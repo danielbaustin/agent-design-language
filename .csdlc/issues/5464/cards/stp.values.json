@@ -7,7 +7,7 @@
     "title": "[v0.91.7][ci] Remove cargo-nextest 0.9.140 unsupported-binary fallback",
     "slug": "v0-91-7-ci-nextest-install-contract",
     "version": "v0.91.7",
-    "generation": 9
+    "generation": 12
   },
   "status": "ready",
   "content": {

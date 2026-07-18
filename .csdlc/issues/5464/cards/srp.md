@@ -26,19 +26,9 @@ adl/tools/test_ci_runtime_contracts.sh
 
 [
   {
-    "id": "F-5464-2",
+    "id": "F-5464-4",
     "severity": "p2",
-    "summary": "Unversioned nextest and cargo-nextest tool aliases escape the @-based inventory.",
-    "actionable": true,
-    "in_scope": true,
-    "disposition": "open",
-    "fix_revision": null,
-    "route": null
-  },
-  {
-    "id": "F-5464-3",
-    "severity": "p3",
-    "summary": "The alternate cargo-nextest alias has no negative fixture.",
+    "summary": "Quoted installer scalars and fully inline YAML steps escape line-oriented install-action inventory.",
     "actionable": true,
     "in_scope": true,
     "disposition": "open",
@@ -57,7 +47,7 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:e2574403da44cda7f6e5f7ec31a2b92a97147e81:f8549e0b1836ee40d5245827e32b1ca8791e6b0c56bdadf7840f3d5463f14b2a")
+Revision: Some("git-blake3:aaad5ad6b7ce63f267f0dde29b911f9db4861626:eb60f68256fa7d3558fa00e01cbd78d67bda47d2ca66c74606828a3cd2194e5d")
 
 Reviewer: Some("bounded-subagent-review-5464")
 

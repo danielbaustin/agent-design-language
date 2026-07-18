@@ -4,6 +4,65 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 WORKFLOW="$ROOT_DIR/.github/workflows/ci.yaml"
 
+ruby -ryaml - "$WORKFLOW" <<'RUBY'
+NEXTTEST_INSTALLER = "taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c"
+class NextestContractError < StandardError; end
+
+def require_nextest_contract(source)
+  workflow = YAML.safe_load(
+    source,
+    permitted_classes: [],
+    permitted_symbols: [],
+    aliases: true
+  )
+  steps = workflow.fetch("jobs").values.flat_map { |job| job.fetch("steps", []) }
+  install_steps = steps.select do |step|
+    step.fetch("uses", "").start_with?("taiki-e/install-action@")
+  end
+  nextest_steps = install_steps.select do |step|
+    tool = step.fetch("with", {}).fetch("tool", "").to_s.strip
+    tool.match?(/\A(?:cargo-)?nextest(?:@.*)?\z/)
+  end
+  raise NextestContractError, "CI must retain exactly four declared nextest install steps" unless nextest_steps.length == 4
+
+  nextest_steps.each do |step|
+    name = step.fetch("name", "unnamed nextest install")
+    raise NextestContractError, "#{name} must use the supported immutable installer" unless step["uses"] == NEXTTEST_INSTALLER
+    inputs = step.fetch("with", {})
+    raise NextestContractError, "#{name} must pin nextest 0.9.140" unless inputs["tool"] == "nextest@0.9.140"
+    raise NextestContractError, "#{name} must disable installer fallback" unless inputs["fallback"] == "none"
+  end
+end
+
+workflow = File.read(ARGV.fetch(0))
+begin
+  require_nextest_contract(workflow)
+rescue NextestContractError => error
+  abort error.message
+end
+
+fixtures = [
+  workflow + %Q(\n      - uses: taiki-e/install-action@v2\n        with:\n          tool: nextest@0.9.140\n          fallback: cargo-install\n),
+  workflow.sub(
+    "with:\n          tool: nextest@0.9.140\n          fallback: none",
+    "with: {tool: nextest@0.9.140, fallback: cargo-install}"
+  ),
+  workflow.sub(NEXTTEST_INSTALLER, "taiki-e/install-action@v2"),
+  workflow.sub("fallback: none", "fallback: cargo-install"),
+  workflow + %Q(\n      - name: Floating nextest alias\n        uses: taiki-e/install-action@v2\n        with: {tool: nextest, fallback: cargo-install}\n),
+  workflow + %Q(\n      - name: Floating cargo-nextest alias\n        uses: "taiki-e/install-action@v2"\n        with:\n          tool: cargo-nextest\n          fallback: cargo-install\n),
+  workflow + %Q(\n      - {name: Inline nextest, uses: taiki-e/install-action@v2, with: {tool: nextest, fallback: cargo-install}}\n)
+]
+fixtures.each do |fixture|
+  begin
+    require_nextest_contract(fixture)
+  rescue NextestContractError
+    next
+  end
+  abort "invalid nextest installer fixture escaped enforcement"
+end
+RUBY
+
 python3 - "$WORKFLOW" "$ROOT_DIR/adl/tools/test_run_authoritative_coverage_lane.sh" "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" "$ROOT_DIR/adl/tools/run_pr_fast_coverage_lane.sh" <<'PY'
 import pathlib
 import re
@@ -148,81 +207,6 @@ for fixture in (
 for action, count in seen.items():
     if count == 0:
         raise SystemExit(f"canonical action inventory unexpectedly contains no {action} use")
-
-nextest_installer = "taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c"
-
-def require_nextest_contract(candidate: str) -> None:
-    named_blocks = [
-        match.group(0)
-        for match in re.finditer(
-            r"^      - name: .+\n(?:(?!^      - name: ).*\n)*",
-            candidate,
-            re.MULTILINE,
-        )
-    ]
-    install_blocks = [
-        block
-        for block in named_blocks
-        if re.search(r"^\s+uses:\s+taiki-e/install-action@", block, re.MULTILINE)
-    ]
-    install_uses = re.findall(
-        r"^\s+(?:-\s+)?uses:\s+taiki-e/install-action@",
-        candidate,
-        re.MULTILINE,
-    )
-    if len(install_blocks) != len(install_uses):
-        raise SystemExit("Every install-action use must be an independently named step")
-
-    nextest_blocks = []
-    for block in install_blocks:
-        if not re.search(r"^\s+with:\s*$", block, re.MULTILINE):
-            continue
-        tool_match = re.search(r"^\s+tool:\s+(.+?)\s*(?:#.*)?$", block, re.MULTILINE)
-        if not tool_match:
-            raise SystemExit("install-action with inputs must use a block-style tool scalar")
-        tool = tool_match.group(1).strip().strip("'\"")
-        if tool in {"nextest", "cargo-nextest"} or tool.startswith(("nextest@", "cargo-nextest@")):
-            nextest_blocks.append(block)
-
-    if len(nextest_blocks) != 4:
-        raise SystemExit("CI must retain exactly four declared nextest install steps")
-    for block in nextest_blocks:
-        name = re.search(r"^\s+- name:\s+(.+)$", block, re.MULTILINE).group(1)
-        if not re.search(
-            rf"^\s+uses:\s+{re.escape(nextest_installer)}(?:\s+#.*)?$",
-            block,
-            re.MULTILINE,
-        ):
-            raise SystemExit(
-                f"{name} must use the immutable install-action manifest that supports nextest 0.9.140"
-            )
-        if not re.search(r"^\s+tool:\s+nextest@0\.9\.140\s*$", block, re.MULTILINE):
-            raise SystemExit(f"{name} must pin nextest 0.9.140")
-        if not re.search(r"^\s+fallback:\s+none\s*$", block, re.MULTILINE):
-            raise SystemExit(f"{name} must disable installer fallback")
-
-require_nextest_contract(workflow)
-
-nextest_bypass_fixtures = (
-    workflow + "\n      - uses: taiki-e/install-action@v2\n        with:\n          tool: nextest@0.9.140\n          fallback: cargo-install\n",
-    workflow.replace("tool: nextest@0.9.140", 'tool: "nextest@0.9.140"', 1),
-    workflow.replace(
-        "with:\n          tool: nextest@0.9.140\n          fallback: none",
-        "with: {tool: nextest@0.9.140, fallback: cargo-install}",
-        1,
-    ),
-    workflow.replace(nextest_installer, "taiki-e/install-action@v2", 1),
-    workflow.replace("fallback: none", "fallback: cargo-install", 1),
-    workflow + "\n      - name: Floating nextest alias\n        uses: taiki-e/install-action@v2\n        with:\n          tool: nextest\n          fallback: cargo-install\n",
-    workflow + "\n      - name: Floating cargo-nextest alias\n        uses: taiki-e/install-action@v2\n        with:\n          tool: cargo-nextest\n          fallback: cargo-install\n",
-)
-for fixture in nextest_bypass_fixtures:
-    try:
-        require_nextest_contract(fixture)
-    except SystemExit:
-        pass
-    else:
-        raise SystemExit("invalid nextest installer fixture escaped enforcement")
 
 adl_profile_summary = step_block("Validation profile summary (adl-ci)")
 for required_fragment in (

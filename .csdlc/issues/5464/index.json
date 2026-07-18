@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "ae3e72f2513ddf93bede427c2ef36d2b067ddb7c1bd59bd1003a94f2e520d5fb",
   "phase": "implemented",
-  "generation": 9,
-  "digest": "fa690691f71b53b11034d05ea318fc7c6f128ee59beba48b9d6dd3dbfca1600a",
+  "generation": 12,
+  "digest": "236e648ad2005c2f50155757587bfe478a80a1895143973f70822e7a8fbe9c76",
   "claim": {
     "id": "claim-5464-nextest-install-contract",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 9,
+    "generation": 12,
     "acquired_unix_seconds": 1784358000,
     "expires_unix_seconds": 1784444400,
     "heartbeat_unix_seconds": 1784358000,
@@ -24,7 +24,7 @@
   "review_assignment": {
     "reviewer": "bounded-subagent-review-5464",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "revision": "git-blake3:e2574403da44cda7f6e5f7ec31a2b92a97147e81:f8549e0b1836ee40d5245827e32b1ca8791e6b0c56bdadf7840f3d5463f14b2a",
+    "revision": "git-blake3:aaad5ad6b7ce63f267f0dde29b911f9db4861626:eb60f68256fa7d3558fa00e01cbd78d67bda47d2ca66c74606828a3cd2194e5d",
     "scope": [
       ".github/workflows/ci.yaml",
       "adl/tools/test_ci_runtime_contracts.sh"
@@ -36,22 +36,12 @@
       ".github/workflows/ci.yaml",
       "adl/tools/test_ci_runtime_contracts.sh"
     ],
-    "reviewed_revision": "git-blake3:e2574403da44cda7f6e5f7ec31a2b92a97147e81:f8549e0b1836ee40d5245827e32b1ca8791e6b0c56bdadf7840f3d5463f14b2a",
+    "reviewed_revision": "git-blake3:aaad5ad6b7ce63f267f0dde29b911f9db4861626:eb60f68256fa7d3558fa00e01cbd78d67bda47d2ca66c74606828a3cd2194e5d",
     "findings": [
       {
-        "id": "F-5464-2",
+        "id": "F-5464-4",
         "severity": "p2",
-        "summary": "Unversioned nextest and cargo-nextest tool aliases escape the @-based inventory.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "open",
-        "fix_revision": null,
-        "route": null
-      },
-      {
-        "id": "F-5464-3",
-        "severity": "p3",
-        "summary": "The alternate cargo-nextest alias has no negative fixture.",
+        "summary": "Quoted installer scalars and fully inline YAML steps escape line-oriented install-action inventory.",
         "actionable": true,
         "in_scope": true,
         "disposition": "open",
@@ -77,34 +67,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "cebf0ada921769b58ad3ad014964cb8f0d253927f001b997795147f0af2ff3d3",
+      "values_digest": "4645fb890af742fe61e7eaa87ef2e0b143479d92b1ace9d289980dbdfafef1ff",
       "rendered_digest": "a2fb478ef4bd13ba429e8c0f8c544110e67e901a6de718d2cf148eca1f55f1a6",
       "ast_digest": "5c565f0762207eecbe4664aff60df4a55a8349758e22cc60254ac86f612dc1c6"
     },
     "stp": {
-      "values_digest": "0fdb90d13ff9b0f96f70e9d0473810f14103870f2131d4bcb627f3abbd90d9ba",
+      "values_digest": "87a0adf98e274700ac0ecb7e5886eec54472c7a34fd0b25278c1be227eb4dfa5",
       "rendered_digest": "fc4b91f3228586ba35da574b082470293a7bf1b5145fea2dc54b5ca65c5c9d38",
       "ast_digest": "564b0df1e2c6093cb771e9b8d15562dd48d1ce5df66fb3477e27ad87a9cfd372"
     },
     "spp": {
-      "values_digest": "c43f276e83584a116481d0ee233dab76062819f2d2addd20df1a94e8a6aa4690",
+      "values_digest": "67759058202e921c34bff17e1c364e5cec6ce1bf7bff443d98e504e8733f8885",
       "rendered_digest": "7343cfe8e4dafed0a0e53405f81df92f00f78fae0b9094b9230b1b7f5781dbb8",
       "ast_digest": "269a7d90989ca87bf68e0d1775dafa72639584e93ae11cf70c7c4d2e2a4f18f7"
     },
     "vpp": {
-      "values_digest": "436cc442cf18ec5610998717e6a0d59e8231beeefcc0eb0b72bc229f7341ff81",
+      "values_digest": "9af8a412b8edc6c36f8173b7c8e57cc1247bb37165f999d00693d04ee9e96fa9",
       "rendered_digest": "d5cc78ce07b13e4f45c7727f07c44991f89a55815257d63068f374a7c1b017a9",
       "ast_digest": "de9357a2a9bc9a4c0fa064b5efb770a71e03195446b8fc79607366093d535464"
     },
     "srp": {
-      "values_digest": "032ade60400bb678eb868409684fcb273498b491f024e549af671d6a871a68f4",
-      "rendered_digest": "66c806f309a0f3331a08805b999f846e5e782084d572be5f48c3931705f370a8",
-      "ast_digest": "b8d4f1696a123062e9a9340ec41a250aebcff961780d85d88a3f94efbe9823c0"
+      "values_digest": "30c28c8ad73b8a8606fda6158bd00b4a507ad62705a24116426e20b9dae6fc76",
+      "rendered_digest": "44ec02c60c852e47c3109245d658c12d2d96e125e8e50f672596d45436aca4c4",
+      "ast_digest": "612c4a29414fecdbcce4b0bf27c9f2e2088f02f5cf1774e379cedac8f319d143"
     },
     "sor": {
-      "values_digest": "03d27632efccab6eaf1c9400c04588f548a3f0a6acfbd99ffd2004880dee1517",
-      "rendered_digest": "8de44105d9d11a338f0df24aa87902a1e6943ead1b4bf063c06e9910079bbfae",
-      "ast_digest": "0cf80ef5c31ccdb7601d7ba8e847d32ab52a326ad595029c45b328492b401fee"
+      "values_digest": "c9a93c77566857be49e8c7bf4c42f084f2e997d253516d55bd8ed62489642d71",
+      "rendered_digest": "1537bfd6b9098a62257e21281837cb1c77e64c340a1ca9ac37a7b3b3be199300",
+      "ast_digest": "7abd6fad59f45c5dfc8233cdb43dba1f53dfe8cf2b9d602f0d34d9ec5fcb101d"
     }
   },
   "transitions": [
@@ -221,6 +211,34 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The focused contract passes with unversioned alias regression fixtures.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove every install-action step is inventoried and both unversioned nextest aliases fail closed\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-unversioned-alias-regression-pass\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5464-4 by replacing line-oriented nextest inspection with structural YAML parsing.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Use Ruby Psych to normalize all workflow step and input forms before enforcing the nextest contract.\",\"changes\":[\"Parse ci.yaml with YAML.safe_load instead of regex for nextest installer enforcement\",\"Traverse every job step and normalize quoted, block, and inline mappings\",\"Add quoted installer and fully inline step bypass fixtures\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The structural YAML contract and all adversarial fixtures pass after F-5464-4 repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove structural nextest enforcement covers quoted installer scalars and fully inline workflow steps\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-structural-yaml-regression-pass\"}}"
     }
   ]
 }
