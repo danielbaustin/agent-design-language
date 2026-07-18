@@ -1,0 +1,52 @@
+{
+  "issue": 5466,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5466/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5466/diagram.mmd",
+  "design_reviewer": "codex-root-design-review",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5466-merged-head-closeout",
+    "owner": "codex-root",
+    "generation": 0,
+    "acquired_unix_seconds": 1784354668,
+    "expires_unix_seconds": 1784959468,
+    "heartbeat_unix_seconds": 1784354668,
+    "branch": "codex/5466-merged-head-closeout-recovery",
+    "worktree": ".worktrees/adl-wp-5466",
+    "protected_paths": [
+      "csdlc-v2/src/bin/csdlc-publish.rs",
+      "csdlc-v2/tests/gate6.rs"
+    ],
+    "purpose": "Add a fail-closed typed publication reconciliation path for an already-merged PR whose final head has exact review evidence"
+  },
+  "initial": {
+    "slug": "merged-head-closeout-recovery",
+    "version": "v0.91.7",
+    "title": "Reconcile merged PR after a late reviewed-head advance",
+    "goal": "Allow truthful typed closeout when a merged PR head advanced after initial publication.",
+    "required_outcome": "A final reviewed merged head can be reconciled into publication evidence without weakening exact-revision review or fabricating terminal SHA truth.",
+    "declared_scope": ["csdlc-v2/src/bin/csdlc-publish.rs", "csdlc-v2/tests/gate6.rs"],
+    "repo_inputs": ["csdlc-v2/src/bin/csdlc-publish.rs", "csdlc-v2/src/publication.rs", "csdlc-v2/src/readiness.rs", "csdlc-v2/tests/gate6.rs"],
+    "acceptance_criteria": [
+      "AC-1: Reconciliation requires an explicit merged PR and exact final reviewed head",
+      "AC-2: Repository, base, head, issue linkage, title, body, SHA, and merged state fail closed on drift",
+      "AC-3: Normal draft publication behavior is unchanged",
+      "AC-4: #5412 can proceed through normal readiness and closeout using truthful final-head evidence"
+    ],
+    "invariants": ["Exact-revision review remains mandatory", "Terminal SHA is never fabricated", "Normal draft publication stays fail closed", "No direct card or index edits"],
+    "non_goals": ["No automatic acceptance of arbitrary late commits", "No weakening of review guards", "No AWS execution"],
+    "deliverables": ["Typed reconcile-merged publication command", "Focused regression tests", "Truthful #5412 closeout proof"],
+    "dependencies": ["#5412 merged PR #5459 final-head review"],
+    "failure_policy": "Reject unless the explicit GitHub PR is merged and its final head exactly matches the current clean reviewed revision.",
+    "authority_boundary": ["Independent Rust C-SDLC v2 publication and closeout path"],
+    "plan_summary": "Add a narrow merged-publication reconciliation command and prove all identity and review gates.",
+    "steps": [{"id":"implement","action":"Implement and prove merged-head reconciliation","acceptance_ids":["AC-1","AC-2","AC-3","AC-4"],"status":"pending"}],
+    "validation_lanes": [{"lane":"csdlc-v2-publication","proof_role":"Merged-head reconciliation and unchanged draft publication","acceptance_ids":["AC-1","AC-2","AC-3","AC-4"],"deterministic":true,"resource_profile":"small","budget_seconds":1200,"budget_tokens":10000,"argv":["cargo","test","--locked","--manifest-path","csdlc-v2/Cargo.toml","--test","gate6"],"parallel_group":"csdlc-v2-focused","defer_reason":null}],
+    "review_prompts": ["Does the route require exact final-head review?", "Can a wrong or unmerged PR be reconciled?", "Is normal draft publication unchanged?"],
+    "risks": ["A permissive merged-PR path could bypass exact review if identity validation is incomplete."],
+    "stop_conditions": ["Any need to fabricate terminal evidence", "Any bypass of typed v2 state mutation"],
+    "task_boundary": "Implement and prove only the narrow merged-head publication reconciliation needed for truthful closeout.",
+    "planning_profile": "small"
+  }
+}

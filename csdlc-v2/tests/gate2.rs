@@ -1,5 +1,6 @@
 use std::fs;
 
+use csdlc_v2::doctor::DoctorStatus;
 use csdlc_v2::{
     amend_claim_scope, diagnose, edit_issue, AmendClaimScopeRequest, BootstrapRequest, CardKind,
     Claim, EditRequest, ErrorCode, SemanticOperation, Store,
@@ -204,6 +205,95 @@ fn bind_supports_issue_local_state_without_touching_primary_checkout() {
     assert_eq!(git_branch(temp.path()), "issue-42");
 }
 
+#[test]
+fn closed_issue_claim_release_is_typed_and_compare_and_swap_guarded() {
+    let (temp, store, mut record) = fixture();
+    git(temp.path(), &["init", "-b", "main"]);
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "C-SDLC Test"]);
+    git(temp.path(), &["add", "docs"]);
+    git(temp.path(), &["commit", "-m", "fixture"]);
+    record = csdlc_v2::edit_issue(
+        &store,
+        edit(
+            &record,
+            SemanticOperation::AdvancePhase {
+                phase: csdlc_v2::LifecyclePhase::Ready,
+            },
+        ),
+    )
+    .unwrap();
+    record = csdlc_v2::edit_issue(
+        &store,
+        edit(
+            &record,
+            SemanticOperation::AdvancePhase {
+                phase: csdlc_v2::LifecyclePhase::Bound,
+            },
+        ),
+    )
+    .unwrap();
+    record = csdlc_v2::edit_issue(
+        &store,
+        EditRequest {
+            issue: 42,
+            card: CardKind::Sor,
+            expected_generation: record.generation,
+            expected_digest: record.digest.clone(),
+            claim_id: "claim-1".into(),
+            actor: "agent".into(),
+            reason: "test edit".into(),
+            operation: SemanticOperation::RecordExecution {
+                summary: "done".into(),
+                changes: vec!["claim".into()],
+                artifacts: vec![],
+            },
+            fail_after_backup: false,
+        },
+    )
+    .unwrap();
+    record = csdlc_v2::edit_issue(
+        &store,
+        edit(
+            &record,
+            SemanticOperation::AdvancePhase {
+                phase: csdlc_v2::LifecyclePhase::Implemented,
+            },
+        ),
+    )
+    .unwrap();
+    let claim_id = record.claim.as_ref().unwrap().id.clone();
+    let evidence = csdlc_v2::release_closed_claim(
+        &store,
+        csdlc_v2::ReleaseClosedClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: claim_id,
+            expected_generation: record.generation,
+            expected_digest: record.digest.clone(),
+            actor: "operator".into(),
+            reason: "GitHub issue is closed; release stale broad claim for follow-on setup".into(),
+            observed_issue_state: "closed".into(),
+            observed_issue: 42,
+            observation_source: "github://example/repo/issues/42".into(),
+        },
+    )
+    .unwrap();
+    assert_eq!(evidence.previous_owner, "agent");
+    let released = store.load_record(42).unwrap();
+    assert!(released.claim.is_none());
+    assert!(released
+        .audit
+        .last()
+        .unwrap()
+        .operation
+        .contains("release_closed_claim"));
+    assert_eq!(csdlc_v2::diagnose(&store, 42).status, DoctorStatus::Pass);
+}
+
 fn git_branch(root: &std::path::Path) -> String {
     let output = std::process::Command::new("git")
         .current_dir(root)
@@ -309,6 +399,8 @@ fn bind_refuses_overlapping_protected_path_reserved_by_another_issue() {
     )
     .expect_err("path overlap");
     assert!(matches!(error.code, ErrorCode::ClaimCollision));
+    assert!(error.message.contains("in phase"));
+    assert!(error.message.contains("protected"));
 }
 
 #[test]
@@ -867,6 +959,7 @@ fn public_schema_bundle_covers_requests_state_and_doctor_output() {
         "bind_request",
         "bind_result",
         "recover_claim_request",
+        "release_closed_claim_request",
         "amend_claim_scope_request",
         "issue_record",
         "terminal_receipt",

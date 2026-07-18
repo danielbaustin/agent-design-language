@@ -1,0 +1,53 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5468,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][records] Normalize terminal SRP status during reconciliation",
+    "slug": "v0-91-7-csdlc-v2-terminal-srp-status-reconciliation",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-csdlc-v2-lifecycle",
+          "proof_role": "Prove terminal SRP status normalization and retained receipt parity",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 180,
+          "budget_tokens": 1500,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate7_lifecycle",
+            "terminal_reconciliation"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on any card validation, receipt parity, digest, rollback, or focused lifecycle regression failure.",
+      "design_ref": ".csdlc/issues/5468/retained/design.md",
+      "design_digest": "d614eae3ff34b1fb0b24c6411a8f12a09320c1491aa6e4e6d0fc98818cce8e4e",
+      "diagram_ref": ".csdlc/issues/5468/retained/diagram.mmd",
+      "diagram_digest": "79ebcaa424c684197dfc29ec4ea66420594ecaebfa80fc9f48eb6b1b91777125"
+    }
+  }
+}

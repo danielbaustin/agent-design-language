@@ -3,11 +3,15 @@ use serde_json::{json, Value};
 use crate::doctor::DoctorReport;
 use crate::lifecycle::{
     AmendClaimScopeRequest, BindRequest, BindResult, HeartbeatRequest, RecoverClaimRequest,
+    ReleaseClosedClaimRequest,
 };
 use crate::migration::{ImportReport, LegacyImportRequest, NormalizedOutcome, ShadowComparison};
 use crate::model::IssueRecord;
 use crate::model::{ReconcileTerminalRequest, TerminalReceipt};
-use crate::publication::{PublicationIntent, PublicationRequest, RemotePullRequest};
+use crate::publication::{
+    MergedPublicationReconciliationRequest, PublicationIntent, PublicationRequest,
+    RemotePullRequest,
+};
 use crate::pvf::{ExecutionReport, ExecutionRequest, PvfManifest, ScheduleReport, ShepherdReport};
 use crate::readiness::{ReadinessReport, ReadinessRequest, TerminalObservation};
 use crate::review::{
@@ -26,6 +30,7 @@ pub fn public_schema_bundle() -> Value {
         "bind_request": schemars::schema_for!(BindRequest),
         "bind_result": schemars::schema_for!(BindResult),
         "recover_claim_request": schemars::schema_for!(RecoverClaimRequest),
+        "release_closed_claim_request": schemars::schema_for!(ReleaseClosedClaimRequest),
         "amend_claim_scope_request": schemars::schema_for!(AmendClaimScopeRequest),
         "heartbeat_request": schemars::schema_for!(HeartbeatRequest),
         "issue_record": schemars::schema_for!(IssueRecord),
@@ -42,6 +47,7 @@ pub fn public_schema_bundle() -> Value {
         "review_recovery_request": schemars::schema_for!(ReviewRecoveryRequest),
         "publication_review_report": schemars::schema_for!(PublicationReviewReport),
         "publication_request": schemars::schema_for!(PublicationRequest),
+        "merged_publication_reconciliation_request": schemars::schema_for!(MergedPublicationReconciliationRequest),
         "publication_intent": schemars::schema_for!(PublicationIntent),
         "remote_pull_request": schemars::schema_for!(RemotePullRequest),
         "readiness_request": schemars::schema_for!(ReadinessRequest),

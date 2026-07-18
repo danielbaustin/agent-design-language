@@ -1,0 +1,10 @@
+{
+  "issue": 5466,
+  "card": "spp",
+  "expected_generation": 0,
+  "expected_digest": "5340d2ad521329d6dd57b4030730c6c5f88da88b1ee16fd43e000e33589a81ae",
+  "claim_id": "claim-5466-merged-head-closeout",
+  "actor": "codex-root",
+  "reason": "All six typed cards and the approved bounded design are ready for execution.",
+  "operation": {"operation":"advance_phase","phase":"ready"}
+}

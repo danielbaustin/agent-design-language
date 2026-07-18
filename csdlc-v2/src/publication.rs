@@ -26,6 +26,27 @@ pub struct PublicationRequest {
     pub token_file: Option<String>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct MergedPublicationReconciliationRequest {
+    pub schema: String,
+    pub publication: PublicationRequest,
+    pub pull_request: u64,
+}
+
+impl MergedPublicationReconciliationRequest {
+    pub fn validate(&self) -> Result<()> {
+        if self.schema != "csdlc.merged_publication_reconciliation_request.v1"
+            || self.pull_request == 0
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "merged publication reconciliation request identity is invalid",
+            ));
+        }
+        Ok(())
+    }
+}
+
 fn default_draft() -> bool {
     true
 }
@@ -202,6 +223,26 @@ pub fn validate_remote(intent: &PublicationIntent, remote: &RemotePullRequest) -
     Ok(())
 }
 
+pub fn validate_merged_remote(
+    intent: &PublicationIntent,
+    remote: &RemotePullRequest,
+) -> Result<()> {
+    validate_remote_identity(intent, remote)?;
+    if intent.draft
+        || remote.head_sha != intent.commit_sha
+        || remote.title != intent.title
+        || remote.body != intent.body
+        || remote.draft
+        || remote.state != "merged"
+    {
+        return Err(V2Error::new(
+            ErrorCode::ReconciliationRequired,
+            "merged PR did not converge to the exact final reviewed intent",
+        ));
+    }
+    Ok(())
+}
+
 fn validate_remote_identity(intent: &PublicationIntent, remote: &RemotePullRequest) -> Result<()> {
     if remote.repository != intent.repository
         || remote.base != intent.base
@@ -253,6 +294,40 @@ pub fn record_publication(
         &request.claim_id,
         request.actor.clone(),
         evidence,
+        false,
+    )
+}
+
+pub fn record_merged_publication(
+    store: &Store,
+    request: &PublicationRequest,
+    intent: &PublicationIntent,
+    remote: RemotePullRequest,
+) -> Result<IssueRecord> {
+    validate_merged_remote(intent, &remote)?;
+    let evidence = PublicationEvidence {
+        repository: remote.repository,
+        issue: request.issue,
+        pull_request: remote.number,
+        url: remote.url,
+        base: remote.base,
+        head: remote.head,
+        revision: intent.revision.clone(),
+        draft: remote.draft,
+        observed_state: remote.state,
+    };
+    let current = store.load_record(request.issue)?;
+    if current.digest == request.expected_digest && current.publication.as_ref() == Some(&evidence)
+    {
+        return Ok(current);
+    }
+    store.commit_publication(
+        request.issue,
+        &request.expected_digest,
+        &request.claim_id,
+        request.actor.clone(),
+        evidence,
+        true,
     )
 }
 

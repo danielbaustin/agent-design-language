@@ -38,6 +38,20 @@ pub struct RecoverClaimRequest {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct ReleaseClosedClaimRequest {
+    pub issue: u64,
+    pub repository: String,
+    pub expected_claim_id: String,
+    pub expected_generation: u64,
+    pub expected_digest: String,
+    pub actor: String,
+    pub reason: String,
+    pub observed_issue_state: String,
+    pub observed_issue: u64,
+    pub observation_source: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct HeartbeatRequest {
     pub issue: u64,
     pub claim_id: String,
@@ -131,14 +145,22 @@ pub fn initialize_issue(
                     continue;
                 }
                 if let Some(claim) = other.claim {
-                    if claim
-                        .protected_paths
-                        .iter()
-                        .any(|a| request.claim.protected_paths.iter().any(|b| overlaps(a, b)))
+                    if let Some((reserved, requested)) =
+                        claim.protected_paths.iter().find_map(|a| {
+                            request
+                                .claim
+                                .protected_paths
+                                .iter()
+                                .find(|b| overlaps(a, b))
+                                .map(|b| (a, b))
+                        })
                     {
                         return Err(V2Error::new(
                             ErrorCode::ClaimCollision,
-                            format!("protected path overlaps issue {}", other.issue),
+                            format!(
+                                "protected path '{}' overlaps requested '{}' from issue {} in phase {:?}",
+                                reserved, requested, other.issue, other.phase
+                            ),
                         ));
                     }
                 }
@@ -270,14 +292,22 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
                     continue;
                 }
                 if let Some(claim) = other.claim {
-                    if claim
-                        .protected_paths
-                        .iter()
-                        .any(|a| request.claim.protected_paths.iter().any(|b| overlaps(a, b)))
+                    if let Some((reserved, requested)) =
+                        claim.protected_paths.iter().find_map(|a| {
+                            request
+                                .claim
+                                .protected_paths
+                                .iter()
+                                .find(|b| overlaps(a, b))
+                                .map(|b| (a, b))
+                        })
                     {
                         return Err(V2Error::new(
                             ErrorCode::ClaimCollision,
-                            format!("protected path overlaps issue {}", other.issue),
+                            format!(
+                                "protected path '{}' overlaps requested '{}' from issue {} in phase {:?}",
+                                reserved, requested, other.issue, other.phase
+                            ),
                         ));
                     }
                 }
@@ -452,15 +482,21 @@ pub fn amend_claim_scope(store: &Store, request: AmendClaimScopeRequest) -> Resu
                 continue;
             }
             if let Some(claim) = other.claim {
-                if claim.protected_paths.iter().any(|reserved| {
-                    request
-                        .add_protected_paths
-                        .iter()
-                        .any(|candidate| overlaps(reserved, candidate))
-                }) {
+                if let Some((reserved, candidate)) =
+                    claim.protected_paths.iter().find_map(|reserved| {
+                        request
+                            .add_protected_paths
+                            .iter()
+                            .find(|candidate| overlaps(reserved, candidate))
+                            .map(|candidate| (reserved, candidate))
+                    })
+                {
                     return Err(V2Error::new(
                         ErrorCode::ClaimCollision,
-                        format!("protected path overlaps issue {}", other.issue),
+                        format!(
+                            "protected path '{}' overlaps requested '{}' from issue {} in phase {:?}",
+                            reserved, candidate, other.issue, other.phase
+                        ),
                     ));
                 }
             }
@@ -538,6 +574,74 @@ pub fn recover_claim(store: &Store, request: RecoverClaimRequest) -> Result<Clai
     });
     record.digest = crate::store::record_digest(&record)?;
     store.replace_record(request.issue, &expected_digest, &record)?;
+    Ok(evidence)
+}
+
+pub fn release_closed_claim(
+    store: &Store,
+    request: ReleaseClosedClaimRequest,
+) -> Result<ClaimRecovery> {
+    if request.actor.trim().is_empty()
+        || request.reason.trim().is_empty()
+        || request.repository.trim().is_empty()
+        || request.observed_issue_state != "closed"
+        || request.observed_issue != request.issue
+        || request.observation_source.trim().is_empty()
+        || request.observation_source
+            != format!("github://{}/issues/{}", request.repository, request.issue)
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "release actor and reason required",
+        ));
+    }
+    let mut record = store.load_record(request.issue)?;
+    if record.repository != request.repository {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "closed-issue claim release repository mismatch",
+        ));
+    }
+    let current = record
+        .claim
+        .as_ref()
+        .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "claim missing"))?;
+    if record.phase != crate::LifecyclePhase::Implemented
+        || current.id != request.expected_claim_id
+        || record.generation != request.expected_generation
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidClaim,
+            "closed-issue claim release compare-and-swap failed",
+        ));
+    }
+    if record.digest != request.expected_digest {
+        return Err(V2Error::new(
+            ErrorCode::StaleDigest,
+            "closed-issue claim release digest is stale",
+        ));
+    }
+    let evidence = ClaimRecovery {
+        previous_owner: current.owner.clone(),
+        observed_expiry_unix_seconds: current.expires_unix_seconds,
+        recovery_actor: request.actor.clone(),
+        reason: request.reason.clone(),
+    };
+    record.claim = None;
+    record.audit.push(AuditEvent {
+        sequence: record.audit.len() as u64 + 1,
+        generation: record.generation,
+        actor: request.actor,
+        reason: request.reason,
+        operation: serde_json::json!({
+            "operation": "release_closed_claim",
+            "observed_issue_state": request.observed_issue_state,
+            "observation_source": request.observation_source,
+        })
+        .to_string(),
+    });
+    record.digest = crate::store::record_digest(&record)?;
+    store.replace_record(request.issue, &request.expected_digest, &record)?;
     Ok(evidence)
 }
 

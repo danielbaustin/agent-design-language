@@ -488,6 +488,25 @@ impl Store {
         }
         let mut projection = receipt.record;
         let mut cards = receipt.cards;
+        let current_review_passes = cards.get(&CardKind::Srp).is_some_and(|card| {
+            matches!(&card.content, CardContent::Srp(srp)
+            if srp.review_result == crate::cards::ReviewResult::Pass
+                && srp.review_revision.as_deref().is_some_and(|value| !value.is_empty())
+                && srp.reviewer.as_deref().is_some_and(|value| !value.is_empty())
+                && !srp.findings.iter().any(|finding| {
+                    finding.actionable
+                        && finding.disposition == crate::cards::FindingDisposition::Open
+                }))
+        });
+        if projection
+            .review
+            .as_ref()
+            .is_some_and(|review| review.completed)
+            && current_review_passes
+        {
+            cards.get_mut(&CardKind::Srp).expect("SRP card").status =
+                crate::cards::CardStatus::Complete;
+        }
         let routed = match cards.get(&CardKind::Srp).map(|values| &values.content) {
             Some(CardContent::Srp(values)) => values
                 .residual_risk
@@ -783,6 +802,7 @@ impl Store {
         claim_id: &str,
         actor: String,
         evidence: PublicationEvidence,
+        merged: bool,
     ) -> Result<IssueRecord> {
         let _lock = self.lock(issue)?;
         self.recover_if_needed(issue)?;
@@ -804,7 +824,16 @@ impl Store {
             CardContent::Sor(values) => values,
             _ => unreachable!("SOR"),
         };
-        sor.integration_state = crate::cards::IntegrationState::PrOpen;
+        sor.integration_state = if merged {
+            crate::cards::IntegrationState::Merged
+        } else {
+            crate::cards::IntegrationState::PrOpen
+        };
+        sor.merge_state = if merged {
+            crate::cards::MergeState::Merged
+        } else {
+            crate::cards::MergeState::NotMerged
+        };
         sor.publication_state = if evidence.draft {
             crate::cards::PublicationState::Draft
         } else {
@@ -822,15 +851,30 @@ impl Store {
             record.advance(
                 LifecyclePhase::Published,
                 actor.clone(),
-                "observed exact draft PR after current review".into(),
+                if merged {
+                    "observed exact merged PR after current review"
+                } else {
+                    "observed exact PR after current review"
+                }
+                .into(),
             )?;
         }
         record.audit.push(AuditEvent {
             sequence: record.audit.len() as u64 + 1,
             generation: record.generation,
             actor,
-            reason: "atomically record observed GitHub publication and SOR projection".into(),
-            operation: "record_publication".into(),
+            reason: if merged {
+                "atomically record observed merged GitHub publication and SOR projection"
+            } else {
+                "atomically record observed GitHub publication and SOR projection"
+            }
+            .into(),
+            operation: if merged {
+                "record_merged_publication"
+            } else {
+                "record_publication"
+            }
+            .into(),
         });
         validate_updated_cards(self, &record, &cards)?;
         hydrate_projections(&mut record, &cards)?;
@@ -1732,11 +1776,7 @@ pub(crate) fn verify_record(record: &IssueRecord) -> Result<()> {
                 "closed-out record must have terminal evidence and no active claim",
             ));
         }
-    } else {
-        let claim = record
-            .claim
-            .as_ref()
-            .ok_or_else(|| V2Error::new(ErrorCode::CorruptRecord, "claim missing"))?;
+    } else if let Some(claim) = record.claim.as_ref() {
         if claim.generation != record.generation
             || claim.id.is_empty()
             || claim.owner.is_empty()
@@ -1751,6 +1791,19 @@ pub(crate) fn verify_record(record: &IssueRecord) -> Result<()> {
                 "claim invariant failed",
             ));
         }
+    } else if !record.audit.last().is_some_and(|event| {
+        serde_json::from_str::<serde_json::Value>(&event.operation)
+            .ok()
+            .and_then(|value| {
+                value
+                    .get("operation")
+                    .and_then(|v| v.as_str())
+                    .map(str::to_owned)
+            })
+            .as_deref()
+            == Some("release_closed_claim")
+    }) {
+        return Err(V2Error::new(ErrorCode::CorruptRecord, "claim missing"));
     }
     if let DesignReview::Approved { reviewer, revision } = &record.design_review {
         if reviewer.trim().is_empty() || revision.trim().is_empty() {

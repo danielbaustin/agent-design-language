@@ -1,0 +1,10 @@
+{
+  "issue": 5466,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "3e782e98336992c9d15f2df764341a0ecdda41e2ed2164f7983020ebfb426f0c",
+  "claim_id": "claim-5466-merged-head-closeout",
+  "actor": "codex-root",
+  "reason": "The bounded merged-head publication reconciliation implementation is complete.",
+  "operation": {"operation":"advance_phase","phase":"implemented"}
+}

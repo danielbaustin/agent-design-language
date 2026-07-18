@@ -1,0 +1,75 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5468,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][records] Normalize terminal SRP status during reconciliation",
+    "slug": "v0-91-7-csdlc-v2-terminal-srp-status-reconciliation",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Add bounded SRP normalization inside typed terminal reconciliation, prove projection and receipt parity, then regenerate #5452 terminal truth.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Confirm current terminal reconciliation and SRP validation invariants",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Normalize completed terminal SRP status inside the existing transaction",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Add focused regression and regenerate #5452 projection",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-4"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Only evidence-backed terminal SRP status is normalized",
+        "Receipt and projected record remain identical authorities",
+        "No AWS or remote execution is used"
+      ],
+      "risks": [
+        "Over-broad normalization could hide incomplete review truth",
+        "Projection and retained receipt could diverge if normalization occurs outside the atomic transaction"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "The repair requires arbitrary terminal card mutation",
+        "Focused lifecycle proof cannot preserve receipt rollback guarantees"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5468/retained/design.md",
+      "design_digest": "d614eae3ff34b1fb0b24c6411a8f12a09320c1491aa6e4e6d0fc98818cce8e4e",
+      "diagram_ref": ".csdlc/issues/5468/retained/diagram.mmd",
+      "diagram_digest": "79ebcaa424c684197dfc29ec4ea66420594ecaebfa80fc9f48eb6b1b91777125"
+    }
+  }
+}

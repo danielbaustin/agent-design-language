@@ -1,0 +1,10 @@
+{
+  "issue": 5466,
+  "card": "srp",
+  "expected_generation": 11,
+  "expected_digest": "a7fe8eac9e5bb1de4553c1cd22d0fb3c37c66d5a210bcdca64a63f3a90b86f89",
+  "claim_id": "claim-5466-merged-head-closeout",
+  "actor": "codex-root",
+  "reason": "Exact current-head review passed; the committed delta after the source review contains typed lifecycle metadata only.",
+  "operation": {"operation":"advance_phase","phase":"reviewed"}
+}

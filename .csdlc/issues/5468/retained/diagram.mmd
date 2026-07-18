@@ -1,0 +1,7 @@
+flowchart LR
+    A["Retained terminal receipt"] --> B["Typed reconcile-terminal"]
+    B --> C{"Completed review evidence?"}
+    C -->|Yes| D["SRP status complete"]
+    C -->|No| E["Preserve fail-closed review truth"]
+    D --> F["Validate cards and refresh receipt atomically"]
+    E --> F

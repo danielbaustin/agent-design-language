@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5452,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][spot] Preserve builder summary generation failures",
+    "slug": "v0-91-7-tooling-spot-builder-summary-failure-truth",
+    "version": "v0.91.7",
+    "generation": 21
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair only builder-image wrapper status composition and its focused regression harness.",
+      "deliverables": [
+        "Fail-closed wrapper status composition",
+        "Primary-success and summary-failure regression",
+        "Primary-failure and summary-success regression"
+      ],
+      "acceptance_criteria": [
+        "AC1: Primary success plus summary failure returns non-zero",
+        "AC2: Primary failure plus summary success returns non-zero",
+        "AC3: Both stages succeeding retains the successful path",
+        "AC4: Existing wrapper artifacts and diagnostics remain available"
+      ],
+      "dependencies": [
+        "Existing Spot builder-image validation wrapper and focused shell harness"
+      ],
+      "repo_inputs": [
+        "adl/tools/run_aws_spot_builder_image_validation.sh",
+        "adl/tools/test_run_aws_spot_builder_image_validation.sh",
+        "GitHub issue #5452"
+      ],
+      "non_goals": [
+        "Runtime v2 or Runtime v3 changes",
+        "AWS topology changes",
+        "CI workflow changes",
+        "WP-07 hardening changes"
+      ]
+    }
+  }
+}

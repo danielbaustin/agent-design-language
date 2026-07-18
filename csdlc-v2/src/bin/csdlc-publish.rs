@@ -4,8 +4,9 @@ use std::path::{Path, PathBuf};
 use clap::{Parser, Subcommand};
 use csdlc_v2::error::{ErrorCode, V2Error};
 use csdlc_v2::{
-    prepare_publication, reconcile_action, record_publication, PublicationAction,
-    PublicationIntent, PublicationRequest, RemotePullRequest, Store,
+    prepare_publication, reconcile_action, record_merged_publication, record_publication,
+    MergedPublicationReconciliationRequest, PublicationAction, PublicationIntent,
+    PublicationRequest, RemotePullRequest, Store,
 };
 use octocrab::params::State;
 
@@ -24,6 +25,10 @@ enum Command {
         request: PathBuf,
     },
     Status {
+        #[arg(long)]
+        request: PathBuf,
+    },
+    ReconcileMerged {
         #[arg(long)]
         request: PathBuf,
     },
@@ -50,9 +55,12 @@ async fn run(cli: &Cli) -> csdlc_v2::Result<serde_json::Value> {
     if matches!(cli.command, Command::Schema) {
         return Ok(csdlc_v2::public_schema_bundle());
     }
+    if let Command::ReconcileMerged { request } = &cli.command {
+        return reconcile_merged(&cli.root, request).await;
+    }
     let request_path = match &cli.command {
         Command::Publish { request } | Command::Status { request } => request,
-        Command::Schema => unreachable!(),
+        Command::ReconcileMerged { .. } | Command::Schema => unreachable!(),
     };
     let request: PublicationRequest = serde_json::from_slice(&fs::read(request_path)?)?;
     let store = Store::new(&cli.root);
@@ -129,6 +137,46 @@ async fn run(cli: &Cli) -> csdlc_v2::Result<serde_json::Value> {
     Ok(
         serde_json::json!({"schema":"csdlc.publication_result.v1","publication":normalized,"generation":record.generation,"digest":record.digest}),
     )
+}
+
+async fn reconcile_merged(root: &Path, request_path: &Path) -> csdlc_v2::Result<serde_json::Value> {
+    let request: MergedPublicationReconciliationRequest =
+        serde_json::from_slice(&fs::read(request_path)?)?;
+    request.validate()?;
+    let store = Store::new(root);
+    let mut preparation = request.publication.clone();
+    preparation.draft = true;
+    let mut intent = prepare_publication(&store, &preparation)?;
+    intent.draft = false;
+    verify_git_remote(root, &request.publication.remote, &intent)?;
+    let token = resolve_token(&request.publication)?;
+    let crab = octocrab::Octocrab::builder()
+        .personal_token(token)
+        .build()
+        .map_err(|error| remote(error.to_string()))?;
+    let observed = crab
+        .pulls(owner(&intent)?, repo(&intent)?)
+        .get(request.pull_request)
+        .await
+        .map_err(|error| remote(error.to_string()))?;
+    if observed.merged != Some(true) {
+        return Err(V2Error::new(
+            ErrorCode::ReconciliationRequired,
+            "explicit PR is not merged",
+        ));
+    }
+    let mut normalized = normalize(&intent, &observed)?;
+    normalized.state = "merged".into();
+    csdlc_v2::publication::validate_merged_remote(&intent, &normalized)?;
+    persist_intent(root, &intent)?;
+    let record =
+        record_merged_publication(&store, &request.publication, &intent, normalized.clone())?;
+    Ok(serde_json::json!({
+        "schema": "csdlc.merged_publication_reconciliation_result.v1",
+        "publication": normalized,
+        "generation": record.generation,
+        "digest": record.digest,
+    }))
 }
 
 fn resolve_token(request: &PublicationRequest) -> csdlc_v2::Result<String> {
@@ -234,6 +282,15 @@ fn normalize(
             "observed PR has no head identity",
         )
     })?;
+    validate_observed_repository_identity(
+        intent,
+        base.repo
+            .as_ref()
+            .and_then(|repo| repo.full_name.as_deref()),
+        head.repo
+            .as_ref()
+            .and_then(|repo| repo.full_name.as_deref()),
+    )?;
     Ok(RemotePullRequest {
         number: pr_number(pr)?,
         url: pr
@@ -250,6 +307,22 @@ fn normalize(
         state: "open".into(),
         head_sha: head.sha.clone(),
     })
+}
+
+fn validate_observed_repository_identity(
+    intent: &PublicationIntent,
+    base_repository: Option<&str>,
+    head_repository: Option<&str>,
+) -> csdlc_v2::Result<()> {
+    if base_repository != Some(intent.repository.as_str())
+        || head_repository != Some(intent.repository.as_str())
+    {
+        return Err(V2Error::new(
+            ErrorCode::ReconciliationRequired,
+            "observed PR base or head repository differs from publication intent",
+        ));
+    }
+    Ok(())
 }
 fn pr_number(pr: &octocrab::models::pulls::PullRequest) -> csdlc_v2::Result<u64> {
     pr.number.ok_or_else(|| {
@@ -294,7 +367,10 @@ fn reconcile_create_observation(send_failed: bool, observed: bool) -> csdlc_v2::
 
 #[cfg(test)]
 mod tests {
-    use super::{reconcile_create_observation, remote_url_matches};
+    use super::{
+        reconcile_create_observation, remote_url_matches, validate_observed_repository_identity,
+    };
+    use csdlc_v2::PublicationIntent;
 
     #[test]
     fn remote_url_requires_exact_github_host_and_repository() {
@@ -322,5 +398,35 @@ mod tests {
         assert!(reconcile_create_observation(true, true).is_ok());
         assert!(reconcile_create_observation(true, false).is_err());
         assert!(reconcile_create_observation(false, false).is_err());
+    }
+
+    #[test]
+    fn normalization_rejects_fork_or_missing_repository_identity() {
+        let intent = PublicationIntent {
+            schema: "csdlc.publication_intent.v1".into(),
+            issue: 5466,
+            repository: "owner/repo".into(),
+            base: "main".into(),
+            head: "codex/5466".into(),
+            title: "title".into(),
+            body: "Resolves #5466".into(),
+            draft: false,
+            revision: "revision".into(),
+            commit_sha: "sha".into(),
+        };
+        assert!(validate_observed_repository_identity(
+            &intent,
+            Some("owner/repo"),
+            Some("owner/repo")
+        )
+        .is_ok());
+        assert!(validate_observed_repository_identity(
+            &intent,
+            Some("owner/repo"),
+            Some("fork/repo")
+        )
+        .is_err());
+        assert!(validate_observed_repository_identity(&intent, None, Some("owner/repo")).is_err());
+        assert!(validate_observed_repository_identity(&intent, Some("owner/repo"), None).is_err());
     }
 }

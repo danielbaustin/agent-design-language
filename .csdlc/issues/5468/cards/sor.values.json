@@ -1,0 +1,81 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5468,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][records] Normalize terminal SRP status during reconciliation",
+    "slug": "v0-91-7-csdlc-v2-terminal-srp-status-reconciliation",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Required current passing SRP truth before terminal completion normalization.",
+      "actual_changes": [
+        "Set SRP status complete only when retained review evidence is completed",
+        "Keep normalization inside the existing projection and receipt transaction",
+        "Assert projected and retained SRP status parity in the end-to-end lifecycle test",
+        "Gate completion on current pass result, reviewer, revision, and no open actionable findings",
+        "Add a negative lifecycle regression for a late unresolved MergeReady finding",
+        "Route pre-existing crash-consistency redesign to #5470"
+      ],
+      "artifacts": [
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs",
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate7_lifecycle"
+          ],
+          "purpose": "Prove terminal SRP status normalization, projection and receipt parity, idempotence, and failure paths",
+          "outcome": "passed",
+          "evidence_ref": "3 gate7_lifecycle tests passed using CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5468"
+        },
+        {
+          "command": [
+            "cargo",
+            "clippy",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "purpose": "Prove the bounded typed-v2 change is formatted, warning-free, and patch-clean",
+          "outcome": "passed",
+          "evidence_ref": "cargo fmt, cargo clippy -D warnings, and git diff --check passed using /Volumes/FastWork"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate7_lifecycle"
+          ],
+          "purpose": "Prove completed passing SRP normalization and preservation of unresolved post-review finding truth",
+          "outcome": "passed",
+          "evidence_ref": "4 gate7_lifecycle tests passed; clippy -D warnings and diff check passed using /Volumes/FastWork"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

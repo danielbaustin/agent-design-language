@@ -1,0 +1,10 @@
+{
+  "issue": 5466,
+  "claim_id": "claim-5466-merged-head-closeout",
+  "expected_generation": 2,
+  "expected_digest": "9119cc9fe0e6e9edb6b1c4c2207b0350890485a714786311604205d7875875a5",
+  "now_unix_seconds": 1784354668,
+  "actor": "codex-root",
+  "reason": "Protect the shared merged-remote identity validator used by the typed CLI and focused tests.",
+  "add_protected_paths": ["csdlc-v2/src/publication.rs"]
+}

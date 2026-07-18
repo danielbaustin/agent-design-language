@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5468,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][records] Normalize terminal SRP status during reconciliation",
+    "slug": "v0-91-7-csdlc-v2-terminal-srp-status-reconciliation",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair only terminal SRP status normalization and its focused lifecycle regression.",
+      "deliverables": [
+        "Typed terminal SRP status normalization",
+        "Focused retained-receipt regression",
+        "Regenerated truthful #5452 terminal projection"
+      ],
+      "acceptance_criteria": [
+        "AC1: A closed-out receipt with completed passing review projects SRP status complete",
+        "AC2: Projection and retained receipt carry the same normalized status and digest truth",
+        "AC3: Reconciliation remains atomic, deterministic, and fail closed",
+        "AC4: #5452 terminal projection validates without stale SRP status"
+      ],
+      "dependencies": [
+        "Existing typed reconcile-terminal transaction from #5438"
+      ],
+      "repo_inputs": [
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs",
+        "GitHub issue #5468",
+        "Terminal review finding from #5452"
+      ],
+      "non_goals": [
+        "Arbitrary post-closeout editing",
+        "SOR follow-up reconciliation changes",
+        "Runtime, AWS, CI, or workflow changes"
+      ]
+    }
+  }
+}

@@ -31,7 +31,8 @@ pub use eligibility::{
 pub use error::{ErrorCode, Result, V2Error};
 pub use lifecycle::{
     amend_claim_scope, bind_issue, heartbeat_claim, initialize_issue, recover_claim,
-    AmendClaimScopeRequest, BindRequest, BindResult, HeartbeatRequest, RecoverClaimRequest,
+    release_closed_claim, AmendClaimScopeRequest, BindRequest, BindResult, HeartbeatRequest,
+    RecoverClaimRequest, ReleaseClosedClaimRequest,
 };
 pub use migration::{
     compare_shadow, generate_compatibility_view, import_legacy, write_compatibility_view_atomic,
@@ -48,8 +49,9 @@ pub use operator::{
 };
 pub use proof::{run_pre_switch_proof, PreSwitchEvidence, ProofManifest, ProofStep};
 pub use publication::{
-    prepare_publication, reconcile_action, record_publication, PublicationAction,
-    PublicationIntent, PublicationRequest, RemotePullRequest,
+    prepare_publication, reconcile_action, record_merged_publication, record_publication,
+    MergedPublicationReconciliationRequest, PublicationAction, PublicationIntent,
+    PublicationRequest, RemotePullRequest,
 };
 pub use pvf::{
     classify_schedule, classify_shepherd, execute, select, ExecutionRequest, PvfManifest,

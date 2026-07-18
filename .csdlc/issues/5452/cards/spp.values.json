@@ -1,0 +1,76 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5452,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][spot] Preserve builder summary generation failures",
+    "slug": "v0-91-7-tooling-spot-builder-summary-failure-truth",
+    "version": "v0.91.7",
+    "generation": 21
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Inspect the current status flow, implement deterministic two-stage status composition, add mixed-result regressions, and run the focused contract proof.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Map the existing primary and summary status paths",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Implement fail-closed two-stage status composition",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Add and run focused mixed-result regressions",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "A required-stage failure must never produce wrapper success",
+        "The implementation remains bounded to the two declared scripts",
+        "Existing successful artifact generation remains intact"
+      ],
+      "risks": [
+        "Shell errexit handling may bypass summary generation or overwrite the primary status",
+        "Test seams may accidentally weaken production behavior"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Required behavior cannot be tested without widening into AWS or CI workflow changes",
+        "The current wrapper contract contradicts the issue acceptance criteria"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5452/retained/design.md",
+      "design_digest": "13807358fef099d94c02758ec21154632510bb448cdf562f33adbd52d160970e",
+      "diagram_ref": ".csdlc/issues/5452/retained/diagram.mmd",
+      "diagram_digest": "948a4bc82749ac148df1dac8d6f09ebd8ac5c42e1b01856576952f7431a0a6a9"
+    }
+  }
+}

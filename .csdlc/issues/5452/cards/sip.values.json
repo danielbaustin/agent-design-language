@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5452,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][spot] Preserve builder summary generation failures",
+    "slug": "v0-91-7-tooling-spot-builder-summary-failure-truth",
+    "version": "v0.91.7",
+    "generation": 21
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make the Spot builder-image wrapper fail closed when either primary validation or retained-summary generation fails.",
+      "required_outcome": "Both stage statuses remain observable and focused mixed-result regressions prove that neither failure can be masked.",
+      "declared_scope": [
+        "adl/tools/run_aws_spot_builder_image_validation.sh",
+        "adl/tools/test_run_aws_spot_builder_image_validation.sh"
+      ],
+      "authority_boundary": [
+        "GitHub issue #5452 defines the behavioral defect and scope",
+        "The wrapper must retain the existing builder validation contract",
+        "No runtime or CI workflow changes are authorized"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

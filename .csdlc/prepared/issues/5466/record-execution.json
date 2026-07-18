@@ -1,0 +1,20 @@
+{
+  "issue": 5466,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "f1ae0648d938e18c90541f8ee31db89eec97b72debc5d83db813ae5030124bae",
+  "claim_id": "claim-5466-merged-head-closeout",
+  "actor": "codex-root",
+  "reason": "Implemented the narrow exact-reviewed merged-PR publication reconciliation route.",
+  "operation": {
+    "operation":"record_execution",
+    "summary":"Added a typed reconcile-merged publication command that observes an explicit merged PR and fails closed on final-head or identity drift.",
+    "changes":[
+      "Add reconcile-merged CLI request with explicit PR number",
+      "Require current clean final-head review through the existing publication guard",
+      "Validate merged state, final SHA, repository route, base, head, title, body, and draft state",
+      "Record final merged publication evidence for normal readiness and closeout"
+    ],
+    "artifacts":["csdlc-v2/src/bin/csdlc-publish.rs","csdlc-v2/src/publication.rs","csdlc-v2/tests/gate6.rs"]
+  }
+}

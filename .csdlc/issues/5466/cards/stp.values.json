@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5466,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Reconcile merged PR after a late reviewed-head advance",
+    "slug": "merged-head-closeout-recovery",
+    "version": "v0.91.7",
+    "generation": 14
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement and prove only the narrow merged-head publication reconciliation needed for truthful closeout.",
+      "deliverables": [
+        "Typed reconcile-merged publication command",
+        "Focused regression tests",
+        "Truthful #5412 closeout proof"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Reconciliation requires an explicit merged PR and exact final reviewed head",
+        "AC-2: Repository, base, head, issue linkage, title, body, SHA, and merged state fail closed on drift",
+        "AC-3: Normal draft publication behavior is unchanged",
+        "AC-4: #5412 can proceed through normal readiness and closeout using truthful final-head evidence"
+      ],
+      "dependencies": [
+        "#5412 merged PR #5459 final-head review"
+      ],
+      "repo_inputs": [
+        "csdlc-v2/src/bin/csdlc-publish.rs",
+        "csdlc-v2/src/publication.rs",
+        "csdlc-v2/src/readiness.rs",
+        "csdlc-v2/tests/gate6.rs"
+      ],
+      "non_goals": [
+        "No automatic acceptance of arbitrary late commits",
+        "No weakening of review guards",
+        "No AWS execution"
+      ]
+    }
+  }
+}

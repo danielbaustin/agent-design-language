@@ -1,0 +1,421 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5452,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "68d1850efcd713469108287c5d8186257a701602239d865940693086774c6281",
+  "phase": "closed_out",
+  "generation": 21,
+  "digest": "e28d55c367501712bfee9564137d4d2fde30162b5f3bdadaaa29fa00fd99cb26",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f73c5-dd52-7540-bebd-9ca6c7c8d9f9",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:ec722b9b773c9faaf4f9b8e1555c7afbc6922500:ba7f25037aa7bdee150c3dd17f31c47cdb051df20ec8e53195e1e102704f3ae2",
+    "scope": [
+      "adl/tools/run_aws_spot_builder_image_validation.sh",
+      "adl/tools/test_run_aws_spot_builder_image_validation.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f73c5-dd52-7540-bebd-9ca6c7c8d9f9",
+    "scope": [
+      "adl/tools/run_aws_spot_builder_image_validation.sh",
+      "adl/tools/test_run_aws_spot_builder_image_validation.sh"
+    ],
+    "reviewed_revision": "git-blake3:ec722b9b773c9faaf4f9b8e1555c7afbc6922500:ba7f25037aa7bdee150c3dd17f31c47cdb051df20ec8e53195e1e102704f3ae2",
+    "findings": [
+      {
+        "id": "5452-R1",
+        "severity": "p2",
+        "summary": "A summary-generation failure can retain stale or partially written proof JSON at the final retained path.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:ec722b9b773c9faaf4f9b8e1555c7afbc6922500:ba7f25037aa7bdee150c3dd17f31c47cdb051df20ec8e53195e1e102704f3ae2",
+        "route": "issue-5452"
+      }
+    ],
+    "residual_risks": [
+      "The adjacent Spot CI profile contract has a pre-existing base mismatch for separate builder hardening assertions and was not repaired in issue #5452."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5452,
+    "pull_request": 5465,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5465",
+    "base": "main",
+    "head": "codex/5452-builder-summary-failure",
+    "revision": "git-blake3:ec722b9b773c9faaf4f9b8e1555c7afbc6922500:ba7f25037aa7bdee150c3dd17f31c47cdb051df20ec8e53195e1e102704f3ae2",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": {
+    "pull_request": 5465,
+    "head_sha": "ec722b9b773c9faaf4f9b8e1555c7afbc6922500",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633181484/job/88050774898"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633181484/job/88050725491"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633181484/job/88050713358"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633181484/job/88050725340"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633181484/job/88050713372"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633181484/job/88050725692"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633181484/job/88050725679"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633181484/job/88050725767"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633181484/job/88050725783"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633181484/job/88050725674"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633181484/job/88050725330"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5465,
+    "disposition": "merged",
+    "observed_sha": "ec722b9b773c9faaf4f9b8e1555c7afbc6922500",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5452.json",
+    "released_branch": "codex/5452-builder-summary-failure",
+    "released_worktree": ".worktrees/adl-wp-5452",
+    "released_protected_paths": [
+      "adl/tools/run_aws_spot_builder_image_validation.sh",
+      "adl/tools/test_run_aws_spot_builder_image_validation.sh"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5452/retained/design.md",
+  "diagram_path": ".csdlc/issues/5452/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "revision": "13807358fef099d94c02758ec21154632510bb448cdf562f33adbd52d160970e"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "a426ce3748f82f885103096660bfefe8bf0d98e2b8a49739d566eb1e1a55f9af",
+      "rendered_digest": "fb16c4a7d4ead7f4236d1e98ce746f700faf6c14569cf6efb54b72846c97912b",
+      "ast_digest": "68745ef06bbc8f3a918b23d13dd4af192192761bbab90030bdbac14013276678"
+    },
+    "stp": {
+      "values_digest": "f63a73f0462463253cd37e51e504fa8077c23ef2347f6a829293ebc9c90e5766",
+      "rendered_digest": "22facd84fe53a946f90fca53a00c890272ec891bfc5b18a0e44e9c050a314cb2",
+      "ast_digest": "83bf5f250cc4c4fde3a0fe93bc49a6deb1c0bc72e7ad5b9406ee28953d28cc74"
+    },
+    "spp": {
+      "values_digest": "6957412ca34336a7a0e23a3c97c90d4904a394a439aa08e2f66deb9083dde9a8",
+      "rendered_digest": "b70793cd610228fbbb66d64c25de76b8e7a64b159a926f097ecf51ccb270b168",
+      "ast_digest": "4e00dd29f6e7b1c5565f65c5dd9de005b1ba20a1ad112244e395c38c982d5b78"
+    },
+    "vpp": {
+      "values_digest": "70457e4b43c543137d5f4f2fce7804c9b252f10fb11e5e001ba03f3fa5d0d314",
+      "rendered_digest": "a54315e6eaca3f56fd2c9a515b6dd78f31ac3b6eb339b7a2cf77bd220b2bcddd",
+      "ast_digest": "6dd3cd8dae5309f0ced093d4d42b1da713d7ef428020760dfb16616c7de75d16"
+    },
+    "srp": {
+      "values_digest": "0d03f50e234cbd5d6d7ab0c3bad087c3de209e23a16124c25f2390c66cc303e9",
+      "rendered_digest": "ce8ddcbb61187aadd4c3f388618599c1e6507ced8d5e46f9a18f071d5c47c560",
+      "ast_digest": "48fcaa88daa19efd31efd0d854cfb35007fa4f3c403ccfacd5f6c23f2258044a"
+    },
+    "sor": {
+      "values_digest": "40e8d19b139f9b4c449e50e4a9b922f09805e2499aa02f690e55998d55adb6c4",
+      "rendered_digest": "38be6402047e46590b4c40c53979eafb0d642b25d3ebbdaedffbbc52e4fb7a86",
+      "ast_digest": "7fa05542ef5d8db7418cd298e2f466fa889f7c7f22a5be4a13ecc67dc99fb6eb"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Issue-specific scope, design, plan, validation lane, and all six typed cards are ready"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Bounded implementation and focused executable proof are complete"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact-revision subagent re-review passed with 5452-R1 fixed and no remaining actionable findings"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Issue-specific scope, design, plan, validation lane, and all six typed cards are ready",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Mapped outer errexit, validation exit, summary generation, and final status flow",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Implemented independent validation and summary status capture with fail-closed precedence",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Added and passed primary-success, summary-failure, primary-failure, both-failure, and success regressions",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the bounded two-script builder summary failure-truth repair",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Preserved independent validation and retained-summary failure truth in the Spot builder-image wrapper.\",\"changes\":[\"Capture validation status without aborting before summary generation\",\"Record validation status in the retained summary and return non-zero for either failed stage\",\"Add success, mixed-result, and combined-failure regressions through executable fakes\"],\"artifacts\":[\"adl/tools/run_aws_spot_builder_image_validation.sh\",\"adl/tools/test_run_aws_spot_builder_image_validation.sh\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record passing executable mixed-result wrapper proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_aws_spot_builder_image_validation.sh\"],\"purpose\":\"Prove primary success plus summary failure, primary failure plus summary success, combined failure, and successful execution\",\"outcome\":\"passed\",\"evidence_ref\":\"PASS test_run_aws_spot_builder_image_validation\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record passing syntax and diff-hygiene proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"-n\",\"adl/tools/run_aws_spot_builder_image_validation.sh\",\"adl/tools/test_run_aws_spot_builder_image_validation.sh\"],\"purpose\":\"Prove both touched shell scripts parse and the patch has clean whitespace\",\"outcome\":\"passed\",\"evidence_ref\":\"bash -n and git diff --check passed\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Bounded implementation and focused executable proof are complete",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record passing adjacent Spot CI profile contract",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_aws_spot_ci_profile.sh\"],\"purpose\":\"Prove the repaired wrapper remains correctly selected and invoked by the Spot CI profile contract\",\"outcome\":\"passed\",\"evidence_ref\":\"local focused contract run exited 0\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the bounded correction for review finding 5452-R1",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Made retained summary publication atomic and fail-closed after the initial review.\",\"changes\":[\"Remove stale final summary evidence before regeneration\",\"Write through a sibling temporary file and atomically publish only complete JSON\",\"Suppress the proof marker and clean partial temporary output when summary generation fails\",\"Add regression coverage for stale final evidence and partial temporary output\"],\"artifacts\":[\"adl/tools/run_aws_spot_builder_image_validation.sh\",\"adl/tools/test_run_aws_spot_builder_image_validation.sh\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record passing atomic-publication regression proof after review repair",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_aws_spot_builder_image_validation.sh\"],\"purpose\":\"Prove stale final evidence removal, partial-temp cleanup, proof-marker suppression, mixed-result precedence, and successful publication\",\"outcome\":\"passed\",\"evidence_ref\":\"PASS test_run_aws_spot_builder_image_validation\"}}"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the truthful adjacent baseline failure without widening issue scope",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_aws_spot_ci_profile.sh\"],\"purpose\":\"Check the adjacent Spot CI profile contract without remote or AWS execution\",\"outcome\":\"failed\",\"evidence_ref\":\"pre-existing base mismatch: test expects CapEff/NoNewPrivs/permission-probe and gh checks absent from the checked-in builder validator\"}}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact-revision subagent re-review passed with 5452-R1 fixed and no remaining actionable findings",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Correct the adjacent baseline check classification to a documented non-goal",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_aws_spot_ci_profile.sh\"],\"purpose\":\"Check the adjacent Spot CI profile contract without remote or AWS execution\",\"outcome\":\"skipped_non_goal\",\"evidence_ref\":\"pre-existing base mismatch: test expects CapEff/NoNewPrivs/permission-probe and gh checks absent from the checked-in builder validator\"}}"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 24,
+      "generation": 20,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 25,
+      "generation": 21,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Normalize #5452 terminal SRP status through merged typed fix #5468",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

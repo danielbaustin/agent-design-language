@@ -1,0 +1,10 @@
+{
+  "issue": 5466,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "8cff94c6239220c652f880f12ebe7da58ecb3ef2e5365fce5db8053517357637",
+  "claim_id": "claim-5466-merged-head-closeout",
+  "actor": "codex-root",
+  "reason": "Verified the existing issue branch and dedicated worktree; typed issue-local bind limitation remains tracked as #5461.",
+  "operation": {"operation":"advance_phase","phase":"bound"}
+}

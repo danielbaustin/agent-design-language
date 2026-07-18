@@ -1,0 +1,20 @@
+{
+  "issue": 5466,
+  "expected_generation": 7,
+  "expected_digest": "d95ec470d73f5c93900fae0ffcd860202fd89c42678054c6e42708b11c8e7302",
+  "claim_id": "claim-5466-merged-head-closeout",
+  "actor": "bounded-subagent-review-5466",
+  "evidence": {
+    "reviewer": "bounded-subagent-review-5466",
+    "scope": ["csdlc-v2/src/bin/csdlc-publish.rs","csdlc-v2/src/lib.rs","csdlc-v2/src/publication.rs","csdlc-v2/src/schema.rs","csdlc-v2/src/store.rs","csdlc-v2/tests/gate6.rs","csdlc-v2/tests/gate7_lifecycle.rs"],
+    "reviewed_revision": "git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670",
+    "findings": [
+      {"id":"F-5466-1","severity":"p1","summary":"Observed fork or missing head/base repository identity could satisfy branch and SHA checks.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670","route":null},
+      {"id":"F-5466-2","severity":"p2","summary":"Merged reconciliation request was private and absent from the public versioned schema bundle.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670","route":null},
+      {"id":"F-5466-3","severity":"p2","summary":"Merged publication evidence was initially projected into SOR as an open PR with draft-oriented audit truth.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670","route":null}
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

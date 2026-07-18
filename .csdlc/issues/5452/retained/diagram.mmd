@@ -1,0 +1,7 @@
+flowchart TD
+  primary["Primary builder validation"] --> primary_status["Capture primary status"]
+  primary_status --> summary["Generate and validate retained summary"]
+  summary --> summary_status["Capture summary status"]
+  primary_status --> decision["Fail if either status is non-zero"]
+  summary_status --> decision
+  decision --> result["Truthful wrapper exit status"]

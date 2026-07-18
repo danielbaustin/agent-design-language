@@ -1,0 +1,73 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5466,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Reconcile merged PR after a late reviewed-head advance",
+    "slug": "merged-head-closeout-recovery",
+    "version": "v0.91.7",
+    "generation": 14
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Added a typed reconcile-merged publication command that observes an explicit merged PR and fails closed on final-head or identity drift.",
+      "actual_changes": [
+        "Add reconcile-merged CLI request with explicit PR number",
+        "Require current clean final-head review through the existing publication guard",
+        "Validate merged state, final SHA, repository route, base, head, title, body, and draft state",
+        "Record final merged publication evidence for normal readiness and closeout"
+      ],
+      "artifacts": [
+        "csdlc-v2/src/bin/csdlc-publish.rs",
+        "csdlc-v2/src/publication.rs",
+        "csdlc-v2/tests/gate6.rs"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml"
+          ],
+          "purpose": "Prove merged-head identity rejection, unchanged draft publication behavior, and full C-SDLC v2 regression safety",
+          "outcome": "passed",
+          "evidence_ref": "local:5466-gate6-full-suite-clippy-fmt-help"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml"
+          ],
+          "purpose": "Prove exact merged-head and repository identity rejection, public request schema coverage, unchanged draft publication behavior, and full C-SDLC v2 regression safety",
+          "outcome": "passed",
+          "evidence_ref": "local:5466-post-review-fix-gate6-binary-full-suite-clippy-fmt"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml"
+          ],
+          "purpose": "Prove exact merged identity, truthful atomic SOR integration and merge projection, unchanged draft publication, and full C-SDLC v2 regression safety",
+          "outcome": "passed",
+          "evidence_ref": "local:5466-final-gate6-gate7-lifecycle-binary-full-suite-clippy-fmt"
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "draft",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}
