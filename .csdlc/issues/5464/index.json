@@ -3,13 +3,13 @@
   "issue": 5464,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "ae3e72f2513ddf93bede427c2ef36d2b067ddb7c1bd59bd1003a94f2e520d5fb",
-  "phase": "reviewed",
-  "generation": 17,
-  "digest": "901b6727a173567870cda97420eca5f8be5014740ed967ae16c1e87de2ab43fe",
+  "phase": "published",
+  "generation": 21,
+  "digest": "49e91ac857b8788314b72b98667366b285bf13d172ddccbe6c6a92db58ccaee0",
   "claim": {
     "id": "claim-5464-nextest-install-contract",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 17,
+    "generation": 21,
     "acquired_unix_seconds": 1784358000,
     "expires_unix_seconds": 1784444400,
     "heartbeat_unix_seconds": 1784358000,
@@ -24,7 +24,7 @@
   "review_assignment": {
     "reviewer": "bounded-subagent-review-5464",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
+    "revision": "git-blake3:441632856110b1d7c1e115d640d07b9c7c092185:873cf72ac653f14e6049437bf06275fe7219cd5a8998e2ac8d9314e33dcad9fe",
     "scope": [
       ".github/workflows/ci.yaml",
       "adl/tools/test_ci_runtime_contracts.sh"
@@ -36,64 +36,23 @@
       ".github/workflows/ci.yaml",
       "adl/tools/test_ci_runtime_contracts.sh"
     ],
-    "reviewed_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
-    "findings": [
-      {
-        "id": "F-5464-1",
-        "severity": "p2",
-        "summary": "Alternate YAML step forms bypassed line-oriented block checks.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
-        "route": null
-      },
-      {
-        "id": "F-5464-2",
-        "severity": "p2",
-        "summary": "Unversioned nextest aliases escaped @-based inventory.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
-        "route": null
-      },
-      {
-        "id": "F-5464-3",
-        "severity": "p3",
-        "summary": "Alternate alias fixtures were incomplete.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
-        "route": null
-      },
-      {
-        "id": "F-5464-4",
-        "severity": "p2",
-        "summary": "Quoted installer and fully inline steps escaped regex inventory.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
-        "route": null
-      },
-      {
-        "id": "F-5464-5",
-        "severity": "p2",
-        "summary": "Multi-tool selections could hide nextest tokens.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
-        "route": null
-      }
-    ],
+    "reviewed_revision": "git-blake3:441632856110b1d7c1e115d640d07b9c7c092185:873cf72ac653f14e6049437bf06275fe7219cd5a8998e2ac8d9314e33dcad9fe",
+    "findings": [],
     "residual_risks": [],
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5464,
+    "pull_request": 5490,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5490",
+    "base": "main",
+    "head": "codex/5464-nextest-install-contract",
+    "revision": "git-blake3:441632856110b1d7c1e115d640d07b9c7c092185:873cf72ac653f14e6049437bf06275fe7219cd5a8998e2ac8d9314e33dcad9fe",
+    "draft": true,
+    "observed_state": "open"
+  },
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -107,34 +66,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "167a0a12597c79cf26964822c832933365a5595471a004fdd5ab36c09ed14e7b",
+      "values_digest": "7ca0459652549ce30841fef5d533b9e7ae49f657e788cf39c7b2f58310312304",
       "rendered_digest": "a2fb478ef4bd13ba429e8c0f8c544110e67e901a6de718d2cf148eca1f55f1a6",
       "ast_digest": "5c565f0762207eecbe4664aff60df4a55a8349758e22cc60254ac86f612dc1c6"
     },
     "stp": {
-      "values_digest": "b0f4368aa2a9ae4b09d987a1cef843aa371342071aecdea37d4d29f488631f9d",
+      "values_digest": "1b741e8cb0142bfe6e501a9aed55278fb5bbd7f6699df1329515582563300c16",
       "rendered_digest": "fc4b91f3228586ba35da574b082470293a7bf1b5145fea2dc54b5ca65c5c9d38",
       "ast_digest": "564b0df1e2c6093cb771e9b8d15562dd48d1ce5df66fb3477e27ad87a9cfd372"
     },
     "spp": {
-      "values_digest": "83b0a101d86c781a92b0fb18ab534fb95e528d6787eebb63b5b326a2ebf3a67b",
+      "values_digest": "e4269b269945e4ddb2fedf1292889ea42477f72990f22586b3c64ca03c3d7652",
       "rendered_digest": "7343cfe8e4dafed0a0e53405f81df92f00f78fae0b9094b9230b1b7f5781dbb8",
       "ast_digest": "269a7d90989ca87bf68e0d1775dafa72639584e93ae11cf70c7c4d2e2a4f18f7"
     },
     "vpp": {
-      "values_digest": "ed48ba52d6af8b399c1eb8e49ead469538c816ccbe42c012d70a9a7cdb04b617",
+      "values_digest": "4f58e7a33640c019930fe4378c4d9aac5204535c10155296db47bff40ad3e846",
       "rendered_digest": "d5cc78ce07b13e4f45c7727f07c44991f89a55815257d63068f374a7c1b017a9",
       "ast_digest": "de9357a2a9bc9a4c0fa064b5efb770a71e03195446b8fc79607366093d535464"
     },
     "srp": {
-      "values_digest": "a3ac52455ce784140fb6cd30973c7c54aa1a74fcf51594183c9e3ec1bd2a0fb5",
-      "rendered_digest": "a4945172186e66305d8b79e129af11dd59a1b455aaf029a68cd06c5c64234916",
-      "ast_digest": "a0a84636698b7571745c9abcc249923e184fc7e094a593d3ddb87d5ace7ea824"
+      "values_digest": "303f8fc8f865b3accbe983d95415cc1d888453170ea0502245c290d7e6402583",
+      "rendered_digest": "accf1a1f47a8d50c72a555a8862127692dfc50012ba635671ff2ea99bd8a796c",
+      "ast_digest": "e125b64866efa623efdc45fcbf447e96c0140e985d5ebbe6ef9a05e1bc0454bf"
     },
     "sor": {
-      "values_digest": "701ff950bacfc4f5bc917c02ecd6e6d8b52aa520ee7802b043bd323f7ea9134b",
-      "rendered_digest": "d23ed4526962c4d4453d19202db58464bce38f28fb35867f33d077f741e25449",
-      "ast_digest": "f05eaaf2642949b677a95b59b0bbb2185a13e4e7498034843d212098f8bf219e"
+      "values_digest": "9adc0a0dd87ba2fac54e55c601c6b04c18fcc119c2bbae04834cd1538c663171",
+      "rendered_digest": "22852c6b797ae351ef7b9da1a163047702a7d34f65228350b49c8d416a3f857a",
+      "ast_digest": "abfdfb962919b1fafb01d417a5f3822c164ceb8195731c6ff9393fe3777e44ed"
     }
   },
   "transitions": [
@@ -165,6 +124,27 @@
       "to": "reviewed",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Exact current-revision review passed after all five actionable findings were fixed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover from review identity staleness after committing review lifecycle metadata; substantive scope is unchanged."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Publication-head exact review passed with protected scope unchanged and focused validation green."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact draft PR after current review"
     }
   ],
   "audit": [
@@ -335,6 +315,41 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Exact current-revision review passed after all five actionable findings were fixed.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover from review identity staleness after committing review lifecycle metadata; substantive scope is unchanged.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 19,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 20,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Publication-head exact review passed with protected scope unchanged and focused validation green.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
     }
   ]
 }

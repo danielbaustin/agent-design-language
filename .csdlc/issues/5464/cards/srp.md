@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: pre_phase
+Status: draft
 
 ## Scope
 
@@ -24,58 +24,7 @@ adl/tools/test_ci_runtime_contracts.sh
 
 ## Findings
 
-[
-  {
-    "id": "F-5464-1",
-    "severity": "p2",
-    "summary": "Alternate YAML step forms bypassed line-oriented block checks.",
-    "actionable": true,
-    "in_scope": true,
-    "disposition": "fixed",
-    "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
-    "route": null
-  },
-  {
-    "id": "F-5464-2",
-    "severity": "p2",
-    "summary": "Unversioned nextest aliases escaped @-based inventory.",
-    "actionable": true,
-    "in_scope": true,
-    "disposition": "fixed",
-    "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
-    "route": null
-  },
-  {
-    "id": "F-5464-3",
-    "severity": "p3",
-    "summary": "Alternate alias fixtures were incomplete.",
-    "actionable": true,
-    "in_scope": true,
-    "disposition": "fixed",
-    "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
-    "route": null
-  },
-  {
-    "id": "F-5464-4",
-    "severity": "p2",
-    "summary": "Quoted installer and fully inline steps escaped regex inventory.",
-    "actionable": true,
-    "in_scope": true,
-    "disposition": "fixed",
-    "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
-    "route": null
-  },
-  {
-    "id": "F-5464-5",
-    "severity": "p2",
-    "summary": "Multi-tool selections could hide nextest tokens.",
-    "actionable": true,
-    "in_scope": true,
-    "disposition": "fixed",
-    "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
-    "route": null
-  }
-]
+[]
 
 ## Dispositions
 
@@ -87,7 +36,7 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659")
+Revision: Some("git-blake3:441632856110b1d7c1e115d640d07b9c7c092185:873cf72ac653f14e6049437bf06275fe7219cd5a8998e2ac8d9314e33dcad9fe")
 
 Reviewer: Some("bounded-subagent-review-5464")
 
