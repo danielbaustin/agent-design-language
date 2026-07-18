@@ -743,13 +743,6 @@ impl Store {
         receipt_lock.lock_exclusive()?;
         let original_receipt = fs::read(&receipt_path)?;
         drop(receipt_lock);
-        self.commit_with_authored(
-            request.issue,
-            &projection,
-            &cards,
-            false,
-            Some(&retained_artifacts),
-        )?;
         receipt.record = projection.clone();
         receipt.cards = cards.clone();
         receipt.authored_artifacts = retained_artifacts.clone();
@@ -766,6 +759,7 @@ impl Store {
             original_receipt: Some(original_receipt),
             target_receipt,
         };
+        Self::maybe_interrupt_terminal_transaction(request.issue, "before_journal")?;
         self.write_terminal_transaction_journal(&journal)?;
         Self::maybe_interrupt_terminal_transaction(request.issue, "after_journal")?;
         if let Err(error) = self.commit_with_authored(

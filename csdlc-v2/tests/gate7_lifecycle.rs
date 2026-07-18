@@ -389,6 +389,7 @@ fn merged_publication_reconciliation_projects_truth_before_closeout() {
 #[test]
 fn terminal_projection_and_receipt_recover_at_each_durable_boundary() {
     for (offset, stage) in [
+        "before_journal",
         "after_journal",
         "after_projection",
         "after_projection_journal",
@@ -490,7 +491,7 @@ fn terminal_projection_and_receipt_recover_at_each_durable_boundary() {
                 schema: "csdlc.terminal_observation.v1".into(),
                 issue,
                 expected_generation: current.generation,
-                expected_digest: current.digest,
+                expected_digest: current.digest.clone(),
                 claim_id: "claim".into(),
                 actor: "closer".into(),
                 pull_request: Some(70),
@@ -502,10 +503,11 @@ fn terminal_projection_and_receipt_recover_at_each_durable_boundary() {
             },
         )
         .unwrap();
+        let terminal_start = store.load_record(issue).unwrap();
         store.retain_terminal_receipt(issue).unwrap();
         let request = ReconcileTerminalRequest {
             issue,
-            expected_initialization_digest: store.load_record(issue).unwrap().initialization_digest,
+            expected_initialization_digest: terminal_start.initialization_digest.clone(),
             expected_branch: "issue-7".into(),
             expected_worktree: temp.path().to_string_lossy().into_owned(),
             actor: "durability-test".into(),
@@ -525,7 +527,15 @@ fn terminal_projection_and_receipt_recover_at_each_durable_boundary() {
             .path()
             .join(".git/csdlc-v2/terminal-transactions")
             .join(format!("{issue}.json"));
-        assert!(journal.is_file(), "journal missing at {stage}");
+        if stage == "before_journal" {
+            assert!(!journal.exists(), "journal unexpectedly written at {stage}");
+            assert_eq!(
+                store.load_record(issue).unwrap().digest,
+                terminal_start.digest
+            );
+        } else {
+            assert!(journal.is_file(), "journal missing at {stage}");
+        }
         let recovered = store.reconcile_terminal(request).unwrap();
         assert_eq!(recovered.phase, LifecyclePhase::ClosedOut);
         assert!(!journal.exists(), "journal retained after {stage}");
