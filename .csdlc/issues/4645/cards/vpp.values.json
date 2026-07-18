@@ -1,0 +1,70 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4645,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-18][review] Internal review",
+    "slug": "v0-91-7-wp18-internal-review",
+    "version": "v0.91.7",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "review-prep-card-validation",
+          "proof_role": "Validate typed #4645 C-SDLC state and preparation-only review inputs",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            ".adl/bin/csdlc-v2/csdlc-validate",
+            "--repo",
+            ".",
+            "--issue",
+            "4645"
+          ],
+          "parallel_group": "review-prep",
+          "defer_reason": null
+        },
+        {
+          "lane": "review-artifact-integrity",
+          "proof_role": "Validate future review artifacts are whitespace-clean and retained on tracked paths",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "review-prep",
+          "defer_reason": "Run after the internal review artifacts are written"
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on stale issue truth, missing retained evidence, overclaim, or unowned blocker ambiguity.",
+      "design_ref": ".csdlc/prepared/issues/4645/design.md",
+      "design_digest": "72b33889c99e26bf7b2af161548dd71955cb41fa4104a476236d31a7a705f91e",
+      "diagram_ref": ".csdlc/prepared/issues/4645/diagram.mmd",
+      "diagram_digest": "b7a45eef76b9d17607505c32475088890557fcbd93626e4d0a6bebbf9aa98bb4"
+    }
+  }
+}

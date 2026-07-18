@@ -1,0 +1,105 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4645,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "b83689bd4a80acea6cd1dad467b03005174d03bdf87b95341e9d6235f48796fe",
+  "phase": "bound",
+  "generation": 0,
+  "digest": "6831b34dc0a357ce76292c42b7c5e55a1b3d92c8965eb99d5a393972ac270ece",
+  "claim": {
+    "id": "claim-4645-v0917-internal-review-prep",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784359768,
+    "expires_unix_seconds": 1784964568,
+    "heartbeat_unix_seconds": 1784359768,
+    "branch": "codex/4645-v0917-internal-review",
+    "worktree": ".worktrees/adl-wp-4645",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_INTERNAL_REVIEW_4645.md",
+      "docs/milestones/v0.91.7/review/internal_review_4645",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/reviews/v0.91.7/internal-review-4645",
+      ".csdlc/issues/4645"
+    ],
+    "purpose": "Prepare and later run the v0.91.7 WP-18 internal milestone review without claiming release readiness"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/4645/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4645/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-prep-only",
+      "revision": "72b33889c99e26bf7b2af161548dd71955cb41fa4104a476236d31a7a705f91e"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "417e342d4b10fcd71fec52b75b362f8ae279f89d2f465d7599850b0c16da8a8a",
+      "rendered_digest": "e1bf89aef7dad8b7e62722b0916c6bba5ff3bf1565e0bd04fc5955d33f63d739",
+      "ast_digest": "e6ac30a25dd6a6a7c4961f6510b70bb96a483fed02a09a2fff081460bab62e5a"
+    },
+    "stp": {
+      "values_digest": "63cb2c439c0992fb07e1c2374184c52687d341b84b9289a1ae312524b00c4e4e",
+      "rendered_digest": "4eac2fb9b783d00bfb49377c7fe316b145b49273fb0cac63985770dd9782e7a2",
+      "ast_digest": "b42c7d1246f0141a9b8131f63a686ae56ec5ba2e74b6b41459d528fa0ea27267"
+    },
+    "spp": {
+      "values_digest": "3548d1716fd9634741d72ebd0be01c9c33e03f214037d41858b2f7e36b980bd3",
+      "rendered_digest": "f4061d5e60cf4ddaf3915fc2a2e3e617f2ed8b3b11e0645d279a0285d0010ea0",
+      "ast_digest": "9419c497afb4bf656ce8b91b1f2bd7273ded47e38248a3182d09c786e3c377f7"
+    },
+    "vpp": {
+      "values_digest": "d8d90baeb32b1ec99b2b361ea23779cf3d7a84a5f9922dcc5df5ea3ae6f3e3cc",
+      "rendered_digest": "67c4a527e567c24bbde221d7e3cb734bd6b14f5456f8aef9c2135a056fe4f252",
+      "ast_digest": "afbeedd850450474da2fb1c97b98150e5c98a10ab853c2b1563116badf81ca30"
+    },
+    "srp": {
+      "values_digest": "fa191103929664b41ddf031526246f95435de97b9da8864e8a8743f00242fa85",
+      "rendered_digest": "9a889c836043add7f39adcef6a106366dbe81266ed9814bb7ef59b1edca56ab2",
+      "ast_digest": "bc197bd47268e894f12b056d254c6f4acbfcff923e357e1feb5ab46d971d947b"
+    },
+    "sor": {
+      "values_digest": "88e6f6002156df72d809f33ba6372b39f04f4de41f353fee34ec4daaa8538219",
+      "rendered_digest": "996de852c1328b77f39c9fa139d04949cc76d05138b82a0e6d99972b4e700e82",
+      "ast_digest": "9f0e3125d9857f00f2d71ce3786ad2cacbb50a93083bfffc7613124147566b79"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "verified Git worktree binding"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    }
+  ]
+}
