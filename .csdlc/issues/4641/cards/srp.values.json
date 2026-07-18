@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4641,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-14] Launch and v0.92 birthday handoff",
+    "slug": "v0-91-7-wp14-launch-v092-birthday-handoff",
+    "version": "v0.91.7",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Exact implementation revision before publication.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does the issue stay within its WP scope?",
+        "Are claims supported by retained or fresh evidence?",
+        "Are skipped and unproven surfaces explicit?",
+        "Are sibling WP and release/activation non-claims preserved?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4641,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "57a995b4e8def457743bbb6195a56ad30c43e0e9bec2d90766fd1dee105a19f1",
+  "phase": "bound",
+  "generation": 0,
+  "digest": "fe500c03ee40800db5540fdeb18c9aea0861570f5e99ae52e9c4c40ca773b129",
+  "claim": {
+    "id": "claim-4641-v0-91-7-wp14-launch-v092-birthday-handoff",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/4641-v0917-launch-birthday-handoff",
+    "worktree": ".worktrees/adl-wp-4641",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md",
+      "docs/milestones/v0.91.7/review/wp14_launch_birthday_4641",
+      ".csdlc/issues/4641"
+    ],
+    "purpose": "Prepare and later execute WP-14 without claiming completion from setup"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/4641/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4641/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-prep-only",
+      "revision": "81201aebef52effe741c3ecf69e531133aec9526caf8823f13699bf10b210d1a"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "ace2da9e3c338e6df6c695d3f4207213193b2fa4a1c0af266b666b424843900f",
+      "rendered_digest": "d0e0eb3db34314cd9797e7b269d901093fb6333694550c4753b2739ab54332c3",
+      "ast_digest": "e7eb79d44243b7c51f3efdc625402b0f5a55f844b19aa8a5a21eb5fd88ce3346"
+    },
+    "stp": {
+      "values_digest": "455869bf35aa3cf459b1afbe7f58efa978c932195bfb49a7804d3cf2abcefcc6",
+      "rendered_digest": "40eb8a20828f9f337899f785088fa1592fb9df68ee12d8305785a4c554729b63",
+      "ast_digest": "45ed6103e30a3c1c701947d17223559c9f1a74cfdac74d24d61f416c967e01ea"
+    },
+    "spp": {
+      "values_digest": "fa8f61680bfa82ee21325ae460363cdc6aeb948615f81fe0e4362038ce741c13",
+      "rendered_digest": "e9618c9b332a0d35a368b354295dea46e3a3a489e3277e44b4d4374e12ada510",
+      "ast_digest": "794a8c90a1488d7e53be4bcda67e399c02db3eb74d0050be00bcf6e3a7eae334"
+    },
+    "vpp": {
+      "values_digest": "626f5a6d4af14d90df542776cf693a8af384775059795ba25adb76f1ca4054f3",
+      "rendered_digest": "27d967627fa7e6c0bd62a6370b653f4b20dc886b6843b77d0c250f09721449ec",
+      "ast_digest": "17bd283e76dcac1b720572e6aba7687a48fe6f9afd731f513fd41f39b21eb6fb"
+    },
+    "srp": {
+      "values_digest": "d232d3c42c704164354740e4c735f42b86c373f3b6f8dcb5e8bf78fed3e49b5a",
+      "rendered_digest": "c9ca3c816f3763ea8c082cd123640ab87f235a75a70903fdfda5cb91e6a68edd",
+      "ast_digest": "ef54635cc83977e2fe27a74d0d7291777e7fd548fe82efedf46a1d1a58fe6df3"
+    },
+    "sor": {
+      "values_digest": "e24df0256ecc2161110491d34685113ec8ba12b19a441995468957a4511ca3e7",
+      "rendered_digest": "22907f6297aa9458e0bbc8cb34f4b8ebb87030f54a89dcce654875e9f0faffe0",
+      "ast_digest": "1e1170003f5e1fd6fe2d30aa0f08f316ee306b9572adfeebcaf280238ea9caa8"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "verified Git worktree binding"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    }
+  ]
+}
