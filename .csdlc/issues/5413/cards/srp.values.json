@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5413,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3] Resolve #5276 live parity and Observatory findings",
+    "slug": "runtime-v3-live-parity-observatory",
+    "version": "v0.91.7",
+    "generation": 6
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Exact implementation revision before publication.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does every claimed v2/v3 equivalence execute both runtime processes?",
+        "Can any local or remote client read the Observatory feed without valid authorization?",
+        "Does the live proof actually connect to the spawned HTTPS Runtime v3 process?",
+        "Are weather age and stale transitions bounded and independently tested?",
+        "Does the packet enumerate #5277-#5286 with exact PR and check truth?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

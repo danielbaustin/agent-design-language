@@ -1,0 +1,85 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5413,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3] Resolve #5276 live parity and Observatory findings",
+    "slug": "runtime-v3-live-parity-observatory",
+    "version": "v0.91.7",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Correct proof classifications first, secure and refresh the runtime projection, replace mocked client proof with a live HTTPS lane, then reconcile and validate the full release packet.",
+      "steps": [
+        {
+          "id": "step-1",
+          "action": "Audit each #5276 finding against current source and retained evidence and fix parity classification truth.",
+          "acceptance_ids": [
+            "AC-1"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "step-2",
+          "action": "Add read authentication plus bounded weather refresh and stale-state behavior to the Runtime v3 Observatory feed.",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "step-3",
+          "action": "Run the real HTML/client surface against a live HTTPS Runtime v3 endpoint and retain fail-closed proof.",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "step-4",
+          "action": "Reconcile #5277-#5286 issue, PR, and check truth into the release packet and run focused/full validation.",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "machine-readable output and human observability remain separated",
+        "authorization fails closed without leaking secrets",
+        "parity proof never promotes a one-runtime fixture to equivalence",
+        "weather sampling remains bounded and observable",
+        "release evidence is source-linked and does not invent check results"
+      ],
+      "risks": [
+        "authentication changes can break the existing local demo contract",
+        "live TLS client proof can become machine-local if certificate and port handling are not portable",
+        "cross-runtime binaries may be unavailable and require truthful non-equivalence classification",
+        "release child/PR metadata may have drifted since #5276"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 43200,
+        "total_tokens": 140000,
+        "validation_seconds": 7200
+      },
+      "stop_conditions": [
+        "the #5412 reviewed baseline changes substantively before #5413 publication",
+        "live client proof requires committing credentials or machine-local paths",
+        "an acceptance criterion requires widening into unrelated Runtime v3 cutover work"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5413/design.md",
+      "design_digest": "7be7c588826f3f1bba791852bb64387a46657717711a916847b18cb8d9e2e70d",
+      "diagram_ref": ".csdlc/prepared/issues/5413/diagram.mmd",
+      "diagram_digest": "8b53719d9be8e1c05b76c48251dde536b5ce4efc96d8d091c44088f817bc652f"
+    }
+  }
+}

@@ -57,6 +57,11 @@ python3 "${ROOT_DIR}/adl/tools/validate_v0917_html_observatory.py" \
   --csm-metrics "${CSM_METRICS}" \
   --csm-events "${CSM_EVENTS}" >/dev/null
 python3 -m json.tool "${PACKET}" >/dev/null
+cargo test \
+  --manifest-path "${ROOT_DIR}/adl-runtime-kernel/Cargo.toml" \
+  --test control \
+  observatory_https_feed_requires_bearer_and_reports_weather_freshness \
+  -- --nocapture >/dev/null
 
 require_readme "Magic UI Pro AI Agent Template"
 require_readme "bounded runtime capture"

@@ -1,0 +1,174 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5413,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "e4da376d0304becdfa285004056527593b13c674e7d7329d8ea318d383058977",
+  "phase": "implemented",
+  "generation": 6,
+  "digest": "f858b079ecabe6450f4691f6857e3341e03abb8b387a42a2f9dfc019109fd2d1",
+  "claim": {
+    "id": "claim-5413-runtime-v3-live-parity",
+    "owner": "codex-root",
+    "generation": 6,
+    "acquired_unix_seconds": 1784352880,
+    "expires_unix_seconds": 1784957680,
+    "heartbeat_unix_seconds": 1784352880,
+    "branch": "codex/5413-runtime-v3-live-parity",
+    "worktree": ".worktrees/adl-wp-5413",
+    "protected_paths": [
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/config.rs",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/parity.rs",
+      "adl-runtime-kernel/src/weather.rs",
+      "adl-runtime-kernel/tests/configuration.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/guardian_soak.rs",
+      "adl-runtime-kernel/tests/parity.rs",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+      "adl/tools/validate_v0917_html_observatory.py",
+      "demos/v0.91.7/html-observatory/",
+      "docs/architecture/runtime_v3_acip_a2a_cloud_network_5285.v1.json",
+      "docs/architecture/runtime_v3_adaptive_learning_dag_5281.v1.json",
+      "docs/architecture/runtime_v3_continuity_replay_recovery_5280.v1.json",
+      "docs/architecture/runtime_v3_delegation_resources_5283.v1.json",
+      "docs/architecture/runtime_v3_governance_freedom_gate_aee_5282.v1.json",
+      "docs/architecture/runtime_v3_kernel_lifecycle_5277.v1.json",
+      "docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json",
+      "docs/architecture/runtime_v3_live_parity_remediation_5413.v1.json",
+      "docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
+      "docs/architecture/runtime_v3_release_proof_gate_5220.v1.json",
+      "docs/architecture/runtime_v3_service_contracts_configuration_5279.v1.json",
+      "docs/architecture/runtime_v3_topology_backpressure_5278.v1.json",
+      "docs/reviews/v0.91.7/remaining-sprints-5403/"
+    ],
+    "purpose": "Resolve #5276 Runtime v3 live parity, Observatory authentication, live client, weather freshness, and release-packet findings"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5413/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5413/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-root-design-review",
+      "revision": "7be7c588826f3f1bba791852bb64387a46657717711a916847b18cb8d9e2e70d"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "296a26003e48fa6939cc4c0e84865ad757e6fb2117a2fd95063866f5e1dd5cb8",
+      "rendered_digest": "20f798b2256249b8d7fa8b24a09dc475fa79e370cd2a44b7eaa67b0e148c7883",
+      "ast_digest": "3cd9fb707cce93663cb8e25a6129822ca48d4ea5852550b95da6387496f0d99f"
+    },
+    "stp": {
+      "values_digest": "ee40fcac4d010e638b3fd13f6eea74c7aaa281d5fac630ba8192d4458a5d7d80",
+      "rendered_digest": "ad7797ec45563e02049091f73380a07e83f34238a30efbc307cece559ad5da98",
+      "ast_digest": "b92c25c49b3c0b58c77aa11f1f685c805cf89c1333d25b5012047eae7df59898"
+    },
+    "spp": {
+      "values_digest": "58764dc518023458d3376f09530dc89099760a325b0de1f5bf539b24317e41a7",
+      "rendered_digest": "feb991f230f3df4053920e78a0e2c0b05d9a49e0a3fe4918d8370a57332b4059",
+      "ast_digest": "4cf9aa26e814784cf99f117ad675ef60455287bb3108d8c5b00f4dab60e234ed"
+    },
+    "vpp": {
+      "values_digest": "7623a99ca8e026da5290e1a00b02f4065c4e3265056a92a1b39ebbc114267f60",
+      "rendered_digest": "4c0e9a5ef11ea2a07932a3693f9b0c1dc3ce00958d72c91a4d2d8b926d34b192",
+      "ast_digest": "59910802d5d602d14f423802438f56e5bf43839e6539fa134ac09785d82c5d2f"
+    },
+    "srp": {
+      "values_digest": "e725249366f301fff088c0cc27fa4aecabd28309a5803520264aa2283d525ed4",
+      "rendered_digest": "8cafe9ea15a64d0b059c9c3ff9f8e418d97e5d18a68764f1d1bccd78384e7e0a",
+      "ast_digest": "229bec5af644e3a67442069a35c2436f64236b34c21282bec095ec2c8505c252"
+    },
+    "sor": {
+      "values_digest": "afa6c0dd439dd75ff4c86666658841b5c193be78017ac5ab6b8be64f987f520b",
+      "rendered_digest": "bc097094ac4178666c6cda78255e0f77d1a4f1c0dd3c2ef5ab1da422b3fbd963",
+      "ast_digest": "9f7a20441ad719af6b04ac0dc3aff0a8d134d12cbdafddb559a82c7e14793b2b"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-root",
+      "reason": "All six typed cards, approved design artifacts, issue scope, and validation lanes are structurally ready for #5413."
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-root",
+      "reason": "Verified existing Git branch and issue worktree binding; used typed phase transition because csdlc-bind cannot bind issue-local state without writing the primary checkout, tracked as #5461."
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex-root",
+      "reason": "The bounded live-parity and Observatory remediation is implemented and locally validated."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex-root",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex-root-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 2,
+      "actor": "codex-root",
+      "reason": "All six typed cards, approved design artifacts, issue scope, and validation lanes are structurally ready for #5413.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 3,
+      "actor": "codex-root",
+      "reason": "Verified existing Git branch and issue worktree binding; used typed phase transition because csdlc-bind cannot bind issue-local state without writing the primary checkout, tracked as #5461.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"bound\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex-root",
+      "reason": "Protect all production bootstrap, guardian, release-wave, and corrected proof paths required by the accepted remediation design.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/tests/guardian_soak.rs\",\"docs/architecture/runtime_v3_acip_a2a_cloud_network_5285.v1.json\",\"docs/architecture/runtime_v3_adaptive_learning_dag_5281.v1.json\",\"docs/architecture/runtime_v3_continuity_replay_recovery_5280.v1.json\",\"docs/architecture/runtime_v3_delegation_resources_5283.v1.json\",\"docs/architecture/runtime_v3_governance_freedom_gate_aee_5282.v1.json\",\"docs/architecture/runtime_v3_kernel_lifecycle_5277.v1.json\",\"docs/architecture/runtime_v3_live_parity_remediation_5413.v1.json\",\"docs/architecture/runtime_v3_release_proof_gate_5220.v1.json\",\"docs/architecture/runtime_v3_service_contracts_configuration_5279.v1.json\",\"docs/architecture/runtime_v3_topology_backpressure_5278.v1.json\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex-root",
+      "reason": "Implemented the bounded live-parity and authenticated Observatory remediation, including the release-evidence contract fix found by the fresh full suite.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Added authenticated live local HTTPS Observatory consumption with freshness truth and corrected Runtime v3 parity/release evidence without authorizing default cutover.\",\"changes\":[\"Require bounded bearer authentication for the Observatory and fail closed in production\",\"Serve schema-v2 no-store feeds with atomic weather freshness and configured-origin CORS preflight\",\"Update the browser client and integrated proof to authenticate and reject stale or legacy feeds\",\"Reclassify fixture-only parity honestly and retain one proven live equivalence\",\"Record the full Runtime v3 release wave while keeping default cutover false\",\"Accept the new live_local_https evidence class only as live evidence\"],\"artifacts\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/tests/control.rs\",\"adl-runtime-kernel/tests/parity.rs\",\"demos/v0.91.7/html-observatory/app.js\",\"docs/architecture/runtime_v3_live_parity_remediation_5413.v1.json\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex-root",
+      "reason": "Full local Runtime v3 tests, clippy, formatting, focused parity, real local HTTPS client proof, integrated browser proof, JSON parsing, and diff checks pass; no AWS was used.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\"],\"purpose\":\"Prove authenticated Observatory behavior, weather freshness, parity classification, release evidence, and full Runtime v3 regression safety\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5413-full-runtime-clippy-fmt-local-https-integrated-observatory-proof\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex-root",
+      "reason": "The bounded live-parity and Observatory remediation is implemented and locally validated.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    }
+  ]
+}

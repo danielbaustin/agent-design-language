@@ -99,19 +99,19 @@
     },
     {
       "id": "parity.live_black_box",
-      "status": "passed_no_default_cutover",
+      "status": "runtime_v3_fixture_only_no_default_cutover",
       "evidence_class": "contract_only",
       "satisfies_live_requirement": false,
       "evidence": "docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json",
-      "claim": "Live black-box parity reports cutover_eligible=true with zero remaining blocker-class capability groups after #5277 resolves kernel.lifecycle, #5278 resolves kernel.topology_and_backpressure, #5279 resolves service.contracts_and_configuration, #5280 resolves continuity.replay_recovery, #5281 resolves learning.adaptive_dag, #5282 resolves governance.freedom_gate_aee, #5283 resolves contracts.delegation_resources, #5284 resolves agents.providers_scheduler, and #5285 resolves network.acip_a2a_cloud; #5220 remains a no-go default-cutover gate until a later reviewed decision authorizes a default switch."
+      "claim": "Only reasoning.graphs_and_loops has a real v2/v3 process comparison. The other nine #5277-#5285 lanes are truthful Runtime v3-only fixture proof and do not establish live equivalence; cutover_eligible=false."
     },
     {
       "id": "observatory.live_runtime_v3_consumption",
       "status": "passed_explicit_opt_in_no_default_cutover",
-      "evidence_class": "contract_only",
-      "satisfies_live_requirement": false,
+      "evidence_class": "live_local_https",
+      "satisfies_live_requirement": true,
       "evidence": "docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
-      "claim": "Runtime v3 exposes a runtime-owned loopback read feed at GET /v1/observatory on port 20997, HTML Observatory can consume it only through explicit Runtime v3 selection, retained Runtime v2/CSM evidence remains the default mirror, Unity remains proven-limited while #4739 and #4741 are open, and no default switch or browser mutation authority is claimed."
+      "claim": "Runtime v3 exposes a bearer-authenticated GET /v1/observatory feed over HTTPS for configured local or remote origins. The live client proof executes against a running endpoint, weather reports carry bounded age/staleness state, Runtime v3 remains explicit opt-in, and no browser mutation authority is claimed."
     }
   ],
   "child_issue_results": [
@@ -122,14 +122,24 @@
     {"issue": 5251, "state": "closed", "role": "governed_cognition_adapters_or_non_cutover_dispositions", "blocks_5220_closeout": false},
     {"issue": 5252, "state": "closed", "role": "gpu_weather_cloudwatch_retained_proof", "blocks_5220_closeout": false},
     {"issue": 5253, "state": "closed", "role": "production_like_soak_and_rollback", "blocks_5220_closeout": false},
-    {"issue": 5254, "state": "closed", "role": "default_switch_and_runtime_v2_decommission_decision", "blocks_5220_closeout": false}
+    {"issue": 5254, "state": "closed", "role": "default_switch_and_runtime_v2_decommission_decision", "blocks_5220_closeout": false},
+    {"issue": 5277, "state": "closed", "pull_request": 5291, "merge_revision": "03d9c5e0656ec0c1fbe5399eec6e475f09ec4611", "role": "runtime_v3_kernel_lifecycle_fixture_only", "checks": "verified_passed_rollup", "blocks_5220_closeout": false},
+    {"issue": 5278, "state": "closed", "pull_request": 5297, "merge_revision": "db936273806c07802a9b23836604c69573228260", "role": "runtime_v3_topology_backpressure_fixture_only", "checks": "verified_passed_rollup", "blocks_5220_closeout": false},
+    {"issue": 5279, "state": "closed", "pull_request": 5299, "merge_revision": "d8e448de6136e9320546b9c3562fe4a5245a89d7", "role": "runtime_v3_service_configuration_fixture_only", "checks": "verified_passed_rollup", "blocks_5220_closeout": false},
+    {"issue": 5280, "state": "closed", "pull_request": 5302, "merge_revision": "cf32f207ec4114b9ef75a472a2a3b64ac37aa658", "role": "runtime_v3_continuity_recovery_fixture_only", "checks": "verified_passed_rollup", "blocks_5220_closeout": false},
+    {"issue": 5281, "state": "closed", "pull_request": 5310, "merge_revision": "9aaaeb92d653f6eee01dacba91d384a15deb9110", "role": "runtime_v3_learning_fixture_only", "checks": "verified_passed_rollup", "blocks_5220_closeout": false},
+    {"issue": 5282, "state": "closed", "pull_request": 5313, "merge_revision": "5288671f50a705bd6ef782771dfdc4374db8a74f", "role": "runtime_v3_governance_fixture_only", "checks": "verified_passed_rollup", "blocks_5220_closeout": false},
+    {"issue": 5283, "state": "closed", "pull_request": 5314, "merge_revision": "e5af548820d6fb0ef449024e757b049a875574d9", "role": "runtime_v3_delegation_resources_fixture_only", "checks": "verified_passed_rollup", "blocks_5220_closeout": false},
+    {"issue": 5284, "state": "closed", "pull_request": 5288, "merge_revision": "46a782205cbca7bbf52b0d898be0a3a16df96080", "role": "runtime_v3_agents_providers_scheduler_fixture_only", "checks": "verified_passed_rollup", "blocks_5220_closeout": false},
+    {"issue": 5285, "state": "closed", "pull_request": 5315, "merge_revision": "d695819621f7eca98d42ba7689a5805a1f088319", "role": "runtime_v3_network_fixture_only", "checks": "verified_passed_rollup", "blocks_5220_closeout": false},
+    {"issue": 5286, "state": "closed", "pull_request": 5317, "merge_revision": "d3252737680136f6f6e628771dcd87e7984f7e69", "role": "runtime_v3_observatory_consumption", "checks": "verified_passed_rollup", "blocks_5220_closeout": false}
   ],
   "local_validation": [
     "python3 -m json.tool docs/architecture/runtime_v3_release_proof_gate_5220.v1.json",
     "python3 -m json.tool docs/architecture/runtime_v3_cutover_checklist.v1.json",
     "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
     "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test parity -- release_proof_gate_closes_without_authorizing_default_cutover final_cutover_decision_keeps_v2_default_after_live_parity_clear kernel_lifecycle_proof_resolves_only_kernel_lifecycle_blocker topology_backpressure_proof_resolves_only_topology_backpressure_blocker service_contracts_configuration_proof_resolves_only_service_contracts_blocker continuity_replay_recovery_proof_resolves_only_continuity_blocker adaptive_learning_dag_proof_resolves_only_learning_blocker governance_freedom_gate_aee_proof_resolves_only_governance_blocker delegation_resources_proof_resolves_only_delegation_blocker acip_a2a_cloud_network_proof_resolves_final_live_black_box_blocker --nocapture",
-    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test control -- observatory_feed_serves_runtime_owned_read_projection_without_mutation_authority --nocapture",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test control observatory_https_feed_requires_bearer_and_reports_weather_freshness -- --nocapture",
     "bash adl/tools/test_v0917_html_observatory_integrated_proof.sh",
     "python3 -m json.tool docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
     "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak -- production_like_soak_rollback_packet_retains_cutover_boundaries packaging_preserves_one_guardian_neutral_child_contract --nocapture",

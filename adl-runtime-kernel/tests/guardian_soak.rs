@@ -396,6 +396,10 @@ fn horust_forwards_sigterm_and_runtime_checkpoints_cleanly() {
                         .as_bytes(),
                 ),
             )
+            .env(
+                "ADL_RUNTIME_OBSERVATORY_TOKEN",
+                "guardian-observatory-token-00000001",
+            )
             .stdout(Stdio::null())
             .stderr(Stdio::null())
             .spawn()
@@ -651,6 +655,10 @@ fn serve_handles_guardian_sigterm_with_a_clean_checkpointed_exit() {
                     .as_bytes(),
             ),
         )
+        .env(
+            "ADL_RUNTIME_OBSERVATORY_TOKEN",
+            "guardian-observatory-token-00000002",
+        )
         .stdout(std::process::Stdio::null())
         .stderr(std::process::Stdio::piped())
         .spawn()
@@ -741,6 +749,10 @@ cpu_stop_basis_points = 2
                     .verifying_key()
                     .as_bytes(),
             ),
+        )
+        .env(
+            "ADL_RUNTIME_OBSERVATORY_TOKEN",
+            "guardian-observatory-token-00000003",
         )
         .stdout(Stdio::null())
         .stderr(Stdio::piped())
@@ -882,6 +894,10 @@ async fn signed_https_shutdown_checkpoints_and_forgery_cannot_stop_the_process()
                     .verifying_key()
                     .as_bytes(),
             ),
+        )
+        .env(
+            "ADL_RUNTIME_OBSERVATORY_TOKEN",
+            "guardian-observatory-token-00000004",
         )
         .stdout(Stdio::null())
         .stderr(Stdio::piped())

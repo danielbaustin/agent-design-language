@@ -491,6 +491,18 @@ impl Store {
         }
         let mut projection = receipt.record;
         let mut cards = receipt.cards;
+        if let (Some(publication), Some(terminal)) = (
+            projection.publication.as_mut(),
+            projection.terminal.as_ref(),
+        ) {
+            if terminal.disposition == crate::readiness::TerminalDisposition::Merged
+                && terminal.pull_request == Some(publication.pull_request)
+                && terminal.observed_state == "merged"
+            {
+                publication.draft = false;
+                publication.observed_state = "merged".into();
+            }
+        }
         let current_review_passes = cards.get(&CardKind::Srp).is_some_and(|card| {
             matches!(&card.content, CardContent::Srp(srp)
             if srp.review_result == crate::cards::ReviewResult::Pass

@@ -250,6 +250,23 @@ async fn main() -> ExitCode {
                 init.observatory_allowed_origins(),
                 init.agent_population(),
             ));
+            let observatory_token = match std::env::var("ADL_RUNTIME_OBSERVATORY_TOKEN") {
+                Ok(token) => token,
+                Err(_) => {
+                    eprintln!("runtime Observatory read token is missing");
+                    return ExitCode::from(78);
+                }
+            };
+            if service
+                .set_observatory_bearer_token(&observatory_token)
+                .is_err()
+            {
+                eprintln!("runtime Observatory read token is invalid");
+                return ExitCode::from(78);
+            }
+            service.set_weather_stale_after(std::time::Duration::from_millis(
+                init.weather.sample_millis.saturating_mul(2),
+            ));
             let pressure_checkpoint_deadline =
                 std::time::Duration::from_millis(init.weather.checkpoint_deadline_millis);
             let api_shutdown = tokio_util::sync::CancellationToken::new();

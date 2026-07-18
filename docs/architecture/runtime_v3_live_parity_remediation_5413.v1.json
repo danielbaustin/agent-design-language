@@ -1,0 +1,69 @@
+{
+  "schema": "adl.runtime_v3.live_parity_remediation.v1",
+  "issue": 5413,
+  "source_review": 5276,
+  "target_version": "v0.91.7",
+  "parity": {
+    "live_equivalent_fixture_count": 1,
+    "runtime_v3_fixture_only_count": 9,
+    "live_equivalent_capabilities": ["reasoning.graphs_and_loops"],
+    "cutover_eligible": false
+  },
+  "observatory": {
+    "feed_schema": "adl.runtime_v3.observatory_feed.v2",
+    "transport": "https",
+    "endpoint": "GET /v1/observatory",
+    "read_authentication": "bearer_required_local_and_remote",
+    "credential_source": "ADL_RUNTIME_OBSERVATORY_TOKEN",
+    "credential_persisted_in_feed_or_logs": false,
+    "browser_preflight": "configured origins only; GET and Authorization header only",
+    "live_client_test": "observatory_https_feed_requires_bearer_and_reports_weather_freshness",
+    "mock_validator_role": "static_client_contract_only"
+  },
+  "weather": {
+    "refresh_owner": "periodic SysinfoWeatherObserver monitor",
+    "freshness_fields": [
+      "observed_at_unix_millis",
+      "age_millis",
+      "stale_after_millis",
+      "stale"
+    ],
+    "stale_after": "two configured sample intervals in production",
+    "bounded": true
+  },
+  "second_wave": {
+    "issues": [5277, 5278, 5279, 5280, 5281, 5282, 5283, 5284, 5285, 5286],
+    "pull_requests": [5291, 5297, 5299, 5302, 5310, 5313, 5314, 5288, 5315, 5317],
+    "merged_revisions": [
+      "03d9c5e0656ec0c1fbe5399eec6e475f09ec4611",
+      "db936273806c07802a9b23836604c69573228260",
+      "d8e448de6136e9320546b9c3562fe4a5245a89d7",
+      "cf32f207ec4114b9ef75a472a2a3b64ac37aa658",
+      "9aaaeb92d653f6eee01dacba91d384a15deb9110",
+      "5288671f50a705bd6ef782771dfdc4374db8a74f",
+      "e5af548820d6fb0ef449024e757b049a875574d9",
+      "46a782205cbca7bbf52b0d898be0a3a16df96080",
+      "d695819621f7eca98d42ba7689a5805a1f088319",
+      "d3252737680136f6f6e628771dcd87e7984f7e69"
+    ],
+    "verified_common_passed_checks": [
+      "adl-path-policy",
+      "adl-coverage",
+      "adl-tooling-contracts",
+      "adl-demo-proof",
+      "adl-ci"
+    ],
+    "verified_path_policy_skips": [
+      "adl-rust-fmt-clippy",
+      "adl-rust-tests",
+      "adl-slow-proof"
+    ],
+    "verification_source": "live GitHub PR statusCheckRollup inspected for all ten PRs during #5413"
+  },
+  "non_claims": [
+    "Nine Runtime v3-only fixtures do not prove live v2/v3 equivalence.",
+    "Runtime v3 is not authorized as the default runtime.",
+    "The static JavaScript validator is not end-to-end live proof by itself.",
+    "The Observatory bearer token is not supplied through a URL query parameter."
+  ]
+}

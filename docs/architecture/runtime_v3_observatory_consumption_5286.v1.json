@@ -10,12 +10,15 @@
   "runtime_v3_selection": "explicit_opt_in_only",
   "control_port": 20997,
   "runtime_v3_feed": {
-    "schema": "adl.runtime_v3.observatory_feed.v1",
+    "schema": "adl.runtime_v3.observatory_feed.v2",
     "endpoint": "GET /v1/observatory",
     "owner": "adl-runtime-kernel",
     "sidecar_required": false,
     "browser_mutation_authority": false,
-    "weather_population": "adl-runtime-kernel serve samples SysinfoWeatherObserver at startup and attaches the WeatherHealthReport to the runtime-owned feed.",
+    "weather_population": "adl-runtime-kernel periodically samples SysinfoWeatherObserver, attaches the latest WeatherHealthReport, and publishes bounded observation age and staleness state.",
+    "read_authentication": "bearer token required for local and remote access",
+    "credential_source": "ADL_RUNTIME_OBSERVATORY_TOKEN",
+    "browser_preflight": "configured origins only; GET and Authorization header only",
     "sections": [
       "control",
       "health",
@@ -32,6 +35,8 @@
     "default_consumption": "retained_runtime_v2_csm_mirror",
     "runtime_v3_opt_in_url": "demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=https://<runtime-gateway-host>&live=1",
     "runtime_v3_read_feed_consumed": true,
+    "live_https_client_proof": "observatory_https_feed_requires_bearer_and_reports_weather_freshness",
+    "static_validator_is_live_proof": false,
     "runtime_v3_default_claimed": false,
     "retained_evidence_still_available": true
   },
@@ -55,11 +60,13 @@
     "runtime_v3_control_port_20997_respected": true,
     "hidden_sidecar_introduced": false,
     "feeds_come_from_runtime_owned_surfaces_or_retained_artifacts": true,
+    "runtime_v3_read_authentication_required": true,
+    "weather_freshness_and_staleness_bounded": true,
     "unity_remains_proven_limited": true,
     "default_runtime_v3_cutover_claimed": false
   },
   "validation": [
-    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test control -- observatory_feed_serves_runtime_owned_read_projection_without_mutation_authority --nocapture",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test control observatory_https_feed_requires_bearer_and_reports_weather_freshness -- --nocapture",
     "bash adl/tools/test_v0917_html_observatory_integrated_proof.sh",
     "python3 -m json.tool docs/architecture/runtime_v3_observatory_consumption_5286.v1.json"
   ],

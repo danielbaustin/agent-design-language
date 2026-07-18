@@ -1,0 +1,18 @@
+{
+  "issue": 5413,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "256345b838443c851c1fce7ae77d77a8eca6a60b02c33e043d27142397e2b3ac",
+  "claim_id": "claim-5413-runtime-v3-live-parity",
+  "actor": "codex-root",
+  "reason": "Full local Runtime v3 tests, clippy, formatting, focused parity, real local HTTPS client proof, integrated browser proof, JSON parsing, and diff checks pass; no AWS was used.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo","test","--locked","--manifest-path","adl-runtime-kernel/Cargo.toml"],
+      "purpose": "Prove authenticated Observatory behavior, weather freshness, parity classification, release evidence, and full Runtime v3 regression safety",
+      "outcome": "passed",
+      "evidence_ref": "local:5413-full-runtime-clippy-fmt-local-https-integrated-observatory-proof"
+    }
+  }
+}

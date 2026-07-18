@@ -77,6 +77,7 @@ const OBSERVATORY_VERSION = "v0.91.7";
 const OBSERVATORY_MANIFOLD_LABEL = `${OBSERVATORY_VERSION} CSM runtime mirror`;
 const OBSERVATORY_PACKET_LABEL = `${OBSERVATORY_VERSION} Observatory proof packet`;
 const RUNTIME_V3_OBSERVATORY_ENDPOINT = "/v1/observatory";
+const RUNTIME_V3_OBSERVATORY_SCHEMA = "adl.runtime_v3.observatory_feed.v2";
 
 const AWS_LINKAGES = [
   {
@@ -610,13 +611,24 @@ async function fetchRuntimeV3ObservatorySnapshot(apiBase) {
   if (!isRuntimeV3ApiBase(base)) {
     throw new Error("Runtime v3 selection requires a configured HTTPS runtime API base.");
   }
-  const response = await fetch(`${base}${RUNTIME_V3_OBSERVATORY_ENDPOINT}`, { method: "GET" });
+  const readToken = globalThis.sessionStorage?.getItem("adl.runtimeV3.observatoryToken") || "";
+  if (!readToken) {
+    throw new Error("Runtime v3 Observatory read token is not configured in session storage.");
+  }
+  const response = await fetch(`${base}${RUNTIME_V3_OBSERVATORY_ENDPOINT}`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${readToken}` }
+  });
   if (!response.ok) {
     throw new Error(`${RUNTIME_V3_OBSERVATORY_ENDPOINT} returned ${response.status}`);
   }
   const feed = await response.json();
+  if (feed.schema !== RUNTIME_V3_OBSERVATORY_SCHEMA) {
+    throw new Error(`Unsupported Runtime v3 Observatory schema: ${feed.schema || "missing"}`);
+  }
   const snapshot = feed.health?.snapshot || {};
   const weather = feed.weather || {};
+  const weatherFreshness = feed.weather_freshness || {};
   const events = asArray(feed.events);
   return {
     mode: "live",
@@ -653,13 +665,16 @@ async function fetchRuntimeV3ObservatorySnapshot(apiBase) {
         queue_count: Object.keys(snapshot.queues || {}).length,
         weather_cpu_basis_points: weather.sample?.cpu_basis_points?.value ?? null,
         network_received_bytes: weather.sample?.network_received_bytes?.value ?? null,
-        network_transmitted_bytes: weather.sample?.network_transmitted_bytes?.value ?? null
+        network_transmitted_bytes: weather.sample?.network_transmitted_bytes?.value ?? null,
+        weather_age_millis: weatherFreshness.age_millis ?? null,
+        weather_stale_after_millis: weatherFreshness.stale_after_millis ?? null
       },
       states: {
         lifecycle: snapshot.lifecycle || "unknown",
         resource_state: weather.resource_state || "unknown",
         shutdown_decision: weather.shutdown_decision || "unknown",
-        gpu_proof_state: weather.gpu_proof_state || "unknown"
+        gpu_proof_state: weather.gpu_proof_state || "unknown",
+        weather_stale: weatherFreshness.stale ?? null
       }
     },
     events: { events },

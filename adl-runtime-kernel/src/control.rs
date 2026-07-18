@@ -5,7 +5,7 @@ use std::{
     net::{IpAddr, SocketAddr},
     sync::Arc,
     sync::Mutex,
-    time::Duration,
+    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 use async_trait::async_trait;
@@ -30,7 +30,8 @@ use crate::{
 
 pub const CONTROL_COMMAND_SCHEMA: &str = "adl.runtime.control_command.v1";
 pub const CONTROL_RESPONSE_SCHEMA: &str = "adl.runtime.control_response.v1";
-pub const OBSERVATORY_FEED_SCHEMA: &str = "adl.runtime_v3.observatory_feed.v1";
+pub const LEGACY_OBSERVATORY_FEED_SCHEMA: &str = "adl.runtime_v3.observatory_feed.v1";
+pub const OBSERVATORY_FEED_SCHEMA: &str = "adl.runtime_v3.observatory_feed.v2";
 pub const DEFAULT_CONTROL_API_PORT: u16 = 20_997;
 pub const MAX_SHUTDOWN_GRACE_MILLIS: u64 = 60_000;
 pub const CONTROL_API_SHUTDOWN_GRACE: Duration = Duration::from_secs(2);
@@ -248,7 +249,9 @@ pub struct ControlService<C> {
     authority: ControlAuthority,
     max_records: usize,
     idempotency: Mutex<IdempotencyState>,
-    weather: Mutex<Option<WeatherHealthReport>>,
+    weather: Mutex<Option<ObservedWeather>>,
+    weather_stale_after_millis: Mutex<u64>,
+    observatory_bearer_digest: Mutex<Option<blake3::Hash>>,
     observatory_allowed_origins: BTreeSet<String>,
     agent_population: AgentPopulationFeed,
     control_addr: Mutex<SocketAddr>,
@@ -320,6 +323,8 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
                 admission_open: true,
             }),
             weather: Mutex::new(None),
+            weather_stale_after_millis: Mutex::new(30_000),
+            observatory_bearer_digest: Mutex::new(None),
             observatory_allowed_origins,
             agent_population,
             control_addr: Mutex::new(SocketAddr::from(([127, 0, 0, 1], DEFAULT_CONTROL_API_PORT))),
@@ -338,7 +343,56 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
     }
 
     pub fn set_weather_report(&self, report: WeatherHealthReport) {
-        *self.weather.lock().expect("weather mutex poisoned") = Some(report);
+        self.set_weather_report_at(report, now_unix_millis());
+    }
+
+    pub fn set_weather_report_at(&self, report: WeatherHealthReport, observed_at_unix_millis: u64) {
+        *self.weather.lock().expect("weather mutex poisoned") = Some(ObservedWeather {
+            report,
+            observed_at_unix_millis,
+        });
+    }
+
+    pub fn set_weather_stale_after(&self, duration: Duration) {
+        let millis = u64::try_from(duration.as_millis())
+            .unwrap_or(u64::MAX)
+            .max(1);
+        *self
+            .weather_stale_after_millis
+            .lock()
+            .expect("weather staleness mutex poisoned") = millis;
+    }
+
+    pub fn set_observatory_bearer_token(&self, token: &str) -> Result<(), ControlError> {
+        if !(32..=256).contains(&token.len()) || token.chars().any(char::is_whitespace) {
+            return Err(ControlError::Authentication);
+        }
+        *self
+            .observatory_bearer_digest
+            .lock()
+            .expect("observatory credential mutex poisoned") = Some(blake3::hash(token.as_bytes()));
+        Ok(())
+    }
+
+    fn observatory_authorized(&self, headers: &HeaderMap) -> bool {
+        let Some(expected) = *self
+            .observatory_bearer_digest
+            .lock()
+            .expect("observatory credential mutex poisoned")
+        else {
+            return false;
+        };
+        let Some(token) = headers
+            .get(header::AUTHORIZATION)
+            .and_then(|value| value.to_str().ok())
+            .and_then(|value| value.strip_prefix("Bearer "))
+        else {
+            return false;
+        };
+        constant_time_eq(
+            expected.as_bytes(),
+            blake3::hash(token.as_bytes()).as_bytes(),
+        )
     }
 
     pub fn set_control_addr(&self, address: SocketAddr) {
@@ -374,6 +428,21 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
         let continuity_head = snapshot.continuity_head.clone();
         let events = self.recorder.events();
         let weather = self.weather.lock().expect("weather mutex poisoned").clone();
+        let stale_after_millis = *self
+            .weather_stale_after_millis
+            .lock()
+            .expect("weather staleness mutex poisoned");
+        let now = now_unix_millis();
+        let weather_freshness = weather.as_ref().map(|weather| {
+            let observed_at_unix_millis = weather.observed_at_unix_millis;
+            let age_millis = now.saturating_sub(observed_at_unix_millis);
+            ObservatoryWeatherFreshness {
+                observed_at_unix_millis,
+                age_millis,
+                stale_after_millis,
+                stale: age_millis > stale_after_millis,
+            }
+        });
         ObservatoryFeed {
             schema: OBSERVATORY_FEED_SCHEMA.to_owned(),
             runtime_instance_id: self.instance_id.clone(),
@@ -388,13 +457,15 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
                 read_endpoint: "/v1/observatory".to_owned(),
                 signed_command_endpoint: "/v1/control".to_owned(),
                 signed_commands_required_for_mutation: true,
+                bearer_token_required_for_read: true,
                 browser_mutation_authority: false,
             },
             health: ObservatoryHealthFeed {
                 snapshot,
                 observability_ready,
             },
-            weather,
+            weather: weather.map(|weather| weather.report),
+            weather_freshness,
             continuity: ObservatoryContinuityFeed {
                 checkpoint: continuity_head,
             },
@@ -519,7 +590,22 @@ pub struct ObservatoryControlFeed {
     pub read_endpoint: String,
     pub signed_command_endpoint: String,
     pub signed_commands_required_for_mutation: bool,
+    pub bearer_token_required_for_read: bool,
     pub browser_mutation_authority: bool,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct ObservatoryWeatherFreshness {
+    pub observed_at_unix_millis: u64,
+    pub age_millis: u64,
+    pub stale_after_millis: u64,
+    pub stale: bool,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct ObservedWeather {
+    report: WeatherHealthReport,
+    observed_at_unix_millis: u64,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -582,6 +668,7 @@ pub struct ObservatoryFeed {
     pub control: ObservatoryControlFeed,
     pub health: ObservatoryHealthFeed,
     pub weather: Option<WeatherHealthReport>,
+    pub weather_freshness: Option<ObservatoryWeatherFreshness>,
     pub continuity: ObservatoryContinuityFeed,
     pub agents: AgentPopulationFeed,
     pub proof: ObservatoryProofFeed,
@@ -664,7 +751,10 @@ where
         .into_std()
         .map_err(|error| ControlApiError::Bind(error.to_string()))?;
     let router = Router::new()
-        .route("/v1/observatory", get(observatory_feed_handler::<C>))
+        .route(
+            "/v1/observatory",
+            get(observatory_feed_handler::<C>).options(observatory_preflight_handler::<C>),
+        )
         .route("/v1/control", post(control_handler::<C>))
         .with_state(service);
     let handle = axum_server::Handle::new();
@@ -700,7 +790,45 @@ async fn observatory_feed_handler<C: LifecycleControl + 'static>(
     headers: HeaderMap,
 ) -> Response {
     let allowed_origin = allowed_origin(&service, &headers);
-    cors_json(StatusCode::OK, service.observatory_feed(), allowed_origin)
+    if !service.observatory_authorized(&headers) {
+        return observatory_json(
+            StatusCode::UNAUTHORIZED,
+            ControlErrorPayload {
+                schema: "adl.runtime.control_error.v1",
+                code: "authentication_failed",
+            },
+            allowed_origin,
+        );
+    }
+    observatory_json(StatusCode::OK, service.observatory_feed(), allowed_origin)
+}
+
+async fn observatory_preflight_handler<C: LifecycleControl + 'static>(
+    State(service): State<Arc<ControlService<C>>>,
+    headers: HeaderMap,
+) -> Response {
+    let Some(origin) = allowed_origin(&service, &headers) else {
+        return StatusCode::FORBIDDEN.into_response();
+    };
+    let mut response = StatusCode::NO_CONTENT.into_response();
+    response
+        .headers_mut()
+        .insert(header::ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+    response.headers_mut().insert(
+        header::ACCESS_CONTROL_ALLOW_METHODS,
+        HeaderValue::from_static("GET"),
+    );
+    response.headers_mut().insert(
+        header::ACCESS_CONTROL_ALLOW_HEADERS,
+        HeaderValue::from_static("Authorization"),
+    );
+    response
+        .headers_mut()
+        .insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
+    response
+        .headers_mut()
+        .insert(header::VARY, HeaderValue::from_static("Origin"));
+    response
 }
 
 async fn control_handler<C: LifecycleControl + 'static>(
@@ -775,10 +903,40 @@ fn cors_json<T: Serialize>(
     response
 }
 
+fn observatory_json<T: Serialize>(
+    status: StatusCode,
+    payload: T,
+    allowed_origin: Option<HeaderValue>,
+) -> Response {
+    let mut response = cors_json(status, payload, allowed_origin);
+    response
+        .headers_mut()
+        .insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
+    response
+}
+
 #[derive(Serialize)]
 struct ControlErrorPayload {
     schema: &'static str,
     code: &'static str,
+}
+
+fn now_unix_millis() -> u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|duration| u64::try_from(duration.as_millis()).unwrap_or(u64::MAX))
+        .unwrap_or(0)
+}
+
+fn constant_time_eq(left: &[u8], right: &[u8]) -> bool {
+    left.len() == right.len()
+        && left
+            .iter()
+            .zip(right)
+            .fold(0_u8, |difference, (left, right)| {
+                difference | (left ^ right)
+            })
+            == 0
 }
 
 pub fn write_payload(

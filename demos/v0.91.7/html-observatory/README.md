@@ -49,7 +49,8 @@ CSM API directly. For Runtime v3, the explicit opt-in path is
 `?runtime=v3&runtimeApiBase=<runtime-api-base>&live=1`, where
 `<runtime-api-base>` must match the configured Runtime v3 control API host,
 port, and Observatory allowed-origin policy. That path consumes the
-runtime-owned `/v1/observatory` read feed. Runtime v3 control mutation remains
+runtime-owned `/v1/observatory` read feed using bearer authentication. Runtime
+v3 control mutation remains
 signed-command-only through `/v1/control`; the browser has no shutdown,
 mutation, CloudWatch, SNS, or state authority. The CSM API panel intentionally
 presents the standalone `csm` runtime ownership boundary from #4929 when the
@@ -96,14 +97,24 @@ For the Runtime v3 opt-in path, start the Runtime v3 kernel control API with
 the repo default init file:
 
 ```sh
-adl-runtime-kernel serve --init infra/runtime-v3/runtime-init.toml
+ADL_RUNTIME_OBSERVATORY_TOKEN="<operator-local-token>" \
+  adl-runtime-kernel serve --init infra/runtime-v3/runtime-init.toml
 ```
 
 The default init file keeps the Runtime v3 listener on `localhost:20997`.
 Runtime v3 browser/API access is HTTPS-only. Before launch, provision a
 localhost certificate and private key at the `[api.tls]` paths in the init file;
-the repository does not retain private keys. Serve this Observatory from the
-allowed HTTPS origin `https://localhost:8765`, then open:
+the repository does not retain private keys. Set a 32-to-256-character
+operator-local read token for the runtime process in
+`ADL_RUNTIME_OBSERVATORY_TOKEN`. In the browser session, set the same token
+without putting it in the URL or repository, then reload the page:
+
+```js
+sessionStorage.setItem("adl.runtimeV3.observatoryToken", "<operator-local-token>")
+```
+
+Serve this Observatory from the allowed HTTPS origin
+`https://localhost:8765`, then open:
 
 ```text
 https://localhost:8765/demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=https://localhost:20997&live=1
@@ -131,15 +142,19 @@ path, set `[api].address` to the runtime host interface, set
 `[api].public_base_url` to the HTTPS public route, set `[api.tls]` to that
 route's certificate and key paths, and add the dashboard origin to
 `[observatory].allowed_origins`. Public routing may be provided by the
-operator's ingress layer, such as an Elastic IP or API Gateway route, but is not
-hardcoded in Runtime v3 source.
+operator's ingress layer but is not hardcoded in Runtime v3 source. Remote and
+local reads use the same bearer requirement; CORS is an additional
+browser-origin control, not authentication. The runtime answers the browser's
+bounded `OPTIONS` preflight only for configured origins and allows only `GET`
+with the `Authorization` header.
 
 ```text
 https://<observatory-host>/demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=https://<runtime-gateway-host>&live=1
 ```
 
 The Runtime v3 browser path consumes only the runtime-owned read feed at
-`/v1/observatory`. It does not send signed control commands, does not change the
+`/v1/observatory` with the session-scoped bearer token. It does not send signed
+control commands, does not change the
 default runtime, and does not authorize Runtime v2 decommission.
 
 The browser-served dashboard only receives CORS permission when its origin is
@@ -160,11 +175,13 @@ bash adl/tools/test_v0917_html_observatory_integrated_proof.sh
 
 ## Claim Boundary
 
-This proves that the HTML Observatory can render an auto-refreshing CSM
+The validation lane includes a real TLS client against a running Runtime v3
+endpoint and separately retains the JavaScript mock as static
+rendering-contract coverage. This proves that the HTML Observatory can render an auto-refreshing CSM
 panopticon over retained publishable runtime API responses, and can upgrade to a
 live loopback CSM panopticon when the running CSM API base is supplied. It can
-also consume the Runtime v3 `/v1/observatory` read feed when Runtime v3 is
-selected explicitly with a configured runtime API base. It renders the retained
+also consume the authenticated Runtime v3 `/v1/observatory` read feed when
+Runtime v3 is selected explicitly with a configured runtime API base. It renders the retained
 bounded runtime capture through a polished investor-facing operator UI, while exposing
 CSM API, CSM service, CloudWatch heartbeat, ACIP-SNS projection proof, Runtime
 v3 opt-in status, and WP-08 linkage status. It does not claim direct runtime

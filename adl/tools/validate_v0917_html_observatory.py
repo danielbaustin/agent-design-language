@@ -97,7 +97,7 @@ def run_js_view_model(
           [retainedRefs.eventsRef, fs.readFileSync(retainedRefs.eventsRef, "utf8")]
         ]);
         const runtimeV3Feed = JSON.stringify({{
-          schema: "adl.runtime_v3.observatory_feed.v1",
+          schema: "adl.runtime_v3.observatory_feed.v2",
           runtime_instance_id: "runtime-v3-test",
           default_runtime_changed: false,
           runtime_selection: "runtime_v3_explicit_opt_in",
@@ -143,6 +143,12 @@ def run_js_view_model(
               max_temperature_millicelsius: {{ value: 42000, source: "fixture" }},
               gpus: {{ value: [], source: "optional_platform_adapter" }}
             }}
+          }},
+          weather_freshness: {{
+            observed_at_unix_millis: 1789000000,
+            age_millis: 250,
+            stale_after_millis: 2000,
+            stale: false
           }},
           continuity: {{ checkpoint: {{ generation: 2, accepted_through: 19, topology_hash: "topology", config_hash: "config", integrity: "snapshot" }} }},
           agents: {{
@@ -266,8 +272,11 @@ def run_js_view_model(
           querySelector: (selector) => selector === ".observatory" ? observatoryElement : null,
           querySelectorAll: (selector) => selector === "[data-dashboard-link]" ? dashboardLinks : []
         }};
-        const mockFetch = async (ref) => {{
+        const mockFetch = async (ref, options = {{}}) => {{
           const key = String(ref);
+          if (key.endsWith("/v1/observatory") && options.headers?.Authorization !== "Bearer validator-observatory-token-0001") {{
+            return {{ ok: false, status: 401, text: async () => "", json: async () => {{ throw new Error("unauthorized"); }} }};
+          }}
           const body = retainedFiles.get(key) || livePayloads.get(key);
           return body == null
             ? {{ ok: false, status: 404, text: async () => "", json: async () => {{ throw new Error("missing mock payload"); }} }}
@@ -287,6 +296,9 @@ def run_js_view_model(
             return timers.length;
           }},
           clearInterval: () => {{}},
+          sessionStorage: {{
+            getItem: (key) => key === "adl.runtimeV3.observatoryToken" ? "validator-observatory-token-0001" : null
+          }},
           globalThis: {{}}
         }};
         context.globalThis = context;
@@ -435,7 +447,10 @@ def run_js_view_model(
             mutationAuthority: runtimeV3Snapshot.status.control.browser_mutation_authority,
             decommissionAuthorized: runtimeV3Snapshot.proof.runtime_v2_decommission_authorized,
             defaultSwitchAuthorized: runtimeV3Snapshot.proof.default_runtime_switch_authorized,
-            sidecarRequired: runtimeV3Snapshot.proof.sidecar_required
+            sidecarRequired: runtimeV3Snapshot.proof.sidecar_required,
+            weatherAgeMillis: runtimeV3Snapshot.metrics.gauges.weather_age_millis,
+            weatherStaleAfterMillis: runtimeV3Snapshot.metrics.gauges.weather_stale_after_millis,
+            weatherStale: runtimeV3Snapshot.metrics.states.weather_stale
           }},
           dashboardMirrors: {{
             heroCloudwatchOkLabel: integrationViewModel.cloudwatchSummary.status === "passed" ? "CloudWatch Proven" : context.AdlHtmlObservatory.formatLabel(integrationViewModel.cloudwatchSummary.status || "pending"),
@@ -641,6 +656,9 @@ def main() -> int:
     assert_contains("JS runtime snapshot polling", js, "fetchRuntimeSnapshot")
     assert_contains("JS Runtime v3 observatory feed polling", js, "fetchRuntimeV3ObservatorySnapshot")
     assert_contains("JS Runtime v3 observatory endpoint", js, 'RUNTIME_V3_OBSERVATORY_ENDPOINT = "/v1/observatory"')
+    assert_contains("JS Runtime v3 observatory schema", js, 'RUNTIME_V3_OBSERVATORY_SCHEMA = "adl.runtime_v3.observatory_feed.v2"')
+    assert_contains("JS Runtime v3 bearer authentication", js, "Authorization: `Bearer ${readToken}`")
+    assert_contains("JS Runtime v3 weather staleness", js, "weather_stale_after_millis")
     assert_contains("JS Runtime v3 explicit opt-in selection", js, "runtime_v3_explicit_opt_in")
     assert_contains("JS runtime query base bootstrap", js, "getQueryApiBase")
     assert_contains("JS runtime auto-connect gate", js, "shouldAutoConnectLive")
@@ -888,6 +906,12 @@ def main() -> int:
       fail("Runtime v3 observatory feed did not expose health/weather metrics")
     if runtime_v3_panopticon.get("readyState") != "ready":
       fail("Runtime v3 observatory feed readiness state mismatch")
+    if runtime_v3_panopticon.get("weatherAgeMillis") != 250:
+      fail(f"Runtime v3 Observatory dropped weather age: {runtime_v3_panopticon!r}")
+    if runtime_v3_panopticon.get("weatherStaleAfterMillis") != 2000:
+      fail(f"Runtime v3 Observatory dropped weather staleness bound: {runtime_v3_panopticon!r}")
+    if runtime_v3_panopticon.get("weatherStale") is not False:
+      fail(f"Runtime v3 Observatory weather freshness state mismatch: {runtime_v3_panopticon!r}")
 
     secret_pattern = re.compile(
         r"/Users/|/private/var/|192\\.168\\.|"

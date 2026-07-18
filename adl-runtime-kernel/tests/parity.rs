@@ -989,7 +989,7 @@ fn live_black_box_parity_classification_covers_matrix_without_counting_blockers_
         "adl.runtime_v3.live_black_box_parity.v1"
     );
     assert_eq!(classification["target_version"], "v0.91.7");
-    assert_eq!(classification["cutover_eligible"], true);
+    assert_eq!(classification["cutover_eligible"], false);
     assert_eq!(
         classification["classification_policy"]["blocked_or_deferred_counts_as_passed"],
         false
@@ -1043,6 +1043,14 @@ fn live_black_box_parity_classification_covers_matrix_without_counting_blockers_
         )
     );
     assert_eq!(
+        classification["summary"]["runtime_v3_fixture_only"].as_u64(),
+        Some(
+            *disposition_counts
+                .get("runtime_v3_fixture_only")
+                .unwrap_or(&0) as u64
+        )
+    );
+    assert_eq!(
         classification["summary"]["accepted_intentional_divergence"].as_u64(),
         Some(
             *disposition_counts
@@ -1086,7 +1094,7 @@ fn kernel_lifecycle_proof_resolves_only_kernel_lifecycle_blocker() {
     assert_eq!(proof["schema"], "adl.runtime_v3.kernel_lifecycle_proof.v1");
     assert_eq!(proof["issue"], 5277);
     assert_eq!(proof["capability"], "kernel.lifecycle");
-    assert_eq!(proof["disposition"], "live_equivalent_fixture");
+    assert_eq!(proof["disposition"], "runtime_v3_fixture_only");
     assert_eq!(proof["runtime_v2_default_preserved"], true);
     assert_eq!(proof["runtime_v2_internal_reuse"], false);
     assert_eq!(proof["default_runtime_switch_authorized"], false);
@@ -1113,12 +1121,12 @@ fn kernel_lifecycle_proof_resolves_only_kernel_lifecycle_blocker() {
         .iter()
         .find(|capability| capability["id"] == "kernel.lifecycle")
         .unwrap();
-    assert_eq!(kernel["disposition"], "live_equivalent_fixture");
+    assert_eq!(kernel["disposition"], "runtime_v3_fixture_only");
     assert!(kernel.get("blocking_issue").is_none());
     assert!(kernel["proof"].as_str().unwrap().contains("#5277"));
     assert_eq!(classification["summary"]["blocker"], 0);
-    assert_eq!(classification["summary"]["live_equivalent_fixture"], 10);
-    assert_eq!(classification["cutover_eligible"], true);
+    assert_eq!(classification["summary"]["live_equivalent_fixture"], 1);
+    assert_eq!(classification["cutover_eligible"], false);
 }
 
 #[test]
@@ -1139,7 +1147,7 @@ fn topology_backpressure_proof_resolves_only_topology_backpressure_blocker() {
     assert_eq!(proof["issue"], 5278);
     assert_eq!(proof["sprint_issue"], 5276);
     assert_eq!(proof["capability"], "kernel.topology_and_backpressure");
-    assert_eq!(proof["disposition"], "live_equivalent_fixture");
+    assert_eq!(proof["disposition"], "runtime_v3_fixture_only");
     assert_eq!(proof["runtime_v2_default_preserved"], true);
     assert_eq!(proof["runtime_v2_internal_reuse"], false);
     assert_eq!(proof["default_runtime_switch_authorized"], false);
@@ -1175,12 +1183,12 @@ fn topology_backpressure_proof_resolves_only_topology_backpressure_blocker() {
         .iter()
         .find(|capability| capability["id"] == "kernel.topology_and_backpressure")
         .unwrap();
-    assert_eq!(topology["disposition"], "live_equivalent_fixture");
+    assert_eq!(topology["disposition"], "runtime_v3_fixture_only");
     assert!(topology.get("blocking_issue").is_none());
     assert!(topology["proof"].as_str().unwrap().contains("#5278"));
     assert_eq!(classification["summary"]["blocker"], 0);
-    assert_eq!(classification["summary"]["live_equivalent_fixture"], 10);
-    assert_eq!(classification["cutover_eligible"], true);
+    assert_eq!(classification["summary"]["live_equivalent_fixture"], 1);
+    assert_eq!(classification["cutover_eligible"], false);
     assert_eq!(classification["default_runtime_switch_authorized"], false);
 }
 
@@ -1202,7 +1210,7 @@ fn service_contracts_configuration_proof_resolves_only_service_contracts_blocker
     assert_eq!(proof["issue"], 5279);
     assert_eq!(proof["sprint_issue"], 5276);
     assert_eq!(proof["capability"], "service.contracts_and_configuration");
-    assert_eq!(proof["disposition"], "live_equivalent_fixture");
+    assert_eq!(proof["disposition"], "runtime_v3_fixture_only");
     assert_eq!(proof["runtime_v2_default_preserved"], true);
     assert_eq!(proof["runtime_v2_internal_reuse"], false);
     assert_eq!(proof["default_runtime_switch_authorized"], false);
@@ -1234,15 +1242,15 @@ fn service_contracts_configuration_proof_resolves_only_service_contracts_blocker
         .iter()
         .find(|capability| capability["id"] == "service.contracts_and_configuration")
         .unwrap();
-    assert_eq!(service_contracts["disposition"], "live_equivalent_fixture");
+    assert_eq!(service_contracts["disposition"], "runtime_v3_fixture_only");
     assert!(service_contracts.get("blocking_issue").is_none());
     assert!(service_contracts["proof"]
         .as_str()
         .unwrap()
         .contains("#5279"));
     assert_eq!(classification["summary"]["blocker"], 0);
-    assert_eq!(classification["summary"]["live_equivalent_fixture"], 10);
-    assert_eq!(classification["cutover_eligible"], true);
+    assert_eq!(classification["summary"]["live_equivalent_fixture"], 1);
+    assert_eq!(classification["cutover_eligible"], false);
     assert_eq!(classification["default_runtime_switch_authorized"], false);
 }
 
@@ -1264,7 +1272,7 @@ fn continuity_replay_recovery_proof_resolves_only_continuity_blocker() {
     assert_eq!(proof["issue"], 5280);
     assert_eq!(proof["sprint_issue"], 5276);
     assert_eq!(proof["capability"], "continuity.replay_recovery");
-    assert_eq!(proof["disposition"], "live_equivalent_fixture");
+    assert_eq!(proof["disposition"], "runtime_v3_fixture_only");
     assert_eq!(proof["runtime_v2_default_preserved"], true);
     assert_eq!(proof["runtime_v2_internal_reuse"], false);
     assert_eq!(proof["default_runtime_switch_authorized"], false);
@@ -1297,12 +1305,12 @@ fn continuity_replay_recovery_proof_resolves_only_continuity_blocker() {
         .iter()
         .find(|capability| capability["id"] == "continuity.replay_recovery")
         .unwrap();
-    assert_eq!(continuity["disposition"], "live_equivalent_fixture");
+    assert_eq!(continuity["disposition"], "runtime_v3_fixture_only");
     assert!(continuity.get("blocking_issue").is_none());
     assert!(continuity["proof"].as_str().unwrap().contains("#5280"));
     assert_eq!(classification["summary"]["blocker"], 0);
-    assert_eq!(classification["summary"]["live_equivalent_fixture"], 10);
-    assert_eq!(classification["cutover_eligible"], true);
+    assert_eq!(classification["summary"]["live_equivalent_fixture"], 1);
+    assert_eq!(classification["cutover_eligible"], false);
     assert_eq!(classification["default_runtime_switch_authorized"], false);
 }
 
@@ -1324,7 +1332,7 @@ fn adaptive_learning_dag_proof_resolves_only_learning_blocker() {
     assert_eq!(proof["issue"], 5281);
     assert_eq!(proof["sprint_issue"], 5276);
     assert_eq!(proof["capability"], "learning.adaptive_dag");
-    assert_eq!(proof["disposition"], "live_equivalent_fixture");
+    assert_eq!(proof["disposition"], "runtime_v3_fixture_only");
     assert_eq!(proof["runtime_v2_default_preserved"], true);
     assert_eq!(proof["runtime_v2_internal_reuse"], false);
     assert_eq!(proof["default_runtime_switch_authorized"], false);
@@ -1356,12 +1364,12 @@ fn adaptive_learning_dag_proof_resolves_only_learning_blocker() {
         .iter()
         .find(|capability| capability["id"] == "learning.adaptive_dag")
         .unwrap();
-    assert_eq!(learning["disposition"], "live_equivalent_fixture");
+    assert_eq!(learning["disposition"], "runtime_v3_fixture_only");
     assert!(learning.get("blocking_issue").is_none());
     assert!(learning["proof"].as_str().unwrap().contains("#5281"));
     assert_eq!(classification["summary"]["blocker"], 0);
-    assert_eq!(classification["summary"]["live_equivalent_fixture"], 10);
-    assert_eq!(classification["cutover_eligible"], true);
+    assert_eq!(classification["summary"]["live_equivalent_fixture"], 1);
+    assert_eq!(classification["cutover_eligible"], false);
     assert_eq!(classification["default_runtime_switch_authorized"], false);
 }
 
@@ -1383,7 +1391,7 @@ fn governance_freedom_gate_aee_proof_resolves_only_governance_blocker() {
     assert_eq!(proof["issue"], 5282);
     assert_eq!(proof["sprint_issue"], 5276);
     assert_eq!(proof["capability"], "governance.freedom_gate_aee");
-    assert_eq!(proof["disposition"], "live_equivalent_fixture");
+    assert_eq!(proof["disposition"], "runtime_v3_fixture_only");
     assert_eq!(proof["runtime_v2_default_preserved"], true);
     assert_eq!(proof["runtime_v2_internal_reuse"], false);
     assert_eq!(proof["default_runtime_switch_authorized"], false);
@@ -1415,12 +1423,12 @@ fn governance_freedom_gate_aee_proof_resolves_only_governance_blocker() {
         .iter()
         .find(|capability| capability["id"] == "governance.freedom_gate_aee")
         .unwrap();
-    assert_eq!(governance["disposition"], "live_equivalent_fixture");
+    assert_eq!(governance["disposition"], "runtime_v3_fixture_only");
     assert!(governance.get("blocking_issue").is_none());
     assert!(governance["proof"].as_str().unwrap().contains("#5282"));
     assert_eq!(classification["summary"]["blocker"], 0);
-    assert_eq!(classification["summary"]["live_equivalent_fixture"], 10);
-    assert_eq!(classification["cutover_eligible"], true);
+    assert_eq!(classification["summary"]["live_equivalent_fixture"], 1);
+    assert_eq!(classification["cutover_eligible"], false);
     assert_eq!(classification["default_runtime_switch_authorized"], false);
 }
 
@@ -1442,7 +1450,7 @@ fn delegation_resources_proof_resolves_only_delegation_blocker() {
     assert_eq!(proof["issue"], 5283);
     assert_eq!(proof["sprint_issue"], 5276);
     assert_eq!(proof["capability"], "contracts.delegation_resources");
-    assert_eq!(proof["disposition"], "live_equivalent_fixture");
+    assert_eq!(proof["disposition"], "runtime_v3_fixture_only");
     assert_eq!(proof["runtime_v2_default_preserved"], true);
     assert_eq!(proof["runtime_v2_internal_reuse"], false);
     assert_eq!(proof["default_runtime_switch_authorized"], false);
@@ -1477,12 +1485,12 @@ fn delegation_resources_proof_resolves_only_delegation_blocker() {
         .iter()
         .find(|capability| capability["id"] == "contracts.delegation_resources")
         .unwrap();
-    assert_eq!(delegation["disposition"], "live_equivalent_fixture");
+    assert_eq!(delegation["disposition"], "runtime_v3_fixture_only");
     assert!(delegation.get("blocking_issue").is_none());
     assert!(delegation["proof"].as_str().unwrap().contains("#5283"));
     assert_eq!(classification["summary"]["blocker"], 0);
-    assert_eq!(classification["summary"]["live_equivalent_fixture"], 10);
-    assert_eq!(classification["cutover_eligible"], true);
+    assert_eq!(classification["summary"]["live_equivalent_fixture"], 1);
+    assert_eq!(classification["cutover_eligible"], false);
     assert_eq!(classification["default_runtime_switch_authorized"], false);
 }
 
@@ -1504,11 +1512,11 @@ fn acip_a2a_cloud_network_proof_resolves_final_live_black_box_blocker() {
     assert_eq!(proof["issue"], 5285);
     assert_eq!(proof["sprint_issue"], 5276);
     assert_eq!(proof["capability"], "network.acip_a2a_cloud");
-    assert_eq!(proof["disposition"], "live_equivalent_fixture");
+    assert_eq!(proof["disposition"], "runtime_v3_fixture_only");
     assert_eq!(proof["runtime_v2_default_preserved"], true);
     assert_eq!(proof["runtime_v2_internal_reuse"], false);
     assert_eq!(proof["default_runtime_switch_authorized"], false);
-    assert_eq!(proof["cutover_eligible"], true);
+    assert_eq!(proof["cutover_eligible"], false);
     assert_eq!(
         proof["acceptance"]["runtime_v2_decommission_authorized"],
         false
@@ -1537,12 +1545,12 @@ fn acip_a2a_cloud_network_proof_resolves_final_live_black_box_blocker() {
         .iter()
         .find(|capability| capability["id"] == "network.acip_a2a_cloud")
         .unwrap();
-    assert_eq!(network["disposition"], "live_equivalent_fixture");
+    assert_eq!(network["disposition"], "runtime_v3_fixture_only");
     assert!(network.get("blocking_issue").is_none());
     assert!(network["proof"].as_str().unwrap().contains("#5285"));
     assert_eq!(classification["summary"]["blocker"], 0);
-    assert_eq!(classification["summary"]["live_equivalent_fixture"], 10);
-    assert_eq!(classification["cutover_eligible"], true);
+    assert_eq!(classification["summary"]["live_equivalent_fixture"], 1);
+    assert_eq!(classification["cutover_eligible"], false);
     assert_eq!(classification["default_runtime_switch_authorized"], false);
 }
 
@@ -1586,11 +1594,16 @@ fn final_cutover_decision_keeps_v2_default_after_live_parity_clear() {
         .unwrap();
     assert_eq!(network_dependency["state"], "in_review");
 
-    assert_eq!(classification["cutover_eligible"], true);
+    assert_eq!(classification["cutover_eligible"], false);
     assert_eq!(classification["default_runtime_switch_authorized"], false);
     assert_eq!(
         decision["input_summary"]["live_black_box_cutover_eligible"],
-        classification["cutover_eligible"]
+        true
+    );
+    assert_ne!(
+        decision["input_summary"]["live_black_box_cutover_eligible"],
+        classification["cutover_eligible"],
+        "the immutable decision-time snapshot must remain distinct from the corrected current classification"
     );
     assert_eq!(
         decision["input_summary"]["live_black_box_blockers"],
@@ -1665,9 +1678,15 @@ fn release_proof_gate_closes_without_authorizing_default_cutover() {
     assert_eq!(gate["runtime_v2_deletion_authorized"], false);
     assert_eq!(gate["runtime_v2_decommission_authorized"], false);
     assert_eq!(gate["rollback_target"], "v2");
-    let evidence_classes = ["executed", "contract_only", "ignored", "deferred"]
-        .into_iter()
-        .collect::<std::collections::BTreeSet<_>>();
+    let evidence_classes = [
+        "executed",
+        "live_local_https",
+        "contract_only",
+        "ignored",
+        "deferred",
+    ]
+    .into_iter()
+    .collect::<std::collections::BTreeSet<_>>();
     for release_gate in gate["gates"].as_array().unwrap() {
         let evidence_class = release_gate["evidence_class"].as_str().unwrap();
         assert!(
@@ -1678,9 +1697,9 @@ fn release_proof_gate_closes_without_authorizing_default_cutover() {
             .as_bool()
             .expect("release evidence must declare a boolean satisfies_live_requirement");
         if satisfies_live_requirement {
-            assert_eq!(
-                evidence_class, "executed",
-                "non-executed evidence cannot satisfy live requirement {}",
+            assert!(
+                matches!(evidence_class, "executed" | "live_local_https"),
+                "non-live evidence cannot satisfy live requirement {}",
                 release_gate["id"]
             );
         }
@@ -1688,7 +1707,7 @@ fn release_proof_gate_closes_without_authorizing_default_cutover() {
 
     assert_eq!(decision["decision"], "keep_runtime_v2_default");
     assert_eq!(decision["default_runtime_switch_authorized"], false);
-    assert_eq!(classification["cutover_eligible"], true);
+    assert_eq!(classification["cutover_eligible"], false);
     assert_eq!(classification["summary"]["blocker"], 0);
     assert_eq!(
         closeout["release_truth"]["live_black_box_blocker_groups"],
@@ -1758,9 +1777,12 @@ fn release_proof_gate_closes_without_authorizing_default_cutover() {
         .collect::<std::collections::BTreeSet<_>>();
     assert_eq!(
         closed_children,
-        [5247, 5248, 5249, 5250, 5251, 5252, 5253, 5254]
-            .into_iter()
-            .collect()
+        [
+            5247, 5248, 5249, 5250, 5251, 5252, 5253, 5254, 5277, 5278, 5279, 5280, 5281, 5282,
+            5283, 5284, 5285, 5286,
+        ]
+        .into_iter()
+        .collect()
     );
 
     let checklist_gate = checklist["gates"]

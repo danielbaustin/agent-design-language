@@ -1,0 +1,10 @@
+{
+  "issue": 5413,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "07834bf20630879f55e9079c002a28c8a4328c3f61058497c8fc2e440403bf25",
+  "claim_id": "claim-5413-runtime-v3-live-parity",
+  "actor": "codex-root",
+  "reason": "The bounded live-parity and Observatory remediation is implemented and locally validated.",
+  "operation": {"operation":"advance_phase","phase":"implemented"}
+}

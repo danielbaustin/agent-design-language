@@ -1,0 +1,35 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5413,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3] Resolve #5276 live parity and Observatory findings",
+    "slug": "runtime-v3-live-parity-observatory",
+    "version": "v0.91.7",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Replace overstated Runtime v3 parity and Observatory proof with real authenticated live behavior and complete release evidence.",
+      "required_outcome": "Real cross-runtime comparisons or truthful non-equivalence classifications; a real client against running HTTPS Runtime v3; authenticated local and remote Observatory feed access; bounded weather refresh/staleness semantics; and a complete #5277-#5286 release packet.",
+      "declared_scope": [
+        "Runtime v3 parity classifications and live process proof",
+        "Runtime v3 Observatory read authentication and client consumption",
+        "weather refresh and staleness behavior",
+        "#5277-#5286 release evidence reconciliation"
+      ],
+      "authority_boundary": [
+        "Do not claim v2/v3 equivalence without both real runtime processes",
+        "Do not substitute mocked fetch for live HTTPS client proof",
+        "Do not expose a remotely bindable feed without read authorization",
+        "Do not claim freshness without bounded update and stale-state semantics",
+        "Do not write in the primary main checkout"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

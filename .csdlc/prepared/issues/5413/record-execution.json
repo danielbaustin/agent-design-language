@@ -1,0 +1,28 @@
+{
+  "issue": 5413,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "b70db31cc4d3ec7836c90460388fe000c1b3e6036c16c12a2a3dc5c2e5566064",
+  "claim_id": "claim-5413-runtime-v3-live-parity",
+  "actor": "codex-root",
+  "reason": "Implemented the bounded live-parity and authenticated Observatory remediation, including the release-evidence contract fix found by the fresh full suite.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Added authenticated live local HTTPS Observatory consumption with freshness truth and corrected Runtime v3 parity/release evidence without authorizing default cutover.",
+    "changes": [
+      "Require bounded bearer authentication for the Observatory and fail closed in production",
+      "Serve schema-v2 no-store feeds with atomic weather freshness and configured-origin CORS preflight",
+      "Update the browser client and integrated proof to authenticate and reject stale or legacy feeds",
+      "Reclassify fixture-only parity honestly and retain one proven live equivalence",
+      "Record the full Runtime v3 release wave while keeping default cutover false",
+      "Accept the new live_local_https evidence class only as live evidence"
+    ],
+    "artifacts": [
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/parity.rs",
+      "demos/v0.91.7/html-observatory/app.js",
+      "docs/architecture/runtime_v3_live_parity_remediation_5413.v1.json"
+    ]
+  }
+}

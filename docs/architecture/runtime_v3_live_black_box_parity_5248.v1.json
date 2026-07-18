@@ -3,11 +3,12 @@
   "issue": 5248,
   "target_version": "v0.91.7",
   "created_at_utc": "2026-07-12T11:05:00Z",
-  "cutover_eligible": true,
+  "cutover_eligible": false,
   "default_runtime_switch_authorized": false,
   "classification_policy": {
     "allowed_dispositions": [
       "live_equivalent_fixture",
+      "runtime_v3_fixture_only",
       "accepted_intentional_divergence",
       "retained_v2_behavior_behind_adapter",
       "deferred_non_cutover_surface",
@@ -19,22 +20,22 @@
   "capabilities": [
     {
       "id": "kernel.lifecycle",
-      "disposition": "live_equivalent_fixture",
-      "proof": "#5277 records direct Runtime v3 kernel lifecycle proof covering start, health promotion, graceful stop, restart/fatal-exit classification, deadline abort, guardian recovery, and rollback-preserving behavior in docs/architecture/runtime_v3_kernel_lifecycle_5277.v1.json."
+      "disposition": "runtime_v3_fixture_only",
+      "proof": "#5277 records direct Runtime v3-only kernel lifecycle fixture proof; it does not execute a Runtime v2 process and therefore does not establish live equivalence."
     },
     {
       "id": "kernel.topology_and_backpressure",
-      "disposition": "live_equivalent_fixture",
+      "disposition": "runtime_v3_fixture_only",
       "proof": "#5278 records direct Runtime v3 topology and backpressure proof covering dependency-ordered startup/shutdown, missing dependency rejection, cycle rejection, typed port mismatch rejection, canonical topology construction, bounded channel saturation, sysinfo-backed weather observation, and serialize-state-then-stop resource pressure behavior in docs/architecture/runtime_v3_topology_backpressure_5278.v1.json."
     },
     {
       "id": "service.contracts_and_configuration",
-      "disposition": "live_equivalent_fixture",
+      "disposition": "runtime_v3_fixture_only",
       "proof": "#5279 records direct Runtime v3 service-contract and configuration proof covering service contract schema validation, component surface binding, semver capability matching, fail-closed required capabilities, optional capabilities, duplicate service/capability rejection, runtime configuration schema rejection, deterministic canonical configuration projection, fail-closed factory registry behavior, and deterministic topology construction in docs/architecture/runtime_v3_service_contracts_configuration_5279.v1.json."
     },
     {
       "id": "continuity.replay_recovery",
-      "disposition": "live_equivalent_fixture",
+      "disposition": "runtime_v3_fixture_only",
       "proof": "#5280 records direct Runtime v3 continuity, replay, and recovery proof covering checkpoint quiesce-before-snapshot, bounded parallel serialization, signed manifest integrity, corrupt snapshot quarantine, identity/schema recovery refusal, missing checkpoint restart-fresh behavior, replay prefix validation, graceful resource-stop serialization, fresh kernel generation continuity, and checkpoint restore continuity in docs/architecture/runtime_v3_continuity_replay_recovery_5280.v1.json."
     },
     {
@@ -54,27 +55,27 @@
     },
     {
       "id": "learning.adaptive_dag",
-      "disposition": "live_equivalent_fixture",
+      "disposition": "runtime_v3_fixture_only",
       "proof": "#5281 records direct Runtime v3 adaptive learning DAG proof covering bounded canonical graph validation, deterministic graph execution, bounded adaptive loops, replay/resume integrity, checkpointed adaptation state, signed one-shot graph mutation grants, durable mutation evidence, fail-closed mutation authority, and typed reasoning topology in docs/architecture/runtime_v3_adaptive_learning_dag_5281.v1.json."
     },
     {
       "id": "governance.freedom_gate_aee",
-      "disposition": "live_equivalent_fixture",
+      "disposition": "runtime_v3_fixture_only",
       "proof": "#5282 records direct Runtime v3 governance/Freedom Gate/AEE proof covering signed gate-before-actuation, fail-closed admission, signed linked delegation, revocation and resource refusal evidence, signed appeal/operator review, bounded AEE quarantine, cancellation/checkpoint safety, checkpointed recovery, and typed governance topology in docs/architecture/runtime_v3_governance_freedom_gate_aee_5282.v1.json."
     },
     {
       "id": "contracts.delegation_resources",
-      "disposition": "live_equivalent_fixture",
+      "disposition": "runtime_v3_fixture_only",
       "proof": "#5283 records direct Runtime v3 delegation/resource contract proof covering signed attenuating delegation, remaining-depth enforcement, resource exhaustion and revocation refusal evidence, cancellation permit cleanup, checkpointed contract-history recovery, fail-closed policy/dependency admission, one contract/lifecycle model, bounded inbox and resource backpressure, idempotency/retry bounds, governed shutdown drain, and bounded timeout/failure classes in docs/architecture/runtime_v3_delegation_resources_5283.v1.json."
     },
     {
       "id": "agents.providers_scheduler",
-      "disposition": "live_equivalent_fixture",
+      "disposition": "runtime_v3_fixture_only",
       "proof": "#5284 proves Runtime v3 agent/provider/scheduler component parity with a supervised operational topology fixture: chronosense starts before scheduler, scheduler starts before governed provider, provider/scheduler/lifelog start before agent_runtime, agent_runtime, scheduler, and governed provider all admit work through their component inboxes, provider authority is signed, active provider work drains on governed shutdown, and post-shutdown provider admission fails closed. Existing operations fixtures also cover representative topology, idempotency, retry, timeout, and bounded concurrency."
     },
     {
       "id": "network.acip_a2a_cloud",
-      "disposition": "live_equivalent_fixture",
+      "disposition": "runtime_v3_fixture_only",
       "proof": "#5285 records direct Runtime v3 ACIP/A2A/cloud network-boundary proof covering local signed control API isolation, control port 20997, graceful API shutdown drain, stdout/stderr observability separation, Vector-owned CloudWatch EMF route shape, sysinfo network weather counters, credential-free configuration, and safe non-claims for live external cloud delivery in docs/architecture/runtime_v3_acip_a2a_cloud_network_5285.v1.json."
     },
     {
@@ -109,7 +110,8 @@
     }
   ],
   "summary": {
-    "live_equivalent_fixture": 10,
+    "live_equivalent_fixture": 1,
+    "runtime_v3_fixture_only": 9,
     "accepted_intentional_divergence": 7,
     "retained_v2_behavior_behind_adapter": 1,
     "deferred_non_cutover_surface": 0,
@@ -119,6 +121,7 @@
     "This packet does not authorize Runtime v3 as the default runtime.",
     "This packet does not delete Runtime v2.",
     "Blocker and deferred dispositions are not counted as passed parity.",
-    "This packet records that Runtime v2 internal reuse is not authorized for Runtime v3 parity credit; it does not independently prove implementation-boundary equivalence."
+    "This packet records that Runtime v2 internal reuse is not authorized for Runtime v3 parity credit; it does not independently prove implementation-boundary equivalence.",
+    "Nine direct Runtime v3 fixture packets are classified as Runtime v3-only and do not count as live v2/v3 equivalence."
   ]
 }

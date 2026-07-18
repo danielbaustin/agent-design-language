@@ -5,7 +5,7 @@
   "target_version": "v0.91.7",
   "created_at_utc": "2026-07-12T23:10:00Z",
   "capability": "kernel.lifecycle",
-  "disposition": "live_equivalent_fixture",
+  "disposition": "runtime_v3_fixture_only",
   "runtime_v2_default_preserved": true,
   "runtime_v2_internal_reuse": false,
   "default_runtime_switch_authorized": false,

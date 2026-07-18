@@ -408,7 +408,7 @@ async fn axum_adapter_serves_signed_control_payloads() {
 }
 
 #[tokio::test]
-async fn observatory_feed_serves_runtime_owned_read_projection_without_mutation_authority() {
+async fn observatory_https_feed_requires_bearer_and_reports_weather_freshness() {
     let key = SigningKey::from_bytes(&[12; 32]);
     let recorder = RuntimeRecorder::new(8);
     recorder.set_topology_generation(11);
@@ -491,25 +491,55 @@ async fn observatory_feed_serves_runtime_owned_read_projection_without_mutation_
         ResourceState::Healthy,
     );
     assert_eq!(weather.shutdown_decision, ShutdownDecision::Continue);
-    service.set_weather_report(weather);
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_millis() as u64;
+    service.set_weather_stale_after(Duration::from_secs(1));
+    service.set_weather_report_at(weather.clone(), now);
+    service
+        .set_observatory_bearer_token("test-observatory-token-0000000001")
+        .unwrap();
 
     let listener = tokio::net::TcpListener::bind((TEST_BIND_HOST, 0))
         .await
         .unwrap();
     let address = listener.local_addr().unwrap();
     let (tls, client) = test_https().await;
-    let server = tokio::spawn(serve_control_listener(service, listener, tls));
-    let response = https_request(
+    let server = tokio::spawn(serve_control_listener(service.clone(), listener, tls));
+    let preflight = https_request(
+        &client,
+        address,
+        b"OPTIONS /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://localhost:8765\r\nAccess-Control-Request-Method: GET\r\nAccess-Control-Request-Headers: authorization\r\nConnection: close\r\n\r\n",
+    )
+    .await;
+    assert!(preflight.starts_with("HTTP/1.1 204 No Content"));
+    assert!(preflight.contains("access-control-allow-origin: https://localhost:8765"));
+    assert!(preflight.contains("access-control-allow-methods: GET"));
+    assert!(preflight.contains("access-control-allow-headers: Authorization"));
+    assert!(preflight.contains("cache-control: no-store"));
+    let unauthorized = https_request(
         &client,
         address,
         b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://localhost:8765\r\nConnection: close\r\n\r\n",
     )
     .await;
+    assert!(unauthorized.starts_with("HTTP/1.1 401 Unauthorized"));
+    assert!(unauthorized.contains("cache-control: no-store"));
+    let response = https_request(
+        &client,
+        address,
+        b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://localhost:8765\r\nAuthorization: Bearer test-observatory-token-0000000001\r\nConnection: close\r\n\r\n",
+    )
+    .await;
     assert!(response.starts_with("HTTP/1.1 200 OK"));
+    assert!(response.contains("cache-control: no-store"));
+    assert!(!response.contains(adl_runtime_kernel::LEGACY_OBSERVATORY_FEED_SCHEMA));
     assert!(response.contains("access-control-allow-origin: https://localhost:8765"));
     assert!(response.contains(adl_runtime_kernel::OBSERVATORY_FEED_SCHEMA));
     assert!(response.contains("\"runtime_selection\":\"runtime_v3_explicit_opt_in\""));
     assert!(response.contains("\"signed_commands_required_for_mutation\":true"));
+    assert!(response.contains("\"bearer_token_required_for_read\":true"));
     assert!(response.contains("\"browser_mutation_authority\":false"));
     assert!(response.contains(&format!("\"port\":{}", address.port())));
     assert!(response.contains("\"event\":\"state:Running\""));
@@ -519,6 +549,17 @@ async fn observatory_feed_serves_runtime_owned_read_projection_without_mutation_
     assert!(response.contains("\"runtime_v2_decommission_authorized\":false"));
     assert!(response.contains("\"total_count\":1"));
     assert!(response.contains("\"id\":\"agent-0001\""));
+    assert!(response.contains("\"stale\":false"));
+
+    service.set_weather_report_at(weather, 0);
+    let stale = https_request(
+        &client,
+        address,
+        b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer test-observatory-token-0000000001\r\nConnection: close\r\n\r\n",
+    )
+    .await;
+    assert!(stale.starts_with("HTTP/1.1 200 OK"));
+    assert!(stale.contains("\"stale\":true"));
     server.abort();
 }
 
@@ -575,6 +616,9 @@ async fn observatory_cors_allows_only_configured_origins_and_reports_canonical_p
         4,
         ["https://observatory.example.test".to_owned()],
     ));
+    service
+        .set_observatory_bearer_token("test-observatory-token-0000000002")
+        .unwrap();
     let listener = tokio::net::TcpListener::bind((TEST_BIND_HOST, 0))
         .await
         .unwrap();
@@ -585,7 +629,7 @@ async fn observatory_cors_allows_only_configured_origins_and_reports_canonical_p
     let response = https_request(
         &client,
         address,
-        b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://observatory.example.test\r\nConnection: close\r\n\r\n",
+        b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://observatory.example.test\r\nAuthorization: Bearer test-observatory-token-0000000002\r\nConnection: close\r\n\r\n",
     )
     .await;
     assert!(response.starts_with("HTTP/1.1 200 OK"));
@@ -595,7 +639,7 @@ async fn observatory_cors_allows_only_configured_origins_and_reports_canonical_p
     let response = https_request(
         &client,
         address,
-        b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://other.example.test\r\nConnection: close\r\n\r\n",
+        b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://other.example.test\r\nAuthorization: Bearer test-observatory-token-0000000002\r\nConnection: close\r\n\r\n",
     )
     .await;
     assert!(response.starts_with("HTTP/1.1 200 OK"));
