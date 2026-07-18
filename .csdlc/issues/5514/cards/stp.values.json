@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5514,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][coverage] Preserve the complete ADL CSM suite in Runtime v3 bridge coverage",
+    "slug": "v0-91-7-complete-csm-coverage",
+    "version": "v0.91.7",
+    "generation": 5
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Restore all valid ADL CSM selectors in the exact bridge partition without changing runtime behavior, coverage thresholds, Runtime v2, or AWS lanes.",
+      "deliverables": [
+        "Complete owning-workspace ADL CSM expression",
+        "Regression assertion for every retained ADL selector",
+        "Passing #5504 changed-source coverage proof"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Exact canonical-expression matching remains fail closed",
+        "AC-2: Every valid ADL CSM selector in the canonical expression reaches the ADL workspace",
+        "AC-3: Runtime v3 auth, supervision, and topology selectors reach only adl-runtime",
+        "AC-4: The nonexistent adl::cli_smoke selector and Runtime v2 remain absent",
+        "AC-5: The #5504 changed-source coverage gate passes without lowering thresholds"
+      ],
+      "dependencies": [
+        "Issue #5512 workspace partition merged",
+        "PR #5504 run 29645093147 retained failure evidence"
+      ],
+      "repo_inputs": [
+        "adl/tools/run_pr_fast_coverage_lane.sh",
+        "adl/tools/test_run_pr_fast_coverage_lane.sh",
+        "GitHub run 29645093147 job 88081915666"
+      ],
+      "non_goals": [
+        "Production runtime changes",
+        "Runtime v2 source or tests",
+        "Coverage threshold changes",
+        "AWS execution"
+      ]
+    }
+  }
+}

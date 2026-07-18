@@ -1,0 +1,13 @@
+{
+  "issue": 5516,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "3aeb045a5847e4c33dde7cd991e4f252102e12bea3328b5b234a3d6836193c95",
+  "claim_id": "claim-5516-5494-terminal-design-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact PR-head review passed after typed publication recovery; all three findings are fixed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "issue": 5494,
+  "expected_generation": 17,
+  "expected_digest": "4f1bf422079aa46554485e6a0503f07d1aa0bcc4d57b355a2112150621e1e093",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "subagent:019f7478-1e9d-7dc0-9492-9e48ab672b0b",
+  "evidence": {
+    "reviewer": "subagent:019f7478-1e9d-7dc0-9492-9e48ab672b0b",
+    "scope": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/supervision.rs",
+      "adl-runtime/src/topology.rs",
+      "adl/src/csm_runtime_api.rs",
+      "adl/src/long_lived_agent.rs",
+      "adl/src/long_lived_agent/tests.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ],
+    "reviewed_revision": "git-blake3:6289f938e64f0cb9fec96e98c45e40e485dfbcdf:6692bfcc0a549c1fe5cc9b1895e1679da81d6f5c2c2f530912859f7426bf2a7d",
+    "findings": [],
+    "residual_risks": [
+      "Strict all-target Clippy is blocked by two pre-existing cav.rs test warnings outside #5494."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

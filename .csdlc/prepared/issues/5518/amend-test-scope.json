@@ -1,0 +1,10 @@
+{
+  "issue": 5518,
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "expected_generation": 7,
+  "expected_digest": "f1087cfb005bfce3ca4cbf0f4a3483492271427b5f8ceb11039ebcb016e7f7fa",
+  "now_unix_seconds": 1784387769,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Add the actual Store-level terminal lifecycle integration test path found during review remediation.",
+  "add_protected_paths": ["csdlc-v2/tests/gate7_lifecycle.rs"]
+}

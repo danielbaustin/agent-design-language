@@ -1,0 +1,29 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "80cab1a40ccb8a0a30d152f1d81b2afeb459cf6681b3580ad92759568c4e98fe",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Implement the narrow typed terminal plan-step repair and use it to correct #5516.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Add a forward-only, cross-issue terminal plan-step repair with atomic receipt rollback, then complete #5516 SPP S3.",
+    "changes": [
+      "Add TerminalPlanStepRepairRequest to the public typed schema",
+      "Add csdlc-closeout repair-plan-step command",
+      "Require distinct active authority and closed-out claim-free target with exact receipt CAS",
+      "Permit only pending or in-progress SPP step completion",
+      "Regenerate projections, audit, record digest, and receipt atomically with rollback",
+      "Repair #5516 SPP S3 from pending to completed"
+    ],
+    "artifacts": [
+      "csdlc-v2/src/model.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/lib.rs",
+      ".csdlc/issues/5516"
+    ]
+  }
+}

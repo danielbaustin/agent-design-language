@@ -533,7 +533,7 @@ for required_fragment in (
     '--status-level all',
     '--final-status-level slow',
     '--no-report',
-    '-E "$FILTER_EXPRESSION"',
+    '-E "$adl_filter_expression"',
     'coverage_args+=(--test-threads "$TEST_THREADS")',
     'PR-fast coverage test threads: nextest-default',
     'CARGO_INCREMENTAL=0 cargo "${coverage_args[@]}"',

@@ -1,0 +1,21 @@
+{
+  "issue": 5512,
+  "base_branch": "main",
+  "branch": "codex/5512-runtime-v3-csm-coverage-filter",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5512-runtime-v3-csm-coverage-filter",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784377277,
+    "expires_unix_seconds": 1784463677,
+    "heartbeat_unix_seconds": 1784377277,
+    "branch": "codex/5512-runtime-v3-csm-coverage-filter",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Keep foreign Runtime v3 and nonexistent binary selectors out of ADL focused coverage"
+  }
+}

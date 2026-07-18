@@ -1,0 +1,315 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5494
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: complete
+
+## Summary
+
+Strengthen retained lifecycle replay assertions and preserve shared-lock concurrency for ordinary API authorization.
+
+## Artifacts
+
+- adl-runtime/src/runtime_api_auth.rs
+- adl-runtime/src/topology.rs
+- adl/src/csm_runtime_api.rs
+- docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md
+- docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md
+- adl-runtime/src/runtime_api_auth.rs
+- adl-runtime/src/supervision.rs
+- adl-runtime/src/topology.rs
+- adl/src/csm_runtime_api.rs
+- adl/src/long_lived_agent.rs
+- adl/src/long_lived_agent/tests.rs
+- docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md
+- docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md
+- adl-runtime/src/runtime_api_auth.rs
+- adl-runtime/src/runtime_api_auth.rs
+- adl-runtime/src/runtime_api_auth.rs
+- adl/src/csm_runtime_api.rs
+- docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md
+- docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md
+- adl/src/cli/csmctl_cmd.rs
+- adl-runtime/src/topology.rs
+- adl/src/long_lived_agent/tests.rs
+- docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md
+- docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md
+- adl-runtime/src/runtime_api_auth.rs
+- adl-runtime/src/topology.rs
+- docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md
+- docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md
+
+## Execution
+
+- Report the real daemon-supervised-cycle production model and remove static all-ready topology claims
+- Normalize all sixteen component observations and fail readiness closed for required unhealthy components or typed channels
+- Run 100 supervised Tokio task/channel cycles with injected failure, restart, recovery, and retained replay
+- Retain one previous API bearer generation for five minutes while terminal revocation rejects both generations
+- Renew expired non-revoked credentials and report the actual clipped overlap duration
+- Derive required readiness directly from runtime channel policy, including Audit and Evidence
+- Keep weather in Runtime v3 and limit the CSM production assembly to its fifteen owned components
+- Exercise the exact production daemon cycle for 100 real ticks with injected failure and recovery
+- Correct the retained repair document and sprint register to match the proving implementation
+- Delegate public rotation to a deterministic rotate_at transaction
+- Use the same timestamp for prior-generation overlap and replacement creation
+- Add a deterministic one-second-overlap regression test
+- Serialize ensure, rotate, and revoke mutations through a private 0600 fs2 lock file
+- Keep timestamp capture inside the acquired mutation lock
+- Add concurrent rotation-versus-revocation regression coverage
+- Serialize final authorization decisions under a shared fs2 credential lock while mutations retain the exclusive lock
+- Verify gateway identity signatures against the exact current or still-valid previous bearer generation
+- Add deterministic revocation serialization and integrated previous-generation gateway overlap regressions
+- Document shared-lock authorization serialization and matching-generation gateway overlap
+- Update Runtime v3 validation counts to 124 unit tests, 1 independence test, and 11 focused credential tests
+- Keep exact-head re-review, PR checks, merge, and lifecycle closeout explicitly pending
+- Keep the existing two-second connection timeout and bounded connection retry loop
+- Allow a listening runtime up to fifteen seconds to produce an authenticated response under heavy instrumentation load
+- Run 100 supervised Runtime v3 task cycles and 101 attempts through every real RuntimeChannelFabric channel
+- Retain injected failure, restart, recovery, and durable lifecycle replay assertions
+- Exercise the unmodified production daemon entrypoint for three real ticks with one injected workflow failure and recovery
+- Remove the issue-local helper from the 4.7K-line legacy daemon source
+- Assert retained lifecycle status, contiguous sequence numbers, and the NotReady-to-restart-to-Ready replay transition
+- Narrow documentation to retained lifecycle-journal sequence and readiness replay rather than generic durable replay
+- Use a shared-lock authorization fast path and escalate to the exclusive mutation lock only for creation or renewal
+- Add a regression proving ordinary authorization proceeds while another shared credential lock is held
+
+## Validation
+
+[
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml"
+    ],
+    "purpose": "Prove supervision, topology, credential overlap, weather independence, and the real 100-cycle task/channel soak",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 122 unit tests plus 1 independence test passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "csm_runtime_api"
+    ],
+    "purpose": "Prove observed component/channel readiness, fail-closed missing observations, and HTTP credential overlap/revocation",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 44 focused CSM runtime API tests passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml"
+    ],
+    "purpose": "Prove credential recovery, exact overlap reporting, CSM ownership boundaries, and Runtime v3 weather independence",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 121 unit tests plus 1 independence test passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "csm_runtime_api"
+    ],
+    "purpose": "Prove all policy-required channel blockers, fifteen CSM component observations, credential renewal, and revocation",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 44 focused CSM runtime API tests passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "long_lived_agent::tests::production_daemon_cycle_soak_runs_real_ticks_channels_and_recovery",
+      "--",
+      "--exact",
+      "--nocapture"
+    ],
+    "purpose": "Prove 100 production tick cycles over typed Runtime v3 channels with one injected failure and recovery on the same context",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 100 successful production cycles, one injected failure, recovery, 27.78 seconds"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml",
+      "runtime_api_auth::tests"
+    ],
+    "purpose": "Prove credential creation, renewal, expired recovery, overlap, revocation, and the exact one-second rotation boundary",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 9 credential-store tests passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml",
+      "runtime_api_auth::tests"
+    ],
+    "purpose": "Prove all credential lifecycle behavior plus concurrent rotation and terminal revocation serialization",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 10 credential-store tests passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml",
+      "&&",
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "csm_runtime_api"
+    ],
+    "purpose": "Prove the complete Runtime v3 crate, independence boundary, and integrated CSM API after final credential concurrency remediation",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 123 runtime unit tests, 1 independence test, and 44 focused CSM API tests passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml",
+      "runtime_api_auth::tests"
+    ],
+    "purpose": "Prove credential lifecycle, authorization-versus-revocation serialization, and current/previous gateway signature validation",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 11 focused Runtime v3 credential tests passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "csm_runtime_api"
+    ],
+    "purpose": "Prove the complete CSM runtime API including bounded prior-generation bearer and gateway-signature overlap",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 44 focused CSM runtime API tests passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml"
+    ],
+    "purpose": "Prove all Runtime v3 behavior and the independent-crate boundary after the review fixes",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 124 Runtime v3 unit tests plus 1 independence test passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml",
+      "--lib",
+      "--",
+      "-D",
+      "warnings",
+      "&&",
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings",
+      "-A",
+      "clippy::field_reassign_with_default"
+    ],
+    "purpose": "Prove warning-free Runtime v3 production code and all changed test targets without widening scope into unrelated CAV test cleanup",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: strict library clippy passed; all-target clippy passed with only the pre-existing cav.rs field-reassign lint exempted"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "csmctl_authenticated_api_client_",
+      "--",
+      "--nocapture"
+    ],
+    "purpose": "Prove normal authenticated access and delayed listener startup remain correct with the coverage-tolerant deadline",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 2 focused csmctl authenticated API tests passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml"
+    ],
+    "purpose": "Prove Runtime v3 behavior, crate independence, and the 100-cycle real typed-channel supervision soak",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 125 Runtime v3 unit tests plus 1 independence test passed; soak completed 100 cycles and 101 supervised attempts in 1.20 seconds"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "--lib",
+      "production_daemon_executes_real_ticks_and_recovers_after_child_failure"
+    ],
+    "purpose": "Prove the production daemon executes three real bounded ticks and cleanly recovers after one injected workflow failure",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 3 completed production daemon ticks, 1 injected failure, clean recovery; focused test completed in 16.77 seconds"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml"
+    ],
+    "purpose": "Prove both review fixes and all Runtime v3 behavior before exact-head re-review",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork: 126 Runtime v3 unit tests plus 1 independence test passed in 3.24 seconds; 44 CSM API tests and 3-cycle daemon recovery passed; all-target Runtime v3 Clippy and formatting passed"
+  }
+]
+
+## Integration
+
+merged
+
+## Publication
+
+Publication: closed
+
+Merge: merged
+
+## Closeout
+
+complete
+
+## Follow Ups
+
+- none

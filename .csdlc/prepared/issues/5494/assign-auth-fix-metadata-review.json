@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "expected_generation": 34,
+  "expected_digest": "1690b34a1fd5c96aff95de13f1e952452e15e3d2fe42cf80d0a154e084540ba2",
+  "claim_id": "claim-5494-wp07a-completion",
+  "reviewer": "subagent:019f74ae-d602-7d20-b7ef-e8964d851ea2",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    "adl-runtime/src/runtime_api_auth.rs",
+    "adl-runtime/src/supervision.rs",
+    "adl-runtime/src/topology.rs",
+    "adl/src/csm_runtime_api.rs",
+    "adl/src/long_lived_agent.rs",
+    "adl/src/long_lived_agent/tests.rs",
+    "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+    "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+  ]
+}

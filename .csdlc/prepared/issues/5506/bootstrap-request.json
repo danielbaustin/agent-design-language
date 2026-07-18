@@ -1,0 +1,131 @@
+{
+  "issue": 5506,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5506/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5506/diagram.mmd",
+  "design_reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5506-runtime-auth-coverage-map",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784367985,
+    "expires_unix_seconds": 1784454385,
+    "heartbeat_unix_seconds": 1784367985,
+    "branch": "codex/5506-runtime-auth-coverage-map",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Register focused Runtime v3 API-auth coverage without mixed runtime and policy escalation"
+  },
+  "initial": {
+    "title": "[v0.91.7][tooling][coverage] Register Runtime v3 API-auth coverage without mixed-lane escalation",
+    "slug": "v0-91-7-runtime-v3-auth-coverage-map",
+    "version": "v0.91.7",
+    "goal": "Map Runtime v3 API-auth source to its focused independent-crate coverage tests.",
+    "required_outcome": "Auth-only coverage runs the Runtime v3 auth tests, while mixed selections retain both workspace runs.",
+    "declared_scope": [
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "authority_boundary": [
+      "Issue #5506 owns only coverage tooling",
+      "Issue #5494 retains all Runtime v3 and CSM behavior",
+      "The existing Runtime v3 weather service remains unchanged"
+    ],
+    "task_boundary": "Extract and prove the four-file coverage mapping required by #5494.",
+    "deliverables": [
+      "Runtime v3 auth risk mapping",
+      "Independent-crate auth coverage route",
+      "Auth-only and mixed-selection contract tests"
+    ],
+    "acceptance_criteria": [
+      "AC1: runtime_api_auth.rs selects runtime_v3_auth",
+      "AC2: auth-only coverage runs against adl-runtime/Cargo.toml",
+      "AC3: mixed selections run both Runtime v3 and ADL workspace tests",
+      "AC4: focused shell contract tests pass",
+      "AC5: exact-revision review and required checks pass before merge"
+    ],
+    "dependencies": [
+      "Existing PR-fast coverage tooling",
+      "Existing runtime_api_auth unit tests"
+    ],
+    "repo_inputs": [
+      "PR #5504 failed hosted coverage run 29638880423",
+      "Issue #5494"
+    ],
+    "non_goals": [
+      "Runtime source changes",
+      "Runtime v3 weather changes",
+      "Legacy full-coverage flake repair",
+      "AWS execution"
+    ],
+    "plan_summary": "Extract the reviewed coverage mapping, validate auth-only and mixed execution, review, publish, and merge before rebasing #5494.",
+    "steps": [
+      {"id": "S1", "action": "Apply the four-file Runtime v3 auth coverage mapping", "status": "pending", "acceptance_ids": ["AC-1", "AC-2", "AC-3"]},
+      {"id": "S2", "action": "Run focused coverage-tool contract tests", "status": "pending", "acceptance_ids": ["AC-4"]},
+      {"id": "S3", "action": "Review, publish, and merge the tooling-only PR", "status": "pending", "acceptance_ids": ["AC-5"]}
+    ],
+    "risks": [
+      "Auth-only routing could accidentally suppress mixed ADL coverage",
+      "The nextest expression could select no tests"
+    ],
+    "invariants": [
+      "Mixed selectors retain ADL workspace coverage",
+      "Auth-only selection resolves at least one Runtime v3 test",
+      "No runtime source changes"
+    ],
+    "stop_conditions": [
+      "The mapping requires runtime source changes",
+      "Focused contract tests cannot prove both execution modes"
+    ],
+    "review_prompts": [
+      "Can auth-only routing skip required ADL tests for a mixed change?",
+      "Does the Runtime v3 expression select the intended tests?",
+      "Did any runtime source enter the diff?"
+    ],
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "coverage-impact-contracts",
+        "proof_role": "Prove source-to-risk mapping and expression selection",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "local-tooling",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": ["bash", "adl/tools/test_check_coverage_impact.sh"],
+        "acceptance_ids": ["AC-1", "AC-4"]
+      },
+      {
+        "lane": "pr-fast-coverage-contracts",
+        "proof_role": "Prove auth-only and mixed manifest routing",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "local-tooling",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": ["bash", "adl/tools/test_run_pr_fast_coverage_lane.sh"],
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4"]
+      },
+      {
+        "lane": "tooling-review-boundary",
+        "proof_role": "Prove the exact reviewed diff is limited to coverage tooling before publication",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "local-review",
+        "budget_seconds": 60,
+        "budget_tokens": 500,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-5"]
+      }
+    ],
+    "failure_policy": "Fail closed if auth source is unmapped, auth-only tests target the legacy workspace, mixed selectors skip ADL tests, or runtime source changes."
+  }
+}

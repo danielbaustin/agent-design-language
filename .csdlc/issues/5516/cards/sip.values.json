@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5516,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Correct #5494 retained Runtime v3 design truth",
+    "slug": "v0-91-7-wp07a-correct-5494-retained-runtime-v3-design",
+    "version": "v0.91.7",
+    "generation": 19
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make the retained #5494 design and diagram agree with the merged Runtime v3 and CSM proof paths.",
+      "required_outcome": "Typed terminal design repair replaces the stale Runtime v2-only claim, preserves Runtime v3 weather ownership, and regenerates durable design digests.",
+      "declared_scope": [
+        ".csdlc/issues/5494 terminal design and diagram",
+        ".csdlc/issues/5516 lifecycle records",
+        "WP-07A repair and milestone review documentation"
+      ],
+      "authority_boundary": [
+        "Issue #5516 authorizes only terminal design truth repair",
+        "PR #5504 implementation and validation truth remain unchanged",
+        "Runtime v3 remains the sole weather-service owner"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "issue": 5512,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "51107192c7b529d0ba6048420b26630ee0399529c33acbefaf89dfefa922523e",
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Both review findings are fixed and the exact-head re-review is clean.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

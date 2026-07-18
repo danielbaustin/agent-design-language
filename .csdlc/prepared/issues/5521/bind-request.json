@@ -1,0 +1,22 @@
+{
+  "issue": 5521,
+  "base_branch": "main",
+  "branch": "codex/5521-terminal-plan-repair",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5521-terminal-plan-repair",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784390428,
+    "expires_unix_seconds": 1784476828,
+    "heartbeat_unix_seconds": 1784390428,
+    "branch": "codex/5521-terminal-plan-repair",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5518",
+      ".csdlc/issues/5521",
+      ".csdlc/prepared/issues/5521"
+    ],
+    "purpose": "Complete #5518 SPP S4 through the typed terminal repair"
+  }
+}

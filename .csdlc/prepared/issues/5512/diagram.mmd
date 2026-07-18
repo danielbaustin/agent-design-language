@@ -1,0 +1,8 @@
+flowchart LR
+  I["Impact expression"] --> D{"Bounded Runtime v3 and CSM bridge?"}
+  D -->|yes| A["ADL CSM coverage filter"]
+  D -->|yes| R["Runtime v3 coverage filter"]
+  A --> S["Composed coverage summary"]
+  R --> S
+  D -->|no| G["Existing generic fail-closed route"]
+

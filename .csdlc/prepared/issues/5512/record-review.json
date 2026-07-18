@@ -1,0 +1,43 @@
+{
+  "issue": 5512,
+  "expected_generation": 4,
+  "expected_digest": "8d5061a146999fea281e5cb01634df076770ddd2509a3282571623ac3d3a3b6a",
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "actor": "subagent:019f7532-dfd0-7b52-a750-7df6cce35b42",
+  "evidence": {
+    "reviewer": "subagent:019f7532-dfd0-7b52-a750-7df6cce35b42",
+    "scope": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "reviewed_revision": "git-blake3:b3e00aa1d966bdead5c7bd39c442017619086625:3bbd97871d2832a3ab91d55cb480cb7498ca97c87e64224bc6d88c77d6e076de",
+    "findings": [
+      {
+        "id": "F-5512-1",
+        "severity": "p2",
+        "summary": "Substring bridge detection could silently discard unrelated coverage selectors.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:b3e00aa1d966bdead5c7bd39c442017619086625:3bbd97871d2832a3ab91d55cb480cb7498ca97c87e64224bc6d88c77d6e076de",
+        "route": null
+      },
+      {
+        "id": "F-5512-2",
+        "severity": "p3",
+        "summary": "Zero-valued fake summaries did not prove both coverage inputs were composed.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:b3e00aa1d966bdead5c7bd39c442017619086625:3bbd97871d2832a3ab91d55cb480cb7498ca97c87e64224bc6d88c77d6e076de",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Hosted CI remains the final proof that the exact #5504 expression interoperates with the GitHub llvm-cov and nextest toolchain."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}
+

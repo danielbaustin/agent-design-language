@@ -1,0 +1,25 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 47,
+  "expected_digest": "17c4b9fc43b8f1074f98ff98aa1884a9ce53a436840dfe32e7c4d89fbd15d0af",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fix both actionable findings from the bounded soak exact-head review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Strengthen retained lifecycle replay assertions and preserve shared-lock concurrency for ordinary API authorization.",
+    "changes": [
+      "Assert retained lifecycle status, contiguous sequence numbers, and the NotReady-to-restart-to-Ready replay transition",
+      "Narrow documentation to retained lifecycle-journal sequence and readiness replay rather than generic durable replay",
+      "Use a shared-lock authorization fast path and escalate to the exclusive mutation lock only for creation or renewal",
+      "Add a regression proving ordinary authorization proceeds while another shared credential lock is held"
+    ],
+    "artifacts": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/topology.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ]
+  }
+}

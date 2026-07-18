@@ -38,7 +38,13 @@ if [[ "${ADL_FAKE_CARGO_FAIL:-0}" == 1 && "$*" == *"llvm-cov nextest"* ]]; then
 fi
 if [ -n "$out_path" ]; then
   mkdir -p "$(dirname "$out_path")"
-  printf '{"data":[{"files":[],"totals":{"branches":{"count":0,"covered":0,"notcovered":0,"percent":0.0},"mcdc":{"count":0,"covered":0,"notcovered":0,"percent":0.0},"functions":{"count":0,"covered":0,"percent":0.0},"instantiations":{"count":0,"covered":0,"percent":0.0},"lines":{"count":0,"covered":0,"percent":0.0},"regions":{"count":0,"covered":0,"notcovered":0,"percent":0.0}}}]}\n' > "$out_path"
+  if [[ "$out_path" == *"coverage-impact-summary.adl-runtime.json" ]]; then
+    printf '{"data":[{"files":[{"filename":"adl-runtime/src/runtime_api_auth.rs"}],"totals":{"branches":{"count":3,"covered":2,"notcovered":1,"percent":66.7},"mcdc":{"count":0,"covered":0,"notcovered":0,"percent":0.0},"functions":{"count":3,"covered":2,"percent":66.7},"instantiations":{"count":0,"covered":0,"percent":0.0},"lines":{"count":7,"covered":6,"percent":85.7},"regions":{"count":4,"covered":3,"notcovered":1,"percent":75.0}}}]}\n' > "$out_path"
+  elif [[ "$out_path" == *"coverage-impact-summary.adl.json" ]]; then
+    printf '{"data":[{"files":[{"filename":"adl/src/csm_runtime_api.rs"}],"totals":{"branches":{"count":2,"covered":1,"notcovered":1,"percent":50.0},"mcdc":{"count":0,"covered":0,"notcovered":0,"percent":0.0},"functions":{"count":2,"covered":2,"percent":100.0},"instantiations":{"count":0,"covered":0,"percent":0.0},"lines":{"count":5,"covered":4,"percent":80.0},"regions":{"count":3,"covered":2,"notcovered":1,"percent":66.7}}}]}\n' > "$out_path"
+  else
+    printf '{"data":[{"files":[],"totals":{"branches":{"count":0,"covered":0,"notcovered":0,"percent":0.0},"mcdc":{"count":0,"covered":0,"notcovered":0,"percent":0.0},"functions":{"count":0,"covered":0,"percent":0.0},"instantiations":{"count":0,"covered":0,"percent":0.0},"lines":{"count":0,"covered":0,"percent":0.0},"regions":{"count":0,"covered":0,"notcovered":0,"percent":0.0}}}]}\n' > "$out_path"
+  fi
 fi
 exit 0
 EOF
@@ -203,6 +209,105 @@ grep -F "cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml" 
 grep -F "cmd=llvm-cov report --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --json --summary-only --output-path $ROOT_DIR/adl/target/coverage-impact-summary.json" "$guardian_only_cargo_log" >/dev/null
 if [ ! -s "$ROOT_DIR/adl/target/coverage-impact-summary.json" ]; then
   echo "expected merged PR-fast coverage summary" >&2
+  exit 1
+fi
+
+runtime_auth_only_cargo_log="$temp_root/cargo-runtime-auth-only.log"
+runtime_auth_only_expression='test(/^runtime_api_auth::tests::/)'
+PATH="$bin_dir:$PATH" \
+PR_FAST_COVERAGE_CARGO_LOG="$runtime_auth_only_cargo_log" \
+ADL_RUST_WARM_CACHE=0 \
+ADL_PR_FAST_COVERAGE_BUILD_ROOT="$scratch_root-runtime-auth-only" \
+  bash "$SCRIPT" --filter-expression "$runtime_auth_only_expression" >"$temp_root/pr-fast-coverage-runtime-auth-only-run.out"
+if grep -Fq "cmd=llvm-cov nextest --workspace" "$runtime_auth_only_cargo_log"; then
+  echo "runtime-auth-only coverage must not send an adl-runtime selector to the adl workspace" >&2
+  exit 1
+fi
+grep -F "PR-fast coverage companion: adl-runtime Runtime v3 API auth tests" "$temp_root/pr-fast-coverage-runtime-auth-only-run.out" >/dev/null
+grep -F "cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml" "$runtime_auth_only_cargo_log" >/dev/null
+grep -F "test(/^runtime_api_auth::tests::/)" "$runtime_auth_only_cargo_log" >/dev/null
+
+runtime_auth_mixed_cargo_log="$temp_root/cargo-runtime-auth-mixed.log"
+runtime_auth_mixed_expression='binary_id(adl) and test(/^csm_runtime_api::tests::/) or test(/^runtime_api_auth::tests::/)'
+PATH="$bin_dir:$PATH" \
+PR_FAST_COVERAGE_CARGO_LOG="$runtime_auth_mixed_cargo_log" \
+ADL_RUST_WARM_CACHE=0 \
+ADL_PR_FAST_COVERAGE_BUILD_ROOT="$scratch_root-runtime-auth-mixed" \
+  bash "$SCRIPT" --filter-expression "$runtime_auth_mixed_expression" >"$temp_root/pr-fast-coverage-runtime-auth-mixed-run.out"
+grep -F "cmd=llvm-cov nextest --workspace" "$runtime_auth_mixed_cargo_log" >/dev/null
+grep -F "cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml" "$runtime_auth_mixed_cargo_log" >/dev/null
+grep -F "cmd=llvm-cov report --json --summary-only --output-path $ROOT_DIR/adl/target/coverage-impact-summary.adl.json" "$runtime_auth_mixed_cargo_log" >/dev/null
+grep -F "cmd=llvm-cov report --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --json --summary-only --output-path $ROOT_DIR/adl/target/coverage-impact-summary.adl-runtime.json" "$runtime_auth_mixed_cargo_log" >/dev/null
+
+runtime_v3_csm_bridge_cargo_log="$temp_root/cargo-runtime-v3-csm-bridge.log"
+runtime_v3_csm_bridge_expression='test(/^runtime_api_auth::tests::/) or (binary_id(adl) and (test(/^csm_runtime_api::/) or test(/^csm_backpressure::/) or test(/^csm_cav::/) or test(/^csm_constructability_gate::/) or test(/^csm_freedom_gate::/) or test(/^csm_godel_snapshot::/) or test(/^csm_shepherd_agent::/) or test(/^long_lived_agent::/) or test(/^cli::csm_service_cmd::/) or test(/^cli::csm_cmd::tests::/)) or binary_id(adl::cli_smoke) and test(/^agent::csm_/)) and not test(governed_notice_retains_spool_and_cursor_for_ambiguous_timeout) or test(csmctl) or test(csm_service)'
+PATH="$bin_dir:$PATH" \
+PR_FAST_COVERAGE_CARGO_LOG="$runtime_v3_csm_bridge_cargo_log" \
+ADL_RUST_WARM_CACHE=0 \
+ADL_PR_FAST_COVERAGE_BUILD_ROOT="$scratch_root-runtime-v3-csm-bridge" \
+  bash "$SCRIPT" --filter-expression "$runtime_v3_csm_bridge_expression" >"$temp_root/pr-fast-coverage-runtime-v3-csm-bridge-run.out"
+adl_bridge_command="$(grep -F "cmd=llvm-cov nextest --workspace" "$runtime_v3_csm_bridge_cargo_log")"
+expected_adl_bridge_command='cmd=llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E ((binary_id(adl) and (test(/^csm_runtime_api::/) or test(/^csm_backpressure::/) or test(/^csm_cav::/) or test(/^csm_constructability_gate::/) or test(/^csm_freedom_gate::/) or test(/^csm_godel_snapshot::/) or test(/^csm_shepherd_agent::/) or test(/^long_lived_agent::/))) and not test(governed_notice_retains_spool_and_cursor_for_ambiguous_timeout)) or (binary_id(adl::bin/adl) and (test(/^cli::csm_service_cmd::/) or test(/^cli::csm_cmd::tests::/) or test(csmctl) or test(csm_service)))'
+if [ "$adl_bridge_command" != "$expected_adl_bridge_command" ]; then
+  echo "Runtime v3/CSM bridge coverage did not use the owning ADL filter" >&2
+  printf 'expected: %s\nactual:   %s\n' "$expected_adl_bridge_command" "$adl_bridge_command" >&2
+  exit 1
+fi
+if [[ "$adl_bridge_command" == *"adl::cli_smoke"* || "$adl_bridge_command" == *"runtime_api_auth"* ]]; then
+  echo "Runtime v3/CSM ADL coverage retained a foreign selector" >&2
+  exit 1
+fi
+for retained_adl_selector in \
+  'test(/^csm_runtime_api::/)' \
+  'test(/^csm_backpressure::/)' \
+  'test(/^csm_cav::/)' \
+  'test(/^csm_constructability_gate::/)' \
+  'test(/^csm_freedom_gate::/)' \
+  'test(/^csm_godel_snapshot::/)' \
+  'test(/^csm_shepherd_agent::/)' \
+  'test(/^long_lived_agent::/)' \
+  'test(/^cli::csm_service_cmd::/)' \
+  'test(/^cli::csm_cmd::tests::/)' \
+  'test(csmctl)' \
+  'test(csm_service)'
+do
+  if [[ "$adl_bridge_command" != *"$retained_adl_selector"* ]]; then
+    echo "Runtime v3/CSM ADL coverage discarded selector: $retained_adl_selector" >&2
+    exit 1
+  fi
+done
+if [[ "$adl_bridge_command" != *'binary_id(adl::bin/adl) and (test(/^cli::csm_service_cmd::/) or test(/^cli::csm_cmd::tests::/)'* ]]; then
+  echo "Runtime v3/CSM ADL coverage assigned CLI selectors to the wrong test binary" >&2
+  exit 1
+fi
+grep -F "cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml" "$runtime_v3_csm_bridge_cargo_log" >/dev/null
+grep -F "test(/^runtime_api_auth::/) or test(/^supervision::/) or test(/^topology::/)" "$runtime_v3_csm_bridge_cargo_log" >/dev/null
+if grep -Fq "runtime_v2" "$runtime_v3_csm_bridge_cargo_log"; then
+  echo "Runtime v3/CSM focused coverage must not select Runtime v2" >&2
+  exit 1
+fi
+jq -e '
+  .data[0].totals.lines.count == 12
+  and .data[0].totals.lines.covered == 10
+  and .data[0].totals.functions.count == 5
+  and .data[0].totals.functions.covered == 4
+  and ([.data[0].files[].filename] | sort) == ["adl-runtime/src/runtime_api_auth.rs", "adl/src/csm_runtime_api.rs"]
+' "$ROOT_DIR/adl/target/coverage-impact-summary.json" >/dev/null
+
+runtime_v3_csm_near_match_log="$temp_root/cargo-runtime-v3-csm-near-match.log"
+runtime_v3_csm_near_match_expression="$runtime_v3_csm_bridge_expression or test(/^trace_schema_v1::/)"
+PATH="$bin_dir:$PATH" \
+PR_FAST_COVERAGE_CARGO_LOG="$runtime_v3_csm_near_match_log" \
+ADL_RUST_WARM_CACHE=0 \
+ADL_PR_FAST_COVERAGE_BUILD_ROOT="$scratch_root-runtime-v3-csm-near-match" \
+  bash "$SCRIPT" --filter-expression "$runtime_v3_csm_near_match_expression" >"$temp_root/pr-fast-coverage-runtime-v3-csm-near-match-run.out"
+near_match_adl_command="$(grep -F "cmd=llvm-cov nextest --workspace" "$runtime_v3_csm_near_match_log")"
+if [[ "$near_match_adl_command" != *"test(/^trace_schema_v1::/)"* ]]; then
+  echo "near-match coverage expression was silently narrowed" >&2
+  exit 1
+fi
+if grep -Fq "PR-fast coverage ADL bridge expression:" "$temp_root/pr-fast-coverage-runtime-v3-csm-near-match-run.out"; then
+  echo "near-match coverage expression entered the bounded bridge route" >&2
   exit 1
 fi
 

@@ -1,0 +1,18 @@
+{
+  "issue": 5506,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "32434cb27fbd5fdb0efc3f2aa11c042edf6f2cbb8103123ab9fcfd3f446d4278",
+  "claim_id": "claim-5506-runtime-auth-coverage-map",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The real nextest inventory resolved the focused Runtime v3 auth expression.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "nextest", "list", "--manifest-path", "adl-runtime/Cargo.toml", "-E", "test(/^runtime_api_auth::tests::/)"],
+      "purpose": "Prove the mapped expression selects concrete Runtime v3 API-auth tests",
+      "outcome": "passed",
+      "evidence_ref": "local:5506-nextest-inventory-7-tests"
+    }
+  }
+}

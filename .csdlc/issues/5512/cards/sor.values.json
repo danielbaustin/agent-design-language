@@ -1,0 +1,63 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5512,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][CI] Remove foreign binary selectors from Runtime v3 CSM coverage",
+    "slug": "v0-91-7-runtime-v3-csm-coverage-filter",
+    "version": "v0.91.7",
+    "generation": 12
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Replace the invalid mixed coverage expression with valid ADL and Runtime v3 owning-crate expressions only for the bounded bridge route.",
+      "actual_changes": [
+        "Detect the already bounded Runtime v3 and CSM bridge selector family",
+        "Run the ADL coverage invocation with only CSM, long-lived-agent, and csmctl selectors",
+        "Run auth, supervision, and topology selectors only through adl-runtime",
+        "Use the exact failed GitHub expression as the regression fixture"
+      ],
+      "artifacts": [
+        "adl/tools/run_pr_fast_coverage_lane.sh",
+        "adl/tools/test_run_pr_fast_coverage_lane.sh"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_run_pr_fast_coverage_lane.sh"
+          ],
+          "purpose": "Prove owning-crate filter splitting, foreign-selector exclusion, and composed summaries",
+          "outcome": "passed",
+          "evidence_ref": "local:5512-exact-29644007246-expression-contract-pass"
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_ci_path_policy.sh"
+          ],
+          "purpose": "Prove the narrow repair preserves existing validation routing contracts",
+          "outcome": "passed",
+          "evidence_ref": "local:5512-ci-path-policy-contract-pass"
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_ci_runtime_contracts.sh"
+          ],
+          "purpose": "Prove the CI contract accepts the reviewed owning-crate coverage variable",
+          "outcome": "passed",
+          "evidence_ref": "local:5512-ci-runtime-contract-pass"
+        }
+      ],
+      "integration_state": "worktree_only",
+      "publication_state": "not_published",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

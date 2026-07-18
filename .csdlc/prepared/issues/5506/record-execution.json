@@ -1,0 +1,25 @@
+{
+  "issue": 5506,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "512f9b5a12b213e0963ff17d1d8c0bb1b9e8269ea0dfef98fe8d930df1834201",
+  "claim_id": "claim-5506-runtime-auth-coverage-map",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Implemented the bounded Runtime v3 API-auth coverage mapping.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Mapped Runtime v3 API-auth source to focused independent-crate coverage while preserving both workspaces for mixed selections.",
+    "changes": [
+      "Map runtime_api_auth.rs to the runtime_v3_auth selector",
+      "Resolve runtime_v3_auth to the runtime_api_auth unit-test expression",
+      "Skip the ADL workspace for auth-only coverage and retain it for mixed expressions",
+      "Add auth-only and mixed-routing contract coverage"
+    ],
+    "artifacts": [
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ]
+  }
+}

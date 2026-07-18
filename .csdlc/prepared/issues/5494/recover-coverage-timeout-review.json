@@ -1,0 +1,8 @@
+{
+  "issue": 5494,
+  "expected_generation": 37,
+  "expected_digest": "bae002fbf34e5980b1cd8ca0e1d0378e397a47e5ef896074a25e18c8f26aac33",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover review identity after hosted coverage exposed a five-second authenticated API response deadline that is too short under instrumentation load."
+}

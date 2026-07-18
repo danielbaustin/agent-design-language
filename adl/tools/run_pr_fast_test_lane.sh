@@ -610,6 +610,7 @@ mode="full"
 reason="ordinary_pr_fast_lane_fails_closed_to_full_nextest"
 filter_tokens=""
 filter_expression=""
+runtime_filter_expression=""
 rust_surface_count=0
 structural_surface_count=0
 slow_proof_inventory_surface_count=0
@@ -624,6 +625,9 @@ saw_csdlc_binary_taxonomy_surface=false
 saw_adl_crate_surface=false
 saw_adl_runtime_crate_surface=false
 saw_other_relevant_fast_lane_surface=false
+bounded_runtime_v3_csm_bridge=true
+saw_runtime_v3_bridge_surface=false
+saw_csm_bridge_surface=false
 
 declare -a tokens=()
 declare -a family_tokens=()
@@ -671,6 +675,22 @@ while IFS= read -r path; do
   if ! is_relevant_fast_lane_surface "$path"; then
     continue
   fi
+  case "$path" in
+    adl-runtime/src/runtime_api_auth.rs|\
+    adl-runtime/src/supervision.rs|\
+    adl-runtime/src/topology.rs)
+      saw_runtime_v3_bridge_surface=true
+      ;;
+    adl/src/cli/csmctl_cmd.rs|\
+    adl/src/csm_runtime_api.rs|\
+    adl/src/long_lived_agent.rs|\
+    adl/src/long_lived_agent/tests.rs)
+      saw_csm_bridge_surface=true
+      ;;
+    *)
+      bounded_runtime_v3_csm_bridge=false
+      ;;
+  esac
   case "$path" in
     adl-runtime/*)
       saw_adl_runtime_crate_surface=true
@@ -738,6 +758,14 @@ EOF
 
 if [ "$classification_locked" = true ]; then
   :
+elif [ "$bounded_runtime_v3_csm_bridge" = true ] \
+  && [ "$saw_runtime_v3_bridge_surface" = true ] \
+  && [ "$saw_csm_bridge_surface" = true ]; then
+  mode="mixed_focused"
+  reason="bounded_runtime_v3_csm_bridge_runs_independent_focused_nextest"
+  filter_tokens="csm_runtime_agent,runtime_v3_kernel"
+  filter_expression='test(/^csm_runtime_api::/) or test(/^long_lived_agent::/) or test(/^cli::csmctl_cmd::/)'
+  runtime_filter_expression='test(/^runtime_api_auth::/) or test(/^supervision::/) or test(/^topology::/)'
 elif [ "$saw_adl_runtime_crate_surface" = true ] && { [ "$saw_adl_crate_surface" = true ] || [ "$saw_other_relevant_fast_lane_surface" = true ]; }; then
   mode="full"
   reason="mixed_adl_runtime_with_other_fast_lane_surfaces_requires_full_nextest"
@@ -792,6 +820,7 @@ emit "structural_surface_count" "$structural_surface_count"
 emit "slow_proof_inventory_surface_count" "$slow_proof_inventory_surface_count"
 emit "filter_tokens" "$filter_tokens"
 emit "filter_expression" "$filter_expression"
+emit "runtime_filter_expression" "$runtime_filter_expression"
 
 if [ "$JSON_OUTPUT" = true ]; then
   python3 - <<'PY' \
@@ -801,7 +830,8 @@ if [ "$JSON_OUTPUT" = true ]; then
     "$structural_surface_count" \
     "$slow_proof_inventory_surface_count" \
     "$filter_tokens" \
-    "$filter_expression"
+    "$filter_expression" \
+    "$runtime_filter_expression"
 import json
 import sys
 
@@ -813,6 +843,7 @@ import sys
     slow_proof_inventory_surface_count,
     filter_tokens,
     filter_expression,
+    runtime_filter_expression,
 ) = sys.argv[1:]
 
 print(json.dumps(
@@ -825,6 +856,7 @@ print(json.dumps(
         "slow_proof_inventory_surface_count": int(slow_proof_inventory_surface_count),
         "filter_tokens": filter_tokens,
         "filter_expression": filter_expression,
+        "runtime_filter_expression": runtime_filter_expression,
     },
     indent=2,
     sort_keys=True,
@@ -873,7 +905,17 @@ run_warm_cache() {
     bash "$ROOT_DIR/adl/tools/rust_validation_warm_cache.sh"
 }
 
-if [ "$mode" = "focused" ] || [ "$mode" = "family" ]; then
+if [ "$mode" = "mixed_focused" ]; then
+  run_warm_cache
+  echo "Running focused ADL CSM lane: $filter_expression"
+  cargo nextest run --status-level all --final-status-level slow -E "$filter_expression"
+  echo "Running focused Runtime v3 lane: $runtime_filter_expression"
+  cargo nextest run \
+    --manifest-path "$ROOT_DIR/adl-runtime/Cargo.toml" \
+    --status-level all \
+    --final-status-level slow \
+    -E "$runtime_filter_expression"
+elif [ "$mode" = "focused" ] || [ "$mode" = "family" ]; then
   run_warm_cache
   echo "Running $mode nextest lane: $filter_expression"
   cargo nextest run --status-level all --final-status-level slow -E "$filter_expression"

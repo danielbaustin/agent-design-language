@@ -1,0 +1,13 @@
+{
+  "issue": 5509,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "f258c5ac66122fab366b3ea294c131e01342716ccd09c2d426feb076f9a34eaa",
+  "claim_id": "claim-5509-runtime-v3-csm-fast-lane",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact-revision subagent review found no actionable findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

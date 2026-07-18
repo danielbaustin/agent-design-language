@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5512,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][CI] Remove foreign binary selectors from Runtime v3 CSM coverage",
+    "slug": "v0-91-7-runtime-v3-csm-coverage-filter",
+    "version": "v0.91.7",
+    "generation": 12
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "pr-fast-coverage-contract",
+          "proof_role": "Prove exact failed-expression repair and unchanged summary composition",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 2000,
+          "argv": [
+            "bash",
+            "adl/tools/test_run_pr_fast_coverage_lane.sh"
+          ],
+          "parallel_group": "tooling-contracts",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed if any foreign selector reaches an owning crate, the exact fixture is not exercised, either summary is omitted, or Runtime v2/AWS enters scope.",
+      "design_ref": ".csdlc/prepared/issues/5512/design.md",
+      "design_digest": "389e313a0101bd380a9294b090884d97ad96e2933198b03831d3cdac1f5ced55",
+      "diagram_ref": ".csdlc/prepared/issues/5512/diagram.mmd",
+      "diagram_digest": "f486496a9d419d941b64de7636f1b52946a1c1b0dcb8fdd7a2445ada3b595026"
+    }
+  }
+}

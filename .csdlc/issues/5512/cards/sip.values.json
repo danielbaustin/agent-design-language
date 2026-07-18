@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5512,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][CI] Remove foreign binary selectors from Runtime v3 CSM coverage",
+    "slug": "v0-91-7-runtime-v3-csm-coverage-filter",
+    "version": "v0.91.7",
+    "generation": 12
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make the bounded Runtime v3/CSM coverage route execute valid owning-crate expressions.",
+      "required_outcome": "The exact #5504 CI expression runs ADL-only and Runtime-v3-only coverage filters and composes both summaries.",
+      "declared_scope": [
+        "adl/tools/run_pr_fast_coverage_lane.sh",
+        "adl/tools/test_run_pr_fast_coverage_lane.sh"
+      ],
+      "authority_boundary": [
+        "Issue #5512 owns only the focused coverage split and regression proof",
+        "Issue #5494 owns Runtime v3 and CSM implementation",
+        "Issue #5409 owns WP-07A acceptance truth"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

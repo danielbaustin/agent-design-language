@@ -1,0 +1,23 @@
+{
+  "issue": 5506,
+  "expected_generation": 8,
+  "expected_digest": "97346c4febf0db45212b4191bac01373e9cca3d4e70ef7de91bb6210fa8a876f",
+  "claim_id": "claim-5506-runtime-auth-coverage-map",
+  "actor": "subagent:019f74a4-d2d6-7e51-b69d-e92676e69394",
+  "evidence": {
+    "reviewer": "subagent:019f74a4-d2d6-7e51-b69d-e92676e69394",
+    "scope": [
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "reviewed_revision": "git-blake3:1f30a6046adc24029da4bbd5c3bc359464f35001:da9e6998ebc1aedfbb800c694f51a7eba6d26307d5553fcc53512e20f5304dd5",
+    "findings": [],
+    "residual_risks": [
+      "The shell routing contract uses fake cargo; actual llvm-cov interoperability remains hosted CI proof."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

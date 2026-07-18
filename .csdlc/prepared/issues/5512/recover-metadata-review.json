@@ -1,0 +1,8 @@
+{
+  "issue": 5512,
+  "expected_generation": 6,
+  "expected_digest": "529474abbbb459c999949e6dc0caa6dec75f72dd6c1b6b7fe5f6937749d4cd25",
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover exact review identity after committing typed review metadata; both substantive tooling blobs are byte-identical."
+}

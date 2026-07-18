@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5494,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_generation": 36,
+  "expected_digest": "466c61f45ad24a0edd8952bc18873a6b9f2a03f3fcb40c9a66f9d08206ad90ac",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5494-wp07a-completion",
+  "title": "[v0.91.7][runtime][WP-07A] Complete the #5409 acceptance boundary",
+  "body": "Closes #5494\n\n## Summary\n- report the real daemon-supervised CSM cycle and observed policy-required readiness\n- exercise 100 production ticks with typed channels, injected failure, and recovery\n- retain bounded bearer and matching-generation gateway overlap with expired recovery and authorization/revocation serialization\n- preserve Runtime v3 as the sole host-weather implementation owner\n\n## Validation\n- `cargo test --manifest-path adl-runtime/Cargo.toml` (124 + 1 passed; 11 focused credential tests)\n- `cargo test --manifest-path adl/Cargo.toml csm_runtime_api` (44 passed)\n- production daemon-cycle soak (100 ticks, injected failure, recovery)\n- exact remediation-head and metadata-head reviews: PASS; all ten findings fixed\n\nNo AWS execution was performed.",
+  "draft": true,
+  "token_file": "/Users/daniel/keys/github.token"
+}

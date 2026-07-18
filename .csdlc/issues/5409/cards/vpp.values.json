@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5409,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Complete and prove the #5121 runtime rearchitecture",
+    "slug": "v0-91-7-review-fix-wp07a-complete-prove-5121-runtime-rearchitecture",
+    "version": "v0.91.7",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "wp07-review-fix",
+          "proof_role": "Focused WP-07 runtime hardening regressions and proof truth",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1800,
+          "budget_tokens": 12000,
+          "argv": [
+            "bash",
+            "adl/tools/run_pr_fast_coverage_lane.sh"
+          ],
+          "parallel_group": "wp07",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on forged authority and proof overclaim; document bounded downgrade rather than inventing live evidence.",
+      "design_ref": ".csdlc/issues/5409/retained/design.md",
+      "design_digest": "b334a90e062a7a63b62f49592afe43dd01031ba51be1fda9902814822ea252a3",
+      "diagram_ref": ".csdlc/issues/5409/retained/diagram.mmd",
+      "diagram_digest": "efb71e84624a77422732103e8e9bd91cf760c4ced239ccbdf3d11db31f75766f"
+    }
+  }
+}

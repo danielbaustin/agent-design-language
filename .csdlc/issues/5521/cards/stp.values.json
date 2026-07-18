@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5521,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Complete #5518 terminal plan-step truth",
+    "slug": "v0-91-7-csdlc-v2-complete-5518-terminal-plan-step",
+    "version": "v0.91.7",
+    "generation": 14
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Invoke the existing typed repair once and validate exact parity.",
+      "deliverables": [
+        "Corrected #5518 SPP S4",
+        "Refreshed #5518 terminal receipt",
+        "Typed doctor and exact-diff proof"
+      ],
+      "acceptance_criteria": [
+        "AC1: exact authority, target, and receipt CAS succeeds",
+        "AC2: #5518 S4 is completed and no other semantic field changes",
+        "AC3: #5518 card, index, and receipt parity is exact",
+        "AC4: typed doctor passes for #5518 and #5521"
+      ],
+      "dependencies": [
+        "Merged PR #5519 terminal plan repair",
+        "Merged PR #5520 #5518 terminal closeout"
+      ],
+      "repo_inputs": [
+        ".csdlc/issues/5518",
+        "csdlc-v2/closeout/5518.json"
+      ],
+      "non_goals": [
+        "Source changes",
+        "General terminal editing",
+        "Runtime changes",
+        "AWS execution"
+      ]
+    }
+  }
+}

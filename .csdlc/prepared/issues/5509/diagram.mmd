@@ -1,0 +1,8 @@
+flowchart TD
+  D["Changed paths"] --> C{"Bounded Runtime v3 and CSM family?"}
+  C -->|"yes"| A["Focused adl CSM tests"]
+  C -->|"yes"| R["Focused adl-runtime tests"]
+  A --> S["Combined focused proof"]
+  R --> S
+  C -->|"no"| F["Existing fail-closed validation"]
+

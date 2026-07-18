@@ -1,0 +1,18 @@
+{
+  "issue": 5509,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "98959ec246a77105a07e69db0bfc897e38c7021d43c32bca0026f5ed00898795",
+  "claim_id": "claim-5509-runtime-v3-csm-fast-lane",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The mixed two-crate planner and execution contracts passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_run_pr_fast_test_lane.sh"],
+      "purpose": "Prove the bounded bridge runs focused tests in both owning crates and rejects unrelated mixed paths",
+      "outcome": "passed",
+      "evidence_ref": "local:5509-pr-fast-two-crate-contract-pass"
+    }
+  }
+}

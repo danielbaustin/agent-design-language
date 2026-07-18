@@ -1,0 +1,21 @@
+{
+  "issue": 5514,
+  "base_branch": "main",
+  "branch": "codex/5514-complete-csm-coverage",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5514-complete-csm-coverage",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784380117,
+    "expires_unix_seconds": 1784466517,
+    "heartbeat_unix_seconds": 1784380117,
+    "branch": "codex/5514-complete-csm-coverage",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Preserve complete ADL CSM coverage while partitioning Runtime v3 selectors"
+  }
+}

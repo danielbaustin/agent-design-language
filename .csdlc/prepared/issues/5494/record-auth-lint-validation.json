@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 29,
+  "expected_digest": "5a69a612744bc8a474bcd4ff889427979587da228b6a9cf8885d287b56062440",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Runtime v3 production code and all targets pass clippy after isolating the two pre-existing CAV test-style warnings.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "clippy", "--manifest-path", "adl-runtime/Cargo.toml", "--lib", "--", "-D", "warnings", "&&", "cargo", "clippy", "--manifest-path", "adl-runtime/Cargo.toml", "--all-targets", "--", "-D", "warnings", "-A", "clippy::field_reassign_with_default"],
+      "purpose": "Prove warning-free Runtime v3 production code and all changed test targets without widening scope into unrelated CAV test cleanup",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: strict library clippy passed; all-target clippy passed with only the pre-existing cav.rs field-reassign lint exempted"
+    }
+  }
+}

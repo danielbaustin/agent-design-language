@@ -1,0 +1,58 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5409,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Complete and prove the #5121 runtime rearchitecture",
+    "slug": "v0-91-7-review-fix-wp07a-complete-prove-5121-runtime-rearchitecture",
+    "version": "v0.91.7",
+    "generation": 15
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "WP-07A now assembles the complete supervised CSM component set with typed-channel coverage and truthful readiness.",
+      "actual_changes": [
+        "Add resident_agents to the supervised component identity set with an explicit provider-admission policy.",
+        "Add CsmRuntimeAssembly::production with component/policy parity and complete typed-channel validation.",
+        "Expose deterministic RuntimeReadiness for every supervised component and channel.",
+        "Retain a bounded 100-cycle assembled-readiness soak and proactive credential-renewal proof."
+      ],
+      "artifacts": [
+        "adl-runtime/src/topology.rs",
+        "adl-runtime/src/supervision.rs",
+        "adl-runtime/src/runtime_api_auth.rs",
+        "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo test --manifest-path adl-runtime/Cargo.toml",
+            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5409-target cargo check --manifest-path adl/Cargo.toml",
+            "git diff --check"
+          ],
+          "purpose": "Prove complete supervised topology, typed-channel readiness, proactive credential renewal, and assembled-runtime stability.",
+          "outcome": "passed",
+          "evidence_ref": "adl-runtime: 118 unit tests and 1 independence test passed; adl cargo check passed; 100-cycle readiness soak passed"
+        },
+        {
+          "command": [
+            "cargo test --manifest-path adl-runtime/Cargo.toml",
+            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5409-target cargo check --manifest-path adl/Cargo.toml",
+            "git diff --check"
+          ],
+          "purpose": "Re-prove terminal revocation, request-time renewal, complete static assembly readiness, and deterministic soak.",
+          "outcome": "passed",
+          "evidence_ref": "adl-runtime: 119 unit tests and 1 independence test passed; adl cargo check passed; 100-cycle readiness soak passed"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

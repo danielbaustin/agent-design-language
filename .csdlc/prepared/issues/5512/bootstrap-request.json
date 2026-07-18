@@ -1,0 +1,125 @@
+{
+  "issue": 5512,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5512/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5512/diagram.mmd",
+  "design_reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5512-runtime-v3-csm-coverage-filter",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784377277,
+    "expires_unix_seconds": 1784463677,
+    "heartbeat_unix_seconds": 1784377277,
+    "branch": "codex/5512-runtime-v3-csm-coverage-filter",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Keep foreign Runtime v3 and nonexistent binary selectors out of ADL focused coverage"
+  },
+  "initial": {
+    "title": "[v0.91.7][tooling][CI] Remove foreign binary selectors from Runtime v3 CSM coverage",
+    "slug": "v0-91-7-runtime-v3-csm-coverage-filter",
+    "version": "v0.91.7",
+    "goal": "Make the bounded Runtime v3/CSM coverage route execute valid owning-crate expressions.",
+    "required_outcome": "The exact #5504 CI expression runs ADL-only and Runtime-v3-only coverage filters and composes both summaries.",
+    "declared_scope": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "authority_boundary": [
+      "Issue #5512 owns only the focused coverage split and regression proof",
+      "Issue #5494 owns Runtime v3 and CSM implementation",
+      "Issue #5409 owns WP-07A acceptance truth"
+    ],
+    "task_boundary": "Repair the focused coverage filter without changing Runtime v2, production runtime behavior, or general coverage policy.",
+    "deliverables": [
+      "Owning-crate coverage expression split",
+      "Exact failed-expression regression fixture"
+    ],
+    "acceptance_criteria": [
+      "AC-1: The exact run 29644007246 expression produces a valid ADL-only coverage invocation",
+      "AC-2: Runtime v3 selectors execute only through adl-runtime/Cargo.toml",
+      "AC-3: Both crate summaries remain composed",
+      "AC-4: Generic non-bridge coverage behavior remains unchanged",
+      "AC-5: No Runtime v2 source changes and no AWS"
+    ],
+    "dependencies": [
+      "Issue #5509 merged focused route",
+      "Existing PR-fast coverage composition"
+    ],
+    "repo_inputs": [
+      "GitHub run 29644007246 job 88079048688",
+      "Issue #5512",
+      "Issue #5494"
+    ],
+    "non_goals": [
+      "Runtime v2 source changes",
+      "Runtime v3 production changes",
+      "AWS execution",
+      "General nextest binary-ID cleanup"
+    ],
+    "plan_summary": "Detect the already bounded bridge expression, substitute owning-crate filters, and lock the exact failure into the coverage contract test.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Add the bounded owning-crate expression split",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-4"]
+      },
+      {
+        "id": "S2",
+        "action": "Add the exact CI failure regression and run focused validation",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-5"]
+      },
+      {
+        "id": "S3",
+        "action": "Review, publish, merge, and resume #5494 CI",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"]
+      }
+    ],
+    "risks": [
+      "A broad detector could alter unrelated coverage routes",
+      "The ADL filter could omit intended CSM coverage",
+      "Summary composition could silently lose one crate"
+    ],
+    "invariants": [
+      "Only the already bounded Runtime v3/CSM bridge is specialized",
+      "Each crate receives only selectors it owns",
+      "Both summaries are composed",
+      "Runtime v2 source remains untouched"
+    ],
+    "stop_conditions": [
+      "The repair requires Runtime v2 changes",
+      "The bridge cannot be identified from its closed selector family",
+      "Validation requires AWS"
+    ],
+    "review_prompts": [
+      "Can a foreign binary selector still reach the ADL workspace?",
+      "Can the detector trigger for an unrelated expression?",
+      "Does the runtime companion retain auth, supervision, and topology coverage?",
+      "Are both summaries still emitted?"
+    ],
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "pr-fast-coverage-contract",
+        "proof_role": "Prove exact failed-expression repair and unchanged summary composition",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "tooling-contracts",
+        "budget_seconds": 300,
+        "budget_tokens": 2000,
+        "argv": ["bash", "adl/tools/test_run_pr_fast_coverage_lane.sh"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"]
+      }
+    ],
+    "failure_policy": "Fail closed if any foreign selector reaches an owning crate, the exact fixture is not exercised, either summary is omitted, or Runtime v2/AWS enters scope."
+  }
+}
+

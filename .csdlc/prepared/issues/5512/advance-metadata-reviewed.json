@@ -1,0 +1,13 @@
+{
+  "issue": 5512,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "b1fb65f16bfde855b7f4ab6d9b74c1dbda15d11d750e82e979293ed573494e2e",
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The exact metadata head is covered by non-substantive proof and the substantive repair remains review-clean.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

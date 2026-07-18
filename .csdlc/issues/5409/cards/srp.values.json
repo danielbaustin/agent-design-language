@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5409,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Complete and prove the #5121 runtime rearchitecture",
+    "slug": "v0-91-7-review-fix-wp07a-complete-prove-5121-runtime-rearchitecture",
+    "version": "v0.91.7",
+    "generation": 15
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl-runtime/src/runtime_api_auth.rs\nadl-runtime/src/supervision.rs\nadl-runtime/src/topology.rs\ndocs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "review_revision": "git-blake3:373cbbde8c34655035e1d5ae4b739a177f67f760:94a0127ffc3509e9bea64ec7f10cd6de40840c0d52f78d40d5b02a136b96d5c5",
+      "reviewer": "subagents-019f6850-4a05-7060-9eff-d582ac25d18f",
+      "review_prompts": [
+        "Can a forged or wrong-authority caller trigger emergency stop?",
+        "Does API Gateway proof cover required routes and failure behavior?",
+        "Is #4906 closure or release disposition explicit and evidence-bound?",
+        "Do focused validators prove the repaired behavior?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "RuntimeReadiness is a static assembly capability projection; live component health remains owned by supervision outcomes and runtime API health routes.",
+        "The separately governed #4906 assembled-runtime coherence gate remains outside this issue and is not claimed closed."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

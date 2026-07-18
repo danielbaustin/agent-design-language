@@ -1,0 +1,18 @@
+{
+  "issue": 5509,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "7fe9c6a0b04f7a20ccf198c88640121f6874cc9ebd2ea3f32f4c829e9972d3b4",
+  "claim_id": "claim-5509-runtime-v3-csm-fast-lane",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The end-to-end path-policy contract passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_ci_path_policy.sh"],
+      "purpose": "Prove the exact bridge family selects focused coverage and unrelated additions remain fail closed",
+      "outcome": "passed",
+      "evidence_ref": "local:5509-ci-path-policy-contract-pass"
+    }
+  }
+}

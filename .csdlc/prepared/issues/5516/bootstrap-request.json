@@ -1,0 +1,135 @@
+{
+  "issue": 5516,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5516/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5516/diagram.mmd",
+  "design_reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5516-5494-terminal-design-repair",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784386103,
+    "expires_unix_seconds": 1784472503,
+    "heartbeat_unix_seconds": 1784386103,
+    "branch": "codex/5516-5494-terminal-design-repair",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5494",
+      ".csdlc/issues/5516",
+      ".csdlc/prepared/issues/5494/reconcile-terminal.json",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ],
+    "purpose": "Correct the retained #5494 Runtime v3 design and diagram through typed terminal repair"
+  },
+  "initial": {
+    "title": "[v0.91.7][review-fix][WP-07A] Correct #5494 retained Runtime v3 design truth",
+    "slug": "v0-91-7-wp07a-correct-5494-retained-runtime-v3-design",
+    "version": "v0.91.7",
+    "goal": "Make the retained #5494 design and diagram agree with the merged Runtime v3 and CSM proof paths.",
+    "required_outcome": "Typed terminal design repair replaces the stale Runtime v2-only claim, preserves Runtime v3 weather ownership, and regenerates durable design digests.",
+    "declared_scope": [
+      ".csdlc/issues/5494 terminal design and diagram",
+      ".csdlc/issues/5516 lifecycle records",
+      "WP-07A repair and milestone review documentation"
+    ],
+    "authority_boundary": [
+      "Issue #5516 authorizes only terminal design truth repair",
+      "PR #5504 implementation and validation truth remain unchanged",
+      "Runtime v3 remains the sole weather-service owner"
+    ],
+    "task_boundary": "Repair retained design metadata and terminal documentation without changing runtime source.",
+    "deliverables": [
+      "Corrected #5494 retained design",
+      "Corrected #5494 retained architecture diagram",
+      "Regenerated typed design and diagram digests",
+      "Reviewed terminal reconciliation packet"
+    ],
+    "acceptance_criteria": [
+      "AC1: retained #5494 design no longer claims Runtime v2-only or no Runtime v3 changes",
+      "AC2: retained diagram shows Runtime v3 soak, CSM production integration, and weather ownership",
+      "AC3: typed terminal design repair succeeds and doctor passes",
+      "AC4: docs and live issue/PR state agree",
+      "AC5: exact review is clean before publication"
+    ],
+    "dependencies": [
+      "Merged PR #5504",
+      "Closed-out #5494 terminal receipt",
+      "Typed csdlc-closeout repair-design operation"
+    ],
+    "repo_inputs": [
+      "Final terminal review finding on #5494 retained design",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      ".csdlc/issues/5494/retained/design.md"
+    ],
+    "non_goals": [
+      "Runtime source changes",
+      "Runtime v2 source work",
+      "Weather-service implementation",
+      "AWS execution"
+    ],
+    "plan_summary": "Initialize the narrow authority, run typed terminal design repair, validate digests and lifecycle truth, review, publish, merge, and close out.",
+    "steps": [
+      {"id": "S1", "action": "Prepare corrected design and diagram sources", "status": "completed", "acceptance_ids": ["AC-1", "AC-2"]},
+      {"id": "S2", "action": "Apply typed terminal design repair and validate", "status": "pending", "acceptance_ids": ["AC-3", "AC-4"]},
+      {"id": "S3", "action": "Review, publish, merge, and close out", "status": "pending", "acceptance_ids": ["AC-5"]}
+    ],
+    "risks": [
+      "Manual edits could break terminal receipt and card digest parity",
+      "Historical planning prose could be mistaken for current architecture truth"
+    ],
+    "invariants": [
+      "Terminal repair uses typed C-SDLC v2 operations",
+      "Runtime source remains byte-identical to origin/main",
+      "Runtime v3 weather ownership remains explicit"
+    ],
+    "stop_conditions": [
+      "Repair requires runtime source changes",
+      "Typed terminal receipt validation fails",
+      "Exact review finds unresolved architecture contradiction"
+    ],
+    "review_prompts": [
+      "Does the retained design match PR #5504's actual two-path proof?",
+      "Does the diagram preserve Runtime v3 weather ownership?",
+      "Did any runtime source enter the diff?"
+    ],
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "terminal-design-repair",
+        "proof_role": "Prove typed design and diagram replacement with regenerated digests",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "records",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": ["csdlc-closeout", "repair-design", "--request", ".csdlc/prepared/issues/5516/repair-5494-design.json"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3"]
+      },
+      {
+        "lane": "terminal-record-doctor",
+        "proof_role": "Prove closed-out record and docs remain structurally valid",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "records",
+        "budget_seconds": 60,
+        "budget_tokens": 500,
+        "argv": ["csdlc-doctor", "--issue", "5494"],
+        "acceptance_ids": ["AC-3", "AC-4"]
+      },
+      {
+        "lane": "terminal-review",
+        "proof_role": "Prove the exact docs and records diff is architecture-truthful",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "review",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-5"]
+      }
+    ],
+    "failure_policy": "Fail closed on manual terminal mutation, stale Runtime v2-only claims, digest mismatch, runtime source changes, or unresolved review findings."
+  }
+}

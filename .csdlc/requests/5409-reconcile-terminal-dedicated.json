@@ -1,0 +1,9 @@
+{
+  "issue": 5409,
+  "expected_initialization_digest": "f4295f97c8e571585f0305df75e892cebea12d84197bb8475779c6916601c699",
+  "expected_branch": "codex/5409-terminal-reconcile",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5409-terminal-reconcile",
+  "actor": "codex",
+  "reason": "Reconcile the retained merged #5409 terminal receipt into the tracked C-SDLC projection from a dedicated closeout branch.",
+  "follow_ups": []
+}

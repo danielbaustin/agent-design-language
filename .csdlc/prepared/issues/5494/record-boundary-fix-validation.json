@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "205f546014a36a007aa4f21aa0a3ec9b59b387754704dc91987e177dee786bed",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "All focused credential-store tests pass including the one-second rotation boundary.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl-runtime/Cargo.toml", "runtime_api_auth::tests"],
+      "purpose": "Prove credential creation, renewal, expired recovery, overlap, revocation, and the exact one-second rotation boundary",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 9 credential-store tests passed"
+    }
+  }
+}

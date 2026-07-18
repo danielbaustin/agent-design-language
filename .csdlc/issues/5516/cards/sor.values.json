@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5516,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Correct #5494 retained Runtime v3 design truth",
+    "slug": "v0-91-7-wp07a-correct-5494-retained-runtime-v3-design",
+    "version": "v0.91.7",
+    "generation": 19
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Repair #5494 retained design truth to show the implemented Runtime v3 supervision, typed-channel, readiness, and weather ownership boundaries alongside the CSM production-daemon proof.",
+      "actual_changes": [
+        "Replace the stale Runtime v2-only retained design claim with the merged Runtime v3 and CSM proof paths",
+        "Add a retained Mermaid diagram covering Runtime v3 supervised channels, CSM daemon recovery, and observed readiness",
+        "Record Runtime v3 as the sole host-weather owner without adding a duplicate service",
+        "Preserve the merged implementation, review, CI, publication, and terminal closeout truth"
+      ],
+      "artifacts": [
+        ".csdlc/issues/5494/retained/design.md",
+        ".csdlc/issues/5494/retained/diagram.mmd",
+        ".csdlc/issues/5494/index.json",
+        "csdlc-v2/closeout/5494.json"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "terminal_design_repair"
+          ],
+          "purpose": "Prove fail-closed terminal design repair and validate the repaired #5494 and authority #5516 records with current typed doctor",
+          "outcome": "passed",
+          "evidence_ref": "local FastWork: 2 focused repair tests passed; csdlc-doctor passed for #5494 generation 61 and #5516 generation 0"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

@@ -300,6 +300,14 @@ if grep -Fq "binary_id(adl-runtime)" <<<"$runtime_v3_expression"; then
   exit 1
 fi
 
+runtime_v3_auth_changed="$TMP/runtime-v3-auth-changed.txt"
+printf 'M\tadl-runtime/src/runtime_api_auth.rs\n' >"$runtime_v3_auth_changed"
+runtime_v3_auth_filters="$TMP/runtime-v3-auth-filters.txt"
+bash "$SCRIPT" --changed-files "$runtime_v3_auth_changed" --print-risk-filters >"$runtime_v3_auth_filters"
+grep -Fx "runtime_v3_auth" "$runtime_v3_auth_filters" >/dev/null
+runtime_v3_auth_expression="$(bash "$SCRIPT" --changed-files "$runtime_v3_auth_changed" --print-risk-nextest-expression)"
+grep -Fx "test(/^runtime_api_auth::tests::/)" <<<"$runtime_v3_auth_expression" >/dev/null
+
 split_acc_changed="$TMP/split-acc-changed.txt"
 printf 'A\tadl/src/acc/validation.rs\n' >"$split_acc_changed"
 split_acc_filters="$TMP/split-acc-filters.txt"

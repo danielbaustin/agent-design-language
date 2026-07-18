@@ -1,0 +1,32 @@
+{
+  "issue": 5506,
+  "expected_generation": 5,
+  "expected_digest": "235e62037c8e0d1523fbee9d52252d07d6df8882630ee0019035775ccdfda570",
+  "claim_id": "claim-5506-runtime-auth-coverage-map",
+  "actor": "subagent:019f74a4-d2d6-7e51-b69d-e92676e69394",
+  "evidence": {
+    "reviewer": "subagent:019f74a4-d2d6-7e51-b69d-e92676e69394",
+    "scope": [
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "reviewed_revision": "git-blake3:f9cd9e27b7f8b49d36bf7188939b5d870538aa65:278425780552ab7f24ec439c357b4048622a6f643ff8946a5a16ddee8d0daf2b",
+    "findings": [
+      {
+        "id": "F-5506-1",
+        "severity": "p2",
+        "summary": "Mixed Runtime v3 auth plus ADL selector routing is not explicitly tested.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "issue": 4642,
+  "expected_generation": 5,
+  "expected_digest": "deba0a636b20163a1ef0575adbaf19c2a9cbddfaf08478398100869a39808e07",
+  "claim_id": "claim-4642-v0-91-7-wp15-demo-matrix-proof-coverage",
+  "actor": "codex-root",
+  "reason": "The committed review-record metadata changed only C-SDLC review surfaces after substantive review, so recover to implemented for exact-current metadata-only review before publication."
+}

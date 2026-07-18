@@ -1,0 +1,13 @@
+{
+  "issue": 5514,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "d9c5e49cd6c0d8f1a94e7dd4dfefbf5e5a3970dbb572f9ff6d351128dddf9a97",
+  "claim_id": "claim-5514-complete-csm-coverage",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The complete owning-workspace selector partition and command regression are implemented.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "f34ae8a74add2ab5424023f0d7d61630a45bdd33c976af66645d0beb6cf2e567",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Focused request and forward-transition tests pass on FastWork.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "csdlc-v2/Cargo.toml", "terminal_plan_repair"],
+      "purpose": "Prove incomplete authority rejection and forward-only pending or in-progress to completed status semantics",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 2 focused terminal plan repair tests passed"
+    }
+  }
+}

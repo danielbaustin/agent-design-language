@@ -1,0 +1,392 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5506,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "af133679cd9c7015c46c265fcc38664355bbbfd4fa282ab6ac6fac5fbb980bae",
+  "phase": "closed_out",
+  "generation": 18,
+  "digest": "f225f6c0da8dd00e3fde8331d49854455b1cb76fb2849ce8fbc709381aa4937f",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f74a4-d2d6-7e51-b69d-e92676e69394",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:5620c6e920dcbb232c4160c171c5bf3f4e60f845:1fd30361d1d46debae0269d0d84fc878c6d136f704d2fcab8abc7f2b93e8bab0",
+    "scope": [
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f74a4-d2d6-7e51-b69d-e92676e69394",
+    "scope": [
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "reviewed_revision": "git-blake3:5620c6e920dcbb232c4160c171c5bf3f4e60f845:1fd30361d1d46debae0269d0d84fc878c6d136f704d2fcab8abc7f2b93e8bab0",
+    "findings": [],
+    "residual_risks": [
+      "Actual llvm-cov interoperability remains hosted CI proof."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5506,
+    "pull_request": 5507,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5507",
+    "base": "main",
+    "head": "codex/5506-runtime-auth-coverage-map",
+    "revision": "git-blake3:5620c6e920dcbb232c4160c171c5bf3f4e60f845:1fd30361d1d46debae0269d0d84fc878c6d136f704d2fcab8abc7f2b93e8bab0",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5507,
+    "head_sha": "5620c6e920dcbb232c4160c171c5bf3f4e60f845",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29640131016/job/88069247552"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29640131016/job/88069211323"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29640131016/job/88069190877"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29640131016/job/88069173782"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29640131016/job/88069190903"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29640131016/job/88069190890"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29640131016/job/88069191161"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5507,
+    "disposition": "merged",
+    "observed_sha": "5620c6e920dcbb232c4160c171c5bf3f4e60f845",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5506.json",
+    "released_branch": "codex/5506-runtime-auth-coverage-map",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5506/retained/design.md",
+  "diagram_path": ".csdlc/issues/5506/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "revision": "20cf641e33b4974869160e064dff275dae0a0e07063cd6408ffa64f4d859cbf9"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "eb8e7ed350b67ac6737540582f9ce65f0f5a78e6bc85b0e14bb7e709757170b0",
+      "rendered_digest": "27a26c52385b371d9555a033bb408f74bab06f8b9b504acb1d380febbb994c24",
+      "ast_digest": "8b7a8da67dfa2b8ad0385d4025dbd630c01ba6115c6c8bd9f7b2c348b2bb98d7"
+    },
+    "stp": {
+      "values_digest": "ea2d42c9f77d4f6f685406dfcb6c55014467cb0cb687053d905050af327d4b11",
+      "rendered_digest": "aa0f75b97d0c6181343a57e8830a50bcbebac19bc4ceeb02b0ac4c205d751a78",
+      "ast_digest": "4eefe71e7aa2df57ba3c8fd0fe6390b30dcc8d32a532e1e8eaac2480ddb05a7f"
+    },
+    "spp": {
+      "values_digest": "3ba8c1d86126c548159ed533a2d306ca3554b1e260bb1a5f46a99215f65f921f",
+      "rendered_digest": "95cb3f53beeef2a7f910ea42f2b5fc014845e7a162c6e746d9f4e058ce7f38c6",
+      "ast_digest": "6dc39e28e4800c9724d32f2c06321b3706ceb683c1a071481b3b082157669a7a"
+    },
+    "vpp": {
+      "values_digest": "b136501f191fbebf90074c245b08cecfab4b5bbf36ea0f8b86a3829c76e63760",
+      "rendered_digest": "e9dd593247fb8e8cffb9faebdb2bb8b3ec4548fdd04f40a0ad80ab326a6d13db",
+      "ast_digest": "21484918375418c2c5883d812321592fe7a787dec5da0e86ac637b5a57895e30"
+    },
+    "srp": {
+      "values_digest": "094f317fedbb5d708f83470b0f897d2321f38976698cfedb247ca8f02086ca0a",
+      "rendered_digest": "d29ba689a77273d84bd2fac81719bc691497da59f329e43a786cf9b5f82c05b9",
+      "ast_digest": "5dd821519eef83f115d2502338093d35802617022aca70cc6dda9043856ef720"
+    },
+    "sor": {
+      "values_digest": "f6a95d73c92e980c474799fa0e4f6f724947ab5d745fb692363a9b4bbe23f5d0",
+      "rendered_digest": "137e6731738ff822c8d74b41482f7eb57eacdef268e5ec774a3a559ea0cfc12e",
+      "ast_digest": "7b7c44176a89e264792ee97e6647916f47cddc9edea2c4be12fa624af5265120"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded coverage mapping and focused proof are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact-revision re-review passed after F-5506-1 with no remaining actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover review identity after committing retained lifecycle metadata so the publication head receives exact review."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact publication head is review-clean with unchanged substantive scope."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 9,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 10,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Implemented the bounded Runtime v3 API-auth coverage mapping.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Mapped Runtime v3 API-auth source to focused independent-crate coverage while preserving both workspaces for mixed selections.\",\"changes\":[\"Map runtime_api_auth.rs to the runtime_v3_auth selector\",\"Resolve runtime_v3_auth to the runtime_api_auth unit-test expression\",\"Skip the ADL workspace for auth-only coverage and retain it for mixed expressions\",\"Add auth-only and mixed-routing contract coverage\"],\"artifacts\":[\"adl/tools/check_coverage_impact.sh\",\"adl/tools/run_pr_fast_coverage_lane.sh\",\"adl/tools/test_check_coverage_impact.sh\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The coverage impact mapping and expression contracts passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_check_coverage_impact.sh\"],\"purpose\":\"Prove Runtime v3 API-auth source selects the focused runtime_v3_auth expression\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5506-coverage-impact-contract-pass\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The PR-fast manifest-routing contracts passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\"],\"purpose\":\"Prove auth-only coverage uses adl-runtime while mixed expressions retain the ADL workspace\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5506-pr-fast-routing-contract-pass\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The real nextest inventory resolved the focused Runtime v3 auth expression.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"nextest\",\"list\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"-E\",\"test(/^runtime_api_auth::tests::/)\"],\"purpose\":\"Prove the mapped expression selects concrete Runtime v3 API-auth tests\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5506-nextest-inventory-7-tests\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded coverage mapping and focused proof are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "subagent:019f74a4-d2d6-7e51-b69d-e92676e69394",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5506-1 with an explicit mixed Runtime v3 auth plus ADL routing regression.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Prove mixed API-auth and ADL selectors execute both coverage workspaces and emit both summaries.\",\"changes\":[\"Add a mixed csm_runtime_api plus runtime_api_auth expression\",\"Assert both ADL workspace and adl-runtime nextest commands execute\",\"Assert both component coverage summaries are emitted\"],\"artifacts\":[\"adl/tools/test_run_pr_fast_coverage_lane.sh\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The mixed-routing regression and shell checks passed after F-5506-1.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\"],\"purpose\":\"Prove auth plus ADL selection executes both workspaces and emits both summaries\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5506-mixed-auth-adl-regression-pass\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "subagent:019f74a4-d2d6-7e51-b69d-e92676e69394",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact-revision re-review passed after F-5506-1 with no remaining actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover review identity after committing retained lifecycle metadata so the publication head receives exact review.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "subagent:019f74a4-d2d6-7e51-b69d-e92676e69394",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact publication head is review-clean with unchanged substantive scope.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 22,
+      "generation": 17,
+      "actor": "csdlc-closeout",
+      "reason": "normalize legacy terminal receipt path to portable reference",
+      "operation": "normalize_terminal_receipt_ref"
+    },
+    {
+      "sequence": 23,
+      "generation": 18,
+      "actor": "codex-terminal-reconcile",
+      "reason": "Materialize the retained terminal receipt after merged PR #5507 and closed issue #5506 so its released paths no longer appear actively claimed.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

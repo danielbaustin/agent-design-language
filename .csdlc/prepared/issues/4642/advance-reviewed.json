@@ -1,0 +1,13 @@
+{
+  "issue": 4642,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "71b582336da9b6ee86d81a451c3c140760c5741e1a64da6c2fcd2315e57fc9db",
+  "claim_id": "claim-4642-v0-91-7-wp15-demo-matrix-proof-coverage",
+  "actor": "codex-root",
+  "reason": "Bounded pre-PR review completed and all findings were fixed and verified.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

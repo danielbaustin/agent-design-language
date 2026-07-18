@@ -1,0 +1,24 @@
+{
+  "issue": 5512,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "530c26238845efb9e89a39713ffd4ada84e297b575495b8e581f0c08fc71a42b",
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Split the bounded Runtime v3 and CSM coverage expression by owning crate.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Replace the invalid mixed coverage expression with valid ADL and Runtime v3 owning-crate expressions only for the bounded bridge route.",
+    "changes": [
+      "Detect the already bounded Runtime v3 and CSM bridge selector family",
+      "Run the ADL coverage invocation with only CSM, long-lived-agent, and csmctl selectors",
+      "Run auth, supervision, and topology selectors only through adl-runtime",
+      "Use the exact failed GitHub expression as the regression fixture"
+    ],
+    "artifacts": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ]
+  }
+}
+

@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5518,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5518-terminal-plan-repair",
+  "title": "[v0.91.7][csdlc-v2][closeout] Repair stale terminal plan-step truth atomically",
+  "body": "Closes #5518\n\n## Summary\n- add a narrow typed terminal plan-step repair for closed-out issue records\n- require exact authority scope and receipt/record compare-and-swap truth\n- serialize all common terminal receipt writers across worktrees\n- fail ordinary lifecycle operations closed while terminal recovery is pending\n- repair #5516 SPP S3 and preserve exact terminal receipt parity\n\n## Validation\n- focused terminal plan repair unit, Gate 7, and Gate 9 tests pass on FastWork\n- all six terminal durability interruption boundaries pass\n- strict all-target Clippy, cargo fmt, and git diff checks pass\n- exact publication-head subagent review is clean\n- csdlc-doctor passes for #5516 and #5518\n\nNo Runtime, Runtime v2, or Runtime v3 source changes. No AWS execution.",
+  "draft": false,
+  "revision": "git-blake3:45a6348f44e80dcddf8bef7c13f88002dfcece20:27cdf49e79bb3f544adecaff36c373e61effbaa2f2dc153d2026a359d993962c",
+  "commit_sha": "45a6348f44e80dcddf8bef7c13f88002dfcece20"
+}

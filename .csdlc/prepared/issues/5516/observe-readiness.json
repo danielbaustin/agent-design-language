@@ -1,0 +1,19 @@
+{
+  "schema": "csdlc.readiness_request.v1",
+  "issue": 5516,
+  "expected_generation": 15,
+  "expected_digest": "3344d14e776e5f0cff6ff62f7576d529bd67b2dd50df724d456262442847b1f8",
+  "claim_id": "claim-5516-5494-terminal-design-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5517,
+  "required_checks": [
+    "adl-ci",
+    "adl-coverage",
+    "adl-tooling-contracts",
+    "adl-path-policy",
+    "adl-demo-proof"
+  ],
+  "require_review": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}

@@ -4,7 +4,7 @@ use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, V2Error>;
 
-#[derive(Debug, Clone, Copy, Serialize, Display, EnumString, AsRefStr, EnumIter)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Display, EnumString, AsRefStr, EnumIter)]
 #[serde(rename_all = "snake_case")]
 #[strum(serialize_all = "snake_case")]
 pub enum ErrorCode {

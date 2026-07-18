@@ -88,6 +88,7 @@ Notes:\n\
 fn csmctl_api_get(args: &[String]) -> Result<()> {
     const CONNECT_RETRY_ATTEMPTS: usize = 200;
     const CONNECT_RETRY_DELAY: Duration = Duration::from_millis(25);
+    const REQUEST_TIMEOUT: Duration = Duration::from_secs(15);
 
     let spec = required_path_arg(args, "--spec")?;
     let bind = optional_arg(args, "--bind").unwrap_or("127.0.0.1:19997");
@@ -108,7 +109,7 @@ fn csmctl_api_get(args: &[String]) -> Result<()> {
     let url = format!("http://{bind}{path}");
     let client = reqwest::blocking::Client::builder()
         .connect_timeout(Duration::from_secs(2))
-        .timeout(Duration::from_secs(5))
+        .timeout(REQUEST_TIMEOUT)
         .build()
         .context("build csmctl runtime API client")?;
     let response = store

@@ -1,0 +1,62 @@
+{
+  "issue": 5512,
+  "expected_generation": 7,
+  "expected_digest": "9d7b84bc3657b7abefc1ed868c58eab25df74bb614ee34eac26207d17d4fa1a9",
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "actor": "subagent:019f7532-dfd0-7b52-a750-7df6cce35b42",
+  "evidence": {
+    "reviewer": "subagent:019f7532-dfd0-7b52-a750-7df6cce35b42",
+    "scope": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "reviewed_revision": "git-blake3:28daa5495fb58580d9fa7e7eada8bd140b1a8228:b7c18518bf7f828c03db2cb0cd7e54240eaa8ecd74b947dd32c2f2fa725b5a52",
+    "findings": [
+      {
+        "id": "F-5512-1",
+        "severity": "p2",
+        "summary": "Substring bridge detection could silently discard unrelated coverage selectors.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:28daa5495fb58580d9fa7e7eada8bd140b1a8228:b7c18518bf7f828c03db2cb0cd7e54240eaa8ecd74b947dd32c2f2fa725b5a52",
+        "route": null
+      },
+      {
+        "id": "F-5512-2",
+        "severity": "p3",
+        "summary": "Zero-valued fake summaries did not prove both coverage inputs were composed.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:28daa5495fb58580d9fa7e7eada8bd140b1a8228:b7c18518bf7f828c03db2cb0cd7e54240eaa8ecd74b947dd32c2f2fa725b5a52",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Hosted CI remains the final proof that the exact #5504 expression interoperates with the GitHub llvm-cov and nextest toolchain."
+    ],
+    "completed": true,
+    "non_substantive_proof": {
+      "from_commit": "b3e00aa1d966bdead5c7bd39c442017619086625",
+      "to_commit": "28daa5495fb58580d9fa7e7eada8bd140b1a8228",
+      "from_revision": "git-blake3:b3e00aa1d966bdead5c7bd39c442017619086625:3bbd97871d2832a3ab91d55cb480cb7498ca97c87e64224bc6d88c77d6e076de",
+      "to_revision": "git-blake3:28daa5495fb58580d9fa7e7eada8bd140b1a8228:b7c18518bf7f828c03db2cb0cd7e54240eaa8ecd74b947dd32c2f2fa725b5a52",
+      "changed_paths": [
+        ".csdlc/issues/5512/audit.jsonl",
+        ".csdlc/issues/5512/cards/sip.values.json",
+        ".csdlc/issues/5512/cards/sor.values.json",
+        ".csdlc/issues/5512/cards/spp.values.json",
+        ".csdlc/issues/5512/cards/srp.md",
+        ".csdlc/issues/5512/cards/srp.values.json",
+        ".csdlc/issues/5512/cards/stp.values.json",
+        ".csdlc/issues/5512/cards/vpp.values.json",
+        ".csdlc/issues/5512/index.json",
+        ".csdlc/prepared/issues/5512/advance-reviewed.json",
+        ".csdlc/prepared/issues/5512/assign-review.json",
+        ".csdlc/prepared/issues/5512/record-review.json"
+      ],
+      "policy": "metadata_only_review_projection"
+    }
+  }
+}

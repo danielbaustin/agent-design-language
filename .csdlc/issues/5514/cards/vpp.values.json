@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5514,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][coverage] Preserve the complete ADL CSM suite in Runtime v3 bridge coverage",
+    "slug": "v0-91-7-complete-csm-coverage",
+    "version": "v0.91.7",
+    "generation": 5
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "pr-fast-coverage-contract",
+          "proof_role": "Prove complete workspace partitioning and exact command construction",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 2000,
+          "argv": [
+            "bash",
+            "adl/tools/test_run_pr_fast_coverage_lane.sh"
+          ],
+          "parallel_group": "tooling-contracts",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed if any canonical ADL CSM selector is discarded, any foreign selector reaches an owning workspace, exact matching weakens, thresholds change, or Runtime v2/AWS enters scope.",
+      "design_ref": ".csdlc/prepared/issues/5514/design.md",
+      "design_digest": "5bffbfb561d33dc342a1030ca018ec053fe51d3195ecdb8c4f419ab0ccf10c11",
+      "diagram_ref": ".csdlc/prepared/issues/5514/diagram.mmd",
+      "diagram_digest": "b620e1d89dd7dffe09577589bdd6b73c7bcfb69e7c4fd1a0a698ad4e86643e8d"
+    }
+  }
+}

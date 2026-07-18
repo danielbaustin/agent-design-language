@@ -1,0 +1,10 @@
+{
+  "issue": 5518,
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "expected_generation": 7,
+  "expected_digest": "5f54384ddcb834b6f4dd85477b7e4d9dc377504f184aef94d0acacee5ce88934",
+  "now_unix_seconds": 1784387769,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Add the typed request model and public re-export paths required by the reviewed command surface.",
+  "add_protected_paths": ["csdlc-v2/src/model.rs", "csdlc-v2/src/lib.rs"]
+}

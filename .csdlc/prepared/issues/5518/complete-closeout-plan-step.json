@@ -1,0 +1,14 @@
+{
+  "issue": 5518,
+  "card": "spp",
+  "expected_generation": 26,
+  "expected_digest": "f5c0449b52095d4f6eb3a79acf1dc5487d0aea39a63d9f4990f9dd297b798cdf",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact review, publication, green CI, PR merge, and GitHub issue closure are complete; typed terminal closeout is the next atomic operation.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S4",
+    "status": "completed"
+  }
+}

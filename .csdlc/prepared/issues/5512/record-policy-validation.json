@@ -1,0 +1,18 @@
+{
+  "issue": 5512,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "57301429a702633acbcb9d15ca4be08bfbf0bdae02924604d70537d23cde0f13",
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The surrounding path-policy and fast-test contracts passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_ci_path_policy.sh"],
+      "purpose": "Prove the narrow repair preserves existing validation routing contracts",
+      "outcome": "passed",
+      "evidence_ref": "local:5512-ci-path-policy-contract-pass"
+    }
+  }
+}

@@ -1,0 +1,97 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5506
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: complete
+
+## Summary
+
+Prove mixed API-auth and ADL selectors execute both coverage workspaces and emit both summaries.
+
+## Artifacts
+
+- adl/tools/check_coverage_impact.sh
+- adl/tools/run_pr_fast_coverage_lane.sh
+- adl/tools/test_check_coverage_impact.sh
+- adl/tools/test_run_pr_fast_coverage_lane.sh
+- adl/tools/test_run_pr_fast_coverage_lane.sh
+
+## Execution
+
+- Map runtime_api_auth.rs to the runtime_v3_auth selector
+- Resolve runtime_v3_auth to the runtime_api_auth unit-test expression
+- Skip the ADL workspace for auth-only coverage and retain it for mixed expressions
+- Add auth-only and mixed-routing contract coverage
+- Add a mixed csm_runtime_api plus runtime_api_auth expression
+- Assert both ADL workspace and adl-runtime nextest commands execute
+- Assert both component coverage summaries are emitted
+
+## Validation
+
+[
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_check_coverage_impact.sh"
+    ],
+    "purpose": "Prove Runtime v3 API-auth source selects the focused runtime_v3_auth expression",
+    "outcome": "passed",
+    "evidence_ref": "local:5506-coverage-impact-contract-pass"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Prove auth-only coverage uses adl-runtime while mixed expressions retain the ADL workspace",
+    "outcome": "passed",
+    "evidence_ref": "local:5506-pr-fast-routing-contract-pass"
+  },
+  {
+    "command": [
+      "cargo",
+      "nextest",
+      "list",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml",
+      "-E",
+      "test(/^runtime_api_auth::tests::/)"
+    ],
+    "purpose": "Prove the mapped expression selects concrete Runtime v3 API-auth tests",
+    "outcome": "passed",
+    "evidence_ref": "local:5506-nextest-inventory-7-tests"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Prove auth plus ADL selection executes both workspaces and emits both summaries",
+    "outcome": "passed",
+    "evidence_ref": "local:5506-mixed-auth-adl-regression-pass"
+  }
+]
+
+## Integration
+
+merged
+
+## Publication
+
+Publication: closed
+
+Merge: merged
+
+## Closeout
+
+complete
+
+## Follow Ups
+
+- none

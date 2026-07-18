@@ -42,7 +42,7 @@ pub use model::{
     Claim, ClaimRecovery, DesignReview, IssueRecord, LifecyclePhase, MigrationEvidence,
     NonSubstantiveProof, PublicationEvidence, ReadinessEvidence, ReconcileTerminalRequest,
     ReviewAssignment, ReviewEvidence, ReviewFindingEvidence, TerminalDesignRepairRequest,
-    TerminalEvidence, TerminalReceipt,
+    TerminalEvidence, TerminalPlanStepRepairRequest, TerminalReceipt,
 };
 pub use operator::{
     install_binaries, resolve_operator_generation, verify_coexistence, CoexistenceInventory,

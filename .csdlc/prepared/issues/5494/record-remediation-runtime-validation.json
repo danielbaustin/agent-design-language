@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "5d8d1bf28608317a221ba4470ca3dcb2d40e2762936de083a906c184017c0d11",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The independent Runtime v3 crate passes after review remediation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl-runtime/Cargo.toml"],
+      "purpose": "Prove credential recovery, exact overlap reporting, CSM ownership boundaries, and Runtime v3 weather independence",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 121 unit tests plus 1 independence test passed"
+    }
+  }
+}

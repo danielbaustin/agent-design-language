@@ -1,0 +1,72 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5506,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][coverage] Register Runtime v3 API-auth coverage without mixed-lane escalation",
+    "slug": "v0-91-7-runtime-v3-auth-coverage-map",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Extract the reviewed coverage mapping, validate auth-only and mixed execution, review, publish, and merge before rebasing #5494.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Apply the four-file Runtime v3 auth coverage mapping",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Run focused coverage-tool contract tests",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Review, publish, and merge the tooling-only PR",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Mixed selectors retain ADL workspace coverage",
+        "Auth-only selection resolves at least one Runtime v3 test",
+        "No runtime source changes"
+      ],
+      "risks": [
+        "Auth-only routing could accidentally suppress mixed ADL coverage",
+        "The nextest expression could select no tests"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "The mapping requires runtime source changes",
+        "Focused contract tests cannot prove both execution modes"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5506/retained/design.md",
+      "design_digest": "20cf641e33b4974869160e064dff275dae0a0e07063cd6408ffa64f4d859cbf9",
+      "diagram_ref": ".csdlc/issues/5506/retained/diagram.mmd",
+      "diagram_digest": "e43e8aba7055ad219b77ed6b87bb3ccf433afa45a792b7f7d3dbab90782b5384"
+    }
+  }
+}

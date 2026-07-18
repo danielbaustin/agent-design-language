@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 45,
+  "expected_digest": "742536e1dfd49fcd412c3e13450283d24c8561dc48f30bad7e2522ace56ca787",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The unmodified production daemon entrypoint executes real ticks and recovers after an injected child failure.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl/Cargo.toml", "--lib", "production_daemon_executes_real_ticks_and_recovers_after_child_failure"],
+      "purpose": "Prove the production daemon executes three real bounded ticks and cleanly recovers after one injected workflow failure",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 3 completed production daemon ticks, 1 injected failure, clean recovery; focused test completed in 16.77 seconds"
+    }
+  }
+}

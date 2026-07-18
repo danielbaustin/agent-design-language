@@ -8,6 +8,7 @@ use csdlc_v2::{
     classify_readiness, closeout_issue, record_readiness, CheckConclusion, CheckObservation,
     CheckRequirement, ConflictState, PostPublicationFinding, ReadinessRequest, RemoteReviewState,
     Store, TerminalDesignRepairRequest, TerminalDisposition, TerminalObservation,
+    TerminalPlanStepRepairRequest,
 };
 use octocrab::models::pulls::{MergeableState, ReviewState};
 use octocrab::params::repos::Commitish;
@@ -45,6 +46,10 @@ enum Command {
         request: PathBuf,
     },
     RepairDesign {
+        #[arg(long)]
+        request: PathBuf,
+    },
+    RepairPlanStep {
         #[arg(long)]
         request: PathBuf,
     },
@@ -117,6 +122,9 @@ async fn run(cli: &Cli) -> csdlc_v2::Result<serde_json::Value> {
         Command::ReconcileTerminal { request } => json(store.reconcile_terminal(read(request)?)?),
         Command::RepairDesign { request } => {
             json(store.repair_terminal_design(read::<TerminalDesignRepairRequest>(request)?)?)
+        }
+        Command::RepairPlanStep { request } => {
+            json(store.repair_terminal_plan_step(read::<TerminalPlanStepRepairRequest>(request)?)?)
         }
         Command::ValidatePrune { issue } | Command::Prune { issue } => {
             let record = store.load_record(*issue)?;

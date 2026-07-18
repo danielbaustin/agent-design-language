@@ -7,7 +7,10 @@ use crate::lifecycle::{
 };
 use crate::migration::{ImportReport, LegacyImportRequest, NormalizedOutcome, ShadowComparison};
 use crate::model::IssueRecord;
-use crate::model::{ReconcileTerminalRequest, TerminalDesignRepairRequest, TerminalReceipt};
+use crate::model::{
+    ReconcileTerminalRequest, TerminalDesignRepairRequest, TerminalPlanStepRepairRequest,
+    TerminalReceipt,
+};
 use crate::publication::{
     MergedPublicationReconciliationRequest, PublicationIntent, PublicationRequest,
     RemotePullRequest,
@@ -37,6 +40,7 @@ pub fn public_schema_bundle() -> Value {
         "terminal_receipt": schemars::schema_for!(TerminalReceipt),
         "reconcile_terminal_request": schemars::schema_for!(ReconcileTerminalRequest),
         "terminal_design_repair_request": schemars::schema_for!(TerminalDesignRepairRequest),
+        "terminal_plan_step_repair_request": schemars::schema_for!(TerminalPlanStepRepairRequest),
         "doctor_report": schemars::schema_for!(DoctorReport),
         "pvf_manifest": schemars::schema_for!(PvfManifest),
         "pvf_execution_request": schemars::schema_for!(ExecutionRequest),
@@ -68,6 +72,8 @@ mod tests {
 
     #[test]
     fn exposes_heartbeat_request_schema() {
-        assert!(public_schema_bundle().get("heartbeat_request").is_some());
+        let bundle = public_schema_bundle();
+        assert!(bundle.get("heartbeat_request").is_some());
+        assert!(bundle.get("terminal_plan_step_repair_request").is_some());
     }
 }

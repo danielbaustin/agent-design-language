@@ -1,0 +1,18 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "fa5bbb7969807c1d3888f007a24871d0613902a5a7a58edd8d393933cf3e259d",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Repeatable Store-level repair coverage, focused unit tests, and strict Clippy all pass after review remediation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "csdlc-v2/Cargo.toml", "terminal_plan_repair"],
+      "purpose": "Prove authority scope, forward-only semantics, atomic rollback, success parity, stale CAS rejection, phase rejection, and warning-free code",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 3 unit tests plus Store-level gate7 and gate9 integration coverage passed; all-target strict Clippy passed"
+    }
+  }
+}

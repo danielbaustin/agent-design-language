@@ -1,0 +1,13 @@
+{
+  "issue": 5509,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "d8d06830d771a37b8bcd613fe4e0fe7324c154da44233ed203bfa083d0c6e780",
+  "claim_id": "claim-5509-runtime-v3-csm-fast-lane",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded mixed-crate route and its positive and negative proof are complete.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

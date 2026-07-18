@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5494,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Complete the unfinished #5409 runtime acceptance boundary",
+    "slug": "v0-91-7-wp07a-complete-5409-runtime-acceptance",
+    "version": "v0.91.7",
+    "generation": 62
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Complete only the four remaining WP-07A findings and reconcile their proof truth.",
+      "deliverables": [
+        "Production supervised assembly",
+        "Observed fail-closed readiness",
+        "Real assembled-runtime soak",
+        "Bounded credential overlap",
+        "Updated WP-07A proof and register disposition"
+      ],
+      "acceptance_criteria": [
+        "AC1: Production executes declared required components through the supervisor",
+        "AC2: Readiness consumes observed health for every required component and typed channel",
+        "AC3: The deterministic soak runs supervised tasks and channels and proves failure and recovery readiness transitions",
+        "AC4: Credential renewal accepts old and new generations only during bounded overlap and revocation rejects both",
+        "AC5: #5409 and the canonical register close only after exact-revision review and proving validation"
+      ],
+      "dependencies": [
+        "Tokio",
+        "Existing Runtime v2 supervision and typed-channel primitives",
+        "Existing Runtime API authentication store"
+      ],
+      "repo_inputs": [
+        "docs/reviews/v0.91.7/remaining-sprints-5403/WP07A_REARCHITECTURE_REVIEW_5121.md",
+        "PR #5420",
+        "Issue #5409"
+      ],
+      "non_goals": [
+        "Runtime v3 changes",
+        "AWS execution",
+        "Unrelated ADL refactoring"
+      ]
+    }
+  }
+}
