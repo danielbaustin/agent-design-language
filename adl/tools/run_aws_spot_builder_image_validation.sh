@@ -182,6 +182,7 @@ stage "$CURRENT_STAGE"
 VALIDATION_START="$(date +%s)"
 VALIDATION_UID="$(id -u)"
 VALIDATION_GID="$(id -g)"
+VALIDATION_STATUS=0
 "${DOCKER[@]}" run --rm \
   --user "$VALIDATION_UID:$VALIDATION_GID" \
   --workdir /workspace \
@@ -198,17 +199,24 @@ VALIDATION_GID="$(id -g)"
   --env RUSTFLAGS= \
   --env CARGO_INCREMENTAL=0 \
   --entrypoint /bin/bash \
-  "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status"
+  "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status" \
+  || VALIDATION_STATUS=$?
 VALIDATION_END="$(date +%s)"
 
 CURRENT_STAGE="write_builder_summary"
 stage "$CURRENT_STAGE"
 IMAGE_DIGEST="${IMAGE##*@}"
 export RESOLVED_REF IMAGE_DIGEST IMAGE_ARCH CACHE_SOURCE CACHE_FREE_BYTES
-export VALIDATION_START VALIDATION_END
+export VALIDATION_START VALIDATION_END VALIDATION_STATUS
 export CACHE_TARGET_PREEXISTING_ENTRIES CACHE_TARGET_PREEXISTING_BYTES
 export CACHE_LOW_SPACE_RECOVERY
-python3 - "$ADL_RUN_ROOT/spot-builder-summary.json" <<'PY'
+SUMMARY_PATH="$ADL_RUN_ROOT/spot-builder-summary.json"
+SUMMARY_TMP="${SUMMARY_PATH}.tmp.$$"
+SUMMARY_STATUS=0
+SUMMARY_OUTPUT=""
+rm -f "$SUMMARY_PATH" "$SUMMARY_TMP" || SUMMARY_STATUS=$?
+if [[ "$SUMMARY_STATUS" -eq 0 ]]; then
+  SUMMARY_OUTPUT="$(python3 - "$SUMMARY_TMP" <<'PY'
 import hashlib
 import json
 import os
@@ -217,7 +225,8 @@ import sys
 out = sys.argv[1]
 payload = {
     "schema": "adl.aws_spot_builder_image_validation.v1",
-    "status": "passed",
+    "status": "passed" if int(os.environ["VALIDATION_STATUS"]) == 0 else "failed",
+    "validation_exit_code": int(os.environ["VALIDATION_STATUS"]),
     "source_commit": os.environ["RESOLVED_REF"],
     "source_commit_verified": True,
     "builder_image_digest_sha256": hashlib.sha256(os.environ["IMAGE_DIGEST"].encode()).hexdigest(),
@@ -239,3 +248,20 @@ with open(out, "w", encoding="utf-8") as handle:
     handle.write("\n")
 print("ADL_SPOT_BUILDER_PROOF=" + json.dumps(payload, sort_keys=True, separators=(",", ":")))
 PY
+)" || SUMMARY_STATUS=$?
+fi
+if [[ "$SUMMARY_STATUS" -eq 0 ]]; then
+  mv -f "$SUMMARY_TMP" "$SUMMARY_PATH" || SUMMARY_STATUS=$?
+fi
+rm -f "$SUMMARY_TMP" || true
+
+if [[ "$SUMMARY_STATUS" -ne 0 ]]; then
+  echo "spot_builder_image_validation: retained summary generation failed with status $SUMMARY_STATUS" >&2
+else
+  printf '%s\n' "$SUMMARY_OUTPUT"
+fi
+if [[ "$VALIDATION_STATUS" -ne 0 ]]; then
+  echo "spot_builder_image_validation: validation command failed with status $VALIDATION_STATUS" >&2
+  exit "$VALIDATION_STATUS"
+fi
+exit "$SUMMARY_STATUS"

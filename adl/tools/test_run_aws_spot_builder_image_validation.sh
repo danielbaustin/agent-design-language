@@ -10,6 +10,7 @@ FAKE_BIN="$TMP/fake-bin"
 RUN_ROOT="$TMP/run"
 CACHE_MOUNT="$TMP/cache"
 mkdir -p "$FAKE_BIN" "$RUN_ROOT" "$CACHE_MOUNT"
+export ADL_REAL_PYTHON3="$(command -v python3)"
 
 cat >"$FAKE_BIN/mountpoint" <<'EOF'
 #!/usr/bin/env bash
@@ -113,6 +114,15 @@ esac
 echo "unexpected docker command: $*" >&2
 exit 1
 EOF
+
+cat >"$FAKE_BIN/python3" <<'EOF'
+#!/usr/bin/env bash
+if [[ "${ADL_FAKE_SUMMARY_EXIT:-0}" != "0" && "${2:-}" == */spot-builder-summary.json.tmp.* ]]; then
+  printf '{' >"$2"
+  exit "$ADL_FAKE_SUMMARY_EXIT"
+fi
+exec "$ADL_REAL_PYTHON3" "$@"
+EOF
 chmod +x "$FAKE_BIN"/*
 
 commit="$(git -C "$ROOT" rev-parse HEAD)"
@@ -139,6 +149,7 @@ import json
 import sys
 payload = json.load(open(sys.argv[1], encoding="utf-8"))
 assert payload["status"] == "passed"
+assert payload["validation_exit_code"] == 0
 assert payload["source_commit"] == sys.argv[2]
 assert payload["source_commit_verified"] is True
 assert payload["builder_image_immutable"] is True
@@ -196,9 +207,47 @@ if ADL_FAKE_IMAGE_ARCH=arm64 run_fixture >"$TMP/arch.out" 2>"$TMP/arch.err"; the
 fi
 grep -F 'builder image architecture mismatch' "$TMP/arch.err" >/dev/null
 
-if ADL_FAKE_VALIDATION_EXIT=17 run_fixture >"$TMP/validation.out" 2>"$TMP/validation.err"; then
-  echo "expected validation failure to propagate" >&2
+printf '{"status":"passed"}\n' >"$RUN_ROOT/spot-builder-summary.json"
+set +e
+ADL_FAKE_SUMMARY_EXIT=23 run_fixture >"$TMP/summary-failure.out" 2>"$TMP/summary-failure.err"
+summary_status=$?
+set -e
+[[ "$summary_status" -eq 23 ]]
+grep -F 'retained summary generation failed with status 23' "$TMP/summary-failure.err" >/dev/null
+[[ ! -e "$RUN_ROOT/spot-builder-summary.json" ]]
+if compgen -G "$RUN_ROOT/spot-builder-summary.json.tmp.*" >/dev/null; then
+  echo "summary failure retained a partial temporary file" >&2
   exit 1
 fi
+if grep -F 'ADL_SPOT_BUILDER_PROOF=' "$TMP/summary-failure.out" >/dev/null; then
+  echo "summary failure emitted a proof marker" >&2
+  exit 1
+fi
+
+rm -f "$RUN_ROOT/spot-builder-summary.json"
+set +e
+ADL_FAKE_VALIDATION_EXIT=17 run_fixture >"$TMP/validation.out" 2>"$TMP/validation.err"
+validation_status=$?
+set -e
+[[ "$validation_status" -eq 17 ]]
+grep -F 'validation command failed with status 17' "$TMP/validation.err" >/dev/null
+grep -F 'ADL_SPOT_BUILDER_PROOF=' "$TMP/validation.out" >/dev/null
+python3 - "$RUN_ROOT/spot-builder-summary.json" <<'PY'
+import json
+import sys
+payload = json.load(open(sys.argv[1], encoding="utf-8"))
+assert payload["status"] == "failed"
+assert payload["validation_exit_code"] == 17
+PY
+
+rm -f "$RUN_ROOT/spot-builder-summary.json"
+set +e
+ADL_FAKE_VALIDATION_EXIT=17 ADL_FAKE_SUMMARY_EXIT=23 \
+  run_fixture >"$TMP/both-fail.out" 2>"$TMP/both-fail.err"
+both_status=$?
+set -e
+[[ "$both_status" -eq 17 ]]
+grep -F 'retained summary generation failed with status 23' "$TMP/both-fail.err" >/dev/null
+grep -F 'validation command failed with status 17' "$TMP/both-fail.err" >/dev/null
 
 echo "PASS test_run_aws_spot_builder_image_validation"
