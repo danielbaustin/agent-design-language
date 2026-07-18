@@ -149,6 +149,36 @@ for action, count in seen.items():
     if count == 0:
         raise SystemExit(f"canonical action inventory unexpectedly contains no {action} use")
 
+nextest_installer = "taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c"
+nextest_blocks = [
+    match.group(0)
+    for match in re.finditer(
+        r"^      - name: .+\n(?:(?!^      - name: ).*\n)*",
+        workflow,
+        re.MULTILINE,
+    )
+    if re.search(r"^\s+tool:\s+nextest@", match.group(0), re.MULTILINE)
+]
+if len(nextest_blocks) != 4:
+    raise SystemExit(
+        "CI must retain exactly four declared cargo-nextest installation steps; "
+        f"found {len(nextest_blocks)}"
+    )
+for block in nextest_blocks:
+    name = re.search(r"^\s+- name:\s+(.+)$", block, re.MULTILINE).group(1)
+    if not re.search(
+        rf"^\s+uses:\s+{re.escape(nextest_installer)}(?:\s+#.*)?$",
+        block,
+        re.MULTILINE,
+    ):
+        raise SystemExit(
+            f"{name} must use the immutable install-action manifest that supports nextest 0.9.140"
+        )
+    if not re.search(r"^\s+tool:\s+nextest@0\.9\.140\s*$", block, re.MULTILINE):
+        raise SystemExit(f"{name} must pin nextest 0.9.140")
+    if not re.search(r"^\s+fallback:\s+none\s*$", block, re.MULTILINE):
+        raise SystemExit(f"{name} must disable installer fallback")
+
 adl_profile_summary = step_block("Validation profile summary (adl-ci)")
 for required_fragment in (
     "ADL validation profile",

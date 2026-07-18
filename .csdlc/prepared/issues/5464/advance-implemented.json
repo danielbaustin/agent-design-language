@@ -1,0 +1,13 @@
+{
+  "issue": 5464,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "c153b3bff1e08f0515778fb9f535712521a17ab8a72f5df3dc34e773629df120",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded nextest installer repair and focused local proof are complete.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

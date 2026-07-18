@@ -1,0 +1,75 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5464,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][ci] Remove cargo-nextest 0.9.140 unsupported-binary fallback",
+    "slug": "v0-91-7-ci-nextest-install-contract",
+    "version": "v0.91.7",
+    "generation": 3
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Pin nextest steps to an installer manifest that supports 0.9.140, disable fallback, strengthen static contracts, and inspect hosted proof.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Verify official release asset and supported installer manifest",
+          "acceptance_ids": [
+            "AC-1"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Update nextest installer pins and enforce fallback none",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run static proof and inspect hosted CI output",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Every third-party action remains pinned to a 40-hex commit",
+        "Checksum verification remains enabled",
+        "No AWS execution occurs",
+        "Test-lane behavior is otherwise unchanged"
+      ],
+      "risks": [
+        "A partial update could leave one lane on the stale manifest",
+        "A future nextest version could be selected before the pinned manifest supports it"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "The selected official manifest does not contain nextest 0.9.140",
+        "The selected action revision requires unrelated workflow changes",
+        "Hosted proof requires AWS execution"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5464/design.md",
+      "design_digest": "7b4911b3d2706584d0f30221dc602dd7e4928f6749d0945ab70fb700dcf3d503",
+      "diagram_ref": ".csdlc/prepared/issues/5464/diagram.mmd",
+      "diagram_digest": "65c1ffffce9f6c0f25abce99a100d1909fcf88d5598b56de08a69194a422f259"
+    }
+  }
+}
