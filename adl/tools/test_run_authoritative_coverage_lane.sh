@@ -30,7 +30,7 @@ case "$plan" in
     ;;
 esac
 case "$plan" in
-  *"skip_patterns=real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_unified_runtime_kernel_rejects_missing_participant_or_negative_case,runtime_v2_unified_runtime_kernel_rejects_unretained_negative_evidence,csmctl_authenticated_api_client_waits_for_slow_listener_startup"*) ;;
+  *"skip_patterns=real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,runtime_v2_unified_runtime_kernel_rejects_missing_participant_or_negative_case,runtime_v2_unified_runtime_kernel_rejects_unretained_negative_evidence,csmctl_authenticated_api_client_waits_for_slow_listener_startup"*) ;;
   *)
     echo "expected authoritative coverage plan to list default slow/flaky coverage skip patterns" >&2
     echo "$plan" >&2
@@ -142,6 +142,7 @@ for required in \
   "--skip runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist" \
   "--skip runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift" \
   "--skip runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift" \
+  "--skip runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors" \
   "--skip runtime_v2_unified_runtime_kernel_rejects_missing_participant_or_negative_case" \
   "--skip runtime_v2_unified_runtime_kernel_rejects_unretained_negative_evidence" \
   "--skip csmctl_authenticated_api_client_waits_for_slow_listener_startup" \
