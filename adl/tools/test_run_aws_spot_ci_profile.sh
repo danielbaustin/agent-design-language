@@ -276,7 +276,9 @@ python3 "$VERIFY_BACKEND_ROUTE" --surface adl-coverage --backend spot \
 for invalid_route in \
   'adl-coverage spot pull_request true true success skipped coverage=skipped' \
   'adl-coverage hosted push false true skipped skipped coverage=success' \
-  'adl-coverage hosted push false true success skipped coverage=skipped'
+  'adl-coverage hosted push false true success skipped coverage=skipped' \
+  'adl-coverage spot pull_request true false success success coverage=success' \
+  'adl-coverage hosted pull_request true false success skipped coverage=success'
 do
   read -r surface backend event same_repo required path_result spot_result hosted_result <<<"$invalid_route"
   if python3 "$VERIFY_BACKEND_ROUTE" --surface "$surface" --backend "$backend" \
