@@ -1,0 +1,7 @@
+flowchart LR
+  A["Local workflow fixture"] --> B["Backend selection"]
+  B -->|hosted| C["Hosted route"]
+  B -->|spot| D["Spot-selected route only"]
+  B -->|invalid| E["Fail closed"]
+  C --> F["All snapshot assertions reached"]
+  D --> F

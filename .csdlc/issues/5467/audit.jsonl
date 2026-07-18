@@ -13,3 +13,12 @@
 {"sequence":13,"generation":8,"actor":"bounded-subagent-review-5467","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":14,"generation":9,"actor":"codex-root","reason":"Final exact-revision review passed after both findings were fixed and locally revalidated without AWS.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":15,"generation":10,"actor":"codex-root","reason":"Rebase and committed lifecycle metadata changed revision identity after substantive review; recover for exact final-head review before publication.","operation":"recover_review"}
+{"sequence":16,"generation":10,"actor":"codex-root","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":17,"generation":11,"actor":"bounded-subagent-review-5467","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
+{"sequence":18,"generation":12,"actor":"codex-root","reason":"Exact rebased final-head review passed with prior fixes intact and no new findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":19,"generation":13,"actor":"codex-root","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":20,"generation":14,"actor":"codex-root","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":21,"generation":15,"actor":"codex-root","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":22,"generation":16,"actor":"codex-root","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":23,"generation":17,"actor":"codex-root","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":24,"generation":18,"actor":"codex-root-closeout","reason":"Materialize the retained terminal receipt after merged PR #5485 and closed issue #5467.","operation":"reconcile_terminal"}

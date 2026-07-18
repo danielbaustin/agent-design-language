@@ -3,34 +3,124 @@
   "issue": 5467,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "2ad38313de373e32d209f2a3d3ed3f31060f4b2763fd10f58df6b26c6bb9831f",
-  "phase": "implemented",
-  "generation": 10,
-  "digest": "4768e1b19d4cf0c8d7f2bb0b33aa050339b4a859f6a1a10096062a3e488becf2",
-  "claim": {
-    "id": "claim-5467-backend-snapshot-contract",
-    "owner": "codex-root",
-    "generation": 10,
-    "acquired_unix_seconds": 1784357994,
-    "expires_unix_seconds": 1784962794,
-    "heartbeat_unix_seconds": 1784357994,
-    "branch": "codex/5467-backend-snapshot-contract",
-    "worktree": ".worktrees/adl-wp-5467",
-    "protected_paths": [
+  "phase": "closed_out",
+  "generation": 18,
+  "digest": "dcff0b0973830e32b1b2c30850988f13828d794691536ac94954b6a4c607aaeb",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "bounded-subagent-review-5467",
+    "assigned_by": "codex-root",
+    "revision": "git-blake3:cf96c76f32ec7c4e3c05df660ba259f96730023a:b292c08fe883633bcc7664151eecebf86c4f8ec94a11fe499054b4301875e2bc",
+    "scope": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/resolve_ci_backend.sh",
+      "adl/tools/setup_aws_spot_remote_validation_github_resources.sh",
+      "adl/tools/test_run_aws_spot_ci_profile.sh",
+      ".csdlc/issues/5467"
+    ]
+  },
+  "review": {
+    "reviewer": "bounded-subagent-review-5467",
+    "scope": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/resolve_ci_backend.sh",
+      "adl/tools/setup_aws_spot_remote_validation_github_resources.sh",
+      "adl/tools/test_run_aws_spot_ci_profile.sh",
+      ".csdlc/issues/5467"
+    ],
+    "reviewed_revision": "git-blake3:cf96c76f32ec7c4e3c05df660ba259f96730023a:b292c08fe883633bcc7664151eecebf86c4f8ec94a11fe499054b4301875e2bc",
+    "findings": [
+      {
+        "id": "F-5467-1",
+        "severity": "p1",
+        "summary": "Removing all stale setup assertions weakened live SSM, EBS attachment, and IAM cleanup policy coverage.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:cf96c76f32ec7c4e3c05df660ba259f96730023a:b292c08fe883633bcc7664151eecebf86c4f8ec94a11fe499054b4301875e2bc",
+        "route": null
+      },
+      {
+        "id": "F-5467-2",
+        "severity": "p3",
+        "summary": "Invalid backend proof accepted any nonzero status while lifecycle truth claimed exact status 2.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:cf96c76f32ec7c4e3c05df660ba259f96730023a:b292c08fe883633bcc7664151eecebf86c4f8ec94a11fe499054b4301875e2bc",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "AWS deployment and live permission exercise remain explicitly outside this issue; proof is source-to-policy local contract plus GitHub-hosted CI."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5467,
+    "pull_request": 5485,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5485",
+    "base": "main",
+    "head": "codex/5467-backend-snapshot-contract",
+    "revision": "git-blake3:cf96c76f32ec7c4e3c05df660ba259f96730023a:b292c08fe883633bcc7664151eecebf86c4f8ec94a11fe499054b4301875e2bc",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5485,
+    "head_sha": "cf96c76f32ec7c4e3c05df660ba259f96730023a",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635403810/job/88056827697"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635403810/job/88056781106"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635403810/job/88056768243"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635403810/job/88056768674"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5485,
+    "disposition": "merged",
+    "observed_sha": "cf96c76f32ec7c4e3c05df660ba259f96730023a",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5467.json",
+    "released_branch": "codex/5467-backend-snapshot-contract",
+    "released_worktree": ".worktrees/adl-wp-5467",
+    "released_protected_paths": [
       ".github/workflows/ci.yaml",
       "adl/tools/resolve_ci_backend.sh",
       "adl/tools/setup_aws_spot_remote_validation_github_resources.sh",
       "adl/tools/test_run_aws_spot_ci_profile.sh"
-    ],
-    "purpose": "Repair unreachable backend-snapshot assertions and prove backend selection locally without AWS"
+    ]
   },
-  "review_assignment": null,
-  "review": null,
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5467/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5467/diagram.mmd",
+  "design_path": ".csdlc/issues/5467/retained/design.md",
+  "diagram_path": ".csdlc/issues/5467/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex-root-design-review",
@@ -39,34 +129,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "31d4e90a61b63bb4eeb507940800b4d77b56bf0659af4b7434482af7f92f570a",
+      "values_digest": "c84d8b17c1680b40f3b0c118283d936e238ef05a8fe04d470d69efcff279d0ed",
       "rendered_digest": "178febf3b5cfdb4b8e7964c67773681647514cc6af6caebf0b643e6cc01f122f",
       "ast_digest": "a81b26e7ff519e7ceadcd67efb7ded9d44a20d01d3e94d4839d431c7752cb7e5"
     },
     "stp": {
-      "values_digest": "4746de62587bfc29809d0a6bae8b3a1d638db21f5e20922787ed7d49b4dcdb7c",
+      "values_digest": "b3b23c0e69d99f96ac465e833b2ff207d1150189afde63b2d6640feb8b5fc7dd",
       "rendered_digest": "c06a469a2a42e85d566b0e5abd1dd53eaff5254b105e217c14114f9c223a5748",
       "ast_digest": "58c6ea760265ad9c19fe15dcdcf48e4c4636fd9cd0ac659a9c90647a7d49e4e9"
     },
     "spp": {
-      "values_digest": "7a7df1dacdc2e77c2b2e0b62d0cc7fd1f0f3eb2953e0399a25e0a10bc32d87ea",
-      "rendered_digest": "88b9c9de5780740d40da5daca273a5bddb3a37f826ec31b999bb7bf56abfe573",
-      "ast_digest": "e0b11c70757c00997b84ac0a71d90ed7717f636fb826c8612d527d7dd0250c97"
+      "values_digest": "9845ffc139a58bdcf03a254ee8928f02848d4ebc23d4ac728f6804c3133d7826",
+      "rendered_digest": "45117d13edfd397e48b4c0afa942f07523793d3edd2d985e64aff52a30daaa82",
+      "ast_digest": "d6daa3e0992f30df48c994de4b85bc334ad8026838a3c948c842e779033c82de"
     },
     "vpp": {
-      "values_digest": "6c65c5e56a679e7c7c8006d57a59a7c7de4cdd8958893ff67ec825e26876ee81",
-      "rendered_digest": "2f96022b177a64ebbbdce694730043ff721196114fbd9b427066852d84737d2c",
-      "ast_digest": "a646953b2576fd2a787e51dd9836431aa6429d97e228516ac701d8f1f47e9a1a"
+      "values_digest": "a1c768ddd1fab45ef724caebd8561333448f14e248306610ab7b266e2d60479a",
+      "rendered_digest": "6b6854ea74150858dc99c6c105a3d00b263a5b2d3cd9dcec95902840bec09d3a",
+      "ast_digest": "8a1dd0f999b1402ca0e1053cd48e7759ba189663f357af7e332a6886b54a9a0f"
     },
     "srp": {
-      "values_digest": "1e8e96f85a67262db3f79089ef6add21dfba412a9cfce8ac248a92dcd5636b60",
-      "rendered_digest": "1474a501a0f0212c63eda7fb69697009b41b8ba979a66fd68e40a7b21b94d4ab",
-      "ast_digest": "d1bf975ba0141548d5bb02cd3d4955fadd03804f24b660ee3732cb620a866e21"
+      "values_digest": "17afa57068354ab10b7713af941125a8a4f0a84baf850e6302285a01540d0b50",
+      "rendered_digest": "ba3e3b675efc2097c46ff38421cf671ba2abee324887c877ccad7f80fcdde478",
+      "ast_digest": "2fb8891a3169e4a13bae78fc976088ea9b137c3c964fc4456c2b97a5129b603c"
     },
     "sor": {
-      "values_digest": "a7155de9a0b02b8a212effab277a1dc301b5eb70f59af05deed5426c566864b6",
-      "rendered_digest": "7c54850f7c45c97a1959eeb7c98e61f25d2fc13f0889c275e421f3692ec99c0b",
-      "ast_digest": "ce77bdbeece448f61f138f6828888922db769af50de256efc5f627363d006c61"
+      "values_digest": "16500cb348440eb7bb86afbe23ac9a6dd80ed0b2d583466a5eb586fbf370a85c",
+      "rendered_digest": "0d6ef2e041c6e743c2fc87a0d7785c4792d9a5d4bc4ac5d365716a90f4099e9c",
+      "ast_digest": "755726a346d47bc42f6eccd2aca47fe5b1285d5130af5cc13d9643d7d8ffff32"
     }
   },
   "transitions": [
@@ -104,6 +194,41 @@
       "to": "implemented",
       "actor": "codex-root",
       "reason": "Rebase and committed lifecycle metadata changed revision identity after substantive review; recover for exact final-head review before publication."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex-root",
+      "reason": "Exact rebased final-head review passed with prior fixes intact and no new findings."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex-root",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex-root",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 9,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex-root",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 10,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex-root",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -211,6 +336,69 @@
       "actor": "codex-root",
       "reason": "Rebase and committed lifecycle metadata changed revision identity after substantive review; recover for exact final-head review before publication.",
       "operation": "recover_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex-root",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 11,
+      "actor": "bounded-subagent-review-5467",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex-root",
+      "reason": "Exact rebased final-head review passed with prior fixes intact and no new findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex-root",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex-root",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex-root",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex-root",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex-root",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex-root-closeout",
+      "reason": "Materialize the retained terminal receipt after merged PR #5485 and closed issue #5467.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

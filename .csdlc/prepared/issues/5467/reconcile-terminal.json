@@ -1,0 +1,9 @@
+{
+  "issue": 5467,
+  "expected_initialization_digest": "2ad38313de373e32d209f2a3d3ed3f31060f4b2763fd10f58df6b26c6bb9831f",
+  "expected_branch": "codex/5467-closeout",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5467-closeout",
+  "actor": "codex-root-closeout",
+  "reason": "Materialize the retained terminal receipt after merged PR #5485 and closed issue #5467.",
+  "follow_ups": []
+}
