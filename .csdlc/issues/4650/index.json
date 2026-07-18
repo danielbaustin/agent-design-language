@@ -1,0 +1,103 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4650,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "c605f6dcd0449eee34f7f59bcb9e54397e5b23c62b96d1a36483b7bf158c12f6",
+  "phase": "bound",
+  "generation": 0,
+  "digest": "7dea0dd962277f9dcb77a3d36caf9b135dec072adda0a422ba530fea5db356aa",
+  "claim": {
+    "id": "claim-4650-v0-91-7-wp23-release-ceremony",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/4650-v0917-release-ceremony",
+    "worktree": ".worktrees/adl-wp-4650",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_WP23_RELEASE_CEREMONY_4650.md",
+      "docs/milestones/v0.91.7/review/wp23_release_ceremony_4650",
+      ".csdlc/issues/4650"
+    ],
+    "purpose": "Prepare and later execute WP-23 without claiming completion from setup"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/4650/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4650/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-prep-only",
+      "revision": "fda1682220e3d4185e4331f1b3d50a98dedb2511efafde223471e4b8e68a6ed4"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "dab1f91060e1436b43baa2b4d46333e2bf2b0bfa14023a4b632a3ffe1f35aebf",
+      "rendered_digest": "98e34c20f64641cac9ddde41b5bf69d1595c5b510c84312bf6cbea017f27af37",
+      "ast_digest": "988c512bf2999431565822bde6985d29287bcafd7e8b870ef1fb66704099eb7a"
+    },
+    "stp": {
+      "values_digest": "2c138049e9a4008cda9d7a9154b14943ac8a0f3cbdb08dd9394dffd8685dd757",
+      "rendered_digest": "590aa4245e7cdcae7ace74839a11912a14a5ef0cbe8e377f6e7fbe04c892377f",
+      "ast_digest": "ba86408c715522d4ee9c21925f7bc5fe8a7261a28ee627e9501d6575cfe1ceb0"
+    },
+    "spp": {
+      "values_digest": "a499d3930653c720332c4dd4225a0366fc29f0c7163503d967522ad17759ff9f",
+      "rendered_digest": "17f0ef08e9762b8585a99172d15e22ea4383bbcacdd2a40f1ac2c8b27d5163d4",
+      "ast_digest": "c3abed1d6f441bec8bb722bffe143af6547d196461b47451ee5b9f95a50b4963"
+    },
+    "vpp": {
+      "values_digest": "3a9200f2582ae79f606ba79c4260bbf0dc01f4bf0cffe0afeb6421a8f00f959d",
+      "rendered_digest": "6ac1808bd1d4efbd33d1e4c0f914851dcf876673a270e38094249243a6eaeb18",
+      "ast_digest": "e8a1a36c97dfd85e5ab1693cd9c9090c14d19a447dbf26dfdc366f788339b3cd"
+    },
+    "srp": {
+      "values_digest": "cd17e2d7ca01a2ebc29b8e17a50f16139d09d20e6d059f92534596df4a47decc",
+      "rendered_digest": "34acd9befa9994e199ee25abffe6948acd049c0feb97b1ac8c1c0d132556fd92",
+      "ast_digest": "3d5f6ff7ff573a14ac19a77d17993dc851093170b49753208e4eb6ec6467c25f"
+    },
+    "sor": {
+      "values_digest": "3c607662b8b1f951fb096f606f09cf93d49ebaffd44ead9fc2c451024618954c",
+      "rendered_digest": "d1128289bc4a7665eb9e00ea92dc0db0f0ab315617fde99b46cafd2e6aa7b060",
+      "ast_digest": "35f69e6bc5236da31917467c6ba099a2b2252bdfc3d87473bd28d41a6c8bbea8"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "verified Git worktree binding"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    }
+  ]
+}

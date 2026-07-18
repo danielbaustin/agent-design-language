@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4650,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-23][release] Release ceremony",
+    "slug": "v0-91-7-wp23-release-ceremony",
+    "version": "v0.91.7",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Prepare and execute the v0.91.7 release ceremony after review gates are satisfied.",
+      "required_outcome": "Release evidence, closeout truth, release notes, checklist state, and ceremony packet are finalized only after all review findings are fixed or explicitly blocked with evidence and operator approval.",
+      "declared_scope": [
+        "v0.91.7 release evidence and ceremony packet",
+        "release notes and checklist state",
+        "closeout truth and final non-claims"
+      ],
+      "authority_boundary": [
+        "Issue #4650 owns WP-23 execution",
+        "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml and WBS_v0.91.7.md define the work package",
+        "Preparation is not execution or completion evidence"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4650,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-23][release] Release ceremony",
+    "slug": "v0-91-7-wp23-release-ceremony",
+    "version": "v0.91.7",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare and later execute only WP-23; do not absorb sibling WPs or release-readiness claims.",
+      "deliverables": [
+        "Release ceremony packet",
+        "Closeout packet"
+      ],
+      "acceptance_criteria": [
+        "AC-1: WP-23 executes only within its declared scope and protected output paths",
+        "AC-2: Deliverables are retained on tracked paths with evidence-bound claims",
+        "AC-3: Validation records distinguish fresh checks, retained proof, skipped checks, and unproven surfaces",
+        "AC-4: Sibling WP work, v0.91.7 release readiness, and v0.92 activation readiness are not silently claimed"
+      ],
+      "dependencies": [
+        "WP-22 next milestone review and all required review/remediation gates"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.91.7/RELEASE_PLAN_v0.91.7.md",
+        "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
+        "docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md",
+        "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+      ],
+      "non_goals": [
+        "Do not execute this work during preparation",
+        "Do not implement sibling WP work",
+        "Do not use AWS or paid remote validation lanes for preparation",
+        "Do not claim release readiness from setup cards"
+      ]
+    }
+  }
+}

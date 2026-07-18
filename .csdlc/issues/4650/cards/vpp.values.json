@@ -1,0 +1,69 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4650,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-23][release] Release ceremony",
+    "slug": "v0-91-7-wp23-release-ceremony",
+    "version": "v0.91.7",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "prep-doctor",
+          "proof_role": "Validate typed C-SDLC prep state and issue-local cards",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+            "--repo",
+            ".",
+            "--issue",
+            "4650"
+          ],
+          "parallel_group": "prep",
+          "defer_reason": null
+        },
+        {
+          "lane": "artifact-integrity",
+          "proof_role": "Validate future tracked artifacts are clean after execution",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "prep",
+          "defer_reason": "Run after execution artifacts are written"
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on stale live truth, missing retained evidence, overclaim, or dependency ambiguity.",
+      "design_ref": ".csdlc/prepared/issues/4650/design.md",
+      "design_digest": "fda1682220e3d4185e4331f1b3d50a98dedb2511efafde223471e4b8e68a6ed4",
+      "diagram_ref": ".csdlc/prepared/issues/4650/diagram.mmd",
+      "diagram_digest": "ca29f06a0b2ee20135d367052ec17467b2a9ffd3fb9342c4d8c66820b28acc8f"
+    }
+  }
+}

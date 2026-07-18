@@ -1,0 +1,22 @@
+{
+  "issue": 4650,
+  "base_branch": "main",
+  "branch": "codex/4650-v0917-release-ceremony",
+  "worktree": ".worktrees/adl-wp-4650",
+  "claim": {
+    "id": "claim-4650-v0-91-7-wp23-release-ceremony",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/4650-v0917-release-ceremony",
+    "worktree": ".worktrees/adl-wp-4650",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_WP23_RELEASE_CEREMONY_4650.md",
+      "docs/milestones/v0.91.7/review/wp23_release_ceremony_4650",
+      ".csdlc/issues/4650"
+    ],
+    "purpose": "Prepare and later execute WP-23 without claiming completion from setup"
+  }
+}
