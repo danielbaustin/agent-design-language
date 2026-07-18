@@ -7,15 +7,15 @@
     "title": "[v0.91.7][WP-14] Launch and v0.92 birthday handoff",
     "slug": "v0-91-7-wp14-launch-v092-birthday-handoff",
     "version": "v0.91.7",
-    "generation": 5
+    "generation": 7
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "Exact implementation revision before publication.",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": ".csdlc/issues/4641\n.csdlc/prepared/issues/4641\ndocs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md\ndocs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md\ndocs/milestones/v0.91.7/review/wp14_launch_birthday_4641/ledger.yaml",
+      "review_revision": "git-blake3:30cfdfc72eb048d64cd8a27c0bdd0b39cf6c8021:be8ae90cb0af1e1c82e8007931df6c113cb3ad31b909b7a5f4443be38887e6b5",
+      "reviewer": "codex-review",
       "review_prompts": [
         "Does the issue stay within its WP scope?",
         "Are claims supported by retained or fresh evidence?",
@@ -23,8 +23,11 @@
         "Are sibling WP and release/activation non-claims preserved?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "WP-14 child implementation/proof issues #4758-#4763 remain open and must close with integrated evidence before v0.92 consumes launch, activation, Memory Palace, capability-envelope, witness/receipt, or birthday-doc readiness.",
+        "This review checked the bounded documentation and lifecycle diff only; it did not run runtime, provider, Observatory, Unity, AWS, or v0.92 activation validation."
+      ],
+      "review_result": "pass"
     }
   }
 }
