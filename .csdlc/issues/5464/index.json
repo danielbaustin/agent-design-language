@@ -3,13 +3,13 @@
   "issue": 5464,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "ae3e72f2513ddf93bede427c2ef36d2b067ddb7c1bd59bd1003a94f2e520d5fb",
-  "phase": "implemented",
-  "generation": 15,
-  "digest": "dbfe7c70ede6debf49f9d737ee9100e1adf0790ea10f8f5474499582f9d56925",
+  "phase": "reviewed",
+  "generation": 17,
+  "digest": "901b6727a173567870cda97420eca5f8be5014740ed967ae16c1e87de2ab43fe",
   "claim": {
     "id": "claim-5464-nextest-install-contract",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 15,
+    "generation": 17,
     "acquired_unix_seconds": 1784358000,
     "expires_unix_seconds": 1784444400,
     "heartbeat_unix_seconds": 1784358000,
@@ -24,7 +24,7 @@
   "review_assignment": {
     "reviewer": "bounded-subagent-review-5464",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "revision": "git-blake3:563c796a1b2db53165a8d055192ed172a5a29f44:64aa68041155f50dad8c84c7ab253ea5786c3ccc4d4508b5f5a0200f2d0682d1",
+    "revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
     "scope": [
       ".github/workflows/ci.yaml",
       "adl/tools/test_ci_runtime_contracts.sh"
@@ -36,16 +36,56 @@
       ".github/workflows/ci.yaml",
       "adl/tools/test_ci_runtime_contracts.sh"
     ],
-    "reviewed_revision": "git-blake3:563c796a1b2db53165a8d055192ed172a5a29f44:64aa68041155f50dad8c84c7ab253ea5786c3ccc4d4508b5f5a0200f2d0682d1",
+    "reviewed_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
     "findings": [
+      {
+        "id": "F-5464-1",
+        "severity": "p2",
+        "summary": "Alternate YAML step forms bypassed line-oriented block checks.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
+        "route": null
+      },
+      {
+        "id": "F-5464-2",
+        "severity": "p2",
+        "summary": "Unversioned nextest aliases escaped @-based inventory.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
+        "route": null
+      },
+      {
+        "id": "F-5464-3",
+        "severity": "p3",
+        "summary": "Alternate alias fixtures were incomplete.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
+        "route": null
+      },
+      {
+        "id": "F-5464-4",
+        "severity": "p2",
+        "summary": "Quoted installer and fully inline steps escaped regex inventory.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
+        "route": null
+      },
       {
         "id": "F-5464-5",
         "severity": "p2",
-        "summary": "Comma- and whitespace-separated multi-tool selections can hide nextest from whole-value matching.",
+        "summary": "Multi-tool selections could hide nextest tokens.",
         "actionable": true,
         "in_scope": true,
-        "disposition": "open",
-        "fix_revision": null,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
         "route": null
       }
     ],
@@ -67,32 +107,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "f8c7a7af71cf762cfc6c0a666049b0e6635521dc99bf17a4b9c2770e81f3b834",
+      "values_digest": "167a0a12597c79cf26964822c832933365a5595471a004fdd5ab36c09ed14e7b",
       "rendered_digest": "a2fb478ef4bd13ba429e8c0f8c544110e67e901a6de718d2cf148eca1f55f1a6",
       "ast_digest": "5c565f0762207eecbe4664aff60df4a55a8349758e22cc60254ac86f612dc1c6"
     },
     "stp": {
-      "values_digest": "22555e67458cc03b3b1afb4d719b36babc73ac192f9193fb6592584cfedd26c5",
+      "values_digest": "b0f4368aa2a9ae4b09d987a1cef843aa371342071aecdea37d4d29f488631f9d",
       "rendered_digest": "fc4b91f3228586ba35da574b082470293a7bf1b5145fea2dc54b5ca65c5c9d38",
       "ast_digest": "564b0df1e2c6093cb771e9b8d15562dd48d1ce5df66fb3477e27ad87a9cfd372"
     },
     "spp": {
-      "values_digest": "b29f9e48133b9849b8a62796fcbc3331751d0c517a63da8077a0cffbcd3a058d",
+      "values_digest": "83b0a101d86c781a92b0fb18ab534fb95e528d6787eebb63b5b326a2ebf3a67b",
       "rendered_digest": "7343cfe8e4dafed0a0e53405f81df92f00f78fae0b9094b9230b1b7f5781dbb8",
       "ast_digest": "269a7d90989ca87bf68e0d1775dafa72639584e93ae11cf70c7c4d2e2a4f18f7"
     },
     "vpp": {
-      "values_digest": "9886c5f6d9dd953d6f713fb177639c42747d84852f7cb32b27ad04c4adcfb304",
+      "values_digest": "ed48ba52d6af8b399c1eb8e49ead469538c816ccbe42c012d70a9a7cdb04b617",
       "rendered_digest": "d5cc78ce07b13e4f45c7727f07c44991f89a55815257d63068f374a7c1b017a9",
       "ast_digest": "de9357a2a9bc9a4c0fa064b5efb770a71e03195446b8fc79607366093d535464"
     },
     "srp": {
-      "values_digest": "0eda93bd1b71c6c1d58d4500933f821043678ad8a5a464e69b4a88d32a58721a",
-      "rendered_digest": "b60384c97c27653804b4957563bea73f905b8946ca5e0c073e6f190003c8f171",
-      "ast_digest": "0d0076ee8d11297f4fbad1da9dbddcc8e3ebfbf6f4dcffa82c7fbd9734391aa4"
+      "values_digest": "a3ac52455ce784140fb6cd30973c7c54aa1a74fcf51594183c9e3ec1bd2a0fb5",
+      "rendered_digest": "a4945172186e66305d8b79e129af11dd59a1b455aaf029a68cd06c5c64234916",
+      "ast_digest": "a0a84636698b7571745c9abcc249923e184fc7e094a593d3ddb87d5ace7ea824"
     },
     "sor": {
-      "values_digest": "e2bf151dae173e0c771d85995d6e8d96dc374b53d62df2fb41f7f7be35ead30f",
+      "values_digest": "701ff950bacfc4f5bc917c02ecd6e6d8b52aa520ee7802b043bd323f7ea9134b",
       "rendered_digest": "d23ed4526962c4d4453d19202db58464bce38f28fb35867f33d077f741e25449",
       "ast_digest": "f05eaaf2642949b677a95b59b0bbb2185a13e4e7498034843d212098f8bf219e"
     }
@@ -118,6 +158,13 @@
       "to": "implemented",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The bounded nextest installer repair and focused local proof are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact current-revision review passed after all five actionable findings were fixed."
     }
   ],
   "audit": [
@@ -267,6 +314,27 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The structural contract passes with all multi-tool regression fixtures.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove comma- and whitespace-separated tool lists cannot hide nextest or cargo-nextest\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-multitool-regression-pass\"}}"
+    },
+    {
+      "sequence": 22,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 16,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact current-revision review passed after all five actionable findings were fixed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
     }
   ]
 }

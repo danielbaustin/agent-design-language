@@ -26,13 +26,53 @@ adl/tools/test_ci_runtime_contracts.sh
 
 [
   {
-    "id": "F-5464-5",
+    "id": "F-5464-1",
     "severity": "p2",
-    "summary": "Comma- and whitespace-separated multi-tool selections can hide nextest from whole-value matching.",
+    "summary": "Alternate YAML step forms bypassed line-oriented block checks.",
     "actionable": true,
     "in_scope": true,
-    "disposition": "open",
-    "fix_revision": null,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
+    "route": null
+  },
+  {
+    "id": "F-5464-2",
+    "severity": "p2",
+    "summary": "Unversioned nextest aliases escaped @-based inventory.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
+    "route": null
+  },
+  {
+    "id": "F-5464-3",
+    "severity": "p3",
+    "summary": "Alternate alias fixtures were incomplete.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
+    "route": null
+  },
+  {
+    "id": "F-5464-4",
+    "severity": "p2",
+    "summary": "Quoted installer and fully inline steps escaped regex inventory.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
+    "route": null
+  },
+  {
+    "id": "F-5464-5",
+    "severity": "p2",
+    "summary": "Multi-tool selections could hide nextest tokens.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659",
     "route": null
   }
 ]
@@ -47,8 +87,8 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:563c796a1b2db53165a8d055192ed172a5a29f44:64aa68041155f50dad8c84c7ab253ea5786c3ccc4d4508b5f5a0200f2d0682d1")
+Revision: Some("git-blake3:753d012f201772d606b3b9dfb021156c4077f4ec:6cafcccbc6a9f6eab7f6c035424d3c3500223915aae3b51a6c9ecf43b1221659")
 
 Reviewer: Some("bounded-subagent-review-5464")
 
-Result: changes_required
+Result: pass
