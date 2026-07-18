@@ -239,7 +239,9 @@ python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend spot \
   --spot-opt-in true \
   --rust-required true --demo-required true \
   --path-policy-result success --spot-result success \
-  --hosted-result rust=skipped >/dev/null
+  --hosted-result rust-fmt-clippy=skipped \
+  --hosted-result rust-tests=skipped \
+  --hosted-result demo-proof=skipped >/dev/null
 python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend spot \
   --event-name pull_request --same-repo-pr true --work-required true \
   --spot-opt-in false \
@@ -296,6 +298,16 @@ if python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend spot \
   echo "backend-route verifier accepted a skipped selected Spot lane" >&2
   exit 1
 fi
+if python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend spot \
+    --event-name pull_request --same-repo-pr true --work-required true \
+    --spot-opt-in true \
+    --rust-required true --demo-required true \
+    --path-policy-result success --spot-result success \
+    --hosted-result rust-fmt-clippy=success --hosted-result rust-tests=skipped \
+    --hosted-result demo-proof=skipped >/dev/null 2>&1; then
+  echo "backend-route verifier accepted a selected Spot route with a hosted lane also running" >&2
+  exit 1
+fi
 if python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend hosted \
     --event-name pull_request --same-repo-pr true --work-required true \
     --spot-opt-in false \
@@ -304,6 +316,16 @@ if python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend hosted \
     --hosted-result rust-fmt-clippy=skipped --hosted-result rust-tests=skipped \
     --hosted-result demo-proof=success >/dev/null 2>&1; then
   echo "backend-route verifier let demo success mask skipped required Rust lanes" >&2
+  exit 1
+fi
+if python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend hosted \
+    --event-name pull_request --same-repo-pr true --work-required true \
+    --spot-opt-in false \
+    --rust-required true --demo-required false \
+    --path-policy-result success --spot-result success \
+    --hosted-result rust-fmt-clippy=success --hosted-result rust-tests=success \
+    --hosted-result demo-proof=success >/dev/null 2>&1; then
+  echo "backend-route verifier accepted a hosted route with the Spot lane also running" >&2
   exit 1
 fi
 

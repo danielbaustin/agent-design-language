@@ -47,7 +47,12 @@ hosted_results = dict(args.hosted_result)
 if spot_selected and args.work_required:
     if args.spot_result != "success":
         errors.append(f"selected Spot lane did not succeed: {args.spot_result}")
+    for lane, result in hosted_results.items():
+        if result != "skipped":
+            errors.append(f"unselected hosted {lane} lane was not skipped: {result}")
 elif not spot_selected:
+    if args.spot_result != "skipped":
+        errors.append(f"unselected Spot lane was not skipped: {args.spot_result}")
     if args.surface == "adl-coverage":
         if hosted_results.get("coverage") != "success":
             errors.append(
