@@ -1,0 +1,30 @@
+{
+  "issue": 5405,
+  "base_branch": "main",
+  "branch": "codex/5405-wp13-review-repair",
+  "worktree": ".worktrees/adl-wp-5405-repair",
+  "claim": {
+    "id": "claim-5405-review-findings-finish",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784342092,
+    "expires_unix_seconds": 1784428492,
+    "heartbeat_unix_seconds": 1784342092,
+    "branch": "codex/5405-wp13-review-repair",
+    "worktree": ".worktrees/adl-wp-5405-repair",
+    "protected_paths": [
+      "adl/src/runtime_v2/economics_civilization_boundary.rs",
+      "adl/src/runtime_v2/tests/economics_civilization_boundary.rs",
+      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GUILD_FOUNDATION_BOUNDARY_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GODEL_MECHANICS_BRIDGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/review/wp13_closeout_4640.md",
+      "docs/milestones/v0.91.7/review/wp13_closeout_4640/closeout_packet.json",
+      "docs/milestones/v0.91.7/review/wp13_economics_civilization_boundary_4754.md",
+      "docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md",
+      "docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+    ],
+    "purpose": "Resolve #5403 WP-13 guild, Godel, and economics review findings"
+  }
+}

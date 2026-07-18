@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5455,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Fail closed on stale stable owner-binary provenance",
+    "slug": "stale-owner-binary-provenance",
+    "version": "v0.91.7",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement and prove stale owner-binary provenance enforcement.",
+      "deliverables": [
+        "Source provenance field and verifier",
+        "Focused regression test"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Receipt records source revision",
+        "AC-2: Verification fails closed with explicit stale provenance",
+        "AC-3: Focused Gate 10A proof passes"
+      ],
+      "dependencies": [],
+      "repo_inputs": [
+        "csdlc-v2/src/operator.rs",
+        "csdlc-v2/tests/gate10a.rs",
+        "csdlc-v2/src/bin/csdlc-install.rs"
+      ],
+      "non_goals": [
+        "No v1 wrapper restoration",
+        "No shell or Python fallback"
+      ]
+    }
+  }
+}

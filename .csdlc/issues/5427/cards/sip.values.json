@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5427,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][cards] Add typed repair for stale card identity metadata",
+    "slug": "v0-91-7-typed-card-identity-repair",
+    "version": "v0.91.7",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Provide a safe typed route to repair stale release-version identity across the canonical issue record and all six cards.",
+      "required_outcome": "A validated semantic operation repairs #5353 from v0.91.8 to v0.91.7 without manual card mutation or content drift.",
+      "declared_scope": [
+        "Typed semantic identity operation",
+        "Atomic card projection update",
+        "Focused round-trip and atomicity tests",
+        "#5353 identity repair"
+      ],
+      "authority_boundary": [
+        "Issue #5427 acceptance criteria",
+        "C-SDLC v2 typed store and card schemas",
+        "No manual Markdown or JSON mutation"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

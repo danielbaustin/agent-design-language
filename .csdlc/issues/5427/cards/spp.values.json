@@ -1,0 +1,76 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5427,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][cards] Add typed repair for stale card identity metadata",
+    "slug": "v0-91-7-typed-card-identity-repair",
+    "version": "v0.91.7",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Add the typed identity operation, test validation and atomicity, then use it to repair #5353 and validate the resulting cards.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Map identity projection and mutation boundaries",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement typed operation and focused regressions",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Repair #5353 and run v2 validation",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "All six cards and canonical issue identity share one version",
+        "CAS protects the mutation",
+        "Failed validation leaves prior state intact"
+      ],
+      "risks": [
+        "Existing identity schema may require a compatibility-preserving operation shape",
+        "#5353 may have unrelated stale card content"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Repair requires changing non-identity content",
+        "Atomicity cannot be proven with focused tests",
+        "#5353 state is unavailable or conflicts with the issue scope"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5427/design.md",
+      "design_digest": "466ae2bb60432db07310e17f7ee398b820574150f97cb39fecf67618d9d78f22",
+      "diagram_ref": ".csdlc/prepared/issues/5427/diagram.mmd",
+      "diagram_digest": "58fdfa7edeec79f2bb33de2b26a8aed64354afcf090b644eb45c884c842cae66"
+    }
+  }
+}

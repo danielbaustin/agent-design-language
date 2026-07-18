@@ -1,0 +1,7 @@
+flowchart LR
+  S[Tracked repository HEAD] --> I[csdlc-install]
+  I --> R[install-receipt.json\nsource_revision + binary hashes]
+  R --> V[verify_coexistence]
+  S --> V
+  V -->|match| O[stable v2 owner binary allowed]
+  V -->|mismatch| F[fail closed\nstale provenance]

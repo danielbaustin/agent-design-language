@@ -1,0 +1,10 @@
+{
+  "issue": 5427,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "9281aa1701cd1ea6afa6556e1bfd0cae8ec888d71dba227654e7eea438477520",
+  "claim_id": "claim-5427-card-identity",
+  "actor": "codex",
+  "reason": "Implement typed identity version repair and repair #5353 through the supported route.",
+  "operation": {"operation":"record_execution","summary":"Added typed identity-version semantic operation and cross-issue repair route.","changes":["Update all six card identity versions atomically through typed operation","Reject malformed identity versions before mutation","Repair #5353 card identities from v0.91.8 to v0.91.7","Add focused round-trip and rejection tests"],"artifacts":["csdlc-v2/src/cards.rs","csdlc-v2/src/store.rs","csdlc-v2/src/bin/csdlc-edit.rs","csdlc-v2/tests/card_identity.rs"]}
+}

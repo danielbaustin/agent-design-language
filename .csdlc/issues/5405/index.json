@@ -1,0 +1,663 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5405,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "054e97bce0600f6d67de82ce3c57351da92204496680e0793747ea6943aa00a2",
+  "phase": "closed_out",
+  "generation": 39,
+  "digest": "7ceb69946c4225d98e1774d754738f41d53eadced81f92ac3207fdce39892fbd",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f739a-5fbe-7e33-8b85-4cf33cf43dcd",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:7a3b66a7c76167828b80ecae5451fec4b3673ece:193b685342662653c2ebf507e8240003bbe6b50a7af0fd7dccc7ca4ea92d69c4",
+    "scope": [
+      "adl/src/runtime_v2/economics_civilization_boundary.rs",
+      "adl/src/runtime_v2/tests/economics_civilization_boundary.rs",
+      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GODEL_MECHANICS_BRIDGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GUILD_FOUNDATION_BOUNDARY_v0.91.7.md",
+      "docs/milestones/v0.91.7/review/wp13_closeout_4640.md",
+      "docs/milestones/v0.91.7/review/wp13_closeout_4640/closeout_packet.json",
+      "docs/milestones/v0.91.7/review/wp13_economics_civilization_boundary_4754.md",
+      "docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md",
+      "docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f739a-5fbe-7e33-8b85-4cf33cf43dcd",
+    "scope": [
+      "adl/src/runtime_v2/economics_civilization_boundary.rs",
+      "adl/src/runtime_v2/tests/economics_civilization_boundary.rs",
+      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GODEL_MECHANICS_BRIDGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GUILD_FOUNDATION_BOUNDARY_v0.91.7.md",
+      "docs/milestones/v0.91.7/review/wp13_closeout_4640.md",
+      "docs/milestones/v0.91.7/review/wp13_closeout_4640/closeout_packet.json",
+      "docs/milestones/v0.91.7/review/wp13_economics_civilization_boundary_4754.md",
+      "docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md",
+      "docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+    ],
+    "reviewed_revision": "git-blake3:7a3b66a7c76167828b80ecae5451fec4b3673ece:193b685342662653c2ebf507e8240003bbe6b50a7af0fd7dccc7ca4ea92d69c4",
+    "findings": [],
+    "residual_risks": [
+      "Required GitHub CI and live remote validation remain in progress at the reviewed head."
+    ],
+    "completed": true,
+    "non_substantive_proof": {
+      "policy": "No-content CI synchronization commit; issue-owned tree is byte-identical to the prior reviewed revision.",
+      "from_revision": "git-blake3:0746a91e294e9843c3d0322511e7156fdef71072:510e9a406a6c815a29435999644673c2ecb8a06ca0fc9795c714d61cd71a52bb",
+      "to_revision": "git-blake3:7a3b66a7c76167828b80ecae5451fec4b3673ece:193b685342662653c2ebf507e8240003bbe6b50a7af0fd7dccc7ca4ea92d69c4",
+      "from_commit": "0746a91e294e9843c3d0322511e7156fdef71072",
+      "to_commit": "7a3b66a7c76167828b80ecae5451fec4b3673ece",
+      "changed_paths": []
+    }
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5405,
+    "pull_request": 5445,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5445",
+    "base": "main",
+    "head": "codex/5405-wp13-review-repair",
+    "revision": "git-blake3:7a3b66a7c76167828b80ecae5451fec4b3673ece:193b685342662653c2ebf507e8240003bbe6b50a7af0fd7dccc7ca4ea92d69c4",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": {
+    "pull_request": 5445,
+    "head_sha": "7a3b66a7c76167828b80ecae5451fec4b3673ece",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29631556008/job/88047431074"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29631556008/job/88047431077"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5445,
+    "disposition": "merged",
+    "observed_sha": "7a3b66a7c76167828b80ecae5451fec4b3673ece",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5405.json",
+    "released_branch": "codex/5405-wp13-review-repair",
+    "released_worktree": ".worktrees/adl-wp-5405-repair",
+    "released_protected_paths": [
+      "adl/src/runtime_v2/economics_civilization_boundary.rs",
+      "adl/src/runtime_v2/tests/economics_civilization_boundary.rs",
+      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GODEL_MECHANICS_BRIDGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GUILD_FOUNDATION_BOUNDARY_v0.91.7.md",
+      "docs/milestones/v0.91.7/review/wp13_closeout_4640.md",
+      "docs/milestones/v0.91.7/review/wp13_closeout_4640/closeout_packet.json",
+      "docs/milestones/v0.91.7/review/wp13_economics_civilization_boundary_4754.md",
+      "docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md",
+      "docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5405/retained/design.md",
+  "diagram_path": ".csdlc/issues/5405/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator-assigned-review-fix",
+      "revision": "94d15fb356b31f02b0d46cc67eb69d558668f1783d2090be1b75914e4866ed68"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "6b390cb3e2717890a10d6227cabf57fd0978123cf730a82e7474667fbf4bf514",
+      "rendered_digest": "703b92e39c250aa5e073508493c1d38ae73f523e6cf4a0536e89a13faebea53d",
+      "ast_digest": "37f28dd84da79b263104176dbb71e609b56a71b7afb6e5076d455ad7142d5f1f"
+    },
+    "stp": {
+      "values_digest": "170844264f7ea5777c8fec5a2dfd394e696de750dfb6aa1500f2d514110d620a",
+      "rendered_digest": "d93082537cdc86d0519550bef7290c3fb715ab2dd435712a3d0ae9a944770e30",
+      "ast_digest": "94191cfd67fe8d03c3e4761a74ca4434efdaa7c87cc3dd5960d46a12a27b3a2d"
+    },
+    "spp": {
+      "values_digest": "f33a108d3d2c886311c7888b2b0f4f92a9cd66fadf8b4a0aaecf8d37f1233c26",
+      "rendered_digest": "c2420565538a898ac289b714a8cfad25837275fa48fa4ca0d0d147b7e00cbf28",
+      "ast_digest": "53e801dc8c30bbe457bcd7538b42c4d898b942ebf60dcca1a8d3bd276944bfb3"
+    },
+    "vpp": {
+      "values_digest": "91b8f91bc467cefa2c0f9829fec4e84841b33dd9e83d0c5686abe4b0b9c7e5b3",
+      "rendered_digest": "e33eadd8a727f314507198604083fafd6b6602ca1d74988afc702543f05d6f2e",
+      "ast_digest": "199fec29ee78c16eeefb424d5a2e80b2a2b6bc944c3cbb3904e9028fcb0783dd"
+    },
+    "srp": {
+      "values_digest": "989d592fce44b79d8335840e6764f782b3b67fc0a426e8d12d13dbb29d438e6f",
+      "rendered_digest": "c0d7edaf5e7c880a5c9ca0701a449a83c85d0aa3cb71e7c915d9aad3f9c3486f",
+      "ast_digest": "42f704c6a13b6207e5cd96ddb1b959113c06c5416d83fc2866fa4faee46dd301"
+    },
+    "sor": {
+      "values_digest": "f44f85625de11074af1090ea46cbd6f387708dbcd77cd08da27e9341263534e0",
+      "rendered_digest": "0618b81be325ed1a79bd24fb5d0c28c79f89e903ba5fc8075a0fe3abb3b0579d",
+      "ast_digest": "056bdf5ee7d6acca25e59f63658e3b4cba7e31109c1d44bdd57f1c387e920e43"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "All six cards and approved design are ready in the existing clean issue-bound worktree."
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The existing branch and worktree match the exact reserved claim and protected issue scope."
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "All #5405 implementation changes and focused pre-review proof are complete on the clean issue branch."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact-revision subagent review passed at 89088f8a5 with all four prior findings fixed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Lifecycle-only review-record commit changed revision identity after the prior exact review; recover for exact current-HEAD review before publication."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact current-HEAD review passed at daad3d266 with all substantive paths unchanged from the prior PASS."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Rebase onto merged Spot wrapper repair changed the commit identity while leaving all issue-owned bytes unchanged"
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Exact post-rebase review passed and confirmed issue-owned content is byte-identical"
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 11,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Final rebase onto merged cache-shape repair changed commit identity while leaving all issue-owned bytes unchanged"
+    },
+    {
+      "sequence": 12,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Final exact-revision review passed after both Spot tooling repairs merged"
+    },
+    {
+      "sequence": 13,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 14,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Rebase onto merged Spot tooling fixes changed the exact commit identity; refresh review and publication truth at the current substantive revision."
+    },
+    {
+      "sequence": 15,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Final exact-revision review passed after rebase onto the merged Spot tooling baseline"
+    },
+    {
+      "sequence": 16,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 17,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Refresh exact-revision review and publication after a no-content CI synchronization commit"
+    },
+    {
+      "sequence": 18,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact-revision review passed and confirmed the CI synchronization commit changed no issue-owned bytes"
+    },
+    {
+      "sequence": 19,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 20,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 21,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 22,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "All six cards and approved design are ready in the existing clean issue-bound worktree.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The existing branch and worktree match the exact reserved claim and protected issue scope.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"bound\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Mapped each #5403 WP-13 finding to its owning code and claim-truth surfaces.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Repaired Guild and Godel claim truth plus duplicate rejection in the owning economics boundary validator.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Focused economics, Guild, Godel, JSON, claim-language, formatting, and diff-hygiene validation passed.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the clean #5405 implementation surfaces before exact-revision review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Resolved all three #5403 WP-13 findings by correcting Guild and Godel claim truth and rejecting duplicate Runtime v2 economics boundary rows.\",\"changes\":[\"Downgraded declarative Guild vocabulary and gates from integrated_proven to boundary_proven across parent, handoff, and activation-ledger truth.\",\"Reworded Godel evidence as admission readiness with hosted provider requests resolved but not invoked.\",\"Rejected duplicate allowed-consumption rows, postponed-surface ids, and promotion gates with focused regression coverage.\"],\"artifacts\":[\"adl/src/runtime_v2/economics_civilization_boundary.rs\",\"adl/src/runtime_v2/tests/economics_civilization_boundary.rs\",\"docs/milestones/v0.91.7/review/wp13_closeout_4640.md\",\"docs/milestones/v0.91.7/review/wp13_closeout_4640/closeout_packet.json\",\"docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record focused Runtime v2 economics duplicate-policy proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"--lib\",\"runtime_v2_economics_civilization_boundary\",\"--\",\"--nocapture\"],\"purpose\":\"Prove canonical economics boundary packets remain valid and all three duplicate semantic row classes fail closed.\",\"outcome\":\"passed\",\"evidence_ref\":\"adl/src/runtime_v2/tests/economics_civilization_boundary.rs\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record focused Guild and Godel boundary behavior proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"--lib\",\"runtime_v2_g\",\"--\",\"--nocapture\"],\"purpose\":\"Confirm Guild remains a handoff-only boundary and Godel runtime packets retain explicit non-invocation behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\"adl/src/runtime_v2/tests\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record machine-readable packet, stale-claim scan, and diff-hygiene proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"-lc\",\"jq empty docs/milestones/v0.91.7/review/wp13_closeout_4640/closeout_packet.json && ! rg -n -i 'integrated_proven.*guild|guild.*integrated_proven|executable (godel|launch)|godel.*executable|executable launch-plan' <WP-13 claim surfaces> && git diff --check\"],\"purpose\":\"Prove valid closeout JSON, absence of the reviewed stale claim wording, and clean patch whitespace.\",\"outcome\":\"passed\",\"evidence_ref\":\"docs/milestones/v0.91.7/review/wp13_closeout_4640/closeout_packet.json\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "All #5405 implementation changes and focused pre-review proof are complete on the clean issue branch.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Pre-PR review found the same stale Guild routing claim in the owning feature document.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.7/features/GUILD_FOUNDATION_BOUNDARY_v0.91.7.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "subagent:019f7321-c006-7013-a1bc-9d2048423552",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the three actionable pre-PR review repairs before re-review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Resolved all #5403 WP-13 findings and the first pre-PR review consistency findings across code, closeout, and handoff truth.\",\"changes\":[\"Removed the remaining implication that v0.92 may consume implemented Guild identity/witness routing.\",\"Added explicit Guild record, routing, membership-event, and moderation-hook behavior non-claims to the machine closeout packet.\",\"Replaced remaining Godel launch-admission consumption wording with admission-readiness and not-invoked truth.\"],\"artifacts\":[\"docs/milestones/v0.91.7/features/GUILD_FOUNDATION_BOUNDARY_v0.91.7.md\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "subagent:019f7321-c006-7013-a1bc-9d2048423552",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the final primary Guild feature truth repair before re-review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Resolved all #5403 WP-13 findings and all actionable pre-PR review consistency findings.\",\"changes\":[\"Set the primary Guild feature status to boundary_proven and qualified all named record and hook surfaces as declarative identifiers.\"],\"artifacts\":[]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "subagent:019f7321-c006-7013-a1bc-9d2048423552",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact-revision subagent review passed at 89088f8a5 with all four prior findings fixed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Lifecycle-only review-record commit changed revision identity after the prior exact review; recover for exact current-HEAD review before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 18,
+      "actor": "subagent:019f7321-c006-7013-a1bc-9d2048423552",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 26,
+      "generation": 19,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact current-HEAD review passed at daad3d266 with all substantive paths unchanged from the prior PASS.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 20,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 28,
+      "generation": 21,
+      "actor": "codex",
+      "reason": "Rebase onto merged Spot wrapper repair changed the commit identity while leaving all issue-owned bytes unchanged",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 30,
+      "generation": 22,
+      "actor": "subagent:019f7321-c006-7013-a1bc-9d2048423552",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 31,
+      "generation": 23,
+      "actor": "codex",
+      "reason": "Exact post-rebase review passed and confirmed issue-owned content is byte-identical",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 32,
+      "generation": 24,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 33,
+      "generation": 25,
+      "actor": "codex",
+      "reason": "Final rebase onto merged cache-shape repair changed commit identity while leaving all issue-owned bytes unchanged",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 34,
+      "generation": 25,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 35,
+      "generation": 26,
+      "actor": "subagent:019f7321-c006-7013-a1bc-9d2048423552",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 36,
+      "generation": 27,
+      "actor": "codex",
+      "reason": "Final exact-revision review passed after both Spot tooling repairs merged",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 37,
+      "generation": 28,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 38,
+      "generation": 29,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Rebase onto merged Spot tooling fixes changed the exact commit identity; refresh review and publication truth at the current substantive revision.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 39,
+      "generation": 29,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 40,
+      "generation": 30,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 41,
+      "generation": 31,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Final exact-revision review passed after rebase onto the merged Spot tooling baseline",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 42,
+      "generation": 32,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 43,
+      "generation": 33,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Refresh exact-revision review and publication after a no-content CI synchronization commit",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 44,
+      "generation": 33,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 45,
+      "generation": 34,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 46,
+      "generation": 35,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact-revision review passed and confirmed the CI synchronization commit changed no issue-owned bytes",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 47,
+      "generation": 36,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 48,
+      "generation": 37,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 49,
+      "generation": 38,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 50,
+      "generation": 39,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Materialize the retained terminal receipt after PR #5445 merged and issue #5405 closed",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

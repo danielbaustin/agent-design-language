@@ -1,0 +1,10 @@
+{
+  "issue": 5427,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "dbcd44feac95a414c726e5b4fd0286df18014b824a61048f1464c26757d92464",
+  "claim_id": "claim-5427-card-identity",
+  "actor": "codex",
+  "reason": "Pre-publication review completed with no actionable findings.",
+  "operation": {"operation":"advance_phase","phase":"reviewed"}
+}

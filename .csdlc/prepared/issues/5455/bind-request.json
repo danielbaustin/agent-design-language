@@ -1,0 +1,18 @@
+{
+  "issue": 5455,
+  "base_branch": "main",
+  "branch": "codex/5455-stale-owner-provenance",
+  "worktree": ".worktrees/adl-wp-5455",
+  "claim": {
+    "id": "claim-5455-owner-provenance",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1784352200,
+    "expires_unix_seconds": 1784355800,
+    "heartbeat_unix_seconds": 1784352200,
+    "branch": "codex/5455-stale-owner-provenance",
+    "worktree": ".worktrees/adl-wp-5455",
+    "protected_paths": ["csdlc-v2/src/operator.rs", "csdlc-v2/tests/gate10a.rs"],
+    "purpose": "Fail closed on stale stable owner-binary provenance"
+  }
+}

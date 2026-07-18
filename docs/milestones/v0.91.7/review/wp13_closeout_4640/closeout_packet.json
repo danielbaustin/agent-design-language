@@ -25,7 +25,7 @@
       "state": "closed",
       "surface": "godel_constructability",
       "evidence": "docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md",
-      "parent_disposition": "integrated_proven_launch_admission_boundary",
+      "parent_disposition": "boundary_proven_launch_admission_readiness_not_invoked",
       "non_claims": [
         "live_hosted_invocation",
         "unbounded_recursive_self_improvement",
@@ -51,8 +51,12 @@
       "state": "closed",
       "surface": "guild_foundation",
       "evidence": "docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md",
-      "parent_disposition": "integrated_proven_governance_handoff_context",
+      "parent_disposition": "boundary_proven_declarative_governance_handoff_context",
       "non_claims": [
+        "guild_record_or_hook_producer_consumer_behavior",
+        "identity_witness_routing_behavior",
+        "membership_event_behavior",
+        "moderation_hook_behavior",
         "constitutional_citizenship",
         "polis_authority",
         "delegated_governance_authority",
@@ -90,7 +94,7 @@
   ],
   "v0_92_may_consume": [
     "operational_affect_reasoning_control_boundary",
-    "godel_constructability_launch_admission_boundary",
+    "godel_constructability_admission_readiness_not_invoked_boundary",
     "economics_context_only_non_claim_posture",
     "guild_foundation_handoff_context",
     "codefriend_adapter_obligation_handoff_truth",

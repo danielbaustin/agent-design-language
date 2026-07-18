@@ -1,0 +1,10 @@
+{
+  "issue": 5427,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "dfe2e51c981ee107311e8b24bfb522a1ea4229706ab390dccb2626816c0b9fcc",
+  "claim_id": "claim-5427-card-identity",
+  "actor": "codex",
+  "reason": "Focused identity tests, full C-SDLC v2 suite, and doctor proofs passed.",
+  "operation": {"operation":"record_validation","result":{"command":["cargo","test","--locked","--manifest-path","csdlc-v2/Cargo.toml"],"purpose":"Prove identity round-trip, malformed rejection, full v2 regression, and repair-compatible projections","outcome":"passed","evidence_ref":"local:5427-card-identity-and-csdlc-v2-suite"}}
+}

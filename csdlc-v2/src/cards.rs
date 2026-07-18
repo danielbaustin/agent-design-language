@@ -487,6 +487,9 @@ pub enum TextField {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "operation", rename_all = "snake_case")]
 pub enum SemanticOperation {
+    UpdateIdentityVersion {
+        version: String,
+    },
     Replan {
         field: TextField,
         value: String,
@@ -761,6 +764,11 @@ pub fn apply(
     operation: &SemanticOperation,
 ) -> Result<Option<LifecyclePhase>> {
     match operation {
+        SemanticOperation::UpdateIdentityVersion { version } => {
+            validate_identity_version(version)?;
+            values.identity.version = version.clone();
+            Ok(None)
+        }
         SemanticOperation::Replan { field, value } => {
             set_text(values, *field, value.clone())?;
             Ok(None)
@@ -949,6 +957,27 @@ pub fn apply(
         },
         SemanticOperation::AdvancePhase { phase } => Ok(Some(*phase)),
     }
+}
+
+pub fn validate_identity_version(value: &str) -> Result<()> {
+    let Some(rest) = value.strip_prefix('v') else {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "identity version must use vMAJOR.MINOR.PATCH form",
+        ));
+    };
+    let parts: Vec<_> = rest.split('.').collect();
+    if parts.len() != 3
+        || parts
+            .iter()
+            .any(|part| part.is_empty() || !part.bytes().all(|byte| byte.is_ascii_digit()))
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "identity version must use vMAJOR.MINOR.PATCH form",
+        ));
+    }
+    Ok(())
 }
 
 fn validate_status_guard(values: &CardValues, next: CardStatus) -> Result<()> {

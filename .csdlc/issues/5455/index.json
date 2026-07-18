@@ -1,0 +1,80 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5455,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "7d2ae121794a7f32acd179c81aea481aa59af9f3f31f85ea8ef242fc462d1df4",
+  "phase": "initialized",
+  "generation": 0,
+  "digest": "7d7c4cfbc66a9c413cd679e0631de079608fe1eecc0d7857f33acdda268666b3",
+  "claim": {
+    "id": "claim-5455-owner-provenance",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1784352200,
+    "expires_unix_seconds": 1784355800,
+    "heartbeat_unix_seconds": 1784352200,
+    "branch": "codex/5455-stale-owner-provenance",
+    "worktree": ".worktrees/adl-wp-5455",
+    "protected_paths": [
+      "csdlc-v2/src/operator.rs",
+      "csdlc-v2/tests/gate10a.rs"
+    ],
+    "purpose": "Fail closed on stale stable owner-binary provenance"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5455/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5455/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex",
+      "revision": "9d5e727c184ec395d3fbf87ec3d0be0d2359bf63293ec8327f51f654205d3585"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "bbda80b9378937c92605100cc46faf30b4e6b5505f357b3e4b8d736838ce2d61",
+      "rendered_digest": "a7e66983bd9cc699f02dda3557ed133ada5b913e0dd33ccf563edf8776019b7c",
+      "ast_digest": "1fbac3166ccf0d475cc75672e375c55a21e91c90454c8fdcdb5eb13ec2694c29"
+    },
+    "stp": {
+      "values_digest": "7d506b9e983c7e5fcc8319880baed4e628cf54e27c59293762af76d8d8cbeb5c",
+      "rendered_digest": "2d9d62b64304dca45f181632ebd278f0b0f6d9c112725d2d2c21417a395774aa",
+      "ast_digest": "623f06ee07f0e3902d23f5d5460ce030ed92d84ec038a984e6e415ca9a3d1059"
+    },
+    "spp": {
+      "values_digest": "3e86cb761b10993be48caf6a47ea09c825480e1d15177ec060f579d50b2479fa",
+      "rendered_digest": "5e453a6e4d1e97a189443d534f7e304341ea47eb46a27d244fd6497745279b9c",
+      "ast_digest": "91877968be4e9c237bf12591370efdd53b45bab858f98ba1f737dc01388f9915"
+    },
+    "vpp": {
+      "values_digest": "736ff285da8812b561719bd0c2648e9f2c4f345a48f8e30d6ffe04132d2dcac0",
+      "rendered_digest": "b1385ee2b0e92ffff735fec8f1450cb941d353bedd707466a8a312813c878e77",
+      "ast_digest": "03753a5a69af5937790df78430e6d0443f1a443efe29717f8c2aec419ccb92e7"
+    },
+    "srp": {
+      "values_digest": "cf6de4f668227da92ab177f0f53214110f270b22c4938118f88ed8bff43ff05e",
+      "rendered_digest": "ffd4fa066158af24836800cca403f3ead79639769987e7c2faf0a92ad5df9ce6",
+      "ast_digest": "fa978425a37d5c352788b304178c4c66f97927280248c4f50160dd0bec04331f"
+    },
+    "sor": {
+      "values_digest": "c03f9c8cb89f4863824beaf0b365c3cee8ba5a724f7e607c30890930b6ff0d8d",
+      "rendered_digest": "cc23f1fc645da9cf6ffed8f68ca1d98a7e43caf66338b78f87bdd283379f9bed",
+      "ast_digest": "7e6baa8fceca1fef9bbce45ab1712080ffd64486afec90975ff8f1c8378839fd"
+    }
+  },
+  "transitions": [],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5427,
+  "expected_generation": 7,
+  "expected_digest": "436ad469a95e13884e6f361815cd47d1d8dc0af455c67d8cdbe3cd5670713db9",
+  "claim_id": "claim-5427-card-identity",
+  "actor": "codex",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5427-v0-91-7-card-identity-repair",
+  "title": "[v0.91.7][csdlc-v2] #5427 Add typed stale card identity repair",
+  "body": "Closes #5427\n\nAdds the typed identity-version repair operation, atomic six-card updates, receipt-safe rollback, and repairs #5353 to v0.91.7. Full csdlc-v2 tests and clippy pass.",
+  "draft": true,
+  "token_file": null
+}

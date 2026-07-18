@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5405,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-13] Resolve #5403 guild, Godel, and economics findings",
+    "slug": "v0-91-7-review-fix-wp13-guild-godel-economics-findings",
+    "version": "v0.91.7",
+    "generation": 39
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Resolve the three #5403 WP-13 findings without redesigning the scheduler or adding broad guild/Godel runtime work.",
+      "deliverables": [
+        "Corrected guild and Godel truth wording",
+        "Economics duplicate-policy rejection",
+        "Regression validation for duplicate semantics",
+        "Parent closeout/handoff truth alignment"
+      ],
+      "acceptance_criteria": [
+        "Guild truth is downgraded to boundary_proven or a real producer/consumer path is implemented and proven",
+        "Godel docs consistently say admission readiness and retain not-invoked truth",
+        "Economics validators reject duplicates and retain regression tests",
+        "Parent closeout and v0.92 handoff agree with corrected claims"
+      ],
+      "dependencies": [
+        "#5403 review packet",
+        "WP-13 #4753/#4754/#4755 review packets",
+        "Runtime v2 economics/civilization boundary validator"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md",
+        "docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md",
+        "docs/milestones/v0.91.7/review/wp13_economics_civilization_boundary_4754.md",
+        "docs/milestones/v0.91.7/review/wp13_closeout_4640.md",
+        "adl/src/runtime_v2/economics_civilization_boundary.rs",
+        "adl/src/runtime_v2/tests/economics_civilization_boundary.rs"
+      ],
+      "non_goals": [
+        "Full guild producer/consumer runtime implementation unless already trivial and bounded",
+        "Hosted provider invocation proof",
+        "Economics boundary redesign"
+      ]
+    }
+  }
+}

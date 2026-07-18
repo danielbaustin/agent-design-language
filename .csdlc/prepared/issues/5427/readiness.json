@@ -1,0 +1,13 @@
+{
+  "schema": "csdlc.readiness_request.v1",
+  "issue": 5427,
+  "expected_generation": 8,
+  "expected_digest": "adae86db327e1ac012ef20098923caaf7dd9ac6beccaf4003cdc505e3914421b",
+  "claim_id": "claim-5427-card-identity",
+  "actor": "codex",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5456,
+  "required_checks": ["adl-ci", "adl-coverage", "adl-tooling-contracts", "adl-path-policy"],
+  "require_review": false,
+  "token_file": null
+}

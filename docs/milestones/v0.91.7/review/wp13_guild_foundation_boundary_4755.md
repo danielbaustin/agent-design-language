@@ -2,8 +2,9 @@
 
 ## Scope
 
-`#4755` proves the MVP guild foundation boundary that `v0.92` may consume for
-birthday governance context without absorbing v0.93 constitutional governance.
+`#4755` proves a declarative MVP guild foundation boundary that `v0.92` may
+consume for birthday governance context without absorbing v0.93 constitutional
+governance. Its claim status is `boundary_proven`, not `integrated_proven`.
 
 ## Implemented Surface
 
@@ -17,11 +18,14 @@ birthday governance context without absorbing v0.93 constitutional governance.
 ## Decision
 
 Guild foundation evidence is available to `v0.92` as handoff context only.
+The module validates identifiers, allowlists, deferrals, and promotion gates; it
+does not produce or consume guild identity records, membership events,
+moderation hooks, or witness-routing records.
 
 `v0.92` may consume:
 
 - birthday governance context;
-- identity witness evidence routing;
+- declarative identity/witness-routing vocabulary only;
 - community-memory boundary language;
 - future governance issue inputs.
 

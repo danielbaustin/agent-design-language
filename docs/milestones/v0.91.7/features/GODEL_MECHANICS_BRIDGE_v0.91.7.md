@@ -67,9 +67,10 @@ as birthday evidence:
 
 ## Required Decisions
 
-- Executable before `v0.92`: Runtime v2 Godel agent runtime readiness,
+- Admission-ready before `v0.92`: Runtime v2 Godel agent plan readiness,
   deterministic scheduling/provider binding, CSM-supervised launch admission,
-  and constructability-gated claim promotion.
+  and constructability-gated claim promotion. Every hosted provider request
+  remains `provider_target_resolved_not_invoked`.
 - Retained artifacts: WP-11 Godel runtime packet, WP-10 constructability anchor
   validator packet, the Godel launch-plan fields in the runtime packet, and the
   WP-13 bridge proof packet.
@@ -97,9 +98,9 @@ git diff --check
 
 The Rust proof validates the bridge packet, canonical JSON stability, retained
 Godel non-claims, constructability anchor/operator-review requirements, unsafe
-v0.92 claim rejection, Godel agent-count drift rejection, executable launch
-plan construction, complete provider-request coverage for all 10 agents, and
-launch-plan gate enforcement.
+v0.92 claim rejection, Godel agent-count drift rejection, admission-plan
+construction, complete non-invoked provider-request coverage for all 10 agents,
+and launch-plan gate enforcement.
 
 ## v0.92 Consumption
 

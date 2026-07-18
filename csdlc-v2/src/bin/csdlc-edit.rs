@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use clap::{Parser, Subcommand};
 use csdlc_v2::{
     approve_design, bootstrap_issue, edit_issue, public_schema_bundle, ApproveDesignRequest,
-    BootstrapRequest, EditRequest, ErrorCode, Store,
+    BootstrapRequest, EditRequest, ErrorCode, RepairIdentityRequest, Store,
 };
 use serde::Serialize;
 
@@ -28,6 +28,10 @@ enum Command {
         request: PathBuf,
     },
     ApproveDesign {
+        #[arg(long)]
+        request: PathBuf,
+    },
+    RepairIdentity {
         #[arg(long)]
         request: PathBuf,
     },
@@ -60,6 +64,8 @@ fn main() {
         }
         Command::ApproveDesign { request } => read::<ApproveDesignRequest>(&request)
             .and_then(|request| approve_design(&store, request)),
+        Command::RepairIdentity { request } => read::<RepairIdentityRequest>(&request)
+            .and_then(|request| store.repair_identity(request)),
         Command::Schema => unreachable!("handled above"),
     };
     match result {

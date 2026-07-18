@@ -125,6 +125,42 @@ fn runtime_v2_economics_civilization_boundary_rejects_promotion_gate_drift() {
 }
 
 #[test]
+fn runtime_v2_economics_civilization_boundary_rejects_duplicate_policy_rows() {
+    let mut packet = runtime_v2_economics_civilization_boundary_contract()
+        .expect("economics/civilization boundary packet");
+    packet
+        .allowed_v092_consumption
+        .push(packet.allowed_v092_consumption[0].clone());
+    assert!(packet
+        .validate()
+        .expect_err("duplicate allowed consumption should fail")
+        .to_string()
+        .contains("allowed_v092_consumption must not contain duplicates"));
+
+    let mut packet = runtime_v2_economics_civilization_boundary_contract()
+        .expect("economics/civilization boundary packet");
+    packet
+        .postponed_surfaces
+        .push(packet.postponed_surfaces[0].clone());
+    assert!(packet
+        .validate()
+        .expect_err("duplicate postponed surface should fail")
+        .to_string()
+        .contains("postponed_surfaces must not contain duplicate surface ids"));
+
+    let mut packet = runtime_v2_economics_civilization_boundary_contract()
+        .expect("economics/civilization boundary packet");
+    packet
+        .required_promotion_gates
+        .push(packet.required_promotion_gates[0].clone());
+    assert!(packet
+        .validate()
+        .expect_err("duplicate promotion gate should fail")
+        .to_string()
+        .contains("required_promotion_gates must not contain duplicates"));
+}
+
+#[test]
 fn runtime_v2_economics_civilization_boundary_json_is_stable_and_path_safe() {
     let packet = runtime_v2_economics_civilization_boundary_contract()
         .expect("economics/civilization boundary packet");

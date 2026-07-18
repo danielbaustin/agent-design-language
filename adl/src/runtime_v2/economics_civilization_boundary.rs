@@ -231,6 +231,11 @@ fn validate_allowed_consumption(consumption: &[String]) -> Result<()> {
         .iter()
         .map(String::as_str)
         .collect::<BTreeSet<_>>();
+    if actual.len() != consumption.len() {
+        return Err(anyhow!(
+            "economics_civilization_boundary.allowed_v092_consumption must not contain duplicates"
+        ));
+    }
     if actual != allowed {
         return Err(anyhow!(
             "economics_civilization_boundary.allowed_v092_consumption must remain exactly the context-only allowlist"
@@ -244,6 +249,11 @@ fn validate_postponed_surfaces(surfaces: &[RuntimeV2EconomicsPostponedSurface]) 
         .iter()
         .map(|surface| surface.surface_id.as_str())
         .collect::<BTreeSet<_>>();
+    if ids.len() != surfaces.len() {
+        return Err(anyhow!(
+            "economics_civilization_boundary.postponed_surfaces must not contain duplicate surface ids"
+        ));
+    }
     let required = BTreeSet::from([
         "civilization-economics",
         "market-mechanisms",
@@ -318,6 +328,11 @@ fn validate_postponed_surfaces(surfaces: &[RuntimeV2EconomicsPostponedSurface]) 
 
 fn validate_required_gates(gates: &[String]) -> Result<()> {
     let actual = gates.iter().map(String::as_str).collect::<BTreeSet<_>>();
+    if actual.len() != gates.len() {
+        return Err(anyhow!(
+            "economics_civilization_boundary.required_promotion_gates must not contain duplicates"
+        ));
+    }
     let required = BTreeSet::from([
         "bounded_test_plan",
         "operator_approval",

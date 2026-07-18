@@ -5,9 +5,10 @@
 Issue `#4753` implements a Runtime v2 Godel/constructability boundary for
 `v0.92` claim consumption. The bridge consumes the retained WP-11 Godel agent
 runtime packet, its CSM-supervised launch plan, and the WP-10 constructability
-anchor validator packet. It does not implement a separate new Godel runtime,
-but it does make the retained Godel agents executable as admitted provider
-requests with runtime-owned channels and gates.
+anchor validator packet. It does not implement a separate new Godel runtime or
+dispatch provider calls. It proves admission readiness for retained Godel-agent
+provider-request records with runtime-owned channels and gates; every hosted
+provider request remains resolved but not invoked.
 
 ## Runtime Surface
 
@@ -17,8 +18,8 @@ requests with runtime-owned channels and gates.
 - Runtime tests consumed: `adl/src/runtime_v2/tests/godel_agent_runtime.rs`
 - Schema: `runtime_v2.godel_constructability_boundary.v1`
 - Launch-plan schema: `runtime_v2.godel_agent_launch_plan.v1`
-- Focus: executable Godel-agent readiness and v0.92 birthday-claim boundaries
-  for Godel mechanics.
+- Focus: Godel-agent admission readiness and v0.92 birthday-claim boundaries
+  for Godel mechanics, with hosted provider requests explicitly not invoked.
 
 ## Consumed Evidence
 
@@ -74,8 +75,8 @@ The Rust proof covers:
 - disabled constructability anchor rejection;
 - unsafe v0.92 claim rejection;
 - Godel agent-count drift rejection.
-- executable launch-plan construction;
-- complete provider-request coverage for all 10 Godel agents;
+- admission-plan construction;
+- complete non-invoked provider-request coverage for all 10 Godel agents;
 - launch-plan policy-gate rejection;
 - boundary rejection when launch-plan provider-request counts drift.
 

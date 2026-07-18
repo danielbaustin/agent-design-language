@@ -1,0 +1,160 @@
+{
+  "issue": 5405,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5405/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5405/diagram.mmd",
+  "design_reviewer": "operator-assigned-review-fix",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5405-review-findings-finish",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784342092,
+    "expires_unix_seconds": 1784428492,
+    "heartbeat_unix_seconds": 1784342092,
+    "branch": "codex/5405-wp13-review-repair",
+    "worktree": ".worktrees/adl-wp-5405-repair",
+    "protected_paths": [
+      "adl/src/runtime_v2/economics_civilization_boundary.rs",
+      "adl/src/runtime_v2/tests/economics_civilization_boundary.rs",
+      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GUILD_FOUNDATION_BOUNDARY_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GODEL_MECHANICS_BRIDGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/review/wp13_closeout_4640.md",
+      "docs/milestones/v0.91.7/review/wp13_closeout_4640/closeout_packet.json",
+      "docs/milestones/v0.91.7/review/wp13_economics_civilization_boundary_4754.md",
+      "docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md",
+      "docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+    ],
+    "purpose": "Resolve #5403 WP-13 guild, Godel, and economics review findings"
+  },
+  "initial": {
+    "title": "[v0.91.7][review-fix][WP-13] Resolve #5403 guild, Godel, and economics findings",
+    "slug": "v0-91-7-review-fix-wp13-guild-godel-economics-findings",
+    "version": "v0.91.7",
+    "goal": "Repair WP-13 claim truth for guild, Godel, and economics surfaces after #5403 review findings.",
+    "required_outcome": "Guild truth is bounded or proven, Godel documentation preserves not-invoked admission truth, and economics validation rejects duplicate semantic policy entries.",
+    "declared_scope": [
+      "WP-13 guild/Godel/economics review and closeout records",
+      "Runtime v2 economics/civilization boundary validation and regression tests"
+    ],
+    "authority_boundary": [
+      "#5403 WP-13 review packet findings are the source defects",
+      "Do not claim integrated producer/consumer guild behavior without real proof",
+      "Do not describe hosted provider requests as invoked when evidence says admission-only"
+    ],
+    "task_boundary": "Resolve the three #5403 WP-13 findings without redesigning the scheduler or adding broad guild/Godel runtime work.",
+    "deliverables": [
+      "Corrected guild and Godel truth wording",
+      "Economics duplicate-policy rejection",
+      "Regression validation for duplicate semantics",
+      "Parent closeout/handoff truth alignment"
+    ],
+    "acceptance_criteria": [
+      "Guild truth is downgraded to boundary_proven or a real producer/consumer path is implemented and proven",
+      "Godel docs consistently say admission readiness and retain not-invoked truth",
+      "Economics validators reject duplicates and retain regression tests",
+      "Parent closeout and v0.92 handoff agree with corrected claims"
+    ],
+    "dependencies": [
+      "#5403 review packet",
+      "WP-13 #4753/#4754/#4755 review packets",
+      "Runtime v2 economics/civilization boundary validator"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md",
+      "docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md",
+      "docs/milestones/v0.91.7/review/wp13_economics_civilization_boundary_4754.md",
+      "docs/milestones/v0.91.7/review/wp13_closeout_4640.md",
+      "adl/src/runtime_v2/economics_civilization_boundary.rs",
+      "adl/src/runtime_v2/tests/economics_civilization_boundary.rs"
+    ],
+    "non_goals": [
+      "Full guild producer/consumer runtime implementation unless already trivial and bounded",
+      "Hosted provider invocation proof",
+      "Economics boundary redesign"
+    ],
+    "plan_summary": "Inspect WP-13 claim records, correct overclaims, add duplicate policy-row rejection to the owning Runtime v2 economics boundary, then run focused Rust and document validation.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Map #5403 WP-13 findings to claim records and the owning Runtime v2 economics validator",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Repair docs/records and duplicate semantic-policy validation",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run focused regression proof and update retained evidence",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-4"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "WP-13 claim status remains evidence-bound",
+      "Admission readiness is not equivalent to live provider invocation",
+      "Duplicate semantic policy entries fail validation"
+    ],
+    "risks": [
+      "Closeout records may need multiple claim-status updates",
+      "Economics boundary duplicate rejection must preserve valid canonical packets"
+    ],
+    "planning_profile": "medium",
+    "stop_conditions": [
+      "Real guild integration is required but outside the approved issue scope",
+      "Economics duplicate rejection breaks existing valid boundary packets",
+      "Parent closeout truth needs operator decision rather than mechanical repair"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "wp13-review-fix",
+        "proof_role": "Focused WP-13 claim truth and Runtime v2 economics duplicate validation",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 1800,
+        "budget_tokens": 12000,
+        "argv": [
+          "cargo",
+          "test",
+          "--manifest-path",
+          "adl/Cargo.toml",
+          "runtime_v2_economics_civilization_boundary"
+        ],
+        "parallel_group": "wp13",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on overclaim; prefer bounded downgrade truth over invented integration.",
+    "review_prompts": [
+      "Does guild truth claim only what the evidence proves?",
+      "Does Godel wording consistently retain not-invoked hosted-provider truth?",
+      "Does economics validation reject duplicate semantic policy entries?",
+      "Do closeout and handoff records agree with the corrected truth?"
+    ]
+  }
+}

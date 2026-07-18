@@ -1,0 +1,7 @@
+flowchart LR
+  R["Typed identity repair request"] --> V["Validate version + CAS"]
+  V --> S["Canonical issue record"]
+  V --> C["Six card identities"]
+  S --> P["Atomic commit"]
+  C --> P
+  P --> T["Round-trip validation + doctor"]

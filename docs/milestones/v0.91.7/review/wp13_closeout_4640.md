@@ -22,9 +22,9 @@ not claimed, and which retained packets carry proof or boundary truth.
 | Child | State | Retained evidence | Parent disposition |
 | --- | --- | --- | --- |
 | `#4752` affect | closed | `docs/milestones/v0.91.7/review/wp13_affect_happiness_boundary_4752.md` | `integrated_proven` for operational affect-like reasoning-control and resident-agent affect metadata; subjective affect/happiness/wellbeing/consciousness remain non-claims. |
-| `#4753` Godel | closed | `docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md` | `integrated_proven` for retained Runtime v2 Godel/constructability boundary and CSM-supervised launch admission; live hosted invocation and adaptive-DAG completion remain non-claims. |
+| `#4753` Godel | closed | `docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md` | `boundary_proven` for retained Runtime v2 Godel/constructability admission readiness; provider requests remain resolved but not invoked, and live hosted invocation and adaptive-DAG completion remain non-claims. |
 | `#4754` economics | closed | `docs/milestones/v0.91.7/review/wp13_economics_civilization_boundary_4754.md` | `operator_scoped_out` for `v0.92` activation beyond context-only planning and non-claim boundaries. |
-| `#4755` guild | closed | `docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md` | `integrated_proven` for MVP guild foundation handoff context; v0.93 constitutional governance and public product readiness remain non-claims. |
+| `#4755` guild | closed | `docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md` | `boundary_proven` for declarative MVP guild handoff vocabulary and claim gates; no guild record or hook producer/consumer is implemented, and v0.93 constitutional governance and public product readiness remain non-claims. |
 | `#4756` CodeFriend | closed | `docs/milestones/v0.91.7/review/wp13_codefriend_adapter_obligations_4756.md`; `docs/planning/codefriend/CODEFRIEND_V1_BUILD_PLAN.md` | Bounded handoff truth for CodeFriend v1 / adapter v2 obligations; CodeFriend product readiness and external-repo proof remain future work. |
 | `#4757` publication | closed | `docs/milestones/v0.91.7/review/wp13_publication_boundary_4757.md`; `docs/milestones/v0.91.7/review/wp13_publication_boundary_4757/boundary_packet.json` | Publication and paper surfaces are scoped out of `v0.92` birthday activation unless a later tracked issue promotes a bounded artifact with evidence and human approval. |
 
@@ -38,7 +38,8 @@ surfaces now point at the proof/non-claim packets.
 
 - operational affect reasoning-control boundary and resident-agent affect
   metadata;
-- Godel/constructability launch-admission and claim-boundary evidence;
+- Godel/constructability admission-readiness and claim-boundary evidence, with
+  provider requests resolved but not invoked;
 - economics/civilization context-only non-claim posture;
 - guild foundation handoff context;
 - CodeFriend v1 / adapter v2 roadmap and obligation handoff truth;

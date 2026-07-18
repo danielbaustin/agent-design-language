@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "404ad9845d55cf189416e19f7553915074e73a88adb8b0168d0b7e4781f60ddf",
   "phase": "closed_out",
-  "generation": 24,
-  "digest": "f84b45dc996dfe095ac163e4bcb9a3f874fc0540a1da8c94116f3af0be0b4a19",
+  "generation": 28,
+  "digest": "021f0da6cb5c065913533c07f78947ab616dcd86757976599975bf16cec4ddfc",
   "claim": null,
   "review_assignment": {
     "reviewer": "codex-subagent-terminal-publication",
@@ -152,32 +152,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "c5dc237b23cc517a185d4cec8be4b2ab41f29aa337e429515f4647150ba2189f",
+      "values_digest": "2f6dce14567c365cd410a2578e2a875e62c95e969405b0c2151f05f49d879fdd",
       "rendered_digest": "09584eaac2c1ae475b3422c344c58d984ee9565cc09293db1149a84175e26de5",
       "ast_digest": "d4684cf547a9c50d22ab8e1e4b2cd112b98a73128406c651c209b0d81aed69ee"
     },
     "stp": {
-      "values_digest": "0adaadc4569eea7b83f84ff3746bff83a17ba2d7787a60e4aba2d73acf85eab3",
+      "values_digest": "af91f5df192db39922a48b5da4eb156592f0deefe8dd8bc9b10c863741359ecc",
       "rendered_digest": "6e2f28697e49ec9cfd218f0b77e684d88eee857041de05913dfd572190d79b24",
       "ast_digest": "39dc2a5822da1ee0fa69e7153fea05bc821a67ca005324a29d54f05a635929b3"
     },
     "spp": {
-      "values_digest": "14c21059678584a27de683b79a7ac837b191dd8859a012be5a6ccd7dff2b1f5b",
+      "values_digest": "1d836977e63925f24c1799f5ed7954537b4b950edbb2b65e79191d8a0c10ed7e",
       "rendered_digest": "3258d618b0169e350398d6f2d8687e67c266d4fcd01b5857cecc5138e61ce966",
       "ast_digest": "561cbc524056352e9a1ee315abf352cb3721db9050336409ff8d0daab2113d34"
     },
     "vpp": {
-      "values_digest": "7cee7b897575bfcb4d843616920c131031fdd17b04973f01b444055b42ac714c",
+      "values_digest": "c01b513c57797ae93979da496ad3fb0930fe76782fb6987b1795c2051b1693ef",
       "rendered_digest": "63fbfde03d4b1f8a6ed6d708217472ca92791f7387a1b937409ef184a95c1d3e",
       "ast_digest": "25af10b69fbbc21e4716004d459f927d8697146b0b9122b905c07d53b2cb6a45"
     },
     "srp": {
-      "values_digest": "606c4bcafda8c2ec1251f5c875b6274c75250acd10c886e70c2678076e7af6a9",
+      "values_digest": "7b7519f0f9bf5d823587f5a2ec7ed7efe47ef5e5794747f2c44454347af6af03",
       "rendered_digest": "b51b3c0b77c2d03645e420412082fbb1ff8b81350df7564eea830a1e1dbd3731",
       "ast_digest": "2422a71b67460f445363d332033c590eea5b0b76afc120ac7bff17f7e112562b"
     },
     "sor": {
-      "values_digest": "f135c0e009f07236e6013bd2880317f37cbba656cf7e1a8b023fc8809d173ace",
+      "values_digest": "9c91d334b9ddf281a915c983480c9266936a3d916e1094b6b35693c4db406009",
       "rendered_digest": "31f6b4312d654d048c9d064ac17c07f0c624b7238837b6bcb261901236d019ab",
       "ast_digest": "4b4b712756a21e94cb73c6ce72b2c205e99573cb95cddc022eb7384a3f0af569"
     }
@@ -492,6 +492,34 @@
       "actor": "codex",
       "reason": "atomically finalize SOR/index and release claim/protected paths",
       "operation": "record_terminal"
+    },
+    {
+      "sequence": 32,
+      "generation": 25,
+      "actor": "codex",
+      "reason": "typed identity repair authorized by issue 5427",
+      "operation": "{\"operation\":\"update_identity_version\",\"version\":\"v0.91.7\"}"
+    },
+    {
+      "sequence": 33,
+      "generation": 26,
+      "actor": "codex",
+      "reason": "typed identity repair authorized by issue 5427",
+      "operation": "{\"operation\":\"update_identity_version\",\"version\":\"v0.91.7\"}"
+    },
+    {
+      "sequence": 34,
+      "generation": 27,
+      "actor": "codex",
+      "reason": "typed identity repair authorized by issue 5427",
+      "operation": "{\"operation\":\"update_identity_version\",\"version\":\"v0.91.7\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 28,
+      "actor": "codex",
+      "reason": "typed identity repair authorized by issue 5427",
+      "operation": "{\"operation\":\"update_identity_version\",\"version\":\"v0.91.7\"}"
     }
   ]
 }

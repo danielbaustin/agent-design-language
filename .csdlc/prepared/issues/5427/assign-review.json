@@ -1,0 +1,9 @@
+{
+  "issue": 5427,
+  "expected_generation": 5,
+  "expected_digest": "c6fd69e374fd4a6147a877f6ec8c3f0dbb22839b130f06b2a5c5bff1539209a4",
+  "claim_id": "claim-5427-card-identity",
+  "reviewer": "codex-review",
+  "assigned_by": "codex",
+  "scope": ["csdlc-v2/src/cards.rs","csdlc-v2/src/store.rs","csdlc-v2/src/bin/csdlc-edit.rs","csdlc-v2/src/schema.rs","csdlc-v2/tests/card_identity.rs",".csdlc/issues/5353"]
+}

@@ -14,7 +14,7 @@ use crate::review::{
     PublicationReviewReport, ReviewAssignmentRequest, ReviewRecordRequest, ReviewRecoveryRequest,
 };
 use crate::store::ApproveDesignRequest;
-use crate::store::{BootstrapRequest, EditRequest};
+use crate::store::{BootstrapRequest, EditRequest, RepairIdentityRequest};
 
 pub fn public_schema_bundle() -> Value {
     json!({
@@ -22,6 +22,7 @@ pub fn public_schema_bundle() -> Value {
         "bootstrap_request": schemars::schema_for!(BootstrapRequest),
         "approve_design_request": schemars::schema_for!(ApproveDesignRequest),
         "edit_request": schemars::schema_for!(EditRequest),
+        "repair_identity_request": schemars::schema_for!(RepairIdentityRequest),
         "bind_request": schemars::schema_for!(BindRequest),
         "bind_result": schemars::schema_for!(BindResult),
         "recover_claim_request": schemars::schema_for!(RecoverClaimRequest),

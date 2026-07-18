@@ -1,0 +1,10 @@
+{
+  "issue": 5427,
+  "card": "sip",
+  "expected_generation": 1,
+  "expected_digest": "6011f36d4740ffbdc8b804e04d2ee800b5aab9ebe27460c192351e375677bf2f",
+  "claim_id": "claim-5427-card-identity",
+  "actor": "codex",
+  "reason": "Reconcile authority card generations after typed cross-issue identity repair.",
+  "operation": {"operation":"update_identity_version","version":"v0.91.7"}
+}

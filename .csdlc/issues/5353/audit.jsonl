@@ -29,3 +29,7 @@
 {"sequence":29,"generation":22,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":30,"generation":23,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
 {"sequence":31,"generation":24,"actor":"codex","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":32,"generation":25,"actor":"codex","reason":"typed identity repair authorized by issue 5427","operation":"{\"operation\":\"update_identity_version\",\"version\":\"v0.91.7\"}"}
+{"sequence":33,"generation":26,"actor":"codex","reason":"typed identity repair authorized by issue 5427","operation":"{\"operation\":\"update_identity_version\",\"version\":\"v0.91.7\"}"}
+{"sequence":34,"generation":27,"actor":"codex","reason":"typed identity repair authorized by issue 5427","operation":"{\"operation\":\"update_identity_version\",\"version\":\"v0.91.7\"}"}
+{"sequence":35,"generation":28,"actor":"codex","reason":"typed identity repair authorized by issue 5427","operation":"{\"operation\":\"update_identity_version\",\"version\":\"v0.91.7\"}"}

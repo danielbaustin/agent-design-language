@@ -1,0 +1,11 @@
+{
+  "authority_issue": 5427,
+  "target_issue": 5353,
+  "expected_authority_generation": 5,
+  "expected_authority_digest": "65e38effd9adc5b41ec14a48f6d0a842785e4dd307346b61ba1a6316688c1adc",
+  "expected_target_generation": 27,
+  "expected_target_digest": "22b817e2ee8247312031f7a23408d9f975cee2991b399d8bc569d31473cebf24",
+  "claim_id": "claim-5427-card-identity",
+  "actor": "codex",
+  "operation": {"operation":"update_identity_version","version":"v0.91.7"}
+}

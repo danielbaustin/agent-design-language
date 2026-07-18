@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5427,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][cards] Add typed repair for stale card identity metadata",
+    "slug": "v0-91-7-typed-card-identity-repair",
+    "version": "v0.91.7",
+    "generation": 10
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Added typed identity-version semantic operation and cross-issue repair route.",
+      "actual_changes": [
+        "Update all six card identity versions atomically through typed operation",
+        "Reject malformed identity versions before mutation",
+        "Repair #5353 card identities from v0.91.8 to v0.91.7",
+        "Add focused round-trip and rejection tests"
+      ],
+      "artifacts": [
+        "csdlc-v2/src/cards.rs",
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/bin/csdlc-edit.rs",
+        "csdlc-v2/tests/card_identity.rs"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml"
+          ],
+          "purpose": "Prove identity round-trip, malformed rejection, full v2 regression, and repair-compatible projections",
+          "outcome": "passed",
+          "evidence_ref": "local:5427-card-identity-and-csdlc-v2-suite"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

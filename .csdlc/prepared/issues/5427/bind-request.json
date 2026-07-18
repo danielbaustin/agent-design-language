@@ -1,0 +1,18 @@
+{
+  "issue": 5427,
+  "base_branch": "main",
+  "branch": "codex/5427-v0-91-7-card-identity-repair",
+  "worktree": ".worktrees/adl-wp-5427",
+  "claim": {
+    "id": "claim-5427-card-identity",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1784350596,
+    "expires_unix_seconds": 1784354196,
+    "heartbeat_unix_seconds": 1784350596,
+    "branch": "codex/5427-v0-91-7-card-identity-repair",
+    "worktree": ".worktrees/adl-wp-5427",
+    "protected_paths": ["csdlc-v2/src/cards.rs", "csdlc-v2/src/cards.rs", "csdlc-v2/tests/card_identity.rs", ".csdlc/issues/5353/cards"],
+    "purpose": "Add and prove typed stale card identity repair"
+  }
+}

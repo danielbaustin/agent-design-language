@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5455,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Fail closed on stale stable owner-binary provenance",
+    "slug": "stale-owner-binary-provenance",
+    "version": "v0.91.7",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Ensure stable C-SDLC v2 binaries cannot silently lag tracked source semantics.",
+      "required_outcome": "Install receipts bind binaries to the exact repository revision and verification rejects stale provenance.",
+      "declared_scope": [
+        "csdlc-v2/src/operator.rs",
+        "csdlc-v2/tests/gate10a.rs"
+      ],
+      "authority_boundary": [
+        "csdlc-v2 operator install and coexistence verification"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

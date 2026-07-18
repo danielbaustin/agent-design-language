@@ -1,0 +1,78 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5405,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-13] Resolve #5403 guild, Godel, and economics findings",
+    "slug": "v0-91-7-review-fix-wp13-guild-godel-economics-findings",
+    "version": "v0.91.7",
+    "generation": 39
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Inspect WP-13 claim records, correct overclaims, add duplicate policy-row rejection to the owning Runtime v2 economics boundary, then run focused Rust and document validation.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Map #5403 WP-13 findings to claim records and the owning Runtime v2 economics validator",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Repair docs/records and duplicate semantic-policy validation",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Run focused regression proof and update retained evidence",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "WP-13 claim status remains evidence-bound",
+        "Admission readiness is not equivalent to live provider invocation",
+        "Duplicate semantic policy entries fail validation"
+      ],
+      "risks": [
+        "Closeout records may need multiple claim-status updates",
+        "Economics boundary duplicate rejection must preserve valid canonical packets"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 21600,
+        "total_tokens": 80000,
+        "validation_seconds": 3600
+      },
+      "stop_conditions": [
+        "Real guild integration is required but outside the approved issue scope",
+        "Economics duplicate rejection breaks existing valid boundary packets",
+        "Parent closeout truth needs operator decision rather than mechanical repair"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5405/retained/design.md",
+      "design_digest": "94d15fb356b31f02b0d46cc67eb69d558668f1783d2090be1b75914e4866ed68",
+      "diagram_ref": ".csdlc/issues/5405/retained/diagram.mmd",
+      "diagram_digest": "e6532f69e14e124f0eff40d721bb0a891acdfa8f2a26925fb4ae643f9ecbefd9"
+    }
+  }
+}

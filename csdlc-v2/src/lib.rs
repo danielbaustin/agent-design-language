@@ -74,5 +74,5 @@ pub use soak::{
 };
 pub use store::{
     approve_design, bootstrap_issue, edit_issue, ApproveDesignRequest, BootstrapRequest,
-    EditRequest, Store,
+    EditRequest, RepairIdentityRequest, Store,
 };

@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.terminal_observation.v1",
+  "issue": 5427,
+  "expected_generation": 9,
+  "expected_digest": "c4270d304c398dd78c152403536c84cfe2886424d864dc06590f3ecd7a54602b",
+  "claim_id": "claim-5427-card-identity",
+  "actor": "codex",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5456,
+  "disposition": "merged",
+  "observed_state": "merged",
+  "observed_sha": "41010a368cf6b118cc15dd19e375ffc7eace3595",
+  "receipt_path": "csdlc-v2/closeout/5427.json",
+  "approved_no_pr_reason": null,
+  "token_file": null
+}

@@ -1,0 +1,10 @@
+{
+  "issue": 5427,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "643f76820b75934f1a0eea254e1e7e9d77b647ee7f2ac342317ecd4505ba93b8",
+  "claim_id": "claim-5427-card-identity",
+  "actor": "codex",
+  "reason": "Implementation and focused proof are complete.",
+  "operation": {"operation":"advance_phase","phase":"implemented"}
+}

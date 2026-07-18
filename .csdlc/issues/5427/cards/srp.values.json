@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5427,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][cards] Add typed repair for stale card identity metadata",
+    "slug": "v0-91-7-typed-card-identity-repair",
+    "version": "v0.91.7",
+    "generation": 10
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2/src/cards.rs\ncsdlc-v2/src/store.rs\ncsdlc-v2/src/bin/csdlc-edit.rs\ncsdlc-v2/src/schema.rs\ncsdlc-v2/tests/card_identity.rs\n.csdlc/issues/5353",
+      "review_revision": "git-blake3:289015763c35d1516ca486359d3241633bf0dad5:b3a3d9f218e5b5132d598e747682c41af00d81db85ea60bd982af46068a4985c",
+      "reviewer": "codex-review",
+      "review_prompts": [
+        "Does the operation update exactly the canonical identity projections?",
+        "Are malformed versions and partial failures rejected without mutation?",
+        "Does the #5353 repair preserve all non-identity content?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Store-level receipt failure injection remains a follow-up test opportunity; focused and full v2 suites pass."
+      ],
+      "review_result": "pass"
+    }
+  }
+}
