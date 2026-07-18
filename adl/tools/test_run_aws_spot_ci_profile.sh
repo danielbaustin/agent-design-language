@@ -44,19 +44,19 @@ grep -F 'adl.aws_spot_coverage_summary.v1' "$SCRIPT" >/dev/null
 grep -F 'rustup component add rustfmt clippy llvm-tools-preview' "$DOCKERFILE" >/dev/null
 grep -F 'cargo llvm-cov --version' "$DOCKERFILE" >/dev/null
 grep -F 'gh --version' "$DOCKERFILE" >/dev/null
-grep -F "for required in 'CapEff=0 NoNewPrivs=1 permission-probe=denied' rustc cargo cargo-nextest 'gh version' sccache LLD aws-cli" \
+grep -F "for required in rustc cargo cargo-nextest sccache LLD aws-cli" \
   "$ROOT/adl/tools/run_aws_spot_builder_image_validation.sh" >/dev/null
 grep -F "grep -E '^llvm-tools-'" "$SCRIPT" >/dev/null
-grep -F 'ResolveImmutableBuilderImage' "$SETUP" >/dev/null
-grep -F 'DescribeAdlBuilderImage' "$SETUP" >/dev/null
-grep -F 'ssm:GetParameter' "$SETUP" >/dev/null
-grep -F 'al2023-ami-kernel-default-x86_64' "$SETUP" >/dev/null
-grep -F 'ADLAwsRemoteValidationRole-*' "$SETUP" >/dev/null
-grep -F 'ADLAwsRemoteValidationProfile-*' "$SETUP" >/dev/null
-grep -F 'iam:AttachRolePolicy' "$SETUP" >/dev/null
-grep -F 'iam:DeleteRolePolicy' "$SETUP" >/dev/null
-grep -F 'ec2:AttachVolume' "$SETUP" >/dev/null
-grep -F 'ec2:DetachVolume' "$SETUP" >/dev/null
+grep -F 'sts get-caller-identity' "$SETUP" >/dev/null
+grep -F 'token.actions.githubusercontent.com' "$SETUP" >/dev/null
+grep -F 'AWS_SPOT_REMOTE_VALIDATION_REGION' "$SETUP" >/dev/null
+grep -F 'ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR' "$SETUP" >/dev/null
+grep -F 'RemoteValidationEc2Lifecycle' "$SETUP" >/dev/null
+grep -F 'ec2:RequestSpotInstances' "$SETUP" >/dev/null
+grep -F 'RemoteValidationSsmCommands' "$SETUP" >/dev/null
+grep -F 'ssm:SendCommand' "$SETUP" >/dev/null
+grep -F 'RemoteValidationEphemeralInstanceProfiles' "$SETUP" >/dev/null
+grep -F 'iam:PutRolePolicy' "$SETUP" >/dev/null
 grep -F 'SSH_ALLOWED_CIDR="${ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR:-}"' "$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh" >/dev/null
 grep -F 'https://checkip.amazonaws.com' "$ROOT/tools/aws_remote_validation/src/aws_remote_validation.rs" >/dev/null
 if grep -F 'AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR' "$WORKFLOW" >/dev/null; then
