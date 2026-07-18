@@ -326,8 +326,9 @@ operational evidence.
 
 The fastest rollback requires no source edit: remove the `ci:spot` PR label or
 set repository variable `ADL_HEAVY_CI_BACKEND=hosted`, then rerun the failed
-checks. The workflow also defaults to hosted when the variable is absent or has
-any value other than `spot`, so deleting the variable is fail-safe rollback.
+checks. The workflow also defaults to hosted when the variable is absent, so
+deleting the variable is fail-safe rollback. Invalid values intentionally fail
+closed instead of silently selecting a backend.
 
 ## Concurrency And Operations
 
