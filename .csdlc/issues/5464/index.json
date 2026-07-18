@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "ae3e72f2513ddf93bede427c2ef36d2b067ddb7c1bd59bd1003a94f2e520d5fb",
   "phase": "implemented",
-  "generation": 3,
-  "digest": "45a2cc98a005292b49d5e9657f7bacd2e5e9df46017de26e4ca42ff4905dcc54",
+  "generation": 6,
+  "digest": "e320919011ab507f497913129e60691beb8f6f58ce425ad1663624e5672e4970",
   "claim": {
     "id": "claim-5464-nextest-install-contract",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 3,
+    "generation": 6,
     "acquired_unix_seconds": 1784358000,
     "expires_unix_seconds": 1784444400,
     "heartbeat_unix_seconds": 1784358000,
@@ -21,8 +21,38 @@
     ],
     "purpose": "Make cargo-nextest installation immutable and fail closed without cargo-binstall fallback"
   },
-  "review_assignment": null,
-  "review": null,
+  "review_assignment": {
+    "reviewer": "bounded-subagent-review-5464",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:6f72414262eb807200379440c13580aa43651f02:1fd9200c4b6534ed30f7ec17d25546ae8ec0cd2b1aa8707fd708f25c0a012a49",
+    "scope": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "bounded-subagent-review-5464",
+    "scope": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "reviewed_revision": "git-blake3:6f72414262eb807200379440c13580aa43651f02:1fd9200c4b6534ed30f7ec17d25546ae8ec0cd2b1aa8707fd708f25c0a012a49",
+    "findings": [
+      {
+        "id": "F-5464-1",
+        "severity": "p2",
+        "summary": "Unnamed, quoted, or inline YAML nextest steps can bypass the block-only static contract.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -37,34 +67,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "cc5719b9bbcac98760a948356ec731e337bbb22f5edbb52941124d98f1acee4e",
+      "values_digest": "08e2064636c7f1a8a17a01b7dc5c6b4a0685c1333af6cbc34aa0593cc496bb96",
       "rendered_digest": "a2fb478ef4bd13ba429e8c0f8c544110e67e901a6de718d2cf148eca1f55f1a6",
       "ast_digest": "5c565f0762207eecbe4664aff60df4a55a8349758e22cc60254ac86f612dc1c6"
     },
     "stp": {
-      "values_digest": "b72516ed76284a9f294b049b6c5ac59e0a6598bd43726367e167ffff58394e65",
+      "values_digest": "d9c8713d3a95247104e2e82e5161f1bd792df0c1c3ec10e436e13cb71710e516",
       "rendered_digest": "fc4b91f3228586ba35da574b082470293a7bf1b5145fea2dc54b5ca65c5c9d38",
       "ast_digest": "564b0df1e2c6093cb771e9b8d15562dd48d1ce5df66fb3477e27ad87a9cfd372"
     },
     "spp": {
-      "values_digest": "b91bd7517e6fe577a44aac529c43b06e43f307f44982ed5f92c9ce433d06d8cf",
+      "values_digest": "2bbad69a9bb4f7befa72b85f12a5171786f0f6dc5d89bfb4e26b31ab019a04b6",
       "rendered_digest": "7343cfe8e4dafed0a0e53405f81df92f00f78fae0b9094b9230b1b7f5781dbb8",
       "ast_digest": "269a7d90989ca87bf68e0d1775dafa72639584e93ae11cf70c7c4d2e2a4f18f7"
     },
     "vpp": {
-      "values_digest": "8f1319dec6be16c5962045cfb2c18871f862fad83b5a09723fdf46d0ffee6f83",
+      "values_digest": "1683451ffdbf9f1cd45ece8d021b57c64a35e4e12b28c8d3602f507a2f7fa0dd",
       "rendered_digest": "d5cc78ce07b13e4f45c7727f07c44991f89a55815257d63068f374a7c1b017a9",
       "ast_digest": "de9357a2a9bc9a4c0fa064b5efb770a71e03195446b8fc79607366093d535464"
     },
     "srp": {
-      "values_digest": "4488777990295e94128d7442817ceb5d3fe5325fa503906369ef4da4cc904ad7",
-      "rendered_digest": "8e0405cd53c7125b34edcaa9f2dfeb811a1849f386632995b1be20979f34dc21",
-      "ast_digest": "715ca1427cb455b9aac430be8ecce4ee14eee488b2a0227a6c00cece2e3a68e1"
+      "values_digest": "83408f7a4700c7df4d3d45b2b800f936f5571f6e84ce315811a6e5ca8af63908",
+      "rendered_digest": "2b0e2e3e6ee63a718a2a01c0eb257b2402b23dd1e9f365645066535604758df3",
+      "ast_digest": "74fe20b4aadc553143f8178c92a4056dae0cfc1767256547b8d0d3fb545ab353"
     },
     "sor": {
-      "values_digest": "4530c1f70ef715d4bb2601b62a52507b956f459b54b38cdce273e6ca8bae2803",
-      "rendered_digest": "7dc2766f0074f7e881738aaf68a7974674d84ccced88e9d1a435da904c53f057",
-      "ast_digest": "96ae71b0cd7ff488f75ebcf543f697744be816afb91690f24eb5f49eba3bb656"
+      "values_digest": "13dff708819f21705c135f6f573932b5d11375c17a53367523ad1d615e1c5310",
+      "rendered_digest": "8c4493d8e7b68f9902fb67edd27bd574caa37983b95c3b277be61bf0736400ee",
+      "ast_digest": "9318ee93cf07cabd1b5ce7b39aa2d5b813afa0cb959638222774607094fbbd38"
     }
   },
   "transitions": [
@@ -125,6 +155,34 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The bounded nextest installer repair and focused local proof are complete.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5464-1 by enforcing whole-workflow nextest inventory and adding bypass fixtures.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Close alternate YAML-form escapes by coupling canonical named-block checks to exact whole-workflow nextest selection counts.\",\"changes\":[\"Require exactly four nextest selections and exactly four 0.9.140 selections across the whole workflow\",\"Reject the alternate cargo-nextest alias\",\"Add negative fixtures for unnamed, quoted, inline-map, floating-installer, and fallback-enabled forms\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The nextest contract and all alternate-form negative fixtures pass after F-5464-1 repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove unnamed, quoted, inline, floating-installer, and fallback-enabled nextest forms cannot escape enforcement\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-nextest-bypass-regression-pass\"}}"
     }
   ]
 }

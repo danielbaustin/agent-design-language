@@ -150,34 +150,58 @@ for action, count in seen.items():
         raise SystemExit(f"canonical action inventory unexpectedly contains no {action} use")
 
 nextest_installer = "taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c"
-nextest_blocks = [
-    match.group(0)
-    for match in re.finditer(
-        r"^      - name: .+\n(?:(?!^      - name: ).*\n)*",
-        workflow,
-        re.MULTILINE,
-    )
-    if re.search(r"^\s+tool:\s+nextest@", match.group(0), re.MULTILINE)
-]
-if len(nextest_blocks) != 4:
-    raise SystemExit(
-        "CI must retain exactly four declared cargo-nextest installation steps; "
-        f"found {len(nextest_blocks)}"
-    )
-for block in nextest_blocks:
-    name = re.search(r"^\s+- name:\s+(.+)$", block, re.MULTILINE).group(1)
-    if not re.search(
-        rf"^\s+uses:\s+{re.escape(nextest_installer)}(?:\s+#.*)?$",
-        block,
-        re.MULTILINE,
-    ):
-        raise SystemExit(
-            f"{name} must use the immutable install-action manifest that supports nextest 0.9.140"
+
+def require_nextest_contract(candidate: str) -> None:
+    if candidate.count("nextest@") != 4 or candidate.count("nextest@0.9.140") != 4:
+        raise SystemExit("CI must retain exactly four nextest@0.9.140 selections")
+    if "cargo-nextest@" in candidate:
+        raise SystemExit("CI must use the canonical nextest tool alias")
+    blocks = [
+        match.group(0)
+        for match in re.finditer(
+            r"^      - name: .+\n(?:(?!^      - name: ).*\n)*",
+            candidate,
+            re.MULTILINE,
         )
-    if not re.search(r"^\s+tool:\s+nextest@0\.9\.140\s*$", block, re.MULTILINE):
-        raise SystemExit(f"{name} must pin nextest 0.9.140")
-    if not re.search(r"^\s+fallback:\s+none\s*$", block, re.MULTILINE):
-        raise SystemExit(f"{name} must disable installer fallback")
+        if re.search(r"^\s+tool:\s+nextest@", match.group(0), re.MULTILINE)
+    ]
+    if len(blocks) != 4:
+        raise SystemExit("Every nextest selection must use the canonical named block form")
+    for block in blocks:
+        name = re.search(r"^\s+- name:\s+(.+)$", block, re.MULTILINE).group(1)
+        if not re.search(
+            rf"^\s+uses:\s+{re.escape(nextest_installer)}(?:\s+#.*)?$",
+            block,
+            re.MULTILINE,
+        ):
+            raise SystemExit(
+                f"{name} must use the immutable install-action manifest that supports nextest 0.9.140"
+            )
+        if not re.search(r"^\s+tool:\s+nextest@0\.9\.140\s*$", block, re.MULTILINE):
+            raise SystemExit(f"{name} must pin nextest 0.9.140")
+        if not re.search(r"^\s+fallback:\s+none\s*$", block, re.MULTILINE):
+            raise SystemExit(f"{name} must disable installer fallback")
+
+require_nextest_contract(workflow)
+
+nextest_bypass_fixtures = (
+    workflow + "\n      - uses: taiki-e/install-action@v2\n        with:\n          tool: nextest@0.9.140\n          fallback: cargo-install\n",
+    workflow.replace("tool: nextest@0.9.140", 'tool: "nextest@0.9.140"', 1),
+    workflow.replace(
+        "with:\n          tool: nextest@0.9.140\n          fallback: none",
+        "with: {tool: nextest@0.9.140, fallback: cargo-install}",
+        1,
+    ),
+    workflow.replace(nextest_installer, "taiki-e/install-action@v2", 1),
+    workflow.replace("fallback: none", "fallback: cargo-install", 1),
+)
+for fixture in nextest_bypass_fixtures:
+    try:
+        require_nextest_contract(fixture)
+    except SystemExit:
+        pass
+    else:
+        raise SystemExit("invalid nextest installer fixture escaped enforcement")
 
 adl_profile_summary = step_block("Validation profile summary (adl-ci)")
 for required_fragment in (

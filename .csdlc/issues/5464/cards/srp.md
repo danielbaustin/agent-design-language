@@ -12,7 +12,8 @@ Status: pre_phase
 
 ## Scope
 
-Exact implementation revision before publication.
+.github/workflows/ci.yaml
+adl/tools/test_ci_runtime_contracts.sh
 
 ## Prompts
 
@@ -23,7 +24,18 @@ Exact implementation revision before publication.
 
 ## Findings
 
-[]
+[
+  {
+    "id": "F-5464-1",
+    "severity": "p2",
+    "summary": "Unnamed, quoted, or inline YAML nextest steps can bypass the block-only static contract.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "open",
+    "fix_revision": null,
+    "route": null
+  }
+]
 
 ## Dispositions
 
@@ -35,8 +47,8 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:6f72414262eb807200379440c13580aa43651f02:1fd9200c4b6534ed30f7ec17d25546ae8ec0cd2b1aa8707fd708f25c0a012a49")
 
-Reviewer: None
+Reviewer: Some("bounded-subagent-review-5464")
 
-Result: pre_review
+Result: changes_required
