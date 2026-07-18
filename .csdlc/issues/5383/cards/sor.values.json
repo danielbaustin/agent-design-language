@@ -7,9 +7,9 @@
     "title": "[v0.91.7][planning] Restore WP-14 routing and create v0.91.8 planning package",
     "slug": "v0-91-7-planning-restore-wp14-routing-and-create-v0-91-8-planning-package",
     "version": "v0.91.7",
-    "generation": 18
+    "generation": 25
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -109,10 +109,10 @@
           "evidence_ref": "live-github:issue-5384-routing"
         }
       ],
-      "integration_state": "worktree_only",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

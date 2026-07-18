@@ -1,0 +1,74 @@
+{
+  "schema": "adl.review.github_closeout_snapshot.v1",
+  "observed_at": "2026-07-16",
+  "source": "gh issue view and gh pr view statusCheckRollup",
+  "required_check_classification": "not_inferred",
+  "entries": [
+    {
+      "issue": 5034, "issue_state": "CLOSED", "issue_closed_at": "2026-07-09T19:20:57Z",
+      "pr": 5056, "pr_state": "MERGED", "merged_at": "2026-07-09T19:20:56Z",
+      "head": "52192c72b2d2f7cc64e700c6681bd5acada5827d", "merge": "34a01b9f7f54ca2fa2e0b76a8a60606e6c942e33",
+      "checks": {"adl-ci": "SUCCESS", "adl-coverage": "SUCCESS", "adl-slow-proof": "SKIPPED"}
+    },
+    {
+      "issue": 5032, "issue_state": "CLOSED", "issue_closed_at": "2026-07-09T19:22:14Z",
+      "pr": 5058, "pr_state": "MERGED", "merged_at": "2026-07-09T19:22:13Z",
+      "head": "faf6094ffedc346b76a888477149274c8677fdc3", "merge": "9ea9298894f8bb09349f7ca2504e6f98e923ea3a",
+      "checks": {"adl-ci": "SUCCESS", "adl-coverage": "SUCCESS", "adl-slow-proof": "SKIPPED"}
+    },
+    {
+      "issue": 5037, "issue_state": "CLOSED", "issue_closed_at": "2026-07-09T16:36:01Z",
+      "pr": 5046, "pr_state": "MERGED", "merged_at": "2026-07-09T16:36:00Z",
+      "head": "eb0aead9954b586443ccbfb3377cc4bfc3f2bfaa", "merge": "8d129a6b7392ae91cecfac7b7c1c8573fdb952e8",
+      "checks": {"adl-ci": "SUCCESS", "adl-coverage": "SUCCESS", "adl-slow-proof": "SKIPPED"}
+    },
+    {
+      "issue": 5031, "issue_state": "CLOSED", "issue_closed_at": "2026-07-09T20:19:21Z",
+      "pr": 5060, "pr_state": "MERGED", "merged_at": "2026-07-09T20:19:20Z",
+      "head": "38be1a63b45d90fb4118292422774e380d51d86a", "merge": "40bbe721b93a5054eaad0cdc9e01b03e09668552",
+      "checks": {"adl-ci": "SUCCESS", "adl-coverage": "SUCCESS", "adl-slow-proof": "SKIPPED"}
+    },
+    {
+      "issue": 5028, "issue_state": "CLOSED", "issue_closed_at": "2026-07-07T18:18:45Z",
+      "pr": 5030, "pr_state": "MERGED", "merged_at": "2026-07-07T18:18:44Z",
+      "head": "52e086f973d7325eb8280f28a7185874ed270a75", "merge": "30660d741456e2c7ec6765b384efb04329760a45",
+      "checks": {"adl-ci": "SUCCESS", "adl-coverage": "SUCCESS", "adl-slow-proof": "SKIPPED"}
+    },
+    {
+      "issue": 5012, "issue_state": "CLOSED", "issue_closed_at": "2026-07-07T18:18:29Z",
+      "pr": 5029, "pr_state": "MERGED", "merged_at": "2026-07-07T18:18:28Z",
+      "head": "88868a11692b954bfc3e3d43aad3f110081cadf4", "merge": "0ec4d6a047aba00c61eabbd6284e48b18426471e",
+      "checks": {"adl-ci": "SUCCESS", "adl-coverage": "SUCCESS", "adl-slow-proof": "SKIPPED"}
+    },
+    {
+      "issue": 5002, "issue_state": "CLOSED", "issue_closed_at": "2026-07-09T20:51:23Z",
+      "pr": 5066, "pr_state": "MERGED", "merged_at": "2026-07-09T20:51:22Z",
+      "head": "8bd480320f33ad9c8dbf38a86a7bec80c030db74", "merge": "6c6cabf1782e6688981134fa36a356625db67473",
+      "checks": {"adl-ci": "SUCCESS", "adl-coverage": "SUCCESS", "adl-slow-proof": "SKIPPED"}
+    },
+    {
+      "issue": 4999, "issue_state": "CLOSED", "issue_closed_at": "2026-07-10T01:29:28Z",
+      "pr": 5071, "pr_state": "MERGED", "merged_at": "2026-07-10T01:29:27Z",
+      "head": "a55636569e879a9b0572f2cf9955794834376c02", "merge": "de28105573ecb735c25ebe42852f96b3704218dd",
+      "checks": {"adl-path-policy": "SUCCESS", "adl-coverage": "SUCCESS", "adl-tooling-contracts": "SUCCESS", "adl-rust-fmt-clippy": "SUCCESS", "adl-rust-tests": "SUCCESS", "adl-demo-proof": "SUCCESS", "adl-ci": "SUCCESS", "adl-slow-proof": "SKIPPED"}
+    },
+    {
+      "issue": 4995, "issue_state": "CLOSED", "issue_closed_at": "2026-07-10T00:08:25Z",
+      "pr": 5074, "pr_state": "MERGED", "merged_at": "2026-07-10T00:08:24Z",
+      "head": "c01f61e705d3dc695afaa85839564023946b3282", "merge": "40a0c8d471e39b6be3278324e3111a0a8619b616",
+      "checks": {"adl-ci": "SUCCESS", "adl-coverage": "SUCCESS", "adl-slow-proof": "SKIPPED"}
+    },
+    {
+      "issue": 4987, "issue_state": "CLOSED", "issue_closed_at": "2026-07-10T15:52:00Z",
+      "pr": 5103, "pr_state": "MERGED", "merged_at": "2026-07-10T15:51:59Z",
+      "head": "539938e3b0f50839f4de935e584e896518c156ea", "merge": "507495693525db12ca746f7022dfc96795a7342c",
+      "checks": {"adl-path-policy": "SUCCESS", "adl-coverage": "SUCCESS", "adl-tooling-contracts": "SUCCESS", "adl-rust-fmt-clippy": "SUCCESS", "adl-rust-tests": "SUCCESS", "adl-demo-proof": "SUCCESS", "adl-ci": "SUCCESS", "adl-slow-proof": "SKIPPED"}
+    },
+    {
+      "issue": 4938, "issue_state": "CLOSED", "issue_closed_at": "2026-07-10T18:18:02Z",
+      "pr": 5128, "pr_state": "MERGED", "merged_at": "2026-07-10T18:18:01Z",
+      "head": "39e1d1253c28d89f307afe362f497e58e5dcb8c0", "merge": "4c86b17b53765525057b2929a8b2324ab51ec6d7",
+      "checks": {"adl-path-policy": "SUCCESS", "adl-coverage": "SUCCESS", "adl-tooling-contracts": "SUCCESS", "adl-rust-fmt-clippy": "SKIPPED", "adl-rust-tests": "SKIPPED", "adl-demo-proof": "SUCCESS", "adl-ci": "SUCCESS", "adl-slow-proof": "SKIPPED"}
+    }
+  ]
+}

@@ -34,7 +34,7 @@ pub struct ComponentConfig {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[serde(default, deny_unknown_fields)]
 pub struct WeatherConfig {
     pub sample_millis: u64,
     pub history_capacity: usize,
@@ -216,6 +216,8 @@ pub struct RuntimeInitConfig {
     pub observatory: ObservatoryInitConfig,
     #[serde(default)]
     pub agents: RuntimeAgentsInitConfig,
+    #[serde(default)]
+    pub weather: WeatherConfig,
 }
 
 impl RuntimeInitConfig {
@@ -231,6 +233,7 @@ impl RuntimeInitConfig {
                 allowed_origins: default_local_observatory_origins(),
             },
             agents: RuntimeAgentsInitConfig::default(),
+            weather: WeatherConfig::default(),
         }
     }
 
@@ -263,6 +266,9 @@ impl RuntimeInitConfig {
         self.api.validate()?;
         self.observatory.validate()?;
         self.agents.validate()?;
+        self.weather
+            .validate()
+            .map_err(|error| RuntimeInitError::Weather(error.to_string()))?;
         Ok(())
     }
 
@@ -530,4 +536,6 @@ pub enum RuntimeInitError {
     InvalidTlsPaths,
     #[error("runtime init agents.count and agents.sample_limit must be positive, with sample_limit <= 100")]
     InvalidAgentPopulation,
+    #[error("runtime init weather configuration is invalid: {0}")]
+    Weather(String),
 }

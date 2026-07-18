@@ -83,6 +83,37 @@ def require(condition: bool, failures: list[str], message: str) -> None:
         failures.append(message)
 
 
+def is_capacity_failure(message: str) -> bool:
+    markers = (
+        "InsufficientInstanceCapacity",
+        "UnfulfillableCapacity",
+        "MaxSpotInstanceCountExceeded",
+        "SpotMaxPriceTooLow",
+        "capacity",
+        "vCPU limit",
+        "vcpu limit",
+    )
+    return any(marker in message for marker in markers)
+
+
+def no_compute_launched_for_capacity(raw: dict[str, Any]) -> bool:
+    if isinstance(raw.get("launch"), dict):
+        return False
+    attempts = raw.get("attempts")
+    if not isinstance(attempts, list) or not attempts:
+        return False
+    for attempt in attempts:
+        if not isinstance(attempt, dict):
+            return False
+        if str(attempt.get("status", "")).lower() != "failed":
+            return False
+        if attempt.get("purchase_option") != "spot":
+            return False
+        if not is_capacity_failure(str(attempt.get("message", ""))):
+            return False
+    return True
+
+
 def redact_artifact_logs(artifact_dir: Path) -> None:
     private_root = artifact_dir / ".private"
     for path in artifact_dir.rglob("*"):
@@ -173,35 +204,41 @@ def main() -> int:
         if str(attempt.get("status", "")).lower() in {"interrupted_by_aws", "interrupted"}
     ]
 
+    capacity_no_launch = no_compute_launched_for_capacity(raw)
     failures: list[str] = []
     require(args.runner_exit_code == 0, failures, "runner_exit_nonzero")
-    require(str(raw.get("status", "")).lower() in {"passed", "resumed_after_interruption"}, failures, "run_status_not_passed")
-    require(launch.get("purchase_option") == "spot", failures, "purchase_option_not_spot")
-    require(cache.get("created") is False, failures, "retained_cache_was_created_or_unproven")
+    if capacity_no_launch:
+        require(not cleanup.get("termination_error"), failures, "compute_termination_error")
+    else:
+        require(str(raw.get("status", "")).lower() in {"passed", "resumed_after_interruption"}, failures, "run_status_not_passed")
+        require(launch.get("purchase_option") == "spot", failures, "purchase_option_not_spot")
+        require(cache.get("created") is False, failures, "retained_cache_was_created_or_unproven")
     cache_volume_id = cache.get("volume_id") if isinstance(cache.get("volume_id"), str) else ""
-    require(sha256(cache_volume_id) == args.expected_cache_volume_id_sha256, failures, "retained_cache_identity_mismatch")
-    require(cache.get("attachment_state") == "attached", failures, "retained_cache_not_attached")
-    require(cache.get("mount_path") == "/mnt/adl-cache", failures, "retained_cache_mount_mismatch")
-    require(cleanup.get("termination_attempted") is True, failures, "compute_termination_not_attempted")
-    require(cleanup.get("final_instance_state") == "terminated", failures, "compute_not_terminated")
-    require(not cleanup.get("termination_error"), failures, "compute_termination_error")
-    require(launch_surface.get("ssh_debug_enabled") is True, failures, "ssh_debug_not_enabled")
-    require("status=ssh_debug_ready" in command_status, failures, "ssh_recovery_not_proven")
-    require("status=ssh_tail_started" in command_status, failures, "live_ssh_tail_not_proven")
-    require(builder.get("builder_image_immutable") is True, failures, "builder_image_not_immutable")
-    require(builder.get("builder_image_digest_sha256") == expected_digest_hash, failures, "builder_image_digest_mismatch")
-    require(builder.get("toolchain_verified") is True, failures, "builder_toolchain_not_verified")
-    require(builder.get("source_commit_verified") is True, failures, "source_commit_not_verified")
-    require(builder.get("source_commit") == args.expected_source_commit, failures, "source_commit_mismatch")
-    require(builder.get("cache_mount_verified") is True, failures, "cache_mount_not_verified")
-    require(builder.get("cache_writable") is True, failures, "cache_not_writable")
-    require(builder.get("host_validation_tools_installed") is False, failures, "host_validation_tool_install_detected")
+    if not capacity_no_launch:
+        require(sha256(cache_volume_id) == args.expected_cache_volume_id_sha256, failures, "retained_cache_identity_mismatch")
+        require(cache.get("attachment_state") == "attached", failures, "retained_cache_not_attached")
+        require(cache.get("mount_path") == "/mnt/adl-cache", failures, "retained_cache_mount_mismatch")
+        require(cleanup.get("termination_attempted") is True, failures, "compute_termination_not_attempted")
+        require(cleanup.get("final_instance_state") == "terminated", failures, "compute_not_terminated")
+        require(not cleanup.get("termination_error"), failures, "compute_termination_error")
+        require(launch_surface.get("ssh_debug_enabled") is True, failures, "ssh_debug_not_enabled")
+        require("status=ssh_debug_ready" in command_status, failures, "ssh_recovery_not_proven")
+        require("status=ssh_tail_started" in command_status, failures, "live_ssh_tail_not_proven")
+        require(builder.get("builder_image_immutable") is True, failures, "builder_image_not_immutable")
+        require(builder.get("builder_image_digest_sha256") == expected_digest_hash, failures, "builder_image_digest_mismatch")
+        require(builder.get("toolchain_verified") is True, failures, "builder_toolchain_not_verified")
+        require(builder.get("source_commit_verified") is True, failures, "source_commit_not_verified")
+        require(builder.get("source_commit") == args.expected_source_commit, failures, "source_commit_mismatch")
+        require(builder.get("cache_mount_verified") is True, failures, "cache_mount_not_verified")
+        require(builder.get("cache_writable") is True, failures, "cache_not_writable")
+        require(builder.get("host_validation_tools_installed") is False, failures, "host_validation_tool_install_detected")
 
     total_seconds = int(timings.get("total_seconds") or 0)
     estimated_cost = round(args.estimated_hourly_cost_usd * total_seconds / 3600.0, 6)
     self_verification = {
-        "passed": not failures,
+        "passed": not failures and not capacity_no_launch,
         "failures": failures,
+        "capacity_unavailable_no_compute": capacity_no_launch,
         "account_verified_by_wrapper": True,
         "spot_purchase_verified": launch.get("purchase_option") == "spot",
         "immutable_builder_image_verified": builder.get("builder_image_immutable") is True,
@@ -215,9 +252,12 @@ def main() -> int:
         "compute_teardown_verified": cleanup.get("final_instance_state") == "terminated" and not cleanup.get("termination_error"),
         "host_validation_tools_installed": builder.get("host_validation_tools_installed"),
     }
+    status = "passed" if not failures and not capacity_no_launch else "failed_self_verification"
+    if capacity_no_launch and not failures:
+        status = "blocked_capacity_unavailable"
     wrapper = {
         "schema": "adl.aws_spot_remote_validation_wrapper_summary.v2",
-        "status": "passed" if not failures else "failed_self_verification",
+        "status": status,
         "runner_exit_code": args.runner_exit_code,
         "self_verification": self_verification,
         "source_commit": args.expected_source_commit,
@@ -255,6 +295,9 @@ def main() -> int:
     if failures:
         print("aws_spot_artifact_finalize: self-verification failed: " + ", ".join(failures), file=sys.stderr)
         return 1
+    if capacity_no_launch:
+        print(json.dumps(wrapper, sort_keys=True))
+        return 0
     print(json.dumps(wrapper, sort_keys=True))
     return 0
 

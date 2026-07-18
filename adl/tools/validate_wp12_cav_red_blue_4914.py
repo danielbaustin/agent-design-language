@@ -73,10 +73,10 @@ def validate_proof(repo_root: Path, proof_path: Path, proof: dict[str, Any]) -> 
         fail("runtime_surface must be an object")
     if runtime.get("owner_binary") != "csm":
         fail("runtime_surface must be owned by csm")
-    if runtime.get("integrated_csm_path") is not True:
-        fail("runtime_surface must mark integrated_csm_path")
-    if runtime.get("http_runtime_api_integrated") is not True:
-        fail("HTTP runtime API integration must be true")
+    if runtime.get("integrated_csm_path") is not False:
+        fail("runtime_surface must not claim integrated_csm_path without live boundary-crossing proof")
+    if runtime.get("http_runtime_api_integrated") is not False:
+        fail("HTTP runtime API integration must remain a non-claim")
     if runtime.get("websocket_runtime_api_integrated") is not False:
         fail("WebSocket runtime API integration must remain a non-claim")
     if runtime.get("cloud_hook_mode") != "local_denial_no_aws_mutation":
@@ -101,15 +101,11 @@ def validate_proof(repo_root: Path, proof_path: Path, proof: dict[str, Any]) -> 
     missing = REQUIRED_SCENARIOS - scenario_ids
     if missing:
         fail(f"missing required scenarios: {sorted(missing)}")
-    if not any(
-        row.get("runs_end_to_end") is True and row.get("integrated_csm_path") is True
-        for row in scenarios
-        if isinstance(row, dict)
-    ):
-        fail("at least one scenario must run end-to-end through integrated CSM path")
     for row in scenarios:
         if not isinstance(row, dict):
             fail("red_blue_scenarios entries must be objects")
+        if row.get("runs_end_to_end") is True or row.get("integrated_csm_path") is True:
+            fail(f"scenario {row.get('id')} must not claim integrated end-to-end CSM execution")
         if row.get("decision") not in {"refused", "detected"}:
             fail(f"scenario {row.get('id')} has invalid decision")
         if not row.get("executed_control") or not row.get("observed_result"):
@@ -151,8 +147,8 @@ def validate_parent_gate(parent: dict[str, Any]) -> None:
     row = matches[0]
     if row.get("owner_issue") != 4914:
         fail("CAV row must be owned by #4914")
-    if row.get("state") != "integrated_proven":
-        fail("CAV row must be integrated_proven")
+    if row.get("state") != "boundary_proven":
+        fail("CAV row must be boundary_proven until live boundary-crossing proof exists")
     required_evidence = "docs/milestones/v0.91.7/review/security/wp12_cav_red_blue_4914/cav_red_blue_summary.json"
     if required_evidence not in row.get("evidence", []):
         fail("CAV row must cite the #4914 summary")

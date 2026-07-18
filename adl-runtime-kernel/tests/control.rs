@@ -224,6 +224,34 @@ async fn forged_and_unauthorized_commands_never_reach_lifecycle_authority() {
 }
 
 #[tokio::test]
+async fn pressure_admission_gate_refuses_new_commands_until_reopened() {
+    let key = SigningKey::from_bytes(&[31; 32]);
+    let service = Arc::new(ControlService::new(
+        "instance-1",
+        RuntimeRecorder::new(4),
+        FakeLifecycle {
+            calls: Arc::new(AtomicUsize::new(0)),
+        },
+        authority(&key, [ControlCapability::Read]),
+        4,
+    ));
+
+    assert!(service.pause_admission_if_idle());
+    assert_eq!(
+        service
+            .execute(signed(&key, "read-paused", ControlAction::Snapshot))
+            .await
+            .unwrap_err(),
+        ControlError::AdmissionClosed
+    );
+    service.reopen_admission();
+    service
+        .execute(signed(&key, "read-open", ControlAction::Snapshot))
+        .await
+        .unwrap();
+}
+
+#[tokio::test]
 async fn duplicate_shutdown_executes_once_and_conflicting_reuse_fails() {
     let key = SigningKey::from_bytes(&[4; 32]);
     let calls = Arc::new(AtomicUsize::new(0));
@@ -306,6 +334,7 @@ async fn cancelled_client_does_not_cancel_execution_or_exceed_idempotency_bound(
         tokio::spawn(async move { service.execute(command).await })
     };
     started.notified().await;
+    assert!(!service.pause_admission_if_idle());
     request.abort();
     assert_eq!(
         service

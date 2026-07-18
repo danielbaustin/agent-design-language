@@ -1,12 +1,16 @@
-use std::{collections::BTreeMap, sync::Arc};
+use std::{
+    collections::{BTreeMap, VecDeque},
+    sync::Arc,
+};
 
 use adl_runtime_kernel::{
-    CanonicalValue, Capability, CapabilityRequirement, Component, ComponentConfig,
-    ComponentContext, ComponentError, ComponentFactory, ComponentId, ComponentSpec, ConfigError,
-    DeterminismClass, DiskWeather, FactoryRegistration, FactoryRegistry, FailurePolicy, GpuWeather,
-    LifecycleGuarantees, Observation, PortSpec, ResourceState, RuntimeConfig, ServiceContract,
-    ShutdownDecision, SysinfoWeatherObserver, TopologyError, WeatherConfig, WeatherHealthReport,
-    WeatherObserver, WeatherSample, RUNTIME_CONFIG_SCHEMA, SERVICE_CONTRACT_SCHEMA,
+    monitor_until_stop, CanonicalValue, Capability, CapabilityRequirement, Component,
+    ComponentConfig, ComponentContext, ComponentError, ComponentFactory, ComponentId,
+    ComponentSpec, ConfigError, DeterminismClass, DiskWeather, FactoryRegistration,
+    FactoryRegistry, FailurePolicy, GpuWeather, LifecycleGuarantees, Observation, PortSpec,
+    ResourceState, RuntimeConfig, ServiceContract, ShutdownDecision, SysinfoWeatherObserver,
+    TopologyError, WeatherConfig, WeatherHealthReport, WeatherObserver, WeatherSample,
+    RUNTIME_CONFIG_SCHEMA, SERVICE_CONTRACT_SCHEMA,
 };
 use async_trait::async_trait;
 use semver::{Version, VersionReq};
@@ -202,6 +206,10 @@ allowed_origins = ["https://localhost:8765", "https://observatory.example.test"]
 [agents]
 count = 10000
 sample_limit = 6
+
+[weather]
+sample_millis = 25
+checkpoint_deadline_millis = 750
 "#,
     )
     .unwrap();
@@ -226,6 +234,12 @@ sample_limit = 6
     assert_eq!(agents.total_count, 10_000);
     assert_eq!(agents.rendered_sample_count, 6);
     assert_eq!(agents.sample[0].id, "agent-00001");
+    assert_eq!(init.weather.sample_millis, 25);
+    assert_eq!(init.weather.checkpoint_deadline_millis, 750);
+    assert_eq!(
+        init.weather.disk_stop_free_bytes,
+        WeatherConfig::default().disk_stop_free_bytes
+    );
     assert!(!init.socket_addrs().unwrap().is_empty());
 }
 
@@ -478,6 +492,41 @@ fn resource_policy_warns_stops_and_recovers_with_hysteresis() {
     assert_eq!(
         adl_runtime_kernel::resource_state(&thresholds, &unavailable, ResourceState::Healthy),
         ResourceState::Warning
+    );
+}
+
+struct SequenceWeatherObserver {
+    samples: VecDeque<WeatherSample>,
+}
+
+impl WeatherObserver for SequenceWeatherObserver {
+    fn sample(&mut self) -> WeatherSample {
+        self.samples.pop_front().expect("weather sample")
+    }
+}
+
+#[tokio::test]
+async fn periodic_weather_monitor_publishes_reports_until_stop_is_required() {
+    let config = WeatherConfig {
+        sample_millis: 1,
+        disk_stop_free_bytes: 20,
+        disk_warning_free_bytes: 40,
+        disk_recover_free_bytes: 60,
+        ..WeatherConfig::default()
+    };
+    let observer = SequenceWeatherObserver {
+        samples: VecDeque::from([sample(0, 0, 70), sample(0, 0, 15)]),
+    };
+    let mut reports = Vec::new();
+
+    let terminal = monitor_until_stop(config, observer, |report| reports.push(report)).await;
+
+    assert_eq!(reports.len(), 2);
+    assert_eq!(reports[0].resource_state, ResourceState::Healthy);
+    assert_eq!(terminal.resource_state, ResourceState::StopRequired);
+    assert_eq!(
+        terminal.shutdown_decision,
+        ShutdownDecision::SerializeStateThenStop
     );
 }
 

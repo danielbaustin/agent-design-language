@@ -1,0 +1,155 @@
+{
+  "issue": 5404,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5404/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5404/diagram.mmd",
+  "design_reviewer": "operator-assigned-review-fix",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5404-wp12-review-fix",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1784155570,
+    "expires_unix_seconds": 1784159170,
+    "heartbeat_unix_seconds": 1784155570,
+    "branch": "codex/5404-wp12-security-protocol-review-fix",
+    "worktree": ".worktrees/adl-wp-5404",
+    "protected_paths": [
+      "adl/src/csm_cav_red_blue.rs",
+      "adl/src/csm_credential_policy.rs",
+      "adl/tools/validate_wp12_cav_red_blue_4914.py",
+      "adl/tools/validate_wp12_ssm_readiness_4657.py",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Resolve #5403 WP-12 security and protocol review findings"
+  },
+  "initial": {
+    "title": "[v0.91.7][review-fix][WP-12] Resolve #5403 security and protocol findings",
+    "slug": "v0-91-7-review-fix-wp12-security-protocol-findings",
+    "version": "v0.91.7",
+    "goal": "Repair WP-12 security/protocol truth so CAV, access activation, focused validators, and credential-policy evidence match the actual integrated proof.",
+    "required_outcome": "WP-12 records and validators no longer overclaim integrated CSM execution, no longer require obsolete issue state, execute focused proof lanes, and classify synthetic credential-policy events explicitly.",
+    "declared_scope": [
+      "WP-12 security/CAV/access/protocol review packets",
+      "Focused WP-12 validators and selected validation-lane coverage",
+      "Credential-policy proof classification and evidence wording"
+    ],
+    "authority_boundary": [
+      "#5403 WP-12 review packet findings are the source defects",
+      "Do not claim live CAV/runtime integration unless a real boundary-crossing path is implemented and proven",
+      "Do not weaken security fail-closed behavior to satisfy docs"
+    ],
+    "task_boundary": "Resolve the four #5403 WP-12 findings without redesigning WP-12 or moving unrelated security work.",
+    "deliverables": [
+      "Corrected CAV/access/protocol truth records",
+      "Focused validator execution or explicit downgrade proof",
+      "Credential-policy synthetic/proof classification",
+      "Regression validation for the corrected behavior"
+    ],
+    "acceptance_criteria": [
+      "CAV integrated claims are replaced with real boundary-crossing proof or downgraded truth",
+      "Activation gate, WBS, v0.92 consumers, and validator expectations agree with live issue state",
+      "Selected CI lanes execute focused #4657/#4660 validators or fail closed when they should",
+      "Synthetic credential-policy events are unmistakably classified and excluded from operational audit streams",
+      "Updated proof and review evidence is retained"
+    ],
+    "dependencies": [
+      "#5403 review packet",
+      "WP-12 security/protocol review packets",
+      "Current #4657/#4659/#4660/#4914 issue and proof state"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.91.7/review/security/WP12_ACCESS_ACTIVATION_GATE_4660.md",
+      "docs/milestones/v0.91.7/review/security/WP12_SECURITY_CAV_PRE_V092_REQUIREMENTS_4656.md",
+      "docs/milestones/v0.91.7/review/security/WP12_CSM_CREDENTIAL_POLICY_4920.md",
+      "docs/milestones/v0.91.7/review/runtime/WP12_ACIP_WEBSOCKET_TRANSPORT_4659.md",
+      "adl/tools/validate_wp12_cav_red_blue_4914.py",
+      "adl/tools/validate_wp12_ssm_readiness_4657.py",
+      "adl/tools/run_pr_fast_coverage_lane.sh"
+    ],
+    "non_goals": [
+      "Full production CAV red/blue runtime expansion",
+      "Production WebSocket authentication/TLS/cross-polis networking",
+      "Unrelated WP-12 or runtime refactors"
+    ],
+    "plan_summary": "Inspect the WP-12 records and validators, repair overclaims or stale assumptions, add focused regression checks, then validate the corrected proof surface.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Map each #5403 WP-12 finding to the exact record or validator surface",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Apply bounded truth/validator repairs",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run focused WP-12 validation and record retained evidence",
+        "acceptance_ids": [
+          "AC-5"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "Security/CAV proof claims stay evidence-bound",
+      "Synthetic proof artifacts cannot masquerade as operational audit evidence",
+      "Validators fail closed when required live proof is absent"
+    ],
+    "risks": [
+      "Review findings may require downgrading milestone truth rather than implementing new runtime paths",
+      "Issue-state wording may drift from live GitHub state"
+    ],
+    "planning_profile": "medium",
+    "stop_conditions": [
+      "A finding requires operator-approved scope expansion",
+      "A required live proof cannot be produced locally",
+      "Focused validators fail in a way that points to unrelated runtime defects"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "wp12-review-fix",
+        "proof_role": "Focused WP-12 review-fix validators and regression checks",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 1800,
+        "budget_tokens": 12000,
+        "argv": [
+          "bash",
+          "adl/tools/run_pr_fast_coverage_lane.sh"
+        ],
+        "parallel_group": "wp12",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on security/protocol overclaim; document downgraded truth rather than inventing proof.",
+    "review_prompts": [
+      "Do the WP-12 records overclaim integrated CAV/runtime behavior?",
+      "Do validators and WBS agree with current issue/proof state?",
+      "Are synthetic credential-policy events clearly separated from operational audit streams?",
+      "Are focused validators actually executed by the selected lane?"
+    ]
+  }
+}

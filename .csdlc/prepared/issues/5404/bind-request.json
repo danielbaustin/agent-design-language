@@ -1,0 +1,25 @@
+{
+  "issue": 5404,
+  "base_branch": "main",
+  "branch": "codex/5404-wp12-security-protocol-review-fix",
+  "worktree": ".worktrees/adl-wp-5404",
+  "claim": {
+    "id": "claim-5404-wp12-review-fix",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1784155570,
+    "expires_unix_seconds": 1784159170,
+    "heartbeat_unix_seconds": 1784155570,
+    "branch": "codex/5404-wp12-security-protocol-review-fix",
+    "worktree": ".worktrees/adl-wp-5404",
+    "protected_paths": [
+      "adl/src/csm_cav_red_blue.rs",
+      "adl/src/csm_credential_policy.rs",
+      "adl/tools/validate_wp12_cav_red_blue_4914.py",
+      "adl/tools/validate_wp12_ssm_readiness_4657.py",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Resolve #5403 WP-12 security and protocol review findings"
+  }
+}

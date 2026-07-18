@@ -1,0 +1,111 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5411,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3] Resolve #5227 selector, guardian, and pressure-stop findings",
+    "slug": "v0-91-7-runtime-v3-selector-guardian-pressure-stop",
+    "version": "v0.91.7",
+    "generation": 23
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Resolved Runtime v3 selector truth, Unix guardian process-tree containment, scoped periodic resource-pressure monitoring, signed stateful checkpoint-before-stop behavior, reversible control admission, and release-evidence classification.",
+      "actual_changes": [
+        "Clarified selector as a reporting contract without runtime invocation",
+        "Contained Unix descendants with bounded capture and process-group liveness escalation",
+        "Connected configured weather pressure to signed checkpoint and graceful stop with retry on checkpoint failure",
+        "Retained stateful recorder snapshots with explicit current and legacy schema handling",
+        "Classified release proof as executed, contract-only, ignored, or deferred"
+      ],
+      "artifacts": [
+        "docs/reviews/v0.91.7/runtime-v3-5411/DESIGN.md",
+        "docs/reviews/v0.91.7/runtime-v3-5411/DIAGRAM.mmd",
+        "docs/architecture/runtime_v3_release_proof_gate_5220.v1.json",
+        "docs/architecture/runtime_v3_current_inventory.v1.json"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--all-targets"
+          ],
+          "purpose": "Full Runtime v3 kernel behavior across all targets",
+          "outcome": "passed",
+          "evidence_ref": "local FastWork validation: all non-ignored tests passed"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl-runtime/Cargo.toml",
+            "--all-targets"
+          ],
+          "purpose": "Guardian containment, restart, signaling, and independence behavior",
+          "outcome": "passed",
+          "evidence_ref": "local FastWork validation: 117 tests passed"
+        },
+        {
+          "command": [
+            "cargo",
+            "clippy",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "purpose": "Runtime v3 kernel warning-free quality gate",
+          "outcome": "passed",
+          "evidence_ref": "local FastWork strict Clippy"
+        },
+        {
+          "command": [
+            "cargo",
+            "clippy",
+            "--manifest-path",
+            "adl-runtime/Cargo.toml",
+            "--lib",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "purpose": "Guardian library warning-free quality gate",
+          "outcome": "passed",
+          "evidence_ref": "local FastWork strict Clippy"
+        },
+        {
+          "command": [
+            "python3",
+            "adl-runtime-kernel/tools/test_generate_runtime_inventory.py"
+          ],
+          "purpose": "Runtime v3 implementation budget and deterministic inventory truth",
+          "outcome": "passed",
+          "evidence_ref": "11,935 kernel LoC; 867-line shared guardian reported separately; deterministic inventory current"
+        },
+        {
+          "command": [
+            "python3",
+            "adl-runtime-kernel/tools/test_generate_runtime_inventory.py"
+          ],
+          "purpose": "Final Runtime v3 implementation budget and deterministic inventory truth",
+          "outcome": "passed",
+          "evidence_ref": "11,964 kernel LoC; 867-line shared guardian auxiliary surface; 12,831 combined selected surface; 186 test attributes; inventory current"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

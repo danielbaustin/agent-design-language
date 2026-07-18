@@ -1,0 +1,55 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "patch-integrity", "proof_role": "Prove patch integrity", "purpose": "Check the worktree diff for patch integrity",
+        "determinism": "deterministic", "resources": {"cpu_units": 1, "memory_mib": 8, "tokens": 10},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "docs", "release_gate": "required",
+        "execution": "local", "timeout_seconds": 60, "executable": "/usr/bin/env", "argv": ["git", "diff", "--check"],
+        "evidence": {"max_log_bytes": 4096, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "logging-scope-truth", "proof_role": "Prove logging scope truth", "purpose": "Check the explicit build-action-log implementation boundary",
+        "determinism": "deterministic", "resources": {"cpu_units": 1, "memory_mib": 8, "tokens": 10},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "docs", "release_gate": "required",
+        "execution": "local", "timeout_seconds": 30, "executable": "/usr/bin/env",
+        "argv": ["rg", "-n", "The only integrated producer is.*validation_manager.py --run", "docs/tooling/BUILD_ACTION_LOGS.md"],
+        "evidence": {"max_log_bytes": 4096, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "typed-v2-authority", "proof_role": "Prove typed-v2 authority", "purpose": "Check the current lifecycle authority wording",
+        "determinism": "deterministic", "resources": {"cpu_units": 1, "memory_mib": 8, "tokens": 10},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "docs", "release_gate": "required",
+        "execution": "local", "timeout_seconds": 30, "executable": "/usr/bin/env",
+        "argv": ["rg", "-n", "Gate 10D2|csdlc-v2", "docs/tooling/ADL_PLATFORM_CLI_BINARY_TAXONOMY.md"],
+        "evidence": {"max_log_bytes": 4096, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "closeout-coverage", "proof_role": "Prove closeout child coverage", "purpose": "Check #5037 and #4938 are retained",
+        "determinism": "deterministic", "resources": {"cpu_units": 1, "memory_mib": 8, "tokens": 10},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "evidence", "release_gate": "required",
+        "execution": "local", "timeout_seconds": 30, "executable": "/usr/bin/env",
+        "argv": ["rg", "-n", "#5037|#4938", "docs/reviews/v0.91.7/tools-5407/TOOLS_RELIABILITY_CLOSEOUT_5036.md"],
+        "evidence": {"max_log_bytes": 4096, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "performance-boundary", "proof_role": "Prove performance non-claim", "purpose": "Check the retained performance non-claim",
+        "determinism": "deterministic", "resources": {"cpu_units": 1, "memory_mib": 8, "tokens": 10},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "evidence", "release_gate": "required",
+        "execution": "local", "timeout_seconds": 30, "executable": "/usr/bin/env",
+        "argv": ["rg", "-n", "not a material hosted|No material|not proven", "docs/reviews/v0.91.7/tools-5407/TOOLS_RELIABILITY_CLOSEOUT_5036.md"],
+        "evidence": {"max_log_bytes": 4096, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["patch-integrity", "logging-scope-truth", "typed-v2-authority", "closeout-coverage", "performance-boundary"],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {"max_parallel": 5, "cpu_units": 5, "memory_mib": 64, "tokens": 100},
+  "root": ".",
+  "evidence_dir": ".csdlc/issues/5407/evidence",
+  "cancellation_file": null
+}

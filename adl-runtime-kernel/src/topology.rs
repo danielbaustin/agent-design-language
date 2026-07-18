@@ -252,6 +252,10 @@ impl ConfiguredTopology {
     pub fn into_topology(self) -> ValidatedTopology {
         self.topology
     }
+
+    pub fn into_parts(self) -> (ValidatedTopology, ValidatedContracts, String) {
+        (self.topology, self.contracts, self.effective_json)
+    }
 }
 
 impl ValidatedTopology {

@@ -238,6 +238,7 @@ struct CommandRecord {
 struct IdempotencyState {
     records: LruCache<String, CommandRecord>,
     terminal_action: Option<String>,
+    admission_open: bool,
 }
 
 pub struct ControlService<C> {
@@ -316,6 +317,7 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
             idempotency: Mutex::new(IdempotencyState {
                 records: LruCache::unbounded(),
                 terminal_action: None,
+                admission_open: true,
             }),
             weather: Mutex::new(None),
             observatory_allowed_origins,
@@ -344,6 +346,26 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
             .control_addr
             .lock()
             .expect("control address mutex poisoned") = address;
+    }
+
+    pub fn pause_admission_if_idle(&self) -> bool {
+        let mut state = self.idempotency.lock().expect("idempotency mutex poisoned");
+        if state
+            .records
+            .iter()
+            .any(|(_, record)| record.response.is_none())
+        {
+            return false;
+        }
+        state.admission_open = false;
+        true
+    }
+
+    pub fn reopen_admission(&self) {
+        self.idempotency
+            .lock()
+            .expect("idempotency mutex poisoned")
+            .admission_open = true;
     }
 
     pub fn observatory_feed(&self) -> ObservatoryFeed {
@@ -403,6 +425,9 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
                     return Err(ControlError::IdempotencyConflict);
                 }
                 return record.response.clone().ok_or(ControlError::InFlight);
+            }
+            if !state.admission_open {
+                return Err(ControlError::AdmissionClosed);
             }
             while state.records.len() >= self.max_records {
                 let completed = state
@@ -699,9 +724,9 @@ fn control_error_response(error: ControlError) -> Response {
         ControlError::IdempotencyConflict
         | ControlError::InFlight
         | ControlError::LifecycleAlreadyRequested => StatusCode::CONFLICT,
-        ControlError::IdempotencyCapacity | ControlError::Internal => {
-            StatusCode::SERVICE_UNAVAILABLE
-        }
+        ControlError::AdmissionClosed
+        | ControlError::IdempotencyCapacity
+        | ControlError::Internal => StatusCode::SERVICE_UNAVAILABLE,
         ControlError::StaleRuntimeInstance => StatusCode::GONE,
         _ => StatusCode::BAD_REQUEST,
     };
@@ -829,6 +854,8 @@ pub enum ControlError {
     InFlight,
     #[error("control idempotency capacity is exhausted")]
     IdempotencyCapacity,
+    #[error("control command admission is temporarily closed")]
+    AdmissionClosed,
     #[error("a terminal lifecycle action has already been requested")]
     LifecycleAlreadyRequested,
     #[error("control execution failed internally")]

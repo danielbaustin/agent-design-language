@@ -97,6 +97,7 @@ fn participants(
 fn request(generation: u64) -> CheckpointRequest {
     CheckpointRequest {
         generation,
+        previous_integrity: None,
         accepted_through: 41,
         provenance: "runtime-v3-test".to_owned(),
         topology_hash: "topology-a".to_owned(),

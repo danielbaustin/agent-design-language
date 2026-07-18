@@ -1,0 +1,42 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5423,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][register] Reconcile sprint review register after remediation wave",
+    "slug": "v0-91-7-review-fix-register-reconcile-remediation-wave",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5423\n.csdlc/locks/5423.lock\ndocs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md\ndocs/reviews/v0.91.7/register-reconcile-5423",
+      "review_revision": "git-blake3:afffd91407e4ec8e3e643176f5fb89524d6b4083:f9f0c75a572658705ebad74d6e190f3c821285d469366d7fe1ba0e819d23c791",
+      "reviewer": "huygens-subagent",
+      "review_prompts": [
+        "Are all promoted rows backed by terminal retained evidence?",
+        "Did any nonterminal remediation row change?",
+        "Are historical findings still visible?"
+      ],
+      "findings": [
+        {
+          "id": "F-5423-1",
+          "severity": "p1",
+          "summary": "Initial abandoned revision used a working-tree-only whitespace proof and contained an extra blank line at design EOF",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:afffd91407e4ec8e3e643176f5fb89524d6b4083:f9f0c75a572658705ebad74d6e190f3c821285d469366d7fe1ba0e819d23c791",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "Delegated remediation issues #5404, #5405, #5408, and #5409 remain open and unchanged, so overall v0.91.7 release readiness is not promoted"
+      ],
+      "review_result": "pass"
+    }
+  }
+}

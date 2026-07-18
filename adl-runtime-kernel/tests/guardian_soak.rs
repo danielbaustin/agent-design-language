@@ -1,6 +1,6 @@
 use std::{
     future::pending,
-    io::Read,
+    io::{BufRead, BufReader, Read},
     path::{Path, PathBuf},
     process::{Command, Stdio},
     sync::{
@@ -14,8 +14,8 @@ use adl_runtime_kernel::{
     channel,
     proof::{build_proof_runtime, run_proof},
     ChannelFullPolicy, Component, ComponentContext, ComponentError, ComponentFactory, ComponentId,
-    ComponentRegistry, ComponentSpec, FailurePolicy, Kernel, KernelExit, RuntimeRecorder,
-    SendError,
+    ComponentRegistry, ComponentSpec, ControlAction, FailurePolicy, Kernel, KernelExit,
+    RuntimeRecorder, SendError, SignedControlCommand,
 };
 use async_trait::async_trait;
 
@@ -181,6 +181,7 @@ fn horust_restarts_once_and_restores_continuity() {
 #[ignore = "requires ADL_HORUST_BIN and exercises native process supervision"]
 fn horust_does_not_restart_configuration_failure() {
     let directory = tempfile::tempdir().unwrap();
+    let init = write_test_runtime_init(directory.path(), control_test_addr().parse().unwrap());
     let mut command = Command::new(horust_binary());
     command
         .arg("--services-path")
@@ -188,8 +189,11 @@ fn horust_does_not_restart_configuration_failure() {
         .arg("--uds-folder-path")
         .arg(directory.path().join("uds"))
         .env("ADL_RUNTIME_BIN", env!("CARGO_BIN_EXE_adl-runtime-kernel"))
-        .env("ADL_RUNTIME_INIT", runtime_init_path())
-        .env("ADL_RUNTIME_CAPSULE", directory.path().join("config.json"));
+        .env("ADL_RUNTIME_INIT", init)
+        .env(
+            "ADL_RUNTIME_CONTINUITY_ROOT",
+            directory.path().join("config"),
+        );
     let output = bounded_output(&mut command);
     assert!(output.status.success());
     let combined = format!(
@@ -199,7 +203,7 @@ fn horust_does_not_restart_configuration_failure() {
     );
     assert_eq!(
         combined
-            .matches("runtime control key is missing or invalid")
+            .matches("runtime continuity signing key is missing or invalid")
             .count(),
         1,
         "configuration failure must execute exactly once: {combined}"
@@ -359,7 +363,8 @@ fn horust_forwards_sigterm_and_runtime_checkpoints_cleanly() {
     use ed25519_dalek::SigningKey;
 
     let directory = tempfile::tempdir().unwrap();
-    let capsule = directory.path().join("horust-sigterm.json");
+    let continuity_root = directory.path().join("horust-sigterm");
+    let init = write_test_runtime_init(directory.path(), control_test_addr().parse().unwrap());
     let verifying_key = SigningKey::from_bytes(&[19_u8; 32]).verifying_key();
     let mut command = Command::new(horust_binary());
     configure_process_group(&mut command);
@@ -370,14 +375,27 @@ fn horust_forwards_sigterm_and_runtime_checkpoints_cleanly() {
             .arg("--uds-folder-path")
             .arg(directory.path().join("uds"))
             .env("ADL_RUNTIME_BIN", env!("CARGO_BIN_EXE_adl-runtime-kernel"))
-            .env("ADL_RUNTIME_INIT", runtime_init_path())
-            .env("ADL_RUNTIME_CAPSULE", &capsule)
+            .env("ADL_RUNTIME_INIT", init)
+            .env("ADL_RUNTIME_CONTINUITY_ROOT", &continuity_root)
             .env(
                 "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
                 hex::encode(verifying_key.as_bytes()),
             )
             .env("ADL_RUNTIME_CONTROL_KEY_ID", "guardian-test")
             .env("ADL_RUNTIME_CONTROL_PRINCIPAL", "guardian-test")
+            .env(
+                "ADL_RUNTIME_CONTINUITY_SIGNING_KEY_HEX",
+                hex::encode([23_u8; 32]),
+            )
+            .env("ADL_RUNTIME_CONTINUITY_MIN_GENERATION", "0")
+            .env(
+                "ADL_RUNTIME_OPERATION_PUBLIC_KEY_HEX",
+                hex::encode(
+                    SigningKey::from_bytes(&[29_u8; 32])
+                        .verifying_key()
+                        .as_bytes(),
+                ),
+            )
             .stdout(Stdio::null())
             .stderr(Stdio::null())
             .spawn()
@@ -385,6 +403,7 @@ fn horust_forwards_sigterm_and_runtime_checkpoints_cleanly() {
     );
 
     wait_for_control_port(guardian.0.as_mut().unwrap());
+    std::thread::sleep(Duration::from_millis(250));
     assert_eq!(
         unsafe { libc::kill(-(guardian.0.as_ref().unwrap().id() as i32), libc::SIGTERM) },
         0
@@ -400,9 +419,11 @@ fn horust_forwards_sigterm_and_runtime_checkpoints_cleanly() {
         );
         std::thread::sleep(Duration::from_millis(20));
     }
-    let continuity: serde_json::Value =
-        serde_json::from_slice(&std::fs::read(capsule).unwrap()).unwrap();
-    assert_eq!(continuity["schema"], "adl.runtime_kernel.continuity.v1");
+    let continuity: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(continuity_root.join("generation-1/manifest.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(continuity["schema"], "adl.runtime.checkpoint.v1");
     assert_eq!(continuity["generation"], 1);
 }
 
@@ -518,8 +539,48 @@ fn control_test_addr() -> String {
 }
 
 #[cfg(unix)]
-fn runtime_init_path() -> PathBuf {
-    repo_path("infra/runtime-v3/runtime-init.toml")
+fn write_test_runtime_init(directory: &Path, address: std::net::SocketAddr) -> PathBuf {
+    write_test_runtime_init_with_certificate(directory, address).0
+}
+
+#[cfg(unix)]
+fn write_test_runtime_init_with_certificate(
+    directory: &Path,
+    address: std::net::SocketAddr,
+) -> (PathBuf, Vec<u8>) {
+    use rcgen::{generate_simple_self_signed, CertifiedKey};
+
+    let CertifiedKey { cert, signing_key } =
+        generate_simple_self_signed(["localhost".to_owned()]).unwrap();
+    let certificate = directory.join("cert.pem");
+    let private_key = directory.join("key.pem");
+    std::fs::write(&certificate, cert.pem()).unwrap();
+    std::fs::write(&private_key, signing_key.serialize_pem()).unwrap();
+    let init = directory.join("runtime-init.toml");
+    std::fs::write(
+        &init,
+        format!(
+            r#"schema = "adl.runtime_v3.init.v1"
+[api]
+address = "{}"
+public_base_url = "https://localhost:{}"
+[api.tls]
+certificate_chain_path = "{}"
+private_key_path = "{}"
+[observatory]
+allowed_origins = ["https://localhost:8765"]
+[agents]
+count = 1
+sample_limit = 1
+"#,
+            address,
+            address.port(),
+            toml_path(&certificate),
+            toml_path(&private_key),
+        ),
+    )
+    .unwrap();
+    (init, cert.der().to_vec())
 }
 
 #[cfg(unix)]
@@ -562,34 +623,354 @@ fn serve_handles_guardian_sigterm_with_a_clean_checkpointed_exit() {
     use ed25519_dalek::SigningKey;
 
     let directory = tempfile::tempdir().unwrap();
-    let capsule = directory.path().join("sigterm-continuity.json");
+    let continuity_root = directory.path().join("sigterm-continuity");
+    let probe = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = probe.local_addr().unwrap();
+    drop(probe);
+    let init = write_test_runtime_init(directory.path(), address);
     let verifying_key = SigningKey::from_bytes(&[17_u8; 32]).verifying_key();
     let mut child = std::process::Command::new(env!("CARGO_BIN_EXE_adl-runtime-kernel"))
         .arg("serve")
-        .arg(&capsule)
+        .arg("--init")
+        .arg(&init)
+        .arg(&continuity_root)
         .env(
             "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
             hex::encode(verifying_key.as_bytes()),
         )
+        .env(
+            "ADL_RUNTIME_CONTINUITY_SIGNING_KEY_HEX",
+            hex::encode([23_u8; 32]),
+        )
+        .env("ADL_RUNTIME_CONTINUITY_MIN_GENERATION", "0")
+        .env(
+            "ADL_RUNTIME_OPERATION_PUBLIC_KEY_HEX",
+            hex::encode(
+                SigningKey::from_bytes(&[29_u8; 32])
+                    .verifying_key()
+                    .as_bytes(),
+            ),
+        )
         .stdout(std::process::Stdio::null())
-        .stderr(std::process::Stdio::null())
+        .stderr(std::process::Stdio::piped())
         .spawn()
         .unwrap();
-    let deadline = std::time::Instant::now() + Duration::from_secs(3);
-    while std::net::TcpStream::connect(control_test_addr()).is_err() {
-        assert!(
-            std::time::Instant::now() < deadline,
-            "serve did not become ready"
-        );
-        std::thread::sleep(Duration::from_millis(20));
-    }
+    let stderr = child.stderr.take().unwrap();
+    let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+    let stderr_reader = std::thread::spawn(move || {
+        let mut output = String::new();
+        for line in BufReader::new(stderr).lines() {
+            let line = line.unwrap();
+            output.push_str(&line);
+            output.push('\n');
+            if line.contains("event=control_ready") {
+                let _ = ready_tx.send(());
+            }
+        }
+        output
+    });
+    ready_rx
+        .recv_timeout(Duration::from_secs(5))
+        .expect("serve did not report control readiness");
     assert_eq!(unsafe { libc::kill(child.id() as i32, libc::SIGTERM) }, 0);
     let status = child.wait().unwrap();
-    assert!(status.success());
-    let continuity: serde_json::Value =
-        serde_json::from_slice(&std::fs::read(capsule).unwrap()).unwrap();
-    assert_eq!(continuity["schema"], "adl.runtime_kernel.continuity.v1");
+    let stderr = stderr_reader.join().unwrap();
+    assert!(
+        status.success(),
+        "serve shutdown failed ({status}): {stderr}"
+    );
+    let continuity: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(continuity_root.join("generation-1/manifest.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(continuity["schema"], "adl.runtime.checkpoint.v1");
     assert_eq!(continuity["generation"], 1);
+    assert_eq!(continuity["signing_algorithm"], "ed25519");
+}
+
+#[cfg(unix)]
+#[test]
+fn pressure_checkpoint_failure_keeps_signal_shutdown_responsive() {
+    use ed25519_dalek::SigningKey;
+
+    let directory = tempfile::tempdir().unwrap();
+    let continuity_root = directory.path().join("pressure-continuity");
+    std::fs::create_dir_all(&continuity_root).unwrap();
+    std::fs::create_dir(continuity_root.join(".generation-1.pending")).unwrap();
+    let probe = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = probe.local_addr().unwrap();
+    drop(probe);
+    let init = write_test_runtime_init(directory.path(), address);
+    let mut init_text = std::fs::read_to_string(&init).unwrap();
+    init_text.push_str(
+        r#"
+[weather]
+sample_millis = 60000
+memory_recover_used_basis_points = 0
+memory_warning_used_basis_points = 1
+memory_stop_used_basis_points = 2
+cpu_recover_basis_points = 0
+cpu_warning_basis_points = 1
+cpu_stop_basis_points = 2
+"#,
+    );
+    std::fs::write(&init, init_text).unwrap();
+    let mut child = Command::new(env!("CARGO_BIN_EXE_adl-runtime-kernel"))
+        .arg("serve")
+        .arg("--init")
+        .arg(init)
+        .arg("--continuity-root")
+        .arg(&continuity_root)
+        .env(
+            "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
+            hex::encode(
+                SigningKey::from_bytes(&[17_u8; 32])
+                    .verifying_key()
+                    .as_bytes(),
+            ),
+        )
+        .env(
+            "ADL_RUNTIME_CONTINUITY_SIGNING_KEY_HEX",
+            hex::encode([23_u8; 32]),
+        )
+        .env("ADL_RUNTIME_CONTINUITY_MIN_GENERATION", "0")
+        .env(
+            "ADL_RUNTIME_OPERATION_PUBLIC_KEY_HEX",
+            hex::encode(
+                SigningKey::from_bytes(&[29_u8; 32])
+                    .verifying_key()
+                    .as_bytes(),
+            ),
+        )
+        .stdout(Stdio::null())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let stderr = child.stderr.take().unwrap();
+    let (failure_tx, failure_rx) = std::sync::mpsc::channel();
+    let stderr_reader = std::thread::spawn(move || {
+        let mut output = String::new();
+        for line in BufReader::new(stderr).lines() {
+            let line = line.unwrap();
+            if line.contains("runtime pressure continuity checkpoint failed") {
+                let _ = failure_tx.send(());
+            }
+            output.push_str(&line);
+            output.push('\n');
+        }
+        output
+    });
+    failure_rx
+        .recv_timeout(Duration::from_secs(5))
+        .expect("pressure checkpoint collision was not observed");
+    assert!(
+        child.try_wait().unwrap().is_none(),
+        "checkpoint failure must keep Runtime v3 alive"
+    );
+    assert!(
+        std::net::TcpStream::connect(address).is_ok(),
+        "checkpoint failure must leave the control API reachable"
+    );
+    std::fs::remove_dir(continuity_root.join(".generation-1.pending")).unwrap();
+    assert_eq!(unsafe { libc::kill(child.id() as i32, libc::SIGTERM) }, 0);
+    let deadline = std::time::Instant::now() + Duration::from_secs(5);
+    let status = loop {
+        if let Some(status) = child.try_wait().unwrap() {
+            break status;
+        }
+        if std::time::Instant::now() >= deadline {
+            let _ = child.kill();
+            panic!("Runtime v3 did not handle SIGTERM during pressure retry delay");
+        }
+        std::thread::sleep(Duration::from_millis(10));
+    };
+    let stderr = stderr_reader.join().unwrap();
+
+    assert!(
+        status.success(),
+        "signal shutdown after pressure failure failed ({status}): {stderr}"
+    );
+    assert!(stderr.contains("event=resource_pressure_stop"));
+    let manifest: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(continuity_root.join("generation-1/manifest.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(manifest["generation"], 1);
+    assert_eq!(manifest["signing_algorithm"], "ed25519");
+}
+
+#[cfg(unix)]
+#[test]
+fn serve_refuses_reused_continuity_and_operation_keys() {
+    use ed25519_dalek::SigningKey;
+
+    let directory = tempfile::tempdir().unwrap();
+    let probe = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = probe.local_addr().unwrap();
+    drop(probe);
+    let init = write_test_runtime_init(directory.path(), address);
+    let reused = SigningKey::from_bytes(&[23_u8; 32]);
+    let output = Command::new(env!("CARGO_BIN_EXE_adl-runtime-kernel"))
+        .arg("serve")
+        .arg("--init")
+        .arg(init)
+        .arg("--continuity-root")
+        .arg(directory.path().join("continuity"))
+        .env(
+            "ADL_RUNTIME_CONTINUITY_SIGNING_KEY_HEX",
+            hex::encode(reused.to_bytes()),
+        )
+        .env("ADL_RUNTIME_CONTINUITY_MIN_GENERATION", "0")
+        .env(
+            "ADL_RUNTIME_OPERATION_PUBLIC_KEY_HEX",
+            hex::encode(reused.verifying_key().as_bytes()),
+        )
+        .env(
+            "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
+            hex::encode(
+                SigningKey::from_bytes(&[17_u8; 32])
+                    .verifying_key()
+                    .as_bytes(),
+            ),
+        )
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(78));
+    assert!(String::from_utf8_lossy(&output.stderr)
+        .contains("runtime continuity and operation keys must be distinct"));
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn signed_https_shutdown_checkpoints_and_forgery_cannot_stop_the_process() {
+    use ed25519_dalek::SigningKey;
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
+    use tokio_rustls::rustls::{
+        pki_types::{CertificateDer, ServerName},
+        ClientConfig, RootCertStore,
+    };
+
+    let directory = tempfile::tempdir().unwrap();
+    let continuity_root = directory.path().join("remote-continuity");
+    let probe = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = probe.local_addr().unwrap();
+    drop(probe);
+    let (init, certificate_der) =
+        write_test_runtime_init_with_certificate(directory.path(), address);
+    let control_key = SigningKey::from_bytes(&[17_u8; 32]);
+    let mut child = Command::new(env!("CARGO_BIN_EXE_adl-runtime-kernel"))
+        .arg("serve")
+        .arg("--init")
+        .arg(init)
+        .arg("--continuity-root")
+        .arg(&continuity_root)
+        .env(
+            "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
+            hex::encode(control_key.verifying_key().as_bytes()),
+        )
+        .env("ADL_RUNTIME_CONTROL_KEY_ID", "remote-test")
+        .env("ADL_RUNTIME_CONTROL_PRINCIPAL", "remote-test")
+        .env(
+            "ADL_RUNTIME_CONTINUITY_SIGNING_KEY_HEX",
+            hex::encode([23_u8; 32]),
+        )
+        .env("ADL_RUNTIME_CONTINUITY_MIN_GENERATION", "0")
+        .env(
+            "ADL_RUNTIME_OPERATION_PUBLIC_KEY_HEX",
+            hex::encode(
+                SigningKey::from_bytes(&[29_u8; 32])
+                    .verifying_key()
+                    .as_bytes(),
+            ),
+        )
+        .stdout(Stdio::null())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let stderr = child.stderr.take().unwrap();
+    let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+    let stderr_reader = std::thread::spawn(move || {
+        let mut output = String::new();
+        for line in BufReader::new(stderr).lines() {
+            let line = line.unwrap();
+            if line.contains("event=control_ready") {
+                let instance = line
+                    .split_whitespace()
+                    .find_map(|field| field.strip_prefix("instance_id="))
+                    .unwrap()
+                    .to_owned();
+                let _ = ready_tx.send(instance);
+            }
+            output.push_str(&line);
+            output.push('\n');
+        }
+        output
+    });
+    let instance_id = ready_rx
+        .recv_timeout(Duration::from_secs(5))
+        .expect("serve did not report control readiness");
+
+    let mut roots = RootCertStore::empty();
+    roots.add(CertificateDer::from(certificate_der)).unwrap();
+    let connector = tokio_rustls::TlsConnector::from(Arc::new(
+        ClientConfig::builder()
+            .with_root_certificates(roots)
+            .with_no_client_auth(),
+    ));
+    let request = |mut command: SignedControlCommand| {
+        let connector = connector.clone();
+        async move {
+            let stream = tokio::net::TcpStream::connect(address).await.unwrap();
+            let mut stream = connector
+                .connect(ServerName::try_from("localhost").unwrap(), stream)
+                .await
+                .unwrap();
+            let body = serde_json::to_vec(&command).unwrap();
+            let headers = format!(
+                "POST /v1/control HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
+                body.len()
+            );
+            stream.write_all(headers.as_bytes()).await.unwrap();
+            stream.write_all(&body).await.unwrap();
+            let mut response = Vec::new();
+            stream.read_to_end(&mut response).await.unwrap();
+            command.signature.clear();
+            String::from_utf8(response).unwrap()
+        }
+    };
+    let signed = |id: &str| {
+        SignedControlCommand::sign(
+            id,
+            blake3::hash(id.as_bytes()).to_hex()[..32].to_owned(),
+            &instance_id,
+            "remote-test",
+            ControlAction::Shutdown { grace_millis: 500 },
+            "remote-test",
+            &control_key,
+        )
+        .unwrap()
+    };
+    let mut forged = signed("forged-stop");
+    forged.signature = hex::encode([0_u8; 64]);
+    assert!(request(forged).await.starts_with("HTTP/1.1 401"));
+    assert!(child.try_wait().unwrap().is_none());
+    assert!(!continuity_root.join("generation-1").exists());
+
+    assert!(request(signed("valid-stop"))
+        .await
+        .starts_with("HTTP/1.1 200 OK"));
+    let status = child.wait().unwrap();
+    let stderr = stderr_reader.join().unwrap();
+    assert!(
+        status.success(),
+        "serve shutdown failed ({status}): {stderr}"
+    );
+    let manifest: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(continuity_root.join("generation-1/manifest.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(manifest["generation"], 1);
+    assert_eq!(manifest["signing_algorithm"], "ed25519");
 }
 
 #[tokio::test]

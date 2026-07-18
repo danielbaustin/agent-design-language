@@ -86,6 +86,8 @@ pub fn prove_credential_policy(
                 ("issue", "4920"),
                 ("credential_material", "not_retained"),
                 ("run_id", &options.run_id),
+                ("proof_classification", "synthetic_negative_case"),
+                ("operational_audit_stream", "false"),
             ],
         );
     }
@@ -136,6 +138,9 @@ pub fn prove_credential_policy(
         observability: json!({
             "schema": CREDENTIAL_EVENT_SCHEMA,
             "event_log_ref": "credential_lifecycle_events.jsonl",
+            "event_origin": "synthetic_proof_fixture",
+            "proof_classification": "synthetic_negative_case",
+            "operational_audit_stream": false,
             "event_kinds": [
                 "credential_rotation_due",
                 "credential_rebind_required",
@@ -323,6 +328,9 @@ fn credential_events(run_id: &str, at: DateTime<Utc>) -> Vec<Value> {
             "result": result,
             "at": timestamp,
             "secret_material": "not_retained",
+            "event_origin": "synthetic_proof_fixture",
+            "proof_classification": "synthetic_negative_case",
+            "operational_audit_stream": false,
             "credential_ref": "class_only_no_secret_value",
             "audit_ref": "credential_policy_summary.json"
         })
@@ -428,7 +436,15 @@ mod tests {
         assert!(events.contains("credential_access_denied"));
         assert!(events.contains("break_glass_denied"));
         assert!(events.contains("break_glass_revoked"));
+        assert!(events.contains("\"event_origin\":\"synthetic_proof_fixture\""));
+        assert!(events.contains("\"proof_classification\":\"synthetic_negative_case\""));
+        assert!(events.contains("\"operational_audit_stream\":false"));
         assert!(!events.contains("operator-alice"));
+        assert!(!proof
+            .observability
+            .get("operational_audit_stream")
+            .and_then(Value::as_bool)
+            .unwrap_or(true));
     }
 
     #[test]

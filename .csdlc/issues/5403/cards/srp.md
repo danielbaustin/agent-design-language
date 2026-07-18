@@ -12,7 +12,8 @@ Status: draft
 
 ## Scope
 
-
+docs/reviews/v0.91.7/remaining-sprints-5403
+docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md
 
 ## Prompts
 
@@ -24,7 +25,38 @@ Status: draft
 
 ## Findings
 
-[]
+[
+  {
+    "id": "5403-FR1",
+    "severity": "p1",
+    "summary": "AC-6 could pass while its retained review evidence explicitly failed",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+    "route": null
+  },
+  {
+    "id": "5403-FR2",
+    "severity": "p2",
+    "summary": "Review surfaces retained obsolete pre-#5406 lifecycle truth",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+    "route": null
+  },
+  {
+    "id": "5403-FR3",
+    "severity": "p2",
+    "summary": "Three final decision surfaces still described the completed review as pending",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+    "route": null
+  }
+]
 
 ## Dispositions
 
@@ -32,12 +64,12 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- Remediation issues #5404-#5413 remain open and are tracked separately from this completed review.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015")
 
-Reviewer: None
+Reviewer: Some("codex-subagent-mill")
 
-Result: pre_review
+Result: pass

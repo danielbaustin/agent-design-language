@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5423,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][register] Reconcile sprint review register after remediation wave",
+    "slug": "v0-91-7-review-fix-register-reconcile-remediation-wave",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Reconcile #5036 remediation and any other terminal remediation evidence in one bounded canonical-register pass.",
+      "deliverables": [
+        "Truthful canonical register update",
+        "Retained validation and independent review evidence"
+      ],
+      "acceptance_criteria": [
+        "#5403 terminal claim release is verified",
+        "The #5036 row reflects completed #5406/#5407 remediation",
+        "Additional rows change only with terminal retained evidence",
+        "Nonterminal remediation rows remain unchanged",
+        "The register patch passes focused validation and exact-revision review"
+      ],
+      "dependencies": [
+        "#5403 terminal lifecycle reconciliation",
+        "#5407 completed remediation"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+        "docs/reviews/v0.91.7/remaining-sprints-5403",
+        ".git/csdlc-v2/closeout"
+      ],
+      "non_goals": [
+        "Product or runtime code changes",
+        "Changes to other sessions' cards or worktrees",
+        "Premature pass claims"
+      ]
+    }
+  }
+}

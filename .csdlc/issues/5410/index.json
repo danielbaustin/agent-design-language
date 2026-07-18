@@ -1,0 +1,498 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5410,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "51b84af00233b3ef4a23490fa7b3cdd510296e5ed90ca2942d20405bf69a5d93",
+  "phase": "closed_out",
+  "generation": 21,
+  "digest": "7f178e6b373952948ebeda0a9934c57bbd86735065d6217d4134c91e62606c39",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "independent-runtime-v3-reviewer",
+    "assigned_by": "codex",
+    "revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+    "scope": [
+      ".csdlc/issues/5410",
+      "adl-runtime-kernel",
+      "docs/architecture/RUNTIME_V3_FINAL_REVIEW_5175.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md",
+      "docs/architecture/runtime_v3_current_inventory.v1.json",
+      "docs/reviews/v0.91.7/runtime-v3-5410",
+      "infra/horust/README.md",
+      "infra/horust/adl-runtime-kernel.toml",
+      "infra/rustysd/adl-runtime-kernel.service",
+      "infra/systemd/adl-runtime-kernel.service"
+    ]
+  },
+  "review": {
+    "reviewer": "independent-runtime-v3-reviewer",
+    "scope": [
+      ".csdlc/issues/5410",
+      "adl-runtime-kernel",
+      "docs/architecture/RUNTIME_V3_FINAL_REVIEW_5175.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md",
+      "docs/architecture/runtime_v3_current_inventory.v1.json",
+      "docs/reviews/v0.91.7/runtime-v3-5410",
+      "infra/horust/README.md",
+      "infra/horust/adl-runtime-kernel.toml",
+      "infra/rustysd/adl-runtime-kernel.service",
+      "infra/systemd/adl-runtime-kernel.service"
+    ],
+    "reviewed_revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+    "findings": [
+      {
+        "id": "5410-R1",
+        "severity": "p1",
+        "summary": "Signed continuity generation and lineage could be spoofed by directory renaming",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+        "route": null
+      },
+      {
+        "id": "5410-R2",
+        "severity": "p1",
+        "summary": "Passive live-service shells reported Running instead of Degraded",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+        "route": null
+      },
+      {
+        "id": "5410-R3",
+        "severity": "p2",
+        "summary": "Continuity and operation key separation was documented but not enforced",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+        "route": null
+      },
+      {
+        "id": "5410-R4",
+        "severity": "p2",
+        "summary": "Trusted time could move backward across authoritative corrections",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+        "route": null
+      },
+      {
+        "id": "5410-R5",
+        "severity": "p2",
+        "summary": "Signed remote shutdown checkpointing lacked integrated binary HTTPS proof",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Full mutable operation, governance, and adaptation state authenticity remains owned by #5412",
+      "Pressure-triggered graceful shutdown remains owned by #5411",
+      "Live Observatory and cross-runtime parity proof remains owned by #5413",
+      "Two bounded Claude Fable 5 calls returned empty provider output; no Fable PASS is claimed, and the exact-revision independent review is authoritative"
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5410,
+    "pull_request": 5437,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5437",
+    "base": "main",
+    "head": "codex/5410-runtime-v3-live-kernel",
+    "revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": {
+    "pull_request": 5437,
+    "head_sha": "b46184afe4eb1c2328b9bb8a361ee14fa7de083f",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29538520917/job/87755582203"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29538520917/job/87755448933"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29538520917/job/87755447048"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29538520917/job/87755449580"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29538520917/job/87755421609"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29538520917/job/87755449141"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29538520917/job/87755449623"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29538520917/job/87755449132"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29538520917/job/87755449708"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29538520917/job/87755449413"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29538520917/job/87755448661"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5437,
+    "disposition": "merged",
+    "observed_sha": "b46184afe4eb1c2328b9bb8a361ee14fa7de083f",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5410.json",
+    "released_branch": "codex/5410-runtime-v3-live-kernel",
+    "released_worktree": ".worktrees/adl-wp-5410",
+    "released_protected_paths": [
+      ".csdlc/issues/5410",
+      "adl-runtime-kernel",
+      "docs/architecture/RUNTIME_V3_FINAL_REVIEW_5175.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md",
+      "docs/architecture/runtime_v3_current_inventory.v1.json",
+      "docs/reviews/v0.91.7/runtime-v3-5410",
+      "infra/horust/README.md",
+      "infra/horust/adl-runtime-kernel.toml",
+      "infra/rustysd/adl-runtime-kernel.service",
+      "infra/systemd/adl-runtime-kernel.service"
+    ]
+  },
+  "migration": null,
+  "design_path": "docs/reviews/v0.91.7/runtime-v3-5410/DESIGN.md",
+  "diagram_path": "docs/reviews/v0.91.7/runtime-v3-5410/DIAGRAM.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator-authorized-runtime-v3-remediation",
+      "revision": "14e433899ed0595752e034e9e61e365ef0209f0baa9d0021198d74fb7c5e945f"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "70ae299d0f2ce44bdee88a551e1c821b47021ff4576e18056c063fd2452f3fe3",
+      "rendered_digest": "72c712c0a437d623fdc67975949ed57ddb78ee34a9345e525aa29fb220275ffe",
+      "ast_digest": "5024fcff6be019e356c70895efa162b0292ce25732143d58f172b25b54f0637e"
+    },
+    "stp": {
+      "values_digest": "5d6dbb7a6b00e6bc77fb5396601b184540883b29936d7fd662b47afbff25699d",
+      "rendered_digest": "56f2e3650d2c313a34bd9782b76e5d70593c201431e1e2d9b1958795e539dbab",
+      "ast_digest": "593721100e4380fbe0d7c01f56fcc9dea293238ce6a3cab4760e563845fa2f09"
+    },
+    "spp": {
+      "values_digest": "1db42c052d1d7a1b7b33d14ae073df4ec1d39be4b5b08fc234ffe49366e75cd5",
+      "rendered_digest": "98d1caba596b57c8b189584ce5169821878f95a80285a5b595242377ddb3d42c",
+      "ast_digest": "8b248453c601d26929b34127ff268ce3ba757b568c4b78152190babe7814e0e8"
+    },
+    "vpp": {
+      "values_digest": "0d89fdfe442a9575c18e1b8281c51cb607e3abd085b42555b0063a07f25de33d",
+      "rendered_digest": "ef0a2bf4004d72c21817fa2e4de79ed791e0089ca65cd9731b9f4fecd5b940d4",
+      "ast_digest": "5a730768cc5fe317e5f0b7f39efc4906407efcdf32e9459907410d27635a4331"
+    },
+    "srp": {
+      "values_digest": "407f1049edbbed77260345a9f9d1eb6ee09b142c2f4c7fe58a1cf6e37bc046e7",
+      "rendered_digest": "6fe77800a8d942b8ffbf45e7be381e9f5731cbee6be810f01c0df46c16cdb448",
+      "ast_digest": "a0989f2b644887d62ab1c2b52e6c08e60cacd56381f88ac0ca1d018d20cd9d10"
+    },
+    "sor": {
+      "values_digest": "07d583a0a891943e8aaab5dfdb694026c6350d8c86fb22deefd8db6678e858c9",
+      "rendered_digest": "0fd5d2488d35ed8c35e236f38eb6a8aff9807f85e882d248d503f630842141f0",
+      "ast_digest": "c5a7f6444e883152a82029186106f7b85bd9e5597edd869420228196fa734624"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "live-kernel design, bounded plan, validation lanes, and all six cards are ready"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "bounded implementation, validation, inventory, and staged-diff review are complete"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "exact-revision independent review passed after all five actionable findings were fixed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "live-kernel design, bounded plan, validation lanes, and all six cards are ready",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "repair reviewed guardian launch contracts for the live signed-continuity serve path",
+      "operation": "{\"add_protected_paths\":[\"infra/horust/adl-runtime-kernel.toml\",\"infra/rustysd/adl-runtime-kernel.service\",\"infra/systemd/adl-runtime-kernel.service\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "repair operator documentation for the reviewed live continuity directory contract",
+      "operation": "{\"add_protected_paths\":[\"docs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md\",\"docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md\",\"infra/horust/README.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "reconcile the plan with security and lifecycle changes required by independent review",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Assemble the complete live service inventory through FactoryRegistry, keep unavailable external operation adapters explicitly degraded, qualify trusted time through bounded rsntp sampling, restore and emit Ed25519-authenticated continuity above an operator-supplied generation floor, separate continuity and operation trust identities, bind local and remote shutdown to checkpoint-before-stop, and generate reproducible current inventory truth under the 12000 LoC ceiling. Full mutable state authenticity remains owned by follow-on #5412.\",\"operation\":\"replan\",\"previous_value\":\"Freeze the service inventory, add bounded qualified time and signed live continuity bindings, assemble serve through the registry, then generate current inventory truth and validate the binary path.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "make inventory generation and its regression suite explicit proving lanes",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-full\",\"proof_role\":\"Prove live assembly, continuity, qualified time, control shutdown, and all crate behavior\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--all-targets\"],\"parallel_group\":\"rust\",\"defer_reason\":null},{\"lane\":\"runtime-v3-strict\",\"proof_role\":\"Prove warning-free all-target integration\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":1200,\"argv\":[\"cargo\",\"clippy\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"rust\",\"defer_reason\":null},{\"lane\":\"inventory-regression\",\"proof_role\":\"Prove the generator is deterministic and rejects stale or malformed inventory inputs\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":500,\"argv\":[\"python3\",\"-m\",\"unittest\",\"adl-runtime-kernel/tools/test_generate_runtime_inventory.py\"],\"parallel_group\":\"inventory\",\"defer_reason\":null},{\"lane\":\"inventory-current\",\"proof_role\":\"Fail closed unless the retained Runtime v3 counts match tracked source\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":500,\"argv\":[\"python3\",\"adl-runtime-kernel/tools/generate_runtime_inventory.py\",\"--check\"],\"parallel_group\":\"inventory\",\"defer_reason\":null},{\"lane\":\"patch-integrity\",\"proof_role\":\"Prove the bounded implementation patch has no whitespace defects\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":200,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"docs\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "bounded rsntp qualification and degraded trusted-time behavior are implemented and tested",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex",
+      "reason": "Ed25519 continuity restore, rollback floor, recorder publication, and checkpointed shutdown are implemented and tested",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "the exact 26-service live inventory is registry-built, contract-validated, membership-locked, and externally unavailable adapters are explicitly degraded",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex",
+      "reason": "serve now uses live assembly and binary-level configuration refusal and checkpointed SIGTERM behavior are proved",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex",
+      "reason": "record the bounded live-kernel implementation",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Assembled and secured the Runtime v3 live kernel for #5410.\",\"changes\":[\"Construct the exact 26-service live topology through FactoryRegistry and expose truthful degraded health for unavailable or passive services\",\"Authenticate continuity with Ed25519 generation and predecessor-chain binding, external rollback floor, restored-head publication, and checkpoint-before-stop\",\"Qualify trusted time through bounded rsntp sampling and preserve monotonic authoritative time across corrections\",\"Enforce distinct continuity, operation, and control trust identities and prove forged versus valid HTTPS shutdown behavior\",\"Generate current Runtime v3 source, test, dependency, and baseline inventory under the 12000 LoC ceiling\"],\"artifacts\":[\"docs/architecture/runtime_v3_current_inventory.v1.json\",\"docs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md\",\"adl-runtime-kernel/tests/live_continuity.rs\",\"adl-runtime-kernel/tests/guardian_soak.rs\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex",
+      "reason": "record full Runtime v3 crate validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--all-targets\"],\"purpose\":\"Prove the complete Runtime v3 kernel crate after review remediation\",\"outcome\":\"passed\",\"evidence_ref\":\"adl-runtime-kernel\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "record direct guardian signal validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--test\",\"guardian_soak\",\"serve_handles_guardian_sigterm_with_a_clean_checkpointed_exit\",\"--\",\"--ignored\",\"--exact\"],\"purpose\":\"Prove direct SIGTERM produces a clean signed checkpointed exit\",\"outcome\":\"passed\",\"evidence_ref\":\"adl-runtime-kernel/tests/guardian_soak.rs\"}}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex",
+      "reason": "record strict lint validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Prove warning-free all-target Runtime v3 integration\",\"outcome\":\"passed\",\"evidence_ref\":\"adl-runtime-kernel\"}}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex",
+      "reason": "record deterministic inventory regression validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"python3\",\"-m\",\"unittest\",\"adl-runtime-kernel/tools/test_generate_runtime_inventory.py\"],\"purpose\":\"Prove deterministic inventory generation and stale-artifact refusal\",\"outcome\":\"passed\",\"evidence_ref\":\"adl-runtime-kernel/tools/test_generate_runtime_inventory.py\"}}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex",
+      "reason": "record current inventory validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"python3\",\"adl-runtime-kernel/tools/generate_runtime_inventory.py\",\"--check\"],\"purpose\":\"Prove retained counts match tracked Runtime v3 source\",\"outcome\":\"passed\",\"evidence_ref\":\"docs/architecture/runtime_v3_current_inventory.v1.json\"}}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex",
+      "reason": "record patch integrity validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--cached\",\"--check\"],\"purpose\":\"Prove the staged bounded patch has no whitespace defects\",\"outcome\":\"passed\",\"evidence_ref\":\"git-index\"}}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex",
+      "reason": "generated inventory, budget proof, and independent remediation review are complete",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S5\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex",
+      "reason": "bounded implementation, validation, inventory, and staged-diff review are complete",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 17,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 18,
+      "actor": "codex",
+      "reason": "exact-revision independent review passed after all five actionable findings were fixed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 24,
+      "generation": 19,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 25,
+      "generation": 20,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 26,
+      "generation": 21,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    }
+  ]
+}

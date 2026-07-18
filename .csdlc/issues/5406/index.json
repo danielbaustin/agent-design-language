@@ -3,135 +3,123 @@
   "issue": 5406,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "dd7cf0bd89553833f2914daff64cecdce443600f09e0b5b36d4027d9ca9dc3d3",
-  "phase": "reviewed",
-  "generation": 16,
-  "digest": "2370ca84e4dba9a7dce867f888c33ec70046a9767c4b808ee9ffa5ac7c8e6230",
-  "claim": {
-    "id": "claim-5406-csdlc-v2-records-truth",
-    "owner": "codex",
-    "generation": 16,
-    "acquired_unix_seconds": 1784154300,
-    "expires_unix_seconds": 1784240700,
-    "heartbeat_unix_seconds": 1784154300,
-    "branch": "codex/5406-csdlc-v2-records-truth",
-    "worktree": ".worktrees/adl-wp-5406",
-    "protected_paths": [
-      "csdlc-v2",
-      "docs/reviews/v0.91.7/csdlc-v2-5406",
-      ".csdlc/issues/5406"
-    ],
-    "purpose": "Fix typed v2 lifecycle retention, claim scope, SPP status, and VPP proof-role findings"
-  },
+  "phase": "closed_out",
+  "generation": 43,
+  "digest": "62e1be6d33f14697b3ec55139083eeeae4b30a15a340a2580aa8345bb9876355",
+  "claim": null,
   "review_assignment": {
     "reviewer": "codex-subagent-mendel",
     "assigned_by": "codex",
-    "revision": "git-blake3:8b86a18e6e2979a84cd047feacdbe0ba9b747bd1:74bd4d11f30206925a9f1879a36d23ff2843b2e0c609235de7793770ac9f4980",
+    "revision": "git-blake3:f847332f40e090dcc9afb1295474b206435e0b67:50bf2124fd45420841dfab37b18fad9159bdbf2c7652c51b968842ce255db0df",
     "scope": [
-      "csdlc-v2",
-      "docs/reviews/v0.91.7/csdlc-v2-5406"
+      ".csdlc/issues/5406"
     ]
   },
   "review": {
     "reviewer": "codex-subagent-mendel",
     "scope": [
-      "csdlc-v2",
-      "docs/reviews/v0.91.7/csdlc-v2-5406"
+      ".csdlc/issues/5406"
     ],
-    "reviewed_revision": "git-blake3:8b86a18e6e2979a84cd047feacdbe0ba9b747bd1:74bd4d11f30206925a9f1879a36d23ff2843b2e0c609235de7793770ac9f4980",
+    "reviewed_revision": "git-blake3:f847332f40e090dcc9afb1295474b206435e0b67:50bf2124fd45420841dfab37b18fad9159bdbf2c7652c51b968842ce255db0df",
     "findings": [
       {
-        "id": "5406-R1",
-        "severity": "p1",
-        "summary": "Expired foreign claims could bypass stale-claim recovery during scope amendment",
+        "id": "5406-C1",
+        "severity": "p2",
+        "summary": "Downstream validation command observed metadata without proving its stated purpose",
         "actionable": true,
         "in_scope": true,
         "disposition": "fixed",
-        "fix_revision": "git-blake3:8b86a18e6e2979a84cd047feacdbe0ba9b747bd1:74bd4d11f30206925a9f1879a36d23ff2843b2e0c609235de7793770ac9f4980",
+        "fix_revision": "git-blake3:f847332f40e090dcc9afb1295474b206435e0b67:50bf2124fd45420841dfab37b18fad9159bdbf2c7652c51b968842ce255db0df",
         "route": null
       },
       {
-        "id": "5406-R2",
+        "id": "5406-C2",
         "severity": "p2",
-        "summary": "Legacy absolute closeout receipt paths could not be retried and backfilled",
+        "summary": "PR-state jq select predicate did not fail closed on a false predicate",
         "actionable": true,
         "in_scope": true,
         "disposition": "fixed",
-        "fix_revision": "git-blake3:8b86a18e6e2979a84cd047feacdbe0ba9b747bd1:74bd4d11f30206925a9f1879a36d23ff2843b2e0c609235de7793770ac9f4980",
+        "fix_revision": "git-blake3:f847332f40e090dcc9afb1295474b206435e0b67:50bf2124fd45420841dfab37b18fad9159bdbf2c7652c51b968842ce255db0df",
         "route": null
       },
       {
-        "id": "5406-R3",
+        "id": "5406-C3",
         "severity": "p2",
-        "summary": "Terminal reconciliation did not bind an exact dedicated branch and worktree",
+        "summary": "Recorded regex git-grep operation checks failed with the retained argv",
         "actionable": true,
         "in_scope": true,
         "disposition": "fixed",
-        "fix_revision": "git-blake3:8b86a18e6e2979a84cd047feacdbe0ba9b747bd1:74bd4d11f30206925a9f1879a36d23ff2843b2e0c609235de7793770ac9f4980",
-        "route": null
-      },
-      {
-        "id": "5406-R4",
-        "severity": "p2",
-        "summary": "Terminal receipts omitted authored design and diagram evidence",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:8b86a18e6e2979a84cd047feacdbe0ba9b747bd1:74bd4d11f30206925a9f1879a36d23ff2843b2e0c609235de7793770ac9f4980",
-        "route": null
-      },
-      {
-        "id": "5406-R5",
-        "severity": "p2",
-        "summary": "Receipt conflict detection happened after local legacy normalization",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:8b86a18e6e2979a84cd047feacdbe0ba9b747bd1:74bd4d11f30206925a9f1879a36d23ff2843b2e0c609235de7793770ac9f4980",
-        "route": null
-      },
-      {
-        "id": "5406-R6",
-        "severity": "p2",
-        "summary": "Reconciliation had a design and diagram check-copy race",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:8b86a18e6e2979a84cd047feacdbe0ba9b747bd1:74bd4d11f30206925a9f1879a36d23ff2843b2e0c609235de7793770ac9f4980",
-        "route": null
-      },
-      {
-        "id": "5406-R7",
-        "severity": "p2",
-        "summary": "Existing receipt matching omitted released claim topology",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:8b86a18e6e2979a84cd047feacdbe0ba9b747bd1:74bd4d11f30206925a9f1879a36d23ff2843b2e0c609235de7793770ac9f4980",
-        "route": null
-      },
-      {
-        "id": "5406-R8",
-        "severity": "p2",
-        "summary": "Identical design and diagram paths could make receipt retention fail after closeout",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:8b86a18e6e2979a84cd047feacdbe0ba9b747bd1:74bd4d11f30206925a9f1879a36d23ff2843b2e0c609235de7793770ac9f4980",
+        "fix_revision": "git-blake3:f847332f40e090dcc9afb1295474b206435e0b67:50bf2124fd45420841dfab37b18fad9159bdbf2c7652c51b968842ce255db0df",
         "route": null
       }
     ],
-    "residual_risks": [
-      "SPP S4 remains pending until the merged operations are applied to #5403, then terminal reconciliation will retain that post-merge truth."
-    ],
+    "residual_risks": [],
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5406,
+    "pull_request": 5421,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5421",
+    "base": "main",
+    "head": "codex/5406-csdlc-v2-records-truth",
+    "revision": "git-blake3:f847332f40e090dcc9afb1295474b206435e0b67:50bf2124fd45420841dfab37b18fad9159bdbf2c7652c51b968842ce255db0df",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": {
+    "pull_request": 5421,
+    "head_sha": "f847332f40e090dcc9afb1295474b206435e0b67",
+    "checks": [
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29522349039/job/87702214731"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29522349039/job/87702259514"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29522349039/job/87702260265"
+      },
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29522349039/job/87702425469"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5421,
+    "disposition": "merged",
+    "observed_sha": "f847332f40e090dcc9afb1295474b206435e0b67",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5406.json",
+    "released_branch": "codex/5406-csdlc-v2-records-truth",
+    "released_worktree": ".worktrees/adl-wp-5406",
+    "released_protected_paths": [
+      "csdlc-v2",
+      "docs/reviews/v0.91.7/csdlc-v2-5406",
+      ".csdlc/issues/5406"
+    ]
+  },
   "migration": null,
-  "design_path": ".csdlc/issues/5406/design/DESIGN.md",
-  "diagram_path": ".csdlc/issues/5406/design/DIAGRAM.mmd",
+  "design_path": ".csdlc/issues/5406/retained/design.md",
+  "diagram_path": ".csdlc/issues/5406/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "operator-authorized-findings-remediation",
@@ -140,34 +128,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "9db6a7e9c59569186de7f8b13c2deeb076b168e9834a4905841e117935704043",
+      "values_digest": "44c7bde9740a97f23ff8290669f9226311a6bd6eb2bd770c334e9730881856fa",
       "rendered_digest": "dd1f6693ee7962d42ffc557389aeeed510fc7eb8d203197708aa973438c0386a",
       "ast_digest": "80fa6172e80165cdd7c23352b1a955909575c0575464ac8eda2c99714acb59ce"
     },
     "stp": {
-      "values_digest": "b90b085bb794d5e0575c8841e967a03602b9cd18571488e4e9677da41bd2ebf1",
+      "values_digest": "0145d8d60dcfa59b6220153b784d78f2b60466e338018e4600a3edd7bab82d8c",
       "rendered_digest": "df10dbfcefa0e318c9545c091738793fdcfad33ea552036d6ca4a7bbb43d6661",
       "ast_digest": "e51c4ae0eab4a901ce410fd51a8d560c4846d4e50bd62671fe96883116d11124"
     },
     "spp": {
-      "values_digest": "f6cb597ef9ae62dd28c0de6c7e67cfd94b3a3c473afc3a89a963cfab17ecb69e",
-      "rendered_digest": "bfb54a2d4f80b8d9c29ebf8e13158ec2abc86f391d550025bb843a1b8e95a583",
-      "ast_digest": "ff56dc76702789375705c4dbaa2c84ed77d909cb80cdf30c1019066f5840d27b"
+      "values_digest": "62aa6186241926e7fe05c8f9a466702281802fc09ae4622c8a9664d05508dc42",
+      "rendered_digest": "ec8cc35e5ca3a7e445d3dc9d646f638347c6cb0d6616a7ae07b52cb4dc6bd66d",
+      "ast_digest": "a3d5a46652aeaad3ec90958ad46ea1c1b840bcd2cabe84ecede972c281566174"
     },
     "vpp": {
-      "values_digest": "894d43f5b54f935612d49b2602e666b3a3337f434306c81d2c65d7093dfcc150",
-      "rendered_digest": "5f521a636a885181cb956bb76a9587dbda7815e345626c955a4e8304ef7038e9",
-      "ast_digest": "14fbf162a6f2b5b904c08cd5f8ff6b660e3a9a4880a86f3eca68d99c0e73a212"
+      "values_digest": "b2cf2cd2a383210a2e8005b75973a33c17f334c6a87c4388d51f4eab86c1c236",
+      "rendered_digest": "2c62ca8e9aa36aa823990d7cce802d8e557eb1feb0d963ec896aecf5f1141955",
+      "ast_digest": "c77f4a97b99ed015fd8a4b71d308507dab313e686fea1ebf21dbfba470c70199"
     },
     "srp": {
-      "values_digest": "5f06696e9ea025e4599671b46453ba2eb11d4d540e46c8bcf918a882a42b97e1",
-      "rendered_digest": "5d0df2501810f6e06b6efb29bf82e38ec7742f9325d5287ddf80b04475afeaa5",
-      "ast_digest": "9661fa806c2c77c20ed54a171715506b6172b670b4275102b179ac11e8e0c4b4"
+      "values_digest": "5f31c159e88761391c88616a62e41440a4afb2662a42c19ba66b790983bd7f28",
+      "rendered_digest": "2d66de4a7ab3ea777b50268cb31390f61386ea5388283449b82029f6fbaaa93b",
+      "ast_digest": "ae6f1e8b475c7b99ddb1e3a90ca102e36ff6be2b54041b54ac9bcfda3b9ec6d4"
     },
     "sor": {
-      "values_digest": "8c7d20df5a8a81bb93ae88c679c497ef0b4a6e1df0e59cd9910f98ab6b4fbed4",
-      "rendered_digest": "665fcde3f514fd5a898d0be4f19597dd46ef225fbcbef19a8befb2a6d005b1d7",
-      "ast_digest": "73b403720d402ec69b0c3b13b2b8ddbf1db97d2b23409931c546f22179633283"
+      "values_digest": "88ef74cec0659e3fb9758103069621cc6afd93a8d5c90af1e82e54ea883f7e11",
+      "rendered_digest": "2c52280195775e90bc6a0d8b5d0137f4969f60b1ae2c0d9a0a5eb9f2f9c20429",
+      "ast_digest": "f3127c1891a3f5085674dc9d2e7c4b1585b4a9aa4b63e2cce2953e1c350e8a40"
     }
   },
   "transitions": [
@@ -198,6 +186,90 @@
       "to": "reviewed",
       "actor": "codex",
       "reason": "Exact-revision review passed with all actionable findings fixed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Recover exact review after lifecycle metadata commit changed the publication commit"
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Exact-revision review passed with all eight actionable findings fixed"
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Refresh exact-revision review after integrating current main"
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Exact merged-HEAD review passed with all eight findings fixed and no in-scope drift"
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 11,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Complete downstream-consumer S4 and publish final closeout truth after #5403 merged"
+    },
+    {
+      "sequence": 12,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Exact closeout-only review passed after all three proof findings were fixed"
+    },
+    {
+      "sequence": 13,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 14,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 15,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 16,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -333,6 +405,216 @@
       "actor": "codex",
       "reason": "Exact-revision review passed with all actionable findings fixed",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 17,
+      "actor": "codex",
+      "reason": "Recover exact review after lifecycle metadata commit changed the publication commit",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex-subagent-mendel",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex",
+      "reason": "Exact-revision review passed with all eight actionable findings fixed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 24,
+      "generation": 20,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 25,
+      "generation": 21,
+      "actor": "codex",
+      "reason": "Refresh exact-revision review after integrating current main",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 26,
+      "generation": 21,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 22,
+      "actor": "codex-subagent-mendel",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 23,
+      "actor": "codex",
+      "reason": "Exact merged-HEAD review passed with all eight findings fixed and no in-scope drift",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 24,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 30,
+      "generation": 25,
+      "actor": "codex",
+      "reason": "Complete downstream-consumer S4 and publish final closeout truth after #5403 merged",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 31,
+      "generation": 26,
+      "actor": "codex",
+      "reason": "PR #5414 merged after #5403 used typed plan-step and validation-lane operations and passed exact-revision review",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 32,
+      "generation": 27,
+      "actor": "codex",
+      "reason": "Record merged downstream consumption proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"gh\",\"pr\",\"view\",\"5414\",\"--repo\",\"danielbaustin/agent-design-language\",\"--json\",\"state,mergeCommit\"],\"purpose\":\"Prove #5403 consumed the new typed SPP/VPP operations and merged its reviewed lifecycle repair\",\"outcome\":\"passed\",\"evidence_ref\":\"https://github.com/danielbaustin/agent-design-language/pull/5414\"}}"
+    },
+    {
+      "sequence": 33,
+      "generation": 28,
+      "actor": "codex",
+      "reason": "Supersede the weak downstream observation with exact merge-commit-bound assertions",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Completed typed lifecycle authority and proved downstream consumption at the exact merged #5403 revision.\",\"changes\":[\"Supersede the earlier metadata-only PR observation with exact merged-state and merge-commit assertions\",\"Prove #5403 consumed update_plan_step and replace_validation_lanes from its merged audit\",\"Clarify that #5403 retained independent review Status: pass while its tracked typed index remains implemented\"],\"artifacts\":[\"https://github.com/danielbaustin/agent-design-language/pull/5414\",\".csdlc/issues/5403/audit.jsonl\",\"docs/reviews/v0.91.7/remaining-sprints-5403/REFRESHED_REVIEW_QUALITY_EVALUATION.md\"]}"
+    },
+    {
+      "sequence": 34,
+      "generation": 29,
+      "actor": "codex",
+      "reason": "Record exact #5403 merged-state assertion",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"gh\",\"pr\",\"view\",\"5414\",\"--repo\",\"danielbaustin/agent-design-language\",\"--json\",\"state,mergeCommit\",\"--jq\",\"select(.state == \\\"MERGED\\\" and .mergeCommit.oid == \\\"75d0a957dea718fd825ac73e2ce164a92b691a75\\\")\"],\"purpose\":\"Assert PR #5414 is merged at the exact retained merge commit\",\"outcome\":\"passed\",\"evidence_ref\":\"https://github.com/danielbaustin/agent-design-language/pull/5414\"}}"
+    },
+    {
+      "sequence": 35,
+      "generation": 30,
+      "actor": "codex",
+      "reason": "Record merge-commit-bound plan-step consumption proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"grep\",\"-q\",\"\\\"operation\\\":\\\"{\\\\\\\"operation\\\\\\\":\\\\\\\"update_plan_step\\\\\\\"\",\"75d0a957dea718fd825ac73e2ce164a92b691a75\",\"--\",\".csdlc/issues/5403/audit.jsonl\"],\"purpose\":\"Assert merged #5403 audit contains typed update_plan_step consumption\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5403/audit.jsonl\"}}"
+    },
+    {
+      "sequence": 36,
+      "generation": 31,
+      "actor": "codex",
+      "reason": "Record merge-commit-bound validation-lane consumption proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"grep\",\"-q\",\"\\\"operation\\\":\\\"{\\\\\\\"operation\\\\\\\":\\\\\\\"replace_validation_lanes\\\\\\\"\",\"75d0a957dea718fd825ac73e2ce164a92b691a75\",\"--\",\".csdlc/issues/5403/audit.jsonl\"],\"purpose\":\"Assert merged #5403 audit contains typed replace_validation_lanes consumption\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5403/audit.jsonl\"}}"
+    },
+    {
+      "sequence": 37,
+      "generation": 32,
+      "actor": "codex",
+      "reason": "Record merge-commit-bound retained independent review decision",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"grep\",\"-q\",\"^Status: pass$\",\"75d0a957dea718fd825ac73e2ce164a92b691a75\",\"--\",\"docs/reviews/v0.91.7/remaining-sprints-5403/REFRESHED_REVIEW_QUALITY_EVALUATION.md\"],\"purpose\":\"Assert merged #5403 review packet records an explicit passing independent decision\",\"outcome\":\"passed\",\"evidence_ref\":\"docs/reviews/v0.91.7/remaining-sprints-5403/REFRESHED_REVIEW_QUALITY_EVALUATION.md\"}}"
+    },
+    {
+      "sequence": 38,
+      "generation": 33,
+      "actor": "codex",
+      "reason": "Supersede three validation records whose argv did not fail closed as recorded",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Completed typed lifecycle authority and proved downstream consumption with fail-closed exact-revision assertions.\",\"changes\":[\"Mark the prior gh select predicate and regex git-grep records as invalid historical attempts\",\"Replace them with a jq error predicate and fixed-string merge-commit checks\",\"Retain the already valid merge-commit-bound Status: pass assertion\"],\"artifacts\":[\"https://github.com/danielbaustin/agent-design-language/pull/5414\",\".csdlc/issues/5403/audit.jsonl\",\"docs/reviews/v0.91.7/remaining-sprints-5403/REFRESHED_REVIEW_QUALITY_EVALUATION.md\"]}"
+    },
+    {
+      "sequence": 39,
+      "generation": 34,
+      "actor": "codex",
+      "reason": "Record fail-closed exact #5403 merge assertion",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"gh\",\"pr\",\"view\",\"5414\",\"--repo\",\"danielbaustin/agent-design-language\",\"--json\",\"state,mergeCommit\",\"--jq\",\"if .state == \\\"MERGED\\\" and .mergeCommit.oid == \\\"75d0a957dea718fd825ac73e2ce164a92b691a75\\\" then \\\"ok\\\" else error(\\\"unexpected PR terminal state\\\") end\"],\"purpose\":\"Fail closed unless PR #5414 is merged at the exact retained merge commit\",\"outcome\":\"passed\",\"evidence_ref\":\"https://github.com/danielbaustin/agent-design-language/pull/5414\"}}"
+    },
+    {
+      "sequence": 40,
+      "generation": 35,
+      "actor": "codex",
+      "reason": "Record fixed-string merge-commit-bound plan-step check",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"grep\",\"-Fq\",\"update_plan_step\",\"75d0a957dea718fd825ac73e2ce164a92b691a75\",\"--\",\".csdlc/issues/5403/audit.jsonl\"],\"purpose\":\"Fail closed unless merged #5403 audit contains typed update_plan_step consumption\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5403/audit.jsonl\"}}"
+    },
+    {
+      "sequence": 41,
+      "generation": 36,
+      "actor": "codex",
+      "reason": "Record fixed-string merge-commit-bound validation-lane check",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"grep\",\"-Fq\",\"replace_validation_lanes\",\"75d0a957dea718fd825ac73e2ce164a92b691a75\",\"--\",\".csdlc/issues/5403/audit.jsonl\"],\"purpose\":\"Fail closed unless merged #5403 audit contains typed replace_validation_lanes consumption\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5403/audit.jsonl\"}}"
+    },
+    {
+      "sequence": 42,
+      "generation": 36,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 43,
+      "generation": 37,
+      "actor": "codex-subagent-mendel",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 44,
+      "generation": 38,
+      "actor": "codex",
+      "reason": "Exact closeout-only review passed after all three proof findings were fixed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 45,
+      "generation": 39,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 46,
+      "generation": 40,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 47,
+      "generation": 41,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 48,
+      "generation": 42,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 49,
+      "generation": 43,
+      "actor": "codex",
+      "reason": "Materialize authoritative terminal receipt after merged closeout PR #5421",
+      "operation": "reconcile_terminal"
     }
   ]
 }

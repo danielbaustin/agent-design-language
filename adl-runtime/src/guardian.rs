@@ -17,6 +17,7 @@ use tokio_util::sync::CancellationToken;
 
 pub const GUARDIAN_SCHEMA: &str = "adl.runtime_v3.external_guardian.v2";
 pub const MAX_CAPTURE_BYTES: u64 = 64 * 1024;
+const CAPTURE_DRAIN_GRACE: Duration = Duration::from_millis(500);
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GuardianConfig {
@@ -174,9 +175,10 @@ pub async fn run_guardian(
 
         let attempt_exit = tokio::select! {
             _ = shutdown.cancelled() => {
-                let signal = terminate_child(&mut child);
+                let signal = terminate_child_tree(&mut child);
                 let wait_result = timeout(Duration::from_millis(config.shutdown_grace_ms), child.wait()).await;
                 if wait_result.is_err() {
+                    force_kill_child_tree(&mut child);
                     let _ = child.kill().await;
                     let _ = child.wait().await;
                 }
@@ -197,6 +199,7 @@ pub async fn run_guardian(
                     Ok(status) => {
                         let code = status.code();
                         let signal = exit_signal(&status);
+                        graceful_terminate_process_group(pid);
                         let attempt_exit = classify_exit(&config, code, restarts);
                         let reason_code = reason_code_for_exit(&config, code, restarts);
                         let attempt = attempt_record(
@@ -307,14 +310,17 @@ pub async fn run_guardian_with_os_signals(
 }
 
 fn spawn_child(config: &GuardianConfig) -> std::io::Result<Child> {
-    Command::new(&config.program)
+    let mut command = Command::new(&config.program);
+    command
         .args(&config.args)
         .envs(config.env.iter().map(|(name, value)| (name, value)))
         .stdin(Stdio::null())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
-        .kill_on_drop(true)
-        .spawn()
+        .kill_on_drop(true);
+    #[cfg(unix)]
+    command.process_group(0);
+    command.spawn()
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -366,14 +372,31 @@ async fn attempt_record(
     stderr: JoinHandle<String>,
     reason_code: impl Into<String>,
 ) -> GuardianAttempt {
+    let (stdout, stderr) = tokio::join!(
+        bounded_capture(stdout, CAPTURE_DRAIN_GRACE),
+        bounded_capture(stderr, CAPTURE_DRAIN_GRACE),
+    );
+    if stdout.1 || stderr.1 || process_group_alive(pid) {
+        force_kill_process_group(pid);
+    }
     GuardianAttempt {
         attempt,
         pid,
         exit_code,
         signal,
-        stdout: stdout.await.unwrap_or_default(),
-        stderr: stderr.await.unwrap_or_default(),
+        stdout: stdout.0,
+        stderr: stderr.0,
         reason_code: reason_code.into(),
+    }
+}
+
+async fn bounded_capture(mut capture: JoinHandle<String>, grace: Duration) -> (String, bool) {
+    match timeout(grace, &mut capture).await {
+        Ok(result) => (result.unwrap_or_default(), false),
+        Err(_) => {
+            capture.abort();
+            ("<adl_guardian_capture_deadline_exceeded>".to_owned(), true)
+        }
     }
 }
 
@@ -436,20 +459,71 @@ fn outcome(
 }
 
 #[cfg(unix)]
-fn terminate_child(child: &mut Child) -> Option<i32> {
+fn terminate_child_tree(child: &mut Child) -> Option<i32> {
     let pid = child.id()?;
     let signal = libc::SIGTERM;
-    unsafe {
-        libc::kill(pid as i32, signal);
-    }
+    terminate_process_group(Some(pid), signal);
     Some(signal)
 }
 
 #[cfg(not(unix))]
-fn terminate_child(child: &mut Child) -> Option<i32> {
+fn terminate_child_tree(child: &mut Child) -> Option<i32> {
     let _ = child.start_kill();
     None
 }
+
+#[cfg(unix)]
+fn force_kill_child_tree(child: &mut Child) {
+    force_kill_process_group(child.id());
+}
+
+#[cfg(not(unix))]
+fn force_kill_child_tree(child: &mut Child) {
+    let _ = child.start_kill();
+}
+
+#[cfg(unix)]
+fn terminate_process_group(pid: Option<u32>, signal: i32) {
+    let Some(process_group) = pid.and_then(|pid| i32::try_from(pid).ok()) else {
+        return;
+    };
+    unsafe {
+        libc::kill(-process_group, signal);
+    }
+}
+
+#[cfg(not(unix))]
+fn terminate_process_group(_pid: Option<u32>, _signal: i32) {}
+
+#[cfg(unix)]
+fn force_kill_process_group(pid: Option<u32>) {
+    terminate_process_group(pid, libc::SIGKILL);
+}
+
+#[cfg(not(unix))]
+fn force_kill_process_group(_pid: Option<u32>) {}
+
+#[cfg(unix)]
+fn process_group_alive(pid: Option<u32>) -> bool {
+    let Some(process_group) = pid.and_then(|pid| i32::try_from(pid).ok()) else {
+        return false;
+    };
+    (unsafe { libc::kill(-process_group, 0) == 0 })
+        || std::io::Error::last_os_error().raw_os_error() == Some(libc::EPERM)
+}
+
+#[cfg(not(unix))]
+fn process_group_alive(_pid: Option<u32>) -> bool {
+    false
+}
+
+#[cfg(unix)]
+fn graceful_terminate_process_group(pid: Option<u32>) {
+    terminate_process_group(pid, libc::SIGTERM);
+}
+
+#[cfg(not(unix))]
+fn graceful_terminate_process_group(_pid: Option<u32>) {}
 
 #[cfg(unix)]
 fn exit_signal(status: &std::process::ExitStatus) -> Option<i32> {
@@ -705,5 +779,89 @@ mod tests {
         assert_eq!(outcome.last_reason(), Some("shutdown_signal_forwarded"));
         assert_eq!(fs::read_to_string(term_file).unwrap(), "term\n");
         assert_eq!(outcome.attempts_detail[0].signal, Some(libc::SIGTERM));
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn child_exit_terminates_descendants_and_bounds_inherited_pipe_capture() {
+        let root = TestRoot::new("descendant-cleanup");
+        let descendant_file = root.path("descendant-pid");
+        let script = root.script(
+            "descendant.sh",
+            &format!(
+                "#!/bin/sh\n(trap '' TERM; while true; do sleep 1; done) &\necho $! > {descendant_file}\nexit 0\n",
+                descendant_file = descendant_file.display()
+            ),
+        );
+        let mut config = GuardianConfig::runtime_kernel(script, "unused", "runtime-init.toml");
+        config.args.clear();
+
+        let outcome = timeout(
+            Duration::from_secs(2),
+            run_guardian(config, CancellationToken::new()),
+        )
+        .await
+        .expect("guardian capture must be bounded")
+        .unwrap();
+
+        assert_eq!(
+            outcome.terminal_state,
+            GuardianTerminalState::ExitedSuccessfully
+        );
+        let descendant = fs::read_to_string(descendant_file)
+            .unwrap()
+            .trim()
+            .parse::<i32>()
+            .unwrap();
+        let deadline = std::time::Instant::now() + Duration::from_secs(1);
+        while unsafe { libc::kill(descendant, 0) } == 0 && std::time::Instant::now() < deadline {
+            sleep(Duration::from_millis(10)).await;
+        }
+        assert_eq!(
+            unsafe { libc::kill(descendant, 0) },
+            -1,
+            "guardian descendant survived process-group cleanup"
+        );
+        assert!(outcome.attempts_detail[0]
+            .stdout
+            .contains("<adl_guardian_capture_deadline_exceeded>"));
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn child_exit_terminates_descendants_that_close_inherited_pipes() {
+        let root = TestRoot::new("detached-descendant-cleanup");
+        let descendant_file = root.path("descendant-pid");
+        let script = root.script(
+            "detached-descendant.sh",
+            &format!(
+                "#!/bin/sh\n(trap '' TERM; exec >/dev/null 2>&1; while true; do sleep 1; done) &\necho $! > {descendant_file}\nexit 0\n",
+                descendant_file = descendant_file.display()
+            ),
+        );
+        let mut config = GuardianConfig::runtime_kernel(script, "unused", "runtime-init.toml");
+        config.args.clear();
+
+        let outcome = timeout(
+            Duration::from_secs(2),
+            run_guardian(config, CancellationToken::new()),
+        )
+        .await
+        .expect("guardian cleanup must be bounded")
+        .unwrap();
+
+        let descendant = fs::read_to_string(descendant_file)
+            .unwrap()
+            .trim()
+            .parse::<i32>()
+            .unwrap();
+        let deadline = std::time::Instant::now() + Duration::from_secs(1);
+        while unsafe { libc::kill(descendant, 0) } == 0 && std::time::Instant::now() < deadline {
+            sleep(Duration::from_millis(10)).await;
+        }
+        assert_eq!(unsafe { libc::kill(descendant, 0) }, -1);
+        assert!(!outcome.attempts_detail[0]
+            .stdout
+            .contains("<adl_guardian_capture_deadline_exceeded>"));
     }
 }

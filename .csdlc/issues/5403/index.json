@@ -3,30 +3,124 @@
   "issue": 5403,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "a6b5bfcabf02fb1660f8f012ad84f66ce29939f56a959143631affd26775de9b",
-  "phase": "implemented",
-  "generation": 27,
-  "digest": "1250be5e8265f2743f9fa9f45c11dbdbffb59d6e93bd057fd3adace140cff43b",
-  "claim": {
-    "id": "claim-5403-remaining-sprint-reviews-expanded",
-    "owner": "codex",
-    "generation": 27,
-    "acquired_unix_seconds": 1784154224,
-    "expires_unix_seconds": 1784240624,
-    "heartbeat_unix_seconds": 1784154224,
-    "branch": "codex/5403-remaining-sprint-reviews",
-    "worktree": ".worktrees/adl-wp-5403",
-    "protected_paths": [
+  "phase": "closed_out",
+  "generation": 32,
+  "digest": "db301927a41ec0f82ddb621f58b228ee839335f9b33c11f3c1c3b64422b4557c",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "codex-subagent-mill",
+    "assigned_by": "codex",
+    "revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+    "scope": [
+      "docs/reviews/v0.91.7/remaining-sprints-5403",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-subagent-mill",
+    "scope": [
+      "docs/reviews/v0.91.7/remaining-sprints-5403",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ],
+    "reviewed_revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+    "findings": [
+      {
+        "id": "5403-FR1",
+        "severity": "p1",
+        "summary": "AC-6 could pass while its retained review evidence explicitly failed",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+        "route": null
+      },
+      {
+        "id": "5403-FR2",
+        "severity": "p2",
+        "summary": "Review surfaces retained obsolete pre-#5406 lifecycle truth",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+        "route": null
+      },
+      {
+        "id": "5403-FR3",
+        "severity": "p2",
+        "summary": "Three final decision surfaces still described the completed review as pending",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Remediation issues #5404-#5413 remain open and are tracked separately from this completed review."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5403,
+    "pull_request": 5414,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5414",
+    "base": "main",
+    "head": "codex/5403-remaining-sprint-reviews",
+    "revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": {
+    "pull_request": 5414,
+    "head_sha": "8924e4a572aa1b0d53afaaa8e172d1d396722dc3",
+    "checks": [
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29458138453/job/87495747827"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29458138453/job/87495777258"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29458138453/job/87495777567"
+      },
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29458138453/job/87495891975"
+      }
+    ],
+    "review_state": "unknown",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5414,
+    "disposition": "merged",
+    "observed_sha": "8924e4a572aa1b0d53afaaa8e172d1d396722dc3",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5403.json",
+    "released_branch": "codex/5403-remaining-sprint-reviews",
+    "released_worktree": ".worktrees/adl-wp-5403",
+    "released_protected_paths": [
       "docs/reviews/v0.91.7/remaining-sprints-5403",
       "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
       ".csdlc/issues/5403"
-    ],
-    "purpose": "Complete retained sprint reviews and canonical register reconciliation"
+    ]
   },
-  "review_assignment": null,
-  "review": null,
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
   "migration": null,
   "design_path": "docs/reviews/v0.91.7/remaining-sprints-5403/DESIGN.md",
   "diagram_path": "docs/reviews/v0.91.7/remaining-sprints-5403/DIAGRAM.mmd",
@@ -38,34 +132,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "01d1816c068acb1c26f718b99233d38405a51d30982a91c9712ebc1a708f997a",
+      "values_digest": "40124c8b64431e0268fcef4d73278de469e1548b392d6d109286c10d7302f8f2",
       "rendered_digest": "34e29c367fa895c71041f342e9e9345be0c280997c94bc896fba6484dc9cd6e5",
       "ast_digest": "6d3e8fabbaa83e910904a041b13a1f469babd8f85a69ea47ac450881134e4769"
     },
     "stp": {
-      "values_digest": "8d8d5dba5ca41c61faa2239a2fd23383d070196b2cae133e4a21752b75821fe7",
+      "values_digest": "80b650d3bd7aacc6852bdcebef2a0775137c04444749d1df968ff11858c5d918",
       "rendered_digest": "73f3bcb014e3666a3f040bf72fd987d253376282a5472760c9d7c9643d0907c2",
       "ast_digest": "30c006c5d0a4a66c041bf57e1bc36e48f13e4e930eec6b96e273147e486d7318"
     },
     "spp": {
-      "values_digest": "ccb951149bfff4fec08cbe9cda8770b7a0a5fa6fa608a5e02eb6a60f7528dabc",
+      "values_digest": "0856d648dc1ee4e4997b82c042f8fc13ec633bf809c7a0ef2acae14b463a34b5",
       "rendered_digest": "54f19a2e83b8fc48279756dc407c27a30569d248558e7c236470b4c85fd6c71c",
       "ast_digest": "118e7861d7f03039a3493673a451ee0f882c22729e9ad7c1e837a3d62d657b46"
     },
     "vpp": {
-      "values_digest": "7d922d93bd551781d97ba9263df565410d135e693481a1347eb4ddc4256d4f08",
+      "values_digest": "d6ff2baf196ab48ec9cdff887cce2800d78c7d9df26b7afe1be58d93dc36e5ea",
       "rendered_digest": "f8fc761bdad444cf26dec31b7b88154af5743a487af0d1a595313c3e8b08b8f4",
       "ast_digest": "31c3e4d8b56dba309cda80e9b16ce87b1ff325330292671252992efa72f8b284"
     },
     "srp": {
-      "values_digest": "51166c2f5480d57a66b3d032e97a3c369b1b4975f9a493c6337042e8f22dec04",
-      "rendered_digest": "a4a8f6772627b06b66051edd8bbca64c1af6571e6964ad41722f8c1bbf5a3c5c",
-      "ast_digest": "92d4f23de11b2d50347518699109453772dbf68fcc3ac198052952c181421683"
+      "values_digest": "e39c1e0ea452f57264148f05e621c6db4532ba906f9fc4776fa3537b7a9d98ce",
+      "rendered_digest": "103dab482e5eecec06f9e90b4329055688fd19fdc28137532f1b8f1a75ae6c4a",
+      "ast_digest": "1be9a8185d7b0f3fc9722e471281fe6d7fe045442dac7febe2d9d53f3e42d8d0"
     },
     "sor": {
-      "values_digest": "ea548cbb7e5dec7ca6d52dddc2f73774c86bc15ed2a26f8f4007e73fa2f9e96b",
-      "rendered_digest": "466392c9de420cfcfa86a47daeb2994f3738e5e8737cdf654e17d8f12198400d",
-      "ast_digest": "72f564a6e0b0b9d643befcbdeaacf9bfbabae993e1f142a809a0395964925e80"
+      "values_digest": "c8e9d2ac7b6153e6dfb0a0662a7f13f9e909d387b00365f28ef04bf901a92a93",
+      "rendered_digest": "1753f896c16a32ae41f48b2459ec72365b81a864b7e231bb3e510d7d54073427",
+      "ast_digest": "8a4e5da31913bf89fa01d341f69046ca4a4c95413ba77bcf118356cc9eab42fd"
     }
   },
   "transitions": [
@@ -110,6 +204,41 @@
       "to": "implemented",
       "actor": "codex",
       "reason": "Recover published review state because #5383 released the register path and current main must be integrated before the canonical register update"
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Exact-revision independent review passed after all three final findings were fixed"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -329,6 +458,48 @@
       "actor": "codex",
       "reason": "Canonical register is current and refreshed independent review passed with no actionable findings",
       "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 32,
+      "generation": 27,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 33,
+      "generation": 28,
+      "actor": "codex-subagent-mill",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 34,
+      "generation": 29,
+      "actor": "codex",
+      "reason": "Exact-revision independent review passed after all three final findings were fixed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 30,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 36,
+      "generation": 31,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 37,
+      "generation": 32,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
     }
   ]
 }

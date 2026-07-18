@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -40,22 +40,34 @@ Repaired issue-local initialization atomicity and complete design/diagram digest
     "purpose": "Run complete C-SDLC v2 regression suite",
     "outcome": "passed",
     "evidence_ref": "local:cargo-test-csdlc-v2"
+  },
+  {
+    "command": [
+      "csdlc-doctor",
+      "--repo",
+      ".",
+      "--issue",
+      "5353"
+    ],
+    "purpose": "Prove the canonical typed issue record and all six cards pass doctor validation",
+    "outcome": "passed",
+    "evidence_ref": "local:csdlc-doctor-5353-generation-14"
   }
 ]
 
 ## Integration
 
-not_started
+merged
 
 ## Publication
 
-Publication: not_published
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

@@ -3,52 +3,144 @@
   "issue": 5353,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "404ad9845d55cf189416e19f7553915074e73a88adb8b0168d0b7e4781f60ddf",
-  "phase": "implemented",
-  "generation": 7,
-  "digest": "dd80126e45af9c9ae80684484047b657eea72328a63a95208028a4a83bde710c",
-  "claim": {
-    "id": "csdlc-v2-5353-wp01",
-    "owner": "codex",
-    "generation": 7,
-    "acquired_unix_seconds": 1784053673,
-    "expires_unix_seconds": 1784140073,
-    "heartbeat_unix_seconds": 1784053673,
-    "branch": "codex/5353-v0-91-8-csdlc-v2-wp01-init-design-approval-safety",
-    "worktree": ".worktrees/adl-wp-5353",
-    "protected_paths": [
+  "phase": "closed_out",
+  "generation": 24,
+  "digest": "f84b45dc996dfe095ac163e4bcb9a3f874fc0540a1da8c94116f3af0be0b4a19",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "codex-subagent-terminal-publication",
+    "assigned_by": "codex",
+    "revision": "git-blake3:21b4e1a9d46b9607f3fb29bb04e2084843590366:ccdc825a421b209ed8fa2651708bceca65fc577861703d97c139f83cfef27c52",
+    "scope": [
+      ".csdlc/issues/5353"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-subagent-terminal-publication",
+    "scope": [
+      ".csdlc/issues/5353"
+    ],
+    "reviewed_revision": "git-blake3:21b4e1a9d46b9607f3fb29bb04e2084843590366:ccdc825a421b209ed8fa2651708bceca65fc577861703d97c139f83cfef27c52",
+    "findings": [
+      {
+        "id": "5353-TR-P1-transient-terminal-projection",
+        "severity": "p1",
+        "summary": "Review recovery temporarily projects implemented state until typed terminal observation is recorded",
+        "actionable": false,
+        "in_scope": true,
+        "disposition": "accepted_risk",
+        "fix_revision": null,
+        "route": "#5423"
+      },
+      {
+        "id": "5353-TR-P2-version-identity",
+        "severity": "p2",
+        "summary": "All six retained card identities say v0.91.8 while live issue and PR truth say v0.91.7",
+        "actionable": true,
+        "in_scope": false,
+        "disposition": "out_of_scope",
+        "fix_revision": null,
+        "route": "#5427"
+      },
+      {
+        "id": "5353-TR-P2-plan-steps",
+        "severity": "p2",
+        "summary": "SPP steps remained pending after implementation, validation, review, and merge",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:21b4e1a9d46b9607f3fb29bb04e2084843590366:ccdc825a421b209ed8fa2651708bceca65fc577861703d97c139f83cfef27c52",
+        "route": null
+      },
+      {
+        "id": "5353-TR-P2-doctor-proof",
+        "severity": "p2",
+        "summary": "SOR did not retain the declared passing doctor acceptance proof",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:21b4e1a9d46b9607f3fb29bb04e2084843590366:ccdc825a421b209ed8fa2651708bceca65fc577861703d97c139f83cfef27c52",
+        "route": null
+      },
+      {
+        "id": "5353-TR-P2-focused-command",
+        "severity": "p2",
+        "summary": "The focused VPP lane used two positional Cargo test filters and was not executable",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:21b4e1a9d46b9607f3fb29bb04e2084843590366:ccdc825a421b209ed8fa2651708bceca65fc577861703d97c139f83cfef27c52",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Typed terminal closeout must replace the transient implemented projection",
+      "Card identity version remains stale until #5427 applies the new typed repair"
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5353,
+    "pull_request": 5428,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5428",
+    "base": "main",
+    "head": "codex/5353-v0-91-8-csdlc-v2-wp01-init-design-approval-safety",
+    "revision": "git-blake3:21b4e1a9d46b9607f3fb29bb04e2084843590366:ccdc825a421b209ed8fa2651708bceca65fc577861703d97c139f83cfef27c52",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": {
+    "pull_request": 5428,
+    "head_sha": "21b4e1a9d46b9607f3fb29bb04e2084843590366",
+    "checks": [
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29529668689/job/87726700998"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29529668689/job/87726732849"
+      },
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29529668689/job/87726874377"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29529668689/job/87726733005"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5428,
+    "disposition": "merged",
+    "observed_sha": "21b4e1a9d46b9607f3fb29bb04e2084843590366",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5353.json",
+    "released_branch": "codex/5353-v0-91-8-csdlc-v2-wp01-init-design-approval-safety",
+    "released_worktree": ".worktrees/adl-wp-5353",
+    "released_protected_paths": [
       "csdlc-v2/src/lifecycle.rs",
       "csdlc-v2/src/store.rs",
       "csdlc-v2/src/cards.rs",
       "csdlc-v2/tests"
-    ],
-    "purpose": "WP-01 regression and atomicity repair for issue-local design initialization and design approval digests"
-  },
-  "review_assignment": {
-    "reviewer": "subagent-reviewer",
-    "assigned_by": "codex",
-    "revision": "git-blake3:445608da09701fd594851196ef891dfbab424671:3bc51cc26064257bf5414f455894263db3e70b962c7853a63ac1fbc30a13dd2d",
-    "scope": [
-      "csdlc-v2/src/lifecycle.rs",
-      "csdlc-v2/src/store.rs",
-      "csdlc-v2/tests/gate2.rs"
     ]
   },
-  "review": {
-    "reviewer": "subagent-reviewer",
-    "scope": [
-      "csdlc-v2/src/lifecycle.rs",
-      "csdlc-v2/src/store.rs",
-      "csdlc-v2/tests/gate2.rs"
-    ],
-    "reviewed_revision": "git-blake3:445608da09701fd594851196ef891dfbab424671:3bc51cc26064257bf5414f455894263db3e70b962c7853a63ac1fbc30a13dd2d",
-    "findings": [],
-    "residual_risks": [],
-    "completed": true,
-    "non_substantive_proof": null
-  },
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
   "migration": null,
   "design_path": "docs/architecture/csdlc-v2/wp01/5353/DESIGN.md",
   "diagram_path": "docs/architecture/csdlc-v2/wp01/5353/DIAGRAM.mmd",
@@ -60,34 +152,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "387be3211139003260a440dbc49b3b3f6dc6daed4ca9eb760ec156afa683d633",
+      "values_digest": "c5dc237b23cc517a185d4cec8be4b2ab41f29aa337e429515f4647150ba2189f",
       "rendered_digest": "09584eaac2c1ae475b3422c344c58d984ee9565cc09293db1149a84175e26de5",
       "ast_digest": "d4684cf547a9c50d22ab8e1e4b2cd112b98a73128406c651c209b0d81aed69ee"
     },
     "stp": {
-      "values_digest": "7eaebb2b72f09f5f70ba7023f3364e19ac4444e4f245c7b6aa8f8d17aefec3d7",
+      "values_digest": "0adaadc4569eea7b83f84ff3746bff83a17ba2d7787a60e4aba2d73acf85eab3",
       "rendered_digest": "6e2f28697e49ec9cfd218f0b77e684d88eee857041de05913dfd572190d79b24",
       "ast_digest": "39dc2a5822da1ee0fa69e7153fea05bc821a67ca005324a29d54f05a635929b3"
     },
     "spp": {
-      "values_digest": "2f57703f8981546ca9d7230a43af5ae4b95d88f6db3e09951ae54f36f07634d2",
-      "rendered_digest": "3ca9ea198a3691822447ad812b93824a8e4a6e7e433c87d7c3aac4cc004f6c6c",
-      "ast_digest": "7f6d0becbc3be143827fdda88374d54b176b3886ecaf32b066a2325ff90f9274"
+      "values_digest": "14c21059678584a27de683b79a7ac837b191dd8859a012be5a6ccd7dff2b1f5b",
+      "rendered_digest": "3258d618b0169e350398d6f2d8687e67c266d4fcd01b5857cecc5138e61ce966",
+      "ast_digest": "561cbc524056352e9a1ee315abf352cb3721db9050336409ff8d0daab2113d34"
     },
     "vpp": {
-      "values_digest": "fb17d52fb2970c7cc9096a88d08c0d807aac0739f132906a6190d1411348ad56",
-      "rendered_digest": "8f5a93315de38fc11cf6f419a9804114cf4bb07d5b187a49fc479e7aa6d8a80e",
-      "ast_digest": "c8d0f923f17fd2ac5e04bf92502841aded7bf1eef4600e5b632e909ab86d6b18"
+      "values_digest": "7cee7b897575bfcb4d843616920c131031fdd17b04973f01b444055b42ac714c",
+      "rendered_digest": "63fbfde03d4b1f8a6ed6d708217472ca92791f7387a1b937409ef184a95c1d3e",
+      "ast_digest": "25af10b69fbbc21e4716004d459f927d8697146b0b9122b905c07d53b2cb6a45"
     },
     "srp": {
-      "values_digest": "1cb554ab18541bc84d2a8a6b36420b8ee95c7c019d50c24ecd0c54fd8a67d4b5",
-      "rendered_digest": "27eda3d8684c16202088e81294fc99dc3af14a594a41b12cf87a605ba82859d2",
-      "ast_digest": "813c249bdccfde59cd57fe18472e0436667060b7d4ecc8c15f5fc7c73ef45e66"
+      "values_digest": "606c4bcafda8c2ec1251f5c875b6274c75250acd10c886e70c2678076e7af6a9",
+      "rendered_digest": "b51b3c0b77c2d03645e420412082fbb1ff8b81350df7564eea830a1e1dbd3731",
+      "ast_digest": "2422a71b67460f445363d332033c590eea5b0b76afc120ac7bff17f7e112562b"
     },
     "sor": {
-      "values_digest": "bb78359af6431e336eeb248990461238d7e75ce90d911f48dcf667da0a8382f8",
-      "rendered_digest": "484bdcb636e19afca3708752c939cffd38814314d8ca427908155e7618e72bd3",
-      "ast_digest": "77ced718bd273d3ab06b08dc29e0ec677fccda8cbd475f634342e67e37ea12f3"
+      "values_digest": "f135c0e009f07236e6013bd2880317f37cbba656cf7e1a8b023fc8809d173ace",
+      "rendered_digest": "31f6b4312d654d048c9d064ac17c07f0c624b7238837b6bcb261901236d019ab",
+      "ast_digest": "4b4b712756a21e94cb73c6ce72b2c205e99573cb95cddc022eb7384a3f0af569"
     }
   },
   "transitions": [
@@ -111,6 +203,76 @@
       "to": "implemented",
       "actor": "codex",
       "reason": "implementation and validation evidence recorded"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "exact-revision subagent review passed with no findings"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Re-review the current clean branch and publish exact terminal-reconciliation evidence after the original PR merged"
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Record bounded terminal-reconciliation review with stale version identity routed to #5427"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Re-establish exact clean-commit review before typed publication; subsequent lifecycle metadata remains uncommitted until publication"
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Exact clean-commit review passed after fixing all in-scope record findings; version repair remains routed to #5427"
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 11,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 12,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 13,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -176,6 +338,160 @@
       "actor": "subagent-reviewer",
       "reason": "atomically record review evidence and SRP projection",
       "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "subagent-reviewer",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex",
+      "reason": "exact-revision subagent review passed with no findings",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "GitHub issue #5353 and PR #5374 are merged, but the typed claim expired before terminal closeout",
+      "operation": "{\"previous_owner\":\"codex\",\"observed_expiry_unix_seconds\":1784140073,\"recovery_actor\":\"codex\",\"reason\":\"GitHub issue #5353 and PR #5374 are merged, but the typed claim expired before terminal closeout\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex",
+      "reason": "Re-review the current clean branch and publish exact terminal-reconciliation evidence after the original PR merged",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex-subagent-terminal-review",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex",
+      "reason": "Record bounded terminal-reconciliation review with stale version identity routed to #5427",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex",
+      "reason": "Re-establish exact clean-commit review before typed publication; subsequent lifecycle metadata remains uncommitted until publication",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex",
+      "reason": "Replace invalid dual-filter Cargo syntax with independently executable focused lanes",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"focused-gate2\",\"proof_role\":\"Prove issue-local initialization and dual digest refresh behavior\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\"],\"parallel_group\":\"focused\",\"defer_reason\":null},{\"lane\":\"focused-gate7\",\"proof_role\":\"Prove lifecycle integration remains compatible with initialization repair\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_lifecycle\"],\"parallel_group\":\"focused\",\"defer_reason\":null},{\"lane\":\"v2-suite\",\"proof_role\":\"Prove the independent v2 workspace remains green\",\"acceptance_ids\":[\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\"],\"parallel_group\":\"suite\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex",
+      "reason": "Reconcile the completed defect reproduction step after merged implementation",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"step-1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex",
+      "reason": "Reconcile the completed implementation step after PR #5374 merged",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"step-2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex",
+      "reason": "Retain the passing typed doctor result required by AC-4",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5353\"],\"purpose\":\"Prove the canonical typed issue record and all six cards pass doctor validation\",\"outcome\":\"passed\",\"evidence_ref\":\"local:csdlc-doctor-5353-generation-14\"}}"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex",
+      "reason": "Reconcile focused validation, doctor, independent review, and merged PR proof",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"step-3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 19,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 20,
+      "actor": "codex-subagent-terminal-publication",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 21,
+      "actor": "codex",
+      "reason": "Exact clean-commit review passed after fixing all in-scope record findings; version repair remains routed to #5427",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 22,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 30,
+      "generation": 23,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 31,
+      "generation": 24,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
     }
   ]
 }

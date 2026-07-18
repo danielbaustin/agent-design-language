@@ -1,0 +1,53 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5440,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][design] Support audited post-readiness design reapproval",
+    "slug": "v0-91-7-csdlc-v2-post-readiness-design-reapproval",
+    "version": "v0.91.7",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "csdlc-v2-design-reapproval",
+          "proof_role": "Prove phase authorization, digest refresh, audit history, and fail-closed later phases",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 5000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate2"
+          ],
+          "parallel_group": "csdlc-v2",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on stale claim, stale generation, stale digest, unsupported phase, or card drift.",
+      "design_ref": "docs/reviews/v0.91.7/csdlc-v2-5440/DESIGN.md",
+      "design_digest": "e55e6c28f27d759dc82b6649b21118dd3a72959ab62e310dadf468443212e9a3",
+      "diagram_ref": "docs/reviews/v0.91.7/csdlc-v2-5440/DIAGRAM.mmd",
+      "diagram_digest": "382de225279586ed470844adb28d61d81d7cf22c5762555a18d0f6290adc4c8d"
+    }
+  }
+}

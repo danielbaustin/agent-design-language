@@ -7,15 +7,15 @@
     "title": "[v0.91.7][planning] Restore WP-14 routing and create v0.91.8 planning package",
     "slug": "v0-91-7-planning-restore-wp14-routing-and-create-v0-91-8-planning-package",
     "version": "v0.91.7",
-    "generation": 18
+    "generation": 25
   },
   "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": ".csdlc/issues/5383",
+      "review_revision": "git-blake3:f55126638707b436478316bf84dbcb040ee60cca:3c69e35ef0b3df7b5b868ef547f573ee258e085493a52c65efad2d048409b2e1",
+      "reviewer": "subagent-huygens",
       "review_prompts": [
         "Review whether the v0.91.8 package is complete enough for execution without implementation overclaims.",
         "Review whether #4641/#5384 routing is clear and not lossy.",
@@ -23,7 +23,7 @@
       ],
       "findings": [],
       "residual_risk": [],
-      "review_result": "pre_review"
+      "review_result": "pass"
     }
   }
 }

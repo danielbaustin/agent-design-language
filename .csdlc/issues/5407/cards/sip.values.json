@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5407,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][tools] Resolve #5036 reliability-tail findings",
+    "slug": "v0-91-7-review-fix-tools-resolve-5036-reliability-tail-findings",
+    "version": "v0.91.7",
+    "generation": 34
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Repair all four #5036 review findings with truthful current documentation and retained closeout evidence.",
+      "required_outcome": "Current docs expose typed C-SDLC v2 authority, build-action-log claims match implemented validation-manager behavior, #5036 has complete retained child closeout evidence, and #5037 makes no unproved material-speedup claim.",
+      "declared_scope": [
+        "build-action-log documentation boundary",
+        "C-SDLC CLI taxonomy",
+        "#5036 retained closeout synthesis",
+        "#5037 hosted timing claim boundary"
+      ],
+      "authority_boundary": [
+        "Do not restore or invoke v1 lifecycle wrappers",
+        "Do not add unplanned logging producers or consumers",
+        "Do not change CI routing or validation-manager runtime behavior",
+        "Do not claim hosted speedup without comparable hosted evidence"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

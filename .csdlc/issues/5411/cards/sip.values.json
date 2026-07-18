@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5411,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3] Resolve #5227 selector, guardian, and pressure-stop findings",
+    "slug": "v0-91-7-runtime-v3-selector-guardian-pressure-stop",
+    "version": "v0.91.7",
+    "generation": 23
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make Runtime v3 selection claims, guardian containment, pressure shutdown, and release evidence truthful and operational.",
+      "required_outcome": "Runtime v3 remains independently launchable, guardian descendants cannot leak, resource pressure produces a signed checkpoint before graceful stop, and non-executed evidence cannot satisfy release completion.",
+      "declared_scope": [
+        "Runtime v3 selector documentation and release-proof truth",
+        "Existing Runtime v3 guardian process boundary",
+        "Runtime v3 weather-to-continuity-to-shutdown integration",
+        "Focused process, pressure, and evidence-class tests"
+      ],
+      "authority_boundary": [
+        "Runtime v2 remains untouched and default",
+        "No default switch or decommission is authorized",
+        "No overlap with #5409 protected authentication, supervision, or topology files",
+        "Only executed evidence may satisfy live cutover requirements"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

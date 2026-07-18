@@ -7,15 +7,15 @@
     "title": "[v0.91.7][review][sprint] Complete remaining closed-sprint reviews",
     "slug": "v0-91-7-review-complete-remaining-closed-sprint-reviews",
     "version": "v0.91.7",
-    "generation": 27
+    "generation": 32
   },
   "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "docs/reviews/v0.91.7/remaining-sprints-5403\ndocs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "review_revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+      "reviewer": "codex-subagent-mill",
       "review_prompts": [
         "Does every sprint packet cover its complete ordered child set?",
         "Are findings grounded in exact source or live GitHub evidence?",
@@ -23,9 +23,42 @@
         "Are remediation issues separate from review execution?",
         "Does the canonical register match the completed packets?"
       ],
-      "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "findings": [
+        {
+          "id": "5403-FR1",
+          "severity": "p1",
+          "summary": "AC-6 could pass while its retained review evidence explicitly failed",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+          "route": null
+        },
+        {
+          "id": "5403-FR2",
+          "severity": "p2",
+          "summary": "Review surfaces retained obsolete pre-#5406 lifecycle truth",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+          "route": null
+        },
+        {
+          "id": "5403-FR3",
+          "severity": "p2",
+          "summary": "Three final decision surfaces still described the completed review as pending",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:8924e4a572aa1b0d53afaaa8e172d1d396722dc3:81c23fc4fdbbabb2290a9106671f0766c6c59bd7db9fd4c04ccabda7cbefc015",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "Remediation issues #5404-#5413 remain open and are tracked separately from this completed review."
+      ],
+      "review_result": "pass"
     }
   }
 }

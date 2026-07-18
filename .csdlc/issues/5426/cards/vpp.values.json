@@ -1,0 +1,72 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5426,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][readiness] Let terminal validation supersede earlier nonterminal evidence",
+    "slug": "v0-91-7-csdlc-v2-readiness-validation-supersession",
+    "version": "v0.91.7",
+    "generation": 25
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-rust-tests",
+          "proof_role": "Prove both validation supersession directions and unchanged fail-closed behavior",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 180,
+          "budget_tokens": 1000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "validation"
+          ],
+          "parallel_group": "rust",
+          "defer_reason": null
+        },
+        {
+          "lane": "rust-format",
+          "proof_role": "Prove Rust formatting for the changed C-SDLC v2 surface",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 200,
+          "argv": [
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--",
+            "--check"
+          ],
+          "parallel_group": "format",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on ambiguous identity, any latest non-passing validation, test failure, or lifecycle mismatch.",
+      "design_ref": "docs/reviews/v0.91.7/csdlc-v2-5426/DESIGN.md",
+      "design_digest": "c4dcb826af2864338d6f39dbbd21de3c5a2dfdcaad04932990648e74fd9ad983",
+      "diagram_ref": "docs/reviews/v0.91.7/csdlc-v2-5426/DIAGRAM.mmd",
+      "diagram_digest": "37f058dfe07cc4e362abf37be46fe05d9853e931c82adae046bde313cded4f7e"
+    }
+  }
+}

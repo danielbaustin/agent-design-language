@@ -914,12 +914,14 @@ impl MutationGate {
             .inner
             .lock()
             .expect("adaptation state mutex poisoned");
-        if state.consumed_grants.contains(&grant.grant_id)
+        let now = self.trusted_time.now_unix_millis();
+        if now == 0
+            || state.consumed_grants.contains(&grant.grant_id)
             || grant.graph_hash != state.graph.hash()
             || grant.policy_hash != self.policy_hash
             || grant.patch_hash != patch_hash
             || !operations.is_subset(&grant.allowed_operations)
-            || self.trusted_time.now_unix_millis() >= grant.expires_unix_millis
+            || now >= grant.expires_unix_millis
             || state.quiesced
             || adaptation.quiesced
             || adaptation.state.graph_hash != state.graph.hash()

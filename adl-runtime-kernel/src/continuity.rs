@@ -37,6 +37,8 @@ pub struct SnapshotEntry {
 pub struct CheckpointManifest {
     pub schema: String,
     pub generation: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub previous_integrity: Option<String>,
     pub accepted_through: u64,
     pub provenance: String,
     pub topology_hash: String,
@@ -117,6 +119,7 @@ pub trait AdmissionGate: Send + Sync {
 #[derive(Clone, Debug)]
 pub struct CheckpointRequest {
     pub generation: u64,
+    pub previous_integrity: Option<String>,
     pub accepted_through: u64,
     pub provenance: String,
     pub topology_hash: String,
@@ -201,6 +204,7 @@ impl CheckpointCoordinator {
             let mut manifest = CheckpointManifest {
                 schema: CHECKPOINT_SCHEMA.to_owned(),
                 generation: request.generation,
+                previous_integrity: request.previous_integrity,
                 accepted_through: request.accepted_through,
                 provenance: request.provenance,
                 topology_hash: request.topology_hash,
@@ -254,6 +258,12 @@ impl CheckpointCoordinator {
             return Err(ContinuityError::UnsupportedSchema(manifest.schema));
         }
         manifest.validate_integrity()?;
+        if manifest.generation != generation {
+            return Err(ContinuityError::GenerationMismatch {
+                requested: generation,
+                signed: manifest.generation,
+            });
+        }
         if manifest.topology_hash != topology_hash || manifest.config_hash != config_hash {
             return Err(ContinuityError::IdentityMismatch);
         }
@@ -603,6 +613,10 @@ fn digest_json<T: Serialize>(value: &T) -> Result<String, ContinuityError> {
 pub enum ContinuityError {
     #[error("checkpoint generation already exists: {0}")]
     GenerationExists(u64),
+    #[error(
+        "checkpoint directory generation {requested} does not match signed generation {signed}"
+    )]
+    GenerationMismatch { requested: u64, signed: u64 },
     #[error("checkpoint generation not found: {0}")]
     NotFound(u64),
     #[error("unsupported continuity schema: {0}")]

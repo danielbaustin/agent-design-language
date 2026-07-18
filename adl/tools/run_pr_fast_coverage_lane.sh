@@ -99,6 +99,17 @@ runtime_companion=""
 if grep -Fq 'test(/^csm_cav::/)' <<<"$FILTER_EXPRESSION"; then
   runtime_expression='test(/^cav::/) or test(/^runtime_api::/) or test(/^supervision::/) or test(/^topology::/)'
   runtime_companion="adl-runtime CAV tests"
+  printf 'PR-fast coverage companion: WP-12 access and SSM validators\n'
+  (
+    cd "$ADL_DIR/.."
+    python3 adl/tools/validate_wp12_ssm_readiness_4657.py \
+      --source-summary docs/milestones/v0.91.7/review/runtime/wp08_local_polis_ssm_4687/local_polis_ssm_summary.json \
+      --readiness-summary docs/milestones/v0.91.7/review/security/wp12_ssm_readiness_4657.json \
+      --gate docs/milestones/v0.91.7/review/security/wp12_security_cav_gate_4656.json
+    python3 adl/tools/validate_wp12_access_activation_gate_4660.py \
+      --access-gate docs/milestones/v0.91.7/review/security/wp12_access_activation_gate_4660.json \
+      --parent-gate docs/milestones/v0.91.7/review/security/wp12_security_cav_gate_4656.json
+  )
 fi
 if grep -Fq 'test(/^guardian::tests::/)' <<<"$FILTER_EXPRESSION"; then
   if [ -n "$runtime_expression" ]; then

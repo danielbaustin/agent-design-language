@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5404,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-12] Resolve #5403 security and protocol findings",
+    "slug": "v0-91-7-review-fix-wp12-security-protocol-findings",
+    "version": "v0.91.7",
+    "generation": 16
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl/src/csm_cav_red_blue.rs\nadl/src/csm_credential_policy.rs\nadl/tools/run_pr_fast_coverage_lane.sh\nadl/tools/test_run_pr_fast_coverage_lane.sh\nadl/tools/validate_wp12_access_activation_gate_4660.py\nadl/tools/validate_wp12_cav_red_blue_4914.py\ndocs/milestones/v0.91.7/WBS_v0.91.7.md\ndocs/milestones/v0.91.7/review/security/WP12_ACCESS_ACTIVATION_GATE_4660.md\ndocs/milestones/v0.91.7/review/security/WP12_SECURITY_CAV_PRE_V092_REQUIREMENTS_4656.md\ndocs/milestones/v0.91.7/review/security/wp12_access_activation_gate_4660.json\ndocs/milestones/v0.91.7/review/security/wp12_cav_red_blue_4914/cav_red_blue_events.jsonl\ndocs/milestones/v0.91.7/review/security/wp12_cav_red_blue_4914/cav_red_blue_summary.json\ndocs/milestones/v0.91.7/review/security/wp12_csm_credential_policy_4920/credential_lifecycle_events.jsonl\ndocs/milestones/v0.91.7/review/security/wp12_csm_credential_policy_4920/credential_policy_summary.json\ndocs/milestones/v0.91.7/review/security/wp12_security_cav_gate_4656.json",
+      "review_revision": "git-blake3:fc761b2a8a170426d3cd42f837b912ba8ba7ab06:924f025f6fd0ab0ddac8cf13a0e62243f03d29df4eb0a210bd4702bec4e2f419",
+      "reviewer": "subagent:019f7300-5482-7290-ab2c-1b4c44959fda",
+      "review_prompts": [
+        "Do the WP-12 records overclaim integrated CAV/runtime behavior?",
+        "Do validators and WBS agree with current issue/proof state?",
+        "Are synthetic credential-policy events clearly separated from operational audit streams?",
+        "Are focused validators actually executed by the selected lane?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Full owner-validation and integration CI remain delegated to the refreshed PR checks.",
+        "Live integrated CSM HTTP/WebSocket behavior remains intentionally outside the bounded claims of this issue."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

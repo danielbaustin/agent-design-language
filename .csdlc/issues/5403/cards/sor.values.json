@@ -7,9 +7,9 @@
     "title": "[v0.91.7][review][sprint] Complete remaining closed-sprint reviews",
     "slug": "v0-91-7-review-complete-remaining-closed-sprint-reviews",
     "version": "v0.91.7",
-    "generation": 27
+    "generation": 32
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -150,10 +150,10 @@
           "evidence_ref": "docs/reviews/v0.91.7/remaining-sprints-5403/REFRESHED_REVIEW_QUALITY_EVALUATION.md"
         }
       ],
-      "integration_state": "worktree_only",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": [
         "Open remediation issues retained from the synthesis: #5404, #5405, #5406, #5407, #5408, #5409, #5410, #5411, #5412, and #5413."
       ]

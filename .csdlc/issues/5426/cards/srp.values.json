@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5426,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][readiness] Let terminal validation supersede earlier nonterminal evidence",
+    "slug": "v0-91-7-csdlc-v2-readiness-validation-supersession",
+    "version": "v0.91.7",
+    "generation": 25
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2/src/cards.rs\ncsdlc-v2/src/store.rs\ncsdlc-v2/tests/gate7_lifecycle.rs\ndocs/reviews/v0.91.7/csdlc-v2-5426",
+      "review_revision": "git-blake3:d1ed65343d71bcf55274affb1fb731e1dd9ad2a9:e809f3c46311951ca0ca80d86fbc9e6665adbdf7549fbddfb7c07d365a257ba2",
+      "reviewer": "subagent-huygens",
+      "review_prompts": [
+        "Is validation identity narrow and deterministic?",
+        "Do pass-after-waiting and fail-after-pass behave correctly?",
+        "Is append-only evidence preserved?",
+        "Are all terminal validation call sites consistent?"
+      ],
+      "findings": [
+        {
+          "id": "F-5426-1",
+          "severity": "p1",
+          "summary": "Terminal closeout bypassed latest validation state",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:d1ed65343d71bcf55274affb1fb731e1dd9ad2a9:e809f3c46311951ca0ca80d86fbc9e6665adbdf7549fbddfb7c07d365a257ba2",
+          "route": null
+        },
+        {
+          "id": "F-5426-2",
+          "severity": "p2",
+          "summary": "Merged regression used an invalid closed observation and did not reach the repaired guard",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:d1ed65343d71bcf55274affb1fb731e1dd9ad2a9:e809f3c46311951ca0ca80d86fbc9e6665adbdf7549fbddfb7c07d365a257ba2",
+          "route": null
+        }
+      ],
+      "residual_risk": [],
+      "review_result": "pass"
+    }
+  }
+}

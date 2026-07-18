@@ -1,11 +1,17 @@
 //! CSM runtime component topology.
 
-use serde::Serialize;
+use std::collections::BTreeSet;
+
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
 use crate::acip::{runtime_capability as acip_runtime_capability, CSM_ACIP_COMPONENT};
+use crate::backpressure::RuntimeChannelId;
 use crate::cav::{CsmCavComponentStatus, CSM_CAV_COMPONENT};
-use crate::supervision::{default_component_supervision, SUPERVISION_SCHEMA};
+use crate::supervision::{
+    default_component_supervision, ComponentId, ComponentReadiness, ComponentSupervisionPolicy,
+    SUPERVISION_SCHEMA,
+};
 
 pub const CSM_RUNTIME_STACK_SCHEMA: &str = "adl.csm.runtime_stack.v1";
 pub const CSM_COMPONENT_TOPOLOGY_SCHEMA: &str = "adl.csm.component_topology.v1";
@@ -16,6 +22,91 @@ pub struct RuntimeComponent {
     pub id: &'static str,
     pub plane: &'static str,
     pub role: &'static str,
+}
+
+pub const CSM_RUNTIME_READINESS_SCHEMA: &str = "adl.csm.runtime_readiness.v1";
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RuntimeReadiness {
+    pub schema: String,
+    pub status: ComponentReadiness,
+    pub components: Vec<String>,
+    pub channels: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CsmRuntimeAssembly {
+    components: Vec<RuntimeComponent>,
+    policies: Vec<ComponentSupervisionPolicy>,
+    channels: Vec<RuntimeChannelId>,
+}
+
+impl CsmRuntimeAssembly {
+    /// Build the only supported production component set and validate that it
+    /// has a supervision policy and typed channel coverage for every member.
+    pub fn production() -> Result<Self, String> {
+        let components = runtime_components();
+        let policies = default_component_supervision();
+        let expected = ComponentId::ALL
+            .into_iter()
+            .map(ComponentId::as_str)
+            .collect::<BTreeSet<_>>();
+        let actual = components
+            .iter()
+            .map(|component| component.id)
+            .collect::<BTreeSet<_>>();
+        if actual != expected {
+            return Err(format!(
+                "runtime topology/supervision mismatch: expected {:?}, observed {:?}",
+                expected, actual
+            ));
+        }
+        if policies.len() != ComponentId::ALL.len()
+            || ComponentId::ALL
+                .into_iter()
+                .any(|component| !policies.iter().any(|policy| policy.component == component))
+        {
+            return Err("runtime topology has incomplete supervision policy coverage".to_string());
+        }
+        let channels = RuntimeChannelId::ALL.to_vec();
+        if channels.is_empty() {
+            return Err("runtime topology has no typed channels".to_string());
+        }
+        Ok(Self {
+            components,
+            policies,
+            channels,
+        })
+    }
+
+    pub fn components(&self) -> &[RuntimeComponent] {
+        &self.components
+    }
+
+    pub fn policies(&self) -> &[ComponentSupervisionPolicy] {
+        &self.policies
+    }
+
+    pub fn readiness(&self) -> RuntimeReadiness {
+        RuntimeReadiness {
+            schema: CSM_RUNTIME_READINESS_SCHEMA.to_string(),
+            status: ComponentReadiness::Ready,
+            components: self
+                .components
+                .iter()
+                .map(|component| component.id.to_string())
+                .collect(),
+            channels: self
+                .channels
+                .iter()
+                .map(|channel| format!("{channel:?}"))
+                .collect(),
+        }
+    }
+
+    pub fn readiness_json(&self) -> Value {
+        serde_json::to_value(self.readiness()).expect("runtime readiness is serializable")
+    }
 }
 
 pub fn runtime_components() -> Vec<RuntimeComponent> {
@@ -104,6 +195,8 @@ pub fn runtime_components() -> Vec<RuntimeComponent> {
 }
 
 pub fn runtime_stack_json() -> Value {
+    let assembly = CsmRuntimeAssembly::production()
+        .expect("production runtime topology must have complete supervision and channels");
     json!({
         "schema": CSM_RUNTIME_STACK_SCHEMA,
         "runtime_owner": "csm",
@@ -117,7 +210,8 @@ pub fn runtime_stack_json() -> Value {
             "schema": CSM_COMPONENT_TOPOLOGY_SCHEMA,
             "components": runtime_components(),
             "supervision_schema": SUPERVISION_SCHEMA,
-            "supervision": default_component_supervision()
+            "supervision": assembly.policies(),
+            "readiness": assembly.readiness_json()
         },
         "api_server": {
             "http_framework": "axum",
@@ -241,6 +335,34 @@ mod tests {
         assert!(ids.contains(&"constructability_gate"));
         assert!(ids.contains(&"observability"));
         assert!(ids.contains(&"cloud_bridge"));
+    }
+
+    #[test]
+    fn production_assembly_covers_every_component_and_channel() {
+        let assembly = CsmRuntimeAssembly::production().unwrap();
+        let readiness = assembly.readiness();
+        assert_eq!(readiness.status, ComponentReadiness::Ready);
+        assert_eq!(readiness.components.len(), ComponentId::ALL.len());
+        assert_eq!(readiness.channels.len(), RuntimeChannelId::ALL.len());
+        assert!(readiness
+            .components
+            .contains(&"resident_agents".to_string()));
+    }
+
+    #[test]
+    fn production_readiness_is_deterministic() {
+        let first = CsmRuntimeAssembly::production().unwrap().readiness_json();
+        let second = CsmRuntimeAssembly::production().unwrap().readiness_json();
+        assert_eq!(first, second);
+    }
+
+    #[test]
+    fn assembled_runtime_readiness_soak_is_stable() {
+        let expected = CsmRuntimeAssembly::production().unwrap().readiness_json();
+        for _ in 0..100 {
+            let observed = CsmRuntimeAssembly::production().unwrap().readiness_json();
+            assert_eq!(observed, expected);
+        }
     }
 
     #[test]

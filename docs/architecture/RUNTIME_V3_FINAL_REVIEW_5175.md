@@ -29,24 +29,30 @@ authoritative proof.
 | Fixture validation and environment leakage | Fixed | validation at the process boundary, cleared environment, stdin-only fixture input, shared 1 MiB bound |
 | Self-certifying relation labels | Fixed | stale redesign, unsupported, and blocked expectations classify as defects |
 | String-inferred failure taxonomy | Fixed | explicit `BackendFailureKind` constructors; unclassified strings default to `Other` |
-| Concurrent timing methodology | Fixed | sequential-backend 21-sample live run retained with current medians |
+| Concurrent timing methodology | Fixed | sequential-backend 21-sample live run retained with then-current medians |
 | Guardian restart and shutdown behavior | Fixed | native Horust fatal restart, SIGTERM/checkpoint, and terminal configuration-exit proofs |
-| Stale or mismatched reports | Fixed | generated soak execution matches the tracked projection; parity and guardian reports share current counts and timing |
+| Stale or mismatched reports | Fixed | generated soak execution matched the tracked projection; parity and guardian reports shared then-current counts and timing |
 
 ## Validation
+
+The numeric inventory counts below are the historical snapshot recorded when
+issue #5175 closed. They are not current-size claims. The
+[current generated Runtime v3 inventory](runtime_v3_current_inventory.v1.json)
+is the authoritative reproducible source for present implementation LoC,
+direct dependencies, Rust test attributes, and parity-baseline module count.
 
 - Full Runtime v3 crate tests passed.
 - Clippy passed for all targets with warnings denied.
 - The 100-cycle, 1,600-item bounded soak passed.
 - Five explicit native guardian/soak tests passed serially.
 - The live v2/v3 bounded-loop fixture passed for 21 sequential samples per
-  runtime; current medians are 7,844 microseconds for v2 and 5,717 microseconds
-  for v3.
-- Runtime v3 contains 8,446 Rust source lines and 106 tests, below the 10,000
-  LoC and 1,000-test challenge limits.
-- The rebased external inventory routes 195 Runtime v2 and `adl-runtime`
-  modules, including the newly merged Vector observability module; this is
-  ownership routing, not a behavioral-equivalence claim.
+  runtime; the then-current medians were 7,844 microseconds for v2 and 5,717
+  microseconds for v3.
+- At #5175 closeout, Runtime v3 contained 8,446 Rust source lines and 106 tests,
+  below the then-applicable 10,000 LoC and 1,000-test challenge limits.
+- At #5175 closeout, the rebased external inventory routed 195 Runtime v2 and
+  `adl-runtime` modules, including the newly merged Vector observability module;
+  this was ownership routing, not a behavioral-equivalence claim.
 
 ## Residual Risk
 

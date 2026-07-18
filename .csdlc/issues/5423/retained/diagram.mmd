@@ -1,0 +1,8 @@
+flowchart LR
+    A["Existing sprint review row"] --> B{"Remediation terminal?"}
+    B -- "No" --> C["Preserve current finding state"]
+    B -- "Yes" --> D["Verify merged PR and closed-out lifecycle"]
+    D --> E["Verify retained finding dispositions"]
+    E --> F["Update canonical register row"]
+    C --> G["Validated register"]
+    F --> G

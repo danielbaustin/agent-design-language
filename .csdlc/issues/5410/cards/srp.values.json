@@ -1,0 +1,86 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5410,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3] Assemble and secure the #5174 live kernel",
+    "slug": "v0-91-7-review-fix-runtime-v3-assemble-secure-live-kernel",
+    "version": "v0.91.7",
+    "generation": 21
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5410\nadl-runtime-kernel\ndocs/architecture/RUNTIME_V3_FINAL_REVIEW_5175.md\ndocs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md\ndocs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md\ndocs/architecture/runtime_v3_current_inventory.v1.json\ndocs/reviews/v0.91.7/runtime-v3-5410\ninfra/horust/README.md\ninfra/horust/adl-runtime-kernel.toml\ninfra/rustysd/adl-runtime-kernel.service\ninfra/systemd/adl-runtime-kernel.service",
+      "review_revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+      "reviewer": "independent-runtime-v3-reviewer",
+      "review_prompts": [
+        "Does serve avoid every proof-only topology and checksum path?",
+        "Can forged, substituted, rolled-back, or identity-mismatched continuity reach API readiness?",
+        "Can any timeout or local wall-clock path become authoritative?",
+        "Is exact service membership and current inventory reproducibly proven?"
+      ],
+      "findings": [
+        {
+          "id": "5410-R1",
+          "severity": "p1",
+          "summary": "Signed continuity generation and lineage could be spoofed by directory renaming",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+          "route": null
+        },
+        {
+          "id": "5410-R2",
+          "severity": "p1",
+          "summary": "Passive live-service shells reported Running instead of Degraded",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+          "route": null
+        },
+        {
+          "id": "5410-R3",
+          "severity": "p2",
+          "summary": "Continuity and operation key separation was documented but not enforced",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+          "route": null
+        },
+        {
+          "id": "5410-R4",
+          "severity": "p2",
+          "summary": "Trusted time could move backward across authoritative corrections",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+          "route": null
+        },
+        {
+          "id": "5410-R5",
+          "severity": "p2",
+          "summary": "Signed remote shutdown checkpointing lacked integrated binary HTTPS proof",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "Full mutable operation, governance, and adaptation state authenticity remains owned by #5412",
+        "Pressure-triggered graceful shutdown remains owned by #5411",
+        "Live Observatory and cross-runtime parity proof remains owned by #5413",
+        "Two bounded Claude Fable 5 calls returned empty provider output; no Fable PASS is claimed, and the exact-revision independent review is authoritative"
+      ],
+      "review_result": "pass"
+    }
+  }
+}

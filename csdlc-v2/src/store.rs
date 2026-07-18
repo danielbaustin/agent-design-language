@@ -9,8 +9,8 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::cards::{
-    apply, digest, initial_cards, render, validate_cross_card, CardContent, CardKind, CardValues,
-    InitialCardInput, SemanticOperation,
+    apply, digest, initial_cards, render, terminal_validation_passed, validate_cross_card,
+    CardContent, CardKind, CardValues, InitialCardInput, SemanticOperation,
 };
 use crate::error::{ErrorCode, Result, V2Error};
 use crate::model::{
@@ -572,14 +572,7 @@ impl Store {
             _ => unreachable!(),
         };
         if evidence.ready {
-            let validation_ready = !sor.actual_validation.is_empty()
-                && sor.actual_validation.iter().all(|item| {
-                    matches!(
-                        item.outcome,
-                        crate::cards::EvidenceOutcome::Passed
-                            | crate::cards::EvidenceOutcome::SkippedNonGoal
-                    )
-                });
+            let validation_ready = terminal_validation_passed(&sor.actual_validation);
             if !validation_ready {
                 return Err(V2Error::new(
                     ErrorCode::InvalidTransition,
@@ -701,6 +694,16 @@ impl Store {
         }
         let mut cards = self.load_cards(observation.issue)?;
         verify_cards(self, &record, &cards)?;
+        let current_validation = match &cards[&CardKind::Sor].content {
+            CardContent::Sor(value) => &value.actual_validation,
+            _ => unreachable!(),
+        };
+        if !terminal_validation_passed(current_validation) {
+            return Err(V2Error::new(
+                ErrorCode::InvalidTransition,
+                "terminal closeout requires current passing validation evidence",
+            ));
+        }
         let sor_values = cards.get_mut(&CardKind::Sor).expect("SOR");
         sor_values.status = crate::cards::CardStatus::Complete;
         let sor = match &mut sor_values.content {
@@ -1017,15 +1020,19 @@ pub fn approve_design(store: &Store, request: ApproveDesignRequest) -> Result<Is
             "design reviewer is required",
         ));
     }
-    if record.phase != LifecyclePhase::Initialized
-        || !matches!(
+    let initial_approval = record.phase == LifecyclePhase::Initialized
+        && matches!(
             record.design_review,
             DesignReview::Pending | DesignReview::ChangesRequired { .. }
-        )
-    {
+        );
+    let reapproval = matches!(
+        record.phase,
+        LifecyclePhase::Bound | LifecyclePhase::Implemented
+    );
+    if !initial_approval && !reapproval {
         return Err(V2Error::new(
             ErrorCode::InvalidTransition,
-            "design approval is allowed only before readiness",
+            "design approval is allowed only before readiness or during bound/implemented reapproval",
         ));
     }
     record
@@ -1034,7 +1041,7 @@ pub fn approve_design(store: &Store, request: ApproveDesignRequest) -> Result<Is
         .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "claim missing"))?
         .validate(&request.claim_id, now_seconds()?)?;
     let mut cards = store.load_cards(request.issue)?;
-    verify_record(&record)?;
+    verify_card_projections(store, &record, &cards)?;
     let design_digest = digest(&fs::read(store.root.join(&record.design_path))?);
     let diagram_digest = digest(&fs::read(store.root.join(&record.diagram_path))?);
     for kind in [CardKind::Spp, CardKind::Vpp] {
@@ -1065,7 +1072,12 @@ pub fn approve_design(store: &Store, request: ApproveDesignRequest) -> Result<Is
         sequence: record.audit.len() as u64 + 1,
         generation: record.generation,
         actor: request.reviewer,
-        reason: "approve completed issue design".into(),
+        reason: if reapproval {
+            "reapprove changed issue design"
+        } else {
+            "approve completed issue design"
+        }
+        .into(),
         operation: "approve_design".into(),
     });
     hydrate_projections(&mut record, &cards)?;
@@ -1296,6 +1308,24 @@ pub(crate) fn verify_cards(
     record: &IssueRecord,
     cards: &BTreeMap<CardKind, CardValues>,
 ) -> Result<()> {
+    verify_card_projections(store, record, cards)?;
+    let design_digest = digest(&fs::read(store.root.join(&record.design_path))?);
+    let diagram_digest = digest(&fs::read(store.root.join(&record.diagram_path))?);
+    validate_cross_card(
+        cards,
+        &record.design_path,
+        &design_digest,
+        &record.diagram_path,
+        &diagram_digest,
+    )?;
+    Ok(())
+}
+
+fn verify_card_projections(
+    store: &Store,
+    record: &IssueRecord,
+    cards: &BTreeMap<CardKind, CardValues>,
+) -> Result<()> {
     verify_record(record)?;
     for (kind, values) in cards {
         if values.kind() != *kind
@@ -1332,15 +1362,6 @@ pub(crate) fn verify_cards(
             ));
         }
     }
-    let design_digest = digest(&fs::read(store.root.join(&record.design_path))?);
-    let diagram_digest = digest(&fs::read(store.root.join(&record.diagram_path))?);
-    validate_cross_card(
-        cards,
-        &record.design_path,
-        &design_digest,
-        &record.diagram_path,
-        &diagram_digest,
-    )?;
     Ok(())
 }
 
@@ -1510,17 +1531,7 @@ fn validate_phase_guard(
         && !srp.findings.iter().any(|finding| {
             finding.actionable && finding.disposition == crate::cards::FindingDisposition::Open
         });
-    let validation_passed = !sor.actual_validation.is_empty()
-        && sor.actual_validation.iter().all(|result| {
-            !result.command.is_empty()
-                && !result.purpose.is_empty()
-                && !result.evidence_ref.is_empty()
-                && matches!(
-                    result.outcome,
-                    crate::cards::EvidenceOutcome::Passed
-                        | crate::cards::EvidenceOutcome::SkippedNonGoal
-                )
-        });
+    let validation_passed = terminal_validation_passed(&sor.actual_validation);
     if next == LifecyclePhase::Published
         && (!review_current
             || record.review_assignment.as_ref().is_none_or(|assignment| {

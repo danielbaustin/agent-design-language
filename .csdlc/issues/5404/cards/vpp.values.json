@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5404,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-12] Resolve #5403 security and protocol findings",
+    "slug": "v0-91-7-review-fix-wp12-security-protocol-findings",
+    "version": "v0.91.7",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "wp12-review-fix",
+          "proof_role": "Focused WP-12 review-fix validators and regression checks",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1800,
+          "budget_tokens": 12000,
+          "argv": [
+            "bash",
+            "adl/tools/run_pr_fast_coverage_lane.sh"
+          ],
+          "parallel_group": "wp12",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on security/protocol overclaim; document downgraded truth rather than inventing proof.",
+      "design_ref": ".csdlc/prepared/issues/5404/design.md",
+      "design_digest": "bcf2460905e3b06e3b268b83e3f976e28e912860a418c9aaa2a345df2e20949e",
+      "diagram_ref": ".csdlc/prepared/issues/5404/diagram.mmd",
+      "diagram_digest": "c64dba65d2a52bbfb5b54816e68f7c90c56ca70a5dc45a7e45e4fde38e094967"
+    }
+  }
+}

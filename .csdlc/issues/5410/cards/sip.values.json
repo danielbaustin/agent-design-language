@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5410,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3] Assemble and secure the #5174 live kernel",
+    "slug": "v0-91-7-review-fix-runtime-v3-assemble-secure-live-kernel",
+    "version": "v0.91.7",
+    "generation": 21
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Replace the seed proof serve topology with the contract-validated live Runtime v3 architecture and truthful continuity, time, and inventory evidence.",
+      "required_outcome": "The live binary starts only from the required component set, authenticates restored state, remains time-degraded until qualified, and reports reproducible current counts.",
+      "declared_scope": [
+        "adl-runtime-kernel",
+        "docs/architecture/RUNTIME_V3_FINAL_REVIEW_5175.md",
+        "docs/architecture/runtime_v3_current_inventory.v1.json",
+        "docs/reviews/v0.91.7/runtime-v3-5410",
+        ".csdlc/issues/5410"
+      ],
+      "authority_boundary": [
+        "Do not modify Runtime v2 or adl-runtime",
+        "Reuse existing registry, Ed25519 checkpoint, Tokio, and rsntp primitives",
+        "Fail closed on missing external bindings, signer trust, or time qualification"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

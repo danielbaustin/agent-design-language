@@ -1,8 +1,10 @@
 //! WP-12 CSM CAV red/blue proof packet.
 //!
 //! The proof is intentionally local and non-destructive. It exercises the CSM
-//! owner binary surface, records red-team attempts, and captures the blue-team
-//! detection or fail-closed response without retaining secrets or host paths.
+//! owner-adjacent boundary surfaces, records red-team attempts, and captures the
+//! blue-team detection or fail-closed response without retaining secrets or host
+//! paths. It is a bounded local/static proof, not an integrated CSM HTTP runtime
+//! path proof.
 
 use crate::observability::emit_event;
 use crate::runtime_v2::runtime_v2_security_boundary_proof_contract;
@@ -140,10 +142,10 @@ pub fn prove_cav_red_blue(options: CavRedBlueProofOptions) -> Result<CavRedBlueP
         operator_ref: short_hash(&options.operator),
         runtime_surface: RuntimeSurface {
             owner_binary: "csm".to_string(),
-            integrated_csm_path: true,
-            runtime_api_surface: "embedded_http_runtime_api_status_health_ready_metrics_events"
+            integrated_csm_path: false,
+            runtime_api_surface: "bounded_static_and_local_boundary_probes_no_integrated_csm_http"
                 .to_string(),
-            http_runtime_api_integrated: true,
+            http_runtime_api_integrated: false,
             websocket_runtime_api_integrated: false,
             otel_export_surface: "event_log_and_observability_event_schema".to_string(),
             cloud_hook_mode: "local_denial_no_aws_mutation".to_string(),
@@ -161,6 +163,7 @@ pub fn prove_cav_red_blue(options: CavRedBlueProofOptions) -> Result<CavRedBlueP
         },
         non_claims: vec![
             "does not perform destructive cloud actions".to_string(),
+            "does not claim integrated CSM HTTP runtime path execution".to_string(),
             "does not claim production WebSocket runtime API integration".to_string(),
             "does not retain provider, AWS, or operator secret values".to_string(),
             "does not claim live adversarial coverage beyond these retained scenarios".to_string(),
@@ -188,10 +191,10 @@ pub fn validate_proof(proof: &CavRedBlueProof) -> Result<()> {
     if proof.issue != 4914 || proof.parent_issue != 4639 || proof.sprint_issue != 4656 {
         bail!("CAV red-blue proof has unexpected issue lineage");
     }
-    if !proof.runtime_surface.integrated_csm_path
-        || !proof.runtime_surface.http_runtime_api_integrated
+    if proof.runtime_surface.integrated_csm_path
+        || proof.runtime_surface.http_runtime_api_integrated
     {
-        bail!("CAV red-blue proof must run through the integrated CSM HTTP runtime path");
+        bail!("CAV red-blue proof must not claim integrated CSM HTTP runtime path without live boundary-crossing evidence");
     }
     if proof.runtime_surface.websocket_runtime_api_integrated {
         bail!("CAV red-blue proof must not claim WebSocket runtime API integration");
@@ -224,12 +227,12 @@ pub fn validate_proof(proof: &CavRedBlueProof) -> Result<()> {
             bail!("CAV red-blue proof missing required scenario {id}");
         }
     }
-    if !proof
+    if proof
         .red_blue_scenarios
         .iter()
-        .any(|scenario| scenario.runs_end_to_end && scenario.integrated_csm_path)
+        .any(|scenario| scenario.runs_end_to_end || scenario.integrated_csm_path)
     {
-        bail!("CAV red-blue proof must include an end-to-end integrated CSM scenario");
+        bail!("CAV red-blue proof scenarios must not claim integrated end-to-end execution");
     }
     if proof.pass_fail_register.len() != proof.red_blue_scenarios.len() {
         bail!("CAV red-blue pass/fail register must cover each scenario");
@@ -305,7 +308,6 @@ fn red_blue_scenarios() -> Result<Vec<RedBlueScenario>> {
                 observed_event: "csm_security_event.snapshot_integrity_refused",
                 decision: "refused",
                 evidence_ref: "cav_red_blue_events.jsonl#malformed_snapshot",
-                runs_end_to_end: false,
             },
             malformed,
         ),
@@ -318,7 +320,6 @@ fn red_blue_scenarios() -> Result<Vec<RedBlueScenario>> {
                 observed_event: "csm_security_event.operator_command_refused",
                 decision: "refused",
                 evidence_ref: "cav_red_blue_events.jsonl#unauthorized_control_command",
-                runs_end_to_end: true,
             },
             unauthorized,
         ),
@@ -332,7 +333,6 @@ fn red_blue_scenarios() -> Result<Vec<RedBlueScenario>> {
                 observed_event: "csm_security_event.telemetry_injection_detected",
                 decision: "detected",
                 evidence_ref: "cav_red_blue_events.jsonl#telemetry_injection",
-                runs_end_to_end: false,
             },
             telemetry,
         ),
@@ -345,7 +345,6 @@ fn red_blue_scenarios() -> Result<Vec<RedBlueScenario>> {
                 observed_event: "csm_security_event.credential_path_leakage_refused",
                 decision: "refused",
                 evidence_ref: "cav_red_blue_events.jsonl#credential_path_leakage",
-                runs_end_to_end: false,
             },
             leakage,
         ),
@@ -358,7 +357,6 @@ fn red_blue_scenarios() -> Result<Vec<RedBlueScenario>> {
                 observed_event: "csm_security_event.replay_tampering_refused",
                 decision: "refused",
                 evidence_ref: "cav_red_blue_events.jsonl#replay_tampering",
-                runs_end_to_end: false,
             },
             replay,
         ),
@@ -372,7 +370,6 @@ fn red_blue_scenarios() -> Result<Vec<RedBlueScenario>> {
                 observed_event: "csm_security_event.cloud_hook_denial",
                 decision: "refused",
                 evidence_ref: "cav_red_blue_events.jsonl#cloud_hook_denial",
-                runs_end_to_end: false,
             },
             cloud,
         ),
@@ -387,7 +384,6 @@ struct ScenarioSpec {
     observed_event: &'static str,
     decision: &'static str,
     evidence_ref: &'static str,
-    runs_end_to_end: bool,
 }
 
 fn scenario(spec: ScenarioSpec, executed: ExecutedControl) -> RedBlueScenario {
@@ -395,7 +391,7 @@ fn scenario(spec: ScenarioSpec, executed: ExecutedControl) -> RedBlueScenario {
         id: spec.id.to_string(),
         red_team_attempt: spec.red_team_attempt.to_string(),
         fixture_ref: spec.fixture_ref.to_string(),
-        integrated_csm_path: true,
+        integrated_csm_path: false,
         expected_detection: spec.expected_detection.to_string(),
         observed_event: spec.observed_event.to_string(),
         decision: spec.decision.to_string(),
@@ -404,7 +400,7 @@ fn scenario(spec: ScenarioSpec, executed: ExecutedControl) -> RedBlueScenario {
         observed_result: executed.result,
         secret_material_retained: false,
         host_path_retained: false,
-        runs_end_to_end: spec.runs_end_to_end,
+        runs_end_to_end: false,
     }
 }
 
@@ -742,11 +738,18 @@ mod tests {
         assert!(events.contains("malformed_snapshot"));
         assert!(events.contains("cloud_hook_denial"));
         assert_ne!(proof.operator_ref, "operator_identity_hash_only");
+        assert!(!proof.runtime_surface.integrated_csm_path);
+        assert!(!proof.runtime_surface.http_runtime_api_integrated);
         assert!(proof
-            .red_blue_scenarios
+            .non_claims
             .iter()
-            .all(|scenario| !scenario.executed_control.is_empty()
-                && !scenario.observed_result.is_empty()));
+            .any(|claim| claim.contains("does not claim integrated CSM HTTP runtime path")));
+        assert!(proof.red_blue_scenarios.iter().all(|scenario| !scenario
+            .executed_control
+            .is_empty()
+            && !scenario.observed_result.is_empty()
+            && !scenario.integrated_csm_path
+            && !scenario.runs_end_to_end));
     }
 
     #[test]

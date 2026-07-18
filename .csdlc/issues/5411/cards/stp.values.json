@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5411,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3] Resolve #5227 selector, guardian, and pressure-stop findings",
+    "slug": "v0-91-7-runtime-v3-selector-guardian-pressure-stop",
+    "version": "v0.91.7",
+    "generation": 23
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair only the four #5227 review findings retained by #5411 and their direct proving surfaces.",
+      "deliverables": [
+        "Truthful selector and release-evidence records",
+        "Process-group guardian with bounded shutdown and capture",
+        "Periodic resource-pressure monitor wired to signed continuity and graceful stop",
+        "Focused regression and integration proof"
+      ],
+      "acceptance_criteria": [
+        "Selector claims accurately distinguish reporting from invocation without modifying Runtime v2",
+        "Guardian terminates the supervised process tree and bounds output-capture shutdown",
+        "StopRequired pressure creates a signed live checkpoint before graceful kernel shutdown",
+        "Checkpoint failure cannot be reported as a clean pressure stop",
+        "Executed, contract-only, ignored, and deferred evidence are distinct and only executed proof closes live requirements",
+        "Runtime v3 remains within the approved 12,000-line implementation budget or any variance is explicitly justified"
+      ],
+      "dependencies": [
+        "#5410 merged and closed",
+        "#5409 protected paths remain untouched",
+        "Existing Runtime v3 weather, continuity, supervisor, and guardian contracts"
+      ],
+      "repo_inputs": [
+        "docs/reviews/v0.91.7/runtime-v3-5410/DESIGN.md",
+        "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+        "docs/architecture/runtime_v3_release_proof_gate_5220.v1.json",
+        "adl-runtime/src/guardian.rs",
+        "adl-runtime-kernel/src/weather.rs",
+        "adl-runtime-kernel/src/live_continuity.rs"
+      ],
+      "non_goals": [
+        "Runtime v2 changes or decommission",
+        "Default runtime cutover",
+        "New service-manager, signing, serialization, or monitoring framework",
+        "GPU qualification or distributed-polis work"
+      ]
+    }
+  }
+}

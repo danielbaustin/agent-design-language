@@ -381,6 +381,7 @@ async fn adaptation_store_round_trips_through_checkpoint_coordinator() {
         .checkpoint(
             CheckpointRequest {
                 generation: 1,
+                previous_integrity: None,
                 accepted_through: completed.state.accepted_sequence,
                 provenance: "reasoning-proof".to_owned(),
                 topology_hash: "topology-v1".to_owned(),

@@ -1,0 +1,94 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5411,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3] Resolve #5227 selector, guardian, and pressure-stop findings",
+    "slug": "v0-91-7-runtime-v3-selector-guardian-pressure-stop",
+    "version": "v0.91.7",
+    "generation": 23
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "runtime-v3-full",
+          "proof_role": "Prove pressure monitoring, signed continuity, release evidence semantics, and all Runtime v3 kernel contracts",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1800,
+          "budget_tokens": 12000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--all-targets"
+          ],
+          "parallel_group": "runtime-v3",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-guardian",
+          "proof_role": "Prove Unix process-tree containment, bounded capture, restart, and signal forwarding",
+          "acceptance_ids": [
+            "AC-2"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl-runtime/Cargo.toml",
+            "guardian::tests"
+          ],
+          "parallel_group": "runtime-v3-guardian",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-quality",
+          "proof_role": "Prove formatting, warnings, and implementation budget truth",
+          "acceptance_ids": [
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1800,
+          "budget_tokens": 8000,
+          "argv": [
+            "cargo",
+            "clippy",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "parallel_group": "runtime-v3-quality",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed: preserve the running process when continuity cannot commit, report the terminal error, and do not promote non-executed evidence.",
+      "design_ref": ".csdlc/issues/5411/retained/design.md",
+      "design_digest": "42753c93f96ca6246d88216dc16f79f2d4a1c96b516babc266af641f5b3f8355",
+      "diagram_ref": ".csdlc/issues/5411/retained/diagram.mmd",
+      "diagram_digest": "cbc3fc41538cc3470e917a60083a2098c9553d2e4b3eeea14368004ff43c0386"
+    }
+  }
+}

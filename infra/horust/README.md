@@ -19,16 +19,26 @@ Install the pinned guardian outside the repository build:
 cargo install --locked horust --version 0.1.13
 ```
 
-Set the native runtime binary, init file, continuity path, and public control identity,
-then run the service definition:
+Set the native runtime binary, init file, continuity directory, distinct
+continuity-signing and operation-permit identities, and public control identity,
+then run the service definition. Source private signing material from the host
+secret manager; do not place it in the init file.
+
+The runtime derives the continuity public identity at startup and exits with a
+configuration error when it matches the operation-permit public key.
 
 ```sh
 export ADL_RUNTIME_BIN=/usr/local/bin/adl-runtime-kernel
 export ADL_RUNTIME_INIT="$HOME/.adl/runtime-v3/runtime-init.toml"
-export ADL_RUNTIME_CAPSULE="$HOME/.adl/runtime-v3/continuity.json"
+export ADL_RUNTIME_CONTINUITY_ROOT="$HOME/.adl/runtime-v3/continuity"
 export ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX=<ed25519-public-key-hex>
 export ADL_RUNTIME_CONTROL_KEY_ID=operator
 export ADL_RUNTIME_CONTROL_PRINCIPAL=operator
+export ADL_RUNTIME_CONTINUITY_SIGNING_KEY_HEX=<distinct-ed25519-private-key-hex>
+export ADL_RUNTIME_CONTINUITY_KEY_ID=runtime-continuity
+export ADL_RUNTIME_CONTINUITY_MIN_GENERATION=0
+export ADL_RUNTIME_OPERATION_PUBLIC_KEY_HEX=<distinct-ed25519-public-key-hex>
+export ADL_RUNTIME_OPERATION_KEY_ID=runtime-operations
 horust --services-path infra/horust/adl-runtime-kernel.toml
 ```
 

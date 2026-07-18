@@ -3,31 +3,90 @@
   "issue": 5383,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "5774e6b65a3f68bbe9cfdfde4e2d22219496012f36018b5b495815756bd8a140",
-  "phase": "implemented",
-  "generation": 18,
-  "digest": "c08ce842a899b8b995f02572dcda7d7585ed0bbd09db3e13501c219692ac8545",
-  "claim": {
-    "id": "csdlc-v2-5383-v0918-planning-package",
-    "owner": "codex",
-    "generation": 18,
-    "acquired_unix_seconds": 1784133645,
-    "expires_unix_seconds": 1784220045,
-    "heartbeat_unix_seconds": 1784133645,
-    "branch": "codex/5383-v0-91-7-restore-wp14-and-create-v0-91-8-planning-package",
-    "worktree": ".worktrees/adl-wp-5383",
-    "protected_paths": [
+  "phase": "closed_out",
+  "generation": 25,
+  "digest": "9680adcce40727d4d35e6c8dd911a8b083f2bc0d3e5c0bd3893c421779bea80c",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent-huygens",
+    "assigned_by": "codex",
+    "revision": "git-blake3:f55126638707b436478316bf84dbcb040ee60cca:3c69e35ef0b3df7b5b868ef547f573ee258e085493a52c65efad2d048409b2e1",
+    "scope": [
+      ".csdlc/issues/5383"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent-huygens",
+    "scope": [
+      ".csdlc/issues/5383"
+    ],
+    "reviewed_revision": "git-blake3:f55126638707b436478316bf84dbcb040ee60cca:3c69e35ef0b3df7b5b868ef547f573ee258e085493a52c65efad2d048409b2e1",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5383,
+    "pull_request": 5433,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5433",
+    "base": "main",
+    "head": "codex/5383-terminal-repair",
+    "revision": "git-blake3:f55126638707b436478316bf84dbcb040ee60cca:3c69e35ef0b3df7b5b868ef547f573ee258e085493a52c65efad2d048409b2e1",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": {
+    "pull_request": 5433,
+    "head_sha": "f55126638707b436478316bf84dbcb040ee60cca",
+    "checks": [
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29532929523/job/87737278569"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29532929523/job/87737310044"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29532929523/job/87737310342"
+      },
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29532929523/job/87737474905"
+      }
+    ],
+    "review_state": "unknown",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5433,
+    "disposition": "merged",
+    "observed_sha": "f55126638707b436478316bf84dbcb040ee60cca",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5383.json",
+    "released_branch": "codex/5383-terminal-repair",
+    "released_worktree": ".worktrees/adl-wp-5383-terminal-repair",
+    "released_protected_paths": [
       "docs/milestones/v0.91.8",
       "docs/milestones/v0.91.7",
       "docs/milestones/v0.92",
       ".csdlc/issues/5383"
-    ],
-    "purpose": "Restore WP-14 routing and create the missing v0.91.8 planned-posture milestone package"
+    ]
   },
-  "review_assignment": null,
-  "review": null,
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
   "migration": null,
   "design_path": "docs/milestones/v0.91.8/setup/5383/DESIGN.md",
   "diagram_path": "docs/milestones/v0.91.8/setup/5383/DIAGRAM.mmd",
@@ -39,34 +98,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "5dbc5e215412f30b69c3809180af5fa882d73eae0f8eaec8b8646bd8b49ab785",
+      "values_digest": "db0641f63fd7952bef98b316bbcb47477444c7288a8e347bc3f07d0b13a6f1ef",
       "rendered_digest": "b2757d55da8bf9be4ffbcaed846c5e9c15bcee27e1db146206b071c9636084fc",
       "ast_digest": "d1b3405638cb259d04fef5f91b87a803938d66998afb518ba0f2e56604a02d44"
     },
     "stp": {
-      "values_digest": "21ad9a0b8bec3e2604e20e80cd7b66d7ae080f22a9dd0176bde676811812abe4",
+      "values_digest": "701806ac59372564b0ad332bb78f67cfd714183fa96b9c92259d0ed9ba5f25a8",
       "rendered_digest": "c3196f51a37435dd4483767048cbf2b4c2e9dba3cac3212963043e2d2d7b09f6",
       "ast_digest": "5e42129772d7467f88f42226ccd57a9e9587e8a85d4c78831f13f91efde0fe95"
     },
     "spp": {
-      "values_digest": "55dbd40e96b4430f43f7870867a8860da86ce8a3ce668effd60eaa327339c30c",
-      "rendered_digest": "f0033e9d6832ab14bbbe131938597a3363ecc71df4c6458b5776b0ec4a018b6e",
-      "ast_digest": "1c037064d5738a2d8c4ec99d1c61f7f61fa5eeff9be658bc3f3427c33d5970ba"
+      "values_digest": "7349970af3412dfad05851af448b422b17ead569c3fce279f06608e578e29aab",
+      "rendered_digest": "ace81fb4d398db2d89ec5601f3c048feff8adbbcb1020d916f76b6bb1bf83677",
+      "ast_digest": "7a88c9d65193bb3bc2f0d1f4608c22731bac85feb6ece957c23947d85ea13c43"
     },
     "vpp": {
-      "values_digest": "2a25407663cd921ef06477520c47122a0290b8083cabf127849212b93dc3b229",
+      "values_digest": "507e7b5ed32e944f9450b521eb7101cc12b7bf20569a58ec6f7987527dd3c415",
       "rendered_digest": "e998ed06a1b566fa6f747901fab80b45ed9052c8ee6d8828a9368851f782f1aa",
       "ast_digest": "97b60032a5b4567f8a7f1b1efede7a72fe827afad430d98c1ee2a3e3fc75ed8f"
     },
     "srp": {
-      "values_digest": "3c31d76d393a226982d5ec20b63134f7248ce4c67fae10c04291ae78cb84b007",
-      "rendered_digest": "e20b5c59da2e500cba4e9b89b52af6a01653f99f81c47b5dff412e9c27079ab6",
-      "ast_digest": "b044e3d2083ab18d2b2ab74f0194f92708dd7ed40a1f52896d8b27909560293c"
+      "values_digest": "208f8af7c21c2aec639a48ce84a16663ee6e3e0bd8faed32466227bb47f4df7c",
+      "rendered_digest": "0ce3add31722377b928350bbae1db6bf564a69efde137a347ad429754591513a",
+      "ast_digest": "0f84820d118e53dd8c809ef72fe1b014af27bf927427b06e6cf6539588659f7f"
     },
     "sor": {
-      "values_digest": "cf2bb7f4d86d69d23dca001e2ca13d79e6cd9571b8072793b74c3234ad1b1d38",
-      "rendered_digest": "4707a42d31ce0cd4693160ed086a7c52522140f23634c88d2a151be50b7402e8",
-      "ast_digest": "24585a68290edeff3be507e03930da737b858a88da87a929662c84c4dc34163c"
+      "values_digest": "a4ef791d9453edf347fddc16a69bde65b8f131e69e6e57c39171bdefdac62918",
+      "rendered_digest": "6ed883ee3641ae735628d376078beec4e2212820e780558e55881f8b05554e22",
+      "ast_digest": "79668cf3601e7f9cbaf9abdfc7f28b7da642a5beb3cf9d5d9b171330dca16775"
     }
   },
   "transitions": [
@@ -118,6 +177,41 @@
       "to": "implemented",
       "actor": "codex",
       "reason": "recover committed reviewed metadata so publication review can be applied as working-tree lifecycle state"
+    },
+    {
+      "sequence": 8,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "exact-revision review passed after lifecycle plan repair"
+    },
+    {
+      "sequence": 9,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 10,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 11,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 12,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -267,6 +361,69 @@
       "actor": "codex",
       "reason": "recover committed reviewed metadata so publication review can be applied as working-tree lifecycle state",
       "operation": "recover_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex",
+      "reason": "Recover expired closed issue claim to repair terminal lifecycle truth before reconciliation",
+      "operation": "{\"previous_owner\":\"codex\",\"observed_expiry_unix_seconds\":1784220045,\"recovery_actor\":\"codex\",\"reason\":\"Recover expired closed issue claim to repair terminal lifecycle truth before reconciliation\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex",
+      "reason": "v0.91.8 planning package exists on merged PR 5389",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"step-2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 24,
+      "generation": 20,
+      "actor": "codex",
+      "reason": "focused validation, independent review, and PR 5389 publication completed",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"step-3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 20,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 26,
+      "generation": 21,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 22,
+      "actor": "codex",
+      "reason": "exact-revision review passed after lifecycle plan repair",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 28,
+      "generation": 23,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 29,
+      "generation": 24,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 30,
+      "generation": 25,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
     }
   ]
 }

@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+use std::path::{Path, PathBuf};
+use std::time::Duration;
 use sysinfo::{Components, Disks, Networks, System};
 
 use crate::WeatherConfig;
@@ -84,6 +86,7 @@ pub struct SysinfoWeatherObserver {
     disks: Disks,
     networks: Networks,
     components: Components,
+    disk_scope: Option<PathBuf>,
 }
 
 impl Default for SysinfoWeatherObserver {
@@ -93,8 +96,38 @@ impl Default for SysinfoWeatherObserver {
             disks: Disks::new_with_refreshed_list(),
             networks: Networks::new_with_refreshed_list(),
             components: Components::new_with_refreshed_list(),
+            disk_scope: None,
         }
     }
+}
+
+impl SysinfoWeatherObserver {
+    pub fn for_path(path: impl AsRef<Path>) -> Self {
+        Self {
+            disk_scope: Some(resolve_scope_path(path.as_ref())),
+            ..Self::default()
+        }
+    }
+}
+
+fn resolve_scope_path(path: &Path) -> PathBuf {
+    let absolute = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        std::env::current_dir()
+            .unwrap_or_else(|_| PathBuf::from("."))
+            .join(path)
+    };
+    let mut ancestor = absolute.as_path();
+    while !ancestor.exists() {
+        let Some(parent) = ancestor.parent() else {
+            return absolute;
+        };
+        ancestor = parent;
+    }
+    std::fs::canonicalize(ancestor)
+        .map(|resolved| resolved.join(absolute.strip_prefix(ancestor).unwrap_or(Path::new(""))))
+        .unwrap_or(absolute)
 }
 
 impl WeatherObserver for SysinfoWeatherObserver {
@@ -122,6 +155,7 @@ impl WeatherObserver for SysinfoWeatherObserver {
                 available_bytes: disk.available_space(),
             })
             .collect::<Vec<_>>();
+        let disks = scoped_disks(disks, self.disk_scope.as_deref());
         let (received, transmitted) =
             self.networks
                 .iter()
@@ -157,6 +191,19 @@ impl WeatherObserver for SysinfoWeatherObserver {
             gpus: Observation::unavailable("optional_platform_adapter"),
         }
     }
+}
+
+fn scoped_disks(mut disks: Vec<DiskWeather>, scope: Option<&Path>) -> Vec<DiskWeather> {
+    let Some(scope) = scope else {
+        return disks;
+    };
+    let selected = disks
+        .iter()
+        .filter(|disk| scope.starts_with(Path::new(&disk.mount)))
+        .max_by_key(|disk| Path::new(&disk.mount).components().count())
+        .map(|disk| disk.mount.clone());
+    disks.retain(|disk| Some(&disk.mount) == selected.as_ref());
+    disks
 }
 
 fn to_basis_points(percent: f32) -> u16 {
@@ -223,6 +270,29 @@ impl WeatherHealthReport {
     }
 }
 
+pub async fn monitor_until_stop<O, F>(
+    config: WeatherConfig,
+    mut observer: O,
+    mut publish: F,
+) -> WeatherHealthReport
+where
+    O: WeatherObserver,
+    F: FnMut(WeatherHealthReport),
+{
+    let mut previous = ResourceState::Healthy;
+    let mut interval = tokio::time::interval(Duration::from_millis(config.sample_millis));
+    interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+    loop {
+        interval.tick().await;
+        let report = WeatherHealthReport::from_sample(&config, observer.sample(), previous);
+        previous = report.resource_state;
+        publish(report.clone());
+        if report.shutdown_decision == ShutdownDecision::SerializeStateThenStop {
+            return report;
+        }
+    }
+}
+
 pub fn resource_state(
     config: &WeatherConfig,
     sample: &WeatherSample,
@@ -258,5 +328,57 @@ pub fn resource_state(
         ResourceState::Warning
     } else {
         ResourceState::Healthy
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn disk_pressure_uses_the_filesystem_containing_continuity_state() {
+        let disks = vec![
+            DiskWeather {
+                mount: "/".to_owned(),
+                total_bytes: 100,
+                available_bytes: 1,
+            },
+            DiskWeather {
+                mount: "/Volumes/FastWork".to_owned(),
+                total_bytes: 1_000,
+                available_bytes: 900,
+            },
+            DiskWeather {
+                mount: "/Volumes/unrelated-small-disk".to_owned(),
+                total_bytes: 10,
+                available_bytes: 0,
+            },
+        ];
+
+        let selected = scoped_disks(
+            disks,
+            Some(Path::new("/Volumes/FastWork/runtime-v3/continuity")),
+        );
+
+        assert_eq!(selected.len(), 1);
+        assert_eq!(selected[0].mount, "/Volumes/FastWork");
+        assert_eq!(selected[0].available_bytes, 900);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn disk_scope_resolves_a_symlinked_continuity_ancestor() {
+        use std::os::unix::fs::symlink;
+
+        let root = tempfile::tempdir().unwrap();
+        let target = root.path().join("target");
+        std::fs::create_dir(&target).unwrap();
+        let link = root.path().join("continuity-link");
+        symlink(&target, &link).unwrap();
+
+        assert_eq!(
+            resolve_scope_path(&link.join("future-generation")),
+            target.canonicalize().unwrap().join("future-generation")
+        );
     }
 }

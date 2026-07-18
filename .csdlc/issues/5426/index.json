@@ -1,0 +1,456 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5426,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "e55c2db4bd8ae777019f0debbc3182c08f764f13e2fad1f7888f0de141ce5efb",
+  "phase": "closed_out",
+  "generation": 25,
+  "digest": "ba0fc520eafecbd4119c6c59ec5c1678b38e227ba28fa0a9680ad05f10b7c067",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent-huygens",
+    "assigned_by": "codex",
+    "revision": "git-blake3:d1ed65343d71bcf55274affb1fb731e1dd9ad2a9:e809f3c46311951ca0ca80d86fbc9e6665adbdf7549fbddfb7c07d365a257ba2",
+    "scope": [
+      "csdlc-v2/src/cards.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      "docs/reviews/v0.91.7/csdlc-v2-5426"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent-huygens",
+    "scope": [
+      "csdlc-v2/src/cards.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      "docs/reviews/v0.91.7/csdlc-v2-5426"
+    ],
+    "reviewed_revision": "git-blake3:d1ed65343d71bcf55274affb1fb731e1dd9ad2a9:e809f3c46311951ca0ca80d86fbc9e6665adbdf7549fbddfb7c07d365a257ba2",
+    "findings": [
+      {
+        "id": "F-5426-1",
+        "severity": "p1",
+        "summary": "Terminal closeout bypassed latest validation state",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:d1ed65343d71bcf55274affb1fb731e1dd9ad2a9:e809f3c46311951ca0ca80d86fbc9e6665adbdf7549fbddfb7c07d365a257ba2",
+        "route": null
+      },
+      {
+        "id": "F-5426-2",
+        "severity": "p2",
+        "summary": "Merged regression used an invalid closed observation and did not reach the repaired guard",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:d1ed65343d71bcf55274affb1fb731e1dd9ad2a9:e809f3c46311951ca0ca80d86fbc9e6665adbdf7549fbddfb7c07d365a257ba2",
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5426,
+    "pull_request": 5430,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5430",
+    "base": "main",
+    "head": "codex/5426-validation-supersession",
+    "revision": "git-blake3:d1ed65343d71bcf55274affb1fb731e1dd9ad2a9:e809f3c46311951ca0ca80d86fbc9e6665adbdf7549fbddfb7c07d365a257ba2",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": {
+    "pull_request": 5430,
+    "head_sha": "d1ed65343d71bcf55274affb1fb731e1dd9ad2a9",
+    "checks": [
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29531523910/job/87732707261"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29531523910/job/87732745943"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29531523910/job/87732746403"
+      },
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29531523910/job/87732915058"
+      }
+    ],
+    "review_state": "unknown",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5430,
+    "disposition": "merged",
+    "observed_sha": "d1ed65343d71bcf55274affb1fb731e1dd9ad2a9",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5426.json",
+    "released_branch": "codex/5426-validation-supersession",
+    "released_worktree": ".worktrees/adl-wp-5426",
+    "released_protected_paths": [
+      ".csdlc/issues/5426",
+      "csdlc-v2/src",
+      "csdlc-v2/tests",
+      "docs/reviews/v0.91.7/csdlc-v2-5426"
+    ]
+  },
+  "migration": null,
+  "design_path": "docs/reviews/v0.91.7/csdlc-v2-5426/DESIGN.md",
+  "diagram_path": "docs/reviews/v0.91.7/csdlc-v2-5426/DIAGRAM.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator-authorized-tooling-repair",
+      "revision": "c4dcb826af2864338d6f39dbbd21de3c5a2dfdcaad04932990648e74fd9ad983"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "d260e95176546e80d0d510b31498e078e5c44e290fb76a2c838c5eff56636e12",
+      "rendered_digest": "81352b303a0c1a359c6e8e08e149933236c7b3c76c31a20cc4efed4b54519444",
+      "ast_digest": "16ab4cc12d990fb65ddffc717c8ccfc5e974f4a368ca69c8193d523977b3140c"
+    },
+    "stp": {
+      "values_digest": "98979c9aff35a5f959f8b51083bb748de850d5787058b347c98024d413eec6e5",
+      "rendered_digest": "742886029862ab898b3d4fe8b65f8c4c90a5f35480368570c59167af9f2e3cde",
+      "ast_digest": "646a1b19c7056b9eaab80cda5bbe207989dab1b78c4d8bee59abe5bda30bf650"
+    },
+    "spp": {
+      "values_digest": "35266c2f0d83f2183e99fad572b3fba5945188198e3740d08dcca9c204226125",
+      "rendered_digest": "40f3c6506a4e3c9dd975841925f8bd450870c151d3ae50bd92a52c3da6c9cea0",
+      "ast_digest": "1dc61d64da66d210c72b4cec1f029cfdfbfb6d0c7119ef617bc33dea163cb4f1"
+    },
+    "vpp": {
+      "values_digest": "d5bcfe0b520d36fe1fa999f1c5795e17609c9669929ded1ec44d1dfcae20f9fe",
+      "rendered_digest": "bed264bfdbfcea6ba358a529ce583149dc2902a2676ab59bab8b808b31c785f9",
+      "ast_digest": "28e5c7a11aa26313df7f2edbefd843931149d64bebaa89beb39508f63c610cdb"
+    },
+    "srp": {
+      "values_digest": "69ecce96d94a3dd4a41f833bdc2a736009bd1d94bef86e690e9dd334e3845b7e",
+      "rendered_digest": "9bdcfe1e5659ad02a657ef5d874e68493453aa0524089e6ff6fb81f8ae125127",
+      "ast_digest": "bbced3bd3fd87d517e8a8941d5dae444e788710a6c7e959e1c35c6a0d525dc74"
+    },
+    "sor": {
+      "values_digest": "22010520681db4c16133b03ddc27321d61dd316a73e4eb96b9a1c6de507626a1",
+      "rendered_digest": "79756c3321a3e98cd55072781ae92a76b2fe959614b2d3033342bf9963a66f66",
+      "ast_digest": "b687129c039ecab42256abccab8871c3b748a5a39173b045e4d5f749d1661907"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "bounded implementation and validation complete"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "exact-revision independent review passed with findings fixed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "return to implemented phase to record S3 review and publication completion truthfully"
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "restore exact-revision passing review after truthful S3 completion"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "shared latest-observation terminal validation semantics implemented",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "record bounded implementation",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented append-only terminal validation supersession using the latest observation for each logical validation identity.\",\"changes\":[\"Centralized terminal validation evaluation in cards::terminal_validation_passed\",\"Applied the shared evaluator to SOR completion, readiness, and lifecycle phase guards\",\"Added unit and end-to-end regression coverage for superseding and regressing observations\"],\"artifacts\":[\"docs/reviews/v0.91.7/csdlc-v2-5426/DESIGN.md\",\"docs/reviews/v0.91.7/csdlc-v2-5426/DIAGRAM.mmd\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "record formatting proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"fmt\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--\",\"--check\"],\"purpose\":\"Rust formatting proof\",\"outcome\":\"passed\",\"evidence_ref\":\"local-fastwork-validation-5426-fmt\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "record full test proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\"],\"purpose\":\"Full C-SDLC v2 regression suite\",\"outcome\":\"passed\",\"evidence_ref\":\"local-fastwork-validation-5426-test\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex",
+      "reason": "record strict lint proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Strict all-target Rust lint proof\",\"outcome\":\"passed\",\"evidence_ref\":\"local-fastwork-validation-5426-clippy\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "focused and full validation completed on FastWork",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex",
+      "reason": "bounded implementation and validation complete",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex",
+      "reason": "record P1 review repair",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented append-only terminal validation supersession and enforced it at readiness, lifecycle, SOR completion, and terminal closeout boundaries.\",\"changes\":[\"Enforced current passing validation before every terminal closeout disposition\",\"Added merged and closed-unmerged pass-then-failure closeout regressions\"],\"artifacts\":[]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex",
+      "reason": "record post-review formatting proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"fmt\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--\",\"--check\"],\"purpose\":\"Rust formatting proof\",\"outcome\":\"passed\",\"evidence_ref\":\"local-fastwork-validation-5426-fmt\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "record post-review full test proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\"],\"purpose\":\"Full C-SDLC v2 regression suite\",\"outcome\":\"passed\",\"evidence_ref\":\"local-fastwork-validation-5426-test\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex",
+      "reason": "record post-review strict lint proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Strict all-target Rust lint proof\",\"outcome\":\"passed\",\"evidence_ref\":\"local-fastwork-validation-5426-clippy\"}}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex",
+      "reason": "record P2 review repair",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented append-only terminal validation supersession and enforced it at all terminal boundaries with disposition-specific regression proof.\",\"changes\":[\"Corrected merged terminal test observation so it reaches the validation guard\",\"Added no-PR terminal validation regression coverage\"],\"artifacts\":[]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex",
+      "reason": "record second post-review formatting proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"fmt\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--\",\"--check\"],\"purpose\":\"Rust formatting proof\",\"outcome\":\"passed\",\"evidence_ref\":\"local-fastwork-validation-5426-fmt\"}}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex",
+      "reason": "record second post-review full test proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\"],\"purpose\":\"Full C-SDLC v2 regression suite\",\"outcome\":\"passed\",\"evidence_ref\":\"local-fastwork-validation-5426-test\"}}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex",
+      "reason": "record second post-review strict lint proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Strict all-target Rust lint proof\",\"outcome\":\"passed\",\"evidence_ref\":\"local-fastwork-validation-5426-clippy\"}}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 17,
+      "actor": "codex",
+      "reason": "exact-revision independent review passed with findings fixed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 18,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 24,
+      "generation": 19,
+      "actor": "codex",
+      "reason": "return to implemented phase to record S3 review and publication completion truthfully",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 20,
+      "actor": "codex",
+      "reason": "independent review passed and PR 5430 was published",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex",
+      "reason": "restore exact-revision passing review after truthful S3 completion",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 23,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 30,
+      "generation": 24,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 31,
+      "generation": 25,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    }
+  ]
+}

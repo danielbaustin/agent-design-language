@@ -1,0 +1,5 @@
+flowchart LR
+  workflow["Reusable Spot workflow"] -->|"--instance-type and --instance-types"| wrapper["Spot validation wrapper"]
+  workflow -->|"--max-run-seconds"| wrapper
+  wrapper -->|"repeated --instance-type"| validator["Remote validator"]
+  wrapper -->|"--command-timeout-seconds"| validator

@@ -1,0 +1,86 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5407,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][tools] Resolve #5036 reliability-tail findings",
+    "slug": "v0-91-7-review-fix-tools-resolve-5036-reliability-tail-findings",
+    "version": "v0.91.7",
+    "generation": 34
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Correct each claim surface, retain complete sprint closure evidence, validate exact wording and coverage, then run independent review.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Correct build-action-log scope and typed-v2 CLI authority",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Assemble complete #5036 child and PR closeout synthesis",
+          "acceptance_ids": [
+            "AC-3"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Withdraw or prove the #5037 material hosted-speedup claim",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S4",
+          "action": "Run focused validation and exact-revision independent review",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Gate 10D2 v1_sunset remains authoritative",
+        "Implemented and planned behavior stay distinct",
+        "All declared sprint children remain visible",
+        "Local timing is not hosted performance evidence"
+      ],
+      "risks": [
+        "Narrowing claims may leave desired future integration unimplemented",
+        "Historical PR descriptions may overstate current authority",
+        "Closeout synthesis can drift from live GitHub state"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "all four findings have explicit dispositions",
+        "every declared child has retained closure evidence",
+        "no active operator guidance invokes sunset v1 commands",
+        "independent review has no unresolved actionable findings"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5407/retained/design.md",
+      "design_digest": "2d56ddd900547a66c82e264f4b88079cff5da2e98f7dbfb41d0af6a139fe6643",
+      "diagram_ref": ".csdlc/issues/5407/retained/diagram.mmd",
+      "diagram_digest": "d139a50f00713a5a75dedf621513cff27c1cde5f1d61fd51fa5ded760e595157"
+    }
+  }
+}

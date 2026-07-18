@@ -6,13 +6,16 @@ use std::{
 };
 
 use adl_runtime_kernel::{
-    execute_loop, generate_runtime_instance_id, load_control_tls,
-    proof::{build_proof_runtime, load_capsule, run_proof},
-    serve_control_listener_until_ready, verifying_key_from_hex, AdaptationState, ControlAuthority,
-    ControlCapability, ControlService, KernelExit, LoopDefinition, LoopStatus, ReasoningEdge,
-    ReasoningGraphDefinition, ReasoningNode, RecordedObservation, ResourceState, RuntimeInitConfig,
-    SysinfoWeatherObserver, TrustedControlKey, ValidatedReasoningGraph, WeatherConfig,
-    WeatherHealthReport, WeatherObserver, MAX_SHADOW_FIXTURE_BYTES, REASONING_GRAPH_SCHEMA,
+    bootstrap_reasoning_services, build_live_assembly, execute_loop, generate_runtime_instance_id,
+    load_control_tls, mark_unavailable_live_services, monitor_until_stop,
+    proof::{load_capsule, run_proof},
+    serve_control_listener_until_ready, verifying_key_from_hex, AdaptationState,
+    CheckpointingControl, ControlAuthority, ControlCapability, ControlService,
+    DegradedOperationExecutor, Kernel, KernelExit, LiveBindings, LiveContinuity,
+    LiveKernelSnapshot, LoopDefinition, LoopStatus, ReasoningEdge, ReasoningGraphDefinition,
+    ReasoningNode, RecordedObservation, RsntpTimeSampleSource, RuntimeInitConfig, RuntimeRecorder,
+    SysinfoWeatherObserver, TimeQualificationBounds, TrustedControlKey, ValidatedReasoningGraph,
+    MAX_SHADOW_FIXTURE_BYTES, REASONING_GRAPH_SCHEMA, REQUIRED_OPERATIONAL_ADAPTERS,
 };
 use tokio_util::sync::CancellationToken;
 
@@ -51,10 +54,94 @@ async fn main() -> ExitCode {
                     return ExitCode::from(78);
                 }
             };
-            let proof = match build_proof_runtime(&serve_args.capsule, 3) {
-                Ok(proof) => proof,
+            let continuity_secret = match std::env::var("ADL_RUNTIME_CONTINUITY_SIGNING_KEY_HEX")
+                .map_err(|_| ())
+                .and_then(|value| LiveContinuity::signing_key_from_hex(&value).map_err(|_| ()))
+            {
+                Ok(secret) => secret,
+                Err(()) => {
+                    eprintln!("runtime continuity signing key is missing or invalid");
+                    return ExitCode::from(78);
+                }
+            };
+            let continuity_key_id = std::env::var("ADL_RUNTIME_CONTINUITY_KEY_ID")
+                .unwrap_or_else(|_| "runtime-continuity".to_owned());
+            if continuity_key_id.trim().is_empty() {
+                eprintln!("runtime continuity key id is empty");
+                return ExitCode::from(78);
+            }
+            let recorder = RuntimeRecorder::new(1_024);
+            let reasoning = match bootstrap_reasoning_services(recorder.clone()) {
+                Ok(reasoning) => reasoning,
                 Err(error) => {
-                    eprintln!("runtime topology invalid: {error}");
+                    eprintln!("runtime reasoning bootstrap invalid: {error}");
+                    return ExitCode::from(78);
+                }
+            };
+            let operation_executors = REQUIRED_OPERATIONAL_ADAPTERS
+                .into_iter()
+                .map(|kind| {
+                    (
+                        kind,
+                        Arc::new(DegradedOperationExecutor::new(format!(
+                            "{} executor is not configured",
+                            kind.service_name()
+                        )))
+                            as Arc<dyn adl_runtime_kernel::OperationExecutor>,
+                    )
+                })
+                .collect();
+            let operation_key = match std::env::var("ADL_RUNTIME_OPERATION_PUBLIC_KEY_HEX")
+                .map_err(|_| ())
+                .and_then(|value| verifying_key_from_hex(&value).map_err(|_| ()))
+            {
+                Ok(key) => key,
+                Err(()) => {
+                    eprintln!("runtime operation permit key is missing or invalid");
+                    return ExitCode::from(78);
+                }
+            };
+            if ed25519_dalek::SigningKey::from_bytes(&continuity_secret).verifying_key()
+                == operation_key
+            {
+                eprintln!("runtime continuity and operation keys must be distinct");
+                return ExitCode::from(78);
+            }
+            let operation_key_id = std::env::var("ADL_RUNTIME_OPERATION_KEY_ID")
+                .unwrap_or_else(|_| "runtime-operations".to_owned());
+            if operation_key_id.trim().is_empty() {
+                eprintln!("runtime operation key id is empty");
+                return ExitCode::from(78);
+            }
+            let sntp_server = std::env::var("ADL_RUNTIME_SNTP_SERVER")
+                .unwrap_or_else(|_| "pool.ntp.org".to_owned());
+            let assembly = match build_live_assembly(LiveBindings {
+                operation_executors,
+                permit_keys: BTreeMap::from([(operation_key_id.clone(), operation_key)]),
+                reasoning,
+                time_source: Arc::new(RsntpTimeSampleSource::new(sntp_server.clone())),
+                time_bounds: TimeQualificationBounds {
+                    timeout: std::time::Duration::from_secs(3),
+                    max_offset: std::time::Duration::from_secs(5),
+                    max_round_trip: std::time::Duration::from_secs(2),
+                },
+            }) {
+                Ok(assembly) => assembly,
+                Err(error) => {
+                    eprintln!("runtime live topology invalid: {error}");
+                    return ExitCode::from(78);
+                }
+            };
+            let minimum_generation = match std::env::var("ADL_RUNTIME_CONTINUITY_MIN_GENERATION") {
+                Ok(value) => match value.parse::<u64>() {
+                    Ok(value) => value,
+                    Err(_) => {
+                        eprintln!("runtime continuity minimum generation is invalid");
+                        return ExitCode::from(78);
+                    }
+                },
+                Err(_) => {
+                    eprintln!("runtime continuity minimum generation is invalid");
                     return ExitCode::from(78);
                 }
             };
@@ -72,6 +159,57 @@ async fn main() -> ExitCode {
                 .unwrap_or_else(|_| "operator".to_owned());
             let principal = std::env::var("ADL_RUNTIME_CONTROL_PRINCIPAL")
                 .unwrap_or_else(|_| "operator".to_owned());
+            let service_schemas = assembly
+                .contracts
+                .contracts()
+                .map(|contract| (contract.service.clone(), contract.config_schema.clone()))
+                .collect::<BTreeMap<_, _>>();
+            let (tls_certificate_hash, tls_private_key_hash) = match tokio::try_join!(
+                file_hash(&init.api.tls.certificate_chain_path),
+                file_hash(&init.api.tls.private_key_path),
+            ) {
+                Ok(hashes) => hashes,
+                Err(error) => {
+                    eprintln!("runtime TLS identity could not be hashed: {error}");
+                    return ExitCode::from(78);
+                }
+            };
+            let binding_projection = serde_json::json!({
+                "assembly_config_hash": assembly.config_hash,
+                "runtime_init": &init,
+                "sntp_server": &sntp_server,
+                "operation_key_id": &operation_key_id,
+                "operation_key": hex::encode(operation_key.as_bytes()),
+                "control_key_id": &key_id,
+                "control_principal": &principal,
+                "control_key": hex::encode(public_key.as_bytes()),
+                "continuity_key_id": &continuity_key_id,
+                "tls_certificate_hash": tls_certificate_hash,
+                "tls_private_key_hash": tls_private_key_hash,
+            });
+            let config_hash = blake3::hash(
+                &serde_json::to_vec(&binding_projection)
+                    .expect("runtime binding JSON is encodable"),
+            )
+            .to_hex()
+            .to_string();
+            let snapshot = LiveKernelSnapshot::new(
+                assembly.topology_hash.clone(),
+                config_hash,
+                service_schemas,
+            );
+            let continuity_root = serve_args.continuity_root;
+            let mut continuity = LiveContinuity::new(
+                &continuity_root,
+                continuity_key_id,
+                &continuity_secret,
+                snapshot,
+                minimum_generation,
+            );
+            if let Err(error) = continuity.restore_latest(&recorder).await {
+                eprintln!("runtime continuity restore refused: {error}");
+                return ExitCode::from(78);
+            }
             let authority = ControlAuthority::new(BTreeMap::from([(
                 key_id,
                 TrustedControlKey {
@@ -90,33 +228,34 @@ async fn main() -> ExitCode {
                     return ExitCode::from(70);
                 }
             };
-            let mut handle = match proof.kernel.start().await {
+            let mut handle = match Kernel::new(assembly.topology, recorder.clone())
+                .start()
+                .await
+            {
                 Ok(handle) => handle,
                 Err(error) => {
                     eprintln!("runtime kernel failed to start: {error}");
                     return ExitCode::from(70);
                 }
             };
+            mark_unavailable_live_services(&recorder);
             let instance_id = generate_runtime_instance_id();
+            let (lifecycle, mut shutdown_requests) = CheckpointingControl::channel(4);
             let service = Arc::new(ControlService::new_with_observatory_config_and_agents(
                 instance_id.clone(),
-                proof.recorder,
-                handle.control(),
+                recorder.clone(),
+                lifecycle,
                 authority,
                 1024,
                 init.observatory_allowed_origins(),
                 init.agent_population(),
             ));
-            let mut weather_observer = SysinfoWeatherObserver::default();
-            service.set_weather_report(WeatherHealthReport::from_sample(
-                &WeatherConfig::default(),
-                weather_observer.sample(),
-                ResourceState::Healthy,
-            ));
+            let pressure_checkpoint_deadline =
+                std::time::Duration::from_millis(init.weather.checkpoint_deadline_millis);
             let api_shutdown = tokio_util::sync::CancellationToken::new();
             let (ready_sender, ready_receiver) = tokio::sync::oneshot::channel();
             let mut api = tokio::spawn(serve_control_listener_until_ready(
-                service,
+                service.clone(),
                 listener,
                 tls,
                 ready_sender,
@@ -135,7 +274,60 @@ async fn main() -> ExitCode {
                 "{}",
                 adl_runtime_kernel::control_ready_event(&instance_id, bound_address)
             );
-            tokio::select! {
+            let mut pressure_retry_at = None;
+            'serve: loop {
+                let weather_service = service.clone();
+                let pressure_delay = pressure_retry_at.take();
+                let pressure_monitor = async {
+                    if let Some(deadline) = pressure_delay {
+                        tokio::time::sleep_until(deadline).await;
+                    }
+                    monitor_until_stop(
+                        init.weather.clone(),
+                        SysinfoWeatherObserver::for_path(&continuity_root),
+                        move |report| weather_service.set_weather_report(report),
+                    )
+                    .await
+                };
+                tokio::pin!(pressure_monitor);
+                let terminal = tokio::select! {
+                pressure = &mut pressure_monitor => {
+                    eprintln!(
+                        "event=resource_pressure_stop state={:?} decision={:?}",
+                        pressure.resource_state,
+                        pressure.shutdown_decision,
+                    );
+                    if !service.pause_admission_if_idle() {
+                        eprintln!("event=resource_pressure_wait reason=control_command_in_flight");
+                        pressure_retry_at = Some(
+                            tokio::time::Instant::now()
+                                + std::time::Duration::from_millis(init.weather.sample_millis),
+                        );
+                        continue 'serve;
+                    }
+                    if let Err(error) = continuity
+                        .checkpoint(&recorder, pressure_checkpoint_deadline)
+                        .await
+                    {
+                        eprintln!("runtime pressure continuity checkpoint failed: {error}");
+                        service.reopen_admission();
+                        pressure_retry_at = Some(
+                            tokio::time::Instant::now()
+                                + std::time::Duration::from_millis(init.weather.sample_millis),
+                        );
+                        continue 'serve;
+                    }
+                    api_shutdown.cancel();
+                    let shutdown = handle.shutdown(std::time::Duration::from_secs(10)).await;
+                    drain_control_api(&mut api).await;
+                    match shutdown {
+                        Ok(exit) => process_exit(exit),
+                        Err(error) => {
+                            eprintln!("runtime pressure shutdown failed: {error}");
+                            ExitCode::from(70)
+                        }
+                    }
+                }
                 signal = shutdown_signal() => {
                     if let Err(error) = signal {
                         eprintln!("runtime signal handler failed: {error}");
@@ -145,6 +337,15 @@ async fn main() -> ExitCode {
                         return ExitCode::from(70);
                     }
                     api_shutdown.cancel();
+                    if let Err(error) = continuity
+                        .checkpoint(&recorder, std::time::Duration::from_secs(5))
+                        .await
+                    {
+                        eprintln!("runtime continuity checkpoint failed: {error}");
+                        let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
+                        drain_control_api(&mut api).await;
+                        return ExitCode::from(74);
+                    }
                     let shutdown = handle.shutdown(std::time::Duration::from_secs(10)).await;
                     drain_control_api(&mut api).await;
                     match shutdown {
@@ -153,6 +354,42 @@ async fn main() -> ExitCode {
                         },
                         Err(error) => {
                             eprintln!("runtime shutdown failed: {error}");
+                            ExitCode::from(70)
+                        }
+                    }
+                }
+                request = shutdown_requests.recv() => {
+                    let Some(request) = request else {
+                        eprintln!("runtime checkpoint shutdown channel closed");
+                        api_shutdown.cancel();
+                        let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
+                        drain_control_api(&mut api).await;
+                        return ExitCode::from(70);
+                    };
+                    if let Err(error) = continuity
+                        .checkpoint(&recorder, std::time::Duration::from_secs(5))
+                        .await
+                    {
+                        eprintln!("runtime continuity checkpoint failed: {error}");
+                        request.respond(Err(()));
+                        api_shutdown.cancel();
+                        let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
+                        drain_control_api(&mut api).await;
+                        return ExitCode::from(74);
+                    }
+                    let shutdown = handle.shutdown(request.grace).await;
+                    match shutdown {
+                        Ok(exit) => {
+                            request.respond(Ok(exit.clone()));
+                            api_shutdown.cancel();
+                            drain_control_api(&mut api).await;
+                            process_exit(exit)
+                        }
+                        Err(error) => {
+                            eprintln!("runtime shutdown failed: {error}");
+                            request.respond(Err(()));
+                            api_shutdown.cancel();
+                            drain_control_api(&mut api).await;
                             ExitCode::from(70)
                         }
                     }
@@ -180,6 +417,8 @@ async fn main() -> ExitCode {
                     let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
                     ExitCode::from(70)
                 },
+                };
+                break 'serve terminal;
             }
         }
         "demo" => {
@@ -248,7 +487,7 @@ async fn main() -> ExitCode {
         }
         _ => {
             eprintln!(
-                "usage: adl-runtime-kernel [serve [--init path] [--capsule path]|demo [capsule-path]|shadow-loop|fatal-once [capsule-path]]"
+                "usage: adl-runtime-kernel [serve [--init path] [--continuity-root path]|demo [capsule-path]|shadow-loop|fatal-once [capsule-path]]"
             );
             ExitCode::from(64)
         }
@@ -256,14 +495,14 @@ async fn main() -> ExitCode {
 }
 
 struct ServeArgs {
-    capsule: PathBuf,
+    continuity_root: PathBuf,
     init_path: Option<PathBuf>,
 }
 
 impl ServeArgs {
     fn parse(args: impl Iterator<Item = String>) -> Result<Self, String> {
         let mut init_path = None;
-        let mut capsule = None;
+        let mut continuity_root = None;
         let mut args = args.peekable();
         while let Some(arg) = args.next() {
             match arg.as_str() {
@@ -273,25 +512,26 @@ impl ServeArgs {
                     };
                     init_path = Some(PathBuf::from(path));
                 }
-                "--capsule" => {
+                "--continuity-root" | "--capsule" => {
                     let Some(path) = args.next() else {
-                        return Err("--capsule requires a continuity capsule path".to_owned());
+                        return Err("--continuity-root requires a checkpoint directory".to_owned());
                     };
-                    capsule = Some(PathBuf::from(path));
+                    continuity_root = Some(PathBuf::from(path));
                 }
                 other if other.starts_with('-') => {
                     return Err(format!("unknown serve option: {other}"));
                 }
                 path => {
-                    if capsule.is_some() {
-                        return Err("serve accepts only one continuity capsule path".to_owned());
+                    if continuity_root.is_some() {
+                        return Err("serve accepts only one continuity root".to_owned());
                     }
-                    capsule = Some(PathBuf::from(path));
+                    continuity_root = Some(PathBuf::from(path));
                 }
             }
         }
         Ok(Self {
-            capsule: capsule.unwrap_or_else(|| PathBuf::from("adl-runtime-kernel-continuity.json")),
+            continuity_root: continuity_root
+                .unwrap_or_else(|| PathBuf::from(".adl/runtime-v3/continuity")),
             init_path,
         })
     }
@@ -317,6 +557,12 @@ async fn shutdown_signal() -> std::io::Result<()> {
     {
         tokio::signal::ctrl_c().await
     }
+}
+
+async fn file_hash(path: &std::path::Path) -> std::io::Result<String> {
+    Ok(blake3::hash(&tokio::fs::read(path).await?)
+        .to_hex()
+        .to_string())
 }
 
 async fn run_shadow_loop() -> Result<serde_json::Value, String> {

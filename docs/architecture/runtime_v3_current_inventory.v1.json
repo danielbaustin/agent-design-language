@@ -1,0 +1,86 @@
+{
+  "schema": "adl.runtime_v3.current_inventory.v1",
+  "generator": "adl-runtime-kernel/tools/generate_runtime_inventory.py",
+  "tracked_files_only": true,
+  "rust_implementation": {
+    "root": "adl-runtime-kernel/src",
+    "files": [
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-shadow-fixture.rs",
+      "adl-runtime-kernel/src/channel.rs",
+      "adl-runtime-kernel/src/cognition.rs",
+      "adl-runtime-kernel/src/component.rs",
+      "adl-runtime-kernel/src/config.rs",
+      "adl-runtime-kernel/src/continuity.rs",
+      "adl-runtime-kernel/src/contract.rs",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/governance.rs",
+      "adl-runtime-kernel/src/identity_memory.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/src/live_continuity.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/src/parity.rs",
+      "adl-runtime-kernel/src/private_state.rs",
+      "adl-runtime-kernel/src/proof.rs",
+      "adl-runtime-kernel/src/reasoning.rs",
+      "adl-runtime-kernel/src/supervisor.rs",
+      "adl-runtime-kernel/src/telemetry.rs",
+      "adl-runtime-kernel/src/time.rs",
+      "adl-runtime-kernel/src/topology.rs",
+      "adl-runtime-kernel/src/weather.rs"
+    ],
+    "file_count": 24,
+    "implementation_loc": 11964,
+    "measurement": "logical lines across tracked Rust files under the implementation root"
+  },
+  "selected_auxiliary_surface": {
+    "files": [
+      "adl-runtime/src/guardian.rs"
+    ],
+    "implementation_loc": 867,
+    "combined_with_kernel_loc": 12831,
+    "budget_disposition": "The 12,000-line challenge applies to the independent Runtime v3 kernel. The selected shared guardian is reported separately because its source contains the reusable process contract and co-located unit tests."
+  },
+  "direct_dependencies": {
+    "manifest": "adl-runtime-kernel/Cargo.toml",
+    "names": [
+      "async-trait",
+      "axum",
+      "axum-server",
+      "blake3",
+      "ed25519-dalek",
+      "futures",
+      "hex",
+      "libc",
+      "lru",
+      "petgraph",
+      "rsntp",
+      "semver",
+      "serde",
+      "serde_json",
+      "sysinfo",
+      "thiserror",
+      "tokio",
+      "tokio-util",
+      "toml",
+      "tracing",
+      "uuid"
+    ],
+    "count": 21,
+    "scope": "[dependencies] plus target-specific [dependencies]; excludes dev-dependencies"
+  },
+  "rust_tests": {
+    "roots": [
+      "adl-runtime-kernel/src",
+      "adl-runtime-kernel/tests"
+    ],
+    "attribute_count": 186,
+    "measurement": "tracked Rust attributes named test, including qualified forms such as tokio::test"
+  },
+  "parity_baseline": {
+    "artifact": "docs/architecture/runtime_v3_baseline_modules.v1.json",
+    "schema": "adl.runtime_v3.baseline_modules.v1",
+    "module_count": 207
+  }
+}

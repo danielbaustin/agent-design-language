@@ -9,12 +9,24 @@ artifact in this packet authorizes cutover.
 
 ## Guardian-Neutral Child Contract
 
-Every guardian starts the same `adl-runtime-kernel serve --init <init-path> --capsule <continuity-path>`
+Every guardian starts the same `adl-runtime-kernel serve --init <init-path> --continuity-root <checkpoint-directory>`
 process. The child owns component supervision, readiness, typed bounded
 channels, continuity, and graceful shutdown. The external guardian owns
 environment injection, stdout/stderr capture, signal delivery, child reaping,
 restart delay, and process restart. The child accepts `SIGINT` and `SIGTERM`,
 classifies fatal exits, and never embeds guardian-specific configuration.
+Continuity-signing and operation-permit keys are distinct host-injected
+identities and never enter the canonical init file. Runtime startup rejects
+reuse of the same Ed25519 identity for both roles. Every retained live
+checkpoint binds its signed generation to the directory generation and signs
+the previous manifest integrity; restore validates that predecessor chain back
+to the operator-supplied minimum generation.
+
+The registry retains the complete 26-service contract inventory, but health is
+not inferred from membership. Unconfigured operational adapters and passive
+governance, cognition, weather, and continuity component shells are reported
+`Degraded` before API readiness. Only components that execute live in-process
+behavior report `Running`.
 
 ## Bakeoff
 

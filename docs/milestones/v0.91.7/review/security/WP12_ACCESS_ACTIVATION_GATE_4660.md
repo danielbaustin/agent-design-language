@@ -37,9 +37,9 @@ an explicit operator non-claim/defer decision is recorded.
 | Security/CAV boundary | `#4656` | `gate_recorded_child_blockers_remaining` | `WP12_SECURITY_CAV_PRE_V092_REQUIREMENTS_4656.md`, `wp12_security_cav_gate_4656.json` |
 | SSM readiness | `#4657` | `integrated_proven` | `WP12_SSM_READINESS_4657.md`, `wp12_ssm_readiness_4657.json` |
 | ACIP schema/protobuf projection | `#4658` | `integrated_proven` | `WP12_ACIP_SCHEMA_PROTOBUF_PROJECTION_4658.md`, `wp12_acip_schema_protobuf_projection_4658.json` |
-| WebSocket transport path | `#4659` | `pr_open_pending_ci_review` | `ACIP_RUNTIME_STREAM_SUBSTRATE_4900.md`; PR `#5146` |
+| WebSocket transport path | `#4659` | `boundary_proven` | `WP12_ACIP_WEBSOCKET_TRANSPORT_4659.md`; merged PR `#5146` |
 | Access rules and activation blockers | `#4660` | `access_gate_recorded` | this packet and `wp12_access_activation_gate_4660.json` |
-| CAV red/blue runtime proof | `#4914` | `integrated_proven` | bounded retained CSM red/blue scenarios may be cited; do not claim broad live CAV readiness |
+| CAV red/blue runtime proof | `#4914` | `boundary_proven` | bounded retained CSM red/blue scenarios may be cited; do not claim broad live CAV readiness |
 | Tamper-evident Polis custody | `#4917` | `integrated_proven` | `WP12_POLIS_CUSTODY_4917.md`, `wp12_polis_custody_4917.json` |
 | Credential rotation and break-glass policy | `#4920` | `integrated_proven` | `WP12_CSM_CREDENTIAL_POLICY_4920.md`, retained credential-policy proof packet |
 
@@ -48,25 +48,28 @@ an explicit operator non-claim/defer decision is recorded.
 `v0.92` may consume a WP-12 row only when the row is one of:
 
 - `integrated_proven`
+- `boundary_proven` for the named bounded claim only
 - `operator_scoped_out_with_evidence`
 - `deferred_noncritical_with_operator_approval`
 - `blocked_with_evidence`
 
 Rows that remain `pr_open_pending_ci_review` or `blocked_with_evidence` cannot
-support activation-readiness claims. They can only be cited as known blockers,
-non-claims, or explicit later-milestone candidates.
+support activation-readiness claims. `boundary_proven` rows support only their
+named bounded claim; they do not imply production activation readiness.
 
 ## Current Result
 
 The access gate is recorded and enforceable by
 `adl/tools/validate_wp12_access_activation_gate_4660.py`.
 
-Current WP-12 activation result: `blocked_with_evidence`.
+Current WP-12 gate result: `access_gate_recorded` with no open owner-issue or
+PR blockers. The bounded proof rows still constrain the claims that v0.92 may
+consume.
 
-Blocking rows:
+Bounded rows and non-claims:
 
-- `#4659` remains PR-open and cannot support final transport activation until
-  PR truth is closed/merged or explicitly scoped out.
+- `#4659` and merged PR `#5146` support the retained loopback WebSocket
+  transport-path claim only.
 - `#4914` now supports bounded retained CSM red/blue scenario claims only.
 - Live WebSocket runtime API integration alongside HTTP is noncritical and
   backlog-only until the operator promotes it in the next milestone.
@@ -78,8 +81,8 @@ Blocking rows:
 - This packet does not claim production transport security, TLS, auth, or
   cross-polis networking.
 - This packet does not claim x402 or payment-flow readiness.
-- This packet does not claim final v0.92 activation readiness while `#4659` or
-  #4659 transport activation remains unresolved.
+- This bounded WP-12 packet does not by itself claim final v0.92 activation
+  readiness.
 
 ## Validation
 

@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5411,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3] Resolve #5227 selector, guardian, and pressure-stop findings",
+    "slug": "v0-91-7-runtime-v3-selector-guardian-pressure-stop",
+    "version": "v0.91.7",
+    "generation": 23
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl-runtime/src/guardian.rs\nadl-runtime-kernel\ndocs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md\ndocs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md\ndocs/architecture/RUNTIME_V3_RELEASE_PROOF_GATE_5220.md\ndocs/architecture/runtime_v3_current_inventory.v1.json\ndocs/architecture/runtime_v3_release_proof_gate_5220.v1.json\ndocs/reviews/v0.91.7/runtime-v3-5411\ninfra/runtime-v3/runtime-init.toml",
+      "review_revision": "git-blake3:432913ed43f316ddd40543c5268f20a43d68702b:d77b31f184074fe817332dc2d3da6fba031e3f33398d3242e0932e3b84f753c3",
+      "reviewer": "codex-subagent-019f6d3d",
+      "review_prompts": [
+        "Verify no Runtime v2 or #5409 protected file changed.",
+        "Verify process descendants cannot survive guardian shutdown and capture cannot hang closeout.",
+        "Verify pressure stop commits authentic continuity before graceful shutdown.",
+        "Verify release completion consumes only executed proof and LoC remains bounded."
+      ],
+      "findings": [],
+      "residual_risk": [
+        "GPU and remote-cloud validation remain explicitly deferred non-claims for v0.92",
+        "Ignored and contract-only proof surfaces remain classified as non-executed in release evidence"
+      ],
+      "review_result": "pass"
+    }
+  }
+}

@@ -3,8 +3,8 @@
   "issue": 4660,
   "parent_issue": 4639,
   "milestone": "v0.91.7",
-  "status": "access_gate_recorded_blockers_remaining",
-  "generated_at_utc": "2026-07-11T00:20:00Z",
+  "status": "access_gate_recorded",
+  "generated_at_utc": "2026-07-18T02:11:05Z",
   "authoritative_review_packet": "docs/milestones/v0.91.7/review/security/WP12_ACCESS_ACTIVATION_GATE_4660.md",
   "parent_gate": "docs/milestones/v0.91.7/review/security/wp12_security_cav_gate_4656.json",
   "v092_consumers": [
@@ -135,10 +135,12 @@
     {
       "surface": "websocket_transport_path",
       "owner_issue": 4659,
-      "state": "pr_open_pending_ci_review",
-      "v092_disposition": "blocks_final_transport_activation_until_pr_truth_closes",
+      "state": "boundary_proven",
+      "v092_disposition": "supports_bounded_loopback_websocket_transport_claims",
       "evidence": [
         "docs/milestones/v0.91.7/review/runtime/ACIP_RUNTIME_STREAM_SUBSTRATE_4900.md",
+        "docs/milestones/v0.91.7/review/runtime/WP12_ACIP_WEBSOCKET_TRANSPORT_4659.md",
+        "docs/milestones/v0.91.7/review/runtime/wp12_acip_websocket_transport_4659/acip_websocket_transport_proof.json",
         "https://github.com/danielbaustin/agent-design-language/pull/5146"
       ]
     },
@@ -156,7 +158,7 @@
     {
       "surface": "cav_red_blue_runtime_proof",
       "owner_issue": 4914,
-      "state": "integrated_proven",
+      "state": "boundary_proven",
       "v092_disposition": "supports_bounded_retained_cav_red_blue_claims",
       "evidence": [
         "docs/milestones/v0.91.7/review/security/wp12_cav_red_blue_4914/cav_red_blue_summary.json",
@@ -185,17 +187,12 @@
       ]
     }
   ],
-  "current_blockers": [
-    {
-      "issue": 4659,
-      "reason": "PR #5146 remains open/pending; final transport activation cannot be claimed from unmerged PR truth."
-    }
-  ],
+  "current_blockers": [],
   "non_claims": [
     "does not open a new GitHub issue",
     "does not implement live WebSocket runtime API integration",
     "does not claim production transport security, TLS, authentication, or cross-polis networking",
     "does not claim x402 or payment-flow readiness",
-    "does not claim final v0.92 activation readiness while #4659 transport activation remains unresolved"
+    "does not claim final v0.92 activation readiness from this bounded WP-12 packet alone"
   ]
 }

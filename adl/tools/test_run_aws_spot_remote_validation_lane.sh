@@ -28,7 +28,13 @@ path, account_hash = sys.argv[1:3]
 with open(path, "w", encoding="utf-8") as handle:
     json.dump({
         "account_identity": {"account_id_sha256": account_hash},
-        "cache_volume": {"volume_id": "vol-0123456789abcdef0"},
+        "cache_volume": {
+            "volume_id": "vol-0123456789abcdef0",
+            "size_gib": 100,
+            "volume_type": "gp3",
+            "iops": 3000,
+            "throughput_mbps": 125,
+        },
         "launch_surface": {"subnet_id": "subnet-0123456789abcdef0"},
     }, handle)
 PY
@@ -57,6 +63,10 @@ if [[ "$1 $2" == "sts get-caller-identity" ]]; then
 }
 JSON
 elif [[ "$1 $2" == "ec2 describe-volumes" ]]; then
+  if [[ "$*" != *"length(Volumes)"* && "$*" != *"--volume-ids vol-0123456789abcdef0"* ]]; then
+    echo "unexpected retained volume identity: $*" >&2
+    exit 1
+  fi
   case "$*" in
     *'Volumes[0].State'*) echo available ;;
     *'Volumes[0].Tags'*) echo adl-aws-remote-validation-cache-volume ;;
@@ -245,7 +255,27 @@ case "$method" in
     ;;
 esac
 EOF
-chmod +x "$fake_bin/aws" "$fake_bin/adl-aws-remote-validation" "$fake_bin/curl"
+cat >"$fake_bin/stat" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "${ADL_FAKE_STAT_STYLE:-gnu}" == "gnu" && "${1:-}" == "-c" && "${2:-}" == "%a" ]]; then
+  echo 600
+  exit 0
+fi
+if [[ "${ADL_FAKE_STAT_STYLE:-gnu}" == "gnu" && "${1:-}" == "-f" && "${2:-}" == "%Lp" ]]; then
+  echo "unexpected BSD stat fallback on GNU path" >&2
+  exit 1
+fi
+if [[ "${ADL_FAKE_STAT_STYLE:-gnu}" == "bsd" && "${1:-}" == "-c" && "${2:-}" == "%a" ]]; then
+  exit 1
+fi
+if [[ "${ADL_FAKE_STAT_STYLE:-gnu}" == "bsd" && "${1:-}" == "-f" && "${2:-}" == "%Lp" ]]; then
+  echo 600
+  exit 0
+fi
+exec /usr/bin/stat "$@"
+EOF
+chmod +x "$fake_bin/aws" "$fake_bin/adl-aws-remote-validation" "$fake_bin/curl" "$fake_bin/stat"
 
 cat >"$fake_bin/stat" <<'EOF'
 #!/usr/bin/env bash
@@ -290,6 +320,7 @@ assert payload == {
 PY
 
 ADL_AWS_CLI="$fake_bin/aws" \
+PATH="$fake_bin:$PATH" \
 bash "$SCRIPT" \
   --check-account \
   --expected-proof "$proof" \
@@ -301,6 +332,7 @@ if grep -F "$account" "$TMP/check.out" >/dev/null; then
   echo "account id leaked in account-check output" >&2
   exit 1
 fi
+
 if grep -F "arn:aws:iam" "$TMP/check.out" >/dev/null; then
   echo "arn leaked in account-check output" >&2
   exit 1
@@ -310,7 +342,9 @@ if grep -F "AIDAEXAMPLE" "$TMP/check.out" >/dev/null; then
   exit 1
 fi
 
+ADL_FAKE_STAT_STYLE=bsd \
 ADL_AWS_CLI="$fake_bin/aws" \
+PATH="$fake_bin:$PATH" \
 bash "$SCRIPT" preflight \
   --expected-proof "$proof" \
   --builder-image "$builder_image" \
@@ -361,8 +395,24 @@ grep -Fx -- "--region" "$TMP/args.txt" >/dev/null
 grep -Fx -- "us-west-2" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--issue" "$TMP/args.txt" >/dev/null
 grep -Fx -- "5191" "$TMP/args.txt" >/dev/null
-grep -Fx -- "--instance-type" "$TMP/args.txt" >/dev/null
-grep -Fx -- "m7a.2xlarge" "$TMP/args.txt" >/dev/null
+python3 - "$TMP/args.txt" <<'PY'
+import sys
+
+args = open(sys.argv[1], encoding="utf-8").read().splitlines()
+instance_types = [
+    args[index + 1]
+    for index, value in enumerate(args)
+    if value == "--instance-type"
+]
+assert instance_types == ["m7a.2xlarge", "c7a.4xlarge", "m7a.4xlarge"]
+timeout_indexes = [
+    index
+    for index, value in enumerate(args)
+    if value == "--command-timeout-seconds"
+]
+assert len(timeout_indexes) == 1
+assert args[timeout_indexes[0] + 1] == "900"
+PY
 grep -Fx -- "--spot-only" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--command-timeout-seconds" "$TMP/args.txt" >/dev/null
 grep -Fx -- "900" "$TMP/args.txt" >/dev/null
@@ -426,6 +476,57 @@ assert parts[parts.index("--expected-architecture") + 1] == "x86_64"
 assert parts[parts.index("--min-cache-free-gib") + 1] == "10"
 assert parts[parts.index("--command") + 1].startswith("cargo test")
 PY
+
+if ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB=999 \
+  ADL_FAKE_AWS_REMOTE_ARGS="$TMP/explicit-mismatch-args.txt" \
+  ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
+  ADL_FAKE_EXPECTED_IMAGE_DIGEST_HASH="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$builder_digest")" \
+  ADL_AWS_CLI="$fake_bin/aws" \
+  bash "$SCRIPT" --run --expected-proof "$proof" --bin "$fake_bin/adl-aws-remote-validation" \
+    --run-id explicit-mismatch --builder-image "$builder_image" --estimated-hourly-cost-usd 0.15 \
+    --ssh-private-key-path "$test_ssh_key" --command "true" --git-ref origin/main \
+    --out "$TMP/explicit-mismatch.json" --artifact-dir "$TMP/explicit-mismatch-artifacts" \
+    >"$TMP/explicit-mismatch.out" 2>"$TMP/explicit-mismatch.err"; then
+  echo "expected explicit cache shape mismatch to fail closed" >&2
+  exit 1
+fi
+grep -F "retained cache volume shape mismatch" "$TMP/explicit-mismatch.err" >/dev/null
+[ ! -e "$TMP/explicit-mismatch-args.txt" ]
+
+ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB=999 \
+ADL_FAKE_AWS_REMOTE_ARGS="$TMP/cli-override-args.txt" \
+ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
+ADL_FAKE_EXPECTED_IMAGE_DIGEST_HASH="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$builder_digest")" \
+ADL_AWS_CLI="$fake_bin/aws" \
+bash "$SCRIPT" --run --expected-proof "$proof" --bin "$fake_bin/adl-aws-remote-validation" \
+  --run-id cli-override --builder-image "$builder_image" --estimated-hourly-cost-usd 0.15 \
+  --ssh-private-key-path "$test_ssh_key" --command "true" --git-ref origin/main \
+  --out "$TMP/cli-override.json" --artifact-dir "$TMP/cli-override-artifacts" \
+  --cache-volume-size-gib 1000 >/dev/null
+grep -Fx -- "1000" "$TMP/cli-override-args.txt" >/dev/null
+
+bad_volume_proof="$TMP/bad-volume-proof.json"
+python3 - "$proof" "$bad_volume_proof" <<'PY'
+import json
+import sys
+
+payload = json.load(open(sys.argv[1], encoding="utf-8"))
+payload["cache_volume"]["volume_id"] = "vol-fffffffffffffffff"
+with open(sys.argv[2], "w", encoding="utf-8") as handle:
+    json.dump(payload, handle)
+PY
+if ADL_FAKE_AWS_REMOTE_ARGS="$TMP/bad-volume-args.txt" ADL_AWS_CLI="$fake_bin/aws" \
+  bash "$SCRIPT" --run --expected-proof "$bad_volume_proof" --bin "$fake_bin/adl-aws-remote-validation" \
+    --run-id bad-volume --builder-image "$builder_image" --estimated-hourly-cost-usd 0.15 \
+    --ssh-private-key-path "$test_ssh_key" --command "true" --git-ref origin/main \
+    --out "$TMP/bad-volume.json" --artifact-dir "$TMP/bad-volume-artifacts" \
+    >"$TMP/bad-volume.out" 2>"$TMP/bad-volume.err"; then
+  echo "expected wrong retained volume identity to fail closed" >&2
+  exit 1
+fi
+grep -F "unexpected retained volume identity" "$TMP/bad-volume.err" >/dev/null
+[ ! -e "$TMP/bad-volume-args.txt" ]
+
 test -f "$TMP/summary.json"
 test -f "$TMP/artifacts/events.jsonl"
 test -f "$TMP/artifacts/wrapper-final-summary.json"
@@ -445,6 +546,7 @@ ADL_FAKE_AWS_REMOTE_ARGS="$TMP/launch-args.txt" \
 ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
 ADL_FAKE_EXPECTED_IMAGE_DIGEST_HASH="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$builder_digest")" \
 ADL_AWS_CLI="$fake_bin/aws" \
+PATH="$fake_bin:$PATH" \
 bash "$SCRIPT" launch \
   --expected-proof "$proof" \
   --bin "$fake_bin/adl-aws-remote-validation" \
@@ -475,6 +577,7 @@ ADL_FAKE_AWS_REMOTE_ARGS="$TMP/resume-args.txt" \
 ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
 ADL_FAKE_EXPECTED_IMAGE_DIGEST_HASH="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$builder_digest")" \
 ADL_AWS_CLI="$fake_bin/aws" \
+PATH="$fake_bin:$PATH" \
 bash "$SCRIPT" \
   --run \
   --expected-proof "$proof" \

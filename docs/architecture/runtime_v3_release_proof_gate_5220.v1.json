@@ -5,6 +5,8 @@
   "target_version": "v0.91.7",
   "created_at_utc": "2026-07-12T14:20:00Z",
   "release_gate_result": "complete_no_default_cutover",
+  "release_decision_review_complete": true,
+  "live_cutover_proof_complete": false,
   "default_cutover_authorized": false,
   "default_runtime": "v2",
   "runtime_v3_selection": "explicit_opt_in_only",
@@ -33,61 +35,81 @@
   "gates": [
     {
       "id": "entrypoint.explicit_switch",
-      "status": "passed",
+      "status": "reported_contract_only",
+      "evidence_class": "contract_only",
+      "satisfies_live_requirement": false,
       "evidence": "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
-      "claim": "Runtime v3 can be selected explicitly without changing default behavior."
+      "claim": "The compatibility surface reports an explicit Runtime v3 request without invoking either runtime; independent execution uses adl-runtime-kernel serve."
     },
     {
       "id": "default_runtime",
       "status": "not_authorized",
+      "evidence_class": "executed",
+      "satisfies_live_requirement": false,
       "evidence": "docs/architecture/runtime_v3_cutover_decision_5254.v1.json",
       "claim": "Runtime v2 remains the default for v0.91.7."
     },
     {
       "id": "runtime_v2_decommission",
       "status": "not_authorized",
+      "evidence_class": "executed",
+      "satisfies_live_requirement": false,
       "evidence": "docs/architecture/runtime_v3_cutover_decision_5254.v1.json",
       "claim": "Runtime v2 deletion or decommission remains out of scope."
     },
     {
       "id": "guardian.fallback",
       "status": "passed_selected_scope",
+      "evidence_class": "executed",
+      "satisfies_live_requirement": true,
       "evidence": "docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md",
       "claim": "The selected fallback scope uses the small ADL Tokio child-process guardian; Horust/native lanes remain non-pass unless separately qualified."
     },
     {
       "id": "weather.cpu_memory_disk",
       "status": "passed",
+      "evidence_class": "executed",
+      "satisfies_live_requirement": true,
       "evidence": "docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json",
       "claim": "CPU, memory, disk, CloudWatch-shape event, and graceful-stop policy are retained."
     },
     {
       "id": "weather.gpu",
       "status": "deferred_non_cutover_surface",
+      "evidence_class": "deferred",
+      "satisfies_live_requirement": false,
       "evidence": "docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json",
       "claim": "Observed GPU telemetry remains deferred and is not counted as passed proof."
     },
     {
       "id": "api.control_port",
       "status": "passed_by_contract",
+      "evidence_class": "contract_only",
+      "satisfies_live_requirement": false,
       "evidence": "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
       "claim": "Runtime v3 control API policy remains 127.0.0.1:20997."
     },
     {
       "id": "soak.rollback",
-      "status": "passed_bounded_scope",
+      "status": "retained_ignored_not_run",
+      "evidence_class": "ignored",
+      "satisfies_live_requirement": false,
       "evidence": "docs/architecture/runtime_v3_soak_rollback_5253.v1.json",
-      "claim": "Bounded production-like soak and Runtime v2 rollback/default preservation are retained."
+      "claim": "The bounded soak packet is retained, but the 100-cycle soak test is ignored by default and is not live completion evidence."
     },
     {
       "id": "parity.live_black_box",
       "status": "passed_no_default_cutover",
+      "evidence_class": "contract_only",
+      "satisfies_live_requirement": false,
       "evidence": "docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json",
       "claim": "Live black-box parity reports cutover_eligible=true with zero remaining blocker-class capability groups after #5277 resolves kernel.lifecycle, #5278 resolves kernel.topology_and_backpressure, #5279 resolves service.contracts_and_configuration, #5280 resolves continuity.replay_recovery, #5281 resolves learning.adaptive_dag, #5282 resolves governance.freedom_gate_aee, #5283 resolves contracts.delegation_resources, #5284 resolves agents.providers_scheduler, and #5285 resolves network.acip_a2a_cloud; #5220 remains a no-go default-cutover gate until a later reviewed decision authorizes a default switch."
     },
     {
       "id": "observatory.live_runtime_v3_consumption",
       "status": "passed_explicit_opt_in_no_default_cutover",
+      "evidence_class": "contract_only",
+      "satisfies_live_requirement": false,
       "evidence": "docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
       "claim": "Runtime v3 exposes a runtime-owned loopback read feed at GET /v1/observatory on port 20997, HTML Observatory can consume it only through explicit Runtime v3 selection, retained Runtime v2/CSM evidence remains the default mirror, Unity remains proven-limited while #4739 and #4741 are open, and no default switch or browser mutation authority is claimed."
     }
@@ -111,6 +133,8 @@
     "bash adl/tools/test_v0917_html_observatory_integrated_proof.sh",
     "python3 -m json.tool docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
     "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak -- production_like_soak_rollback_packet_retains_cutover_boundaries packaging_preserves_one_guardian_neutral_child_contract --nocapture",
+    "cargo test --manifest-path adl-runtime/Cargo.toml guardian::tests -- --nocapture",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak -- pressure_checkpoint_failure_keeps_signal_shutdown_responsive --nocapture",
     "cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",
     "cargo test --manifest-path adl-runtime-kernel/Cargo.toml"
   ],
@@ -128,6 +152,7 @@
     "No Runtime v2 deletion or decommission is authorized.",
     "Full Runtime v2 behavioral equivalence is not claimed.",
     "GPU, remote multi-day, and Horust/native deferred lanes are not counted as passed proof.",
+    "Windows process-tree containment is not claimed; the selected guardian process-group proof covers Unix platforms.",
     "This packet closes #5220 as a v0.91.7 no-go default-switch release gate, not as Runtime v3 production cutover."
   ]
 }

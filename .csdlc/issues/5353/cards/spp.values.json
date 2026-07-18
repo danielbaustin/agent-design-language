@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-01][csdlc-v2] Make init and design approval safe for issue-local design paths",
     "slug": "v0-91-8-wp01-csdlc-v2-init-design-approval-safety",
     "version": "v0.91.8",
-    "generation": 7
+    "generation": 24
   },
   "status": "ready",
   "content": {
@@ -24,7 +24,7 @@
             "AC-2",
             "AC-3"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "step-2",
@@ -34,7 +34,7 @@
             "AC-2",
             "AC-3"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "step-3",
@@ -42,7 +42,7 @@
           "acceptance_ids": [
             "AC-4"
           ],
-          "status": "pending"
+          "status": "completed"
         }
       ],
       "affected_areas": [],

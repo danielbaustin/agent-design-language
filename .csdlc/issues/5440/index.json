@@ -1,0 +1,276 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5440,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "76c01aff9cfa5df1cb78fa58763e7de29d43b0e9a9dd02de411a2953b7b4f8d2",
+  "phase": "published",
+  "generation": 13,
+  "digest": "a08f6aa621ab77b2dc04dae27ee7b422e1e73bf6de7f108b0c6646f2d14eef2a",
+  "claim": {
+    "id": "claim-5440-design-reapproval",
+    "owner": "codex",
+    "generation": 13,
+    "acquired_unix_seconds": 1784242974,
+    "expires_unix_seconds": 1784329374,
+    "heartbeat_unix_seconds": 1784242974,
+    "branch": "codex/5440-csdlc-design-reapproval",
+    "worktree": ".worktrees/adl-wp-5440",
+    "protected_paths": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs",
+      "docs/reviews/v0.91.7/csdlc-v2-5440"
+    ],
+    "purpose": "Add audited post-readiness design reapproval without weakening exact-revision review."
+  },
+  "review_assignment": {
+    "reviewer": "codex-subagent-019f6d31",
+    "assigned_by": "codex",
+    "revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
+    "scope": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-subagent-019f6d31",
+    "scope": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "reviewed_revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
+    "findings": [
+      {
+        "id": "P1-projection-drift",
+        "severity": "p1",
+        "summary": "Reject unrelated card projection drift during design reapproval",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5440,
+    "pull_request": 5441,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5441",
+    "base": "main",
+    "head": "codex/5440-csdlc-design-reapproval",
+    "revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": "docs/reviews/v0.91.7/csdlc-v2-5440/DESIGN.md",
+  "diagram_path": "docs/reviews/v0.91.7/csdlc-v2-5440/DIAGRAM.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-issue-design-review",
+      "revision": "e55e6c28f27d759dc82b6649b21118dd3a72959ab62e310dadf468443212e9a3"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "751dd5b5687cbca7e00307e4423ae0444d3e4cb2f0851d20ae6ec57b68a91ca1",
+      "rendered_digest": "9f8c4a3246eacc23abc0a68aac64038d2f03b965999b6c59bb4c661c021bce78",
+      "ast_digest": "abee1c62fb70501f0b2b03d10cf3255da1fd38676504ed3dbab492613cd838b6"
+    },
+    "stp": {
+      "values_digest": "7c3d550d53de9337cd4a3eb8ad9952f2591c2863d16b4eda5be0661d65fd249a",
+      "rendered_digest": "6378644229260b73c894c783c9f01b296c12f61fc48ae2b8a7eb1176b0ef62fd",
+      "ast_digest": "3b56186d8e43419ead065aedc5ebe2d7a95ab0410641c3d9dc05d771bc956d6e"
+    },
+    "spp": {
+      "values_digest": "b607b4c5c6e20b9d8fed9a502d835ded35b18c0ae6ed102ea2269e192b80edbd",
+      "rendered_digest": "0f161e1c4f7e88470e167663862d0c425a5116bebf54e5d2d67f940ac7a33ce9",
+      "ast_digest": "4808d58da59af1a265dec3c5ecfa652ae2c8c87fb19dbe13869a51f599ad86b4"
+    },
+    "vpp": {
+      "values_digest": "27720550d3bc502fa07af049e6f75532e0a46db714576de52e252109e665a0a1",
+      "rendered_digest": "0d6bf082bb871a42727caea94b77333a24c71c3162e70c47740d428d32ecba11",
+      "ast_digest": "0b503b8a491926748916d0c13cd6a2ead4d9d8f7e0631d15fa91ad788ea16e6b"
+    },
+    "srp": {
+      "values_digest": "008e74c790573d9c794626a12aa0689ee0e43ab4bf913b669111930b800eec06",
+      "rendered_digest": "e1782e4e7f76d562cf7bb84263516b9eb3dd7d3c2f8f38e080e41a8ac6ac1ec2",
+      "ast_digest": "8bf3530cc6503e9510a57899aad86933f028c6ec5a9cee56cf2d08c4fcaa13ba"
+    },
+    "sor": {
+      "values_digest": "5929fbfe7a340a7f007a73f284657c7e1f768db7b4222f8d18a343c40fa8a1b7",
+      "rendered_digest": "8ad4582d2e9034e1cbb60e491d06b3e0ca1d9165dc22b2eb73291f1455fa8556",
+      "ast_digest": "f86625607d8231d6c922e55792bc5e1e339e9c3957eac93771b90214d67946de"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "issue-specific design, plan, validation lane, and all six cards are ready"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "reflect successful typed csdlc-bind result"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "implementation and focused validation complete"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "independent exact-revision review passed with finding fixed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "refresh exact-revision review after metadata-only review commit"
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "refreshed exact-revision review passed"
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "issue-specific design, plan, validation lane, and all six cards are ready",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "reflect successful typed csdlc-bind result",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"bound\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "record issue 5440 implementation",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Allow audited design reapproval in bound and implemented phases while preserving later-phase rejection.\",\"changes\":[\"csdlc-v2/src/store.rs\",\"csdlc-v2/tests/gate2.rs\"],\"artifacts\":[\"focused Gate 2 regression test\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "record issue 5440 validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--test\",\"gate2\",\"bound_and_implemented_design_reapproval_refreshes_truth_and_reviewed_rejects\"],\"purpose\":\"Focused regression for bound/implemented design reapproval and reviewed rejection\",\"outcome\":\"passed\",\"evidence_ref\":\"local: focused Gate 2 test passed\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 5,
+      "actor": "codex",
+      "reason": "record issue 5440 validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--test\",\"gate2\"],\"purpose\":\"Gate 2 integration regression suite\",\"outcome\":\"passed\",\"evidence_ref\":\"local: gate2 28 passed\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "record issue 5440 validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Rust lint validation with warnings denied\",\"outcome\":\"passed\",\"evidence_ref\":\"local: clippy passed\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 7,
+      "actor": "codex",
+      "reason": "implementation and focused validation complete",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 9,
+      "actor": "codex",
+      "reason": "independent exact-revision review passed with finding fixed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "refresh exact-revision review after metadata-only review commit",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex",
+      "reason": "refreshed exact-revision review passed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

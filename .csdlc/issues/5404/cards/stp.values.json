@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5404,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-12] Resolve #5403 security and protocol findings",
+    "slug": "v0-91-7-review-fix-wp12-security-protocol-findings",
+    "version": "v0.91.7",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Resolve the four #5403 WP-12 findings without redesigning WP-12 or moving unrelated security work.",
+      "deliverables": [
+        "Corrected CAV/access/protocol truth records",
+        "Focused validator execution or explicit downgrade proof",
+        "Credential-policy synthetic/proof classification",
+        "Regression validation for the corrected behavior"
+      ],
+      "acceptance_criteria": [
+        "CAV integrated claims are replaced with real boundary-crossing proof or downgraded truth",
+        "Activation gate, WBS, v0.92 consumers, and validator expectations agree with live issue state",
+        "Selected CI lanes execute focused #4657/#4660 validators or fail closed when they should",
+        "Synthetic credential-policy events are unmistakably classified and excluded from operational audit streams",
+        "Updated proof and review evidence is retained"
+      ],
+      "dependencies": [
+        "#5403 review packet",
+        "WP-12 security/protocol review packets",
+        "Current #4657/#4659/#4660/#4914 issue and proof state"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.91.7/review/security/WP12_ACCESS_ACTIVATION_GATE_4660.md",
+        "docs/milestones/v0.91.7/review/security/WP12_SECURITY_CAV_PRE_V092_REQUIREMENTS_4656.md",
+        "docs/milestones/v0.91.7/review/security/WP12_CSM_CREDENTIAL_POLICY_4920.md",
+        "docs/milestones/v0.91.7/review/runtime/WP12_ACIP_WEBSOCKET_TRANSPORT_4659.md",
+        "adl/tools/validate_wp12_cav_red_blue_4914.py",
+        "adl/tools/validate_wp12_ssm_readiness_4657.py",
+        "adl/tools/run_pr_fast_coverage_lane.sh"
+      ],
+      "non_goals": [
+        "Full production CAV red/blue runtime expansion",
+        "Production WebSocket authentication/TLS/cross-polis networking",
+        "Unrelated WP-12 or runtime refactors"
+      ]
+    }
+  }
+}

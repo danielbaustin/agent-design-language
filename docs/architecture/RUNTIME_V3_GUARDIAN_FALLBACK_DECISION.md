@@ -26,18 +26,18 @@ It tests two options against the same contract:
    and configuration
 
 That follow-on must stay outside Runtime v2 and must preserve the same
-`adl-runtime-kernel serve --init <init-path> --capsule <continuity-path>` child contract.
+`adl-runtime-kernel serve --init <init-path> --continuity-root <checkpoint-directory>` child contract.
 
 ## Guardian Contract
 
 The runtime kernel process remains the boundary:
 
-- the guardian starts `adl-runtime-kernel serve --init <init-path> --capsule <continuity-path>`
+- the guardian starts `adl-runtime-kernel serve --init <init-path> --continuity-root <checkpoint-directory>`
 - the guardian owns environment injection, stdout/stderr capture, signal
   delivery, child reaping, restart delay, and process restart
 - the child owns component supervision, typed channels, readiness, continuity,
   graceful shutdown, and serialization
-- the control API remains on `127.0.0.1:20997`
+- the control API uses the HTTPS address declared by the runtime init file
 - a guardian candidate is not acceptable if it only supervises in-process
   Rust tasks unless ADL explicitly wraps it with an OS-process guardian layer
 
@@ -96,7 +96,7 @@ boundary.
 #5225 should first attempt the `rust-tokio-supervisor` adoption path.
 The most promising shape is a wrapper task: `rust-tokio-supervisor` supervises
 one guardian task, and that task owns a `tokio::process::Child` for
-`adl-runtime-kernel serve --init <init-path> --capsule <continuity-path>`. The wrapper translates child
+`adl-runtime-kernel serve --init <init-path> --continuity-root <checkpoint-directory>`. The wrapper translates child
 exit, configuration exit, signal handling, readiness, output capture, and
 restart-budget results into the crate's task-result model.
 
@@ -109,7 +109,7 @@ Either path should be constrained to the smallest surface that satisfies the
 existing contract:
 
 1. load a small declarative child spec
-2. spawn `adl-runtime-kernel serve --init <init-path> --capsule <continuity-path>` with `tokio::process`
+2. spawn `adl-runtime-kernel serve --init <init-path> --continuity-root <checkpoint-directory>` with `tokio::process`
 3. capture stdout and stderr through the existing logging contract
 4. forward `SIGINT` and `SIGTERM`
 5. reap the child and fail closed on unsupported platform guarantees
@@ -143,6 +143,13 @@ restarting on configuration exits or exhausted restart budgets. This keeps the
 fallback smaller than a service manager while preserving the child-process
 contract for later cutover proof.
 
+#5411 completes the selected Unix containment contract: each child starts in a
+new process group, graceful termination targets the group, capture drain is
+bounded, and escalation kills the group when inherited pipes fail to close or
+when the process group remains live after graceful termination. Descendant,
+closed-pipe, and ignored-TERM regression tests prove that the guardian returns
+within the bound and no descendant remains after escalation.
+
 ## Non-Claims
 
 - This packet does not authorize Runtime v3 cutover.
@@ -152,6 +159,8 @@ contract for later cutover proof.
 - This packet does not claim rustysd is cross-platform production ready.
 - This packet does not claim `rust_supervisor` or `rust-tokio-supervisor`
   directly supervise external OS child processes.
+- This packet does not claim Windows Job Object or equivalent process-tree
+  containment.
 - The original #5224 packet did not implement a new ADL-owned guardian; #5225
   adds the bounded `adl_runtime::guardian` fallback described above without
   authorizing default Runtime v3 cutover.

@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5426,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][readiness] Let terminal validation supersede earlier nonterminal evidence",
+    "slug": "v0-91-7-csdlc-v2-readiness-validation-supersession",
+    "version": "v0.91.7",
+    "generation": 25
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Change only C-SDLC v2 validation evaluation and focused tests needed for deterministic supersession.",
+      "deliverables": [
+        "Shared latest-validation evaluation helper",
+        "Readiness and terminal card validation integration",
+        "Regression tests for both supersession directions",
+        "Design and validation evidence"
+      ],
+      "acceptance_criteria": [
+        "AC-1: repeated observations have deterministic logical identity",
+        "AC-2: pass after waiting permits readiness",
+        "AC-3: failure after pass still fails closed",
+        "AC-4: append-only history is preserved",
+        "AC-5: focused Rust tests and formatting pass"
+      ],
+      "dependencies": [
+        "Issue #5426",
+        "Current Gate 10D2 typed C-SDLC v2 authority"
+      ],
+      "repo_inputs": [
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/cards.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs"
+      ],
+      "non_goals": [
+        "Manual lifecycle state repair",
+        "Removing historical validation evidence",
+        "Runtime or product changes"
+      ]
+    }
+  }
+}

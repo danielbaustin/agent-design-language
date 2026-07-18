@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5407,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][tools] Resolve #5036 reliability-tail findings",
+    "slug": "v0-91-7-review-fix-tools-resolve-5036-reliability-tail-findings",
+    "version": "v0.91.7",
+    "generation": 34
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Apply a docs-and-evidence-only remediation for the four findings in TOOLS_RELIABILITY_REVIEW_5036.md.",
+      "deliverables": [
+        "corrected build-action-log scope",
+        "typed-v2 CLI taxonomy",
+        "complete #5036 closeout synthesis",
+        "truthful #5037 performance boundary",
+        "updated review disposition"
+      ],
+      "acceptance_criteria": [
+        "Every original #5032 producer/consumer is either implemented or explicitly excluded from current claims",
+        "Current operator docs name only typed C-SDLC v2 lifecycle authority",
+        "Retained #5036 synthesis covers all declared children including #5037 and #4938 with closure evidence",
+        "#5037 material-speedup claims are backed by comparable hosted timings or explicitly withdrawn"
+      ],
+      "dependencies": [
+        "#5403 tools reliability review",
+        "#5406 terminal records authority",
+        "Gate 10D2 v1_sunset"
+      ],
+      "repo_inputs": [
+        "docs/reviews/v0.91.7/remaining-sprints-5403/TOOLS_RELIABILITY_REVIEW_5036.md",
+        "docs/tooling/BUILD_ACTION_LOGS.md",
+        "docs/tooling/ADL_PLATFORM_CLI_BINARY_TAXONOMY.md",
+        "docs/milestones/v0.91.7/review/build_throughput/CI_CONTRACT_SPLIT_5037.md",
+        "GitHub issues #5032 and #5036"
+      ],
+      "non_goals": [
+        "new build-action-log implementation",
+        "v1 compatibility restoration",
+        "CI workflow changes",
+        "hosted benchmark execution"
+      ]
+    }
+  }
+}

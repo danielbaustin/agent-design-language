@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5410,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5410-runtime-v3-live-kernel",
+  "title": "[v0.91.7][runtime-v3] Assemble and secure the live kernel",
+  "body": "Closes #5410\n\nAssembles the exact 26-service Runtime v3 live topology through FactoryRegistry, reports unavailable and passive services truthfully as degraded, authenticates continuity generation and predecessor lineage with Ed25519, enforces distinct trust identities, qualifies monotonic trusted time through rsntp, and proves signed HTTPS checkpoint-before-shutdown behavior.\n\nCurrent generated inventory: 11,724 implementation LoC, 180 Rust test attributes, 21 direct dependencies, and 207 parity-baseline modules.\n\nValidation: full all-target tests, strict Clippy, direct SIGTERM checkpoint proof, HTTPS forged/valid shutdown process proof, deterministic inventory tests/check, and exact-revision independent review PASS. Two bounded Fable calls returned empty provider output; no Fable PASS is claimed.",
+  "draft": true,
+  "revision": "git-blake3:b46184afe4eb1c2328b9bb8a361ee14fa7de083f:b067b6a395c1e6398d05d9cc864b673d670cd124b938c1547b606f7b259d2bd0",
+  "commit_sha": "b46184afe4eb1c2328b9bb8a361ee14fa7de083f"
+}

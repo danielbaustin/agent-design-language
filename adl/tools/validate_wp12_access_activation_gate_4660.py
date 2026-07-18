@@ -47,8 +47,8 @@ def validate_access_gate(repo_root: Path, data: dict[str, Any]) -> None:
         fail("access gate must be issue 4660")
     if data.get("parent_issue") != 4639:
         fail("access gate must point at parent issue 4639")
-    if data.get("status") != "access_gate_recorded_blockers_remaining":
-        fail("access gate status must preserve remaining blockers")
+    if data.get("status") != "access_gate_recorded":
+        fail("access gate status must reflect the closed WP-12 owner-issue set")
 
     required_consumers = {
         "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md",
@@ -90,9 +90,9 @@ def validate_access_gate(repo_root: Path, data: dict[str, Any]) -> None:
         4656: "gate_recorded_child_blockers_remaining",
         4657: "integrated_proven",
         4658: "integrated_proven",
-        4659: "pr_open_pending_ci_review",
+        4659: "boundary_proven",
         4660: "access_gate_recorded",
-        4914: "integrated_proven",
+        4914: "boundary_proven",
         4917: "integrated_proven",
         4920: "integrated_proven",
     }
@@ -104,13 +104,43 @@ def validate_access_gate(repo_root: Path, data: dict[str, Any]) -> None:
             fail(f"owner issue {issue} state must be {expected_state}")
         require_refs_exist(repo_root, row.get("evidence", []), label=f"checklist issue {issue} evidence")
 
-    blockers = {item.get("issue") for item in data.get("current_blockers", []) if isinstance(item, dict)}
-    if blockers != {4659}:
-        fail("current_blockers must be exactly #4659")
+    blockers = data.get("current_blockers")
+    if blockers != []:
+        fail("current_blockers must be empty after #4659 and PR #5146 closed")
 
     non_claims = data.get("non_claims")
     if not isinstance(non_claims, list) or len(non_claims) < 5:
         fail("non_claims must preserve transport, x402, and readiness non-claims")
+
+
+def validate_credential_policy_artifacts(repo_root: Path) -> None:
+    summary_path = repo_root / "docs/milestones/v0.91.7/review/security/wp12_csm_credential_policy_4920/credential_policy_summary.json"
+    event_log_path = repo_root / "docs/milestones/v0.91.7/review/security/wp12_csm_credential_policy_4920/credential_lifecycle_events.jsonl"
+    summary = load_json(summary_path)
+    observability = summary.get("observability")
+    if not isinstance(observability, dict):
+        fail("credential policy summary must retain observability classification")
+    if observability.get("event_origin") != "synthetic_proof_fixture":
+        fail("credential policy observability must classify events as synthetic proof fixtures")
+    if observability.get("proof_classification") != "synthetic_negative_case":
+        fail("credential policy observability must classify negative cases as synthetic")
+    if observability.get("operational_audit_stream") is not False:
+        fail("credential policy observability must exclude synthetic events from operational audit streams")
+
+    event_lines = event_log_path.read_text(encoding="utf-8").splitlines()
+    if not event_lines:
+        fail("credential policy event log must retain synthetic events")
+    for index, line in enumerate(event_lines, start=1):
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError as exc:
+            fail(f"credential policy event log line {index} is not valid JSON: {exc}")
+        if event.get("event_origin") != "synthetic_proof_fixture":
+            fail(f"credential policy event log line {index} must classify event_origin")
+        if event.get("proof_classification") != "synthetic_negative_case":
+            fail(f"credential policy event log line {index} must classify proof_classification")
+        if event.get("operational_audit_stream") is not False:
+            fail(f"credential policy event log line {index} must set operational_audit_stream=false")
 
 
 def validate_parent_gate(parent: dict[str, Any]) -> None:
@@ -144,6 +174,7 @@ def main() -> int:
     access_gate = load_json(args.access_gate)
     parent_gate = load_json(args.parent_gate)
     validate_access_gate(repo_root, access_gate)
+    validate_credential_policy_artifacts(repo_root)
     validate_parent_gate(parent_gate)
     print("PASS validate_wp12_access_activation_gate_4660")
     return 0

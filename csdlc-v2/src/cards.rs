@@ -982,14 +982,7 @@ fn validate_status_guard(values: &CardValues, next: CardStatus) -> Result<()> {
                 sor.merge_state,
                 MergeState::Merged | MergeState::ClosedUnmerged
             );
-            let terminal_validation = !sor.actual_validation.is_empty()
-                && sor.actual_validation.iter().all(|result| {
-                    validate_result(result).is_ok()
-                        && matches!(
-                            result.outcome,
-                            EvidenceOutcome::Passed | EvidenceOutcome::SkippedNonGoal
-                        )
-                });
+            let terminal_validation = terminal_validation_passed(&sor.actual_validation);
             if !terminal_integration
                 || !terminal_merge
                 || sor.closeout_state != CloseoutState::Complete
@@ -1017,6 +1010,32 @@ fn validate_result(result: &ValidationResult) -> Result<()> {
         ));
     }
     Ok(())
+}
+
+pub(crate) fn terminal_validation_passed(results: &[ValidationResult]) -> bool {
+    if results.is_empty() {
+        return false;
+    }
+    let mut latest = BTreeMap::new();
+    for result in results {
+        if validate_result(result).is_err() {
+            return false;
+        }
+        latest.insert(
+            (
+                result.command.clone(),
+                result.purpose.clone(),
+                result.evidence_ref.clone(),
+            ),
+            result.outcome,
+        );
+    }
+    latest.values().all(|outcome| {
+        matches!(
+            outcome,
+            EvidenceOutcome::Passed | EvidenceOutcome::SkippedNonGoal
+        )
+    })
 }
 
 pub fn render(values: &CardValues) -> Result<RenderedCard> {
@@ -1420,4 +1439,34 @@ fn numbered(values: &[String]) -> String {
 }
 pub fn digest(bytes: &[u8]) -> String {
     blake3::hash(bytes).to_hex().to_string()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{terminal_validation_passed, EvidenceOutcome, ValidationResult};
+
+    fn result(outcome: EvidenceOutcome) -> ValidationResult {
+        ValidationResult {
+            command: vec!["cargo".into(), "test".into()],
+            purpose: "proof".into(),
+            outcome,
+            evidence_ref: "evidence.json".into(),
+        }
+    }
+
+    #[test]
+    fn latest_pass_supersedes_waiting_for_the_same_validation() {
+        assert!(terminal_validation_passed(&[
+            result(EvidenceOutcome::Waiting),
+            result(EvidenceOutcome::Passed),
+        ]));
+    }
+
+    #[test]
+    fn latest_failure_supersedes_an_earlier_pass() {
+        assert!(!terminal_validation_passed(&[
+            result(EvidenceOutcome::Passed),
+            result(EvidenceOutcome::Failed),
+        ]));
+    }
 }

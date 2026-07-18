@@ -3,9 +3,9 @@
   "issue": 4656,
   "parent_issue": 4639,
   "milestone": "v0.91.7",
-  "status": "gate_recorded_transport_blocker_remaining",
-  "generated_at_utc": "2026-07-10T18:35:00Z",
-  "purpose": "Record the WP-12 security and CAV pre-v0.92 activation gate so unresolved transport work remains explicit while bounded security, CAV, custody, credential, schema, SSM, and access-rule evidence stays claim-limited.",
+  "status": "gate_recorded_bounded_non_claims_remaining",
+  "generated_at_utc": "2026-07-18T02:11:05Z",
+  "purpose": "Record the WP-12 security and CAV pre-v0.92 activation gate so bounded transport and security evidence remains explicit and claim-limited after all owner issues close.",
   "authoritative_review_packet": "docs/milestones/v0.91.7/review/security/WP12_SECURITY_CAV_PRE_V092_REQUIREMENTS_4656.md",
   "source_evidence": [
     "docs/milestones/v0.91.7/features/SECURITY_RESIDUAL_READINESS_v0.91.7.md",
@@ -33,7 +33,7 @@
         4917,
         4920
       ],
-      "state": "integrated_proven",
+      "state": "boundary_proven",
       "v092_disposition": "supports_bounded_evidence_claims",
       "evidence": [
         "docs/milestones/v0.91.7/review/security/wp12_cav_red_blue_4914/cav_red_blue_summary.json",
@@ -88,14 +88,14 @@
         4900
       ],
       "state": "integrated_proven",
-      "v092_disposition": "schema_projection_ready_transport_and_access_still_blocked",
+      "v092_disposition": "schema_projection_ready_bounded_transport_and_access_gate_recorded",
       "evidence": [
         "docs/milestones/v0.91.7/features/ACIP_A2A_PROTOBUF_RESIDUALS_v0.91.7.md",
         "docs/milestones/v0.91.7/review/runtime/ACIP_RUNTIME_STREAM_SUBSTRATE_4900.md",
         "docs/milestones/v0.91.7/review/security/WP12_ACIP_SCHEMA_PROTOBUF_PROJECTION_4658.md",
         "docs/milestones/v0.91.7/review/security/wp12_acip_schema_protobuf_projection_4658.json"
       ],
-      "required_before_claim": "Schema/protobuf projection and JSON/WebSocket consumption posture are deterministic for #4658; ACIP/A2A readiness still depends on #4659 transport and #4660 access-rule proof."
+      "required_before_claim": "Schema/protobuf projection and JSON/WebSocket consumption posture are deterministic for #4658; #4659 and #4660 now provide bounded transport and fail-closed access-gate evidence without proving production transport activation."
     },
     {
       "id": "acip_websocket_transport_path",
@@ -104,13 +104,15 @@
         4659,
         4900
       ],
-      "state": "pr_open_pending_ci_review",
-      "v092_disposition": "blocks_final_transport_activation_until_pr_truth_closes",
+      "state": "boundary_proven",
+      "v092_disposition": "supports_bounded_loopback_websocket_transport_claims",
       "evidence": [
         "docs/milestones/v0.91.7/review/runtime/ACIP_RUNTIME_STREAM_SUBSTRATE_4900.md",
+        "docs/milestones/v0.91.7/review/runtime/WP12_ACIP_WEBSOCKET_TRANSPORT_4659.md",
+        "docs/milestones/v0.91.7/review/runtime/wp12_acip_websocket_transport_4659/acip_websocket_transport_proof.json",
         "https://github.com/danielbaustin/agent-design-language/pull/5146"
       ],
-      "required_before_claim": "The WebSocket carrier selected by #4900 is extended by #4659 in PR #5146, but final runtime transport activation cannot be claimed until PR truth is closed/merged or explicitly scoped out. Live WebSocket runtime API integration alongside HTTP is noncritical backlog-only until promoted in the next milestone."
+      "required_before_claim": "Closed #4659 and merged PR #5146 prove the bounded loopback WebSocket transport path. Production authentication, TLS termination, reconnect scheduling, cross-polis networking, and live runtime API integration remain non-claims until separately promoted."
     },
     {
       "id": "external_agent_access_rules",
@@ -135,7 +137,7 @@
       "dependent_issues": [
         4914
       ],
-      "state": "integrated_proven",
+      "state": "boundary_proven",
       "v092_disposition": "supports_bounded_adversarial_cav_claims",
       "evidence": [
         "docs/milestones/v0.91.7/review/security/wp12_cav_red_blue_4914/cav_red_blue_summary.json",
@@ -144,7 +146,7 @@
         "docs/milestones/v0.91.7/review/security/wp12_cav_red_blue_4914/red_team_fixtures.json",
         "adl/tools/validate_wp12_cav_red_blue_4914.py"
       ],
-      "required_before_claim": "Bounded adversarial CAV claims may cite #4914 for the retained CSM red-blue runtime scenarios only; destructive cloud actions, secret retention, production WebSocket runtime API integration, and broader live CAV coverage remain non-claims unless separately proven."
+      "required_before_claim": "Bounded adversarial CAV claims may cite #4914 for retained local/static red-blue boundary scenarios only; integrated CSM HTTP runtime execution, destructive cloud actions, secret retention, production WebSocket runtime API integration, and broader live CAV coverage remain non-claims unless separately proven."
     },
     {
       "id": "tamper_evident_evidence_custody",

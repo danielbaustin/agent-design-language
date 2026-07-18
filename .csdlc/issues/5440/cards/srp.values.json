@@ -1,0 +1,40 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5440,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][design] Support audited post-readiness design reapproval",
+    "slug": "v0-91-7-csdlc-v2-post-readiness-design-reapproval",
+    "version": "v0.91.7",
+    "generation": 13
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2/src/store.rs\ncsdlc-v2/tests/gate2.rs",
+      "review_revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
+      "reviewer": "codex-subagent-019f6d31",
+      "review_prompts": [
+        "Verify review authority cannot survive a later-phase design change",
+        "Verify both design and diagram digests refresh atomically",
+        "Verify audit and generation truth"
+      ],
+      "findings": [
+        {
+          "id": "P1-projection-drift",
+          "severity": "p1",
+          "summary": "Reject unrelated card projection drift during design reapproval",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
+          "route": null
+        }
+      ],
+      "residual_risk": [],
+      "review_result": "pass"
+    }
+  }
+}

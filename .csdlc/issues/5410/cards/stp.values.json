@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5410,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3] Assemble and secure the #5174 live kernel",
+    "slug": "v0-91-7-review-fix-runtime-v3-assemble-secure-live-kernel",
+    "version": "v0.91.7",
+    "generation": 21
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Resolve the four open #5174 runtime findings routed to #5410 without widening into #5409 or later Runtime v3 remediation issues.",
+      "deliverables": [
+        "Live registry-based Runtime v3 composition root",
+        "Signed live continuity restore and shutdown path",
+        "Bounded qualified Chronosense adapter",
+        "Reproducible current inventory and historical count labeling",
+        "Focused and full Runtime v3 validation evidence"
+      ],
+      "acceptance_criteria": [
+        "Live kernel is assembled through the component registry with required service health and lifecycle proof",
+        "Restored continuity is cryptographically authenticated against identity and lineage",
+        "Time remains degraded until real synchronization qualification succeeds",
+        "Historical review snapshots are labeled and current counts are generated reproducibly",
+        "Runtime v3 remains below 12000 Rust implementation LoC and 1000 tests",
+        "Independent exact-revision review has no unresolved actionable findings"
+      ],
+      "dependencies": [
+        "#5406 terminal records remediation",
+        "#5174 review packet"
+      ],
+      "repo_inputs": [
+        "docs/reviews/v0.91.7/remaining-sprints-5403/RUNTIME_V3_PARITY_REVIEW_5174.md",
+        "adl-runtime-kernel/src/topology.rs",
+        "adl-runtime-kernel/src/continuity.rs",
+        "adl-runtime-kernel/src/operations.rs",
+        "adl-runtime-kernel/src/reasoning.rs",
+        "adl-runtime-kernel/src/governance.rs"
+      ],
+      "non_goals": [
+        "Runtime v2 changes or decommission",
+        "Production cloud/provider credentials",
+        "Distributed Runtime v3 architecture",
+        "Changes to #5409 protected files"
+      ]
+    }
+  }
+}

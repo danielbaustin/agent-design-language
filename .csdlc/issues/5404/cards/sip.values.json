@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5404,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-12] Resolve #5403 security and protocol findings",
+    "slug": "v0-91-7-review-fix-wp12-security-protocol-findings",
+    "version": "v0.91.7",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Repair WP-12 security/protocol truth so CAV, access activation, focused validators, and credential-policy evidence match the actual integrated proof.",
+      "required_outcome": "WP-12 records and validators no longer overclaim integrated CSM execution, no longer require obsolete issue state, execute focused proof lanes, and classify synthetic credential-policy events explicitly.",
+      "declared_scope": [
+        "WP-12 security/CAV/access/protocol review packets",
+        "Focused WP-12 validators and selected validation-lane coverage",
+        "Credential-policy proof classification and evidence wording"
+      ],
+      "authority_boundary": [
+        "#5403 WP-12 review packet findings are the source defects",
+        "Do not claim live CAV/runtime integration unless a real boundary-crossing path is implemented and proven",
+        "Do not weaken security fail-closed behavior to satisfy docs"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

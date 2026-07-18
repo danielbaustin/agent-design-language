@@ -58,7 +58,7 @@ Revision 1
       "AC-5",
       "AC-6"
     ],
-    "status": "pending"
+    "status": "completed"
   }
 ]
 
@@ -85,13 +85,13 @@ Revision 1
 
 ## Design
 
-.csdlc/issues/5406/design/DESIGN.md
+.csdlc/issues/5406/retained/design.md
 
 Digest: f7b944b576eed6f7cb93f6966fcdd46cffb4eef66f6eeb11f814a328211d35d4
 
 ## Diagram
 
-.csdlc/issues/5406/design/DIAGRAM.mmd
+.csdlc/issues/5406/retained/diagram.mmd
 
 Digest: f1ab1b5d46837cec8164e9c002562f1365bd32b8302a9b8e4ddf78ba138864a3
 

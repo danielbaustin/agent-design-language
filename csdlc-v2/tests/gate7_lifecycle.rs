@@ -50,10 +50,27 @@ fn edit(
         .unwrap()
 }
 
-fn fixture(
+fn fixture_with_validation_history(
     issue: u64,
     title: &str,
     scenario: &str,
+    validation_history: Vec<ValidationResult>,
+) -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord, String) {
+    fixture_with_validation_history_and_publication(
+        issue,
+        title,
+        scenario,
+        validation_history,
+        true,
+    )
+}
+
+fn fixture_with_validation_history_and_publication(
+    issue: u64,
+    title: &str,
+    scenario: &str,
+    validation_history: Vec<ValidationResult>,
+    publish: bool,
 ) -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord, String) {
     let temp = tempfile::tempdir().unwrap();
     std::fs::create_dir_all(temp.path().join("docs")).unwrap();
@@ -165,19 +182,14 @@ fn fixture(
             artifacts: vec!["artifact".into()],
         },
     );
-    record = edit(
-        &store,
-        &record,
-        CardKind::Sor,
-        SemanticOperation::RecordValidation {
-            result: ValidationResult {
-                command: vec!["cargo".into(), "test".into()],
-                purpose: "proof".into(),
-                outcome: EvidenceOutcome::Passed,
-                evidence_ref: "evidence.json".into(),
-            },
-        },
-    );
+    for result in validation_history {
+        record = edit(
+            &store,
+            &record,
+            CardKind::Sor,
+            SemanticOperation::RecordValidation { result },
+        );
+    }
     record = edit(
         &store,
         &record,
@@ -233,6 +245,9 @@ fn fixture(
             phase: LifecyclePhase::Reviewed,
         },
     );
+    if !publish {
+        return (temp, store, record, sha);
+    }
     let publication_body = format!("Closes #{issue}");
     let request = PublicationRequest {
         schema: "csdlc.publication_request.v1".into(),
@@ -290,13 +305,182 @@ fn readiness_regression_and_exact_terminal_closeout_are_atomic_and_idempotent() 
     run_complete_lifecycle(7, "Gate 7 fixture", "gate7", true);
 }
 
+#[test]
+fn later_pass_supersedes_waiting_validation_through_terminal_closeout() {
+    let identity = || ValidationResult {
+        command: vec!["cargo".into(), "test".into()],
+        purpose: "proof".into(),
+        outcome: EvidenceOutcome::Waiting,
+        evidence_ref: "evidence.json".into(),
+    };
+    let mut passed = identity();
+    passed.outcome = EvidenceOutcome::Passed;
+    run_complete_lifecycle_with_validation_history(
+        71,
+        "Gate 7 supersession fixture",
+        "validation-supersession",
+        false,
+        vec![identity(), passed],
+    );
+}
+
+#[test]
+fn later_failure_blocks_merged_and_closed_unmerged_terminal_closeout() {
+    for (issue, disposition) in [
+        (72, TerminalDisposition::Merged),
+        (73, TerminalDisposition::ClosedUnmerged),
+    ] {
+        let (temp, store, mut record, sha) = fixture_with_validation_history(
+            issue,
+            "Gate 7 validation regression fixture",
+            "validation-regression",
+            vec![ValidationResult {
+                command: vec!["cargo".into(), "test".into()],
+                purpose: "proof".into(),
+                outcome: EvidenceOutcome::Passed,
+                evidence_ref: "evidence.json".into(),
+            }],
+        );
+        record = record_readiness(
+            &store,
+            ReadinessRequest {
+                schema: "csdlc.readiness_request.v1".into(),
+                issue,
+                expected_generation: record.generation,
+                expected_digest: record.digest.clone(),
+                claim_id: "claim".into(),
+                actor: "shepherd".into(),
+                pull_request: 70,
+                head_sha: sha.clone(),
+                required_checks: vec!["fast".into()],
+                require_review: true,
+                checks: vec![csdlc_v2::CheckObservation {
+                    name: "fast".into(),
+                    requirement: csdlc_v2::CheckRequirement::Required,
+                    conclusion: csdlc_v2::CheckConclusion::Success,
+                    details_url: None,
+                }],
+                review_state: csdlc_v2::RemoteReviewState::Approved,
+                conflict_state: csdlc_v2::ConflictState::Clean,
+                post_publication_findings: vec![],
+            },
+        )
+        .unwrap();
+        record = edit(
+            &store,
+            &record,
+            CardKind::Sor,
+            SemanticOperation::RecordValidation {
+                result: ValidationResult {
+                    command: vec!["cargo".into(), "test".into()],
+                    purpose: "proof".into(),
+                    outcome: EvidenceOutcome::Failed,
+                    evidence_ref: "evidence.json".into(),
+                },
+            },
+        );
+        let observed_state = match disposition {
+            TerminalDisposition::Merged => "merged",
+            TerminalDisposition::ClosedUnmerged => "closed",
+            TerminalDisposition::ClosedNoPr => unreachable!(),
+        };
+        let terminal = TerminalObservation {
+            schema: "csdlc.terminal_observation.v1".into(),
+            issue,
+            expected_generation: record.generation,
+            expected_digest: record.digest.clone(),
+            claim_id: "claim".into(),
+            actor: "closer".into(),
+            pull_request: Some(70),
+            disposition,
+            observed_sha: Some(sha),
+            observed_state: observed_state.into(),
+            approved_no_pr_reason: None,
+            receipt_path: format!("csdlc-v2/closeout/{issue}.json"),
+        };
+        assert!(closeout_issue(&store, terminal).is_err());
+        assert_eq!(
+            Store::new(temp.path()).load_record(issue).unwrap().phase,
+            LifecyclePhase::MergeReady
+        );
+    }
+
+    let issue = 74;
+    let (temp, store, mut record, _) = fixture_with_validation_history_and_publication(
+        issue,
+        "Gate 7 no-PR validation regression fixture",
+        "validation-regression-no-pr",
+        vec![ValidationResult {
+            command: vec!["cargo".into(), "test".into()],
+            purpose: "proof".into(),
+            outcome: EvidenceOutcome::Passed,
+            evidence_ref: "evidence.json".into(),
+        }],
+        false,
+    );
+    record = edit(
+        &store,
+        &record,
+        CardKind::Sor,
+        SemanticOperation::RecordValidation {
+            result: ValidationResult {
+                command: vec!["cargo".into(), "test".into()],
+                purpose: "proof".into(),
+                outcome: EvidenceOutcome::Failed,
+                evidence_ref: "evidence.json".into(),
+            },
+        },
+    );
+    let terminal = TerminalObservation {
+        schema: "csdlc.terminal_observation.v1".into(),
+        issue,
+        expected_generation: record.generation,
+        expected_digest: record.digest.clone(),
+        claim_id: "claim".into(),
+        actor: "closer".into(),
+        pull_request: None,
+        disposition: TerminalDisposition::ClosedNoPr,
+        observed_sha: None,
+        observed_state: "closed_no_pr".into(),
+        approved_no_pr_reason: Some("operator-approved no-PR closeout".into()),
+        receipt_path: format!("csdlc-v2/closeout/{issue}.json"),
+    };
+    assert!(closeout_issue(&store, terminal).is_err());
+    assert_eq!(
+        Store::new(temp.path()).load_record(issue).unwrap().phase,
+        LifecyclePhase::Reviewed
+    );
+}
+
 pub(crate) fn run_complete_lifecycle(
     issue: u64,
     title: &str,
     scenario: &str,
     hostile: bool,
 ) -> csdlc_v2::NormalizedOutcome {
-    let (temp, store, mut record, sha) = fixture(issue, title, scenario);
+    run_complete_lifecycle_with_validation_history(
+        issue,
+        title,
+        scenario,
+        hostile,
+        vec![ValidationResult {
+            command: vec!["cargo".into(), "test".into()],
+            purpose: "proof".into(),
+            outcome: EvidenceOutcome::Passed,
+            evidence_ref: "evidence.json".into(),
+        }],
+    )
+}
+
+fn run_complete_lifecycle_with_validation_history(
+    issue: u64,
+    title: &str,
+    scenario: &str,
+    hostile: bool,
+    validation_history: Vec<ValidationResult>,
+) -> csdlc_v2::NormalizedOutcome {
+    let (temp, store, mut record, sha) =
+        fixture_with_validation_history(issue, title, scenario, validation_history);
     let mut request = ReadinessRequest {
         schema: "csdlc.readiness_request.v1".into(),
         issue,

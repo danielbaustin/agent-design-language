@@ -1,63 +1,62 @@
 # ADL Platform CLI Binary Taxonomy
 
-ADL uses owned command binaries so command families do not all share one
-validation and operational blast radius.
+ADL separates command families so each owner has a bounded operational and
+validation surface.
 
-## Canonical Binaries
+## Platform Owners
 
-| Binary | Owner surface | Current status |
+| Owner surface | Command family | Current status |
 |---|---|---|
-| `adl` | ADL language/compiler/manager entrypoint | canonical |
-| `csdlc` | C-SDLC workflow control plane: issue lifecycle, cards, PR lifecycle, validation planning, review, and closeout | canonical as of v0.91.7 |
-| `csm` | Cognitive Spacetime runtime execution surface | canonical |
-| `csmctl` | CSM runtime administration and operator control | planned; do not place C-SDLC commands here |
-| `adl-csdlc` | Compatibility alias for C-SDLC commands | retained during migration |
-| `adl-runtime` | Runtime compatibility alias | retained during migration |
-| `adl-review` | Review tooling compatibility surface | retained during migration |
+| ADL language and compiler | `adl` | canonical |
+| C-SDLC workflow lifecycle | typed `csdlc-*` binaries under `csdlc-v2/` | canonical under Gate 10D2 |
+| Cognitive Spacetime runtime | `csm` | canonical |
+| CSM administration | `csmctl` | planned; no C-SDLC commands belong here |
+| Runtime compatibility | `adl-runtime` | compatibility surface outside C-SDLC v2 |
+| Review compatibility | `adl-review` | compatibility surface outside C-SDLC v2 |
 
-## C-SDLC Usage
+## C-SDLC V2 Authority
 
-Use `csdlc` for direct C-SDLC control-plane commands:
+Gate 10D2 records `v1_sunset`. The sole current C-SDLC operational authority is
+the independent Rust binary set in `csdlc-v2/`, routed through the nine typed
+skills in `csdlc-v2/operator/skills/`.
 
-```bash
-csdlc --help
-csdlc issue run <issue>
-csdlc tooling prompt-template validate-structure --kind sor --input <path>
-```
+Current lifecycle owners are:
 
-Agent issue execution should still prefer the repo wrapper while it owns
-session-ledger, worktree, queue, and finish policy:
+- `csdlc-init`
+- `csdlc-bind`
+- `csdlc-edit`
+- `csdlc-doctor`
+- `csdlc-validate`
+- `csdlc-review`
+- `csdlc-publish`
+- `csdlc-shepherd`
+- `csdlc-closeout`
 
-```bash
-bash adl/tools/pr.sh run <issue>
-bash adl/tools/pr.sh finish <issue> --title "<title>" --paths "<paths>"
-```
+Resolve the selected generation through `csdlc-install resolve`, then invoke
+the typed owner selected by the matching operator skill. Stable generated v2
+binaries belong under `.adl/bin/csdlc-v2/`; Cargo target directories are build
+output, not operational authority.
 
-`adl-csdlc` remains available for compatibility and should produce the same
-C-SDLC dispatch behavior, but new docs and scripts should prefer `csdlc` when
-they need the owner binary directly.
+There is no canonical monolithic `csdlc` lifecycle command. The removed v1
+`pr.sh` wrappers, prompt-template wrappers, `csdlc-import`, and `adl-csdlc`
+compatibility route are not valid operator paths.
 
 ## Validation Boundary
 
-Changes to one binary family should not automatically require broad validation
-for all binaries. For C-SDLC binary-surface changes, prefer:
+Validate the typed owner and contract touched by a change. Use the focused
+C-SDLC owner lane when broader integration proof is required:
 
 ```bash
-cargo fmt --manifest-path adl/Cargo.toml --all -- --check
-cargo check --manifest-path adl/Cargo.toml --bin csdlc --bin adl-csdlc
-cargo test --manifest-path adl/Cargo.toml --test cli_smoke csdlc_cli_binary_help_and_version_smoke -- --exact
+bash adl/tools/run_owner_validation_lane.sh csdlc
 git diff --check
 ```
 
-Broader owner-lane validation is still available when the touched surface
-changes delegation policy:
-
-```bash
-bash adl/tools/run_owner_validation_lane.sh csdlc --build
-```
+Do not restore sunset commands to make historical examples pass. Historical
+Gate 10A-C artifacts remain evidence and do not override Gate 10D2 authority.
 
 ## Non-Claims
 
-- This document does not remove compatibility binaries.
-- This document does not make `csmctl` ready; it reserves the boundary.
-- This document does not move every C-SDLC helper out of `adl` in one step.
+- This taxonomy does not make `csmctl` ready.
+- It does not move runtime or review compatibility commands into C-SDLC v2.
+- It does not authorize direct card Markdown mutation; typed card edits remain
+  governed by `csdlc-edit` and `csdlc-validate`.

@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5440,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][design] Support audited post-readiness design reapproval",
+    "slug": "v0-91-7-csdlc-v2-post-readiness-design-reapproval",
+    "version": "v0.91.7",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Provide a typed recovery when design artifacts truthfully change before exact-revision review.",
+      "required_outcome": "Bound and implemented issues can reapprove changed design artifacts through an audited typed operation while reviewed and later phases remain fail-closed.",
+      "declared_scope": [
+        "csdlc-edit approve-design lifecycle authorization",
+        "SPP and VPP design reference refresh",
+        "focused deterministic regression tests"
+      ],
+      "authority_boundary": [
+        "No direct card or index edits",
+        "No exact-revision review weakening",
+        "No Runtime code changes"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

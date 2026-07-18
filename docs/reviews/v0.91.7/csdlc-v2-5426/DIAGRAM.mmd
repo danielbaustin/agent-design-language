@@ -1,0 +1,7 @@
+flowchart LR
+  H["Append-only validation history"] --> G["Group by command, purpose, evidence"]
+  G --> L["Select latest observation"]
+  L --> P{"Latest result terminal-pass?"}
+  P -->|"passed or skipped_non_goal"| R["Readiness may proceed"]
+  P -->|"other"| F["Fail closed"]
+

@@ -1,0 +1,75 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5423,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][register] Reconcile sprint review register after remediation wave",
+    "slug": "v0-91-7-review-fix-register-reconcile-remediation-wave",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Inventory terminal remediation evidence, update only qualifying register rows, validate unchanged nonterminal rows, and complete exact-revision review.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Inventory terminal retained evidence for register remediation rows",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Apply the bounded canonical register reconciliation",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Complete focused validation and exact-revision independent review",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Historical findings remain visible",
+        "Only terminal remediation evidence can promote a row",
+        "Other sessions' active work remains untouched"
+      ],
+      "risks": [
+        "A live issue may be closed without terminal lifecycle truth",
+        "Concurrent remediation sessions may finish during this pass"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "The canonical register path is claimed by another active issue",
+        "Terminal evidence is ambiguous or internally inconsistent",
+        "Scope expands beyond review register reconciliation"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5423/retained/design.md",
+      "design_digest": "e8471fb230d0908eb43425697c6e24c59b52ddea6db2dc2c4dfbf09166c7e620",
+      "diagram_ref": ".csdlc/issues/5423/retained/diagram.mmd",
+      "diagram_digest": "6b266de02092cdd482103b5744d940e1b304866ec8c19db74442d065040548b1"
+    }
+  }
+}

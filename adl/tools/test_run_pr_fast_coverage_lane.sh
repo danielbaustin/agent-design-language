@@ -117,6 +117,39 @@ ADL_PR_FAST_COVERAGE_BUILD_ROOT="$scratch_root-csm-cav" \
   bash "$SCRIPT" --filter-expression "$csm_cav_expression" >"$temp_root/pr-fast-coverage-csm-cav-run.out"
 
 grep -F "PR-fast coverage companion: adl-runtime CAV tests" "$temp_root/pr-fast-coverage-csm-cav-run.out" >/dev/null
+grep -F "PR-fast coverage companion: WP-12 access and SSM validators" "$temp_root/pr-fast-coverage-csm-cav-run.out" >/dev/null
+grep -F "PASS validate_wp12_ssm_readiness_4657" "$temp_root/pr-fast-coverage-csm-cav-run.out" >/dev/null
+grep -F "PASS validate_wp12_access_activation_gate_4660" "$temp_root/pr-fast-coverage-csm-cav-run.out" >/dev/null
+
+ssm_negative="$temp_root/wp12-ssm-readiness-negative.json"
+jq '.status = "not_ready_fixture"' \
+  "$ROOT_DIR/docs/milestones/v0.91.7/review/security/wp12_ssm_readiness_4657.json" >"$ssm_negative"
+if (
+  cd "$ROOT_DIR"
+  python3 adl/tools/validate_wp12_ssm_readiness_4657.py \
+    --source-summary docs/milestones/v0.91.7/review/runtime/wp08_local_polis_ssm_4687/local_polis_ssm_summary.json \
+    --readiness-summary "$ssm_negative" \
+    --gate docs/milestones/v0.91.7/review/security/wp12_security_cav_gate_4656.json
+) >"$temp_root/wp12-ssm-negative.out" 2>&1; then
+  echo "expected WP-12 SSM validator to reject a non-ready fixture" >&2
+  exit 1
+fi
+grep -F "readiness status must be ssm_operations_ready" "$temp_root/wp12-ssm-negative.out" >/dev/null
+
+access_negative="$temp_root/wp12-access-gate-negative.json"
+jq '(.activation_checklist[] | select(.owner_issue == 4659).state) = "pr_open_pending_ci_review"' \
+  "$ROOT_DIR/docs/milestones/v0.91.7/review/security/wp12_access_activation_gate_4660.json" >"$access_negative"
+if (
+  cd "$ROOT_DIR"
+  python3 adl/tools/validate_wp12_access_activation_gate_4660.py \
+    --access-gate "$access_negative" \
+    --parent-gate docs/milestones/v0.91.7/review/security/wp12_security_cav_gate_4656.json
+) >"$temp_root/wp12-access-negative.out" 2>&1; then
+  echo "expected WP-12 access validator to reject stale #4659 state" >&2
+  exit 1
+fi
+grep -F "owner issue 4659 state must be boundary_proven" "$temp_root/wp12-access-negative.out" >/dev/null
+
 runtime_companion_token="cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --status-level all --final-status-level slow --no-clean -E test(/^cav::/) or test(/^runtime_api::/) or test(/^supervision::/) or test(/^topology::/)"
 if ! grep -F "$runtime_companion_token" "$csm_cav_cargo_log" >/dev/null; then
   echo "missing PR-fast coverage runtime companion token: $runtime_companion_token" >&2

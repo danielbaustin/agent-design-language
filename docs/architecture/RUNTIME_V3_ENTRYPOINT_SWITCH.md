@@ -6,13 +6,15 @@ As of v0.91.7, Runtime v3 is selectable through an explicit CLI compatibility
 boundary. Runtime v2 remains the default runtime until the cutover proof gate
 authorizes a default switch.
 
-## Covered Entrypoints
+## Selection Report Surface
 
 - `adl runtime-v3 select [--runtime v2|v3] [--json]`
 - `adl-runtime runtime-v3 select [--runtime v2|v3] [--json]`
 
-These entrypoints report the selected runtime and the Runtime v3 control API
-policy without launching a daemon or changing global defaults.
+These compatibility entrypoints report the requested runtime and the Runtime v3
+control API policy. They are not runtime launchers: they invoke neither Runtime
+v2 nor Runtime v3 and do not change global defaults. Runtime v3 execution uses
+the independent `adl-runtime-kernel serve` command below.
 
 The selector reports `DEFAULT_CHANGED=false` for both Runtime v2 and Runtime v3
 selection. `SELECTION_DIFFERS_FROM_DEFAULT=true` is the reversible selection
@@ -21,8 +23,8 @@ signal for explicit Runtime v3 use while Runtime v2 remains the default.
 ## Selection Rules
 
 - No selector: Runtime v2 remains selected.
-- `--runtime v3`: Runtime v3 is selected explicitly.
-- `--runtime v2`: Runtime v2 fallback is selected explicitly.
+- `--runtime v3`: the report records an explicit Runtime v3 request.
+- `--runtime v2`: the report records an explicit Runtime v2 request.
 - `ADL_RUNTIME_SELECTION=v3`: Runtime v3 is selected when `--runtime` is
   omitted.
 - Unknown values fail closed.
@@ -37,7 +39,7 @@ Runtime v3 uses the local HTTPS control API endpoint:
 https://localhost:20997
 ```
 
-The Runtime v3 kernel launch command reported by the selector is:
+The independent Runtime v3 kernel launch command reported by this surface is:
 
 ```text
 adl-runtime-kernel serve --init infra/runtime-v3/runtime-init.toml

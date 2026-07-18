@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5423,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][register] Reconcile sprint review register after remediation wave",
+    "slug": "v0-91-7-review-fix-register-reconcile-remediation-wave",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make the canonical v0.91.7 sprint review register agree with terminal retained remediation evidence.",
+      "required_outcome": "Update completed remediation rows without overstating or erasing unresolved sprint findings.",
+      "declared_scope": [
+        "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+        "docs/reviews/v0.91.7/register-reconcile-5423",
+        ".csdlc/issues/5423"
+      ],
+      "authority_boundary": [
+        "Use terminal retained evidence as the only promotion authority",
+        "Do not modify active #5404, #5405, #5408, or #5409 work"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

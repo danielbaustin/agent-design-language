@@ -9,8 +9,8 @@ default_cutover_authorized: false
 
 ## Summary
 
-The v0.91.7 Runtime v3 release proof gate is complete, but it closes as a
-no-go for default Runtime v3 cutover.
+The v0.91.7 release-decision review is complete, but live cutover proof is not.
+The gate closes as a no-go for default Runtime v3 cutover.
 
 Runtime v3 has retained proof for explicit opt-in selection, selected control
 API and observability contracts, weather/resource monitoring, bounded
@@ -25,7 +25,7 @@ Runtime v2 remains the default runtime and rollback target.
 
 This release gate covers the selected v0.91.7 Runtime v3 cutover scope:
 
-- explicit Runtime v3 entrypoint selection;
+- the explicit Runtime v3 selection report and independent kernel command;
 - Runtime v2 default and rollback preservation;
 - guardian fallback behavior for the selected small Tokio child-process scope;
 - resource weather and graceful-stop policy;
@@ -39,12 +39,12 @@ This release gate covers the selected v0.91.7 Runtime v3 cutover scope:
 
 | Surface | Evidence | Result |
 |---|---|---|
-| Entrypoint switch | `docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md` | Explicit selection only; Runtime v2 remains default. |
+| Entrypoint report | `docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md` | Contract only: reports the requested runtime but invokes neither runtime; Runtime v2 remains default. |
 | Cutover decision | `docs/architecture/runtime_v3_cutover_decision_5254.v1.json` | #5254 records no-go for default switch and no Runtime v2 decommission. |
 | Live black-box parity | `docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json` | `cutover_eligible: true`; zero blockers remain for live black-box parity after #5277, #5278, #5279, #5280, #5281, #5282, #5283, #5284, and #5285. |
-| Weather/resource monitoring | `docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json` | CPU, memory, disk, CloudWatch-shape event, and graceful-stop policy are retained; observed GPU telemetry is deferred. |
+| Weather/resource monitoring | `docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json` | CPU, memory, continuity-filesystem disk, CloudWatch-shape event, and graceful-stop policy are retained; observed GPU telemetry is deferred. Pressure stop atomically pauses new control admission before signing current runtime state. Checkpoint failure reopens admission and retries without stopping the kernel or API. |
 | Observatory consumption | `docs/architecture/runtime_v3_observatory_consumption_5286.v1.json` | Runtime v3 owns a loopback read feed at `GET /v1/observatory` on port `20997`; HTML Observatory consumes it only by explicit opt-in, retained Runtime v2/CSM evidence remains the default mirror, and Unity remains proven-limited while #4739/#4741 are open. |
-| Soak and rollback | `docs/architecture/runtime_v3_soak_rollback_5253.v1.json` | Bounded production-like soak and Runtime v2 rollback/default preservation are retained. |
+| Soak and rollback | `docs/architecture/runtime_v3_soak_rollback_5253.v1.json` | Retained packet; the 100-cycle test is ignored by default and is not live completion evidence. |
 | Shadow parity | `docs/architecture/runtime_v3_shadow_parity_report.v1.json` | Runtime v2 remains default and Runtime v3 stays opt-in. |
 | Cutover checklist | `docs/architecture/runtime_v3_cutover_checklist.v1.json` | Current gate state remains no default cutover. |
 
@@ -52,16 +52,26 @@ This release gate covers the selected v0.91.7 Runtime v3 cutover scope:
 
 | Gate | Result | Notes |
 |---|---|---|
-| Explicit entrypoint selection | passed | Runtime v3 can be selected without changing the default. |
+| Explicit entrypoint report | contract only | Reports an explicit Runtime v3 request without invoking either runtime. |
 | Default runtime switch | not authorized | Runtime v2 remains default for v0.91.7. |
 | Runtime v2 deletion/decommission | not authorized | Runtime v2 remains intact and is the rollback target. |
 | Guardian fallback | passed for selected fallback scope | Tiny Tokio child-process fallback is retained; Horust/native lanes remain non-pass unless separately qualified. |
-| Weather/resource monitoring | passed with GPU deferral | CPU, memory, disk, CloudWatch-shape event, and graceful-stop policy are retained; observed GPU telemetry is deferred. |
+| Weather/resource monitoring | passed with GPU deferral | CPU, memory, continuity-filesystem disk, CloudWatch-shape event, and graceful-stop policy are retained. Pressure checkpoint failure keeps service alive and re-arms monitoring; observed GPU telemetry is deferred. |
 | API health and port policy | passed by contract | Runtime v3 control endpoint remains `127.0.0.1:20997`. |
 | Observatory live consumption | passed explicit opt-in | Runtime v3 exposes a runtime-owned read feed at `GET /v1/observatory`; browser mutation authority remains false and signed commands remain required for control mutation. |
 | Observability contract | passed by contract | Machine-readable output and human `adl_event` streams remain separated by existing policy. |
-| Soak and rollback | passed bounded scope | #5253 retained bounded production-like soak and Runtime v2 rollback/default preservation. |
+| Soak and rollback | ignored | #5253 is retained, but its 100-cycle test is not part of the default executed proof. |
 | Live black-box parity | passed without default cutover | #5248 now reports `cutover_eligible: true` with zero blocker-class capability groups; #5220 still closes as no-go for default cutover until a later reviewed decision authorizes a default switch. |
+
+Every machine-readable gate now declares one evidence class: `executed`,
+`contract_only`, `ignored`, or `deferred`. A gate may satisfy a live requirement
+only when its evidence class is `executed`.
+
+The deterministic size inventory measures the independent Runtime v3 kernel
+against the 12,000-line challenge and reports the selected shared guardian as a
+separate auxiliary surface. The combined figure is retained rather than hidden;
+the guardian variance is explicit because that file includes the reusable
+cross-process contract and its co-located unit tests, not another kernel module.
 
 ## Child Issue Results
 
@@ -85,6 +95,8 @@ This release gate covers the selected v0.91.7 Runtime v3 cutover scope:
   retained.
 - Remote multi-day soak and Horust/native guardian qualification are not counted
   as passed proof in this gate.
+- Unix process-group containment is executed proof for the selected guardian;
+  Windows Job Object containment is not claimed.
 - Runtime v2 decommission remains a separate reviewed decision.
 
 ## Focused Proof Commands
@@ -100,6 +112,8 @@ cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test control -- obser
 bash adl/tools/test_v0917_html_observatory_integrated_proof.sh
 cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test parity -- release_proof_gate_closes_without_authorizing_default_cutover final_cutover_decision_keeps_v2_default_after_live_parity_clear kernel_lifecycle_proof_resolves_only_kernel_lifecycle_blocker topology_backpressure_proof_resolves_only_topology_backpressure_blocker service_contracts_configuration_proof_resolves_only_service_contracts_blocker continuity_replay_recovery_proof_resolves_only_continuity_blocker adaptive_learning_dag_proof_resolves_only_learning_blocker governance_freedom_gate_aee_proof_resolves_only_governance_blocker delegation_resources_proof_resolves_only_delegation_blocker acip_a2a_cloud_network_proof_resolves_final_live_black_box_blocker --nocapture
 cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak -- production_like_soak_rollback_packet_retains_cutover_boundaries packaging_preserves_one_guardian_neutral_child_contract --nocapture
+cargo test --manifest-path adl-runtime/Cargo.toml guardian::tests -- --nocapture
+cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak -- pressure_checkpoint_failure_keeps_signal_shutdown_responsive --nocapture
 cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings
 cargo test --manifest-path adl-runtime-kernel/Cargo.toml
 ```
@@ -124,3 +138,4 @@ adl-ci
 - This packet does not claim full Runtime v2 behavioral equivalence.
 - This packet does not count GPU, remote multi-day, or Horust/native deferred
   lanes as passed proof.
+- This packet does not claim Windows process-tree containment.

@@ -1,0 +1,388 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5411,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "b26e9dc0f5d2f761167d0995d7e58fb46ee0356c54cf4c5227da725203155b7b",
+  "phase": "closed_out",
+  "generation": 23,
+  "digest": "3f6885d971095920cf37afc05c62a447ee67eccd0c0ee3a6413e24841101417b",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "codex-subagent-019f6d3d",
+    "assigned_by": "codex",
+    "revision": "git-blake3:432913ed43f316ddd40543c5268f20a43d68702b:d77b31f184074fe817332dc2d3da6fba031e3f33398d3242e0932e3b84f753c3",
+    "scope": [
+      "adl-runtime/src/guardian.rs",
+      "adl-runtime-kernel",
+      "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md",
+      "docs/architecture/RUNTIME_V3_RELEASE_PROOF_GATE_5220.md",
+      "docs/architecture/runtime_v3_current_inventory.v1.json",
+      "docs/architecture/runtime_v3_release_proof_gate_5220.v1.json",
+      "docs/reviews/v0.91.7/runtime-v3-5411",
+      "infra/runtime-v3/runtime-init.toml"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-subagent-019f6d3d",
+    "scope": [
+      "adl-runtime/src/guardian.rs",
+      "adl-runtime-kernel",
+      "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md",
+      "docs/architecture/RUNTIME_V3_RELEASE_PROOF_GATE_5220.md",
+      "docs/architecture/runtime_v3_current_inventory.v1.json",
+      "docs/architecture/runtime_v3_release_proof_gate_5220.v1.json",
+      "docs/reviews/v0.91.7/runtime-v3-5411",
+      "infra/runtime-v3/runtime-init.toml"
+    ],
+    "reviewed_revision": "git-blake3:432913ed43f316ddd40543c5268f20a43d68702b:d77b31f184074fe817332dc2d3da6fba031e3f33398d3242e0932e3b84f753c3",
+    "findings": [],
+    "residual_risks": [
+      "GPU and remote-cloud validation remain explicitly deferred non-claims for v0.92",
+      "Ignored and contract-only proof surfaces remain classified as non-executed in release evidence"
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5411,
+    "pull_request": 5442,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5442",
+    "base": "main",
+    "head": "codex/5411-runtime-v3-pressure-stop",
+    "revision": "git-blake3:432913ed43f316ddd40543c5268f20a43d68702b:d77b31f184074fe817332dc2d3da6fba031e3f33398d3242e0932e3b84f753c3",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": {
+    "pull_request": 5442,
+    "head_sha": "432913ed43f316ddd40543c5268f20a43d68702b",
+    "checks": [
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29542607971/job/87767762584"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29542607971/job/87767783440"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29542607971/job/87767783308"
+      },
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29542607971/job/87767860173"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5442,
+    "disposition": "merged",
+    "observed_sha": "432913ed43f316ddd40543c5268f20a43d68702b",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5411.json",
+    "released_branch": "codex/5411-runtime-v3-pressure-stop",
+    "released_worktree": ".worktrees/adl-wp-5411",
+    "released_protected_paths": [
+      "adl-runtime/src/guardian.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/weather.rs",
+      "adl-runtime-kernel/src/live_continuity.rs",
+      "adl-runtime-kernel/tests/guardian_soak.rs",
+      "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+      "docs/architecture/runtime_v3_release_proof_gate_5220.v1.json"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5411/retained/design.md",
+  "diagram_path": ".csdlc/issues/5411/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-final-design-conformance",
+      "revision": "42753c93f96ca6246d88216dc16f79f2d4a1c96b516babc266af641f5b3f8355"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "443884c8feb90fa2c8789f56ed3becfcf43cc9aed913d9b4a8c7cf961f819d08",
+      "rendered_digest": "854f6a26c87df4e3a2200c7ac4ad5ae1d1fd64c27702733e7171cd4ac7c41db5",
+      "ast_digest": "4e72032ecfe2b81570caf0fab2f6efebb91ea84a03cea36654c35973c6137c8f"
+    },
+    "stp": {
+      "values_digest": "63ce98ce593c831417d1770d362154236e471d0e832ecdbaed06a93bd807bf6f",
+      "rendered_digest": "ec827436f9d87d547b7d1db67b3c647b0d91c628405c2fa98a2fe0b47d39004e",
+      "ast_digest": "26c6e9e39e5ea8f22b197eaeeb2c100802f6734206b09e58cd28ad78f2b9cc20"
+    },
+    "spp": {
+      "values_digest": "f6001768d9122cacee3161bf7759becb537c1faa1e5fe5e03d7354b038ee1644",
+      "rendered_digest": "0f5c3ff042b330fd69043773cc16b4e83b6613873f112172a572895ba9d69923",
+      "ast_digest": "b158603aa3dfc2654a0952a4f469ef9f83f74a6e0bab60fdcfbb525b45d441e1"
+    },
+    "vpp": {
+      "values_digest": "4812c24a110ce9fec7ad8f626dd1b6c961027fc5a036b1d4532f32cef552f1a7",
+      "rendered_digest": "d5b97f92fba410da584920e9da2d8bf33837043a5c89a2174335849716a1ab41",
+      "ast_digest": "7a963df9bdc5846ac69dbbe772f4e51e7252af81dbe5162e936caf808512dbaa"
+    },
+    "srp": {
+      "values_digest": "8d57486ae9164122300fb91513428f3628e6a5c807b8093604e9ca20eca14ac9",
+      "rendered_digest": "2fe47343c5cbd18529172ef457f89734750e6284d958478400a1e48ff534f807",
+      "ast_digest": "ce755743026b627f873712d8c753d8867d55ae705006202e5e0570756214cbc5"
+    },
+    "sor": {
+      "values_digest": "0c966a8e7318fc3c4a1b8c8bdf6d0edccc2dcc58fb0082cd8b8c5c2f0630ad36",
+      "rendered_digest": "667a5438ee44d7546370e11aa0f540edccf9b3142faf18d76ee3d1dcd37d97fa",
+      "ast_digest": "1c23f561cbadc587151b496d3eb81d8f74cd1fe13a1195039a761163cc93cb4c"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "issue-specific design, bounded plan, validation lanes, and all six cards are ready"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "reflect the successful typed csdlc-bind result in the issue worktree record"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "implementation and local proof complete; advance to exact-revision review"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "exact-revision independent review passed with no actionable findings"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "issue-specific design, bounded plan, validation lanes, and all six cards are ready",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "reflect the successful typed csdlc-bind result in the issue worktree record",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"bound\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "include the focused external guardian proof required by the implemented scope",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-full\",\"proof_role\":\"Prove pressure monitoring, signed continuity, release evidence semantics, and all Runtime v3 kernel contracts\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":12000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--all-targets\"],\"parallel_group\":\"runtime-v3\",\"defer_reason\":null},{\"lane\":\"runtime-v3-guardian\",\"proof_role\":\"Prove Unix process-tree containment, bounded capture, restart, and signal forwarding\",\"acceptance_ids\":[\"AC-2\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"guardian::tests\"],\"parallel_group\":\"runtime-v3-guardian\",\"defer_reason\":null},{\"lane\":\"runtime-v3-quality\",\"proof_role\":\"Prove formatting, warnings, and implementation budget truth\",\"acceptance_ids\":[\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":8000,\"argv\":[\"cargo\",\"clippy\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"runtime-v3-quality\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "selector and release evidence semantics implemented",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"step-1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 5,
+      "actor": "codex",
+      "reason": "guardian containment and regression tests implemented",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"step-2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "pressure monitoring, signed checkpoint, and graceful stop implemented",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"step-3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 7,
+      "actor": "codex",
+      "reason": "record bounded Runtime v3 remediation implementation",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Resolved Runtime v3 selector truth, Unix guardian process-tree containment, scoped periodic resource-pressure monitoring, signed stateful checkpoint-before-stop behavior, reversible control admission, and release-evidence classification.\",\"changes\":[\"Clarified selector as a reporting contract without runtime invocation\",\"Contained Unix descendants with bounded capture and process-group liveness escalation\",\"Connected configured weather pressure to signed checkpoint and graceful stop with retry on checkpoint failure\",\"Retained stateful recorder snapshots with explicit current and legacy schema handling\",\"Classified release proof as executed, contract-only, ignored, or deferred\"],\"artifacts\":[\"docs/reviews/v0.91.7/runtime-v3-5411/DESIGN.md\",\"docs/reviews/v0.91.7/runtime-v3-5411/DIAGRAM.mmd\",\"docs/architecture/runtime_v3_release_proof_gate_5220.v1.json\",\"docs/architecture/runtime_v3_current_inventory.v1.json\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 8,
+      "actor": "codex",
+      "reason": "record full Runtime v3 kernel validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--all-targets\"],\"purpose\":\"Full Runtime v3 kernel behavior across all targets\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork validation: all non-ignored tests passed\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 9,
+      "actor": "codex",
+      "reason": "record guardian crate validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--all-targets\"],\"purpose\":\"Guardian containment, restart, signaling, and independence behavior\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork validation: 117 tests passed\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "record Runtime v3 strict lint validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Runtime v3 kernel warning-free quality gate\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork strict Clippy\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 11,
+      "actor": "codex",
+      "reason": "record guardian library strict lint validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--lib\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Guardian library warning-free quality gate\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork strict Clippy\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 12,
+      "actor": "codex",
+      "reason": "record deterministic inventory validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"python3\",\"adl-runtime-kernel/tools/test_generate_runtime_inventory.py\"],\"purpose\":\"Runtime v3 implementation budget and deterministic inventory truth\",\"outcome\":\"passed\",\"evidence_ref\":\"11,935 kernel LoC; 867-line shared guardian reported separately; deterministic inventory current\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 13,
+      "actor": "codex",
+      "reason": "implementation and local proof complete; advance to exact-revision review",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 14,
+      "actor": "codex-post-implementation-design-conformance",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 16,
+      "generation": 15,
+      "actor": "codex-final-design-conformance",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 17,
+      "generation": 16,
+      "actor": "codex",
+      "reason": "refresh deterministic inventory evidence after final findings",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"python3\",\"adl-runtime-kernel/tools/test_generate_runtime_inventory.py\"],\"purpose\":\"Final Runtime v3 implementation budget and deterministic inventory truth\",\"outcome\":\"passed\",\"evidence_ref\":\"11,964 kernel LoC; 867-line shared guardian auxiliary surface; 12,831 combined selected surface; 186 test attributes; inventory current\"}}"
+    },
+    {
+      "sequence": 18,
+      "generation": 17,
+      "actor": "codex",
+      "reason": "full validation and final independent review passed",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"step-4\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 17,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 18,
+      "actor": "codex-subagent-019f6d3d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 19,
+      "actor": "codex",
+      "reason": "exact-revision independent review passed with no actionable findings",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 20,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 23,
+      "generation": 21,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 24,
+      "generation": 22,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 25,
+      "generation": 23,
+      "actor": "codex-closeout-retainer",
+      "reason": "materialize shared terminal authority after PR #5442 merged",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

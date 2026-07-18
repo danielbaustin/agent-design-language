@@ -915,6 +915,239 @@ fn placeholder_design_is_pending_then_can_be_completed_approved_and_bound() {
 }
 
 #[test]
+fn bound_and_implemented_design_reapproval_refreshes_truth_and_reviewed_rejects() {
+    let (temp, store, record) = fixture();
+    let ready = edit_issue(
+        &store,
+        edit(
+            &record,
+            SemanticOperation::AdvancePhase {
+                phase: csdlc_v2::LifecyclePhase::Ready,
+            },
+        ),
+    )
+    .expect("ready");
+    let bound = edit_issue(
+        &store,
+        edit(
+            &ready,
+            SemanticOperation::AdvancePhase {
+                phase: csdlc_v2::LifecyclePhase::Bound,
+            },
+        ),
+    )
+    .expect("bound");
+    let bound_transitions = bound.transitions.clone();
+    fs::write(
+        temp.path().join("docs/design.md"),
+        "# Bound design revision\n",
+    )
+    .expect("bound design edit");
+    fs::write(
+        temp.path().join("docs/diagram.mmd"),
+        "flowchart LR\n  Bound --> Reapproved\n",
+    )
+    .expect("bound diagram edit");
+    let reapproved_bound = csdlc_v2::approve_design(
+        &store,
+        csdlc_v2::ApproveDesignRequest {
+            issue: 42,
+            expected_generation: bound.generation,
+            expected_digest: bound.digest,
+            claim_id: "claim-1".into(),
+            reviewer: "architect".into(),
+        },
+    )
+    .expect("bound reapproval");
+    assert_eq!(reapproved_bound.phase, csdlc_v2::LifecyclePhase::Bound);
+    assert_eq!(reapproved_bound.transitions, bound_transitions);
+    assert_eq!(reapproved_bound.generation, bound.generation + 1);
+    assert_eq!(
+        reapproved_bound.audit.last().expect("audit").operation,
+        "approve_design"
+    );
+
+    let mut execution = edit(
+        &reapproved_bound,
+        SemanticOperation::RecordExecution {
+            summary: "implemented".into(),
+            changes: vec!["csdlc-v2/src/store.rs".into()],
+            artifacts: vec!["focused tests".into()],
+        },
+    );
+    execution.card = CardKind::Sor;
+    let implemented_evidence = edit_issue(&store, execution).expect("execution evidence");
+    let implemented = edit_issue(
+        &store,
+        edit(
+            &implemented_evidence,
+            SemanticOperation::AdvancePhase {
+                phase: csdlc_v2::LifecyclePhase::Implemented,
+            },
+        ),
+    )
+    .expect("implemented");
+    let implemented_transitions = implemented.transitions.clone();
+    fs::write(
+        temp.path().join("docs/design.md"),
+        "# Implemented design correction\n",
+    )
+    .expect("implemented design edit");
+    fs::write(
+        temp.path().join("docs/diagram.mmd"),
+        "flowchart LR\n  Implemented --> Corrected\n",
+    )
+    .expect("implemented diagram edit");
+
+    let mut stale_mutation = edit(
+        &implemented,
+        SemanticOperation::UpdatePlanStep {
+            step_id: "step-1".into(),
+            status: csdlc_v2::cards::StepStatus::Completed,
+        },
+    );
+    stale_mutation.card = CardKind::Spp;
+    assert!(matches!(
+        edit_issue(&store, stale_mutation)
+            .expect_err("stale design blocks typed mutation")
+            .code,
+        ErrorCode::CardInvalid
+    ));
+
+    let reapproved = csdlc_v2::approve_design(
+        &store,
+        csdlc_v2::ApproveDesignRequest {
+            issue: 42,
+            expected_generation: implemented.generation,
+            expected_digest: implemented.digest,
+            claim_id: "claim-1".into(),
+            reviewer: "architect".into(),
+        },
+    )
+    .expect("implemented reapproval");
+    assert_eq!(reapproved.phase, csdlc_v2::LifecyclePhase::Implemented);
+    assert_eq!(reapproved.transitions, implemented_transitions);
+    assert_eq!(reapproved.generation, implemented.generation + 1);
+    let design_digest =
+        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/design.md")).expect("design"));
+    let diagram_digest =
+        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/diagram.mmd")).expect("diagram"));
+    assert!(matches!(
+        &reapproved.design_review,
+        csdlc_v2::DesignReview::Approved { revision, .. } if revision == &design_digest
+    ));
+    let cards = store.load_cards(42).expect("reapproved cards");
+    for kind in [CardKind::Spp, CardKind::Vpp] {
+        let (actual_design, actual_diagram) = match &cards[&kind].content {
+            csdlc_v2::cards::CardContent::Spp(values) => {
+                (&values.design_digest, &values.diagram_digest)
+            }
+            csdlc_v2::cards::CardContent::Vpp(values) => {
+                (&values.design_digest, &values.diagram_digest)
+            }
+            _ => unreachable!("design-bearing card"),
+        };
+        assert_eq!(actual_design, &design_digest);
+        assert_eq!(actual_diagram, &diagram_digest);
+    }
+
+    let mut plan_mutation = edit(
+        &reapproved,
+        SemanticOperation::UpdatePlanStep {
+            step_id: "step-1".into(),
+            status: csdlc_v2::cards::StepStatus::Completed,
+        },
+    );
+    plan_mutation.card = CardKind::Spp;
+    let mutated = edit_issue(&store, plan_mutation).expect("typed mutation after reapproval");
+    let mut review = edit(
+        &mutated,
+        SemanticOperation::RecordReview {
+            reviewer: "independent-reviewer".into(),
+            revision: "reviewed-revision".into(),
+            result: csdlc_v2::cards::ReviewResult::Pass,
+            residual_risk: Vec::new(),
+        },
+    );
+    review.card = CardKind::Srp;
+    let reviewed_evidence = edit_issue(&store, review).expect("review evidence");
+    let reviewed = edit_issue(
+        &store,
+        edit(
+            &reviewed_evidence,
+            SemanticOperation::AdvancePhase {
+                phase: csdlc_v2::LifecyclePhase::Reviewed,
+            },
+        ),
+    )
+    .expect("reviewed");
+    let error = csdlc_v2::approve_design(
+        &store,
+        csdlc_v2::ApproveDesignRequest {
+            issue: 42,
+            expected_generation: reviewed.generation,
+            expected_digest: reviewed.digest,
+            claim_id: "claim-1".into(),
+            reviewer: "architect".into(),
+        },
+    )
+    .expect_err("reviewed reapproval must fail closed");
+    assert!(matches!(error.code, ErrorCode::InvalidTransition));
+}
+
+#[test]
+fn design_reapproval_rejects_unrelated_card_projection_drift() {
+    let (temp, store, record) = fixture();
+    let ready = edit_issue(
+        &store,
+        edit(
+            &record,
+            SemanticOperation::AdvancePhase {
+                phase: csdlc_v2::LifecyclePhase::Ready,
+            },
+        ),
+    )
+    .expect("ready");
+    let bound = edit_issue(
+        &store,
+        edit(
+            &ready,
+            SemanticOperation::AdvancePhase {
+                phase: csdlc_v2::LifecyclePhase::Bound,
+            },
+        ),
+    )
+    .expect("bound");
+    fs::write(
+        temp.path().join("docs/design.md"),
+        "# Legitimate bound design revision\n",
+    )
+    .expect("design edit");
+    let sip_path = store.issue_dir(42).join("cards/sip.values.json");
+    let mut sip: serde_json::Value =
+        serde_json::from_slice(&fs::read(&sip_path).expect("SIP values")).expect("SIP JSON");
+    sip["content"]["values"]["goal"] = "unauthorized direct edit".into();
+    fs::write(
+        &sip_path,
+        serde_json::to_vec_pretty(&sip).expect("serialize SIP"),
+    )
+    .expect("tamper SIP values");
+
+    let error = csdlc_v2::approve_design(
+        &store,
+        csdlc_v2::ApproveDesignRequest {
+            issue: 42,
+            expected_generation: bound.generation,
+            expected_digest: bound.digest,
+            claim_id: "claim-1".into(),
+            reviewer: "architect".into(),
+        },
+    )
+    .expect_err("unrelated card drift must not be canonicalized");
+    assert!(matches!(error.code, ErrorCode::CorruptRecord));
+}
+
+#[test]
 fn issue_local_design_paths_do_not_look_like_existing_records() {
     let temp = tempfile::tempdir().expect("tempdir");
     let store = Store::new(temp.path());

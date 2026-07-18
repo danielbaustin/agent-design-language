@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5426,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][readiness] Let terminal validation supersede earlier nonterminal evidence",
+    "slug": "v0-91-7-csdlc-v2-readiness-validation-supersession",
+    "version": "v0.91.7",
+    "generation": 25
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Allow supported terminal closeout when a later validation observation supersedes an earlier state for the same logical validation.",
+      "required_outcome": "Readiness and terminal validation use one shared latest-observation rule while retaining append-only evidence.",
+      "declared_scope": [
+        "C-SDLC v2 terminal validation semantics",
+        "focused readiness and card-validation regression tests",
+        "retained design and diagram"
+      ],
+      "authority_boundary": [
+        "Do not hand-edit lifecycle cards",
+        "Do not weaken required local or remote gates",
+        "Do not touch runtime or product code"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

@@ -1,0 +1,22 @@
+flowchart TB
+    U["Operator or platform service manager"] --> G["Runtime guardian"]
+    G --> PG["Bounded child process group"]
+    PG --> K["adl-runtime-kernel serve"]
+    K --> W["System weather sampler"]
+    W -->|"healthy or warning"| O["Telemetry and continued service"]
+    W -->|"stop required"| A["Close admission"]
+    A --> C["Signed continuity checkpoint"]
+    C -->|"checkpoint committed"| Q["Cancel and drain control API"]
+    Q --> S["Graceful kernel shutdown"]
+    C -->|"checkpoint failed"| F["Reopen admission; keep service alive"]
+    F -->|"selectable retry"| W
+    S --> G
+    G -->|"deadline exceeded"| X["Terminate process group"]
+    E["Release evidence classifier"] --> EX["Executed proof"]
+    E --> CO["Contract only"]
+    E --> IG["Ignored"]
+    E --> DE["Deferred"]
+    EX --> R["May satisfy cutover requirement"]
+    CO --> N["Retained non-completion evidence"]
+    IG --> N
+    DE --> N

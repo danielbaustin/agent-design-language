@@ -1,0 +1,74 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5440,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][design] Support audited post-readiness design reapproval",
+    "slug": "v0-91-7-csdlc-v2-post-readiness-design-reapproval",
+    "version": "v0.91.7",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Extend the existing approve-design phase guard, retain its atomic digest refresh, and prove allowed and rejected phases.",
+      "steps": [
+        {
+          "id": "step-1",
+          "action": "Extend approve-design authorization to bound and implemented",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "step-2",
+          "action": "Add deterministic allowed and rejected phase tests",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "step-3",
+          "action": "Run focused validation and independent review",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Exact-revision review authority is never retained after an unreviewed design change",
+        "Card projections remain renderer-generated and digest-consistent",
+        "Transitions are append-only"
+      ],
+      "risks": [
+        "Accidentally allowing stale reviewed work",
+        "Failing to refresh the diagram digest",
+        "Breaking initialized approval"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Any solution requires manual card mutation",
+        "Later lifecycle phases would silently retain review truth",
+        "Scope expands beyond csdlc-v2"
+      ],
+      "replan_triggers": [],
+      "design_ref": "docs/reviews/v0.91.7/csdlc-v2-5440/DESIGN.md",
+      "design_digest": "e55e6c28f27d759dc82b6649b21118dd3a72959ab62e310dadf468443212e9a3",
+      "diagram_ref": "docs/reviews/v0.91.7/csdlc-v2-5440/DIAGRAM.mmd",
+      "diagram_digest": "382de225279586ed470844adb28d61d81d7cf22c5762555a18d0f6290adc4c8d"
+    }
+  }
+}

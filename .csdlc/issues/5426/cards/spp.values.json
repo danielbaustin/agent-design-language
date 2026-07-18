@@ -1,0 +1,80 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5426,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][readiness] Let terminal validation supersede earlier nonterminal evidence",
+    "slug": "v0-91-7-csdlc-v2-readiness-validation-supersession",
+    "version": "v0.91.7",
+    "generation": 25
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Define one reusable latest-observation rule, apply it to all terminal validation checks, add focused tests, validate, review, and publish.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Implement shared latest-observation terminal validation semantics",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Add and run focused regression tests and formatting",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-5"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Complete independent review and lifecycle publication",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Validation history remains append-only",
+        "The latest observation for a logical validation is authoritative",
+        "Any current non-passing required validation fails closed"
+      ],
+      "risks": [
+        "An overly broad identity could collapse distinct validations",
+        "Divergent readiness and card validation logic could reintroduce drift"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "The change requires destructive history mutation",
+        "Focused tests reveal ambiguous logical identity",
+        "Scope expands outside C-SDLC v2"
+      ],
+      "replan_triggers": [],
+      "design_ref": "docs/reviews/v0.91.7/csdlc-v2-5426/DESIGN.md",
+      "design_digest": "c4dcb826af2864338d6f39dbbd21de3c5a2dfdcaad04932990648e74fd9ad983",
+      "diagram_ref": "docs/reviews/v0.91.7/csdlc-v2-5426/DIAGRAM.mmd",
+      "diagram_digest": "37f058dfe07cc4e362abf37be46fe05d9853e931c82adae046bde313cded4f7e"
+    }
+  }
+}

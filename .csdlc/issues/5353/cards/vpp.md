@@ -24,8 +24,8 @@ Diagram: docs/architecture/csdlc-v2/wp01/5353/DIAGRAM.mmd
 
 [
   {
-    "lane": "focused-regression",
-    "proof_role": "Prove issue-local init and dual digest refresh behavior",
+    "lane": "focused-gate2",
+    "proof_role": "Prove issue-local initialization and dual digest refresh behavior",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -34,17 +34,41 @@ Diagram: docs/architecture/csdlc-v2/wp01/5353/DIAGRAM.mmd
     "deterministic": true,
     "resource_profile": "small",
     "budget_seconds": 120,
-    "budget_tokens": 2000,
+    "budget_tokens": 1000,
     "argv": [
       "cargo",
       "test",
       "--locked",
       "--manifest-path",
       "csdlc-v2/Cargo.toml",
-      "gate2",
-      "gate7"
+      "--test",
+      "gate2"
     ],
-    "parallel_group": "local",
+    "parallel_group": "focused",
+    "defer_reason": null
+  },
+  {
+    "lane": "focused-gate7",
+    "proof_role": "Prove lifecycle integration remains compatible with initialization repair",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 1000,
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate7_lifecycle"
+    ],
+    "parallel_group": "focused",
     "defer_reason": null
   },
   {
@@ -64,7 +88,7 @@ Diagram: docs/architecture/csdlc-v2/wp01/5353/DIAGRAM.mmd
       "--manifest-path",
       "csdlc-v2/Cargo.toml"
     ],
-    "parallel_group": "local",
+    "parallel_group": "suite",
     "defer_reason": null
   }
 ]
@@ -81,7 +105,8 @@ Tokens: 10000
 
 ## Commands
 
-- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml gate2 gate7`
+- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate2`
+- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate7_lifecycle`
 - `cargo test --locked --manifest-path csdlc-v2/Cargo.toml`
 
 ## Failure Semantics

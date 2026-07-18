@@ -2,11 +2,11 @@
 
 Status: active_review_register
 
-Last updated: 2026-07-15
+Last updated: 2026-07-16
 
 Issue: #5134
 
-Current update: #5403
+Current update: #5423
 
 ## Purpose
 
@@ -59,6 +59,10 @@ closed out in the issue/card/PR surfaces.
   reconciles every declared child with its closing PR and merged revision, and
   routes 42 findings to #5404-#5413. Current disposition is 39 open, 2 partly
   fixed, and 1 fixed/superseded; these reviews do not claim remediation.
+- Register reconciliation #5423 records the tools reliability tail #5036 as
+  review-remediated after terminal #5406 records authority and terminal #5407
+  issue-wave remediation. The other #5403 remediation rows remain unchanged
+  until their own terminal retained evidence is available.
 
 ## Review Status Table
 
@@ -99,7 +103,7 @@ closed out in the issue/card/PR surfaces.
 | Workflow tooling stabilization follow-up wave | #4927 closed; residual routed and closed | GitHub closeout comment on #4927; #5034 | #4927 closed after #4907, #4882, #4908, #4916, #4905, #4924, and #4848 were all closed. Its closeout routed legacy merged-PR/no-watcher-attachment closeout hygiene to #5034; #5034 is now closed and was later consumed by the #5036 tools reliability tail. #4825 remains intentionally excluded as Unity-specific work. | Keep #5034 as closed residual evidence; do not treat #4825 as part of this sprint wave. |
 | Provider native adapters mini-sprint | #5027 closed; review-record finding fixed | `docs/milestones/v0.91.7/review/provider/PROVIDER_MINI_SPRINT_REVIEW_5027.md`; `docs/milestones/v0.91.7/review/provider/PROVIDER_MINI_SPRINT_CLOSEOUT_5027.md` | Children #5024, #5025, #5026, #5044, #4653, #4654, and #5075 are closed. The closeout packet accepts Z.ai GLM-5, AWS Bedrock Nova Pro, and Fable 5 rows while keeping DSpark Qwen/Gemma candidate-only and DeepSeek V4 Flash GPU smoke blocked by AWS quota/shape constraints. The stale ignored `.adl` placeholder review is superseded and no longer consumed as release-review evidence. | Keep provider acceptance non-claims visible; consume the tracked review and closeout packets instead of ignored local placeholders. |
 | Rust tooling simplification wave | #5035 closed | `.adl/v0.91.7/sprints/issue-5035__v0-91-7-rust-sprint-execute-rust-tooling-simplification-wave/review/SPRINT_REVIEW_PACKET.md`; `.adl/v0.91.7/sprints/issue-5035__v0-91-7-rust-sprint-execute-rust-tooling-simplification-wave/review/SPRINT_REVIEW_SYNTHESIS.md`; `.adl/v0.91.7/sprints/issue-5035__v0-91-7-rust-sprint-execute-rust-tooling-simplification-wave/SPRINT_CLOSEOUT.md` | Review records no blocking sprint finding. All ordered children #4892-#4899 are closed out with merged PRs. Residual risk: sprint rollup artifacts are local `.adl` operational evidence and should not be mistaken for product-code deltas merged by the child PRs. | Keep the local-operational-evidence boundary visible; do not claim broad Rust tooling regression absence beyond child VPP/SOR proof. |
-| Tools workflow reliability tail | #5036 closed; changes required | `docs/reviews/v0.91.7/remaining-sprints-5403/TOOLS_RELIABILITY_REVIEW_5036.md` | Four findings: 2 P1 and 2 P2. Validation-manager logging, stale v1 taxonomy, closeout synthesis, and hosted timing evidence are routed to #5407 and #5406. | Resolve #5407/#5406; do not claim material CI speedup without comparable hosted evidence. |
+| Tools workflow reliability tail | #5036 closed; review-remediated | `docs/reviews/v0.91.7/remaining-sprints-5403/TOOLS_RELIABILITY_REVIEW_5036.md`; `docs/reviews/v0.91.7/tools-5407/TOOLS_RELIABILITY_CLOSEOUT_5036.md`; `docs/reviews/v0.91.7/csdlc-v2-5406/TERMINAL_AUTHORITY.md` | All four findings are fixed through terminal #5406/#5407 evidence: build-action logging claims are limited to the implemented validation-manager producer, current CLI taxonomy names typed C-SDLC v2 authority, the complete eleven-child closeout matrix is retained, and unsupported hosted-speedup claims are withdrawn. | Keep the narrowed logging and performance non-claims visible; require a new reviewed issue for broader producers, consumers, or material speedup claims. |
 | WP-07 remaining CSM/runtime hardening follow-on sprint | #5045 closed; blocked with findings | `docs/reviews/v0.91.7/remaining-sprints-5403/WP07_HARDENING_REVIEW_5045.md` | Three P1 findings cover unauthenticated emergency stop, incomplete API Gateway proof, and the unresolved #4906 serial release gate. The later #5068 wave remains correctly owned by WP-07A. | Resolve #5408 and retain #4906 as blocking until an explicit release disposition exists. |
 | WP-07A CSM runtime rearchitecture and topology sprint | #5121 closed; blocked with findings | `docs/reviews/v0.91.7/remaining-sprints-5403/WP07A_REARCHITECTURE_REVIEW_5121.md` | Four findings: 3 P1 and 1 P2. The final soak did not run, production does not use the advertised supervisor topology, readiness omits required health, and API credentials have a 24-hour availability cliff. The closed umbrella remains setup/topology evidence only. | Resolve #5409 before claiming implementation completion. |
 | Runtime v3 parity mini-sprint | #5174 closed; changes required | `docs/reviews/v0.91.7/remaining-sprints-5403/RUNTIME_V3_PARITY_REVIEW_5174.md` | Five findings: 2 P1, 2 P2, and 1 P3 covering executable topology, continuity authenticity, time authority, lifecycle retention, and stale footprint claims. | Resolve #5410/#5406; Runtime v3 remains opt-in. |

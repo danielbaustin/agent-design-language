@@ -126,6 +126,60 @@ if run_finalizer "$missing_builder" >"$missing_builder/out" 2>"$missing_builder/
 fi
 grep -F 'builder_image_not_immutable' "$missing_builder/err" >/dev/null
 
+capacity="$TMP/capacity"
+mkdir -p "$capacity/artifacts"
+python3 - "$capacity/summary.json" <<'PY'
+import json
+import sys
+
+payload = {
+  "status": "resumed_after_interruption",
+  "attempts": [
+    {
+      "instance_type": "c7a.4xlarge",
+      "purchase_option": "spot",
+      "status": "failed",
+      "message": "InsufficientInstanceCapacity: There is no Spot capacity available that matches your request.",
+    },
+    {
+      "instance_type": "m7a.4xlarge",
+      "purchase_option": "spot",
+      "status": "failed",
+      "message": "InsufficientInstanceCapacity: There is no Spot capacity available that matches your request.",
+    },
+  ],
+  "launch": None,
+  "cache_volume": None,
+  "cleanup": {
+    "termination_attempted": False,
+    "final_instance_state": None,
+    "termination_error": None,
+  },
+  "timings": {
+    "total_seconds": 17,
+    "launch_seconds": 16,
+    "ssm_ready_seconds": None,
+    "remote_command_seconds": None,
+    "teardown_seconds": None,
+  },
+  "remote_summary": None,
+  "failure_reason": None,
+}
+open(sys.argv[1], "w", encoding="utf-8").write(json.dumps(payload) + "\n")
+PY
+run_finalizer "$capacity" >"$capacity/out" 2>"$capacity/err"
+python3 - "$capacity/artifacts/wrapper-final-summary.json" <<'PY'
+import json
+import sys
+
+wrapper = json.load(open(sys.argv[1], encoding="utf-8"))
+assert wrapper["status"] == "blocked_capacity_unavailable", wrapper
+assert wrapper["self_verification"]["passed"] is False, wrapper
+assert wrapper["self_verification"]["capacity_unavailable_no_compute"] is True, wrapper
+assert wrapper["self_verification"]["failures"] == [], wrapper
+assert wrapper["timings"]["remote_command_seconds"] is None, wrapper
+PY
+
 echo "PASS test_aws_spot_artifact_finalize"
 
 attempt_layout="$TMP/attempt-layout"

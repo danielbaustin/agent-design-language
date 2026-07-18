@@ -1657,12 +1657,34 @@ fn release_proof_gate_closes_without_authorizing_default_cutover() {
     assert_eq!(gate["issue"], 5220);
     assert_eq!(gate["target_version"], "v0.91.7");
     assert_eq!(gate["release_gate_result"], "complete_no_default_cutover");
+    assert_eq!(gate["release_decision_review_complete"], true);
+    assert_eq!(gate["live_cutover_proof_complete"], false);
     assert_eq!(gate["default_cutover_authorized"], false);
     assert_eq!(gate["default_runtime"], "v2");
     assert_eq!(gate["runtime_v3_selection"], "explicit_opt_in_only");
     assert_eq!(gate["runtime_v2_deletion_authorized"], false);
     assert_eq!(gate["runtime_v2_decommission_authorized"], false);
     assert_eq!(gate["rollback_target"], "v2");
+    let evidence_classes = ["executed", "contract_only", "ignored", "deferred"]
+        .into_iter()
+        .collect::<std::collections::BTreeSet<_>>();
+    for release_gate in gate["gates"].as_array().unwrap() {
+        let evidence_class = release_gate["evidence_class"].as_str().unwrap();
+        assert!(
+            evidence_classes.contains(evidence_class),
+            "unsupported release evidence class {evidence_class}"
+        );
+        let satisfies_live_requirement = release_gate["satisfies_live_requirement"]
+            .as_bool()
+            .expect("release evidence must declare a boolean satisfies_live_requirement");
+        if satisfies_live_requirement {
+            assert_eq!(
+                evidence_class, "executed",
+                "non-executed evidence cannot satisfy live requirement {}",
+                release_gate["id"]
+            );
+        }
+    }
 
     assert_eq!(decision["decision"], "keep_runtime_v2_default");
     assert_eq!(decision["default_runtime_switch_authorized"], false);

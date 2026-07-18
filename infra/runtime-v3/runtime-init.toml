@@ -17,3 +17,18 @@ allowed_origins = [
 [agents]
 count = 10000
 sample_limit = 6
+
+[weather]
+sample_millis = 1000
+history_capacity = 60
+disk_warning_free_bytes = 5368709120
+disk_stop_free_bytes = 2147483648
+disk_recover_free_bytes = 8589934592
+memory_warning_used_basis_points = 8500
+memory_stop_used_basis_points = 9500
+memory_recover_used_basis_points = 7500
+cpu_warning_basis_points = 9000
+cpu_stop_basis_points = 9800
+cpu_recover_basis_points = 8000
+checkpoint_deadline_millis = 5000
+snapshot_concurrency = 4
