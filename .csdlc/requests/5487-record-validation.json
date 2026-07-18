@@ -1,0 +1,18 @@
+{
+  "issue": 5487,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "5f971054ba7b0eae7fced3c437f651d74a7b4374a3471efc8d727a694ece7e61",
+  "claim_id": "claim-5487-terminal-design-repair",
+  "actor": "codex",
+  "reason": "Focused terminal design repair validation passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--locked", "--manifest-path", "csdlc-v2/Cargo.toml", "--test", "gate7_lifecycle"],
+      "purpose": "Prove terminal transaction recovery and lifecycle invariants; clippy and diff checks also pass.",
+      "outcome": "passed",
+      "evidence_ref": "gate7_lifecycle: 6 tests passed; cargo clippy --all-targets -D warnings; git diff --check"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "authority_issue": 5487,
+  "target_issue": 5467,
+  "expected_authority_generation": 2,
+  "expected_authority_digest": "a02224451dc18f02a2447321cf0d4d7752ef71c9a74407c1b0720e48d9177e9a",
+  "expected_target_generation": 18,
+  "expected_target_digest": "dcff0b0973830e32b1b2c30850988f13828d794691536ac94954b6a4c607aaeb",
+  "expected_receipt_digest": "bc7c457db3ead15bb700c7a59fef931387fbd0432825a347c4a3fc0abe8ba9f9",
+  "authority_claim_id": "claim-5487-terminal-design-repair",
+  "actor": "codex",
+  "reviewer": "codex",
+  "source_design_path": ".csdlc/prepared/issues/5487/5467-design.md",
+  "source_diagram_path": ".csdlc/prepared/issues/5487/5467-diagram.mmd",
+  "expected_design_digest": "62bbed696fe9543370e826598729a077a149767c2a8057f7226d275d7f5a61b5",
+  "expected_diagram_digest": "2e1b24880b9233553127f93042f50ffdc002f547d508750d129ecc7ed8b46011"
+}

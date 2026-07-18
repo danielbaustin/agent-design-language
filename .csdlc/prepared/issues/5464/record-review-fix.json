@@ -1,0 +1,19 @@
+{
+  "issue": 5464,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "b0f433079eadd32cc52bd82ef17274a1f243717c08b89dea560c37f6f87cccb4",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fixed F-5464-1 by enforcing whole-workflow nextest inventory and adding bypass fixtures.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Close alternate YAML-form escapes by coupling canonical named-block checks to exact whole-workflow nextest selection counts.",
+    "changes": [
+      "Require exactly four nextest selections and exactly four 0.9.140 selections across the whole workflow",
+      "Reject the alternate cargo-nextest alias",
+      "Add negative fixtures for unnamed, quoted, inline-map, floating-installer, and fallback-enabled forms"
+    ],
+    "artifacts": ["adl/tools/test_ci_runtime_contracts.sh"]
+  }
+}

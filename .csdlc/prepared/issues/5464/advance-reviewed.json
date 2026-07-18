@@ -1,0 +1,10 @@
+{
+  "issue": 5464,
+  "card": "sor",
+  "expected_generation": 16,
+  "expected_digest": "ef0a5f864d95934522fe4c9ef13b146bfb3856a393e9bbcc2ab7723fe92a8498",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact current-revision review passed after all five actionable findings were fixed.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"}
+}

@@ -5,6 +5,7 @@ use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use fs2::FileExt;
+use markdown::{to_mdast, ParseOptions};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -17,7 +18,8 @@ use crate::error::{ErrorCode, Result, V2Error};
 use crate::model::{
     AuditEvent, CardProjection, Claim, DesignReview, IssueRecord, LifecyclePhase,
     PublicationEvidence, ReadinessEvidence, ReconcileTerminalRequest, ReviewAssignment,
-    ReviewEvidence, TerminalEvidence, TerminalReceipt, TransitionEvent,
+    ReviewEvidence, TerminalDesignRepairRequest, TerminalEvidence, TerminalReceipt,
+    TransitionEvent,
 };
 use crate::review::evaluate_publication_review_in_repo;
 
@@ -235,6 +237,214 @@ impl Store {
             }
             return Err(error);
         }
+        Ok(target)
+    }
+
+    pub fn repair_terminal_design(
+        &self,
+        request: TerminalDesignRepairRequest,
+    ) -> Result<IssueRecord> {
+        if request.authority_issue == request.target_issue
+            || request.actor.trim().is_empty()
+            || request.reviewer.trim().is_empty()
+            || request.expected_authority_digest.trim().is_empty()
+            || request.expected_target_digest.trim().is_empty()
+            || request.expected_receipt_digest.trim().is_empty()
+            || request.expected_design_digest.trim().is_empty()
+            || request.expected_diagram_digest.trim().is_empty()
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "terminal design repair identity or authority is incomplete",
+            ));
+        }
+        for path in [&request.source_design_path, &request.source_diagram_path] {
+            if !crate::pvf::clean_relative(Path::new(path)) {
+                return Err(V2Error::new(
+                    ErrorCode::InvalidInput,
+                    "terminal design repair source path must be repository-relative",
+                ));
+            }
+        }
+        let (first, second) = if request.authority_issue < request.target_issue {
+            (request.authority_issue, request.target_issue)
+        } else {
+            (request.target_issue, request.authority_issue)
+        };
+        let _first_lock = self.lock(first)?;
+        let _second_lock = self.lock(second)?;
+        self.recover_if_needed(request.authority_issue)?;
+        self.recover_if_needed(request.target_issue)?;
+        let authority = self.load_record(request.authority_issue)?;
+        let mut target = self.load_record(request.target_issue)?;
+        if authority.generation != request.expected_authority_generation
+            || authority.digest != request.expected_authority_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "repair authority record is stale",
+            ));
+        }
+        if target.generation != request.expected_target_generation
+            || target.digest != request.expected_target_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "repair target record is stale",
+            ));
+        }
+        if target.phase != LifecyclePhase::ClosedOut || target.claim.is_some() {
+            return Err(V2Error::new(
+                ErrorCode::InvalidTransition,
+                "terminal design repair requires a closed-out target without a claim",
+            ));
+        }
+        authority
+            .claim
+            .as_ref()
+            .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "repair authority claim missing"))?
+            .validate(&request.authority_claim_id, now_seconds()?)?;
+        let receipt_path = self.terminal_receipt_path(request.target_issue)?;
+        let original_receipt_bytes = fs::read(&receipt_path)?;
+        let original_receipt: TerminalReceipt = serde_json::from_slice(&original_receipt_bytes)?;
+        validate_terminal_receipt(&original_receipt)?;
+        if original_receipt.digest != request.expected_receipt_digest
+            || original_receipt.record.digest != target.digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "terminal receipt is stale",
+            ));
+        }
+        let design = fs::read(self.root.join(&request.source_design_path))?;
+        let diagram = fs::read(self.root.join(&request.source_diagram_path))?;
+        let design_digest = digest(&design);
+        let diagram_digest = digest(&diagram);
+        if design_digest != request.expected_design_digest
+            || diagram_digest != request.expected_diagram_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "repair artifact hash does not match request",
+            ));
+        }
+        let design_text = String::from_utf8(design).map_err(|_| {
+            V2Error::new(
+                ErrorCode::InvalidInput,
+                "repair design must be UTF-8 Markdown",
+            )
+        })?;
+        let diagram_text = String::from_utf8(diagram).map_err(|_| {
+            V2Error::new(
+                ErrorCode::InvalidInput,
+                "repair diagram must be UTF-8 Mermaid",
+            )
+        })?;
+        if design_text.trim().is_empty() || diagram_text.trim().is_empty() {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "repair artifacts must not be empty",
+            ));
+        }
+        if !valid_mermaid_diagram(&diagram_text) {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "repair diagram is not recognized Mermaid source",
+            ));
+        }
+        to_mdast(&design_text, &ParseOptions::gfm()).map_err(|error| {
+            V2Error::new(
+                ErrorCode::InvalidInput,
+                format!("repair design Markdown failed AST validation: {error}"),
+            )
+        })?;
+        let mut cards = self.load_cards(request.target_issue)?;
+        verify_cards(self, &target, &cards)?;
+        for kind in [CardKind::Spp, CardKind::Vpp] {
+            match &mut cards.get_mut(&kind).expect("design-bearing card").content {
+                CardContent::Spp(values) => {
+                    values.design_digest = design_digest.clone();
+                    values.diagram_digest = diagram_digest.clone();
+                }
+                CardContent::Vpp(values) => {
+                    values.design_digest = design_digest.clone();
+                    values.diagram_digest = diagram_digest.clone();
+                }
+                _ => unreachable!("design-bearing card"),
+            }
+        }
+        target.design_review = DesignReview::Approved {
+            reviewer: request.reviewer.clone(),
+            revision: design_digest.clone(),
+        };
+        target.generation += 1;
+        for values in cards.values_mut() {
+            values.identity.generation = target.generation;
+        }
+        target.audit.push(AuditEvent {
+            sequence: target.audit.len() as u64 + 1,
+            generation: target.generation,
+            actor: request.actor.clone(),
+            reason: format!(
+                "typed terminal design repair authorized by issue {}",
+                request.authority_issue
+            ),
+            operation: "repair_terminal_design".into(),
+        });
+        hydrate_projections(&mut target, &cards)?;
+        target.digest = record_digest(&target)?;
+        let authored_artifacts = BTreeMap::from([
+            (target.design_path.clone(), design_text),
+            (target.diagram_path.clone(), diagram_text),
+        ]);
+        let mut repaired_receipt = original_receipt.clone();
+        repaired_receipt.record = target.clone();
+        repaired_receipt.cards = cards.clone();
+        repaired_receipt.authored_artifacts = authored_artifacts.clone();
+        repaired_receipt.digest.clear();
+        repaired_receipt.digest = terminal_receipt_digest(&repaired_receipt)?;
+        validate_terminal_receipt(&repaired_receipt)?;
+        let target_receipt = serde_json::to_vec_pretty(&repaired_receipt)?;
+        let mut journal = TerminalTransactionJournal {
+            schema: "csdlc.terminal_transaction.v1".into(),
+            issue: request.target_issue,
+            stage: "prepared_terminal_design_repair".into(),
+            original_record_digest: original_receipt.record.digest.clone(),
+            target_record_digest: target.digest.clone(),
+            original_receipt: Some(original_receipt_bytes),
+            target_receipt,
+        };
+        self.write_terminal_transaction_journal(&journal)?;
+        if request.fail_after_stage.as_deref() == Some("after_journal") {
+            self.remove_terminal_transaction_journal(request.target_issue)?;
+            return Err(V2Error::new(
+                ErrorCode::InterruptedTransaction,
+                "injected repair failure",
+            ));
+        }
+        if let Err(error) = self.commit_with_authored(
+            request.target_issue,
+            &target,
+            &cards,
+            false,
+            Some(&authored_artifacts),
+        ) {
+            let _ = self.recover_terminal_transaction(request.target_issue);
+            return Err(error);
+        }
+        journal.stage = "projection_committed_terminal_design_repair".into();
+        self.write_terminal_transaction_journal(&journal)?;
+        if request.fail_after_stage.as_deref() == Some("after_projection") {
+            let _ = self.recover_terminal_transaction(request.target_issue);
+            return Err(V2Error::new(
+                ErrorCode::InterruptedTransaction,
+                "injected repair failure",
+            ));
+        }
+        self.replace_receipt_bytes(&receipt_path, Some(&journal.target_receipt))?;
+        journal.stage = "receipt_committed_terminal_design_repair".into();
+        self.write_terminal_transaction_journal(&journal)?;
+        self.remove_terminal_transaction_journal(request.target_issue)?;
         Ok(target)
     }
 
@@ -2437,4 +2647,53 @@ pub(crate) fn now_seconds() -> Result<u64> {
 fn enum_iterator() -> impl Iterator<Item = CardKind> {
     use strum::IntoEnumIterator;
     CardKind::iter()
+}
+
+fn valid_mermaid_diagram(diagram: &str) -> bool {
+    let first = diagram
+        .lines()
+        .find(|line| !line.trim().is_empty())
+        .unwrap_or_default()
+        .trim();
+    (first.starts_with("flowchart ")
+        || first == "stateDiagram-v2"
+        || first.starts_with("sequenceDiagram"))
+        && diagram.lines().count() >= 2
+}
+
+#[cfg(test)]
+mod terminal_design_repair_tests {
+    use super::*;
+
+    #[test]
+    fn terminal_design_repair_rejects_incomplete_authority_before_io() {
+        let root = tempfile::tempdir().expect("temp root");
+        let error = Store::new(root.path())
+            .repair_terminal_design(TerminalDesignRepairRequest {
+                authority_issue: 5487,
+                target_issue: 5467,
+                expected_authority_generation: 1,
+                expected_authority_digest: String::new(),
+                expected_target_generation: 18,
+                expected_target_digest: "target".into(),
+                expected_receipt_digest: "receipt".into(),
+                authority_claim_id: "claim".into(),
+                actor: "codex".into(),
+                reviewer: "reviewer".into(),
+                source_design_path: "design.md".into(),
+                source_diagram_path: "diagram.mmd".into(),
+                expected_design_digest: "design".into(),
+                expected_diagram_digest: "diagram".into(),
+                fail_after_stage: None,
+            })
+            .expect_err("missing authority digest must fail closed");
+        assert_eq!(error.code.to_string(), "invalid_input");
+    }
+
+    #[test]
+    fn terminal_design_repair_mermaid_guard_is_fail_closed() {
+        assert!(valid_mermaid_diagram("flowchart LR\n  A-->B\n"));
+        assert!(!valid_mermaid_diagram("not mermaid\n  A-->B\n"));
+        assert!(!valid_mermaid_diagram("flowchart LR\n"));
+    }
 }

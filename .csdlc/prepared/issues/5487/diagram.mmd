@@ -1,0 +1,8 @@
+flowchart TD
+  request["typed repair request"] --> auth["authority + CAS + hash checks"]
+  auth --> lock["closed-out issue lock"]
+  lock --> journal["repair journal: old receipt + artifacts"]
+  journal --> stage["validate markdown.rs AST and stage replacements"]
+  stage --> commit["atomic receipt, card-reference, projection, audit update"]
+  commit --> materialize["reconcile-terminal materializes retained artifacts"]
+  journal --> rollback["failure: restore old receipt and artifacts"]

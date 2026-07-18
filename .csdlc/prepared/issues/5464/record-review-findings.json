@@ -1,0 +1,30 @@
+{
+  "issue": 5464,
+  "expected_generation": 3,
+  "expected_digest": "5fe2b243599806da93f4d111e59e416dbc6ccee965ffb487ba8c3ea5e282cbd1",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "bounded-subagent-review-5464",
+  "evidence": {
+    "reviewer": "bounded-subagent-review-5464",
+    "scope": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "reviewed_revision": "git-blake3:6f72414262eb807200379440c13580aa43651f02:1fd9200c4b6534ed30f7ec17d25546ae8ec0cd2b1aa8707fd708f25c0a012a49",
+    "findings": [
+      {
+        "id": "F-5464-1",
+        "severity": "p2",
+        "summary": "Unnamed, quoted, or inline YAML nextest steps can bypass the block-only static contract.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

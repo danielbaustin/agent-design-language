@@ -1,0 +1,18 @@
+{
+  "issue": 5464,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "aba6110bda8f4b24db56e8f586b2f22f128d2e6406c8699ee224acc18a242685",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The focused nextest installation contract passed without dispatching any workflow.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_ci_runtime_contracts.sh"],
+      "purpose": "Prove every hosted nextest install uses the supported immutable manifest, pins 0.9.140, and disables fallback",
+      "outcome": "passed",
+      "evidence_ref": "local:5464-nextest-install-contract-pass"
+    }
+  }
+}

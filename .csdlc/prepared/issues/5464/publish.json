@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5464,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_generation": 20,
+  "expected_digest": "2cd6bfaf8023ba601056147bbe5507517a31a11a1fd19df64dad427796fdde5a",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5464-nextest-install-contract",
+  "title": "[v0.91.7][ci] Remove cargo-nextest unsupported-binary fallback",
+  "body": "Closes #5464\n\n## Summary\n- pin nextest installs to the immutable install-action manifest that supports 0.9.140\n- disable cargo-binstall fallback on every nextest step\n- structurally enforce the contract across YAML forms and multi-tool selections\n\n## Validation\n- `bash adl/tools/test_ci_runtime_contracts.sh`\n- bounded exact-revision review: PASS\n\nNo AWS execution was performed or requested.",
+  "draft": true,
+  "token_file": null
+}

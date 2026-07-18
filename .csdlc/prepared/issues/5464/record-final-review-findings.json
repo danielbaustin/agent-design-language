@@ -1,0 +1,27 @@
+{
+  "issue": 5464,
+  "expected_generation": 9,
+  "expected_digest": "38546b34140981682b8a4e48e9788f67a16bb45da65bb3d774a6c9e530a40ab3",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "bounded-subagent-review-5464",
+  "evidence": {
+    "reviewer": "bounded-subagent-review-5464",
+    "scope": [".github/workflows/ci.yaml", "adl/tools/test_ci_runtime_contracts.sh"],
+    "reviewed_revision": "git-blake3:aaad5ad6b7ce63f267f0dde29b911f9db4861626:eb60f68256fa7d3558fa00e01cbd78d67bda47d2ca66c74606828a3cd2194e5d",
+    "findings": [
+      {
+        "id": "F-5464-4",
+        "severity": "p2",
+        "summary": "Quoted installer scalars and fully inline YAML steps escape line-oriented install-action inventory.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

@@ -1,0 +1,355 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5464,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "ae3e72f2513ddf93bede427c2ef36d2b067ddb7c1bd59bd1003a94f2e520d5fb",
+  "phase": "published",
+  "generation": 21,
+  "digest": "49e91ac857b8788314b72b98667366b285bf13d172ddccbe6c6a92db58ccaee0",
+  "claim": {
+    "id": "claim-5464-nextest-install-contract",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 21,
+    "acquired_unix_seconds": 1784358000,
+    "expires_unix_seconds": 1784444400,
+    "heartbeat_unix_seconds": 1784358000,
+    "branch": "codex/5464-nextest-install-contract",
+    "worktree": ".worktrees/adl-wp-5464",
+    "protected_paths": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "purpose": "Make cargo-nextest installation immutable and fail closed without cargo-binstall fallback"
+  },
+  "review_assignment": {
+    "reviewer": "bounded-subagent-review-5464",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:441632856110b1d7c1e115d640d07b9c7c092185:873cf72ac653f14e6049437bf06275fe7219cd5a8998e2ac8d9314e33dcad9fe",
+    "scope": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "bounded-subagent-review-5464",
+    "scope": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "reviewed_revision": "git-blake3:441632856110b1d7c1e115d640d07b9c7c092185:873cf72ac653f14e6049437bf06275fe7219cd5a8998e2ac8d9314e33dcad9fe",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5464,
+    "pull_request": 5490,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5490",
+    "base": "main",
+    "head": "codex/5464-nextest-install-contract",
+    "revision": "git-blake3:441632856110b1d7c1e115d640d07b9c7c092185:873cf72ac653f14e6049437bf06275fe7219cd5a8998e2ac8d9314e33dcad9fe",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5464/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5464/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "revision": "7b4911b3d2706584d0f30221dc602dd7e4928f6749d0945ab70fb700dcf3d503"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "7ca0459652549ce30841fef5d533b9e7ae49f657e788cf39c7b2f58310312304",
+      "rendered_digest": "a2fb478ef4bd13ba429e8c0f8c544110e67e901a6de718d2cf148eca1f55f1a6",
+      "ast_digest": "5c565f0762207eecbe4664aff60df4a55a8349758e22cc60254ac86f612dc1c6"
+    },
+    "stp": {
+      "values_digest": "1b741e8cb0142bfe6e501a9aed55278fb5bbd7f6699df1329515582563300c16",
+      "rendered_digest": "fc4b91f3228586ba35da574b082470293a7bf1b5145fea2dc54b5ca65c5c9d38",
+      "ast_digest": "564b0df1e2c6093cb771e9b8d15562dd48d1ce5df66fb3477e27ad87a9cfd372"
+    },
+    "spp": {
+      "values_digest": "e4269b269945e4ddb2fedf1292889ea42477f72990f22586b3c64ca03c3d7652",
+      "rendered_digest": "7343cfe8e4dafed0a0e53405f81df92f00f78fae0b9094b9230b1b7f5781dbb8",
+      "ast_digest": "269a7d90989ca87bf68e0d1775dafa72639584e93ae11cf70c7c4d2e2a4f18f7"
+    },
+    "vpp": {
+      "values_digest": "4f58e7a33640c019930fe4378c4d9aac5204535c10155296db47bff40ad3e846",
+      "rendered_digest": "d5cc78ce07b13e4f45c7727f07c44991f89a55815257d63068f374a7c1b017a9",
+      "ast_digest": "de9357a2a9bc9a4c0fa064b5efb770a71e03195446b8fc79607366093d535464"
+    },
+    "srp": {
+      "values_digest": "303f8fc8f865b3accbe983d95415cc1d888453170ea0502245c290d7e6402583",
+      "rendered_digest": "accf1a1f47a8d50c72a555a8862127692dfc50012ba635671ff2ea99bd8a796c",
+      "ast_digest": "e125b64866efa623efdc45fcbf447e96c0140e985d5ebbe6ef9a05e1bc0454bf"
+    },
+    "sor": {
+      "values_digest": "9adc0a0dd87ba2fac54e55c601c6b04c18fcc119c2bbae04834cd1538c663171",
+      "rendered_digest": "22852c6b797ae351ef7b9da1a163047702a7d34f65228350b49c8d416a3f857a",
+      "ast_digest": "abfdfb962919b1fafb01d417a5f3822c164ceb8195731c6ff9393fe3777e44ed"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded nextest installer repair and focused local proof are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact current-revision review passed after all five actionable findings were fixed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover from review identity staleness after committing review lifecycle metadata; substantive scope is unchanged."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Publication-head exact review passed with protected scope unchanged and focused validation green."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact draft PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Implemented the bounded fail-closed nextest installation contract.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Replaced the stale nextest installer manifest with the immutable v2.82.10 revision that contains nextest 0.9.140 and disabled fallback on every hosted install.\",\"changes\":[\"Pin all four nextest install steps to install-action v2.82.10 commit 50414676f9f5d50a65992c6dd2ed02641263226c\",\"Set fallback to none on every nextest install step\",\"Require the canonical installer, nextest version, fallback policy, and complete four-step inventory in the CI runtime contract\"],\"artifacts\":[\".github/workflows/ci.yaml\",\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The focused nextest installation contract passed without dispatching any workflow.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove every hosted nextest install uses the supported immutable manifest, pins 0.9.140, and disables fallback\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-nextest-install-contract-pass\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded nextest installer repair and focused local proof are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5464-1 by enforcing whole-workflow nextest inventory and adding bypass fixtures.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Close alternate YAML-form escapes by coupling canonical named-block checks to exact whole-workflow nextest selection counts.\",\"changes\":[\"Require exactly four nextest selections and exactly four 0.9.140 selections across the whole workflow\",\"Reject the alternate cargo-nextest alias\",\"Add negative fixtures for unnamed, quoted, inline-map, floating-installer, and fallback-enabled forms\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The nextest contract and all alternate-form negative fixtures pass after F-5464-1 repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove unnamed, quoted, inline, floating-installer, and fallback-enabled nextest forms cannot escape enforcement\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-nextest-bypass-regression-pass\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5464-2 and F-5464-3 by inventorying every install-action step and testing both unversioned aliases.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Validate all install-action steps before classifying normalized nextest and cargo-nextest tool values.\",\"changes\":[\"Require each install-action use to occupy its own named step\",\"Normalize block-style tool scalars and classify versioned and unversioned nextest aliases\",\"Add negative fixtures for unversioned nextest and cargo-nextest aliases\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The focused contract passes with unversioned alias regression fixtures.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove every install-action step is inventoried and both unversioned nextest aliases fail closed\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-unversioned-alias-regression-pass\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5464-4 by replacing line-oriented nextest inspection with structural YAML parsing.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Use Ruby Psych to normalize all workflow step and input forms before enforcing the nextest contract.\",\"changes\":[\"Parse ci.yaml with YAML.safe_load instead of regex for nextest installer enforcement\",\"Traverse every job step and normalize quoted, block, and inline mappings\",\"Add quoted installer and fully inline step bypass fixtures\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The structural YAML contract and all adversarial fixtures pass after F-5464-4 repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove structural nextest enforcement covers quoted installer scalars and fully inline workflow steps\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-structural-yaml-regression-pass\"}}"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5464-5 by tokenizing install-action tool lists using comma and whitespace semantics.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Classify every install-action tool token independently and reject nextest-bearing multi-tool steps.\",\"changes\":[\"Split tool inputs on commas and whitespace\",\"Require nextest-bearing steps to select only nextest@0.9.140\",\"Add comma-list, whitespace-list, and cargo-nextest multi-tool fixtures\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The structural contract passes with all multi-tool regression fixtures.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove comma- and whitespace-separated tool lists cannot hide nextest or cargo-nextest\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-multitool-regression-pass\"}}"
+    },
+    {
+      "sequence": 22,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 16,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact current-revision review passed after all five actionable findings were fixed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover from review identity staleness after committing review lifecycle metadata; substantive scope is unchanged.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 19,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 20,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Publication-head exact review passed with protected scope unchanged and focused validation green.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

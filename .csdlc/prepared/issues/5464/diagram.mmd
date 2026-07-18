@@ -1,0 +1,7 @@
+flowchart LR
+    A["Stale installer manifest"] --> B["Unsupported nextest warning"]
+    B --> C["Implicit cargo-binstall fallback"]
+    C --> D["Pin manifest with nextest 0.9.140"]
+    D --> E["Set fallback to none"]
+    E --> F["Static contract"]
+    F --> G["Hosted warning-free proof"]

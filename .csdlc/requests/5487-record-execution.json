@@ -1,0 +1,15 @@
+{
+  "issue": 5487,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "a02224451dc18f02a2447321cf0d4d7752ef71c9a74407c1b0720e48d9177e9a",
+  "claim_id": "claim-5487-terminal-design-repair",
+  "actor": "codex",
+  "reason": "Implement typed terminal design repair and receipt-aware projection recovery.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Closed-out design repair now performs authority/CAS/hash checks, markdown AST validation, journaled projection and receipt replacement, and typed reconciliation materializes repaired #5467 artifacts.",
+    "changes": ["Add TerminalDesignRepairRequest and csdlc-closeout repair-design.", "Atomically update terminal record, SPP/VPP digests, receipt, authored artifacts, and audit.", "Repair #5467 retained design and diagram with the approved SSM/EBS/IAM scope."],
+    "artifacts": ["csdlc-v2/src/store.rs", "csdlc-v2/src/bin/csdlc-closeout.rs", ".csdlc/issues/5467/retained/design.md", ".csdlc/issues/5467/retained/diagram.mmd"]
+  }
+}

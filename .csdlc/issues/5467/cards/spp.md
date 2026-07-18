@@ -58,13 +58,13 @@ Revision 1
 
 .csdlc/issues/5467/retained/design.md
 
-Digest: de8434266e09af78b8938b5e7fde26f38633d8a4977af4f5c398f580d11c97ce
+Digest: 62bbed696fe9543370e826598729a077a149767c2a8057f7226d275d7f5a61b5
 
 ## Diagram
 
 .csdlc/issues/5467/retained/diagram.mmd
 
-Digest: 6b41c17778163f5ed0e28be47eba40294f57ddccb660b1afc7b48766b48d5382
+Digest: 2e1b24880b9233553127f93042f50ffdc002f547d508750d129ecc7ed8b46011
 
 ## Stop Conditions
 

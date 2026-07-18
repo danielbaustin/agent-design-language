@@ -7,7 +7,7 @@ use crate::lifecycle::{
 };
 use crate::migration::{ImportReport, LegacyImportRequest, NormalizedOutcome, ShadowComparison};
 use crate::model::IssueRecord;
-use crate::model::{ReconcileTerminalRequest, TerminalReceipt};
+use crate::model::{ReconcileTerminalRequest, TerminalDesignRepairRequest, TerminalReceipt};
 use crate::publication::{
     MergedPublicationReconciliationRequest, PublicationIntent, PublicationRequest,
     RemotePullRequest,
@@ -36,6 +36,7 @@ pub fn public_schema_bundle() -> Value {
         "issue_record": schemars::schema_for!(IssueRecord),
         "terminal_receipt": schemars::schema_for!(TerminalReceipt),
         "reconcile_terminal_request": schemars::schema_for!(ReconcileTerminalRequest),
+        "terminal_design_repair_request": schemars::schema_for!(TerminalDesignRepairRequest),
         "doctor_report": schemars::schema_for!(DoctorReport),
         "pvf_manifest": schemars::schema_for!(PvfManifest),
         "pvf_execution_request": schemars::schema_for!(ExecutionRequest),

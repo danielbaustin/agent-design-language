@@ -22,3 +22,4 @@
 {"sequence":22,"generation":16,"actor":"codex-root","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
 {"sequence":23,"generation":17,"actor":"codex-root","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
 {"sequence":24,"generation":18,"actor":"codex-root-closeout","reason":"Materialize the retained terminal receipt after merged PR #5485 and closed issue #5467.","operation":"reconcile_terminal"}
+{"sequence":25,"generation":19,"actor":"codex","reason":"typed terminal design repair authorized by issue 5487","operation":"repair_terminal_design"}
