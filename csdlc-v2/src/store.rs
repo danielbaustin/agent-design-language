@@ -346,6 +346,9 @@ impl Store {
             });
             if existing.repository != record.repository
                 || existing.initialization_digest != record.initialization_digest
+                || existing.record.generation != record.generation
+                || existing.record.digest != record.digest
+                || existing.cards != cards
                 || !terminal_matches
             {
                 return Err(V2Error::new(

@@ -52,6 +52,10 @@ enum Command {
         #[arg(long)]
         issue: u64,
     },
+    RetainReceipt {
+        #[arg(long)]
+        issue: u64,
+    },
     Schema,
 }
 
@@ -147,6 +151,7 @@ async fn run(cli: &Cli) -> csdlc_v2::Result<serde_json::Value> {
                 "pruned":matches!(&cli.command, Command::Prune { .. })
             }))
         }
+        Command::RetainReceipt { issue } => json(store.retain_terminal_receipt(*issue)?),
     }
 }
 
