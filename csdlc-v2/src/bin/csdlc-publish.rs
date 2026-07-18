@@ -144,7 +144,9 @@ async fn reconcile_merged(root: &Path, request_path: &Path) -> csdlc_v2::Result<
         serde_json::from_slice(&fs::read(request_path)?)?;
     request.validate()?;
     let store = Store::new(root);
-    let mut intent = prepare_publication(&store, &request.publication)?;
+    let mut preparation = request.publication.clone();
+    preparation.draft = true;
+    let mut intent = prepare_publication(&store, &preparation)?;
     intent.draft = false;
     verify_git_remote(root, &request.publication.remote, &intent)?;
     let token = resolve_token(&request.publication)?;
