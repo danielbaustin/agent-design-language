@@ -1,0 +1,18 @@
+{
+  "issue": 5463,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "fc7a041f25ceaf8ad2ba917d63ea8d73c349128cfb5551deab18c94207e1d16f",
+  "claim_id": "claim-5463-node24-action-pins",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The CI path-policy regression suite passed with the updated canonical checkout fixture.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_ci_path_policy.sh"],
+      "purpose": "Prove the action pin upgrade preserves CI path-policy behavior and fixture truth",
+      "outcome": "passed",
+      "evidence_ref": "local:5463-ci-path-policy-pass"
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "issue":5463,
+  "repository":"danielbaustin/agent-design-language",
+  "design_path":".csdlc/prepared/issues/5463/design.md",
+  "diagram_path":".csdlc/prepared/issues/5463/diagram.mmd",
+  "design_reviewer":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "design_approved":true,
+  "claim":{
+    "id":"claim-5463-node24-action-pins",
+    "owner":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation":0,
+    "acquired_unix_seconds":1784356628,
+    "expires_unix_seconds":1784443028,
+    "heartbeat_unix_seconds":1784356628,
+    "branch":"codex/5463-node24-action-pins",
+    "worktree":".worktrees/adl-wp-5463",
+    "protected_paths":[
+      ".github/workflows/aws-codefriend-build.yaml",
+      ".github/workflows/aws-spot-remote-validation.yaml",
+      ".github/workflows/ci.yaml",
+      ".github/workflows/nightly-coverage-ratchet.yaml",
+      ".github/workflows/v0871_milestone_closeout_gate.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md"
+    ],
+    "purpose":"Upgrade deprecated Node 20 GitHub Action pins to reviewed Node 24 revisions"
+  },
+  "initial":{
+    "title":"[v0.91.7][ci] Upgrade pinned Actions away from deprecated Node 20 runtime",
+    "slug":"v0-91-7-ci-node24-action-pins",
+    "version":"v0.91.7",
+    "goal":"Remove GitHub Actions Node 20 compatibility forcing while preserving immutable pinning.",
+    "required_outcome":"Every annotated action pin uses a reviewed Node 24 revision and a hosted run contains no Node 20 deprecation annotation.",
+    "declared_scope":[
+      ".github/workflows/aws-codefriend-build.yaml",
+      ".github/workflows/aws-spot-remote-validation.yaml",
+      ".github/workflows/ci.yaml",
+      ".github/workflows/nightly-coverage-ratchet.yaml",
+      ".github/workflows/v0871_milestone_closeout_gate.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md"
+    ],
+    "authority_boundary":[
+      "GitHub run 29632957768 is annotation evidence",
+      "Official action repositories and immutable commit SHAs are release authority",
+      "Repository runtime contracts preserve canonical pin policy"
+    ],
+    "task_boundary":"Replace only annotated Node 20 action pins, strengthen their static contract, retain inventory, and prove hosted annotations absent.",
+    "deliverables":["Reviewed Node 24 immutable pins","Canonical static pin contract","Retained pin inventory","Hosted annotation-free proof"],
+    "acceptance_criteria":[
+      "AC1: All checkout occurrences use reviewed checkout v7 Node 24 commit",
+      "AC2: All upload-artifact occurrences use reviewed v7 Node 24 commit",
+      "AC3: All rust-cache occurrences use reviewed v2.9.1 Node 24 commit",
+      "AC4: Deprecated SHAs are absent and immutable full-SHA policy remains enforced",
+      "AC5: A GitHub-hosted PR run emits no Node.js 20 deprecation annotation"
+    ],
+    "dependencies":["GitHub-hosted Actions runner and official action release metadata"],
+    "repo_inputs":[".github/workflows","adl/tools/test_ci_runtime_contracts.sh","adl/tools/test_ci_path_policy.sh","GitHub run 29632957768"],
+    "non_goals":["AWS execution","AWS-backed validation","Floating action tags","Unrelated CI policy changes"],
+    "plan_summary":"Inventory annotated pins, replace them with reviewed Node 24 commits, strengthen static contracts, and inspect hosted PR annotations.",
+    "steps":[
+      {"id":"S1","action":"Inventory annotated revisions and verify official Node 24 replacement commits","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3"]},
+      {"id":"S2","action":"Replace pins and strengthen canonical immutable-SHA contracts","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4"]},
+      {"id":"S3","action":"Run static proof and inspect hosted PR annotations","status":"pending","acceptance_ids":["AC-4","AC-5"]}
+    ],
+    "risks":["Major action upgrades may change inputs or outputs","A partial replacement can leave compatibility forcing in less-used workflows"],
+    "invariants":["Every third-party action remains pinned to 40-hex commit","No AWS execution occurs","Workflow behavior outside action runtime upgrades is unchanged"],
+    "stop_conditions":["Official action metadata does not declare Node 24","Replacement release has incompatible behavior requiring broader CI design","Hosted proof requires AWS execution"],
+    "review_prompts":["Are all annotated occurrences replaced?","Do major upgrades preserve used inputs and outputs?","Does the static contract reject deprecated or floating pins?","Are hosted annotations genuinely absent?"],
+    "planning_profile":"small",
+    "validation_lanes":[
+      {"lane":"ci-runtime-contract","proof_role":"Prove canonical pins and deprecated-SHA absence","deterministic":true,"resource_profile":"small","parallel_group":"local","budget_seconds":120,"budget_tokens":1000,"argv":["bash","adl/tools/test_ci_runtime_contracts.sh"],"acceptance_ids":["AC-1","AC-2","AC-3","AC-4"]},
+      {"lane":"hosted-annotation-proof","proof_role":"Prove Node 20 deprecation annotations are absent","deterministic":false,"resource_profile":"small","parallel_group":"github-hosted","budget_seconds":600,"budget_tokens":1000,"argv":["gh","pr","checks","PR"],"acceptance_ids":["AC-5"]}
+    ],
+    "failure_policy":"Fail closed on floating pins, partial replacement, contract failure, incompatible action inputs, or any hosted Node 20 deprecation annotation."
+  }
+}

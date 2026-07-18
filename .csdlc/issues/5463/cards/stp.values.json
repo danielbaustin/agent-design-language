@@ -1,0 +1,47 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5463,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][ci] Upgrade pinned Actions away from deprecated Node 20 runtime",
+    "slug": "v0-91-7-ci-node24-action-pins",
+    "version": "v0.91.7",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Replace only annotated Node 20 action pins, strengthen their static contract, retain inventory, and prove hosted annotations absent.",
+      "deliverables": [
+        "Reviewed Node 24 immutable pins",
+        "Canonical static pin contract",
+        "Retained pin inventory",
+        "Hosted annotation-free proof"
+      ],
+      "acceptance_criteria": [
+        "AC1: All checkout occurrences use reviewed checkout v7 Node 24 commit",
+        "AC2: All upload-artifact occurrences use reviewed v7 Node 24 commit",
+        "AC3: All rust-cache occurrences use reviewed v2.9.1 Node 24 commit",
+        "AC4: Deprecated SHAs are absent and immutable full-SHA policy remains enforced",
+        "AC5: A GitHub-hosted PR run emits no Node.js 20 deprecation annotation"
+      ],
+      "dependencies": [
+        "GitHub-hosted Actions runner and official action release metadata"
+      ],
+      "repo_inputs": [
+        ".github/workflows",
+        "adl/tools/test_ci_runtime_contracts.sh",
+        "adl/tools/test_ci_path_policy.sh",
+        "GitHub run 29632957768"
+      ],
+      "non_goals": [
+        "AWS execution",
+        "AWS-backed validation",
+        "Floating action tags",
+        "Unrelated CI policy changes"
+      ]
+    }
+  }
+}

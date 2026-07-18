@@ -1,0 +1,11 @@
+flowchart LR
+  IA["Identity authority"] --> SC["Signed full checkpoint"]
+  SC --> VR["Verify identity, sequence, head, and payload"]
+  VR --> ML["Restored memory lineage"]
+  PA["Private-state authority"] --> SR["Signed record"]
+  SR --> AL["Accepted lineage"]
+  AL --> VP["Verified projection"]
+  VR --> RG["Release gate"]
+  VP --> RG
+  SOAK["Real 100-cycle scheduled soak"] --> RG
+  LOC["Reviewed LoC disposition"] --> RG

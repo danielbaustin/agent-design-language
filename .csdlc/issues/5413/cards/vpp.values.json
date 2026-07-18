@@ -7,7 +7,7 @@
     "title": "[v0.91.7][review-fix][runtime-v3] Resolve #5276 live parity and Observatory findings",
     "slug": "runtime-v3-live-parity-observatory",
     "version": "v0.91.7",
-    "generation": 6
+    "generation": 13
   },
   "status": "ready",
   "content": {
@@ -77,9 +77,9 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on missing binaries, unauthenticated feed access, mocked live proof, stale weather without explicit state, or incomplete release evidence; downgrade claims rather than infer success.",
-      "design_ref": ".csdlc/prepared/issues/5413/design.md",
+      "design_ref": ".csdlc/issues/5413/retained/design.md",
       "design_digest": "7be7c588826f3f1bba791852bb64387a46657717711a916847b18cb8d9e2e70d",
-      "diagram_ref": ".csdlc/prepared/issues/5413/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5413/retained/diagram.mmd",
       "diagram_digest": "8b53719d9be8e1c05b76c48251dde536b5ce4efc96d8d091c44088f817bc652f"
     }
   }

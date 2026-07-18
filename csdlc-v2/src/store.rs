@@ -479,6 +479,9 @@ impl Store {
         .unwrap_or(false);
         if local.phase == LifecyclePhase::ClosedOut
             && local.terminal == receipt.record.terminal
+            && local.publication.as_ref().is_some_and(|publication| {
+                !publication.draft && publication.observed_state == "merged"
+            })
             && existing_follow_ups == requested_follow_ups
             && local_integrity
             && local.audit.last().is_some_and(|event| {

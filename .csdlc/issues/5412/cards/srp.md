@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: pre_phase
+Status: draft
 
 ## Scope
 
@@ -21,6 +21,8 @@ adl/tools/test_run_runtime_v3_guardian_soak.sh
 adl/tools/report_runtime_v3_loc.sh
 docs/architecture/RUNTIME_V3_STATE_AUTHENTICITY_5412.md
 docs/architecture/runtime_v3_state_authenticity_5412.v1.json
+.github/workflows/ci.yaml
+adl/tools/test_run_aws_spot_ci_profile.sh
 
 ## Prompts
 
@@ -39,7 +41,7 @@ docs/architecture/runtime_v3_state_authenticity_5412.v1.json
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:a995c185255b041c4215d163630eee7374225983:8f5704ab088e16e4c09c9317d8e3963e3180e77c8dc16bcde623717255324a90",
+    "fix_revision": "git-blake3:6318706c380b4af8a65ae8792d3baf999113a669:717ff72f6f4f45540dc237e6d4cea012328edea31b693d46e0eef19a048ecd28",
     "route": null
   },
   {
@@ -49,8 +51,18 @@ docs/architecture/runtime_v3_state_authenticity_5412.v1.json
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:a995c185255b041c4215d163630eee7374225983:8f5704ab088e16e4c09c9317d8e3963e3180e77c8dc16bcde623717255324a90",
+    "fix_revision": "git-blake3:6318706c380b4af8a65ae8792d3baf999113a669:717ff72f6f4f45540dc237e6d4cea012328edea31b693d46e0eef19a048ecd28",
     "route": null
+  },
+  {
+    "id": "F-5412-FINAL-1",
+    "severity": "p2",
+    "summary": "The backend snapshot contract assertions are unreachable behind a stale pre-existing assertion.",
+    "actionable": true,
+    "in_scope": false,
+    "disposition": "out_of_scope",
+    "fix_revision": null,
+    "route": "https://github.com/danielbaustin/agent-design-language/issues/5467"
   }
 ]
 
@@ -60,12 +72,12 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- Runtime v3 remains above the 10,000-line target at 12,034 physical Rust source lines; the bounded exception and v0.91.8 reduction ownership remain explicit.
+- Runtime v3 remains at 12,034 physical Rust source lines under the explicit 20K exception; v0.91.8 owns the further reduction.
 
 ## Review Result
 
-Revision: Some("git-blake3:a995c185255b041c4215d163630eee7374225983:8f5704ab088e16e4c09c9317d8e3963e3180e77c8dc16bcde623717255324a90")
+Revision: Some("git-blake3:6318706c380b4af8a65ae8792d3baf999113a669:717ff72f6f4f45540dc237e6d4cea012328edea31b693d46e0eef19a048ecd28")
 
-Reviewer: Some("bounded-subagent-review-5412")
+Reviewer: Some("bounded-subagent-review-5412-final")
 
 Result: pass

@@ -7,9 +7,9 @@
     "title": "[v0.91.7][review-fix][runtime-v3][security] Resolve #5247 state authenticity and readiness findings",
     "slug": "v0-91-7-runtime-v3-state-authenticity-readiness",
     "version": "v0.91.7",
-    "generation": 8
+    "generation": 19
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -47,10 +47,10 @@
           "evidence_ref": "/tmp/5412-guardian-soak-final.json and local exact-worktree validation output"
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

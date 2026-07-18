@@ -7,9 +7,9 @@
     "title": "[v0.91.7][review-fix][runtime-v3] Resolve #5276 live parity and Observatory findings",
     "slug": "runtime-v3-live-parity-observatory",
     "version": "v0.91.7",
-    "generation": 6
+    "generation": 13
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -43,10 +43,10 @@
           "evidence_ref": "local:5413-full-runtime-clippy-fmt-local-https-integrated-observatory-proof"
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

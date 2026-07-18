@@ -1,0 +1,67 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5463,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][ci] Upgrade pinned Actions away from deprecated Node 20 runtime",
+    "slug": "v0-91-7-ci-node24-action-pins",
+    "version": "v0.91.7",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "ci-runtime-contract",
+          "proof_role": "Prove canonical pins and deprecated-SHA absence",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "bash",
+            "adl/tools/test_ci_runtime_contracts.sh"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "hosted-annotation-proof",
+          "proof_role": "Prove Node 20 deprecation annotations are absent",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "deterministic": false,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 1000,
+          "argv": [
+            "gh",
+            "pr",
+            "checks",
+            "PR"
+          ],
+          "parallel_group": "github-hosted",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on floating pins, partial replacement, contract failure, incompatible action inputs, or any hosted Node 20 deprecation annotation.",
+      "design_ref": ".csdlc/prepared/issues/5463/design.md",
+      "design_digest": "c7a88a3322b388897fffc0bc336747387e1fdfaebb84b33ca7bad2f93ed5997e",
+      "diagram_ref": ".csdlc/prepared/issues/5463/diagram.mmd",
+      "diagram_digest": "536eb3739081002b884beb69dc7cae5984544d0cb1217a8fc662726fa9167b71"
+    }
+  }
+}

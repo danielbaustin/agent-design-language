@@ -7,15 +7,15 @@
     "title": "[v0.91.7][review-fix][runtime-v3] Resolve #5276 live parity and Observatory findings",
     "slug": "runtime-v3-live-parity-observatory",
     "version": "v0.91.7",
-    "generation": 6
+    "generation": 13
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "Exact implementation revision before publication.",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\nadl-runtime-kernel/src/control.rs\nadl-runtime-kernel/tests/control.rs\nadl-runtime-kernel/tests/guardian_soak.rs\nadl-runtime-kernel/tests/parity.rs\nadl/tools/test_v0917_html_observatory_integrated_proof.sh\nadl/tools/validate_v0917_html_observatory.py\ndemos/v0.91.7/html-observatory/README.md\ndemos/v0.91.7/html-observatory/app.js\ndocs/architecture/runtime_v3_acip_a2a_cloud_network_5285.v1.json\ndocs/architecture/runtime_v3_adaptive_learning_dag_5281.v1.json\ndocs/architecture/runtime_v3_continuity_replay_recovery_5280.v1.json\ndocs/architecture/runtime_v3_delegation_resources_5283.v1.json\ndocs/architecture/runtime_v3_governance_freedom_gate_aee_5282.v1.json\ndocs/architecture/runtime_v3_kernel_lifecycle_5277.v1.json\ndocs/architecture/runtime_v3_live_black_box_parity_5248.v1.json\ndocs/architecture/runtime_v3_live_parity_remediation_5413.v1.json\ndocs/architecture/runtime_v3_observatory_consumption_5286.v1.json\ndocs/architecture/runtime_v3_release_proof_gate_5220.v1.json\ndocs/architecture/runtime_v3_service_contracts_configuration_5279.v1.json\ndocs/architecture/runtime_v3_topology_backpressure_5278.v1.json",
+      "review_revision": "git-blake3:8127883103f54fdcf3e44bb488639295f100ed7d:d5d3fa0ade90fea91ec858b211c9abd663d4659aa05f5f7b996dcc5d0c48203a",
+      "reviewer": "bounded-subagent-review-5413",
       "review_prompts": [
         "Does every claimed v2/v3 equivalence execute both runtime processes?",
         "Can any local or remote client read the Observatory feed without valid authorization?",
@@ -24,8 +24,10 @@
         "Does the packet enumerate #5277-#5286 with exact PR and check truth?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "Only one capability has real v2-v3 live equivalence evidence; nine Runtime v3 capabilities remain fixture-only/v3-only, so default cutover and Runtime v2 decommission remain unauthorized."
+      ],
+      "review_result": "pass"
     }
   }
 }

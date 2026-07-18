@@ -1,0 +1,251 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5463,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "f8acfa7ae245012c2e6017e2b33f50c8af46f755be2cb30c945a79c4173be0c5",
+  "phase": "implemented",
+  "generation": 10,
+  "digest": "edf5d7868ca8b09c3c1a8f9c1e369f85ca09de7f4e4bc449e6f918904ca7090e",
+  "claim": {
+    "id": "claim-5463-node24-action-pins",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 10,
+    "acquired_unix_seconds": 1784356628,
+    "expires_unix_seconds": 1784443028,
+    "heartbeat_unix_seconds": 1784356628,
+    "branch": "codex/5463-node24-action-pins",
+    "worktree": ".worktrees/adl-wp-5463",
+    "protected_paths": [
+      ".github/workflows/aws-codefriend-build.yaml",
+      ".github/workflows/aws-spot-remote-validation.yaml",
+      ".github/workflows/ci.yaml",
+      ".github/workflows/nightly-coverage-ratchet.yaml",
+      ".github/workflows/v0871_milestone_closeout_gate.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md"
+    ],
+    "purpose": "Upgrade deprecated Node 20 GitHub Action pins to reviewed Node 24 revisions"
+  },
+  "review_assignment": {
+    "reviewer": "bounded-subagent-review-5463",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:7c19d5461d71c79e8a4b9c4ba1a3f7d4f7c991ac:b785ae5945c851b62e70638a0713b7a9d0773a531e0329c20f6035ee19667fa2",
+    "scope": [
+      ".github/workflows/aws-codefriend-build.yaml",
+      ".github/workflows/aws-spot-remote-validation.yaml",
+      ".github/workflows/ci.yaml",
+      ".github/workflows/nightly-coverage-ratchet.yaml",
+      ".github/workflows/v0871_milestone_closeout_gate.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md"
+    ]
+  },
+  "review": {
+    "reviewer": "bounded-subagent-review-5463",
+    "scope": [
+      ".github/workflows/aws-codefriend-build.yaml",
+      ".github/workflows/aws-spot-remote-validation.yaml",
+      ".github/workflows/ci.yaml",
+      ".github/workflows/nightly-coverage-ratchet.yaml",
+      ".github/workflows/v0871_milestone_closeout_gate.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md"
+    ],
+    "reviewed_revision": "git-blake3:7c19d5461d71c79e8a4b9c4ba1a3f7d4f7c991ac:b785ae5945c851b62e70638a0713b7a9d0773a531e0329c20f6035ee19667fa2",
+    "findings": [
+      {
+        "id": "F-5463-1",
+        "severity": "p2",
+        "summary": "Valid quoted YAML uses scalars bypass canonical and deprecated action pin enforcement.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:7c19d5461d71c79e8a4b9c4ba1a3f7d4f7c991ac:b785ae5945c851b62e70638a0713b7a9d0773a531e0329c20f6035ee19667fa2",
+        "route": null
+      },
+      {
+        "id": "F-5463-2",
+        "severity": "p2",
+        "summary": "Rejected negative fixtures increment real workflow occurrence counts and can mask action disappearance.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5463/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5463/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "revision": "c7a88a3322b388897fffc0bc336747387e1fdfaebb84b33ca7bad2f93ed5997e"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "a086ee6f65ca50e7016bfe051256df75a093631f04706b64c5644b1cc754a6f7",
+      "rendered_digest": "116ecd514fd218a6b2bfeafeceba5897f833cd75eecca4906aa596c663a42ad1",
+      "ast_digest": "055c88cb431f309965d18d1b03e53b285236d3274271fbf29637501e28513148"
+    },
+    "stp": {
+      "values_digest": "be84b20e55f99aa294efd00f62edd619bc709d9d3d25a5f1109a087c59796305",
+      "rendered_digest": "65c8dc354b936414b8a32edecb10f2c7c786b25a25ecfae40ae7f184fa2f7c3d",
+      "ast_digest": "091ab560afbb4b9b8cf99d8062958bf060cc2071b488261c653bebf9029d190e"
+    },
+    "spp": {
+      "values_digest": "4b0c73a7fa4daeae78e10417882b920dc9716003e58e987a7e2fdb353f4cab17",
+      "rendered_digest": "e90ef2d4205cb124b557e22c1c43ea52d7770fb4c97deea49ace098a1fcdfab2",
+      "ast_digest": "cfa727ea5ef308c202c0ecea492b419bb70f5cebeb9991ececd775f4f39ddf92"
+    },
+    "vpp": {
+      "values_digest": "c914acf8c07656c74ec3181e66b6f98e9f417f9cc0a9b344d715cca5e51894c4",
+      "rendered_digest": "9916975d95eaed7aaf8f51caabbda183377af039827c88793385d7761329815e",
+      "ast_digest": "8f6f00a2dfc4e8878be02995b0924ea97025a2b98c88520bd6f8991ffd0d3f65"
+    },
+    "srp": {
+      "values_digest": "b25e2d845350fc5f5ff67e78f6bc4e1b7022c487f63f8b114958194a0754bee2",
+      "rendered_digest": "51874519eeeb38975cb4e173ea0cfe7c7cc8bb7d05cc9122c8d9fc8bdb9e4d99",
+      "ast_digest": "93d1309752f4459e2824c92b519c656a8cf62394760a38f6edc60ab78cb08428"
+    },
+    "sor": {
+      "values_digest": "aa57e139b93a55db3589cebda9c95161b78b7631cbf318b70ea83f4e0c59de07",
+      "rendered_digest": "aef83baad4fc3d94d7c400a0ee45884310ad114aa392ada90198794e67ea4f99",
+      "ast_digest": "bdec276a8d96c6d654297521963854b208c7879d53eae3da75ece380afd2a489"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded action runtime upgrade, retained inventory, and focused local proof are complete."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Implemented the bounded Node 24 action pin upgrade and its static regression contract.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Replaced the three GitHub-annotated Node 20 action revisions with reviewed immutable Node 24 commits across every workflow and strengthened canonical pin enforcement.\",\"changes\":[\"Upgrade actions/checkout to the immutable v7.0.0 Node 24 revision\",\"Upgrade actions/upload-artifact to the immutable v7.0.1 Node 24 revision\",\"Upgrade Swatinem/rust-cache to the immutable v2.9.1 Node 24 revision\",\"Scan both list-style and mapping-style uses syntax for canonical and deprecated revisions\",\"Retain the source-linked runtime pin inventory and explicit no-AWS proof boundary\"],\"artifacts\":[\".github/workflows/aws-codefriend-build.yaml\",\".github/workflows/aws-spot-remote-validation.yaml\",\".github/workflows/ci.yaml\",\".github/workflows/nightly-coverage-ratchet.yaml\",\".github/workflows/v0871_milestone_closeout_gate.yaml\",\"adl/tools/test_ci_runtime_contracts.sh\",\"adl/tools/test_ci_path_policy.sh\",\"docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The focused canonical action runtime contract passed without dispatching any workflow.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove canonical immutable Node 24 revisions and deprecated-revision absence across every workflow\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5463-ci-runtime-contract-pass\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The CI path-policy regression suite passed with the updated canonical checkout fixture.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\"],\"purpose\":\"Prove the action pin upgrade preserves CI path-policy behavior and fixture truth\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5463-ci-path-policy-pass\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded action runtime upgrade, retained inventory, and focused local proof are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "bounded-subagent-review-5463",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5463-1 by normalizing quoted uses scalars and adding quoted floating-pin negative fixtures.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Normalize single- and double-quoted uses scalars before canonical action validation and prove both workflow step forms reject floating pins.\",\"changes\":[\"Parse matching single- and double-quoted uses scalars\",\"Fail closed on malformed quoted uses scalars\",\"Add negative fixtures for quoted list-style and mapping-style floating pins\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The canonical runtime contract and quoted-scalar negative fixtures pass after F-5463-1 repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove quoted and unquoted tracked action uses cannot escape canonical immutable Node 24 enforcement\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5463-quoted-uses-regression-pass\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "bounded-subagent-review-5463",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5463-2 by counting only successfully validated canonical workflow occurrences.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Move occurrence accounting after canonical SHA validation so rejected fixtures cannot satisfy real inventory presence checks.\",\"changes\":[\"Count a tracked action only after its uses scalar exactly matches the canonical immutable SHA\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The canonical runtime contract passes with fixture-isolated occurrence accounting.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove rejected negative fixtures cannot mask disappearance of a real canonical action occurrence\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5463-occurrence-accounting-regression-pass\"}}"
+    }
+  ]
+}

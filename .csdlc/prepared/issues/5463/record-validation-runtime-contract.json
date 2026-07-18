@@ -1,0 +1,18 @@
+{
+  "issue": 5463,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "9b227e6071a40d149ab84d9b3363d0b676839b9f53ba9b76d02a5b3050eaf95f",
+  "claim_id": "claim-5463-node24-action-pins",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The focused canonical action runtime contract passed without dispatching any workflow.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_ci_runtime_contracts.sh"],
+      "purpose": "Prove canonical immutable Node 24 revisions and deprecated-revision absence across every workflow",
+      "outcome": "passed",
+      "evidence_ref": "local:5463-ci-runtime-contract-pass"
+    }
+  }
+}

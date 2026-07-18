@@ -1,0 +1,18 @@
+{
+  "issue": 5463,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "4278867ada909b092d1dac9c207e0c10b7a2c12c0af544c78e2270e3fe103a8f",
+  "claim_id": "claim-5463-node24-action-pins",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The canonical runtime contract passes with fixture-isolated occurrence accounting.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_ci_runtime_contracts.sh"],
+      "purpose": "Prove rejected negative fixtures cannot mask disappearance of a real canonical action occurrence",
+      "outcome": "passed",
+      "evidence_ref": "local:5463-occurrence-accounting-regression-pass"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "issue": 5463,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "1a8168e57912b2a76b364d8eca98ad2ab685a538c4961d8fc090dfa15c056285",
+  "claim_id": "claim-5463-node24-action-pins",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded action runtime upgrade, retained inventory, and focused local proof are complete.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "issue": 5463,
+  "base_branch": "main",
+  "branch": "codex/5463-node24-action-pins",
+  "worktree": ".worktrees/adl-wp-5463",
+  "claim": {
+    "id": "claim-5463-node24-action-pins",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784356628,
+    "expires_unix_seconds": 1784443028,
+    "heartbeat_unix_seconds": 1784356628,
+    "branch": "codex/5463-node24-action-pins",
+    "worktree": ".worktrees/adl-wp-5463",
+    "protected_paths": [
+      ".github/workflows/aws-codefriend-build.yaml",
+      ".github/workflows/aws-spot-remote-validation.yaml",
+      ".github/workflows/ci.yaml",
+      ".github/workflows/nightly-coverage-ratchet.yaml",
+      ".github/workflows/v0871_milestone_closeout_gate.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md"
+    ],
+    "purpose": "Upgrade deprecated Node 20 GitHub Action pins to reviewed Node 24 revisions"
+  }
+}

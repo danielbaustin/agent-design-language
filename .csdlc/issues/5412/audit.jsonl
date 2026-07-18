@@ -10,3 +10,16 @@
 {"sequence":10,"generation":6,"actor":"codex-root","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":11,"generation":7,"actor":"codex-root","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":12,"generation":8,"actor":"codex-root","reason":"Exact-revision bounded review passed after both actionable findings were fixed and revalidated.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":13,"generation":9,"actor":"codex-root","reason":"Lifecycle metadata was committed after review, changing revision identity; recover to implemented for exact re-review of the current clean substantive commit.","operation":"recover_review"}
+{"sequence":14,"generation":9,"actor":"codex-root","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":15,"generation":10,"actor":"codex-root","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
+{"sequence":16,"generation":11,"actor":"codex-root","reason":"Exact-revision bounded review passed after both actionable findings were fixed and revalidated.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":17,"generation":12,"actor":"codex-root","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":18,"generation":13,"actor":"codex-root","reason":"PR #5459 merged after a late CI-routing commit advanced the head; recover for exact final-head review and typed merged publication reconciliation.","operation":"recover_review"}
+{"sequence":19,"generation":13,"actor":"codex-root","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":20,"generation":14,"actor":"bounded-subagent-review-5412-final","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
+{"sequence":21,"generation":15,"actor":"codex-root","reason":"Exact final merged-head review passed; product fixes remain valid and the out-of-scope CI test defect is routed to #5467.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":22,"generation":16,"actor":"codex-root","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":23,"generation":17,"actor":"codex-root","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":24,"generation":18,"actor":"codex-root","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":25,"generation":19,"actor":"codex-root","reason":"Materialize the retained exact-final-head terminal receipt after PR #5459 merged.","operation":"reconcile_terminal"}

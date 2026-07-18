@@ -1,0 +1,30 @@
+{
+  "issue": 5463,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "91beeab0677a19d5367ece66169b6ac3d277a57bcfe5b023279169b35d3feb41",
+  "claim_id": "claim-5463-node24-action-pins",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Implemented the bounded Node 24 action pin upgrade and its static regression contract.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Replaced the three GitHub-annotated Node 20 action revisions with reviewed immutable Node 24 commits across every workflow and strengthened canonical pin enforcement.",
+    "changes": [
+      "Upgrade actions/checkout to the immutable v7.0.0 Node 24 revision",
+      "Upgrade actions/upload-artifact to the immutable v7.0.1 Node 24 revision",
+      "Upgrade Swatinem/rust-cache to the immutable v2.9.1 Node 24 revision",
+      "Scan both list-style and mapping-style uses syntax for canonical and deprecated revisions",
+      "Retain the source-linked runtime pin inventory and explicit no-AWS proof boundary"
+    ],
+    "artifacts": [
+      ".github/workflows/aws-codefriend-build.yaml",
+      ".github/workflows/aws-spot-remote-validation.yaml",
+      ".github/workflows/ci.yaml",
+      ".github/workflows/nightly-coverage-ratchet.yaml",
+      ".github/workflows/v0871_milestone_closeout_gate.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md"
+    ]
+  }
+}

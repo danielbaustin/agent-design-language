@@ -1,0 +1,15 @@
+{
+  "issue": 5463,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "f76195586b08fe22f20a0efccade13420398fe4c726c2396f3736062612245c1",
+  "claim_id": "claim-5463-node24-action-pins",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fixed F-5463-2 by counting only successfully validated canonical workflow occurrences.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Move occurrence accounting after canonical SHA validation so rejected fixtures cannot satisfy real inventory presence checks.",
+    "changes": ["Count a tracked action only after its uses scalar exactly matches the canonical immutable SHA"],
+    "artifacts": ["adl/tools/test_ci_runtime_contracts.sh"]
+  }
+}

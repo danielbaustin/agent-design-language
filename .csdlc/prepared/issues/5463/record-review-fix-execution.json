@@ -1,0 +1,19 @@
+{
+  "issue": 5463,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "1c4f83b9a8d4ebd089029d1631be7aefb74e19d024d874e877356c4fd282c0e9",
+  "claim_id": "claim-5463-node24-action-pins",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fixed F-5463-1 by normalizing quoted uses scalars and adding quoted floating-pin negative fixtures.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Normalize single- and double-quoted uses scalars before canonical action validation and prove both workflow step forms reject floating pins.",
+    "changes": [
+      "Parse matching single- and double-quoted uses scalars",
+      "Fail closed on malformed quoted uses scalars",
+      "Add negative fixtures for quoted list-style and mapping-style floating pins"
+    ],
+    "artifacts": ["adl/tools/test_ci_runtime_contracts.sh"]
+  }
+}

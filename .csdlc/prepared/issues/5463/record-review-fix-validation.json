@@ -1,0 +1,18 @@
+{
+  "issue": 5463,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "82bbcb83f98fe465c3c2c4bd19a8f72847c604b3cc5b3da26d59607b052f20d6",
+  "claim_id": "claim-5463-node24-action-pins",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The canonical runtime contract and quoted-scalar negative fixtures pass after F-5463-1 repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_ci_runtime_contracts.sh"],
+      "purpose": "Prove quoted and unquoted tracked action uses cannot escape canonical immutable Node 24 enforcement",
+      "outcome": "passed",
+      "evidence_ref": "local:5463-quoted-uses-regression-pass"
+    }
+  }
+}
