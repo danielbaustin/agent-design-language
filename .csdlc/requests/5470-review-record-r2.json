@@ -1,0 +1,16 @@
+{
+  "issue": 5470,
+  "expected_generation": 8,
+  "expected_digest": "1ff0f3617b3a2721b9fe53bc18f3d653cdcf41fceb873e69af8821ab7a709c62",
+  "claim_id": "claim-5470-terminal-durability",
+  "actor": "review_5427",
+  "evidence": {
+    "reviewer": "review_5427",
+    "scope": ["csdlc-v2/src/store.rs", "csdlc-v2/src/publication.rs", "csdlc-v2/tests/gate7_lifecycle.rs"],
+    "reviewed_revision": "git-blake3:55906219439aed67090ae7c8df703d66e0c78fd5:a17f3066c1b561bcc0ad4aa57748020a567f6070cb41f7fa71d6185363807415",
+    "findings": [],
+    "residual_risks": ["Filesystem crash semantics remain platform-dependent beyond the synchronized Rust boundaries."],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

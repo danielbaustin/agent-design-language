@@ -1,0 +1,8 @@
+{
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5486,
+  "required_checks": ["adl-ci", "adl-coverage", "adl-tooling-contracts", "adl-demo-proof", "adl-coverage-hosted", "adl-path-policy"],
+  "require_review": false,
+  "token_file": null,
+  "linked_issue": 5470
+}

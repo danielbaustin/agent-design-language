@@ -1,0 +1,8 @@
+{
+  "issue": 5470,
+  "expected_generation": 7,
+  "expected_digest": "ade0144935e4d65e15001c143af482c1aea8b4eaf3f721214aa9aefce4870580",
+  "claim_id": "claim-5470-terminal-durability",
+  "actor": "codex",
+  "reason": "Publication metadata changed the exact reviewed revision; require typed re-review before continuing closeout."
+}

@@ -193,7 +193,7 @@ fn verify_record(record: &IssueRecord, request: &PublicationRequest) -> Result<(
     }
     if !matches!(
         record.phase,
-        LifecyclePhase::Reviewed | LifecyclePhase::Published
+        LifecyclePhase::Reviewed | LifecyclePhase::Published | LifecyclePhase::MergeReady
     ) {
         return Err(V2Error::new(
             ErrorCode::InvalidTransition,

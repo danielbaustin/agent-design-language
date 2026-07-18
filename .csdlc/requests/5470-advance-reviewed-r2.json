@@ -1,0 +1,10 @@
+{
+  "issue": 5470,
+  "card": "sip",
+  "expected_generation": 9,
+  "expected_digest": "78067ab3d33fd8d86ee19ad5d7bc5460adbee11a9c32a2747b9ab51af404bca7",
+  "claim_id": "claim-5470-terminal-durability",
+  "actor": "codex",
+  "reason": "Exact post-publication lifecycle revision re-reviewed with no actionable findings.",
+  "operation": {"operation":"advance_phase","phase":"reviewed"}
+}

@@ -26,6 +26,17 @@ pub struct Store {
     root: PathBuf,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct TerminalTransactionJournal {
+    schema: String,
+    issue: u64,
+    stage: String,
+    original_record_digest: String,
+    target_record_digest: String,
+    original_receipt: Option<Vec<u8>>,
+    target_receipt: Vec<u8>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct RepairIdentityRequest {
     pub authority_issue: u64,
@@ -62,6 +73,17 @@ impl Store {
         self.root
             .join(".csdlc/issues")
             .join(format!(".{issue}.staging"))
+    }
+
+    fn terminal_transaction_path(&self, issue: u64) -> Result<PathBuf> {
+        let common = crate::git::run(
+            &self.root,
+            &["rev-parse", "--path-format=absolute", "--git-common-dir"],
+        )?
+        .stdout;
+        Ok(PathBuf::from(common)
+            .join("csdlc-v2/terminal-transactions")
+            .join(format!("{issue}.json")))
     }
 
     fn lock(&self, issue: u64) -> Result<File> {
@@ -251,8 +273,120 @@ impl Store {
         receipt.digest = terminal_receipt_digest(&receipt)?;
         validate_terminal_receipt(&receipt)?;
         let temporary = path.with_extension("json.repair-tmp");
-        fs::write(&temporary, serde_json::to_vec_pretty(&receipt)?)?;
-        fs::rename(temporary, path)?;
+        let mut file = File::create(&temporary)?;
+        file.write_all(&serde_json::to_vec_pretty(&receipt)?)?;
+        file.sync_all()?;
+        fs::rename(temporary, &path)?;
+        sync_dir(parent)?;
+        Ok(())
+    }
+
+    fn write_terminal_transaction_journal(
+        &self,
+        journal: &TerminalTransactionJournal,
+    ) -> Result<()> {
+        let path = self.terminal_transaction_path(journal.issue)?;
+        let parent = path
+            .parent()
+            .ok_or_else(|| V2Error::new(ErrorCode::InvalidInput, "transaction has no parent"))?;
+        fs::create_dir_all(parent)?;
+        let temporary = path.with_extension("json.tmp");
+        write_json(&temporary, journal)?;
+        fs::rename(temporary, &path)?;
+        sync_dir(parent)?;
+        Ok(())
+    }
+
+    fn remove_terminal_transaction_journal(&self, issue: u64) -> Result<()> {
+        let path = self.terminal_transaction_path(issue)?;
+        if path.exists() {
+            fs::remove_file(&path)?;
+            sync_dir(path.parent().expect("transaction parent"))?;
+        }
+        Ok(())
+    }
+
+    fn replace_receipt_bytes(&self, path: &Path, bytes: Option<&[u8]>) -> Result<()> {
+        let parent = path
+            .parent()
+            .ok_or_else(|| V2Error::new(ErrorCode::InvalidInput, "receipt has no parent"))?;
+        fs::create_dir_all(parent)?;
+        let lock = OpenOptions::new()
+            .create(true)
+            .truncate(false)
+            .read(true)
+            .write(true)
+            .open(parent.join("receipts.lock"))?;
+        lock.lock_exclusive()?;
+        for suffix in [
+            "json.reconcile-tmp",
+            "json.recovery-tmp",
+            "json.repair-tmp",
+            "json.restore-tmp",
+        ] {
+            let temporary = path.with_extension(suffix);
+            if temporary.exists() {
+                fs::remove_file(temporary)?;
+            }
+        }
+        match bytes {
+            Some(bytes) => {
+                let temporary = path.with_extension("json.recovery-tmp");
+                let mut file = File::create(&temporary)?;
+                file.write_all(bytes)?;
+                file.sync_all()?;
+                fs::rename(temporary, path)?;
+                sync_dir(parent)?;
+            }
+            None if path.exists() => {
+                fs::remove_file(path)?;
+                sync_dir(parent)?;
+            }
+            None => {}
+        }
+        Ok(())
+    }
+
+    fn recover_terminal_transaction(&self, issue: u64) -> Result<()> {
+        let path = self.terminal_transaction_path(issue)?;
+        if !path.is_file() {
+            return Ok(());
+        }
+        let journal: TerminalTransactionJournal = read_json(&path)?;
+        if journal.schema != "csdlc.terminal_transaction.v1" || journal.issue != issue {
+            return Err(V2Error::new(
+                ErrorCode::CorruptRecord,
+                "terminal transaction journal identity is invalid",
+            ));
+        }
+        let current = self.load_record(issue)?;
+        let receipt_path = self.terminal_receipt_path(issue)?;
+        if current.digest == journal.target_record_digest {
+            self.replace_receipt_bytes(&receipt_path, Some(&journal.target_receipt))?;
+        } else if current.digest == journal.original_record_digest {
+            self.replace_receipt_bytes(&receipt_path, journal.original_receipt.as_deref())?;
+        } else {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "terminal transaction journal does not match current projection",
+            ));
+        }
+        self.remove_terminal_transaction_journal(issue)
+    }
+
+    fn maybe_interrupt_terminal_transaction(issue: u64, stage: &str) -> Result<()> {
+        let issue_matches = std::env::var("CSDLC_V2_TEST_INTERRUPT_ISSUE")
+            .ok()
+            .is_some_and(|value| value == issue.to_string());
+        let stage_matches = std::env::var("CSDLC_V2_TEST_INTERRUPT_STAGE")
+            .ok()
+            .is_some_and(|value| value == stage);
+        if issue_matches && stage_matches {
+            return Err(V2Error::new(
+                ErrorCode::InterruptedTransaction,
+                format!("injected terminal interruption at {stage}"),
+            ));
+        }
         Ok(())
     }
 
@@ -271,8 +405,11 @@ impl Store {
             return Ok(());
         }
         let temporary = path.with_extension("json.restore-tmp");
-        fs::write(&temporary, bytes)?;
+        let mut file = File::create(&temporary)?;
+        file.write_all(bytes)?;
+        file.sync_all()?;
         fs::rename(temporary, path)?;
+        sync_dir(parent)?;
         Ok(())
     }
 
@@ -595,7 +732,6 @@ impl Store {
         hydrate_projections(&mut projection, &cards)?;
         projection.digest = record_digest(&projection)?;
         let retained_artifacts = BTreeMap::from([(design_path, design), (diagram_path, diagram)]);
-        let original_cards = self.load_cards(request.issue)?;
         let receipt_path = self.terminal_receipt_path(request.issue)?;
         let receipt_parent = receipt_path.parent().expect("receipt parent");
         let receipt_lock = OpenOptions::new()
@@ -618,10 +754,37 @@ impl Store {
         receipt.cards = cards.clone();
         receipt.authored_artifacts = retained_artifacts.clone();
         receipt.digest.clear();
-        let mut refreshed_bytes = Vec::new();
+        receipt.digest = terminal_receipt_digest(&receipt)?;
+        validate_terminal_receipt(&receipt)?;
+        let target_receipt = serde_json::to_vec_pretty(&receipt)?;
+        let mut journal = TerminalTransactionJournal {
+            schema: "csdlc.terminal_transaction.v1".into(),
+            issue: request.issue,
+            stage: "prepared".into(),
+            original_record_digest: local.digest.clone(),
+            target_record_digest: projection.digest.clone(),
+            original_receipt: Some(original_receipt),
+            target_receipt,
+        };
+        self.write_terminal_transaction_journal(&journal)?;
+        Self::maybe_interrupt_terminal_transaction(request.issue, "after_journal")?;
+        if let Err(error) = self.commit_with_authored(
+            request.issue,
+            &projection,
+            &cards,
+            false,
+            Some(&retained_artifacts),
+        ) {
+            if !matches!(&error.code, ErrorCode::InterruptedTransaction) {
+                let _ = self.recover_terminal_transaction(request.issue);
+            }
+            return Err(error);
+        }
+        Self::maybe_interrupt_terminal_transaction(request.issue, "after_projection")?;
+        journal.stage = "projection_committed".into();
+        self.write_terminal_transaction_journal(&journal)?;
+        Self::maybe_interrupt_terminal_transaction(request.issue, "after_projection_journal")?;
         let refresh = (|| -> Result<()> {
-            receipt.digest = terminal_receipt_digest(&receipt)?;
-            validate_terminal_receipt(&receipt)?;
             let parent = receipt_path.parent().expect("receipt parent");
             let lock = OpenOptions::new()
                 .create(true)
@@ -631,37 +794,25 @@ impl Store {
                 .open(parent.join("receipts.lock"))?;
             lock.lock_exclusive()?;
             let temporary = receipt_path.with_extension("json.reconcile-tmp");
-            refreshed_bytes = serde_json::to_vec_pretty(&receipt)?;
-            fs::write(&temporary, &refreshed_bytes)?;
+            let mut file = File::create(&temporary)?;
+            file.write_all(&journal.target_receipt)?;
+            file.sync_all()?;
+            Self::maybe_interrupt_terminal_transaction(request.issue, "after_receipt_write")?;
             fs::rename(temporary, &receipt_path)?;
+            sync_dir(parent)?;
+            Self::maybe_interrupt_terminal_transaction(request.issue, "after_receipt_rename")?;
             Ok(())
         })();
         if let Err(error) = refresh {
-            let rollback =
-                self.commit_with_authored(request.issue, &local, &original_cards, false, None);
-            let restore = (|| -> Result<()> {
-                let parent = receipt_path.parent().expect("receipt parent");
-                let lock = OpenOptions::new()
-                    .create(true)
-                    .truncate(false)
-                    .read(true)
-                    .write(true)
-                    .open(parent.join("receipts.lock"))?;
-                lock.lock_exclusive()?;
-                if fs::read(&receipt_path)? != refreshed_bytes {
-                    return Ok(());
-                }
-                fs::write(&receipt_path, &original_receipt)?;
-                Ok(())
-            })();
-            if rollback.is_err() || restore.is_err() {
-                return Err(V2Error::new(
-                    ErrorCode::ReconciliationRequired,
-                    "terminal reconciliation failed and rollback requires operator recovery",
-                ));
+            if !matches!(&error.code, ErrorCode::InterruptedTransaction) {
+                let _ = self.recover_terminal_transaction(request.issue);
             }
             return Err(error);
         }
+        journal.stage = "receipt_committed".into();
+        self.write_terminal_transaction_journal(&journal)?;
+        Self::maybe_interrupt_terminal_transaction(request.issue, "after_receipt_journal")?;
+        self.remove_terminal_transaction_journal(request.issue)?;
         Ok(projection)
     }
 
@@ -675,6 +826,7 @@ impl Store {
         if staging.exists() {
             fs::remove_dir_all(staging)?;
         }
+        self.recover_terminal_transaction(issue)?;
         Ok(())
     }
 

@@ -1,0 +1,18 @@
+{
+  "issue": 5470,
+  "base_branch": "main",
+  "branch": "codex/5470-terminal-durability",
+  "worktree": ".worktrees/adl-wp-5470",
+  "claim": {
+    "id": "claim-5470-terminal-durability",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1784358380,
+    "expires_unix_seconds": 1784365580,
+    "heartbeat_unix_seconds": 1784358380,
+    "branch": "codex/5470-terminal-durability",
+    "worktree": ".worktrees/adl-wp-5470",
+    "protected_paths": ["csdlc-v2/src/store.rs", "csdlc-v2/src/bin/csdlc-closeout.rs", "csdlc-v2/tests/gate7_terminal_durability_5470.rs", ".csdlc/issues/5470/retained/design.md", ".csdlc/issues/5470/retained/diagram.mmd"],
+    "purpose": "Make terminal projection and retained receipt updates crash-consistent"
+  }
+}

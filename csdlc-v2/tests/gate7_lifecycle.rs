@@ -6,9 +6,9 @@ use csdlc_v2::{
     assign_review, closeout_issue, edit_issue, initialize_issue, record_merged_publication,
     record_publication, record_readiness, record_review, BootstrapRequest, CardKind, Claim,
     EditRequest, InitialCardInput, LifecyclePhase, PlanningProfile, PublicationIntent,
-    PublicationRequest, ReadinessRequest, RemotePullRequest, ReviewAssignmentRequest,
-    ReviewEvidence, ReviewRecordRequest, SemanticOperation, Store, TerminalDisposition,
-    TerminalObservation,
+    PublicationRequest, ReadinessRequest, ReconcileTerminalRequest, RemotePullRequest,
+    ReviewAssignmentRequest, ReviewEvidence, ReviewRecordRequest, SemanticOperation, Store,
+    TerminalDisposition, TerminalObservation,
 };
 
 fn git(root: &std::path::Path, args: &[&str]) {
@@ -384,6 +384,154 @@ fn merged_publication_reconciliation_projects_truth_before_closeout() {
         published.audit.last().unwrap().operation,
         "record_merged_publication"
     );
+}
+
+#[test]
+fn terminal_projection_and_receipt_recover_at_each_durable_boundary() {
+    for (offset, stage) in [
+        "after_journal",
+        "after_projection",
+        "after_projection_journal",
+        "after_receipt_write",
+        "after_receipt_rename",
+        "after_receipt_journal",
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let issue = 5_470 + offset as u64;
+        let (temp, store, record, sha) = fixture_with_validation_history_and_publication(
+            issue,
+            "Terminal durability fixture",
+            "terminal-durability",
+            vec![ValidationResult {
+                command: vec!["cargo".into(), "test".into()],
+                purpose: "terminal durability proof".into(),
+                outcome: EvidenceOutcome::Passed,
+                evidence_ref: "durability-proof.json".into(),
+            }],
+            true,
+        );
+        let readiness = record_readiness(
+            &store,
+            ReadinessRequest {
+                schema: "csdlc.readiness_request.v1".into(),
+                issue,
+                expected_generation: record.generation,
+                expected_digest: record.digest,
+                claim_id: "claim".into(),
+                actor: "shepherd".into(),
+                pull_request: 70,
+                head_sha: sha.clone(),
+                required_checks: vec!["fast".into()],
+                require_review: true,
+                checks: vec![csdlc_v2::CheckObservation {
+                    name: "fast".into(),
+                    requirement: csdlc_v2::CheckRequirement::Required,
+                    conclusion: csdlc_v2::CheckConclusion::Success,
+                    details_url: None,
+                }],
+                review_state: csdlc_v2::RemoteReviewState::Approved,
+                conflict_state: csdlc_v2::ConflictState::Clean,
+                post_publication_findings: vec![],
+            },
+        )
+        .unwrap();
+        let publication = PublicationRequest {
+            schema: "csdlc.publication_request.v1".into(),
+            issue,
+            expected_generation: readiness.generation,
+            expected_digest: readiness.digest.clone(),
+            claim_id: "claim".into(),
+            actor: "publisher".into(),
+            repository: "example/repo".into(),
+            base: "main".into(),
+            head: "issue-7".into(),
+            title: "Fixture".into(),
+            body: format!("Closes #{issue}"),
+            draft: true,
+            remote: "origin".into(),
+            token_file: None,
+        };
+        let reviewed_revision = readiness.review.as_ref().unwrap().reviewed_revision.clone();
+        record_merged_publication(
+            &store,
+            &publication,
+            &PublicationIntent {
+                schema: "csdlc.publication_intent.v1".into(),
+                issue,
+                repository: "example/repo".into(),
+                base: "main".into(),
+                head: "issue-7".into(),
+                title: "Fixture".into(),
+                body: format!("Closes #{issue}"),
+                draft: false,
+                revision: reviewed_revision,
+                commit_sha: sha.clone(),
+            },
+            RemotePullRequest {
+                number: 70,
+                url: "https://example.invalid/70".into(),
+                repository: "example/repo".into(),
+                base: "main".into(),
+                head: "issue-7".into(),
+                title: "Fixture".into(),
+                body: format!("Closes #{issue}"),
+                draft: false,
+                state: "merged".into(),
+                head_sha: sha.clone(),
+            },
+        )
+        .unwrap();
+        let current = store.load_record(issue).unwrap();
+        closeout_issue(
+            &store,
+            TerminalObservation {
+                schema: "csdlc.terminal_observation.v1".into(),
+                issue,
+                expected_generation: current.generation,
+                expected_digest: current.digest,
+                claim_id: "claim".into(),
+                actor: "closer".into(),
+                pull_request: Some(70),
+                disposition: TerminalDisposition::Merged,
+                observed_sha: Some(sha),
+                observed_state: "merged".into(),
+                approved_no_pr_reason: None,
+                receipt_path: format!("csdlc-v2/closeout/{issue}.json"),
+            },
+        )
+        .unwrap();
+        store.retain_terminal_receipt(issue).unwrap();
+        let request = ReconcileTerminalRequest {
+            issue,
+            expected_initialization_digest: store.load_record(issue).unwrap().initialization_digest,
+            expected_branch: "issue-7".into(),
+            expected_worktree: temp.path().to_string_lossy().into_owned(),
+            actor: "durability-test".into(),
+            reason: format!("fault boundary {stage}"),
+            follow_ups: vec![],
+        };
+        std::env::set_var("CSDLC_V2_TEST_INTERRUPT_ISSUE", issue.to_string());
+        std::env::set_var("CSDLC_V2_TEST_INTERRUPT_STAGE", stage);
+        let interrupted = store.reconcile_terminal(request.clone()).unwrap_err();
+        assert!(matches!(
+            interrupted.code,
+            csdlc_v2::ErrorCode::InterruptedTransaction
+        ));
+        std::env::remove_var("CSDLC_V2_TEST_INTERRUPT_ISSUE");
+        std::env::remove_var("CSDLC_V2_TEST_INTERRUPT_STAGE");
+        let journal = temp
+            .path()
+            .join(".git/csdlc-v2/terminal-transactions")
+            .join(format!("{issue}.json"));
+        assert!(journal.is_file(), "journal missing at {stage}");
+        let recovered = store.reconcile_terminal(request).unwrap();
+        assert_eq!(recovered.phase, LifecyclePhase::ClosedOut);
+        assert!(!journal.exists(), "journal retained after {stage}");
+        let receipt = store.load_terminal_receipt(issue).unwrap().unwrap();
+        assert_eq!(receipt.record.digest, recovered.digest);
+    }
 }
 
 #[test]

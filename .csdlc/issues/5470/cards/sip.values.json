@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5470,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][durability] Make terminal projection and receipt crash-consistent",
+    "slug": "terminal-projection-receipt-crash-consistent",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make terminal projection and retained receipt updates crash-consistent and recoverable.",
+      "required_outcome": "A terminal reconciliation either durably commits both projection and receipt or leaves a journaled state that deterministically recovers without generation or identity drift.",
+      "declared_scope": [
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/bin/csdlc-closeout.rs",
+        "csdlc-v2/tests",
+        ".csdlc/issues/5470/retained/design.md",
+        ".csdlc/issues/5470/retained/diagram.mmd"
+      ],
+      "authority_boundary": [
+        "The Rust v2 store and receipt journal are the sole durability authority",
+        "Existing terminal receipt identity, rollback, idempotence, and typed reconciliation contracts remain unchanged"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

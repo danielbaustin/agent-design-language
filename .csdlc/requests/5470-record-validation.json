@@ -1,0 +1,18 @@
+{
+  "issue": 5470,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "ba4a127160069973f30710a8fa3b58c93fd7c7510aa9e406ceae008cd3207106",
+  "claim_id": "claim-5470-terminal-durability",
+  "actor": "codex",
+  "reason": "Focused Gate 7 durability and recovery validation passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--locked", "--manifest-path", "csdlc-v2/Cargo.toml", "--test", "gate7_lifecycle"],
+      "purpose": "Prove projection/receipt recovery at every durable boundary and preserve terminal lifecycle contracts.",
+      "outcome": "passed",
+      "evidence_ref": "gate7_lifecycle: 6 tests passed; clippy and diff-check passed"
+    }
+  }
+}

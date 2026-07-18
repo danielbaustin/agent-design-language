@@ -1,0 +1,11 @@
+flowchart TD
+  request["typed terminal reconciliation"] --> lock["issue lock + CAS"]
+  lock --> journal["durability journal"]
+  journal --> projection["sync projection temp"]
+  journal --> receipt["sync receipt temp"]
+  projection --> rename["atomic renames"]
+  receipt --> rename
+  rename --> dirs["sync parent directories"]
+  dirs --> commit["success + remove journal"]
+  journal --> recover["deterministic recovery"]
+  recover --> rollback["rollback or complete pair"]

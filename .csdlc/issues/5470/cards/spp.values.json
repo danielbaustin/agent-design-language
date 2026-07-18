@@ -1,0 +1,76 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5470,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][durability] Make terminal projection and receipt crash-consistent",
+    "slug": "terminal-projection-receipt-crash-consistent",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Map the existing projection/receipt writes, introduce a journal and fsync boundaries, inject interruption at every commit point, then prove deterministic recovery and idempotence.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Map terminal projection, receipt, journal, and recovery boundaries",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement synchronized journaled commit and deterministic recovery",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run fault-injection, rollback, idempotence, and contract validation",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Projection and receipt share one canonical generation and digest",
+        "No successful return occurs before receipt bytes and parent directory are synchronized",
+        "Recovery is deterministic and fail-closed",
+        "Existing receipt identity and rollback semantics are preserved"
+      ],
+      "risks": [
+        "Filesystem synchronization semantics differ across supported hosts",
+        "Fault injection must not weaken normal lifecycle locking or receipt retention"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Every durable write/rename interruption point has deterministic recovery proof",
+        "Focused durability and lifecycle checks are green",
+        "Subagent review has no actionable findings"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5470/retained/design.md",
+      "design_digest": "e63f569602e8bd2b07235d08458ad1454428db6c068d1e4be531f053fe43e957",
+      "diagram_ref": ".csdlc/issues/5470/retained/diagram.mmd",
+      "diagram_digest": "ebf87368dc3f82c763a99bbbca79ec0609a080b21863b81ccb16d66d572168af"
+    }
+  }
+}

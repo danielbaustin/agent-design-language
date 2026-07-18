@@ -1,0 +1,9 @@
+{
+  "issue": 5470,
+  "expected_generation": 8,
+  "expected_digest": "535229e2534f35cdf7cde7dc376b5b2f9b0ffdbec0420ccc3524e2a67e099744",
+  "claim_id": "claim-5470-terminal-durability",
+  "reviewer": "review_5427",
+  "assigned_by": "codex",
+  "scope": ["csdlc-v2/src/store.rs", "csdlc-v2/src/publication.rs", "csdlc-v2/tests/gate7_lifecycle.rs"]
+}

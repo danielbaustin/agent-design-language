@@ -1,0 +1,10 @@
+{
+  "issue": 5470,
+  "card": "sip",
+  "expected_generation": 2,
+  "expected_digest": "22910ae8b45fe4980e7186610ad9aaeec8c4611c38cc30114a4a00e5e9dd2953",
+  "claim_id": "claim-5470-terminal-durability",
+  "actor": "codex",
+  "reason": "Implementation and focused durability validation are complete; advance to review.",
+  "operation": {"operation":"advance_phase","phase":"implemented"}
+}

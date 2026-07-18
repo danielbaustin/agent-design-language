@@ -1,0 +1,47 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5470,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][durability] Make terminal projection and receipt crash-consistent",
+    "slug": "terminal-projection-receipt-crash-consistent",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Add a bounded journaled terminal projection/receipt transaction with deterministic recovery and fault-injection proof.",
+      "deliverables": [
+        "Crash-consistent terminal transaction or recovery journal",
+        "Explicit file and parent-directory synchronization",
+        "Interruption recovery and fault-injection tests",
+        "Design and diagram evidence"
+      ],
+      "acceptance_criteria": [
+        "Projection and receipt converge to one generation after success or recovery",
+        "Receipt bytes and parent directory are synchronized before success",
+        "Interruption before and after each durable write/rename recovers deterministically",
+        "Identity, rollback, idempotence, and typed reconciliation contracts remain green"
+      ],
+      "dependencies": [
+        "Existing Store::reconcile_terminal implementation",
+        "Retained terminal receipt format",
+        "Rust filesystem primitives and focused test harness"
+      ],
+      "repo_inputs": [
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/bin/csdlc-closeout.rs",
+        "csdlc-v2/src/readiness.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs"
+      ],
+      "non_goals": [
+        "Runtime or AWS changes",
+        "Arbitrary post-closeout card mutation",
+        "Blocking #5468 SRP truth normalization"
+      ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "issue": 5470,
+  "card": "sip",
+  "expected_generation": 4,
+  "expected_digest": "5ebf9c639c625c472d8e6977d9c268aa58ea868b2eccf5892b78624982ded1b4",
+  "claim_id": "claim-5470-terminal-durability",
+  "actor": "codex",
+  "reason": "Pre-publication review passed with no actionable findings.",
+  "operation": {"operation":"advance_phase","phase":"reviewed"}
+}
