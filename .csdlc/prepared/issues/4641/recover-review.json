@@ -1,0 +1,8 @@
+{
+  "issue": 4641,
+  "expected_generation": 7,
+  "expected_digest": "9f48d2d2251ef9e2a6a46931af3eb9164178a22971a1ced76c28ed3142adac15",
+  "claim_id": "claim-4641-v0-91-7-wp14-launch-v092-birthday-handoff",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Committed typed review metadata advanced HEAD after the source review; recover for exact current-head metadata-delta review before publication."
+}
