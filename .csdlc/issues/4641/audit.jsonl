@@ -8,3 +8,4 @@
 {"sequence":8,"generation":5,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":9,"generation":6,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":10,"generation":7,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"Advance #4641 after bounded review returned no actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":11,"generation":8,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"Committed typed review metadata advanced HEAD after the source review; recover for exact current-head metadata-delta review before publication.","operation":"recover_review"}
