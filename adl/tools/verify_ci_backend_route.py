@@ -69,6 +69,10 @@ elif not spot_selected:
         expected_work_required = args.rust_required or args.demo_required
         if args.work_required != expected_work_required:
             errors.append("adl-ci work-required input disagrees with required lane categories")
+        if not args.work_required:
+            for lane, result in hosted_results.items():
+                if result != "skipped":
+                    errors.append(f"selected hosted {lane} lane expected skipped: {result}")
         if args.rust_required:
             for lane in ("rust-fmt-clippy", "rust-tests"):
                 if hosted_results.get(lane) != "success":

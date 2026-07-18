@@ -187,7 +187,7 @@ grep -F "github.event_name != 'pull_request' || github.event.pull_request.head.r
 grep -F "contains(github.event.pull_request.labels.*.name, 'ci:spot')" "$CI_WORKFLOW" >/dev/null
 grep -F -- "--spot-opt-in \"\$SPOT_OPT_IN\"" "$CI_WORKFLOW" >/dev/null
 grep -F "if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))" "$CI_WORKFLOW" >/dev/null
-grep -F "if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))" "$CI_WORKFLOW" >/dev/null
+grep -F "if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true') && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))" "$CI_WORKFLOW" >/dev/null
 grep -F "if: needs.adl_path_policy.outputs.heavy_ci_backend == 'spot' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'ci:spot') && (needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' || needs.adl_path_policy.outputs.coverage_required == 'true')" "$CI_WORKFLOW" >/dev/null
 grep -F "if: needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot')" "$CI_WORKFLOW" >/dev/null
 grep -F 'name: adl-coverage-hosted' "$CI_WORKFLOW" >/dev/null
@@ -260,6 +260,14 @@ python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend hosted \
   --hosted-result rust-fmt-clippy=success \
   --hosted-result rust-tests=success \
   --hosted-result demo-proof=success >/dev/null
+python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend hosted \
+  --event-name pull_request --same-repo-pr true --work-required false \
+  --spot-opt-in false \
+  --rust-required false --demo-required false \
+  --path-policy-result success --spot-result skipped \
+  --hosted-result rust-fmt-clippy=skipped \
+  --hosted-result rust-tests=skipped \
+  --hosted-result demo-proof=skipped >/dev/null
 python3 "$VERIFY_BACKEND_ROUTE" --surface adl-coverage --backend spot \
   --event-name pull_request --same-repo-pr true --work-required true \
   --spot-opt-in true \
@@ -289,7 +297,8 @@ for invalid_route in \
   'adl-coverage hosted push false true skipped skipped coverage=success' \
   'adl-coverage hosted push false true success skipped coverage=skipped' \
   'adl-coverage spot pull_request true false success success coverage=success' \
-  'adl-coverage hosted pull_request true false success skipped coverage=success'
+  'adl-coverage hosted pull_request true false success skipped coverage=success' \
+  'adl-ci hosted pull_request true false success skipped demo-proof=success'
 do
   read -r surface backend event same_repo required path_result spot_result hosted_result <<<"$invalid_route"
   if python3 "$VERIFY_BACKEND_ROUTE" --surface "$surface" --backend "$backend" \
