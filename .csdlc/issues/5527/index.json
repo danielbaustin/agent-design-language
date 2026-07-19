@@ -1,0 +1,283 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5527,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "b39cf9f23e29cee6b0210b71f27cb741da4101fc49585ca4be7c8eb7a86b8f68",
+  "phase": "implemented",
+  "generation": 17,
+  "digest": "c20ad572df68d473d7b2f118e44230c9ed00e9c6df9941a384cde5a360802ce3",
+  "claim": {
+    "id": "claim-5527-terminal-sor-artifact-repair",
+    "owner": "codex-closeout-audit",
+    "generation": 17,
+    "acquired_unix_seconds": 1784418712,
+    "expires_unix_seconds": 1784505112,
+    "heartbeat_unix_seconds": 1784418712,
+    "branch": "codex/5527-terminal-sor-artifact-repair",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5390",
+      ".csdlc/issues/5527",
+      ".csdlc/prepared/issues/5527",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      "csdlc-v2/tests/gate7_terminal_sor_artifact_repair_5527.rs"
+    ],
+    "purpose": "Add atomic typed terminal SOR artifact-reference repair and correct #5390"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5527/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5527/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-closeout-audit",
+      "revision": "c1593baf422c79cc8ccf18cbf198fc06b7bf2d84f6c1e5453a43d4c0a1d3b52e"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "375f8bcf63dd2129fec5d1cef9169e87c99100e1746a7ea190a9d48771def4da",
+      "rendered_digest": "2fcef2c8a671de6df948e1f090a4bbd6009874b2e7a24fcf753fbc7f7e985412",
+      "ast_digest": "95f89c615430c3d6d0d9cd545ef5fc0287b1d0189dbc35d7d936d0ec23e529a7"
+    },
+    "stp": {
+      "values_digest": "6856df525686a411e339ff5ac298ac0a8f27ffa6ad4099c2b0c15d34eb009bbe",
+      "rendered_digest": "9f27ff1f7dd70941fa6a040092d128da0790cbc47e17f415bb193c6ee10755b1",
+      "ast_digest": "96e122a7bf67f79354b616ba86217d6604c5a4eafd529705f7635a456fc07f45"
+    },
+    "spp": {
+      "values_digest": "64c9ababb309f732b3d928668385e406573b3655951d225d11ff887cfc665183",
+      "rendered_digest": "78c9cb6b20aa9628a0cb614ac17e3a8b4b9c68c2a75afaf0c3505f2ed3666997",
+      "ast_digest": "f6d99558828ae87f281ac1e5768ad2a0b42fb300c7afc5ebed5ebab950a5d8bc"
+    },
+    "vpp": {
+      "values_digest": "315269cf75c089e93b2680d9c055775774fdc5345bea83d64da7e7ea4662c721",
+      "rendered_digest": "e33d36e45faa63e361f3cdd612c8fcff169d3949afbb54e97fbe73091f37ea35",
+      "ast_digest": "95001bf7b86c4778b0f0a1c5323ec44a17b7956e0ce88c85107d8c0fc75b5094"
+    },
+    "srp": {
+      "values_digest": "98ac8fb1b86bf36e27a1e8fcfbf17bbcff515f0a7552fbb6aba5f928423f0fd1",
+      "rendered_digest": "0b194bc35e71e0a9e99270351bb478704ac3db56fa7fbb3c48671fcfcbe4f681",
+      "ast_digest": "52b87827dee4561e49b2c4c0d60f2312260b7d368738a2121cd5ea22659277df"
+    },
+    "sor": {
+      "values_digest": "3129e5f22a6d3bfd180e5feb6ff9d40be22e0d0a3c0f3bfce71e81a6c972af2a",
+      "rendered_digest": "49488c3bac69396ef11f5eb8e3299daa13d6da5844637a18a36ca86653cf3330",
+      "ast_digest": "5520218c2498b1ad75bd711c1d7deae471e3d1fe1d999104dd3b9fd9afbfd15d"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-closeout-audit",
+      "reason": "Issue-specific cards, design, diagram, plan, and validation lanes are ready for binding."
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-closeout-audit",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex-closeout-audit",
+      "reason": "Implementation, focused regression, rollback, lint, and repaired-target validation are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex-closeout-audit",
+      "reason": "Exact substantive revision review is clean after both VPP truth findings were fixed and independently rerun."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex-closeout-audit",
+      "reason": "Recover exact review identity after committing typed review metadata; substantive code and tests are unchanged."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex-closeout-audit",
+      "reason": "Exact metadata-head review is clean; substantive code and tests remain byte-identical and both fixed findings plus #5548 residual risk are restored."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex-closeout-audit",
+      "reason": "Recover exact review identity after committing metadata-head review so the publication head receives current review."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex-closeout-audit",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex-closeout-audit",
+      "reason": "Issue-specific cards, design, diagram, plan, and validation lanes are ready for binding.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex-closeout-audit",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex-closeout-audit",
+      "reason": "Use the existing full terminal lifecycle fixture for receipt-bound atomic repair coverage.",
+      "operation": "{\"add_protected_paths\":[\"csdlc-v2/tests/gate7_lifecycle.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex-closeout-audit",
+      "reason": "Implement the bounded receipt-authenticated SOR artifact-reference repair and apply it to #5390.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Typed terminal repair now replaces one exact stale SOR artifact reference with a receipt-authenticated retained artifact and refreshes record and receipt atomically.\",\"changes\":[\"Added TerminalSorArtifactRepairRequest to the public typed schema.\",\"Added csdlc-closeout repair-sor-artifact with authority claim, target, receipt, path, and byte-digest guards.\",\"Added rollback-safe terminal transaction handling and exact/nonduplicating SOR replacement.\",\"Reconciled and repaired #5390 from the deleted diagram path to retained/diagram.mmd.\"],\"artifacts\":[\"csdlc-v2/src/model.rs\",\"csdlc-v2/src/store.rs\",\"csdlc-v2/src/bin/csdlc-closeout.rs\",\"csdlc-v2/src/schema.rs\",\"csdlc-v2/tests/gate7_lifecycle.rs\",\".csdlc/issues/5390\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex-closeout-audit",
+      "reason": "Record the complete Gate 7 lifecycle and terminal transaction regression result.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Prove terminal reconciliation, receipt parity, authority scoping, exact SOR replacement, and rollback behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\"12 passed, 0 failed, including terminal_sor_artifact_repair_is_scoped_atomic_and_receipt_bound\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex-closeout-audit",
+      "reason": "Record strict all-target compiler and Clippy proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--locked\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Reject compiler or Clippy warnings across the complete C-SDLC v2 target surface.\",\"outcome\":\"passed\",\"evidence_ref\":\"Finished dev profile successfully with warnings denied\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex-closeout-audit",
+      "reason": "Record exact #5390 repaired projection and receipt parity proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5390\"],\"purpose\":\"Prove #5390 remains closed_out with coherent generated cards after typed repair.\",\"outcome\":\"passed\",\"evidence_ref\":\"doctor status pass at generation 41; SOR uses retained/diagram.mmd; record and receipt digests agree\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex-closeout-audit",
+      "reason": "Record formatting and diff hygiene proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"fmt\",\"--all\",\"--\",\"--check\"],\"purpose\":\"Prove canonical Rust formatting and clean patch hygiene.\",\"outcome\":\"passed\",\"evidence_ref\":\"cargo fmt --check and git diff --check passed\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex-closeout-audit",
+      "reason": "Implementation, focused regression, rollback, lint, and repaired-target validation are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex-closeout-audit",
+      "reason": "Correct the VPP to name the exact implemented Gate 7 regression test and retain the other proving lanes.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"terminal-sor-artifact-repair-tests\",\"proof_role\":\"Prove exact atomic repair and rollback\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--test\",\"gate7_lifecycle\",\"terminal_sor_artifact_repair_is_scoped_atomic_and_receipt_bound\",\"--\",\"--exact\"],\"parallel_group\":\"rust\",\"defer_reason\":null},{\"lane\":\"target-doctor\",\"proof_role\":\"Prove #5390 terminal SOR and receipt parity\",\"acceptance_ids\":[\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":500,\"argv\":[\"csdlc-doctor\",\"--issue\",\"5390\"],\"parallel_group\":\"records\",\"defer_reason\":null},{\"lane\":\"exact-review\",\"proof_role\":\"Prove bounded implementation and terminal truth\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"review\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex-closeout-audit",
+      "reason": "Record the exact corrected VPP lane after review remediation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--test\",\"gate7_lifecycle\",\"terminal_sor_artifact_repair_is_scoped_atomic_and_receipt_bound\",\"--\",\"--exact\"],\"purpose\":\"Prove the exact declared atomic SOR artifact repair and rollback behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\"1 passed, 0 failed, 11 filtered out\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex-closeout-audit",
+      "reason": "Make the exact Gate 7 VPP lane executable from the repository root by declaring its manifest path.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"terminal-sor-artifact-repair-tests\",\"proof_role\":\"Prove exact atomic repair and rollback\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_lifecycle\",\"terminal_sor_artifact_repair_is_scoped_atomic_and_receipt_bound\",\"--\",\"--exact\"],\"parallel_group\":\"rust\",\"defer_reason\":null},{\"lane\":\"target-doctor\",\"proof_role\":\"Prove #5390 terminal SOR and receipt parity\",\"acceptance_ids\":[\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":500,\"argv\":[\"csdlc-doctor\",\"--issue\",\"5390\"],\"parallel_group\":\"records\",\"defer_reason\":null},{\"lane\":\"exact-review\",\"proof_role\":\"Prove bounded implementation and terminal truth\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"review\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex-closeout-audit",
+      "reason": "Record the literal root-executable VPP lane after review remediation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_lifecycle\",\"terminal_sor_artifact_repair_is_scoped_atomic_and_receipt_bound\",\"--\",\"--exact\"],\"purpose\":\"Prove the exact declared root-relative atomic SOR artifact repair and rollback lane.\",\"outcome\":\"passed\",\"evidence_ref\":\"Executed literally from the issue worktree root: 1 passed, 0 failed, 11 filtered out\"}}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex-closeout-audit",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex-closeout-audit",
+      "reason": "Exact substantive revision review is clean after both VPP truth findings were fixed and independently rerun.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex-closeout-audit",
+      "reason": "Recover exact review identity after committing typed review metadata; substantive code and tests are unchanged.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex-closeout-audit",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex-closeout-audit",
+      "reason": "Exact metadata-head review is clean; substantive code and tests remain byte-identical and both fixed findings plus #5548 residual risk are restored.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 17,
+      "actor": "codex-closeout-audit",
+      "reason": "Recover exact review identity after committing metadata-head review so the publication head receives current review.",
+      "operation": "recover_review"
+    }
+  ]
+}

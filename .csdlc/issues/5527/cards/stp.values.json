@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5527,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Normalize SOR artifact refs during terminal reconciliation",
+    "slug": "v0-91-7-csdlc-v2-terminal-sor-artifact-repair",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Add and prove one atomic terminal SOR artifact-reference repair operation, then use it on #5390.",
+      "deliverables": [
+        "Typed repair request and store operation",
+        "Focused fail-closed and rollback tests",
+        "Corrected #5390 SOR artifact reference and receipt",
+        "Reviewed terminal reconciliation"
+      ],
+      "acceptance_criteria": [
+        "AC1: only exact existing SOR artifact references may be replaced",
+        "AC2: replacement must be a receipt-authenticated retained authored artifact with matching bytes",
+        "AC3: stale authority, target, artifact, or receipt identity fails closed",
+        "AC4: invalid phase, claim, path, duplicate, or no-op replacement fails closed",
+        "AC5: receipt refresh failure rolls target and receipt back",
+        "AC6: #5390 contains no generated reference to the deleted diagram path",
+        "AC7: focused tests, doctor, and exact review pass"
+      ],
+      "dependencies": [
+        "Closed #5390",
+        "Typed C-SDLC v2 terminal repair transaction pattern"
+      ],
+      "repo_inputs": [
+        "#5527 review finding",
+        ".git/csdlc-v2/closeout/5390.json",
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/bin/csdlc-closeout.rs"
+      ],
+      "non_goals": [
+        "General terminal card editing",
+        "Audit rewriting",
+        "Runtime changes",
+        "Runtime v2 changes",
+        "AWS execution"
+      ]
+    }
+  }
+}

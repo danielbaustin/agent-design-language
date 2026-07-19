@@ -32,7 +32,7 @@ Runtime v3 HTTPS repair is implemented; approved design artifacts remain unchang
 - adl-runtime/src/guardian.rs
 - infra/horust/README.md
 - docs/architecture/runtime_v3_guardian_fallback_matrix.v1.json
-- .csdlc/issues/5390/diagram.mmd
+- .csdlc/issues/5390/retained/diagram.mmd
 - adl-runtime/src/guardian.rs
 - adl-runtime-kernel/src/control.rs
 - adl-runtime-kernel/src/bin/adl-runtime-kernel.rs

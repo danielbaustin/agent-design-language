@@ -1,0 +1,19 @@
+{
+  "issue": 5527,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "4a1567364a0ee45d386f1247a0b4c7dc459ec3bca820c7b7f5014bef0347d6d4",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "reason": "Record the literal root-executable VPP lane after review remediation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--locked", "--manifest-path", "csdlc-v2/Cargo.toml", "--test", "gate7_lifecycle", "terminal_sor_artifact_repair_is_scoped_atomic_and_receipt_bound", "--", "--exact"],
+      "purpose": "Prove the exact declared root-relative atomic SOR artifact repair and rollback lane.",
+      "outcome": "passed",
+      "evidence_ref": "Executed literally from the issue worktree root: 1 passed, 0 failed, 11 filtered out"
+    }
+  },
+  "fail_after_backup": false
+}

@@ -42,3 +42,7 @@
 {"sequence":42,"generation":35,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":43,"generation":36,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
 {"sequence":44,"generation":37,"actor":"codex","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":45,"generation":38,"actor":"csdlc-closeout","reason":"normalize legacy terminal receipt path to portable reference","operation":"normalize_terminal_receipt_ref"}
+{"sequence":46,"generation":39,"actor":"codex-closeout-audit","reason":"Materialize the retained terminal receipt during the complete v0.91.7 closed-issue audit.","operation":"reconcile_terminal"}
+{"sequence":47,"generation":40,"actor":"codex-closeout-audit","reason":"Materialize retained #5390 terminal truth before typed SOR artifact-reference repair.","operation":"reconcile_terminal"}
+{"sequence":48,"generation":41,"actor":"codex-closeout-audit","reason":"typed terminal SOR artifact repair authorized by issue 5527","operation":"repair_terminal_sor_artifact:.csdlc/issues/5390/diagram.mmd->.csdlc/issues/5390/retained/diagram.mmd"}

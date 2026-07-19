@@ -19,7 +19,7 @@ use crate::model::{
     AuditEvent, CardProjection, Claim, DesignReview, IssueRecord, LifecyclePhase,
     PublicationEvidence, ReadinessEvidence, ReconcileTerminalRequest, ReviewAssignment,
     ReviewEvidence, TerminalDesignRepairRequest, TerminalEvidence, TerminalPlanStepRepairRequest,
-    TerminalReceipt, TransitionEvent,
+    TerminalReceipt, TerminalSorArtifactRepairRequest, TransitionEvent,
 };
 use crate::review::evaluate_publication_review_in_repo;
 
@@ -599,7 +599,7 @@ impl Store {
         journal.stage = "projection_committed_terminal_plan_repair".into();
         self.write_terminal_transaction_journal(&journal)?;
         if request.fail_after_stage.as_deref() == Some("after_projection") {
-            self.rollback_terminal_plan_repair(
+            self.rollback_terminal_repair(
                 request.target_issue,
                 &original_target,
                 &original_cards,
@@ -613,7 +613,7 @@ impl Store {
         }
         if let Err(error) = self.replace_receipt_bytes(&receipt_path, Some(&journal.target_receipt))
         {
-            self.rollback_terminal_plan_repair(
+            self.rollback_terminal_repair(
                 request.target_issue,
                 &original_target,
                 &original_cards,
@@ -628,7 +628,204 @@ impl Store {
         Ok(target)
     }
 
-    fn rollback_terminal_plan_repair(
+    pub fn repair_terminal_sor_artifact(
+        &self,
+        request: TerminalSorArtifactRepairRequest,
+    ) -> Result<IssueRecord> {
+        if request.authority_issue == request.target_issue
+            || request.actor.trim().is_empty()
+            || request.expected_authority_digest.trim().is_empty()
+            || request.expected_target_digest.trim().is_empty()
+            || request.expected_receipt_digest.trim().is_empty()
+            || request.expected_artifact_digest.trim().is_empty()
+            || request.stale_ref == request.retained_ref
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "terminal SOR artifact repair identity or authority is incomplete",
+            ));
+        }
+        for path in [&request.stale_ref, &request.retained_ref] {
+            if !crate::pvf::clean_relative(Path::new(path)) {
+                return Err(V2Error::new(
+                    ErrorCode::InvalidInput,
+                    "terminal SOR artifact repair paths must be repository-relative",
+                ));
+            }
+        }
+
+        let _terminal_repair_lock = self.terminal_repair_lock()?;
+        let (first, second) = if request.authority_issue < request.target_issue {
+            (request.authority_issue, request.target_issue)
+        } else {
+            (request.target_issue, request.authority_issue)
+        };
+        let _first_lock = self.lock(first)?;
+        let _second_lock = self.lock(second)?;
+        self.recover_with_terminal_lock(request.authority_issue)?;
+        self.recover_with_terminal_lock(request.target_issue)?;
+        let authority = self.load_record(request.authority_issue)?;
+        let mut target = self.load_record(request.target_issue)?;
+        if authority.generation != request.expected_authority_generation
+            || authority.digest != request.expected_authority_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "repair authority record is stale",
+            ));
+        }
+        if target.generation != request.expected_target_generation
+            || target.digest != request.expected_target_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "repair target record is stale",
+            ));
+        }
+        if target.phase != LifecyclePhase::ClosedOut || target.claim.is_some() {
+            return Err(V2Error::new(
+                ErrorCode::InvalidTransition,
+                "terminal SOR artifact repair requires a closed-out target without a claim",
+            ));
+        }
+        authority
+            .claim
+            .as_ref()
+            .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "repair authority claim missing"))?
+            .validate(&request.authority_claim_id, now_seconds()?)?;
+        if !authority
+            .claim
+            .as_ref()
+            .is_some_and(|claim| claim_covers_issue(claim, request.target_issue))
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "repair authority claim does not cover the target issue",
+            ));
+        }
+
+        let receipt_path = self.terminal_receipt_path(request.target_issue)?;
+        let original_receipt_bytes = fs::read(&receipt_path)?;
+        let original_receipt: TerminalReceipt = serde_json::from_slice(&original_receipt_bytes)?;
+        validate_terminal_receipt(&original_receipt)?;
+        if original_receipt.digest != request.expected_receipt_digest
+            || original_receipt.record.digest != target.digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "terminal receipt is stale",
+            ));
+        }
+        if request.retained_ref != target.design_path && request.retained_ref != target.diagram_path
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "replacement is not a canonical retained authored artifact",
+            ));
+        }
+        let retained_bytes = original_receipt
+            .authored_artifacts
+            .get(&request.retained_ref)
+            .ok_or_else(|| {
+                V2Error::new(
+                    ErrorCode::InvalidInput,
+                    "replacement artifact is absent from the terminal receipt",
+                )
+            })?;
+        if digest(retained_bytes.as_bytes()) != request.expected_artifact_digest {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "replacement artifact bytes differ from the request",
+            ));
+        }
+
+        let original_cards = self.load_cards(request.target_issue)?;
+        verify_cards(self, &target, &original_cards)?;
+        let mut cards = original_cards.clone();
+        replace_terminal_sor_artifact(&mut cards, &request.stale_ref, &request.retained_ref)?;
+
+        let original_target = target.clone();
+        target.generation += 1;
+        for values in cards.values_mut() {
+            values.identity.generation = target.generation;
+        }
+        target.audit.push(AuditEvent {
+            sequence: target.audit.len() as u64 + 1,
+            generation: target.generation,
+            actor: request.actor.clone(),
+            reason: format!(
+                "typed terminal SOR artifact repair authorized by issue {}",
+                request.authority_issue
+            ),
+            operation: format!(
+                "repair_terminal_sor_artifact:{}->{}",
+                request.stale_ref, request.retained_ref
+            ),
+        });
+        hydrate_projections(&mut target, &cards)?;
+        target.digest = record_digest(&target)?;
+
+        let mut repaired_receipt = original_receipt.clone();
+        repaired_receipt.record = target.clone();
+        repaired_receipt.cards = cards.clone();
+        repaired_receipt.digest.clear();
+        repaired_receipt.digest = terminal_receipt_digest(&repaired_receipt)?;
+        validate_terminal_receipt(&repaired_receipt)?;
+        let target_receipt = serde_json::to_vec_pretty(&repaired_receipt)?;
+        let mut journal = TerminalTransactionJournal {
+            schema: "csdlc.terminal_transaction.v1".into(),
+            issue: request.target_issue,
+            stage: "prepared_terminal_sor_artifact_repair".into(),
+            original_record_digest: original_receipt.record.digest.clone(),
+            target_record_digest: target.digest.clone(),
+            original_receipt: Some(original_receipt_bytes.clone()),
+            target_receipt,
+        };
+        self.write_terminal_transaction_journal(&journal)?;
+        if request.fail_after_stage.as_deref() == Some("after_journal") {
+            self.remove_terminal_transaction_journal(request.target_issue)?;
+            return Err(V2Error::new(
+                ErrorCode::InterruptedTransaction,
+                "injected repair failure",
+            ));
+        }
+        if let Err(error) = self.commit(request.target_issue, &target, &cards, false) {
+            let _ = self.remove_terminal_transaction_journal(request.target_issue);
+            return Err(error);
+        }
+        journal.stage = "projection_committed_terminal_sor_artifact_repair".into();
+        self.write_terminal_transaction_journal(&journal)?;
+        if request.fail_after_stage.as_deref() == Some("after_projection") {
+            self.rollback_terminal_repair(
+                request.target_issue,
+                &original_target,
+                &original_cards,
+                &receipt_path,
+                &original_receipt_bytes,
+            )?;
+            return Err(V2Error::new(
+                ErrorCode::InterruptedTransaction,
+                "injected repair failure",
+            ));
+        }
+        if let Err(error) = self.replace_receipt_bytes(&receipt_path, Some(&journal.target_receipt))
+        {
+            self.rollback_terminal_repair(
+                request.target_issue,
+                &original_target,
+                &original_cards,
+                &receipt_path,
+                &original_receipt_bytes,
+            )?;
+            return Err(error);
+        }
+        journal.stage = "receipt_committed_terminal_sor_artifact_repair".into();
+        self.write_terminal_transaction_journal(&journal)?;
+        self.remove_terminal_transaction_journal(request.target_issue)?;
+        Ok(target)
+    }
+
+    fn rollback_terminal_repair(
         &self,
         issue: u64,
         record: &IssueRecord,
@@ -2890,6 +3087,43 @@ fn complete_terminal_plan_step(
     complete_step_status(&mut step.status)
 }
 
+fn replace_terminal_sor_artifact(
+    cards: &mut BTreeMap<CardKind, CardValues>,
+    stale_ref: &str,
+    retained_ref: &str,
+) -> Result<()> {
+    let sor = match &mut cards.get_mut(&CardKind::Sor).expect("SOR").content {
+        CardContent::Sor(values) => values,
+        _ => unreachable!("SOR card content"),
+    };
+    let stale_count = sor
+        .artifacts
+        .iter()
+        .filter(|artifact| artifact.as_str() == stale_ref)
+        .count();
+    if stale_count != 1 {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "terminal SOR artifact repair requires exactly one stale reference",
+        ));
+    }
+    if sor
+        .artifacts
+        .iter()
+        .any(|artifact| artifact == retained_ref)
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidTransition,
+            "terminal SOR artifact replacement is already present",
+        ));
+    }
+    *sor.artifacts
+        .iter_mut()
+        .find(|artifact| artifact.as_str() == stale_ref)
+        .expect("count checked") = retained_ref.to_owned();
+    Ok(())
+}
+
 fn claim_covers_issue(claim: &Claim, issue: u64) -> bool {
     let target = format!(".csdlc/issues/{issue}");
     claim
@@ -3007,5 +3241,91 @@ mod terminal_design_repair_tests {
         assert!(!claim_covers_issue(&claim, 5516));
         claim.protected_paths.push(".csdlc/issues/5516/".into());
         assert!(claim_covers_issue(&claim, 5516));
+    }
+
+    #[test]
+    fn terminal_sor_artifact_repair_rejects_incomplete_authority_before_io() {
+        let root = tempfile::tempdir().expect("temp root");
+        let error = Store::new(root.path())
+            .repair_terminal_sor_artifact(TerminalSorArtifactRepairRequest {
+                authority_issue: 5527,
+                target_issue: 5390,
+                expected_authority_generation: 0,
+                expected_authority_digest: String::new(),
+                expected_target_generation: 39,
+                expected_target_digest: "target".into(),
+                expected_receipt_digest: "receipt".into(),
+                authority_claim_id: "claim".into(),
+                actor: "codex".into(),
+                stale_ref: ".csdlc/issues/5390/diagram.mmd".into(),
+                retained_ref: ".csdlc/issues/5390/retained/diagram.mmd".into(),
+                expected_artifact_digest: "diagram".into(),
+                fail_after_stage: None,
+            })
+            .expect_err("missing authority digest must fail closed");
+        assert_eq!(error.code.to_string(), "invalid_input");
+    }
+
+    #[test]
+    fn terminal_sor_artifact_replacement_is_exact_and_nonduplicating() {
+        let mut cards = initial_cards(
+            1,
+            "example/repo",
+            "docs/design.md",
+            "design",
+            "docs/diagram.mmd",
+            "diagram",
+            InitialCardInput {
+                title: "test".into(),
+                slug: "test".into(),
+                version: "v0.91.7".into(),
+                goal: "test".into(),
+                required_outcome: "test".into(),
+                declared_scope: vec!["test".into()],
+                authority_boundary: vec!["test".into()],
+                task_boundary: "test".into(),
+                deliverables: vec!["test".into()],
+                acceptance_criteria: vec!["test".into()],
+                dependencies: vec!["test".into()],
+                repo_inputs: vec!["test".into()],
+                non_goals: vec!["test".into()],
+                plan_summary: "test".into(),
+                steps: vec![crate::cards::PlanStep {
+                    id: "S1".into(),
+                    action: "test".into(),
+                    acceptance_ids: vec!["AC-1".into()],
+                    status: StepStatus::Pending,
+                }],
+                invariants: vec!["test".into()],
+                risks: vec!["test".into()],
+                planning_profile: crate::cards::PlanningProfile::Small,
+                stop_conditions: vec!["test".into()],
+                validation_lanes: vec![crate::cards::ValidationLane {
+                    lane: "test".into(),
+                    proof_role: "test".into(),
+                    acceptance_ids: vec!["AC-1".into()],
+                    deterministic: true,
+                    resource_profile: crate::cards::ResourceProfile::Small,
+                    budget_seconds: 1,
+                    budget_tokens: 1,
+                    argv: vec!["test".into()],
+                    parallel_group: "test".into(),
+                    defer_reason: None,
+                }],
+                failure_policy: "test".into(),
+                review_prompts: vec!["test".into()],
+            },
+        )
+        .expect("cards");
+        let CardContent::Sor(sor) = &mut cards.get_mut(&CardKind::Sor).unwrap().content else {
+            panic!("SOR");
+        };
+        sor.artifacts = vec!["old".into()];
+        replace_terminal_sor_artifact(&mut cards, "old", "retained").expect("replacement");
+        let CardContent::Sor(sor) = &cards[&CardKind::Sor].content else {
+            panic!("SOR");
+        };
+        assert_eq!(sor.artifacts, vec!["retained"]);
+        assert!(replace_terminal_sor_artifact(&mut cards, "old", "retained").is_err());
     }
 }

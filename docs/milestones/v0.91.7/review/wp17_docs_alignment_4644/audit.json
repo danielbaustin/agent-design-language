@@ -2,7 +2,7 @@
   "schema": "adl.v0917.wp17.docs_alignment_audit.v1",
   "issue": 4644,
   "verified_on": "2026-07-18",
-  "status": "complete_pending_review_and_integration",
+  "status": "complete_post_merge_truth_repair_pending_review",
   "live_wp_state": {
     "closed": [
       4628,
@@ -21,11 +21,11 @@
       4641,
       4642,
       4643,
+      4644,
       4648,
       4649
     ],
     "open": [
-      4644,
       4645,
       4646,
       4647,
@@ -50,7 +50,7 @@
   },
   "validation": {
     "unique_markdown_entrypoints_scanned": 415,
-    "local_links_checked": 822,
+    "local_links_checked": 830,
     "broken_local_links_after_repair": 0,
     "yaml_valid": 55,
     "yaml_invalid": 0,

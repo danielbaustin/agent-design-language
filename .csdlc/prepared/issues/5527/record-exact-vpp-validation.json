@@ -1,0 +1,19 @@
+{
+  "issue": 5527,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "f9e3aa2695d6642615a48cd0e2868a8ba7dfca6f8f2c26874ad2841470270334",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "reason": "Record the exact corrected VPP lane after review remediation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--locked", "--test", "gate7_lifecycle", "terminal_sor_artifact_repair_is_scoped_atomic_and_receipt_bound", "--", "--exact"],
+      "purpose": "Prove the exact declared atomic SOR artifact repair and rollback behavior.",
+      "outcome": "passed",
+      "evidence_ref": "1 passed, 0 failed, 11 filtered out"
+    }
+  },
+  "fail_after_backup": false
+}

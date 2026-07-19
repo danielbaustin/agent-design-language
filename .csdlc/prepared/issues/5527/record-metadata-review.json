@@ -1,0 +1,71 @@
+{
+  "issue": 5527,
+  "expected_generation": 14,
+  "expected_digest": "f8ae89daf955f73cec9385f106098deab25e648221d43a2599a303a497d96cf9",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+  "evidence": {
+    "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+    "scope": [
+      ".csdlc/issues/5390",
+      ".csdlc/issues/5527",
+      ".csdlc/prepared/issues/5527",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/model.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "reviewed_revision": "git-blake3:1e5b6b0f783d68e08e20d6997ca553ab2d4e9f5b:16d10e4195c2d1050d93bfe27688816dcac5510f09f63f00868148b7acf88ad7",
+    "findings": [
+      {
+        "id": "F-5527-1",
+        "severity": "p1",
+        "summary": "Initial VPP named a nonexistent standalone test target instead of the implemented Gate 7 test.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:1e5b6b0f783d68e08e20d6997ca553ab2d4e9f5b:16d10e4195c2d1050d93bfe27688816dcac5510f09f63f00868148b7acf88ad7",
+        "route": null
+      },
+      {
+        "id": "F-5527-2",
+        "severity": "p1",
+        "summary": "The first corrected VPP argv depended on an unstated subdirectory working directory.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:1e5b6b0f783d68e08e20d6997ca553ab2d4e9f5b:16d10e4195c2d1050d93bfe27688816dcac5510f09f63f00868148b7acf88ad7",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "The pre-existing non-Git Gate 2 fixture failures discovered by the full suite are routed to #5548; focused Gate 7, Clippy, formatting, and doctor proofs pass for this bounded change."
+    ],
+    "completed": true,
+    "non_substantive_proof": {
+      "policy": "metadata_only_review_projection",
+      "from_revision": "git-blake3:d1b858942bc8130f03fb26d5f66f6834721816c7:1d70024e040109803c96950722bc2a255acb134fce7e1d5249f297094b719d06",
+      "to_revision": "git-blake3:1e5b6b0f783d68e08e20d6997ca553ab2d4e9f5b:16d10e4195c2d1050d93bfe27688816dcac5510f09f63f00868148b7acf88ad7",
+      "from_commit": "d1b858942bc8130f03fb26d5f66f6834721816c7",
+      "to_commit": "1e5b6b0f783d68e08e20d6997ca553ab2d4e9f5b",
+      "changed_paths": [
+        ".csdlc/issues/5527/audit.jsonl",
+        ".csdlc/issues/5527/cards/sip.values.json",
+        ".csdlc/issues/5527/cards/sor.md",
+        ".csdlc/issues/5527/cards/sor.values.json",
+        ".csdlc/issues/5527/cards/spp.values.json",
+        ".csdlc/issues/5527/cards/srp.md",
+        ".csdlc/issues/5527/cards/srp.values.json",
+        ".csdlc/issues/5527/cards/stp.values.json",
+        ".csdlc/issues/5527/cards/vpp.values.json",
+        ".csdlc/issues/5527/index.json",
+        ".csdlc/prepared/issues/5527/advance-reviewed.json",
+        ".csdlc/prepared/issues/5527/assign-review.json",
+        ".csdlc/prepared/issues/5527/record-review.json",
+        ".csdlc/prepared/issues/5527/recover-review.json"
+      ]
+    }
+  }
+}

@@ -16,9 +16,10 @@ The canonical WP issue wave is in its closeout tail. This document defines
 execution order and records live issue-state alignment; it does not approve
 release readiness.
 
-As verified on 2026-07-18, WP-01 through WP-16 are closed, WP-17 through WP-20
-are open, WP-21 and WP-22 are closed retained planning evidence, and WP-23 is
-open. Closed work may still carry retained findings or non-claims.
+As last verified on 2026-07-18, WP-01 through WP-17 are closed; WP-17 closed
+through #4644 and merged PR #5539. WP-18, WP-19, WP-20, and WP-23 are open,
+while WP-21 and WP-22 are closed retained planning evidence. Closed work may
+still carry retained findings or non-claims.
 
 Opened WP issues:
 
@@ -40,7 +41,9 @@ Non-WP v0.91.7 issues:
 
 ## Sprint Overview
 
-Complete the final implementation/readiness tranche before `v0.92` activation refresh. The milestone should move from source capture to operational readiness, then to cognitive/security/protocol implementation closure, then to launch/birthday handoff.
+Complete the v0.91.7 implementation/readiness tranche for reviewed consumption
+by the required [v0.91.8 bridge](../v0.91.8/README.md). v0.92 activation must
+consume the v0.91.8 exact-revision handoff rather than this sprint plan directly.
 
 Before execution begins, WP-01 must consume the v0.91.6 release-tail handoff
 addendum `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` together with
@@ -72,7 +75,7 @@ remediation truth.
 | 7 | Cognitive implementation sprint | WP-10, WP-11, WP-13 | Curiosity, Constructability, reasoning graph, affect/Godel/economics/guild proof and boundary packets are retained. | closed with claim boundaries |
 | 8 | Security and protocol implementation sprint | WP-12 | Security/protocol proof and remediation are retained; broader activation remains evidence-bound. | closed and review-remediated |
 | 9 | Launch and v0.92 handoff sprint | WP-14 | `#4641` routes bounded handoff truth into v0.91.8; it does not approve v0.92 activation. | closed as routed-with-evidence |
-| 10 | Canonical closeout-tail sprint | WP-15 through WP-23 | WP-15, WP-16, WP-21, and WP-22 are closed. WP-17 through WP-20 and WP-23 remain open and preserve the required docs/review/remediation/release gates. | active |
+| 10 | Canonical closeout-tail sprint | WP-15 through WP-23 | WP-15, WP-16, WP-17, WP-21, and WP-22 are closed. WP-18, WP-19, WP-20, and WP-23 remain open and preserve the required review/remediation/release gates. | active |
 
 ## Execution Policy
 

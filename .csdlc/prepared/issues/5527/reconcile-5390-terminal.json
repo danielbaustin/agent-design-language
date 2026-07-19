@@ -1,0 +1,9 @@
+{
+  "issue": 5390,
+  "expected_initialization_digest": "a1ce191172a445886835ae006aeeacd5a05ac2cd4c6ee5ee10060bcd8436f21f",
+  "expected_branch": "codex/5527-terminal-sor-artifact-repair",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5527",
+  "actor": "codex-closeout-audit",
+  "reason": "Materialize retained #5390 terminal truth before typed SOR artifact-reference repair.",
+  "follow_ups": []
+}

@@ -1,0 +1,14 @@
+{
+  "issue": 5527,
+  "card": "sor",
+  "expected_generation": 12,
+  "expected_digest": "6027555ddf6406f45f0c117574086fa4442787a913efd8b22ca4510699f1c57c",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "reason": "Exact substantive revision review is clean after both VPP truth findings were fixed and independently rerun.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

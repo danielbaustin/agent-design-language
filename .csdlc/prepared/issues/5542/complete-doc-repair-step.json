@@ -1,0 +1,14 @@
+{
+  "issue": 5542,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "d8a2267890827c257ae3a969260ada477a19fb66d3d0a0e24b18b1f81af80270",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Repaired the non-overlapping canonical entrypoints so WP-17 is closed, v0.91.8 bridge precedence is explicit, and creation dates are distinct from last-verification dates.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S2",
+    "status": "completed"
+  }
+}

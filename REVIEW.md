@@ -82,16 +82,17 @@ minimum, inspect and update every applicable item in this checklist:
 Tail closeout docs review is complete only when this surface has either been
 updated, confirmed current, or explicitly ruled not applicable with evidence.
 
-The current review posture is the v0.91.7 closeout tail. WP-01 through WP-16
-are closed; WP-17 through WP-20 and WP-23 are open; WP-21 and WP-22 are closed
-retained planning/review evidence. Reviewers must use live issue truth together
-with the sprint-review register because closed umbrellas can retain findings,
-blocked rows, or explicit non-claims.
+The current review posture is the v0.91.7 closeout tail. WP-01 through WP-17
+are closed; WP-17 closed through issue #4644 and merged PR #5539. WP-18,
+WP-19, WP-20, and WP-23 remain open; WP-21 and WP-22 are closed retained
+planning/review evidence. Reviewers must use live issue truth together with the
+sprint-review register because closed umbrellas can retain findings, blocked
+rows, or explicit non-claims.
 
 Important active non-claims:
 
-- v0.91.7 does not claim release readiness until WP-17 through WP-20 and WP-23
-  settle with current review and closeout truth.
+- v0.91.7 does not claim release readiness until WP-18, WP-19, WP-20, and
+  WP-23 settle with current review and closeout truth.
 - Closed v0.91.7 planning, implementation, demo, or remediation issues do not
   prove broad runtime, provider, security, observability, or v0.92 activation
   readiness beyond their retained packets.

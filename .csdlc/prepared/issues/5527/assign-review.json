@@ -1,0 +1,19 @@
+{
+  "issue": 5527,
+  "expected_generation": 11,
+  "expected_digest": "fa9e81de530ee767a2379c0e9f91461cda07bb62897a55c8a362011458001dae",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+  "assigned_by": "codex-closeout-audit",
+  "scope": [
+    ".csdlc/issues/5390",
+    ".csdlc/issues/5527",
+    ".csdlc/prepared/issues/5527",
+    "csdlc-v2/src/bin/csdlc-closeout.rs",
+    "csdlc-v2/src/lib.rs",
+    "csdlc-v2/src/model.rs",
+    "csdlc-v2/src/schema.rs",
+    "csdlc-v2/src/store.rs",
+    "csdlc-v2/tests/gate7_lifecycle.rs"
+  ]
+}

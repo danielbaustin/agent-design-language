@@ -1,0 +1,51 @@
+{
+  "issue": 5527,
+  "card": "vpp",
+  "expected_generation": 7,
+  "expected_digest": "e3ffd1ec027c60cf18317a44ce783d3dd03b74f71379778aa398f29add5c56db",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "reason": "Correct the VPP to name the exact implemented Gate 7 regression test and retain the other proving lanes.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "terminal-sor-artifact-repair-tests",
+        "proof_role": "Prove exact atomic repair and rollback",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 180,
+        "budget_tokens": 2000,
+        "argv": ["cargo", "test", "--locked", "--test", "gate7_lifecycle", "terminal_sor_artifact_repair_is_scoped_atomic_and_receipt_bound", "--", "--exact"],
+        "parallel_group": "rust",
+        "defer_reason": null
+      },
+      {
+        "lane": "target-doctor",
+        "proof_role": "Prove #5390 terminal SOR and receipt parity",
+        "acceptance_ids": ["AC-6"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 500,
+        "argv": ["csdlc-doctor", "--issue", "5390"],
+        "parallel_group": "records",
+        "defer_reason": null
+      },
+      {
+        "lane": "exact-review",
+        "proof_role": "Prove bounded implementation and terminal truth",
+        "acceptance_ids": ["AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--check"],
+        "parallel_group": "review",
+        "defer_reason": null
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

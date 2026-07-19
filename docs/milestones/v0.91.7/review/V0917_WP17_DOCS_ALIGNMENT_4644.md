@@ -1,8 +1,8 @@
 # v0.91.7 WP-17 Documentation Alignment
 
-Issue: `#4644`
+Issues: `#4644`, post-merge truth repair `#5542`
 
-Status: complete pending review and integration
+Status: closed and merged through PR `#5539`
 
 Verified: 2026-07-18
 
@@ -10,11 +10,16 @@ Verified: 2026-07-18
 
 The v0.91.7 documentation entry points now describe the live closeout tail:
 
-- WP-01 through WP-16 are closed;
-- WP-17 is this active documentation pass;
+- WP-01 through WP-17 are closed;
+- WP-17 closed through issue `#4644` and merged PR `#5539`;
 - WP-18 through WP-20 and WP-23 remain open;
 - WP-21 and WP-22 are closed retained planning/review work;
 - remediation `#5408` remains open and is not hidden by this alignment pass.
+
+The post-merge repair distinguishes issue and integration truth: issue `#4644`
+closed after PR `#5539` merged. It also makes the reviewed v0.91.8 bridge the
+required predecessor to v0.92 and labels milestone-baseline creation dates
+separately from live verification dates.
 
 The update preserves evidence boundaries. Closed issues establish only the
 bounded claims in their retained packets; they do not imply v0.92 activation,
@@ -25,7 +30,7 @@ adaptive learning, or general product readiness.
 
 | Surface | Audited result |
 | --- | --- |
-| Repository READMEs | All 208 tracked README Markdown files inventoried case-insensitively, including lowercase template READMEs; 415 unique README/v0.91.7 Markdown entry points scanned together; 822 local links checked with zero unresolved targets after repair. |
+| Repository READMEs | All 208 tracked README Markdown files inventoried case-insensitively, including lowercase template READMEs; 415 unique README/v0.91.7 Markdown entry points scanned together; 830 local links checked with zero unresolved targets after repair. |
 | v0.91.7 tree | 1,328 tracked files inventoried, including 231 Markdown files, 808 JSON artifacts, and 55 YAML artifacts. The issue-owned alignment artifacts and merged WP-16 quality-gate packet are included. |
 | Feature docs | All ten files under `docs/milestones/v0.91.7/features/` plus the canonical `FEATURE_DOCS_v0.91.7.md` index reviewed. |
 | Cargo manifests | All six tracked manifests parsed with `cargo metadata --no-deps --locked`; package versions remain package-local truth rather than being forced to one value. |
@@ -51,6 +56,11 @@ file contents, and provides a stable statement of the audited population.
   0031, 0034, and 0040 without silently promoting them.
 - Corrected seven broken relative links in the v0.8 and v0.91 feature README
   entry points found by the complete README scan.
+- Reconciled WP-17 from pending integration to closed/merged truth after PR
+  `#5539`, removed it from the open WP set, and made the v0.91.8 reviewed
+  exact-revision handoff explicit in the repository entry points.
+- Replaced ambiguous milestone-baseline `Date` labels with distinct `Created`
+  and `Last verified` fields in the canonical live documents.
 
 ## Structured Artifact Validation
 
@@ -89,6 +99,9 @@ proofs. No AWS command or service was used.
 
 ## Remaining Release Tail
 
-WP-17 can close after current review and integration. WP-18, WP-19, WP-20,
-open remediation `#5408`, and WP-23 retain their own gates. This packet does
-not close them and does not authorize v0.92 activation.
+WP-17 is closed and integrated through PR `#5539`. WP-18, WP-19, WP-20, open
+remediation `#5408`, and WP-23 retain their own gates. The sprint-review
+register is owned by active WP-18 issue `#4645`; its closeout row must be
+reconciled by that lane or after its claim is released, without cross-lane
+editing. This packet does not close those gates and does not authorize v0.92
+activation. v0.92 consumes only the reviewed v0.91.8 exact-revision handoff.

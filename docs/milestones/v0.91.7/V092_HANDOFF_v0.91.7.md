@@ -5,7 +5,8 @@
 - Source milestone: `v0.91.7`
 - Target milestone: `v0.92`
 - Version: `v0.91.7`
-- Date: `2026-06-21`
+- Created: `2026-06-21`
+- Last verified: `2026-07-18`
 - Owner: ADL maintainers
 - Related issues: `#3825`, `#4368`, `#3982`, `#3780`, `#5383`, `#5384`
 
@@ -45,10 +46,11 @@ and only `integrated_proven` counts as operational completion.
 
 ## v0.91.7 Closeout-Tail Truth
 
-As verified on 2026-07-18, WP-01 through WP-16 are closed; WP-17 through
-WP-20 and WP-23 are open; WP-21 and WP-22 are closed retained planning/review
-evidence. This handoff is therefore not release or activation approval. Its
-current role is to route bounded evidence into the reviewed v0.91.8 bridge.
+As last verified on 2026-07-18, WP-01 through WP-17 are closed; WP-17 closed
+through #4644 and merged PR #5539. WP-18, WP-19, WP-20, and WP-23 are open;
+WP-21 and WP-22 are closed retained planning/review evidence. This handoff is
+therefore not release or activation approval. Its current role is to route
+bounded evidence into the reviewed v0.91.8 bridge.
 
 ## v0.91.8 Bridge Routing
 

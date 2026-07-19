@@ -1,0 +1,8 @@
+{
+  "issue": 5527,
+  "expected_generation": 13,
+  "expected_digest": "477865f9447437f16705abd4fb37d526875b0a69650744a5f8e555cbfa026440",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "reason": "Recover exact review identity after committing typed review metadata; substantive code and tests are unchanged."
+}

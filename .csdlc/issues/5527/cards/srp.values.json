@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5527,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Normalize SOR artifact refs during terminal reconciliation",
+    "slug": "v0-91-7-csdlc-v2-terminal-sor-artifact-repair",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Is the operation limited to exact SOR artifact-reference replacement?",
+        "Are path and byte identity both authenticated?",
+        "Can a failed refresh leave split truth?",
+        "Does #5390 contain any stale generated artifact reference after repair?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

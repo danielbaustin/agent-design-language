@@ -1,0 +1,23 @@
+{
+  "issue": 5542,
+  "expected_generation": 0,
+  "expected_digest": "1fe174af4d9c27ce5d0ce120172e1ce4422a554827eed57b090df6512bd98f01",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Protect every canonical entrypoint that repeats the reviewed WP-17-open, direct-v0.92, or ambiguous-date defects while preserving the active #4645 register boundary.",
+  "now_unix_seconds": 1784418998,
+  "add_protected_paths": [
+    "REVIEW.md",
+    "docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md",
+    "docs/milestones/v0.91.7/RELEASE_PLAN_v0.91.7.md",
+    "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
+    "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+    "docs/milestones/v0.91.7/DESIGN_v0.91.7.md",
+    "docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md",
+    "docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md",
+    "docs/milestones/v0.91.7/VISION_v0.91.7.md",
+    "docs/milestones/v0.91.7/DECISIONS_v0.91.7.md",
+    "docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md",
+    "docs/milestones/v0.91.7/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md"
+  ]
+}

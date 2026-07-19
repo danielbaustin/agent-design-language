@@ -1,0 +1,8 @@
+flowchart LR
+  A["Active authority #5527 claim"] --> V["Validate target #5390 record and receipt CAS"]
+  R["Retained authored artifact bytes"] --> V
+  V --> S["Replace exact stale SOR artifact ref"]
+  S --> J["Write terminal transaction journal"]
+  J --> P["Commit rendered projections and record"]
+  P --> T["Atomically refresh retained receipt"]
+  T --> C["Reconcile repaired terminal truth"]

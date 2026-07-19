@@ -1,0 +1,13 @@
+{
+  "issue": 5542,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "9206b9ae71a8e58dd0b0b988d442e624c0986641c91bfd7610038c3008c61085",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded post-merge documentation repair is implemented and locally validated with retained evidence.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

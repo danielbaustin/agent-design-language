@@ -217,6 +217,24 @@ pub struct TerminalPlanStepRepairRequest {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct TerminalSorArtifactRepairRequest {
+    pub authority_issue: u64,
+    pub target_issue: u64,
+    pub expected_authority_generation: u64,
+    pub expected_authority_digest: String,
+    pub expected_target_generation: u64,
+    pub expected_target_digest: String,
+    pub expected_receipt_digest: String,
+    pub authority_claim_id: String,
+    pub actor: String,
+    pub stale_ref: String,
+    pub retained_ref: String,
+    pub expected_artifact_digest: String,
+    #[serde(default)]
+    pub fail_after_stage: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct MigrationEvidence {
     pub schema: String,
     pub imported_unix_seconds: u64,

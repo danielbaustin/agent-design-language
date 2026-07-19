@@ -9,17 +9,19 @@ source_bridge_ledger: docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER
 first_tranche_input: docs/milestones/v0.91.6/
 source_capture: docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md
 release_tail_handoff_addendum: docs/milestones/v0.91.7/V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md
+required_successor_bridge: docs/milestones/v0.91.8/README.md
 notes:
   - "Issue wave opened by WP-01 #4628 on 2026-06-28."
   - "Do not claim v0.92 activation readiness from this seed."
   - "Keep v0.92 birthday implementation out of this planning package."
   - "Every activation-path source-capture input must exit integrated/proven, already closed with evidence, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval."
   - "WP-01 must consume failed-but-closed WP-15 #3980 external-review truth, closed WP-16 #3981/#4620/#4621 remediation truth, closed v0.91.7 tooling fix #4622, WP-14A #4582, and closed WP-14A remediation #4609-#4612 truth before dependent execution starts."
-  - "Live WP truth refreshed by #4644 on 2026-07-18: WP-01 through WP-16 closed; WP-17 through WP-20 open; WP-21 and WP-22 closed retained evidence; WP-23 open."
+  - "Live WP truth last verified on 2026-07-18: WP-01 through WP-17 closed; #4644 closed through merged PR #5539; WP-18, WP-19, WP-20, and WP-23 open; WP-21 and WP-22 closed retained evidence."
+  - "v0.92 consumes the reviewed v0.91.8 exact-revision handoff, not this v0.91.7 issue wave directly."
 closeout_tail_truth:
   verified_on: 2026-07-18
-  closed_wps: [WP-01, WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16, WP-21, WP-22]
-  open_wps: [WP-17, WP-18, WP-19, WP-20, WP-23]
+  closed_wps: [WP-01, WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16, WP-17, WP-21, WP-22]
+  open_wps: [WP-18, WP-19, WP-20, WP-23]
   release_ready: false
   evidence: docs/milestones/v0.91.7/review/V0917_WP17_DOCS_ALIGNMENT_4644.md
 wp_issue_map:

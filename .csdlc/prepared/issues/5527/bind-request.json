@@ -1,0 +1,26 @@
+{
+  "issue": 5527,
+  "base_branch": "main",
+  "branch": "codex/5527-terminal-sor-artifact-repair",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5527-terminal-sor-artifact-repair",
+    "owner": "codex-closeout-audit",
+    "generation": 1,
+    "acquired_unix_seconds": 1784418712,
+    "expires_unix_seconds": 1784505112,
+    "heartbeat_unix_seconds": 1784418712,
+    "branch": "codex/5527-terminal-sor-artifact-repair",
+    "worktree": ".",
+    "protected_paths": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/tests/gate7_terminal_sor_artifact_repair_5527.rs",
+      ".csdlc/issues/5390",
+      ".csdlc/issues/5527",
+      ".csdlc/prepared/issues/5527"
+    ],
+    "purpose": "Add atomic typed terminal SOR artifact-reference repair and correct #5390"
+  }
+}

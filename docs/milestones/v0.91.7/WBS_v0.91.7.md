@@ -4,8 +4,9 @@
 
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Date: `2026-06-21`
-- Status: closeout tail active; WP-01 through WP-16 closed, WP-17 through WP-20 and WP-23 open
+- Created: `2026-06-21`
+- Last verified: `2026-07-18`
+- Status: closeout tail active; WP-01 through WP-17 closed, WP-18, WP-19, WP-20, and WP-23 open
 - Setup lineage: `#3801`, `#3825`, `#4368`
 - Source capture: `PLANNING_SOURCE_CAPTURE_v0.91.7.md`
 - Release-tail handoff addendum: `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`
@@ -14,9 +15,10 @@
 
 WP allocation is promoted into the v0.91.7 issue wave. WP-01 is `#4628`; WP-02 through WP-23 are `#4629` through `#4650`. Existing v0.91.7 issues are assigned rather than duplicated: `#4603` belongs to WP-06, `#4617` belongs to WP-04, `#4622` belongs to WP-02, and integrated logging/OTel proof `#4718` belongs to WP-07 with WP-08/WP-09 consumers. `#4622` is closed and delivered the repo-native PR inventory command required for release-tail review.
 
-Live WP truth refreshed on 2026-07-18: WP-01 through WP-16 are closed;
-WP-17 through WP-20 are open; WP-21 and WP-22 are closed retained planning
-evidence; and WP-23 is open. This sequence snapshot is issue-state truth only.
+Live WP truth last verified on 2026-07-18: WP-01 through WP-17 are closed;
+WP-17 closed through issue #4644 and merged PR #5539. WP-18, WP-19, WP-20,
+and WP-23 are open; WP-21 and WP-22 are closed retained planning evidence.
+This sequence snapshot is issue-state truth only.
 Review cleanliness and release consumption remain governed by
 `review/V0917_SPRINT_REVIEW_REGISTER.md` and issue-local proof packets.
 
@@ -24,7 +26,14 @@ WP-01 consumes this document, `PLANNING_SOURCE_CAPTURE_v0.91.7.md`, and [WP_ISSU
 
 ## WBS Summary
 
-`v0.91.7` should make the path to `v0.92` explicit. It combines the operational substrate needed for first-birthday execution: sprint execution, validation planning, goal/metrics accounting, scheduler/provider/local-agent execution, build throughput, integrated logging/OTel proof, runtime integration/soak, runtime architecture diet, AWS/signal operations, security/protocol implementation, demos, and launch handoff.
+`v0.91.7` should make its inputs to the required `v0.91.8` bridge explicit.
+The reviewed v0.91.8 exact-revision handoff, not this WBS directly, is the
+consumable platform prerequisite for `v0.92`. v0.91.7 combines the operational
+substrate needed for that bridge: sprint execution, validation planning,
+goal/metrics accounting, scheduler/provider/local-agent execution, build
+throughput, integrated logging/OTel proof, runtime integration/soak, runtime
+architecture diet, signal operations, security/protocol implementation,
+demos, and launch handoff.
 
 Completion standard: planned, documented, mocked, component-proven, assigned, or merely owned work does not count as done for a product, runtime, or release-gating surface. Any activation-path surface must exit v0.91.7 as `integrated_proven`, `already_closed_with_evidence`, `operator_scoped_out`, or `blocked_with_evidence`. Scoped-out exits require evidence, risk, and explicit operator approval; blocked exits require owner, evidence, risk, and explicit operator approval. Assignment to another issue or later milestone is scheduling truth only, not completion truth.
 

@@ -151,11 +151,13 @@ from issue
 
 ### v0.91.7 - Active Closeout Tail
 
-v0.91.7 is the active final pre-v0.92 implementation and integrated-proof
-tranche. WP-01 through WP-16 are closed. The remaining active gates are WP-17
-through WP-20 and WP-23; WP-21 and WP-22 are closed retained planning/review
-evidence. Closed issue state does not imply release readiness, and the
-milestone sprint-review register retains residual findings and non-claims.
+v0.91.7 is the active closeout tail feeding the required v0.91.8 bridge.
+WP-01 through WP-17 are closed; WP-17 closed through issue #4644 and merged
+PR #5539. The remaining v0.91.7 gates are WP-18, WP-19, WP-20, and WP-23;
+WP-21 and WP-22 are closed retained planning/review evidence. Closed issue
+state does not imply release readiness, and the milestone sprint-review
+register retains residual findings and non-claims. v0.92 consumes the reviewed
+v0.91.8 exact-revision handoff, not v0.91.7 prose as direct approval.
 
 Start here:
 
@@ -164,6 +166,8 @@ Start here:
 - [v0.91.7 issue wave](docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml)
 - [v0.91.7 feature-doc index](docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md)
 - [v0.91.7 sprint-review register](docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md)
+- [v0.91.8 bridge package](docs/milestones/v0.91.8/README.md)
+- [v0.91.8 to v0.92 handoff](docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md)
 
 ### v0.91.6 - Completed First Bridge Tranche
 
@@ -305,12 +309,13 @@ production markets.
 ## Project Status
 
 - Active milestone: v0.91.7 closeout tail
+- Required next bridge: v0.91.8 exact-revision platform acceptance and handoff
 - Current ADL and Runtime v2 crate version: 0.91.7
 - Independent Runtime v3 kernel package version: 0.92.0; it remains separately
   versioned and does not by itself claim v0.92 activation readiness
 - Most recently completed milestone: v0.91.6
-- Current milestone state: WP-01 through WP-16 are closed; WP-17 through WP-20
-  and WP-23 remain open; WP-21 and WP-22 are closed retained evidence
+- Current milestone state: WP-01 through WP-17 are closed; WP-18, WP-19,
+  WP-20, and WP-23 remain open; WP-21 and WP-22 are closed retained evidence
 - Primary implementation language: Rust
 
 ADL is under active development. The repository contains implemented runtime

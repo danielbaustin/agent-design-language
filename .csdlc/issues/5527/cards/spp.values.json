@@ -1,0 +1,89 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5527,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Normalize SOR artifact refs during terminal reconciliation",
+    "slug": "v0-91-7-csdlc-v2-terminal-sor-artifact-repair",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Implement the narrow repair operation, prove fail-closed atomic behavior, repair #5390, review, publish, merge, and close out.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Design and bind the terminal repair authority",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Implement and test atomic terminal SOR artifact-reference repair",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Repair #5390 and validate receipt parity",
+          "acceptance_ids": [
+            "AC-6"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Review, publish, merge, and close out",
+          "acceptance_ids": [
+            "AC-7"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Separate authority issue is mandatory",
+        "Target is closed-out and claim-free",
+        "Replacement path is receipt-authenticated and byte-matched",
+        "Receipt and target roll back together"
+      ],
+      "risks": [
+        "Overbroad terminal mutation would weaken immutability",
+        "Receipt refresh failure could split record truth",
+        "Path-only comparison could authenticate the wrong artifact bytes"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Repair requires runtime changes",
+        "Operation permits arbitrary terminal edits",
+        "Rollback proof fails",
+        "Exact review finds unresolved atomicity defects"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5527/design.md",
+      "design_digest": "c1593baf422c79cc8ccf18cbf198fc06b7bf2d84f6c1e5453a43d4c0a1d3b52e",
+      "diagram_ref": ".csdlc/prepared/issues/5527/diagram.mmd",
+      "diagram_digest": "4bb902cea59c5b483610ec80c8edab657f253fb3af614719ebed6732a3ad0c7b"
+    }
+  }
+}

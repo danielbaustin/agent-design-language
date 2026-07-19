@@ -9,7 +9,7 @@ use crate::migration::{ImportReport, LegacyImportRequest, NormalizedOutcome, Sha
 use crate::model::IssueRecord;
 use crate::model::{
     ReconcileTerminalRequest, TerminalDesignRepairRequest, TerminalPlanStepRepairRequest,
-    TerminalReceipt,
+    TerminalReceipt, TerminalSorArtifactRepairRequest,
 };
 use crate::publication::{
     MergedPublicationReconciliationRequest, PublicationIntent, PublicationRequest,
@@ -41,6 +41,7 @@ pub fn public_schema_bundle() -> Value {
         "reconcile_terminal_request": schemars::schema_for!(ReconcileTerminalRequest),
         "terminal_design_repair_request": schemars::schema_for!(TerminalDesignRepairRequest),
         "terminal_plan_step_repair_request": schemars::schema_for!(TerminalPlanStepRepairRequest),
+        "terminal_sor_artifact_repair_request": schemars::schema_for!(TerminalSorArtifactRepairRequest),
         "doctor_report": schemars::schema_for!(DoctorReport),
         "pvf_manifest": schemars::schema_for!(PvfManifest),
         "pvf_execution_request": schemars::schema_for!(ExecutionRequest),
@@ -75,5 +76,6 @@ mod tests {
         let bundle = public_schema_bundle();
         assert!(bundle.get("heartbeat_request").is_some());
         assert!(bundle.get("terminal_plan_step_repair_request").is_some());
+        assert!(bundle.get("terminal_sor_artifact_repair_request").is_some());
     }
 }

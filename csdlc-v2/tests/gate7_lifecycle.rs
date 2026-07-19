@@ -9,7 +9,7 @@ use csdlc_v2::{
     PublicationRequest, ReadinessRequest, ReconcileTerminalRequest, RemotePullRequest,
     ReviewAssignmentRequest, ReviewEvidence, ReviewRecordRequest, SemanticOperation, Store,
     TerminalDesignRepairRequest, TerminalDisposition, TerminalObservation,
-    TerminalPlanStepRepairRequest,
+    TerminalPlanStepRepairRequest, TerminalSorArtifactRepairRequest,
 };
 
 fn git(root: &std::path::Path, args: &[&str]) {
@@ -1434,6 +1434,95 @@ fn terminal_plan_repair_is_scoped_atomic_and_receipt_bound() {
     nonterminal.expected_target_digest = unscoped.digest;
     let phase_error = store.repair_terminal_plan_step(nonterminal).unwrap_err();
     assert_eq!(phase_error.code, csdlc_v2::ErrorCode::InvalidTransition);
+}
+
+#[test]
+fn terminal_sor_artifact_repair_is_scoped_atomic_and_receipt_bound() {
+    let target_issue = 93;
+    let (temp, store, _, receipt) =
+        retained_receipt_fixture(target_issue, "terminal-sor-artifact-repair");
+    let reconciled = store
+        .reconcile_terminal(ReconcileTerminalRequest {
+            issue: target_issue,
+            expected_initialization_digest: receipt.initialization_digest,
+            expected_branch: "issue-7".into(),
+            expected_worktree: temp.path().to_string_lossy().into_owned(),
+            actor: "closeout-retainer".into(),
+            reason: "materialize retained paths before SOR repair".into(),
+            follow_ups: vec![],
+        })
+        .unwrap();
+    let receipt = store.load_terminal_receipt(target_issue).unwrap().unwrap();
+    let original_cards = store.load_cards(target_issue).unwrap();
+    let original_receipt =
+        std::fs::read(store.terminal_receipt_path(target_issue).unwrap()).unwrap();
+    let retained_ref = reconciled.diagram_path.clone();
+    let artifact_digest = digest(receipt.authored_artifacts[&retained_ref].as_bytes());
+
+    let unscoped =
+        terminal_plan_repair_authority(&store, 94, temp.path(), vec![".csdlc/issues/92".into()]);
+    let scoped = terminal_plan_repair_authority(
+        &store,
+        95,
+        temp.path(),
+        vec![format!(".csdlc/issues/{target_issue}")],
+    );
+    let request = |authority: &csdlc_v2::IssueRecord| TerminalSorArtifactRepairRequest {
+        authority_issue: authority.issue,
+        target_issue,
+        expected_authority_generation: authority.generation,
+        expected_authority_digest: authority.digest.clone(),
+        expected_target_generation: reconciled.generation,
+        expected_target_digest: reconciled.digest.clone(),
+        expected_receipt_digest: receipt.digest.clone(),
+        authority_claim_id: format!("authority-{}", authority.issue),
+        actor: "repairer".into(),
+        stale_ref: "artifact".into(),
+        retained_ref: retained_ref.clone(),
+        expected_artifact_digest: artifact_digest.clone(),
+        fail_after_stage: None,
+    };
+
+    let scope_error = store
+        .repair_terminal_sor_artifact(request(&unscoped))
+        .unwrap_err();
+    assert_eq!(scope_error.code, csdlc_v2::ErrorCode::InvalidInput);
+
+    let mut wrong_bytes = request(&scoped);
+    wrong_bytes.expected_artifact_digest = "wrong".into();
+    let digest_error = store.repair_terminal_sor_artifact(wrong_bytes).unwrap_err();
+    assert_eq!(digest_error.code, csdlc_v2::ErrorCode::StaleDigest);
+
+    let mut interrupted = request(&scoped);
+    interrupted.fail_after_stage = Some("after_projection".into());
+    let interruption = store.repair_terminal_sor_artifact(interrupted).unwrap_err();
+    assert_eq!(
+        interruption.code,
+        csdlc_v2::ErrorCode::InterruptedTransaction
+    );
+    assert_eq!(store.load_record(target_issue).unwrap(), reconciled);
+    assert_eq!(store.load_cards(target_issue).unwrap(), original_cards);
+    assert_eq!(
+        std::fs::read(store.terminal_receipt_path(target_issue).unwrap()).unwrap(),
+        original_receipt
+    );
+
+    let repaired = store
+        .repair_terminal_sor_artifact(request(&scoped))
+        .unwrap();
+    let repaired_cards = store.load_cards(target_issue).unwrap();
+    let CardContent::Sor(sor) = &repaired_cards[&CardKind::Sor].content else {
+        panic!("SOR content");
+    };
+    assert_eq!(sor.artifacts, vec![retained_ref.clone()]);
+    let repaired_receipt = store.load_terminal_receipt(target_issue).unwrap().unwrap();
+    assert_eq!(repaired_receipt.record.digest, repaired.digest);
+    assert_eq!(repaired_receipt.cards, repaired_cards);
+
+    let stale_target = store
+        .repair_terminal_sor_artifact(request(&scoped))
+        .unwrap_err();
+    assert_eq!(stale_target.code, csdlc_v2::ErrorCode::StaleDigest);
 }
 
 pub(crate) fn run_complete_lifecycle(

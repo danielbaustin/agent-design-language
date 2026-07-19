@@ -4,7 +4,8 @@
 
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Date: `2026-06-21`
+- Created: `2026-06-21`
+- Last verified: `2026-07-18`
 - Issue: `#4368`
 - Status: retained planning-source ledger; current closeout truth lives in issue-local packets and the sprint-review register
 - Release-tail refresh: `#3982` / `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`
@@ -20,7 +21,9 @@ Scheduling truth is not completion truth. A source is not done because it is ass
 
 ## Planning Rule
 
-`v0.91.7` should be planned as the final pre-`v0.92` implementation and readiness tranche.
+The original planning baseline treated `v0.91.7` as the final pre-`v0.92`
+implementation and readiness tranche. Current routing requires its reviewed
+outputs to pass through the v0.91.8 bridge before v0.92 consumption.
 
 It must answer three questions before `v0.92` opens:
 

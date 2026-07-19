@@ -119,13 +119,15 @@ contracts it depends on.
 
 ## Current Repo Status
 
-Current roadmap planning truth as of 2026-07-18:
+Current roadmap planning truth, last verified 2026-07-18:
 - the feature-doc production wave is tracked as issue `#3779` with child
   issues `#3778`, `#3780`, `#3781`, and `#3782`
 - `v0.91.6` is the completed first pre-v0.92 readiness tranche
-- `v0.91.7` is the active closeout tail: WP-01 through WP-16 are closed,
-  WP-17 through WP-20 and WP-23 remain open, and closed WP-21/WP-22 are
-  retained planning/review evidence
+- `v0.91.7` is the active closeout tail: WP-01 through WP-17 are closed,
+  including #4644 through merged PR #5539; WP-18, WP-19, WP-20, and WP-23
+  remain open, and closed WP-21/WP-22 are retained planning/review evidence
+- `v0.91.8` is the required reviewed platform-acceptance bridge; `v0.92`
+  consumes its exact-revision handoff rather than v0.91.7 prose directly
 - `v0.92` remains the first true identity, continuity, and birthday milestone
 - `v0.95` remains MVP convergence and packaging, not first implementation of
   major cognitive or product systems
@@ -138,9 +140,10 @@ Recent completed/planned milestone reading:
 - `v0.91.4` completed the C-SDLC default-operation hardening band
 - `v0.91.5` carried tooling/provider/public-record pressure toward the
   pre-v0.92 path
-- `v0.91.6` and `v0.91.7` are the readiness, implementation, and integrated-proof
-  tranches before v0.92 activation; v0.91.7 must close the remaining
-  activation-path implementation and integrated-proof gaps before v0.92 opens.
+- `v0.91.6` and `v0.91.7` are readiness, implementation, and integrated-proof
+  tranches feeding the required
+  [v0.91.8 bridge](../milestones/v0.91.8/README.md). v0.92 consumes only the
+  reviewed [v0.91.8 handoff](../milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md).
 - most recently completed tooling/workflow-pressure milestone package: `v0.91.2`
 - most recently completed inhabited-runtime milestone package: `v0.91.1`
 - most recently completed moral-governance milestone package: `v0.91`
@@ -356,7 +359,8 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.91.4` | Completed Cognitive SDLC default-operation and hardening milestone: default-operation lifecycle, validator/doctor/conductor/editor alignment, Software Development Polis actor standing, shard ownership, tracked durable workflow records, signed trace proof, ObsMem handoff, repeatability metrics, validation-tail/proof-latency handling, Parallel Validation Fabric planning, and active-issue migration policy. |
 | `v0.91.5` | Review/tooling/provider/public-record pressure toward v0.92: AEE completion tranche, prompt-template workflow integration, multi-agent and provider reliability proof, public C-SDLC prompt records, and logging/observability follow-on setup. |
 | `v0.91.6` | First required pre-v0.92 readiness tranche: resilience/citizen persistence, logging/tooling proof-loop fixes, public prompt records, provider/model reliability, first ACIP/A2A/security decisions, and feature-doc issue-wave setup. |
-| `v0.91.7` | Active closeout tail after the implementation/demo/quality waves: bounded evidence exists for logging/OTel, goals/metrics, lifecycle tooling, validation/build throughput, scheduler/provider/local agents, Soak #2, AWS/signal operations, Observatory/Unity, Curiosity, Constructability, reasoning graph/loops/`adl.skill.v1`, security, guild/CodeFriend boundaries, and ACIP/A2A decisions. Remaining release truth belongs to WP-17 through WP-20 and WP-23. |
+| `v0.91.7` | Active closeout tail after the implementation/demo/quality waves: bounded evidence exists for logging/OTel, goals/metrics, lifecycle tooling, validation/build throughput, scheduler/provider/local agents, Soak #2, signal operations, Observatory/Unity, Curiosity, Constructability, reasoning graph/loops/`adl.skill.v1`, security, guild/CodeFriend boundaries, and ACIP/A2A decisions. WP-17 closed through #4644 / PR #5539; remaining release truth belongs to WP-18, WP-19, WP-20, and WP-23. |
+| `v0.91.8` | Required bridge for exact-revision ADL v2, Runtime v3, and C-SDLC v2 platform acceptance, deployment/cutover truth, rollback, and reviewed handoff into v0.92. |
 | `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, Memory Palace proof slice, witnesses, receipts, and the first true Gödel-agent birthday. |
 | `v0.93` | Constitutional citizenship, rights/duties, social contract, delegation/upstream delegation/IAM, standing/challenge/appeal governance, guilds, relationship model, reputation/trust, shared social memory, ToM/social cognition, security governance, and enterprise security for the ADL polis. |
 | `v0.94` | Secure execution, policy-engine and identity/auth convergence, provider trust and isolation, secrets/data governance, signed/queryable trace and reasoning/provenance closure, bounded mental time travel / temporal self-projection, and cross-band convergence before MVP freeze. |
@@ -504,16 +508,19 @@ practical long-lived runtime supervision:
 The truthful v0.90 story is implemented baseline, with Runtime v2 consuming
 those surfaces rather than replacing them.
 
-## Current Planning Focus: v0.91.7 Implementation Before v0.92
+## Current Planning Focus: v0.91.7 Through v0.91.8 Before v0.92
 
 `v0.91.4` is no longer the active planning center in this feature list. Its
 role is the completed Cognitive SDLC default-operation hardening band that the
 current workflow now consumes.
 
-The current planning focus is the pre-v0.92 implementation/proof path:
+The current planning focus is the pre-v0.92 implementation/proof path through
+the required reviewed v0.91.8 bridge:
 
 - consume the completed `v0.91.6` readiness tranche truthfully
 - finish `v0.91.7` as the required implementation and integrated-proof tranche
+- pass v0.91.7 outputs through the reviewed v0.91.8 exact-revision handoff
+  before v0.92 consumes them
 - keep v0.92 as the first true identity/continuity/birthday milestone
 - keep v0.95 as convergence and packaging, not first implementation of major
   cognitive systems

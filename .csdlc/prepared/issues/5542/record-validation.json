@@ -1,0 +1,23 @@
+{
+  "issue": 5542,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "5fd5d17091be2da0f3ca755cf702d7025e288df4ae87f79c20c6ad5882b4df37",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Focused post-merge documentation proof passed locally and retained typed evidence.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby .csdlc/prepared/issues/4644/validate_docs_alignment.rb .",
+        "csdlc-validate --request .csdlc/prepared/issues/5542/validate-docs.json",
+        "csdlc-doctor --repo . --issue 5542",
+        "git diff --check"
+      ],
+      "purpose": "Prove current WP closeout sets, reviewed v0.91.8 bridge precedence, unambiguous date metadata, 208 README files, 830 resolved local links, expected structured-evidence exceptions only, ADR integrity, locked Cargo metadata, diff hygiene, and lifecycle health.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5542/wp17-post-merge-truth.log"
+    }
+  }
+}
