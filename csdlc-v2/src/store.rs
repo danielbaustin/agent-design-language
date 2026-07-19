@@ -1221,18 +1221,19 @@ impl Store {
             }
             _ => BTreeSet::new(),
         };
+        let local_cards = match self.load_cards(request.issue) {
+            Ok(cards) => Some(cards),
+            Err(error) if !issue_dir.exists() => None,
+            Err(error) => return Err(error),
+        };
         let local_integrity = (|| -> Result<bool> {
             verify_record(&local)?;
-            let current_cards = match self.load_cards(request.issue) {
-                Ok(cards) => cards,
-                Err(error) if !issue_dir.exists() => return Ok(false),
-                Err(error) => return Err(error),
+            let Some(current_cards) = local_cards.as_ref() else {
+                return Ok(false);
             };
             let mut checked = local.clone();
-            hydrate_projections(&mut checked, &current_cards)?;
-            Ok(checked.digest == record_digest(&checked)?
-                && checked.digest == local.digest
-                && checked.cards == receipt.record.cards)
+            hydrate_projections(&mut checked, current_cards)?;
+            Ok(checked.digest == record_digest(&checked)? && checked.digest == local.digest)
         })()?;
         if local.phase == LifecyclePhase::ClosedOut
             && local.terminal == receipt.record.terminal
@@ -1249,8 +1250,50 @@ impl Store {
         {
             return Ok(local);
         }
-        let mut projection = receipt.record;
-        let mut cards = receipt.cards;
+        // A complete, valid tracked terminal projection may contain newer
+        // append-only audit provenance than the machine-local receipt. Preserve
+        // that history and refresh the receipt from it; use the receipt as the
+        // recovery authority only when the tracked projection is absent,
+        // incomplete, or invalid.
+        let local_cards_match_receipt_semantics = local_cards.as_ref().is_some_and(|values| {
+            let mut local_values = values.clone();
+            let mut receipt_values = receipt.cards.clone();
+            for card in local_values.values_mut() {
+                card.identity.generation = 0;
+            }
+            for card in receipt_values.values_mut() {
+                card.identity.generation = 0;
+            }
+            local_values == receipt_values
+        });
+        let prefer_local = local_integrity
+            && local.phase == LifecyclePhase::ClosedOut
+            && local.claim.is_none()
+            && local.terminal == receipt.record.terminal
+            && local_cards_match_receipt_semantics;
+        let (mut projection, mut cards) = if prefer_local {
+            (local.clone(), local_cards.expect("validated local cards"))
+        } else {
+            (receipt.record, receipt.cards)
+        };
+        if local_integrity
+            && local.phase == LifecyclePhase::ClosedOut
+            && local.claim.is_none()
+            && local.terminal == projection.terminal
+        {
+            for (retained, tracked) in projection.audit.iter_mut().zip(local.audit.iter()) {
+                if retained.sequence != tracked.sequence
+                    || retained.generation != tracked.generation
+                    || retained.operation != tracked.operation
+                {
+                    break;
+                }
+                // Sequence, generation, and operation identify the same durable
+                // event. Preserve the tracked actor/reason provenance when an
+                // older machine-local receipt retained different attribution.
+                *retained = tracked.clone();
+            }
+        }
         if let (Some(publication), Some(terminal)) = (
             projection.publication.as_mut(),
             projection.terminal.as_ref(),
