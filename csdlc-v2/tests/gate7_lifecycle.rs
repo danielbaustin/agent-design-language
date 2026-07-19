@@ -1816,7 +1816,10 @@ fn run_complete_lifecycle_with_validation_history(
     let preserved = store
         .reconcile_terminal(reconcile("final-writer", "refresh divergent receipt"))
         .unwrap();
-    assert_eq!(&preserved.audit[..tracked.audit.len()], tracked.audit.as_slice());
+    assert_eq!(
+        &preserved.audit[..tracked.audit.len()],
+        tracked.audit.as_slice()
+    );
     assert_eq!(
         store.load_terminal_receipt(issue).unwrap().unwrap().record,
         preserved
