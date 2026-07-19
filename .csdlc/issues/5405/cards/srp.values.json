@@ -7,9 +7,9 @@
     "title": "[v0.91.7][review-fix][WP-13] Resolve #5403 guild, Godel, and economics findings",
     "slug": "v0-91-7-review-fix-wp13-guild-godel-economics-findings",
     "version": "v0.91.7",
-    "generation": 40
+    "generation": 39
   },
-  "status": "complete",
+  "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {

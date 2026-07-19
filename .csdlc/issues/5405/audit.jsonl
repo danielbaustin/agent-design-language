@@ -47,5 +47,4 @@
 {"sequence":47,"generation":36,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":48,"generation":37,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
 {"sequence":49,"generation":38,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
-{"sequence":50,"generation":39,"actor":"codex-closeout-audit","reason":"Materialize the retained terminal receipt during exhaustive v0.91.7 closeout audit #5573.","operation":"reconcile_terminal"}
-{"sequence":51,"generation":40,"actor":"codex-closeout-audit","reason":"Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.","operation":"reconcile_terminal"}
+{"sequence":50,"generation":39,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"Materialize the retained terminal receipt after PR #5445 merged and issue #5405 closed","operation":"reconcile_terminal"}

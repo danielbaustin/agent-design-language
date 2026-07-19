@@ -17,5 +17,4 @@
 {"sequence":17,"generation":14,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
 {"sequence":18,"generation":15,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
 {"sequence":19,"generation":16,"actor":"codex","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
-{"sequence":20,"generation":17,"actor":"codex-closeout-audit","reason":"Materialize the retained terminal receipt during exhaustive v0.91.7 closeout audit #5573.","operation":"reconcile_terminal"}
-{"sequence":21,"generation":18,"actor":"codex-closeout-audit","reason":"Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.","operation":"reconcile_terminal"}
+{"sequence":20,"generation":17,"actor":"codex","reason":"project retained #5423 terminal receipt onto tracked main history","operation":"reconcile_terminal"}

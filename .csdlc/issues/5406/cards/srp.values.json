@@ -7,9 +7,9 @@
     "title": "[v0.91.7][csdlc-v2][records] Retain auditable lifecycle and sprint closeout truth after v1 sunset",
     "slug": "v0-91-7-csdlc-v2-retain-auditable-lifecycle-and-sprint-closeout-truth",
     "version": "v0.91.7",
-    "generation": 44
+    "generation": 43
   },
-  "status": "complete",
+  "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {

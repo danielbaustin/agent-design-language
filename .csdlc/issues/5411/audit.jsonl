@@ -22,5 +22,4 @@
 {"sequence":22,"generation":20,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":23,"generation":21,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
 {"sequence":24,"generation":22,"actor":"codex","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
-{"sequence":25,"generation":23,"actor":"codex-closeout-audit","reason":"Materialize the retained terminal receipt during exhaustive v0.91.7 closeout audit #5573.","operation":"reconcile_terminal"}
-{"sequence":26,"generation":24,"actor":"codex-closeout-audit","reason":"Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.","operation":"reconcile_terminal"}
+{"sequence":25,"generation":23,"actor":"codex-closeout-retainer","reason":"materialize shared terminal authority after PR #5442 merged","operation":"reconcile_terminal"}

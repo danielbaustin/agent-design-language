@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "054e97bce0600f6d67de82ce3c57351da92204496680e0793747ea6943aa00a2",
   "phase": "closed_out",
-  "generation": 40,
-  "digest": "9b3a64060972d2e75dee04d4fb8f47054d08dc6adbcb12ec243dc18fdae9d9bb",
+  "generation": 39,
+  "digest": "7ceb69946c4225d98e1774d754738f41d53eadced81f92ac3207fdce39892fbd",
   "claim": null,
   "review_assignment": {
     "reviewer": "subagent:019f739a-5fbe-7e33-8b85-4cf33cf43dcd",
@@ -63,8 +63,8 @@
     "base": "main",
     "head": "codex/5405-wp13-review-repair",
     "revision": "git-blake3:7a3b66a7c76167828b80ecae5451fec4b3673ece:193b685342662653c2ebf507e8240003bbe6b50a7af0fd7dccc7ca4ea92d69c4",
-    "draft": false,
-    "observed_state": "merged"
+    "draft": true,
+    "observed_state": "open"
   },
   "readiness": {
     "pull_request": 5445,
@@ -122,32 +122,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "82f5c8e3210f6a42cca7fd9ab9127507811f2131390e8687f96fa6778e91042d",
+      "values_digest": "6b390cb3e2717890a10d6227cabf57fd0978123cf730a82e7474667fbf4bf514",
       "rendered_digest": "703b92e39c250aa5e073508493c1d38ae73f523e6cf4a0536e89a13faebea53d",
       "ast_digest": "37f28dd84da79b263104176dbb71e609b56a71b7afb6e5076d455ad7142d5f1f"
     },
     "stp": {
-      "values_digest": "a85dc47064d2818e2dd998b26023a055447214c835969a14180e20aa599f146c",
+      "values_digest": "170844264f7ea5777c8fec5a2dfd394e696de750dfb6aa1500f2d514110d620a",
       "rendered_digest": "d93082537cdc86d0519550bef7290c3fb715ab2dd435712a3d0ae9a944770e30",
       "ast_digest": "94191cfd67fe8d03c3e4761a74ca4434efdaa7c87cc3dd5960d46a12a27b3a2d"
     },
     "spp": {
-      "values_digest": "760bcd13e782d23c26eaab0d3d26437455674de1c7b1e564f9e16f4f73bb544b",
+      "values_digest": "f33a108d3d2c886311c7888b2b0f4f92a9cd66fadf8b4a0aaecf8d37f1233c26",
       "rendered_digest": "c2420565538a898ac289b714a8cfad25837275fa48fa4ca0d0d147b7e00cbf28",
       "ast_digest": "53e801dc8c30bbe457bcd7538b42c4d898b942ebf60dcca1a8d3bd276944bfb3"
     },
     "vpp": {
-      "values_digest": "f2bd037f6c16d559600136d12ceda7f687581ec7ff811f243a746b005afaf9c9",
+      "values_digest": "91b8f91bc467cefa2c0f9829fec4e84841b33dd9e83d0c5686abe4b0b9c7e5b3",
       "rendered_digest": "e33eadd8a727f314507198604083fafd6b6602ca1d74988afc702543f05d6f2e",
       "ast_digest": "199fec29ee78c16eeefb424d5a2e80b2a2b6bc944c3cbb3904e9028fcb0783dd"
     },
     "srp": {
-      "values_digest": "19b9a39bb2e6f4beb5c3d9e438fab2d0f301a9aea9993e459c2b078fe7ca3917",
-      "rendered_digest": "c8e7d78c2af8f2d256dcbdc12a313f6773b08e88f7d635991b934ae20e73bd1a",
-      "ast_digest": "a8f613589f0b5eb55875352565dda13de80b987ba18ac2efe7414cb92c76cde9"
+      "values_digest": "989d592fce44b79d8335840e6764f782b3b67fc0a426e8d12d13dbb29d438e6f",
+      "rendered_digest": "c0d7edaf5e7c880a5c9ca0701a449a83c85d0aa3cb71e7c915d9aad3f9c3486f",
+      "ast_digest": "42f704c6a13b6207e5cd96ddb1b959113c06c5416d83fc2866fa4faee46dd301"
     },
     "sor": {
-      "values_digest": "14db378a75ca0678a45173b866a3d81104458cbb7feef18a3143bf7394546d85",
+      "values_digest": "f44f85625de11074af1090ea46cbd6f387708dbcd77cd08da27e9341263534e0",
       "rendered_digest": "0618b81be325ed1a79bd24fb5d0c28c79f89e903ba5fc8075a0fe3abb3b0579d",
       "ast_digest": "056bdf5ee7d6acca25e59f63658e3b4cba7e31109c1d44bdd57f1c387e920e43"
     }
@@ -655,15 +655,8 @@
     {
       "sequence": 50,
       "generation": 39,
-      "actor": "codex-closeout-audit",
-      "reason": "Materialize the retained terminal receipt during exhaustive v0.91.7 closeout audit #5573.",
-      "operation": "reconcile_terminal"
-    },
-    {
-      "sequence": 51,
-      "generation": 40,
-      "actor": "codex-closeout-audit",
-      "reason": "Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Materialize the retained terminal receipt after PR #5445 merged and issue #5405 closed",
       "operation": "reconcile_terminal"
     }
   ]
