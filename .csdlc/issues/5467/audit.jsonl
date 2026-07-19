@@ -23,3 +23,6 @@
 {"sequence":23,"generation":17,"actor":"codex-root","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
 {"sequence":24,"generation":18,"actor":"codex-root-closeout","reason":"Materialize the retained terminal receipt after merged PR #5485 and closed issue #5467.","operation":"reconcile_terminal"}
 {"sequence":25,"generation":19,"actor":"codex","reason":"typed terminal design repair authorized by issue 5487","operation":"repair_terminal_design"}
+{"sequence":26,"generation":20,"actor":"codex-root-closeout","reason":"Materialize the retained terminal receipt after merged PR #5485 and closed issue #5467.","operation":"reconcile_terminal"}
+{"sequence":27,"generation":21,"actor":"codex-closeout-audit","reason":"Materialize the retained terminal receipt during exhaustive v0.91.7 closeout audit #5573.","operation":"reconcile_terminal"}
+{"sequence":28,"generation":22,"actor":"codex-closeout-audit","reason":"Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.","operation":"reconcile_terminal"}
