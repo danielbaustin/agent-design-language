@@ -27,3 +27,4 @@
 {"sequence":27,"generation":19,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
 {"sequence":28,"generation":20,"actor":"codex-closeout-audit","reason":"Materialize the retained terminal receipt during exhaustive v0.91.7 closeout audit #5573.","operation":"reconcile_terminal"}
 {"sequence":29,"generation":21,"actor":"codex-closeout-audit","reason":"Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.","operation":"reconcile_terminal"}
+{"sequence":30,"generation":22,"actor":"codex-closeout-audit","reason":"typed terminal plan repair authorized by issue 4647","operation":"repair_terminal_plan_step:S4"}

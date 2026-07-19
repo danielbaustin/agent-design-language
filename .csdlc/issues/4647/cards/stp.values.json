@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4647,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-20][review] Remediate review findings",
+    "slug": "v0-91-7-wp20-review-remediation-preflight",
+    "version": "v0.91.7",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare and later execute only WP-20; do not absorb sibling WPs or release-readiness claims.",
+      "deliverables": [
+        "Remediation PRs",
+        "Preflight packet",
+        "Final checklist"
+      ],
+      "acceptance_criteria": [
+        "AC-1: WP-20 executes only within its declared scope and protected output paths",
+        "AC-2: Deliverables are retained on tracked paths with evidence-bound claims",
+        "AC-3: Validation records distinguish fresh checks, retained proof, skipped checks, and unproven surfaces",
+        "AC-4: Sibling WP work, v0.91.7 release readiness, and v0.92 activation readiness are not silently claimed"
+      ],
+      "dependencies": [
+        "WP-18 and WP-19 findings"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.91.7/review/V0917_INTERNAL_REVIEW_4645.md",
+        "docs/milestones/v0.91.7/review/external_review_4646",
+        "docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md",
+        "docs/milestones/v0.91.7/RELEASE_PLAN_v0.91.7.md"
+      ],
+      "non_goals": [
+        "Do not execute this work during preparation",
+        "Do not implement sibling WP work",
+        "Do not use AWS or paid remote validation lanes for preparation",
+        "Do not claim release readiness from setup cards"
+      ]
+    }
+  }
+}
