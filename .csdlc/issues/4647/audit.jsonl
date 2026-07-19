@@ -1,3 +1,0 @@
-{"sequence":1,"generation":0,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"initialize issue record and all six cards","operation":"bootstrap"}
-{"sequence":2,"generation":0,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"bind branch/worktree and activate claim","operation":"bind"}
-{"sequence":3,"generation":0,"actor":"codex-closeout-audit","reason":"WP-20 authorizes typed repair of terminal plan truth found by the exhaustive v0.91.7 closeout review.","operation":"{\"add_protected_paths\":[\".csdlc/issues/5467\",\".csdlc/issues/5542\"],\"operation\":\"amend_claim_scope\"}"}

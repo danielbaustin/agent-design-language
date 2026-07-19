@@ -1779,6 +1779,48 @@ fn run_complete_lifecycle_with_validation_history(
     let doctor = csdlc_v2::diagnose(&store, issue);
     assert_eq!(doctor.phase, Some(LifecyclePhase::ClosedOut));
     assert!(doctor.findings.is_empty());
+
+    let baseline_projection = temp.path().join("baseline-terminal-projection");
+    copy_dir_all(&store.issue_dir(issue), &baseline_projection);
+    let baseline_receipt = fs::read(store.terminal_receipt_path(issue).unwrap()).unwrap();
+    let reconcile = |actor: &str, reason: &str| ReconcileTerminalRequest {
+        issue,
+        expected_initialization_digest: receipt.initialization_digest.clone(),
+        expected_branch: "issue-7".into(),
+        expected_worktree: temp.path().to_string_lossy().into_owned(),
+        actor: actor.into(),
+        reason: reason.into(),
+        follow_ups: vec!["#5411 follow-up".into()],
+    };
+
+    store
+        .reconcile_terminal(reconcile("receipt-writer", "receipt-side attribution"))
+        .unwrap();
+    let divergent_receipt = fs::read(store.terminal_receipt_path(issue).unwrap()).unwrap();
+    fs::remove_dir_all(store.issue_dir(issue)).unwrap();
+    copy_dir_all(&baseline_projection, &store.issue_dir(issue));
+    fs::write(
+        store.terminal_receipt_path(issue).unwrap(),
+        &baseline_receipt,
+    )
+    .unwrap();
+
+    let tracked = store
+        .reconcile_terminal(reconcile("tracked-writer", "tracked attribution"))
+        .unwrap();
+    fs::write(
+        store.terminal_receipt_path(issue).unwrap(),
+        divergent_receipt,
+    )
+    .unwrap();
+    let preserved = store
+        .reconcile_terminal(reconcile("final-writer", "refresh divergent receipt"))
+        .unwrap();
+    assert_eq!(&preserved.audit[..tracked.audit.len()], tracked.audit.as_slice());
+    assert_eq!(
+        store.load_terminal_receipt(issue).unwrap().unwrap().record,
+        preserved
+    );
     csdlc_v2::NormalizedOutcome::from_v2(&store, issue).unwrap()
 }
 
