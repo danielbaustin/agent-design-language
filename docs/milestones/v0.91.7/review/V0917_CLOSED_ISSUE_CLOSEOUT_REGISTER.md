@@ -2,14 +2,16 @@
 
 Generated from live GitHub closed issues labeled `version:v0.91.7` and local typed C-SDLC v2 projections/receipts. Legacy issues remain legacy; this register does not fabricate typed cards.
 
-- Total closed issues: 427
+- Total closed issues: 429
 - Typed projections: 46
 - Orphaned valid typed receipts: 3
-- Legacy/pre-v2 closures: 378
-- Valid shared receipts: 48
+- Legacy/pre-v2 closures: 380
+- Valid shared receipts: 49
 
 | Issue | Class | Disposition | Evidence | Linked PRs |
 |---:|---|---|---|---|
+| [#5575](https://github.com/danielbaustin/agent-design-language/issues/5575) | legacy | legacy_merged_pr | GitHub closedByPullRequestsReferences includes a merged PR | #5580 |
+| [#5571](https://github.com/danielbaustin/agent-design-language/issues/5571) | legacy | legacy_merged_pr | GitHub closedByPullRequestsReferences includes a merged PR | #5581 |
 | [#5551](https://github.com/danielbaustin/agent-design-language/issues/5551) | typed_projection | typed_receipt_present | tracked typed projection and retained shared terminal receipt exist | #5555 |
 | [#5547](https://github.com/danielbaustin/agent-design-language/issues/5547) | typed_projection | typed_receipt_present | tracked typed projection and retained shared terminal receipt exist | #5554 |
 | [#5546](https://github.com/danielbaustin/agent-design-language/issues/5546) | legacy | legacy_merged_pr | GitHub closedByPullRequestsReferences includes a merged PR | #5559 |
@@ -412,7 +414,7 @@ Generated from live GitHub closed issues labeled `version:v0.91.7` and local typ
 | [#4651](https://github.com/danielbaustin/agent-design-language/issues/4651) | legacy | legacy_closed_without_linked_pr | GitHub issue has no closedByPullRequestsReferences; no typed lifecycle record is fabricated |  |
 | [#4649](https://github.com/danielbaustin/agent-design-language/issues/4649) | legacy | legacy_merged_pr | GitHub closedByPullRequestsReferences includes a merged PR | #5142 |
 | [#4648](https://github.com/danielbaustin/agent-design-language/issues/4648) | legacy | legacy_merged_pr | GitHub closedByPullRequestsReferences includes a merged PR | #4901 |
-| [#4645](https://github.com/danielbaustin/agent-design-language/issues/4645) | typed_projection | typed_receipt_required | tracked typed projection exists; receipt and terminal parity must be checked | #5543 |
+| [#4645](https://github.com/danielbaustin/agent-design-language/issues/4645) | typed_projection | typed_receipt_present | tracked typed projection and retained shared terminal receipt exist | #5543 |
 | [#4644](https://github.com/danielbaustin/agent-design-language/issues/4644) | typed_projection | typed_receipt_present | tracked typed projection and retained shared terminal receipt exist | #5539 |
 | [#4643](https://github.com/danielbaustin/agent-design-language/issues/4643) | typed_projection | typed_receipt_present | tracked typed projection and retained shared terminal receipt exist | #5524 |
 | [#4642](https://github.com/danielbaustin/agent-design-language/issues/4642) | typed_projection | typed_receipt_present | tracked typed projection and retained shared terminal receipt exist | #5503 |

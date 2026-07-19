@@ -1,18 +1,154 @@
 {
   "schema": "adl.v0.91.7.closed_issue_closeout_register.v1",
-  "generated_at": "2026-07-19T06:02:47Z",
+  "generated_at": "2026-07-19T20:48:34Z",
   "source": {
     "issue_label": "version:v0.91.7",
     "issue_state": "closed"
   },
   "summary": {
-    "total": 427,
+    "total": 429,
     "typed_projection": 46,
     "orphaned_typed_receipt": 3,
-    "legacy": 378,
-    "valid_receipts": 48
+    "legacy": 380,
+    "valid_receipts": 49
   },
   "issues": [
+    {
+      "closedAt": "2026-07-19T20:30:55Z",
+      "closedByPullRequestsReferences": [
+        {
+          "id": "PR_kwDORHPd2M7zm--m",
+          "number": 5580,
+          "repository": {
+            "id": "R_kgDORHPd2A",
+            "name": "agent-design-language",
+            "owner": {
+              "id": "MDQ6VXNlcjYwNTc3Mw==",
+              "login": "danielbaustin"
+            }
+          },
+          "url": "https://github.com/danielbaustin/agent-design-language/pull/5580"
+        }
+      ],
+      "labels": [
+        {
+          "id": "LA_kwDORHPd2M8AAAACW7Q-dA",
+          "name": "type:bug",
+          "description": "Bug or correctness issue",
+          "color": "D73A4A"
+        },
+        {
+          "id": "LA_kwDORHPd2M8AAAACYKxGnA",
+          "name": "area:runtime",
+          "description": "Runtime library issues",
+          "color": "0052cc"
+        },
+        {
+          "id": "LA_kwDORHPd2M8AAAACYtXtDg",
+          "name": "area:quality",
+          "description": "",
+          "color": "B60205"
+        },
+        {
+          "id": "LA_kwDORHPd2M8AAAACoIPTeg",
+          "name": "version:v0.91.7",
+          "description": "Targeted for ADL v0.91.7",
+          "color": "1f883d"
+        }
+      ],
+      "number": 5575,
+      "state": "CLOSED",
+      "title": "[v0.91.8][ci][coverage] Prevent unified-runtime kernel negative-test hangs",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5575",
+      "class": "legacy",
+      "typed_projection": false,
+      "tracked_record": "",
+      "shared_receipt": false,
+      "receipt_path": ".git/csdlc-v2/closeout/5575.json",
+      "linked_prs": [
+        {
+          "baseRefName": "main",
+          "headRefOid": "f626de66bd6ff4e3dbd2ff38628344161b0446e5",
+          "mergedAt": "2026-07-19T20:30:54Z",
+          "number": 5580,
+          "state": "MERGED",
+          "url": "https://github.com/danielbaustin/agent-design-language/pull/5580"
+        }
+      ],
+      "disposition": "legacy_merged_pr",
+      "evidence": "GitHub closedByPullRequestsReferences includes a merged PR"
+    },
+    {
+      "closedAt": "2026-07-19T20:38:36Z",
+      "closedByPullRequestsReferences": [
+        {
+          "id": "PR_kwDORHPd2M7znCHm",
+          "number": 5581,
+          "repository": {
+            "id": "R_kgDORHPd2A",
+            "name": "agent-design-language",
+            "owner": {
+              "id": "MDQ6VXNlcjYwNTc3Mw==",
+              "login": "danielbaustin"
+            }
+          },
+          "url": "https://github.com/danielbaustin/agent-design-language/pull/5581"
+        }
+      ],
+      "labels": [
+        {
+          "id": "LA_kwDORHPd2M8AAAACW7JWng",
+          "name": "track:roadmap",
+          "description": "Roadmap-level work",
+          "color": "0e8a16"
+        },
+        {
+          "id": "LA_kwDORHPd2M8AAAACW7Q4Pw",
+          "name": "area:security",
+          "description": "Security-related changes",
+          "color": "d93f0b"
+        },
+        {
+          "id": "LA_kwDORHPd2M8AAAACW7Q-dA",
+          "name": "type:bug",
+          "description": "Bug or correctness issue",
+          "color": "D73A4A"
+        },
+        {
+          "id": "LA_kwDORHPd2M8AAAACayMBng",
+          "name": "area:review",
+          "description": "Review and triage work",
+          "color": "0e8a16"
+        },
+        {
+          "id": "LA_kwDORHPd2M8AAAACoIPTeg",
+          "name": "version:v0.91.7",
+          "description": "Targeted for ADL v0.91.7",
+          "color": "1f883d"
+        }
+      ],
+      "number": 5571,
+      "state": "CLOSED",
+      "title": "[v0.91.7][security][review] Audit #4645 public packet publication boundary",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5571",
+      "class": "legacy",
+      "typed_projection": false,
+      "tracked_record": "",
+      "shared_receipt": false,
+      "receipt_path": ".git/csdlc-v2/closeout/5571.json",
+      "linked_prs": [
+        {
+          "baseRefName": "main",
+          "headRefOid": "9c70ddbad8d06fac3f0ffa4c5ec1e66ba182a97c",
+          "mergedAt": "2026-07-19T20:38:34Z",
+          "number": 5581,
+          "state": "MERGED",
+          "url": "https://github.com/danielbaustin/agent-design-language/pull/5581"
+        }
+      ],
+      "disposition": "legacy_merged_pr",
+      "evidence": "GitHub closedByPullRequestsReferences includes a merged PR"
+    },
     {
       "closedAt": "2026-07-19T00:42:33Z",
       "closedByPullRequestsReferences": [
@@ -28147,7 +28283,7 @@
       "class": "typed_projection",
       "typed_projection": true,
       "tracked_record": ".csdlc/issues/4645/index.json",
-      "shared_receipt": false,
+      "shared_receipt": true,
       "receipt_path": ".git/csdlc-v2/closeout/4645.json",
       "linked_prs": [
         {
@@ -28159,8 +28295,8 @@
           "url": "https://github.com/danielbaustin/agent-design-language/pull/5543"
         }
       ],
-      "disposition": "typed_receipt_required",
-      "evidence": "tracked typed projection exists; receipt and terminal parity must be checked"
+      "disposition": "typed_receipt_present",
+      "evidence": "tracked typed projection and retained shared terminal receipt exist"
     },
     {
       "closedAt": "2026-07-18T23:52:18Z",
