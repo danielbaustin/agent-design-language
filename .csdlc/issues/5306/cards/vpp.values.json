@@ -7,7 +7,7 @@
     "title": "[v0.91.7][csdlc-v2] Gate 10D2: approved bounded v1 deletion wave",
     "slug": "v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave",
     "version": "v0.91.7",
-    "generation": 0
+    "generation": 17
   },
   "status": "ready",
   "content": {
@@ -62,9 +62,9 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed with zero additional deletion; restore or repair only the current bounded slice.",
-      "design_ref": "docs/architecture/csdlc-v2/gate10d2/DESIGN.md",
-      "design_digest": "9b7c6ff1029d318ff44bdf91b6cfa939f69a4be9396b0a711361937bf68812d1",
-      "diagram_ref": "docs/architecture/csdlc-v2/gate10d2/DIAGRAM.mmd",
+      "design_ref": ".csdlc/issues/5306/retained/design.md",
+      "design_digest": "13b29a0a91d5bbea76180a0866c69cdd7d2c6b53cb32c93a3bc857fc6308bfce",
+      "diagram_ref": ".csdlc/issues/5306/retained/diagram.mmd",
       "diagram_digest": "dda9acbc40f48002da88859feb8fe7f7162f9a6a3ea08db58d8e4f631fd95b07"
     }
   }

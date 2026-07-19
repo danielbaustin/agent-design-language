@@ -1,0 +1,10 @@
+flowchart TD
+  E["Current D1 eligibility"] --> G{"eligible and explicitly approved?"}
+  G -->|"no"| N["Zero mutation"]
+  G -->|"yes"| S["One bounded deletion slice"]
+  S --> P["Independent v2 proof"]
+  P --> R["Exact-revision review"]
+  R --> M{"Green?"}
+  M -->|"no"| X["Repair or roll back slice"]
+  M -->|"yes"| C["Merge and recompute LoC/tests"]
+  C --> G
