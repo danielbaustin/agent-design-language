@@ -1,0 +1,53 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5541,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Recover #5306 direct merged PR terminal evidence",
+    "slug": "gate10d2-authority-docs",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "gate10a-authority-guidance",
+          "proof_role": "Final selector, current operational guidance consistency, and review-ready exact scope",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 6000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate10a"
+          ],
+          "parallel_group": "csdlc-v2-focused",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed if any current operational surface routes through a sunset command.",
+      "design_ref": ".csdlc/prepared/issues/5541/design.md",
+      "design_digest": "c9414eecb80e10539771549706400354580c98762b800aebf0c683bc155d2c79",
+      "diagram_ref": ".csdlc/prepared/issues/5541/diagram.mmd",
+      "diagram_digest": "3a249d86dddcf5c290342c46da659600a2224d90f1237c39b179551555c72042"
+    }
+  }
+}

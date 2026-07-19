@@ -1,0 +1,28 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5541,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Recover #5306 direct merged PR terminal evidence",
+    "slug": "gate10d2-authority-docs",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Exact implementation revision before publication.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Do all current routes use typed v2 authority?",
+        "Does the guard exclude explicitly historical evidence while covering current operational guidance?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

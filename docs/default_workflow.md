@@ -1,6 +1,6 @@
 # Default C-SDLC v2 workflow
 
-C-SDLC work is independent of the v1 ADL wrappers. Use the typed Rust
+C-SDLC work is independent of the sunset ADL wrappers. Use the typed Rust
 binaries and operator skills under `csdlc-v2/`:
 
 1. `csdlc-init` creates the issue-local state and six cards.
@@ -11,5 +11,5 @@ binaries and operator skills under `csdlc-v2/`:
 5. `csdlc-review` records current review truth before `csdlc-publish`.
 6. `csdlc-closeout` records integration and terminal evidence.
 
-The former v1 workflow is preserved only as historical evidence in
+The former workflow is preserved only as historical evidence in
 `docs/legacy/DEFAULT_WORKFLOW_V1.md`. It is not an operational route.

@@ -19,6 +19,49 @@ fn nine_skills_are_typed_and_bind_the_generation_selector() {
         .iter()
         .all(|r| r.binary.starts_with("csdlc-") && !r.binary.contains("python")));
 }
+
+#[test]
+fn current_operator_guidance_has_no_sunset_v1_route() {
+    let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
+    let manifest = SkillManifest::load().unwrap();
+    for skill in &manifest.skills {
+        let path = repo
+            .join("csdlc-v2/operator/skills")
+            .join(&skill.name)
+            .join("SKILL.md");
+        let text = fs::read_to_string(&path).unwrap();
+        assert!(
+            current_guidance_is_v2_only(&text, &["v1_sunset"]),
+            "current operational skill retains sunset guidance: {}",
+            path.display()
+        );
+    }
+
+    let workflow = fs::read_to_string(repo.join("docs/default_workflow.md")).unwrap();
+    assert!(workflow.starts_with("# Default C-SDLC v2 workflow"));
+    assert!(workflow.contains("csdlc-init"));
+    assert!(workflow.contains("csdlc-closeout"));
+    assert!(current_guidance_is_v2_only(
+        &workflow,
+        &["docs/legacy/default_workflow_v1.md"]
+    ));
+}
+
+#[test]
+fn current_guidance_guard_rejects_exact_former_wrapper_command() {
+    let former = "Run `bash ./adl/tools/pr.sh run 42`; pr.sh remains the default.";
+    assert!(!current_guidance_is_v2_only(former, &[]));
+}
+
+fn current_guidance_is_v2_only(text: &str, allowed_v1_references: &[&str]) -> bool {
+    let mut normalized = text.to_ascii_lowercase().replace("./", "");
+    for allowed in allowed_v1_references {
+        normalized = normalized.replace(&allowed.to_ascii_lowercase(), "");
+    }
+    !normalized.contains("pr.sh")
+        && !normalized.contains("workflow-conductor")
+        && !normalized.contains("v1")
+}
 #[test]
 fn coexistence_fails_closed_when_v1_or_v2_is_missing() {
     let repo = tempfile::tempdir().unwrap();

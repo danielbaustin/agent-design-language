@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5541,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Recover #5306 direct merged PR terminal evidence",
+    "slug": "gate10d2-authority-docs",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Remove retained current v1 guidance that contradicts final Gate 10D2 authority so #5306 can close truthfully.",
+      "required_outcome": "All current default operator guidance is executable through typed v2 routes and Gate 10A rejects reintroduced sunset instructions.",
+      "declared_scope": [
+        "csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md",
+        "docs/default_workflow.md",
+        "csdlc-v2/tests/gate10a.rs"
+      ],
+      "authority_boundary": [
+        "Current typed skills and current default workflow only"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

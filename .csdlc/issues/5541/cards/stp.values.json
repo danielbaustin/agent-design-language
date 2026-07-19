@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5541,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Recover #5306 direct merged PR terminal evidence",
+    "slug": "gate10d2-authority-docs",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Fix only the two review findings and focused guardrail needed for #5306 closeout.",
+      "deliverables": [
+        "Corrected init skill",
+        "Typed-v2 default workflow document",
+        "Gate 10A stale-guidance regression"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Retained typed skills contain no v1-default instruction",
+        "AC-2: Current default workflow uses only installed typed v2 binaries and skills",
+        "AC-3: Gate 10A rejects stale operational v1 guidance without scanning historical evidence",
+        "AC-4: Exact-revision review dispositions both #5306 P1 findings"
+      ],
+      "dependencies": [
+        "#5306",
+        "PR #5331"
+      ],
+      "repo_inputs": [
+        "csdlc-v2/operator/generation-selector.json",
+        "csdlc-v2/operator/coexistence.json",
+        "AGENTS.md",
+        "PR #5331",
+        "issue #5306"
+      ],
+      "non_goals": [
+        "No historical-record rewriting",
+        "No runtime changes",
+        "No lifecycle JSON hand edits"
+      ]
+    }
+  }
+}

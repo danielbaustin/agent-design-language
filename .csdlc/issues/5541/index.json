@@ -1,0 +1,154 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5541,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "052e24c4cff26aa0a876c9dbf6153fa4defcfab8fe44e5ce3547cb681dacb8f6",
+  "phase": "implemented",
+  "generation": 6,
+  "digest": "6db5db30035a87bb1f0fb33a42b9854b725df8da505f68a55b7a35fdfbe99fce",
+  "claim": {
+    "id": "claim-5541-gate10d2-authority-docs",
+    "owner": "codex-closeout-audit",
+    "generation": 6,
+    "acquired_unix_seconds": 1784426710,
+    "expires_unix_seconds": 1784513110,
+    "heartbeat_unix_seconds": 1784426710,
+    "branch": "codex/5541-gate10d2-authority-docs",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5541",
+      ".csdlc/prepared/issues/5541",
+      "csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md",
+      "docs/default_workflow.md",
+      "csdlc-v2/tests/gate10a.rs"
+    ],
+    "purpose": "Align current operational guidance and guardrails with final Gate 10D2 v1_sunset authority"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5541/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5541/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-closeout-audit",
+      "revision": "c9414eecb80e10539771549706400354580c98762b800aebf0c683bc155d2c79"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "2ad71204fbfc0b0f8380766f57d2a17f9e1a2b6ce65287684f005deb532a8627",
+      "rendered_digest": "16a818e829224e92ee2b4122aa0a27483f0b953d54af7f14262b7ad96fec07a1",
+      "ast_digest": "36b4b023632ff75cef23d81021629998935de1095fb917dddbabcf97ae28a929"
+    },
+    "stp": {
+      "values_digest": "cd496227d4877045db9d1ce8aeecdc7963e038a45531adecab22d5933dfe90af",
+      "rendered_digest": "1882917af1c0c9c0037afa734f45c2746ebd1cf11a714df815ef0d24a0b4b693",
+      "ast_digest": "3fa58118b1cc836f56a1d36ea152a175a17b6e2480d4937ebb8b415e8aab176f"
+    },
+    "spp": {
+      "values_digest": "1403713f41901f4fcba2facb676928060d3eeb8ef022f26e3fbca9e8d74d5435",
+      "rendered_digest": "9878897a9757eab6dcf2fddc42eff9d2242098133a59e7a6b252574d93981803",
+      "ast_digest": "2797712dffa5bf2f6ca77410fca9061860aa5a84b2c36a73d2929922e72825db"
+    },
+    "vpp": {
+      "values_digest": "d7458e5d70d30ca6439767b61753b703d5b6d9e8e28346297fe914a764b1303d",
+      "rendered_digest": "7d53f4529d64b264a25d20670e437f438d1799f889dd536b6b4d9070b919c8fa",
+      "ast_digest": "584f798e63b64bd2b9ddf73bd51582dbd1e9a0c998a9ed416e10d4331376f006"
+    },
+    "srp": {
+      "values_digest": "3aa727bead83a25e83da8eccaae0869ee329711799c460b4abafeca71e74b854",
+      "rendered_digest": "8596521e944a2b20f97564b6e989120e2354f021dc1e3c4506a30ba4d4e9dce7",
+      "ast_digest": "f17a78ca3bb274cc6a01208f8941c27bfa640c5745571e7c91bcbf30355c26d6"
+    },
+    "sor": {
+      "values_digest": "288f7d3ceb5130bc06938fd1d90d39b00d21b3fecd69e3d426afcba162842abf",
+      "rendered_digest": "72d8e4444cef914dbc67e0c2ec80faab1c5f0cc22c7e12662e26a7b07c9bc938",
+      "ast_digest": "66f72c78ed3881dc743657ba8a87a436e7a7859bbe3aeead6cd1c50e994be438"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-closeout-audit",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-closeout-audit",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex-closeout-audit",
+      "reason": "Both #5306 P1 guidance findings are remediated with focused executable guard proof."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex-closeout-audit",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex-closeout-audit",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex-closeout-audit",
+      "reason": "Record the bounded final-authority guidance remediation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Aligned the retained init skill with final v1_sunset authority and guarded all current typed skills plus the current default workflow against sunset routes.\",\"changes\":[\"Replace the stale preserve-v1-default instruction with the installed v2 sole-authority contract.\",\"Verify the already-correct current default workflow names the typed v2 lifecycle and treats v1 only as historical evidence.\",\"Add a focused Gate 10A regression over all nine current skills and the current default workflow.\"],\"artifacts\":[\"csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md\",\"docs/default_workflow.md\",\"csdlc-v2/tests/gate10a.rs\",\"#5306 retrospective P1 findings\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex-closeout-audit",
+      "reason": "Record focused current-guidance guard and strict static-analysis proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate10a\",\"current_operator_guidance_has_no_sunset_v1_route\"],\"purpose\":\"Prove all current operational skills and the current default workflow reject sunset v1 guidance.\",\"outcome\":\"passed\",\"evidence_ref\":\"Focused Gate 10A guard passed 1/1; cargo fmt --check, strict all-target all-feature Clippy, and git diff --check passed. No AWS or Spot used.\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex-closeout-audit",
+      "reason": "The retained skill and current workflow now agree with final v2 authority.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"fix-guidance\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex-closeout-audit",
+      "reason": "Focused guard, strict validation, and review-ready scope complete the second plan step.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"guard-review\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex-closeout-audit",
+      "reason": "Both #5306 P1 guidance findings are remediated with focused executable guard proof.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex-closeout-audit",
+      "reason": "Record the review-driven normalized stale-command mutation proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate10a\",\"guidance\"],\"purpose\":\"Prove current guidance is v2-only and the exact former bash ./adl/tools/pr.sh command is rejected after normalization.\",\"outcome\":\"passed\",\"evidence_ref\":\"Three guidance-focused Gate 10A tests passed, including exact former wrapper mutation; strict Clippy, fmt, and diff hygiene passed.\"}}"
+    }
+  ]
+}
