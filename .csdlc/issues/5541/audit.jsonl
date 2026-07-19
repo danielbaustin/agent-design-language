@@ -9,3 +9,4 @@
 {"sequence":9,"generation":6,"actor":"codex-closeout-audit","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":10,"generation":7,"actor":"subagent:019f669a-596c-71e2-adb3-bd753875989d","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":11,"generation":8,"actor":"codex-closeout-audit","reason":"Exact-revision review passed after dispositioning both review-driven guard findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":12,"generation":9,"actor":"codex-closeout-audit","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}

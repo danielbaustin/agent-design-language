@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5541,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5541-gate10d2-authority-docs",
+  "title": "[v0.91.8][csdlc-v2] Align final Gate 10D2 operational guidance",
+  "body": "Closes #5541\n\nCompletes the remediation required by retrospective review of #5306 / PR #5331. The retained init skill now states final `v1_sunset` authority; the current default workflow is typed-v2-only; and Gate 10A validates all nine current skills plus the current workflow while excluding historical evidence.\n\nThe review found and drove a P1 strengthening: optional `./` is normalized, any `pr.sh` or conductor route is rejected, unauthorized `v1` text is rejected, and the exact former `bash ./adl/tools/pr.sh` command is covered by mutation proof. Three focused guidance tests, strict Clippy, formatting, and diff hygiene pass. No AWS or Spot used.",
+  "draft": true,
+  "revision": "git-blake3:844f1d99c834362061ab218bd537fbceca320d57:c3a17d64536144135571fa337d7e2f501806a8123b6ca356238fa38e2e48fdf0",
+  "commit_sha": "844f1d99c834362061ab218bd537fbceca320d57"
+}

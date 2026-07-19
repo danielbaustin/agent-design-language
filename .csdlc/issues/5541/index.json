@@ -3,13 +3,13 @@
   "issue": 5541,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "052e24c4cff26aa0a876c9dbf6153fa4defcfab8fe44e5ce3547cb681dacb8f6",
-  "phase": "reviewed",
-  "generation": 8,
-  "digest": "a7aa194ee866956094601e68460406c317f471cd5d5d2254f2aa143d1cb41e80",
+  "phase": "published",
+  "generation": 9,
+  "digest": "159f06e3f1c1cf22a3cbacf7f11afd796b4038332b37742d36246b3dbeb876aa",
   "claim": {
     "id": "claim-5541-gate10d2-authority-docs",
     "owner": "codex-closeout-audit",
-    "generation": 8,
+    "generation": 9,
     "acquired_unix_seconds": 1784426710,
     "expires_unix_seconds": 1784513110,
     "heartbeat_unix_seconds": 1784426710,
@@ -47,7 +47,17 @@
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5541,
+    "pull_request": 5568,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5568",
+    "base": "main",
+    "head": "codex/5541-gate10d2-authority-docs",
+    "revision": "git-blake3:844f1d99c834362061ab218bd537fbceca320d57:c3a17d64536144135571fa337d7e2f501806a8123b6ca356238fa38e2e48fdf0",
+    "draft": true,
+    "observed_state": "open"
+  },
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -61,34 +71,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "d92cd748b4fcf71a5e35aa58f8f93c4353841bba38d9e9864af33f6a4ffc9531",
+      "values_digest": "cd70b03fc0a5f02e50391109221e5427f2596dee97852d9dacf96d7e7060cdd2",
       "rendered_digest": "16a818e829224e92ee2b4122aa0a27483f0b953d54af7f14262b7ad96fec07a1",
       "ast_digest": "36b4b023632ff75cef23d81021629998935de1095fb917dddbabcf97ae28a929"
     },
     "stp": {
-      "values_digest": "7bdf5aab20f4525c15c5a7047c05bf02819318adbd8492a6477c7856d0f66241",
+      "values_digest": "9710667fa86683bde14f71c94ad5031b2441ee5a8ab64dee953cfeffd2024b4b",
       "rendered_digest": "1882917af1c0c9c0037afa734f45c2746ebd1cf11a714df815ef0d24a0b4b693",
       "ast_digest": "3fa58118b1cc836f56a1d36ea152a175a17b6e2480d4937ebb8b415e8aab176f"
     },
     "spp": {
-      "values_digest": "6de38e25b0f81651e5d8a72fecb5219b7a5864d78cf2b10a82b20ae5c3a62047",
+      "values_digest": "9dcd4fa5262823c56c497c68617fc596abdaf372bee6df1651aa23312ffd8719",
       "rendered_digest": "9878897a9757eab6dcf2fddc42eff9d2242098133a59e7a6b252574d93981803",
       "ast_digest": "2797712dffa5bf2f6ca77410fca9061860aa5a84b2c36a73d2929922e72825db"
     },
     "vpp": {
-      "values_digest": "0f2e24879be4ff8385bc1a55d39e19af2ef83ac0b9401e28df530a55136cb412",
+      "values_digest": "009e73435d2d29414895e6ec2f6def2c58b3bcf32d5ccd579e8fa8ab8f9a0492",
       "rendered_digest": "7d53f4529d64b264a25d20670e437f438d1799f889dd536b6b4d9070b919c8fa",
       "ast_digest": "584f798e63b64bd2b9ddf73bd51582dbd1e9a0c998a9ed416e10d4331376f006"
     },
     "srp": {
-      "values_digest": "11f4248ec05eee90ef806fed942a9a9b2310f2faad8f5656cf4c26995399dd69",
+      "values_digest": "d4a1d694eb8aed6bbfd43a1cb9a9d809ab6081e52edf4c6f6c022a0d9c576140",
       "rendered_digest": "5299f530f9fb2600ab4fb7e5e6349943c682ecfb6b30675268e0530a7ea1dc7a",
       "ast_digest": "c080985cf1eb0ac7ca20287025ad9474eb4449ac56ea4d7b6291ab70edcaf8d1"
     },
     "sor": {
-      "values_digest": "35fef82b08e3f79160613db9fc7180b15c23ee112974123a551059c41e212b9b",
-      "rendered_digest": "72d8e4444cef914dbc67e0c2ec80faab1c5f0cc22c7e12662e26a7b07c9bc938",
-      "ast_digest": "66f72c78ed3881dc743657ba8a87a436e7a7859bbe3aeead6cd1c50e994be438"
+      "values_digest": "96d63f6ece8fd9456dedf1e216ea621eca31d3ce73bfb2054ba4d08fd6565094",
+      "rendered_digest": "ab51d90e9200084feeaea16b4c3a40f5e040b0f7935270dd4e42edf121b2da98",
+      "ast_digest": "ec7efc6234329e1996e05277285ec5777cc9c2a2ab569cb38c6a2ecbead6740b"
     }
   },
   "transitions": [
@@ -119,6 +129,13 @@
       "to": "reviewed",
       "actor": "codex-closeout-audit",
       "reason": "Exact-revision review passed after dispositioning both review-driven guard findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex-closeout-audit",
+      "reason": "observed exact PR after current review"
     }
   ],
   "audit": [
@@ -198,6 +215,13 @@
       "actor": "codex-closeout-audit",
       "reason": "Exact-revision review passed after dispositioning both review-driven guard findings.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
     }
   ]
 }

@@ -64,11 +64,11 @@ Aligned the retained init skill with final v1_sunset authority and guarded all c
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: draft
 
 Merge: not_merged
 
