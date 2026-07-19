@@ -12,7 +12,7 @@ The v0.91.7 documentation entry points now describe the live closeout tail:
 
 - WP-01 through WP-17 are closed;
 - WP-17 closed through issue `#4644` and merged PR `#5539`;
-- WP-18 through WP-20 and WP-23 remain open;
+- WP-18 through WP-20, WP-21A, and WP-23 remain open;
 - WP-21 and WP-22 are closed retained planning/review work;
 - remediation `#5408` remains open and is not hidden by this alignment pass.
 
@@ -99,8 +99,8 @@ proofs. No AWS command or service was used.
 
 ## Remaining Release Tail
 
-WP-17 is closed and integrated through PR `#5539`. WP-18, WP-19, WP-20, open
-remediation `#5408`, and WP-23 retain their own gates. The sprint-review
+WP-17 is closed and integrated through PR `#5539`. WP-18, WP-19, WP-20,
+WP-21A, open remediation `#5408`, and WP-23 retain their own gates. The sprint-review
 register is owned by active WP-18 issue `#4645`; its closeout row must be
 reconciled by that lane or after its claim is released, without cross-lane
 editing. This packet does not close those gates and does not authorize v0.92

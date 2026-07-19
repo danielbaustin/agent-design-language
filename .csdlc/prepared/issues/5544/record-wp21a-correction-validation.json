@@ -1,0 +1,25 @@
+{
+  "issue": 5544,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "d1902ce1f1ea576d0e253ba35b3a8578711e2b33181444a8348209ced57c3b07",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "WP-21A #5489 was added to the release-tail open-gate truth and evidence packet after urgent operator correction.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "gh issue view 5489 --json number,title,state,labels,assignees,createdAt,updatedAt,closedAt,url,body",
+        "git diff --check",
+        "jq . docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json",
+        "jq . .csdlc/evidence/5544/live-state/github_state.json",
+        "jq . .csdlc/evidence/5544/live-state/issue_5489.json",
+        "ruby -e 'require yaml; YAML.load_file(...)'"
+      ],
+      "purpose": "Prove the corrected #5544 release-tail truth now includes open WP-21A/#5489 in the sprint register, issue wave, coverage/handoff summaries, and retained live-state evidence.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5544/live-state/issue_5489.json and .csdlc/evidence/5544/live-state/github_state.json"
+    }
+  }
+}

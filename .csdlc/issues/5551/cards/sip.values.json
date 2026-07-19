@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5551,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Repair #5527 retained terminal plan-step truth",
+    "slug": "v0-91-7-csdlc-v2-repair-5527-terminal-plan-truth",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Complete the three stale retained plan steps in closed-out issue #5527.",
+      "required_outcome": "#5527 SPP S2, S3, and S4 are completed with exact card, index, audit, and retained receipt parity.",
+      "declared_scope": [
+        "#5527 terminal plan and receipt",
+        "#5551 lifecycle records"
+      ],
+      "authority_boundary": [
+        "#5551 is the active repair authority",
+        "#5527 is the closed-out claim-free target",
+        "Only S2, S3, and S4 pending to completed are allowed"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

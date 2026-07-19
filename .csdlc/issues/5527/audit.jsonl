@@ -20,3 +20,16 @@
 {"sequence":20,"generation":15,"actor":"subagent:019f669a-596c-71e2-adb3-bd753875989d","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":21,"generation":16,"actor":"codex-closeout-audit","reason":"Exact metadata-head review is clean; substantive code and tests remain byte-identical and both fixed findings plus #5548 residual risk are restored.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":22,"generation":17,"actor":"codex-closeout-audit","reason":"Recover exact review identity after committing metadata-head review so the publication head receives current review.","operation":"recover_review"}
+{"sequence":23,"generation":17,"actor":"codex-closeout-audit","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":24,"generation":18,"actor":"subagent:019f669a-596c-71e2-adb3-bd753875989d","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
+{"sequence":25,"generation":19,"actor":"codex-closeout-audit","reason":"Exact publication-head review is clean with no findings or publication blockers; fixed findings and #5548 residual risk are retained.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":26,"generation":20,"actor":"codex-closeout-audit","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":27,"generation":21,"actor":"codex-closeout-audit","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":28,"generation":22,"actor":"codex-closeout-audit","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":29,"generation":23,"actor":"codex-closeout-audit","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":30,"generation":24,"actor":"codex-closeout-audit","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":31,"generation":25,"actor":"codex-closeout-audit","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":32,"generation":26,"actor":"codex-closeout-audit","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":33,"generation":27,"actor":"codex-closeout-audit","reason":"typed terminal plan repair authorized by issue 5551","operation":"repair_terminal_plan_step:S2"}
+{"sequence":34,"generation":28,"actor":"codex-closeout-audit","reason":"typed terminal plan repair authorized by issue 5551","operation":"repair_terminal_plan_step:S3"}
+{"sequence":35,"generation":29,"actor":"codex-closeout-audit","reason":"typed terminal plan repair authorized by issue 5551","operation":"repair_terminal_plan_step:S4"}

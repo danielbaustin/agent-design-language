@@ -1,0 +1,11 @@
+{
+  "issue": 5551,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "20f33b1eb1c14a67410cd1fb3dc78dab4129c1d3c6d937230866f9450356cc15",
+  "claim_id": "claim-5551-terminal-plan-truth",
+  "actor": "codex-closeout-audit",
+  "reason": "The records-only terminal repairs and validation are complete with no source changes.",
+  "operation": {"operation":"advance_phase","phase":"implemented"},
+  "fail_after_backup": false
+}

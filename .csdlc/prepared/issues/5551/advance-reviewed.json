@@ -1,0 +1,11 @@
+{
+  "issue": 5551,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "84ca79666c98cb60c63af5aec08dda8f156ccf2dedda5fbcbcb760e5458677d5",
+  "claim_id": "claim-5551-terminal-plan-truth",
+  "actor": "codex-closeout-audit",
+  "reason": "Exact records-only review is clean with no findings or residual risks.",
+  "operation": {"operation":"advance_phase","phase":"reviewed"},
+  "fail_after_backup": false
+}

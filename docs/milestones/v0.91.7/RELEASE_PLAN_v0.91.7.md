@@ -10,8 +10,9 @@
 ## How To Use
 
 Use this as the active release-tail checklist. WP-01 through WP-17 are closed;
-WP-17 closed through #4644 and merged PR #5539. WP-18, WP-19, WP-20, and
-WP-23 remain the live review, remediation, and ceremony gates. This document
+WP-17 closed through #4644 and merged PR #5539. WP-18, WP-19, WP-20, WP-21A,
+and WP-23 remain the live review, remediation, planning, and ceremony gates.
+This document
 does not publish a release by itself, and its output must pass through the
 reviewed [v0.91.8 bridge](../v0.91.8/README.md) before v0.92 consumption.
 

@@ -16,3 +16,7 @@
 {"sequence":16,"generation":9,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":17,"generation":10,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":18,"generation":11,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"Advance after the bounded current-head metadata review found no actionable findings and retained the substantive f873efb34 review as the implementation authority.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":19,"generation":12,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"Operator identified omitted open WP-21A/#5489 after the prior reviewed revision; recover review state for the corrected exact head.","operation":"recover_review"}
+{"sequence":20,"generation":12,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":21,"generation":13,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
+{"sequence":22,"generation":14,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"The corrected exact-revision review confirms WP-21A/#5489 is represented consistently and found no remaining actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}

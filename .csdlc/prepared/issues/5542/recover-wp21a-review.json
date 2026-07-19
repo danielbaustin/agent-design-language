@@ -1,0 +1,8 @@
+{
+  "issue": 5542,
+  "expected_generation": 11,
+  "expected_digest": "246efc7ca8a08c35db02ab6a31e31c3ff1bfe9131358babf8c7cd2a1fb4f9560",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Operator identified omitted open WP-21A/#5489 after the prior reviewed revision; recover review state for the corrected exact head."
+}

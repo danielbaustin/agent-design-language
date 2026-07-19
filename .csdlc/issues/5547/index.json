@@ -1,0 +1,238 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5547,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "51ffcc86c4288f3ab50aec7beb0a0134d2a6763b0a025f7f74fd4c6acb4f0bc6",
+  "phase": "published",
+  "generation": 8,
+  "digest": "c9e004a83a52b48efda25a9bb82c23ba40bff07cf058e41340ad038c7199f4fa",
+  "claim": {
+    "id": "claim-5547-csdlc-identity-ownership-residuals",
+    "owner": "codex:root",
+    "generation": 8,
+    "acquired_unix_seconds": 1784419946,
+    "expires_unix_seconds": 1784506346,
+    "heartbeat_unix_seconds": 1784419946,
+    "branch": "codex/5547-csdlc-identity-ownership-residuals",
+    "worktree": ".worktrees/adl-wp-5547",
+    "protected_paths": [
+      "docs/reviews/v0.91.7/review-fixes-5547",
+      "docs/architecture/csdlc-v2",
+      "csdlc-v2/src/publication.rs",
+      "csdlc-v2/src/git.rs",
+      "csdlc-v2/src/bin/csdlc-review.rs",
+      "csdlc-v2/src/bin/csdlc-publish.rs"
+    ],
+    "purpose": "Disposition C-SDLC review identity and ownership-split residuals from IR-4645-011 and IR-4645-012"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:019f77ca-4728-7271-b9c9-3b536e5e880e",
+    "assigned_by": "codex:root",
+    "revision": "git-blake3:f318b425ea09068c2a69fd78f89cfcc0ca1cde87:678f39122fd919313f76e28840f4d59e240d83830a1e3313bfbfd39afd12a12f",
+    "scope": [
+      "csdlc-v2/src/git.rs",
+      "csdlc-v2/tests/gate5.rs",
+      "docs/reviews/v0.91.7/review-fixes-5547",
+      ".csdlc/issues/5547",
+      ".csdlc/prepared/issues/5547"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f77ca-4728-7271-b9c9-3b536e5e880e",
+    "scope": [
+      "csdlc-v2/src/git.rs",
+      "csdlc-v2/tests/gate5.rs",
+      "docs/reviews/v0.91.7/review-fixes-5547",
+      ".csdlc/issues/5547",
+      ".csdlc/prepared/issues/5547"
+    ],
+    "reviewed_revision": "git-blake3:f318b425ea09068c2a69fd78f89cfcc0ca1cde87:678f39122fd919313f76e28840f4d59e240d83830a1e3313bfbfd39afd12a12f",
+    "findings": [
+      {
+        "id": "SUBAGENT-5547-001",
+        "severity": "p3",
+        "summary": "Initial regression test missed in-scope untracked files; fixed by adding docs/new.md assertion.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:f318b425ea09068c2a69fd78f89cfcc0ca1cde87:678f39122fd919313f76e28840f4d59e240d83830a1e3313bfbfd39afd12a12f",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Complex Git pathspec magic/no-match cases remain dependent on Git behavior and are outside the focused #5547 proof."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5547,
+    "pull_request": 5554,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5554",
+    "base": "main",
+    "head": "codex/5547-csdlc-identity-ownership-residuals",
+    "revision": "git-blake3:cc5f6ce984d0586ee8828415e85861b76986da49:c355990846b1aaab19c441d8f27e29e8ca96ffdbee14d8cc314249ad058c3835",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5547/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5547/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:root",
+      "revision": "0206fe7bcd87b35f0d9da1150602e4e992fb42b312a4328012264ea399d6842b"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "bb911088656e4392cd39565ef5b2d33fd509a792687ebf62a59053e6856d0f99",
+      "rendered_digest": "cafbd8469f647ba253e674e2eec9c7971efd0959b372cced0e69536cf8f2c47d",
+      "ast_digest": "b9ec28b92871cbcb1929428f54e5da69d30f2c505119599366f24f648ebb2d69"
+    },
+    "stp": {
+      "values_digest": "64f93d186289ca42130b36ec66f8eaad52a222f58be9c4c8789d7f8a0ee87311",
+      "rendered_digest": "eb21681baedfd097bbf233ae30698791dd8086069eb485cf869ada1d789690af",
+      "ast_digest": "4e48ca298ace221a33bf8dcc4898103a4af91531859ff0eca5a14ef1066ed0fe"
+    },
+    "spp": {
+      "values_digest": "c64fac8a587a4388e6fcbb28e5f6feb0f074f6923a45d81a499ab1885384462f",
+      "rendered_digest": "7b90f92b60ec548a42d6bf68b5bef22511588201122625a270d7824b572f5b4b",
+      "ast_digest": "1fdf2bba2301a378ed35a4c2b51512e7d290f37bf2d0f2c2e0d4319e3be2230c"
+    },
+    "vpp": {
+      "values_digest": "1f9abfb12dbca3be7eefcdaeb9741b8f77f8239f28e4cb69d99e8894c366b4ba",
+      "rendered_digest": "82c8a6a96bf08f484728dc758d7528ddf2cc31e11db143058c3b18aa1046561a",
+      "ast_digest": "96ae70e03e72c05c155db744b3182463b174a259fe576945517ad357a55e1c85"
+    },
+    "srp": {
+      "values_digest": "cc37414ff967f75daec47c5973364c7a8d4f83b966c769b3446054e57548390e",
+      "rendered_digest": "1b9e94acef72886995a46d3021d7c27bdd90430259f78b1ac2d4809fb71e7dce",
+      "ast_digest": "fab13bf16ad6a77ba1ebc7802e1d337f11b0e495b07a94281b6adb6d93efcbf4"
+    },
+    "sor": {
+      "values_digest": "dca0d7f16cdf2cb890073edb2f90b3977a043d2031a1cee1a5e737caf51c8a91",
+      "rendered_digest": "74c9c34910a21798174a93008907d3d4298e77d1a8a457598a2d672f753a265f",
+      "ast_digest": "90a9ebbb13335a29cabb98de5fbac11d688142c76e0ceb5ec666bd0569946fe5"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:root",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:root",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:root",
+      "reason": "advance #5547 after scoped identity implementation, ownership residual plan, and focused validation"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:root",
+      "reason": "advance #5547 after bounded subagent review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:root",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:root",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:root",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:root",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:root",
+      "reason": "record #5547 implementation and ownership residual plan",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented scope-aware C-SDLC substantive revision identity and recorded the IR-4645-012 ownership-first split plan.\",\"changes\":[\"csdlc-v2/src/git.rs now applies the declared review scope pathspec to tracked diff and untracked-file hashing.\",\"csdlc-v2/tests/gate5.rs adds a regression proving out-of-scope dirty files do not stale scoped review identity while in-scope changes do.\",\"docs/reviews/v0.91.7/review-fixes-5547/CSDLC_IDENTITY_AND_OWNERSHIP_RESIDUALS_5547.md records the #5547 disposition and v0.91.8 ownership split routing.\"],\"artifacts\":[\"csdlc-v2/src/git.rs\",\"csdlc-v2/tests/gate5.rs\",\"docs/reviews/v0.91.7/review-fixes-5547/CSDLC_IDENTITY_AND_OWNERSHIP_RESIDUALS_5547.md\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:root",
+      "reason": "record focused #5547 scoped revision regression proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"substantive_revision_honors_review_scope_pathspecs\"],\"purpose\":\"Focused proof that C-SDLC substantive review identity honors declared review scope pathspecs.\",\"outcome\":\"passed\",\"evidence_ref\":\"Local run in .worktrees/adl-wp-5547 with TMPDIR=.adl/tmp/5547 and CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5547/csdlc-v2-target; 1 matching test passed.\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:root",
+      "reason": "record #5547 C-SDLC review publication gate proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate5\"],\"purpose\":\"Validate the surrounding C-SDLC review/publication guard behavior after scoped revision identity change.\",\"outcome\":\"passed\",\"evidence_ref\":\"Local run in .worktrees/adl-wp-5547 with TMPDIR=.adl/tmp/5547 and CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5547/csdlc-v2-target; gate5 passed 13 tests.\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:root",
+      "reason": "advance #5547 after scoped identity implementation, ownership residual plan, and focused validation",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:root",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:root",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:root",
+      "reason": "advance #5547 after bounded subagent review passed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:root",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

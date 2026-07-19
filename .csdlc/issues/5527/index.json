@@ -3,19 +3,155 @@
   "issue": 5527,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b39cf9f23e29cee6b0210b71f27cb741da4101fc49585ca4be7c8eb7a86b8f68",
-  "phase": "implemented",
-  "generation": 17,
-  "digest": "c20ad572df68d473d7b2f118e44230c9ed00e9c6df9941a384cde5a360802ce3",
-  "claim": {
-    "id": "claim-5527-terminal-sor-artifact-repair",
-    "owner": "codex-closeout-audit",
-    "generation": 17,
-    "acquired_unix_seconds": 1784418712,
-    "expires_unix_seconds": 1784505112,
-    "heartbeat_unix_seconds": 1784418712,
-    "branch": "codex/5527-terminal-sor-artifact-repair",
-    "worktree": ".",
-    "protected_paths": [
+  "phase": "closed_out",
+  "generation": 29,
+  "digest": "d17d0b4fbfdd0ca0ab5ce69156fd6dad9351f411e5390572eed983d465203fd2",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+    "assigned_by": "codex-closeout-audit",
+    "revision": "git-blake3:c696e2787103a3d0c919661a0fd13c92c9acb26b:c96ee4a6db3699908acb31cbcec78d83fe33008710da8775952a56ba03cdcf8e",
+    "scope": [
+      ".csdlc/issues/5390",
+      ".csdlc/issues/5527",
+      ".csdlc/prepared/issues/5527",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/model.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+    "scope": [
+      ".csdlc/issues/5390",
+      ".csdlc/issues/5527",
+      ".csdlc/prepared/issues/5527",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/model.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "reviewed_revision": "git-blake3:c696e2787103a3d0c919661a0fd13c92c9acb26b:c96ee4a6db3699908acb31cbcec78d83fe33008710da8775952a56ba03cdcf8e",
+    "findings": [
+      {
+        "id": "F-5527-1",
+        "severity": "p1",
+        "summary": "Initial VPP named a nonexistent standalone test target instead of the implemented Gate 7 test.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:c696e2787103a3d0c919661a0fd13c92c9acb26b:c96ee4a6db3699908acb31cbcec78d83fe33008710da8775952a56ba03cdcf8e",
+        "route": null
+      },
+      {
+        "id": "F-5527-2",
+        "severity": "p1",
+        "summary": "The first corrected VPP argv depended on an unstated subdirectory working directory.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:c696e2787103a3d0c919661a0fd13c92c9acb26b:c96ee4a6db3699908acb31cbcec78d83fe33008710da8775952a56ba03cdcf8e",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "The pre-existing non-Git Gate 2 fixture failures discovered by the full suite are routed to #5548; focused Gate 7, Clippy, formatting, and doctor proofs pass for this bounded change."
+    ],
+    "completed": true,
+    "non_substantive_proof": {
+      "policy": "metadata_only_review_projection",
+      "from_revision": "git-blake3:d1b858942bc8130f03fb26d5f66f6834721816c7:1d70024e040109803c96950722bc2a255acb134fce7e1d5249f297094b719d06",
+      "to_revision": "git-blake3:c696e2787103a3d0c919661a0fd13c92c9acb26b:c96ee4a6db3699908acb31cbcec78d83fe33008710da8775952a56ba03cdcf8e",
+      "from_commit": "d1b858942bc8130f03fb26d5f66f6834721816c7",
+      "to_commit": "c696e2787103a3d0c919661a0fd13c92c9acb26b",
+      "changed_paths": [
+        ".csdlc/issues/5527/audit.jsonl",
+        ".csdlc/issues/5527/cards/sip.values.json",
+        ".csdlc/issues/5527/cards/sor.md",
+        ".csdlc/issues/5527/cards/sor.values.json",
+        ".csdlc/issues/5527/cards/spp.values.json",
+        ".csdlc/issues/5527/cards/srp.md",
+        ".csdlc/issues/5527/cards/srp.values.json",
+        ".csdlc/issues/5527/cards/stp.values.json",
+        ".csdlc/issues/5527/cards/vpp.values.json",
+        ".csdlc/issues/5527/index.json",
+        ".csdlc/prepared/issues/5527/advance-metadata-reviewed.json",
+        ".csdlc/prepared/issues/5527/advance-reviewed.json",
+        ".csdlc/prepared/issues/5527/assign-metadata-review.json",
+        ".csdlc/prepared/issues/5527/assign-review.json",
+        ".csdlc/prepared/issues/5527/record-metadata-review.json",
+        ".csdlc/prepared/issues/5527/record-review.json",
+        ".csdlc/prepared/issues/5527/recover-publication-review.json",
+        ".csdlc/prepared/issues/5527/recover-review.json"
+      ]
+    }
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5527,
+    "pull_request": 5550,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5550",
+    "base": "main",
+    "head": "codex/5527-terminal-sor-artifact-repair",
+    "revision": "git-blake3:c696e2787103a3d0c919661a0fd13c92c9acb26b:c96ee4a6db3699908acb31cbcec78d83fe33008710da8775952a56ba03cdcf8e",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5550,
+    "head_sha": "c696e2787103a3d0c919661a0fd13c92c9acb26b",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29666883850/job/88138804889"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29666883850/job/88138765240"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29666883850/job/88138744700"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29666883850/job/88138730037"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29666883850/job/88138744694"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5550,
+    "disposition": "merged",
+    "observed_sha": "c696e2787103a3d0c919661a0fd13c92c9acb26b",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5527.json",
+    "released_branch": "codex/5527-terminal-sor-artifact-repair",
+    "released_worktree": ".",
+    "released_protected_paths": [
       ".csdlc/issues/5390",
       ".csdlc/issues/5527",
       ".csdlc/prepared/issues/5527",
@@ -24,14 +160,8 @@
       "csdlc-v2/src/store.rs",
       "csdlc-v2/tests/gate7_lifecycle.rs",
       "csdlc-v2/tests/gate7_terminal_sor_artifact_repair_5527.rs"
-    ],
-    "purpose": "Add atomic typed terminal SOR artifact-reference repair and correct #5390"
+    ]
   },
-  "review_assignment": null,
-  "review": null,
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5527/design.md",
   "diagram_path": ".csdlc/prepared/issues/5527/diagram.mmd",
@@ -43,34 +173,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "375f8bcf63dd2129fec5d1cef9169e87c99100e1746a7ea190a9d48771def4da",
+      "values_digest": "d41495acdccd44d4be33ed1b88e287cb0718f40bd01f5cf9d7122fb67f7167e0",
       "rendered_digest": "2fcef2c8a671de6df948e1f090a4bbd6009874b2e7a24fcf753fbc7f7e985412",
       "ast_digest": "95f89c615430c3d6d0d9cd545ef5fc0287b1d0189dbc35d7d936d0ec23e529a7"
     },
     "stp": {
-      "values_digest": "6856df525686a411e339ff5ac298ac0a8f27ffa6ad4099c2b0c15d34eb009bbe",
+      "values_digest": "39c1d73544621083287d5c2ac3a8091c3b4bd51970e2b8031d9b184699c4fa6b",
       "rendered_digest": "9f27ff1f7dd70941fa6a040092d128da0790cbc47e17f415bb193c6ee10755b1",
       "ast_digest": "96e122a7bf67f79354b616ba86217d6604c5a4eafd529705f7635a456fc07f45"
     },
     "spp": {
-      "values_digest": "64c9ababb309f732b3d928668385e406573b3655951d225d11ff887cfc665183",
-      "rendered_digest": "78c9cb6b20aa9628a0cb614ac17e3a8b4b9c68c2a75afaf0c3505f2ed3666997",
-      "ast_digest": "f6d99558828ae87f281ac1e5768ad2a0b42fb300c7afc5ebed5ebab950a5d8bc"
+      "values_digest": "4ac991f22e98f1b0b02ecc5f877019e98a4a05545d25600fd3375d2e7b9cf0c7",
+      "rendered_digest": "611448eee041ac03dd0ccb27f988f38a18e0aa14002c52d59c7eeefd23230092",
+      "ast_digest": "e824772d1c1c3b1f35930cdd47ad7ffd74b8d31bc08123051aa0dcf9d7fb5c71"
     },
     "vpp": {
-      "values_digest": "315269cf75c089e93b2680d9c055775774fdc5345bea83d64da7e7ea4662c721",
+      "values_digest": "c545480f60f6eeabda3782a07f3fc03dab0641c98e39b45752d549e08b0795c5",
       "rendered_digest": "e33d36e45faa63e361f3cdd612c8fcff169d3949afbb54e97fbe73091f37ea35",
       "ast_digest": "95001bf7b86c4778b0f0a1c5323ec44a17b7956e0ce88c85107d8c0fc75b5094"
     },
     "srp": {
-      "values_digest": "98ac8fb1b86bf36e27a1e8fcfbf17bbcff515f0a7552fbb6aba5f928423f0fd1",
-      "rendered_digest": "0b194bc35e71e0a9e99270351bb478704ac3db56fa7fbb3c48671fcfcbe4f681",
-      "ast_digest": "52b87827dee4561e49b2c4c0d60f2312260b7d368738a2121cd5ea22659277df"
+      "values_digest": "cf9e991c3903c351dadb722d7a8c1d166350ed5238122cd12dda5488b99778e8",
+      "rendered_digest": "0cf31c4a50591a33c0c80e6dcd9f7b7f1bf758053074c7b66c757c87005e8457",
+      "ast_digest": "11f5f81d3eef48e62ce30c18b6cdc27a9243dc569dfda495e976b35bff6e91a9"
     },
     "sor": {
-      "values_digest": "3129e5f22a6d3bfd180e5feb6ff9d40be22e0d0a3c0f3bfce71e81a6c972af2a",
-      "rendered_digest": "49488c3bac69396ef11f5eb8e3299daa13d6da5844637a18a36ca86653cf3330",
-      "ast_digest": "5520218c2498b1ad75bd711c1d7deae471e3d1fe1d999104dd3b9fd9afbfd15d"
+      "values_digest": "74c504dfd1f986d4f556e6b42f0bafdbae1f2d1c405513d546c0cd691a110008",
+      "rendered_digest": "305927299b14af0a842ae3326269de4d616c9800e2976b9513935dbec9b4f4ff",
+      "ast_digest": "70e959271f6eca30d7173ff2adb313e71a672b3ffc50a79ce795e30839565c0e"
     }
   },
   "transitions": [
@@ -122,6 +252,55 @@
       "to": "implemented",
       "actor": "codex-closeout-audit",
       "reason": "Recover exact review identity after committing metadata-head review so the publication head receives current review."
+    },
+    {
+      "sequence": 8,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex-closeout-audit",
+      "reason": "Exact publication-head review is clean with no findings or publication blockers; fixed findings and #5548 residual risk are retained."
+    },
+    {
+      "sequence": 9,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex-closeout-audit",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 10,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex-closeout-audit",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 11,
+      "from": "merge_ready",
+      "to": "published",
+      "actor": "codex-closeout-audit",
+      "reason": "latest remote observation revoked merge readiness"
+    },
+    {
+      "sequence": 12,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex-closeout-audit",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 13,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex-closeout-audit",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 14,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex-closeout-audit",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -278,6 +457,97 @@
       "actor": "codex-closeout-audit",
       "reason": "Recover exact review identity after committing metadata-head review so the publication head receives current review.",
       "operation": "recover_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex-closeout-audit",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex-closeout-audit",
+      "reason": "Exact publication-head review is clean with no findings or publication blockers; fixed findings and #5548 residual risk are retained.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 29,
+      "generation": 23,
+      "actor": "codex-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 30,
+      "generation": 24,
+      "actor": "codex-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 31,
+      "generation": 25,
+      "actor": "codex-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 32,
+      "generation": 26,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 33,
+      "generation": 27,
+      "actor": "codex-closeout-audit",
+      "reason": "typed terminal plan repair authorized by issue 5551",
+      "operation": "repair_terminal_plan_step:S2"
+    },
+    {
+      "sequence": 34,
+      "generation": 28,
+      "actor": "codex-closeout-audit",
+      "reason": "typed terminal plan repair authorized by issue 5551",
+      "operation": "repair_terminal_plan_step:S3"
+    },
+    {
+      "sequence": 35,
+      "generation": 29,
+      "actor": "codex-closeout-audit",
+      "reason": "typed terminal plan repair authorized by issue 5551",
+      "operation": "repair_terminal_plan_step:S4"
     }
   ]
 }

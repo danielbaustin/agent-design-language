@@ -7,7 +7,7 @@
     "title": "[v0.91.7][csdlc-v2][closeout] Normalize SOR artifact refs during terminal reconciliation",
     "slug": "v0-91-7-csdlc-v2-terminal-sor-artifact-repair",
     "version": "v0.91.7",
-    "generation": 17
+    "generation": 29
   },
   "status": "ready",
   "content": {

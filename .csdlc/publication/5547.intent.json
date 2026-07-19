@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5547,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5547-csdlc-identity-ownership-residuals",
+  "title": "[v0.91.7][WP-20] Fix C-SDLC scoped review identity",
+  "body": "## Summary\n\nCloses #5547.\n\n- Make C-SDLC substantive review revision identity honor declared review scope pathspecs.\n- Add focused gate5 regression coverage for out-of-scope tracked/untracked files and in-scope tracked/untracked files.\n- Record the IR-4645-012 ownership-first split plan and v0.91.8 deferral truth.\n\n## Validation\n\n- `TMPDIR=.adl/tmp/5547 CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5547/csdlc-v2-target cargo test --manifest-path csdlc-v2/Cargo.toml substantive_revision_honors_review_scope_pathspecs`\n- `TMPDIR=.adl/tmp/5547 CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5547/csdlc-v2-target cargo test --manifest-path csdlc-v2/Cargo.toml --test gate5`\n- `/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor --repo . --issue 5547`\n\n## Review\n\nBounded subagent review found one P3 missing-test issue; it was fixed and rechecked with no remaining actionable findings.",
+  "draft": true,
+  "revision": "git-blake3:cc5f6ce984d0586ee8828415e85861b76986da49:c355990846b1aaab19c441d8f27e29e8ca96ffdbee14d8cc314249ad058c3835",
+  "commit_sha": "cc5f6ce984d0586ee8828415e85861b76986da49"
+}

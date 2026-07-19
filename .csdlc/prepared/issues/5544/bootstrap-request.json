@@ -1,0 +1,206 @@
+{
+  "issue": 5544,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5544/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5544/diagram.mmd",
+  "design_reviewer": "codex-prep",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+    "owner": "codex:issue-5544",
+    "generation": 0,
+    "acquired_unix_seconds": 1784419797,
+    "expires_unix_seconds": 1785024597,
+    "heartbeat_unix_seconds": 1784419797,
+    "branch": "codex/5544-v0917-release-truth-gates",
+    "worktree": ".worktrees/adl-wp-5544",
+    "protected_paths": [
+      ".csdlc/issues/5544",
+      ".csdlc/prepared/issues/5544",
+      ".csdlc/evidence/5544"
+    ],
+    "purpose": "Reconcile v0.91.7 review truth and external-review gates without claiming release readiness"
+  },
+  "initial": {
+    "title": "[v0.91.7][WP-20][review-fix] Reconcile release truth and external-review gates",
+    "slug": "v0-91-7-wp20-release-truth-gates",
+    "version": "v0.91.7",
+    "goal": "Reconcile the v0.91.7 sprint review register and WP-19 external-review handoff to current live GitHub and C-SDLC truth after #4645.",
+    "required_outcome": "The canonical review register, handoff status, and retained #5544 evidence agree on which findings are fixed, existing-owner-routed, blocked, or explicitly residual before WP-19.",
+    "declared_scope": [
+      "v0.91.7 review truth for WP-14 through WP-18",
+      "WP-19 external-review gate wording",
+      "#4645 findings IR-4645-002, IR-4645-003, and IR-4645-005",
+      "Existing-owner routing for #5408 and #5527",
+      "#4644 terminal projection reconciliation if needed to release stale register ownership"
+    ],
+    "authority_boundary": [
+      "#5544 owns release-truth and handoff reconciliation under #4647",
+      "#5408 remains the WP-07 terminal owner",
+      "#5527 remains the SOR artifact reference repair owner",
+      "#5544 may consume live GitHub and typed C-SDLC state but does not override unresolved owners"
+    ],
+    "task_boundary": "Repair review-truth and external-review gate artifacts only; do not start external review or approve release readiness.",
+    "deliverables": [
+      "Refreshed sprint review register entries",
+      "Refreshed WP-19 external-review handoff status",
+      "Retained #5544 live-state evidence packet",
+      "Typed lifecycle records and validation evidence"
+    ],
+    "acceptance_criteria": [
+      "AC-1: The canonical v0.91.7 sprint review register reflects current live GitHub and C-SDLC truth for WP-14 through WP-18",
+      "AC-2: #5404, #5413, #5527, #5408, and active closeout/audit PR truth are represented without premature release-readiness claims",
+      "AC-3: The WP-19 external-review handoff is explicitly blocked, ready, or conditionally ready based on current P1/P2 remediation state",
+      "AC-4: Existing-owner findings are routed without duplicate ownership",
+      "AC-5: Retained validation and live-state evidence support every refreshed state claim"
+    ],
+    "dependencies": [
+      "#4645 internal review packet / PR #5543",
+      "#4647 WP-20 remediation owner",
+      "#5408 WP-07 terminal blocker",
+      "#5527 terminal SOR artifact repair"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
+      "docs/reviews/v0.91.7/internal-review-4645/FINDINGS_REGISTER.md",
+      ".csdlc/issues/4644/index.json",
+      ".csdlc/issues/5404/index.json",
+      ".csdlc/issues/5413/index.json"
+    ],
+    "non_goals": [
+      "Do not close #5408 or #5527",
+      "Do not perform runtime, provider, or security code remediation",
+      "Do not approve v0.91.7 release readiness",
+      "Do not start WP-19 external review",
+      "Do not use AWS"
+    ],
+    "plan_summary": "Bind #5544, reconcile stale closed-owner lifecycle truth if required, capture live state, refresh the review register and handoff, validate, review, and publish.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Bind #5544 with minimal non-overlapping lifecycle ownership",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Materialize closed #4644 terminal authority if it still blocks register ownership",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Capture live GitHub and C-SDLC state for WP-14 through WP-18 and named blocker issues",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Refresh register and handoff artifacts with evidence-bound blocked/ready truth",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S5",
+        "action": "Validate, review, and prepare publication without release-readiness overclaim",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-5"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "No tracked implementation work on main",
+      "Generated cards remain binary-owned",
+      "External review is not started by this issue",
+      "Release readiness is not inferred",
+      "AWS is not used"
+    ],
+    "risks": [
+      "The #4645 review packet may still be pending merge when #5544 starts",
+      "Closed issue projections may retain stale claims until terminal reconciliation runs",
+      "Live GitHub state can change while the review register is being refreshed",
+      "A register update can accidentally imply release readiness"
+    ],
+    "planning_profile": "medium",
+    "stop_conditions": [
+      "#5544 cannot acquire non-overlapping lifecycle ownership",
+      "The review register cannot be claimed because a live issue still owns it",
+      "Live state contradicts the intended handoff status and cannot be represented truthfully",
+      "The work would require AWS, runtime/provider code remediation, or WP-19 execution"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "csdlc-doctor-5544",
+        "proof_role": "Validate typed C-SDLC issue state and generated cards",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 300,
+        "budget_tokens": 3000,
+        "argv": [
+          ".adl/bin/csdlc-v2/csdlc-doctor",
+          "--repo",
+          ".",
+          "--issue",
+          "5544"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      },
+      {
+        "lane": "diff-hygiene",
+        "proof_role": "Check edited artifacts for whitespace and patch hygiene",
+        "acceptance_ids": [
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "parallel_group": "local",
+        "defer_reason": "Run after execution artifacts are written"
+      }
+    ],
+    "failure_policy": "Fail closed on stale live truth, unresolved ownership collision, missing evidence, or release-readiness overclaim.",
+    "review_prompts": [
+      "Does #5544 preserve existing ownership for #5408 and #5527?",
+      "Does the refreshed register match live GitHub and C-SDLC state?",
+      "Does the handoff avoid starting WP-19 or approving release readiness?",
+      "Are every blocked, residual, and existing-owner state backed by retained evidence?"
+    ]
+  }
+}

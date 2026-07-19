@@ -1,0 +1,19 @@
+{
+  "issue": 5551,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "5a304c85420b46b5a7455e32caa112f1e90adcfb700655d3c9f727eb31f5bd1a",
+  "claim_id": "claim-5551-terminal-plan-truth",
+  "actor": "codex-closeout-audit",
+  "reason": "#5527 and #5551 typed doctors pass with exact completed steps and receipt parity.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-doctor", "--issue", "5527"],
+      "purpose": "Prove #5527 remains closed out with S1-S4 completed and exact retained receipt parity",
+      "outcome": "passed",
+      "evidence_ref": "#5527 generation 29 record digest d17d0b4f; receipt digest 91acffee; #5527 and #5551 doctor reports pass"
+    }
+  },
+  "fail_after_backup": false
+}

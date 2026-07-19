@@ -1,0 +1,22 @@
+{
+  "issue": 5544,
+  "base_branch": "main",
+  "branch": "codex/5544-v0917-release-truth-gates",
+  "worktree": ".worktrees/adl-wp-5544",
+  "claim": {
+    "id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+    "owner": "codex:issue-5544",
+    "generation": 0,
+    "acquired_unix_seconds": 1784419797,
+    "expires_unix_seconds": 1785024597,
+    "heartbeat_unix_seconds": 1784419797,
+    "branch": "codex/5544-v0917-release-truth-gates",
+    "worktree": ".worktrees/adl-wp-5544",
+    "protected_paths": [
+      ".csdlc/issues/5544",
+      ".csdlc/prepared/issues/5544",
+      ".csdlc/evidence/5544"
+    ],
+    "purpose": "Reconcile v0.91.7 review truth and external-review gates without claiming release readiness"
+  }
+}

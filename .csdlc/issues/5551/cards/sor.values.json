@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5551,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Repair #5527 retained terminal plan-step truth",
+    "slug": "v0-91-7-csdlc-v2-repair-5527-terminal-plan-truth",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Advance only #5527 SPP S2, S3, and S4 to completed and atomically refresh its terminal receipt after each exact repair.",
+      "actual_changes": [
+        "Repair #5527 S2-S4 from pending to completed",
+        "Regenerate #5527 card identities, audit, generation, and digests",
+        "Replace #5527 retained receipt atomically after each step"
+      ],
+      "artifacts": [
+        ".csdlc/issues/5527",
+        ".csdlc/issues/5551",
+        ".csdlc/prepared/issues/5551"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "csdlc-doctor",
+            "--issue",
+            "5527"
+          ],
+          "purpose": "Prove #5527 remains closed out with S1-S4 completed and exact retained receipt parity",
+          "outcome": "passed",
+          "evidence_ref": "#5527 generation 29 record digest d17d0b4f; receipt digest 91acffee; #5527 and #5551 doctor reports pass"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

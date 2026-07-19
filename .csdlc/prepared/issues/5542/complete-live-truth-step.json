@@ -5,7 +5,7 @@
   "expected_digest": "389a7b18a5fa1b7a75ffdca1abba4208e71f2e3e635c05931993cb221c41c366",
   "claim_id": "claim-5542-wp17-closeout-truth",
   "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-  "reason": "Confirmed live GitHub truth that issue #4644 is closed, PR #5539 is merged, WP-18/WP-19/WP-20/WP-23 remain gates, and active #4645 owns the sprint-review register.",
+  "reason": "Confirmed live GitHub truth that issue #4644 is closed, PR #5539 is merged, WP-18/WP-19/WP-20/WP-21A/WP-23 remain gates, and active #5544 owns the sprint-review register repair.",
   "operation": {
     "operation": "update_plan_step",
     "step_id": "S1",

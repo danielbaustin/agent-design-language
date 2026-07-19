@@ -1,0 +1,502 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5544,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "3cb107cf091a604d64ad723f767c71c0dfd71375a7971dc0584c32af392f0a19",
+  "phase": "published",
+  "generation": 20,
+  "digest": "2b262d023975cf84aafbd4c501d6b32979530718675414bdca1a982ef5f79436",
+  "claim": {
+    "id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+    "owner": "codex:issue-5544",
+    "generation": 20,
+    "acquired_unix_seconds": 1784419797,
+    "expires_unix_seconds": 1785024597,
+    "heartbeat_unix_seconds": 1784419797,
+    "branch": "codex/5544-v0917-release-truth-gates",
+    "worktree": ".worktrees/adl-wp-5544",
+    "protected_paths": [
+      ".csdlc/evidence/5544",
+      ".csdlc/issues/4644",
+      ".csdlc/issues/5544",
+      ".csdlc/prepared/issues/4644/reconcile-terminal-from-5544.json",
+      ".csdlc/prepared/issues/5544",
+      "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/milestones/v0.91.7/review/V0917_WP18_INTERNAL_REVIEW_4645.md",
+      "docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_5544"
+    ],
+    "purpose": "Reconcile v0.91.7 review truth and external-review gates without claiming release readiness"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:019f77d3-f77f-7161-9f58-6503d284cdc5",
+    "assigned_by": "codex:issue-5544",
+    "revision": "git-blake3:153f268e1c8926a05189cca1dd1f58ab08eb0a2d:68f798257791fee4d91c7725b75474db77eb70f881ae76a5117e79834806acf4",
+    "scope": [
+      ".csdlc/evidence/5544/live-state/github_state.json",
+      ".csdlc/evidence/5544/live-state/issue_4647.json",
+      ".csdlc/evidence/5544/live-state/issue_5408.json",
+      ".csdlc/evidence/5544/live-state/issue_5489.json",
+      ".csdlc/evidence/5544/live-state/issue_5527.json",
+      ".csdlc/evidence/5544/live-state/pr_5419.json",
+      ".csdlc/evidence/5544/live-state/pr_5539.json",
+      ".csdlc/evidence/5544/live-state/pr_5543.json",
+      ".csdlc/issues/4644/audit.jsonl",
+      ".csdlc/issues/4644/cards/sip.values.json",
+      ".csdlc/issues/4644/cards/sor.md",
+      ".csdlc/issues/4644/cards/sor.values.json",
+      ".csdlc/issues/4644/cards/spp.md",
+      ".csdlc/issues/4644/cards/spp.values.json",
+      ".csdlc/issues/4644/cards/srp.md",
+      ".csdlc/issues/4644/cards/srp.values.json",
+      ".csdlc/issues/4644/cards/stp.values.json",
+      ".csdlc/issues/4644/cards/vpp.md",
+      ".csdlc/issues/4644/cards/vpp.values.json",
+      ".csdlc/issues/4644/index.json",
+      ".csdlc/issues/4644/retained/design.md",
+      ".csdlc/issues/4644/retained/diagram.mmd",
+      ".csdlc/issues/5544/audit.jsonl",
+      ".csdlc/issues/5544/cards/sip.md",
+      ".csdlc/issues/5544/cards/sip.values.json",
+      ".csdlc/issues/5544/cards/sor.md",
+      ".csdlc/issues/5544/cards/sor.values.json",
+      ".csdlc/issues/5544/cards/spp.md",
+      ".csdlc/issues/5544/cards/spp.values.json",
+      ".csdlc/issues/5544/cards/srp.md",
+      ".csdlc/issues/5544/cards/srp.values.json",
+      ".csdlc/issues/5544/cards/stp.md",
+      ".csdlc/issues/5544/cards/stp.values.json",
+      ".csdlc/issues/5544/cards/vpp.md",
+      ".csdlc/issues/5544/cards/vpp.values.json",
+      ".csdlc/issues/5544/index.json",
+      ".csdlc/prepared/issues/4644/reconcile-terminal-from-5544.json",
+      ".csdlc/prepared/issues/5544/advance-implemented.json",
+      ".csdlc/prepared/issues/5544/advance-reviewed.json",
+      ".csdlc/prepared/issues/5544/advance-wp21a-correction-reviewed.json",
+      ".csdlc/prepared/issues/5544/amend-review-truth-scope.json",
+      ".csdlc/prepared/issues/5544/assign-pre-pr-review.json",
+      ".csdlc/prepared/issues/5544/assign-wp21a-correction-review.json",
+      ".csdlc/prepared/issues/5544/bind-request.json",
+      ".csdlc/prepared/issues/5544/bootstrap-request.json",
+      ".csdlc/prepared/issues/5544/complete-S1.json",
+      ".csdlc/prepared/issues/5544/complete-S2.json",
+      ".csdlc/prepared/issues/5544/complete-S3.json",
+      ".csdlc/prepared/issues/5544/complete-S4.json",
+      ".csdlc/prepared/issues/5544/design.md",
+      ".csdlc/prepared/issues/5544/diagram.mmd",
+      ".csdlc/prepared/issues/5544/publish.json",
+      ".csdlc/prepared/issues/5544/record-execution.json",
+      ".csdlc/prepared/issues/5544/record-final-validation.json",
+      ".csdlc/prepared/issues/5544/record-post-rebase-validation.json",
+      ".csdlc/prepared/issues/5544/record-pre-pr-review.json",
+      ".csdlc/prepared/issues/5544/record-validation.json",
+      ".csdlc/prepared/issues/5544/record-wp21a-correction-review.json",
+      ".csdlc/prepared/issues/5544/record-wp21a-correction-validation.json",
+      ".csdlc/prepared/issues/5544/recover-post-rebase-review.json",
+      ".csdlc/prepared/issues/5544/recover-wp21a-correction-review.json",
+      ".csdlc/publication/5544.intent.json",
+      "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/milestones/v0.91.7/review/V0917_WP18_INTERNAL_REVIEW_4645.md",
+      "docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f77d3-f77f-7161-9f58-6503d284cdc5",
+    "scope": [
+      ".csdlc/evidence/5544/live-state/github_state.json",
+      ".csdlc/evidence/5544/live-state/issue_4647.json",
+      ".csdlc/evidence/5544/live-state/issue_5408.json",
+      ".csdlc/evidence/5544/live-state/issue_5489.json",
+      ".csdlc/evidence/5544/live-state/issue_5527.json",
+      ".csdlc/evidence/5544/live-state/pr_5419.json",
+      ".csdlc/evidence/5544/live-state/pr_5539.json",
+      ".csdlc/evidence/5544/live-state/pr_5543.json",
+      ".csdlc/issues/4644/audit.jsonl",
+      ".csdlc/issues/4644/cards/sip.values.json",
+      ".csdlc/issues/4644/cards/sor.md",
+      ".csdlc/issues/4644/cards/sor.values.json",
+      ".csdlc/issues/4644/cards/spp.md",
+      ".csdlc/issues/4644/cards/spp.values.json",
+      ".csdlc/issues/4644/cards/srp.md",
+      ".csdlc/issues/4644/cards/srp.values.json",
+      ".csdlc/issues/4644/cards/stp.values.json",
+      ".csdlc/issues/4644/cards/vpp.md",
+      ".csdlc/issues/4644/cards/vpp.values.json",
+      ".csdlc/issues/4644/index.json",
+      ".csdlc/issues/4644/retained/design.md",
+      ".csdlc/issues/4644/retained/diagram.mmd",
+      ".csdlc/issues/5544/audit.jsonl",
+      ".csdlc/issues/5544/cards/sip.md",
+      ".csdlc/issues/5544/cards/sip.values.json",
+      ".csdlc/issues/5544/cards/sor.md",
+      ".csdlc/issues/5544/cards/sor.values.json",
+      ".csdlc/issues/5544/cards/spp.md",
+      ".csdlc/issues/5544/cards/spp.values.json",
+      ".csdlc/issues/5544/cards/srp.md",
+      ".csdlc/issues/5544/cards/srp.values.json",
+      ".csdlc/issues/5544/cards/stp.md",
+      ".csdlc/issues/5544/cards/stp.values.json",
+      ".csdlc/issues/5544/cards/vpp.md",
+      ".csdlc/issues/5544/cards/vpp.values.json",
+      ".csdlc/issues/5544/index.json",
+      ".csdlc/prepared/issues/4644/reconcile-terminal-from-5544.json",
+      ".csdlc/prepared/issues/5544/advance-implemented.json",
+      ".csdlc/prepared/issues/5544/advance-reviewed.json",
+      ".csdlc/prepared/issues/5544/advance-wp21a-correction-reviewed.json",
+      ".csdlc/prepared/issues/5544/amend-review-truth-scope.json",
+      ".csdlc/prepared/issues/5544/assign-pre-pr-review.json",
+      ".csdlc/prepared/issues/5544/assign-wp21a-correction-review.json",
+      ".csdlc/prepared/issues/5544/bind-request.json",
+      ".csdlc/prepared/issues/5544/bootstrap-request.json",
+      ".csdlc/prepared/issues/5544/complete-S1.json",
+      ".csdlc/prepared/issues/5544/complete-S2.json",
+      ".csdlc/prepared/issues/5544/complete-S3.json",
+      ".csdlc/prepared/issues/5544/complete-S4.json",
+      ".csdlc/prepared/issues/5544/design.md",
+      ".csdlc/prepared/issues/5544/diagram.mmd",
+      ".csdlc/prepared/issues/5544/publish.json",
+      ".csdlc/prepared/issues/5544/record-execution.json",
+      ".csdlc/prepared/issues/5544/record-final-validation.json",
+      ".csdlc/prepared/issues/5544/record-post-rebase-validation.json",
+      ".csdlc/prepared/issues/5544/record-pre-pr-review.json",
+      ".csdlc/prepared/issues/5544/record-validation.json",
+      ".csdlc/prepared/issues/5544/record-wp21a-correction-review.json",
+      ".csdlc/prepared/issues/5544/record-wp21a-correction-validation.json",
+      ".csdlc/prepared/issues/5544/recover-post-rebase-review.json",
+      ".csdlc/prepared/issues/5544/recover-wp21a-correction-review.json",
+      ".csdlc/publication/5544.intent.json",
+      "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/milestones/v0.91.7/review/V0917_WP18_INTERNAL_REVIEW_4645.md",
+      "docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json"
+    ],
+    "reviewed_revision": "git-blake3:153f268e1c8926a05189cca1dd1f58ab08eb0a2d:68f798257791fee4d91c7725b75474db77eb70f881ae76a5117e79834806acf4",
+    "findings": [],
+    "residual_risks": [
+      "Review did not refresh live GitHub state; it reviewed retained evidence and the exact branch diff after rebase onto #5552/current origin/main.",
+      "Review did not run lifecycle validators; parent session ran focused parsers and csdlc-doctor before review assignment.",
+      "WP-19 remains blocked and v0.91.7 release readiness remains unapproved until open P1/P2 gates, including WP-21A #5489, are fixed or explicitly dispositioned."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5544,
+    "pull_request": 5553,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5553",
+    "base": "main",
+    "head": "codex/5544-v0917-release-truth-gates",
+    "revision": "git-blake3:b8116000908d769fa4841f8c0cb4b18329f91bd5:8978a225aaae8d287185cca1e5a591ecb63bc0bb7e5e8dda92b920e520061f46",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5544/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5544/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-prep",
+      "revision": "701a7479eb3019cb0c7b02d9453e6a575f904768fb80b4668304af1993d291ab"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "3d755346ab21753bad51f4cb08e6943f193f0472126d68f3d4a08b42ac6137d2",
+      "rendered_digest": "243e45f97fe43e05e504a889e2c36d121789c2ca89aedd00490e7fd8aba5844a",
+      "ast_digest": "aa25ae383996c99471d9e1cb8dce21749076051233c33d58b53ab5daf28b4493"
+    },
+    "stp": {
+      "values_digest": "9f6bfdfbdac2650dd0b4c4f55001d6a8986d2a3ad25f00247a56babab04d94ce",
+      "rendered_digest": "d0eec3be60c4a8c6cd8e50d28484ef34ea1cff8751eb0b3c68af1a581a47bdb2",
+      "ast_digest": "91a3643f70974fa65f68d665c14b53aa72ba5fb93dacee8f98c0ab973ffa578d"
+    },
+    "spp": {
+      "values_digest": "167e19dcdfd109e2adfd3580a4bba652e5058aba4b9063d49d4a930a39903ca1",
+      "rendered_digest": "37180c52bf037079800bd21289ab611b2fd41cb9e4460f5d7e33371161dcbfd6",
+      "ast_digest": "c8a4f3a0e84b47babbde3c4eed8280e2a7ea8fde23a5ef41aebae0b371a7f139"
+    },
+    "vpp": {
+      "values_digest": "ea10a0c346064d2c688f6d07636f2a2404a5d05f9e0d5d5ea27c7b54970f6901",
+      "rendered_digest": "9cd98293bdf676bea30526d41e386d77e9bc29ee0e6174c6ee6e0b910861fb6f",
+      "ast_digest": "8f249e9f4a5379904e46b0cdab712bc605f64b10904f85bd5db46909a7fc6ccf"
+    },
+    "srp": {
+      "values_digest": "8e0c4f3f053dec22f1cf6179895cb77c06b9b91df99db7ab24fe3f4ba7e55ab9",
+      "rendered_digest": "44d86c4a5653e8b3a4a463f7e707c2a58a8fad383774744f12a5f43e51e56b7b",
+      "ast_digest": "ab3391e4673c3d6ac97ce57bd7d8642a9b5a8b09ded56bd576811c349acd5c56"
+    },
+    "sor": {
+      "values_digest": "da24e177b0bb972815fa9de2c00446cd0cbfadde05a8a189b21307cb6f6427d7",
+      "rendered_digest": "f2905c409bdb1f9716363c21685f1b8609c215d444f848340a557f05180589aa",
+      "ast_digest": "a5f142d30e30f24cb868420775da4c224a9db7b678ace2432bff0eafb91ff363"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5544",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5544",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5544",
+      "reason": "#5544 release-truth reconciliation is implemented and focused local validation has passed."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5544",
+      "reason": "Exact-revision pre-PR review by Erdos recorded no findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:issue-5544",
+      "reason": "WP-21A #5489 was omitted from the reviewed remaining-gates wording; recover reviewed state so the corrected release-tail truth can receive exact-head review before publication."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5544",
+      "reason": "Exact-head WP-21A correction review by Meitner recorded no findings."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5544",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:issue-5544",
+      "reason": "Rebase onto merged #5552/current origin/main changed the exact branch revision; recover review truth for focused validation and exact-head review before updating PR #5553."
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5544",
+      "reason": "Exact-head post-rebase review by Ptolemy recorded no findings."
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5544",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5544",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5544",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:issue-5544",
+      "reason": "After typed #4644 terminal projection materialization, protect the review truth and handoff paths #5544 must reconcile.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/issues/4644\",\".csdlc/prepared/issues/4644/reconcile-terminal-from-5544.json\",\"docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md\",\"docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml\",\"docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md\",\"docs/milestones/v0.91.7/review/V0917_WP18_INTERNAL_REVIEW_4645.md\",\"docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md\",\"docs/milestones/v0.91.7/review/wp20_remediation_5544\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:issue-5544",
+      "reason": "#5544 is bound in its issue worktree with non-overlapping lifecycle ownership.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:issue-5544",
+      "reason": "The retained #4644 terminal receipt was materialized through typed closeout projection and copied into #5544 so closed WP-17 paths are not treated as actively claimed.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:issue-5544",
+      "reason": "Live GitHub and C-SDLC state was captured for the named WP-14 through WP-20 surfaces and blocker issues.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:issue-5544",
+      "reason": "The sprint review register, issue-wave truth, feature-proof open-gates section, WP-18 handoff, WP-19 handoff, and #5544 status packet were refreshed with blocked-before-external-review truth.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:issue-5544",
+      "reason": "Reconciled v0.91.7 release truth and WP-19 external-review gate status after #4645.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Materialized #4644 terminal projection, captured live issue and PR state, refreshed the sprint review register, issue wave, feature-proof open gates, WP-18 internal-review handoff, WP-19 external-review handoff, and #5544 remediation status packet without claiming release readiness.\",\"changes\":[\"Project #4644 retained terminal truth into the #5544 branch so WP-17 no longer appears as an active register owner\",\"Retain live-state evidence for #5408/#5419, #5527, #4645/#5543, #4647, and #5544-#5547\",\"Update the canonical sprint review register to mark WP-17 closed-out, WP-18 recorded-but-open, WP-19 blocked, and WP-20 active\",\"Update issue-wave and feature-proof coverage surfaces to match the blocked-before-external-review gate\",\"Add WP-18, WP-19, and WP-20 #5544 handoff/status packets with non-claims\"],\"artifacts\":[\".csdlc/issues/4644\",\".csdlc/evidence/5544/live-state\",\"docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md\",\"docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml\",\"docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md\",\"docs/milestones/v0.91.7/review/V0917_WP18_INTERNAL_REVIEW_4645.md\",\"docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md\",\"docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md\",\"docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:issue-5544",
+      "reason": "Focused release-truth documentation and typed lifecycle validation passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git diff --check\",\"jq . docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json\",\"jq . .csdlc/evidence/5544/live-state/github_state.json\",\"ruby -e 'require yaml; YAML.load_file(...)'\",\"csdlc-doctor --repo . --issue 5544\",\"csdlc-doctor --repo . --issue 4644\"],\"purpose\":\"Prove #5544 edited docs and evidence parse cleanly, diff hygiene is clean, #5544 lifecycle state is valid, and the #4644 terminal projection is closed_out and valid.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5544/live-state/ and local command output in #5544 session\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:issue-5544",
+      "reason": "#5544 release-truth reconciliation is implemented and focused local validation has passed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:issue-5544",
+      "reason": "Post-correction release-truth documentation and typed lifecycle validation passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git diff --check\",\"jq . docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json\",\"jq . .csdlc/evidence/5544/live-state/github_state.json\",\"ruby -e 'require yaml; YAML.load_file(...)'\",\"csdlc-doctor --repo . --issue 5544\",\"csdlc-doctor --repo . --issue 4644\"],\"purpose\":\"Re-prove final #5544 documentation and evidence parse cleanly after stale WP-17 wording was corrected, and that #5544/#4644 typed lifecycle state remains valid.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5544/live-state/ and local command output in #5544 session\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:issue-5544",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "subagent:019f77bf-bc21-7c01-af9c-ef11b91e630a",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:issue-5544",
+      "reason": "Exact-revision pre-PR review by Erdos recorded no findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:issue-5544",
+      "reason": "WP-21A #5489 was omitted from the reviewed remaining-gates wording; recover reviewed state so the corrected release-tail truth can receive exact-head review before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:issue-5544",
+      "reason": "WP-21A #5489 was added to the release-tail open-gate truth and evidence packet after urgent operator correction.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"gh issue view 5489 --json number,title,state,labels,assignees,createdAt,updatedAt,closedAt,url,body\",\"git diff --check\",\"jq . docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json\",\"jq . .csdlc/evidence/5544/live-state/github_state.json\",\"jq . .csdlc/evidence/5544/live-state/issue_5489.json\",\"ruby -e 'require yaml; YAML.load_file(...)'\"],\"purpose\":\"Prove the corrected #5544 release-tail truth now includes open WP-21A/#5489 in the sprint register, issue wave, coverage/handoff summaries, and retained live-state evidence.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5544/live-state/issue_5489.json and .csdlc/evidence/5544/live-state/github_state.json\"}}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:issue-5544",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "subagent:019f77cb-4533-7903-a255-ec999a8b594c",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:issue-5544",
+      "reason": "Exact-head WP-21A correction review by Meitner recorded no findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:issue-5544",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex:issue-5544",
+      "reason": "Rebase onto merged #5552/current origin/main changed the exact branch revision; recover review truth for focused validation and exact-head review before updating PR #5553.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 17,
+      "actor": "codex:issue-5544",
+      "reason": "Focused validation passed after rebasing #5553 onto merged #5552/current origin/main.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git diff --check\",\"jq . docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json\",\"jq . .csdlc/evidence/5544/live-state/github_state.json\",\"jq . .csdlc/evidence/5544/live-state/issue_5489.json\",\"ruby -e 'require yaml; YAML.load_file(...)'\"],\"purpose\":\"Re-prove #5544 documentation and retained evidence after rebasing onto #5552's canonical WP-21A correction.\",\"outcome\":\"passed\",\"evidence_ref\":\"local #5544 post-rebase validation output\"}}"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:issue-5544",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "subagent:019f77d3-f77f-7161-9f58-6503d284cdc5",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex:issue-5544",
+      "reason": "Exact-head post-rebase review by Ptolemy recorded no findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex:issue-5544",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

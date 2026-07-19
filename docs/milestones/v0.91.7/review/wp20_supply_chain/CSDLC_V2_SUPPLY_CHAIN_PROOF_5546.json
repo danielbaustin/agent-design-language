@@ -1,0 +1,42 @@
+{
+  "advisories": {
+    "reason": "cargo-audit/cargo-deny database checks are not run without the approved tool and database",
+    "status": "unavailable"
+  },
+  "explicit_dispositions": [
+    "advisories",
+    "licenses",
+    "sbom",
+    "msrv"
+  ],
+  "issue": 5546,
+  "licenses": {
+    "reason": "No license policy engine is installed; package declarations and repository LICENSE remain review inputs",
+    "status": "unavailable"
+  },
+  "locked_dependency_metadata": {
+    "exit_code": 0,
+    "status": "passed"
+  },
+  "lockfile": {
+    "path": "csdlc-v2/Cargo.lock",
+    "sha256": "b6d6b6483e866796990c410e05c60f11977450826fb06ec325d492007d154b01",
+    "status": "passed"
+  },
+  "msrv": {
+    "declared": "1.85",
+    "proof": {
+      "reason": "Rust 1.85 is not installed unless rustup reports it",
+      "status": "unavailable"
+    }
+  },
+  "network_access": "not_requested",
+  "overall": "partial_with_explicit_dispositions",
+  "release_gate": "not_ready_for_supply_chain_certification",
+  "sbom": {
+    "reason": "No SBOM generator is installed; cargo metadata is retained only as a dependency inventory, not an SBOM",
+    "status": "unavailable"
+  },
+  "schema": "adl.csdlc_v2.release_supply_chain_proof.v1",
+  "scope": "csdlc-v2"
+}

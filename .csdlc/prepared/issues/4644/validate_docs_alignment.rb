@@ -88,7 +88,7 @@ Dir.chdir(ROOT) do
   closeout_truth = issue_wave.fetch("closeout_tail_truth")
   checks["wp17_closed"] = closeout_truth.fetch("closed_wps").include?("WP-17")
   checks["open_wps_current"] = closeout_truth.fetch("open_wps") ==
-                                %w[WP-18 WP-19 WP-20 WP-23]
+                                %w[WP-18 WP-19 WP-20 WP-21A WP-23]
 
   bridge_requirements = {
     "README.md" => ["docs/milestones/v0.91.8/README.md",

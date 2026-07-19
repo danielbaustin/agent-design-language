@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5547,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-20][review-fix] Disposition C-SDLC identity and ownership-split residuals",
+    "slug": "v0-91-7-wp-20-review-fix-disposition-csdlc-identity-and-ownership-split-residuals",
+    "version": "v0.91.7",
+    "generation": 8
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Resolve or explicitly route the WP-20 review residuals for C-SDLC review revision identity and large-module ownership boundaries before external review.",
+      "required_outcome": "A truthful v0.91.7 disposition exists for IR-4645-011 and IR-4645-012: either implemented with focused proof or explicitly deferred with exact follow-on routing and no overclaim.",
+      "declared_scope": [
+        "Issue #5547 only.",
+        "IR-4645-011 C-SDLC review/publication revision identity.",
+        "IR-4645-012 ownership-first split planning for large modules named by #4645.",
+        "v0.91.7 WP-20 review-fix truth before WP-19/external review."
+      ],
+      "authority_boundary": [
+        "Source issue #5547 is authoritative for acceptance criteria.",
+        "Source findings are IR-4645-011 and IR-4645-012 from #4645 retained review evidence.",
+        "Gate 10D2 C-SDLC v2 binaries are the lifecycle authority.",
+        "No v0.91.8 implementation work is authorized by this issue."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

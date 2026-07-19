@@ -1,0 +1,11 @@
+{
+  "issue": 5551,
+  "card": "spp",
+  "expected_generation": 3,
+  "expected_digest": "841c95959e1845c212889e2f098aed2a268c209863257d843c289d93c9d0894c",
+  "claim_id": "claim-5551-terminal-plan-truth",
+  "actor": "codex-closeout-audit",
+  "reason": "#5527 S2-S4 repairs and exact terminal parity validation are complete.",
+  "operation": {"operation":"update_plan_step","step_id":"S2","status":"completed"},
+  "fail_after_backup": false
+}

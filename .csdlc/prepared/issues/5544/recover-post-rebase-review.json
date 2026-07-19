@@ -1,0 +1,8 @@
+{
+  "issue": 5544,
+  "expected_generation": 15,
+  "expected_digest": "9e60af613bee5ff2b5eec0fdbede739cf1a1454dfb0095a6fb47df7e1c067d1b",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "Rebase onto merged #5552/current origin/main changed the exact branch revision; recover review truth for focused validation and exact-head review before updating PR #5553."
+}

@@ -515,6 +515,28 @@ phases:
       - . /tmp/adl-rust-cache-env.sh
       - test -n "${ADL_CODEFRIEND_BUILD_COMMAND:-}"
       - |
+        case "${ADL_CODEFRIEND_BUILD_COMMAND}" in
+          "bash adl/tools/run_pr_fast_test_lane.sh"|"bash adl/tools/run_pr_fast_coverage_lane.sh"|"bash adl/tools/run_authoritative_coverage_lane.sh"|"cd adl && cargo nextest run --test-threads 18 --no-fail-fast --status-level all --final-status-level slow")
+            echo "ADL_CODEFRIEND_COMMAND_POLICY status=approved"
+            ;;
+          *)
+            echo "ADL_CODEFRIEND_COMMAND_POLICY status=denied classification=unapproved_build_command" >&2
+            exit 2
+            ;;
+        esac
+      - |
+        if [ -n "${ADL_CODEFRIEND_BUILD_PREPARE_COMMAND:-}" ]; then
+          case "${ADL_CODEFRIEND_BUILD_PREPARE_COMMAND}" in
+            "cd adl && cargo nextest run --no-run")
+              echo "ADL_CODEFRIEND_PREPARE_COMMAND_POLICY status=approved"
+              ;;
+            *)
+              echo "ADL_CODEFRIEND_PREPARE_COMMAND_POLICY status=denied classification=unapproved_prepare_command" >&2
+              exit 2
+              ;;
+          esac
+        fi
+      - |
         if [ -z "${ADL_CODEFRIEND_TARGET_CACHE_KEY:-}" ]; then
           lock_hash="$(sha256sum adl/Cargo.lock | awk '{print $1}')"
           source_key="${CODEBUILD_RESOLVED_SOURCE_VERSION}"

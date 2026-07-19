@@ -1,0 +1,8 @@
+{
+  "issue": 5544,
+  "expected_generation": 10,
+  "expected_digest": "049e40f6e77b91361c6fc71a9063fe79cf731ff81f4459ebfd0fc153b19a8a72",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "WP-21A #5489 was omitted from the reviewed remaining-gates wording; recover reviewed state so the corrected release-tail truth can receive exact-head review before publication."
+}

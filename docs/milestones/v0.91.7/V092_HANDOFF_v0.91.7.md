@@ -47,7 +47,7 @@ and only `integrated_proven` counts as operational completion.
 ## v0.91.7 Closeout-Tail Truth
 
 As last verified on 2026-07-18, WP-01 through WP-17 are closed; WP-17 closed
-through #4644 and merged PR #5539. WP-18, WP-19, WP-20, and WP-23 are open;
+through #4644 and merged PR #5539. WP-18, WP-19, WP-20, WP-21A, and WP-23 are open;
 WP-21 and WP-22 are closed retained planning/review evidence. This handoff is
 therefore not release or activation approval. Its current role is to route
 bounded evidence into the reviewed v0.91.8 bridge.

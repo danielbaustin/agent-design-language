@@ -1,0 +1,16 @@
+{
+  "issue": 5551,
+  "expected_generation": 5,
+  "expected_digest": "502260ec610182cc96da8a08ac0d2db170089726e95c88539d74a0b83a416cb2",
+  "claim_id": "claim-5551-terminal-plan-truth",
+  "actor": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+  "evidence": {
+    "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+    "scope": [".csdlc/issues/5527", ".csdlc/issues/5551", ".csdlc/prepared/issues/5551"],
+    "reviewed_revision": "git-blake3:c447012a9e847e7c7c62875e41fa64c570d683b7:52470346cd11dc3592412be49f8654b98a2a2c0fb470e674c014e2766fcedd9d",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

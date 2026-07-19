@@ -1,0 +1,42 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5547,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-20][review-fix] Disposition C-SDLC identity and ownership-split residuals",
+    "slug": "v0-91-7-wp-20-review-fix-disposition-csdlc-identity-and-ownership-split-residuals",
+    "version": "v0.91.7",
+    "generation": 8
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2/src/git.rs\ncsdlc-v2/tests/gate5.rs\ndocs/reviews/v0.91.7/review-fixes-5547\n.csdlc/issues/5547\n.csdlc/prepared/issues/5547",
+      "review_revision": "git-blake3:f318b425ea09068c2a69fd78f89cfcc0ca1cde87:678f39122fd919313f76e28840f4d59e240d83830a1e3313bfbfd39afd12a12f",
+      "reviewer": "subagent:019f77ca-4728-7271-b9c9-3b536e5e880e",
+      "review_prompts": [
+        "Review whether #5547 accurately dispositions IR-4645-011 without overstating scoped review identity.",
+        "Review whether the ownership split plan for IR-4645-012 is actionable, behavior-first, and safely deferred where needed.",
+        "Review whether validation evidence matches the actual code-or-planning scope."
+      ],
+      "findings": [
+        {
+          "id": "SUBAGENT-5547-001",
+          "severity": "p3",
+          "summary": "Initial regression test missed in-scope untracked files; fixed by adding docs/new.md assertion.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:f318b425ea09068c2a69fd78f89cfcc0ca1cde87:678f39122fd919313f76e28840f4d59e240d83830a1e3313bfbfd39afd12a12f",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "Complex Git pathspec magic/no-match cases remain dependent on Git behavior and are outside the focused #5547 proof."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

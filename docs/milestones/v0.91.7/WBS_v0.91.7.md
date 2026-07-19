@@ -6,7 +6,7 @@
 - Version: `v0.91.7`
 - Created: `2026-06-21`
 - Last verified: `2026-07-18`
-- Status: closeout tail active; WP-01 through WP-17 closed, WP-18, WP-19, WP-20, and WP-23 open
+- Status: closeout tail active; WP-01 through WP-17 closed, WP-18, WP-19, WP-20, WP-21A, and WP-23 open
 - Setup lineage: `#3801`, `#3825`, `#4368`
 - Source capture: `PLANNING_SOURCE_CAPTURE_v0.91.7.md`
 - Release-tail handoff addendum: `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`
@@ -17,7 +17,7 @@ WP allocation is promoted into the v0.91.7 issue wave. WP-01 is `#4628`; WP-02 t
 
 Live WP truth last verified on 2026-07-18: WP-01 through WP-17 are closed;
 WP-17 closed through issue #4644 and merged PR #5539. WP-18, WP-19, WP-20,
-and WP-23 are open; WP-21 and WP-22 are closed retained planning evidence.
+WP-21A, and WP-23 are open; WP-21 and WP-22 are closed retained planning evidence.
 This sequence snapshot is issue-state truth only.
 Review cleanliness and release consumption remain governed by
 `review/V0917_SPRINT_REVIEW_REGISTER.md` and issue-local proof packets.
@@ -62,7 +62,7 @@ Completion standard: planned, documented, mocked, component-proven, assigned, or
 | WP-19 | External review | Prepare and run the external/third-party review handoff after internal review remediation is ready enough for outside scrutiny. | External review handoff and finding register. | WP-18. |
 | WP-20 | Remediation and preflight | Fix internal/external review findings, rerun focused checks, update checklists, and record only evidence-backed blockers explicitly approved by the operator. | Remediation PRs, preflight packet, final checklist updates. | WP-19. |
 | WP-21 | Feature-list, TBD, and v0.92 planning truth alignment | Prepare v0.92 planning inputs from reviewed v0.91.7 implementation/proof truth without reopening v0.91.7 scope; consume observability `#4718` and resilience `#4778` / `#4780`-`#4783` truth explicitly. | v0.92 planning seed, source-capture handoff, and feature-list/TBD disposition update. | WP-20. |
-| WP-21A | Next milestone closeout planning | To be opened as a separate issue after WP-21 alignment, carrying the canonical next-milestone closeout role that WP-21 previously held. | v0.92 closeout-planning packet and review-ready handoff. | WP-21. |
+| WP-21A | Next milestone closeout planning | Open as issue #5489 to carry the canonical next-milestone closeout role that WP-21 previously held. | v0.92 closeout-planning packet and review-ready handoff. | WP-21. |
 | WP-22 | Next milestone review | Review v0.92 planning inputs for missing activation blockers, overclaims, and stale assumptions before v0.92 opens. | v0.92 planning review packet. | WP-21A. |
 | WP-23 | Release ceremony | Finalize release evidence, closeout truth, release notes/checklist state, and ceremony packet after all review findings are fixed or explicitly blocked with evidence and operator approval. | Release ceremony packet and final closeout record. | WP-22. |
 

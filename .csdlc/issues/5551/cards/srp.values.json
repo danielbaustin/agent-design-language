@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5551,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Repair #5527 retained terminal plan-step truth",
+    "slug": "v0-91-7-csdlc-v2-repair-5527-terminal-plan-truth",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5527\n.csdlc/issues/5551\n.csdlc/prepared/issues/5551",
+      "review_revision": "git-blake3:e0a4d4256316d85615f26142836ea76a2d339086:ad6c87350aa9330e39a0a7d964379bd83d8998bb356949170fe30dbf1cdbd29a",
+      "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+      "review_prompts": [
+        "Did only #5527 S2-S4 advance semantically?",
+        "Do local cards, index, and receipt match exactly?",
+        "Is #5551 free of recursive terminal plan steps?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pass"
+    }
+  }
+}

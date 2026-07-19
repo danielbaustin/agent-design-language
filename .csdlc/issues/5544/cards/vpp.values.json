@@ -1,0 +1,70 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5544,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-20][review-fix] Reconcile release truth and external-review gates",
+    "slug": "v0-91-7-wp20-release-truth-gates",
+    "version": "v0.91.7",
+    "generation": 20
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "csdlc-doctor-5544",
+          "proof_role": "Validate typed C-SDLC issue state and generated cards",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            ".adl/bin/csdlc-v2/csdlc-doctor",
+            "--repo",
+            ".",
+            "--issue",
+            "5544"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "diff-hygiene",
+          "proof_role": "Check edited artifacts for whitespace and patch hygiene",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "local",
+          "defer_reason": "Run after execution artifacts are written"
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on stale live truth, unresolved ownership collision, missing evidence, or release-readiness overclaim.",
+      "design_ref": ".csdlc/prepared/issues/5544/design.md",
+      "design_digest": "701a7479eb3019cb0c7b02d9453e6a575f904768fb80b4668304af1993d291ab",
+      "diagram_ref": ".csdlc/prepared/issues/5544/diagram.mmd",
+      "diagram_digest": "656c9804af995d0aa8faaf4ab5557190cb12be85d224be5e09d745ca1250362c"
+    }
+  }
+}

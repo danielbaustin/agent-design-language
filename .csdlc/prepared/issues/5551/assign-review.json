@@ -1,0 +1,9 @@
+{
+  "issue": 5551,
+  "expected_generation": 5,
+  "expected_digest": "a9da366555e016449a3eab597332fe39a3b444d2d0c78c77e5cb51f268edb167",
+  "claim_id": "claim-5551-terminal-plan-truth",
+  "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+  "assigned_by": "codex-closeout-audit",
+  "scope": [".csdlc/issues/5527", ".csdlc/issues/5551", ".csdlc/prepared/issues/5551"]
+}

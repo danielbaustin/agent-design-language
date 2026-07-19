@@ -17,7 +17,7 @@ execution order and records live issue-state alignment; it does not approve
 release readiness.
 
 As last verified on 2026-07-18, WP-01 through WP-17 are closed; WP-17 closed
-through #4644 and merged PR #5539. WP-18, WP-19, WP-20, and WP-23 are open,
+through #4644 and merged PR #5539. WP-18, WP-19, WP-20, WP-21A, and WP-23 are open,
 while WP-21 and WP-22 are closed retained planning evidence. Closed work may
 still carry retained findings or non-claims.
 
@@ -75,7 +75,7 @@ remediation truth.
 | 7 | Cognitive implementation sprint | WP-10, WP-11, WP-13 | Curiosity, Constructability, reasoning graph, affect/Godel/economics/guild proof and boundary packets are retained. | closed with claim boundaries |
 | 8 | Security and protocol implementation sprint | WP-12 | Security/protocol proof and remediation are retained; broader activation remains evidence-bound. | closed and review-remediated |
 | 9 | Launch and v0.92 handoff sprint | WP-14 | `#4641` routes bounded handoff truth into v0.91.8; it does not approve v0.92 activation. | closed as routed-with-evidence |
-| 10 | Canonical closeout-tail sprint | WP-15 through WP-23 | WP-15, WP-16, WP-17, WP-21, and WP-22 are closed. WP-18, WP-19, WP-20, and WP-23 remain open and preserve the required review/remediation/release gates. | active |
+| 10 | Canonical closeout-tail sprint | WP-15 through WP-23 | WP-15, WP-16, WP-17, WP-21, and WP-22 are closed. WP-18, WP-19, WP-20, WP-21A, and WP-23 remain open and preserve the required review/remediation/planning/release gates. | active |
 
 ## Execution Policy
 

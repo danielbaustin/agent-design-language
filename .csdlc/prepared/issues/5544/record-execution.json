@@ -1,0 +1,31 @@
+{
+  "issue": 5544,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "39c8513ddb87c7cfe65b7f52ddac5f1442140c0d87106afac52f568f1c178a95",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "Reconciled v0.91.7 release truth and WP-19 external-review gate status after #4645.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Materialized #4644 terminal projection, captured live issue and PR state, refreshed the sprint review register, issue wave, feature-proof open gates, WP-18 internal-review handoff, WP-19 external-review handoff, and #5544 remediation status packet without claiming release readiness.",
+    "changes": [
+      "Project #4644 retained terminal truth into the #5544 branch so WP-17 no longer appears as an active register owner",
+      "Retain live-state evidence for #5408/#5419, #5527, #4645/#5543, #4647, and #5544-#5547",
+      "Update the canonical sprint review register to mark WP-17 closed-out, WP-18 recorded-but-open, WP-19 blocked, and WP-20 active",
+      "Update issue-wave and feature-proof coverage surfaces to match the blocked-before-external-review gate",
+      "Add WP-18, WP-19, and WP-20 #5544 handoff/status packets with non-claims"
+    ],
+    "artifacts": [
+      ".csdlc/issues/4644",
+      ".csdlc/evidence/5544/live-state",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/review/V0917_WP18_INTERNAL_REVIEW_4645.md",
+      "docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json"
+    ]
+  }
+}

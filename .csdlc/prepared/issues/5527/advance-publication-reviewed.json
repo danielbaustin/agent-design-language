@@ -1,0 +1,14 @@
+{
+  "issue": 5527,
+  "card": "sor",
+  "expected_generation": 18,
+  "expected_digest": "c84f9eb1d922646ab03e20e8272333e484219b067bba758cd78af2c8c9202a09",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "reason": "Exact publication-head review is clean with no findings or publication blockers; fixed findings and #5548 residual risk are retained.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

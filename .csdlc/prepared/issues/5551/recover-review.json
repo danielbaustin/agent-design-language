@@ -1,0 +1,1 @@
+{"issue":5551,"expected_generation":7,"expected_digest":"833d14a35e553ea85b779044b7e0c03e3c27721c42140782b5bde3367db30892","claim_id":"claim-5551-terminal-plan-truth","actor":"codex-closeout-audit","reason":"Recover exact review identity after committing typed review metadata; target repair truth is unchanged."}

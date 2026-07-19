@@ -124,7 +124,7 @@ Current roadmap planning truth, last verified 2026-07-18:
   issues `#3778`, `#3780`, `#3781`, and `#3782`
 - `v0.91.6` is the completed first pre-v0.92 readiness tranche
 - `v0.91.7` is the active closeout tail: WP-01 through WP-17 are closed,
-  including #4644 through merged PR #5539; WP-18, WP-19, WP-20, and WP-23
+  including #4644 through merged PR #5539; WP-18, WP-19, WP-20, WP-21A, and WP-23
   remain open, and closed WP-21/WP-22 are retained planning/review evidence
 - `v0.91.8` is the required reviewed platform-acceptance bridge; `v0.92`
   consumes its exact-revision handoff rather than v0.91.7 prose directly
@@ -359,7 +359,7 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.91.4` | Completed Cognitive SDLC default-operation and hardening milestone: default-operation lifecycle, validator/doctor/conductor/editor alignment, Software Development Polis actor standing, shard ownership, tracked durable workflow records, signed trace proof, ObsMem handoff, repeatability metrics, validation-tail/proof-latency handling, Parallel Validation Fabric planning, and active-issue migration policy. |
 | `v0.91.5` | Review/tooling/provider/public-record pressure toward v0.92: AEE completion tranche, prompt-template workflow integration, multi-agent and provider reliability proof, public C-SDLC prompt records, and logging/observability follow-on setup. |
 | `v0.91.6` | First required pre-v0.92 readiness tranche: resilience/citizen persistence, logging/tooling proof-loop fixes, public prompt records, provider/model reliability, first ACIP/A2A/security decisions, and feature-doc issue-wave setup. |
-| `v0.91.7` | Active closeout tail after the implementation/demo/quality waves: bounded evidence exists for logging/OTel, goals/metrics, lifecycle tooling, validation/build throughput, scheduler/provider/local agents, Soak #2, signal operations, Observatory/Unity, Curiosity, Constructability, reasoning graph/loops/`adl.skill.v1`, security, guild/CodeFriend boundaries, and ACIP/A2A decisions. WP-17 closed through #4644 / PR #5539; remaining release truth belongs to WP-18, WP-19, WP-20, and WP-23. |
+| `v0.91.7` | Active closeout tail after the implementation/demo/quality waves: bounded evidence exists for logging/OTel, goals/metrics, lifecycle tooling, validation/build throughput, scheduler/provider/local agents, Soak #2, signal operations, Observatory/Unity, Curiosity, Constructability, reasoning graph/loops/`adl.skill.v1`, security, guild/CodeFriend boundaries, and ACIP/A2A decisions. WP-17 closed through #4644 / PR #5539; remaining release truth belongs to WP-18, WP-19, WP-20, WP-21A, and WP-23. |
 | `v0.91.8` | Required bridge for exact-revision ADL v2, Runtime v3, and C-SDLC v2 platform acceptance, deployment/cutover truth, rollback, and reviewed handoff into v0.92. |
 | `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, Memory Palace proof slice, witnesses, receipts, and the first true Gödel-agent birthday. |
 | `v0.93` | Constitutional citizenship, rights/duties, social contract, delegation/upstream delegation/IAM, standing/challenge/appeal governance, guilds, relationship model, reputation/trust, shared social memory, ToM/social cognition, security governance, and enterprise security for the ADL polis. |

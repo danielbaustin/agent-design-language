@@ -1,0 +1,10 @@
+{
+  "issue": 5544,
+  "card": "srp",
+  "expected_generation": 9,
+  "expected_digest": "2397e1a7d9d8b8e44ea15d750106eb6368885e9e37c1b474a91afa09f51358aa",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "Exact-revision pre-PR review by Erdos recorded no findings.",
+  "operation": {"operation":"advance_phase","phase":"reviewed"}
+}

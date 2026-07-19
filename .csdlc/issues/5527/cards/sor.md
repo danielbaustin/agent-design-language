@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -119,17 +119,17 @@ Typed terminal repair now replaces one exact stale SOR artifact reference with a
 
 ## Integration
 
-worktree_only
+merged
 
 ## Publication
 
-Publication: not_published
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

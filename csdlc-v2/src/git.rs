@@ -62,16 +62,11 @@ pub fn substantive_revision(root: &Path, scope: &[String]) -> Result<String> {
     let head = run(root, &["rev-parse", "HEAD"])?.stdout;
     let mut hasher = blake3::Hasher::new();
     hasher.update(head.as_bytes());
+    let pathspec = scoped_pathspec(scope);
     let mut diff = Command::new("git");
-    diff.current_dir(root).args([
-        "diff",
-        "--no-ext-diff",
-        "--binary",
-        "HEAD",
-        "--",
-        ".",
-        ":(exclude).csdlc/**",
-    ]);
+    diff.current_dir(root)
+        .args(["diff", "--no-ext-diff", "--binary", "HEAD", "--"])
+        .args(&pathspec);
     let output = diff
         .output()
         .map_err(|e| V2Error::new(ErrorCode::GitFailure, e.to_string()))?;
@@ -83,14 +78,10 @@ pub fn substantive_revision(root: &Path, scope: &[String]) -> Result<String> {
     }
     hasher.update(&output.stdout);
     let mut others = Command::new("git");
-    others.current_dir(root).args([
-        "ls-files",
-        "--others",
-        "--exclude-standard",
-        "--",
-        ".",
-        ":(exclude).csdlc/**",
-    ]);
+    others
+        .current_dir(root)
+        .args(["ls-files", "--others", "--exclude-standard", "--"])
+        .args(&pathspec);
     let output = others
         .output()
         .map_err(|e| V2Error::new(ErrorCode::GitFailure, e.to_string()))?;
@@ -110,6 +101,12 @@ pub fn substantive_revision(root: &Path, scope: &[String]) -> Result<String> {
         hasher.update(&fs::read(root.join(path))?);
     }
     Ok(format!("git-blake3:{head}:{}", hasher.finalize().to_hex()))
+}
+
+fn scoped_pathspec(scope: &[String]) -> Vec<String> {
+    let mut pathspec = scope.to_vec();
+    pathspec.push(":(exclude).csdlc/**".into());
+    pathspec
 }
 
 pub fn clean_commit_revision(commit: &str) -> String {

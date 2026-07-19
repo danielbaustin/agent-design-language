@@ -10,7 +10,7 @@
     "operation": "record_execution",
     "summary": "Reconciled canonical WP-17 closeout truth after #4644 closed and PR #5539 merged, routed v0.92 through the reviewed v0.91.8 bridge, distinguished creation and verification dates, strengthened the executable documentation validator, and coordinated the separately claimed sprint-review register with #4645.",
     "changes": [
-      "Remove WP-17 from canonical open-work sets and retain WP-18, WP-19, WP-20, and WP-23 as independent gates",
+      "Remove WP-17 from canonical open-work sets and retain WP-18, WP-19, WP-20, WP-21A, and WP-23 as independent gates",
       "Add v0.91.8 bridge and exact-revision handoff precedence to repository and milestone entrypoints",
       "Replace ambiguous 2026-06-21 Date labels with Created and Last verified metadata",
       "Extend the WP-17 validator with closeout, bridge-precedence, date-semantics, and working-tree diff checks",

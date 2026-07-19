@@ -1,0 +1,10 @@
+{
+ "schema":"csdlc.readiness_request.v1","issue":5551,"expected_generation":16,"expected_digest":"1fe0de0bb1c44a7ee0c179fe600a8d5f986deeb6a68894d030a610897eed4faa","claim_id":"claim-5551-terminal-plan-truth","actor":"codex-closeout-audit","pull_request":5555,"head_sha":"e0a4d4256316d85615f26142836ea76a2d339086","required_checks":["adl-ci","adl-coverage","adl-tooling-contracts","adl-path-policy","adl-demo-proof"],"require_review":false,
+ "checks":[
+  {"name":"adl-ci","requirement":"required","conclusion":"success","details_url":"https://github.com/danielbaustin/agent-design-language/actions/runs/29667348953/job/88140096440"},
+  {"name":"adl-coverage","requirement":"required","conclusion":"success","details_url":"https://github.com/danielbaustin/agent-design-language/actions/runs/29667348953/job/88140056675"},
+  {"name":"adl-tooling-contracts","requirement":"required","conclusion":"success","details_url":"https://github.com/danielbaustin/agent-design-language/actions/runs/29667348953/job/88140036889"},
+  {"name":"adl-path-policy","requirement":"required","conclusion":"success","details_url":"https://github.com/danielbaustin/agent-design-language/actions/runs/29667348953/job/88140026432"},
+  {"name":"adl-demo-proof","requirement":"required","conclusion":"success","details_url":"https://github.com/danielbaustin/agent-design-language/actions/runs/29667348953/job/88140036873"}],
+ "review_state":"not_required","conflict_state":"clean","post_publication_findings":[]
+}

@@ -1,0 +1,19 @@
+{
+  "issue": 5544,
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "expected_generation": 0,
+  "expected_digest": "26b5b8188cb1dce3b12b9a8aaf9963953537c4ca0ff58dca2ba6b070c5753e42",
+  "now_unix_seconds": 1784420002,
+  "actor": "codex:issue-5544",
+  "reason": "After typed #4644 terminal projection materialization, protect the review truth and handoff paths #5544 must reconcile.",
+  "add_protected_paths": [
+    ".csdlc/issues/4644",
+    ".csdlc/prepared/issues/4644/reconcile-terminal-from-5544.json",
+    "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+    "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+    "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
+    "docs/milestones/v0.91.7/review/V0917_WP18_INTERNAL_REVIEW_4645.md",
+    "docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md",
+    "docs/milestones/v0.91.7/review/wp20_remediation_5544"
+  ]
+}

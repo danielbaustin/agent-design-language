@@ -1,0 +1,10 @@
+{
+  "issue": 5544,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "b0052298b92246642151bd26ead277d68627ae3a2302a13921043e8290842d4c",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "#5544 release-truth reconciliation is implemented and focused local validation has passed.",
+  "operation": {"operation":"advance_phase","phase":"implemented"}
+}

@@ -1,0 +1,18 @@
+{
+  "issue": 5551,
+  "base_branch": "main",
+  "branch": "codex/5551-terminal-plan-truth",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5551-terminal-plan-truth",
+    "owner": "codex-closeout-audit",
+    "generation": 1,
+    "acquired_unix_seconds": 1784421106,
+    "expires_unix_seconds": 1784507506,
+    "heartbeat_unix_seconds": 1784421106,
+    "branch": "codex/5551-terminal-plan-truth",
+    "worktree": ".",
+    "protected_paths": [".csdlc/issues/5527", ".csdlc/issues/5551", ".csdlc/prepared/issues/5551"],
+    "purpose": "Complete #5527 SPP S2-S4 through exact typed terminal plan-step repairs"
+  }
+}

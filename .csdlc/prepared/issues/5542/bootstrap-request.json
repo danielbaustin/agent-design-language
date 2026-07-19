@@ -33,7 +33,7 @@
     "slug": "v0-91-7-wp17-post-merge-closeout-truth",
     "version": "v0.91.7",
     "goal": "Repair the canonical documentation defects found after WP-17 PR #5539 merged.",
-    "required_outcome": "Canonical entrypoints agree that #4644 is closed and #5539 merged, WP-18/WP-19/WP-20/WP-23 remain gates, v0.92 consumes the reviewed v0.91.8 bridge, and date freshness is explicit.",
+    "required_outcome": "Canonical entrypoints agree that #4644 is closed and #5539 merged, WP-18/WP-19/WP-20/WP-21A/WP-23 remain gates, v0.92 consumes the reviewed v0.91.8 bridge, and date freshness is explicit.",
     "declared_scope": [
       "WP-17 post-merge closeout truth",
       "v0.91.8 bridge precedence in canonical entrypoints",
@@ -42,7 +42,7 @@
     ],
     "authority_boundary": [
       "Issue #5542 owns only the post-merge findings from #4644 and PR #5539",
-      "WP-18, WP-19, WP-20, and WP-23 remain independent release gates",
+      "WP-18, WP-19, WP-20, WP-21A, and WP-23 remain independent release gates",
       "The active #4645 claim owns the sprint-review register until handoff or release"
     ],
     "task_boundary": "Repair only the three documented post-merge findings; do not execute sibling work packages or runtime/cloud work.",
@@ -53,7 +53,7 @@
     ],
     "acceptance_criteria": [
       "AC-1: #4644 is closed and PR #5539 is merged in every touched canonical entrypoint",
-      "AC-2: WP-17 is absent from open work-package sets while WP-18, WP-19, WP-20, and WP-23 remain gates",
+      "AC-2: WP-17 is absent from open work-package sets while WP-18, WP-19, WP-20, WP-21A, and WP-23 remain gates",
       "AC-3: v0.92 consumption is routed through the reviewed v0.91.8 bridge with canonical links",
       "AC-4: canonical date metadata distinguishes creation from last verification",
       "AC-5: focused validator, links, structured docs, diff hygiene, and exact-revision review pass"
@@ -73,7 +73,7 @@
       "docs/milestones/v0.91.8/README.md"
     ],
     "non_goals": [
-      "Do not execute WP-18, WP-19, WP-20, or WP-23",
+      "Do not execute WP-18, WP-19, WP-20, WP-21A, or WP-23",
       "Do not modify Runtime, provider, cloud, AWS, Unity, GPU, or v0.92 activation behavior",
       "Do not rewrite retained historical evidence",
       "Do not edit the sprint-review register while #4645 owns it"
@@ -139,7 +139,7 @@
     "failure_policy": "Fail closed on stale live truth, active claim collision, bridge bypass, ambiguous date semantics, or validation failure.",
     "review_prompts": [
       "Do all canonical entrypoints represent #4644 closed and #5539 merged?",
-      "Are WP-18, WP-19, WP-20, and WP-23 the only remaining release gates?",
+      "Are WP-18, WP-19, WP-20, WP-21A, and WP-23 the only remaining release gates?",
       "Does every direct-v0.92 statement route through the reviewed v0.91.8 bridge?",
       "Are creation and last-verification dates unambiguous?",
       "Did the issue avoid the active #4645 register claim and all AWS use?"

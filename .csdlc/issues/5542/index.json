@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "4ba22360d9c28877a655c69995e8fec64dd508dd8204c0838e8077a0c90f9d48",
   "phase": "reviewed",
-  "generation": 11,
-  "digest": "246efc7ca8a08c35db02ab6a31e31c3ff1bfe9131358babf8c7cd2a1fb4f9560",
+  "generation": 14,
+  "digest": "7313d2886add02f23e3c25656392678a071f5e2a923ca4ce8750724559bd2fb0",
   "claim": {
     "id": "claim-5542-wp17-closeout-truth",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 11,
+    "generation": 14,
     "acquired_unix_seconds": 1784418998,
     "expires_unix_seconds": 1785023798,
     "heartbeat_unix_seconds": 1784418998,
@@ -44,49 +44,43 @@
   "review_assignment": {
     "reviewer": "codex-subagent:019f77b1-4c8d-7560-8489-bb10c675a6b0",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "revision": "git-blake3:166a380d96bff5c2293800ad1f3f411c28e1891b:541ddcb1ae256802b2f3e733a62f16df830644fd050b75416e44ac110d4f22d2",
+    "revision": "git-blake3:90b89d5c5e4d9404b117e2f39f0af38d7523bcc3:d95b3ec549fde19d6bc99c0d9a6c136662af43a31a4843cd393e9f2da4b45690",
     "scope": [
-      ".csdlc/issues/5542",
-      ".csdlc/prepared/issues/5542"
+      ".csdlc/prepared/issues/4644/validate_docs_alignment.rb",
+      ".csdlc/prepared/issues/5542",
+      "README.md",
+      "docs/milestones/v0.91.7",
+      "docs/planning/ADL_FEATURE_LIST.md"
     ]
   },
   "review": {
     "reviewer": "codex-subagent:019f77b1-4c8d-7560-8489-bb10c675a6b0",
     "scope": [
-      ".csdlc/issues/5542",
-      ".csdlc/prepared/issues/5542"
+      ".csdlc/prepared/issues/4644/validate_docs_alignment.rb",
+      ".csdlc/prepared/issues/5542",
+      "README.md",
+      "docs/milestones/v0.91.7",
+      "docs/planning/ADL_FEATURE_LIST.md"
     ],
-    "reviewed_revision": "git-blake3:166a380d96bff5c2293800ad1f3f411c28e1891b:541ddcb1ae256802b2f3e733a62f16df830644fd050b75416e44ac110d4f22d2",
-    "findings": [],
+    "reviewed_revision": "git-blake3:90b89d5c5e4d9404b117e2f39f0af38d7523bcc3:d95b3ec549fde19d6bc99c0d9a6c136662af43a31a4843cd393e9f2da4b45690",
+    "findings": [
+      {
+        "id": "F-5542-6",
+        "severity": "p1",
+        "summary": "Open WP-21A issue #5489 was omitted from canonical remaining-gate summaries and machine-readable open-work sets.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:90b89d5c5e4d9404b117e2f39f0af38d7523bcc3:d95b3ec549fde19d6bc99c0d9a6c136662af43a31a4843cd393e9f2da4b45690",
+        "route": null
+      }
+    ],
     "residual_risks": [
-      "Substantive documentation remains covered by the exact-revision review of f873efb34d6a1bc98c3df9dfe8649b1fc2899e22.",
-      "PR #5543 must reconcile the sprint-review register before #5542 merges.",
-      "GitHub CI remains publication-time evidence; no AWS command or service was used."
+      "WP-21A remains open and must settle independently before WP-23 release ceremony.",
+      "No AWS command or service was used."
     ],
     "completed": true,
-    "non_substantive_proof": {
-      "policy": "metadata_only_review_projection",
-      "from_revision": "git-blake3:f873efb34d6a1bc98c3df9dfe8649b1fc2899e22:124a18c5facd78eccf3204b8618ecb2cd933b207bfd2c3956686c214c596688b",
-      "to_revision": "git-blake3:166a380d96bff5c2293800ad1f3f411c28e1891b:541ddcb1ae256802b2f3e733a62f16df830644fd050b75416e44ac110d4f22d2",
-      "from_commit": "f873efb34d6a1bc98c3df9dfe8649b1fc2899e22",
-      "to_commit": "166a380d96bff5c2293800ad1f3f411c28e1891b",
-      "changed_paths": [
-        ".csdlc/issues/5542/audit.jsonl",
-        ".csdlc/issues/5542/cards/sip.values.json",
-        ".csdlc/issues/5542/cards/sor.md",
-        ".csdlc/issues/5542/cards/sor.values.json",
-        ".csdlc/issues/5542/cards/spp.values.json",
-        ".csdlc/issues/5542/cards/srp.md",
-        ".csdlc/issues/5542/cards/srp.values.json",
-        ".csdlc/issues/5542/cards/stp.values.json",
-        ".csdlc/issues/5542/cards/vpp.values.json",
-        ".csdlc/issues/5542/index.json",
-        ".csdlc/prepared/issues/5542/advance-reviewed.json",
-        ".csdlc/prepared/issues/5542/assign-final-review.json",
-        ".csdlc/prepared/issues/5542/record-final-review.json",
-        ".csdlc/prepared/issues/5542/recover-metadata-review.json"
-      ]
-    }
+    "non_substantive_proof": null
   },
   "publication": null,
   "readiness": null,
@@ -102,32 +96,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "1dbefa88dad9853edd5728b7aaedff1e3799e6c013c2e84763de05e61c0c2925",
+      "values_digest": "9e5083f74379a43ed3179b651fd1e98f37388cd5764b467c4334d6b6e4c7d804",
       "rendered_digest": "02f4fc7c656039cba2e6b7aabc291ea424d7c6dcc96f3a1c6fe5d21a3de51ad2",
       "ast_digest": "b9ba6846463b5c7662b30f87cb0ef41e4a8661a2f97ea90574337d8eb04a5721"
     },
     "stp": {
-      "values_digest": "dd6137dbbc84b08c4919c313bae6d8d9e96478e05a33212764e2b7b320d66628",
+      "values_digest": "3105622d907f93fdcf0ad5bd587505b3eda34f35ac2170c195c2b2df5105015d",
       "rendered_digest": "a6f45791f8e8ebdcf25e9e34d9f79686597359e7bd26af925411e895cf20c8b2",
       "ast_digest": "07ab818f6c3aa0fb9783dad339189a74a40658f63b4175770eb0294a7cd27ab5"
     },
     "spp": {
-      "values_digest": "84cb2df4fd872cd62815f70fd8a3ef4e0319d15ba1d38a6483247c570af66ded",
+      "values_digest": "4c38fc6eee4ca7219017e2c05544ca56bded7d39056ba6bfb1210895016ee1a0",
       "rendered_digest": "07966a0ef7d8b690b039a91b147da8af1dba64c8b3cb58f3447bd0dd7c8fbcc0",
       "ast_digest": "631a951f50c6bc37a004f8206f350e38bdda702a9a1972448fe3e3aa6e919bc3"
     },
     "vpp": {
-      "values_digest": "34d797a1f4a9660c4bad995db2a4fee209e92ce894bbed8284595ba127ce7992",
+      "values_digest": "80c36f5893e77c8ad9b17477f540c007af7bf03644a15b9f8f5ecbb343de2089",
       "rendered_digest": "6a8491f9fd266cb1bac9cd658a84b5f1cdaac5ca0ccc567d1626614b81d77ff9",
       "ast_digest": "f5817f030c08b76f6ca61267246fddc1c54c2024670e9ef0f4a2b549ef21a897"
     },
     "srp": {
-      "values_digest": "f6fc400b6d8cf02c2c8081ecd321db93e3f92019ecce3f1257a62d10718b4672",
-      "rendered_digest": "b0cddef6cd53e78e01d0774446fc1070b047e0f934d87088cf9afec30b7f3ce9",
-      "ast_digest": "4ed3b8b882d656c6eb4430f34a0332bf7b89613847b58f11f05fb46e71de83e9"
+      "values_digest": "992b55965766e80296230662d5d5fed7c01d307a21ae435aa9cb596782e05786",
+      "rendered_digest": "703f129b8916cfcfde2b96bfe46f31a91f25b1cfc4e6165f19a5dd92dc4a3cfc",
+      "ast_digest": "bd134dd5c5a419b8436ac97bb90aa13b317e5f1aeacef339a85dd6fce9e592fc"
     },
     "sor": {
-      "values_digest": "b9330257205ee6b5d6b7f75326d5c0f79833cac603abddfba1c3ad742dcc8f1e",
+      "values_digest": "a7c27aeb290a5fec6d588bde5f092c73ac71bdbde60abc21189364884aac889c",
       "rendered_digest": "756ff6863a0c2d4b9d403a199cca9394c49af01de95b5bab40cfdb2fbe0b20e9",
       "ast_digest": "e46ff84d61c091ee31fe2268a6e45b90c59cbbccdab0d69fae4c3e34eef00796"
     }
@@ -174,6 +168,20 @@
       "to": "reviewed",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Advance after the bounded current-head metadata review found no actionable findings and retained the substantive f873efb34 review as the implementation authority."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Operator identified omitted open WP-21A/#5489 after the prior reviewed revision; recover review state for the corrected exact head."
+    },
+    {
+      "sequence": 8,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The corrected exact-revision review confirms WP-21A/#5489 is represented consistently and found no remaining actionable findings."
     }
   ],
   "audit": [
@@ -301,6 +309,34 @@
       "generation": 11,
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Advance after the bounded current-head metadata review found no actionable findings and retained the substantive f873efb34 review as the implementation authority.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Operator identified omitted open WP-21A/#5489 after the prior reviewed revision; recover review state for the corrected exact head.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 13,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The corrected exact-revision review confirms WP-21A/#5489 is represented consistently and found no remaining actionable findings.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
     }
   ]

@@ -143,6 +143,44 @@ fn implemented_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
 }
 
 #[test]
+fn substantive_revision_honors_review_scope_pathspecs() {
+    let temp = tempfile::tempdir().expect("temp");
+    std::fs::create_dir_all(temp.path().join("docs")).expect("docs");
+    std::fs::create_dir_all(temp.path().join("src")).expect("src");
+    std::fs::write(temp.path().join("docs/review.md"), "reviewed\n").expect("doc");
+    std::fs::write(temp.path().join("src/outside.rs"), "outside\n").expect("src");
+    git(temp.path(), &["init", "-b", "main"]);
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "C-SDLC Test"]);
+    git(temp.path(), &["add", "docs", "src"]);
+    git(temp.path(), &["commit", "-m", "fixture"]);
+
+    let clean = csdlc_v2::git::substantive_revision(temp.path(), &["docs".into()])
+        .expect("clean scoped revision");
+    let head = git_out(temp.path(), &["rev-parse", "HEAD"]);
+    assert_eq!(clean, csdlc_v2::git::clean_commit_revision(&head));
+
+    std::fs::write(temp.path().join("src/outside.rs"), "outside dirty\n").expect("dirty src");
+    std::fs::write(temp.path().join("src/untracked.rs"), "new outside\n").expect("outside new");
+    let outside_dirty = csdlc_v2::git::substantive_revision(temp.path(), &["docs".into()])
+        .expect("outside dirty scoped revision");
+    assert_eq!(outside_dirty, clean);
+
+    std::fs::write(temp.path().join("docs/new.md"), "new reviewed file\n").expect("new doc");
+    let inside_untracked = csdlc_v2::git::substantive_revision(temp.path(), &["docs".into()])
+        .expect("inside untracked scoped revision");
+    assert_ne!(inside_untracked, clean);
+
+    std::fs::write(temp.path().join("docs/review.md"), "reviewed dirty\n").expect("dirty doc");
+    let inside_dirty = csdlc_v2::git::substantive_revision(temp.path(), &["docs".into()])
+        .expect("inside dirty scoped revision");
+    assert_ne!(inside_dirty, clean);
+}
+
+#[test]
 fn assignment_and_recording_update_index_and_srp_without_publication_side_effect() {
     let (temp, store, record) = implemented_fixture();
     let assigned = assign_review(

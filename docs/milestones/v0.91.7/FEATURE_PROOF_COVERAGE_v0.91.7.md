@@ -17,6 +17,11 @@ activation readiness. Later gates still own quality, documentation alignment,
 internal review, external review, remediation, next-milestone review, and
 release ceremony truth.
 
+Current #5544 refresh: WP-16 and WP-17 are closed, WP-18 internal review is
+recorded on open PR #5543, WP-19 external review is blocked before start, WP-20
+remediation is active through #4647 and #5544-#5547, WP-21A #5489 remains open
+as the next-milestone docs closeout-planning gate, and WP-23 remains open.
+
 ## Coverage Table
 
 | Surface | WP-15 status | Current issue truth | Evidence | Non-claims |
@@ -65,12 +70,18 @@ The following open gates remain after WP-15:
 
 | Gate | Issue | Role |
 | --- | ---: | --- |
-| WP-16 | #4643 | Quality gate |
-| WP-17 | #4644 | Documentation alignment |
-| WP-18 | #4645 | Internal review |
-| WP-19 | #4646 | External review |
-| WP-20 | #4647 | Review remediation |
+| WP-18 | #4645 | Internal review recorded on open PR #5543; not terminally closed at #5544 capture |
+| WP-19 | #4646 | External review blocked before start |
+| WP-20 | #4647 | Review remediation active through #5544-#5547 |
+| WP-21A | #5489 | Next-milestone docs closeout-planning gate remains open |
 | WP-23 | #4650 | Release ceremony |
+
+Closed downstream gates retained after WP-15:
+
+| Gate | Issue | Current truth |
+| --- | ---: | --- |
+| WP-16 | #4643 | Closed quality gate with downstream gates open. |
+| WP-17 | #4644 | Closed documentation alignment; PR #5539 merged and terminal projection materialized by #5544. |
 
 Closed downstream planning evidence:
 

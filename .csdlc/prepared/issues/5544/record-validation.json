@@ -1,0 +1,25 @@
+{
+  "issue": 5544,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "62a0e35a652ea7bf2a480d9ade36cccbfce75619df0a5b7ada2664f6a67b8248",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "Focused release-truth documentation and typed lifecycle validation passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git diff --check",
+        "jq . docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json",
+        "jq . .csdlc/evidence/5544/live-state/github_state.json",
+        "ruby -e 'require yaml; YAML.load_file(...)'",
+        "csdlc-doctor --repo . --issue 5544",
+        "csdlc-doctor --repo . --issue 4644"
+      ],
+      "purpose": "Prove #5544 edited docs and evidence parse cleanly, diff hygiene is clean, #5544 lifecycle state is valid, and the #4644 terminal projection is closed_out and valid.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5544/live-state/ and local command output in #5544 session"
+    }
+  }
+}

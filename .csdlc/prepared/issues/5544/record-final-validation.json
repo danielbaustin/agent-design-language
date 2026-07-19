@@ -1,0 +1,25 @@
+{
+  "issue": 5544,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "c401f258110ac2709fe444d3fcc17805c5469e473f8fff286cce633c5c233e40",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "Post-correction release-truth documentation and typed lifecycle validation passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git diff --check",
+        "jq . docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json",
+        "jq . .csdlc/evidence/5544/live-state/github_state.json",
+        "ruby -e 'require yaml; YAML.load_file(...)'",
+        "csdlc-doctor --repo . --issue 5544",
+        "csdlc-doctor --repo . --issue 4644"
+      ],
+      "purpose": "Re-prove final #5544 documentation and evidence parse cleanly after stale WP-17 wording was corrected, and that #5544/#4644 typed lifecycle state remains valid.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5544/live-state/ and local command output in #5544 session"
+    }
+  }
+}

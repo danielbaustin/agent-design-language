@@ -35,13 +35,12 @@ jobs:
 
       - name: Run coverage and quality gates
         id: checks
-        continue-on-error: true
         run: |
           set -euo pipefail
           cargo fmt --all -- --check
           cargo clippy --all-targets -- -D warnings
+          bash tools/run_authoritative_coverage_lane.sh --authority nightly_main --event-name push
           cargo llvm-cov --summary-only | tee coverage-summary.txt
-          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
           cargo test --doc
 
       - name: Build nightly report
@@ -87,7 +86,7 @@ jobs:
 
           per_file_rows="$(jq -r '
             [.data[].files[]
-              | select(.filename | contains("/adl/src/"))
+              | select((.filename | contains("/adl/src/")) or (.filename | contains("/adl-runtime/src/")))
               | {
                   f:(
                     .filename
@@ -113,7 +112,7 @@ jobs:
           ' coverage-summary.json)"
 
           if [ -z "$per_file_rows" ]; then
-            echo "No per-file rows found for /adl/src in coverage-summary.json" >&2
+            echo "No per-file rows found for /adl/src or /adl-runtime/src in coverage-summary.json" >&2
             exit 1
           fi
 

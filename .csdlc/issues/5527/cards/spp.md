@@ -42,7 +42,7 @@ Revision 1
       "AC-4",
       "AC-5"
     ],
-    "status": "pending"
+    "status": "completed"
   },
   {
     "id": "S3",
@@ -50,7 +50,7 @@ Revision 1
     "acceptance_ids": [
       "AC-6"
     ],
-    "status": "pending"
+    "status": "completed"
   },
   {
     "id": "S4",
@@ -58,7 +58,7 @@ Revision 1
     "acceptance_ids": [
       "AC-7"
     ],
-    "status": "pending"
+    "status": "completed"
   }
 ]
 

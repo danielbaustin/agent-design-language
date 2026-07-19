@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5527,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_generation": 19,
+  "expected_digest": "33ddc91e6754bf766b2543782372a2917c68d84ded1e0190950c4a784554826f",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5527-terminal-sor-artifact-repair",
+  "title": "[v0.91.7][csdlc-v2][closeout] Repair terminal SOR artifact references",
+  "body": "Closes #5527\n\n## Summary\n- add a typed, authority-scoped terminal SOR artifact-reference repair\n- authenticate target record, terminal receipt, retained path, and retained bytes with exact compare-and-swap guards\n- preserve atomic record/card/receipt truth with journaled rollback\n- repair #5390 from its deleted diagram path to the retained terminal artifact\n\n## Validation\n- exact root-relative Gate 7 regression passes\n- complete Gate 7 lifecycle suite passes (12/12)\n- strict all-target Clippy, cargo fmt, and git diff checks pass\n- csdlc-doctor passes for #5390 and #5527\n- exact publication-head subagent review is clean\n\nThe unrelated non-Git Gate 2 fixture failures discovered by the full suite are tracked in #5548. No Runtime source changes. No AWS execution.",
+  "draft": true,
+  "token_file": "/Users/daniel/keys/github.token"
+}

@@ -16,14 +16,20 @@ notes:
   - "Keep v0.92 birthday implementation out of this planning package."
   - "Every activation-path source-capture input must exit integrated/proven, already closed with evidence, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval."
   - "WP-01 must consume failed-but-closed WP-15 #3980 external-review truth, closed WP-16 #3981/#4620/#4621 remediation truth, closed v0.91.7 tooling fix #4622, WP-14A #4582, and closed WP-14A remediation #4609-#4612 truth before dependent execution starts."
-  - "Live WP truth last verified on 2026-07-18: WP-01 through WP-17 closed; #4644 closed through merged PR #5539; WP-18, WP-19, WP-20, and WP-23 open; WP-21 and WP-22 closed retained evidence."
+  - "Live WP truth last verified on 2026-07-18: WP-01 through WP-17 closed; #4644 closed through merged PR #5539; WP-18, WP-19, WP-20, WP-21A, and WP-23 open; WP-21 and WP-22 closed retained evidence."
   - "v0.92 consumes the reviewed v0.91.8 exact-revision handoff, not this v0.91.7 issue wave directly."
 closeout_tail_truth:
   verified_on: 2026-07-18
   closed_wps: [WP-01, WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16, WP-17, WP-21, WP-22]
-  open_wps: [WP-18, WP-19, WP-20, WP-23]
+  open_wps: [WP-18, WP-19, WP-20, WP-21A, WP-23]
   release_ready: false
-  evidence: docs/milestones/v0.91.7/review/V0917_WP17_DOCS_ALIGNMENT_4644.md
+  evidence: docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md
+  blocked_before_external_review: [5408, 5489, 5527, 5544, 5545, 5546, 5547]
+  notes:
+    - "WP-18 #4645 has a retained internal-review packet on open PR #5543 but is not terminally closed at this refresh."
+    - "WP-19 #4646 must not start until P1/P2 remediation is fixed or explicitly dispositioned with retained evidence."
+    - "WP-20 #4647 owns the grouped #4645 remediation wave."
+    - "WP-21A #5489 remains open and must prepare the next-milestone docs closeout plan before next-milestone review/release-tail consumption."
 wp_issue_map:
   - {wp: WP-01, issue: 4628}
   - {wp: WP-02, issue: 4629}
@@ -46,6 +52,7 @@ wp_issue_map:
   - {wp: WP-19, issue: 4646}
   - {wp: WP-20, issue: 4647}
   - {wp: WP-21, issue: 4648}
+  - {wp: WP-21A, issue: 5489}
   - {wp: WP-22, issue: 4649}
   - {wp: WP-23, issue: 4650}
 existing_issue_routes:
@@ -313,7 +320,9 @@ work_packages:
       - "Feature-list/TBD disposition update"
   - wp: WP-21A
     title: Next milestone closeout planning
-    outcome: Create a separate issue after WP-21 alignment to carry the canonical next-milestone closeout role previously assigned to WP-21.
+    issue: 5489
+    status: open
+    outcome: Complete the canonical next-milestone closeout role previously assigned to WP-21.
     depends_on: ["WP-21"]
     deliverables:
       - "v0.92 closeout-planning packet"

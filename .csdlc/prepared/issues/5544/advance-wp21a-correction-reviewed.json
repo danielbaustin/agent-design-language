@@ -1,0 +1,13 @@
+{
+  "issue": 5544,
+  "card": "srp",
+  "expected_generation": 13,
+  "expected_digest": "37cbc7ca8d0e1503ff6f38a80c4cc93d008f020ab63fe99d8d4d47fbdc5e8065",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "Exact-head WP-21A correction review by Meitner recorded no findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

@@ -153,8 +153,8 @@ from issue
 
 v0.91.7 is the active closeout tail feeding the required v0.91.8 bridge.
 WP-01 through WP-17 are closed; WP-17 closed through issue #4644 and merged
-PR #5539. The remaining v0.91.7 gates are WP-18, WP-19, WP-20, and WP-23;
-WP-21 and WP-22 are closed retained planning/review evidence. Closed issue
+PR #5539. The remaining v0.91.7 gates are WP-18, WP-19, WP-20, WP-21A, and
+WP-23; WP-21 and WP-22 are closed retained planning/review evidence. Closed issue
 state does not imply release readiness, and the milestone sprint-review
 register retains residual findings and non-claims. v0.92 consumes the reviewed
 v0.91.8 exact-revision handoff, not v0.91.7 prose as direct approval.
@@ -315,7 +315,7 @@ production markets.
   versioned and does not by itself claim v0.92 activation readiness
 - Most recently completed milestone: v0.91.6
 - Current milestone state: WP-01 through WP-17 are closed; WP-18, WP-19,
-  WP-20, and WP-23 remain open; WP-21 and WP-22 are closed retained evidence
+  WP-20, WP-21A, and WP-23 remain open; WP-21 and WP-22 are closed retained evidence
 - Primary implementation language: Rust
 
 ADL is under active development. The repository contains implemented runtime
