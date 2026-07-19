@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "8e9178cb8566e54c25e6a60a6bb12f910904a4b5d8de5c90bfbda5e8f3b8338b",
   "phase": "closed_out",
-  "generation": 34,
-  "digest": "0861674c8a8ae552d33e1ad0bc7679d3fcb49a6fffca810018b76526349a4dde",
+  "generation": 35,
+  "digest": "d5fe758877318d39084818331a2e028055f22b4d955e76c01670595954eeac20",
   "claim": null,
   "review_assignment": {
     "reviewer": "subagent-Darwin-019f6c37",
@@ -118,8 +118,8 @@
     "base": "main",
     "head": "codex/5407-tools-reliability-tail",
     "revision": "git-blake3:6618c080596ddf0943128c9abdaf67507479b8cc:962010936353d9dfab57cf947115474682a58b27a5d04ae04a131f4e4c35c3ff",
-    "draft": true,
-    "observed_state": "open"
+    "draft": false,
+    "observed_state": "merged"
   },
   "readiness": {
     "pull_request": 5424,
@@ -184,32 +184,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "6dccbe284aaa0b949f2e4090bf1f9d8e133747771058cccb450589c0b8757ac2",
+      "values_digest": "629bce37a5da1735f18548226d9d74f65cf0aed1d6ff5266bfb84480301c3821",
       "rendered_digest": "9d885e96ba486a7cb0b89f6318dff405f2f0ad7073e0576098affcf0e2b82f37",
       "ast_digest": "23de05dd018bea43ce9ebedd2be5701b20ec1ddb7136bb031d531986012f418e"
     },
     "stp": {
-      "values_digest": "79ecb17e00d3fa0b51391b83ced78649bc92d1b2b272441a5dd1c096eb0c6897",
+      "values_digest": "688ff334dd98874f877b4d89332365e4b8df2299e0baa7c7238b7d88c36001d6",
       "rendered_digest": "6feea36e36b92138542354eb3b0775fb4e34eeb3700e4b78df8849517bcdacb3",
       "ast_digest": "35757c103391d6e43ba5181bc35f281d32ac06bf8a28f096afd189ee837981ec"
     },
     "spp": {
-      "values_digest": "ac5c53199f640293b7d34fe668e2b7af073e6af80d23b3a6502d5234c9974ff6",
+      "values_digest": "e19a116897189d6af331f9ad9ed1cb0c4284b86de4cbb1de0cc7ee5ddf759817",
       "rendered_digest": "d6a643ff15296ee1b6aa3a9985a150029b71af88b28de0a2b6f2ff2781c3cfc6",
       "ast_digest": "68e52a76258b88bb5bf5f6ce213a832077f304a8be1b632a4a74423bf9837c7f"
     },
     "vpp": {
-      "values_digest": "e0c98e6fdf4a02435bee362d67a2ca11858c23a78901f965132ea6e2f0a27b02",
+      "values_digest": "2e5e2f7e434c5a49be4a91f37bb4a0db811e50a7cbe9f2bd1bc5790f220f1bb1",
       "rendered_digest": "547f13c3839a2550d2ba90265c2fff6a828f7941b4dd4515f99b6562ab460512",
       "ast_digest": "263cf4f56bbc2872bb5402bd0d3adb05b18cbec92ba41614615a215ab9dbc093"
     },
     "srp": {
-      "values_digest": "d1469e056b484782ea1c6a6953b0351594c8427cd0ae20d32b02192c03574a6e",
-      "rendered_digest": "1f2e2937302deea1cfb3785e46245049933090ad9e66aa67e87b2534f55963d9",
-      "ast_digest": "5cd998adc61c812b24a22c0f17b0c75efeab1a93549c354a287bea8b3d4a0a97"
+      "values_digest": "f36f1abc0abaa2f9a74f86c8bc5d98dee31c0885b0f73dbdc621656d31fc2a98",
+      "rendered_digest": "65d03909ef1d9cd2567d418860294130c8429c157a531dbcedb46e5ae080d1bc",
+      "ast_digest": "08dd74e96493d646429c0fb90f84d97ae1c8c32fab6a5b0b4c5ef6ffdab4a982"
     },
     "sor": {
-      "values_digest": "d4d8269f23a33e7f318ba439dcbdf98ed4ea1244e15f8819f86a2fa74a682f95",
+      "values_digest": "d6f4bb34ade9c69c509575f16f1d0ac995bf38b5c8fa95619e592d5d020f603e",
       "rendered_digest": "34bbf664455cbbb64657262a775bb2ca6e7051646720581de9ec65c646086db8",
       "ast_digest": "a394c9fe9d5c9430c390b18e90467607001d7d07a51434b12051def339b2b336"
     }
@@ -556,8 +556,15 @@
     {
       "sequence": 39,
       "generation": 34,
-      "actor": "codex",
-      "reason": "Materialize retained terminal receipt after merged implementation PR #5424",
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt during exhaustive v0.91.7 closeout audit #5573.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 40,
+      "generation": 35,
+      "actor": "codex-closeout-audit",
+      "reason": "Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.",
       "operation": "reconcile_terminal"
     }
   ]

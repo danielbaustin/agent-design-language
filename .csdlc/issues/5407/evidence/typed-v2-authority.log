@@ -1,6 +1,0 @@
-11:| C-SDLC workflow lifecycle | typed `csdlc-*` binaries under `csdlc-v2/` | canonical under Gate 10D2 |
-19:Gate 10D2 records `v1_sunset`. The sole current C-SDLC operational authority is
-20:the independent Rust binary set in `csdlc-v2/`, routed through the nine typed
-21:skills in `csdlc-v2/operator/skills/`.
-37:binaries belong under `.adl/bin/csdlc-v2/`; Cargo target directories are build
-55:Gate 10A-C artifacts remain evidence and do not override Gate 10D2 authority.
