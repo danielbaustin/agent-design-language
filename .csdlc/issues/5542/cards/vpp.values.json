@@ -7,7 +7,7 @@
     "title": "[v0.91.7][WP-17][docs] Repair post-merge closeout and v0.91.8 bridge truth",
     "slug": "v0-91-7-wp17-post-merge-closeout-truth",
     "version": "v0.91.7",
-    "generation": 14
+    "generation": 21
   },
   "status": "ready",
   "content": {
@@ -41,9 +41,9 @@
       "planned_validation_seconds": 1200,
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on stale live truth, active claim collision, bridge bypass, ambiguous date semantics, or validation failure.",
-      "design_ref": ".csdlc/prepared/issues/5542/design.md",
+      "design_ref": ".csdlc/issues/5542/retained/design.md",
       "design_digest": "fab781fa23c18fe3049476dfadc24785057e8e01555d71a1ff4c51d49b9deb0e",
-      "diagram_ref": ".csdlc/prepared/issues/5542/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5542/retained/diagram.mmd",
       "diagram_digest": "8288260a3a03c8047f3a6278a2c91ee884da009b7e4610925218bbbd329564f4"
     }
   }

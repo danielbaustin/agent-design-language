@@ -3,44 +3,10 @@
   "issue": 5542,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "4ba22360d9c28877a655c69995e8fec64dd508dd8204c0838e8077a0c90f9d48",
-  "phase": "reviewed",
-  "generation": 14,
-  "digest": "7313d2886add02f23e3c25656392678a071f5e2a923ca4ce8750724559bd2fb0",
-  "claim": {
-    "id": "claim-5542-wp17-closeout-truth",
-    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 14,
-    "acquired_unix_seconds": 1784418998,
-    "expires_unix_seconds": 1785023798,
-    "heartbeat_unix_seconds": 1784418998,
-    "branch": "codex/5542-wp17-closeout-truth",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/issues/5542",
-      ".csdlc/prepared/issues/4644/validate_docs_alignment.rb",
-      ".csdlc/prepared/issues/5542",
-      "README.md",
-      "REVIEW.md",
-      "docs/milestones/v0.91.7/DECISIONS_v0.91.7.md",
-      "docs/milestones/v0.91.7/DESIGN_v0.91.7.md",
-      "docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md",
-      "docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md",
-      "docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md",
-      "docs/milestones/v0.91.7/README.md",
-      "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
-      "docs/milestones/v0.91.7/RELEASE_PLAN_v0.91.7.md",
-      "docs/milestones/v0.91.7/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md",
-      "docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md",
-      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
-      "docs/milestones/v0.91.7/VISION_v0.91.7.md",
-      "docs/milestones/v0.91.7/WBS_v0.91.7.md",
-      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
-      "docs/milestones/v0.91.7/review/V0917_WP17_DOCS_ALIGNMENT_4644.md",
-      "docs/milestones/v0.91.7/review/wp17_docs_alignment_4644",
-      "docs/planning/ADL_FEATURE_LIST.md"
-    ],
-    "purpose": "Repair post-merge WP-17 closeout, bridge-precedence, and date-semantics findings without absorbing sibling work"
-  },
+  "phase": "closed_out",
+  "generation": 21,
+  "digest": "26c9eb5d621cb6baf70694186ee65e88bd8434e7ab59fde31479d6c1da96cda2",
+  "claim": null,
   "review_assignment": {
     "reviewer": "codex-subagent:019f77b1-4c8d-7560-8489-bb10c675a6b0",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
@@ -82,12 +48,100 @@
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5542,
+    "pull_request": 5552,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5552",
+    "base": "main",
+    "head": "codex/5542-wp17-closeout-truth",
+    "revision": "git-blake3:ddd4252e99f921c443fe3edd0ca66c7fd91c3ae1:3ee570decae1d275591d820b92802b1ed80bad978cc023f91ff5ae7edac337de",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5552,
+    "head_sha": "ddd4252e99f921c443fe3edd0ca66c7fd91c3ae1",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29667239427/job/88139780795"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29667239427/job/88139742309"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29667239427/job/88139729421"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29667239427/job/88139717309"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29667239427/job/88139729424"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29667239427/job/88139729449"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5552,
+    "disposition": "merged",
+    "observed_sha": "ddd4252e99f921c443fe3edd0ca66c7fd91c3ae1",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5542.json",
+    "released_branch": "codex/5542-wp17-closeout-truth",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5542",
+      ".csdlc/prepared/issues/4644/validate_docs_alignment.rb",
+      ".csdlc/prepared/issues/5542",
+      "README.md",
+      "REVIEW.md",
+      "docs/milestones/v0.91.7/DECISIONS_v0.91.7.md",
+      "docs/milestones/v0.91.7/DESIGN_v0.91.7.md",
+      "docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md",
+      "docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md",
+      "docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md",
+      "docs/milestones/v0.91.7/README.md",
+      "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
+      "docs/milestones/v0.91.7/RELEASE_PLAN_v0.91.7.md",
+      "docs/milestones/v0.91.7/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md",
+      "docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md",
+      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+      "docs/milestones/v0.91.7/VISION_v0.91.7.md",
+      "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/review/V0917_WP17_DOCS_ALIGNMENT_4644.md",
+      "docs/milestones/v0.91.7/review/wp17_docs_alignment_4644",
+      "docs/planning/ADL_FEATURE_LIST.md"
+    ]
+  },
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5542/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5542/diagram.mmd",
+  "design_path": ".csdlc/issues/5542/retained/design.md",
+  "diagram_path": ".csdlc/issues/5542/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
@@ -96,34 +150,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "9e5083f74379a43ed3179b651fd1e98f37388cd5764b467c4334d6b6e4c7d804",
+      "values_digest": "e4e01d945d6ed7a727e9121784a48bee8d2f14d5f22dd00dd16bbbc89529143c",
       "rendered_digest": "02f4fc7c656039cba2e6b7aabc291ea424d7c6dcc96f3a1c6fe5d21a3de51ad2",
       "ast_digest": "b9ba6846463b5c7662b30f87cb0ef41e4a8661a2f97ea90574337d8eb04a5721"
     },
     "stp": {
-      "values_digest": "3105622d907f93fdcf0ad5bd587505b3eda34f35ac2170c195c2b2df5105015d",
+      "values_digest": "4f0ff2875fd0bacce0669f44d0263a4cfb8905a847e16fbdcc9e3a88fd5dcaad",
       "rendered_digest": "a6f45791f8e8ebdcf25e9e34d9f79686597359e7bd26af925411e895cf20c8b2",
       "ast_digest": "07ab818f6c3aa0fb9783dad339189a74a40658f63b4175770eb0294a7cd27ab5"
     },
     "spp": {
-      "values_digest": "4c38fc6eee4ca7219017e2c05544ca56bded7d39056ba6bfb1210895016ee1a0",
-      "rendered_digest": "07966a0ef7d8b690b039a91b147da8af1dba64c8b3cb58f3447bd0dd7c8fbcc0",
-      "ast_digest": "631a951f50c6bc37a004f8206f350e38bdda702a9a1972448fe3e3aa6e919bc3"
+      "values_digest": "a9f9c0657b6f34e15d670b6a7f1a84275a60dd18e7d36bbe47ab93ecc067a351",
+      "rendered_digest": "e2bb343e74951868f2822d67d7c753b543038fc292fbac67a32c5a19c8f823c7",
+      "ast_digest": "fc45109d34612b5a7c61d29c1347c1e8ce6a5fbbbc1c0d61218fce3d5e96f5ae"
     },
     "vpp": {
-      "values_digest": "80c36f5893e77c8ad9b17477f540c007af7bf03644a15b9f8f5ecbb343de2089",
-      "rendered_digest": "6a8491f9fd266cb1bac9cd658a84b5f1cdaac5ca0ccc567d1626614b81d77ff9",
-      "ast_digest": "f5817f030c08b76f6ca61267246fddc1c54c2024670e9ef0f4a2b549ef21a897"
+      "values_digest": "7766ed9185db7be8343935afb19c17ab08b28e4ccbe508138e58a22be457ab7e",
+      "rendered_digest": "094f2564ca67f64d10424ba681be7f52a167ac39b3ab999dafd8373bff68a6c8",
+      "ast_digest": "58ba5dfdf1013e5e3001af5d9d6364e94b0ccd2ef1e32696a46cc4ddecdc4654"
     },
     "srp": {
-      "values_digest": "992b55965766e80296230662d5d5fed7c01d307a21ae435aa9cb596782e05786",
-      "rendered_digest": "703f129b8916cfcfde2b96bfe46f31a91f25b1cfc4e6165f19a5dd92dc4a3cfc",
-      "ast_digest": "bd134dd5c5a419b8436ac97bb90aa13b317e5f1aeacef339a85dd6fce9e592fc"
+      "values_digest": "5da263dd2efaad734dffe9db29f9650c71ed237c8972516b53a671cd1602febc",
+      "rendered_digest": "82e21fbafb35534eb0d1a9bf44b295d0de61482011395fecafbb01b8cc552b32",
+      "ast_digest": "e6171591b588fe54dfb63de00ffff3d43c11a5e71ed47f008abb9d2c43d8c64c"
     },
     "sor": {
-      "values_digest": "a7c27aeb290a5fec6d588bde5f092c73ac71bdbde60abc21189364884aac889c",
-      "rendered_digest": "756ff6863a0c2d4b9d403a199cca9394c49af01de95b5bab40cfdb2fbe0b20e9",
-      "ast_digest": "e46ff84d61c091ee31fe2268a6e45b90c59cbbccdab0d69fae4c3e34eef00796"
+      "values_digest": "3a74a40d0792d0c979393402c7c7bd103e872ef158c3e2182f0faf19d878e12c",
+      "rendered_digest": "52478721b67fcc0febb615763a6e6e4b0bdc968255620f62b8d2144ba21fa605",
+      "ast_digest": "26131f731f3748585b685e988b6e9cb20b4e73755b91dc9a6eadc26e5dc51f01"
     }
   },
   "transitions": [
@@ -182,6 +236,34 @@
       "to": "reviewed",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The corrected exact-revision review confirms WP-21A/#5489 is represented consistently and found no remaining actionable findings."
+    },
+    {
+      "sequence": 9,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 10,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 11,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 12,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -338,6 +420,55 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The corrected exact-revision review confirms WP-21A/#5489 is represented consistently and found no remaining actionable findings.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 24,
+      "generation": 16,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 25,
+      "generation": 17,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 27,
+      "generation": 19,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 28,
+      "generation": 20,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt during exhaustive v0.91.7 closeout audit #5573.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex-closeout-audit",
+      "reason": "Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }
