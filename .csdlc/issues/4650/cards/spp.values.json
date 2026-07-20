@@ -7,7 +7,7 @@
     "title": "[v0.91.7][WP-23][release] Release ceremony",
     "slug": "v0-91-7-wp23-release-ceremony",
     "version": "v0.91.7",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -23,7 +23,7 @@
             "AC-1",
             "AC-4"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "S2",
@@ -32,7 +32,7 @@
             "AC-1",
             "AC-2"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "S3",
@@ -41,7 +41,7 @@
             "AC-2",
             "AC-3"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "S4",

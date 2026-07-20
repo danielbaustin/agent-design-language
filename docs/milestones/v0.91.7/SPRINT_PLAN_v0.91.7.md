@@ -5,9 +5,9 @@
 - Sprint family: `v0.91.7-final-pre-v0.92-readiness`
 - Milestone: `v0.91.7`
 - Start date: not scheduled
-- End date: not scheduled
+- Target closeout date: `2026-07-20`
 - Owner: ADL maintainers
-- Status: closeout tail active
+- Status: release ceremony in progress
 - Source capture: `PLANNING_SOURCE_CAPTURE_v0.91.7.md`
 
 ## Status
@@ -16,9 +16,10 @@ The canonical WP issue wave is in its closeout tail. This document defines
 execution order and records live issue-state alignment; it does not approve
 release readiness.
 
-As last verified on 2026-07-19, WP-01 through WP-18, WP-21, WP-21A, and WP-22
-are closed. WP-19, WP-20, and WP-23 are open. Closed work may still carry
-retained findings or non-claims.
+As last verified on 2026-07-20, WP-01 through WP-22, including WP-21A, are
+closed. WP-20 fixed all 22 WP-19 findings through merged PR #5588. WP-23 #4650
+is the sole open issue before ceremony integration. Closed work may still carry
+retained non-claims.
 
 Current superseding review-tail truth: `#5408` is closed/remediated via merged
 PR #5419 at `6fcd3accafc15e3b6cc8064d836293b4495983de`; the retained #4906
@@ -78,7 +79,7 @@ remediation truth.
 | 7 | Cognitive implementation sprint | WP-10, WP-11, WP-13 | Curiosity, Constructability, reasoning graph, affect/Godel/economics/guild proof and boundary packets are retained. | closed with claim boundaries |
 | 8 | Security and protocol implementation sprint | WP-12 | Security/protocol proof and remediation are retained; broader activation remains evidence-bound. | closed and review-remediated |
 | 9 | Launch and v0.92 handoff sprint | WP-14 | `#4641` routes bounded handoff truth into v0.91.8; it does not approve v0.92 activation. | closed as routed-with-evidence |
-| 10 | Canonical closeout-tail sprint | WP-15 through WP-23 | WP-15 through WP-18, WP-21, WP-21A, and WP-22 are closed. WP-19, WP-20, and WP-23 remain open and preserve the required external-review/remediation/release gates. | active |
+| 10 | Canonical closeout-tail sprint | WP-15 through WP-23 | WP-15 through WP-22, including WP-21A, are closed. WP-19 review and WP-20 remediation are complete; WP-23 is the ceremony integration gate. | final integration |
 
 ## Execution Policy
 

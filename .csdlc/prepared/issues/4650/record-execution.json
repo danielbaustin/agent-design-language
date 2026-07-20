@@ -1,0 +1,24 @@
+{
+  "issue": 4650,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "028d5c81aafc47a1b52fe2aa1a5f8e77f45295fe43c15fac07a30bd514f84330",
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Retain the bounded v0.91.7 release ceremony evidence and reconcile canonical closeout truth after WP-20 integration.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Prepared the final v0.91.7 release ceremony packet after verifying #4650 is the sole open milestone issue, zero unrelated PRs are open, and WP-20 fixed all 22 WP-19 findings before merge.",
+    "changes": [
+      "Added human-readable and machine-readable WP-23 release evidence",
+      "Reconciled README, release notes, checklist, WBS, issue wave, and sprint review register to closed WP-20 truth",
+      "Recorded the v0.91.8 exact-revision bridge requirement and explicit release non-claims"
+    ],
+    "artifacts": [
+      "docs/milestones/v0.91.7/review/V0917_WP23_RELEASE_CEREMONY_4650.md",
+      "docs/milestones/v0.91.7/review/wp23_release_ceremony_4650/release_evidence.json",
+      "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
+      "docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md"
+    ]
+  }
+}

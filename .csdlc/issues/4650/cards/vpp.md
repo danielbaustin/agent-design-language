@@ -35,9 +35,7 @@ Diagram: .csdlc/prepared/issues/4650/diagram.mmd
     "budget_seconds": 300,
     "budget_tokens": 3000,
     "argv": [
-      "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
-      "--repo",
-      ".",
+      "csdlc-doctor",
       "--issue",
       "4650"
     ],
@@ -46,7 +44,7 @@ Diagram: .csdlc/prepared/issues/4650/diagram.mmd
   },
   {
     "lane": "artifact-integrity",
-    "proof_role": "Validate future tracked artifacts are clean after execution",
+    "proof_role": "Validate tracked ceremony artifacts including newly added files",
     "acceptance_ids": [
       "AC-2",
       "AC-3",
@@ -59,10 +57,11 @@ Diagram: .csdlc/prepared/issues/4650/diagram.mmd
     "argv": [
       "git",
       "diff",
+      "--cached",
       "--check"
     ],
     "parallel_group": "prep",
-    "defer_reason": "Run after execution artifacts are written"
+    "defer_reason": null
   }
 ]
 
@@ -78,8 +77,8 @@ Tokens: 25000
 
 ## Commands
 
-- `/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor --repo . --issue 4650`
-- `git diff --check`
+- `csdlc-doctor --issue 4650`
+- `git diff --cached --check`
 
 ## Failure Semantics
 

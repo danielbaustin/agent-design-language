@@ -1,0 +1,10 @@
+{
+  "issue": 4650,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "0f338e0e25cf188b3c62bb93b1417b3473eea1d225ecf595ef8d3d42977c6658",
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Live ADL inventory confirmed all predecessors closed, #4650 as the sole open v0.91.7 issue, and zero open PRs before ceremony publication.",
+  "operation": {"operation": "update_plan_step", "step_id": "S1", "status": "completed"}
+}

@@ -1,0 +1,18 @@
+{
+  "issue": 4650,
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "expected_generation": 0,
+  "expected_digest": "7dea0dd962277f9dcb77a3d36caf9b135dec072adda0a422ba530fea5db356aa",
+  "now_unix_seconds": 1784532770,
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Protect the canonical v0.91.7 status surfaces and typed preparation records required to execute the WP-23 release ceremony truthfully.",
+  "add_protected_paths": [
+    ".csdlc/prepared/issues/4650",
+    "docs/milestones/v0.91.7/README.md",
+    "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
+    "docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md",
+    "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+    "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+    "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+  ]
+}

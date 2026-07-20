@@ -1,0 +1,10 @@
+{
+  "issue": 4650,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "9b7c916b79a670b851728ce256e14859492d9ddf4b8d2ef27fa3b8333078c0a5",
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Focused typed validation passed for diff hygiene, structured release records, and lifecycle consistency; live inventory and local-link checks also passed.",
+  "operation": {"operation": "update_plan_step", "step_id": "S3", "status": "completed"}
+}

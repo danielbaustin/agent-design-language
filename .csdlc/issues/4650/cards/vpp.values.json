@@ -7,7 +7,7 @@
     "title": "[v0.91.7][WP-23][release] Release ceremony",
     "slug": "v0-91-7-wp23-release-ceremony",
     "version": "v0.91.7",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -27,9 +27,7 @@
           "budget_seconds": 300,
           "budget_tokens": 3000,
           "argv": [
-            "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
-            "--repo",
-            ".",
+            "csdlc-doctor",
             "--issue",
             "4650"
           ],
@@ -38,7 +36,7 @@
         },
         {
           "lane": "artifact-integrity",
-          "proof_role": "Validate future tracked artifacts are clean after execution",
+          "proof_role": "Validate tracked ceremony artifacts including newly added files",
           "acceptance_ids": [
             "AC-2",
             "AC-3",
@@ -51,10 +49,11 @@
           "argv": [
             "git",
             "diff",
+            "--cached",
             "--check"
           ],
           "parallel_group": "prep",
-          "defer_reason": "Run after execution artifacts are written"
+          "defer_reason": null
         }
       ],
       "planned_validation_seconds": 3600,

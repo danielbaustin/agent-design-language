@@ -1,0 +1,39 @@
+{
+  "issue": 4650,
+  "card": "vpp",
+  "expected_generation": 6,
+  "expected_digest": "1e51c9caa0118441b210b732a1d3635b83fcd83e069f86f976dc328dc2e2288f",
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Remove the machine-local doctor executable from the generated WP-23 validation plan and align the artifact lane with staged ceremony proof.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "prep-doctor",
+        "proof_role": "Validate typed C-SDLC prep state and issue-local cards",
+        "acceptance_ids": ["AC-1", "AC-4"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 300,
+        "budget_tokens": 3000,
+        "argv": ["csdlc-doctor", "--issue", "4650"],
+        "parallel_group": "prep",
+        "defer_reason": null
+      },
+      {
+        "lane": "artifact-integrity",
+        "proof_role": "Validate tracked ceremony artifacts including newly added files",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 300,
+        "budget_tokens": 3000,
+        "argv": ["git", "diff", "--cached", "--check"],
+        "parallel_group": "prep",
+        "defer_reason": null
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

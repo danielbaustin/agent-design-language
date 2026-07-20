@@ -134,9 +134,7 @@
         "budget_seconds": 300,
         "budget_tokens": 3000,
         "argv": [
-          "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
-          "--repo",
-          ".",
+          "csdlc-doctor",
           "--issue",
           "4650"
         ],

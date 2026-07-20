@@ -1,12 +1,12 @@
 # v0.91.7 Sprint Review Register
 
-Status: active_review_register
+Status: release_ceremony_in_progress
 
-Last updated: 2026-07-18
+Last updated: 2026-07-20
 
 Issue: #5134
 
-Current update: #5544
+Current update: #4650
 
 ## Purpose
 
@@ -35,14 +35,15 @@ closed out in the issue/card/PR surfaces.
 - WP-08 is closed with retained runtime AWS/signal proof and closeout truth;
   the later WP-07/WP-08 CSM governed-notice bridge tail `#4998` also merged
   and closed after adding retained control-plane notice proof.
-  WP-16 is closed with a passed quality gate and downstream gates still open;
-  WP-19 is closed; WP-20 and WP-23 remain open release-tail gates.
+  WP-16 is closed with a passed quality gate. WP-19 is closed; WP-20 fixed all
+  22 returned findings and closed through merged PR #5588. WP-23 is the sole
+  open v0.91.7 issue before ceremony integration.
 - WP-18 internal review is closed through #4645 / merged PR #5543. Its
   internal-remediation owners #5408 and #5544-#5547 are closed, as are #5527
   and WP-21A #5489. PR #5579 records a historical WP-19 review target that
   later merged evidence invalidated. The replacement review completed against
-  `bd9b7a3c58417d20768b31bc1fede03ec8e3cfe5` and retained 22 findings for
-  WP-20 disposition. WP-21, WP-21A, and WP-22 are closed retained
+  `bd9b7a3c58417d20768b31bc1fede03ec8e3cfe5` and retained 22 findings, all
+  fixed by WP-20. WP-21, WP-21A, and WP-22 are closed retained
   planning/review evidence; #5571 and #5573 are closed with retained evidence;
   and WP-23 remains open for release ceremony.
 - Tools sprint #4806 is closed and review-remediated by #4961 for stale child
@@ -75,8 +76,9 @@ closed out in the issue/card/PR surfaces.
 - #5544 originally captured the release-tail truth after the #4645 internal
   review. Current live truth supersedes that dated snapshot: #5408, #5489,
   #5527, and #5544-#5547 are closed. WP-19 is closed with provider-degraded
-  review evidence; WP-20 remains the active remediation gate and this register
-  still does not approve v0.91.7 release readiness.
+  review evidence; WP-20 is closed after fixing all 22 findings. WP-23 is the
+  sole release-ceremony integration gate, and this register does not claim a
+  tag, deployment, Runtime v3 cutover, or v0.92 activation.
 
 ## Review Status Table
 
@@ -101,11 +103,11 @@ closed out in the issue/card/PR surfaces.
 | WP-17 | #4644 | closed-out; merged PR #5539 | `V0917_WP17_DOCS_ALIGNMENT_4644.md`; `wp17_docs_alignment_4644/audit.json`; `.csdlc/evidence/4644/validation-receipt.json`; typed terminal projection in `.csdlc/issues/4644/` | The first bounded review found inventory, closeout-disposition, register, and validation-receipt defects; all four were repaired and focused validation passed. PR #5539 is merged and #5544 materialized the retained terminal receipt so the old register claim is no longer active. | Keep WP-17 as closed documentation truth; do not infer release readiness. |
 | WP-18 | #4645 | closed; merged PR #5543 | `docs/reviews/v0.91.7/internal-review-4645/`; `docs/milestones/v0.91.7/review/V0917_WP18_INTERNAL_REVIEW_4645.md` | #4645 recorded twelve findings. #5408 and #5544-#5547 are closed with retained remediation or explicit v0.91.8 deferral truth. #5571 is closed with retained publication disposition and redaction evidence. | Preserve the internal-review evidence and include the #5571 disposition in the replacement WP-19 corpus. |
 | WP-19 | #4646 | closed; provider-degraded review complete | `docs/milestones/v0.91.7/review/ADL_v0.91.7_THIRD_PARTY_REVIEW_HANDOFF.md`; `docs/milestones/v0.91.7/review/external_review_4646/` | The exact 70-file corpus received one Fable 5 lane and three independent shadow lanes after Anthropic billing blocked further calls. The combined register retains 22 findings. | Preserve the provider limitation and route findings to WP-20. |
-| WP-20 | #4647 | open; 22 WP-19 findings returned | #4647 plus `external_review_4646/FINDINGS_REGISTER.md` | WP-20 owns deduplication, acceptance, remediation, and issue routing. | Resolve or explicitly disposition every accepted finding before preflight. |
+| WP-20 | #4647 | closed; all 22 WP-19 findings fixed; merged PR #5588 | `wp20_remediation_4647/WP19_FINDING_REMEDIATION_MATRIX_4647.md`; `wp20_remediation_4647/PRE_PR_REVIEW_4647.md` | Every WP19-01 through WP19-22 row is fixed with retained evidence; bounded review findings were also fixed before merge. | Consume as the completed remediation/preflight gate. |
 | WP-21 | #4648 | closed; superseded planning with records finding | `docs/reviews/v0.91.7/remaining-sprints-5403/WP21_REVIEW_4648.md` | Two findings: the missed historical review gate is fixed/superseded for current planning consumption; durable lifecycle review evidence was routed through now-closed #5406. Current v0.91.8 planning supersedes direct consumption of the old v0.92 candidate package. | Keep the historical boundary and consume the closed #5406 terminal evidence plus current v0.91.8 planning authority. |
 | WP-21A | #5489 | closed; merged planning and handoff packet | `V0917_WP21A_NEXT_MILESTONE_DOCS_CLOSEOUT_5489.md`; `wp21a_next_milestone_docs_5489/README.md`; `docs/milestones/v0.91.8/` | #5489 is distinct from closed WP-21 #4648 and retains the current v0.91.8/v0.92 next-milestone planning and third-party-review handoff package. | Consume the v0.91.8 package as planned truth; do not infer v0.92 activation. |
 | WP-22 | #4649 | closed retained review evidence | `V0917_CLOSED_SPRINT_REVIEW_4649.md` | Closed on 2026-07-10; current v0.91.8 planning supersedes direct activation consumption. | Keep as historical review input, not release approval. |
-| WP-23 | #4650 | open | none yet | Release ceremony not yet complete. | Run only after all required review/remediation gates are clean or explicitly blocked with operator approval. |
+| WP-23 | #4650 | open before ceremony integration | `V0917_WP23_RELEASE_CEREMONY_4650.md`; `wp23_release_ceremony_4650/release_evidence.json` | All prior release-tail gates are closed; this packet preserves final evidence and non-claims. | Integrate #4650, close the issue, and retain typed terminal closeout. |
 
 ## Sprint Review Records
 

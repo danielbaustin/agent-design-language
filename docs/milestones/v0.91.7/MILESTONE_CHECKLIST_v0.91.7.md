@@ -5,14 +5,14 @@
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
 - Created: `2026-06-21`
-- Last verified: `2026-07-18`
+- Last verified: `2026-07-20`
 - Setup lineage: `#3801`, `#3825`, `#4368`
 - Source capture: `PLANNING_SOURCE_CAPTURE_v0.91.7.md`
 - Release-tail handoff addendum: `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`
 
 ## Status
 
-Live checklist refreshed on 2026-07-18. Checked items below have direct
+Live checklist refreshed on 2026-07-20. Checked items below have direct
 issue/packet evidence; unchecked items remain unverified or belong to open
 quality/review/release gates. This checklist does not infer completion merely
 from a closed issue.
@@ -89,18 +89,24 @@ from a closed issue.
 ## Review And Closeout
 
 - [x] Demo convergence completed with explicit public-claim boundaries through `#4642` and `review/V0917_WP15_DEMO_CONVERGENCE_4642.md`.
-- [ ] Quality gate completed with blockers recorded.
-- [ ] Documentation alignment completed before formal review.
-- [ ] Bounded internal review completed.
-- [ ] External review completed or explicitly blocked with evidence according to release policy and operator approval.
-- [ ] Internal/external findings fixed or recorded as evidence-backed blockers with operator approval.
-- [ ] Remediation/preflight packet completed.
+- [x] Quality gate completed through WP-16 #4643 with downstream boundaries retained.
+- [x] Documentation alignment completed through WP-17 #4644 / merged PR #5539.
+- [x] Bounded internal review completed through WP-18 #4645 and retained remediation evidence.
+- [x] External review completed through WP-19 #4646 with provider limitations retained explicitly.
+- [x] All 22 WP-19 findings fixed through WP-20 #4647 / merged PR #5588.
+- [x] Remediation/preflight packet completed under `review/wp20_remediation_4647/`.
 - [x] Next-milestone planning retained through closed `#4648`; current v0.91.8 planning supersedes direct activation use.
 - [x] Next-milestone planning review retained through closed `#4649`; it is not release approval.
-- [ ] Release ceremony packet completed.
-- [ ] Bridge-ledger dispositions refreshed or handed off.
+- [x] Release ceremony packet completed under `review/wp23_release_ceremony_4650/` for #4650 integration.
+- [x] Bridge-ledger dispositions handed to the reviewed v0.91.8 planning package through WP-21A #5489.
 - [ ] `#3780` has the tracked activation inputs it needs.
-- [ ] Closeout record states what `v0.92` may consume and what remains blocked.
+- [x] WP-23 closeout record states what `v0.92` may consume and what remains blocked.
+
+Unchecked historical planning and feature rows above remain bounded proof or
+handoff questions; this ceremony does not silently convert them into product
+completion. The WP-23 packet records what v0.91.7 closes and what the required
+v0.91.8 bridge must still review before v0.92. The unchecked #3780 activation
+input is a successor-bridge obligation, not permission to claim v0.92 ready.
 
 ## Exit Criteria
 

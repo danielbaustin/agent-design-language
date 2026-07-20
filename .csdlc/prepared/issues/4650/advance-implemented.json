@@ -1,0 +1,10 @@
+{
+  "issue": 4650,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "56f0439bfafdac242ecdfc32395bf01a0f6bd1c56d8fb6993353520053b7272e",
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "WP-23 ceremony artifacts are complete, focused validation passed, and all bounded pre-PR review findings are fixed with a final clean confirmation.",
+  "operation": {"operation": "advance_phase", "phase": "implemented"}
+}

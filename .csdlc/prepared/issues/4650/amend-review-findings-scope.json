@@ -1,0 +1,15 @@
+{
+  "issue": 4650,
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "expected_generation": 5,
+  "expected_digest": "d60f1c889ba8a5dbce22ac5e20dddbc263d2479aa3f6884a5b879495aaf69d92",
+  "now_unix_seconds": 1784533594,
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Protect four additional canonical milestone status surfaces found stale by the bounded WP-23 review.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.7/RELEASE_PLAN_v0.91.7.md",
+    "docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md",
+    "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+    "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md"
+  ]
+}

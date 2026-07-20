@@ -6,7 +6,7 @@
 - Target milestone: `v0.92`
 - Version: `v0.91.7`
 - Created: `2026-06-21`
-- Last verified: `2026-07-19`
+- Last verified: `2026-07-20`
 - Owner: ADL maintainers
 - Related issues: `#3825`, `#4368`, `#3982`, `#3780`, `#5383`, `#5384`
 
@@ -46,10 +46,11 @@ and only `integrated_proven` counts as operational completion.
 
 ## v0.91.7 Closeout-Tail Truth
 
-As last verified on 2026-07-19, WP-01 through WP-18, WP-21, WP-21A, and WP-22
-are closed. WP-19, WP-20, and WP-23 are open. This handoff is
-therefore not release or activation approval. Its current role is to route
-bounded evidence into the reviewed v0.91.8 bridge.
+As last verified on 2026-07-20, WP-01 through WP-22, including WP-21A, are
+closed. WP-20 fixed all 22 WP-19 findings through merged PR #5588. WP-23 #4650
+is the sole open issue before ceremony integration. This handoff is not v0.92
+activation approval; it routes bounded evidence into the reviewed v0.91.8
+bridge.
 
 ## v0.91.8 Bridge Routing
 

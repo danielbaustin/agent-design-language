@@ -1,0 +1,18 @@
+{
+  "issue": 4650,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "5bf274b1d076191eac9ec05d8aff009e8645881bdc5fd4124b2bf95f0cb8e762",
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record focused deterministic release-ceremony validation after the packet and canonical status corrections were complete.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-validate", "--request", ".csdlc/prepared/issues/4650/validate-release-ceremony.json"],
+      "purpose": "Prove diff hygiene, JSON/YAML parsing, and typed lifecycle consistency for WP-23.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/prepared/issues/4650/validation/release-ceremony; disposition local_pass; all three required lanes passed"
+    }
+  }
+}

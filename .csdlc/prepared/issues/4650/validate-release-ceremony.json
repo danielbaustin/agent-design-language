@@ -1,0 +1,101 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "diff-check",
+        "proof_role": "Patch hygiene for WP-23 release records",
+        "purpose": "Verify the current release ceremony diff has no whitespace errors",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "git",
+        "argv": ["diff", "--cached", "--check"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "local-links",
+        "proof_role": "Local documentation-link integrity",
+        "purpose": "Resolve local links in every changed WP-23 Markdown surface",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "ruby",
+        "argv": ["-e", "files=%x[git diff --cached --name-only --diff-filter=ACMR].lines.map(&:strip).select{|f| f.end_with?('.md')}; broken=[]; files.each{|f| File.read(f).scan(/\\[[^\\]]*\\]\\(([^)]+)\\)/).flatten.each{|raw| t=raw.strip; next if t.empty? || t.start_with?('#','http://','https://','mailto:','tel:','data:'); t=t.split('#',2).first; next if t.empty?; broken << [f,raw] unless File.exist?(File.expand_path(t,File.dirname(f))) }}; abort('broken links: '+broken.inspect) unless broken.empty?; puts 'links-ok'"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "protected-scope",
+        "proof_role": "Typed protected-path compliance",
+        "purpose": "Prove every changed or untracked path is inside the active WP-23 claim",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "ruby",
+        "argv": ["-rjson", "-e", "idx=JSON.parse(File.read('.csdlc/issues/4650/index.json')); allowed=idx.fetch('claim').fetch('protected_paths'); paths=%x[git status --porcelain].lines.map{|l| l[3..].strip.sub(%r{/$},'')}; bad=paths.reject{|p| allowed.any?{|a| p==a || p.start_with?(a.sub(%r{/$},'')+'/')}}; abort('outside protected scope: '+bad.join(', ')) unless bad.empty?; puts 'scope-ok'"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "structured-docs",
+        "proof_role": "Machine-readable release evidence validity",
+        "purpose": "Parse the changed JSON and YAML release records",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "ruby",
+        "argv": ["-e", "require 'json'; require 'yaml'; require 'date'; JSON.parse(File.read('docs/milestones/v0.91.7/review/wp23_release_ceremony_4650/release_evidence.json')); YAML.safe_load(File.read('docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml'), permitted_classes: [Date, Time], aliases: true); puts 'structured-ok'"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "csdlc-doctor",
+        "proof_role": "Typed lifecycle consistency",
+        "purpose": "Verify the WP-23 typed record remains consistent",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "../../.adl/bin/csdlc-v2/csdlc-doctor",
+        "argv": ["--issue", "4650"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["diff-check", "structured-docs", "local-links", "protected-scope", "csdlc-doctor"],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {"max_parallel": 5, "cpu_units": 5, "memory_mib": 768, "tokens": 0},
+  "root": ".",
+  "evidence_dir": ".csdlc/prepared/issues/4650/validation/release-ceremony",
+  "cancellation_file": null
+}

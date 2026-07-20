@@ -4,14 +4,14 @@
 
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Release date: not scheduled
+- Target release closeout date: `2026-07-20`
 - Release manager: ADL maintainers
 
 ## How To Use
 
-Use this as the active release-tail checklist. WP-01 through WP-18, WP-21,
-WP-21A, and WP-22 are closed. WP-19, WP-20, and WP-23 remain the live external
-review, remediation/preflight, and ceremony gates.
+Use this as the active release-tail checklist. WP-01 through WP-22, including
+WP-21A, are closed. WP-20 fixed all 22 WP-19 findings through merged PR #5588.
+WP-23 #4650 is the sole open v0.91.7 issue before ceremony integration.
 This document
 does not publish a release by itself, and its output must pass through the
 reviewed [v0.91.8 bridge](../v0.91.8/README.md) before v0.92 consumption.
@@ -70,3 +70,7 @@ reviewed [v0.91.8 bridge](../v0.91.8/README.md) before v0.92 consumption.
 - No hidden implementation or unresolved truth-maintenance work remains in the
   ceremony phase.
 - Every activation-relevant surface is integrated/proven, operator-scoped-out with evidence, or blocked with evidence and operator approval.
+
+Unchecked items above remain bounded release/publication or successor-bridge
+work. WP-23 closes the v0.91.7 milestone evidence boundary; it does not create
+a tag, publish a hosted release, deploy code, or activate v0.92.

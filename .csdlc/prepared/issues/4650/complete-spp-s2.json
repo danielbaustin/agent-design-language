@@ -1,0 +1,10 @@
+{
+  "issue": 4650,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "1d98708f9e8bca6ecf2c79a878e097ffdf8cf0a17489c99b779cd65e8d8cbb23",
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "The human and machine-readable ceremony records and canonical release-closeout corrections are present on protected paths.",
+  "operation": {"operation": "update_plan_step", "step_id": "S2", "status": "completed"}
+}

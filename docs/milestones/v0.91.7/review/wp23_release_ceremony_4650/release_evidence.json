@@ -1,0 +1,48 @@
+{
+  "schema": "adl.v0.91.7.wp23.release-evidence.v1",
+  "issue": 4650,
+  "verified_on": "2026-07-20",
+  "status": "ready_for_integration",
+  "milestone": "v0.91.7",
+  "observed": {
+    "open_version_v0_91_7_issues": [4650],
+    "open_pull_request_count_before_publication": 0,
+    "wp20_issue": {
+      "number": 4647,
+      "state": "closed",
+      "closed_at": "2026-07-20T07:15:06Z"
+    },
+    "wp20_merge_commit": "c707e10d76e8019816c67001edc096c68f8d74e3",
+    "wp19_finding_count": 22,
+    "wp19_findings_fixed": 22
+  },
+  "artifact_digests": {
+    "external_review_verification_sha256": "e45d5841f7d341493480fabebc87e5fb08cef589fe05b0f6fecd653ab97d3cc1",
+    "wp20_remediation_matrix_sha256": "dc32492a09d73301ec5403d7049785d7b6d3ec7155aaf4ad6f4fd34fa13d5a7b",
+    "wp20_pre_pr_review_sha256": "785506d9c74316aeaa3ff24004442bb176b1fd69a615147ab12c64047232ab6d"
+  },
+  "wp20_terminal_receipt": {
+    "path": ".git/csdlc-v2/closeout/4647.json",
+    "sha256": "409dcbf211a95f93830537f29182a80fba9c28e8ef1b7e3098a365e5630143a1",
+    "phase": "closed_out",
+    "generation": 48,
+    "record_digest": "d515befc74946f53fb3d5a88687d32eb8610e344e4fda0cc39ee6d7382993e8c",
+    "supersedes_tracked_pre_terminal_snapshots": true
+  },
+  "decision": {
+    "ready_for_integration": true,
+    "release_ready": false,
+    "ceremony_boundary": "merge issue 4650 packet and retain typed terminal closeout",
+    "required_successor": "reviewed v0.91.8 exact-revision handoff"
+  },
+  "non_claims": [
+    "git_tag_created",
+    "hosted_release_published",
+    "binary_or_service_deployed",
+    "aws_operation_performed",
+    "runtime_v3_default_cutover",
+    "runtime_v2_decommissioned",
+    "v0.92_activated",
+    "runtime_v3_feature_parity_complete"
+  ]
+}

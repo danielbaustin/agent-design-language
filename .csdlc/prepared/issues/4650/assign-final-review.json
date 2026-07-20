@@ -1,0 +1,25 @@
+{
+  "issue": 4650,
+  "expected_generation": 8,
+  "expected_digest": "12ecf2b9a38e33c8f7cdfef7dd511320ee598c4df813d0452068f65b615c75e2",
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "reviewer": "subagent:019f7e77-cc24-7532-a693-7b04a46fe7d7",
+  "assigned_by": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "scope": [
+    ".csdlc/issues/4650",
+    ".csdlc/locks/4650.lock",
+    ".csdlc/prepared/issues/4650",
+    "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
+    "docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md",
+    "docs/milestones/v0.91.7/README.md",
+    "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
+    "docs/milestones/v0.91.7/RELEASE_PLAN_v0.91.7.md",
+    "docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md",
+    "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+    "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+    "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+    "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+    "docs/milestones/v0.91.7/review/V0917_WP23_RELEASE_CEREMONY_4650.md",
+    "docs/milestones/v0.91.7/review/wp23_release_ceremony_4650"
+  ]
+}

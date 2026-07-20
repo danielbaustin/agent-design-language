@@ -4,25 +4,25 @@
 
 - Product: ADL
 - Version: `v0.91.7`
-- Release date: not scheduled
+- Target release closeout date: `2026-07-20`
 - Tag: not assigned
 
 ## How To Use
 
-Keep these notes implementation-accurate. The implementation, demo, and
-quality-gate waves have executed, and WP-17 closed through #4644 / PR #5539.
-WP-18 and WP-21A are also closed. These notes remain a draft until WP-19,
-WP-20, and WP-23 settle release-tail review, preflight, and ceremony truth.
+Keep these notes implementation-accurate. WP-01 through WP-22, including
+WP-21A, are closed with retained evidence. WP-20 closed through #4647 / PR
+#5588 after all 22 WP-19 findings were fixed. WP-23 #4650 is the sole remaining
+v0.91.7 issue and this release-ceremony change is its integration boundary.
 
 # ADL v0.91.7 Release Notes
 
 ## Summary
 
-`v0.91.7` is the implementation/readiness tranche feeding the required
-[v0.91.8 bridge](../v0.91.8/README.md). WP-01 through WP-18 are closed with
-retained implementation, proof, boundary, or routing evidence. The milestone
-is not release-ready while WP-19, WP-20, and WP-23 remain open, and v0.92 may
-consume only the reviewed v0.91.8 exact-revision handoff.
+`v0.91.7` is the completed implementation/readiness tranche feeding the
+required [v0.91.8 bridge](../v0.91.8/README.md). WP-01 through WP-22,
+including WP-21A, are closed with retained implementation, proof, boundary,
+review, remediation, or routing evidence. WP-23 integrates the final ceremony
+packet. `v0.92` may consume only a reviewed v0.91.8 exact-revision handoff.
 
 ## Retained Highlights
 
@@ -56,12 +56,21 @@ consume only the reviewed v0.91.8 exact-revision handoff.
 
 ## Validation Notes
 
-WP-17 validation for this documentation package includes:
+WP-23 validation for this release-closeout package includes:
 
-- docs existence check;
+- live ADL issue inventory proving #4650 is the only open v0.91.7 issue before
+  ceremony integration;
+- live ADL PR inventory proving no unrelated PR is open;
+- retained WP-20 remediation matrix proving all 22 WP-19 findings fixed;
+- YAML/JSON parse and documentation-link checks;
 - `git diff --check`;
-- placeholder and host-local path scan;
-- bounded docs review.
+- bounded exact-head review before publication.
+
+## Release Boundary
+
+This closeout records the v0.91.7 milestone evidence boundary. It does not
+create a Git tag, publish a binary, deploy a service, switch the default
+runtime, or activate v0.92. Those actions require their own reviewed authority.
 
 ## What's Next
 

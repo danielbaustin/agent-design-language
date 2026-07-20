@@ -1,0 +1,12 @@
+{
+  "issue": 4650,
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "expected_generation": 0,
+  "expected_digest": "001cc4f02c2fe6b9cf162e543816cb6c4511580f964ec282dcaf4487cc3d6f86",
+  "now_unix_seconds": 1784532975,
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Protect the typed C-SDLC lock artifact created by the WP-23 lifecycle operation.",
+  "add_protected_paths": [
+    ".csdlc/locks/4650.lock"
+  ]
+}

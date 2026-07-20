@@ -5,7 +5,7 @@
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
 - Created: `2026-06-21`
-- Last verified: `2026-07-19`
+- Last verified: `2026-07-20`
 - Owner: ADL maintainers
 - Setup lineage: `#3801`, `#3825`, `#4368`
 - Source ledger: `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md`
@@ -17,13 +17,12 @@
 
 ## Status
 
-Current status: closeout tail active after the implementation and demo waves.
+Current status: release ceremony in progress at the #4650 integration boundary.
 
-Live issue truth was last verified on 2026-07-19. WP-01 through WP-18 are
-closed. WP-19 is closed with a degraded-provider review that returned 22
-findings.
-WP-20 and WP-23 remain open, while WP-21, WP-21A, and WP-22 are closed
-retained planning evidence. Closed issue state does not by itself
+Live issue truth was last verified on 2026-07-20. WP-01 through WP-22,
+including WP-21A, are closed. WP-19 returned 22 findings and WP-20 fixed all
+22 before #4647 closed through merged PR #5588. WP-23 #4650 is the sole open
+v0.91.7 issue before this ceremony change integrates. Closed issue state does not by itself
 mean review-clean or release-ready; the sprint-review register and issue-local
 proof packets retain findings and non-claims.
 
@@ -41,11 +40,11 @@ replacement review against the frozen exact-revision corpus.
 | WP-17 documentation alignment | #4644 | closed | Merged by PR #5539; alignment packet is under `review/`. |
 | WP-18 internal review | #4645 | closed | Merged PR #5543; internal findings were routed through closed #5408 and #5544-#5547. |
 | WP-19 external review | #4646 | closed; provider-degraded review complete | The exact 70-file corpus received one Fable 5 lane and three independent shadow lanes; 22 findings are retained. |
-| WP-20 remediation/preflight | #4647 | open | Owns synthesis and remediation of the 22 WP-19 findings. |
+| WP-20 remediation/preflight | #4647 | closed; merged PR #5588 | All 22 WP-19 findings are fixed in the retained matrix; exact-head review and required checks completed before merge. |
 | WP-21 next-milestone planning | #4648 | closed | Retained planning evidence; current v0.91.8 authority supersedes direct activation use. |
 | WP-21A next-milestone closeout planning | #5489 | closed | Retains the canonical v0.91.8 planning and external-review handoff package. |
 | WP-22 next-milestone review | #4649 | closed | Retained review evidence, not release approval. |
-| WP-23 release ceremony | #4650 | open | Final gate after required review/remediation truth. |
+| WP-23 release ceremony | #4650 | open before ceremony integration | Sole remaining v0.91.7 issue; this change retains the final evidence and closeout boundary. |
 
 - Initial planning package: created by earlier v0.91.7 setup work.
 - Source-capture refresh: `#4368`.
@@ -78,9 +77,9 @@ replacement review against the frozen exact-revision corpus.
   - `#4652` covers Unity demo surfaces.
   - `#4653` covers dspark speculative decoding evaluation with Qwen and Gemma.
   - `#4654` covers deepseek-v4-flash-dspark smoke testing on ephemeral 2xH100 EC2 with teardown/cost proof.
-- Execution: WP-01 through WP-19 are complete with issue-local evidence and
-  retained limitations. The remaining active work is WP-20
-  remediation/preflight and WP-23 release ceremony.
+- Execution: WP-01 through WP-22, including WP-21A, are complete with
+  issue-local evidence and retained limitations. WP-23 is the final ceremony
+  integration boundary.
   This package is a living
   milestone surface, not the original pre-execution planning snapshot.
 - Validation: validation truth is issue-local; completed child issues retain

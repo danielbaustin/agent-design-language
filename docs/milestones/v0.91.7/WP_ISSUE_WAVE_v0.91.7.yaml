@@ -1,6 +1,6 @@
 milestone: v0.91.7
 version: v0.91.7
-status: closeout_tail_active
+status: release_ceremony_in_progress
 created_by_issues:
   - 3801
   - 3825
@@ -16,22 +16,24 @@ notes:
   - "Keep v0.92 birthday implementation out of this planning package."
   - "Every activation-path source-capture input must exit integrated/proven, already closed with evidence, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval."
   - "WP-01 must consume failed-but-closed WP-15 #3980 external-review truth, closed WP-16 #3981/#4620/#4621 remediation truth, closed v0.91.7 tooling fix #4622, WP-14A #4582, and closed WP-14A remediation #4609-#4612 truth before dependent execution starts."
-  - "Live WP truth last verified on 2026-07-19: WP-19 closed with retained findings; WP-20 and WP-23 open."
+  - "Live WP truth last verified on 2026-07-20: WP-01 through WP-22 including WP-21A are closed; WP-20 fixed all 22 WP-19 findings; WP-23 is the sole open issue before ceremony integration."
   - "v0.92 consumes the reviewed v0.91.8 exact-revision handoff, not this v0.91.7 issue wave directly."
   - "Current superseding review-tail truth: #5408 is closed/remediated via merged PR #5419 at 6fcd3accafc15e3b6cc8064d836293b4495983de; retained #4906 blocked-with-evidence remains unresolved unless separately dispositioned."
 closeout_tail_truth:
-  verified_on: 2026-07-19
-  closed_wps: [WP-01, WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16, WP-17, WP-18, WP-19, WP-21, WP-21A, WP-22]
-  open_wps: [WP-20, WP-23]
+  verified_on: 2026-07-20
+  closed_wps: [WP-01, WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16, WP-17, WP-18, WP-19, WP-20, WP-21, WP-21A, WP-22]
+  open_wps: [WP-23]
+  ready_for_integration: true
   release_ready: false
-  evidence: docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md
+  evidence: docs/milestones/v0.91.7/review/V0917_WP23_RELEASE_CEREMONY_4650.md
   blocked_before_external_review: []
   transient_external_review_send_holds: []
   notes:
     - "WP-18 #4645 is closed through merged PR #5543; #5408, #5527, #5489, and grouped remediation #5544-#5547 are also closed."
     - "WP-19 #4646 is closed: the exact 70-file replacement corpus received one Fable 5 lane and three independent shadow lanes; 22 findings are retained for WP-20."
     - "Closeout audit #5573 is closed; merged PR #5578 retains its 427-issue register, and WP-19 does not rerun or expand that completed audit."
-    - "WP-20 #4647 remains open and owns synthesis and remediation of the 22 WP-19 findings."
+    - "WP-20 #4647 closed through merged PR #5588 after all 22 WP-19 findings were fixed and reviewed."
+    - "WP-23 #4650 is the final ceremony integration boundary; release_ready stays false until merge, issue closure, and typed terminal closeout."
     - "#5571 is closed with retained publication-boundary disposition and redaction evidence that must be included in the replacement WP-19 corpus."
 wp_issue_map:
   - {wp: WP-01, issue: 4628}

@@ -17,11 +17,11 @@ activation readiness. Later gates still own quality, documentation alignment,
 internal review, external review, remediation, next-milestone review, and
 release ceremony truth.
 
-Current 2026-07-19 refresh: WP-16 through WP-19 and WP-21A are complete. WP-19
+Current 2026-07-20 refresh: WP-16 through WP-22, including WP-21A, are complete. WP-19
 reviewed the exact 70-file corpus through one Fable 5 lane and three independent
-shadow lanes, returning 22 findings. WP-20 remains open for synthesis and
-remediation. #5571 and #5573 are closed, with their retained
-publication-boundary and closeout-audit evidence preserved; WP-23 remains open.
+shadow lanes, returning 22 findings. WP-20 fixed all 22 through merged PR #5588.
+#5571 and #5573 are closed, with their retained publication-boundary and
+closeout-audit evidence preserved; WP-23 #4650 is the ceremony integration gate.
 
 ## Coverage Table
 
@@ -65,15 +65,16 @@ The machine-readable WP-15 coverage ledger is retained at:
 docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json
 ```
 
-## Open Next Gates
+## Downstream Gate History
 
-The following open gates remain after WP-15:
+The following downstream gates were required after WP-15. WP-23 is the sole
+open gate before ceremony integration; the other rows retain completed history.
 
 | Gate | Issue | Role |
 | --- | ---: | --- |
 | WP-18 | #4645 | Closed through merged PR #5543; internal remediation #5408 and #5544-#5547 closed |
 | WP-19 | #4646 | Closed; provider-degraded review complete with 22 findings retained |
-| WP-20 | #4647 | Open; owns synthesis and remediation of the WP-19 findings |
+| WP-20 | #4647 | Closed through merged PR #5588 after fixing all 22 WP-19 findings |
 | WP-21A | #5489 | Closed with retained v0.91.8 planning and review-handoff package |
 | WP-23 | #4650 | Release ceremony |
 

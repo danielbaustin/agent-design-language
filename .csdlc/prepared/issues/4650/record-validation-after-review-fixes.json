@@ -1,0 +1,18 @@
+{
+  "issue": 4650,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "8e4f8c2e887cb3e13a35db4aa5d1c25e2418d41033ff6ce6d9b267b0345b2b00",
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record the strengthened focused validation after resolving the bounded pre-PR review findings.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-validate", "--request", ".csdlc/prepared/issues/4650/validate-release-ceremony.json"],
+      "purpose": "Prove staged-patch hygiene including new artifacts, JSON/YAML parsing, changed-document local links, typed protected scope, and lifecycle consistency.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/prepared/issues/4650/validation/release-ceremony; disposition local_pass; all five required lanes passed"
+    }
+  }
+}
