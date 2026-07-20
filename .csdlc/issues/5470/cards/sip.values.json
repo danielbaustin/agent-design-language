@@ -7,7 +7,7 @@
     "title": "[v0.91.8][csdlc-v2][durability] Make terminal projection and receipt crash-consistent",
     "slug": "terminal-projection-receipt-crash-consistent",
     "version": "v0.91.8",
-    "generation": 11
+    "generation": 18
   },
   "status": "ready",
   "content": {

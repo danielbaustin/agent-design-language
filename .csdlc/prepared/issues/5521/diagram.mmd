@@ -1,0 +1,5 @@
+flowchart LR
+  AUTH["#5521 active authority"] --> CAS["Exact claim, target, and receipt CAS"]
+  TARGET["#5518 closed-out S4 pending"] --> CAS
+  CAS --> STEP["S4 completed"]
+  STEP --> PARITY["Cards, index, and receipt parity"]

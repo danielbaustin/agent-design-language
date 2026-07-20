@@ -1,0 +1,21 @@
+{
+  "issue": 5563,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "57555a3b01b02fd5b14bf952d55745b2dda6a003e5dbf2bbd2f55b2a18ada129",
+  "claim_id": "claim-5563-initialized-design-recovery",
+  "actor": "codex-closeout-audit",
+  "reason": "Record the bounded initialized stale-design recovery implementation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Permit typed reapproval of previously approved initialized records only when current authored design inputs are demonstrably stale.",
+    "changes": [
+      "Approve-design validates CAS, active claim, card projections, and current authored digests before selecting the recovery path.",
+      "Initialized approved reapproval is allowed only when SPP or VPP design/diagram digests differ from current authored files.",
+      "Recovery records a distinct audit reason and retains normal pending, bound, and implemented approval behavior.",
+      "Focused Gate 2 regression rejects redundant reapproval, proves stale recovery, and proves doctor readiness afterward."
+    ],
+    "artifacts": ["csdlc-v2/src/store.rs", "csdlc-v2/tests/gate2.rs", "#5563", "#5306"]
+  },
+  "fail_after_backup": false
+}

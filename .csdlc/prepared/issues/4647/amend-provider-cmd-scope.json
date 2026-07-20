@@ -1,0 +1,12 @@
+{
+  "issue": 4647,
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "expected_generation": 5,
+  "expected_digest": "35884f38b45716b0160c872dd6278af8c97db801665678f94a04abc6e36a82c4",
+  "now_unix_seconds": 1784521909,
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Bedrock setup remediation touches provider CLI setup template and tests.",
+  "add_protected_paths": [
+    "adl/src/cli/provider_cmd.rs"
+  ]
+}

@@ -1,0 +1,4 @@
+{
+ "issue":5455,"card":"sor","expected_generation":1,"expected_digest":"81220c9e086304c347eb990d162b005241061ac0ff925e2ebe0982a07b514377","claim_id":"claim-5455-closeout-recovery","actor":"codex-closeout-audit","reason":"Record current evidence for the already-merged implementation without claiming contemporaneous lifecycle execution.",
+ "operation":{"operation":"record_execution","summary":"Retrospective recovery: merged PR #5460 implemented stale stable-owner provenance rejection and exact source-checkout binding.","changes":["Install receipts record source checkout revision or content provenance fallback","Coexistence verification rejects stale owner-binary provenance explicitly","Gate 10A executes a freshly installed stable editor"],"artifacts":["csdlc-v2/src/operator.rs","csdlc-v2/tests/gate10a.rs","https://github.com/danielbaustin/agent-design-language/pull/5460"]},"fail_after_backup":false
+}

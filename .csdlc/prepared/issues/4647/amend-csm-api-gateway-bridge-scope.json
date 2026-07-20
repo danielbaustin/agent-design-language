@@ -1,0 +1,12 @@
+{
+  "issue": 4647,
+  "expected_generation": 34,
+  "expected_digest": "6051dc3578e4eaff9ec7136f516acfb7213d99b60293ab4e3a2c5f69295e99bc",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "now_unix_seconds": 1784600000,
+  "reason": "Post-publication CSM API Gateway response-finalization repair touched this source path; protected-path truth must include the exact changed file before review/publication.",
+  "add_protected_paths": [
+    "adl/src/csm_api_gateway_bridge.rs"
+  ]
+}

@@ -1,0 +1,12 @@
+flowchart TD
+  K["Tokio runtime"] --> A["Production assembly"]
+  A --> S["Supervised component tasks"]
+  A --> C["Typed runtime channels"]
+  S --> H["Observed component health"]
+  C --> H
+  H --> R["Fail-closed readiness"]
+  R --> API["Runtime API /ready"]
+  AUTH["Current credential"] --> API
+  PREV["Previous credential during bounded overlap"] --> API
+  REVOKE["Explicit revocation"] --> STOP["Reject all generations"]
+

@@ -1,0 +1,21 @@
+{
+  "issue": 4644,
+  "expected_generation": 6,
+  "expected_digest": "32320650576d069dd6f98813b9cc9a42b69fb5beacd0454d0081ac8f961efc60",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "reviewer": "codex-subagent:019f7789-9ed8-7790-b8da-8922d5291b7f",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    ".csdlc/issues/4644",
+    ".csdlc/prepared/issues/4644",
+    ".csdlc/evidence/4644",
+    "README.md",
+    "REVIEW.md",
+    "docs/README.md",
+    "docs/adr/README.md",
+    "docs/milestones/v0.8/README.md",
+    "docs/milestones/v0.91/features/README.md",
+    "docs/milestones/v0.91.7",
+    "docs/planning/ADL_FEATURE_LIST.md"
+  ]
+}

@@ -1,0 +1,10 @@
+flowchart LR
+  D[Changed paths] --> S{Path-policy selector}
+  S -->|Runtime v3 only| V3[Runtime v3 fast lane]
+  S -->|Runtime v3 plus legacy| BOTH[Runtime v3 lane + required legacy lanes]
+  S -->|Unmapped v3 path| FAIL[Fail closed: update selector]
+  V3 --> K[adl-runtime-kernel focused cargo checks/tests]
+  V3 --> O[Direct Observatory proof]
+  BOTH --> LEG[Existing legacy validation]
+  K --> R[Published CI profile evidence]
+  O --> R

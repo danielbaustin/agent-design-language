@@ -1,0 +1,350 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5514,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "0ac7f243c9cdabc81f435bc523ae859b6886558d3e83a11e327ce4c4b29442ba",
+  "phase": "closed_out",
+  "generation": 13,
+  "digest": "1497bda7a8a433e048a5fc5996864fb8a7b01d96dff0812f26aa029441784f6e",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f755e-caed-72b0-b9fb-21366bf78332",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:6787d12a21a81e99bd441590ccd113c220a43a60:f517ce58bc10d33d441404b4b40a108b50b0a65f5369223270115e4a66c98abc",
+    "scope": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f755e-caed-72b0-b9fb-21366bf78332",
+    "scope": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "reviewed_revision": "git-blake3:6787d12a21a81e99bd441590ccd113c220a43a60:f517ce58bc10d33d441404b4b40a108b50b0a65f5369223270115e4a66c98abc",
+    "findings": [
+      {
+        "id": "F-5514-1",
+        "severity": "p1",
+        "summary": "The initial partition placed 17 cli::csm_cmd tests under the ADL library test binary, selecting none of them.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:6787d12a21a81e99bd441590ccd113c220a43a60:f517ce58bc10d33d441404b4b40a108b50b0a65f5369223270115e4a66c98abc",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "PR #5504 remains the final changed-source coverage proof after the tooling repair merges."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5514,
+    "pull_request": 5515,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5515",
+    "base": "main",
+    "head": "codex/5514-complete-csm-coverage",
+    "revision": "git-blake3:6787d12a21a81e99bd441590ccd113c220a43a60:f517ce58bc10d33d441404b4b40a108b50b0a65f5369223270115e4a66c98abc",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5515,
+    "head_sha": "6787d12a21a81e99bd441590ccd113c220a43a60",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29646293790/job/88085081651"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29646293790/job/88085036782"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29646293790/job/88085014661"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29646293790/job/88084998962"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29646293790/job/88085014669"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5515,
+    "disposition": "merged",
+    "observed_sha": "6787d12a21a81e99bd441590ccd113c220a43a60",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5514.json",
+    "released_branch": "codex/5514-complete-csm-coverage",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5514/retained/design.md",
+  "diagram_path": ".csdlc/issues/5514/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "revision": "5bffbfb561d33dc342a1030ca018ec053fe51d3195ecdb8c4f419ab0ccf10c11"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "0e7e668f36e6096cdf5bc6905e38e0df39bf324a18c0aae635744e297f4eefdb",
+      "rendered_digest": "ea5fa045e64cc69965e7f1bc49504598ce8133665af52fcd86ea605d8b241add",
+      "ast_digest": "0bf6ea3fd59782704928a18ad3f72cf880e15fe77ed9c3af94d75d93f8a2bbc3"
+    },
+    "stp": {
+      "values_digest": "29f4e175257f52a784d98875799b44fe1654c02d2a77881db500bef48e617f40",
+      "rendered_digest": "71640724c23500d4c902570a4c4e0e2c0c6193f9c30191c4915e17100db0c789",
+      "ast_digest": "acad1ca3dee3ba14189e56cd639b4b042562ec6c3721ffdb7eb410f46d5a3f39"
+    },
+    "spp": {
+      "values_digest": "dcb0317d01735bac2284e5a4ff3cb3dc2e1526eb37b4451b2faf82fbd96a3e45",
+      "rendered_digest": "bae2797bc81ecdc7afb07557d12ca3374ec49a9370a2b9d6e5c4957a955a3645",
+      "ast_digest": "15cdbd68f68698051159f9bbd454a754a5fa895f748b99009d593fce52220fe0"
+    },
+    "vpp": {
+      "values_digest": "7d70cdad940e852103a5fa27d507e8f25633a0ed9ccddee2903782d961a5538c",
+      "rendered_digest": "353dfa5846411052e259df49a220de898980c95b1db7fa21d5a7098bae7b970f",
+      "ast_digest": "af14ed46e8fd2ed2cfcfb2e3cc8c37263c77d018d0b59f95d77cdaf42fd495d4"
+    },
+    "srp": {
+      "values_digest": "8e04a34dc5d217c0290dcddfa9bf658e5bc04317ad9bd3e4ad506bbf86fe82e7",
+      "rendered_digest": "437476466d1482e1cedc779249a14ed559b9dc72e05d78f7e18628f33fbfac5b",
+      "ast_digest": "065dbe27c0ae373a2e9bcd73b7f0deebe94b1a648aae9336c4beab7b18254e99"
+    },
+    "sor": {
+      "values_digest": "2c65b819480248bce42042ec36605d8abfb93fa21e1b6f15a11a5f5db574feeb",
+      "rendered_digest": "b6c8aa092c194c8173b66d0ba88855749831be1d31ef0ffae8dfeec7c9f37fea",
+      "ast_digest": "9c2d1d90fad759d6425514651d0c754849cd75329f2d49832d944a9958d35b68"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The complete owning-workspace selector partition and command regression are implemented."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The P1 binary-ownership finding is fixed and the exact revision is review-clean."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Refresh exact-head review after committing review-only C-SDLC metadata."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact publication head is review-clean with unchanged substantive scripts."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex-closeout-audit",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 9,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex-closeout-audit",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 10,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex-closeout-audit",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Preserve complete owning-workspace CSM coverage after the #5512 partition.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Expand the exact Runtime v3/CSM bridge partition to every valid ADL CSM family while retaining Runtime v3-only companion coverage.\",\"changes\":[\"Retain all canonical ADL library CSM selectors\",\"Route csmctl and csm_service tests through the canonical ADL CLI binary\",\"Keep the nonexistent cli_smoke selector out of ADL coverage\",\"Assert every retained selector in the command-level regression\"],\"artifacts\":[\"adl/tools/run_pr_fast_coverage_lane.sh\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The command contract and real nextest selector parse both pass.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\"],\"purpose\":\"Prove exact partition completeness, foreign-selector rejection, near-match behavior, and summary composition\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5514-pr-fast-coverage-contract-pass\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The complete owning-workspace selector partition and command regression are implemented.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "subagent:019f755e-caed-72b0-b9fb-21366bf78332",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The P1 binary-ownership finding is fixed and the exact revision is review-clean.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Refresh exact-head review after committing review-only C-SDLC metadata.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 7,
+      "actor": "subagent:019f755e-caed-72b0-b9fb-21366bf78332",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact publication head is review-clean with unchanged substantive scripts.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt after merged PR #5515 and closed issue #5514.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

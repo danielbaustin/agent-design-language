@@ -1,0 +1,13 @@
+{
+  "issue": 4646,
+  "card": "sip",
+  "expected_generation": 21,
+  "expected_digest": "18e3fb2ef101857e4dcd86edf58f9fdc81f9a3e231f8db5c982338d17b4a6b3f",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "Corrective documentation revision passed bounded internal pre-publication review with no remaining findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

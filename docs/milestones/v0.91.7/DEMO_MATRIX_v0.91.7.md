@@ -11,7 +11,7 @@ birthday-visible proof map ready
 - Date: `2026-07-11`
 - Owner: ADL maintainers
 - Setup lineage: `#3801`, `#3825`, `#4368`
-- Proof update: `#4691`
+- Proof update: `#4691`, `#4642`
 
 ## Purpose
 
@@ -79,6 +79,7 @@ Runtime v2 remains the default.
 | D7 | Unity reproducible walkthrough proof | Unity-MCP proof can bind the proof project, load the flagship scene, find runtime/polis objects, and retain nonblank camera evidence | read #4704 packet and walkthrough | `docs/milestones/v0.91.7/review/unity_observatory_4704/4704-unity-mcp-proof-summary.md`; `docs/milestones/v0.91.7/review/unity_observatory_4704/4704-operator-walkthrough.md`; `docs/milestones/v0.91.7/review/unity_observatory_4704/flagship-wide-observatory-camera-4704.png` | #4704 records endpoint proof, scene proof, runtime/polis object names, image dimensions, and nonblank hash | live Unity-MCP proof plus retained image; batchmode replay and player build are not claimed | proven-limited |
 | D8 | Unity asset and MCP publication boundary | Unity proofs are reviewable without committing third-party asset packs or generated Unity-MCP payloads | inspect #4745 policy and manifest | `docs/milestones/v0.91.7/review/unity_observatory_4745/4745-asset-mcp-publication-policy.md`; `docs/milestones/v0.91.7/review/unity_observatory_4745/4745-asset-mcp-publication-manifest.json` | policy names local asset roots, package names, retained publishable payloads, and non-claims | deterministic docs/manifest check; does not grant redistribution rights | proven-boundary |
 | D9 | Birthday-visible matrix proof | This matrix is no longer a planning-only list; it is backed by issue-local proof references and reviewer commands | inspect `docs/milestones/v0.91.7/review/demo_matrix_4691/4691-birthday-visible-demo-matrix-proof.md`; run `git diff --check` for this issue | #4691 proof packet and this file | proof packet links all landed visible-demo evidence and names unproven boundaries | retained docs proof; no fresh Unity replay claimed by #4691 | proven |
+| D10 | WP-15 demo convergence and proof coverage | v0.91.7 demo-visible proof coverage is converged into a single issue-local packet with current issue state, retained proof, skipped checks, and non-claims | inspect `docs/milestones/v0.91.7/review/V0917_WP15_DEMO_CONVERGENCE_4642.md`; run `python3 -m json.tool docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json` | `docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md`; `docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json` | WP-15 records retained proof coverage and names later quality/review gates without claiming release readiness | deterministic docs/JSON validation plus retained proof references; no fresh Unity, Runtime v3, or AWS run | proven |
 
 ## Known Limits
 

@@ -1,0 +1,8 @@
+{
+  "issue": 5494,
+  "expected_generation": 19,
+  "expected_digest": "25bcc93e3cf4b4fe83612827f246e99cf9d64bdc497d6d9c2a07eef55131156f",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover exact review identity after committing review lifecycle metadata; substantive scope is unchanged."
+}

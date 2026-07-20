@@ -67,6 +67,28 @@ control_plane_filters="$TMP/control-plane-filters.txt"
 bash "$SCRIPT" --changed-files "$control_plane_changed" --print-risk-filters >"$control_plane_filters"
 grep -Fx "pr_cmd" "$control_plane_filters" >/dev/null
 
+provider_http_family_changed="$TMP/provider-http-family-changed.txt"
+printf 'M\tadl/src/provider/http_family.rs\n' >"$provider_http_family_changed"
+provider_http_family_filters="$TMP/provider-http-family-filters.txt"
+bash "$SCRIPT" --changed-files "$provider_http_family_changed" --print-risk-filters >"$provider_http_family_filters"
+grep -Fx "provider_hardening" "$provider_http_family_filters" >/dev/null
+
+provider_setup_and_local_changed="$TMP/provider-setup-and-local-changed.txt"
+cat >"$provider_setup_and_local_changed" <<'EOF'
+M	adl/src/cli/provider_cmd.rs
+M	adl/src/provider/local.rs
+EOF
+provider_setup_and_local_filters="$TMP/provider-setup-and-local-filters.txt"
+bash "$SCRIPT" --changed-files "$provider_setup_and_local_changed" --print-risk-filters >"$provider_setup_and_local_filters"
+grep -Fx "provider_hardening" "$provider_setup_and_local_filters" >/dev/null
+if [ "$(wc -l <"$provider_setup_and_local_filters" | tr -d ' ')" -ne 1 ]; then
+  echo "expected provider setup and local provider surfaces to collapse to provider_hardening" >&2
+  exit 1
+fi
+provider_setup_and_local_expression="$(bash "$SCRIPT" --changed-files "$provider_setup_and_local_changed" --print-risk-nextest-expression)"
+grep -F "test(/^cli::provider_cmd::tests::/)" <<<"$provider_setup_and_local_expression" >/dev/null
+grep -F "test(/^provider::/)" <<<"$provider_setup_and_local_expression" >/dev/null
+
 finish_helper_changed="$TMP/finish-helper-changed.txt"
 printf 'A\tadl/src/cli/pr_cmd/finish_support.rs\n' >"$finish_helper_changed"
 finish_helper_filters="$TMP/finish-helper-filters.txt"
@@ -142,6 +164,7 @@ A	adl/src/csm_constructability_gate.rs
 M	adl/src/csm_curiosity_engine.rs
 A	adl/src/csm_freedom_gate.rs
 M	adl/src/csm_godel_snapshot.rs
+M	adl/src/csm_networking.rs
 M	adl/src/csm_runtime_api.rs
 M	adl/src/csm_shepherd_agent.rs
 M	adl/src/long_lived_agent.rs
@@ -166,6 +189,7 @@ grep -F "test(/^csm_cav::/)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(/^csm_constructability_gate::/)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(/^csm_freedom_gate::/)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(/^csm_godel_snapshot::/)" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "test(/^csm_networking::/)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(/^csm_shepherd_agent::/)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(/^long_lived_agent::/)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(/^cli::csm_service_cmd::/)" <<<"$csm_runtime_agent_expression" >/dev/null
@@ -299,6 +323,14 @@ if grep -Fq "binary_id(adl-runtime)" <<<"$runtime_v3_expression"; then
   echo "Runtime v3 guardian mapping must remain parseable in the adl workspace" >&2
   exit 1
 fi
+
+runtime_v3_auth_changed="$TMP/runtime-v3-auth-changed.txt"
+printf 'M\tadl-runtime/src/runtime_api_auth.rs\n' >"$runtime_v3_auth_changed"
+runtime_v3_auth_filters="$TMP/runtime-v3-auth-filters.txt"
+bash "$SCRIPT" --changed-files "$runtime_v3_auth_changed" --print-risk-filters >"$runtime_v3_auth_filters"
+grep -Fx "runtime_v3_auth" "$runtime_v3_auth_filters" >/dev/null
+runtime_v3_auth_expression="$(bash "$SCRIPT" --changed-files "$runtime_v3_auth_changed" --print-risk-nextest-expression)"
+grep -Fx "test(/^runtime_api_auth::tests::/)" <<<"$runtime_v3_auth_expression" >/dev/null
 
 split_acc_changed="$TMP/split-acc-changed.txt"
 printf 'A\tadl/src/acc/validation.rs\n' >"$split_acc_changed"

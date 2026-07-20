@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5544,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5544-v0917-release-truth-gates",
+  "title": "[v0.91.7][WP-20] Reconcile release truth and external-review gates",
+  "body": "Closes #5544\n\n## Summary\n- materialize #4644 / PR #5539 terminal truth so WP-17 is recorded closed-out\n- update the sprint review register, issue-wave truth, feature coverage, WP-18 handoff, WP-19 handoff, and #5544 status packet\n- record WP-18, WP-19, WP-20, WP-21A, and WP-23 as the remaining/open release-tail gates\n- retain live-state evidence for #5408/#5419, #5489, #5527, #4645/#5543, #4647, and #5544-#5547\n- preserve blocker and non-readiness truth without touching #5542 files\n\n## Validation\n- `git diff --check`\n- `jq . docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json`\n- `jq . .csdlc/evidence/5544/live-state/github_state.json`\n- `jq . .csdlc/evidence/5544/live-state/issue_5489.json`\n- `ruby -e 'require \"yaml\"; YAML.load_file(\"docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml\")'`\n- `csdlc-doctor --repo . --issue 5544`\n- exact-head read-only review after rebase onto #5552/current main: no findings\n\nNo AWS command or service was used. This PR does not approve WP-19 external review or v0.91.7 release readiness.",
+  "draft": true,
+  "revision": "git-blake3:b8116000908d769fa4841f8c0cb4b18329f91bd5:8978a225aaae8d287185cca1e5a591ecb63bc0bb7e5e8dda92b920e520061f46",
+  "commit_sha": "b8116000908d769fa4841f8c0cb4b18329f91bd5"
+}

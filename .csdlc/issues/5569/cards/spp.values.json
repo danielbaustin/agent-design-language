@@ -1,0 +1,56 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5569,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Repair #5547 terminal plan-step truth",
+    "slug": "repair-5547-terminal-plan",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Bind #5569, apply four exact terminal step repairs, validate parity and doctor, review, and publish.",
+      "steps": [
+        {
+          "id": "repair",
+          "action": "Repair four #5547 terminal plan steps and prove parity",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "No hand-edited cards",
+        "No fabricated evidence",
+        "Receipt and projection CAS",
+        "No AWS or Spot"
+      ],
+      "risks": [
+        "Completing an unproven step would fabricate lifecycle truth"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Any missing retained step evidence",
+        "Any need to hand-edit cards"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5569/retained/design.md",
+      "design_digest": "4ccd1b246a65bb5dc475aa6c4f0bf607e4c238a1481c7078261489a297fa2c52",
+      "diagram_ref": ".csdlc/issues/5569/retained/diagram.mmd",
+      "diagram_digest": "6e86ac1f0e6dff62099dd5f22f65e75678534cbe39584a7975ca990a4c500074"
+    }
+  }
+}

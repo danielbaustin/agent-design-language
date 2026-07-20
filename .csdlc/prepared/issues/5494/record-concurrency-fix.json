@@ -1,0 +1,19 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "98f1988b5f1ccdb50ee83d8cc42ad53534e1d7ae45848da12da8ba2b83c3dbbc",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fixed F-5494-8 by serializing every credential mutation with the existing fs2 file-lock dependency.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Make terminal revocation monotonic across concurrent processes by locking the complete credential read-modify-write transaction.",
+    "changes": [
+      "Serialize ensure, rotate, and revoke mutations through a private 0600 fs2 lock file",
+      "Keep timestamp capture inside the acquired mutation lock",
+      "Add concurrent rotation-versus-revocation regression coverage"
+    ],
+    "artifacts": ["adl-runtime/src/runtime_api_auth.rs"]
+  }
+}

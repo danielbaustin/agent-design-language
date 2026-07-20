@@ -1,0 +1,10 @@
+{
+  "issue": 5518,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "f0bbc243b4a78c70a501eb56f0fc8a74cdef0248cc7a93f879b7129040356155",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The typed repair implementation, focused tests, rollback proof, and lint validation are complete.",
+  "operation": {"operation":"update_plan_step","step_id":"S2","status":"completed"}
+}

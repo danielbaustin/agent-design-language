@@ -1,0 +1,30 @@
+{
+  "artifact_root": "internal-review-4645",
+  "audience": "local_only",
+  "completed_at": "2026-07-19T20:33:49Z",
+  "counts": {
+    "blocker": 0,
+    "info": 0,
+    "warning": 1
+  },
+  "files_scanned": 18,
+  "findings": [
+    {
+      "category": "missing_manifest",
+      "line": 0,
+      "message": "No CodeBuddy run manifest was found.",
+      "path": "run_manifest.json",
+      "recommendation": "Add or repair the packet manifest before publication gating.",
+      "sample": "",
+      "severity": "warning"
+    }
+  ],
+  "notes": [
+    "Audit is deterministic and read-only.",
+    "Findings are bounded to text-like artifacts under the audited root."
+  ],
+  "publication_recommendation": "hold_for_review",
+  "schema": "codebuddy.redaction_audit.v1",
+  "started_at": "2026-07-19T20:33:49Z",
+  "status": "partial"
+}

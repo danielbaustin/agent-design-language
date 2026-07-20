@@ -12,9 +12,10 @@
 | WP-08 | #5341 | Runtime v3 adapter | Connect ADL plans and events to Runtime v3 without changing ownership. | WP-06, WP-07 |
 | WP-09 | #5349 | Provider and governed-tool adapters | Implement mock, HTTP, governed-tool, and compatibility adapters behind typed ports. | WP-06, WP-08 |
 | WP-10 | #5345 | Thin CLI and selector | Implement validate, schema, plan, run, inspect, sign, verify, and generation selection. | WP-04 through WP-09 |
-| WP-11 | #5350 | Shadow parity | Compare exact revisions across the approved corpus and classify mismatches. | WP-03 through WP-10 |
+| WP-10A | #5497 | Distributed C-SDLC workcell | Prove conductor, Codex task adapter, dashboard, convergence, and live distributed workcell without autonomous merge or closeout authority. | WP-09; children #5499, #5498, #5500, #5502, #5501 |
+| WP-11 | #5350 | Shadow parity | Compare exact revisions across the approved corpus and classify mismatches. | WP-03, WP-10, completed WP-10A live proof |
 | WP-12 | #5344, #5343 | Soak, rollback, and reversible cutover | Run opt-in soak, prove rollback, and execute reviewed selector switch. | WP-11 |
-| WP-13 | #5346, #5347 | Deletion wave | Delete only reviewed and replaced incumbent surfaces after eligibility proof. | WP-12 |
+| WP-13 | #5346, #5347 | Deletion wave | Delete only reviewed and replaced incumbent surfaces after eligibility proof. | WP-12 plus current #5358/#5361 acceptance; disjoint manifests |
 | WP-14A | #5384 | Integrated platform acceptance and v0.92 handoff | Accept/deploy ADL v2, Runtime v3, C-SDLC v2, and dispose moved handoff children. | WP-13, #5358, #5361 |
 | WP-15 | #5354 | Demo convergence | Demonstrate the integrated deployed stack and claim boundaries. | WP-14A |
 | WP-16 | #5351 | Quality gate | Run integrated platform quality gate. | WP-15 |
@@ -32,4 +33,3 @@
 WP-14A consumes `#5358`, `#5361`, `#5352`, `#4758`-`#4763`, `#5007`, `#4739`,
 `#4741`, `#5332`, and `#5107`. Each child must close with evidence or remain
 blocked with operator-approved evidence before WP-14A can claim readiness.
-

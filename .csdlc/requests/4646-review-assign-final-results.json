@@ -1,0 +1,18 @@
+{
+  "issue": 4646,
+  "expected_generation": 26,
+  "expected_digest": "95f1bf18c72ce1d857069b765c9ee358689618239b7b467e2b1074858773c29c",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "reviewer": "subagent:019f7c27-5777-7f52-bcbc-8960948e02dd",
+  "assigned_by": "codex:issue-4646",
+  "scope": [
+    ".csdlc/issues/4646",
+    "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
+    "docs/milestones/v0.91.7/README.md",
+    "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+    "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+    "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+    "docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md",
+    "docs/milestones/v0.91.7/review/external_review_4646"
+  ]
+}

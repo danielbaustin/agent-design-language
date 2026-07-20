@@ -1,0 +1,13 @@
+{
+  "issue": 5544,
+  "card": "srp",
+  "expected_generation": 18,
+  "expected_digest": "661f681ee346e7e4a6bbc4bb974a0e8d170eb587a5a0da2726335c7dd6d1edd5",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "Exact-head post-rebase review by Ptolemy recorded no findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

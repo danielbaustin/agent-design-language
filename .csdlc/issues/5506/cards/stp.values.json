@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5506,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][coverage] Register Runtime v3 API-auth coverage without mixed-lane escalation",
+    "slug": "v0-91-7-runtime-v3-auth-coverage-map",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Extract and prove the four-file coverage mapping required by #5494.",
+      "deliverables": [
+        "Runtime v3 auth risk mapping",
+        "Independent-crate auth coverage route",
+        "Auth-only and mixed-selection contract tests"
+      ],
+      "acceptance_criteria": [
+        "AC1: runtime_api_auth.rs selects runtime_v3_auth",
+        "AC2: auth-only coverage runs against adl-runtime/Cargo.toml",
+        "AC3: mixed selections run both Runtime v3 and ADL workspace tests",
+        "AC4: focused shell contract tests pass",
+        "AC5: exact-revision review and required checks pass before merge"
+      ],
+      "dependencies": [
+        "Existing PR-fast coverage tooling",
+        "Existing runtime_api_auth unit tests"
+      ],
+      "repo_inputs": [
+        "PR #5504 failed hosted coverage run 29638880423",
+        "Issue #5494"
+      ],
+      "non_goals": [
+        "Runtime source changes",
+        "Runtime v3 weather changes",
+        "Legacy full-coverage flake repair",
+        "AWS execution"
+      ]
+    }
+  }
+}

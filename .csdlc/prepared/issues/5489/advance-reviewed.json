@@ -1,0 +1,13 @@
+{
+  "issue": 5489,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "2a9485ef75182eef4e1f1f3234a567376389d57c0dd5504333b01fcd4846dee9",
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Exact-revision internal review completed for the WP-21A v0.91.8 canonical-doc audit and review-handoff packet; actionable findings are fixed and residual risks recorded.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

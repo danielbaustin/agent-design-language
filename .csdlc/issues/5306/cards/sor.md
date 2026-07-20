@@ -8,37 +8,86 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
-Pre-execution output record.
+PR #5331 executed the approved Gate 10D2 v1-sunset deletion wave at exact head 2b11155b6 and merged as 7c3e1e0e.
 
 ## Artifacts
 
-- none
+- PR #5331
+- 2b11155b6a4abaf9348cc1cfd147c9b9c676a56c
+- 7c3e1e0e86a4ca982231ce91c39073530c5408e6
+- csdlc-v2/operator/coexistence.json
+- csdlc-v2/operator/eligibility-request.json
 
 ## Execution
 
-- none
+- Removed the v1 lifecycle wrappers, prompt tooling, importer binaries, and legacy ADL command implementation surfaces listed by the approved deletion manifest.
+- Retained the independent Rust v2 binary set, typed operator skills, shared session-ownership invariant, generation selector, and final coexistence verifier.
+- Updated repository policy, CI path routing, coverage handling, and operator records for final v1_sunset authority.
 
 ## Validation
 
-[]
+[
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate10a",
+      "--test",
+      "gate10b"
+    ],
+    "purpose": "Prove typed generation selection, coexistence guardrails, provenance, rollback rehearsal, and mutation refusal on the exact merged implementation head.",
+    "outcome": "passed",
+    "evidence_ref": "Exact PR head 2b11155b6: gate10a 7/7 passed and gate10b 5/5 passed on 2026-07-19; no AWS or Spot used."
+  },
+  {
+    "command": [
+      "csdlc-eligibility",
+      "evaluate",
+      "--repo",
+      "/private/tmp/adl-5306-proof",
+      "--request",
+      "/private/tmp/adl-5306-proof/csdlc-v2/operator/eligibility-request.json"
+    ],
+    "purpose": "Recompute the approved removal and retained-surface truth from a clean detached worktree at the exact PR head.",
+    "outcome": "passed",
+    "evidence_ref": "code_revision 2b11155b6; baseline 49,979 lines; removed 48,966; retained 1,013; 97.97% removal; target_met=true; eligible=true; reasons=[]; evaluated 2026-07-19T01:59:26Z."
+  },
+  {
+    "command": [
+      "gh",
+      "pr",
+      "view",
+      "5331",
+      "--json",
+      "statusCheckRollup"
+    ],
+    "purpose": "Verify integration proof attached to the exact merged implementation PR.",
+    "outcome": "passed",
+    "evidence_ref": "PR #5331 head 2b11155b6: path-policy, tooling-contracts, rust fmt/clippy, rust tests, demo proof, four slow-proof shards, aggregate adl-ci, and coverage all concluded SUCCESS before merge."
+  }
+]
 
 ## Integration
 
-not_started
+merged
 
 ## Publication
 
-Publication: not_published
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

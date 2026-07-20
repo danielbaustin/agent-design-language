@@ -1,0 +1,10 @@
+{
+  "issue": 5495,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "1fe278081c741deb7ce60f274a1e633a4e10b11afa246ed23cecc264d9f277fb",
+  "claim_id": "claim-5495-publication-metadata",
+  "actor": "codex",
+  "reason": "Implement bounded lifecycle metadata classification and automatic metadata-only review proof.",
+  "operation": {"operation":"record_execution","summary":"Publication review now recognizes exact typed lifecycle metadata commits while keeping source drift fail closed.","changes":["Bound safe metadata paths to generated lifecycle surfaces.","Derive automatic non-substantive proof only for exact metadata-only commit transitions.","Preserve explicit-proof validation and substantive review_stale behavior."],"artifacts":["csdlc-v2/src/git.rs","csdlc-v2/src/review.rs","csdlc-v2/tests/gate5.rs"]}
+}

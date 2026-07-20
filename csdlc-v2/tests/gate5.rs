@@ -143,6 +143,44 @@ fn implemented_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
 }
 
 #[test]
+fn substantive_revision_honors_review_scope_pathspecs() {
+    let temp = tempfile::tempdir().expect("temp");
+    std::fs::create_dir_all(temp.path().join("docs")).expect("docs");
+    std::fs::create_dir_all(temp.path().join("src")).expect("src");
+    std::fs::write(temp.path().join("docs/review.md"), "reviewed\n").expect("doc");
+    std::fs::write(temp.path().join("src/outside.rs"), "outside\n").expect("src");
+    git(temp.path(), &["init", "-b", "main"]);
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "C-SDLC Test"]);
+    git(temp.path(), &["add", "docs", "src"]);
+    git(temp.path(), &["commit", "-m", "fixture"]);
+
+    let clean = csdlc_v2::git::substantive_revision(temp.path(), &["docs".into()])
+        .expect("clean scoped revision");
+    let head = git_out(temp.path(), &["rev-parse", "HEAD"]);
+    assert_eq!(clean, csdlc_v2::git::clean_commit_revision(&head));
+
+    std::fs::write(temp.path().join("src/outside.rs"), "outside dirty\n").expect("dirty src");
+    std::fs::write(temp.path().join("src/untracked.rs"), "new outside\n").expect("outside new");
+    let outside_dirty = csdlc_v2::git::substantive_revision(temp.path(), &["docs".into()])
+        .expect("outside dirty scoped revision");
+    assert_eq!(outside_dirty, clean);
+
+    std::fs::write(temp.path().join("docs/new.md"), "new reviewed file\n").expect("new doc");
+    let inside_untracked = csdlc_v2::git::substantive_revision(temp.path(), &["docs".into()])
+        .expect("inside untracked scoped revision");
+    assert_ne!(inside_untracked, clean);
+
+    std::fs::write(temp.path().join("docs/review.md"), "reviewed dirty\n").expect("dirty doc");
+    let inside_dirty = csdlc_v2::git::substantive_revision(temp.path(), &["docs".into()])
+        .expect("inside dirty scoped revision");
+    assert_ne!(inside_dirty, clean);
+}
+
+#[test]
 fn assignment_and_recording_update_index_and_srp_without_publication_side_effect() {
     let (temp, store, record) = implemented_fixture();
     let assigned = assign_review(
@@ -549,6 +587,144 @@ fn non_substantive_exception_is_narrow_and_machine_proven() {
         .expect("proof")
         .changed_paths = vec!["src/lib.rs".into()];
     assert!(!evaluate_publication_review_in_repo(temp.path(), Some(&value), &to_revision).ready);
+}
+
+#[test]
+fn typed_publication_metadata_commit_does_not_stale_review_but_source_drift_does() {
+    let temp = tempfile::tempdir().expect("temp");
+    std::fs::create_dir_all(temp.path().join("docs")).expect("docs");
+    std::fs::create_dir_all(temp.path().join(".csdlc/issues/7/cards")).expect("cards");
+    std::fs::create_dir_all(temp.path().join(".csdlc/prepared/issues/7")).expect("prepared");
+    std::fs::create_dir_all(temp.path().join(".csdlc/requests")).expect("requests");
+    std::fs::create_dir_all(temp.path().join(".csdlc/publication")).expect("publication");
+    std::fs::write(temp.path().join("docs/design.md"), "reviewed\n").expect("design");
+    git(temp.path(), &["init", "-b", "main"]);
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "C-SDLC Test"]);
+    git(temp.path(), &["add", "."]);
+    git(temp.path(), &["commit", "-m", "reviewed source"]);
+    let from = git_out(temp.path(), &["rev-parse", "HEAD"]);
+    let from_revision = csdlc_v2::git::clean_commit_revision(&from);
+    let evidence = ReviewEvidence {
+        reviewer: "subagent".into(),
+        scope: vec!["docs".into()],
+        reviewed_revision: from_revision,
+        findings: vec![],
+        residual_risks: vec![],
+        completed: true,
+        non_substantive_proof: None,
+    };
+    for (path, body) in [
+        (".csdlc/issues/7/index.json", "{}\n"),
+        (".csdlc/issues/7/audit.jsonl", "{}\n"),
+        (".csdlc/issues/7/cards/sor.md", "card\n"),
+        (".csdlc/issues/7/cards/sor.values.json", "{}\n"),
+        (".csdlc/prepared/issues/7/publication.json", "{}\n"),
+        (".csdlc/requests/7-publish.json", "{}\n"),
+        (".csdlc/publication/7.intent.json", "{}\n"),
+    ] {
+        let target = temp.path().join(path);
+        std::fs::write(target, body).expect("metadata");
+    }
+    git(temp.path(), &["add", "."]);
+    git(temp.path(), &["commit", "-m", "typed publication metadata"]);
+    let to = git_out(temp.path(), &["rev-parse", "HEAD"]);
+    let current = csdlc_v2::git::clean_commit_revision(&to);
+    assert!(evaluate_publication_review_in_repo(temp.path(), Some(&evidence), &current).ready);
+
+    std::fs::write(
+        temp.path().join(".csdlc/issues/7/cards/sor.md"),
+        "hand-edited substantive card\n",
+    )
+    .expect("card drift");
+    git(temp.path(), &["add", ".csdlc/issues/7/cards/sor.md"]);
+    git(temp.path(), &["commit", "-m", "substantive card drift"]);
+    let card_drift = git_out(temp.path(), &["rev-parse", "HEAD"]);
+    let card_drift_revision = csdlc_v2::git::clean_commit_revision(&card_drift);
+    let card_report =
+        evaluate_publication_review_in_repo(temp.path(), Some(&evidence), &card_drift_revision);
+    assert!(card_report.blocker_codes.contains(&"review_stale".into()));
+
+    std::fs::write(temp.path().join("docs/new-source.md"), "substantive\n").expect("source");
+    git(temp.path(), &["add", "docs/new-source.md"]);
+    git(temp.path(), &["commit", "-m", "substantive drift"]);
+    let drift = git_out(temp.path(), &["rev-parse", "HEAD"]);
+    let drift_revision = csdlc_v2::git::clean_commit_revision(&drift);
+    let report = evaluate_publication_review_in_repo(temp.path(), Some(&evidence), &drift_revision);
+    assert!(report.blocker_codes.contains(&"review_stale".into()));
+}
+
+#[test]
+fn doctor_accepts_committed_typed_metadata_after_review() {
+    let (temp, store, record) = implemented_fixture();
+    let assigned = assign_review(
+        &store,
+        ReviewAssignmentRequest {
+            issue: 7,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            claim_id: "claim".into(),
+            reviewer: "subagent".into(),
+            assigned_by: "agent".into(),
+            scope: vec!["docs".into()],
+        },
+    )
+    .expect("assignment");
+    let revision = assigned
+        .review_assignment
+        .as_ref()
+        .unwrap()
+        .revision
+        .clone();
+    let reviewed = record_review(
+        &store,
+        ReviewRecordRequest {
+            issue: 7,
+            expected_generation: assigned.generation,
+            expected_digest: assigned.digest,
+            claim_id: "claim".into(),
+            actor: "subagent".into(),
+            evidence: ReviewEvidence {
+                reviewer: "subagent".into(),
+                scope: vec!["docs".into()],
+                reviewed_revision: revision,
+                findings: vec![],
+                residual_risks: vec![],
+                completed: true,
+                non_substantive_proof: None,
+            },
+        },
+    )
+    .expect("review");
+    edit_issue(
+        &store,
+        EditRequest {
+            issue: 7,
+            card: CardKind::Sip,
+            expected_generation: reviewed.generation,
+            expected_digest: reviewed.digest,
+            claim_id: "claim".into(),
+            actor: "agent".into(),
+            reason: "enter reviewed phase".into(),
+            operation: SemanticOperation::AdvancePhase {
+                phase: LifecyclePhase::Reviewed,
+            },
+            fail_after_backup: false,
+        },
+    )
+    .expect("reviewed phase");
+    std::fs::create_dir_all(temp.path().join(".csdlc/publication")).expect("publication");
+    std::fs::write(temp.path().join(".csdlc/publication/7.intent.json"), "{}\n").expect("intent");
+    git(temp.path(), &["add", ".csdlc/publication/7.intent.json"]);
+    git(temp.path(), &["commit", "-m", "typed publication metadata"]);
+    let report = csdlc_v2::diagnose(&store, 7);
+    assert!(!report
+        .findings
+        .iter()
+        .any(|finding| finding.code == "review_publication_dead_end"));
 }
 
 #[test]

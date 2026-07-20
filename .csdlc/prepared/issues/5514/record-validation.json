@@ -1,0 +1,18 @@
+{
+  "issue": 5514,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "f863d374d96641da7a59e28b5ac7c8a34667c16483040364e6382aa96e6c9abc",
+  "claim_id": "claim-5514-complete-csm-coverage",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The command contract and real nextest selector parse both pass.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_run_pr_fast_coverage_lane.sh"],
+      "purpose": "Prove exact partition completeness, foreign-selector rejection, near-match behavior, and summary composition",
+      "outcome": "passed",
+      "evidence_ref": "local:5514-pr-fast-coverage-contract-pass"
+    }
+  }
+}

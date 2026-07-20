@@ -1,0 +1,13 @@
+{
+  "issue": 4647,
+  "card": "srp",
+  "expected_generation": 42,
+  "expected_digest": "f44aed57130585bf0228bf1ebf8f1fd7b9d7176e5d07da255f18907e5b610824",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Exact-head bounded review by subagent 019f7e46-a24a-7f62-b24e-c3b5d9202d63 confirmed HEAD aea910bdd is clean/fixed-confirmed after the post-publication PR coverage report-renderer repair.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

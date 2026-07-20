@@ -1,0 +1,12 @@
+{
+  "issue": 5489,
+  "expected_generation": 9,
+  "expected_digest": "a70ff03aa7f140aa6eedb9cb7091a8a2168b0bd138664d3fa98c720a8c64ca45",
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "now_unix_seconds": 1784425160,
+  "reason": "Current #5408 terminal truth must be consumed by the live v0.91.7 sprint review register while preserving dated historical capture packets.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+  ]
+}

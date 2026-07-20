@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5516,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5516-5494-terminal-design-repair",
+  "title": "[v0.91.7][review-fix][WP-07A] Correct #5494 retained Runtime v3 design truth",
+  "body": "Closes #5516\n\n## Summary\n- repair #5494 retained design and diagram through typed C-SDLC v2 terminal repair\n- show the implemented Runtime v3 supervision/typed-channel proof and separate CSM daemon recovery proof\n- preserve Runtime v3 as the sole weather owner without product-code changes\n- retain merged PR #5504, required CI, and terminal closeout truth\n\n## Validation\n- focused terminal-design repair tests passed on FastWork\n- csdlc-doctor passes for #5494 generation 62 and #5516\n- all affected JSON parses and git diff checks pass\n- exact PR-head subagent review complete after typed publication recovery\n\nNo runtime source changes, no Runtime v2 source changes, and no AWS execution.",
+  "draft": true,
+  "revision": "git-blake3:d80791ff220db788787ce0a7170e14c4fd5a5f3e:c733f01d089fa6c8e9dc8c295bb7b857d21e22e9e1d328e3d8606638b5e82a4a",
+  "commit_sha": "d80791ff220db788787ce0a7170e14c4fd5a5f3e"
+}

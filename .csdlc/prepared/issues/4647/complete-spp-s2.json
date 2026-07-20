@@ -1,0 +1,14 @@
+{
+  "issue": 4647,
+  "card": "spp",
+  "expected_generation": 6,
+  "expected_digest": "446c90b0bae8c811c5b4199e977994c2dc450166b9ea98d69da247d34efad600",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "WP-20 produced protected-path remediation for CSM account redaction, Bedrock setup account pinning, and native provider lock-timeout proof.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S2",
+    "status": "completed"
+  }
+}

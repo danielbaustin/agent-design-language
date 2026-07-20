@@ -7,7 +7,7 @@
     "title": "Make Runtime v3 Observatory local HTTPS and report bound control address",
     "slug": "runtime-v3-local-https-bound-address",
     "version": "v0.91.7",
-    "generation": 37
+    "generation": 41
   },
   "status": "ready",
   "content": {
@@ -76,9 +76,9 @@
         "Fix changes default runtime selection"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/issues/5390/design.md",
+      "design_ref": ".csdlc/issues/5390/retained/design.md",
       "design_digest": "e31afda442f196edcf70e7b2cb021f7b3aab723485a6677ccd2e9d829e95528a",
-      "diagram_ref": ".csdlc/issues/5390/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5390/retained/diagram.mmd",
       "diagram_digest": "4c4d1479748a16c61f8194585b06caef82dde84284b25deb62a363dff643adbb"
     }
   }

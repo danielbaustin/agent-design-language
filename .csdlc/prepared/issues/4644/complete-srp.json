@@ -1,0 +1,13 @@
+{
+  "issue": 4644,
+  "card": "srp",
+  "expected_generation": 12,
+  "expected_digest": "a62b48164a04663ea1b78ffd1ca9d807ab2ec244cd5c3426daa475aaebec6745",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Complete the SRP because the exact reviewed revision, reviewer identity, passing result, and resolved-finding truth are all retained.",
+  "operation": {
+    "operation": "advance_status",
+    "status": "complete"
+  }
+}

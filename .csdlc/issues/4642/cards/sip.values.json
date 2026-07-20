@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4642,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-15][demo] Demo matrix and proof coverage",
+    "slug": "v0-91-7-wp15-demo-matrix-proof-coverage",
+    "version": "v0.91.7",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Prepare and execute demo convergence for v0.91.7.",
+      "required_outcome": "A retained demo convergence packet updates Observatory/demo matrix truth, visible proof status, public demo claim boundaries, and evidence-backed demo blockers.",
+      "declared_scope": [
+        "v0.91.7 demo matrix and proof coverage",
+        "Observatory and visible proof status",
+        "public demo claim boundaries"
+      ],
+      "authority_boundary": [
+        "Issue #4642 owns WP-15 execution",
+        "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml and WBS_v0.91.7.md define the work package",
+        "Preparation is not execution or completion evidence"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

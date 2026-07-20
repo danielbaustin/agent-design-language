@@ -1,0 +1,8 @@
+{
+  "issue": 5527,
+  "expected_generation": 16,
+  "expected_digest": "e28044242f027c72cfa8c04fd3c7b43810f1ef1f194064b0d6cd0377049d29bb",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "reason": "Recover exact review identity after committing metadata-head review so the publication head receives current review."
+}

@@ -1,6 +1,5 @@
 use super::{
-    assert_api_response_redacted, CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA,
-    CSM_RUNTIME_API_ENDPOINTS,
+    finalize_api_response, CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA, CSM_RUNTIME_API_ENDPOINTS,
 };
 use crate::observability::emit_event;
 use anyhow::{bail, Context, Result};
@@ -100,6 +99,7 @@ pub struct ApiGatewayBridgeSummary {
     pub event_schema: Value,
     pub negative_case_policy: Value,
     pub live_negative_cases: Value,
+    pub live_route_probes: Value,
     pub redaction: Value,
     pub local_csm_api_policy: Value,
 }
@@ -282,7 +282,6 @@ pub fn prove_api_gateway_bridge(
         ],
     )?;
     let route_keys = route_keys(&routes);
-    validate_required_routes(&route_keys)?;
     let integrations = aws_json(
         &options.aws_bin,
         &[
@@ -301,6 +300,7 @@ pub fn prove_api_gateway_bridge(
     let route_targets = route_targets(&routes);
     let integration_targets = integration_targets(&integrations);
     validate_required_route_targets(&route_targets, &integration_targets)?;
+    validate_named_route_targets(&routes, &integration_targets)?;
 
     let correlation_id = format!("csm-5039-{}", short_hash(&options.run_id));
     let positive = http_json(
@@ -322,21 +322,19 @@ pub fn prove_api_gateway_bridge(
             positive.status_code
         );
     }
-    assert_api_response_redacted(&positive.body)?;
-    let response_schema = positive
-        .body
+    let positive_body = finalize_api_response(positive.body)?;
+    let response_schema = positive_body
         .get("schema")
         .and_then(Value::as_str)
         .unwrap_or("unknown");
     if response_schema != CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA {
         bail!("API Gateway bridge call did not return CSM runtime API Gateway bridge schema");
     }
-    if positive.body.get("runtime_owner").and_then(Value::as_str) != Some("csm") {
+    if positive_body.get("runtime_owner").and_then(Value::as_str) != Some("csm") {
         bail!("API Gateway bridge call did not return CSM runtime owner");
     }
-    validate_polis_ingress_response(&positive.body, expected_polis_id)?;
-    if positive
-        .body
+    validate_polis_ingress_response(&positive_body, expected_polis_id)?;
+    if positive_body
         .get("agent_instance_id")
         .and_then(Value::as_str)
         != Some(expected_polis_id)
@@ -354,11 +352,12 @@ pub fn prove_api_gateway_bridge(
         .join("redacted_api_gateway_bridge_payload.json");
     fs::write(
         &payload_path,
-        serde_json::to_string_pretty(&positive.body)? + "\n",
+        serde_json::to_string_pretty(&positive_body)? + "\n",
     )
     .with_context(|| format!("failed writing {}", payload_path.display()))?;
 
-    let negative = run_negative_auth_case(&options, &correlation_id)?;
+    let live_route_probes = probe_required_routes(&options, &route_keys, &correlation_id)?;
+    let negative = run_negative_cases(&options, &correlation_id)?;
     let cloudwatch = query_cloudwatch(&options, &correlation_id)?;
     let eventbridge = query_eventbridge(&options)?;
     let cloudwatch_correlation_observed = cloudwatch
@@ -379,7 +378,7 @@ pub fn prove_api_gateway_bridge(
     let summary = ApiGatewayBridgeSummary {
         schema: SCHEMA.to_string(),
         issue: 5039,
-        status: "passed".to_string(),
+        status: "bounded_smoke".to_string(),
         run_id: options.run_id.clone(),
         aws_profile: options.profile.clone(),
         aws_region: options.region.clone(),
@@ -416,14 +415,12 @@ pub fn prove_api_gateway_bridge(
             http_status: positive.status_code,
             response_schema: response_schema.to_string(),
             runtime_owner: "csm".to_string(),
-            status_class: positive
-                .body
+            status_class: positive_body
                 .get("status")
                 .and_then(Value::as_str)
                 .unwrap_or("unknown")
                 .to_string(),
-            ready_class: positive
-                .body
+            ready_class: positive_body
                 .get("ready")
                 .and_then(Value::as_str)
                 .unwrap_or("unknown")
@@ -462,6 +459,7 @@ pub fn prove_api_gateway_bridge(
             "degraded_csm_state": "api_gateway_degraded_csm_state"
         }),
         live_negative_cases: negative,
+        live_route_probes,
         redaction: json!({
             "raw_account_id_recorded": false,
             "raw_api_id_recorded": false,
@@ -501,6 +499,7 @@ fn validate_required_inputs(options: &ApiGatewayBridgeOptions) -> Result<()> {
     if options.invoke_url.trim().is_empty() {
         bail!("csm cloud-control api-gateway-bridge requires --invoke-url");
     }
+    validate_curl_config_value("invoke URL", &options.invoke_url)?;
     if options
         .api_id
         .as_deref()
@@ -522,11 +521,32 @@ fn validate_required_inputs(options: &ApiGatewayBridgeOptions) -> Result<()> {
     if options.operator_token.trim().is_empty() {
         bail!("csm cloud-control api-gateway-bridge requires --operator-token");
     }
+    validate_curl_header_value("operator token", &options.operator_token)?;
     if options.cloudwatch_log_group.trim().is_empty() {
         bail!("csm cloud-control api-gateway-bridge requires --cloudwatch-log-group");
     }
     if options.eventbridge_bus.trim().is_empty() {
         bail!("csm cloud-control api-gateway-bridge requires --eventbridge-bus");
+    }
+    Ok(())
+}
+
+fn validate_curl_header_value(label: &str, value: &str) -> Result<()> {
+    if value
+        .chars()
+        .any(|character| matches!(character, '\\' | '"' | '\r' | '\n'))
+    {
+        bail!("{label} contains curl config control characters");
+    }
+    Ok(())
+}
+
+fn validate_curl_config_value(label: &str, value: &str) -> Result<()> {
+    if value
+        .chars()
+        .any(|character| matches!(character, '\\' | '"' | '\r' | '\n'))
+    {
+        bail!("{label} contains curl config control characters");
     }
     Ok(())
 }
@@ -580,19 +600,6 @@ fn integration_targets(integrations: &Value) -> Vec<String> {
         .collect()
 }
 
-fn validate_required_routes(routes: &[String]) -> Result<()> {
-    for endpoint in api_gateway_required_runtime_routes() {
-        let get_route = format!("GET {endpoint}");
-        if !routes
-            .iter()
-            .any(|route| route == &get_route || route == "$default")
-        {
-            bail!("API Gateway bridge is missing required route {get_route}");
-        }
-    }
-    Ok(())
-}
-
 fn validate_required_route_targets(
     route_targets: &[String],
     integration_targets: &[String],
@@ -609,6 +616,35 @@ fn validate_required_route_targets(
             .any(|integration| integration == target)
         {
             bail!("API Gateway route target does not resolve to a returned integration");
+        }
+    }
+    Ok(())
+}
+
+fn validate_named_route_targets(routes: &Value, integration_targets: &[String]) -> Result<()> {
+    for endpoint in api_gateway_required_runtime_routes() {
+        let route_key = format!("GET {endpoint}");
+        let Some(route) = routes
+            .get("Items")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .find(|route| route.get("RouteKey").and_then(Value::as_str) == Some(&route_key))
+        else {
+            continue;
+        };
+        let target = route
+            .get("Target")
+            .and_then(Value::as_str)
+            .filter(|target| !target.trim().is_empty())
+            .with_context(|| {
+                format!("API Gateway named route {route_key} has no integration target")
+            })?;
+        if !integration_targets
+            .iter()
+            .any(|candidate| candidate == target)
+        {
+            bail!("API Gateway named route {route_key} targets an unknown integration");
         }
     }
     Ok(())
@@ -687,6 +723,12 @@ fn http_json(
     bearer: Option<&str>,
     correlation_id: &str,
 ) -> Result<HttpJsonResponse> {
+    validate_curl_config_value("invoke URL", base_url)?;
+    validate_curl_config_value("request path", path)?;
+    validate_curl_config_value("correlation id", correlation_id)?;
+    if let Some(token) = bearer {
+        validate_curl_header_value("operator token", token)?;
+    }
     let url = format!("{}{}", base_url.trim_end_matches('/'), path);
     let mut config = format!(
         "silent\nshow-error\nwrite-out = \"\\n%{{http_code}}\"\nheader = \"X-ADL-Correlation-Id: {correlation_id}\"\n"
@@ -729,18 +771,55 @@ fn http_json(
     Ok(HttpJsonResponse { status_code, body })
 }
 
-fn run_negative_auth_case(
+fn probe_required_routes(
     options: &ApiGatewayBridgeOptions,
+    routes: &[String],
     correlation_id: &str,
 ) -> Result<Value> {
-    let response = http_json(
+    let mut probed = Vec::new();
+    let mut missing = Vec::new();
+    for endpoint in api_gateway_required_runtime_routes() {
+        let route = format!("GET {endpoint}");
+        if !routes.iter().any(|candidate| candidate == &route) {
+            missing.push(route);
+            continue;
+        }
+        let response = http_json(
+            &options.http_bin,
+            &options.invoke_url,
+            endpoint,
+            Some(&options.operator_token),
+            correlation_id,
+        )?;
+        if !(200..=299).contains(&response.status_code) {
+            bail!(
+                "API Gateway required route {endpoint} returned HTTP {}",
+                response.status_code
+            );
+        }
+        let _redacted_body = finalize_api_response(response.body)?;
+        probed.push(json!({"route": route, "http_status": response.status_code}));
+    }
+    Ok(json!({
+        "required_routes": api_gateway_required_runtime_routes()
+            .iter()
+            .map(|endpoint| format!("GET {endpoint}"))
+            .collect::<Vec<_>>(),
+        "probed": probed,
+        "missing": missing,
+        "default_route_is_not_substituted": true
+    }))
+}
+
+fn run_negative_cases(options: &ApiGatewayBridgeOptions, correlation_id: &str) -> Result<Value> {
+    let missing_token = http_json(
         &options.http_bin,
         &options.invoke_url,
         "/api-gateway-bridge",
         None,
         correlation_id,
     )?;
-    match response.status_code {
+    let missing_token = match missing_token.status_code {
         401 | 403 => {
             emit_bridge_event(
                 "denied",
@@ -748,11 +827,11 @@ fn run_negative_auth_case(
                 &options.run_id,
                 Some("api_gateway_authorization_denied"),
             );
-            Ok(json!({
+            json!({
                 "missing_token": "api_gateway_authorization_denied",
-                "http_status": response.status_code,
+                "http_status": missing_token.status_code,
                 "raw_error_recorded": false
-            }))
+            })
         }
         other => {
             emit_bridge_event(
@@ -763,7 +842,48 @@ fn run_negative_auth_case(
             );
             bail!("API Gateway missing-token negative case returned HTTP {other}")
         }
+    };
+    let malformed = http_json(
+        &options.http_bin,
+        &options.invoke_url,
+        "/api-gateway-bridge",
+        Some("malformed-token"),
+        correlation_id,
+    )?;
+    if !matches!(malformed.status_code, 401 | 403) {
+        bail!(
+            "API Gateway malformed-token negative case returned HTTP {}",
+            malformed.status_code
+        );
     }
+    if malformed.body.get("schema").and_then(Value::as_str)
+        != Some("adl.csm.api_gateway_bridge.denied.v1")
+    {
+        bail!("API Gateway malformed-token negative case returned an unexpected denial schema");
+    }
+    if malformed.body.get("error_class").and_then(Value::as_str)
+        != Some("api_gateway_malformed_request")
+    {
+        bail!("API Gateway malformed-token negative case returned an unexpected error class");
+    }
+    emit_bridge_event(
+        "malformed_request",
+        "blocked",
+        &options.run_id,
+        Some("api_gateway_malformed_request"),
+    );
+    let _redacted_malformed_body = finalize_api_response(malformed.body)?;
+    Ok(json!({
+        "missing_token": missing_token["missing_token"],
+        "missing_token_http_status": missing_token["http_status"],
+        "malformed_request": "api_gateway_malformed_request",
+        "malformed_request_http_status": malformed.status_code,
+        "malformed_request_error_class": "api_gateway_malformed_request",
+        "upstream_failure": "deferred_to_injected_upstream_fixture",
+        "degraded_csm_state": "deferred_to_injected_degraded_fixture",
+        "throttling": "deferred_to_aws_quota_or_gateway_integration_fixture",
+        "raw_error_recorded": false
+    }))
 }
 
 fn query_cloudwatch(options: &ApiGatewayBridgeOptions, correlation_id: &str) -> Result<Value> {
@@ -931,6 +1051,33 @@ mod tests {
     }
 
     #[test]
+    fn api_gateway_operator_token_rejects_curl_config_controls() {
+        assert!(super::validate_curl_header_value("operator token", "safe-token").is_ok());
+        for unsafe_token in ["quoted\"token", "slash\\token", "line\nfeed", "line\rfeed"] {
+            assert!(
+                super::validate_curl_header_value("operator token", unsafe_token).is_err(),
+                "unsafe token accepted: {unsafe_token:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn api_gateway_curl_config_rejects_url_and_correlation_controls() {
+        for (label, value) in [
+            (
+                "invoke URL",
+                "https://example.test/\"\nheader = \"X-Evil: yes\"",
+            ),
+            ("correlation id", "run\\\nurl = \"https://evil.test\""),
+        ] {
+            assert!(
+                super::validate_curl_config_value(label, value).is_err(),
+                "unsafe curl config value accepted: {label}"
+            );
+        }
+    }
+
+    #[test]
     fn api_gateway_bridge_writes_redacted_summary_with_fake_aws_and_http() {
         let root = temp_dir("api-gateway-bridge");
         let aws = write_fake_aws(&root, false);
@@ -956,7 +1103,7 @@ mod tests {
         })
         .expect("fake API Gateway proof");
 
-        assert_eq!(summary.status, "passed");
+        assert_eq!(summary.status, "bounded_smoke");
         assert_eq!(summary.aws_account_hash, "2a33349e7e606a8a");
         assert_eq!(summary.api_gateway.api_count, 1);
         assert_eq!(
@@ -1007,6 +1154,45 @@ mod tests {
     }
 
     #[test]
+    fn api_gateway_bridge_downgrades_missing_named_route_to_bounded_smoke() {
+        let root = temp_dir("api-gateway-missing-route");
+        let aws = write_fake_aws(&root, true);
+        let http = write_fake_http(&root, false);
+        let out_dir = root.join("proof");
+        let account_sha =
+            "2a33349e7e606a8ad2e30e3c84521f9377450cf09083e162e0a9b1480ce0f972".to_string();
+        let summary = prove_api_gateway_bridge(ApiGatewayBridgeOptions {
+            out_dir,
+            run_id: "fixture-run".to_string(),
+            polis_id: "api-agent".to_string(),
+            profile: "agent-logic-admin".to_string(),
+            region: "us-west-2".to_string(),
+            expected_account_sha256: account_sha,
+            api_id: Some("api-1234567890".to_string()),
+            stage_name: Some("prod".to_string()),
+            invoke_url: "https://fixture.execute-api.us-west-2.amazonaws.com/prod".to_string(),
+            operator_token: "fixture-token".to_string(),
+            cloudwatch_log_group: "/aws/apigateway/adl-csm".to_string(),
+            eventbridge_bus: "adl-csm-bus".to_string(),
+            aws_bin: aws.display().to_string(),
+            http_bin: http.display().to_string(),
+        })
+        .expect("missing route is a bounded smoke result");
+
+        assert_eq!(summary.status, "bounded_smoke");
+        assert!(summary.live_route_probes["missing"]
+            .as_array()
+            .expect("missing route list")
+            .iter()
+            .any(|route| route == "GET /health"));
+        assert!(
+            summary.live_route_probes["default_route_is_not_substituted"]
+                .as_bool()
+                .unwrap()
+        );
+    }
+
+    #[test]
     fn api_gateway_bridge_fails_closed_on_polis_identity_mismatch() {
         let root = temp_dir("api-gateway-polis-mismatch");
         let aws = write_fake_aws(&root, false);
@@ -1047,7 +1233,7 @@ mod tests {
     fn write_fake_aws(root: &Path, missing_routes: bool) -> PathBuf {
         let path = root.join("aws");
         let routes = if missing_routes {
-            r#"{"Items":[{"RouteKey":"GET /status"}]}"#
+            r#"{"Items":[{"RouteKey":"GET /status","Target":"integrations/int-1234567890"}]}"#
         } else {
             r#"{"Items":[{"RouteKey":"GET /status","Target":"integrations/int-1234567890"},{"RouteKey":"GET /health","Target":"integrations/int-1234567890"},{"RouteKey":"GET /ready","Target":"integrations/int-1234567890"},{"RouteKey":"GET /metrics","Target":"integrations/int-1234567890"},{"RouteKey":"GET /events","Target":"integrations/int-1234567890"},{"RouteKey":"GET /chronosense","Target":"integrations/int-1234567890"},{"RouteKey":"GET /weather","Target":"integrations/int-1234567890"},{"RouteKey":"GET /shepherd","Target":"integrations/int-1234567890"},{"RouteKey":"GET /cav","Target":"integrations/int-1234567890"},{"RouteKey":"GET /curiosity","Target":"integrations/int-1234567890"},{"RouteKey":"GET /acip","Target":"integrations/int-1234567890"},{"RouteKey":"GET /freedom-gate","Target":"integrations/int-1234567890"},{"RouteKey":"GET /reasoning","Target":"integrations/int-1234567890"},{"RouteKey":"GET /api-gateway-bridge","Target":"integrations/int-1234567890"},{"RouteKey":"GET /persistence","Target":"integrations/int-1234567890"},{"RouteKey":"GET /constructability","Target":"integrations/int-1234567890"}]}"#
         };
@@ -1109,10 +1295,18 @@ esac
 set -euo pipefail
 auth="missing"
 config="$(cat)"
+url="$(printf '%s\n' "$config" | sed -n 's/^url = "\(.*\)"$/\1/p')"
 case "$config" in
+  *"Authorization: Bearer malformed-token"*) auth="malformed" ;;
   *"Authorization: Bearer"*) auth="present" ;;
 esac
-if [ "$auth" = "present" ]; then
+case "$url" in
+  */status|*/health|*/ready|*/metrics|*/events|*/chronosense|*/weather|*/shepherd|*/cav|*/curiosity|*/acip|*/freedom-gate|*/reasoning|*/api-gateway-bridge|*/persistence|*/constructability) ;;
+  *) printf '%s\\n%s' '{{"schema":"adl.csm.api_gateway_bridge.unknown_route.v1","status":"not_found"}}' "404"; exit 0 ;;
+esac
+if [ "$auth" = "malformed" ]; then
+  printf '%s\n%s' '{{"schema":"adl.csm.api_gateway_bridge.denied.v1","status":"denied","error_class":"api_gateway_malformed_request"}}' "{negative_status}"
+elif [ "$auth" = "present" ]; then
   printf '%s\n%s' '{{"schema":"adl.csm.runtime_api.api_gateway_bridge.v1","runtime_owner":"csm","agent_instance_id":"{agent_instance_id}","status":"available","runtime_api_path":"/api-gateway-bridge","polis_ingress":{{"polis_id":"{agent_instance_id}","ingress_model":"one_api_gateway_api_per_polis","route_target":"authorized_api_gateway_to_csm_loopback_runtime_api","per_polis_api":true}},"redaction":{{"secret_material":"not_returned"}}}}' "200"
 else
   printf '%s\n%s' '{{"schema":"adl.csm.api_gateway_bridge.denied.v1","status":"denied"}}' "{negative_status}"

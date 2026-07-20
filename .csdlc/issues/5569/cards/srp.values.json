@@ -1,0 +1,28 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5569,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Repair #5547 terminal plan-step truth",
+    "slug": "repair-5547-terminal-plan",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5547\n.csdlc/issues/5569\n.csdlc/prepared/issues/5547\n.csdlc/prepared/issues/5569",
+      "review_revision": "git-blake3:755269ccb0786bbef6234f0d6c9338460b1edcd1:83a1b6637040069543e6fd330d31f18b3b75701c2ce21bfe9ca6e599a423bccd",
+      "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+      "review_prompts": [
+        "Does each completed step have existing retained proof?",
+        "Are receipt CAS and claim boundaries preserved?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pass"
+    }
+  }
+}

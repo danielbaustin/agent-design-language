@@ -1,0 +1,10 @@
+{
+  "issue": 5544,
+  "card": "spp",
+  "expected_generation": 3,
+  "expected_digest": "cecff65f1303b693903ffb15e31c22ef48119e0a3eb6450ac59d41c438499f95",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "The sprint review register, issue-wave truth, feature-proof open-gates section, WP-18 handoff, WP-19 handoff, and #5544 status packet were refreshed with blocked-before-external-review truth.",
+  "operation": {"operation":"update_plan_step","step_id":"S4","status":"completed"}
+}

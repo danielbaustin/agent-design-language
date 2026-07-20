@@ -1,0 +1,15 @@
+flowchart TD
+  issue["#5544 review-fix issue"]
+  receipt["#4644 retained terminal receipt"]
+  register["V0917_SPRINT_REVIEW_REGISTER.md"]
+  handoff["WP-19 external-review handoff"]
+  evidence["#5544 live-state evidence"]
+  parent["#4647 WP-20 remediation owner"]
+
+  issue --> receipt
+  receipt --> register
+  issue --> evidence
+  evidence --> register
+  evidence --> handoff
+  register --> parent
+  handoff --> parent

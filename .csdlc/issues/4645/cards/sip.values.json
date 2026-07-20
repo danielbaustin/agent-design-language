@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4645,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-18][review] Internal review",
+    "slug": "v0-91-7-wp18-internal-review",
+    "version": "v0.91.7",
+    "generation": 33
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Run the v0.91.7 WP-18 internal milestone review using the established ADL findings-first review process.",
+      "required_outcome": "A retained internal review packet and finding register identify missing surfaces, stale claims, overclaims, unowned blockers, validation gaps, lifecycle truth drift, and release-readiness non-claims before external review.",
+      "declared_scope": [
+        "v0.91.7 milestone docs and release-tail planning surfaces",
+        "v0.91.7 sprint-review register and retained sprint packets",
+        "Open and closed WP issue truth for v0.91.7 WP-01 through WP-23",
+        "Lifecycle cards, PR state, validation evidence, and closeout records needed for milestone release-review truth",
+        "v0.92 activation bridge consumption boundaries"
+      ],
+      "authority_boundary": [
+        "Issue #4645 owns WP-18 internal review",
+        "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml defines WP-18 as Internal review",
+        "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md is the current sprint-review register",
+        "docs/reviews/v0.91.7/remaining-sprints-5403/ is retained findings-first sprint review evidence",
+        "This issue may find and route blockers but must not silently remediate sibling WP work"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

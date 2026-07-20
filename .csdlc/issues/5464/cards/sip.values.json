@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5464,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][ci] Remove cargo-nextest 0.9.140 unsupported-binary fallback",
+    "slug": "v0-91-7-ci-nextest-install-contract",
+    "version": "v0.91.7",
+    "generation": 30
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Install cargo-nextest 0.9.140 directly from a supported immutable manifest without fallback.",
+      "required_outcome": "Every hosted nextest install uses the reviewed manifest, fails closed if unsupported, and emits no cargo-binstall fallback warning.",
+      "declared_scope": [
+        ".github/workflows/ci.yaml",
+        "adl/tools/test_ci_runtime_contracts.sh"
+      ],
+      "authority_boundary": [
+        "GitHub run 29632957768 is warning evidence",
+        "Official nextest release assets and install-action manifests are installation authority",
+        "Repository CI runtime contracts preserve the canonical pin and fallback policy"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

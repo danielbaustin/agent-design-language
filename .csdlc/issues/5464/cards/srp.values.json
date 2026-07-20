@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5464,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][ci] Remove cargo-nextest 0.9.140 unsupported-binary fallback",
+    "slug": "v0-91-7-ci-nextest-install-contract",
+    "version": "v0.91.7",
+    "generation": 30
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".github/workflows/ci.yaml\nadl/tools/test_ci_runtime_contracts.sh",
+      "review_revision": "git-blake3:cd1a7c902d5a9475786213df4a8499ef411acc80:664471ad93686440b4d01c42cd3418ddf7b18479e95f29357a03bd25c4546db5",
+      "reviewer": "bounded-subagent-review-5464",
+      "review_prompts": [
+        "Are all nextest install steps updated?",
+        "Does every step fail closed instead of falling back?",
+        "Does the static contract detect partial or future drift?",
+        "Is the hosted warning genuinely absent?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pass"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "issue": 5516,
+  "expected_generation": 11,
+  "expected_digest": "3604d8971a6ef0ce5904e3c6c62c17085d96e4be98dc28c4c384b1ac57077561",
+  "claim_id": "claim-5516-5494-terminal-design-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover after committing typed publication metadata so exact PR head d80791ff2 receives current review and publication truth."
+}

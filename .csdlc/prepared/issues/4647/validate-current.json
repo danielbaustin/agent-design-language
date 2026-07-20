@@ -1,0 +1,71 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "diff-check",
+        "proof_role": "Whitespace and patch hygiene for #4647 residual remediation",
+        "purpose": "Verify current #4647 diff has no whitespace errors",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 128,
+          "tokens": 0
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "git",
+        "argv": ["diff", "--check"],
+        "evidence": {
+          "max_log_bytes": 12000,
+          "redact_values": [],
+          "require_relative_paths": true
+        }
+      },
+      {
+        "id": "csdlc-doctor",
+        "proof_role": "Typed lifecycle/card consistency for #4647 residual remediation",
+        "purpose": "Verify C-SDLC v2 doctor reports pass for the current issue record",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 128,
+          "tokens": 0
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "csdlc-v2/target/debug/csdlc-doctor",
+        "argv": ["--repo", ".", "--issue", "4647"],
+        "evidence": {
+          "max_log_bytes": 12000,
+          "redact_values": [],
+          "require_relative_paths": true
+        }
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["diff-check", "csdlc-doctor"],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {
+    "max_parallel": 2,
+    "cpu_units": 2,
+    "memory_mib": 512,
+    "tokens": 0
+  },
+  "root": ".",
+  "evidence_dir": ".csdlc/prepared/issues/4647/validation/current",
+  "cancellation_file": null
+}

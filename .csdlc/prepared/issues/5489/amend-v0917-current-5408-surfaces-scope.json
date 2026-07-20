@@ -1,0 +1,14 @@
+{
+  "issue": 5489,
+  "expected_generation": 9,
+  "expected_digest": "3ee7e0dcc4fb409e375ab461aa2c7c8ea4d286443a8a546ea19a2ea19f837b63",
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "now_unix_seconds": 1784425900,
+  "reason": "WP-21A must reconcile current v0.91.7 #5408 blocker/register truth after PR #5419 merged and issue #5408 closed, while preserving historical packets and retained #4906 blocked-with-evidence truth.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md",
+    "docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md",
+    "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml"
+  ]
+}

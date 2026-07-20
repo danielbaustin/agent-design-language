@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4646,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-19][review] External / 3rd-party review",
+    "slug": "v0-91-7-wp19-external-third-party-review",
+    "version": "v0.91.7",
+    "generation": 33
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Prepare and execute the v0.91.7 external or third-party review handoff.",
+      "required_outcome": "A retained external review handoff and finding register are ready after internal review remediation is sufficient for outside scrutiny.",
+      "declared_scope": [
+        "external review handoff",
+        "third-party reviewer packet",
+        "external finding register"
+      ],
+      "authority_boundary": [
+        "Issue #4646 owns WP-19 execution",
+        "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml and WBS_v0.91.7.md define the work package",
+        "Preparation is not execution or completion evidence"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

@@ -12,13 +12,18 @@ use adl_runtime::determinism::{
 use adl_runtime::observability::{ObservabilityConfig, ObservabilityRuntime};
 use adl_runtime::shutdown::{GovernedShutdownState, ShutdownPhase, ShutdownStepOutcome};
 use anyhow::{anyhow, Context, Result};
+use base64::engine::general_purpose::STANDARD as BASE64;
+use base64::Engine;
 use chrono::{DateTime, Duration as ChronoDuration, Utc};
+use ed25519_dalek::{Signature, Verifier, VerifyingKey};
 use serde::Serialize;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
+#[cfg(windows)]
+use std::env;
 use std::fs::{self, File, OpenOptions};
-use std::io::{BufRead, BufReader, Write};
+use std::io::{BufRead, BufReader, Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use std::thread;
@@ -56,6 +61,11 @@ pub use types::{
 };
 
 const DAEMON_DEFAULT_INTERVAL_SECS: u64 = 3;
+const GOVERNED_STOP_POLICY_KEY: &str = "governed_stop_authority";
+const GOVERNED_STOP_POLICY_PUBLIC_KEY: &str = "public_key_b64";
+const GOVERNED_STOP_POLICY_OPERATORS: &str = "operators";
+const GOVERNED_STOP_MAX_AGE_SECS: i64 = 300;
+const GOVERNED_STOP_AUTHORIZATION_LEDGER: &str = "governed_stop_authorizations.jsonl";
 
 fn utc_now() -> DateTime<Utc> {
     Utc::now()
@@ -1238,9 +1248,16 @@ pub struct GovernedStopRequest {
 }
 
 pub fn governed_stop(spec_path: &Path, request: GovernedStopRequest) -> Result<Value> {
-    validate_governed_stop_request(&request)?;
     let loaded = load_spec(spec_path)?;
+    if !locked_spec_path(&loaded).exists() {
+        return Err(anyhow!(
+            "csm governed-stop requires a pre-established locked spec policy"
+        ));
+    }
     ensure_state_root(&loaded)?;
+    ensure_locked_spec(&loaded)?;
+    validate_governed_stop_request(&loaded, &request)?;
+    consume_governed_stop_authorization(&loaded, &request)?;
     let runtime_context = CsmRuntimeContext::observer()?;
     let restart_count = daemon_restart_count_hint(&loaded);
     let governed_stop_id = governed_stop_id(&loaded, &request);
@@ -1327,7 +1344,13 @@ pub fn governed_stop(spec_path: &Path, request: GovernedStopRequest) -> Result<V
         "authorization_policy": {
             "required_fields": ["reason", "operator_identity", "authorization", "intent", "requested_at"],
             "ordinary_api_requests_can_stop_runtime": false,
-            "runtime_budget": "not_applicable"
+            "runtime_budget": "not_applicable",
+            "authority_source": "ed25519_locked_agent_spec",
+            "authority_source_ref": "agent_spec.locked.json:safety.governed_stop_authority.public_key_b64",
+            "operator_allowlist_source": "agent_spec.locked.json:safety.governed_stop_authority.operators",
+            "authorization_verified": true,
+            "operator_identity_verified": true,
+            "os_identity_verified": true
         }
     });
     write_json_pretty(&governed_stop_path(&loaded), &governed_stop)?;
@@ -1442,7 +1465,10 @@ pub fn governed_stop(spec_path: &Path, request: GovernedStopRequest) -> Result<V
     }))
 }
 
-fn validate_governed_stop_request(request: &GovernedStopRequest) -> Result<()> {
+fn validate_governed_stop_request(
+    loaded: &LoadedAgentSpec,
+    request: &GovernedStopRequest,
+) -> Result<()> {
     let fields = [
         ("--reason", request.reason.as_str()),
         ("--operator", request.operator_identity.as_str()),
@@ -1463,7 +1489,181 @@ fn validate_governed_stop_request(request: &GovernedStopRequest) -> Result<()> {
             "csm governed-stop unsupported --intent '{intent}' (expected emergency_polis_stop, operator_safety_stop, or recoverability_drill)"
         ));
     }
+    let policy = loaded
+        .spec
+        .safety
+        .get(GOVERNED_STOP_POLICY_KEY)
+        .ok_or_else(|| anyhow!("csm governed-stop policy is missing from the locked agent spec"))?;
+    let public_key_b64 = policy
+        .get(GOVERNED_STOP_POLICY_PUBLIC_KEY)
+        .and_then(Value::as_str)
+        .filter(|value| !value.trim().is_empty())
+        .ok_or_else(|| anyhow!("csm governed-stop policy has no public key"))?;
+    let public_key_bytes = BASE64
+        .decode(public_key_b64)
+        .map_err(|_| anyhow!("csm governed-stop policy public key is not valid base64"))?;
+    let public_key_bytes: [u8; 32] = public_key_bytes
+        .try_into()
+        .map_err(|_| anyhow!("csm governed-stop policy public key must be 32 bytes"))?;
+    let public_key = VerifyingKey::from_bytes(&public_key_bytes)
+        .map_err(|_| anyhow!("csm governed-stop policy public key is invalid"))?;
+    let signature_bytes = BASE64
+        .decode(request.authorization.trim())
+        .map_err(|_| anyhow!("csm governed-stop authorization signature is not valid base64"))?;
+    let signature = Signature::from_slice(&signature_bytes)
+        .map_err(|_| anyhow!("csm governed-stop authorization signature is invalid"))?;
+    let signed_payload =
+        governed_stop_authorization_payload(&loaded.spec.agent_instance_id, request);
+    public_key
+        .verify(signed_payload.as_bytes(), &signature)
+        .map_err(|_| anyhow!("csm governed-stop authorization signature verification failed"))?;
+    let age = (Utc::now() - request.requested_at).num_seconds().abs();
+    if age > GOVERNED_STOP_MAX_AGE_SECS {
+        return Err(anyhow!(
+            "csm governed-stop authorization is outside the {} second freshness window",
+            GOVERNED_STOP_MAX_AGE_SECS
+        ));
+    }
+    let operator_allowed = policy
+        .get(GOVERNED_STOP_POLICY_OPERATORS)
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .filter_map(Value::as_str)
+        .any(|operator| operator == request.operator_identity.trim());
+    if !operator_allowed {
+        return Err(anyhow!(
+            "csm governed-stop operator is not present in the locked agent spec policy"
+        ));
+    }
+    let os_identity = authenticated_os_identity();
+    if os_identity.trim().is_empty() || os_identity.trim() != request.operator_identity.trim() {
+        return Err(anyhow!(
+            "csm governed-stop operator does not match the authenticated OS identity"
+        ));
+    }
     Ok(())
+}
+
+fn consume_governed_stop_authorization(
+    loaded: &LoadedAgentSpec,
+    request: &GovernedStopRequest,
+) -> Result<()> {
+    let authorization_ref = governed_authorization_ref(&request.authorization);
+    let path = loaded.state_root.join(GOVERNED_STOP_AUTHORIZATION_LEDGER);
+    let mut file = OpenOptions::new()
+        .create(true)
+        .truncate(false)
+        .read(true)
+        .write(true)
+        .open(&path)
+        .with_context(|| format!("open governed-stop authorization ledger {}", path.display()))?;
+    lock_governed_stop_ledger(&file)?;
+    let mut existing = String::new();
+    file.seek(SeekFrom::Start(0))?;
+    file.read_to_string(&mut existing)?;
+    if existing
+        .lines()
+        .any(|line| line.trim() == authorization_ref)
+    {
+        unlock_governed_stop_ledger(&file)?;
+        return Err(anyhow!(
+            "csm governed-stop authorization has already been consumed"
+        ));
+    }
+    file.seek(SeekFrom::End(0))?;
+    writeln!(file, "{authorization_ref}")
+        .with_context(|| format!("record governed-stop authorization {}", path.display()))?;
+    file.sync_all().with_context(|| {
+        format!(
+            "durably record governed-stop authorization {}",
+            path.display()
+        )
+    })?;
+    sync_governed_stop_ledger_parent(&path)?;
+    unlock_governed_stop_ledger(&file)?;
+    Ok(())
+}
+
+fn authenticated_os_identity() -> String {
+    #[cfg(unix)]
+    {
+        use std::ffi::CStr;
+        use std::os::unix::ffi::OsStringExt;
+        let uid = unsafe { libc::geteuid() };
+        let passwd = unsafe { libc::getpwuid(uid) };
+        if !passwd.is_null() {
+            let name = unsafe { CStr::from_ptr((*passwd).pw_name) };
+            return std::ffi::OsString::from_vec(name.to_bytes().to_vec())
+                .to_string_lossy()
+                .into_owned();
+        }
+        String::new()
+    }
+    #[cfg(windows)]
+    {
+        env::var("USERNAME").unwrap_or_default()
+    }
+    #[cfg(not(any(unix, windows)))]
+    {
+        String::new()
+    }
+}
+
+fn lock_governed_stop_ledger(file: &File) -> Result<()> {
+    #[cfg(unix)]
+    {
+        use std::os::fd::AsRawFd;
+        let result = unsafe { libc::flock(file.as_raw_fd(), libc::LOCK_EX) };
+        if result != 0 {
+            return Err(anyhow!("lock governed-stop authorization ledger failed"));
+        }
+    }
+    Ok(())
+}
+
+fn unlock_governed_stop_ledger(file: &File) -> Result<()> {
+    #[cfg(unix)]
+    {
+        use std::os::fd::AsRawFd;
+        let result = unsafe { libc::flock(file.as_raw_fd(), libc::LOCK_UN) };
+        if result != 0 {
+            return Err(anyhow!("unlock governed-stop authorization ledger failed"));
+        }
+    }
+    Ok(())
+}
+
+fn sync_governed_stop_ledger_parent(path: &Path) -> Result<()> {
+    #[cfg(unix)]
+    {
+        let parent = path
+            .parent()
+            .ok_or_else(|| anyhow!("governed-stop authorization ledger has no parent"))?;
+        File::open(parent)
+            .with_context(|| format!("open governed-stop ledger directory {}", parent.display()))?
+            .sync_all()
+            .with_context(|| {
+                format!(
+                    "durably record governed-stop ledger entry {}",
+                    path.display()
+                )
+            })?;
+    }
+    Ok(())
+}
+
+fn governed_stop_authorization_payload(
+    agent_instance_id: &str,
+    request: &GovernedStopRequest,
+) -> String {
+    format!(
+        "adl.csm.governed_stop.authorization.v1\n{agent_instance_id}\n{}\n{}\n{}\n{}",
+        request.operator_identity.trim(),
+        request.intent.trim(),
+        request.requested_at.to_rfc3339(),
+        request.reason.trim()
+    )
 }
 
 fn governed_stop_id(loaded: &LoadedAgentSpec, request: &GovernedStopRequest) -> String {

@@ -1,0 +1,12 @@
+{
+  "issue": 5455,
+  "expected_generation": 17,
+  "expected_digest": "d2e7f7f5d88946553ea014707ad2ebfaef36a19851e6b97a935f9e720b694c31",
+  "claim_id": "claim-5455-closeout-recovery",
+  "actor": "codex-closeout-audit",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5560,
+  "disposition": "merged",
+  "approved_no_pr_reason": null,
+  "token_file": null
+}

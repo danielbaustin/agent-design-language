@@ -94,6 +94,7 @@ markdown = "1.0.0"
 chrono = { version = "0.4", features = ["serde"] }
 chrono-tz = "0.10"
 libc = "0.2"
+fs2 = "0.4"
 
 # Errors
 anyhow = "1.0"

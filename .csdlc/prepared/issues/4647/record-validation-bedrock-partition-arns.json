@@ -1,0 +1,28 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "180a13905c4ccfc2ac431f0929151eda04a3441464e1e7f54ef86838d459637a",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record focused Bedrock partition ARN redaction proof for the final delta-review residual.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "-p",
+        "adl",
+        "bedrock_error_sanitizer",
+        "--",
+        "--nocapture"
+      ],
+      "purpose": "Prove Bedrock diagnostics redact standard and partitioned AWS ARNs plus raw account IDs while retaining useful AccessDenied context.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 4 passed"
+    }
+  }
+}

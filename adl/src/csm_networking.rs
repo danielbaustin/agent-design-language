@@ -413,6 +413,13 @@ mod tests {
     }
 
     #[test]
+    fn main_runtime_api_rejects_non_loopback_bind_before_listener_creation() {
+        let err = resolve_main_runtime_api_listener(Some("0.0.0.0:8765"), true)
+            .expect_err("non-loopback CSM runtime bind must fail before bind");
+        assert!(err.to_string().contains("loopback"));
+    }
+
+    #[test]
     fn main_runtime_api_allows_classified_test_ephemeral_bind() {
         let listener = resolve_main_runtime_api_listener(Some("127.0.0.1:0"), true).unwrap();
         assert_eq!(listener.role, CsmListenerRole::LocalTestHarness);

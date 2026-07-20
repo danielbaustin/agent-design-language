@@ -1,0 +1,122 @@
+# Structured Planning Prompt
+
+Template: 1.0.0
+
+Issue: 5544
+
+Repository: danielbaustin/agent-design-language
+
+Card: spp
+
+Status: ready
+
+## Summary
+
+Bind #5544, reconcile stale closed-owner lifecycle truth if required, capture live state, refresh the review register and handoff, validate, review, and publish.
+
+## Plan
+
+Revision 1
+
+## Steps
+
+[
+  {
+    "id": "S1",
+    "action": "Bind #5544 with minimal non-overlapping lifecycle ownership",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S2",
+    "action": "Materialize closed #4644 terminal authority if it still blocks register ownership",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-5"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S3",
+    "action": "Capture live GitHub and C-SDLC state for WP-14 through WP-18 and named blocker issues",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-4",
+      "AC-5"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S4",
+    "action": "Refresh register and handoff artifacts with evidence-bound blocked/ready truth",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S5",
+    "action": "Validate, review, and prepare publication without release-readiness overclaim",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-5"
+    ],
+    "status": "pending"
+  }
+]
+
+## Invariants
+
+- No tracked implementation work on main
+- Generated cards remain binary-owned
+- External review is not started by this issue
+- Release readiness is not inferred
+- AWS is not used
+
+## Risks
+
+- The #4645 review packet may still be pending merge when #5544 starts
+- Closed issue projections may retain stale claims until terminal reconciliation runs
+- Live GitHub state can change while the review register is being refreshed
+- A register update can accidentally imply release readiness
+
+## Estimates
+
+{
+  "elapsed_seconds": 21600,
+  "total_tokens": 80000,
+  "validation_seconds": 3600
+}
+
+## Design
+
+.csdlc/issues/5544/retained/design.md
+
+Digest: 701a7479eb3019cb0c7b02d9453e6a575f904768fb80b4668304af1993d291ab
+
+## Diagram
+
+.csdlc/issues/5544/retained/diagram.mmd
+
+Digest: 656c9804af995d0aa8faaf4ab5557190cb12be85d224be5e09d745ca1250362c
+
+## Stop Conditions
+
+- #5544 cannot acquire non-overlapping lifecycle ownership
+- The review register cannot be claimed because a live issue still owns it
+- Live state contradicts the intended handoff status and cannot be represented truthfully
+- The work would require AWS, runtime/provider code remediation, or WP-19 execution
+
+## Handoff
+
+Proceed only after doctor readiness.

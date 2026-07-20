@@ -6,10 +6,14 @@ superseded_setup_issue: 5335
 restored_v0917_issue: 4641
 wp14a_parent_issue: 5384
 notes:
-  - "#5383 is the active v0.91.7 setup issue for this package."
+  - "#5383 is the historical v0.91.7 setup authority for this package."
+  - "#5383 is closed as of 2026-07-15; do not describe setup as in progress."
   - "#4641 remains v0.91.7 WP-14 after restoration."
   - "#5384 preserves the v0.91.8 platform acceptance content formerly on #4641."
   - "All entries are planned until issue-local proof says otherwise."
+  - "GitHub milestone configuration is not the current routing authority; use version:v0.91.8 labels plus this checked-in wave."
+  - "Core, acceptance, WP-10A, and provider child issues require typed card/readiness projections before implementation."
+  - "Use one conductor, a global WIP cap of four writable issue/worktree actors, and one serialized integration/merge queue."
 wp_issue_map:
   - {wp: WP-01, issue: 5383}
   - {wp: WP-02, issue: 5336}
@@ -21,6 +25,7 @@ wp_issue_map:
   - {wp: WP-08, issue: 5341}
   - {wp: WP-09, issue: 5349}
   - {wp: WP-10, issue: 5345}
+  - {wp: WP-10A, issue: 5497}
   - {wp: WP-11, issue: 5350}
   - {wp: WP-12, issue: 5344}
   - {wp: WP-13, issue: 5346}
@@ -41,6 +46,15 @@ sidecar_routes:
   - {issue: 5347, wp: WP-13, assignment: "Externally owned incumbent ADL band deletion child"}
   - {issue: 5358, live_wp: WP-14, parent_wp: WP-14A, assignment: "C-SDLC v2 acceptance and deployment gate"}
   - {issue: 5361, live_wp: WP-14, parent_wp: WP-14A, assignment: "Runtime v3 acceptance and deployment gate"}
+  - {issue: 5526, wp: WP-09, assignment: "Current provider and model expansion child"}
+  - {issue: 5499, wp: WP-10A, assignment: "Conductor issue-graph-to-live-task plan"}
+  - {issue: 5498, wp: WP-10A, assignment: "Bounded Codex task and context-handoff adapter"}
+  - {issue: 5500, wp: WP-10A, assignment: "Read-only live workcell operator dashboard"}
+  - {issue: 5502, wp: WP-10A, assignment: "Output convergence and deterministic replanning"}
+  - {issue: 5501, wp: WP-10A, assignment: "Live distributed Codex workcell proof"}
+  - {issue: 5540, wp: WP-14A, assignment: "C-SDLC acceptance preflight inventory defect; do not absorb"}
+  - {issue: 5541, wp: WP-14A, assignment: "C-SDLC acceptance preflight inventory defect; do not absorb"}
+  - {issue: 5558, wp: WP-14A, assignment: "C-SDLC acceptance preflight inventory defect; do not absorb"}
   - {issue: 5352, live_wp: WP-14, parent_wp: WP-14A, assignment: "Exact-revision v0.92 consumption handoff"}
   - {issue: 4758, live_wp: WP-14, parent_wp: WP-14A, assignment: "Launch readiness package after platform deployment"}
   - {issue: 4759, live_wp: WP-14, parent_wp: WP-14A, assignment: "v0.92 activation map from accepted deployed products"}
@@ -53,6 +67,48 @@ sidecar_routes:
   - {issue: 4741, live_wp: WP-14, parent_wp: WP-14A, assignment: "Unity editor liveness and batch proof"}
   - {issue: 5332, live_wp: WP-14, parent_wp: WP-14A, assignment: "Unity ILPP GetDomainName loop"}
   - {issue: 5107, live_wp: WP-14, parent_wp: WP-14A, assignment: "Adaptive Learning DAG downstream queue"}
+parallel_execution:
+  status: planned
+  plan: docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md
+  setup_truth:
+    issue: 5383
+    state: closed
+    closed_at: "2026-07-15"
+  routing_authority:
+    github_milestone_configured: false
+    authority: "version:v0.91.8 labels plus checked-in WP_ISSUE_WAVE_v0.91.8.yaml"
+  card_factory:
+    rule: "Prepare cards one dependency wave ahead; implementation is forbidden until issue-specific SIP/STP/SPP and VPP are ready and validated."
+    missing_projection_issues: [5336, 5337, 5338, 5339, 5340, 5341, 5342, 5343, 5344, 5345, 5346, 5347, 5349, 5350, 5358, 5361, 5384, 5497, 5498, 5499, 5500, 5501, 5502, 5526]
+  controls:
+    writable_actor_wip_cap: 4
+    writable_actor_wip_scope: ["implementation", "card_factory", "acceptance", "janitor_fixes", "other_mutation"]
+    writable_actor_wip_excludes: ["read_only_shadows", "read_only_watchers"]
+    janitor_fix_consumes_slot: true
+    integration_queue: single
+    serialized_gates: ["review", "publication", "merge", "post_merge_validation", "terminal_closeout", "release_tail"]
+  core_serial_path: [5339, 5338, 5340, 5342]
+  wp10a_order:
+    after: ["WP-09 reviewed provider/adapter freeze"]
+    concurrent_with_wp10: [5345, 5499]
+    sequence:
+      - [5499]
+      - [5498]
+      - [5500, 5502]
+      - [5501]
+      - [5497]
+  acceptance_preflight:
+    early_start_allowed: [5358, 5361]
+    closure_constraints:
+      "5358": "C-SDLC acceptance inventories #5540/#5541/#5558 and closes only with current integrated proof."
+      "5361": "Runtime v3 acceptance closure consumes #5501 live workcell proof."
+    csdlc_defect_inventory: [5540, 5541, 5558]
+  cutover_deletion_path:
+    serial_prefix: [5350, 5344, 5343]
+    acceptance: [5358, 5361]
+    disjoint_deletion_execution: [5346, 5347]
+    merge_rule: "Deletion PR merges and post-merge validation remain serial."
+  release_tail_serial: [5354, 5351, 5360, 5356, 5357, 5363, 5362, 5355, 5359, 5348]
 work_packages:
   - wp: WP-01
     issue: 5383
@@ -114,11 +170,17 @@ work_packages:
     outcome: Implement validate, schema, plan, run, inspect, sign, verify, and generation selection.
     depends_on: ["WP-04", "WP-05", "WP-06", "WP-07", "WP-08", "WP-09"]
     deliverables: ["thin CLI", "selector", "stable install proof"]
+  - wp: WP-10A
+    issue: 5497
+    title: Implement end-to-end distributed C-SDLC workcell
+    outcome: Prove the bounded multi-agent conductor, task adapter, dashboard, convergence, and live workcell path without granting autonomous merge or closeout authority.
+    depends_on: ["WP-09", "#5499", "#5498", "#5500", "#5502", "#5501"]
+    deliverables: ["distributed workcell packet", "live proof", "operator dashboard evidence"]
   - wp: WP-11
     issue: 5350
     title: Run exact-revision normalized shadow parity
     outcome: Compare v1 and v2 across the approved corpus and classify every mismatch.
-    depends_on: ["WP-03", "WP-10"]
+    depends_on: ["WP-03", "WP-10", "WP-10A"]
     deliverables: ["shadow matrix", "mismatch disposition"]
   - wp: WP-12
     issue: 5344
@@ -130,7 +192,7 @@ work_packages:
     issue: 5346
     title: Delete replaced incumbent surfaces
     outcome: Delete only reviewed replaced ADL compiler/CLI and external-owned bands through #5346/#5347.
-    depends_on: ["WP-12"]
+    depends_on: ["WP-12", "#5358", "#5361"]
     deliverables: ["deletion manifest", "eligibility proof", "post-deletion validation"]
   - wp: WP-14A
     issue: 5384

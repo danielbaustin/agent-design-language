@@ -3,6 +3,7 @@
 //! This module maps profile names to deterministic provider defaults and expands
 //! ADL documents into explicit provider specs before execution.
 use super::*;
+use reqwest::Url;
 
 /// Profile payload used by `provider_profile_registry`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -42,11 +43,17 @@ pub(crate) fn validate_profile_endpoint(
 }
 
 pub(crate) fn is_allowed_remote_endpoint(endpoint: &str) -> bool {
-    let normalized = endpoint.trim().to_ascii_lowercase();
-    normalized.starts_with("https://")
-        || normalized.starts_with("http://localhost")
-        || normalized.starts_with("http://127.0.0.1")
-        || normalized.starts_with("http://[::1]")
+    let Ok(url) = Url::parse(endpoint.trim()) else {
+        return false;
+    };
+    match url.scheme() {
+        "https" => url.host_str().is_some_and(|host| !host.is_empty()),
+        "http" => matches!(
+            url.host_str(),
+            Some("localhost") | Some("127.0.0.1") | Some("[::1]") | Some("::1")
+        ),
+        _ => false,
+    }
 }
 
 pub(crate) fn is_allowed_ollama_endpoint(endpoint: &str) -> bool {

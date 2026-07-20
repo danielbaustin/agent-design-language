@@ -1,0 +1,12 @@
+{
+  "issue": 4647,
+  "expected_generation": 34,
+  "expected_digest": "a09bc5236493616bec9539a2ddce1c8aac633ab0c0eb132004d1e83f9525801b",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "now_unix_seconds": 1784600001,
+  "reason": "PR #5588 publication intent is a tracked lifecycle artifact changed on this branch; protected-path truth must include it before exact-head review and publication.",
+  "add_protected_paths": [
+    ".csdlc/publication/4647.intent.json"
+  ]
+}

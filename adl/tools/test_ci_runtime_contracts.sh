@@ -4,6 +4,68 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 WORKFLOW="$ROOT_DIR/.github/workflows/ci.yaml"
 
+ruby -ryaml - "$WORKFLOW" <<'RUBY'
+NEXTTEST_INSTALLER = "taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c"
+class NextestContractError < StandardError; end
+
+def require_nextest_contract(source)
+  workflow = YAML.safe_load(
+    source,
+    permitted_classes: [],
+    permitted_symbols: [],
+    aliases: true
+  )
+  steps = workflow.fetch("jobs").values.flat_map { |job| job.fetch("steps", []) }
+  install_steps = steps.select do |step|
+    step.fetch("uses", "").start_with?("taiki-e/install-action@")
+  end
+  nextest_steps = install_steps.each_with_object([]) do |step, selected|
+    tools = step.fetch("with", {}).fetch("tool", "").to_s.split(/[\s,]+/).reject(&:empty?)
+    selected << [step, tools] if tools.any? { |tool| tool.match?(/\A(?:cargo-)?nextest(?:@.*)?\z/) }
+  end
+  raise NextestContractError, "CI must retain exactly four declared nextest install steps" unless nextest_steps.length == 4
+
+  nextest_steps.each do |step, tools|
+    name = step.fetch("name", "unnamed nextest install")
+    raise NextestContractError, "#{name} must use the supported immutable installer" unless step["uses"] == NEXTTEST_INSTALLER
+    inputs = step.fetch("with", {})
+    raise NextestContractError, "#{name} must select only nextest 0.9.140" unless tools == ["nextest@0.9.140"]
+    raise NextestContractError, "#{name} must disable installer fallback" unless inputs["fallback"] == "none"
+  end
+end
+
+workflow = File.read(ARGV.fetch(0))
+begin
+  require_nextest_contract(workflow)
+rescue NextestContractError => error
+  abort error.message
+end
+
+fixtures = [
+  workflow + %Q(\n      - uses: taiki-e/install-action@v2\n        with:\n          tool: nextest@0.9.140\n          fallback: cargo-install\n),
+  workflow.sub(
+    "with:\n          tool: nextest@0.9.140\n          fallback: none",
+    "with: {tool: nextest@0.9.140, fallback: cargo-install}"
+  ),
+  workflow.sub(NEXTTEST_INSTALLER, "taiki-e/install-action@v2"),
+  workflow.sub("fallback: none", "fallback: cargo-install"),
+  workflow + %Q(\n      - name: Floating nextest alias\n        uses: taiki-e/install-action@v2\n        with: {tool: nextest, fallback: cargo-install}\n),
+  workflow + %Q(\n      - name: Floating cargo-nextest alias\n        uses: "taiki-e/install-action@v2"\n        with:\n          tool: cargo-nextest\n          fallback: cargo-install\n),
+  workflow + %Q(\n      - {name: Inline nextest, uses: taiki-e/install-action@v2, with: {tool: nextest, fallback: cargo-install}}\n),
+  workflow + %Q(\n      - name: Comma-list nextest\n        uses: taiki-e/install-action@v2\n        with: {tool: "sccache,nextest@0.9.140", fallback: cargo-install}\n),
+  workflow + %Q(\n      - name: Space-list nextest\n        uses: taiki-e/install-action@v2\n        with: {tool: "sccache nextest@0.9.140", fallback: cargo-install}\n),
+  workflow + %Q(\n      - name: Multi-tool cargo-nextest alias\n        uses: taiki-e/install-action@v2\n        with: {tool: "sccache,cargo-nextest@0.9.140", fallback: cargo-install}\n)
+]
+fixtures.each do |fixture|
+  begin
+    require_nextest_contract(fixture)
+  rescue NextestContractError
+    next
+  end
+  abort "invalid nextest installer fixture escaped enforcement"
+end
+RUBY
+
 python3 - "$WORKFLOW" "$ROOT_DIR/adl/tools/test_run_authoritative_coverage_lane.sh" "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" "$ROOT_DIR/adl/tools/run_pr_fast_coverage_lane.sh" <<'PY'
 import pathlib
 import re
@@ -393,9 +455,9 @@ for required_fragment in (
     'printf \'/mnt/adl-authoritative-coverage\\n\'',
     'printf \'%s\\n\' "$ADL_DIR"',
     'COVERAGE_BUILD_ROOT="${ADL_COVERAGE_BUILD_ROOT:-$(default_coverage_build_root)}"',
-    'mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/target/llvm-cov-target"',
+    'mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/target/llvm-cov-target/$COVERAGE_RUN_ID" "$COVERAGE_OUTPUT_ROOT"',
     'export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"',
-    'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/target/llvm-cov-target"',
+    'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/target/llvm-cov-target/$COVERAGE_RUN_ID"',
 ):
     if required_fragment not in runner_script_text:
         raise SystemExit(
@@ -471,7 +533,7 @@ for required_fragment in (
     '--status-level all',
     '--final-status-level slow',
     '--no-report',
-    '-E "$FILTER_EXPRESSION"',
+    '-E "$adl_filter_expression"',
     'coverage_args+=(--test-threads "$TEST_THREADS")',
     'PR-fast coverage test threads: nextest-default',
     'CARGO_INCREMENTAL=0 cargo "${coverage_args[@]}"',
@@ -497,7 +559,9 @@ for required_fragment in (
     "--summary-only \\",
     '--output-path "$ADL_SUMMARY_PATH"',
     'coverage-summary.adl-runtime.json',
-    "> coverage-summary.json",
+    'COVERAGE_OUTPUT_ROOT="$COVERAGE_BUILD_ROOT/coverage-output/$COVERAGE_RUN_ID"',
+    'FINAL_SUMMARY_PATH="$COVERAGE_OUTPUT_ROOT/coverage-summary.json"',
+    'cp "$FINAL_SUMMARY_PATH" "$LEGACY_FINAL_SUMMARY_PATH"',
 ):
     if required_fragment not in runner_script_text:
         raise SystemExit(

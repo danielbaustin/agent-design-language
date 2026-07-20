@@ -1,0 +1,23 @@
+{
+  "issue": 5563,
+  "base_branch": "main",
+  "branch": "codex/5563-initialized-design-recovery",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5563-initialized-design-recovery",
+    "owner": "codex-closeout-audit",
+    "generation": 1,
+    "acquired_unix_seconds": 1784424572,
+    "expires_unix_seconds": 1784510972,
+    "heartbeat_unix_seconds": 1784424572,
+    "branch": "codex/5563-initialized-design-recovery",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5563",
+      ".csdlc/prepared/issues/5563",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "purpose": "Add a typed fail-closed recovery for stale approved design inputs in initialized records"
+  }
+}

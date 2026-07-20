@@ -1,0 +1,26 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 26,
+  "expected_digest": "fedeaf7fd95d1f9844b824ed0e40478e80e38cc939ae497ce0a8a3cb0f0f2e83",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record focused local-provider UTF-8 regression proof after moving the test module for clippy.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "provider::local::tests::ollama_streaming_buffers_split_multibyte_utf8",
+        "--",
+        "--nocapture"
+      ],
+      "purpose": "Verify the Ollama streaming UTF-8 buffering regression still passes after moving the test module to satisfy clippy.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 1 passed"
+    }
+  }
+}

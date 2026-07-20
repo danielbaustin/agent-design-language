@@ -1,0 +1,41 @@
+{
+  "evidence": {
+    "reviewer": "subagent:019f7d35-6809-7b53-bc24-cc8ae7c55919",
+    "scope": [
+      "adl/src/csm_runtime_api.rs",
+      "adl/src/provider/http_family.rs",
+      "adl/src/provider/http_family/config.rs",
+      "adl/src/provider/http_family/tests.rs",
+      "adl/src/provider/local.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_authoritative_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_run_authoritative_coverage_lane.sh",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/review/ADL_v0.91.7_THIRD_PARTY_REVIEW_HANDOFF.md",
+      "docs/milestones/v0.91.7/review/V0917_EXTERNAL_REVIEW_VERIFICATION_2026-07-19.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/milestones/v0.91.7/review/external_review_4646/FINDINGS_REGISTER.md",
+      "docs/milestones/v0.91.7/review/external_review_4646/PUBLICATION_SAFE_MANIFEST.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_4647/PRE_PR_REVIEW_4647.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_4647/WP19_FINDING_REMEDIATION_MATRIX_4647.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/setup/5383/DIAGRAM.mmd"
+    ],
+    "reviewed_revision": "git-blake3:8c5218388f6bb097d64da9afacd80801992346bd:ac0268df372a76d4b407bd4e7f60d9f6dee6072f58c738df2e453104b40afaa8",
+    "findings": [],
+    "residual_risks": [
+      "Read-only pre-PR review initially found two P3 issues: OPTIONS still leaked x-csm-admission, and local Ollama invalid-byte streaming could block later chunks.",
+      "Both P3 findings were fixed after review and covered by focused tests recorded in docs/milestones/v0.91.7/review/wp20_remediation_4647/PRE_PR_REVIEW_4647.md.",
+      "Bedrock account pinning is locally unit-tested and statically reviewed; no AWS live operation was run for this remediation."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "scope": [
+    ".csdlc/issues/4647",
+    ".csdlc/prepared/issues/4647"
+  ]
+}

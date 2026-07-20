@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 4644,
+  "expected_generation": 14,
+  "expected_digest": "9a140cd4495dc9fe81b2a733eafc1231f759b9a48c89653390d2f58e89825a5b",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/4644-v0917-docs-alignment",
+  "title": "[v0.91.7][WP-17] #4644 Align documentation and adoption truth",
+  "body": "Closes #4644\n\nAligns the repository review entry points, every tracked README, all v0.91.7 milestone and feature documentation, six Cargo manifests, and the accepted/deferred ADR indexes with current evidence. Retains an executable WP-17 audit packet covering 208 README files, 822 local links, 1,328 v0.91.7 files, structured-artifact exceptions, ADR integrity, and locked Cargo metadata.\n\nValidation: the issue-owned documentation validator passed; typed csdlc-validate and csdlc-doctor passed; git diff hygiene passed. Review: bounded exact-revision subagent review found no actionable findings after repairs, and the metadata-only follow-up review confirmed coherent lifecycle truth.\n\nNon-claims: this documentation issue does not claim broad runtime, provider, security, observability, cloud, Unity, GPU, adaptive-learning, or v0.92 activation readiness. #5408 and downstream closeout WPs remain independent gates. No AWS command or service was used.",
+  "draft": true,
+  "token_file": "/Users/daniel/keys/github.token"
+}

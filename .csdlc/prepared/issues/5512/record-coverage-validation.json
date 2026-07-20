@@ -1,0 +1,18 @@
+{
+  "issue": 5512,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "88f43ffb8210de0c4b761520bfff1bdcf3d949f6207ddfafcf08717badf2c58e",
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The exact failed-expression coverage contract passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_run_pr_fast_coverage_lane.sh"],
+      "purpose": "Prove owning-crate filter splitting, foreign-selector exclusion, and composed summaries",
+      "outcome": "passed",
+      "evidence_ref": "local:5512-exact-29644007246-expression-contract-pass"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "issue": 5495,
+  "card": "sip",
+  "expected_generation": 9,
+  "expected_digest": "29b20d4af9b73f816c5c59c7bc0c50a249193ddc374cb59754f316c030973c07",
+  "claim_id": "claim-5495-publication-metadata",
+  "actor": "codex",
+  "reason": "Follow-up review completed with no findings; advance to reviewed for publication reconciliation.",
+  "operation": {"operation":"advance_phase","phase":"reviewed"}
+}

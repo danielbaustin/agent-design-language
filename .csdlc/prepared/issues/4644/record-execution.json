@@ -1,0 +1,26 @@
+{
+  "issue": 4644,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "572dbd0a8ab1d9390dde2f9467e8df87edd150dbdf22ac24cac76da271f053f4",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "WP-17 aligned the complete declared documentation surface and retained an executable audit packet in the bound worktree.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Aligned root and milestone documentation to live v0.91.7 closeout truth; audited all 208 case-insensitive README Markdown files, all v0.91.7 feature docs and structured artifacts, six Cargo manifests, and the accepted/deferred ADR indexes; repaired seven broken README links; retained an executable validator and machine-readable ledger; and preserved release, activation, cloud, runtime, security, affect, and adaptive-learning non-claims.",
+    "changes": [
+      "Align root README, REVIEW, docs README, v0.91.7 milestone entry points, handoff, checklist, sprint register, feature index, and roadmap to live issue/proof truth",
+      "Audit every README Markdown file and repair seven historical relative-link defects",
+      "Reconcile all ten v0.91.7 feature documents and the canonical feature index with closed proof issues, open #5408, and the current no-AWS execution boundary",
+      "Verify 47 accepted ADR index entries, nine v0.91.7 ADR entries, deferred ADR 0051, and unpromoted candidates",
+      "Add an executable local documentation validator, retained JSON audit ledger, and machine-readable PVF receipt"
+    ],
+    "artifacts": [
+      "docs/milestones/v0.91.7/review/V0917_WP17_DOCS_ALIGNMENT_4644.md",
+      "docs/milestones/v0.91.7/review/wp17_docs_alignment_4644/audit.json",
+      ".csdlc/prepared/issues/4644/validate_docs_alignment.rb",
+      ".csdlc/evidence/4644/validation-receipt.json"
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5569,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Repair #5547 terminal plan-step truth",
+    "slug": "repair-5547-terminal-plan",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair only #5547 SPP step status using retained proof.",
+      "deliverables": [
+        "Four typed repair requests",
+        "Corrected #5547 receipt and projection",
+        "Repair authority record"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Four exact typed terminal plan repairs succeed under #5569 authority",
+        "AC-2: #5547 remains closed_out claim-free and receipt/projection equivalent",
+        "AC-3: Doctor and diff hygiene pass without new execution claims"
+      ],
+      "dependencies": [
+        "#5547",
+        "PR #5554"
+      ],
+      "repo_inputs": [
+        "#5547",
+        "PR #5554",
+        ".git/csdlc-v2/closeout/5547.json"
+      ],
+      "non_goals": [
+        "No #5547 source changes",
+        "No terminal disposition change",
+        "No historical evidence rewrite"
+      ]
+    }
+  }
+}

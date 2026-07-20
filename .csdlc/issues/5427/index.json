@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "394bba5966d294aa1e6c625a47c1d6eb772859f24604de62017d743d4d22e639",
   "phase": "closed_out",
-  "generation": 10,
-  "digest": "ac2da93525c4d7d116a531a4e15f09d2fbd1c37d5c906122aaab4ed174ca0d10",
+  "generation": 12,
+  "digest": "8e0c0ba503a0189dd8045043fe9f5f51c6c0adc9c76ef604419dd1d529eae984",
   "claim": null,
   "review_assignment": {
     "reviewer": "codex-review",
@@ -46,8 +46,8 @@
     "base": "main",
     "head": "codex/5427-v0-91-7-card-identity-repair",
     "revision": "git-blake3:289015763c35d1516ca486359d3241633bf0dad5:b3a3d9f218e5b5132d598e747682c41af00d81db85ea60bd982af46068a4985c",
-    "draft": true,
-    "observed_state": "open"
+    "draft": false,
+    "observed_state": "merged"
   },
   "readiness": {
     "pull_request": 5456,
@@ -131,7 +131,7 @@
     "disposition": "merged",
     "observed_sha": "289015763c35d1516ca486359d3241633bf0dad5",
     "observed_state": "merged",
-    "receipt_path": "/Users/daniel/git/agent-design-language/.git/csdlc-v2/closeout/5427.json",
+    "receipt_path": "csdlc-v2/closeout/5427.json",
     "released_branch": "codex/5427-v0-91-7-card-identity-repair",
     "released_worktree": ".worktrees/adl-wp-5427",
     "released_protected_paths": [
@@ -142,8 +142,8 @@
     ]
   },
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5427/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5427/diagram.mmd",
+  "design_path": ".csdlc/issues/5427/retained/design.md",
+  "diagram_path": ".csdlc/issues/5427/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex",
@@ -152,32 +152,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "56c66b9766ca7c82aea1112d17178180aacd372b621262b364bb6d9a9dbae462",
+      "values_digest": "5eae646a1696f911951734a90cd715f106f1a3cc2794d7c98fa38b75f89f2a21",
       "rendered_digest": "94023629ee84d943cd19afec8e87e1c02222a4d0fc8ad1fe9c04dc0dee13089d",
       "ast_digest": "d5ecf1eea88e9a3b349e03885e5c85b35e254e3b2e2ca3243bbb27517a84d4e4"
     },
     "stp": {
-      "values_digest": "f9a883c86c190699b0f93d10584611339dd3088abf33a3cabb08643c522f5328",
+      "values_digest": "9c51b4c4aeec03094fe92ece1b89b56295fbb21ed531ce8483b70f87526fe622",
       "rendered_digest": "1e755d374814da201c2d1f4b0570c47c1de475282bd9890fd71b8179a2bfadac",
       "ast_digest": "cf3380a41cf181110afd1918ed7d0dd7956e4415ba5b15bf58e80f05ef4925ec"
     },
     "spp": {
-      "values_digest": "66479845450199a60d116fe16e7c7b1bc2a2df01268de4ea257036b0ba75306b",
-      "rendered_digest": "ee4d6fbb021b587ae9897d5bd15ec4c030edf39bcbb796acc95ccce0a808bb2f",
-      "ast_digest": "49a658a99ee8d7f862aad78c5d4882b770f3b7e452c84d4ed0196d6e436fd7f4"
+      "values_digest": "64b3e3a2d3396251339671ae541a7e76f17eaed8265b3de0fa9585e799ccc7c2",
+      "rendered_digest": "bceeaafd869c35025968ef8c2bc7854f1113181f7fa823fc695fa62a249bcb2b",
+      "ast_digest": "a3ec83a74344197c4b029d43e9cdfebe9d5d08042b7b467e61afeb92ffb0bb61"
     },
     "vpp": {
-      "values_digest": "da06235d7609ed330d5472c4b2ed07e715911c4fe62027dfcfcda951680ad05a",
-      "rendered_digest": "1359936c33097d7e2c244d0da969fe524cbf49a050e9aab6b9ddd9ea4dbcf1c6",
-      "ast_digest": "6dc4f45700e06b896008f5fdaf2d709193a0640bf9def3c090d387457f027829"
+      "values_digest": "5109383401ef933c7a9bec656919125a224f7e0f7e02cfe8232b6e9f46490fbd",
+      "rendered_digest": "76d7d7ceed10f36102ac3dddfaee9653c55cab40fa334018aafe9137ab41a967",
+      "ast_digest": "5d7070ba9c93437cef33e44ec711ea68890a15483119668e591573f7da6a1192"
     },
     "srp": {
-      "values_digest": "d2ca19c53947b4a5f7bc3e741232d7aec83d561249037cced0f14f67c637710e",
-      "rendered_digest": "a657400bbc944466d35a395d31d42578e8d0e747b733ef437beba9418f059f7d",
-      "ast_digest": "dd01a5181242ceb5d0b6f66824cdf0eb3dc0931ef4f636357a3383c208961fce"
+      "values_digest": "d6f1cbcd3edc844a6c37de79c59fb5b73d644d1b0599c13900f365d330cfc985",
+      "rendered_digest": "479cdf424c9db10d20fee15f2b19a203fc57103dfd908e2ad616dfa6306ad90b",
+      "ast_digest": "76d5ad90b7918aed39eb08c4febdf1941930924054ad592b52f7b10366494e49"
     },
     "sor": {
-      "values_digest": "bb36c1fe4d3c3d5295ca6d812d1e9203adc66cb51f6c54b4847528b19b5992fd",
+      "values_digest": "1a2fb56e2e01cbb9667487fc9baf3f5b47dc71ae42a88c12760e28efdc4bb2b8",
       "rendered_digest": "99ec7fd30327f63613c30848134c702433899e4268f77e3855dc0c8690e0a461",
       "ast_digest": "1412b188daba06b34d436c30c16e367b7752b1dc8c4ab84b3a8ed573ac9e098c"
     }
@@ -345,6 +345,20 @@
       "actor": "codex",
       "reason": "atomically finalize SOR/index and release claim/protected paths",
       "operation": "record_terminal"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "csdlc-closeout",
+      "reason": "normalize legacy terminal receipt path to portable reference",
+      "operation": "normalize_terminal_receipt_ref"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt during the complete v0.91.7 closed-issue audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

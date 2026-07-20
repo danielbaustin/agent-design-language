@@ -7,14 +7,14 @@
     "title": "[v0.91.8][csdlc-v2][durability] Make terminal projection and receipt crash-consistent",
     "slug": "terminal-projection-receipt-crash-consistent",
     "version": "v0.91.8",
-    "generation": 11
+    "generation": 18
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {
       "review_scope": "csdlc-v2/src/store.rs\ncsdlc-v2/src/publication.rs\ncsdlc-v2/tests/gate7_lifecycle.rs",
-      "review_revision": "git-blake3:55906219439aed67090ae7c8df703d66e0c78fd5:a17f3066c1b561bcc0ad4aa57748020a567f6070cb41f7fa71d6185363807415",
+      "review_revision": "git-blake3:e5fe0766c79b4ed27f6615b2668c64039c31c023:a4f0891e9f718157231b7cdca1f460db2fe2f2d6f4e79a0ab63c3c0af6c0f853",
       "reviewer": "review_5427",
       "review_prompts": [
         "Can interruption at every write/rename boundary recover deterministically?",

@@ -1,0 +1,15 @@
+{
+  "issue": 5509,
+  "expected_generation": 5,
+  "expected_digest": "28734a0d184c0a2e687f28212323ae8cf36e7169215aa5fadc11b0ff8e1083de",
+  "claim_id": "claim-5509-runtime-v3-csm-fast-lane",
+  "reviewer": "subagent:019f751d-2d23-70d1-b40f-69c756ed58d0",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    "adl/tools/ci_path_policy.sh",
+    "adl/tools/run_pr_fast_test_lane.sh",
+    "adl/tools/test_ci_path_policy.sh",
+    "adl/tools/test_run_pr_fast_coverage_lane.sh",
+    "adl/tools/test_run_pr_fast_test_lane.sh"
+  ]
+}

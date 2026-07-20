@@ -1,0 +1,40 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5563,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Recover stale approved design in initialized records",
+    "slug": "initialized-stale-design-recovery",
+    "version": "v0.91.8",
+    "generation": 5
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement only the typed initialized stale-design recovery and its focused regression.",
+      "deliverables": [
+        "Bounded approve-design recovery semantics",
+        "Gate 2 regression"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Stale initialized-approved design cannot reach ready before recovery",
+        "AC-2: Typed recovery validates CAS, active claim, reviewer, and actual stale authored inputs",
+        "AC-3: Recovery atomically refreshes SPP/VPP digests and audit truth",
+        "AC-4: Doctor passes and ready transition succeeds after recovery"
+      ],
+      "dependencies": [],
+      "repo_inputs": [
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/tests/gate2.rs",
+        ".csdlc/issues/5306"
+      ],
+      "non_goals": [
+        "No terminal recovery changes",
+        "No v1 wrapper restoration",
+        "No AWS or Spot validation"
+      ]
+    }
+  }
+}

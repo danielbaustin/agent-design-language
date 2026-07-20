@@ -1,0 +1,17 @@
+{
+  "issue": 4644,
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "expected_generation": 1,
+  "expected_digest": "6319389f726f4608492442a9b5244d5232a80c022f07f5ecffcf0969d4eaa542",
+  "now_unix_seconds": 1784415945,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Protect the repository documentation entrypoints and ADR indexes explicitly added to the WP-17 alignment scope.",
+  "add_protected_paths": [
+    "README.md",
+    "REVIEW.md",
+    "docs/README.md",
+    "docs/adr/README.md",
+    "docs/milestones/v0.91.7/features/README.md",
+    "docs/milestones/v0.91.7/review/V0917_ADR_INDEX_4989.md"
+  ]
+}

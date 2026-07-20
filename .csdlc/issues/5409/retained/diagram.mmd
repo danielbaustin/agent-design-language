@@ -1,0 +1,8 @@
+flowchart TD
+  review["#5121 runtime rearchitecture boundary"] --> topology["assembled production topology"]
+  topology --> health["complete readiness health"]
+  topology --> soak["assembled-runtime soak"]
+  auth["runtime API credentials"] --> renewal["proactive overlap renewal"]
+  health --> proof["retained WP-07A proof"]
+  soak --> proof
+  renewal --> proof

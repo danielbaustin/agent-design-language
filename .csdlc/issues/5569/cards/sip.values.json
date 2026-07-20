@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5569,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Repair #5547 terminal plan-step truth",
+    "slug": "repair-5547-terminal-plan",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Align #5547 terminal SPP status with already-retained execution and terminal evidence.",
+      "required_outcome": "All four proven #5547 steps are completed through typed terminal repair while #5547 remains claim-free and closed_out.",
+      "declared_scope": [
+        ".csdlc/issues/5547",
+        ".csdlc/prepared/issues/5547",
+        ".git/csdlc-v2/closeout/5547.json"
+      ],
+      "authority_boundary": [
+        "Typed csdlc-closeout repair-plan-step only"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

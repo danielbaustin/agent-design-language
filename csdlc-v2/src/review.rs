@@ -234,11 +234,14 @@ pub fn evaluate_publication_review_in_repo(
     evidence: Option<&ReviewEvidence>,
     current_revision: &str,
 ) -> PublicationReviewReport {
-    let proof_ok = evidence
-        .and_then(|e| e.non_substantive_proof.as_ref())
-        .is_some_and(|proof| {
-            verify_non_substantive(root, evidence.expect("evidence"), current_revision, proof)
-        });
+    let proof_ok = match evidence {
+        Some(e) if e.non_substantive_proof.is_some() => e
+            .non_substantive_proof
+            .as_ref()
+            .is_some_and(|proof| verify_non_substantive(root, e, current_revision, proof)),
+        Some(e) => verify_automatic_metadata_only(root, e, current_revision),
+        None => false,
+    };
     evaluate(evidence, current_revision, proof_ok)
 }
 
@@ -313,6 +316,34 @@ fn verify_non_substantive(
     }
     crate::git::metadata_only_changed_paths(root, &p.from_commit, &p.to_commit)
         .is_ok_and(|paths| !paths.is_empty() && paths == p.changed_paths)
+}
+
+fn verify_automatic_metadata_only(
+    root: &std::path::Path,
+    evidence: &ReviewEvidence,
+    current: &str,
+) -> bool {
+    let Some(from_commit) = evidence
+        .reviewed_revision
+        .strip_prefix("git-blake3:")
+        .and_then(|value| value.split(':').next())
+    else {
+        return false;
+    };
+    let Some(to_commit) = current
+        .strip_prefix("git-blake3:")
+        .and_then(|value| value.split(':').next())
+    else {
+        return false;
+    };
+    if from_commit == to_commit
+        || crate::git::clean_commit_revision(from_commit) != evidence.reviewed_revision
+        || crate::git::clean_commit_revision(to_commit) != current
+    {
+        return false;
+    }
+    crate::git::metadata_only_changed_paths(root, from_commit, to_commit)
+        .is_ok_and(|paths| !paths.is_empty())
 }
 fn unix_now() -> Result<u64> {
     Ok(std::time::SystemTime::now()

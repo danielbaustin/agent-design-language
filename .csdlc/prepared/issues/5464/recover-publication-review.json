@@ -1,0 +1,8 @@
+{
+  "issue": 5464,
+  "expected_generation": 17,
+  "expected_digest": "901b6727a173567870cda97420eca5f8be5014740ed967ae16c1e87de2ab43fe",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover from review identity staleness after committing review lifecycle metadata; substantive scope is unchanged."
+}

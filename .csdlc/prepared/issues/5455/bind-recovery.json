@@ -1,0 +1,4 @@
+{
+ "issue":5455,"base_branch":"main","branch":"codex/5455-stale-owner-provenance","worktree":".",
+ "claim":{"id":"claim-5455-closeout-recovery","owner":"codex-closeout-audit","generation":1,"acquired_unix_seconds":1784422165,"expires_unix_seconds":1784508565,"heartbeat_unix_seconds":1784422165,"branch":"codex/5455-stale-owner-provenance","worktree":".","protected_paths":[".csdlc/issues/5455",".csdlc/prepared/issues/5455","csdlc-v2/src/operator.rs","csdlc-v2/tests/gate10a.rs"],"purpose":"Recover truthful typed lifecycle and terminal evidence for merged PR #5460"}
+}

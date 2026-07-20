@@ -1,0 +1,382 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5487,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "7c8abbf996795f4d33022b527e2915bc79bae567af2c6bb105b31fd6ab8598c2",
+  "phase": "closed_out",
+  "generation": 17,
+  "digest": "b9f95dc2aa2cf90cfa522353ba10da36c8ba2bdbc1a1c1399f3dc66d9b879740",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "review_5427",
+    "assigned_by": "codex",
+    "revision": "git-blake3:0119c2efbf573c7711eae8d725f5799e5c3d85ab:f0f35265c3b163801a6ca920edf66b48ee08b65e70c5c2bddf269e7cdf92431c",
+    "scope": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/tests/gate7_terminal_design_repair_5487.rs",
+      ".csdlc/issues/5467/retained/design.md",
+      ".csdlc/issues/5467/retained/diagram.mmd"
+    ]
+  },
+  "review": {
+    "reviewer": "review_5427",
+    "scope": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/tests/gate7_terminal_design_repair_5487.rs",
+      ".csdlc/issues/5467/retained/design.md",
+      ".csdlc/issues/5467/retained/diagram.mmd"
+    ],
+    "reviewed_revision": "git-blake3:0119c2efbf573c7711eae8d725f5799e5c3d85ab:f0f35265c3b163801a6ca920edf66b48ee08b65e70c5c2bddf269e7cdf92431c",
+    "findings": [],
+    "residual_risks": [
+      "Crash recovery remains bounded by the existing filesystem durability contract."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5487,
+    "pull_request": 5491,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5491",
+    "base": "main",
+    "head": "codex/5487-terminal-design-repair",
+    "revision": "git-blake3:0119c2efbf573c7711eae8d725f5799e5c3d85ab:f0f35265c3b163801a6ca920edf66b48ee08b65e70c5c2bddf269e7cdf92431c",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5491,
+    "head_sha": "0119c2efbf573c7711eae8d725f5799e5c3d85ab",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5491,
+    "disposition": "merged",
+    "observed_sha": "0119c2efbf573c7711eae8d725f5799e5c3d85ab",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5487.json",
+    "released_branch": "codex/5487-terminal-design-repair",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/tests/gate7_terminal_design_repair_5487.rs",
+      ".csdlc/issues/5487/retained/design.md",
+      ".csdlc/issues/5487/retained/diagram.mmd"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5487/retained/design.md",
+  "diagram_path": ".csdlc/issues/5487/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex",
+      "revision": "81a40365f0d648c8c8d149c38d161a04d795654827a41cabb955c3eea07f89b6"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "56de8209cb509019cd799980499c75bd11c0755ea78340a72eeb745e5f512371",
+      "rendered_digest": "80ddb726ea098e53b247b6b7ef6a23d0c10ab9466b4efaec3d78b7bb2f95d796",
+      "ast_digest": "c1ed38486537316029d56c3414ac20dee07fa0575ae75e52bab9aad80a0b0fc0"
+    },
+    "stp": {
+      "values_digest": "ebeac7fae9104daafa278bf37d1090c76d41950da937aee0b8d2754844197eea",
+      "rendered_digest": "d339f52f34c59d8c1d8c57eae6418fec6c7bbee6a8e1f711296db36a34ff316f",
+      "ast_digest": "14242e803ab4baea4178dff757963d70ca7ac1fb21865bb98a67c9fef1e366fb"
+    },
+    "spp": {
+      "values_digest": "72d4a025e9b0d736cfbc47ab33054e41f8b8acafe6f11fd1c54e870cafd6f3a6",
+      "rendered_digest": "2a63ed153f38ae794a7823f83f16ba957ab20688b06e63a506f8f336fedb50e1",
+      "ast_digest": "44971f6391c44480a012554b33e1cab7043e3fca43903bf922b12abd4ae70571"
+    },
+    "vpp": {
+      "values_digest": "f9da72ae0ed9932bc54f6d98e3e61d80c6178842c7736b30a98f6bb45747c2ea",
+      "rendered_digest": "9989e0e9e5d0ece92e567f88f6a2a1497f2a00221977a68b843e0e302b20fa9c",
+      "ast_digest": "88da1229ef057dd8a42aa36cd5a7a2f6a8c4e9f0d0f37a5102db2b3d02781dc9"
+    },
+    "srp": {
+      "values_digest": "cf2bfaa613b006ba06b7824bdf7976d945547368e8aa00aae7a39aac7bc16f69",
+      "rendered_digest": "84c75c118c24b9dbfbc8d3c478cfe7fbf9170aa4d15d3a52aff7e4b7a008c59c",
+      "ast_digest": "cd436a89266269ef993557aaffb3d2947980bf9e948f91e715e21311f2933b10"
+    },
+    "sor": {
+      "values_digest": "fb2032faa5bb575d6a1f7b18d8b2ee25aad47a3e4f1ae76b1ebc13d0fadb4f8a",
+      "rendered_digest": "8202129b50f7dc3c885b0d8d4e3a249b1bec82391bc3f394c5790e73bdc3dec4",
+      "ast_digest": "87b9ace513641ab5d554c51931290feb464612d982f6166f713f088be68a6899"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Implementation and focused validation are complete; advance to review."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Bounded review completed with no findings; advance to reviewed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Publication metadata commit changed the reviewed revision; recover review truth before reapproval."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Re-review of the final publication metadata revision completed with no findings; advance to reviewed."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "Implement typed terminal design repair and receipt-aware projection recovery.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Closed-out design repair now performs authority/CAS/hash checks, markdown AST validation, journaled projection and receipt replacement, and typed reconciliation materializes repaired #5467 artifacts.\",\"changes\":[\"Add TerminalDesignRepairRequest and csdlc-closeout repair-design.\",\"Atomically update terminal record, SPP/VPP digests, receipt, authored artifacts, and audit.\",\"Repair #5467 retained design and diagram with the approved SSM/EBS/IAM scope.\"],\"artifacts\":[\"csdlc-v2/src/store.rs\",\"csdlc-v2/src/bin/csdlc-closeout.rs\",\".csdlc/issues/5467/retained/design.md\",\".csdlc/issues/5467/retained/diagram.mmd\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "Focused terminal design repair validation passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Prove terminal transaction recovery and lifecycle invariants; clippy and diff checks also pass.\",\"outcome\":\"passed\",\"evidence_ref\":\"gate7_lifecycle: 6 tests passed; cargo clippy --all-targets -D warnings; git diff --check\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex",
+      "reason": "Implementation and focused validation are complete; advance to review.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "Focused repair artifact contract validation passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_terminal_design_repair_5487\"],\"purpose\":\"Verify the typed repair request covers committed #5467 design and diagram artifacts with stable digests and Mermaid shape.\",\"outcome\":\"passed\",\"evidence_ref\":\"gate7_terminal_design_repair_5487: 1 test passed\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "review_5427",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex",
+      "reason": "Bounded review completed with no findings; advance to reviewed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "Publication metadata commit changed the reviewed revision; recover review truth before reapproval.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "review_5427",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex",
+      "reason": "Re-review of the final publication metadata revision completed with no findings; advance to reviewed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt during the complete v0.91.7 closed-issue audit.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

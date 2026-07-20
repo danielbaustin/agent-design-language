@@ -1,0 +1,9 @@
+flowchart LR
+    A["Changed Runtime v3 auth source"] --> B["Coverage impact map"]
+    B --> C["runtime_v3_auth selector"]
+    C --> D["adl-runtime manifest"]
+    D --> E["runtime_api_auth focused tests"]
+    C --> F{"Mixed selectors?"}
+    F -->|Yes| G["Also run ADL workspace selection"]
+    F -->|No| H["Skip legacy ADL workspace"]
+

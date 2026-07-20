@@ -1,0 +1,26 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 31,
+  "expected_digest": "ff8bbdd041a99e22a350abc4ba42abd9868d54231dce78e3b804ef676f4b3075",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record focused CSM API Gateway bridge proof after PR #5588 adl-coverage-hosted failed the bridge redaction tests.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "csm_runtime_api::api_gateway_bridge::tests::api_gateway_bridge_",
+        "--",
+        "--nocapture"
+      ],
+      "purpose": "Verify the exact API Gateway bridge tests that failed in hosted coverage now finalize and redact external response bodies before retaining proof.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 4 passed"
+    }
+  }
+}

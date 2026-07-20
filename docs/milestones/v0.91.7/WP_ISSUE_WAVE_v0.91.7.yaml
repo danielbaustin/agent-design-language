@@ -1,6 +1,6 @@
 milestone: v0.91.7
 version: v0.91.7
-status: issue_wave_opened
+status: closeout_tail_active
 created_by_issues:
   - 3801
   - 3825
@@ -9,12 +9,30 @@ source_bridge_ledger: docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER
 first_tranche_input: docs/milestones/v0.91.6/
 source_capture: docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md
 release_tail_handoff_addendum: docs/milestones/v0.91.7/V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md
+required_successor_bridge: docs/milestones/v0.91.8/README.md
 notes:
   - "Issue wave opened by WP-01 #4628 on 2026-06-28."
   - "Do not claim v0.92 activation readiness from this seed."
   - "Keep v0.92 birthday implementation out of this planning package."
   - "Every activation-path source-capture input must exit integrated/proven, already closed with evidence, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval."
   - "WP-01 must consume failed-but-closed WP-15 #3980 external-review truth, closed WP-16 #3981/#4620/#4621 remediation truth, closed v0.91.7 tooling fix #4622, WP-14A #4582, and closed WP-14A remediation #4609-#4612 truth before dependent execution starts."
+  - "Live WP truth last verified on 2026-07-19: WP-19 closed with retained findings; WP-20 and WP-23 open."
+  - "v0.92 consumes the reviewed v0.91.8 exact-revision handoff, not this v0.91.7 issue wave directly."
+  - "Current superseding review-tail truth: #5408 is closed/remediated via merged PR #5419 at 6fcd3accafc15e3b6cc8064d836293b4495983de; retained #4906 blocked-with-evidence remains unresolved unless separately dispositioned."
+closeout_tail_truth:
+  verified_on: 2026-07-19
+  closed_wps: [WP-01, WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16, WP-17, WP-18, WP-19, WP-21, WP-21A, WP-22]
+  open_wps: [WP-20, WP-23]
+  release_ready: false
+  evidence: docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md
+  blocked_before_external_review: []
+  transient_external_review_send_holds: []
+  notes:
+    - "WP-18 #4645 is closed through merged PR #5543; #5408, #5527, #5489, and grouped remediation #5544-#5547 are also closed."
+    - "WP-19 #4646 is closed: the exact 70-file replacement corpus received one Fable 5 lane and three independent shadow lanes; 22 findings are retained for WP-20."
+    - "Closeout audit #5573 is closed; merged PR #5578 retains its 427-issue register, and WP-19 does not rerun or expand that completed audit."
+    - "WP-20 #4647 remains open and owns synthesis and remediation of the 22 WP-19 findings."
+    - "#5571 is closed with retained publication-boundary disposition and redaction evidence that must be included in the replacement WP-19 corpus."
 wp_issue_map:
   - {wp: WP-01, issue: 4628}
   - {wp: WP-02, issue: 4629}
@@ -37,6 +55,7 @@ wp_issue_map:
   - {wp: WP-19, issue: 4646}
   - {wp: WP-20, issue: 4647}
   - {wp: WP-21, issue: 4648}
+  - {wp: WP-21A, issue: 5489}
   - {wp: WP-22, issue: 4649}
   - {wp: WP-23, issue: 4650}
 existing_issue_routes:
@@ -304,7 +323,9 @@ work_packages:
       - "Feature-list/TBD disposition update"
   - wp: WP-21A
     title: Next milestone closeout planning
-    outcome: Create a separate issue after WP-21 alignment to carry the canonical next-milestone closeout role previously assigned to WP-21.
+    issue: 5489
+    status: closed
+    outcome: Complete the canonical next-milestone closeout role previously assigned to WP-21.
     depends_on: ["WP-21"]
     deliverables:
       - "v0.92 closeout-planning packet"

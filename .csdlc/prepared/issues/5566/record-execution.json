@@ -1,0 +1,5 @@
+{
+  "issue":5566,"card":"sor","expected_generation":0,"expected_digest":"b82ba5cca19d5a59df95513543a6cf2daf582c3a3b459d97aa359d95a9f38344",
+  "claim_id":"claim-5566-existing-worktree-bind","actor":"codex-closeout-audit","reason":"Record the bounded existing-worktree bind implementation.",
+  "operation":{"operation":"record_execution","summary":"Recognize an exact reserved worktree as issue-local when the current Git branch and canonical checkout path match.","changes":["Derive issue-local identity from the current branch plus canonical reserved worktree path.","Preserve exact claim equality and relative path safety.","Add focused success and mismatch regressions."],"artifacts":["csdlc-v2/src/lifecycle.rs","csdlc-v2/tests/gate2.rs","#5566","#5306"]},"fail_after_backup":false
+}

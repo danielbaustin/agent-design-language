@@ -1,0 +1,146 @@
+{
+  "issue": 5527,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5527/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5527/diagram.mmd",
+  "design_reviewer": "codex-closeout-audit",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5527-terminal-sor-artifact-repair",
+    "owner": "codex-closeout-audit",
+    "generation": 0,
+    "acquired_unix_seconds": 1784418712,
+    "expires_unix_seconds": 1784505112,
+    "heartbeat_unix_seconds": 1784418712,
+    "branch": "codex/5527-terminal-sor-artifact-repair",
+    "worktree": ".",
+    "protected_paths": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/tests/gate7_terminal_sor_artifact_repair_5527.rs",
+      ".csdlc/issues/5390",
+      ".csdlc/issues/5527",
+      ".csdlc/prepared/issues/5527"
+    ],
+    "purpose": "Add atomic typed terminal SOR artifact-reference repair and correct #5390"
+  },
+  "initial": {
+    "title": "[v0.91.7][csdlc-v2][closeout] Normalize SOR artifact refs during terminal reconciliation",
+    "slug": "v0-91-7-csdlc-v2-terminal-sor-artifact-repair",
+    "version": "v0.91.7",
+    "goal": "Provide one fail-closed typed repair for stale SOR artifact references in a closed-out record.",
+    "required_outcome": "The typed operation atomically replaces #5390's deleted diagram reference with its byte-identical retained path and refreshes its terminal receipt.",
+    "declared_scope": [
+      "csdlc-v2 terminal repair store and CLI",
+      "focused terminal repair tests",
+      "#5390 terminal SOR and receipt",
+      "#5527 lifecycle records"
+    ],
+    "authority_boundary": [
+      "#5527 is the active repair authority",
+      "#5390 is the closed-out target",
+      "Only exact stale-to-retained SOR artifact reference replacement is allowed"
+    ],
+    "task_boundary": "Add and prove one atomic terminal SOR artifact-reference repair operation, then use it on #5390.",
+    "deliverables": [
+      "Typed repair request and store operation",
+      "Focused fail-closed and rollback tests",
+      "Corrected #5390 SOR artifact reference and receipt",
+      "Reviewed terminal reconciliation"
+    ],
+    "acceptance_criteria": [
+      "AC1: only exact existing SOR artifact references may be replaced",
+      "AC2: replacement must be a receipt-authenticated retained authored artifact with matching bytes",
+      "AC3: stale authority, target, artifact, or receipt identity fails closed",
+      "AC4: invalid phase, claim, path, duplicate, or no-op replacement fails closed",
+      "AC5: receipt refresh failure rolls target and receipt back",
+      "AC6: #5390 contains no generated reference to the deleted diagram path",
+      "AC7: focused tests, doctor, and exact review pass"
+    ],
+    "dependencies": [
+      "Closed #5390",
+      "Typed C-SDLC v2 terminal repair transaction pattern"
+    ],
+    "repo_inputs": [
+      "#5527 review finding",
+      ".git/csdlc-v2/closeout/5390.json",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs"
+    ],
+    "non_goals": [
+      "General terminal card editing",
+      "Audit rewriting",
+      "Runtime changes",
+      "Runtime v2 changes",
+      "AWS execution"
+    ],
+    "plan_summary": "Implement the narrow repair operation, prove fail-closed atomic behavior, repair #5390, review, publish, merge, and close out.",
+    "steps": [
+      {"id":"S1","action":"Design and bind the terminal repair authority","status":"completed","acceptance_ids":["AC-1","AC-2","AC-3","AC-4"]},
+      {"id":"S2","action":"Implement and test atomic terminal SOR artifact-reference repair","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5"]},
+      {"id":"S3","action":"Repair #5390 and validate receipt parity","status":"pending","acceptance_ids":["AC-6"]},
+      {"id":"S4","action":"Review, publish, merge, and close out","status":"pending","acceptance_ids":["AC-7"]}
+    ],
+    "risks": [
+      "Overbroad terminal mutation would weaken immutability",
+      "Receipt refresh failure could split record truth",
+      "Path-only comparison could authenticate the wrong artifact bytes"
+    ],
+    "invariants": [
+      "Separate authority issue is mandatory",
+      "Target is closed-out and claim-free",
+      "Replacement path is receipt-authenticated and byte-matched",
+      "Receipt and target roll back together"
+    ],
+    "stop_conditions": [
+      "Repair requires runtime changes",
+      "Operation permits arbitrary terminal edits",
+      "Rollback proof fails",
+      "Exact review finds unresolved atomicity defects"
+    ],
+    "review_prompts": [
+      "Is the operation limited to exact SOR artifact-reference replacement?",
+      "Are path and byte identity both authenticated?",
+      "Can a failed refresh leave split truth?",
+      "Does #5390 contain any stale generated artifact reference after repair?"
+    ],
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane":"terminal-sor-artifact-repair-tests",
+        "proof_role":"Prove exact atomic repair and rollback",
+        "deterministic":true,
+        "resource_profile":"small",
+        "parallel_group":"rust",
+        "budget_seconds":180,
+        "budget_tokens":2000,
+        "argv":["cargo","test","--manifest-path","csdlc-v2/Cargo.toml","--test","gate7_terminal_sor_artifact_repair_5527"],
+        "acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5"]
+      },
+      {
+        "lane":"target-doctor",
+        "proof_role":"Prove #5390 terminal SOR and receipt parity",
+        "deterministic":true,
+        "resource_profile":"small",
+        "parallel_group":"records",
+        "budget_seconds":60,
+        "budget_tokens":500,
+        "argv":["csdlc-doctor","--issue","5390"],
+        "acceptance_ids":["AC-6"]
+      },
+      {
+        "lane":"exact-review",
+        "proof_role":"Prove bounded implementation and terminal truth",
+        "deterministic":true,
+        "resource_profile":"small",
+        "parallel_group":"review",
+        "budget_seconds":120,
+        "budget_tokens":1000,
+        "argv":["git","diff","--check"],
+        "acceptance_ids":["AC-7"]
+      }
+    ],
+    "failure_policy": "Fail closed on stale identity, missing authority, nonterminal target, invalid reference replacement, receipt mismatch, rollback failure, runtime changes, or unresolved review findings."
+  }
+}

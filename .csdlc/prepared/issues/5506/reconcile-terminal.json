@@ -1,0 +1,9 @@
+{
+  "issue": 5506,
+  "expected_initialization_digest": "af133679cd9c7015c46c265fcc38664355bbbfd4fa282ab6ac6fac5fbb980bae",
+  "expected_branch": "codex/5506-terminal-reconcile",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5506-terminal-reconcile",
+  "actor": "codex-terminal-reconcile",
+  "reason": "Materialize the retained terminal receipt after merged PR #5507 and closed issue #5506 so its released paths no longer appear actively claimed.",
+  "follow_ups": []
+}

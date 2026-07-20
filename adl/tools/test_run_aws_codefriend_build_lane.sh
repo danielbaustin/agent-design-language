@@ -235,6 +235,28 @@ bash "$SCRIPT" \
 assert_has "$TMP/dry.out" "PASS aws_codefriend_build_dry_run"
 [ ! -s "$TMP/aws-dry-args.log" ]
 
+if ADL_AWS_CLI="$TMP/aws" bash "$SCRIPT" \
+  --dry-run \
+  --project-name adl-codefriend-build \
+  --env 'ADL_CODEFRIEND_BUILD_COMMAND=python3 -c "print(1)"' \
+  --out "$TMP/rejected-command-summary.json" \
+  --artifact-dir "$TMP/rejected-command-artifacts" >"$TMP/rejected-command.out" 2>"$TMP/rejected-command.err"; then
+  echo "expected an unapproved CodeFriend build command to fail closed" >&2
+  exit 1
+fi
+assert_has "$TMP/rejected-command.err" "CodeFriend build command is not in the approved validation allowlist"
+
+if ADL_AWS_CLI="$TMP/aws" bash "$SCRIPT" \
+  --dry-run \
+  --project-name adl-codefriend-build \
+  --env 'ADL_CODEFRIEND_BUILD_PREPARE_COMMAND=python3 -c "print(1)"' \
+  --out "$TMP/rejected-prepare-summary.json" \
+  --artifact-dir "$TMP/rejected-prepare-artifacts" >"$TMP/rejected-prepare.out" 2>"$TMP/rejected-prepare.err"; then
+  echo "expected an unapproved CodeFriend prepare command to fail closed" >&2
+  exit 1
+fi
+assert_has "$TMP/rejected-prepare.err" "CodeFriend build command is not in the approved validation allowlist"
+
 FAKE_AWS_ARGS_LOG="$TMP/aws-full-nextest-args.log" \
 ADL_AWS_CLI="$TMP/aws" \
 bash "$SCRIPT" \
@@ -307,6 +329,10 @@ assert_has "$SETUP_SCRIPT" 'classification=wrong_image'
 assert_has "$SETUP_SCRIPT" 'classification=wrong_ref'
 assert_has "$SETUP_SCRIPT" 'classification=cache_configuration'
 assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_EXPECTED_IMAGE'
+assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_COMMAND_POLICY status=approved'
+assert_has "$SETUP_SCRIPT" 'classification=unapproved_build_command'
+assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_PREPARE_COMMAND_POLICY status=approved'
+assert_has "$SETUP_SCRIPT" 'classification=unapproved_prepare_command'
 assert_not_has "$SETUP_SCRIPT" "https://github.com/mozilla/sccache/releases/download/"
 assert_not_has "$SETUP_SCRIPT" "cargo install sccache --locked"
 assert_not_has "$SETUP_SCRIPT" "'/root/.cargo/bin/**/*'"
@@ -413,7 +439,10 @@ if [ "$nextest_install_count" -ne 4 ] || [ "$nextest_pinned_count" -ne "$nextest
   exit 1
 fi
 assert_has "$ROOT/adl/.config/nextest.toml" 'retries = 0'
-assert_has "$ROOT/adl/.config/nextest.toml" 'slow-timeout = { period = "90s", terminate-after = 2 }'
+if grep -Fq 'slow-timeout' "$ROOT/adl/.config/nextest.toml"; then
+  echo "nextest must not impose a slow-test timeout" >&2
+  exit 1
+fi
 assert_has "$SCRIPT" "--run requires an explicit --source-version"
 assert_not_has "$WORKFLOW" "pull_request:"
 assert_not_has "$WORKFLOW" "push:"

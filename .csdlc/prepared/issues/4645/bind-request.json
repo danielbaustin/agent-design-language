@@ -1,0 +1,24 @@
+{
+  "issue": 4645,
+  "base_branch": "main",
+  "branch": "codex/4645-v0917-internal-review",
+  "worktree": ".worktrees/adl-wp-4645",
+  "claim": {
+    "id": "claim-4645-v0917-internal-review-prep",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784359768,
+    "expires_unix_seconds": 1784964568,
+    "heartbeat_unix_seconds": 1784359768,
+    "branch": "codex/4645-v0917-internal-review",
+    "worktree": ".worktrees/adl-wp-4645",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_INTERNAL_REVIEW_4645.md",
+      "docs/milestones/v0.91.7/review/internal_review_4645",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/reviews/v0.91.7/internal-review-4645",
+      ".csdlc/issues/4645"
+    ],
+    "purpose": "Prepare and later run the v0.91.7 WP-18 internal milestone review without claiming release readiness"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "issue": 5566,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5566/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5566/diagram.mmd",
+  "design_reviewer": "codex-closeout-audit",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5566-existing-worktree-bind",
+    "owner": "codex-closeout-audit",
+    "generation": 0,
+    "acquired_unix_seconds": 1784425395,
+    "expires_unix_seconds": 1784511795,
+    "heartbeat_unix_seconds": 1784425395,
+    "branch": "codex/5566-existing-worktree-bind",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5566",
+      ".csdlc/prepared/issues/5566",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "purpose": "Permit exact reserved-claim activation from its registered existing issue worktree"
+  },
+  "initial": {
+    "slug": "existing-worktree-bind",
+    "version": "v0.91.8",
+    "title": "Activate an exact reserved claim from its existing issue worktree",
+    "goal": "Restore a legal typed bind path for a prepared claim whose registered worktree already exists.",
+    "required_outcome": "An exact reserved claim can activate from its matching existing Git worktree without writing lifecycle state on main.",
+    "declared_scope": ["csdlc-v2/src/lifecycle.rs", "csdlc-v2/tests/gate2.rs"],
+    "repo_inputs": ["csdlc-v2/src/lifecycle.rs", "csdlc-v2/tests/gate2.rs", ".csdlc/issues/5306"],
+    "acceptance_criteria": [
+      "AC-1: Existing matching branch and canonical worktree path activate the exact reserved claim",
+      "AC-2: Mismatched claimed branch or worktree path fails closed",
+      "AC-3: Exact claim, collision, path-safety, and readiness guards remain enforced",
+      "AC-4: The #5306 recovery can bind without editing main or lifecycle JSON by hand"
+    ],
+    "invariants": ["No hand-edited cards", "No claim takeover", "No readiness bypass", "Atomic issue state"],
+    "non_goals": ["No expired-claim recovery changes", "No v1 restoration", "No AWS or Spot validation"],
+    "deliverables": ["Existing-worktree bind recognition", "Focused Gate 2 regressions"],
+    "dependencies": [],
+    "failure_policy": "Fail closed unless the exact claim, current branch, and canonical registered worktree all agree.",
+    "authority_boundary": ["Typed csdlc-bind operation only"],
+    "plan_summary": "Recognize the exact registered existing worktree as issue-local, preserve bind guards, and prove match and mismatch behavior.",
+    "steps": [{"id":"implement","action":"Implement existing-worktree bind recognition and regressions","acceptance_ids":["AC-1","AC-2","AC-3","AC-4"],"status":"pending"}],
+    "validation_lanes": [{
+      "lane":"gate2-existing-worktree-bind",
+      "proof_role":"Typed binding and fail-closed path identity",
+      "acceptance_ids":["AC-1","AC-2","AC-3","AC-4"],
+      "deterministic":true,
+      "resource_profile":"small",
+      "budget_seconds":600,
+      "budget_tokens":6000,
+      "argv":["cargo","test","--manifest-path","csdlc-v2/Cargo.toml","--test","gate2","existing_worktree"],
+      "parallel_group":"csdlc-v2-focused",
+      "defer_reason":null
+    }],
+    "review_prompts":["Does issue-local recognition require both the exact branch and canonical registered worktree path?", "Are all existing bind guards preserved?"],
+    "risks":["Loose path matching could activate a claim from the wrong checkout."],
+    "stop_conditions":["Any need to hand-edit rendered cards", "Any relaxation of exact claim or collision checks"],
+    "task_boundary":"Implement only exact existing-worktree recognition for typed bind and focused regressions.",
+    "planning_profile":"small"
+  }
+}

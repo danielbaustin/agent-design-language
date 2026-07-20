@@ -1,0 +1,58 @@
+{
+  "issue": 5563,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5563/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5563/diagram.mmd",
+  "design_reviewer": "codex-closeout-audit",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5563-initialized-design-recovery",
+    "owner": "codex-closeout-audit",
+    "generation": 0,
+    "acquired_unix_seconds": 1784424572,
+    "expires_unix_seconds": 1784510972,
+    "heartbeat_unix_seconds": 1784424572,
+    "branch": "codex/5563-initialized-design-recovery",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5563",
+      ".csdlc/prepared/issues/5563",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "purpose": "Add a typed fail-closed recovery for stale approved design inputs in initialized records"
+  },
+  "initial": {
+    "slug": "initialized-stale-design-recovery",
+    "version": "v0.91.8",
+    "title": "Recover stale approved design in initialized records",
+    "goal": "Restore a legal typed lifecycle path when approved authored design inputs change before readiness.",
+    "required_outcome": "Initialized approved records can refresh stale design projections atomically without hand edits or gate bypass.",
+    "declared_scope": ["csdlc-v2/src/store.rs", "csdlc-v2/tests/gate2.rs"],
+    "repo_inputs": ["csdlc-v2/src/store.rs", "csdlc-v2/tests/gate2.rs", ".csdlc/issues/5306"],
+    "acceptance_criteria": [
+      "AC-1: Stale initialized-approved design cannot reach ready before recovery",
+      "AC-2: Typed recovery validates CAS, active claim, reviewer, and actual stale authored inputs",
+      "AC-3: Recovery atomically refreshes SPP/VPP digests and audit truth",
+      "AC-4: Doctor passes and ready transition succeeds after recovery"
+    ],
+    "invariants": ["No hand-edited cards", "No readiness bypass", "No redundant initialized reapproval", "Atomic six-card state"],
+    "non_goals": ["No terminal recovery changes", "No v1 wrapper restoration", "No AWS or Spot validation"],
+    "deliverables": ["Bounded approve-design recovery semantics", "Gate 2 regression"],
+    "dependencies": [],
+    "failure_policy": "Fail closed without exact stale-input, CAS, claim, and reviewer evidence.",
+    "authority_boundary": ["Typed csdlc-edit approve-design operation only"],
+    "plan_summary": "Detect stale authored digests during initialized approved state, permit exact typed reapproval, and prove normal readiness resumes.",
+    "steps": [
+      {"id":"implement","action":"Implement initialized stale-design reapproval and focused regression","acceptance_ids":["AC-1","AC-2","AC-3","AC-4"],"status":"pending"}
+    ],
+    "validation_lanes": [
+      {"lane":"gate2-design-recovery","proof_role":"Typed lifecycle and atomic card recovery","acceptance_ids":["AC-1","AC-2","AC-3","AC-4"],"deterministic":true,"resource_profile":"small","budget_seconds":600,"budget_tokens":6000,"argv":["cargo","test","--manifest-path","csdlc-v2/Cargo.toml","--test","gate2","initialized_approved_stale_design"],"parallel_group":"csdlc-v2-focused","defer_reason":null}
+    ],
+    "review_prompts": ["Is recovery limited to truly stale initialized-approved inputs?", "Are CAS, claim, atomicity, and readiness gates preserved?"],
+    "risks": ["Over-broad reapproval could hide unrelated card corruption."],
+    "stop_conditions": ["Any need to hand-edit rendered cards", "Any readiness bypass"],
+    "task_boundary": "Implement only the typed initialized stale-design recovery and its focused regression.",
+    "planning_profile": "small"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "artifact_root": "docs/reviews/v0.91.7/internal-review-4645/packet",
+  "completed_at": "2026-07-18T23:41:11Z",
+  "is_worktree": true,
+  "privacy_mode": "local_only",
+  "publication_allowed": false,
+  "repo_name": "agent-design-language",
+  "repo_ref": "9a3a1fa5d",
+  "review_mode": "build_repository_packet",
+  "run_id": "20260718-234110-repo-packet",
+  "schema": "codebuddy.repo_packet.run_manifest.v1",
+  "skills_used": [
+    "repo-packet-builder"
+  ],
+  "started_at": "2026-07-18T23:41:11Z",
+  "worktree_name": "adl-wp-4645"
+}

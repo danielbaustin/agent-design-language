@@ -1,0 +1,338 @@
+{
+  "schema": "adl.v0917.wp15.feature_proof_coverage.v1",
+  "issue": 4642,
+  "wp": "WP-15",
+  "milestone": "v0.91.7",
+  "created_at_utc": "2026-07-18T00:00:00Z",
+  "status": "demo_convergence_recorded",
+  "default_runtime": "v2",
+  "runtime_v3_policy": "explicit_opt_in_only",
+  "demo_for_every_new_feature": false,
+  "release_readiness_claimed": false,
+  "v092_activation_readiness_claimed": false,
+  "classification_vocab": [
+    "demo_backed",
+    "proven",
+    "proven_retained",
+    "proved_explicit_opt_in",
+    "proven_limited",
+    "retained_handoff",
+    "proof_backed_no_demo",
+    "proof_backed_partial_demo",
+    "boundary_handoff_only",
+    "handoff_only",
+    "scoped_out_non_claim"
+  ],
+  "coverage": [
+    {
+      "surface": "demo_matrix",
+      "classification": "proven",
+      "evidence": [
+        "docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md",
+        "docs/milestones/v0.91.7/review/demo_matrix_4691/4691-birthday-visible-demo-matrix-proof.md"
+      ],
+      "current_issue_truth": [
+        {
+          "issue": 4691,
+          "state": "closed"
+        }
+      ],
+      "non_claims": [
+        "release readiness",
+        "v0.92 activation readiness"
+      ]
+    },
+    {
+      "surface": "html_observatory",
+      "classification": "proven",
+      "evidence": [
+        "demos/v0.91.7/html-observatory/README.md",
+        "demos/v0.91.7/html-observatory/index.html",
+        "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+      ],
+      "current_issue_truth": [
+        {
+          "issue": 4690,
+          "state": "closed"
+        }
+      ],
+      "non_claims": [
+        "browser-owned AWS mutation",
+        "full runtime completion",
+        "Runtime v3 default cutover"
+      ]
+    },
+    {
+      "surface": "runtime_v2_observatory_packet",
+      "classification": "proven_retained",
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/demo_manifest.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/operator_report.md"
+      ],
+      "current_issue_truth": [
+        {
+          "issue": 4682,
+          "state": "closed"
+        }
+      ],
+      "non_claims": [
+        "fresh soak rerun by WP-15",
+        "full product completion"
+      ]
+    },
+    {
+      "surface": "runtime_v3_observatory_consumption",
+      "classification": "proved_explicit_opt_in",
+      "evidence": [
+        "docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
+        "demos/v0.91.7/html-observatory/README.md"
+      ],
+      "current_issue_truth": [
+        {
+          "issue": 5286,
+          "state": "closed"
+        }
+      ],
+      "non_claims": [
+        "Runtime v3 default runtime",
+        "Runtime v2 decommission",
+        "browser mutation authority"
+      ]
+    },
+    {
+      "surface": "unity_observatory",
+      "classification": "proven_limited",
+      "evidence": [
+        "docs/milestones/v0.91.7/review/unity_observatory_4652/4652-unity-shell-proof-summary.md",
+        "docs/milestones/v0.91.7/review/unity_observatory_4703/4703-flagship-observatory-stage-proof.md",
+        "docs/milestones/v0.91.7/review/unity_observatory_4704/4704-unity-mcp-proof-summary.md",
+        "docs/milestones/v0.91.7/review/unity_observatory_4689/4689-unity-observatory-integrated-proof.md",
+        "docs/milestones/v0.91.7/review/unity_observatory_4745/4745-asset-mcp-publication-policy.md"
+      ],
+      "current_issue_truth": [
+        {
+          "issue": 4652,
+          "state": "closed"
+        },
+        {
+          "issue": 4689,
+          "state": "closed"
+        },
+        {
+          "issue": 4702,
+          "state": "closed"
+        },
+        {
+          "issue": 4703,
+          "state": "closed"
+        },
+        {
+          "issue": 4704,
+          "state": "closed"
+        },
+        {
+          "issue": 4745,
+          "state": "closed"
+        }
+      ],
+      "open_follow_ons": [
+        4739,
+        4741
+      ],
+      "non_claims": [
+        "Unity player build",
+        "clean-checkout third-party asset replay",
+        "Unity live Runtime v3 consumption"
+      ]
+    },
+    {
+      "surface": "launch_birthday_handoff",
+      "classification": "retained_handoff",
+      "evidence": [
+        "docs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md"
+      ],
+      "current_issue_truth": [
+        {
+          "issue": 4641,
+          "state": "closed"
+        }
+      ],
+      "non_claims": [
+        "release approval",
+        "v0.92 activation readiness"
+      ]
+    },
+    {
+      "surface": "curiosity_engine_discovery_substrate",
+      "classification": "proof_backed_no_demo",
+      "evidence": [
+        "docs/milestones/v0.91.7/features/CURIOSITY_ENGINE_DISCOVERY_SUBSTRATE_v0.91.7.md",
+        "docs/milestones/v0.91.7/review/V0917_WP10_CURIOSITY_CONSTRUCTABILITY_REVIEW_4637.md"
+      ],
+      "current_issue_truth": [
+        {
+          "issue": 4692,
+          "state": "closed"
+        }
+      ],
+      "non_claims": [
+        "reviewer-facing demo",
+        "unbounded autonomous curiosity",
+        "CSM supervisor hosting"
+      ]
+    },
+    {
+      "surface": "constructability_anchor_validator",
+      "classification": "proof_backed_no_demo",
+      "evidence": [
+        "docs/milestones/v0.91.7/features/CONSTRUCTABILITY_GATE_v0.91.7.md",
+        "docs/milestones/v0.91.7/review/V0917_WP10_CURIOSITY_CONSTRUCTABILITY_REVIEW_4637.md"
+      ],
+      "current_issue_truth": [
+        {
+          "issue": 4693,
+          "state": "closed"
+        }
+      ],
+      "non_claims": [
+        "reviewer-facing demo",
+        "authoritative shared-reality promotion",
+        "CSM supervisor hosting"
+      ]
+    },
+    {
+      "surface": "reasoning_graph_loop_skill_aee_obsmem_pvf",
+      "classification": "proof_backed_partial_demo",
+      "evidence": [
+        "docs/milestones/v0.91.7/features/REASONING_GRAPH_LOOP_SKILL_STANDARD_BRIDGE_v0.91.7.md",
+        "docs/milestones/v0.91.7/review/V0917_WP11_REASONING_LOOPS_SKILL_REVIEW_4638.md",
+        "docs/milestones/v0.91.7/review/V0917_WP11_RUNTIME_V2_COGNITIVE_CONTROL_EVIDENCE_4638.md"
+      ],
+      "current_issue_truth": [
+        {
+          "issue": 4694,
+          "state": "closed"
+        },
+        {
+          "issue": 4695,
+          "state": "closed"
+        },
+        {
+          "issue": 4696,
+          "state": "closed"
+        },
+        {
+          "issue": 4697,
+          "state": "closed"
+        },
+        {
+          "issue": 4912,
+          "state": "closed"
+        },
+        {
+          "issue": 5096,
+          "state": "closed"
+        },
+        {
+          "issue": 5136,
+          "state": "closed"
+        }
+      ],
+      "non_claims": [
+        "polished visible demo for every slice",
+        "broad no-regression coverage",
+        "live hosted-provider invocation"
+      ]
+    },
+    {
+      "surface": "wp13_affect_godel_economics_guild_codefriend_publication",
+      "classification": "boundary_handoff_only",
+      "evidence": [
+        "docs/milestones/v0.91.7/review/wp13_closeout_4640.md",
+        "docs/milestones/v0.91.7/review/wp13_affect_happiness_boundary_4752.md",
+        "docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md",
+        "docs/milestones/v0.91.7/review/wp13_economics_civilization_boundary_4754.md",
+        "docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md",
+        "docs/milestones/v0.91.7/review/wp13_codefriend_adapter_obligations_4756.md",
+        "docs/milestones/v0.91.7/review/wp13_publication_boundary_4757.md"
+      ],
+      "current_issue_truth": [
+        {
+          "issue": 4752,
+          "state": "closed"
+        },
+        {
+          "issue": 4753,
+          "state": "closed"
+        },
+        {
+          "issue": 4754,
+          "state": "closed"
+        },
+        {
+          "issue": 4755,
+          "state": "closed"
+        },
+        {
+          "issue": 4756,
+          "state": "closed"
+        },
+        {
+          "issue": 4757,
+          "state": "closed"
+        }
+      ],
+      "non_claims": [
+        "reviewer-facing demo for every WP-13 boundary",
+        "subjective affect or consciousness",
+        "live hosted Godel invocation",
+        "payments or autonomous economy runtime",
+        "public guild product readiness",
+        "CodeFriend product readiness",
+        "publication approval"
+      ]
+    }
+  ],
+  "next_gates": [
+    {
+      "wp": "WP-16",
+      "issue": 4643,
+      "role": "quality gate"
+    },
+    {
+      "wp": "WP-17",
+      "issue": 4644,
+      "role": "documentation alignment"
+    },
+    {
+      "wp": "WP-18",
+      "issue": 4645,
+      "role": "internal review"
+    },
+    {
+      "wp": "WP-19",
+      "issue": 4646,
+      "role": "external review"
+    },
+    {
+      "wp": "WP-20",
+      "issue": 4647,
+      "role": "review remediation"
+    },
+    {
+      "wp": "WP-23",
+      "issue": 4650,
+      "role": "release ceremony"
+    }
+  ],
+  "closed_downstream_evidence": [
+    {
+      "wp": "WP-22",
+      "issue": 4649,
+      "role": "next milestone review",
+      "state": "closed",
+      "closed_at_utc": "2026-07-10T22:55:13Z"
+    }
+  ]
+}

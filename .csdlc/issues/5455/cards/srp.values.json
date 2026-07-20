@@ -7,22 +7,45 @@
     "title": "Fail closed on stale stable owner-binary provenance",
     "slug": "stale-owner-binary-provenance",
     "version": "v0.91.7",
-    "generation": 0
+    "generation": 18
   },
-  "status": "pre_phase",
+  "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "Exact implementation revision before publication.",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "csdlc-v2/src/bin/csdlc-install.rs\ncsdlc-v2/src/lib.rs\ncsdlc-v2/src/operator.rs\ncsdlc-v2/tests/gate10a.rs",
+      "review_revision": "git-blake3:4dcee7813d078ece7e31010465ef1530b102712b:0628955327a373bb561e33e4a032052f46d5ccf59804da8a54255b8cb3d5da36",
+      "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
       "review_prompts": [
         "Does stale provenance fail closed?",
         "Is atomic install preserved?"
       ],
-      "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "findings": [
+        {
+          "id": "F-5455-1",
+          "severity": "p1",
+          "summary": "Owner-binary provenance did not prove that installed bytes came from the exact clean repository revision.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:4dcee7813d078ece7e31010465ef1530b102712b:0628955327a373bb561e33e4a032052f46d5ccf59804da8a54255b8cb3d5da36",
+          "route": "#5540"
+        },
+        {
+          "id": "F-5455-2",
+          "severity": "p1",
+          "summary": "Gate 10A did not prove implemented-phase approve-design through the installed typed editor.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:4dcee7813d078ece7e31010465ef1530b102712b:0628955327a373bb561e33e4a032052f46d5ccf59804da8a54255b8cb3d5da36",
+          "route": "#5540"
+        }
+      ],
+      "residual_risk": [
+        "The broad C-SDLC owner lane remains blocked by unrelated sunset v1 command guidance tracked in #5558; focused Gate 10A and strict Clippy prove this remediation."
+      ],
+      "review_result": "pass"
     }
   }
 }

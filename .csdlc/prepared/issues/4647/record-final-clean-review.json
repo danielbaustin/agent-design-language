@@ -1,0 +1,52 @@
+{
+  "issue": 4647,
+  "expected_generation": 15,
+  "expected_digest": "27502202517e0214f264729447419430806cd6c22fcd51cd9f223dfd5af1df42",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "clean-gate:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "evidence": {
+    "reviewer": "clean-gate:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "scope": [
+      ".csdlc/issues/4647",
+      ".csdlc/locks/4647.lock",
+      ".csdlc/prepared/issues/4647",
+      "adl/Cargo.lock",
+      "adl/Cargo.toml",
+      "adl/src/cli/provider_cmd.rs",
+      "adl/src/csm_networking.rs",
+      "adl/src/csm_runtime_api.rs",
+      "adl/src/provider/http_family.rs",
+      "adl/src/provider/http_family/config.rs",
+      "adl/src/provider/http_family/tests.rs",
+      "adl/src/provider/local.rs",
+      "adl/tests/cli_smoke/agent.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_authoritative_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_run_authoritative_coverage_lane.sh",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/review/ADL_v0.91.7_THIRD_PARTY_REVIEW_HANDOFF.md",
+      "docs/milestones/v0.91.7/review/V0917_EXTERNAL_REVIEW_VERIFICATION_2026-07-19.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/milestones/v0.91.7/review/external_review_4646/FINDINGS_REGISTER.md",
+      "docs/milestones/v0.91.7/review/external_review_4646/PUBLICATION_SAFE_MANIFEST.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_4647/PRE_PR_REVIEW_4647.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_4647/WP19_FINDING_REMEDIATION_MATRIX_4647.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/setup/5383/DIAGRAM.mmd"
+    ],
+    "reviewed_revision": "git-blake3:c8a889da501760e0e9270933023bb72b63117916:d88a20ad50fb684a3c90cc5c22c4f67bbdaed2517cef31a166664027efccd16f",
+    "findings": [],
+    "residual_risks": [
+      "Final exact-head delta review reported clean after the Bedrock partition ARN redaction fix.",
+      "Coverage exact-head lane reported clean.",
+      "Lifecycle/full branch exact-head lane reported clean; csdlc-doctor passed at generation 15, git diff was clean, all changed paths were protected, and the worktree was clean.",
+      "No AWS live operation was run for this remediation."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

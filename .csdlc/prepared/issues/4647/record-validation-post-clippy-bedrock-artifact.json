@@ -1,0 +1,26 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 25,
+  "expected_digest": "a16f8efe14f76ecd67eaa60dde18881dc49699397d40b0edf20bbde89020869d",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record focused Bedrock invocation artifact regression proof after the clippy helper refactor.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "provider::http_family::tests::bedrock_invocation_artifact",
+        "--",
+        "--nocapture"
+      ],
+      "purpose": "Verify Bedrock invocation artifact record/read/write/create-dir behavior still passes after the helper was refactored to satisfy clippy.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 5 passed"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "issue": 5521,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "1780277cfa385556593a6da28e42c59804fde4470bec317aec8fa5d7e6463baa",
+  "claim_id": "claim-5521-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact PR-head review is clean with no findings or publication blockers.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

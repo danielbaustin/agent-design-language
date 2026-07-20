@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 4641,
+  "expected_generation": 10,
+  "expected_digest": "5ed9a2a2982587e96edbb278cfe692e015826940b2e72ffd98ad646360593287",
+  "claim_id": "claim-4641-v0-91-7-wp14-launch-v092-birthday-handoff",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/4641-v0917-launch-birthday-handoff",
+  "title": "[v0.91.7][WP-14] #4641 Record launch and birthday handoff",
+  "body": "Closes #4641\n\nRecords the WP-14 launch and v0.92 birthday handoff as routed_with_evidence. Adds the retained handoff packet and machine-readable ledger, updates the v0.91.7 to v0.92 handoff to point at the packet, and preserves non-claims for v0.91.7 release readiness, v0.92 activation readiness, public launch approval, Memory Palace completion, capability envelope completion, and witness/receipt readiness.\n\nValidation: git diff --check; csdlc-doctor --issue 4641. Review: bounded subagent review found no actionable findings after the stale-base/tracked-artifact fixes. No AWS or runtime/provider validation was run.",
+  "draft": true,
+  "token_file": "/Users/daniel/keys/github.token"
+}

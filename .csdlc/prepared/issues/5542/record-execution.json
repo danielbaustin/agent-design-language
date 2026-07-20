@@ -1,0 +1,26 @@
+{
+  "issue": 5542,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "dfdedd4baf76f9af776265dae8eecd0230bef2c96476f2707503d787860780e7",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The issue-bounded post-merge documentation repair is implemented in the bound worktree.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Reconciled canonical WP-17 closeout truth after #4644 closed and PR #5539 merged, routed v0.92 through the reviewed v0.91.8 bridge, distinguished creation and verification dates, strengthened the executable documentation validator, and coordinated the separately claimed sprint-review register with #4645.",
+    "changes": [
+      "Remove WP-17 from canonical open-work sets and retain WP-18, WP-19, WP-20, WP-21A, and WP-23 as independent gates",
+      "Add v0.91.8 bridge and exact-revision handoff precedence to repository and milestone entrypoints",
+      "Replace ambiguous 2026-06-21 Date labels with Created and Last verified metadata",
+      "Extend the WP-17 validator with closeout, bridge-precedence, date-semantics, and working-tree diff checks",
+      "Request the active #4645 owner to reconcile its claimed sprint-review register without cross-lane editing"
+    ],
+    "artifacts": [
+      "docs/milestones/v0.91.7/review/V0917_WP17_DOCS_ALIGNMENT_4644.md",
+      "docs/milestones/v0.91.7/review/wp17_docs_alignment_4644/audit.json",
+      ".csdlc/prepared/issues/4644/validate_docs_alignment.rb",
+      ".csdlc/evidence/5542/wp17-post-merge-truth.log"
+    ]
+  }
+}

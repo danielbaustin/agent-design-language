@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 4646,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/4646-v0917-external-review",
+  "title": "[v0.91.7][WP-19] Retain final external review findings",
+  "body": "Closes #4646\n\nRetains the completed exact-target WP-19 review over 70 files and its 22 findings. One Claude Fable 5 lane completed; three independent shadow reviewers covered the remaining files after Anthropic billing blocked further calls. The provider-degradation boundary and WP-20 ownership are explicit.",
+  "draft": false,
+  "revision": "git-blake3:defbbd89ec5760ee437e545167d333ec886e8573:8b43804eab7c99318f867a01cd29701985df11b57373a01207e8eb7704960f9a",
+  "commit_sha": "defbbd89ec5760ee437e545167d333ec886e8573"
+}

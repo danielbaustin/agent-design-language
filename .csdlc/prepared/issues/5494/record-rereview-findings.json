@@ -1,0 +1,35 @@
+{
+  "issue": 5494,
+  "expected_generation": 9,
+  "expected_digest": "449e52da7de4354e804def95348611704a2b6c51d50171e9de0220575ff35bef",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "subagent:019f7469-1ee4-71a1-8f2c-d833f6eebd3e",
+  "evidence": {
+    "reviewer": "subagent:019f7469-1ee4-71a1-8f2c-d833f6eebd3e",
+    "scope": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/supervision.rs",
+      "adl-runtime/src/topology.rs",
+      "adl/src/csm_runtime_api.rs",
+      "adl/src/long_lived_agent.rs",
+      "adl/src/long_lived_agent/tests.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ],
+    "reviewed_revision": "git-blake3:36ca3ac58b6bc7a5bdeb9045f19d6848ce43935b:fbf9fcbcb538d409f94f27c68384ac58dfd731714e3771afb86f09acc579443a",
+    "findings": [
+      {"id":"F-5494-1","severity":"p1","summary":"Expired non-revoked credentials cannot recover after the renewal window is missed.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:36ca3ac58b6bc7a5bdeb9045f19d6848ce43935b:fbf9fcbcb538d409f94f27c68384ac58dfd731714e3771afb86f09acc579443a","route":null},
+      {"id":"F-5494-2","severity":"p1","summary":"Readiness exempts Audit and Evidence channels that channel policy classifies as required.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:36ca3ac58b6bc7a5bdeb9045f19d6848ce43935b:fbf9fcbcb538d409f94f27c68384ac58dfd731714e3771afb86f09acc579443a","route":null},
+      {"id":"F-5494-3","severity":"p1","summary":"CSM weather readiness overclaims CPU, memory, and GPU observations from disk pressure only.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:36ca3ac58b6bc7a5bdeb9045f19d6848ce43935b:fbf9fcbcb538d409f94f27c68384ac58dfd731714e3771afb86f09acc579443a","route":null},
+      {"id":"F-5494-4","severity":"p1","summary":"The synthetic supervisor test does not execute the production daemon cycle or typed channel fabric.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:36ca3ac58b6bc7a5bdeb9045f19d6848ce43935b:fbf9fcbcb538d409f94f27c68384ac58dfd731714e3771afb86f09acc579443a","route":null},
+      {"id":"F-5494-5","severity":"p2","summary":"Credential audit events record a fixed overlap instead of the clipped actual duration.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:36ca3ac58b6bc7a5bdeb9045f19d6848ce43935b:fbf9fcbcb538d409f94f27c68384ac58dfd731714e3771afb86f09acc579443a","route":null},
+      {"id":"F-5494-6","severity":"p2","summary":"Repair documentation and the sprint register overstate the first revision's proof.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:36ca3ac58b6bc7a5bdeb9045f19d6848ce43935b:fbf9fcbcb538d409f94f27c68384ac58dfd731714e3771afb86f09acc579443a","route":null},
+      {"id":"F-5494-7","severity":"p1","summary":"Near-expiry rotation can retain a previous credential that does not outlive the replacement creation timestamp.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null}
+    ],
+    "residual_risks": [
+      "Strict all-target Clippy is blocked by two pre-existing cav.rs test warnings outside #5494."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

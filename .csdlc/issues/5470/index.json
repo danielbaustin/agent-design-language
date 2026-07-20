@@ -3,31 +3,14 @@
   "issue": 5470,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "c0d7a90f2c5b1a237ed0ae9feaa3ee21bd1d4a4e59b49972c0a7d167c7b56303",
-  "phase": "published",
-  "generation": 11,
-  "digest": "c6087319624e1ec04fc2e61b34b6591857fa87251d63ec8268ad7f8f625e8eea",
-  "claim": {
-    "id": "claim-5470-terminal-durability",
-    "owner": "codex",
-    "generation": 11,
-    "acquired_unix_seconds": 1784358380,
-    "expires_unix_seconds": 1784365580,
-    "heartbeat_unix_seconds": 1784358380,
-    "branch": "codex/5470-terminal-durability",
-    "worktree": ".worktrees/adl-wp-5470",
-    "protected_paths": [
-      "csdlc-v2/src/store.rs",
-      "csdlc-v2/src/bin/csdlc-closeout.rs",
-      "csdlc-v2/tests/gate7_terminal_durability_5470.rs",
-      ".csdlc/issues/5470/retained/design.md",
-      ".csdlc/issues/5470/retained/diagram.mmd"
-    ],
-    "purpose": "Make terminal projection and retained receipt updates crash-consistent"
-  },
+  "phase": "closed_out",
+  "generation": 18,
+  "digest": "6b25b217f587a9aea19fe9ffa329668c8dae1f4db6cb91d172d7556f79d73059",
+  "claim": null,
   "review_assignment": {
     "reviewer": "review_5427",
     "assigned_by": "codex",
-    "revision": "git-blake3:55906219439aed67090ae7c8df703d66e0c78fd5:a17f3066c1b561bcc0ad4aa57748020a567f6070cb41f7fa71d6185363807415",
+    "revision": "git-blake3:e5fe0766c79b4ed27f6615b2668c64039c31c023:a4f0891e9f718157231b7cdca1f460db2fe2f2d6f4e79a0ab63c3c0af6c0f853",
     "scope": [
       "csdlc-v2/src/store.rs",
       "csdlc-v2/src/publication.rs",
@@ -41,7 +24,7 @@
       "csdlc-v2/src/publication.rs",
       "csdlc-v2/tests/gate7_lifecycle.rs"
     ],
-    "reviewed_revision": "git-blake3:55906219439aed67090ae7c8df703d66e0c78fd5:a17f3066c1b561bcc0ad4aa57748020a567f6070cb41f7fa71d6185363807415",
+    "reviewed_revision": "git-blake3:e5fe0766c79b4ed27f6615b2668c64039c31c023:a4f0891e9f718157231b7cdca1f460db2fe2f2d6f4e79a0ab63c3c0af6c0f853",
     "findings": [],
     "residual_risks": [
       "Filesystem crash semantics remain platform-dependent beyond the synchronized Rust boundaries."
@@ -56,12 +39,103 @@
     "url": "https://github.com/danielbaustin/agent-design-language/pull/5486",
     "base": "main",
     "head": "codex/5470-terminal-durability",
-    "revision": "git-blake3:55906219439aed67090ae7c8df703d66e0c78fd5:a17f3066c1b561bcc0ad4aa57748020a567f6070cb41f7fa71d6185363807415",
-    "draft": true,
-    "observed_state": "open"
+    "revision": "git-blake3:e5fe0766c79b4ed27f6615b2668c64039c31c023:a4f0891e9f718157231b7cdca1f460db2fe2f2d6f4e79a0ab63c3c0af6c0f853",
+    "draft": false,
+    "observed_state": "merged"
   },
-  "readiness": null,
-  "terminal": null,
+  "readiness": {
+    "pull_request": 5486,
+    "head_sha": "e5fe0766c79b4ed27f6615b2668c64039c31c023",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635753023/job/88057732465"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635753023/job/88057695777"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635753023/job/88057677215"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635753023/job/88057677213"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635753023/job/88057666655"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635753023/job/88057677563"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635753023/job/88057677479"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635753023/job/88057677382"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635753023/job/88057677426"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635753023/job/88057677522"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29635753023/job/88057677211"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5486,
+    "disposition": "merged",
+    "observed_sha": "e5fe0766c79b4ed27f6615b2668c64039c31c023",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5470.json",
+    "released_branch": "codex/5470-terminal-durability",
+    "released_worktree": ".worktrees/adl-wp-5470",
+    "released_protected_paths": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/tests/gate7_terminal_durability_5470.rs",
+      ".csdlc/issues/5470/retained/design.md",
+      ".csdlc/issues/5470/retained/diagram.mmd"
+    ]
+  },
   "migration": null,
   "design_path": ".csdlc/issues/5470/retained/design.md",
   "diagram_path": ".csdlc/issues/5470/retained/diagram.mmd",
@@ -73,34 +147,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "7e8ab37016e7467aae2e6ff3e4add5d0c3c86bd3820587863c52d219469f32c6",
+      "values_digest": "b0f299adfa868add65d99a5613abd4128370a270170325db8d7ddb71fa5388a1",
       "rendered_digest": "ec5a58906e0ffc07d1f381534676659f55ca705af55530e36700c01571c8af9a",
       "ast_digest": "5ae728453d3334ce517e3b7d5849aa7fc234fc5a90de30c7bd8fc661cd8d9909"
     },
     "stp": {
-      "values_digest": "6b3498a08ef951a1cfc7987428983dca1becb91d844bcc2737598994062e3fb2",
+      "values_digest": "77aedfb7ac48fc680cf24d43ba0ce26ad4a62775ca331f36886f92d3c2cd9fcb",
       "rendered_digest": "6a818e8348cd7d57370fe2bde712e7db53f3c0d58b0bdfe5338855dd06177667",
       "ast_digest": "8bab69a5fcd29c8c3eeffaa5ceb05250a88dcbd5851dab931636ed7b109559f7"
     },
     "spp": {
-      "values_digest": "43c207173e0e77bccd89886158baad2ae22a3effd66b24396d9971795b7773b5",
+      "values_digest": "17b0810de0e18b1f6440e18ae3851e02999388883b0c41afd992b446b9797967",
       "rendered_digest": "098938789d025c00b01decbc67076a34f9b734d26cf442c185b95e70f4cc6377",
       "ast_digest": "4c4dcf0e2faab1fa4ee5c3794f5176cff2893729840697dbf4615dbb02ff769b"
     },
     "vpp": {
-      "values_digest": "37af97e010db979c4d25b88b37b42be298850afc85c869ea03f0b034cf597018",
+      "values_digest": "bbc0e31f8ae9fd8ce425b5cda7c18acf238cb98f87494b117757caad5cb1aebb",
       "rendered_digest": "0048a95fd2253dd7bd607463ad852806ca1b3fd2c971df05f20a146f2bde9fe8",
       "ast_digest": "8832cd41ca75c9c1118fd490e31f13fef1a3e711cac1374a7840aa84499e75ee"
     },
     "srp": {
-      "values_digest": "ee75fd1ed21c257bef3201692a69a5e1496130255637e87685fc44ff31ce2e82",
-      "rendered_digest": "affa271777b2c40354f7b884c015cd9df55f49924db89be4a2516db1708a9d9b",
-      "ast_digest": "0570c3e47e5888c17caada95aa3b44008883593d91ed549103c34a401ae4c6b5"
+      "values_digest": "05536a40093ea11151b4eb5e0ac0e276a58324c9ffa270724bda0c59d5451f74",
+      "rendered_digest": "b9e818b31eb25f1d20c1f932958fb91c84cdab820347c349935855355829f491",
+      "ast_digest": "95bea1a16355acde75ecda74130a2380cf77bfa15671c6ee76ac14e051a9a6ea"
     },
     "sor": {
-      "values_digest": "fbf17372cc0ec541df9d4b331105aa5d5f4ba886309f6e4e9e684e87d05be91a",
-      "rendered_digest": "2f9e3e767fa7cd511af66d23fe0be026f4fd42aa30035ee2eedcbdbb047e2b32",
-      "ast_digest": "29a6375891d679d5161423df4c37ab7bd49b32f2884210a91a234131931937ef"
+      "values_digest": "377ba746ac387b208cc757a02b0842b39d61d8efa8ade37d874376317cd562a4",
+      "rendered_digest": "11b7da8db401f6d0e9d1261c112c1ccb86896d358c3b94d85840564c15399dcb",
+      "ast_digest": "6c658d2920e76eed340f7ca586b4a28633d24fa85ecc0d166fc6503be74643c2"
     }
   },
   "transitions": [
@@ -166,6 +240,48 @@
       "to": "published",
       "actor": "codex",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 10,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Lifecycle evidence commit changed the exact reviewed revision; require typed re-review before republishing."
+    },
+    {
+      "sequence": 11,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Exact current publication revision re-reviewed with no actionable findings."
+    },
+    {
+      "sequence": 12,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 13,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 14,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 15,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -273,6 +389,62 @@
       "actor": "codex",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex",
+      "reason": "Lifecycle evidence commit changed the exact reviewed revision; require typed re-review before republishing.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "review_5427",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex",
+      "reason": "Exact current publication revision re-reviewed with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 22,
+      "generation": 17,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 23,
+      "generation": 18,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize retained terminal receipt during exhaustive v0.91.7 closed-issue audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

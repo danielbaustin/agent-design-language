@@ -1,0 +1,13 @@
+{
+  "issue": 4647,
+  "card": "srp",
+  "expected_generation": 16,
+  "expected_digest": "f80d38a3f3f2bb364f5c097e66aa15ee06b1fef2a518b57294d284c98d8ad06f",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Final exact-head clean-gate review evidence was recorded for c8a889da501760e0e9270933023bb72b63117916; advance to reviewed for typed publication.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

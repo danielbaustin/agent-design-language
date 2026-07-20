@@ -1,0 +1,13 @@
+{
+  "issue": 4646,
+  "card": "sip",
+  "expected_generation": 27,
+  "expected_digest": "eb3c13976cb1ded9d2850c9a920ccfe3c267b3bf187a6b52be8b2ba7d70b8690",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "The final exact-revision review passed after all integration-truth findings were fixed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

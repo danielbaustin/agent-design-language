@@ -1,0 +1,10 @@
+{
+  "issue": 5495,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "6cb2530ce869344ebbc8b441a9fcd5a9ac13a2c50449b900688c7d890bba4be1",
+  "claim_id": "claim-5495-publication-metadata",
+  "actor": "codex",
+  "reason": "Gate 5 metadata/publication regression proof passed.",
+  "operation": {"operation":"record_validation","result":{"command":["cargo","test","--locked","--manifest-path","csdlc-v2/Cargo.toml","--test","gate5"],"purpose":"Prove recognized typed lifecycle metadata commits do not stale review while source drift remains blocked; explicit malformed proof remains fail closed.","outcome":"passed","evidence_ref":"gate5: 11 tests passed; cargo clippy --all-targets -D warnings; git diff --check"}}
+}

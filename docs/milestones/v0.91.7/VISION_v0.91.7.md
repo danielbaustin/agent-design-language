@@ -5,15 +5,20 @@
 - Project: ADL
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Date: `2026-06-21`
+- Created: `2026-06-21`
+- Last verified: `2026-07-18`
 - Owner: ADL maintainers
 - Setup lineage: `#3801`, `#3825`, `#4368`
 
 ## Purpose
 
-Define the final pre-`v0.92` implementation/readiness tranche. `v0.91.7` exists so the major
-remaining conceptual surfaces become tracked, reviewable, and issue-ready
-before birthday activation begins.
+Define the v0.91.7 implementation/readiness tranche. `v0.91.7` exists so the
+major remaining conceptual surfaces become tracked, reviewable, and
+issue-ready before the required v0.91.8 bridge and birthday activation.
+
+Lifecycle note (2026-07-18): this vision is the retained milestone baseline.
+It should be read with the current closeout-tail snapshot in `README.md`, not
+as a claim that the milestone is still in planning.
 
 ## Overview
 

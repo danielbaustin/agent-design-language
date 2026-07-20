@@ -1,0 +1,8 @@
+{
+  "issue": 4647,
+  "expected_generation": 30,
+  "expected_digest": "f5cba3050bb64bf9ffe22a7aa350e98eee3811bf7fb8075eb043647a844974d9",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Recover review after post-publication CSM API Gateway response-finalization repair required by PR #5588 adl-coverage-hosted failure on run 29719551279."
+}

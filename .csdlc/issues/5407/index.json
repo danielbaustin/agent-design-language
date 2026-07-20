@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "8e9178cb8566e54c25e6a60a6bb12f910904a4b5d8de5c90bfbda5e8f3b8338b",
   "phase": "closed_out",
-  "generation": 34,
-  "digest": "0861674c8a8ae552d33e1ad0bc7679d3fcb49a6fffca810018b76526349a4dde",
+  "generation": 37,
+  "digest": "e21c8bbe7bbf86b9c9f8925002afda3bc40cd02ceeb82bae6cb6576d1a54c934",
   "claim": null,
   "review_assignment": {
     "reviewer": "subagent-Darwin-019f6c37",
@@ -118,8 +118,8 @@
     "base": "main",
     "head": "codex/5407-tools-reliability-tail",
     "revision": "git-blake3:6618c080596ddf0943128c9abdaf67507479b8cc:962010936353d9dfab57cf947115474682a58b27a5d04ae04a131f4e4c35c3ff",
-    "draft": true,
-    "observed_state": "open"
+    "draft": false,
+    "observed_state": "merged"
   },
   "readiness": {
     "pull_request": 5424,
@@ -184,32 +184,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "6dccbe284aaa0b949f2e4090bf1f9d8e133747771058cccb450589c0b8757ac2",
+      "values_digest": "8a6d32842610ba341830e7632f5d07b20cdb8d1eacc544e97084167fd9dcbcb5",
       "rendered_digest": "9d885e96ba486a7cb0b89f6318dff405f2f0ad7073e0576098affcf0e2b82f37",
       "ast_digest": "23de05dd018bea43ce9ebedd2be5701b20ec1ddb7136bb031d531986012f418e"
     },
     "stp": {
-      "values_digest": "79ecb17e00d3fa0b51391b83ced78649bc92d1b2b272441a5dd1c096eb0c6897",
+      "values_digest": "54e6327a4388ac7b76e49d677671dfe445227772c4b2bbec2a80bc2508687031",
       "rendered_digest": "6feea36e36b92138542354eb3b0775fb4e34eeb3700e4b78df8849517bcdacb3",
       "ast_digest": "35757c103391d6e43ba5181bc35f281d32ac06bf8a28f096afd189ee837981ec"
     },
     "spp": {
-      "values_digest": "ac5c53199f640293b7d34fe668e2b7af073e6af80d23b3a6502d5234c9974ff6",
+      "values_digest": "d5902d31fbc08b6bc2f956ff564df70bd69ca590871eecaddca165f21abf1f6c",
       "rendered_digest": "d6a643ff15296ee1b6aa3a9985a150029b71af88b28de0a2b6f2ff2781c3cfc6",
       "ast_digest": "68e52a76258b88bb5bf5f6ce213a832077f304a8be1b632a4a74423bf9837c7f"
     },
     "vpp": {
-      "values_digest": "e0c98e6fdf4a02435bee362d67a2ca11858c23a78901f965132ea6e2f0a27b02",
+      "values_digest": "7910316e5171a41ae66767fd3f92e9f745da45f37c20c8d7ec4e54bb86cc63fc",
       "rendered_digest": "547f13c3839a2550d2ba90265c2fff6a828f7941b4dd4515f99b6562ab460512",
       "ast_digest": "263cf4f56bbc2872bb5402bd0d3adb05b18cbec92ba41614615a215ab9dbc093"
     },
     "srp": {
-      "values_digest": "d1469e056b484782ea1c6a6953b0351594c8427cd0ae20d32b02192c03574a6e",
-      "rendered_digest": "1f2e2937302deea1cfb3785e46245049933090ad9e66aa67e87b2534f55963d9",
-      "ast_digest": "5cd998adc61c812b24a22c0f17b0c75efeab1a93549c354a287bea8b3d4a0a97"
+      "values_digest": "c4d1d62f5804b2df5a43206e7d707c05ddf510145342a122ae699205e4b1aa70",
+      "rendered_digest": "65d03909ef1d9cd2567d418860294130c8429c157a531dbcedb46e5ae080d1bc",
+      "ast_digest": "08dd74e96493d646429c0fb90f84d97ae1c8c32fab6a5b0b4c5ef6ffdab4a982"
     },
     "sor": {
-      "values_digest": "d4d8269f23a33e7f318ba439dcbdf98ed4ea1244e15f8819f86a2fa74a682f95",
+      "values_digest": "6f4c69bf7607ca28e34be6000cf62729547ed1170078130d5c676fd9f354e527",
       "rendered_digest": "34bbf664455cbbb64657262a775bb2ca6e7051646720581de9ec65c646086db8",
       "ast_digest": "a394c9fe9d5c9430c390b18e90467607001d7d07a51434b12051def339b2b336"
     }
@@ -558,6 +558,27 @@
       "generation": 34,
       "actor": "codex",
       "reason": "Materialize retained terminal receipt after merged implementation PR #5424",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 40,
+      "generation": 35,
+      "actor": "codex-closeout-audit",
+      "reason": "Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 41,
+      "generation": 36,
+      "actor": "codex-closeout-audit",
+      "reason": "Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 42,
+      "generation": 37,
+      "actor": "codex-closeout-audit",
+      "reason": "Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.",
       "operation": "reconcile_terminal"
     }
   ]

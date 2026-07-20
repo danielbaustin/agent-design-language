@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5489,
+  "expected_generation": 11,
+  "expected_digest": "b0c48a997884c37b4168b60547c9cfadd96f56a797f75f9d42baf35c69085ee8",
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5489-v0917-wp21a-next-milestone-docs",
+  "title": "[v0.91.7][WP-21A] Prepare v0.91.8 docs and review handoff",
+  "body": "Closes #5489\n\nPrepares the planned-only v0.91.8 next-milestone documentation packet without executing v0.91.8 work. This updates the canonical v0.91.8 inventory, parallel execution plan, README links, sprint/WBS/readiness/wave routing, feature proof coverage, demo matrix, quality gate, checklist, release/handoff surfaces, and a dedicated formal third-party review handoff.\n\nThe handoff keeps WP-19 / #5357 as the formal external-review owner, keeps WP-20 through WP-23 downstream, distinguishes formal milestone review from read-only per-issue external shadows, and fails closed unless send-time landed implementation/test/proof evidence is enumerated from tracked issue evidence. It also records that #5408 is closed/remediated via merged PR #5419 while #4906 remains retained blocked-with-evidence truth.\n\nValidation: git diff --check; v0.91.8 YAML parse with Ruby safe_load; targeted routing assertions for WP-10A, WP-11, WP-13, #5358/#5361 acceptance dependencies, and issue-wave routing; required file/link checks; documented handoff preflight commands including non-self-matching stale-current scans; tracked-path digest procedure smoke via shasum -a 256. Internal exact-revision review accepted git-blake3 revision 92e8dab5f77af9cf390edf4179ac38fcd62800b7; two P2 findings were fixed and recorded before publication. Fable 5 external shadow review was attempted but unavailable after fail-closed runs and is not recorded as approval. No AWS was used.",
+  "draft": true,
+  "remote": "origin",
+  "token_file": null
+}

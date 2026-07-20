@@ -1,0 +1,27 @@
+{
+  "issue": 5455,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "aad9031673f9a39b0c2a6354b765fe31041bc0d6d3b366afb3a9c10a660aca38",
+  "claim_id": "claim-5455-closeout-recovery",
+  "actor": "codex-closeout-audit",
+  "reason": "Record the bounded acceptance remediation required by the retrospective review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Remediated stale owner-binary provenance and replaced the editor help smoke test with an implemented-phase semantic mutation proof.",
+    "changes": [
+      "Repository coexistence now rejects every install receipt that does not exactly match the current Git revision.",
+      "Trusted Git provenance is issued only by a clean, unchanged repository build performed by csdlc-install.",
+      "Direct artifact installation remains content provenance and cannot pass repository coexistence verification.",
+      "Gate 10A proves stale artifacts under an advanced checkout fail closed and the installed editor performs implemented-phase approve-design."
+    ],
+    "artifacts": [
+      "csdlc-v2/src/operator.rs",
+      "csdlc-v2/src/bin/csdlc-install.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/tests/gate10a.rs",
+      "#5540"
+    ]
+  },
+  "fail_after_backup": false
+}

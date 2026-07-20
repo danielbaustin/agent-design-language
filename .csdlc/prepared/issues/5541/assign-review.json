@@ -1,0 +1,1 @@
+{"issue":5541,"expected_generation":6,"expected_digest":"6db5db30035a87bb1f0fb33a42b9854b725df8da505f68a55b7a35fdfbe99fce","claim_id":"claim-5541-gate10d2-authority-docs","reviewer":"subagent:019f669a-596c-71e2-adb3-bd753875989d","assigned_by":"codex-closeout-audit","scope":["csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md","docs/default_workflow.md","csdlc-v2/tests/gate10a.rs"]}

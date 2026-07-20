@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 16,
+  "expected_digest": "f2f5d772df592989193455f8f8e396b597b6eafc18972afe6278b2e13784a01f",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Full focused Runtime v3 and integrated CSM API validation pass after all eight findings are fixed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl-runtime/Cargo.toml", "&&", "cargo", "test", "--manifest-path", "adl/Cargo.toml", "csm_runtime_api"],
+      "purpose": "Prove the complete Runtime v3 crate, independence boundary, and integrated CSM API after final credential concurrency remediation",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 123 runtime unit tests, 1 independence test, and 44 focused CSM API tests passed"
+    }
+  }
+}

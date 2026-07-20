@@ -1,0 +1,12 @@
+{
+  "issue": 4646,
+  "expected_generation": 32,
+  "expected_digest": "bdd22f6c297725405d00204f99303c773d6f80d221ecd9328df89e2aa3534b8d",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "repository": "danielbaustin/agent-design-language",
+  "disposition": "merged",
+  "pull_request": 5584,
+  "approved_no_pr_reason": null,
+  "token_file": null
+}

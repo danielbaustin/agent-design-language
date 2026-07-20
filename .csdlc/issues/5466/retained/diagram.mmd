@@ -1,0 +1,9 @@
+flowchart LR
+  P[Published old head] --> R[Recover review]
+  R --> H[Final merged head checked out]
+  H --> V[Exact final-head review]
+  V --> M[csdlc-publish reconcile-merged]
+  M --> G{GitHub merged identity exact?}
+  G -->|no| F[Fail closed]
+  G -->|yes| E[Final publication evidence]
+  E --> C[Normal readiness and closeout]

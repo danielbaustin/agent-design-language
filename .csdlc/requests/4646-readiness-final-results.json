@@ -1,0 +1,17 @@
+{
+  "issue": 4646,
+  "expected_generation": 30,
+  "expected_digest": "f4e00a4511938fcdf3b697592455966a718ba89f726ef01965f388b1734ed445",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5584,
+  "required_checks": [
+    "ci/adl-ci (pull_request)",
+    "ci/adl-coverage (pull_request)",
+    "ci/adl-tooling-contracts (pull_request)",
+    "ci/adl-path-policy (pull_request)"
+  ],
+  "require_review": false,
+  "token_file": null
+}

@@ -1,0 +1,24 @@
+{
+  "issue": 4646,
+  "card": "sor",
+  "expected_generation": 25,
+  "expected_digest": "65654457b98317703fd7e10976d88f9f871e6aa8e504d67db980f821e1f582ba",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "Focused validation confirms the completed frozen-corpus review and retained findings.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git diff --check",
+        "Ruby YAML.safe_load with Date permitted for WP_ISSUE_WAVE_v0.91.7.yaml",
+        "git ls-tree content digest and corpus expansion verification",
+        "findings-register severity count verification",
+        "csdlc-doctor --repo . --issue 4646"
+      ],
+      "purpose": "Prove documentation hygiene, machine-readable syntax, exact frozen-corpus identity, complete findings accounting, and typed #4646 lifecycle coherence.",
+      "outcome": "passed",
+      "evidence_ref": "Fresh local validation on 2026-07-19: 33 entries expand to 70 tracked blobs / 700167 bytes at bd9b7a3c; digest ccc7c9dfeb404d3855b8184d5da05367c992771d4c09ec97ff2845dc022fdb32; findings 2 P1, 11 P2, 9 P3; doctor pass."
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 32,
+  "expected_digest": "ab284232547930e2d80fff057ea3bf89ab11464d4d7309402277b0d786fb192f",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact remediation-head review passed with all ten WP-07A findings fixed and no new findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

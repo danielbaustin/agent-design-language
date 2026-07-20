@@ -1,0 +1,261 @@
+{
+  "aws_used": false,
+  "blocker_register": [
+    {
+      "id": "QG-4643-1",
+      "owner": "#4644",
+      "status": "open_next_gate",
+      "summary": "Documentation alignment remains a required downstream gate."
+    },
+    {
+      "id": "QG-4643-2",
+      "owner": "#4645",
+      "status": "open_next_gate",
+      "summary": "Internal review remains a required downstream gate."
+    },
+    {
+      "id": "QG-4643-3",
+      "owner": "#4646",
+      "status": "open_next_gate",
+      "summary": "External review remains a required downstream gate."
+    },
+    {
+      "id": "QG-4643-4",
+      "owner": "#4647",
+      "status": "open_next_gate",
+      "summary": "Review remediation/preflight remains a required downstream gate."
+    },
+    {
+      "id": "QG-4643-5",
+      "owner": "#4650",
+      "status": "open_next_gate",
+      "summary": "Release ceremony remains a required downstream gate."
+    }
+  ],
+  "checks": {
+    "feature_coverage": {
+      "missing_required_surfaces": [],
+      "pass": true,
+      "path": "docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json",
+      "readiness_flags": {
+        "demo_for_every_new_feature": false,
+        "release_readiness_claimed": false,
+        "runtime_v3_policy": "explicit_opt_in_only",
+        "v092_activation_readiness_claimed": false
+      },
+      "surface_checks": [
+        {
+          "classification": "proven",
+          "classification_ok": true,
+          "expected_classification": "proven",
+          "missing_closed_issue_truth": [],
+          "missing_existing_evidence_paths": [],
+          "missing_required_evidence": [],
+          "non_claims_present": true,
+          "pass": true,
+          "surface": "demo_matrix"
+        },
+        {
+          "classification": "proven",
+          "classification_ok": true,
+          "expected_classification": "proven",
+          "missing_closed_issue_truth": [],
+          "missing_existing_evidence_paths": [],
+          "missing_required_evidence": [],
+          "non_claims_present": true,
+          "pass": true,
+          "surface": "html_observatory"
+        },
+        {
+          "classification": "proven_retained",
+          "classification_ok": true,
+          "expected_classification": "proven_retained",
+          "missing_closed_issue_truth": [],
+          "missing_existing_evidence_paths": [],
+          "missing_required_evidence": [],
+          "non_claims_present": true,
+          "pass": true,
+          "surface": "runtime_v2_observatory_packet"
+        },
+        {
+          "classification": "proved_explicit_opt_in",
+          "classification_ok": true,
+          "expected_classification": "proved_explicit_opt_in",
+          "missing_closed_issue_truth": [],
+          "missing_existing_evidence_paths": [],
+          "missing_required_evidence": [],
+          "non_claims_present": true,
+          "pass": true,
+          "surface": "runtime_v3_observatory_consumption"
+        },
+        {
+          "classification": "proven_limited",
+          "classification_ok": true,
+          "expected_classification": "proven_limited",
+          "missing_closed_issue_truth": [],
+          "missing_existing_evidence_paths": [],
+          "missing_required_evidence": [],
+          "non_claims_present": true,
+          "pass": true,
+          "surface": "unity_observatory"
+        },
+        {
+          "classification": "retained_handoff",
+          "classification_ok": true,
+          "expected_classification": "retained_handoff",
+          "missing_closed_issue_truth": [],
+          "missing_existing_evidence_paths": [],
+          "missing_required_evidence": [],
+          "non_claims_present": true,
+          "pass": true,
+          "surface": "launch_birthday_handoff"
+        },
+        {
+          "classification": "proof_backed_no_demo",
+          "classification_ok": true,
+          "expected_classification": "proof_backed_no_demo",
+          "missing_closed_issue_truth": [],
+          "missing_existing_evidence_paths": [],
+          "missing_required_evidence": [],
+          "non_claims_present": true,
+          "pass": true,
+          "surface": "curiosity_engine_discovery_substrate"
+        },
+        {
+          "classification": "proof_backed_no_demo",
+          "classification_ok": true,
+          "expected_classification": "proof_backed_no_demo",
+          "missing_closed_issue_truth": [],
+          "missing_existing_evidence_paths": [],
+          "missing_required_evidence": [],
+          "non_claims_present": true,
+          "pass": true,
+          "surface": "constructability_anchor_validator"
+        },
+        {
+          "classification": "proof_backed_partial_demo",
+          "classification_ok": true,
+          "expected_classification": "proof_backed_partial_demo",
+          "missing_closed_issue_truth": [],
+          "missing_existing_evidence_paths": [],
+          "missing_required_evidence": [],
+          "non_claims_present": true,
+          "pass": true,
+          "surface": "reasoning_graph_loop_skill_aee_obsmem_pvf"
+        }
+      ],
+      "valid_json": true
+    },
+    "launch_handoff": {
+      "child_issue_routes_present": true,
+      "ledger_present": true,
+      "packet_present": true,
+      "pass": true
+    },
+    "non_claims": [
+      {
+        "needle": "does not claim v0.91.7 release readiness",
+        "present": true
+      },
+      {
+        "needle": "does not claim v0.92 activation readiness",
+        "present": true
+      },
+      {
+        "needle": "does not claim Runtime v3 as the default runtime",
+        "present": true
+      }
+    ],
+    "open_gate_table": [
+      {
+        "expected_row_prefix": "| WP-16 | #4643 |",
+        "gate": "WP-16",
+        "issue": 4643,
+        "present": true
+      },
+      {
+        "expected_row_prefix": "| WP-17 | #4644 |",
+        "gate": "WP-17",
+        "issue": 4644,
+        "present": true
+      },
+      {
+        "expected_row_prefix": "| WP-18 | #4645 |",
+        "gate": "WP-18",
+        "issue": 4645,
+        "present": true
+      },
+      {
+        "expected_row_prefix": "| WP-19 | #4646 |",
+        "gate": "WP-19",
+        "issue": 4646,
+        "present": true
+      },
+      {
+        "expected_row_prefix": "| WP-20 | #4647 |",
+        "gate": "WP-20",
+        "issue": 4647,
+        "present": true
+      },
+      {
+        "expected_row_prefix": "| WP-23 | #4650 |",
+        "gate": "WP-23",
+        "issue": 4650,
+        "present": true
+      }
+    ],
+    "required_paths": [
+      {
+        "exists": true,
+        "path": "docs/milestones/v0.91.7/README.md"
+      },
+      {
+        "exists": true,
+        "path": "docs/milestones/v0.91.7/WBS_v0.91.7.md"
+      },
+      {
+        "exists": true,
+        "path": "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml"
+      },
+      {
+        "exists": true,
+        "path": "docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md"
+      },
+      {
+        "exists": true,
+        "path": "docs/milestones/v0.91.7/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md"
+      },
+      {
+        "exists": true,
+        "path": "docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md"
+      },
+      {
+        "exists": true,
+        "path": "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md"
+      },
+      {
+        "exists": true,
+        "path": "docs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md"
+      },
+      {
+        "exists": true,
+        "path": "docs/milestones/v0.91.7/review/wp14_launch_birthday_4641/ledger.yaml"
+      },
+      {
+        "exists": true,
+        "path": "docs/milestones/v0.91.7/review/V0917_WP15_DEMO_CONVERGENCE_4642.md"
+      },
+      {
+        "exists": true,
+        "path": "docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json"
+      }
+    ]
+  },
+  "issue": 4643,
+  "milestone": "v0.91.7",
+  "release_readiness_claimed": false,
+  "schema": "adl.v0917.wp16.quality_gate_4643.v1",
+  "status": "passed_with_open_downstream_gates",
+  "v092_activation_readiness_claimed": false,
+  "wp": "WP-16"
+}

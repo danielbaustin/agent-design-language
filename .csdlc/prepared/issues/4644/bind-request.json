@@ -1,0 +1,22 @@
+{
+  "issue": 4644,
+  "base_branch": "main",
+  "branch": "codex/4644-v0917-docs-alignment",
+  "worktree": ".worktrees/adl-wp-4644",
+  "claim": {
+    "id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/4644-v0917-docs-alignment",
+    "worktree": ".worktrees/adl-wp-4644",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_WP17_DOCS_ALIGNMENT_4644.md",
+      "docs/milestones/v0.91.7/review/wp17_docs_alignment_4644",
+      ".csdlc/issues/4644"
+    ],
+    "purpose": "Prepare and later execute WP-17 without claiming completion from setup"
+  }
+}

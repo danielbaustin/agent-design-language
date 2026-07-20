@@ -1,0 +1,29 @@
+{
+  "issue": 5542,
+  "base_branch": "main",
+  "branch": "codex/5542-wp17-closeout-truth",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5542-wp17-closeout-truth",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784418998,
+    "expires_unix_seconds": 1785023798,
+    "heartbeat_unix_seconds": 1784418998,
+    "branch": "codex/5542-wp17-closeout-truth",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5542",
+      ".csdlc/prepared/issues/5542",
+      "README.md",
+      "docs/milestones/v0.91.7/README.md",
+      "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/planning/ADL_FEATURE_LIST.md",
+      "docs/milestones/v0.91.7/review/V0917_WP17_DOCS_ALIGNMENT_4644.md",
+      "docs/milestones/v0.91.7/review/wp17_docs_alignment_4644",
+      ".csdlc/prepared/issues/4644/validate_docs_alignment.rb"
+    ],
+    "purpose": "Repair post-merge WP-17 closeout, bridge-precedence, and date-semantics findings without absorbing sibling work"
+  }
+}

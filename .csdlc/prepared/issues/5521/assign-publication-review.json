@@ -1,0 +1,13 @@
+{
+  "issue": 5521,
+  "expected_generation": 8,
+  "expected_digest": "353b3e5e989231078c4dcf33d21e3ab4719b669d07f2bf2fbec224dc830b55b8",
+  "claim_id": "claim-5521-terminal-plan-repair",
+  "reviewer": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    ".csdlc/issues/5518",
+    ".csdlc/issues/5521",
+    ".csdlc/prepared/issues/5521"
+  ]
+}

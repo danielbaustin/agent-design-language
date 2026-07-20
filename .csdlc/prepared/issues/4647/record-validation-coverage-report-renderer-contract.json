@@ -1,0 +1,21 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 38,
+  "expected_digest": "28aa2ab18883dfcd36cc4af0ef17d868a440d79c02a3512a073b5a2b479c8e17",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record focused coverage runner contract proof for the PR report-renderer crash repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_run_authoritative_coverage_lane.sh"
+      ],
+      "purpose": "Prove the authoritative coverage runner keeps PR report-render crashes soft only when summary evidence exists, while non-PR report crashes remain fail-closed.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, PASS test_run_authoritative_coverage_lane"
+    }
+  }
+}

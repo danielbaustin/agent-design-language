@@ -1,0 +1,27 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 24,
+  "expected_digest": "0f8f65b3bd56c9759ce1d2a9250964c1b83cdd3c645fb6624931533501d3e0b5",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record exact local clippy proof for the PR #5588 adl-rust-fmt-clippy repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "purpose": "Verify the post-publication clippy repair satisfies the same all-target warnings-as-errors gate that failed in GitHub.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, Finished dev profile in 36.00s"
+    }
+  }
+}

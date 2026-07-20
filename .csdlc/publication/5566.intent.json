@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5566,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5566-existing-worktree-bind",
+  "title": "[v0.91.8][csdlc-v2] Activate reserved claims from existing worktrees",
+  "body": "Closes #5566\n\nAllows typed `csdlc-bind` to activate an exact reserved claim from its already registered issue worktree. Relative reservations are resolved from Git's canonical common directory and primary root; exact canonical path and branch equality remain required. Exact claim equality, collision, path-safety, and readiness guards stay fail-closed.\n\nThe mandatory review found and drove a P1 fix for unsafe suffix matching. Positive linked-worktree, mismatched-reservation, and adversarial standalone same-suffix regressions all pass; strict all-target Clippy passes. This unblocks truthful #5306 closeout recovery without writing on `main`.",
+  "draft": true,
+  "revision": "git-blake3:cd521654943cd9fd3a09cc5ed6591c2b46d63aae:8520835fc1cc16c0e37639c3e11dd16bc3f34952923e3971453db4ac4bd777c9",
+  "commit_sha": "cd521654943cd9fd3a09cc5ed6591c2b46d63aae"
+}

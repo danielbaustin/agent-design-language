@@ -1,0 +1,14 @@
+{
+  "issue": 4647,
+  "card": "spp",
+  "expected_generation": 7,
+  "expected_digest": "b7a62383d6ae1bd08e7afe729eef4c21232a0191788c863c5aca2b662e63df28",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "WP-20 ran focused CSM, provider setup, and provider invocation artifact regressions against the current residual patch.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S3",
+    "status": "completed"
+  }
+}

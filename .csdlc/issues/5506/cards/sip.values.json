@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5506,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][coverage] Register Runtime v3 API-auth coverage without mixed-lane escalation",
+    "slug": "v0-91-7-runtime-v3-auth-coverage-map",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Map Runtime v3 API-auth source to its focused independent-crate coverage tests.",
+      "required_outcome": "Auth-only coverage runs the Runtime v3 auth tests, while mixed selections retain both workspace runs.",
+      "declared_scope": [
+        "adl/tools/check_coverage_impact.sh",
+        "adl/tools/run_pr_fast_coverage_lane.sh",
+        "adl/tools/test_check_coverage_impact.sh",
+        "adl/tools/test_run_pr_fast_coverage_lane.sh"
+      ],
+      "authority_boundary": [
+        "Issue #5506 owns only coverage tooling",
+        "Issue #5494 retains all Runtime v3 and CSM behavior",
+        "The existing Runtime v3 weather service remains unchanged"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

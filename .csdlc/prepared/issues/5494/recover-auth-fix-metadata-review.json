@@ -1,0 +1,8 @@
+{
+  "issue": 5494,
+  "expected_generation": 33,
+  "expected_digest": "27ddcee7562847185e5e0d1decb2752320787a8d3d28b8ad5d043e2b76af322c",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover exact review identity after committing the clean review metadata; the substantive eight-file scope is unchanged."
+}

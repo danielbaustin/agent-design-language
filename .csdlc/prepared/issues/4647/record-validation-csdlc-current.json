@@ -1,0 +1,22 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 12,
+  "expected_digest": "ab067f36b1cb55f6bbb9ce73a512605bc007f23c9b71bece61fdbfccaa0d85f2",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record typed PVF validation and doctor proof for the current issue record after SPP/SOR repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "csdlc-validate",
+        "--request",
+        ".csdlc/prepared/issues/4647/validate-current.json"
+      ],
+      "purpose": "Validate current diff hygiene and C-SDLC v2 doctor pass through the typed PVF request.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/prepared/issues/4647/validation/current, disposition local_pass with diff-check and csdlc-doctor passed"
+    }
+  }
+}

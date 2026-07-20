@@ -1,0 +1,14 @@
+{
+  "issue": 4647,
+  "card": "spp",
+  "expected_generation": 8,
+  "expected_digest": "0b0cc7ca0a4cf52e4db0b5fc3b9b684b068339b58ef8063fd783c8f7bfb6b510",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "WP-20 updated SRP/SOR lifecycle truth through typed routes before the next exact-head review and publication gate.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S4",
+    "status": "completed"
+  }
+}

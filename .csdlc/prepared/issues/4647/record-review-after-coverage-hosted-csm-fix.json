@@ -1,0 +1,26 @@
+{
+  "issue": 4647,
+  "expected_generation": 34,
+  "expected_digest": "6478df40b7acf248af770c7f0cb74c1c29816a43c3736de53f5810e6c4331dc6",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "subagent:019f7e25-c21b-7ed1-a38d-ef3a838a6114",
+  "evidence": {
+    "reviewer": "subagent:019f7e25-c21b-7ed1-a38d-ef3a838a6114",
+    "reviewed_revision": "git-blake3:04bf3d8401a2b8c156546bc64bde065a0342cb34:e912b20abd7fc64b42bc767522e512b37ddf4f8cddc3fa2d7d9092e31da49d59",
+    "scope": [
+      ".csdlc/issues/4647",
+      ".csdlc/prepared/issues/4647",
+      ".csdlc/publication/4647.intent.json",
+      "adl/src/csm_api_gateway_bridge.rs"
+    ],
+    "findings": [],
+    "residual_risks": [
+      "Exact-head bounded review by subagent 019f7e25-c21b-7ed1-a38d-ef3a838a6114 confirmed HEAD 04bf3d8401a2b8c156546bc64bde065a0342cb34 is CLEAN/fixed-confirmed for the post-publication CSM API Gateway coverage-hosted repair.",
+      "The prior P2 protected-path finding is fixed: `adl/src/csm_api_gateway_bridge.rs` and `.csdlc/publication/4647.intent.json` are both present in protected paths.",
+      "The branch changed-path-vs-protected-path check over `origin/main...HEAD` returned no output, and `csdlc-doctor` passed at generation 34 implemented.",
+      "No AWS operation was run."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

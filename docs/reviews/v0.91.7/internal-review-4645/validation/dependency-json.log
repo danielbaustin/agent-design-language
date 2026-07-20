@@ -1,0 +1,139 @@
+{
+    "issue_5408": {
+        "assignees": [],
+        "closedAt": null,
+        "comments": [],
+        "labels": [
+            {
+                "color": "0e8a16",
+                "description": "Roadmap-level work",
+                "id": "LA_kwDORHPd2M8AAAACW7JWng",
+                "name": "track:roadmap"
+            },
+            {
+                "color": "D73A4A",
+                "description": "Bug or correctness issue",
+                "id": "LA_kwDORHPd2M8AAAACW7Q-dA",
+                "name": "type:bug"
+            },
+            {
+                "color": "0e8a16",
+                "description": "Review and triage work",
+                "id": "LA_kwDORHPd2M8AAAACayMBng",
+                "name": "area:review"
+            },
+            {
+                "color": "1f883d",
+                "description": "Targeted for ADL v0.91.7",
+                "id": "LA_kwDORHPd2M8AAAACoIPTeg",
+                "name": "version:v0.91.7"
+            }
+        ],
+        "number": 5408,
+        "state": "OPEN",
+        "title": "[v0.91.7][review-fix][WP-07] Resolve #5045 runtime hardening findings",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/5408"
+    },
+    "pr_5419": {
+        "baseRefName": "main",
+        "check_conclusions": {
+            "IN_PROGRESS": 2,
+            "SKIPPED": 2,
+            "SUCCESS": 8
+        },
+        "checks": [
+            {
+                "conclusion": "SUCCESS",
+                "name": "adl-path-policy",
+                "status": "COMPLETED",
+                "url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29665834618/job/88136012897",
+                "workflow": "ci"
+            },
+            {
+                "conclusion": "SUCCESS",
+                "name": "adl-tooling-contracts",
+                "status": "COMPLETED",
+                "url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29665834618/job/88136023047",
+                "workflow": "ci"
+            },
+            {
+                "conclusion": "SKIPPED",
+                "name": "adl-runtime-v3-fast",
+                "status": "COMPLETED",
+                "url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29665834618/job/88136023357",
+                "workflow": "ci"
+            },
+            {
+                "conclusion": "SUCCESS",
+                "name": "adl-rust-fmt-clippy",
+                "status": "COMPLETED",
+                "url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29665834618/job/88136023049",
+                "workflow": "ci"
+            },
+            {
+                "conclusion": "SUCCESS",
+                "name": "adl-rust-tests",
+                "status": "COMPLETED",
+                "url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29665834618/job/88136023045",
+                "workflow": "ci"
+            },
+            {
+                "conclusion": "",
+                "name": "adl-demo-proof",
+                "status": "IN_PROGRESS",
+                "url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29665834618/job/88136023064",
+                "workflow": "ci"
+            },
+            {
+                "conclusion": "SKIPPED",
+                "name": "adl-spot-ci-and-coverage",
+                "status": "COMPLETED",
+                "url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29665834618/job/88136023264",
+                "workflow": "ci"
+            },
+            {
+                "conclusion": "SUCCESS",
+                "name": "adl-slow-proof (1)",
+                "status": "COMPLETED",
+                "url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29665834618/job/88136023071",
+                "workflow": "ci"
+            },
+            {
+                "conclusion": "SUCCESS",
+                "name": "adl-slow-proof (2)",
+                "status": "COMPLETED",
+                "url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29665834618/job/88136023058",
+                "workflow": "ci"
+            },
+            {
+                "conclusion": "SUCCESS",
+                "name": "adl-slow-proof (3)",
+                "status": "COMPLETED",
+                "url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29665834618/job/88136023065",
+                "workflow": "ci"
+            },
+            {
+                "conclusion": "SUCCESS",
+                "name": "adl-slow-proof (4)",
+                "status": "COMPLETED",
+                "url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29665834618/job/88136023070",
+                "workflow": "ci"
+            },
+            {
+                "conclusion": "",
+                "name": "adl-coverage-hosted",
+                "status": "IN_PROGRESS",
+                "url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29665834618/job/88136023035",
+                "workflow": "ci"
+            }
+        ],
+        "headRefName": "codex/5408-wp07-runtime-hardening-review-fix",
+        "isDraft": true,
+        "mergeable": "MERGEABLE",
+        "mergedAt": null,
+        "number": 5419,
+        "state": "OPEN",
+        "title": "[v0.91.7][review-fix][WP-07] Resolve runtime hardening findings (#5408)",
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5419"
+    }
+}

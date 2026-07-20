@@ -20,3 +20,7 @@
 {"sequence":20,"generation":12,"actor":"codex-root","reason":"Exact current-head review passed; the committed delta after the source review contains typed lifecycle metadata only.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":21,"generation":13,"actor":"codex-root","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":22,"generation":14,"actor":"codex-root","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":23,"generation":15,"actor":"codex-root","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":24,"generation":16,"actor":"codex-root","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":25,"generation":17,"actor":"codex-root","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":26,"generation":18,"actor":"codex-closeout-audit","reason":"Materialize the retained terminal receipt during the complete v0.91.7 closed-issue audit.","operation":"reconcile_terminal"}

@@ -1,0 +1,47 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5509,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][CI] Keep mixed Runtime v3 and CSM validation out of Runtime v2 coverage",
+    "slug": "v0-91-7-runtime-v3-csm-fast-lane",
+    "version": "v0.91.7",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Add one bounded mixed Runtime v3 and CSM validation route without weakening other fail-closed classifications.",
+      "deliverables": [
+        "Mixed Runtime v3 and CSM source classifier",
+        "Independent focused test execution for both crates",
+        "Composed focused coverage execution",
+        "Regression contracts preserving unrelated mixed-crate fail-closed behavior"
+      ],
+      "acceptance_criteria": [
+        "AC1: The #5504 source shape selects bounded PR-fast validation",
+        "AC2: Focused tests execute in both owning crates",
+        "AC3: Focused coverage composes both crate summaries",
+        "AC4: Runtime v2 tests are not selected",
+        "AC5: Unrelated or unmapped mixed-crate changes still fail closed"
+      ],
+      "dependencies": [
+        "Existing PR-fast nextest runner",
+        "Existing PR-fast coverage summary composition",
+        "Existing validation manager and path policy"
+      ],
+      "repo_inputs": [
+        "PR #5504 CI run 29642366877",
+        "Issue #5509",
+        "Issue #5494"
+      ],
+      "non_goals": [
+        "Runtime v2 source changes",
+        "AWS execution",
+        "General mixed-crate validation relaxation"
+      ]
+    }
+  }
+}

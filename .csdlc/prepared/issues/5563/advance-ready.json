@@ -1,0 +1,11 @@
+{
+  "issue": 5563,
+  "card": "sip",
+  "expected_generation": 0,
+  "expected_digest": "667eb215f9ae29981eac115f24e13baed55d978d40cf4532a93ee72ceaf27d5b",
+  "claim_id": "claim-5563-initialized-design-recovery",
+  "actor": "codex-closeout-audit",
+  "reason": "Issue-specific design, cards, claim scope, and focused validation lane are ready.",
+  "operation": {"operation":"advance_phase","phase":"ready"},
+  "fail_after_backup": false
+}

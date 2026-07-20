@@ -1,0 +1,13 @@
+{
+  "issue": 4645,
+  "expected_generation": 22,
+  "expected_digest": "7525f0fc896905288a6b958b0d80553fbe09841eac78f35adb82658e91f53348",
+  "claim_id": "claim-4645-v0917-internal-review-prep",
+  "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+  "assigned_by": "codex-closeout-audit",
+  "scope": [
+    "docs/reviews/v0.91.7/internal-review-4645/SPECIALIST_LANE_RESULTS.md",
+    "docs/reviews/v0.91.7/internal-review-4645/VALIDATION.md",
+    "adl/tools/test_retained_diff_proof_contract.sh"
+  ]
+}

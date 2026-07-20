@@ -28,7 +28,7 @@ Revision 1
       "AC-1",
       "AC-2"
     ],
-    "status": "pending"
+    "status": "completed"
   },
   {
     "id": "step-2",
@@ -36,7 +36,7 @@ Revision 1
     "acceptance_ids": [
       "AC-3"
     ],
-    "status": "pending"
+    "status": "completed"
   },
   {
     "id": "step-3",
@@ -45,7 +45,7 @@ Revision 1
       "AC-4",
       "AC-5"
     ],
-    "status": "pending"
+    "status": "completed"
   }
 ]
 
@@ -72,13 +72,13 @@ Revision 1
 
 ## Design
 
-docs/architecture/csdlc-v2/gate10d2/DESIGN.md
+.csdlc/issues/5306/retained/design.md
 
-Digest: 9b7c6ff1029d318ff44bdf91b6cfa939f69a4be9396b0a711361937bf68812d1
+Digest: 13b29a0a91d5bbea76180a0866c69cdd7d2c6b53cb32c93a3bc857fc6308bfce
 
 ## Diagram
 
-docs/architecture/csdlc-v2/gate10d2/DIAGRAM.mmd
+.csdlc/issues/5306/retained/diagram.mmd
 
 Digest: dda9acbc40f48002da88859feb8fe7f7162f9a6a3ea08db58d8e4f631fd95b07
 

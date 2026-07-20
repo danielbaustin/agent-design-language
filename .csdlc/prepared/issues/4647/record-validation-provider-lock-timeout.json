@@ -1,0 +1,28 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "8c29a91a06a52e29568e1537e77d9f5b3a3baff80c187ce11802c53f4bfd0c91",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record focused native and Bedrock invocation artifact lock-timeout regression proof for the current residual patch.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "-p",
+        "adl",
+        "invocation_artifact_and_http_constructor_error_paths_are_exercised",
+        "--",
+        "--nocapture"
+      ],
+      "purpose": "Prove held invocation artifact locks classify native and Bedrock post-success artifact failures as non-retryable partial-success-unknown.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 1 passed"
+    }
+  }
+}

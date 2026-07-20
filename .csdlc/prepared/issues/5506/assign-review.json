@@ -1,0 +1,14 @@
+{
+  "issue": 5506,
+  "expected_generation": 5,
+  "expected_digest": "2e74fe353a327e1f87c1bcedec57b22c2fd3edc466969db65287bfd456045b41",
+  "claim_id": "claim-5506-runtime-auth-coverage-map",
+  "reviewer": "subagent:019f74a4-d2d6-7e51-b69d-e92676e69394",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    "adl/tools/check_coverage_impact.sh",
+    "adl/tools/run_pr_fast_coverage_lane.sh",
+    "adl/tools/test_check_coverage_impact.sh",
+    "adl/tools/test_run_pr_fast_coverage_lane.sh"
+  ]
+}

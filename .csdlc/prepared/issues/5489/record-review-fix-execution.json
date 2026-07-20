@@ -1,0 +1,20 @@
+{
+  "issue": 5489,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "c333417edf327f9112740963a7c61a3334412adc9371201fc94e09b3d157aee4",
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Internal exact-revision review found missing readiness-factory projections for executable cutover/deletion sidecars #5343 and #5347.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Fixed the v0.91.8 wave readiness factory so executable sidecar issues #5343 and #5347 are included in the missing-projection set before implementation can start.",
+    "changes": [
+      "Add #5343 to parallel_execution.card_factory.missing_projection_issues",
+      "Add #5347 to parallel_execution.card_factory.missing_projection_issues"
+    ],
+    "artifacts": [
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml"
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "issue": 5494,
+  "expected_generation": 24,
+  "expected_digest": "c0046767553dc0e00063d6e4ee35ff935f28d8b8bf242d01c585fdab444977b8",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "subagent:019f74ae-d602-7d20-b7ef-e8964d851ea2",
+  "evidence": {
+    "reviewer": "subagent:019f74ae-d602-7d20-b7ef-e8964d851ea2",
+    "scope": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/supervision.rs",
+      "adl-runtime/src/topology.rs",
+      "adl/src/csm_runtime_api.rs",
+      "adl/src/long_lived_agent.rs",
+      "adl/src/long_lived_agent/tests.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ],
+    "reviewed_revision": "git-blake3:51f97887673f338ba861282a976dd8578f345864:82d9a9a6b7f812166547662659949b3fc8a8fabaf79e6b3e4c74ae40e3ff75bb",
+    "findings": [
+      {
+        "id": "F-5494-9",
+        "severity": "p1",
+        "summary": "Concurrent terminal revocation can commit after the initial revocation check and before authorize returns authenticated.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5494-10",
+        "severity": "p2",
+        "summary": "Previous-generation bearer overlap does not accept gateway identity signatures created with that same overlapping credential.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

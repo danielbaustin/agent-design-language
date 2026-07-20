@@ -1,0 +1,43 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5514,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][coverage] Preserve the complete ADL CSM suite in Runtime v3 bridge coverage",
+    "slug": "v0-91-7-complete-csm-coverage",
+    "version": "v0.91.7",
+    "generation": 13
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl/tools/run_pr_fast_coverage_lane.sh\nadl/tools/test_run_pr_fast_coverage_lane.sh",
+      "review_revision": "git-blake3:6787d12a21a81e99bd441590ccd113c220a43a60:f517ce58bc10d33d441404b4b40a108b50b0a65f5369223270115e4a66c98abc",
+      "reviewer": "subagent:019f755e-caed-72b0-b9fb-21366bf78332",
+      "review_prompts": [
+        "Does the ADL partition preserve every valid selector from the canonical expression?",
+        "Can a foreign selector reach either workspace?",
+        "Does exact matching still reject near matches?",
+        "Does the regression prove command completeness and summary composition?"
+      ],
+      "findings": [
+        {
+          "id": "F-5514-1",
+          "severity": "p1",
+          "summary": "The initial partition placed 17 cli::csm_cmd tests under the ADL library test binary, selecting none of them.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:6787d12a21a81e99bd441590ccd113c220a43a60:f517ce58bc10d33d441404b4b40a108b50b0a65f5369223270115e4a66c98abc",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "PR #5504 remains the final changed-source coverage proof after the tooling repair merges."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

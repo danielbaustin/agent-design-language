@@ -1,0 +1,20 @@
+{
+  "issue": 5455,
+  "expected_claim_id": "claim-5455-owner-provenance",
+  "expected_generation": 0,
+  "now_unix_seconds": 1784422165,
+  "replacement": {
+    "id": "claim-5455-closeout-recovery",
+    "owner": "codex-closeout-audit",
+    "generation": 0,
+    "acquired_unix_seconds": 1784422165,
+    "expires_unix_seconds": 1784508565,
+    "heartbeat_unix_seconds": 1784422165,
+    "branch": "codex/5455-stale-owner-provenance",
+    "worktree": ".",
+    "protected_paths": [".csdlc/issues/5455", ".csdlc/prepared/issues/5455", "csdlc-v2/src/operator.rs", "csdlc-v2/tests/gate10a.rs"],
+    "purpose": "Recover truthful typed lifecycle and terminal evidence for merged PR #5460"
+  },
+  "recovery_actor": "codex-closeout-audit",
+  "reason": "The original claim expired after PR #5460 merged while the typed record remained initialized; recover it only to record current evidence and closeout truth."
+}

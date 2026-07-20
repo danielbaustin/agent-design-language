@@ -1,0 +1,10 @@
+{
+  "issue": 5518,
+  "card": "spp",
+  "expected_generation": 5,
+  "expected_digest": "1475b8f098e11ca88e67c973b3cade4cbaaaabc3204e0f53b620c5da9647eb38",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "#5516 SPP S3 and its terminal receipt now agree at completed and typed doctor passes.",
+  "operation": {"operation":"update_plan_step","step_id":"S3","status":"completed"}
+}

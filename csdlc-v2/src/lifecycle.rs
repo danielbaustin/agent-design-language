@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::{Component, Path};
+use std::path::{Component, Path, PathBuf};
 
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -226,13 +226,36 @@ fn validate_validation_lanes(
 }
 
 pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
-    let issue_local = request.worktree == "."
+    let reserved_worktree = Path::new(&request.worktree);
+    let current_path_matches = request.worktree == "."
+        || (|| {
+            let current_root = store.root().canonicalize().ok()?;
+            let common_dir = PathBuf::from(
+                git::run(
+                    store.root(),
+                    &["rev-parse", "--path-format=absolute", "--git-common-dir"],
+                )
+                .ok()?
+                .stdout,
+            )
+            .canonicalize()
+            .ok()?;
+            let primary_root = common_dir.parent()?;
+            primary_root
+                .join(reserved_worktree)
+                .canonicalize()
+                .ok()
+                .is_some_and(|reserved| reserved == current_root)
+                .then_some(())
+        })()
+        .is_some();
+    let issue_local = current_path_matches
         && git::current_branch(store.root()).is_ok_and(|branch| branch == request.branch);
     if request.branch == "main"
         || request.branch == request.base_branch
         || request.claim.branch != request.branch
         || request.claim.worktree != request.worktree
-        || (!issue_local && !clean_relative(&request.worktree))
+        || (request.worktree != "." && !clean_relative(&request.worktree))
         || request
             .claim
             .protected_paths

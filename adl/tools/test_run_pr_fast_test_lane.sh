@@ -73,6 +73,32 @@ mixed_adl_runtime_output="$(bash "$SCRIPT" --changed-files "$mixed_adl_runtime" 
 assert_has "$mixed_adl_runtime_output" "mode=full"
 assert_has "$mixed_adl_runtime_output" "reason=mixed_adl_runtime_with_other_fast_lane_surfaces_requires_full_nextest"
 
+runtime_v3_csm_bridge="$TMP/runtime_v3_csm_bridge.txt"
+cat >"$runtime_v3_csm_bridge" <<'EOF'
+M	adl-runtime/src/runtime_api_auth.rs
+M	adl-runtime/src/supervision.rs
+M	adl-runtime/src/topology.rs
+M	adl/src/cli/csmctl_cmd.rs
+M	adl/src/csm_runtime_api.rs
+M	adl/src/long_lived_agent.rs
+M	adl/src/long_lived_agent/tests.rs
+EOF
+runtime_v3_csm_bridge_output="$(bash "$SCRIPT" --changed-files "$runtime_v3_csm_bridge" --print-plan)"
+assert_has "$runtime_v3_csm_bridge_output" "mode=mixed_focused"
+assert_has "$runtime_v3_csm_bridge_output" "reason=bounded_runtime_v3_csm_bridge_runs_independent_focused_nextest"
+assert_has "$runtime_v3_csm_bridge_output" "filter_tokens=csm_runtime_agent,runtime_v3_kernel"
+assert_has "$runtime_v3_csm_bridge_output" "filter_expression=test(/^csm_runtime_api::/) or test(/^long_lived_agent::/) or test(/^cli::csmctl_cmd::/)"
+assert_has "$runtime_v3_csm_bridge_output" "runtime_filter_expression=test(/^runtime_api_auth::/) or test(/^supervision::/) or test(/^topology::/)"
+
+runtime_v3_csm_bridge_bounded="$TMP/runtime_v3_csm_bridge_bounded.txt"
+cp "$runtime_v3_csm_bridge" "$runtime_v3_csm_bridge_bounded"
+cat >>"$runtime_v3_csm_bridge" <<'EOF'
+M	adl/src/cli/mod.rs
+EOF
+runtime_v3_csm_unrelated_output="$(bash "$SCRIPT" --changed-files "$runtime_v3_csm_bridge" --print-plan)"
+assert_has "$runtime_v3_csm_unrelated_output" "mode=full"
+assert_has "$runtime_v3_csm_unrelated_output" "reason=mixed_adl_runtime_with_other_fast_lane_surfaces_requires_full_nextest"
+
 mixed_adl_runtime_docs="$TMP/mixed_adl_runtime_docs.txt"
 cat >"$mixed_adl_runtime_docs" <<'EOF'
 M	adl-runtime/src/weather.rs
@@ -623,7 +649,7 @@ fakebin="$TMP/fakebin"
 mkdir -p "$fakebin"
 cat >"$fakebin/cargo" <<'EOF'
 #!/usr/bin/env bash
-printf '%s\n' "$*" >"${ADL_FAKE_CARGO_ARGS:?}"
+printf '%s\n' "$*" >>"${ADL_FAKE_CARGO_ARGS:?}"
 if [ "$1" = "nextest" ] && [ "$2" = "run" ]; then
   exit 0
 fi
@@ -631,6 +657,19 @@ echo "unexpected cargo invocation: $*" >&2
 exit 99
 EOF
 chmod +x "$fakebin/cargo"
+runtime_v3_csm_cargo_args="$TMP/runtime-v3-csm-cargo-args.txt"
+runtime_v3_csm_warm_output="$TMP/runtime-v3-csm-warm-cache.json"
+PATH="$fakebin:$PATH" \
+  ADL_FAKE_CARGO_ARGS="$runtime_v3_csm_cargo_args" \
+  ADL_PR_FAST_TEST_WARM_CACHE_OUTPUT="$runtime_v3_csm_warm_output" \
+  ADL_PR_FAST_TEST_WARM_SOURCE_TARGET="$TMP/missing-source-target" \
+  bash "$SCRIPT" --changed-files "$runtime_v3_csm_bridge_bounded" >/dev/null
+grep -Fqx -- "nextest run --status-level all --final-status-level slow -E test(/^csm_runtime_api::/) or test(/^long_lived_agent::/) or test(/^cli::csmctl_cmd::/)" "$runtime_v3_csm_cargo_args"
+grep -Fqx -- "nextest run --manifest-path $ROOT/adl-runtime/Cargo.toml --status-level all --final-status-level slow -E test(/^runtime_api_auth::/) or test(/^supervision::/) or test(/^topology::/)" "$runtime_v3_csm_cargo_args"
+if grep -Fq "runtime_v2" "$runtime_v3_csm_cargo_args"; then
+  echo "Runtime v3/CSM focused tests must not select Runtime v2" >&2
+  exit 1
+fi
 opt_in_cargo_args="$TMP/opt-in-cargo-args.txt"
 opt_in_warm_output="$TMP/opt-in-warm-cache.json"
 opt_in_output="$(

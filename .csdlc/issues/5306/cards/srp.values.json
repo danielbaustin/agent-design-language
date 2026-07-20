@@ -7,23 +7,44 @@
     "title": "[v0.91.7][csdlc-v2] Gate 10D2: approved bounded v1 deletion wave",
     "slug": "v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave",
     "version": "v0.91.7",
-    "generation": 0
+    "generation": 17
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "Exact implementation revision before publication.",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "AGENTS.md\n.github/workflows/ci.yaml\nadl\ncsdlc-v2",
+      "review_revision": "git-blake3:2b11155b6a4abaf9348cc1cfd147c9b9c676a56c:75fcce5a37a1155bbf05e41c881b4c74620359254414539645ada01e8b5f1072",
+      "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
       "review_prompts": [
         "Verify every removed path is in the approved exact manifest.",
         "Verify useful retained code and both sunset surfaces remain.",
         "Verify LoC/test claims are measured rather than budget-driven."
       ],
-      "findings": [],
+      "findings": [
+        {
+          "id": "F-5306-1",
+          "severity": "p1",
+          "summary": "The current csdlc-v2 init skill retained stale guidance to preserve the v1 default after final Gate 10D2 sunset.",
+          "actionable": true,
+          "in_scope": false,
+          "disposition": "out_of_scope",
+          "fix_revision": null,
+          "route": "Resolved by #5541 / merged PR #5568 at head 8e206363ee75f5517862a03d8cc5dc07efa4128a"
+        },
+        {
+          "id": "F-5306-2",
+          "severity": "p1",
+          "summary": "The original default workflow routed through deleted pr.sh and lacked an executable guard against restored v1 routes.",
+          "actionable": true,
+          "in_scope": false,
+          "disposition": "out_of_scope",
+          "fix_revision": null,
+          "route": "Resolved by #5541 / merged PR #5568 at head 8e206363ee75f5517862a03d8cc5dc07efa4128a"
+        }
+      ],
       "residual_risk": [],
-      "review_result": "pre_review"
+      "review_result": "pass"
     }
   }
 }

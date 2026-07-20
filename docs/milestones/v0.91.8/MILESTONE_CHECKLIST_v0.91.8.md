@@ -1,6 +1,6 @@
 # v0.91.8 Milestone Checklist
 
-- [ ] WP-01 planning package and routing repair complete.
+- [x] WP-01 planning package and routing repair complete via closed historical setup `#5383`; WP-21A `#5489` owns the current documentation audit and review-handoff refresh.
 - [ ] `#4641` remains restored as v0.91.7 WP-14.
 - [ ] `#5384` owns v0.91.8 WP-14A platform acceptance/deployment.
 - [ ] Baseline denominator and architecture approval are current.
@@ -13,4 +13,3 @@
 - [ ] Demo, quality, docs, internal review, external review, remediation, and preflight converge.
 - [ ] v0.92 handoff names exact revisions and non-claims.
 - [ ] Release ceremony and lifecycle closeout record truthful terminal state.
-

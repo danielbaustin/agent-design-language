@@ -1,0 +1,26 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "e3849a4039f91c6a5e32ac6395b05b2e87ba631284c0b89b8151ac7a64033105",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Completed the corrective WP-07A runtime acceptance implementation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Aligned reported topology with the daemon-supervised cycle, derived readiness from observed required components and channels, replaced the static soak with supervised execution and recovery, and added bounded credential-generation overlap.",
+    "changes": [
+      "Report the real daemon-supervised-cycle production model and remove static all-ready topology claims",
+      "Normalize all sixteen component observations and fail readiness closed for required unhealthy components or typed channels",
+      "Run 100 supervised Tokio task/channel cycles with injected failure, restart, recovery, and retained replay",
+      "Retain one previous API bearer generation for five minutes while terminal revocation rejects both generations"
+    ],
+    "artifacts": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/topology.rs",
+      "adl/src/csm_runtime_api.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ]
+  }
+}

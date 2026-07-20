@@ -1,0 +1,28 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "51be8e646b513ceaa5b784ec6098e2035be51d2334c0f5d3f49c0a47f8eeffc0",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record focused CSM account redaction regression proof for the current residual patch.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "-p",
+        "adl",
+        "runtime_api_redaction_is_key_aware_and_preserves_benign_ids",
+        "--",
+        "--nocapture"
+      ],
+      "purpose": "Prove exact account keys redact string and numeric account identifiers while benign counters remain allowed.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 1 passed"
+    }
+  }
+}

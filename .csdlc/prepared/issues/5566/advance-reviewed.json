@@ -1,0 +1,1 @@
+{"issue":5566,"card":"sor","expected_generation":6,"expected_digest":"fb46c49e8fd43b5522aee801328b1617f6ba92a5b7a3cbee2391af4a331d2e54","claim_id":"claim-5566-existing-worktree-bind","actor":"codex-closeout-audit","reason":"Exact-revision subagent review passed after the P1 topology fix.","operation":{"operation":"advance_phase","phase":"reviewed"},"fail_after_backup":false}

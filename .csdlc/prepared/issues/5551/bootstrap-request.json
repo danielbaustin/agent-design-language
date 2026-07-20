@@ -1,0 +1,55 @@
+{
+  "issue": 5551,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5551/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5551/diagram.mmd",
+  "design_reviewer": "codex-closeout-audit",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5551-terminal-plan-truth",
+    "owner": "codex-closeout-audit",
+    "generation": 0,
+    "acquired_unix_seconds": 1784421106,
+    "expires_unix_seconds": 1784507506,
+    "heartbeat_unix_seconds": 1784421106,
+    "branch": "codex/5551-terminal-plan-truth",
+    "worktree": ".",
+    "protected_paths": [".csdlc/issues/5527", ".csdlc/issues/5551", ".csdlc/prepared/issues/5551"],
+    "purpose": "Complete #5527 SPP S2-S4 through exact typed terminal plan-step repairs"
+  },
+  "initial": {
+    "title": "[v0.91.7][csdlc-v2][closeout] Repair #5527 retained terminal plan-step truth",
+    "slug": "v0-91-7-csdlc-v2-repair-5527-terminal-plan-truth",
+    "version": "v0.91.7",
+    "goal": "Complete the three stale retained plan steps in closed-out issue #5527.",
+    "required_outcome": "#5527 SPP S2, S3, and S4 are completed with exact card, index, audit, and retained receipt parity.",
+    "declared_scope": ["#5527 terminal plan and receipt", "#5551 lifecycle records"],
+    "authority_boundary": ["#5551 is the active repair authority", "#5527 is the closed-out claim-free target", "Only S2, S3, and S4 pending to completed are allowed"],
+    "task_boundary": "Invoke the existing typed terminal plan repair three times and validate exact parity.",
+    "deliverables": ["Corrected #5527 SPP S2-S4", "Refreshed #5527 terminal receipt", "Typed doctor and exact-diff proof"],
+    "acceptance_criteria": [
+      "AC-1: exact authority, target, and receipt CAS succeeds for each repair",
+      "AC-2: #5527 S2, S3, and S4 are completed and S1 remains completed",
+      "AC-3: #5527 card, index, and receipt parity is exact",
+      "AC-4: typed doctor passes for #5527 and #5551"
+    ],
+    "dependencies": ["Merged PR #5550", "Typed terminal plan-step repair from #5518"],
+    "repo_inputs": [".csdlc/issues/5527", "csdlc-v2/closeout/5527.json"],
+    "non_goals": ["Source changes", "General terminal editing", "Runtime changes", "AWS execution"],
+    "plan_summary": "Establish exact authority, repair #5527 S2-S4, and validate terminal parity.",
+    "steps": [
+      {"id":"S1","action":"Establish and bind exact repair authority","status":"completed","acceptance_ids":["AC-1"]},
+      {"id":"S2","action":"Repair #5527 S2-S4 and validate terminal parity","status":"pending","acceptance_ids":["AC-2","AC-3","AC-4"]}
+    ],
+    "risks": ["Stale receipt CAS must fail closed", "Unexpected semantic drift must stop publication"],
+    "invariants": ["No source files change", "#5527 remains closed-out and claim-free", "Only S2-S4 advance", "Receipt and local record remain exact"],
+    "stop_conditions": ["Any source file changes", "Any #5527 field besides generation, digests, audit, and S2-S4 changes", "Receipt parity or doctor fails"],
+    "review_prompts": ["Did only #5527 S2-S4 advance semantically?", "Do local cards, index, and receipt match exactly?", "Is #5551 free of recursive terminal plan steps?"],
+    "planning_profile": "small",
+    "validation_lanes": [
+      {"lane":"terminal-target-doctor","proof_role":"Prove #5527 terminal parity","deterministic":true,"resource_profile":"small","parallel_group":"records","budget_seconds":60,"budget_tokens":500,"argv":["csdlc-doctor","--issue","5527"],"acceptance_ids":["AC-1","AC-2","AC-3"]},
+      {"lane":"authority-doctor","proof_role":"Prove #5551 lifecycle truth","deterministic":true,"resource_profile":"small","parallel_group":"records","budget_seconds":60,"budget_tokens":500,"argv":["csdlc-doctor","--issue","5551"],"acceptance_ids":["AC-4"]}
+    ],
+    "failure_policy": "Fail closed on stale authority, target, receipt, unexpected semantic drift, doctor failure, or any source change."
+  }
+}

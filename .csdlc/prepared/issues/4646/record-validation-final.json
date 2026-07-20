@@ -1,0 +1,24 @@
+{
+  "issue": 4646,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "249a09d5a8fb36471ee531f21efb283e9fc217acb2f854a3df3ceffd41d74678",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "Record final focused validation after resolving both pre-publication rereview findings.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git diff --check",
+        "Ruby YAML.safe_load with Date permitted for WP_ISSUE_WAVE_v0.91.7.yaml",
+        "authoritative REVIEW_CORPUS.v1.txt uniqueness, exclusion, and existence validation",
+        "66-file corpus publication-safety scan with declared synthetic-fixture exceptions",
+        "local Markdown link existence check over changed documents"
+      ],
+      "purpose": "Prove packet hygiene, issue-wave syntax, one authoritative review corpus, publication boundaries, and changed-document link integrity.",
+      "outcome": "passed",
+      "evidence_ref": "Fresh local validation in .worktrees/adl-wp-4646 on 2026-07-19; external review itself remains not run and dispatch remains held on PR #5574."
+    }
+  }
+}

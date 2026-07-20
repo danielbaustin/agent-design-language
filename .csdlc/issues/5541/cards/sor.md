@@ -1,0 +1,81 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5541
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: complete
+
+## Summary
+
+Aligned the retained init skill with final v1_sunset authority and guarded all current typed skills plus the current default workflow against sunset routes.
+
+## Artifacts
+
+- csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md
+- docs/default_workflow.md
+- csdlc-v2/tests/gate10a.rs
+- #5306 retrospective P1 findings
+
+## Execution
+
+- Replace the stale preserve-v1-default instruction with the installed v2 sole-authority contract.
+- Verify the already-correct current default workflow names the typed v2 lifecycle and treats v1 only as historical evidence.
+- Add a focused Gate 10A regression over all nine current skills and the current default workflow.
+
+## Validation
+
+[
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate10a",
+      "current_operator_guidance_has_no_sunset_v1_route"
+    ],
+    "purpose": "Prove all current operational skills and the current default workflow reject sunset v1 guidance.",
+    "outcome": "passed",
+    "evidence_ref": "Focused Gate 10A guard passed 1/1; cargo fmt --check, strict all-target all-feature Clippy, and git diff --check passed. No AWS or Spot used."
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate10a",
+      "guidance"
+    ],
+    "purpose": "Prove current guidance is v2-only and the exact former bash ./adl/tools/pr.sh command is rejected after normalization.",
+    "outcome": "passed",
+    "evidence_ref": "Three guidance-focused Gate 10A tests passed, including exact former wrapper mutation; strict Clippy, fmt, and diff hygiene passed."
+  }
+]
+
+## Integration
+
+merged
+
+## Publication
+
+Publication: closed
+
+Merge: merged
+
+## Closeout
+
+complete
+
+## Follow Ups
+
+- none

@@ -1,0 +1,18 @@
+{
+  "issue": 5542,
+  "expected_generation": 6,
+  "expected_digest": "47831ab73fe38a4c55abe381f9be20ca08d41790eb52c9848e656185c6a47638",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "reviewer": "codex-subagent:019f77b1-4c8d-7560-8489-bb10c675a6b0",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    ".csdlc/issues/5542",
+    ".csdlc/prepared/issues/5542",
+    ".csdlc/evidence/5542",
+    ".csdlc/prepared/issues/4644/validate_docs_alignment.rb",
+    "README.md",
+    "REVIEW.md",
+    "docs/milestones/v0.91.7",
+    "docs/planning/ADL_FEATURE_LIST.md"
+  ]
+}

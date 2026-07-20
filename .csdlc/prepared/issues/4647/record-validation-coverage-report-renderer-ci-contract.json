@@ -1,0 +1,21 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 39,
+  "expected_digest": "97983982dbfad5e46a06047bd695f1f75225025fe1a03d079738c07d28818db0",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record CI runtime contract proof after coverage report-renderer repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_ci_runtime_contracts.sh"
+      ],
+      "purpose": "Verify the authoritative coverage runner change preserves CI runtime contract expectations.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, PASS test_ci_runtime_contracts and PASS test_run_pr_fast_coverage_lane"
+    }
+  }
+}

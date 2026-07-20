@@ -1,0 +1,28 @@
+{
+  "issue": 5489,
+  "expected_generation": 9,
+  "expected_digest": "86af3593efa205118661e89dd397b5954b901fdcee57c7d8d5d208afe7535c9e",
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "reviewer": "subagent:019f781f-b3b8-76a2-ae0a-253d65c729cf",
+  "assigned_by": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "scope": [
+    ".csdlc/issues/5489",
+    ".csdlc/prepared/issues/5489",
+    "docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md",
+    "docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md",
+    "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+    "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+    "docs/milestones/v0.91.7/review/V0917_WP21A_NEXT_MILESTONE_DOCS_CLOSEOUT_5489.md",
+    "docs/milestones/v0.91.7/review/wp21a_next_milestone_docs_5489/README.md",
+    "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+    "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/README.md",
+    "docs/milestones/v0.91.8/SPRINT_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+    "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+    "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+    "docs/milestones/v0.91.8/features",
+    "docs/milestones/v0.91.8/review/README.md",
+    "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md"
+  ]
+}

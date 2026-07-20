@@ -1,0 +1,12 @@
+{
+  "issue": 5512,
+  "expected_generation": 4,
+  "expected_digest": "f8370dc913e2df01593d8b905e6a3fc16924f1d2d2e583948f898f5404566895",
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "reviewer": "subagent:019f7532-dfd0-7b52-a750-7df6cce35b42",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    "adl/tools/run_pr_fast_coverage_lane.sh",
+    "adl/tools/test_run_pr_fast_coverage_lane.sh"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5495,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][publish] Avoid stale review loop after publication metadata commit",
+    "slug": "publication-metadata-review-loop",
+    "version": "v0.91.7",
+    "generation": 16
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2/src/git.rs\ncsdlc-v2/src/review.rs\ncsdlc-v2/src/doctor.rs\ncsdlc-v2/tests/gate5.rs\n.csdlc/issues/5495/retained/design.md\n.csdlc/issues/5495/retained/diagram.mmd",
+      "review_revision": "git-blake3:1ef7bb7eebcc0c6421d1e02c319ca4b45614149c:a2c283b0d7ecc77ffcd29fa9bebc43a59e99086c80b3df20a90ef6ef2664824b",
+      "reviewer": "review_5495",
+      "review_prompts": [
+        "Can a source or retained-design change bypass review?",
+        "Are all normal typed publication metadata surfaces covered without allowing arbitrary files?",
+        "Does merged reconciliation still require exact identity and final reviewed intent?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Typed request manifests are treated as lifecycle metadata only when they use a numeric issue prefix and JSON suffix."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

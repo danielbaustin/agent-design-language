@@ -1,0 +1,65 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5566,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Activate an exact reserved claim from its existing issue worktree",
+    "slug": "existing-worktree-bind",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Recognize an exact reserved worktree as issue-local when the current Git branch and canonical checkout path match.",
+      "actual_changes": [
+        "Derive issue-local identity from the current branch plus canonical reserved worktree path.",
+        "Preserve exact claim equality and relative path safety.",
+        "Add focused success and mismatch regressions."
+      ],
+      "artifacts": [
+        "csdlc-v2/src/lifecycle.rs",
+        "csdlc-v2/tests/gate2.rs",
+        "#5566",
+        "#5306"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate2",
+            "reserved_worktree"
+          ],
+          "purpose": "Prove exact existing-worktree activation and mismatched-path rejection.",
+          "outcome": "passed",
+          "evidence_ref": "Both focused match and mismatch regressions passed independently; cargo fmt --check and strict all-target all-feature Clippy passed."
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate2",
+            "standalone_repository"
+          ],
+          "purpose": "Prove an unrelated repository with the same worktree path suffix cannot activate the reserved claim.",
+          "outcome": "passed",
+          "evidence_ref": "Adversarial standalone-repository regression passed 1/1; positive linked-worktree and mismatched-reservation regressions also passed 1/1; strict Clippy passed."
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

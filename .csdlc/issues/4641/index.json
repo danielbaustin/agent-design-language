@@ -1,0 +1,446 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4641,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "57a995b4e8def457743bbb6195a56ad30c43e0e9bec2d90766fd1dee105a19f1",
+  "phase": "closed_out",
+  "generation": 19,
+  "digest": "4bb7b63a2f8af76e15124642c8dc1b24505882839511b256e25714b889b40f24",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "codex-review",
+    "assigned_by": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "revision": "git-blake3:d0ded4ef1c22f07b9bf57dcff80630270fa14af7:c432a365105e58d6742fe570dcf313c6d1363f8e27cd047d87bed43b59ea40ff",
+    "scope": [
+      ".csdlc/issues/4641",
+      ".csdlc/prepared/issues/4641",
+      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+      "docs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md",
+      "docs/milestones/v0.91.7/review/wp14_launch_birthday_4641/ledger.yaml"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-review",
+    "scope": [
+      ".csdlc/issues/4641",
+      ".csdlc/prepared/issues/4641",
+      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+      "docs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md",
+      "docs/milestones/v0.91.7/review/wp14_launch_birthday_4641/ledger.yaml"
+    ],
+    "reviewed_revision": "git-blake3:d0ded4ef1c22f07b9bf57dcff80630270fa14af7:c432a365105e58d6742fe570dcf313c6d1363f8e27cd047d87bed43b59ea40ff",
+    "findings": [],
+    "residual_risks": [
+      "WP-14 child implementation/proof issues #4758-#4763 remain open and must close with integrated evidence before v0.92 consumes launch, activation, Memory Palace, capability-envelope, witness/receipt, or birthday-doc readiness.",
+      "Review and validation were bounded to documentation, issue graph, typed C-SDLC state, and lifecycle-publication metadata churn; runtime, provider, Observatory, Unity, AWS, and v0.92 activation validation were not run."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 4641,
+    "pull_request": 5493,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5493",
+    "base": "main",
+    "head": "codex/4641-v0917-launch-birthday-handoff",
+    "revision": "git-blake3:d0ded4ef1c22f07b9bf57dcff80630270fa14af7:c432a365105e58d6742fe570dcf313c6d1363f8e27cd047d87bed43b59ea40ff",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5493,
+    "head_sha": "d0ded4ef1c22f07b9bf57dcff80630270fa14af7",
+    "checks": [
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637092020/job/88061224260"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637092020/job/88061234105"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637092020/job/88061234098"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637092020/job/88061234094"
+      },
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637092020/job/88061286393"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637092020/job/88061252738"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637092020/job/88061234475"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637092020/job/88061234397"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637092020/job/88061234471"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637092020/job/88061234300"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637092020/job/88061234398"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5493,
+    "disposition": "merged",
+    "observed_sha": "d0ded4ef1c22f07b9bf57dcff80630270fa14af7",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/4641.json",
+    "released_branch": "codex/4641-v0917-launch-birthday-handoff",
+    "released_worktree": ".worktrees/adl-wp-4641",
+    "released_protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md",
+      "docs/milestones/v0.91.7/review/wp14_launch_birthday_4641",
+      ".csdlc/issues/4641"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/4641/retained/design.md",
+  "diagram_path": ".csdlc/issues/4641/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-prep-only",
+      "revision": "81201aebef52effe741c3ecf69e531133aec9526caf8823f13699bf10b210d1a"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "08f733b70a00faeb45d614902ffcaed9ab8d05e046e54b745c9c7c602ff662c1",
+      "rendered_digest": "d0e0eb3db34314cd9797e7b269d901093fb6333694550c4753b2739ab54332c3",
+      "ast_digest": "e7eb79d44243b7c51f3efdc625402b0f5a55f844b19aa8a5a21eb5fd88ce3346"
+    },
+    "stp": {
+      "values_digest": "a832fed516dd3dbe508f3e9d3704ef7157e09d81d611b5232f0bc8bd800d00ca",
+      "rendered_digest": "40eb8a20828f9f337899f785088fa1592fb9df68ee12d8305785a4c554729b63",
+      "ast_digest": "45ed6103e30a3c1c701947d17223559c9f1a74cfdac74d24d61f416c967e01ea"
+    },
+    "spp": {
+      "values_digest": "d0c5b904f8d70c68f6c9c584eead8f205154d780cd6f461236c83aef9f6ab12a",
+      "rendered_digest": "7e98268b99992a51c051203648162a58801a223d5ba2c0aa6294f7ff704606be",
+      "ast_digest": "088105a90d43f023099a12aaa716ea521e98f84caa0feef5e6a164e5ee3d4a78"
+    },
+    "vpp": {
+      "values_digest": "ff9a22a90d982227d77c9e042348c195e81eb1815a173c3f75554b0e3e258545",
+      "rendered_digest": "21c100389e8e2a06106c555868373213a84797e7a7217422b6ad8fa71406f5b7",
+      "ast_digest": "99fb6876e701789bf712179ac5a9b5e4ff0aaf6ef68f9f22889f3f466e0e013b"
+    },
+    "srp": {
+      "values_digest": "2caeafe2cb675cd2d538a52eeb1cfefba1d195927879717214d55725f5aa98f8",
+      "rendered_digest": "88be60ec1d7916d783d5a09a40f4e53188c2cd9bbd978610b9b6c0133ae9ff12",
+      "ast_digest": "52d0cd241fa3e122f1a16c61c77fdfbb5006a2a2af2ec894876eb0d57ff8bdf2"
+    },
+    "sor": {
+      "values_digest": "bbdb8b8a41cdb8b344eaed280868301ed830847e4284b87a1edd8aafb0aeb880",
+      "rendered_digest": "11b1569b83aa2dec87220a56f02d7154a28f0b6567d166060a8af80e4dd4ef2f",
+      "ast_digest": "36ab2eab6933ffb58da8086dc6871b72a4806ba2f1ef0f7da92893143aeb0c41"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Advance #4641 after WP-14 routing artifacts and validation were recorded."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Advance #4641 after bounded review returned no actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Committed typed review metadata advanced HEAD after the source review; recover for exact current-head metadata-delta review before publication."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Advance #4641 after current-head review returned no actionable findings."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Typed publication metadata advanced HEAD after the reviewed publication revision; recover for exact current-head lifecycle-metadata review without changing WP-14 substance."
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Advance #4641 after post-publication lifecycle-metadata review returned no actionable findings."
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 11,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 12,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 13,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record WP-14 launch and birthday handoff routing artifacts.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"WP-14 produced a launch/birthday handoff packet and machine-readable ledger that route implementation/proof surfaces to open v0.91.8 child issues without claiming v0.92 activation readiness.\",\"changes\":[\"Added docs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md\",\"Added docs/milestones/v0.91.7/review/wp14_launch_birthday_4641/ledger.yaml\",\"Updated docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md to reference the WP-14 routing packet\",\"Classified #4641 as routed_with_evidence and preserved public launch, birthday, capability envelope, Memory Palace, witness, receipt, and v0.92 activation non-claims\"],\"artifacts\":[\"docs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md\",\"docs/milestones/v0.91.7/review/wp14_launch_birthday_4641/ledger.yaml\",\"docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record local docs whitespace validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Verify WP-14 documentation and card changes have no whitespace errors.\",\"outcome\":\"passed\",\"evidence_ref\":\"local command output: no output, exit 0\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record typed C-SDLC doctor validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\"/Users/daniel/git/agent-design-language/.worktrees/adl-wp-4641\",\"--issue\",\"4641\"],\"purpose\":\"Verify typed C-SDLC issue state after WP-14 execution records were updated.\",\"outcome\":\"passed\",\"evidence_ref\":\"local command output: status pass, phase bound, generation 1, no findings\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Advance #4641 after WP-14 routing artifacts and validation were recorded.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record implemented-phase C-SDLC doctor validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\"/Users/daniel/git/agent-design-language/.worktrees/adl-wp-4641\",\"--issue\",\"4641\"],\"purpose\":\"Verify typed C-SDLC issue state after advancing #4641 to implemented.\",\"outcome\":\"passed\",\"evidence_ref\":\"local command output: status pass, phase implemented, generation 4, no findings\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Advance #4641 after bounded review returned no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Committed typed review metadata advanced HEAD after the source review; recover for exact current-head metadata-delta review before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex-review",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Advance #4641 after current-head review returned no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Typed publication metadata advanced HEAD after the reviewed publication revision; recover for exact current-head lifecycle-metadata review without changing WP-14 substance.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex-review",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Advance #4641 after post-publication lifecycle-metadata review returned no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 22,
+      "generation": 17,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 23,
+      "generation": 18,
+      "actor": "csdlc-closeout",
+      "reason": "normalize legacy terminal receipt path to portable reference",
+      "operation": "normalize_terminal_receipt_ref"
+    },
+    {
+      "sequence": 24,
+      "generation": 19,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Materialize terminal receipt for merged #4641 after PR #5493 closed the issue.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

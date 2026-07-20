@@ -1,0 +1,145 @@
+{
+  "issue": 5494,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5494/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5494/diagram.mmd",
+  "design_reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5494-wp07a-completion",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784362098,
+    "expires_unix_seconds": 1784448498,
+    "heartbeat_unix_seconds": 1784362098,
+    "branch": "codex/5494-wp07a-completion",
+    "worktree": ".",
+    "protected_paths": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/supervision.rs",
+      "adl-runtime/src/topology.rs",
+      "adl/src/csm_runtime_api.rs",
+      "adl/src/long_lived_agent.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ],
+    "purpose": "Complete the unfinished #5409 production supervision, observed readiness, assembled soak, and credential-overlap acceptance boundary"
+  },
+  "initial": {
+    "title": "[v0.91.7][review-fix][WP-07A] Complete the unfinished #5409 runtime acceptance boundary",
+    "slug": "v0-91-7-wp07a-complete-5409-runtime-acceptance",
+    "version": "v0.91.7",
+    "goal": "Make the Runtime v2 production topology, readiness, soak, and credential renewal satisfy #5409 truthfully.",
+    "required_outcome": "Production uses supervised tasks, readiness consumes observed health, the soak exercises running assembly behavior, and credential rotation has bounded overlap.",
+    "declared_scope": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/supervision.rs",
+      "adl-runtime/src/topology.rs",
+      "adl/src/csm_runtime_api.rs",
+      "adl/src/long_lived_agent.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ],
+    "authority_boundary": [
+      "GitHub #5409 remains the product acceptance issue",
+      "Retained #5409 terminal evidence is immutable premature-closeout history",
+      "Issue #5494 is the corrective execution authority"
+    ],
+    "task_boundary": "Complete only the four remaining WP-07A findings and reconcile their proof truth.",
+    "deliverables": [
+      "Production supervised assembly",
+      "Observed fail-closed readiness",
+      "Real assembled-runtime soak",
+      "Bounded credential overlap",
+      "Updated WP-07A proof and register disposition"
+    ],
+    "acceptance_criteria": [
+      "AC1: Production executes declared required components through the supervisor",
+      "AC2: Readiness consumes observed health for every required component and typed channel",
+      "AC3: The deterministic soak runs supervised tasks and channels and proves failure and recovery readiness transitions",
+      "AC4: Credential renewal accepts old and new generations only during bounded overlap and revocation rejects both",
+      "AC5: #5409 and the canonical register close only after exact-revision review and proving validation"
+    ],
+    "dependencies": [
+      "Tokio",
+      "Existing Runtime v2 supervision and typed-channel primitives",
+      "Existing Runtime API authentication store"
+    ],
+    "repo_inputs": [
+      "docs/reviews/v0.91.7/remaining-sprints-5403/WP07A_REARCHITECTURE_REVIEW_5121.md",
+      "PR #5420",
+      "Issue #5409"
+    ],
+    "non_goals": [
+      "Runtime v3 changes",
+      "AWS execution",
+      "Unrelated ADL refactoring"
+    ],
+    "plan_summary": "Wire observed supervised assembly into production readiness, add a behavioral soak, implement bounded credential overlap, and retain exact proof.",
+    "steps": [
+      {"id": "S1", "action": "Implement observed supervised production assembly and readiness", "status": "pending", "acceptance_ids": ["AC-1", "AC-2"]},
+      {"id": "S2", "action": "Implement behavioral assembled-runtime soak with failure and recovery", "status": "pending", "acceptance_ids": ["AC-3"]},
+      {"id": "S3", "action": "Implement bounded credential overlap and revocation tests", "status": "pending", "acceptance_ids": ["AC-4"]},
+      {"id": "S4", "action": "Validate, review, publish, and reconcile #5409/register truth", "status": "pending", "acceptance_ids": ["AC-5"]}
+    ],
+    "risks": [
+      "Supervision integration could duplicate existing long-lived task ownership",
+      "Readiness could over-constrain optional degraded components",
+      "Credential overlap could accidentally weaken explicit revocation"
+    ],
+    "invariants": [
+      "Missing required health fails closed",
+      "Revocation is terminal for all credential generations",
+      "No secrets enter logs or retained proof",
+      "No Runtime v3 or AWS changes"
+    ],
+    "stop_conditions": [
+      "A required runtime component has no observable health source",
+      "Production integration requires changes outside the protected Runtime v2 paths",
+      "Validation would require AWS"
+    ],
+    "review_prompts": [
+      "Does production execute rather than merely describe the assembly?",
+      "Can any required missing or unhealthy observation leave readiness green?",
+      "Does the soak drive real tasks, channels, failure, and recovery?",
+      "Is credential overlap bounded without weakening revocation?"
+    ],
+    "planning_profile": "large",
+    "validation_lanes": [
+      {
+        "lane": "runtime-v2-focused",
+        "proof_role": "Prove supervision, topology, soak, and authentication behavior",
+        "deterministic": true,
+        "resource_profile": "medium",
+        "parallel_group": "local-runtime",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": ["cargo", "test", "--manifest-path", "adl-runtime/Cargo.toml"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"]
+      },
+      {
+        "lane": "csm-api-focused",
+        "proof_role": "Prove the integrated Runtime v2 readiness consumer",
+        "deterministic": true,
+        "resource_profile": "medium",
+        "parallel_group": "local-api",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": ["cargo", "test", "--manifest-path", "adl/Cargo.toml", "csm_runtime_api"],
+        "acceptance_ids": ["AC-1", "AC-2"]
+      },
+      {
+        "lane": "wp07a-closeout-truth",
+        "proof_role": "Prove the retained #5409 repair packet and canonical register disposition match reviewed implementation truth",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "local-docs",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-5"]
+      }
+    ],
+    "failure_policy": "Fail closed on static-only topology, missing observed health, non-behavioral soak proof, unbounded overlap, weakened revocation, or scope expansion."
+  }
+}

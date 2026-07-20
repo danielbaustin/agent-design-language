@@ -1,0 +1,14 @@
+{
+  "issue": 5455,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "0cbadf08eeeb99641831933dd5f7964679a5774d3afcaae2c58358d139d3a363",
+  "claim_id": "claim-5455-closeout-recovery",
+  "actor": "codex-closeout-audit",
+  "reason": "Recovered exact-revision review is current and has no actionable findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

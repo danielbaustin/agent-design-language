@@ -1,0 +1,641 @@
+{
+  "title_v0917": {
+    "by_wp": {
+      "Sprint-4": {
+        "CLOSED": 1,
+        "OPEN": 0
+      },
+      "WP-01": {
+        "CLOSED": 4,
+        "OPEN": 0
+      },
+      "WP-02": {
+        "CLOSED": 7,
+        "OPEN": 0
+      },
+      "WP-03": {
+        "CLOSED": 9,
+        "OPEN": 0
+      },
+      "WP-04": {
+        "CLOSED": 10,
+        "OPEN": 0
+      },
+      "WP-05": {
+        "CLOSED": 11,
+        "OPEN": 0
+      },
+      "WP-06": {
+        "CLOSED": 24,
+        "OPEN": 0
+      },
+      "WP-07": {
+        "CLOSED": 73,
+        "OPEN": 1
+      },
+      "WP-07A": {
+        "CLOSED": 3,
+        "OPEN": 0
+      },
+      "WP-08": {
+        "CLOSED": 11,
+        "OPEN": 0
+      },
+      "WP-09": {
+        "CLOSED": 5,
+        "OPEN": 0
+      },
+      "WP-10": {
+        "CLOSED": 5,
+        "OPEN": 0
+      },
+      "WP-10A": {
+        "CLOSED": 0,
+        "OPEN": 1
+      },
+      "WP-11": {
+        "CLOSED": 8,
+        "OPEN": 0
+      },
+      "WP-12": {
+        "CLOSED": 11,
+        "OPEN": 0
+      },
+      "WP-13": {
+        "CLOSED": 8,
+        "OPEN": 0
+      },
+      "WP-14": {
+        "CLOSED": 3,
+        "OPEN": 8
+      },
+      "WP-14A": {
+        "CLOSED": 2,
+        "OPEN": 1
+      },
+      "WP-15": {
+        "CLOSED": 1,
+        "OPEN": 0
+      },
+      "WP-16": {
+        "CLOSED": 4,
+        "OPEN": 0
+      },
+      "WP-17": {
+        "CLOSED": 2,
+        "OPEN": 1
+      },
+      "WP-18": {
+        "CLOSED": 1,
+        "OPEN": 1
+      },
+      "WP-19": {
+        "CLOSED": 1,
+        "OPEN": 1
+      },
+      "WP-20": {
+        "CLOSED": 0,
+        "OPEN": 1
+      },
+      "WP-21": {
+        "CLOSED": 1,
+        "OPEN": 0
+      },
+      "WP-21A": {
+        "CLOSED": 0,
+        "OPEN": 1
+      },
+      "WP-22": {
+        "CLOSED": 1,
+        "OPEN": 0
+      },
+      "WP-23": {
+        "CLOSED": 0,
+        "OPEN": 1
+      },
+      "unmapped": {
+        "CLOSED": 263,
+        "OPEN": 2
+      }
+    },
+    "count": 488,
+    "open_count": 19,
+    "open_issues": [
+      {
+        "closedAt": null,
+        "labels": [
+          "area:quality",
+          "area:review",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.7",
+          "wp:WP-18"
+        ],
+        "number": 4645,
+        "state": "OPEN",
+        "title": "[v0.91.7][WP-18][review] Internal review",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4645",
+        "wp": "WP-18"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:quality",
+          "area:review",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.7",
+          "wp:WP-19"
+        ],
+        "number": 4646,
+        "state": "OPEN",
+        "title": "[v0.91.7][WP-19][review] External / 3rd-party review",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4646",
+        "wp": "WP-19"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:quality",
+          "area:review",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.7",
+          "wp:WP-20"
+        ],
+        "number": 4647,
+        "state": "OPEN",
+        "title": "[v0.91.7][WP-20][review] Remediate review findings",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4647",
+        "wp": "WP-20"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:release",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.7",
+          "wp:WP-23"
+        ],
+        "number": 4650,
+        "state": "OPEN",
+        "title": "[v0.91.7][WP-23][release] Release ceremony",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4650",
+        "wp": "WP-23"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "bug",
+          "tools",
+          "version:v0.91.8",
+          "wp:WP-14"
+        ],
+        "number": 4741,
+        "state": "OPEN",
+        "title": "[v0.91.8][WP-14][unity][tooling] Make Unity editor liveness and batch proof reliable for deployed observatory",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4741",
+        "wp": "WP-14"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:planning",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.8",
+          "wp:WP-14"
+        ],
+        "number": 4758,
+        "state": "OPEN",
+        "title": "[v0.91.8][WP-14][launch] Implement launch readiness package after platform deployment",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4758",
+        "wp": "WP-14"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:planning",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.8",
+          "wp:WP-14"
+        ],
+        "number": 4759,
+        "state": "OPEN",
+        "title": "[v0.91.8][WP-14][activation] Implement v0.92 activation map from accepted deployed products",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4759",
+        "wp": "WP-14"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:planning",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.8",
+          "wp:WP-14"
+        ],
+        "number": 4760,
+        "state": "OPEN",
+        "title": "[v0.91.8][WP-14][memory-palace] Implement Memory Palace context handoff",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4760",
+        "wp": "WP-14"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:planning",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.8",
+          "wp:WP-14"
+        ],
+        "number": 4761,
+        "state": "OPEN",
+        "title": "[v0.91.8][WP-14][capability-envelope] Implement v0.92 capability envelope",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4761",
+        "wp": "WP-14"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:planning",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.8",
+          "wp:WP-14"
+        ],
+        "number": 4762,
+        "state": "OPEN",
+        "title": "[v0.91.8][WP-14][birth-witnesses] Implement birth witnesses and receipt package",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4762",
+        "wp": "WP-14"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:planning",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.8",
+          "wp:WP-14"
+        ],
+        "number": 4763,
+        "state": "OPEN",
+        "title": "[v0.91.8][WP-14][birthday-docs] Implement first-birthday docs and external launch surfaces",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4763",
+        "wp": "WP-14"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:architecture",
+          "area:docs",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.8",
+          "wp:WP-14"
+        ],
+        "number": 5007,
+        "state": "OPEN",
+        "title": "[v0.91.8][WP-14][ADR] Accept Memory Palace architecture after complete platform proof",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/5007",
+        "wp": "WP-14"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:planning",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.8",
+          "wp:WP-14A"
+        ],
+        "number": 5384,
+        "state": "OPEN",
+        "title": "[v0.91.8][WP-14A] Integrated platform acceptance deployment and v0.92 birthday handoff",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/5384",
+        "wp": "WP-14A"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:review",
+          "track:roadmap",
+          "type:bug",
+          "version:v0.91.7"
+        ],
+        "number": 5408,
+        "state": "OPEN",
+        "title": "[v0.91.7][review-fix][WP-07] Resolve #5045 runtime hardening findings",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/5408",
+        "wp": "WP-07"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:planning",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.7",
+          "wp:WP-21A"
+        ],
+        "number": 5489,
+        "state": "OPEN",
+        "title": "[v0.91.7][WP-21A][planning] Prepare next milestone docs closeout plan",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/5489",
+        "wp": "WP-21A"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:tools",
+          "track:roadmap",
+          "type:feature",
+          "version:v0.91.8",
+          "wp:WP-10A"
+        ],
+        "number": 5500,
+        "state": "OPEN",
+        "title": "[v0.91.8][WP-10A][multi-agent][dashboard] Restore live workcell operator view",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/5500",
+        "wp": "WP-10A"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:review",
+          "track:roadmap",
+          "type:bug",
+          "version:v0.91.8"
+        ],
+        "number": 5527,
+        "state": "OPEN",
+        "title": "[v0.91.8][csdlc-v2][closeout] Normalize SOR artifact refs during terminal reconciliation",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/5527",
+        "wp": null
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:review",
+          "track:roadmap",
+          "type:bug",
+          "version:v0.91.8"
+        ],
+        "number": 5540,
+        "state": "OPEN",
+        "title": "[v0.91.8][csdlc-v2][closeout] Recover terminal lifecycle truth for #5455",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/5540",
+        "wp": null
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:review",
+          "track:roadmap",
+          "type:bug",
+          "version:v0.91.7"
+        ],
+        "number": 5542,
+        "state": "OPEN",
+        "title": "[v0.91.7][WP-17][docs] Repair post-merge closeout and v0.91.8 bridge truth",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/5542",
+        "wp": "WP-17"
+      }
+    ]
+  },
+  "version_label": {
+    "by_wp": {
+      "WP-01": {
+        "CLOSED": 2,
+        "OPEN": 0
+      },
+      "WP-02": {
+        "CLOSED": 7,
+        "OPEN": 0
+      },
+      "WP-03": {
+        "CLOSED": 8,
+        "OPEN": 0
+      },
+      "WP-04": {
+        "CLOSED": 10,
+        "OPEN": 0
+      },
+      "WP-05": {
+        "CLOSED": 11,
+        "OPEN": 0
+      },
+      "WP-06": {
+        "CLOSED": 20,
+        "OPEN": 0
+      },
+      "WP-07": {
+        "CLOSED": 71,
+        "OPEN": 1
+      },
+      "WP-07A": {
+        "CLOSED": 3,
+        "OPEN": 0
+      },
+      "WP-08": {
+        "CLOSED": 11,
+        "OPEN": 0
+      },
+      "WP-09": {
+        "CLOSED": 5,
+        "OPEN": 0
+      },
+      "WP-10": {
+        "CLOSED": 3,
+        "OPEN": 0
+      },
+      "WP-11": {
+        "CLOSED": 8,
+        "OPEN": 0
+      },
+      "WP-12": {
+        "CLOSED": 10,
+        "OPEN": 0
+      },
+      "WP-13": {
+        "CLOSED": 8,
+        "OPEN": 0
+      },
+      "WP-14": {
+        "CLOSED": 1,
+        "OPEN": 0
+      },
+      "WP-15": {
+        "CLOSED": 1,
+        "OPEN": 0
+      },
+      "WP-16": {
+        "CLOSED": 1,
+        "OPEN": 0
+      },
+      "WP-17": {
+        "CLOSED": 1,
+        "OPEN": 1
+      },
+      "WP-18": {
+        "CLOSED": 0,
+        "OPEN": 1
+      },
+      "WP-19": {
+        "CLOSED": 0,
+        "OPEN": 1
+      },
+      "WP-20": {
+        "CLOSED": 0,
+        "OPEN": 1
+      },
+      "WP-21": {
+        "CLOSED": 1,
+        "OPEN": 0
+      },
+      "WP-21A": {
+        "CLOSED": 0,
+        "OPEN": 1
+      },
+      "WP-22": {
+        "CLOSED": 1,
+        "OPEN": 0
+      },
+      "WP-23": {
+        "CLOSED": 0,
+        "OPEN": 1
+      },
+      "unmapped": {
+        "CLOSED": 235,
+        "OPEN": 0
+      }
+    },
+    "count": 425,
+    "open_count": 7,
+    "open_issues": [
+      {
+        "closedAt": null,
+        "labels": [
+          "area:quality",
+          "area:review",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.7",
+          "wp:WP-18"
+        ],
+        "number": 4645,
+        "state": "OPEN",
+        "title": "[v0.91.7][WP-18][review] Internal review",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4645",
+        "wp": "WP-18"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:quality",
+          "area:review",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.7",
+          "wp:WP-19"
+        ],
+        "number": 4646,
+        "state": "OPEN",
+        "title": "[v0.91.7][WP-19][review] External / 3rd-party review",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4646",
+        "wp": "WP-19"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:quality",
+          "area:review",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.7",
+          "wp:WP-20"
+        ],
+        "number": 4647,
+        "state": "OPEN",
+        "title": "[v0.91.7][WP-20][review] Remediate review findings",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4647",
+        "wp": "WP-20"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:release",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.7",
+          "wp:WP-23"
+        ],
+        "number": 4650,
+        "state": "OPEN",
+        "title": "[v0.91.7][WP-23][release] Release ceremony",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/4650",
+        "wp": "WP-23"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:review",
+          "track:roadmap",
+          "type:bug",
+          "version:v0.91.7"
+        ],
+        "number": 5408,
+        "state": "OPEN",
+        "title": "[v0.91.7][review-fix][WP-07] Resolve #5045 runtime hardening findings",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/5408",
+        "wp": "WP-07"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:planning",
+          "track:roadmap",
+          "type:task",
+          "version:v0.91.7",
+          "wp:WP-21A"
+        ],
+        "number": 5489,
+        "state": "OPEN",
+        "title": "[v0.91.7][WP-21A][planning] Prepare next milestone docs closeout plan",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/5489",
+        "wp": "WP-21A"
+      },
+      {
+        "closedAt": null,
+        "labels": [
+          "area:docs",
+          "area:review",
+          "track:roadmap",
+          "type:bug",
+          "version:v0.91.7"
+        ],
+        "number": 5542,
+        "state": "OPEN",
+        "title": "[v0.91.7][WP-17][docs] Repair post-merge closeout and v0.91.8 bridge truth",
+        "url": "https://github.com/danielbaustin/agent-design-language/issues/5542",
+        "wp": "WP-17"
+      }
+    ]
+  }
+}

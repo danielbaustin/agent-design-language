@@ -1,0 +1,13 @@
+{
+  "issue": 5489,
+  "expected_generation": 9,
+  "expected_digest": "d8ee022f5db18078bb598386f8f13301f1b2d9aa8058372b2fbc15a0fcc32b56",
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "now_unix_seconds": 1784425160,
+  "reason": "Operator required WP-21A to prepare a dedicated v0.91.8 third-party review handoff document and link it from canonical v0.91.8 review/planning entrypoints.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/review/README.md",
+    "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md"
+  ]
+}

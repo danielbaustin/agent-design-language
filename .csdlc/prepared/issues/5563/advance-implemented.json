@@ -1,0 +1,11 @@
+{
+  "issue": 5563,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "63b7795c52deb4b09b678c219219d0087852879df6e7b86f0f13a6945a55364f",
+  "claim_id": "claim-5563-initialized-design-recovery",
+  "actor": "codex-closeout-audit",
+  "reason": "Bounded implementation, completed plan, focused regression, and strict Clippy evidence are recorded.",
+  "operation": {"operation":"advance_phase","phase":"implemented"},
+  "fail_after_backup": false
+}

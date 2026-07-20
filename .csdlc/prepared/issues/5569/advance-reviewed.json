@@ -1,0 +1,1 @@
+{"issue":5569,"card":"sor","expected_generation":5,"expected_digest":"281fc09d0fd9446e80bb7c525787ee4df4fdd17b127f165a2ab567197a2828eb","claim_id":"claim-5569-repair-5547-terminal-plan","actor":"codex:closeout-audit","reason":"Exact terminal-repair review passed with no findings or residual risks.","operation":{"operation":"advance_phase","phase":"reviewed"}}

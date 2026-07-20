@@ -1,0 +1,14 @@
+{
+  "issue": 5516,
+  "card": "spp",
+  "expected_generation": 3,
+  "expected_digest": "2604a944b9408b2d9e28eaf3507b48f8447cb9e6972638b1c9949a481efcdb42",
+  "claim_id": "claim-5516-5494-terminal-design-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Align the operative plan with completed typed repair and validation evidence before review.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S2",
+    "status": "completed"
+  }
+}

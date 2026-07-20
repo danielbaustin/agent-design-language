@@ -1,0 +1,65 @@
+{
+  "schema": "csdlc.readiness_request.v1",
+  "issue": 5464,
+  "expected_generation": 27,
+  "expected_digest": "9cc1f0f7eeff4904d5d75751eb3010f229c58b6b28f3083f5a6e9016bc00e9b0",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "pull_request": 5490,
+  "head_sha": "cd1a7c902d5a9475786213df4a8499ef411acc80",
+  "required_checks": [
+    "adl-ci",
+    "adl-coverage",
+    "adl-tooling-contracts",
+    "adl-path-policy",
+    "adl-demo-proof"
+  ],
+  "require_review": false,
+  "checks": [
+    {
+      "name": "adl-ci",
+      "requirement": "required",
+      "conclusion": "success",
+      "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059371151"
+    },
+    {
+      "name": "adl-coverage",
+      "requirement": "required",
+      "conclusion": "success",
+      "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059333430"
+    },
+    {
+      "name": "adl-tooling-contracts",
+      "requirement": "required",
+      "conclusion": "success",
+      "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059321217"
+    },
+    {
+      "name": "adl-path-policy",
+      "requirement": "required",
+      "conclusion": "success",
+      "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059309751"
+    },
+    {
+      "name": "adl-demo-proof",
+      "requirement": "required",
+      "conclusion": "success",
+      "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059321207"
+    },
+    {
+      "name": "adl-coverage-hosted",
+      "requirement": "optional",
+      "conclusion": "success",
+      "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059321223"
+    },
+    {
+      "name": "adl-spot-ci-and-coverage",
+      "requirement": "optional",
+      "conclusion": "skipped",
+      "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059321462"
+    }
+  ],
+  "review_state": "not_required",
+  "conflict_state": "clean",
+  "post_publication_findings": []
+}

@@ -13,3 +13,11 @@
 {"sequence":13,"generation":9,"actor":"review_5427","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":14,"generation":10,"actor":"codex","reason":"Exact post-publication lifecycle revision re-reviewed with no actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":15,"generation":11,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":16,"generation":12,"actor":"codex","reason":"Lifecycle evidence commit changed the exact reviewed revision; require typed re-review before republishing.","operation":"recover_review"}
+{"sequence":17,"generation":12,"actor":"codex","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":18,"generation":13,"actor":"review_5427","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
+{"sequence":19,"generation":14,"actor":"codex","reason":"Exact current publication revision re-reviewed with no actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":20,"generation":15,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":21,"generation":16,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":22,"generation":17,"actor":"codex","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":23,"generation":18,"actor":"codex-closeout-audit","reason":"Materialize retained terminal receipt during exhaustive v0.91.7 closed-issue audit.","operation":"reconcile_terminal"}

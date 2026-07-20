@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5409,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Complete and prove the #5121 runtime rearchitecture",
+    "slug": "v0-91-7-review-fix-wp07a-complete-prove-5121-runtime-rearchitecture",
+    "version": "v0.91.7",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Complete and prove the assembled runtime topology, component readiness, and proactive runtime API credential renewal.",
+      "required_outcome": "Production assembly agrees with the reported supervised topology, readiness observes required components, credentials renew before expiry with overlap, and an assembled-runtime soak is retained.",
+      "declared_scope": [
+        "#5121 runtime rearchitecture boundary",
+        "Assembled production topology and complete readiness health",
+        "Proactive runtime API credential renewal and soak proof"
+      ],
+      "authority_boundary": [
+        "#5403 review packet is the source review boundary",
+        "#5121 remains topology/setup evidence, not a defect claim",
+        "Do not claim assembled-runtime proof without executing the production assembly path"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

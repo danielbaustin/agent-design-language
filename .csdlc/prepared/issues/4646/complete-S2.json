@@ -1,0 +1,10 @@
+{
+  "issue": 4646,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "6418cc6501ff3bee3ea473090d2284e1d1e8eaaabf41d02b5f084900c4361760",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "Prepared the truthful external-review handoff and not-run finding register on tracked paths.",
+  "operation": {"operation":"update_plan_step","step_id":"S2","status":"completed"}
+}

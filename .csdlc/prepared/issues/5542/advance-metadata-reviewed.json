@@ -1,0 +1,13 @@
+{
+  "issue": 5542,
+  "card": "srp",
+  "expected_generation": 10,
+  "expected_digest": "f5dcd5e6ed9aa859928cc872052882fd005069de24f98e3cf0a0b05dd800fc50",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Advance after the bounded current-head metadata review found no actionable findings and retained the substantive f873efb34 review as the implementation authority.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

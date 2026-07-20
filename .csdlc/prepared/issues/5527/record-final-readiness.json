@@ -1,0 +1,22 @@
+{
+  "schema": "csdlc.readiness_request.v1",
+  "issue": 5527,
+  "expected_generation": 24,
+  "expected_digest": "dce227077a4ab2dc3c36b1bd07fc224e2c635b5e6234d6b1ea4703c7e281b49f",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "pull_request": 5550,
+  "head_sha": "c696e2787103a3d0c919661a0fd13c92c9acb26b",
+  "required_checks": ["adl-ci", "adl-coverage", "adl-tooling-contracts", "adl-path-policy", "adl-demo-proof"],
+  "require_review": false,
+  "checks": [
+    {"name":"adl-ci","requirement":"required","conclusion":"success","details_url":"https://github.com/danielbaustin/agent-design-language/actions/runs/29666883850/job/88138804889"},
+    {"name":"adl-coverage","requirement":"required","conclusion":"success","details_url":"https://github.com/danielbaustin/agent-design-language/actions/runs/29666883850/job/88138765240"},
+    {"name":"adl-tooling-contracts","requirement":"required","conclusion":"success","details_url":"https://github.com/danielbaustin/agent-design-language/actions/runs/29666883850/job/88138744700"},
+    {"name":"adl-path-policy","requirement":"required","conclusion":"success","details_url":"https://github.com/danielbaustin/agent-design-language/actions/runs/29666883850/job/88138730037"},
+    {"name":"adl-demo-proof","requirement":"required","conclusion":"success","details_url":"https://github.com/danielbaustin/agent-design-language/actions/runs/29666883850/job/88138744694"}
+  ],
+  "review_state": "not_required",
+  "conflict_state": "clean",
+  "post_publication_findings": []
+}

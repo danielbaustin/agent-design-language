@@ -291,7 +291,7 @@ fn render_provider_yaml(template: &ProviderSetupTemplate, selected_model: &str) 
 
 fn render_env_example(template: &ProviderSetupTemplate) -> String {
     if template.family == "bedrock" {
-        return "ADL_AWS_PROFILE=agent-logic-admin\nADL_AWS_REGION=us-west-2\n".to_string();
+        return "# Copy to a local env file and fill in the approved account pin.\n# Do not commit the filled-in file.\nADL_AWS_PROFILE=agent-logic-admin\nADL_AWS_REGION=us-west-2\nADL_AWS_BEDROCK_ACCOUNT_SHA256=replace-me-with-approved-account-sha256\n".to_string();
     }
     format!(
         "# Copy to a local env file and fill in your real secret.\n# Do not commit the filled-in file.\n{env_var}=replace-me\n",
@@ -301,24 +301,33 @@ fn render_env_example(template: &ProviderSetupTemplate) -> String {
 
 fn render_readme(template: &ProviderSetupTemplate, selected_model: &str) -> String {
     let transport_note = if template.family == "bedrock" {
-        "- This family uses ADL's Rust-native AWS Bedrock adapter through the AWS SDK.\n- ADL AWS work must use the Agent Logic business AWS profile `agent-logic-admin`."
+        "- This family uses ADL's Rust-native AWS Bedrock adapter through the AWS SDK.\n- ADL AWS work must use the Agent Logic business AWS profile `agent-logic-admin`.\n- Bedrock invocation fails closed until `ADL_AWS_BEDROCK_ACCOUNT_SHA256` or `config.expected_account_sha256` contains the operator-approved AWS account hash."
     } else if template.kind.is_some() {
         "- This family uses ADL's Rust-native provider adapter for its vendor API.\n- Leave `config.endpoint` unset for the default vendor endpoint unless you are testing against a trusted compatible endpoint."
     } else {
         "- ADL's bounded HTTP provider expects a completion-style HTTP contract: request body with `{\"prompt\": ...}`, response body with `{\"output\": ...}`.\n- Raw vendor-native endpoints may require a compatibility gateway or adapter if they do not expose that contract directly."
     };
     let endpoint_step = if template.family == "bedrock" {
-        "2. Confirm `ADL_AWS_PROFILE=agent-logic-admin` and set `ADL_AWS_REGION` to the Bedrock region you want to use."
+        "2. Confirm `ADL_AWS_PROFILE=agent-logic-admin`, set `ADL_AWS_REGION` to the Bedrock region you want to use, and replace `ADL_AWS_BEDROCK_ACCOUNT_SHA256` with the operator-approved AWS account SHA-256 before invocation."
     } else if template.kind.is_some() {
         "2. Leave `config.endpoint` unset unless you are testing against a trusted compatible endpoint."
     } else {
         "2. Set `config.endpoint` in `provider.adl.yaml` to a real ADL-compatible completion endpoint."
     };
+    let env_step = if template.family == "bedrock" {
+        "1. Copy `env.example` to a local untracked env file and fill in the approved account pin."
+            .to_string()
+    } else {
+        format!(
+            "1. Copy `env.example` to a local untracked env file and put your real credential in `{}`.",
+            template.env_var
+        )
+    };
     format!(
-        "# Provider setup: {family}\n\nThis bundle gives you a local starting point for configuring the `{family}` provider family.\n\nFiles:\n- `provider.adl.yaml`: mergeable ADL provider/agent snippet\n- `env.example`: local env template for your credential\n\nSelected default model:\n- `{selected_model}`\n\nSteps:\n1. Copy `env.example` to a local untracked env file and put your real credential in `{env_var}`.\n{endpoint_step}\n3. Merge the provider/agent snippet into your workflow file.\n4. Change `provider_model_id` to any trusted model ID supported by this provider family when you want a different task/model route.\n5. Source your local env file before running ADL.\n\nImportant:\n{transport_note}\n- No secrets are stored by this command; the generated env file is only a local template.\n\nNotes:\n{notes}\n",
+        "# Provider setup: {family}\n\nThis bundle gives you a local starting point for configuring the `{family}` provider family.\n\nFiles:\n- `provider.adl.yaml`: mergeable ADL provider/agent snippet\n- `env.example`: local env template for your credential\n\nSelected default model:\n- `{selected_model}`\n\nSteps:\n{env_step}\n{endpoint_step}\n3. Merge the provider/agent snippet into your workflow file.\n4. Change `provider_model_id` to any trusted model ID supported by this provider family when you want a different task/model route.\n5. Source your local env file before running ADL.\n\nImportant:\n{transport_note}\n- No secrets are stored by this command; the generated env file is only a local template.\n\nNotes:\n{notes}\n",
         family = template.family,
         selected_model = selected_model,
-        env_var = template.env_var,
+        env_step = env_step,
         endpoint_step = endpoint_step,
         transport_note = transport_note,
         notes = template.notes
@@ -464,6 +473,30 @@ mod tests {
         assert!(provider_text.contains("env: ANTHROPIC_API_KEY"));
         assert!(env_text.contains("ANTHROPIC_API_KEY=replace-me"));
         assert!(readme.contains("first-class Claude family surface"));
+    }
+
+    #[test]
+    fn provider_setup_writes_bedrock_account_pin_material() {
+        let repo = temp_repo("bedrock");
+        real_provider_in_repo(&["setup".to_string(), "bedrock".to_string()], &repo)
+            .expect("bedrock setup should succeed");
+
+        let out = repo.join(".adl/provider-setup/bedrock");
+        let provider_text =
+            fs::read_to_string(out.join("provider.adl.yaml")).expect("provider yaml");
+        let env_text = fs::read_to_string(out.join("env.example")).expect("env example");
+        let readme = fs::read_to_string(out.join("README.md")).expect("readme");
+
+        assert!(provider_text.contains("type: \"bedrock\""));
+        assert!(provider_text.contains("profile: \"agent-logic-admin\""));
+        assert!(provider_text.contains("region: \"us-west-2\""));
+        assert!(env_text.contains("ADL_AWS_PROFILE=agent-logic-admin"));
+        assert!(env_text.contains("ADL_AWS_REGION=us-west-2"));
+        assert!(env_text
+            .contains("ADL_AWS_BEDROCK_ACCOUNT_SHA256=replace-me-with-approved-account-sha256"));
+        assert!(readme.contains("fails closed"));
+        assert!(readme.contains("ADL_AWS_BEDROCK_ACCOUNT_SHA256"));
+        assert!(readme.contains("config.expected_account_sha256"));
     }
 
     #[test]

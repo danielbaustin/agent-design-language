@@ -1,0 +1,10 @@
+{
+  "issue": 4645,
+  "card": "sor",
+  "expected_generation": 23,
+  "expected_digest": "2a7cb9130641ce2b4cae3c5006daf61a15728fbb2c476cfcae37c3ab6033a452",
+  "claim_id": "claim-4645-v0917-internal-review-prep",
+  "actor": "codex-closeout-audit",
+  "reason": "Exact rebased-head review passed with no findings; the pinned remediation range is isolated and green.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"}
+}

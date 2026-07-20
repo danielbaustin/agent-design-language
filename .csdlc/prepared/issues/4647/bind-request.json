@@ -1,0 +1,22 @@
+{
+  "issue": 4647,
+  "base_branch": "main",
+  "branch": "codex/4647-v0917-review-remediation-preflight",
+  "worktree": ".worktrees/adl-wp-4647",
+  "claim": {
+    "id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/4647-v0917-review-remediation-preflight",
+    "worktree": ".worktrees/adl-wp-4647",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_WP20_REMEDIATION_PREFLIGHT_4647.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_4647",
+      ".csdlc/issues/4647"
+    ],
+    "purpose": "Prepare and later execute WP-20 without claiming completion from setup"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "issue": 5455,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "e81a8cfc260fb39058aa816c67a228d52b57388aec2c0428ffec8bcf43f44caf",
+  "claim_id": "claim-5455-closeout-recovery",
+  "actor": "codex-closeout-audit",
+  "reason": "Record focused acceptance proof for the review remediation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml",
+        "--test",
+        "gate10a",
+        "--",
+        "--test-threads=1"
+      ],
+      "purpose": "Prove trusted clean-source build installation, fail-closed stale/content provenance, atomic installation, and implemented-phase editor mutation.",
+      "outcome": "passed",
+      "evidence_ref": "Head e496f0af5: Gate 10A 9 passed, 0 failed; strict all-target all-feature Clippy also passed. Broad owner lane is independently blocked by stale v1 guidance tracked in #5558."
+    }
+  },
+  "fail_after_backup": false
+}

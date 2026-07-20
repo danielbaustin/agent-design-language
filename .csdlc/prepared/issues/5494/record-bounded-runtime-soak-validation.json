@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 44,
+  "expected_digest": "fe21cb4d850999b58fc49a3dbfde449ef1efeb6e9d61324dc14021be4bfa08e5",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The complete independent Runtime v3 crate and bounded behavioral soak pass on FastWork.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl-runtime/Cargo.toml"],
+      "purpose": "Prove Runtime v3 behavior, crate independence, and the 100-cycle real typed-channel supervision soak",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 125 Runtime v3 unit tests plus 1 independence test passed; soak completed 100 cycles and 101 supervised attempts in 1.20 seconds"
+    }
+  }
+}

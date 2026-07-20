@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5542,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-17][docs] Repair post-merge closeout and v0.91.8 bridge truth",
+    "slug": "v0-91-7-wp17-post-merge-closeout-truth",
+    "version": "v0.91.7",
+    "generation": 22
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "wp17-post-merge-docs",
+          "proof_role": "Prove closeout truth, bridge precedence, date semantics, links, structured docs, and diff hygiene",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 6000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/4644/validate_docs_alignment.rb",
+            "."
+          ],
+          "parallel_group": "docs",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on stale live truth, active claim collision, bridge bypass, ambiguous date semantics, or validation failure.",
+      "design_ref": ".csdlc/issues/5542/retained/design.md",
+      "design_digest": "fab781fa23c18fe3049476dfadc24785057e8e01555d71a1ff4c51d49b9deb0e",
+      "diagram_ref": ".csdlc/issues/5542/retained/diagram.mmd",
+      "diagram_digest": "8288260a3a03c8047f3a6278a2c91ee884da009b7e4610925218bbbd329564f4"
+    }
+  }
+}

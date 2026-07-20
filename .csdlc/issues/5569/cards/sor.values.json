@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5569,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Repair #5547 terminal plan-step truth",
+    "slug": "repair-5547-terminal-plan",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Used separately claimed #5569 authority to align all four #5547 SPP steps with already-retained execution, review, routing, validation, publication, and terminal evidence.",
+      "actual_changes": [
+        "Completed AC-1 contract inspection step through typed receipt/record CAS.",
+        "Completed AC-2 scoped identity implementation and residual routing step through typed receipt/record CAS.",
+        "Completed AC-3 ownership-first split-plan step through typed receipt/record CAS.",
+        "Completed AC-4 deferred-scope and validation-truth step through typed receipt/record CAS."
+      ],
+      "artifacts": [
+        ".csdlc/issues/5547",
+        "csdlc-v2/closeout/5547.json",
+        "repair-ac1.json",
+        "repair-ac2.json",
+        "repair-ac3.json",
+        "repair-ac4.json"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "csdlc-doctor",
+            "--repo",
+            ".",
+            "--issue",
+            "5547"
+          ],
+          "purpose": "Prove repaired terminal record validity and retained receipt parity.",
+          "outcome": "passed",
+          "evidence_ref": "Doctor pass at #5547 generation 16 with zero findings; local index equals retained receipt record; all four SPP steps completed; claim remains null and phase closed_out; git diff --check passed."
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

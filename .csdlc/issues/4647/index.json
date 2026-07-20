@@ -1,0 +1,691 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4647,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "134b044ac1ac0621ec1a8075682990e61a9b8227919ed1a0657cc40a4bbce1a9",
+  "phase": "published",
+  "generation": 44,
+  "digest": "b0500ba975ccb0f1e5a436414d17e6ac065c70c7a6b227880781c172fdb60153",
+  "claim": {
+    "id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 44,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/4647-v0917-review-remediation-preflight",
+    "worktree": ".worktrees/adl-wp-4647",
+    "protected_paths": [
+      ".csdlc/issues/4647",
+      ".csdlc/issues/5467",
+      ".csdlc/issues/5542",
+      ".csdlc/locks/4647.lock",
+      ".csdlc/prepared/issues/4647",
+      ".csdlc/publication/4647.intent.json",
+      "adl/Cargo.lock",
+      "adl/Cargo.toml",
+      "adl/src/cli/provider_cmd.rs",
+      "adl/src/csm_api_gateway_bridge.rs",
+      "adl/src/csm_networking.rs",
+      "adl/src/csm_runtime_api.rs",
+      "adl/src/provider/http_family.rs",
+      "adl/src/provider/http_family/config.rs",
+      "adl/src/provider/http_family/tests.rs",
+      "adl/src/provider/local.rs",
+      "adl/tests/cli_smoke/agent.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_authoritative_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_run_authoritative_coverage_lane.sh",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/review/ADL_v0.91.7_THIRD_PARTY_REVIEW_HANDOFF.md",
+      "docs/milestones/v0.91.7/review/V0917_EXTERNAL_REVIEW_VERIFICATION_2026-07-19.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/milestones/v0.91.7/review/V0917_WP20_REMEDIATION_PREFLIGHT_4647.md",
+      "docs/milestones/v0.91.7/review/external_review_4646/FINDINGS_REGISTER.md",
+      "docs/milestones/v0.91.7/review/external_review_4646/PUBLICATION_SAFE_MANIFEST.md",
+      "docs/milestones/v0.91.7/review/wp20_remediation_4647",
+      "docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/setup/5383/DIAGRAM.mmd"
+    ],
+    "purpose": "Prepare and later execute WP-20 without claiming completion from setup"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:019f7e46-a24a-7f62-b24e-c3b5d9202d63",
+    "assigned_by": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "revision": "git-blake3:aea910bddf047730f32da0bc31c556ebe86e5097:54a47d362a2404eeb9433a2264810b21bc438d21674e4843121fb8341c4c2948",
+    "scope": [
+      ".csdlc/issues/4647",
+      ".csdlc/prepared/issues/4647",
+      "adl/tools/run_authoritative_coverage_lane.sh",
+      "adl/tools/test_run_authoritative_coverage_lane.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f7e46-a24a-7f62-b24e-c3b5d9202d63",
+    "scope": [
+      ".csdlc/issues/4647",
+      ".csdlc/prepared/issues/4647",
+      "adl/tools/run_authoritative_coverage_lane.sh",
+      "adl/tools/test_run_authoritative_coverage_lane.sh"
+    ],
+    "reviewed_revision": "git-blake3:aea910bddf047730f32da0bc31c556ebe86e5097:54a47d362a2404eeb9433a2264810b21bc438d21674e4843121fb8341c4c2948",
+    "findings": [],
+    "residual_risks": [
+      "Exact-head bounded review by subagent 019f7e46-a24a-7f62-b24e-c3b5d9202d63 confirmed HEAD aea910bdd is CLEAN/fixed-confirmed for the post-publication PR coverage report-renderer repair.",
+      "The reviewer verified report nonzero is tolerated only for pull_request events and only when the specific run-scoped summary path is non-empty.",
+      "Partition/test failures remain sticky through coverage_status, so the report tolerance does not mask failed tests.",
+      "Focused parent validation was adequate for this delta: test_run_authoritative_coverage_lane, test_ci_runtime_contracts, and bash -n passed.",
+      "No AWS operation was run."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 4647,
+    "pull_request": 5588,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5588",
+    "base": "main",
+    "head": "codex/4647-v0917-review-remediation-preflight",
+    "revision": "git-blake3:3569c461c45b4be3e615c230faf6c724b3829e48:d2641b084a286b9b7ce8d0385a295fbbea4ffe8a213b794b456008737edcf41f",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/4647/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4647/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-prep-only",
+      "revision": "a4b6e3f41688d189535c3af5cb3a025068fd14275ceaad57f22e31c18b4cf62d"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "9b585cb41b98942bfb4e2c2f9643ed33f2e5378eddb281b9e951e898259cc8e7",
+      "rendered_digest": "e81a7c41d08030b37ad10c9e154b7dea1ca8184f6add7879a256058298c2d572",
+      "ast_digest": "1c427f7fca63ffc6ca4edab193549256edd36068a51de7890b62b87f67d7998f"
+    },
+    "stp": {
+      "values_digest": "4758ac7072962b59c07307c29a8034d9f30d1b4edb03a17ec2a828bf58b2d686",
+      "rendered_digest": "f475ca8470b658722b37c9aa28f663a3754e32133e7e8016fc4708e511e4c156",
+      "ast_digest": "967e7ee9695e8cece048443536ee72fc9944c08ca5d6d6a2840b72d49fcb48e4"
+    },
+    "spp": {
+      "values_digest": "77b37d5e4bb89ee1e5f676c2643e676ebac776251e603af1a443f7d6e8295b81",
+      "rendered_digest": "30aa27ac3b5ad59ba2afee3ad847cd965199e4943ba89f7b85373ed46ba18f00",
+      "ast_digest": "dea26c43126166b4a11f07b4bdf395f72270ac155cbe4738dee2bcc2958f5d57"
+    },
+    "vpp": {
+      "values_digest": "2817184444af5e54d3601911986c5da0c57e1c07bccf70c280f26817d9be1298",
+      "rendered_digest": "d57feb0cf99f8c10f9cf157b81aa43be02c07448866d3eb37e0579de6482a3aa",
+      "ast_digest": "f0460021675411d0969f8a41ada2ab4d2756181b12a031c9121edc62adad14f6"
+    },
+    "srp": {
+      "values_digest": "805d414096b84ade848d879bae62916db47f1145c9ecf86c4e2982075fb11a85",
+      "rendered_digest": "cb2130ae205df7007c6966344a0bd57faee966f50b8c35ee666b42077ee8456f",
+      "ast_digest": "41be9bc2e150e9714525dc16fdd7cd60c3a21b62d030b60a9dfa0690d11094e4"
+    },
+    "sor": {
+      "values_digest": "044132612976f19b418ce75cf8e4274376ce499fd2b0d525c79cebcb7896dd6f",
+      "rendered_digest": "880ee70c55ae4556a8790691fd15770cdc6796117706a25a943f4efa4efbbab2",
+      "ast_digest": "e084d6d8addd8743a96bca0cf952a15c3fd272e1525ddd18c06f1c217affd88d"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-4647",
+      "reason": "All 22 retained WP-19 findings have local remediation or current-code disposition, focused validation has passed, and pre-PR subagent review findings are fixed."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-4647",
+      "reason": "Bounded pre-PR review was recorded; its two P3 findings were fixed and focused tests passed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:issue-4647",
+      "reason": "Typed doctor reports review_publication_dead_end after lifecycle metadata commits; recover to implemented for exact current-head review before publication."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Final exact-head clean-gate review evidence was recorded for c8a889da501760e0e9270933023bb72b63117916; advance to reviewed for typed publication."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Recover review after the post-publication coverage-impact mapping fix required by PR #5588 adl-coverage-hosted failure."
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Exact-head bounded review by subagent 019f7df0-b305-7403-84db-b4a82cf26d1d confirmed HEAD 3f250321dba93a94419b2880baa1905ede9204c5 is clean/fixed-confirmed after the coverage-impact mapping fix."
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 11,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Recover review after post-publication clippy repair required by PR #5588 adl-rust-fmt-clippy failure on run 29718818086."
+    },
+    {
+      "sequence": 12,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Exact-head bounded review by subagent 019f7e00-3942-7ce3-b123-a8d6bbff9803 confirmed HEAD 5d3b83a63eeca4dc14511fb75e166f24f325e4df is clean/fixed-confirmed after post-publication clippy repair and lifecycle validation recording."
+    },
+    {
+      "sequence": 13,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 14,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Recover review after post-publication CSM API Gateway response-finalization repair required by PR #5588 adl-coverage-hosted failure on run 29719551279."
+    },
+    {
+      "sequence": 15,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Exact-head bounded review by subagent 019f7e25-c21b-7ed1-a38d-ef3a838a6114 confirmed HEAD 04bf3d8401a2b8c156546bc64bde065a0342cb34 is clean/fixed-confirmed after the post-publication CSM API Gateway coverage-hosted repair."
+    },
+    {
+      "sequence": 16,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 17,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Recover review after post-publication PR #5588 adl-coverage-hosted failure on run 29721377401. The failure was an llvm-cov report renderer crash after all tests passed and run-scoped summaries were produced; the repair keeps PR report-render failures soft only when summary evidence exists."
+    },
+    {
+      "sequence": 18,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Exact-head bounded review by subagent 019f7e46-a24a-7f62-b24e-c3b5d9202d63 confirmed HEAD aea910bdd is clean/fixed-confirmed after the post-publication PR coverage report-renderer repair."
+    },
+    {
+      "sequence": 19,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex-closeout-audit",
+      "reason": "WP-20 authorizes typed repair of terminal plan truth found by the exhaustive v0.91.7 closeout review.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/issues/5467\",\".csdlc/issues/5542\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:issue-4647",
+      "reason": "Remediated all retained WP-19 findings and retained exact external-review verification artifact.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Retained the exact reviewer-authored WP-19 verification artifact, remediated both P1 findings, dispositioned all 22 WP-19 findings, fixed accepted P2/P3 code and documentation defects, and added a WP-20 remediation matrix plus pre-PR review record.\",\"changes\":[\"Isolated authoritative coverage LLVM profile output by run id and preserved sibling profile data during cleanup\",\"Pinned AWS Bedrock invocation to an operator-approved expected STS account hash before InvokeModel and removed false sts_verified status\",\"Hardened CSM runtime API audit-write failure handling, redaction, OPTIONS admission disclosure, GET projection, PID liveness, client-error sanitization, and serialization fallback status\",\"Fixed local Ollama streaming UTF-8 chunk handling and malformed-byte recovery\",\"Fixed provider IPv6 loopback endpoint classification and provider coverage-impact mapping\",\"Updated current v0.91.7/v0.91.8 planning and review surfaces for #5406, #5489, #5383, Fable lane terminology, publication path claims, and digest identity\",\"Recorded every WP19-01 through WP19-22 finding as fixed or fixed by current code in a WP-20 remediation matrix\"],\"artifacts\":[\"docs/milestones/v0.91.7/review/V0917_EXTERNAL_REVIEW_VERIFICATION_2026-07-19.md\",\"docs/milestones/v0.91.7/review/wp20_remediation_4647/WP19_FINDING_REMEDIATION_MATRIX_4647.md\",\"docs/milestones/v0.91.7/review/wp20_remediation_4647/PRE_PR_REVIEW_4647.md\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:issue-4647",
+      "reason": "All 22 retained WP-19 findings have local remediation or current-code disposition, focused validation has passed, and pre-PR subagent review findings are fixed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:issue-4647",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "subagent:019f7d35-6809-7b53-bc24-cc8ae7c55919",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:issue-4647",
+      "reason": "Bounded pre-PR review was recorded; its two P3 findings were fixed and focused tests passed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:issue-4647",
+      "reason": "Typed doctor reports review_publication_dead_end after lifecycle metadata commits; recover to implemented for exact current-head review before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 5,
+      "actor": "codex-019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "WP-20 remediates retained WP-19 findings across implementation, tests, coverage tooling, provider lock code, CSM API redaction, and current planning/review docs; protected paths must cover the actual branch scope before publication.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/prepared/issues/4647\",\"adl/Cargo.lock\",\"adl/Cargo.toml\",\"adl/src/csm_networking.rs\",\"adl/src/csm_runtime_api.rs\",\"adl/src/provider/http_family.rs\",\"adl/src/provider/http_family/tests.rs\",\"adl/tests/cli_smoke/agent.rs\",\"adl/tools/run_authoritative_coverage_lane.sh\",\"adl/tools/test_ci_runtime_contracts.sh\",\"adl/tools/test_run_authoritative_coverage_lane.sh\",\"docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md\",\"docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md\",\"docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 5,
+      "actor": "codex-019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "csdlc-bind materialized the issue-local lifecycle lock file for #4647; if retained in the branch, protected paths must cover the exact lock path.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/locks/4647.lock\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 5,
+      "actor": "codex-019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Exact path comparison found additional non-lifecycle WP-20 remediation paths changed on the branch; protected paths must include these exact changed paths before publication.",
+      "operation": "{\"add_protected_paths\":[\"adl/src/provider/http_family/config.rs\",\"adl/src/provider/local.rs\",\"adl/tools/check_coverage_impact.sh\",\"adl/tools/test_check_coverage_impact.sh\",\"docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml\",\"docs/milestones/v0.91.7/review/ADL_v0.91.7_THIRD_PARTY_REVIEW_HANDOFF.md\",\"docs/milestones/v0.91.7/review/V0917_EXTERNAL_REVIEW_VERIFICATION_2026-07-19.md\",\"docs/milestones/v0.91.7/review/external_review_4646/FINDINGS_REGISTER.md\",\"docs/milestones/v0.91.7/review/external_review_4646/PUBLICATION_SAFE_MANIFEST.md\",\"docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md\",\"docs/milestones/v0.91.8/setup/5383/DIAGRAM.mmd\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 5,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Bedrock setup remediation touches provider CLI setup template and tests.",
+      "operation": "{\"add_protected_paths\":[\"adl/src/cli/provider_cmd.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 6,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "WP-20 execution confirmed live issue/dependency truth before remediation and review validation.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 7,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "WP-20 produced protected-path remediation for CSM account redaction, Bedrock setup account pinning, and native provider lock-timeout proof.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 8,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "WP-20 ran focused CSM, provider setup, and provider invocation artifact regressions against the current residual patch.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 9,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "WP-20 updated SRP/SOR lifecycle truth through typed routes before the next exact-head review and publication gate.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 18,
+      "generation": 10,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record focused CSM account redaction regression proof for the current residual patch.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"-p\",\"adl\",\"runtime_api_redaction_is_key_aware_and_preserves_benign_ids\",\"--\",\"--nocapture\"],\"purpose\":\"Prove exact account keys redact string and numeric account identifiers while benign counters remain allowed.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 1 passed\"}}"
+    },
+    {
+      "sequence": 19,
+      "generation": 11,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record focused Bedrock provider setup account-pin regression proof for the current residual patch.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"-p\",\"adl\",\"provider_setup_writes_bedrock_account_pin_material\",\"--\",\"--nocapture\"],\"purpose\":\"Prove generated Bedrock setup includes profile, region, account hash environment pin, and clear fail-closed README guidance.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 1 passed\"}}"
+    },
+    {
+      "sequence": 20,
+      "generation": 12,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record focused native and Bedrock invocation artifact lock-timeout regression proof for the current residual patch.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"-p\",\"adl\",\"invocation_artifact_and_http_constructor_error_paths_are_exercised\",\"--\",\"--nocapture\"],\"purpose\":\"Prove held invocation artifact locks classify native and Bedrock post-success artifact failures as non-retryable partial-success-unknown.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 1 passed\"}}"
+    },
+    {
+      "sequence": 21,
+      "generation": 13,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record typed PVF validation and doctor proof for the current issue record after SPP/SOR repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"csdlc-validate\",\"--request\",\".csdlc/prepared/issues/4647/validate-current.json\"],\"purpose\":\"Validate current diff hygiene and C-SDLC v2 doctor pass through the typed PVF request.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/prepared/issues/4647/validation/current, disposition local_pass with diff-check and csdlc-doctor passed\"}}"
+    },
+    {
+      "sequence": 22,
+      "generation": 14,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record focused Bedrock diagnostic redaction proof for the final retained WP-19 residual.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"-p\",\"adl\",\"bedrock_error_sanitizer\",\"--\",\"--nocapture\"],\"purpose\":\"Prove Bedrock diagnostics redact signed AWS values, AWS ARNs, and raw account IDs while retaining useful AccessDenied context.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 3 passed\"}}"
+    },
+    {
+      "sequence": 23,
+      "generation": 15,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record focused Bedrock partition ARN redaction proof for the final delta-review residual.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"-p\",\"adl\",\"bedrock_error_sanitizer\",\"--\",\"--nocapture\"],\"purpose\":\"Prove Bedrock diagnostics redact standard and partitioned AWS ARNs plus raw account IDs while retaining useful AccessDenied context.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 4 passed\"}}"
+    },
+    {
+      "sequence": 24,
+      "generation": 15,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 16,
+      "actor": "clean-gate:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 26,
+      "generation": 17,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Final exact-head clean-gate review evidence was recorded for c8a889da501760e0e9270933023bb72b63117916; advance to reviewed for typed publication.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 18,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 28,
+      "generation": 19,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Recover review after the post-publication coverage-impact mapping fix required by PR #5588 adl-coverage-hosted failure.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 29,
+      "generation": 19,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 30,
+      "generation": 20,
+      "actor": "subagent:019f7df0-b305-7403-84db-b4a82cf26d1d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 31,
+      "generation": 21,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Exact-head bounded review by subagent 019f7df0-b305-7403-84db-b4a82cf26d1d confirmed HEAD 3f250321dba93a94419b2880baa1905ede9204c5 is clean/fixed-confirmed after the coverage-impact mapping fix.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 32,
+      "generation": 22,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 33,
+      "generation": 23,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Recover review after post-publication clippy repair required by PR #5588 adl-rust-fmt-clippy failure on run 29718818086.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 34,
+      "generation": 24,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record post-publication clippy-repair formatting proof after PR #5588 run 29718818086 failed adl-rust-fmt-clippy.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"fmt\",\"--manifest-path\",\"adl/Cargo.toml\"],\"purpose\":\"Verify the post-clippy repair formats cleanly before republishing PR #5588.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, exit 0\"}}"
+    },
+    {
+      "sequence": 35,
+      "generation": 25,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record exact local clippy proof for the PR #5588 adl-rust-fmt-clippy repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--manifest-path\",\"adl/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Verify the post-publication clippy repair satisfies the same all-target warnings-as-errors gate that failed in GitHub.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, Finished dev profile in 36.00s\"}}"
+    },
+    {
+      "sequence": 36,
+      "generation": 26,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record focused Bedrock invocation artifact regression proof after the clippy helper refactor.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider::http_family::tests::bedrock_invocation_artifact\",\"--\",\"--nocapture\"],\"purpose\":\"Verify Bedrock invocation artifact record/read/write/create-dir behavior still passes after the helper was refactored to satisfy clippy.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 5 passed\"}}"
+    },
+    {
+      "sequence": 37,
+      "generation": 27,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record focused local-provider UTF-8 regression proof after moving the test module for clippy.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider::local::tests::ollama_streaming_buffers_split_multibyte_utf8\",\"--\",\"--nocapture\"],\"purpose\":\"Verify the Ollama streaming UTF-8 buffering regression still passes after moving the test module to satisfy clippy.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 1 passed\"}}"
+    },
+    {
+      "sequence": 38,
+      "generation": 27,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 39,
+      "generation": 28,
+      "actor": "subagent:019f7e00-3942-7ce3-b123-a8d6bbff9803",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 40,
+      "generation": 29,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Exact-head bounded review by subagent 019f7e00-3942-7ce3-b123-a8d6bbff9803 confirmed HEAD 5d3b83a63eeca4dc14511fb75e166f24f325e4df is clean/fixed-confirmed after post-publication clippy repair and lifecycle validation recording.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 41,
+      "generation": 30,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 42,
+      "generation": 31,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Recover review after post-publication CSM API Gateway response-finalization repair required by PR #5588 adl-coverage-hosted failure on run 29719551279.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 43,
+      "generation": 32,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record focused CSM API Gateway bridge proof after PR #5588 adl-coverage-hosted failed the bridge redaction tests.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"csm_runtime_api::api_gateway_bridge::tests::api_gateway_bridge_\",\"--\",\"--nocapture\"],\"purpose\":\"Verify the exact API Gateway bridge tests that failed in hosted coverage now finalize and redact external response bodies before retaining proof.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 4 passed\"}}"
+    },
+    {
+      "sequence": 44,
+      "generation": 33,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record clippy proof after the CSM API Gateway response-finalization repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--manifest-path\",\"adl/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Verify the CSM bridge response-finalization repair keeps the all-target clippy gate clean before PR #5588 republish.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, Finished dev profile in 19.81s\"}}"
+    },
+    {
+      "sequence": 45,
+      "generation": 34,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record coverage-harness proof after PR #5588 adl-coverage-hosted failed API Gateway bridge redaction tests.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"llvm-cov\",\"nextest\",\"--manifest-path\",\"adl/Cargo.toml\",\"--no-clean\",\"--no-fail-fast\",\"--no-tests\",\"pass\",\"--test-threads\",\"4\",\"--\",\"csm_runtime_api::api_gateway_bridge::tests::api_gateway_bridge_\"],\"purpose\":\"Verify the coverage-hosted harness path passes for the API Gateway bridge tests that failed in PR #5588 run 29719551279.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, CARGO_LLVM_COV_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/llvm-cov-target/bridge-fix, nextest 4 passed\"}}"
+    },
+    {
+      "sequence": 46,
+      "generation": 34,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Post-publication CSM API Gateway response-finalization repair touched this source path; protected-path truth must include the exact changed file before review/publication.",
+      "operation": "{\"add_protected_paths\":[\"adl/src/csm_api_gateway_bridge.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 47,
+      "generation": 34,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "PR #5588 publication intent is a tracked lifecycle artifact changed on this branch; protected-path truth must include it before exact-head review and publication.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/publication/4647.intent.json\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 48,
+      "generation": 34,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 49,
+      "generation": 35,
+      "actor": "subagent:019f7e25-c21b-7ed1-a38d-ef3a838a6114",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 50,
+      "generation": 36,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Exact-head bounded review by subagent 019f7e25-c21b-7ed1-a38d-ef3a838a6114 confirmed HEAD 04bf3d8401a2b8c156546bc64bde065a0342cb34 is clean/fixed-confirmed after the post-publication CSM API Gateway coverage-hosted repair.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 51,
+      "generation": 37,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 52,
+      "generation": 38,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Recover review after post-publication PR #5588 adl-coverage-hosted failure on run 29721377401. The failure was an llvm-cov report renderer crash after all tests passed and run-scoped summaries were produced; the repair keeps PR report-render failures soft only when summary evidence exists.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 53,
+      "generation": 39,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record focused coverage runner contract proof for the PR report-renderer crash repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_authoritative_coverage_lane.sh\"],\"purpose\":\"Prove the authoritative coverage runner keeps PR report-render crashes soft only when summary evidence exists, while non-PR report crashes remain fail-closed.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, PASS test_run_authoritative_coverage_lane\"}}"
+    },
+    {
+      "sequence": 54,
+      "generation": 40,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record CI runtime contract proof after coverage report-renderer repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Verify the authoritative coverage runner change preserves CI runtime contract expectations.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, PASS test_ci_runtime_contracts and PASS test_run_pr_fast_coverage_lane\"}}"
+    },
+    {
+      "sequence": 55,
+      "generation": 41,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record shell syntax proof for the coverage runner and contract test.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"-n\",\"adl/tools/run_authoritative_coverage_lane.sh\",\"adl/tools/test_run_authoritative_coverage_lane.sh\"],\"purpose\":\"Verify the coverage runner and contract test remain valid shell after the report-renderer crash repair.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout, exit 0\"}}"
+    },
+    {
+      "sequence": 56,
+      "generation": 41,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 57,
+      "generation": 42,
+      "actor": "subagent:019f7e46-a24a-7f62-b24e-c3b5d9202d63",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 58,
+      "generation": 43,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Exact-head bounded review by subagent 019f7e46-a24a-7f62-b24e-c3b5d9202d63 confirmed HEAD aea910bdd is clean/fixed-confirmed after the post-publication PR coverage report-renderer repair.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 59,
+      "generation": 44,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

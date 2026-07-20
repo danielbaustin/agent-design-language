@@ -1,0 +1,127 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4645,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-18][review] Internal review",
+    "slug": "v0-91-7-wp18-internal-review",
+    "version": "v0.91.7",
+    "generation": 33
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Pinned the retained reproduction command to the exact original and remediation commits.",
+      "actual_changes": [
+        "Built the bounded repository, live GitHub, typed lifecycle, CI, dependency, architecture, security, runtime, and release-evidence packet.",
+        "Synthesized twelve severity-ranked findings with concrete evidence, required dispositions, routes, and explicit release/external-review non-claims.",
+        "Retained specialist lane results, machine-readable live-state snapshots, evidence indexes, validation requests, and local proof logs.",
+        "Removed the blank line at EOF from SPECIALIST_LANE_RESULTS.md.",
+        "Added a retrospective validation correction that preserves the original log as non-proving for committed bytes.",
+        "Added an executable helper that requires explicit base and head commit revisions before running git diff --check.",
+        "Replaced moving origin/main and HEAD endpoints with immutable commit SHAs.",
+        "Clarified that the pinned range excludes unrelated later main changes."
+      ],
+      "artifacts": [
+        "PR #5543",
+        "403fc9ec7668d1218ca2cc350d55b180af554005",
+        "f393671dce71d5e1a1a94d2444f2d5b451b81581",
+        "docs/milestones/v0.91.7/review/V0917_INTERNAL_REVIEW_4645.md",
+        "docs/reviews/v0.91.7/internal-review-4645",
+        "#5572",
+        "docs/reviews/v0.91.7/internal-review-4645/SPECIALIST_LANE_RESULTS.md",
+        "docs/reviews/v0.91.7/internal-review-4645/VALIDATION.md",
+        "adl/tools/test_retained_diff_proof_contract.sh",
+        "docs/reviews/v0.91.7/internal-review-4645/VALIDATION.md",
+        "F-4645-3"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "csdlc-validate",
+            "--request",
+            "docs/reviews/v0.91.7/internal-review-4645/live-state/validate-request.json"
+          ],
+          "purpose": "Validate dependency snapshot JSON, summary JSON, and diff hygiene through the declared typed PVF wave.",
+          "outcome": "passed",
+          "evidence_ref": "Retained VALIDATION.md and validation logs record csdlc.pvf.report.v1 disposition local_pass with dependency-json, diff-check, and summary-json selected; no AWS used."
+        },
+        {
+          "command": [
+            "gh",
+            "pr",
+            "view",
+            "5543",
+            "--json",
+            "statusCheckRollup"
+          ],
+          "purpose": "Verify the retained internal-review packet passed its complete selected CI policy before merge.",
+          "outcome": "passed",
+          "evidence_ref": "PR #5543 exact head 403fc9ec7: adl-path-policy, adl-tooling-contracts, adl-demo-proof, hosted coverage, aggregate adl-ci, and adl-coverage all succeeded; Rust/runtime/slow/Spot lanes were policy-skipped; no AWS execution was used."
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check",
+            "HEAD^..HEAD"
+          ],
+          "purpose": "Retrospectively check the exact committed PR range rather than the clean worktree.",
+          "outcome": "failed",
+          "evidence_ref": "Exact PR head 403fc9ec7 reports docs/reviews/v0.91.7/internal-review-4645/SPECIALIST_LANE_RESULTS.md:49 new blank line at EOF. The original bare git diff --check log was non-proving for committed bytes. Routed to #5572."
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_retained_diff_proof_contract.sh",
+            "HEAD^",
+            "HEAD"
+          ],
+          "purpose": "Prove the complete remediation commit has no whitespace defects and the helper requires explicit commit endpoints.",
+          "outcome": "passed",
+          "evidence_ref": "Commit 5bc35e1fe: exact HEAD^..HEAD diff check passed; zero-argument invocation failed closed with exit 64; git diff --check HEAD^..HEAD passed. This supersedes only the failed retrospective lane and does not rewrite the original empty log."
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_retained_diff_proof_contract.sh",
+            "HEAD^",
+            "HEAD"
+          ],
+          "purpose": "Prove exact remediation range and fail-closed endpoint guard.",
+          "outcome": "passed",
+          "evidence_ref": "merged PR #5574 CI and retained exact-revision proof"
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check",
+            "HEAD^..HEAD"
+          ],
+          "purpose": "Retrospectively check the exact committed PR range rather than the clean worktree.",
+          "outcome": "passed",
+          "evidence_ref": "PR #5574 remediation commit exact pinned range passes; original non-proving failure remains retained in audit history and routed to #5572."
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check",
+            "HEAD^..HEAD"
+          ],
+          "purpose": "Retrospectively check the exact committed PR range rather than the clean worktree.",
+          "outcome": "passed",
+          "evidence_ref": "Exact PR head 403fc9ec7 reports docs/reviews/v0.91.7/internal-review-4645/SPECIALIST_LANE_RESULTS.md:49 new blank line at EOF. The original bare git diff --check log was non-proving for committed bytes. Routed to #5572."
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

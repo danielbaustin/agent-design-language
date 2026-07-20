@@ -1,0 +1,22 @@
+{
+  "issue": 5489,
+  "base_branch": "main",
+  "branch": "codex/5489-v0917-wp21a-next-milestone-docs",
+  "worktree": ".worktrees/adl-wp-5489",
+  "claim": {
+    "id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/5489-v0917-wp21a-next-milestone-docs",
+    "worktree": ".worktrees/adl-wp-5489",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_WP21A_NEXT_MILESTONE_DOCS_CLOSEOUT_5489.md",
+      "docs/milestones/v0.91.7/review/wp21a_next_milestone_docs_5489",
+      ".csdlc/issues/5489"
+    ],
+    "purpose": "Prepare and later execute WP-21A without claiming completion from setup"
+  }
+}

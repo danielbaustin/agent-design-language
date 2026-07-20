@@ -1,0 +1,13 @@
+{
+  "issue": 4644,
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "expected_generation": 1,
+  "expected_digest": "b503ea553c5c9afc437f8a09866b9ae757fa37de12ade73ed7de7e7bd64a47ca",
+  "now_unix_seconds": 1784416510,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Protect the two historical milestone README files with broken local links found by the complete tracked README audit requested for WP-17.",
+  "add_protected_paths": [
+    "docs/milestones/v0.8/README.md",
+    "docs/milestones/v0.91/features/README.md"
+  ]
+}

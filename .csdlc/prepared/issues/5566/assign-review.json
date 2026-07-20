@@ -1,0 +1,1 @@
+{"issue":5566,"expected_generation":5,"expected_digest":"81d959b1458a330f9c58fb71ca4b87eb9fca8efc31ed9e9ebe7d356bf4867cde","claim_id":"claim-5566-existing-worktree-bind","reviewer":"subagent:019f669a-596c-71e2-adb3-bd753875989d","assigned_by":"codex-closeout-audit","scope":["csdlc-v2/src/lifecycle.rs","csdlc-v2/tests/gate2.rs"]}

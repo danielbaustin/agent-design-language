@@ -1,0 +1,8 @@
+{
+  "issue": 4647,
+  "expected_generation": 18,
+  "expected_digest": "a675008e7f6a7e8786d4719266dabf5cd77a089becd06e659b71df42e9946106",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Recover review after the post-publication coverage-impact mapping fix required by PR #5588 adl-coverage-hosted failure."
+}

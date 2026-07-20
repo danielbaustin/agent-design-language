@@ -28,8 +28,8 @@ the missing local source of truth for those issues.
 - `#4641` is restored to `[v0.91.7][WP-14] Launch and v0.92 birthday handoff`.
 - `#5384` preserves the v0.91.8 integrated platform acceptance/deployment
   content that temporarily overwrote `#4641`.
-- `#5383` owns this planning-package creation work as a new `v0.91.7` setup
-  issue.
+- `#5383` is the historical v0.91.7 setup authority for this package and is
+  closed; do not describe setup as currently in progress.
 - `#5335` is retained as historical/stale setup context and must not be treated
   as the active setup authority unless the operator explicitly reassigns it.
 
@@ -52,7 +52,9 @@ Every work package must exit as one of:
 - Decisions: [DECISIONS_v0.91.8.md](DECISIONS_v0.91.8.md)
 - Work breakdown: [WBS_v0.91.8.md](WBS_v0.91.8.md)
 - Sprint plan: [SPRINT_PLAN_v0.91.8.md](SPRINT_PLAN_v0.91.8.md)
+- Parallel execution plan: [PARALLEL_EXECUTION_PLAN_v0.91.8.md](PARALLEL_EXECUTION_PLAN_v0.91.8.md)
 - Issue wave: [WP_ISSUE_WAVE_v0.91.8.yaml](WP_ISSUE_WAVE_v0.91.8.yaml)
+- Canonical document inventory: [CANONICAL_DOC_INVENTORY_v0.91.8.md](CANONICAL_DOC_INVENTORY_v0.91.8.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.8.md](DEMO_MATRIX_v0.91.8.md)
 - Checklist: [MILESTONE_CHECKLIST_v0.91.8.md](MILESTONE_CHECKLIST_v0.91.8.md)
 - Release plan: [RELEASE_PLAN_v0.91.8.md](RELEASE_PLAN_v0.91.8.md)
@@ -64,6 +66,8 @@ Every work package must exit as one of:
 - v0.92 handoff: [NEXT_MILESTONE_HANDOFF_v0.91.8.md](NEXT_MILESTONE_HANDOFF_v0.91.8.md)
 - v0.92 activation test map: [V092_ACTIVATION_TEST_MAP_v0.91.8.md](V092_ACTIVATION_TEST_MAP_v0.91.8.md)
 - Feature index: [features/README.md](features/README.md)
+- Review index: [review/README.md](review/README.md)
+- Third-party review handoff: [review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md](review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md)
 
 ## Non-Goals
 
@@ -72,3 +76,10 @@ Every work package must exit as one of:
 - Do not claim `v0.92` birthday readiness before review and proof converge.
 - Do not pull Runtime v3 or C-SDLC v2 ownership back into ADL core.
 
+## WP-21A Documentation Gate
+
+WP-21A fails closed if any canonical v0.91.8 planning, architecture, review,
+release, handoff, routing, validation, or feature-doc surface named in
+[CANONICAL_DOC_INVENTORY_v0.91.8.md](CANONICAL_DOC_INVENTORY_v0.91.8.md) is
+missing, contradictory, stale against live issue truth, or presents planned
+work as proven.

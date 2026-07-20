@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 4646,
+  "expected_generation": 28,
+  "expected_digest": "0f23cbdbbbded837ce820bae5a591d581167b9c5c323a48f407c22220fcb6fb0",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/4646-v0917-external-review",
+  "title": "[v0.91.7][WP-19] Retain final external review findings",
+  "body": "Closes #4646\n\nRetains the completed exact-target WP-19 review over 70 files and its 22 findings. One Claude Fable 5 lane completed; three independent shadow reviewers covered the remaining files after Anthropic billing blocked further calls. The provider-degradation boundary and WP-20 ownership are explicit.",
+  "draft": true,
+  "remote": "origin",
+  "token_file": null
+}

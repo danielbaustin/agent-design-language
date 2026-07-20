@@ -7,7 +7,7 @@
     "title": "Fail closed on stale stable owner-binary provenance",
     "slug": "stale-owner-binary-provenance",
     "version": "v0.91.7",
-    "generation": 0
+    "generation": 18
   },
   "status": "ready",
   "content": {

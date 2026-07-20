@@ -1,0 +1,24 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "4002ac1e4435a8b72ba838fb131a40f6d5e2620fdbdedbac3f4c749891e55e4e",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The shared terminal receipt lock fix passes focused tests and strict linting.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml",
+        "terminal_plan_repair"
+      ],
+      "purpose": "Prove the reviewed shared-lock repair preserves terminal plan repair behavior and warning-free code",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: focused unit, gate7, gate9, exact integration, strict all-target Clippy, and git diff check passed"
+    }
+  }
+}

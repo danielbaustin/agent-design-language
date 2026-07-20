@@ -1,0 +1,28 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "ff65722537e7114821d744f93b313dfd7b10c55e25bb335a6fcef7f2fa2d1b73",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record focused Bedrock provider setup account-pin regression proof for the current residual patch.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "-p",
+        "adl",
+        "provider_setup_writes_bedrock_account_pin_material",
+        "--",
+        "--nocapture"
+      ],
+      "purpose": "Prove generated Bedrock setup includes profile, region, account hash environment pin, and clear fail-closed README guidance.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 1 passed"
+    }
+  }
+}

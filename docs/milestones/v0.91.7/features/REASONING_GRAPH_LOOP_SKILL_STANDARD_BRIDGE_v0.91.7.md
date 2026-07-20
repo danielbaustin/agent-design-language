@@ -4,7 +4,7 @@
 
 - Feature Name: Reasoning Graph, Loop Runtime, And Skill Standard Implementation
 - Milestone Target: `v0.91.7`
-- Status: planned
+- Status: bounded implementation and proof retained through closed #4694-#4697; full standard convergence remains later work
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: architecture, policy

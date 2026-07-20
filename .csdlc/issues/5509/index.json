@@ -1,0 +1,394 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5509,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "99451b4d927edcf6b76df84be0dca94bd2abe78310226631423b8360b922925a",
+  "phase": "closed_out",
+  "generation": 16,
+  "digest": "47c8e117f4f585705f317b6e03b9c09e54f687430e389351fb8513b644210003",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f751d-2d23-70d1-b40f-69c756ed58d0",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:23fbe8a6de84734c2b517c3d36220b3fd960a4db:05b5b27993b947dbf821abcb156dd5f22a6b251761c2a9eefd485fa5a7476afd",
+    "scope": [
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f751d-2d23-70d1-b40f-69c756ed58d0",
+    "scope": [
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh"
+    ],
+    "reviewed_revision": "git-blake3:23fbe8a6de84734c2b517c3d36220b3fd960a4db:05b5b27993b947dbf821abcb156dd5f22a6b251761c2a9eefd485fa5a7476afd",
+    "findings": [
+      {
+        "id": "F-5509-1",
+        "severity": "p1",
+        "summary": "The committed review metadata changed HEAD without an exact non-substantive proof.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:23fbe8a6de84734c2b517c3d36220b3fd960a4db:05b5b27993b947dbf821abcb156dd5f22a6b251761c2a9eefd485fa5a7476afd",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Hosted CI remains the final proof that the focused llvm-cov route interoperates with the GitHub runner toolchain."
+    ],
+    "completed": true,
+    "non_substantive_proof": {
+      "policy": "metadata_only_review_projection",
+      "from_revision": "git-blake3:209a2c14f7db7c977ffb79b0864c0a11807415c9:3d42c4164fd38abe0faf62a31ef9ba3cb7b387b9a08932e92dbb84654e2161dc",
+      "to_revision": "git-blake3:23fbe8a6de84734c2b517c3d36220b3fd960a4db:05b5b27993b947dbf821abcb156dd5f22a6b251761c2a9eefd485fa5a7476afd",
+      "from_commit": "209a2c14f7db7c977ffb79b0864c0a11807415c9",
+      "to_commit": "23fbe8a6de84734c2b517c3d36220b3fd960a4db",
+      "changed_paths": [
+        ".csdlc/issues/5509/audit.jsonl",
+        ".csdlc/issues/5509/cards/sip.values.json",
+        ".csdlc/issues/5509/cards/sor.values.json",
+        ".csdlc/issues/5509/cards/spp.values.json",
+        ".csdlc/issues/5509/cards/srp.md",
+        ".csdlc/issues/5509/cards/srp.values.json",
+        ".csdlc/issues/5509/cards/stp.values.json",
+        ".csdlc/issues/5509/cards/vpp.values.json",
+        ".csdlc/issues/5509/index.json",
+        ".csdlc/prepared/issues/5509/advance-reviewed.json",
+        ".csdlc/prepared/issues/5509/assign-review.json",
+        ".csdlc/prepared/issues/5509/record-review.json"
+      ]
+    }
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5509,
+    "pull_request": 5511,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5511",
+    "base": "main",
+    "head": "codex/5509-runtime-v3-csm-fast-lane",
+    "revision": "git-blake3:23fbe8a6de84734c2b517c3d36220b3fd960a4db:05b5b27993b947dbf821abcb156dd5f22a6b251761c2a9eefd485fa5a7476afd",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5511,
+    "head_sha": "23fbe8a6de84734c2b517c3d36220b3fd960a4db",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29643868255/job/88078741476"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29643868255/job/88078717808"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29643868255/job/88078695050"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29643868255/job/88078678531"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29643868255/job/88078695058"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5511,
+    "disposition": "merged",
+    "observed_sha": "23fbe8a6de84734c2b517c3d36220b3fd960a4db",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5509.json",
+    "released_branch": "codex/5509-runtime-v3-csm-fast-lane",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5509/retained/design.md",
+  "diagram_path": ".csdlc/issues/5509/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "revision": "b62620c42c4c68aa5ab6b70aec61c63346098008aeea9ad3751820d2e07d770a"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "75dde66cd4457e785f140a004d12cecdfe76aae08af31c04e3e740a40f648038",
+      "rendered_digest": "33277b1be6e0ea353119eee7352bcdb20d78d05700abc8634231d40447535aff",
+      "ast_digest": "bbc90e79859496ea951db7642bb58d4385e4fcb071ea07d59bc297f1d4aed907"
+    },
+    "stp": {
+      "values_digest": "155876edc95d0d9ddaafa2633f769492d0ca7ce78808e40629c1e15ba20baa44",
+      "rendered_digest": "58a712a9ee968e85c7e274bb50004fba71c8debd499b16c009f82631d0c7a286",
+      "ast_digest": "59d06a6734cd8095abcfe07224301c3b638b5d8dd0c3b6f15029213ce84292c5"
+    },
+    "spp": {
+      "values_digest": "48fe9dd165f39be67e88adc9651bf0da8a5f02c0517e89c95f1b37c5d035a015",
+      "rendered_digest": "a35c9978691248881393317b6e914a07e5741cf22d4732975d68c744bea5c85d",
+      "ast_digest": "412cc489f16b7cc6072305bb30a231f7a563b72b5a6c64c5ff525639ca04c4b4"
+    },
+    "vpp": {
+      "values_digest": "b189bf697db3931f65274d4144f486d2b19a8f7232a1c3f5d5e174427c87cd33",
+      "rendered_digest": "bd1bcf4ce02ac54c5946b88116a2cd37e5fe7606facead16f69e32f15a48a762",
+      "ast_digest": "15a51bdb602ade52538d927bbf64fb6b08a12d0fd1d0190f54e0a9c9d4ef0bbf"
+    },
+    "srp": {
+      "values_digest": "1cb0b7700ea87f7d1703a513c564438eeda99e416358f3e1003cff4bdea1ebfa",
+      "rendered_digest": "a55b8428fd00b833e9225725722a5bc752e33d1aa2e915b95d7190f0b8a36d9e",
+      "ast_digest": "a62a4953f9534a59cc32cca4bd05b793492e2fc36d438ab09fb3ae938f66d12e"
+    },
+    "sor": {
+      "values_digest": "a70ff8c0b8a8cb4712dee4c7fbc9b02a4fcc8850af51307c4c73971e5ace0da0",
+      "rendered_digest": "517ba4c829292a91bd6f41a7a8ce50b5edb6840d7a166e7d7673a2e668d8873f",
+      "ast_digest": "0f6a0b55bef7c5aeb7d68f90ec28dc64bc76501bec43418702d317003453abdd"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded mixed-crate route and its positive and negative proof are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact-revision subagent review found no actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover exact review identity after committing typed review metadata; all five substantive tooling blobs are byte-identical."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact metadata head is covered by reviewed non-substantive proof and all substantive tooling remains review-clean."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 9,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 10,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Implemented the bounded mixed Runtime v3 and CSM validation route.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Route the closed Runtime v3/CSM bridge family through independent focused tests and composed coverage while retaining fail-closed behavior for every other mixed-crate change.\",\"changes\":[\"Add a mixed_focused two-crate test plan for the Runtime v3/CSM bridge family\",\"Execute ADL CSM tests and Runtime v3 tests in their owning crates\",\"Select focused composed coverage for the closed path family\",\"Preserve full-validation fallback when any unrelated Rust path is present\",\"Add positive, execution, coverage-composition, and negative routing contracts\"],\"artifacts\":[\"adl/tools/ci_path_policy.sh\",\"adl/tools/run_pr_fast_test_lane.sh\",\"adl/tools/test_ci_path_policy.sh\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\",\"adl/tools/test_run_pr_fast_test_lane.sh\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The mixed two-crate planner and execution contracts passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_pr_fast_test_lane.sh\"],\"purpose\":\"Prove the bounded bridge runs focused tests in both owning crates and rejects unrelated mixed paths\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5509-pr-fast-two-crate-contract-pass\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The composed focused coverage contracts passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\"],\"purpose\":\"Prove both crate coverage runs and summaries are composed without Runtime v2 selection\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5509-focused-coverage-composition-pass\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The end-to-end path-policy contract passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\"],\"purpose\":\"Prove the exact bridge family selects focused coverage and unrelated additions remain fail closed\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5509-ci-path-policy-contract-pass\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded mixed-crate route and its positive and negative proof are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "subagent:019f751d-2d23-70d1-b40f-69c756ed58d0",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact-revision subagent review found no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover exact review identity after committing typed review metadata; all five substantive tooling blobs are byte-identical.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "subagent:019f751d-2d23-70d1-b40f-69c756ed58d0",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact metadata head is covered by reviewed non-substantive proof and all substantive tooling remains review-clean.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt during the complete v0.91.7 closed-issue audit.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+flowchart LR
+  R["Canonical mixed CSM expression"] --> P["Exact partition"]
+  P --> A["ADL CSM test families"]
+  P --> V["Runtime v3 auth, supervision, topology"]
+  A --> S["Composed coverage summary"]
+  V --> S
+  S --> G["Changed-source 80 percent gate"]

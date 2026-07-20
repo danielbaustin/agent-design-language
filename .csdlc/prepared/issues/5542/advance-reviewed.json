@@ -1,0 +1,13 @@
+{
+  "issue": 5542,
+  "card": "srp",
+  "expected_generation": 7,
+  "expected_digest": "dec6c41a42c1db89978f9cc41889669d79a20883f7165747fa3fce0fb65050f9",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The final exact-revision review found no actionable in-branch findings; four findings are fixed and the separately claimed register correction is routed to #4645 / PR #5543.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

@@ -2,5 +2,4 @@ nextest-version = "0.9.133"
 
 [profile.default]
 retries = 0
-slow-timeout = { period = "90s", terminate-after = 2 }
 leak-timeout = "100ms"

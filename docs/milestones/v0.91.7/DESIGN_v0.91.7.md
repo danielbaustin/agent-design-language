@@ -4,13 +4,19 @@
 
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Date: `2026-06-21`
+- Created: `2026-06-21`
+- Last verified: `2026-07-18`
 - Owner: ADL maintainers
 - Setup lineage: `#3801`, `#3825`, `#4368`
 
 ## Purpose
 
-Define how the final pre-`v0.92` implementation/readiness tranche is organized, validated, and handed off.
+Define how the v0.91.7 implementation/readiness tranche is organized,
+validated, and handed into the required v0.91.8 bridge before v0.92.
+
+Lifecycle note (2026-07-18): this is the retained planning design. WP-01
+through WP-15 are now closed; current proof, findings, and non-claims live in
+the issue-local packets and `review/V0917_SPRINT_REVIEW_REGISTER.md`.
 
 ## Problem Statement
 

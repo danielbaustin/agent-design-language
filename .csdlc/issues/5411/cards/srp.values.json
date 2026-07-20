@@ -7,9 +7,9 @@
     "title": "[v0.91.7][review-fix][runtime-v3] Resolve #5227 selector, guardian, and pressure-stop findings",
     "slug": "v0-91-7-runtime-v3-selector-guardian-pressure-stop",
     "version": "v0.91.7",
-    "generation": 23
+    "generation": 26
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

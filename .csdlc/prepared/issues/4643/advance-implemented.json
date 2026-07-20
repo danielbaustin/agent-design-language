@@ -1,0 +1,13 @@
+{
+  "issue": 4643,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "b7f9454e49a5d0031bad29c80a95b4e223d13d2a3a39ab6ad6a39b7dba46ceab",
+  "claim_id": "claim-4643-v0-91-7-wp16-coverage-quality-gate",
+  "actor": "codex-root",
+  "reason": "The bounded WP-16 quality gate is implemented and locally validated with retained evidence.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

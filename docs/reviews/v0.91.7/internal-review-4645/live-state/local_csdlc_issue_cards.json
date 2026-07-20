@@ -1,0 +1,1355 @@
+[
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 4641,
+    "status": null,
+    "worktree": null,
+    "wp": "WP-14"
+  },
+  {
+    "branch": "codex/4642-v0917-demo-convergence",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 4642,
+    "status": null,
+    "worktree": ".worktrees/adl-wp-4642",
+    "wp": "WP-15"
+  },
+  {
+    "branch": "codex/4643-v0917-quality-gate",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 4643,
+    "status": null,
+    "worktree": ".worktrees/adl-wp-4643",
+    "wp": "WP-16"
+  },
+  {
+    "branch": "codex/4645-v0917-internal-review",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 4645,
+    "status": null,
+    "worktree": ".worktrees/adl-wp-4645",
+    "wp": "WP-18"
+  },
+  {
+    "branch": "codex/5306-v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5306,
+    "status": null,
+    "worktree": ".worktrees/adl-wp-5306",
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5330,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5353,
+    "status": null,
+    "worktree": null,
+    "wp": "WP-01"
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5383,
+    "status": null,
+    "worktree": null,
+    "wp": "WP-14"
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5390,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5403,
+    "status": null,
+    "worktree": null,
+    "wp": "WP-12"
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5404,
+    "status": null,
+    "worktree": null,
+    "wp": "WP-12"
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5405,
+    "status": null,
+    "worktree": null,
+    "wp": "WP-13"
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5406,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5407,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5409,
+    "status": null,
+    "worktree": null,
+    "wp": "WP-07A"
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5410,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5411,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5412,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5413,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5423,
+    "status": null,
+    "worktree": null,
+    "wp": "WP-12"
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5426,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5427,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": "codex/5440-csdlc-design-reapproval",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5440,
+    "status": null,
+    "worktree": ".worktrees/adl-wp-5440",
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5452,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": "codex/5455-stale-owner-provenance",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5455,
+    "status": null,
+    "worktree": ".worktrees/adl-wp-5455",
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5463,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5464,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": "codex/5466-merged-head-closeout-recovery",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5466,
+    "status": null,
+    "worktree": ".worktrees/adl-wp-5466",
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5467,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5468,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": "codex/5470-terminal-durability",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5470,
+    "status": null,
+    "worktree": ".worktrees/adl-wp-5470",
+    "wp": null
+  },
+  {
+    "branch": "codex/5487-terminal-design-repair",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5487,
+    "status": null,
+    "worktree": ".",
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5494,
+    "status": null,
+    "worktree": null,
+    "wp": "WP-07A"
+  },
+  {
+    "branch": "codex/5495-publication-metadata",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5495,
+    "status": null,
+    "worktree": ".",
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5506,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": "codex/5509-runtime-v3-csm-fast-lane",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5509,
+    "status": null,
+    "worktree": ".",
+    "wp": null
+  },
+  {
+    "branch": "codex/5512-runtime-v3-csm-coverage-filter",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5512,
+    "status": null,
+    "worktree": ".",
+    "wp": null
+  },
+  {
+    "branch": "codex/5514-complete-csm-coverage",
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5514,
+    "status": null,
+    "worktree": ".",
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5516,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5518,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  },
+  {
+    "branch": null,
+    "cards": {
+      "sip": {
+        "md": true,
+        "values": true
+      },
+      "sor": {
+        "md": true,
+        "values": true
+      },
+      "spp": {
+        "md": true,
+        "values": true
+      },
+      "srp": {
+        "md": true,
+        "values": true
+      },
+      "stp": {
+        "md": true,
+        "values": true
+      },
+      "vpp": {
+        "md": true,
+        "values": true
+      }
+    },
+    "issue": 5521,
+    "status": null,
+    "worktree": null,
+    "wp": null
+  }
+]

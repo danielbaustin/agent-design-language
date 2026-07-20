@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 4645,
+  "expected_generation": 20,
+  "expected_digest": "41f4ff072020eac9b59d874e8932cf018173fdd52775dfd07adbb8be2145e242",
+  "claim_id": "claim-4645-v0917-internal-review-prep",
+  "actor": "codex-closeout-audit",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/4645-v0917-internal-review",
+  "title": "[v0.91.8][review][validation] Repair #4645 committed-diff proof",
+  "body": "Closes #5572\n\nFollow-up remediation for closed lifecycle issue #4645. Repairs its retrospective committed-range validation defect, preserves the original non-proving log truthfully, and adds a fail-closed exact-revision diff helper. Final bounded subagent review passed at the assigned substantive revision. The distinct publication-boundary audit remains routed to #5571. No AWS or Spot execution was used.",
+  "draft": true,
+  "remote": "origin",
+  "token_file": null
+}

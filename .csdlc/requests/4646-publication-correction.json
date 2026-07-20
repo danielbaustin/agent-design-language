@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 4646,
+  "expected_generation": 22,
+  "expected_digest": "d22457ae3b1b0f6af1ca4d736a0e92ab7bc3dbcab10bfb0ac6e0fd37112ac34c",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/4646-v0917-external-review",
+  "title": "[v0.91.7][WP-19] Restore truthful external-review preparation state",
+  "body": "Refs #4646\n\nCorrects the prematurely merged WP-19 completion claims. The original #5573 closeout audit remains complete; #5571 and #5573 are closed; PR #5579 is retained as a superseded historical target; and WP-19 remains open while a current 70-file replacement corpus awaits external review. This PR does not run or claim the replacement external review and does not close #4646.",
+  "draft": true,
+  "remote": "origin",
+  "token_file": null
+}

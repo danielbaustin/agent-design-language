@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 27,
+  "expected_digest": "ceed404ecaf5b50062b9c26427c472eee3ec2351f7d426225d5dad69b417900b",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The integrated CSM API accepts a matching previous-generation gateway request during overlap and remains fail closed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl/Cargo.toml", "csm_runtime_api"],
+      "purpose": "Prove the complete CSM runtime API including bounded prior-generation bearer and gateway-signature overlap",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 44 focused CSM runtime API tests passed"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+ "issue":5455,"expected_generation":5,"expected_digest":"4f49dbc629d6d75b85b716bfd8b327fb8aaf3cf38b0512ab52483af3329eebd3","claim_id":"claim-5455-closeout-recovery","actor":"subagent:019f669a-596c-71e2-adb3-bd753875989d",
+ "evidence":{"reviewer":"subagent:019f669a-596c-71e2-adb3-bd753875989d","scope":["csdlc-v2/src/operator.rs","csdlc-v2/tests/gate10a.rs"],"reviewed_revision":"git-blake3:fb7d09a561a169e906eb48166f14099c98d5a974:ce03f1948e2744995b893fac63c8da704b499f5b1ecf9151715914f074fbfabf",
+ "findings":[
+  {"id":"F-5455-1","severity":"p1","summary":"Content-provenance receipts accept stale externally sourced owner binaries because verification rejects mismatches only for git provenance.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":"#5540"},
+  {"id":"F-5455-2","severity":"p1","summary":"Gate 10A runs only csdlc-edit --help and does not prove implemented-phase approve-design through the stable resolved binary.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":"#5540"}
+ ],
+ "residual_risks":["#5455 cannot advance to reviewed or terminal closeout until both P1 acceptance gaps are fixed and re-reviewed."],"completed":true,"non_substantive_proof":null}
+}

@@ -34,9 +34,9 @@ Review these docs while inspecting runnable output:
 - [DEMOS_V0.8.md](DEMOS_V0.8.md)
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
 - [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
-- [../../demos/v0.8/v0.8-bounded-critical-demos.md](../../demos/v0.8/v0.8-bounded-critical-demos.md)
-- [../../demos/v0.8/godel_failure_hypothesis_experiment.md](../../demos/v0.8/godel_failure_hypothesis_experiment.md)
-- [../../demos/aee-recovery/README.md](../../demos/aee-recovery/README.md)
+- [../../../demos/v0.8/v0.8-bounded-critical-demos.md](../../../demos/v0.8/v0.8-bounded-critical-demos.md)
+- [../../../demos/v0.8/godel_failure_hypothesis_experiment.md](../../../demos/v0.8/godel_failure_hypothesis_experiment.md)
+- [../../../demos/aee-recovery/README.md](../../../demos/aee-recovery/README.md)
 
 Scope note:
 - the Rust transpiler runnable surface is a bounded demo scaffold for deterministic fixture-to-runtime mapping verification, not a production transpiler or sandboxed patch/apply workflow.
@@ -126,7 +126,7 @@ Use these docs together when checking current v0.8 truth:
 - [Ideas and backgrounders](ideas/README.md)
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
 - [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
-- [../../demos/v0.8/v0.8-bounded-critical-demos.md](../../demos/v0.8/v0.8-bounded-critical-demos.md)
+- [../../../demos/v0.8/v0.8-bounded-critical-demos.md](../../../demos/v0.8/v0.8-bounded-critical-demos.md)
 - [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
 - [GODEL_AGENT.md](GODEL_AGENT.md)
 - [OBSMEM_BAYES.md](OBSMEM_BAYES.md)

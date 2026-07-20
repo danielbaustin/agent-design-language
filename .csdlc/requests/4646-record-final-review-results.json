@@ -1,0 +1,25 @@
+{
+  "issue": 4646,
+  "card": "sor",
+  "expected_generation": 24,
+  "expected_digest": "1140c00f2ef6518c8ef41ba8a31ec5cea7dc6cf5cf0e21f948b09249601bc880",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "Retain the completed frozen-corpus review, findings, and provider-degradation boundary.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Reviewed all 70 frozen files at bd9b7a3c with one completed Claude Fable 5 lane and three independent shadow lanes after Anthropic billing blocked further calls; retained 22 findings for WP-20.",
+    "changes": [
+      "Record the exact target SHA, content-sensitive corpus digest, and 70-file coverage.",
+      "Retain 22 findings: 2 P1, 11 P2, and 9 P3.",
+      "Distinguish Fable 5 third-party coverage from shadow-agent coverage and preserve the billing limitation.",
+      "Mark WP-19 complete and route findings to open WP-20 without creating one issue per finding."
+    ],
+    "artifacts": [
+      "docs/milestones/v0.91.7/review/external_review_4646/DISPATCH_RECEIPT.md",
+      "docs/milestones/v0.91.7/review/external_review_4646/FINDINGS_REGISTER.md",
+      "docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ]
+  }
+}

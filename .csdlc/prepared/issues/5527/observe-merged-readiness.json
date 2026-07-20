@@ -1,0 +1,13 @@
+{
+  "schema": "csdlc.readiness_request.v1",
+  "issue": 5527,
+  "expected_generation": 23,
+  "expected_digest": "508be56072fae861b10c4d32c225c1d8ec3a2400ba129e57d1760ed5cd1ffbc0",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5550,
+  "required_checks": ["adl-ci", "adl-coverage", "adl-tooling-contracts", "adl-path-policy", "adl-demo-proof"],
+  "require_review": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}

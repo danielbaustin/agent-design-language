@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5563,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Recover stale approved design in initialized records",
+    "slug": "initialized-stale-design-recovery",
+    "version": "v0.91.8",
+    "generation": 5
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Permit typed reapproval of previously approved initialized records only when current authored design inputs are demonstrably stale.",
+      "actual_changes": [
+        "Approve-design validates CAS, active claim, card projections, and current authored digests before selecting the recovery path.",
+        "Initialized approved reapproval is allowed only when SPP or VPP design/diagram digests differ from current authored files.",
+        "Recovery records a distinct audit reason and retains normal pending, bound, and implemented approval behavior.",
+        "Focused Gate 2 regression rejects redundant reapproval, proves stale recovery, and proves doctor readiness afterward."
+      ],
+      "artifacts": [
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/tests/gate2.rs",
+        "#5563",
+        "#5306"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate2",
+            "initialized_approved_stale_design_can_be_reapproved_before_readiness"
+          ],
+          "purpose": "Prove redundant initialized approval rejects, stale approved inputs recover atomically, and doctor readiness resumes.",
+          "outcome": "passed",
+          "evidence_ref": "Focused regression 1 passed, 0 failed; strict all-target all-feature Clippy passed. Existing non-Git Gate 2 fixture failure remains independently tracked in #5548."
+        }
+      ],
+      "integration_state": "not_started",
+      "publication_state": "not_published",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

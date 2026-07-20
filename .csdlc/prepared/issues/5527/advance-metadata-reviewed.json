@@ -1,0 +1,14 @@
+{
+  "issue": 5527,
+  "card": "sor",
+  "expected_generation": 15,
+  "expected_digest": "ecc80c7d2cd2508bbef4fc26101aa955a615085de29637a241c2463fa5d23554",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "reason": "Exact metadata-head review is clean; substantive code and tests remain byte-identical and both fixed findings plus #5548 residual risk are restored.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

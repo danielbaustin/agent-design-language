@@ -1,0 +1,43 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4646,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-19][review] External / 3rd-party review",
+    "slug": "v0-91-7-wp19-external-third-party-review",
+    "version": "v0.91.7",
+    "generation": 33
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare and later execute only WP-19; do not absorb sibling WPs or release-readiness claims.",
+      "deliverables": [
+        "External review handoff",
+        "External finding register"
+      ],
+      "acceptance_criteria": [
+        "AC-1: WP-19 executes only within its declared scope and protected output paths",
+        "AC-2: Deliverables are retained on tracked paths with evidence-bound claims",
+        "AC-3: Validation records distinguish fresh checks, retained proof, skipped checks, and unproven surfaces",
+        "AC-4: Sibling WP work, v0.91.7 release readiness, and v0.92 activation readiness are not silently claimed"
+      ],
+      "dependencies": [
+        "WP-18 internal review and remediation readiness"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.91.7/review/V0917_INTERNAL_REVIEW_4645.md",
+        "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+        "docs/milestones/v0.91.7/README.md"
+      ],
+      "non_goals": [
+        "Do not execute this work during preparation",
+        "Do not implement sibling WP work",
+        "Do not use AWS or paid remote validation lanes for preparation",
+        "Do not claim release readiness from setup cards"
+      ]
+    }
+  }
+}

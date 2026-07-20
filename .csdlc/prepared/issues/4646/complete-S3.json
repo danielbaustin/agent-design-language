@@ -1,0 +1,10 @@
+{
+  "issue": 4646,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "f5874807e745dfdc88d5f5dcacfecd77a46089bb8ea7c48f9d19b913f7dd8498",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "Focused docs, YAML, link, manifest, and typed lifecycle validation passed.",
+  "operation": {"operation":"update_plan_step","step_id":"S3","status":"completed"}
+}

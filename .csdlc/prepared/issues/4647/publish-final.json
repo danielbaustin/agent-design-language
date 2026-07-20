@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 4647,
+  "expected_generation": 17,
+  "expected_digest": "6178441e76c9cc2dd196a40cb0b426f283fc53fd7f0e3b76f52d89ea5c553a04",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/4647-v0917-review-remediation-preflight",
+  "title": "[v0.91.7][WP-20] Remediate external review findings (#4647)",
+  "body": "Closes #4647\n\nRecords WP-20 remediation of the retained WP-19 external review findings for v0.91.7.\n\nHighlights:\n- Retains the exact external finding-validation artifact and WP-19 remediation matrix.\n- Fixes Bedrock account pinning and diagnostic redaction, provider artifact retry safety, coverage profile isolation, CSM redaction/path hygiene, local provider edge cases, and current milestone documentation truth.\n- Final clean gate at c8a889da501760e0e9270933023bb72b63117916: delta reviewer clean, coverage exact-head lane clean, lifecycle/full branch exact-head lane clean, csdlc-doctor passed at generation 15, all changed paths protected, and worktree clean.\n\nValidation:\n- Focused WP-20 validation is recorded in the SOR and remediation matrix.\n- Bedrock sanitizer partition coverage: 4 focused tests passed on FastWork.\n- csdlc-doctor passed for #4647 after final clean-review recording at generation 17.\n\nNon-claims:\n- No AWS live operation was run.\n- This does not reopen WP-18.\n- WP-23 remains separate until WP-20 is merged and closed.",
+  "draft": true,
+  "remote": "origin",
+  "token_file": null
+}

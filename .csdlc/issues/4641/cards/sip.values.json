@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4641,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-14] Launch and v0.92 birthday handoff",
+    "slug": "v0-91-7-wp14-launch-v092-birthday-handoff",
+    "version": "v0.91.7",
+    "generation": 19
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Prepare and execute the launch and v0.92 birthday handoff alignment packet.",
+      "required_outcome": "A retained launch/birthday readiness map aligns v0.91.7 proof truth, v0.92 activation refresh, capability envelope, witness/receipt handoff entries, and public claim boundaries.",
+      "declared_scope": [
+        "v0.91.7 launch and v0.92 birthday handoff docs",
+        "Memory Palace/context, capability envelope, witnesses, receipt, and public claim boundaries",
+        "v0.92 activation bridge consumption surfaces"
+      ],
+      "authority_boundary": [
+        "Issue #4641 owns WP-14 execution",
+        "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml and WBS_v0.91.7.md define the work package",
+        "Preparation is not execution or completion evidence"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

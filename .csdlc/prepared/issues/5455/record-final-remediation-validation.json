@@ -1,0 +1,28 @@
+{
+  "issue": 5455,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "5fdceaf2328211ad19b6335ca29c9a5335595a69b7e0e1337b8f173d091b30f0",
+  "claim_id": "claim-5455-closeout-recovery",
+  "actor": "codex-closeout-audit",
+  "reason": "Record the final focused proof after adding untracked build-input rejection.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml",
+        "--test",
+        "gate10a",
+        "--",
+        "--test-threads=1"
+      ],
+      "purpose": "Prove exact clean-source build provenance including untracked build inputs, fail-closed artifact provenance, atomic installation, and implemented-phase editor mutation.",
+      "outcome": "passed",
+      "evidence_ref": "Head 7d314fded: Gate 10A 10 passed, 0 failed; strict all-target all-feature Clippy passed. Broad owner lane remains independently blocked by #5558."
+    }
+  },
+  "fail_after_backup": false
+}

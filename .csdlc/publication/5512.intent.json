@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5512,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5512-runtime-v3-csm-coverage-filter",
+  "title": "[v0.91.7][tooling][CI] Split Runtime v3 CSM coverage filters by crate",
+  "body": "Closes #5512\n\n## Summary\n- match only the exact bounded Runtime v3/CSM bridge expression\n- run ADL CSM coverage without foreign Runtime v3 or nonexistent binary selectors\n- run Runtime v3 auth, supervision, and topology coverage in `adl-runtime`\n- prove both summaries are composed with distinct nonzero fixtures\n- prove a near-match expression remains on the generic fail-closed path\n\n## Validation\n- `bash adl/tools/test_run_pr_fast_coverage_lane.sh`\n- `bash adl/tools/test_run_pr_fast_test_lane.sh`\n- `bash adl/tools/test_ci_path_policy.sh`\n- real nextest selection: 133 ADL tests and 31 Runtime v3 tests\n- exact-head subagent review clean after fixing both findings\n\nNo Runtime v2 source changes and no AWS execution.",
+  "draft": true,
+  "revision": "git-blake3:28daa5495fb58580d9fa7e7eada8bd140b1a8228:b7c18518bf7f828c03db2cb0cd7e54240eaa8ecd74b947dd32c2f2fa725b5a52",
+  "commit_sha": "28daa5495fb58580d9fa7e7eada8bd140b1a8228"
+}

@@ -1,0 +1,13 @@
+{
+  "issue": 4646,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "b6cf637d7a351d6c6fd728c07a9c9c167a577e8ea3b344465b28d4dbd07fb290",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "The bounded WP-19 handoff implementation and focused validation are complete; external dispatch remains held on PR #5574.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

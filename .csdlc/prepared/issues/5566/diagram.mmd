@@ -1,0 +1,5 @@
+flowchart LR
+  R["Exact reserved claim"] --> G["Registered Git worktree"]
+  G --> M{"Branch and canonical path match"}
+  M -->|yes| B["Typed bind activation"]
+  M -->|no| F["Fail closed"]

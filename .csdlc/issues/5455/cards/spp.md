@@ -29,7 +29,7 @@ Revision 1
       "AC-2",
       "AC-3"
     ],
-    "status": "pending"
+    "status": "completed"
   }
 ]
 

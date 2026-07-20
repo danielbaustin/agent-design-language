@@ -1,0 +1,24 @@
+{
+  "schema": "adl.publication_boundary_manual_review.v1",
+  "issue": 5571,
+  "status": "pass",
+  "publication_recommendation": "allow_historical_retention_restrict_dispatch",
+  "source_files_scanned": 18,
+  "final_files_dispositioned": 21,
+  "deterministic_report_status": "partial",
+  "deterministic_warning_disposition": "false_positive_layout_warning: packet/run_manifest.json exists and was inspected",
+  "method": [
+    "enumerate every tracked file below the #4645 review root",
+    "inspect packet/run_manifest.json and preserve its generation-time policy truth",
+    "scan for credential values, private host paths, internal URLs, raw prompt leakage, and excessive excerpts",
+    "manually inspect the three self-authored audit and disposition outputs",
+    "restrict external dispatch to REVIEW_CORPUS.v1.txt merged in PR #5579"
+  ],
+  "findings": {"blocker": 0, "warning": 0, "info": 1},
+  "info": ["Machine-local operational context remains in historical live-state evidence and is excluded from external dispatch."],
+  "secret_exposure_demonstrated": false,
+  "unsafe_material_removed": false,
+  "manifest": "docs/reviews/v0.91.7/internal-review-4645/packet/run_manifest.json",
+  "dispatch_corpus": "docs/milestones/v0.91.7/review/external_review_4646/REVIEW_CORPUS.v1.txt",
+  "disposition": "Historical public retention is allowed; external dispatch is limited to the explicit publication-safe corpus."
+}

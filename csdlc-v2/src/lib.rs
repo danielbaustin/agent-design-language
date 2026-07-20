@@ -41,11 +41,13 @@ pub use migration::{
 pub use model::{
     Claim, ClaimRecovery, DesignReview, IssueRecord, LifecyclePhase, MigrationEvidence,
     NonSubstantiveProof, PublicationEvidence, ReadinessEvidence, ReconcileTerminalRequest,
-    ReviewAssignment, ReviewEvidence, ReviewFindingEvidence, TerminalEvidence, TerminalReceipt,
+    ReviewAssignment, ReviewEvidence, ReviewFindingEvidence, TerminalDesignRepairRequest,
+    TerminalEvidence, TerminalPlanStepRepairRequest, TerminalReceipt,
+    TerminalSorArtifactRepairRequest,
 };
 pub use operator::{
-    install_binaries, resolve_operator_generation, verify_coexistence, CoexistenceInventory,
-    InstallReceipt, SkillManifest,
+    build_and_install_binaries, install_binaries, resolve_operator_generation, verify_coexistence,
+    CoexistenceInventory, InstallReceipt, SkillManifest,
 };
 pub use proof::{run_pre_switch_proof, PreSwitchEvidence, ProofManifest, ProofStep};
 pub use publication::{

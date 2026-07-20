@@ -1,0 +1,12 @@
+{
+  "issue": 5489,
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "expected_generation": 0,
+  "expected_digest": "b23398f6b03c4a47469c6ab43cb30cbd4663380d3206518d6b6642b0cb452b71",
+  "now_unix_seconds": 1784423473,
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Dependency review identified stale #5383 readiness wording in the v0.91.8 execution-readiness planning surface.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md"
+  ]
+}

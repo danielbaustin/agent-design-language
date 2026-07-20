@@ -1,0 +1,12 @@
+{
+  "issue": 5542,
+  "expected_generation": 9,
+  "expected_digest": "babee6e1150e314aad92122475db03165132cdce4e7bba699da526ba7102ce16",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "reviewer": "codex-subagent:019f77b1-4c8d-7560-8489-bb10c675a6b0",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    ".csdlc/issues/5542",
+    ".csdlc/prepared/issues/5542"
+  ]
+}

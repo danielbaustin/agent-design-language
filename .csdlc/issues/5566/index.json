@@ -1,0 +1,305 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5566,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "0358d975a44846c484a38efa48a8c55e0ab1ea8e6717d3b2c321730a17c1abb9",
+  "phase": "closed_out",
+  "generation": 13,
+  "digest": "1870d557806f83d0c8e3acd2fcc27808c1513975d750cd253abc4e613b2e6a3d",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+    "assigned_by": "codex-closeout-audit",
+    "revision": "git-blake3:683657fb812a1bfd993191f4cbdbafd9651c1608:c89805c93bda7eddca277b1ae6de9753442961629b499d95398bd008bfb4f834",
+    "scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+    "scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "reviewed_revision": "git-blake3:683657fb812a1bfd993191f4cbdbafd9651c1608:c89805c93bda7eddca277b1ae6de9753442961629b499d95398bd008bfb4f834",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5566,
+    "pull_request": 5567,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5567",
+    "base": "main",
+    "head": "codex/5566-existing-worktree-bind",
+    "revision": "git-blake3:5f40f6cceac6c44518818bf06ad3ee190c8b83a9:2fdc63bda8b54a1c14d4fc3ceadf7248af56b8686939f1edf6b5d88677fcf921",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5567,
+    "head_sha": "5f40f6cceac6c44518818bf06ad3ee190c8b83a9",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29669352764/job/88145552054"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29669352764/job/88145506123"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29669352764/job/88145506039"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29669352764/job/88145493628"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5567,
+    "disposition": "merged",
+    "observed_sha": "5f40f6cceac6c44518818bf06ad3ee190c8b83a9",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5566.json",
+    "released_branch": "codex/5566-existing-worktree-bind",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5566",
+      ".csdlc/prepared/issues/5566",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5566/retained/design.md",
+  "diagram_path": ".csdlc/issues/5566/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-closeout-audit",
+      "revision": "3f446bdbb3e2b95665a006199a6ab044a892541cbebe355b5ec37f9d32984981"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "d47af5cb1b24a964b76ba832bb46e7ae5b50c6af75568474b3d0595ecfdf0b4f",
+      "rendered_digest": "3480576725b1becc696685bbfac11d6f8dde5ed93f8a6e6f56ee395175e964fa",
+      "ast_digest": "5c221f031bad4648f98416300c38a719254d42eff3673104211058fcf3b08fb1"
+    },
+    "stp": {
+      "values_digest": "ba8f7e82754d98393f4269b6935a0eb36c6a1bcbf3772d427a234ef4c9f2ff6f",
+      "rendered_digest": "860349dd079401c7d21bcf3ed975aadbfe2b8c4a1096f056490a60cfa07c8780",
+      "ast_digest": "c5ada507b8d8b73c5f379e5243cb604bd0c8de06fe59cdc1aa16aa68c2be5096"
+    },
+    "spp": {
+      "values_digest": "277d362272642f6277db312ab5fb38a5414f8198b26f90ba5b1f934da753aff2",
+      "rendered_digest": "c6718e0b53e4966e98a7b5d75b73390be057187ebbbd53602cab331b256f96ab",
+      "ast_digest": "c6cfce950a05ed494c236cb9eb3ada6c3b9e743b4257666057cfee529fba3bdd"
+    },
+    "vpp": {
+      "values_digest": "9f3460b7bd95282a0f267bf18cebde4d950f8021e4889c65f47e7e7280f46d78",
+      "rendered_digest": "dc20671aee08f52b5fea9b09fbfc202edff5f2b3780f23d93d5ff4b4b097558e",
+      "ast_digest": "a3bca2e2defe75f1770fd9583be67f4750d1d074d08c547fef7a24faaca1eb71"
+    },
+    "srp": {
+      "values_digest": "45fd91f31cc946d936b7bf9373d542b7bdeceef618851ce98805056f58d9d6e0",
+      "rendered_digest": "45dd052125f354cc01fb84ead20bb2d68a766852b8d81088995357c51f40f890",
+      "ast_digest": "d3e4981fea5d0921abe2965ef218e0511a443ca922e7e340fe8acbbb69044542"
+    },
+    "sor": {
+      "values_digest": "078c1f319c7bdc6a60387deee87299777a96a109a123f91d3ab94ca6c19c0468",
+      "rendered_digest": "8e27ef90b8825b444a39be05fce4f409c612916d6731290ad292ca5c9cc3f8a2",
+      "ast_digest": "1752c7eca6a926628f305c7bee7396760694517fab10a357adef50652d5709cf"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-closeout-audit",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-closeout-audit",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex-closeout-audit",
+      "reason": "Bounded implementation and focused validation are recorded."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex-closeout-audit",
+      "reason": "Exact-revision subagent review passed after the P1 topology fix."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex-closeout-audit",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex-closeout-audit",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex-closeout-audit",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex-closeout-audit",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex-closeout-audit",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex-closeout-audit",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex-closeout-audit",
+      "reason": "Record the bounded existing-worktree bind implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Recognize an exact reserved worktree as issue-local when the current Git branch and canonical checkout path match.\",\"changes\":[\"Derive issue-local identity from the current branch plus canonical reserved worktree path.\",\"Preserve exact claim equality and relative path safety.\",\"Add focused success and mismatch regressions.\"],\"artifacts\":[\"csdlc-v2/src/lifecycle.rs\",\"csdlc-v2/tests/gate2.rs\",\"#5566\",\"#5306\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex-closeout-audit",
+      "reason": "Record focused bind regressions and strict static-analysis proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\",\"reserved_worktree\"],\"purpose\":\"Prove exact existing-worktree activation and mismatched-path rejection.\",\"outcome\":\"passed\",\"evidence_ref\":\"Both focused match and mismatch regressions passed independently; cargo fmt --check and strict all-target all-feature Clippy passed.\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex-closeout-audit",
+      "reason": "Implementation and focused proof complete the bounded plan step.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"implement\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex-closeout-audit",
+      "reason": "Bounded implementation and focused validation are recorded.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex-closeout-audit",
+      "reason": "Record the review-driven canonical-topology regression proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\",\"standalone_repository\"],\"purpose\":\"Prove an unrelated repository with the same worktree path suffix cannot activate the reserved claim.\",\"outcome\":\"passed\",\"evidence_ref\":\"Adversarial standalone-repository regression passed 1/1; positive linked-worktree and mismatched-reservation regressions also passed 1/1; strict Clippy passed.\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex-closeout-audit",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex-closeout-audit",
+      "reason": "Exact-revision subagent review passed after the P1 topology fix.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize retained terminal receipt during exhaustive v0.91.7 closed-issue audit.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "issue": 4644,
+  "expected_generation": 10,
+  "expected_digest": "96757354587508eb2c1fad86a825fb951756a3705249ef1d4f74de04f1f83202",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "reviewer": "codex-subagent:019f7789-9ed8-7790-b8da-8922d5291b7f",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    ".csdlc/issues/4644",
+    ".csdlc/prepared/issues/4644"
+  ]
+}

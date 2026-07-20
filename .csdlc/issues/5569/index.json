@@ -1,0 +1,344 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5569,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "dae4cdfe09611326641a8b4a1e8ec7422cdcea55c5d19cb248bbec82a95bfd8f",
+  "phase": "closed_out",
+  "generation": 15,
+  "digest": "8a5ca5a27eca2f3854b40a9a1bae8a25a3b3ed2e0b34de6cae653ffe7fb2da78",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+    "assigned_by": "codex:closeout-audit",
+    "revision": "git-blake3:755269ccb0786bbef6234f0d6c9338460b1edcd1:83a1b6637040069543e6fd330d31f18b3b75701c2ce21bfe9ca6e599a423bccd",
+    "scope": [
+      ".csdlc/issues/5547",
+      ".csdlc/issues/5569",
+      ".csdlc/prepared/issues/5547",
+      ".csdlc/prepared/issues/5569"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+    "scope": [
+      ".csdlc/issues/5547",
+      ".csdlc/issues/5569",
+      ".csdlc/prepared/issues/5547",
+      ".csdlc/prepared/issues/5569"
+    ],
+    "reviewed_revision": "git-blake3:755269ccb0786bbef6234f0d6c9338460b1edcd1:83a1b6637040069543e6fd330d31f18b3b75701c2ce21bfe9ca6e599a423bccd",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5569,
+    "pull_request": 5570,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5570",
+    "base": "main",
+    "head": "codex/5547-closeout-audit",
+    "revision": "git-blake3:3106dcdde0d3f89bcacb2d1c2dee954a48127881:c6460724a694cace5d3a285efe435c4a2a75fa04c6d3e16f15b4b7c18a75221e",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5570,
+    "head_sha": "3106dcdde0d3f89bcacb2d1c2dee954a48127881",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29670628801/job/88148888084"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29670628801/job/88148843551"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29670628801/job/88148843409"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29670628801/job/88148831677"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5570,
+    "disposition": "merged",
+    "observed_sha": "3106dcdde0d3f89bcacb2d1c2dee954a48127881",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5569.json",
+    "released_branch": "codex/5547-closeout-audit",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5547",
+      ".csdlc/issues/5569",
+      ".csdlc/prepared/issues/5547",
+      ".csdlc/prepared/issues/5569"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5569/retained/design.md",
+  "diagram_path": ".csdlc/issues/5569/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-closeout-audit",
+      "revision": "4ccd1b246a65bb5dc475aa6c4f0bf607e4c238a1481c7078261489a297fa2c52"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "4e4bd92bb35afd0b1b7feaf6bcc0f08a04cdf0c0cb4a594dda5e00018a90a743",
+      "rendered_digest": "ab16e10e30d8392dce8e78bde05f7d42a450b6a96250c7755ac04192a12db91b",
+      "ast_digest": "c3019ddbbf571c9379edf4b5a575fa7b3b38f77ccbd78ef149322b58873d0184"
+    },
+    "stp": {
+      "values_digest": "ea43b2362f8239323c654875cb274f5199464c8e37c14d03a324e763d3b0c39e",
+      "rendered_digest": "2bf1c731c8c9106026ccd9c6fc0466c4b448f1da77e9fbca4a8d87b7c2275a16",
+      "ast_digest": "e4a88fe012a86a90e6eb5d767f3e376e70b109c883efef4f152fe08ce57885a3"
+    },
+    "spp": {
+      "values_digest": "6d2fafb78df829e562b065f8eb475a1d46611dc538b42570c435ecc626bcabc7",
+      "rendered_digest": "7b13dfc14e0987038d8328d12e3a192135997b35f3a6ac147298273acd674618",
+      "ast_digest": "3271d148a460515b3650bf9a288a39bdda3034dc18dc243dc859b852c6bcfd52"
+    },
+    "vpp": {
+      "values_digest": "9dd7b15147f9ffb936d83da62f91f554fc66f0b6823d9ffd71ed453cda088ebc",
+      "rendered_digest": "c04be015e5ea484bbe7924bc3055020c08c31d7c3bac79e74c1591240298c297",
+      "ast_digest": "72f36df84e99e64f61303114ca6337d51612ba0e3030040f1ecf629bdd0a9041"
+    },
+    "srp": {
+      "values_digest": "83584cafe3f23a9b0e40e7d1fb44f545f259401e0d08a3f94a0018e91b7610c0",
+      "rendered_digest": "b2b00b55e4cd2236f31352764bc1f59970fcc5d90c5116589eb981719af32237",
+      "ast_digest": "43a00d1c1abeac0855a966b9e33f43243a80aac94996c8aadbe1edfa8578cf45"
+    },
+    "sor": {
+      "values_digest": "b73140ab5e17170c2c2c1f5265aa6aea3ba94c66a367777e2935d57e9f9f799f",
+      "rendered_digest": "17f286ee1aeb187961fa9192cb99007b5db49f69b9c3f59eebc8cff08eb7454b",
+      "ast_digest": "0d464a8675fd6b78875b248734fdd882f44aa56fb2881b878b7b6f19efd88f4e"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-closeout-audit",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-closeout-audit",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex-closeout-audit",
+      "reason": "Typed terminal repair, completed plan, doctor, parity, and hygiene evidence are recorded."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:closeout-audit",
+      "reason": "Exact terminal-repair review passed with no findings or residual risks."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:closeout-audit",
+      "reason": "The rebase and typed publication request changed the exact head after review; recover for a bounded current-head metadata review without changing the repaired #5547 terminal record."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:closeout-audit",
+      "reason": "Exact current publication-head metadata review passed with no findings or residual risks."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:closeout-audit",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:closeout-audit",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 9,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:closeout-audit",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 10,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:closeout-audit",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex-closeout-audit",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex-closeout-audit",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex-closeout-audit",
+      "reason": "Record four exact typed #5547 terminal plan repairs.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Used separately claimed #5569 authority to align all four #5547 SPP steps with already-retained execution, review, routing, validation, publication, and terminal evidence.\",\"changes\":[\"Completed AC-1 contract inspection step through typed receipt/record CAS.\",\"Completed AC-2 scoped identity implementation and residual routing step through typed receipt/record CAS.\",\"Completed AC-3 ownership-first split-plan step through typed receipt/record CAS.\",\"Completed AC-4 deferred-scope and validation-truth step through typed receipt/record CAS.\"],\"artifacts\":[\".csdlc/issues/5547\",\"csdlc-v2/closeout/5547.json\",\"repair-ac1.json\",\"repair-ac2.json\",\"repair-ac3.json\",\"repair-ac4.json\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex-closeout-audit",
+      "reason": "Record #5547 doctor, receipt parity, and diff hygiene proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5547\"],\"purpose\":\"Prove repaired terminal record validity and retained receipt parity.\",\"outcome\":\"passed\",\"evidence_ref\":\"Doctor pass at #5547 generation 16 with zero findings; local index equals retained receipt record; all four SPP steps completed; claim remains null and phase closed_out; git diff --check passed.\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex-closeout-audit",
+      "reason": "Four typed repairs and parity proof complete the bounded plan.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"repair\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex-closeout-audit",
+      "reason": "Typed terminal repair, completed plan, doctor, parity, and hygiene evidence are recorded.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:closeout-audit",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:closeout-audit",
+      "reason": "Exact terminal-repair review passed with no findings or residual risks.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:closeout-audit",
+      "reason": "The rebase and typed publication request changed the exact head after review; recover for a bounded current-head metadata review without changing the repaired #5547 terminal record.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:closeout-audit",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:closeout-audit",
+      "reason": "Exact current publication-head metadata review passed with no findings or residual risks.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:closeout-audit",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:closeout-audit",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:closeout-audit",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize retained terminal receipt during exhaustive v0.91.7 closed-issue audit.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

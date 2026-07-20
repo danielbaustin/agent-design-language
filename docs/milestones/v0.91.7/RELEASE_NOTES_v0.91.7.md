@@ -9,18 +9,22 @@
 
 ## How To Use
 
-Keep these notes implementation-accurate. Until `v0.91.7` executes, this file
-is a draft release-notes surface for planned implementation/proof work.
+Keep these notes implementation-accurate. The implementation, demo, and
+quality-gate waves have executed, and WP-17 closed through #4644 / PR #5539.
+WP-18 and WP-21A are also closed. These notes remain a draft until WP-19,
+WP-20, and WP-23 settle release-tail review, preflight, and ceremony truth.
 
 # ADL v0.91.7 Release Notes
 
 ## Summary
 
-`v0.91.7` is planned as the final implementation/readiness tranche before `v0.92`.
-It organizes activation-critical surfaces into tracked planning and
-feature docs so `v0.92` can proceed from reviewed evidence.
+`v0.91.7` is the implementation/readiness tranche feeding the required
+[v0.91.8 bridge](../v0.91.8/README.md). WP-01 through WP-18 are closed with
+retained implementation, proof, boundary, or routing evidence. The milestone
+is not release-ready while WP-19, WP-20, and WP-23 remain open, and v0.92 may
+consume only the reviewed v0.91.8 exact-revision handoff.
 
-## Planned Highlights
+## Retained Highlights
 
 - Curiosity Engine / Discovery Substrate implementation/proof.
 - Constructability Gate implementation/proof.
@@ -36,7 +40,8 @@ feature docs so `v0.92` can proceed from reviewed evidence.
 
 ## Known Limitations
 
-- These notes do not claim shipped runtime behavior yet.
+- These notes claim only the bounded behavior in the linked issue-local proof
+  and review packets; they do not claim broad product or runtime completion.
 - `v0.92` activation remains blocked until implementation/proof truth is reviewed.
 - Runtime v3 is not the default runtime in v0.91.7. #5254 records a no-go
   default-switch decision: Runtime v2 remains default and Runtime v3 remains
@@ -51,7 +56,7 @@ feature docs so `v0.92` can proceed from reviewed evidence.
 
 ## Validation Notes
 
-Expected validation for this documentation package:
+WP-17 validation for this documentation package includes:
 
 - docs existence check;
 - `git diff --check`;
@@ -61,7 +66,7 @@ Expected validation for this documentation package:
 ## What's Next
 
 - Refresh `v0.92` activation docs from reviewed implementation/proof truth.
-- Open implementation issues only after doc and issue assignments are clear.
+- Consume unresolved implementation only through named issues and evidence.
 - Carry security/governance work into `v0.93` only when explicitly assigned with evidence and operator approval.
 
 ## Exit Criteria

@@ -1,0 +1,35 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5509,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][CI] Keep mixed Runtime v3 and CSM validation out of Runtime v2 coverage",
+    "slug": "v0-91-7-runtime-v3-csm-fast-lane",
+    "version": "v0.91.7",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Prove mixed Runtime v3 and CSM changes without executing unrelated Runtime v2 coverage.",
+      "required_outcome": "A narrowly recognized mixed-crate family runs focused tests and composed coverage in each owning crate.",
+      "declared_scope": [
+        "adl/tools/ci_path_policy.sh",
+        "adl/tools/run_pr_fast_test_lane.sh",
+        "adl/tools/run_pr_fast_coverage_lane.sh",
+        "adl/tools/test_ci_path_policy.sh",
+        "adl/tools/test_run_pr_fast_test_lane.sh",
+        "adl/tools/test_run_pr_fast_coverage_lane.sh"
+      ],
+      "authority_boundary": [
+        "Issue #5509 owns CI routing only",
+        "Issue #5494 owns the Runtime v3 and CSM implementation",
+        "Issue #5409 owns WP-07A acceptance truth"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

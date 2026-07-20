@@ -1,0 +1,12 @@
+{
+  "issue": 5516,
+  "expected_generation": 16,
+  "expected_digest": "84b80da6ad19d5c9089e05af2af29e785310d2a6b629f1f84756107a979fbacc",
+  "claim_id": "claim-5516-5494-terminal-design-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5517,
+  "disposition": "merged",
+  "approved_no_pr_reason": null,
+  "token_file": "/Users/daniel/keys/github.token"
+}

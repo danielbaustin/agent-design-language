@@ -1,0 +1,12 @@
+{
+  "issue": 5527,
+  "expected_generation": 25,
+  "expected_digest": "d20040dbf7e6f882b1aed857eedc19d8f94444f471378400831e2f58c4ed092f",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5550,
+  "disposition": "merged",
+  "approved_no_pr_reason": null,
+  "token_file": "/Users/daniel/keys/github.token"
+}

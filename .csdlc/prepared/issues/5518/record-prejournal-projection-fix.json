@@ -1,0 +1,21 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "bd09b0c8a6870b16d8ef97d8339b1700a8849628d89bba07b6e216e9e5ce2bf3",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fix the pre-journal projection durability gap found in exact re-review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Make the terminal journal durable before the first reconciled projection swap.",
+    "changes": [
+      "Remove the redundant pre-journal projection commit from terminal reconciliation",
+      "Assert the after-journal interruption leaves the original projection and receipt unchanged"
+    ],
+    "artifacts": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ]
+  }
+}

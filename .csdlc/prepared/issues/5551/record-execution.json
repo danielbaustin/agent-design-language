@@ -1,0 +1,16 @@
+{
+  "issue": 5551,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "6710482330e63f116194cc16e9d696d70176f21e1b8d4ebffd80606240e54770",
+  "claim_id": "claim-5551-terminal-plan-truth",
+  "actor": "codex-closeout-audit",
+  "reason": "Use the merged typed terminal repair to complete #5527 SPP S2-S4.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Advance only #5527 SPP S2, S3, and S4 to completed and atomically refresh its terminal receipt after each exact repair.",
+    "changes": ["Repair #5527 S2-S4 from pending to completed", "Regenerate #5527 card identities, audit, generation, and digests", "Replace #5527 retained receipt atomically after each step"],
+    "artifacts": [".csdlc/issues/5527", ".csdlc/issues/5551", ".csdlc/prepared/issues/5551"]
+  },
+  "fail_after_backup": false
+}

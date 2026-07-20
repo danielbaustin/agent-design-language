@@ -1,0 +1,23 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 23,
+  "expected_digest": "0200d20e0c0d437b16ce7686a921080c3e711aaef53068a27ab67e7d63a29d2d",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record post-publication clippy-repair formatting proof after PR #5588 run 29718818086 failed adl-rust-fmt-clippy.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "adl/Cargo.toml"
+      ],
+      "purpose": "Verify the post-clippy repair formats cleanly before republishing PR #5588.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, exit 0"
+    }
+  }
+}

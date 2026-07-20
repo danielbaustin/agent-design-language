@@ -5,7 +5,9 @@ use super::*;
 use aws_config::{meta::region::RegionProviderChain, BehaviorVersion};
 use aws_sdk_bedrockruntime as bedrockruntime;
 use aws_sdk_sts as sts;
+use fs2::FileExt;
 use sha2::{Digest, Sha256};
+use std::fs::{File, OpenOptions};
 use std::thread;
 use std::time::Duration;
 
@@ -18,14 +20,11 @@ use config::{
 pub(crate) use config::{cfg_u64, timeout_secs};
 
 struct InvocationArtifactLock {
-    path: PathBuf,
+    _file: File,
 }
 
-impl Drop for InvocationArtifactLock {
-    fn drop(&mut self) {
-        let _ = fs::remove_dir(&self.path);
-    }
-}
+const INVOCATION_ARTIFACT_LOCK_TIMEOUT: Duration = Duration::from_secs(2);
+const INVOCATION_ARTIFACT_LOCK_TIMEOUT_ENV: &str = "ADL_INVOCATION_LOCK_TIMEOUT_MS";
 
 fn invocation_lock_path(path: &Path) -> PathBuf {
     let mut os = path.as_os_str().to_os_string();
@@ -35,19 +34,37 @@ fn invocation_lock_path(path: &Path) -> PathBuf {
 
 fn acquire_invocation_artifact_lock(path: &Path) -> std::io::Result<InvocationArtifactLock> {
     let lock_path = invocation_lock_path(path);
-    for _attempt in 0..200 {
-        match fs::create_dir(&lock_path) {
-            Ok(()) => return Ok(InvocationArtifactLock { path: lock_path }),
-            Err(err) if err.kind() == std::io::ErrorKind::AlreadyExists => {
+    let file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .truncate(false)
+        .open(lock_path)?;
+    let started = Instant::now();
+    let timeout = invocation_artifact_lock_timeout();
+    loop {
+        match file.try_lock_exclusive() {
+            Ok(()) => return Ok(InvocationArtifactLock { _file: file }),
+            Err(err) if err.kind() == std::io::ErrorKind::WouldBlock => {
+                if started.elapsed() > timeout {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::TimedOut,
+                        "timed out waiting for invocation artifact lock",
+                    ));
+                }
                 thread::sleep(Duration::from_millis(10));
             }
             Err(err) => return Err(err),
         }
     }
-    Err(std::io::Error::new(
-        std::io::ErrorKind::TimedOut,
-        "timed out waiting for invocation artifact lock",
-    ))
+}
+
+fn invocation_artifact_lock_timeout() -> Duration {
+    env::var(INVOCATION_ARTIFACT_LOCK_TIMEOUT_ENV)
+        .ok()
+        .and_then(|raw| raw.parse::<u64>().ok())
+        .map(Duration::from_millis)
+        .unwrap_or(INVOCATION_ARTIFACT_LOCK_TIMEOUT)
 }
 
 /// Maximum number of provider error-body characters kept for inline request-failure messages.
@@ -130,21 +147,21 @@ fn write_native_invocation_record(
     let path = PathBuf::from(path);
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|err| {
-            runtime_error(
+            post_success_invocation_artifact_io_error(
                 family,
                 format!("failed to create provider invocation artifact directory: {err}"),
             )
         })?;
     }
     let _artifact_lock = acquire_invocation_artifact_lock(&path).map_err(|err| {
-        runtime_error(
+        runtime_error_non_retryable(
             family,
-            format!("failed to acquire provider invocation artifact lock: {err}"),
+            format!("partial_success_unknown_invocation_record_lock_unavailable: provider call completed but invocation artifact lock could not be acquired without risking duplicate retry: {err}"),
         )
     })?;
     let mut payload = if path.is_file() {
         serde_json::from_slice::<Value>(&fs::read(&path).map_err(|err| {
-            runtime_error(
+            post_success_invocation_artifact_io_error(
                 family,
                 format!("failed to read provider invocation artifact: {err}"),
             )
@@ -191,43 +208,46 @@ fn write_native_invocation_record(
         )
     })?;
     write_file_atomic(&path, &bytes).map_err(|err| {
-        runtime_error(
+        post_success_invocation_artifact_io_error(
             family,
             format!("failed to write invocation artifact: {err}"),
         )
     })
 }
 
-fn write_bedrock_invocation_record(
-    model: &str,
-    prompt: &str,
-    output: &str,
+struct BedrockInvocationRecord<'a> {
+    model: &'a str,
+    prompt: &'a str,
+    output: &'a str,
     http_status: u16,
-    profile: &str,
-    region: &str,
-    account_id_sha256: Option<&str>,
-) -> Result<()> {
+    profile: &'a str,
+    region: &'a str,
+    account_id_sha256: Option<&'a str>,
+    account_profile_validation_status: &'a str,
+}
+
+fn write_bedrock_invocation_record(record: BedrockInvocationRecord<'_>) -> Result<()> {
     let Some(path) = env::var_os("ADL_PROVIDER_INVOCATIONS_PATH") else {
         return Ok(());
     };
     let path = PathBuf::from(path);
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|err| {
-            runtime_error(
+            post_success_invocation_artifact_io_error(
                 "bedrock",
                 format!("failed to create provider invocation artifact directory: {err}"),
             )
         })?;
     }
     let _artifact_lock = acquire_invocation_artifact_lock(&path).map_err(|err| {
-        runtime_error(
+        runtime_error_non_retryable(
             "bedrock",
-            format!("failed to acquire provider invocation artifact lock: {err}"),
+            format!("partial_success_unknown_invocation_record_lock_unavailable: Bedrock call completed but invocation artifact lock could not be acquired without risking duplicate retry: {err}"),
         )
     })?;
     let mut payload = if path.is_file() {
         serde_json::from_slice::<Value>(&fs::read(&path).map_err(|err| {
-            runtime_error(
+            post_success_invocation_artifact_io_error(
                 "bedrock",
                 format!("failed to read provider invocation artifact: {err}"),
             )
@@ -261,15 +281,15 @@ fn write_bedrock_invocation_record(
         .as_millis() as u64;
     invocations.push(serde_json::json!({
         "family": "bedrock",
-        "model": model,
-        "http_status": http_status,
+        "model": record.model,
+        "http_status": record.http_status,
         "timestamp_unix_ms": timestamp_unix_ms,
-        "prompt_chars": prompt.chars().count(),
-        "output_chars": output.chars().count(),
-        "aws_profile": profile,
-        "aws_region": region,
-        "account_id_sha256": account_id_sha256,
-        "account_profile_validation_status": "sts_verified"
+        "prompt_chars": record.prompt.chars().count(),
+        "output_chars": record.output.chars().count(),
+        "aws_profile": record.profile,
+        "aws_region": record.region,
+        "account_id_sha256": record.account_id_sha256,
+        "account_profile_validation_status": record.account_profile_validation_status
     }));
     let bytes = serde_json::to_vec_pretty(&payload).map_err(|err| {
         runtime_error_non_retryable(
@@ -278,11 +298,24 @@ fn write_bedrock_invocation_record(
         )
     })?;
     write_file_atomic(&path, &bytes).map_err(|err| {
-        runtime_error(
+        post_success_invocation_artifact_io_error(
             "bedrock",
             format!("failed to write invocation artifact: {err}"),
         )
     })
+}
+
+fn post_success_invocation_artifact_io_error(
+    provider: &str,
+    message: impl Into<String>,
+) -> anyhow::Error {
+    runtime_error_non_retryable(
+        provider,
+        format!(
+            "partial_success_unknown_invocation_record_io_failure: provider call completed but invocation artifact I/O failed without a safe retry boundary: {}",
+            message.into()
+        ),
+    )
 }
 
 fn write_file_atomic(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
@@ -675,6 +708,7 @@ impl Provider for OpenRouterProvider {
 
 const DEFAULT_BEDROCK_PROFILE: &str = "agent-logic-admin";
 const DEFAULT_BEDROCK_REGION: &str = "us-west-2";
+const BEDROCK_EXPECTED_ACCOUNT_SHA256_ENV: &str = "ADL_AWS_BEDROCK_ACCOUNT_SHA256";
 
 #[derive(Debug, Clone)]
 /// AWS Bedrock native provider using Bedrock Runtime InvokeModel.
@@ -682,6 +716,7 @@ pub struct AwsBedrockProvider {
     model: String,
     region: String,
     profile: String,
+    expected_account_sha256: Option<String>,
     max_tokens: u64,
     timeout_secs: Option<u64>,
 }
@@ -708,10 +743,46 @@ impl AwsBedrockProvider {
                 ),
             ));
         }
+        let config_expected_account_sha256 = cfg_string(&spec.config, "expected_account_sha256")
+            .or_else(|| cfg_string(&spec.config, "expected-account-sha256"));
+        let env_expected_account_sha256 = env::var(BEDROCK_EXPECTED_ACCOUNT_SHA256_ENV).ok();
+        let expected_account_sha256 = match (
+            env_expected_account_sha256.as_deref(),
+            config_expected_account_sha256.as_deref(),
+        ) {
+            (Some(env_expected), Some(config_expected)) => {
+                let env_expected = normalize_sha256_hex(env_expected)
+                    .map_err(|err| invalid_config("bedrock", err))?;
+                validate_sha256_hex(config_expected)
+                    .map_err(|err| invalid_config("bedrock", err))?;
+                let config_expected = config_expected.to_ascii_lowercase();
+                if env_expected != config_expected {
+                    return Err(invalid_config(
+                        "bedrock",
+                        format!(
+                            "{BEDROCK_EXPECTED_ACCOUNT_SHA256_ENV} is authoritative and conflicts with config.expected_account_sha256"
+                        ),
+                    ));
+                }
+                Some(env_expected)
+            }
+            (Some(env_expected), None) => Some(
+                normalize_sha256_hex(env_expected).map_err(|err| invalid_config("bedrock", err))?,
+            ),
+            (None, Some(config_expected)) => Some(
+                normalize_sha256_hex(config_expected)
+                    .map_err(|err| invalid_config("bedrock", err))?,
+            ),
+            (None, None) => None,
+        };
+        if let Some(expected) = expected_account_sha256.as_deref() {
+            validate_sha256_hex(expected).map_err(|err| invalid_config("bedrock", err))?;
+        }
         Ok(Self {
             model: target.provider_model_id.clone(),
             region,
             profile,
+            expected_account_sha256,
             max_tokens: cfg_u64(&spec.config, "max_tokens")
                 .or_else(|| cfg_u64(&spec.config, "max_output_tokens"))
                 .unwrap_or(220),
@@ -740,6 +811,10 @@ impl AwsBedrockProvider {
             .await
             .map_err(|err| bedrock_sdk_error(format!("{err:?}")))?;
         let account_id_sha256 = identity.account().map(sha256_hex);
+        verify_bedrock_account_identity(
+            account_id_sha256.as_deref(),
+            self.expected_account_sha256.as_deref(),
+        )?;
         let body = bedrock_nova_request_body(prompt, self.max_tokens);
         let response = bedrockruntime::Client::new(&shared_config)
             .invoke_model()
@@ -763,17 +838,59 @@ impl AwsBedrockProvider {
         let output = extract_bedrock_nova_output_text(&json).ok_or_else(|| {
             runtime_error_non_retryable("bedrock", "response missing Bedrock output text")
         })?;
-        write_bedrock_invocation_record(
-            &self.model,
+        write_bedrock_invocation_record(BedrockInvocationRecord {
+            model: &self.model,
             prompt,
-            &output,
-            200,
-            &self.profile,
-            &self.region,
-            account_id_sha256.as_deref(),
-        )?;
+            output: &output,
+            http_status: 200,
+            profile: &self.profile,
+            region: &self.region,
+            account_id_sha256: account_id_sha256.as_deref(),
+            account_profile_validation_status: "account_hash_verified",
+        })?;
         Ok(output)
     }
+}
+
+fn validate_sha256_hex(value: &str) -> std::result::Result<(), String> {
+    if value.len() == 64 && value.chars().all(|ch| ch.is_ascii_hexdigit()) {
+        Ok(())
+    } else {
+        Err("expected account hash must be a 64-character SHA-256 hex digest".to_string())
+    }
+}
+
+fn normalize_sha256_hex(value: &str) -> std::result::Result<String, String> {
+    validate_sha256_hex(value)?;
+    Ok(value.to_ascii_lowercase())
+}
+
+fn verify_bedrock_account_identity(
+    account_id_sha256: Option<&str>,
+    expected_account_sha256: Option<&str>,
+) -> Result<()> {
+    let Some(expected) = expected_account_sha256 else {
+        return Err(runtime_error_non_retryable(
+            "bedrock",
+            format!(
+                "AWS Bedrock provider requires operator-approved expected account hash; set {BEDROCK_EXPECTED_ACCOUNT_SHA256_ENV} or config.expected_account_sha256"
+            ),
+        ));
+    };
+    let expected = normalize_sha256_hex(expected).map_err(|err| invalid_config("bedrock", err))?;
+    let Some(observed) = account_id_sha256 else {
+        return Err(runtime_error_non_retryable(
+            "bedrock",
+            "AWS Bedrock STS identity did not include an account id",
+        ));
+    };
+    if observed != expected {
+        return Err(runtime_error_non_retryable(
+            "bedrock",
+            "AWS Bedrock profile account hash does not match expected Agent Logic account hash",
+        ));
+    }
+    Ok(())
 }
 
 impl Provider for AwsBedrockProvider {
@@ -833,7 +950,78 @@ fn sanitize_bedrock_error(message: &str) -> String {
     ] {
         out = redact_aws_error_value(&out, marker);
     }
+    out = redact_aws_arns(&out);
+    out = redact_aws_account_ids(&out);
     truncate_provider_body(&out)
+}
+
+fn redact_aws_arns(input: &str) -> String {
+    let mut redacted = String::with_capacity(input.len());
+    let mut cursor = 0;
+    while let Some(relative_start) = input[cursor..].find("arn:aws") {
+        let arn_start = cursor + relative_start;
+        let Some(next) = input[arn_start + "arn:aws".len()..].chars().next() else {
+            redacted.push_str(&input[cursor..]);
+            return redacted;
+        };
+        if next != ':' && next != '-' {
+            let prefix_end = arn_start + "arn:aws".len();
+            redacted.push_str(&input[cursor..prefix_end]);
+            cursor = prefix_end;
+            continue;
+        }
+        redacted.push_str(&input[cursor..arn_start]);
+        redacted.push_str("<redacted-aws-arn>");
+
+        let arn_end = input[arn_start..]
+            .char_indices()
+            .find_map(|(idx, ch)| {
+                matches!(ch, ' ' | ',' | ';' | '"' | '\'' | ')' | '}' | ']')
+                    .then_some(arn_start + idx)
+            })
+            .unwrap_or(input.len());
+        cursor = arn_end;
+    }
+    redacted.push_str(&input[cursor..]);
+    redacted
+}
+
+fn redact_aws_account_ids(input: &str) -> String {
+    let mut redacted = String::with_capacity(input.len());
+    let mut digit_start = None;
+    let mut digit_count = 0usize;
+    let mut last_end = 0usize;
+
+    for (idx, ch) in input.char_indices() {
+        if ch.is_ascii_digit() {
+            if digit_start.is_none() {
+                digit_start = Some(idx);
+            }
+            digit_count += 1;
+            continue;
+        }
+
+        if let Some(start) = digit_start {
+            if digit_count == 12 {
+                redacted.push_str(&input[last_end..start]);
+                redacted.push_str("<redacted-aws-account-id>");
+                last_end = idx;
+            }
+        }
+        digit_start = None;
+        digit_count = 0;
+    }
+
+    if let Some(start) = digit_start {
+        if digit_count == 12 {
+            redacted.push_str(&input[last_end..start]);
+            redacted.push_str("<redacted-aws-account-id>");
+            last_end = input.len();
+        }
+    }
+
+    redacted.push_str(&input[last_end..]);
+    redacted
 }
 
 fn redact_aws_error_value(input: &str, marker: &str) -> String {

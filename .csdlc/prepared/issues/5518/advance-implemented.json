@@ -1,0 +1,10 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "a7066681e3fef27ab4156780ce11f0716061e047593d9245fd39fad63ded59a7",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded terminal repair capability and #5516 correction are implemented and validated.",
+  "operation": {"operation":"advance_phase","phase":"implemented"}
+}

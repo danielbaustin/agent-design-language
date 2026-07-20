@@ -1,0 +1,86 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5518,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Repair stale terminal plan-step truth atomically",
+    "slug": "v0-91-7-csdlc-v2-terminal-plan-step-repair",
+    "version": "v0.91.7",
+    "generation": 29
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Implement the narrow repair operation, prove fail-closed atomic behavior, repair #5516, review, publish, merge, and close out.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Design and bind the terminal repair authority",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Implement and test atomic terminal plan-step repair",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Repair #5516 and validate receipt parity",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S4",
+          "action": "Review, publish, merge, and close out",
+          "acceptance_ids": [
+            "AC-6"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Separate authority issue is mandatory",
+        "Target is closed-out and claim-free",
+        "Only a forward step completion is allowed",
+        "Receipt and target roll back together"
+      ],
+      "risks": [
+        "Overbroad terminal mutation would weaken immutability",
+        "Receipt refresh failure could split record truth"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Repair requires runtime changes",
+        "Operation permits arbitrary terminal edits",
+        "Rollback proof fails",
+        "Exact review finds unresolved atomicity defects"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5518/design.md",
+      "design_digest": "a1c8692ee17db438145a33c561c81eb756a748dab107a9403efe96724778797a",
+      "diagram_ref": ".csdlc/prepared/issues/5518/diagram.mmd",
+      "diagram_digest": "2fc0be20bfe7968d65ae59096c37893c65532f51cb289603a54bf9716aced83c"
+    }
+  }
+}

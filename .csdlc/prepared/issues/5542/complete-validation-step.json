@@ -1,0 +1,14 @@
+{
+  "issue": 5542,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "c53988a47f714ea29ca09a71f0352208bf8155a7b78e7a6f36ef07393d4844a3",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The strengthened WP-17 validator, typed local PVF lane, typed doctor, and diff hygiene all passed with 208 READMEs, 830 local links, structured artifacts, ADRs, Cargo manifests, and no AWS use.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S3",
+    "status": "completed"
+  }
+}

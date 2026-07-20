@@ -1,0 +1,27 @@
+{
+  "issue": 5509,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "8b93194b22b092e0445f0411efa0517724a17c6af198366d06b2e55041863587",
+  "claim_id": "claim-5509-runtime-v3-csm-fast-lane",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Implemented the bounded mixed Runtime v3 and CSM validation route.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Route the closed Runtime v3/CSM bridge family through independent focused tests and composed coverage while retaining fail-closed behavior for every other mixed-crate change.",
+    "changes": [
+      "Add a mixed_focused two-crate test plan for the Runtime v3/CSM bridge family",
+      "Execute ADL CSM tests and Runtime v3 tests in their owning crates",
+      "Select focused composed coverage for the closed path family",
+      "Preserve full-validation fallback when any unrelated Rust path is present",
+      "Add positive, execution, coverage-composition, and negative routing contracts"
+    ],
+    "artifacts": [
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh"
+    ]
+  }
+}

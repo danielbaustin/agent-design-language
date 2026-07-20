@@ -1,0 +1,12 @@
+{
+  "issue": 5489,
+  "expected_generation": 9,
+  "expected_digest": "b1c7417349fa5223cdfeedbd2dacb4dc3136e4140b03bc6c339a7964b148f04a",
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "now_unix_seconds": 1784425160,
+  "reason": "WP-21A requires a bounded canonical-document inventory and validation matrix for the complete v0.91.8 next-milestone documentation packet.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md"
+  ]
+}

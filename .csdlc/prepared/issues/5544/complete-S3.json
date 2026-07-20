@@ -1,0 +1,10 @@
+{
+  "issue": 5544,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "3b6d72f1a4b04856e7c3c8d9a99e866ba10991e0c1f4525ded917f02de75abca",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "Live GitHub and C-SDLC state was captured for the named WP-14 through WP-20 surfaces and blocker issues.",
+  "operation": {"operation":"update_plan_step","step_id":"S3","status":"completed"}
+}

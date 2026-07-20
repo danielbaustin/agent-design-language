@@ -1,0 +1,8 @@
+{
+  "issue": 5512,
+  "expected_generation": 10,
+  "expected_digest": "7c75261ede0aa60ad90258ef4a1b964163eba28b6c29c65b0a50a46d7b05500c",
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover implementation after hosted CI exposed a stale static contract for the reviewed owning-crate coverage variable."
+}

@@ -1,0 +1,14 @@
+{
+  "issue": 5489,
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "expected_generation": 0,
+  "expected_digest": "938dd07bfe2eb39a57dc6d666877051870feddda13d84235cc2de3d97aabb694",
+  "now_unix_seconds": 1784423330,
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Operator assigned #5489 WP-21A to prepare the v0.91.8 parallel execution plan and reconcile the checked-in v0.91.8 planning surfaces without executing v0.91.8 work.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/SPRINT_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml"
+  ]
+}

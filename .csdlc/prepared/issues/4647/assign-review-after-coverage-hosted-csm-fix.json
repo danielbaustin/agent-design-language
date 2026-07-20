@@ -1,0 +1,14 @@
+{
+  "issue": 4647,
+  "expected_generation": 34,
+  "expected_digest": "23638f899c69e6ab585f6db08d817f5d43ab07cd3143328dd0420f2be24853ee",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "reviewer": "subagent:019f7e25-c21b-7ed1-a38d-ef3a838a6114",
+  "assigned_by": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "scope": [
+    ".csdlc/issues/4647",
+    ".csdlc/prepared/issues/4647",
+    ".csdlc/publication/4647.intent.json",
+    "adl/src/csm_api_gateway_bridge.rs"
+  ]
+}

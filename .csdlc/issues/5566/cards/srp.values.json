@@ -1,0 +1,28 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5566,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Activate an exact reserved claim from its existing issue worktree",
+    "slug": "existing-worktree-bind",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2/src/lifecycle.rs\ncsdlc-v2/tests/gate2.rs",
+      "review_revision": "git-blake3:683657fb812a1bfd993191f4cbdbafd9651c1608:c89805c93bda7eddca277b1ae6de9753442961629b499d95398bd008bfb4f834",
+      "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+      "review_prompts": [
+        "Does issue-local recognition require both the exact branch and canonical registered worktree path?",
+        "Are all existing bind guards preserved?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pass"
+    }
+  }
+}

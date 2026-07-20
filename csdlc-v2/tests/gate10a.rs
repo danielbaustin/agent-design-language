@@ -1,6 +1,7 @@
 use csdlc_v2::{
-    install_binaries, resolve_operator_generation, verify_coexistence, CoexistenceInventory,
-    Generation, SkillManifest,
+    build_and_install_binaries, edit_issue, install_binaries, resolve_operator_generation,
+    verify_coexistence, BootstrapRequest, CardKind, Claim, CoexistenceInventory, EditRequest,
+    Generation, LifecyclePhase, SemanticOperation, SkillManifest, Store,
 };
 use std::fs;
 use std::process::Command;
@@ -18,6 +19,49 @@ fn nine_skills_are_typed_and_bind_the_generation_selector() {
         .iter()
         .all(|r| r.binary.starts_with("csdlc-") && !r.binary.contains("python")));
 }
+
+#[test]
+fn current_operator_guidance_has_no_sunset_v1_route() {
+    let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
+    let manifest = SkillManifest::load().unwrap();
+    for skill in &manifest.skills {
+        let path = repo
+            .join("csdlc-v2/operator/skills")
+            .join(&skill.name)
+            .join("SKILL.md");
+        let text = fs::read_to_string(&path).unwrap();
+        assert!(
+            current_guidance_is_v2_only(&text, &["v1_sunset"]),
+            "current operational skill retains sunset guidance: {}",
+            path.display()
+        );
+    }
+
+    let workflow = fs::read_to_string(repo.join("docs/default_workflow.md")).unwrap();
+    assert!(workflow.starts_with("# Default C-SDLC v2 workflow"));
+    assert!(workflow.contains("csdlc-init"));
+    assert!(workflow.contains("csdlc-closeout"));
+    assert!(current_guidance_is_v2_only(
+        &workflow,
+        &["docs/legacy/default_workflow_v1.md"]
+    ));
+}
+
+#[test]
+fn current_guidance_guard_rejects_exact_former_wrapper_command() {
+    let former = "Run `bash ./adl/tools/pr.sh run 42`; pr.sh remains the default.";
+    assert!(!current_guidance_is_v2_only(former, &[]));
+}
+
+fn current_guidance_is_v2_only(text: &str, allowed_v1_references: &[&str]) -> bool {
+    let mut normalized = text.to_ascii_lowercase().replace("./", "");
+    for allowed in allowed_v1_references {
+        normalized = normalized.replace(&allowed.to_ascii_lowercase(), "");
+    }
+    !normalized.contains("pr.sh")
+        && !normalized.contains("workflow-conductor")
+        && !normalized.contains("v1")
+}
 #[test]
 fn coexistence_fails_closed_when_v1_or_v2_is_missing() {
     let repo = tempfile::tempdir().unwrap();
@@ -30,21 +74,11 @@ fn coexistence_fails_closed_when_v1_or_v2_is_missing() {
 }
 #[test]
 fn installer_records_provenance_without_replacing_other_files() {
-    let source = tempfile::tempdir().unwrap();
+    let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
     let destination_parent = tempfile::tempdir().unwrap();
     let destination = destination_parent.path().join("csdlc-v2");
-    let manifest = SkillManifest::load().unwrap();
-    for name in manifest.required_binaries() {
-        fs::write(source.path().join(&name), name.as_bytes()).unwrap();
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-            fs::set_permissions(source.path().join(name), fs::Permissions::from_mode(0o755))
-                .unwrap();
-        }
-    }
     fs::write(destination_parent.path().join("v1-stays"), b"v1").unwrap();
-    let receipt = install_binaries(source.path(), &destination).unwrap();
+    let receipt = build_and_install_binaries(&repo, &destination).unwrap();
     assert_eq!(receipt.binaries.len(), 12);
     assert_eq!(
         fs::read(destination_parent.path().join("v1-stays")).unwrap(),
@@ -64,7 +98,6 @@ fn installer_records_provenance_without_replacing_other_files() {
             0
         );
     }
-    let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
     let inventory = CoexistenceInventory::load().unwrap();
     assert!(
         verify_coexistence(&repo, &destination, &inventory)
@@ -95,56 +128,280 @@ fn installer_records_provenance_without_replacing_other_files() {
 
 #[test]
 fn stale_owner_binary_provenance_fails_closed() {
-    let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
-    let source = tempfile::tempdir().unwrap();
+    let repo = tempfile::tempdir().unwrap();
+    git(repo.path(), &["init", "-b", "main"]);
+    git(
+        repo.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(repo.path(), &["config", "user.name", "C-SDLC Test"]);
+    fs::create_dir_all(repo.path().join("csdlc-v2/operator")).unwrap();
+    fs::write(
+        repo.path()
+            .join("csdlc-v2/operator/generation-selector.json"),
+        fs::read(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("operator/generation-selector.json"),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let source = repo.path().join("csdlc-v2/target/debug");
+    fs::create_dir_all(&source).unwrap();
     let parent = tempfile::tempdir().unwrap();
     let bins = parent.path().join("csdlc-v2");
     for name in SkillManifest::load().unwrap().required_binaries() {
-        fs::write(source.path().join(&name), name.as_bytes()).unwrap();
+        fs::write(source.join(&name), name.as_bytes()).unwrap();
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            fs::set_permissions(source.path().join(name), fs::Permissions::from_mode(0o755))
-                .unwrap();
+            fs::set_permissions(source.join(name), fs::Permissions::from_mode(0o755)).unwrap();
         }
     }
-    install_binaries(source.path(), &bins).unwrap();
+    fs::write(repo.path().join("source-revision"), b"one").unwrap();
+    git(repo.path(), &["add", "."]);
+    git(repo.path(), &["commit", "-m", "first revision"]);
+    install_binaries(&source, &bins).unwrap();
+    fs::write(repo.path().join("source-revision"), b"two").unwrap();
+    git(repo.path(), &["add", "source-revision"]);
+    git(repo.path(), &["commit", "-m", "advance source revision"]);
     let receipt_path = bins.join("install-receipt.json");
     let mut receipt: serde_json::Value =
         serde_json::from_slice(&fs::read(&receipt_path).unwrap()).unwrap();
+    assert!(receipt["source_revision"]
+        .as_str()
+        .unwrap()
+        .starts_with("content:"));
+    let error =
+        verify_coexistence(repo.path(), &bins, &CoexistenceInventory::load().unwrap()).unwrap_err();
+    assert!(
+        error.message.contains("stale owner-binary provenance"),
+        "{}",
+        error.message
+    );
+
     receipt["source_revision"] = serde_json::Value::String("git:stale-revision".into());
     fs::write(&receipt_path, serde_json::to_vec_pretty(&receipt).unwrap()).unwrap();
     let error =
-        verify_coexistence(&repo, &bins, &CoexistenceInventory::load().unwrap()).unwrap_err();
+        verify_coexistence(repo.path(), &bins, &CoexistenceInventory::load().unwrap()).unwrap_err();
     assert!(error.message.contains("stale owner-binary provenance"));
+}
+
+#[test]
+fn untracked_build_input_is_rejected_before_cargo_runs() {
+    let repo = tempfile::tempdir().unwrap();
+    git(repo.path(), &["init", "-b", "main"]);
+    git(
+        repo.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(repo.path(), &["config", "user.name", "C-SDLC Test"]);
+    fs::create_dir_all(repo.path().join("csdlc-v2/src")).unwrap();
+    fs::write(
+        repo.path().join("csdlc-v2/Cargo.toml"),
+        "[package]\nname='fixture'\nversion='0.1.0'\nedition='2021'\n",
+    )
+    .unwrap();
+    fs::write(repo.path().join("csdlc-v2/src/main.rs"), "fn main() {}\n").unwrap();
+    git(repo.path(), &["add", "."]);
+    git(repo.path(), &["commit", "-m", "tracked source"]);
+    fs::write(
+        repo.path().join("csdlc-v2/build.rs"),
+        "fn main() { std::fs::write(\"cargo-ran\", \"bad\").unwrap(); }\n",
+    )
+    .unwrap();
+    let destination = tempfile::tempdir().unwrap().path().join("csdlc-v2");
+    let error = build_and_install_binaries(repo.path(), &destination).unwrap_err();
+    assert!(error.message.contains("dirty csdlc-v2 sources"));
+    assert!(!repo.path().join("cargo-ran").exists());
+    assert!(!destination.exists());
 }
 
 #[test]
 fn freshly_installed_stable_edit_binary_is_executable() {
     let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
-    let source = tempfile::tempdir().unwrap();
-    let stable = repo.join("csdlc-v2/target/debug");
-    for name in SkillManifest::load().unwrap().required_binaries() {
-        let bytes = fs::read(stable.join(&name)).unwrap();
-        fs::write(source.path().join(&name), bytes).unwrap();
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-            fs::set_permissions(source.path().join(&name), fs::Permissions::from_mode(0o755))
-                .unwrap();
-        }
-    }
     let parent = tempfile::tempdir().unwrap();
     let destination = parent.path().join("csdlc-v2");
-    install_binaries(source.path(), &destination).unwrap();
+    build_and_install_binaries(&repo, &destination).unwrap();
+
+    let fixture = tempfile::tempdir().unwrap();
+    git(fixture.path(), &["init", "-b", "main"]);
+    git(
+        fixture.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(fixture.path(), &["config", "user.name", "C-SDLC Test"]);
+    fs::create_dir_all(fixture.path().join("docs")).unwrap();
+    fs::write(fixture.path().join("docs/design.md"), "# Reviewed design\n").unwrap();
+    fs::write(
+        fixture.path().join("docs/diagram.mmd"),
+        "flowchart LR\n  A --> B\n",
+    )
+    .unwrap();
+    let store = Store::new(fixture.path());
+    let initialized = csdlc_v2::initialize_issue(&store, bootstrap_request()).unwrap();
+    let ready = edit_issue(
+        &store,
+        edit(
+            &initialized,
+            SemanticOperation::AdvancePhase {
+                phase: LifecyclePhase::Ready,
+            },
+        ),
+    )
+    .unwrap();
+    let bound = edit_issue(
+        &store,
+        edit(
+            &ready,
+            SemanticOperation::AdvancePhase {
+                phase: LifecyclePhase::Bound,
+            },
+        ),
+    )
+    .unwrap();
+    let mut execution = edit(
+        &bound,
+        SemanticOperation::RecordExecution {
+            summary: "implemented".into(),
+            changes: vec!["docs/design.md".into()],
+            artifacts: vec!["focused test".into()],
+        },
+    );
+    execution.card = CardKind::Sor;
+    let evidenced = edit_issue(&store, execution).unwrap();
+    let implemented = edit_issue(
+        &store,
+        edit(
+            &evidenced,
+            SemanticOperation::AdvancePhase {
+                phase: LifecyclePhase::Implemented,
+            },
+        ),
+    )
+    .unwrap();
+    fs::write(
+        fixture.path().join("docs/design.md"),
+        "# Implemented correction\n",
+    )
+    .unwrap();
+    let request = csdlc_v2::ApproveDesignRequest {
+        issue: 42,
+        expected_generation: implemented.generation,
+        expected_digest: implemented.digest,
+        claim_id: "claim-1".into(),
+        reviewer: "architect".into(),
+    };
+    let request_path = fixture.path().join("approve.json");
+    fs::write(&request_path, serde_json::to_vec_pretty(&request).unwrap()).unwrap();
     let result = Command::new(destination.join("csdlc-edit"))
-        .arg("--help")
+        .args([
+            "--repo",
+            fixture.path().to_str().unwrap(),
+            "approve-design",
+            "--request",
+            request_path.to_str().unwrap(),
+        ])
         .output()
         .unwrap();
     assert!(
         result.status.success(),
-        "stable typed editor failed to execute"
+        "stable typed editor failed to reapprove implemented design: {}",
+        String::from_utf8_lossy(&result.stderr)
     );
+    let reapproved = store.load_record(42).unwrap();
+    assert_eq!(reapproved.phase, LifecyclePhase::Implemented);
+    assert_eq!(reapproved.generation, implemented.generation + 1);
+}
+
+fn git(root: &std::path::Path, args: &[&str]) {
+    let output = Command::new("git")
+        .current_dir(root)
+        .args(args)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+}
+
+fn edit(record: &csdlc_v2::IssueRecord, operation: SemanticOperation) -> EditRequest {
+    EditRequest {
+        issue: 42,
+        card: CardKind::Sip,
+        expected_generation: record.generation,
+        expected_digest: record.digest.clone(),
+        claim_id: "claim-1".into(),
+        actor: "agent".into(),
+        reason: "test edit".into(),
+        operation,
+        fail_after_backup: false,
+    }
+}
+
+fn bootstrap_request() -> BootstrapRequest {
+    BootstrapRequest {
+        issue: 42,
+        repository: "example/repo".into(),
+        design_path: "docs/design.md".into(),
+        diagram_path: "docs/diagram.mmd".into(),
+        design_reviewer: "reviewer".into(),
+        design_approved: true,
+        claim: Claim {
+            id: "claim-1".into(),
+            owner: "agent".into(),
+            generation: 0,
+            acquired_unix_seconds: 1,
+            expires_unix_seconds: u64::MAX,
+            heartbeat_unix_seconds: 1,
+            branch: "issue-42".into(),
+            worktree: ".".into(),
+            protected_paths: vec!["docs".into()],
+            purpose: "test".into(),
+        },
+        initial: csdlc_v2::InitialCardInput {
+            title: "Gate 10A fixture".into(),
+            slug: "gate-10a-fixture".into(),
+            version: "v0.91.7".into(),
+            goal: "Prove installed editor behavior.".into(),
+            required_outcome: "Reapprove implemented design.".into(),
+            declared_scope: vec!["fixture".into()],
+            authority_boundary: vec!["no network".into()],
+            task_boundary: "Fixture only.".into(),
+            deliverables: vec!["record".into()],
+            acceptance_criteria: vec!["editor reapproves".into()],
+            dependencies: vec!["none".into()],
+            repo_inputs: vec!["docs/design.md".into()],
+            non_goals: vec!["GitHub".into()],
+            plan_summary: "Construct and reapprove.".into(),
+            steps: vec![csdlc_v2::cards::PlanStep {
+                id: "step-1".into(),
+                action: "exercise editor".into(),
+                acceptance_ids: vec!["AC-1".into()],
+                status: csdlc_v2::cards::StepStatus::Pending,
+            }],
+            invariants: vec!["typed mutation".into()],
+            risks: vec!["binary drift".into()],
+            planning_profile: csdlc_v2::PlanningProfile::Small,
+            stop_conditions: vec!["failure".into()],
+            validation_lanes: vec![csdlc_v2::cards::ValidationLane {
+                lane: "focused".into(),
+                proof_role: "Gate 10A".into(),
+                acceptance_ids: vec!["AC-1".into()],
+                deterministic: true,
+                resource_profile: csdlc_v2::cards::ResourceProfile::Small,
+                budget_seconds: 120,
+                budget_tokens: 1000,
+                argv: vec!["cargo".into(), "test".into()],
+                parallel_group: "local".into(),
+                defer_reason: None,
+            }],
+            failure_policy: "Fail closed.".into(),
+            review_prompts: vec!["Review correctness.".into()],
+        },
+    }
 }
 
 #[test]
@@ -218,15 +475,9 @@ fn shared_destination_and_non_executable_sources_are_rejected_without_mutation()
 fn symlinked_installed_binaries_fail_coexistence() {
     use std::os::unix::fs::symlink;
     let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
-    let source = tempfile::tempdir().unwrap();
     let parent = tempfile::tempdir().unwrap();
     let bins = parent.path().join("csdlc-v2");
-    for name in SkillManifest::load().unwrap().required_binaries() {
-        use std::os::unix::fs::PermissionsExt;
-        fs::write(source.path().join(&name), name.as_bytes()).unwrap();
-        fs::set_permissions(source.path().join(name), fs::Permissions::from_mode(0o755)).unwrap();
-    }
-    install_binaries(source.path(), &bins).unwrap();
+    build_and_install_binaries(&repo, &bins).unwrap();
     fs::remove_file(bins.join("csdlc-init")).unwrap();
     symlink("/bin/true", bins.join("csdlc-init")).unwrap();
     let report = verify_coexistence(&repo, &bins, &CoexistenceInventory::load().unwrap()).unwrap();

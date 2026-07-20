@@ -1,0 +1,18 @@
+{
+  "issue": 5566,
+  "branch": "codex/5566-existing-worktree-bind",
+  "base_branch": "main",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5566-existing-worktree-bind",
+    "owner": "codex-closeout-audit",
+    "generation": 0,
+    "acquired_unix_seconds": 1784425395,
+    "expires_unix_seconds": 1784511795,
+    "heartbeat_unix_seconds": 1784425395,
+    "branch": "codex/5566-existing-worktree-bind",
+    "worktree": ".",
+    "protected_paths": [".csdlc/issues/5566", ".csdlc/prepared/issues/5566", "csdlc-v2/src/lifecycle.rs", "csdlc-v2/tests/gate2.rs"],
+    "purpose": "Permit exact reserved-claim activation from its registered existing issue worktree"
+  }
+}

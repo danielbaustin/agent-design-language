@@ -1,0 +1,11 @@
+{
+  "issue": 5563,
+  "card": "spp",
+  "expected_generation": 3,
+  "expected_digest": "5d1d472fe3769105ec24b8ae83cb2c44b4eb0c957b7d34db0590874d3730b586",
+  "claim_id": "claim-5563-initialized-design-recovery",
+  "actor": "codex-closeout-audit",
+  "reason": "Implementation and focused acceptance proof complete the sole bounded plan step.",
+  "operation": {"operation":"update_plan_step","step_id":"implement","status":"completed"},
+  "fail_after_backup": false
+}

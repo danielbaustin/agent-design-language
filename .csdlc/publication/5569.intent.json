@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5569,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5547-closeout-audit",
+  "title": "[v0.91.8][csdlc-v2][closeout] Repair #5547 terminal plan truth",
+  "body": "Closes #5569\n\nMaterializes #5547's retained terminal receipt and repairs all four stale pending SPP steps through separately claimed typed CAS operations. The reconciled #5547 record is closed_out, claim-free, doctor-clean, and byte-identical to its retained receipt. Both the bounded repair review and exact publication-head review passed with no findings or residual risks.\n\nNo AWS or Spot execution was performed.",
+  "draft": true,
+  "revision": "git-blake3:7ea024cb32f47cc81761d28b084d85652137ed78:a1ec13a52e815c18578173e8d773db460b596d036dfbc736e88c4d52dd08d09f",
+  "commit_sha": "7ea024cb32f47cc81761d28b084d85652137ed78"
+}

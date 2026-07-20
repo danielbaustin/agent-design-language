@@ -1,0 +1,13 @@
+{
+  "issue": 4644,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "ec77f1b06033a36c8f00cbab683b490d45354b4493ecf53028fc48f9fb20bccd",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded WP-17 documentation alignment is implemented and locally validated with retained executable evidence.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

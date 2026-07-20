@@ -1,0 +1,23 @@
+{
+  "issue": 5514,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "f07f5fc7e6c4a0b327e8c3b9d3942430035856b396c33bbfdc3bdd76621b769e",
+  "claim_id": "claim-5514-complete-csm-coverage",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Preserve complete owning-workspace CSM coverage after the #5512 partition.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Expand the exact Runtime v3/CSM bridge partition to every valid ADL CSM family while retaining Runtime v3-only companion coverage.",
+    "changes": [
+      "Retain all canonical ADL library CSM selectors",
+      "Route csmctl and csm_service tests through the canonical ADL CLI binary",
+      "Keep the nonexistent cli_smoke selector out of ADL coverage",
+      "Assert every retained selector in the command-level regression"
+    ],
+    "artifacts": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+{
+ "issue":5455,"card":"sor","expected_generation":2,"expected_digest":"ffe16328d0dc4549b8b544aa2c6f0cac4062502f54ae5d84e447bdde811ec404","claim_id":"claim-5455-closeout-recovery","actor":"codex-closeout-audit","reason":"Record a fresh exact-head Gate 10A proof during closeout recovery.",
+ "operation":{"operation":"record_validation","result":{"command":["cargo","test","--locked","--manifest-path","csdlc-v2/Cargo.toml","--test","gate10a"],"purpose":"Prove current merged-head install provenance, stale rejection, atomic install, and stable editor execution behavior.","outcome":"passed","evidence_ref":"Fresh recovery run at PR #5460 head fb7d09a56: 9 passed, 0 failed"}},"fail_after_backup":false
+}

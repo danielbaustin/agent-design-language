@@ -1,0 +1,8 @@
+{
+  "issue": 5542,
+  "expected_generation": 8,
+  "expected_digest": "af4803606c83ae7d8be64fed9a1473a94180e39cb0266fee214ccf8511855564",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The committed lifecycle projection advanced HEAD after the substantive exact-revision review; recover for a bounded metadata-only current-head review before publication."
+}

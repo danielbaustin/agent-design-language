@@ -1,0 +1,14 @@
+{
+  "issue": 4647,
+  "expected_generation": 41,
+  "expected_digest": "f678402e590b6b097bbcf8db978b8b997d385cb9c4f29d0f81ee4c611764e940",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "reviewer": "subagent:019f7e46-a24a-7f62-b24e-c3b5d9202d63",
+  "assigned_by": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "scope": [
+    ".csdlc/issues/4647",
+    ".csdlc/prepared/issues/4647",
+    "adl/tools/run_authoritative_coverage_lane.sh",
+    "adl/tools/test_run_authoritative_coverage_lane.sh"
+  ]
+}

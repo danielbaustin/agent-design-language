@@ -1,0 +1,8 @@
+{
+  "issue": 5516,
+  "expected_generation": 7,
+  "expected_digest": "5aca3bfb6233b93506db90bed6520b05bd944c7d403210516b28419cdde2b897",
+  "claim_id": "claim-5516-5494-terminal-design-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover exact review identity after committing typed review metadata; the substantive retained design, diagram, and review documents are byte-identical."
+}

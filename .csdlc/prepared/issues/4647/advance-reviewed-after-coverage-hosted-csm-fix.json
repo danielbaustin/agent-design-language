@@ -1,0 +1,13 @@
+{
+  "issue": 4647,
+  "card": "srp",
+  "expected_generation": 35,
+  "expected_digest": "50742fd60451283f42495e908bd1772eafdb926aa17efca2e1bd1a11c9581113",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Exact-head bounded review by subagent 019f7e25-c21b-7ed1-a38d-ef3a838a6114 confirmed HEAD 04bf3d8401a2b8c156546bc64bde065a0342cb34 is clean/fixed-confirmed after the post-publication CSM API Gateway coverage-hosted repair.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

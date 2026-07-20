@@ -1,0 +1,14 @@
+{
+  "issue": 5455,
+  "expected_generation": 12,
+  "expected_digest": "c5c56dfd53e541674a8fd8ce246307ced022ffb5a8b7e897d7bce50e31366fac",
+  "claim_id": "claim-5455-closeout-recovery",
+  "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+  "assigned_by": "codex-closeout-audit",
+  "scope": [
+    "csdlc-v2/src/bin/csdlc-install.rs",
+    "csdlc-v2/src/lib.rs",
+    "csdlc-v2/src/operator.rs",
+    "csdlc-v2/tests/gate10a.rs"
+  ]
+}

@@ -40,6 +40,21 @@ die() {
   exit 2
 }
 
+validate_build_command() {
+  local command="$1"
+  case "$command" in
+    "bash adl/tools/run_pr_fast_test_lane.sh"|\
+    "bash adl/tools/run_pr_fast_coverage_lane.sh"|\
+    "bash adl/tools/run_authoritative_coverage_lane.sh"|\
+    "cd adl && cargo nextest run --no-run"|\
+    "cd adl && cargo nextest run --test-threads 18 --no-fail-fast --status-level all --final-status-level slow")
+      ;;
+    *)
+      die "CodeFriend build command is not in the approved validation allowlist"
+      ;;
+  esac
+}
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 AWS_CLI="${ADL_AWS_CLI:-aws}"
 MODE="dry-run"
@@ -340,6 +355,27 @@ fi
 if [ "$FULL_NEXTEST" = "true" ]; then
   ENV_OVERRIDES+=("ADL_CODEFRIEND_BUILD_PREPARE_COMMAND=cd adl && cargo nextest run --no-run")
   ENV_OVERRIDES+=("ADL_CODEFRIEND_BUILD_COMMAND=cd adl && cargo nextest run --test-threads 18 --no-fail-fast --status-level all --final-status-level slow")
+fi
+
+build_command_override=""
+prepare_command_override=""
+for override in "${ENV_OVERRIDES[@]+${ENV_OVERRIDES[@]}}"; do
+  case "$override" in
+    ADL_CODEFRIEND_BUILD_COMMAND=*)
+      [ -z "$build_command_override" ] || die "ADL_CODEFRIEND_BUILD_COMMAND may be supplied only once"
+      build_command_override="${override#ADL_CODEFRIEND_BUILD_COMMAND=}"
+      ;;
+    ADL_CODEFRIEND_BUILD_PREPARE_COMMAND=*)
+      [ -z "$prepare_command_override" ] || die "ADL_CODEFRIEND_BUILD_PREPARE_COMMAND may be supplied only once"
+      prepare_command_override="${override#ADL_CODEFRIEND_BUILD_PREPARE_COMMAND=}"
+      ;;
+  esac
+done
+if [ -n "$build_command_override" ]; then
+  validate_build_command "$build_command_override"
+fi
+if [ -n "$prepare_command_override" ]; then
+  validate_build_command "$prepare_command_override"
 fi
 
 AWS_PROFILE_ARGS=()

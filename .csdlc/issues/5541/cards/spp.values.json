@@ -1,0 +1,65 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5541,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Recover #5306 direct merged PR terminal evidence",
+    "slug": "gate10d2-authority-docs",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Correct both stale current guidance surfaces, add a focused guard, validate, review, and publish.",
+      "steps": [
+        {
+          "id": "fix-guidance",
+          "action": "Align current skill and workflow guidance with final v2 authority",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "guard-review",
+          "action": "Add stale-guidance guard, validate, and review exact revision",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Final v1_sunset authority remains explicit",
+        "Historical evidence remains immutable",
+        "No v1 command surface is restored",
+        "No AWS or Spot validation"
+      ],
+      "risks": [
+        "An overbroad text scan could reject immutable historical evidence",
+        "A rewritten workflow could name binaries without the resolver/install contract"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Any need to restore a v1 wrapper",
+        "Any historical evidence mutation"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5541/retained/design.md",
+      "design_digest": "c9414eecb80e10539771549706400354580c98762b800aebf0c683bc155d2c79",
+      "diagram_ref": ".csdlc/issues/5541/retained/diagram.mmd",
+      "diagram_digest": "3a249d86dddcf5c290342c46da659600a2224d90f1237c39b179551555c72042"
+    }
+  }
+}

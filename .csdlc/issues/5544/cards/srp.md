@@ -1,0 +1,112 @@
+# Structured Review Prompt
+
+Template: 1.0.0
+
+Issue: 5544
+
+Repository: danielbaustin/agent-design-language
+
+Card: srp
+
+Status: complete
+
+## Scope
+
+.csdlc/evidence/5544/live-state/github_state.json
+.csdlc/evidence/5544/live-state/issue_4647.json
+.csdlc/evidence/5544/live-state/issue_5408.json
+.csdlc/evidence/5544/live-state/issue_5489.json
+.csdlc/evidence/5544/live-state/issue_5527.json
+.csdlc/evidence/5544/live-state/pr_5419.json
+.csdlc/evidence/5544/live-state/pr_5539.json
+.csdlc/evidence/5544/live-state/pr_5543.json
+.csdlc/issues/4644/audit.jsonl
+.csdlc/issues/4644/cards/sip.values.json
+.csdlc/issues/4644/cards/sor.md
+.csdlc/issues/4644/cards/sor.values.json
+.csdlc/issues/4644/cards/spp.md
+.csdlc/issues/4644/cards/spp.values.json
+.csdlc/issues/4644/cards/srp.md
+.csdlc/issues/4644/cards/srp.values.json
+.csdlc/issues/4644/cards/stp.values.json
+.csdlc/issues/4644/cards/vpp.md
+.csdlc/issues/4644/cards/vpp.values.json
+.csdlc/issues/4644/index.json
+.csdlc/issues/4644/retained/design.md
+.csdlc/issues/4644/retained/diagram.mmd
+.csdlc/issues/5544/audit.jsonl
+.csdlc/issues/5544/cards/sip.md
+.csdlc/issues/5544/cards/sip.values.json
+.csdlc/issues/5544/cards/sor.md
+.csdlc/issues/5544/cards/sor.values.json
+.csdlc/issues/5544/cards/spp.md
+.csdlc/issues/5544/cards/spp.values.json
+.csdlc/issues/5544/cards/srp.md
+.csdlc/issues/5544/cards/srp.values.json
+.csdlc/issues/5544/cards/stp.md
+.csdlc/issues/5544/cards/stp.values.json
+.csdlc/issues/5544/cards/vpp.md
+.csdlc/issues/5544/cards/vpp.values.json
+.csdlc/issues/5544/index.json
+.csdlc/prepared/issues/4644/reconcile-terminal-from-5544.json
+.csdlc/prepared/issues/5544/advance-implemented.json
+.csdlc/prepared/issues/5544/advance-reviewed.json
+.csdlc/prepared/issues/5544/advance-wp21a-correction-reviewed.json
+.csdlc/prepared/issues/5544/amend-review-truth-scope.json
+.csdlc/prepared/issues/5544/assign-pre-pr-review.json
+.csdlc/prepared/issues/5544/assign-wp21a-correction-review.json
+.csdlc/prepared/issues/5544/bind-request.json
+.csdlc/prepared/issues/5544/bootstrap-request.json
+.csdlc/prepared/issues/5544/complete-S1.json
+.csdlc/prepared/issues/5544/complete-S2.json
+.csdlc/prepared/issues/5544/complete-S3.json
+.csdlc/prepared/issues/5544/complete-S4.json
+.csdlc/prepared/issues/5544/design.md
+.csdlc/prepared/issues/5544/diagram.mmd
+.csdlc/prepared/issues/5544/publish.json
+.csdlc/prepared/issues/5544/record-execution.json
+.csdlc/prepared/issues/5544/record-final-validation.json
+.csdlc/prepared/issues/5544/record-post-rebase-validation.json
+.csdlc/prepared/issues/5544/record-pre-pr-review.json
+.csdlc/prepared/issues/5544/record-validation.json
+.csdlc/prepared/issues/5544/record-wp21a-correction-review.json
+.csdlc/prepared/issues/5544/record-wp21a-correction-validation.json
+.csdlc/prepared/issues/5544/recover-post-rebase-review.json
+.csdlc/prepared/issues/5544/recover-wp21a-correction-review.json
+.csdlc/publication/5544.intent.json
+docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md
+docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml
+docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md
+docs/milestones/v0.91.7/review/V0917_WP18_INTERNAL_REVIEW_4645.md
+docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md
+docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md
+docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json
+
+## Prompts
+
+- Does #5544 preserve existing ownership for #5408 and #5527?
+- Does the refreshed register match live GitHub and C-SDLC state?
+- Does the handoff avoid starting WP-19 or approving release readiness?
+- Are every blocked, residual, and existing-owner state backed by retained evidence?
+
+## Findings
+
+[]
+
+## Dispositions
+
+Every actionable finding requires a terminal disposition.
+
+## Residual Risk
+
+- Review did not refresh live GitHub state; it reviewed retained evidence and the exact branch diff after rebase onto #5552/current origin/main.
+- Review did not run lifecycle validators; parent session ran focused parsers and csdlc-doctor before review assignment.
+- WP-19 remains blocked and v0.91.7 release readiness remains unapproved until open P1/P2 gates, including WP-21A #5489, are fixed or explicitly dispositioned.
+
+## Review Result
+
+Revision: Some("git-blake3:153f268e1c8926a05189cca1dd1f58ab08eb0a2d:68f798257791fee4d91c7725b75474db77eb70f881ae76a5117e79834806acf4")
+
+Reviewer: Some("subagent:019f77d3-f77f-7161-9f58-6503d284cdc5")
+
+Result: pass

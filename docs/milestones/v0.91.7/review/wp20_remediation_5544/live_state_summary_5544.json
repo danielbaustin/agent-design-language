@@ -1,0 +1,33 @@
+{
+  "schema": "adl.v0917.wp20.release_truth_gate_status.v1",
+  "issue": 5544,
+  "captured_at": "2026-07-18T17:15:00-07:00",
+  "release_ready": false,
+  "external_review_status": "blocked_before_start",
+  "closed_or_terminal": [
+    {"issue": 4644, "truth": "closed; PR #5539 merged; terminal projection materialized by #5544"},
+    {"issue": 5404, "truth": "closed_out typed record"},
+    {"issue": 5413, "truth": "closed_out typed record"}
+  ],
+  "open_gates": [
+    {"issue": 4645, "truth": "open; PR #5543 carries internal review packet"},
+    {"issue": 4646, "truth": "open; WP-19 external review not started"},
+    {"issue": 4647, "truth": "open WP-20 remediation owner"},
+    {"issue": 5408, "truth": "open WP-07 blocker; PR #5419 draft and non-terminal at capture"},
+    {"issue": 5489, "truth": "open WP-21A next-milestone docs closeout-planning gate"},
+    {"issue": 5527, "truth": "open C-SDLC v2 terminal SOR artifact repair"},
+    {"issue": 5544, "truth": "open release-truth remediation"},
+    {"issue": 5545, "truth": "open provider/runtime hardening remediation"},
+    {"issue": 5546, "truth": "open coverage/supply-chain/AWS-boundary proof remediation"},
+    {"issue": 5547, "truth": "open C-SDLC identity and ownership-split residual disposition"},
+    {"issue": 4650, "truth": "open release ceremony"}
+  ],
+  "evidence_dir": ".csdlc/evidence/5544/live-state",
+  "non_claims": [
+    "Does not approve WP-19 external review start",
+    "Does not approve v0.91.7 release readiness",
+    "Does not close #5408 or #5527",
+    "Does not close WP-21A #5489",
+    "Does not use AWS"
+  ]
+}

@@ -34,7 +34,7 @@ coverage map, and `v0.91.0` architecture decisions.
 | Cognitive-being allocation | [../COGNITIVE_BEING_FEATURES_v0.91.md](../COGNITIVE_BEING_FEATURES_v0.91.md) | Milestone allocation and v0.91/v0.91.1 boundary doc |
 | Active issue wave | [../WP_ISSUE_WAVE_v0.91.yaml](../WP_ISSUE_WAVE_v0.91.yaml) | Active WP sequence; issue numbers assigned as #2735-#2759 |
 | WP execution readiness | [../WP_EXECUTION_READINESS_v0.91.md](../WP_EXECUTION_READINESS_v0.91.md) | Card-authoring source for required outputs, validation, boundaries, and proof expectations |
-| Architecture decisions | [../../adr/0016-moral-evidence-and-cognitive-being-substrate.md](../../adr/0016-moral-evidence-and-cognitive-being-substrate.md), [../../adr/0017-secure-local-agent-comms-and-a2a-boundary.md](../../adr/0017-secure-local-agent-comms-and-a2a-boundary.md), [../../adr/0018-structured-planning-and-review-policy-artifacts.md](../../adr/0018-structured-planning-and-review-policy-artifacts.md) | Accepted `v0.91.0` decision records |
+| Architecture decisions | [../../../adr/0016-moral-evidence-and-cognitive-being-substrate.md](../../../adr/0016-moral-evidence-and-cognitive-being-substrate.md), [../../../adr/0017-secure-local-agent-comms-and-a2a-boundary.md](../../../adr/0017-secure-local-agent-comms-and-a2a-boundary.md), [../../../adr/0018-structured-planning-and-review-policy-artifacts.md](../../../adr/0018-structured-planning-and-review-policy-artifacts.md) | Accepted `v0.91.0` decision records |
 
 ## Execution Coverage Map
 

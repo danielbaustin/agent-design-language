@@ -3,19 +3,117 @@
   "issue": 5306,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "4bd749716a1a708d0d72d50211d181af01748a6f3f95dd32db38053c25345d71",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "91800f11bbf0e869d1a8b5313c4943bcf0c661017b95747bc8ba523f75805c9d",
-  "claim": {
-    "id": "csdlc-v2-prepared-5306-v1",
-    "owner": "gate10d-preparation",
-    "generation": 0,
-    "acquired_unix_seconds": 1783999049,
-    "expires_unix_seconds": 1787209200,
-    "heartbeat_unix_seconds": 1783999049,
-    "branch": "codex/5306-v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave",
-    "worktree": ".worktrees/adl-wp-5306",
-    "protected_paths": [
+  "phase": "closed_out",
+  "generation": 17,
+  "digest": "c7e20454ab9d450c23b82139c2e842cc0bf04dda0938d6909e471a8e3e1d1292",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+    "assigned_by": "codex-closeout-audit",
+    "revision": "git-blake3:2b11155b6a4abaf9348cc1cfd147c9b9c676a56c:75fcce5a37a1155bbf05e41c881b4c74620359254414539645ada01e8b5f1072",
+    "scope": [
+      "AGENTS.md",
+      ".github/workflows/ci.yaml",
+      "adl",
+      "csdlc-v2"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+    "scope": [
+      "AGENTS.md",
+      ".github/workflows/ci.yaml",
+      "adl",
+      "csdlc-v2"
+    ],
+    "reviewed_revision": "git-blake3:2b11155b6a4abaf9348cc1cfd147c9b9c676a56c:75fcce5a37a1155bbf05e41c881b4c74620359254414539645ada01e8b5f1072",
+    "findings": [
+      {
+        "id": "F-5306-1",
+        "severity": "p1",
+        "summary": "The current csdlc-v2 init skill retained stale guidance to preserve the v1 default after final Gate 10D2 sunset.",
+        "actionable": true,
+        "in_scope": false,
+        "disposition": "out_of_scope",
+        "fix_revision": null,
+        "route": "Resolved by #5541 / merged PR #5568 at head 8e206363ee75f5517862a03d8cc5dc07efa4128a"
+      },
+      {
+        "id": "F-5306-2",
+        "severity": "p1",
+        "summary": "The original default workflow routed through deleted pr.sh and lacked an executable guard against restored v1 routes.",
+        "actionable": true,
+        "in_scope": false,
+        "disposition": "out_of_scope",
+        "fix_revision": null,
+        "route": "Resolved by #5541 / merged PR #5568 at head 8e206363ee75f5517862a03d8cc5dc07efa4128a"
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5306,
+    "pull_request": 5331,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5331",
+    "base": "main",
+    "head": "codex/5306-v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave",
+    "revision": "git-blake3:2b11155b6a4abaf9348cc1cfd147c9b9c676a56c:75fcce5a37a1155bbf05e41c881b4c74620359254414539645ada01e8b5f1072",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5331,
+    "head_sha": "2b11155b6a4abaf9348cc1cfd147c9b9c676a56c",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29330874918/job/87080587465"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29330874918/job/87078239160"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29330874918/job/87078279075"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29330874918/job/87078239136"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29330874918/job/87078279201"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5331,
+    "disposition": "merged",
+    "observed_sha": "2b11155b6a4abaf9348cc1cfd147c9b9c676a56c",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5306.json",
+    "released_branch": "codex/5306-v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave",
+    "released_worktree": ".worktrees/adl-wp-5306",
+    "released_protected_paths": [
       "adl/src/cli/pr_cmd",
       "adl/src/cli/pr_cmd.rs",
       "adl/src/cli/pr_cmd_args.rs",
@@ -26,56 +124,107 @@
       "adl/tools/pr_cards.sh",
       "adl/tools/pr_delegate.sh",
       "adl/tools/pr_usage.sh"
-    ],
-    "purpose": "Reserve bounded incumbent deletion surfaces; no binding or deletion before current D1 eligibility and explicit approval."
+    ]
   },
-  "review_assignment": null,
-  "review": null,
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
   "migration": null,
-  "design_path": "docs/architecture/csdlc-v2/gate10d2/DESIGN.md",
-  "diagram_path": "docs/architecture/csdlc-v2/gate10d2/DIAGRAM.mmd",
+  "design_path": ".csdlc/issues/5306/retained/design.md",
+  "diagram_path": ".csdlc/issues/5306/retained/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "operator-approved-gate10d-plan",
-      "revision": "9b7c6ff1029d318ff44bdf91b6cfa939f69a4be9396b0a711361937bf68812d1"
+      "reviewer": "codex-closeout-audit",
+      "revision": "13b29a0a91d5bbea76180a0866c69cdd7d2c6b53cb32c93a3bc857fc6308bfce"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "ddf51dc2ce60db386716ec39337d41a19e1a129fe6897a8101f0eed87fbd8cbb",
+      "values_digest": "34a61dc8e8e05b04468cfc9177460a8e9f78cb78e8940a5f488ebe46d3d6b8bb",
       "rendered_digest": "5f68a6edc304e97df0cf21bf952a2319719e2bdf0016a94ef60cbec70dc599ab",
       "ast_digest": "2d2553100a89e6a676cf233bab0b7599bedd4e1fcc1022a34abad8132250a839"
     },
     "stp": {
-      "values_digest": "210346820b40c4cd3e85eba470b6d82668bee05bc0ef6672835cf725f542aa4b",
+      "values_digest": "fb916da5442b39f866eea04c97e1abf926743c6368ece4e525241b05048c3943",
       "rendered_digest": "6af4c123ce832030be3be188e7dd78d048bbbc14ed5714b5118a3e023417e936",
       "ast_digest": "a3b1bbec6a0e3b3fd070bbd61c8d5794ab1747c3886d088f6816806aca30b9ed"
     },
     "spp": {
-      "values_digest": "4799a0539dbaccd5da661aa131ac30c3bb662d2391637eeb7726e808d83d5d08",
-      "rendered_digest": "8d08b388204b99368c2c0dd5cbd9cc53f1a883f26b1fa4bbe3f63ed062c6f41d",
-      "ast_digest": "64a1e2aaa10fa0f58d2dc2521e380695f2f205b713b636651fc180369ca18d4d"
+      "values_digest": "9fd7e8b958ed1144423061bc26e342cec6cfa5b120ad9dd5083c09f4d44c10b4",
+      "rendered_digest": "40c2a7e34078eae82749618f2308f99870a3e5931f79a4d5f6e609962d5909b8",
+      "ast_digest": "7c07d6ad8e09b58bea7801ee0c8a06653ad902fc557c4be1ae12767988778786"
     },
     "vpp": {
-      "values_digest": "46d3ab340938ade6ba249ac6146ba2aff6a4b84cd4b00b0f8a181dbcc0d4a64f",
-      "rendered_digest": "38f9153b12bf7fd38c2d4b9121157b3e9131cc8109b1cf25257776918f349a33",
-      "ast_digest": "18cc2151db2f0cc6b3afd5b2941506fa1a946c56a1c1280c769be007e755d465"
+      "values_digest": "15530c453e18efd855f6e239421ab0145c948ea5b83833ff370bfcbf457e2765",
+      "rendered_digest": "ca22c6ca5b74a516d61cb47b478b82d9d39c8e22a4828a03191ef9406407745b",
+      "ast_digest": "2f267bb3fd5f6969aa3fee7a4571bf2e4170d8fa46609198da2a7cf83b7c8aae"
     },
     "srp": {
-      "values_digest": "6033f7aaae80b6ac928201e9f2766e166e3f45dba104d26d50e5da47ac4be4ae",
-      "rendered_digest": "99e4934441db3f6391f4eed3d7f6c8155105f986215c95a368d930cf5957bce4",
-      "ast_digest": "32a889ceb8537703298ec528fe98b8d2d6c0ab22508604ba07b25d6c83d2271d"
+      "values_digest": "4ed65aeefb9ad0bfada885dac5ba68a5ca2da892ef6da1e5dfcd174521f05b83",
+      "rendered_digest": "7500f4b0180d8ba53de0d913129fb9478f9afae825a60460c1c6a8e85d196ec9",
+      "ast_digest": "a2a05e0b663b01924eb8d46bc124b6826faf4b723c7401809d024da2935d4672"
     },
     "sor": {
-      "values_digest": "12bc18fde3cb638255d57bd922e89abfe85d0947ca6f4c79a3ef76ca2895dff0",
-      "rendered_digest": "51436be732edc1148c74600701b699a40e2c26783ee0a9afaedf8ebc2f655357",
-      "ast_digest": "efe710aec70ec7c0ad0378b0fe43ebdfe14867a607f901a89607423e3a3ba8e7"
+      "values_digest": "991581687dbd2be9f1eb7b11ed41f9858f710507871b5a7e3d745ed080baa284",
+      "rendered_digest": "0726bdd5967b953fc7bd5926e139f5aa56036645a40fc143afed71e69054d8e1",
+      "ast_digest": "84e7b19e4984ef82648926ae60a15f0fe85e44ca0bc5d75cbcdcf047fbfe61da"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "gate10d-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "gate10d-preparation",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex-closeout-audit",
+      "reason": "Actual merged implementation, all plan steps, exact-head validation, eligibility, and integration proof are recorded."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex-closeout-audit",
+      "reason": "Exact merged-head retrospective review is complete; both separately scoped P1 authority findings were routed to and resolved by merged #5541 / PR #5568, and the combined current-authority re-review passed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex-closeout-audit",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex-closeout-audit",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex-closeout-audit",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex-closeout-audit",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -83,6 +232,139 @@
       "actor": "gate10d-preparation",
       "reason": "initialize issue record and all six cards",
       "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex-closeout-audit",
+      "reason": "reapprove stale initialized issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "gate10d-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex-closeout-audit",
+      "reason": "Record retrospective execution truth from the exact merged implementation PR.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"PR #5331 executed the approved Gate 10D2 v1-sunset deletion wave at exact head 2b11155b6 and merged as 7c3e1e0e.\",\"changes\":[\"Removed the v1 lifecycle wrappers, prompt tooling, importer binaries, and legacy ADL command implementation surfaces listed by the approved deletion manifest.\",\"Retained the independent Rust v2 binary set, typed operator skills, shared session-ownership invariant, generation selector, and final coexistence verifier.\",\"Updated repository policy, CI path routing, coverage handling, and operator records for final v1_sunset authority.\"],\"artifacts\":[\"PR #5331\",\"2b11155b6a4abaf9348cc1cfd147c9b9c676a56c\",\"7c3e1e0e86a4ca982231ce91c39073530c5408e6\",\"csdlc-v2/operator/coexistence.json\",\"csdlc-v2/operator/eligibility-request.json\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex-closeout-audit",
+      "reason": "Record current focused Gate 10 authority and coexistence proof at the exact PR head.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate10a\",\"--test\",\"gate10b\"],\"purpose\":\"Prove typed generation selection, coexistence guardrails, provenance, rollback rehearsal, and mutation refusal on the exact merged implementation head.\",\"outcome\":\"passed\",\"evidence_ref\":\"Exact PR head 2b11155b6: gate10a 7/7 passed and gate10b 5/5 passed on 2026-07-19; no AWS or Spot used.\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex-closeout-audit",
+      "reason": "Record current exact-head deletion eligibility recomputation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"csdlc-eligibility\",\"evaluate\",\"--repo\",\"/private/tmp/adl-5306-proof\",\"--request\",\"/private/tmp/adl-5306-proof/csdlc-v2/operator/eligibility-request.json\"],\"purpose\":\"Recompute the approved removal and retained-surface truth from a clean detached worktree at the exact PR head.\",\"outcome\":\"passed\",\"evidence_ref\":\"code_revision 2b11155b6; baseline 49,979 lines; removed 48,966; retained 1,013; 97.97% removal; target_met=true; eligible=true; reasons=[]; evaluated 2026-07-19T01:59:26Z.\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex-closeout-audit",
+      "reason": "Record the actual merged PR integration proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"gh\",\"pr\",\"view\",\"5331\",\"--json\",\"statusCheckRollup\"],\"purpose\":\"Verify integration proof attached to the exact merged implementation PR.\",\"outcome\":\"passed\",\"evidence_ref\":\"PR #5331 head 2b11155b6: path-policy, tooling-contracts, rust fmt/clippy, rust tests, demo proof, four slow-proof shards, aggregate adl-ci, and coverage all concluded SUCCESS before merge.\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex-closeout-audit",
+      "reason": "Exact-head eligibility recomputation and retained authority evidence prove step 1.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"step-1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex-closeout-audit",
+      "reason": "Merged PR #5331 proves the exact approved bounded deletion slice was applied.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"step-2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex-closeout-audit",
+      "reason": "Current Gate 10 proof, green merged CI, exact-revision retrospective review routing, and eligibility recomputation satisfy step 3.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"step-3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 9,
+      "actor": "codex-closeout-audit",
+      "reason": "Actual merged implementation, all plan steps, exact-head validation, eligibility, and integration proof are recorded.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex-closeout-audit",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex-closeout-audit",
+      "reason": "Exact merged-head retrospective review is complete; both separately scoped P1 authority findings were routed to and resolved by merged #5541 / PR #5568, and the combined current-authority re-review passed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 17,
+      "generation": 14,
+      "actor": "codex-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 18,
+      "generation": 15,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 19,
+      "generation": 16,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt during exhaustive v0.91.7 closeout audit #5573.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 20,
+      "generation": 17,
+      "actor": "codex-closeout-audit",
+      "reason": "Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

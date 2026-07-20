@@ -1,0 +1,9 @@
+{
+  "issue": 4644,
+  "expected_initialization_digest": "a439a2c9121dc18fc0f5e1a1f5425432c3cf9c0d0f83632e7b03f2d18f2a6d80",
+  "expected_branch": "codex/4644-v0917-docs-alignment",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-4644",
+  "actor": "codex:issue-5544",
+  "reason": "Materialize the retained #4644 terminal receipt so #5544 can reconcile v0.91.7 review truth without treating closed WP-17 paths as actively claimed.",
+  "follow_ups": []
+}

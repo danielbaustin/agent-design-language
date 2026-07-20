@@ -1,0 +1,10 @@
+{
+  "issue": 5544,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "4dfe44705652cf7e13376e190f60ced53689838a0b0d550ea02ca63682bd619f",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "The retained #4644 terminal receipt was materialized through typed closeout projection and copied into #5544 so closed WP-17 paths are not treated as actively claimed.",
+  "operation": {"operation":"update_plan_step","step_id":"S2","status":"completed"}
+}

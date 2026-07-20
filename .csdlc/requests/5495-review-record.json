@@ -1,0 +1,25 @@
+{
+  "issue": 5495,
+  "expected_generation": 4,
+  "expected_digest": "4fc812d3e1178f4f03b7c1b10efffa9e546a562cce723f9883354f4443ef641d",
+  "claim_id": "claim-5495-publication-metadata",
+  "actor": "review_5495",
+  "evidence": {
+    "reviewer": "review_5495",
+    "scope": [
+      "csdlc-v2/src/git.rs",
+      "csdlc-v2/src/review.rs",
+      "csdlc-v2/src/doctor.rs",
+      "csdlc-v2/tests/gate5.rs",
+      ".csdlc/issues/5495/retained/design.md",
+      ".csdlc/issues/5495/retained/diagram.mmd"
+    ],
+    "reviewed_revision": "git-blake3:c8189c643e780dae17f0300be04b756d8bc7fbc2:fab6846c0930a0019a7b8adedd1014bb5172804448ad1a53ec2e9ac0d2baeeaf",
+    "findings": [],
+    "residual_risks": [
+      "Automatic metadata proof relies on typed card projection pairing for each commit in the reviewed-to-current range; substantive source and standalone card-prose drift remain fail closed."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

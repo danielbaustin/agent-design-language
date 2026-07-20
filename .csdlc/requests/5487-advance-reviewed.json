@@ -1,0 +1,10 @@
+{
+  "issue": 5487,
+  "card": "sip",
+  "expected_generation": 7,
+  "expected_digest": "55b9b23bb3fce0be289111f945ab07d860987d092769e22720428f7f531d3b25",
+  "claim_id": "claim-5487-terminal-design-repair",
+  "actor": "codex",
+  "reason": "Bounded review completed with no findings; advance to reviewed.",
+  "operation": {"operation":"advance_phase","phase":"reviewed"}
+}

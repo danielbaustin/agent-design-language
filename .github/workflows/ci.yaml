@@ -2,6 +2,12 @@ name: ci
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
   push:
     branches:
       - main
@@ -107,9 +113,10 @@ jobs:
 
       - name: Install cargo-nextest for CI contract checks
         if: needs.adl_path_policy.outputs.ci_contract_toolchain_required == 'true'
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        uses: taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c # v2.82.10
         with:
           tool: nextest@0.9.140
+          fallback: none
 
       - name: tooling sanity (bash -n)
         run: bash -n adl/tools/*.sh
@@ -265,7 +272,7 @@ jobs:
   adl_rust_fmt_clippy:
     name: adl-rust-fmt-clippy
     needs: adl_path_policy
-    if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository)
+    if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -338,7 +345,7 @@ jobs:
   adl_rust_tests:
     name: adl-rust-tests
     needs: adl_path_policy
-    if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository)
+    if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -398,9 +405,10 @@ jobs:
 
       - name: Install cargo-nextest
         if: needs.adl_path_policy.outputs.full_coverage_required != 'true'
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        uses: taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c # v2.82.10
         with:
           tool: nextest@0.9.140
+          fallback: none
 
       - name: test
         if: needs.adl_path_policy.outputs.full_coverage_required != 'true' && needs.adl_path_policy.outputs.validation_profile_escalation_required != 'true'
@@ -449,7 +457,7 @@ jobs:
   adl_demo_proof:
     name: adl-demo-proof
     needs: adl_path_policy
-    if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository)
+    if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true') && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -486,7 +494,7 @@ jobs:
   adl_spot_ci_and_coverage:
     name: adl-spot-ci-and-coverage
     needs: adl_path_policy
-    if: needs.adl_path_policy.outputs.heavy_ci_backend == 'spot' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && (needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' || needs.adl_path_policy.outputs.coverage_required == 'true')
+    if: needs.adl_path_policy.outputs.heavy_ci_backend == 'spot' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'ci:spot') && (needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' || needs.adl_path_policy.outputs.coverage_required == 'true')
     permissions:
       contents: read
       id-token: write
@@ -525,7 +533,9 @@ jobs:
           BACKEND: ${{ needs.adl_path_policy.outputs.heavy_ci_backend }}
           EVENT_NAME: ${{ github.event_name }}
           SAME_REPO_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+          SPOT_OPT_IN: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:spot') }}
           WORK_REQUIRED: ${{ needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' }}
+          SPOT_WORK_REQUIRED: ${{ needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' || needs.adl_path_policy.outputs.coverage_required == 'true' }}
           RUST_REQUIRED: ${{ needs.adl_path_policy.outputs.rust_required == 'true' }}
           DEMO_REQUIRED: ${{ needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' }}
         run: |
@@ -535,7 +545,9 @@ jobs:
             --backend "$BACKEND" \
             --event-name "$EVENT_NAME" \
             --same-repo-pr "$SAME_REPO_PR" \
+            --spot-opt-in "$SPOT_OPT_IN" \
             --work-required "$WORK_REQUIRED" \
+            --spot-work-required "$SPOT_WORK_REQUIRED" \
             --rust-required "$RUST_REQUIRED" \
             --demo-required "$DEMO_REQUIRED" \
             --path-policy-result "${{ needs.adl_path_policy.result }}" \
@@ -623,9 +635,10 @@ jobs:
             ~/.cache/sccache
 
       - name: Install cargo-nextest
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        uses: taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c # v2.82.10
         with:
           tool: nextest@0.9.140
+          fallback: none
 
       - name: Slow proof shard
         run: |
@@ -634,7 +647,7 @@ jobs:
   adl_coverage_hosted:
     name: adl-coverage-hosted
     needs: adl_path_policy
-    if: needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    if: needs.adl_path_policy.outputs.coverage_required == 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -735,9 +748,10 @@ jobs:
 
       - name: Install cargo-nextest for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        uses: taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c # v2.82.10
         with:
           tool: nextest@0.9.140
+          fallback: none
 
       - name: Install sccache for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
@@ -937,7 +951,9 @@ jobs:
           BACKEND: ${{ needs.adl_path_policy.outputs.heavy_ci_backend }}
           EVENT_NAME: ${{ github.event_name }}
           SAME_REPO_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+          SPOT_OPT_IN: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:spot') }}
           WORK_REQUIRED: ${{ needs.adl_path_policy.outputs.coverage_required == 'true' }}
+          SPOT_WORK_REQUIRED: ${{ needs.adl_path_policy.outputs.coverage_required == 'true' }}
         run: |
           set -euo pipefail
           python3 adl/tools/verify_ci_backend_route.py \
@@ -945,7 +961,9 @@ jobs:
             --backend "$BACKEND" \
             --event-name "$EVENT_NAME" \
             --same-repo-pr "$SAME_REPO_PR" \
+            --spot-opt-in "$SPOT_OPT_IN" \
             --work-required "$WORK_REQUIRED" \
+            --spot-work-required "$SPOT_WORK_REQUIRED" \
             --path-policy-result "${{ needs.adl_path_policy.result }}" \
             --spot-result "${{ needs.adl_spot_ci_and_coverage.result }}" \
             --hosted-result "coverage=${{ needs.adl_coverage_hosted.result }}"

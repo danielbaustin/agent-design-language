@@ -1,0 +1,40 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5566,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Activate an exact reserved claim from its existing issue worktree",
+    "slug": "existing-worktree-bind",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement only exact existing-worktree recognition for typed bind and focused regressions.",
+      "deliverables": [
+        "Existing-worktree bind recognition",
+        "Focused Gate 2 regressions"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Existing matching branch and canonical worktree path activate the exact reserved claim",
+        "AC-2: Mismatched claimed branch or worktree path fails closed",
+        "AC-3: Exact claim, collision, path-safety, and readiness guards remain enforced",
+        "AC-4: The #5306 recovery can bind without editing main or lifecycle JSON by hand"
+      ],
+      "dependencies": [],
+      "repo_inputs": [
+        "csdlc-v2/src/lifecycle.rs",
+        "csdlc-v2/tests/gate2.rs",
+        ".csdlc/issues/5306"
+      ],
+      "non_goals": [
+        "No expired-claim recovery changes",
+        "No v1 restoration",
+        "No AWS or Spot validation"
+      ]
+    }
+  }
+}

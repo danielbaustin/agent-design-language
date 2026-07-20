@@ -1,0 +1,13 @@
+{
+  "issue": 4644,
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "expected_generation": 3,
+  "expected_digest": "b3996d8c24caf7c2db08da884a01549511a004023f8752a03c19ff578ef7bd9f",
+  "now_unix_seconds": 1784416956,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Protect the issue-local typed request and PVF evidence paths that must be retained with WP-17 lifecycle truth.",
+  "add_protected_paths": [
+    ".csdlc/prepared/issues/4644",
+    ".csdlc/evidence/4644"
+  ]
+}

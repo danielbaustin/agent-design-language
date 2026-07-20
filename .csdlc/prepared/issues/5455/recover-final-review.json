@@ -1,0 +1,8 @@
+{
+  "issue": 5455,
+  "expected_generation": 11,
+  "expected_digest": "f6bdecf402688b1fbe80ed7e396d3737c302961c3da6abf5fa2378b88b5aa847",
+  "claim_id": "claim-5455-closeout-recovery",
+  "actor": "codex-closeout-audit",
+  "reason": "Recover the reviewed state after the required review metadata commit changed revision identity before publication."
+}

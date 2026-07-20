@@ -1,0 +1,31 @@
+{
+  "issue": 5494,
+  "expected_generation": 4,
+  "expected_digest": "7a879f4d4be303487e33d5d1114e81d858a58fbfc1a2e168662c8148cb2f32f2",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "subagent:019f7455-defb-7250-a22e-26c352e90d0d",
+  "evidence": {
+    "reviewer": "subagent:019f7455-defb-7250-a22e-26c352e90d0d",
+    "scope": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/topology.rs",
+      "adl/src/csm_runtime_api.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ],
+    "reviewed_revision": "git-blake3:6c779b1aba99312e79ff2cd801c8b9f8e166da6c:1bdeb0703abc8ad44b84baaee8272494b6df2eb4a440c78e31bf915025a811b8",
+    "findings": [
+      {"id":"F-5494-1","severity":"p1","summary":"Expired non-revoked credentials cannot recover after the renewal window is missed.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"F-5494-2","severity":"p1","summary":"Readiness exempts Audit and Evidence channels that channel policy classifies as required.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"F-5494-3","severity":"p1","summary":"CSM weather readiness overclaims CPU, memory, and GPU observations from disk pressure only.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"F-5494-4","severity":"p1","summary":"The synthetic supervisor test does not execute the production daemon cycle or typed channel fabric.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"F-5494-5","severity":"p2","summary":"Credential audit events record a fixed overlap instead of the clipped actual duration.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"F-5494-6","severity":"p2","summary":"Repair documentation and the sprint register overstate the first revision's proof.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null}
+    ],
+    "residual_risks": [
+      "Strict all-target Clippy is blocked by two pre-existing cav.rs test warnings outside #5494."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

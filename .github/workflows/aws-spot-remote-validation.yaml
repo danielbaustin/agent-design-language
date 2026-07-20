@@ -36,7 +36,7 @@ on:
         type: string
       max_run_seconds:
         required: false
-        default: "1800"
+        default: "600"
         type: string
       builder_image_tag:
         required: false
@@ -97,7 +97,7 @@ on:
       max_run_seconds:
         description: "Hard wall-clock limit for one Spot manager process"
         required: true
-        default: "1800"
+        default: "600"
       builder_image_tag:
         description: "ECR image tag; the default contains the CI and coverage toolchains"
         required: true
@@ -119,14 +119,14 @@ jobs:
   spot-remote-validation:
     runs-on: ubuntu-latest
     environment: adl-spot-ci
-    timeout-minutes: 60
+    timeout-minutes: 15
     env:
       AWS_SPOT_REMOTE_VALIDATION_REGION: ${{ vars.AWS_SPOT_REMOTE_VALIDATION_REGION || 'us-west-2' }}
       AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN: ${{ secrets.AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN }}
       AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64: ${{ secrets.AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64 }}
       ISSUE_NUMBER: ${{ inputs.issue_number }}
       INSTANCE_TYPES: ${{ inputs.instance_types || inputs.instance_type }}
-      MAX_RUN_SECONDS: ${{ inputs.max_run_seconds || '1800' }}
+      MAX_RUN_SECONDS: ${{ inputs.max_run_seconds || '600' }}
       SPOT_RUN_ID: adl-wp-${{ inputs.issue_number }}-gha-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.profile }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -194,8 +194,8 @@ jobs:
             echo "::error::instance_types must be a comma-separated EC2 instance-type list"
             exit 2
           fi
-          if ! [[ "$MAX_RUN_SECONDS" =~ ^[0-9]+$ ]] || [ "$MAX_RUN_SECONDS" -lt 300 ] || [ "$MAX_RUN_SECONDS" -gt 3600 ]; then
-            echo "::error::max_run_seconds must be between 300 and 3600 seconds"
+          if ! [[ "$MAX_RUN_SECONDS" =~ ^[0-9]+$ ]] || [ "$MAX_RUN_SECONDS" -lt 240 ] || [ "$MAX_RUN_SECONDS" -gt 600 ]; then
+            echo "::error::max_run_seconds must be between 240 and 600 seconds"
             exit 2
           fi
 

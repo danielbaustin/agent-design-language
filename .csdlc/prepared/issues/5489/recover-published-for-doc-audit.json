@@ -1,0 +1,8 @@
+{
+  "issue": 5489,
+  "expected_generation": 8,
+  "expected_digest": "7b55bb4043e1010d30c7487d922bf2bc2b2f1a723f9559ae1447798ce271c11c",
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Operator clarified after draft publication that WP-21A must also audit and reconcile all v0.91.8 canonical next-milestone documentation and current #5408 terminal truth; recover to implemented for a new exact-revision review and updated draft publication."
+}

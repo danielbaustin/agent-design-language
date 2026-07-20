@@ -1,0 +1,24 @@
+{
+  "issue": 4646,
+  "card": "sor",
+  "expected_generation": 17,
+  "expected_digest": "de635c73072f98a4d0422dfda54a0b556d63453b541ca37b9ea90c98f29de511",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "Correct WP-19 after the merged review packet became stale against current main.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "WP-19 is restored to pre-review truth because later merged evidence changed the required external-review corpus. The original #5573 audit remains complete and is not being rerun.",
+    "changes": [
+      "Mark PR #5579 and its receipt as a superseded historical review target.",
+      "Record #5571 and #5573 as closed and include #5571 publication-safe disposition evidence in the replacement corpus.",
+      "Mark WP-19 open and WP-20 awaiting findings from a valid current review."
+    ],
+    "artifacts": [
+      "docs/milestones/v0.91.7/README.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md",
+      "docs/milestones/v0.91.7/review/external_review_4646/REVIEW_CORPUS.v1.txt"
+    ]
+  }
+}

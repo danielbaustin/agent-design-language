@@ -1,0 +1,71 @@
+schema: adl.v0917.wp14_launch_birthday_ledger.v1
+issue: 4641
+work_package: WP-14
+version: v0.91.7
+date: 2026-07-18
+status: routed_with_evidence
+source_evidence:
+  - docs/milestones/v0.91.7/WBS_v0.91.7.md
+  - docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml
+  - docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md
+  - docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md
+  - docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md
+  - docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md
+  - docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md
+  - docs/milestones/v0.91.8/README.md
+  - docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md
+  - docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md
+child_routes:
+  - issue: 4758
+    title: "[v0.91.8][WP-14][launch] Implement launch readiness package after platform deployment"
+    state_checked: OPEN
+    disposition: routed_to_v0.91.8
+    v092_consumption: blocked_until_closed_with_integrated_evidence
+  - issue: 4759
+    title: "[v0.91.8][WP-14][activation] Implement v0.92 activation map from accepted deployed products"
+    state_checked: OPEN
+    disposition: routed_to_v0.91.8
+    v092_consumption: blocked_until_closed_with_integrated_evidence
+  - issue: 4760
+    title: "[v0.91.8][WP-14][memory-palace] Implement Memory Palace context handoff"
+    state_checked: OPEN
+    disposition: routed_to_v0.91.8
+    v092_consumption: blocked_until_closed_with_integrated_evidence
+  - issue: 4761
+    title: "[v0.91.8][WP-14][capability-envelope] Implement v0.92 capability envelope"
+    state_checked: OPEN
+    disposition: routed_to_v0.91.8
+    v092_consumption: blocked_until_closed_with_integrated_evidence
+  - issue: 4762
+    title: "[v0.91.8][WP-14][birth-witnesses] Implement birth witnesses and receipt package"
+    state_checked: OPEN
+    disposition: routed_to_v0.91.8
+    v092_consumption: blocked_until_closed_with_integrated_evidence
+  - issue: 4763
+    title: "[v0.91.8][WP-14][birthday-docs] Implement first-birthday docs and external launch surfaces"
+    state_checked: OPEN
+    disposition: routed_to_v0.91.8
+    v092_consumption: blocked_until_closed_with_integrated_evidence
+non_claims:
+  - v0.91.7_release_readiness
+  - v0.92_activation_readiness
+  - public_launch_approval
+  - first_birthday_completion
+  - legal_personhood
+  - consciousness_proof
+  - production_citizenship
+  - completed_constitutional_governance
+  - subjective_affect_or_happiness
+  - completed_memory_palace_runtime
+  - completed_capability_envelope
+  - completed_witness_or_receipt_package
+validation:
+  fresh:
+    - command: "csdlc-doctor --repo /Users/daniel/git/agent-design-language/.worktrees/adl-wp-4641 --issue 4641"
+      result: pass
+      evidence: "status pass, phase bound, no findings"
+  required_after_write:
+    - git diff --check
+  deferred:
+    - GitHub CI and coverage
+    - runtime/provider/AWS/Observatory/Unity/v0.92 activation checks

@@ -3,29 +3,10 @@
   "issue": 5466,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "8c5521ae75dafa28fe8cd6cc7f503e041324db141a312cb95204863e51b9a8b5",
-  "phase": "published",
-  "generation": 14,
-  "digest": "fcaa90ecd5bfb465c28cfb8a9eb9445b17472199225023573d773562aac3a0c9",
-  "claim": {
-    "id": "claim-5466-merged-head-closeout",
-    "owner": "codex-root",
-    "generation": 14,
-    "acquired_unix_seconds": 1784354668,
-    "expires_unix_seconds": 1784959468,
-    "heartbeat_unix_seconds": 1784354668,
-    "branch": "codex/5466-merged-head-closeout-recovery",
-    "worktree": ".worktrees/adl-wp-5466",
-    "protected_paths": [
-      "csdlc-v2/src/bin/csdlc-publish.rs",
-      "csdlc-v2/src/lib.rs",
-      "csdlc-v2/src/publication.rs",
-      "csdlc-v2/src/schema.rs",
-      "csdlc-v2/src/store.rs",
-      "csdlc-v2/tests/gate6.rs",
-      "csdlc-v2/tests/gate7_lifecycle.rs"
-    ],
-    "purpose": "Add a fail-closed typed publication reconciliation path for an already-merged PR whose final head has exact review evidence"
-  },
+  "phase": "closed_out",
+  "generation": 18,
+  "digest": "d1c724f87a7b118a9d30aec4baa5c7572494fa928c8a6b649e8ba371fee4b416",
+  "claim": null,
   "review_assignment": {
     "reviewer": "bounded-subagent-review-5466",
     "assigned_by": "codex-root",
@@ -65,8 +46,8 @@
     "base": "main",
     "head": "codex/5466-merged-head-closeout-recovery",
     "revision": "git-blake3:53092f4a89f4a5ba9cc138543a4c83d5654a6214:9f594f29bba2202c0dd01fe7c5eb8f9ea1dc38fbecb9fe2d5855786ffb19943e",
-    "draft": true,
-    "observed_state": "open"
+    "draft": false,
+    "observed_state": "merged"
   },
   "readiness": {
     "pull_request": 5472,
@@ -83,74 +64,35 @@
         "requirement": "required",
         "conclusion": "success",
         "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052860356"
-      },
-      {
-        "name": "adl-coverage-hosted",
-        "requirement": "optional",
-        "conclusion": "success",
-        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838268"
-      },
-      {
-        "name": "adl-demo-proof",
-        "requirement": "optional",
-        "conclusion": "success",
-        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838261"
-      },
-      {
-        "name": "adl-path-policy",
-        "requirement": "optional",
-        "conclusion": "success",
-        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052826372"
-      },
-      {
-        "name": "adl-runtime-v3-fast",
-        "requirement": "optional",
-        "conclusion": "skipped",
-        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838717"
-      },
-      {
-        "name": "adl-rust-fmt-clippy",
-        "requirement": "optional",
-        "conclusion": "skipped",
-        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838502"
-      },
-      {
-        "name": "adl-rust-tests",
-        "requirement": "optional",
-        "conclusion": "skipped",
-        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838715"
-      },
-      {
-        "name": "adl-slow-proof",
-        "requirement": "optional",
-        "conclusion": "skipped",
-        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838581"
-      },
-      {
-        "name": "adl-spot-ci-and-coverage",
-        "requirement": "optional",
-        "conclusion": "skipped",
-        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838733"
-      },
-      {
-        "name": "adl-tooling-contracts",
-        "requirement": "optional",
-        "conclusion": "success",
-        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838248"
       }
     ],
     "review_state": "not_required",
-    "conflict_state": "unknown",
+    "conflict_state": "clean",
     "post_publication_findings": [],
-    "ready": false,
-    "blockers": [
-      "conflict_state_not_clean"
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5472,
+    "disposition": "merged",
+    "observed_sha": "53092f4a89f4a5ba9cc138543a4c83d5654a6214",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5466.json",
+    "released_branch": "codex/5466-merged-head-closeout-recovery",
+    "released_worktree": ".worktrees/adl-wp-5466",
+    "released_protected_paths": [
+      "csdlc-v2/src/bin/csdlc-publish.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/publication.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate6.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
     ]
   },
-  "terminal": null,
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5466/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5466/diagram.mmd",
+  "design_path": ".csdlc/issues/5466/retained/design.md",
+  "diagram_path": ".csdlc/issues/5466/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex-root-design-review",
@@ -159,34 +101,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "feb72576cb813bbf15ae22c25423617ec064e42fa4eac94010fa47658a5d577b",
+      "values_digest": "034c3f27ba9d89c4c65b3348a1f958796685c79002a0be7ec6afd6cad8a4b095",
       "rendered_digest": "50460e2da18413aa1781f6cced61f4994d4572d26e47be102bbf0f78138656ae",
       "ast_digest": "b25ada4c74c917b4545c92a1d9d3e989a77507ad8f5e7fd8ea568a7ad3bd4dd5"
     },
     "stp": {
-      "values_digest": "8829284899453584f87bad5c2d28268d4fba54337e892699c1a79f249c638111",
+      "values_digest": "9948a19f5da653b64b901573897d7fa965a47c54a1e079ea768e1c99fccbdb82",
       "rendered_digest": "1ff5baecdc669e6fda34d464722e0ac7488d1d3f3a1b11ae44b60677f00b93af",
       "ast_digest": "a890398d95986c17761a499c0f3188f5ccad4149b929b4f0ad28233a3e860706"
     },
     "spp": {
-      "values_digest": "33831c4fb525fe5b6ca5d9f94c3e17e6477e0d1dac6c159c8c1a7869cd54b24e",
-      "rendered_digest": "1d50ee529ba098ba8b2c7b9bb246578b10ccf08153667589ae7b77d0885d3c00",
-      "ast_digest": "fbcce6de941035f21b3d4ee1f1116e7c88b7799b3e11a315cc4c97937c30da03"
+      "values_digest": "30f0680285fe015c6ee284f0cc4183b79f8c0e3488a43847b77df1baa42408ef",
+      "rendered_digest": "74ed2f543dc2cb38d069139ee85220490a2eee7d8ad77cb369b0622b0deb1e95",
+      "ast_digest": "903f5d20f1b17ccc456cf8d8e618e25d78e737356fe68d19028f566ee2dc328a"
     },
     "vpp": {
-      "values_digest": "151428cc135f4d17551eda510e27b650dc2165c4d4784b8b9dbc0d1b488c1b8e",
-      "rendered_digest": "86a02e830e2463ceba10e44774999593edee76abd81323d079dbf3bdaa7c9017",
-      "ast_digest": "4cd72b4661a5d8b6cdac11b8b7f28908aef48e0a62cde2ac0e560231c6bf54f5"
+      "values_digest": "ffcac91349f555bfe10a9b2cea6ddafa8a86c5458cce7c853bf3f244b49b49e1",
+      "rendered_digest": "e833835a280407381bcbab0297b4b2617d3dc05792837c9ee868df755a503bde",
+      "ast_digest": "e9ee99edbe4d731cfdc6f2e1acecdc5521bf4551e80517f4b5afb4a305084c51"
     },
     "srp": {
-      "values_digest": "ad33c7ed3375a3b0752e70c62c8d399d7889af90604808c2ae05c389357f40ad",
-      "rendered_digest": "e3b70b4675919b37c4865d5e8c40101cda6d1c96a1b4dfc75ea02859ae6c749b",
-      "ast_digest": "b498a15cde6f165dfaaf7accc381355fbff3fa065334f5115b9746a830ebb490"
+      "values_digest": "65a24a083f2dd7a972001566a958f0db559f907d17635a61b9c85aadba004e26",
+      "rendered_digest": "4cd295747e0b7b85cc8e5c49a7437838c8d1274b8ca1905298fb21bc53979148",
+      "ast_digest": "30b5f5eb3d978a3c8c13d2e03a579b5d4401e30db4721ebeb3534beb4f41b8d6"
     },
     "sor": {
-      "values_digest": "1cbdddbdb98b439d78428d357626884ba548ed8e90916f8ea66a10e69f1cf629",
-      "rendered_digest": "622316c0744d9455ff43f92a92ebfe9c99ee673d126cd3fbd25a15d0a151192e",
-      "ast_digest": "b547aeaa10ba23be28c72a96481050b7f6fc8d342f5d3760f02db59b2d549c75"
+      "values_digest": "3bc87eeaaeaff6729e437600ed335c29f844121dc9ebf23d22734f001d122e57",
+      "rendered_digest": "30ab066a8f997428a9fe04558fa200e03b75033ed8603af14b214e6013becdec",
+      "ast_digest": "2c6d39f6051ae1ffe999eda257760144f85b0cc2fb1c4a1c389562c51d91d1d5"
     }
   },
   "transitions": [
@@ -238,6 +180,27 @@
       "to": "published",
       "actor": "codex-root",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex-root",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 9,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex-root",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 10,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex-root",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -394,6 +357,34 @@
       "actor": "codex-root",
       "reason": "record normalized remote readiness without replacing pre-publication review",
       "operation": "record_readiness"
+    },
+    {
+      "sequence": 23,
+      "generation": 15,
+      "actor": "codex-root",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 24,
+      "generation": 16,
+      "actor": "codex-root",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 25,
+      "generation": 17,
+      "actor": "codex-root",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt during the complete v0.91.7 closed-issue audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

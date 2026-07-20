@@ -1,0 +1,23 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 40,
+  "expected_digest": "9e719cdceafcb5346ac038464f12b8273e6a3119c6572fcbb3b5076f57502362",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record shell syntax proof for the coverage runner and contract test.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "-n",
+        "adl/tools/run_authoritative_coverage_lane.sh",
+        "adl/tools/test_run_authoritative_coverage_lane.sh"
+      ],
+      "purpose": "Verify the coverage runner and contract test remain valid shell after the report-renderer crash repair.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, exit 0"
+    }
+  }
+}

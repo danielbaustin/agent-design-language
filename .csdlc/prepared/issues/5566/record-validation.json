@@ -1,0 +1,4 @@
+{
+  "issue":5566,"card":"sor","expected_generation":1,"expected_digest":"9e7868729341bbcbbf120d853898875ab52c8bf77eebe7adbfac5215f2e94cf6","claim_id":"claim-5566-existing-worktree-bind","actor":"codex-closeout-audit","reason":"Record focused bind regressions and strict static-analysis proof.",
+  "operation":{"operation":"record_validation","result":{"command":["cargo","test","--manifest-path","csdlc-v2/Cargo.toml","--test","gate2","reserved_worktree"],"purpose":"Prove exact existing-worktree activation and mismatched-path rejection.","outcome":"passed","evidence_ref":"Both focused match and mismatch regressions passed independently; cargo fmt --check and strict all-target all-feature Clippy passed."}},"fail_after_backup":false
+}

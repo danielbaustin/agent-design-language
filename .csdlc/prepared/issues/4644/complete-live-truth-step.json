@@ -1,0 +1,14 @@
+{
+  "issue": 4644,
+  "card": "spp",
+  "expected_generation": 0,
+  "expected_digest": "97007bfacc5e3ce11900a7854a174cfea74b904fdb21d56f57471c3641321a26",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Confirmed live WP issue truth and recorded that WP-16 #4643 remains open while WP-14 and WP-15 are closed.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S1",
+    "status": "completed"
+  }
+}

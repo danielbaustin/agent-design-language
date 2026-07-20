@@ -1,0 +1,32 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 33,
+  "expected_digest": "e46e3b3d3ebef9fbb56cd0f270d6b442d28e7def339d049aa767be02a2d5b95d",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record coverage-harness proof after PR #5588 adl-coverage-hosted failed API Gateway bridge redaction tests.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "llvm-cov",
+        "nextest",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "--no-clean",
+        "--no-fail-fast",
+        "--no-tests",
+        "pass",
+        "--test-threads",
+        "4",
+        "--",
+        "csm_runtime_api::api_gateway_bridge::tests::api_gateway_bridge_"
+      ],
+      "purpose": "Verify the coverage-hosted harness path passes for the API Gateway bridge tests that failed in PR #5588 run 29719551279.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, CARGO_LLVM_COV_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/llvm-cov-target/bridge-fix, nextest 4 passed"
+    }
+  }
+}

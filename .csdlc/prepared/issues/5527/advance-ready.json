@@ -1,0 +1,10 @@
+{
+  "issue": 5527,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "779c76a6202a060cb96f18435c8d83379305d9c94499a1b29fb23c96cf4132db",
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "reason": "Issue-specific cards, design, diagram, plan, and validation lanes are ready for binding.",
+  "operation": {"operation":"advance_phase","phase":"ready"}
+}

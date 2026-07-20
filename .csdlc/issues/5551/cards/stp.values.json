@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5551,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Repair #5527 retained terminal plan-step truth",
+    "slug": "v0-91-7-csdlc-v2-repair-5527-terminal-plan-truth",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Invoke the existing typed terminal plan repair three times and validate exact parity.",
+      "deliverables": [
+        "Corrected #5527 SPP S2-S4",
+        "Refreshed #5527 terminal receipt",
+        "Typed doctor and exact-diff proof"
+      ],
+      "acceptance_criteria": [
+        "AC-1: exact authority, target, and receipt CAS succeeds for each repair",
+        "AC-2: #5527 S2, S3, and S4 are completed and S1 remains completed",
+        "AC-3: #5527 card, index, and receipt parity is exact",
+        "AC-4: typed doctor passes for #5527 and #5551"
+      ],
+      "dependencies": [
+        "Merged PR #5550",
+        "Typed terminal plan-step repair from #5518"
+      ],
+      "repo_inputs": [
+        ".csdlc/issues/5527",
+        "csdlc-v2/closeout/5527.json"
+      ],
+      "non_goals": [
+        "Source changes",
+        "General terminal editing",
+        "Runtime changes",
+        "AWS execution"
+      ]
+    }
+  }
+}

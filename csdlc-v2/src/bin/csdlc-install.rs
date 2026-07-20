@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use csdlc_v2::{
-    install_binaries, resolve_operator_generation, verify_coexistence, CoexistenceInventory,
-    Generation, SkillManifest,
+    build_and_install_binaries, resolve_operator_generation, verify_coexistence,
+    CoexistenceInventory, Generation, SkillManifest,
 };
 use std::fs;
 use std::path::PathBuf;
@@ -17,7 +17,7 @@ enum Command {
     Manifest,
     Install {
         #[arg(long)]
-        source: PathBuf,
+        repo: PathBuf,
         #[arg(long)]
         destination: PathBuf,
     },
@@ -41,10 +41,9 @@ enum Command {
 fn main() {
     let result = match Args::parse().command {
         Command::Manifest => SkillManifest::load().and_then(json),
-        Command::Install {
-            source,
-            destination,
-        } => install_binaries(&source, &destination).and_then(json),
+        Command::Install { repo, destination } => {
+            build_and_install_binaries(&repo, &destination).and_then(json)
+        }
         Command::Verify {
             repo,
             bin_dir,

@@ -1,0 +1,24 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 12,
+  "expected_digest": "81e93d9d3b026c36209b71c238abc272c47935aa716449d417a1e6eb34ea03b6",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The terminal recovery boundary repair passes focused durability, repair, formatting, and lint validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml",
+        "terminal_projection_and_receipt_recover_at_each_durable_boundary"
+      ],
+      "purpose": "Prove uncoordinated lifecycle operations cannot mutate shared terminal recovery state",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: all six durability boundaries, focused terminal repair tests, strict all-target Clippy, cargo fmt check, and git diff check passed"
+    }
+  }
+}

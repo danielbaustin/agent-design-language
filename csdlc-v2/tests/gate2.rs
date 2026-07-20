@@ -206,6 +206,158 @@ fn bind_supports_issue_local_state_without_touching_primary_checkout() {
 }
 
 #[test]
+fn bind_activates_exact_reserved_claim_from_existing_worktree() {
+    let temp = tempfile::tempdir().unwrap();
+    fs::create_dir_all(temp.path().join("docs")).unwrap();
+    fs::write(temp.path().join("docs/design.md"), "# design\n").unwrap();
+    fs::write(
+        temp.path().join("docs/diagram.mmd"),
+        "flowchart LR\n A-->B\n",
+    )
+    .unwrap();
+    git(temp.path(), &["init", "-b", "main"]);
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "C-SDLC Test"]);
+    let store = Store::new(temp.path());
+    csdlc_v2::initialize_issue(&store, request()).unwrap();
+    git(temp.path(), &["add", "."]);
+    git(temp.path(), &["commit", "-m", "prepared issue"]);
+    git(
+        temp.path(),
+        &[
+            "worktree",
+            "add",
+            "-b",
+            "issue-42",
+            ".worktrees/issue-42",
+            "main",
+        ],
+    );
+
+    let issue_root = temp.path().join(".worktrees/issue-42");
+    let issue_store = Store::new(&issue_root);
+    let claim = issue_store.load_record(42).unwrap().claim.unwrap();
+    let result = csdlc_v2::bind_issue(
+        &issue_store,
+        csdlc_v2::BindRequest {
+            issue: 42,
+            base_branch: "main".into(),
+            branch: claim.branch.clone(),
+            worktree: claim.worktree.clone(),
+            claim,
+        },
+    )
+    .expect("activate exact reserved claim from its existing worktree");
+
+    assert!(!result.created);
+    assert_eq!(
+        issue_store.load_record(42).unwrap().phase,
+        csdlc_v2::LifecyclePhase::Bound
+    );
+}
+
+#[test]
+fn bind_rejects_reserved_worktree_that_does_not_match_current_checkout() {
+    let temp = tempfile::tempdir().unwrap();
+    fs::create_dir_all(temp.path().join("docs")).unwrap();
+    fs::write(temp.path().join("docs/design.md"), "# design\n").unwrap();
+    fs::write(
+        temp.path().join("docs/diagram.mmd"),
+        "flowchart LR\n A-->B\n",
+    )
+    .unwrap();
+    let mut initial = request();
+    initial.claim.worktree = ".worktrees/not-this-worktree".into();
+    git(temp.path(), &["init", "-b", "main"]);
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "C-SDLC Test"]);
+    let store = Store::new(temp.path());
+    csdlc_v2::initialize_issue(&store, initial).unwrap();
+    git(temp.path(), &["add", "."]);
+    git(temp.path(), &["commit", "-m", "prepared issue"]);
+    git(
+        temp.path(),
+        &[
+            "worktree",
+            "add",
+            "-b",
+            "issue-42",
+            ".worktrees/issue-42",
+            "main",
+        ],
+    );
+
+    let issue_root = temp.path().join(".worktrees/issue-42");
+    let issue_store = Store::new(&issue_root);
+    let claim = issue_store.load_record(42).unwrap().claim.unwrap();
+    let error = csdlc_v2::bind_issue(
+        &issue_store,
+        csdlc_v2::BindRequest {
+            issue: 42,
+            base_branch: "main".into(),
+            branch: claim.branch.clone(),
+            worktree: claim.worktree.clone(),
+            claim,
+        },
+    )
+    .expect_err("mismatched reserved worktree must fail closed");
+
+    assert_eq!(error.code, ErrorCode::UnsafeCheckout);
+    assert_eq!(
+        issue_store.load_record(42).unwrap().phase,
+        csdlc_v2::LifecyclePhase::Initialized
+    );
+}
+
+#[test]
+fn bind_rejects_standalone_repository_with_matching_worktree_suffix() {
+    let temp = tempfile::tempdir().unwrap();
+    let issue_root = temp.path().join("unrelated/.worktrees/issue-42");
+    fs::create_dir_all(issue_root.join("docs")).unwrap();
+    fs::write(issue_root.join("docs/design.md"), "# design\n").unwrap();
+    fs::write(
+        issue_root.join("docs/diagram.mmd"),
+        "flowchart LR\n A-->B\n",
+    )
+    .unwrap();
+    git(&issue_root, &["init", "-b", "issue-42"]);
+    git(
+        &issue_root,
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(&issue_root, &["config", "user.name", "C-SDLC Test"]);
+    let store = Store::new(&issue_root);
+    let record = csdlc_v2::initialize_issue(&store, request()).unwrap();
+    git(&issue_root, &["add", "."]);
+    git(&issue_root, &["commit", "-m", "copied prepared issue"]);
+    let claim = record.claim.unwrap();
+
+    let error = csdlc_v2::bind_issue(
+        &store,
+        csdlc_v2::BindRequest {
+            issue: 42,
+            base_branch: "main".into(),
+            branch: claim.branch.clone(),
+            worktree: claim.worktree.clone(),
+            claim,
+        },
+    )
+    .expect_err("matching path suffix in an unrelated repository must fail closed");
+
+    assert_eq!(error.code, ErrorCode::UnsafeCheckout);
+    assert_eq!(
+        store.load_record(42).unwrap().phase,
+        csdlc_v2::LifecyclePhase::Initialized
+    );
+}
+
+#[test]
 fn closed_issue_claim_release_is_typed_and_compare_and_swap_guarded() {
     let (temp, store, mut record) = fixture();
     git(temp.path(), &["init", "-b", "main"]);
@@ -1054,6 +1206,69 @@ fn placeholder_design_is_pending_then_can_be_completed_approved_and_bound() {
         store.load_record(42).expect("record").phase,
         csdlc_v2::LifecyclePhase::Bound
     );
+}
+
+#[test]
+fn initialized_approved_stale_design_can_be_reapproved_before_readiness() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    git(temp.path(), &["init", "-b", "main"]);
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "C-SDLC Test"]);
+    fs::create_dir_all(temp.path().join("docs")).expect("docs");
+    fs::write(temp.path().join("docs/design.md"), "# Reviewed design\n").expect("design");
+    fs::write(
+        temp.path().join("docs/diagram.mmd"),
+        "flowchart LR\n  A --> B\n",
+    )
+    .expect("diagram");
+    let store = Store::new(temp.path());
+    let record = csdlc_v2::initialize_issue(&store, request()).expect("initialize");
+    let redundant = csdlc_v2::approve_design(
+        &store,
+        csdlc_v2::ApproveDesignRequest {
+            issue: 42,
+            expected_generation: record.generation,
+            expected_digest: record.digest.clone(),
+            claim_id: "claim-1".into(),
+            reviewer: "architect".into(),
+        },
+    )
+    .expect_err("unchanged initialized approval must not churn state");
+    assert!(matches!(redundant.code, ErrorCode::InvalidTransition));
+
+    fs::write(
+        temp.path().join("docs/design.md"),
+        "# Approved design changed before readiness\n",
+    )
+    .expect("stale design edit");
+    assert!(!diagnose(&store, 42).ready);
+
+    let recovered = csdlc_v2::approve_design(
+        &store,
+        csdlc_v2::ApproveDesignRequest {
+            issue: 42,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            claim_id: "claim-1".into(),
+            reviewer: "recovery-reviewer".into(),
+        },
+    )
+    .expect("typed initialized design recovery");
+    assert_eq!(recovered.phase, csdlc_v2::LifecyclePhase::Initialized);
+    assert_eq!(recovered.generation, 1);
+    assert!(matches!(
+        recovered.design_review,
+        csdlc_v2::DesignReview::Approved { reviewer, .. }
+            if reviewer == "recovery-reviewer"
+    ));
+    assert_eq!(
+        recovered.audit.last().expect("audit").reason,
+        "reapprove stale initialized issue design"
+    );
+    assert!(diagnose(&store, 42).ready);
 }
 
 #[test]

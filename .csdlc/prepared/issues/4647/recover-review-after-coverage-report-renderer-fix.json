@@ -1,0 +1,8 @@
+{
+  "issue": 4647,
+  "expected_generation": 37,
+  "expected_digest": "73f9a2c2ace087c7739a8c4967bf5fa768a64ff86b64b334ee08428dcfd31eea",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Recover review after post-publication PR #5588 adl-coverage-hosted failure on run 29721377401. The failure was an llvm-cov report renderer crash after all tests passed and run-scoped summaries were produced; the repair keeps PR report-render failures soft only when summary evidence exists."
+}

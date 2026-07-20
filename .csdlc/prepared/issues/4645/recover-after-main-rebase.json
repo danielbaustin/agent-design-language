@@ -1,0 +1,8 @@
+{
+  "issue": 4645,
+  "expected_generation": 21,
+  "expected_digest": "eefc77f640bd1cce27bc5e066cd239961d35c6ddfc2d04cf47f3b4772fddfd2a",
+  "claim_id": "claim-4645-v0917-internal-review-prep",
+  "actor": "codex-closeout-audit",
+  "reason": "GitHub reported PR #5574 conflicting; rebase onto current main changed commit identity, so recover to implemented and require a fresh exact-head review before republishing."
+}

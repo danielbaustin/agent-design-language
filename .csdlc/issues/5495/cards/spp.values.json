@@ -1,0 +1,76 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5495,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][publish] Avoid stale review loop after publication metadata commit",
+    "slug": "publication-metadata-review-loop",
+    "version": "v0.91.7",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Define safe lifecycle metadata paths, derive automatic proof only for metadata-only commit transitions, and prove source drift remains blocked.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Define and implement bounded lifecycle metadata classification",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Integrate automatic metadata-only proof into repository review guard",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Add #4641-style regression proof and validate merged guard behavior",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Only explicit recognized lifecycle metadata paths are non-substantive",
+        "A source or retained-design change cannot pass automatic proof",
+        "Explicit malformed proof cannot be upgraded by automatic classification"
+      ],
+      "risks": [
+        "Over-broad metadata paths could mask real work",
+        "Publication commits can touch several generated card surfaces",
+        "Revision parsing must remain exact and commit-bound"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Focused regression tests pass",
+        "Substantive drift remains blocked",
+        "Clippy and diff checks pass"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5495/retained/design.md",
+      "design_digest": "68e7e87969ff9a80c12e15a24e6fde8d4c4f1b9bd1f6dd7329ce94edf680a965",
+      "diagram_ref": ".csdlc/issues/5495/retained/diagram.mmd",
+      "diagram_digest": "b30d358fcc11c8e15db132997d4600948b7acbe41b21974f8d19989b3b6633e5"
+    }
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "issue": 4642,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/4642/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4642/diagram.mmd",
+  "design_reviewer": "codex-prep-only",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-4642-v0-91-7-wp15-demo-matrix-proof-coverage",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/4642-v0917-demo-convergence",
+    "worktree": ".worktrees/adl-wp-4642",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_WP15_DEMO_CONVERGENCE_4642.md",
+      "docs/milestones/v0.91.7/review/wp15_demo_convergence_4642",
+      ".csdlc/issues/4642"
+    ],
+    "purpose": "Prepare and later execute WP-15 without claiming completion from setup"
+  },
+  "initial": {
+    "title": "[v0.91.7][WP-15][demo] Demo matrix and proof coverage",
+    "slug": "v0-91-7-wp15-demo-matrix-proof-coverage",
+    "version": "v0.91.7",
+    "goal": "Prepare and execute demo convergence for v0.91.7.",
+    "required_outcome": "A retained demo convergence packet updates Observatory/demo matrix truth, visible proof status, public demo claim boundaries, and evidence-backed demo blockers.",
+    "declared_scope": [
+      "v0.91.7 demo matrix and proof coverage",
+      "Observatory and visible proof status",
+      "public demo claim boundaries"
+    ],
+    "authority_boundary": [
+      "Issue #4642 owns WP-15 execution",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml and WBS_v0.91.7.md define the work package",
+      "Preparation is not execution or completion evidence"
+    ],
+    "task_boundary": "Prepare and later execute only WP-15; do not absorb sibling WPs or release-readiness claims.",
+    "deliverables": [
+      "Demo convergence packet",
+      "Demo matrix update"
+    ],
+    "acceptance_criteria": [
+      "AC-1: WP-15 executes only within its declared scope and protected output paths",
+      "AC-2: Deliverables are retained on tracked paths with evidence-bound claims",
+      "AC-3: Validation records distinguish fresh checks, retained proof, skipped checks, and unproven surfaces",
+      "AC-4: Sibling WP work, v0.91.7 release readiness, and v0.92 activation readiness are not silently claimed"
+    ],
+    "dependencies": [
+      "WP-14 launch/birthday handoff prep and sufficient implementation proof"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md",
+      "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
+      "demos/v0.91.7/html-observatory/README.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ],
+    "non_goals": [
+      "Do not execute this work during preparation",
+      "Do not implement sibling WP work",
+      "Do not use AWS or paid remote validation lanes for preparation",
+      "Do not claim release readiness from setup cards"
+    ],
+    "plan_summary": "Bind WP-15 to its issue worktree, then execute the future work with focused evidence and truthful review/closeout records.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Confirm live issue and dependency truth before execution",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-4"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Produce the declared deliverables on protected tracked paths",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run focused validation and record fresh/retained/skipped proof truth",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Update SRP/SOR truth and preserve non-claims before publication",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "Work stays issue-local",
+      "Findings and claims remain evidence-bound",
+      "No release or activation readiness is inferred from prep",
+      "No AWS use for preparation"
+    ],
+    "risks": [
+      "Dependencies may not yet be clean enough for execution",
+      "Review/remediation scope can be mistaken for sibling work",
+      "Retained evidence can become stale if live issue truth changes"
+    ],
+    "planning_profile": "medium",
+    "stop_conditions": [
+      "Required dependency remains open or blocked without operator approval",
+      "Execution would require sibling WP remediation",
+      "Release-readiness claim cannot be backed by retained or fresh proof",
+      "AWS or paid remote validation would be required for preparation"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "prep-doctor",
+        "proof_role": "Validate typed C-SDLC prep state and issue-local cards",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-4"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 300,
+        "budget_tokens": 3000,
+        "argv": [
+          "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+          "--repo",
+          ".",
+          "--issue",
+          "4642"
+        ],
+        "parallel_group": "prep",
+        "defer_reason": null
+      },
+      {
+        "lane": "artifact-integrity",
+        "proof_role": "Validate future tracked artifacts are clean after execution",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 300,
+        "budget_tokens": 3000,
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "parallel_group": "prep",
+        "defer_reason": "Run after execution artifacts are written"
+      }
+    ],
+    "failure_policy": "Fail closed on stale live truth, missing retained evidence, overclaim, or dependency ambiguity.",
+    "review_prompts": [
+      "Does the issue stay within its WP scope?",
+      "Are claims supported by retained or fresh evidence?",
+      "Are skipped and unproven surfaces explicit?",
+      "Are sibling WP and release/activation non-claims preserved?"
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "issue": 4647,
+  "expected_generation": 22,
+  "expected_digest": "b6ec60f2b773c72ec9a899363f7ba8509517acacfefee62435b8292bda42335f",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Recover review after post-publication clippy repair required by PR #5588 adl-rust-fmt-clippy failure on run 29718818086."
+}

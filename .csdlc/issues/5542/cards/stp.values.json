@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5542,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-17][docs] Repair post-merge closeout and v0.91.8 bridge truth",
+    "slug": "v0-91-7-wp17-post-merge-closeout-truth",
+    "version": "v0.91.7",
+    "generation": 22
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair only the three documented post-merge findings; do not execute sibling work packages or runtime/cloud work.",
+      "deliverables": [
+        "Repaired canonical closeout and bridge-precedence entrypoints",
+        "Explicit creation/verification date semantics",
+        "Extended executable WP-17 validator and fresh receipt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: #4644 is closed and PR #5539 is merged in every touched canonical entrypoint",
+        "AC-2: WP-17 is absent from open work-package sets while WP-18, WP-19, WP-20, and WP-23 remain gates",
+        "AC-3: v0.92 consumption is routed through the reviewed v0.91.8 bridge with canonical links",
+        "AC-4: canonical date metadata distinguishes creation from last verification",
+        "AC-5: focused validator, links, structured docs, diff hygiene, and exact-revision review pass"
+      ],
+      "dependencies": [
+        "Merged PR #5539",
+        "Active #4645 ownership boundary for V0917_SPRINT_REVIEW_REGISTER.md"
+      ],
+      "repo_inputs": [
+        "README.md",
+        "REVIEW.md",
+        "docs/milestones/v0.91.7/README.md",
+        "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+        "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+        "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+        "docs/planning/ADL_FEATURE_LIST.md",
+        "docs/milestones/v0.91.8/README.md"
+      ],
+      "non_goals": [
+        "Do not execute WP-18, WP-19, WP-20, or WP-23",
+        "Do not modify Runtime, provider, cloud, AWS, Unity, GPU, or v0.92 activation behavior",
+        "Do not rewrite retained historical evidence",
+        "Do not edit the sprint-review register while #4645 owns it"
+      ]
+    }
+  }
+}

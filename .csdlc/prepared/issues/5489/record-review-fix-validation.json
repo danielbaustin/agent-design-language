@@ -1,0 +1,23 @@
+{
+  "issue": 5489,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "7fb636370c5c53c82bfbf7ec29506bfbae5a615e66d6213ed6b19cb603ee2b3c",
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Focused validation passed after the internal review readiness-factory fix.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git diff --check",
+        "ruby -e 'require \"yaml\"; YAML.safe_load(File.read(\"docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml\"), aliases: true)'",
+        "ruby targeted assertions for #5343/#5347 missing_projection_issues, WP-10A, WP-11, WP-13, and WIP controls",
+        "rg stale-wording checks"
+      ],
+      "purpose": "Prove the post-review fix keeps the v0.91.8 wave YAML parseable and includes every executable cutover/deletion sidecar in typed readiness gating.",
+      "outcome": "passed",
+      "evidence_ref": "local focused validation output in #5489 worktree"
+    }
+  }
+}

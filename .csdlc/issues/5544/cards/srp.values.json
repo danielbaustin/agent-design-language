@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5544,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-20][review-fix] Reconcile release truth and external-review gates",
+    "slug": "v0-91-7-wp20-release-truth-gates",
+    "version": "v0.91.7",
+    "generation": 26
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/evidence/5544/live-state/github_state.json\n.csdlc/evidence/5544/live-state/issue_4647.json\n.csdlc/evidence/5544/live-state/issue_5408.json\n.csdlc/evidence/5544/live-state/issue_5489.json\n.csdlc/evidence/5544/live-state/issue_5527.json\n.csdlc/evidence/5544/live-state/pr_5419.json\n.csdlc/evidence/5544/live-state/pr_5539.json\n.csdlc/evidence/5544/live-state/pr_5543.json\n.csdlc/issues/4644/audit.jsonl\n.csdlc/issues/4644/cards/sip.values.json\n.csdlc/issues/4644/cards/sor.md\n.csdlc/issues/4644/cards/sor.values.json\n.csdlc/issues/4644/cards/spp.md\n.csdlc/issues/4644/cards/spp.values.json\n.csdlc/issues/4644/cards/srp.md\n.csdlc/issues/4644/cards/srp.values.json\n.csdlc/issues/4644/cards/stp.values.json\n.csdlc/issues/4644/cards/vpp.md\n.csdlc/issues/4644/cards/vpp.values.json\n.csdlc/issues/4644/index.json\n.csdlc/issues/4644/retained/design.md\n.csdlc/issues/4644/retained/diagram.mmd\n.csdlc/issues/5544/audit.jsonl\n.csdlc/issues/5544/cards/sip.md\n.csdlc/issues/5544/cards/sip.values.json\n.csdlc/issues/5544/cards/sor.md\n.csdlc/issues/5544/cards/sor.values.json\n.csdlc/issues/5544/cards/spp.md\n.csdlc/issues/5544/cards/spp.values.json\n.csdlc/issues/5544/cards/srp.md\n.csdlc/issues/5544/cards/srp.values.json\n.csdlc/issues/5544/cards/stp.md\n.csdlc/issues/5544/cards/stp.values.json\n.csdlc/issues/5544/cards/vpp.md\n.csdlc/issues/5544/cards/vpp.values.json\n.csdlc/issues/5544/index.json\n.csdlc/prepared/issues/4644/reconcile-terminal-from-5544.json\n.csdlc/prepared/issues/5544/advance-implemented.json\n.csdlc/prepared/issues/5544/advance-reviewed.json\n.csdlc/prepared/issues/5544/advance-wp21a-correction-reviewed.json\n.csdlc/prepared/issues/5544/amend-review-truth-scope.json\n.csdlc/prepared/issues/5544/assign-pre-pr-review.json\n.csdlc/prepared/issues/5544/assign-wp21a-correction-review.json\n.csdlc/prepared/issues/5544/bind-request.json\n.csdlc/prepared/issues/5544/bootstrap-request.json\n.csdlc/prepared/issues/5544/complete-S1.json\n.csdlc/prepared/issues/5544/complete-S2.json\n.csdlc/prepared/issues/5544/complete-S3.json\n.csdlc/prepared/issues/5544/complete-S4.json\n.csdlc/prepared/issues/5544/design.md\n.csdlc/prepared/issues/5544/diagram.mmd\n.csdlc/prepared/issues/5544/publish.json\n.csdlc/prepared/issues/5544/record-execution.json\n.csdlc/prepared/issues/5544/record-final-validation.json\n.csdlc/prepared/issues/5544/record-post-rebase-validation.json\n.csdlc/prepared/issues/5544/record-pre-pr-review.json\n.csdlc/prepared/issues/5544/record-validation.json\n.csdlc/prepared/issues/5544/record-wp21a-correction-review.json\n.csdlc/prepared/issues/5544/record-wp21a-correction-validation.json\n.csdlc/prepared/issues/5544/recover-post-rebase-review.json\n.csdlc/prepared/issues/5544/recover-wp21a-correction-review.json\n.csdlc/publication/5544.intent.json\ndocs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md\ndocs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml\ndocs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md\ndocs/milestones/v0.91.7/review/V0917_WP18_INTERNAL_REVIEW_4645.md\ndocs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md\ndocs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md\ndocs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json",
+      "review_revision": "git-blake3:153f268e1c8926a05189cca1dd1f58ab08eb0a2d:68f798257791fee4d91c7725b75474db77eb70f881ae76a5117e79834806acf4",
+      "reviewer": "subagent:019f77d3-f77f-7161-9f58-6503d284cdc5",
+      "review_prompts": [
+        "Does #5544 preserve existing ownership for #5408 and #5527?",
+        "Does the refreshed register match live GitHub and C-SDLC state?",
+        "Does the handoff avoid starting WP-19 or approving release readiness?",
+        "Are every blocked, residual, and existing-owner state backed by retained evidence?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Review did not refresh live GitHub state; it reviewed retained evidence and the exact branch diff after rebase onto #5552/current origin/main.",
+        "Review did not run lifecycle validators; parent session ran focused parsers and csdlc-doctor before review assignment.",
+        "WP-19 remains blocked and v0.91.7 release readiness remains unapproved until open P1/P2 gates, including WP-21A #5489, are fixed or explicitly dispositioned."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "issue": 5521,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "872248fd3c113cff0e6f00ef149b5881815b581b3c24d0cc20a03226bb5ae2c9",
+  "claim_id": "claim-5521-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Use the merged typed terminal repair to complete #5518 SPP S4.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Advance only #5518 SPP S4 to completed and atomically refresh its terminal receipt.",
+    "changes": [
+      "Repair #5518 S4 from pending to completed",
+      "Regenerate #5518 card projections, audit, generation, and digests",
+      "Replace #5518 retained receipt atomically"
+    ],
+    "artifacts": [
+      ".csdlc/issues/5518",
+      ".csdlc/issues/5521",
+      ".csdlc/prepared/issues/5521"
+    ]
+  }
+}

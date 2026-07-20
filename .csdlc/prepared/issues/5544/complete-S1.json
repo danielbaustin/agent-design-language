@@ -1,0 +1,10 @@
+{
+  "issue": 5544,
+  "card": "spp",
+  "expected_generation": 0,
+  "expected_digest": "58485da6c5113b851b5b50c27882af0a9234e38414aabffec967c39d54f033e7",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "#5544 is bound in its issue worktree with non-overlapping lifecycle ownership.",
+  "operation": {"operation":"update_plan_step","step_id":"S1","status":"completed"}
+}

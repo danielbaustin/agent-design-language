@@ -1174,7 +1174,7 @@ pub(crate) fn csm_usage() -> &'static str {
   csm daemon --spec <agent-spec.yaml> [--checkpoint-interval-secs <n>] [--interval-secs <n>] [--api-bind 127.0.0.1:19997] [--recover-stale-lease] [--no-sleep] [--json]
   csm service install --spec <agent-spec.yaml> [--service-root <dir>] [--manager launchd|local] [--label <label>] [--csm-bin <path>] [--api-bind 127.0.0.1:19997] [--json]
   csm service start|status|stop|remove [--service-root <dir>] [--json]
-  csm governed-stop --spec <agent-spec.yaml> --reason <text> --operator <identity> --authorization <metadata> --intent emergency_polis_stop|operator_safety_stop|recoverability_drill --requested-at <RFC3339> [--json]
+  csm governed-stop --spec <agent-spec.yaml> --reason <text> --operator <identity> --authorization <base64-ed25519-signature> --intent emergency_polis_stop|operator_safety_stop|recoverability_drill --requested-at <RFC3339> [--json]
   csm credential-policy prove --out <proof-dir> [--run-id <id>] [--operator <identity>] [--requested-at <RFC3339>] [--json]
   csm cav red-blue prove --out <proof-dir> [--run-id <id>] [--operator <identity>] [--requested-at <RFC3339>] [--json]
   csm aws-signal acip-sns-proof --out <proof-dir> [--run-id <id>] [--projection-level delivery_metadata|content_summary]

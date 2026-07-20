@@ -1,0 +1,12 @@
+{
+  "issue": 5489,
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "expected_generation": 0,
+  "expected_digest": "de5ab22715be325063c01174b37f90e094286ae76e640bb497995cd69bce1ae2",
+  "now_unix_seconds": 1784423613,
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Second draft review required WBS dependency truth to include WP-10A and make WP-11 depend on both WP-10 and WP-10A live proof.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/WBS_v0.91.8.md"
+  ]
+}

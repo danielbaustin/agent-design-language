@@ -1,0 +1,9 @@
+{
+  "issue": 5489,
+  "expected_initialization_digest": "600d3dc651aca0d42502611fc22299cbab5dbce90d456a219ac98a5c2a2ffbfa",
+  "expected_branch": "codex/5489-terminal-reconcile",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-5489-terminal-reconcile",
+  "actor": "codex-closeout-audit",
+  "reason": "Materialize the retained terminal receipt during the complete v0.91.7 closed-issue audit.",
+  "follow_ups": []
+}

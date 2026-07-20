@@ -1,0 +1,26 @@
+{
+  "issue": 5489,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "aea6c28c744a53b36a7d0580c84f98216c52f954d857839a54fa6e18a0bfaf4e",
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Focused planning validation passed; Fable 5 shadow review was attempted but unavailable and is not recorded as a clean external verdict.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git diff --check",
+        "ruby -e 'require \"yaml\"; YAML.safe_load(File.read(\"docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml\"), aliases: true)'",
+        "ruby targeted WP-10A/WP-11/WP-13 dependency assertions",
+        "rg stale-wording and ordering checks",
+        "Fable 5 attempt 001: blocked due missing evidence in prompt",
+        "Fable 5 attempt 002: failed provider_empty_text_output with full evidence",
+        "Fable 5 attempt 003: failed provider_empty_text_output with smaller evidence"
+      ],
+      "purpose": "Prove touched planning docs parse cleanly, the new parallel plan is included in review scope, WP-10A and deletion dependency truth are represented consistently, stale #5383 wording is absent, and external shadow review truth is fail-closed rather than fabricated.",
+      "outcome": "passed",
+      "evidence_ref": "local focused validation output; uncommitted .adl/local-artifacts/fable5-review-5489/ result and run logs retained locally only"
+    }
+  }
+}

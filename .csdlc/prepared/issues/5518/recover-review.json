@@ -1,0 +1,8 @@
+{
+  "issue": 5518,
+  "expected_generation": 17,
+  "expected_digest": "19d9a4eb88c6e340994df962ac4b39309823df36afc39cb508bb4c0bde5f0126",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover exact review identity after committing typed review metadata; all substantive code and tests are unchanged."
+}

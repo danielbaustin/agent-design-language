@@ -1,0 +1,15 @@
+{
+  "authority_issue": 5527,
+  "target_issue": 5390,
+  "expected_authority_generation": 1,
+  "expected_authority_digest": "c0955354fce247e0d14e011dacc371f33fba4cc85e44a2851898e277dc3c208d",
+  "expected_target_generation": 40,
+  "expected_target_digest": "2bbc3d19869eed65da6535ff153259e5c556036ca926eb7b03f85f69fca56c89",
+  "expected_receipt_digest": "b5160df983f1de49e45501d36aef9bfda8d8cb9bc52dc66f2d91eb4901ec8599",
+  "authority_claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "actor": "codex-closeout-audit",
+  "stale_ref": ".csdlc/issues/5390/diagram.mmd",
+  "retained_ref": ".csdlc/issues/5390/retained/diagram.mmd",
+  "expected_artifact_digest": "4c4d1479748a16c61f8194585b06caef82dde84284b25deb62a363dff643adbb",
+  "fail_after_stage": null
+}

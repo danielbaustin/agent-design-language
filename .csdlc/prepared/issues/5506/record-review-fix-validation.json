@@ -1,0 +1,18 @@
+{
+  "issue": 5506,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "dd16f4778746df2f496dac8f568289085ac5928ade72e991ee3052dfb90bd42f",
+  "claim_id": "claim-5506-runtime-auth-coverage-map",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The mixed-routing regression and shell checks passed after F-5506-1.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_run_pr_fast_coverage_lane.sh"],
+      "purpose": "Prove auth plus ADL selection executes both workspaces and emits both summaries",
+      "outcome": "passed",
+      "evidence_ref": "local:5506-mixed-auth-adl-regression-pass"
+    }
+  }
+}

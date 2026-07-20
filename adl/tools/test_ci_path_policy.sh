@@ -380,6 +380,50 @@ EOF
   assert_has "$runtime_output" "validation_profile_primary_reason=wp08_cloudfront_control_surface_requires_csm_runtime_hook_wrapper_contract_checks; retained live summary validation runs through adl/tools/validate_wp08_cloudfront_control_proof.py"
   assert_has "$runtime_output" "validation_profile_escalation_lanes=rust_pr_fast"
 
+  git checkout -q -b runtime-v3-csm-bridge "$base_sha"
+  mkdir -p adl-runtime/src adl/src/cli adl/src/long_lived_agent \
+    .csdlc/issues/5509/cards .csdlc/prepared/issues/5509 .csdlc/locks \
+    docs/milestones/v0.91.7/review docs/review-fixes/runtime
+  printf 'pub fn auth() {}\n' > adl-runtime/src/runtime_api_auth.rs
+  printf 'pub fn supervise() {}\n' > adl-runtime/src/supervision.rs
+  printf 'pub fn topology() {}\n' > adl-runtime/src/topology.rs
+  printf 'pub fn client() {}\n' > adl/src/cli/csmctl_cmd.rs
+  printf 'pub fn api() {}\n' > adl/src/csm_runtime_api.rs
+  printf 'pub fn agent() {}\n' > adl/src/long_lived_agent.rs
+  printf 'fn test_agent() {}\n' > adl/src/long_lived_agent/tests.rs
+  printf '{}\n' > .csdlc/issues/5509/index.json
+  printf '# card\n' > .csdlc/issues/5509/cards/sip.md
+  printf '{}\n' > .csdlc/prepared/issues/5509/bootstrap-request.json
+  printf '{}\n' > .csdlc/locks/5509.lock
+  printf '# register\n' > docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md
+  printf '# repair\n' > docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md
+  git add adl-runtime adl/src/cli/csmctl_cmd.rs adl/src/csm_runtime_api.rs \
+    adl/src/long_lived_agent.rs adl/src/long_lived_agent/tests.rs \
+    .csdlc docs/milestones/v0.91.7/review docs/review-fixes/runtime
+  git commit -q -m runtime-v3-csm-bridge
+  runtime_v3_csm_bridge_head="$(git rev-parse HEAD)"
+
+  runtime_v3_csm_bridge_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$runtime_v3_csm_bridge_head" --ref "refs/pull/1/merge")"
+  assert_has "$runtime_v3_csm_bridge_output" "rust_required=true"
+  assert_has "$runtime_v3_csm_bridge_output" "coverage_required=true"
+  assert_has "$runtime_v3_csm_bridge_output" "full_coverage_required=false"
+  assert_has "$runtime_v3_csm_bridge_output" "coverage_lane=pr_fast_coverage"
+  assert_has "$runtime_v3_csm_bridge_output" "coverage_authority=focused_runtime_v3_csm"
+  assert_has "$runtime_v3_csm_bridge_output" "coverage_execution_state=focused_pr_coverage_required"
+  assert_has "$runtime_v3_csm_bridge_output" "reason=bounded_runtime_v3_csm_bridge_runs_independent_focused_validation"
+  assert_has "$runtime_v3_csm_bridge_output" "validation_profile_selected=bounded_runtime_v3_csm_profile"
+  assert_has "$runtime_v3_csm_bridge_output" "validation_profile_status=ready_to_run"
+  assert_has "$runtime_v3_csm_bridge_output" "validation_profile_escalation_required=false"
+
+  printf 'pub fn unrelated() {}\n' > adl/src/cli/mod.rs
+  git add adl/src/cli/mod.rs
+  git commit -q -m runtime-v3-csm-bridge-plus-unrelated
+  runtime_v3_csm_unrelated_head="$(git rev-parse HEAD)"
+  runtime_v3_csm_unrelated_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$runtime_v3_csm_unrelated_head" --ref "refs/pull/1/merge")"
+  assert_has "$runtime_v3_csm_unrelated_output" "full_coverage_required=true"
+  assert_has "$runtime_v3_csm_unrelated_output" "coverage_authority=fail_closed"
+  assert_has "$runtime_v3_csm_unrelated_output" "reason=validation_manager_escalation_requires_authoritative_full_coverage"
+
   git checkout -q -b rust-test-manifest-change "$base_sha"
   mkdir -p adl/src/runtime_v2
   printf 'mod slow_proof_contract;\n' > adl/src/runtime_v2/tests.rs

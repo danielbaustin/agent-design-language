@@ -1,0 +1,8 @@
+{
+  "issue": 4646,
+  "expected_generation": 23,
+  "expected_digest": "21fc668491934f2cd6266cdae3e7dc5633ee07b97632aabe529bd419b7b0a3a2",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "Record the completed exact-target WP-19 review and its provider-degraded finding set after corrective PR #5582 merged."
+}

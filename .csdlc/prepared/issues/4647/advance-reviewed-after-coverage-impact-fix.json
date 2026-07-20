@@ -1,0 +1,14 @@
+{
+  "schema": "csdlc.semantic_edit_request.v1",
+  "issue": 4647,
+  "expected_generation": 20,
+  "expected_digest": "359fdaeea3e7aeb80c3cf8e61e0b76f3ff589f112416c24db5cda975702e193f",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "card": "srp",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "reason": "Exact-head bounded review by subagent 019f7df0-b305-7403-84db-b4a82cf26d1d confirmed HEAD 3f250321dba93a94419b2880baa1905ede9204c5 is clean/fixed-confirmed after the coverage-impact mapping fix."
+}

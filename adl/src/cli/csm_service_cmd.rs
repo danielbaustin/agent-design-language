@@ -332,7 +332,7 @@ fn stop(args: &[String]) -> Result<()> {
     let parsed = parse_service_args(args, false)?;
     let service_root = absolutize(&parsed.service_root)?;
     let manifest = read_manifest(&service_root)?;
-    record_service_governed_stop(&manifest)?;
+    record_service_stop(&manifest)?;
     match manifest.manager {
         ServiceManager::Local => stop_local(&manifest)?,
         ServiceManager::Launchd => run_launchctl(&[
@@ -843,18 +843,9 @@ fn stop_local(manifest: &ServiceManifest) -> Result<()> {
     Ok(())
 }
 
-fn record_service_governed_stop(manifest: &ServiceManifest) -> Result<()> {
-    long_lived_agent::governed_stop(
-        &manifest.spec,
-        long_lived_agent::GovernedStopRequest {
-            reason: "csm service stop requested".to_string(),
-            operator_identity: "csm-service".to_string(),
-            authorization: "csm-service-stop".to_string(),
-            intent: "recoverability_drill".to_string(),
-            requested_at: Utc::now(),
-        },
-    )
-    .map(|_| ())
+fn record_service_stop(manifest: &ServiceManifest) -> Result<()> {
+    // Internal lifecycle shutdown is distinct from operator-authorized emergency stop.
+    long_lived_agent::stop(&manifest.spec, "csm service stop requested").map(|_| ())
 }
 
 fn record_supervisor_status(

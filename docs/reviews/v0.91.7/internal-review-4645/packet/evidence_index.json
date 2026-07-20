@@ -1,0 +1,1623 @@
+{
+  "evidence": [
+    {
+      "category": "manifest",
+      "line_count": 1953,
+      "path": "adl-runtime-kernel/Cargo.lock",
+      "reason": "manifest or dependency/build surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 779,
+      "path": "adl-runtime/Cargo.lock",
+      "reason": "manifest or dependency/build surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 5389,
+      "path": "adl/Cargo.lock",
+      "reason": "manifest or dependency/build surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 2420,
+      "path": "csdlc-v2/Cargo.lock",
+      "reason": "manifest or dependency/build surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 2625,
+      "path": "tools/aws_remote_validation/Cargo.lock",
+      "reason": "manifest or dependency/build surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 48,
+      "path": "docs/architecture/README.md",
+      "reason": "architecture documentation surface; top-level onboarding surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 37,
+      "path": "docs/architecture/adr/README.md",
+      "reason": "architecture documentation surface; top-level onboarding surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 11,
+      "path": "docs/architecture/diagrams/README.md",
+      "reason": "architecture documentation surface; top-level onboarding surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/4642.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/4643.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5383.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5403.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5410.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5411.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5423.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5426.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5440.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5463.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5494.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5506.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5509.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5512.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5516.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5518.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/5521.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 0,
+      "path": ".csdlc/locks/bindings.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 45,
+      "path": "adl-runtime-kernel/Cargo.toml",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 31,
+      "path": "adl-runtime/Cargo.toml",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 166,
+      "path": "adl/Cargo.toml",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 116,
+      "path": "adl/docker/adl-builder/Dockerfile",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 105,
+      "path": "csdlc-v2/Cargo.toml",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 107,
+      "path": "demos/transpiler_demo/Cargo.lock",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 8,
+      "path": "demos/transpiler_demo/Cargo.toml",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 16,
+      "path": "docs/milestones/v0.91.2/review/code_modernization/fixture/use_diamond_operator_demo/pom.xml",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "manifest",
+      "line_count": 31,
+      "path": "tools/aws_remote_validation/Cargo.toml",
+      "reason": "manifest or dependency/build surface",
+      "specialist_lanes": [
+        "architecture",
+        "code",
+        "dependencies",
+        "diagrams",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "ci",
+      "line_count": 973,
+      "path": ".github/workflows/ci.yaml",
+      "reason": "CI or automation surface; large file",
+      "specialist_lanes": [
+        "code",
+        "dependencies",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 637,
+      "path": "docs/architecture/csdlc-v2/csdlc_v2_block_diagram.png",
+      "reason": "architecture documentation surface; large file",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 15,
+      "path": "adl-spec/spec/README.md",
+      "reason": "test or validation surface; top-level onboarding surface",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 160,
+      "path": "docs/specs/acc/README.md",
+      "reason": "test or validation surface; top-level onboarding surface",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "test",
+      "line_count": 221,
+      "path": "docs/specs/uts/README.md",
+      "reason": "test or validation surface; top-level onboarding surface",
+      "specialist_lanes": [
+        "redaction",
+        "synthesis",
+        "tests"
+      ]
+    },
+    {
+      "category": "ci",
+      "line_count": 139,
+      "path": ".github/workflows/aws-codefriend-build.yaml",
+      "reason": "CI or automation surface",
+      "specialist_lanes": [
+        "code",
+        "dependencies",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "ci",
+      "line_count": 377,
+      "path": ".github/workflows/aws-spot-remote-validation.yaml",
+      "reason": "CI or automation surface",
+      "specialist_lanes": [
+        "code",
+        "dependencies",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "ci",
+      "line_count": 186,
+      "path": ".github/workflows/nightly-coverage-ratchet.yaml",
+      "reason": "CI or automation surface",
+      "specialist_lanes": [
+        "code",
+        "dependencies",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "ci",
+      "line_count": 20,
+      "path": ".github/workflows/v0871_milestone_closeout_gate.yaml",
+      "reason": "CI or automation surface",
+      "specialist_lanes": [
+        "code",
+        "dependencies",
+        "redaction",
+        "security",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 268,
+      "path": "docs/architecture/ADL_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 166,
+      "path": "docs/architecture/ADL_PLATFORM_CLI_BINARY_TAXONOMY.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 227,
+      "path": "docs/architecture/ADL_RUNTIME_KERNEL_PROOF.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 123,
+      "path": "docs/architecture/ARCHITECTURE_DOCUMENT_GENERATION_PLAN.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 104,
+      "path": "docs/architecture/ARCHITECTURE_REVIEW_AUTOMATION.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 290,
+      "path": "docs/architecture/CSDLC_V2_CLEAN_ROOM_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 262,
+      "path": "docs/architecture/PROVIDER_CAPABILITY_AND_TRANSPORT_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 106,
+      "path": "docs/architecture/RUNTIME_V3_ADAPTIVE_REASONING_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 82,
+      "path": "docs/architecture/RUNTIME_V3_CONFIGURATION_WEATHER_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 85,
+      "path": "docs/architecture/RUNTIME_V3_CONTINUITY_RECOVERY_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 90,
+      "path": "docs/architecture/RUNTIME_V3_CONTROL_OBSERVABILITY_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 79,
+      "path": "docs/architecture/RUNTIME_V3_CUTOVER_DECISION.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 59,
+      "path": "docs/architecture/RUNTIME_V3_CUTOVER_DECISION_5254.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 72,
+      "path": "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 64,
+      "path": "docs/architecture/RUNTIME_V3_FINAL_REVIEW_5175.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 44,
+      "path": "docs/architecture/RUNTIME_V3_GOVERNED_COGNITION_5251.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 88,
+      "path": "docs/architecture/RUNTIME_V3_GOVERNED_EXECUTION_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 141,
+      "path": "docs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 166,
+      "path": "docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 48,
+      "path": "docs/architecture/RUNTIME_V3_IDENTITY_MEMORY_5250.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 58,
+      "path": "docs/architecture/RUNTIME_V3_LIVE_BLACK_BOX_PARITY_5248.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 24,
+      "path": "docs/architecture/RUNTIME_V3_OPERATIONAL_COMPONENTS.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 41,
+      "path": "docs/architecture/RUNTIME_V3_PRIVATE_STATE_SECURITY_5249.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 141,
+      "path": "docs/architecture/RUNTIME_V3_RELEASE_PROOF_GATE_5220.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 128,
+      "path": "docs/architecture/RUNTIME_V3_SERVICE_CONTRACT_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 57,
+      "path": "docs/architecture/RUNTIME_V3_SHADOW_PARITY_AND_MIGRATION.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 48,
+      "path": "docs/architecture/RUNTIME_V3_SOAK_ROLLBACK_5253.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 63,
+      "path": "docs/architecture/RUNTIME_V3_STATE_AUTHENTICITY_5412.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 35,
+      "path": "docs/architecture/RUNTIME_V3_WEATHER.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 54,
+      "path": "docs/architecture/RUNTIME_V3_WEATHER_CLOUDWATCH_5252.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 131,
+      "path": "docs/architecture/TRACE_SYSTEM_ARCHITECTURE.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 93,
+      "path": "docs/architecture/VALIDATION_LANE_SELECTOR.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 98,
+      "path": "docs/architecture/adr/0020-universal-tool-schema-portable-tool-description-standard.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 90,
+      "path": "docs/architecture/adr/0021-adl-capability-contract-runtime-authority-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 76,
+      "path": "docs/architecture/adr/0022-speculative-decoding-deterministic-commit-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 83,
+      "path": "docs/architecture/adr/0023-google-workspace-cms-bridge-canonical-promotion-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 83,
+      "path": "docs/architecture/adr/0024-workflow-guardrails-issue-lifecycle-control-plane.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 75,
+      "path": "docs/architecture/adr/0025-codefriend-review-packet-product-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 75,
+      "path": "docs/architecture/adr/0026-repo-visibility-manifest-linkage-layer.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 74,
+      "path": "docs/architecture/adr/0027-governed-code-modernization-moderne-openrewrite-lst.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 117,
+      "path": "docs/architecture/adr/0028-c-sdlc-tracked-workflow-state-and-signed-trace.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 89,
+      "path": "docs/architecture/adr/0029-c-sdlc-default-software-development-lane.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 84,
+      "path": "docs/architecture/adr/0030-software-development-polis-actor-standing-and-shard-ownership.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 82,
+      "path": "docs/architecture/adr/0031-c-sdlc-multi-agent-parallel-execution-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 81,
+      "path": "docs/architecture/adr/0032-parallel-validation-fabric.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 78,
+      "path": "docs/architecture/adr/0033-merge-readiness-and-pr-gate-truth-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 84,
+      "path": "docs/architecture/adr/0034-c-sdlc-evidence-convergence-signed-trace-and-obsmem-handoff.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 97,
+      "path": "docs/architecture/adr/0035-local-polis-ssm-operations-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 91,
+      "path": "docs/architecture/adr/0036-validation-lane-selector-pvf-test-cost-policy.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 82,
+      "path": "docs/architecture/adr/0037-github-csdlc-projection-ownership.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 82,
+      "path": "docs/architecture/adr/0038-runtime-integration-soak-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 80,
+      "path": "docs/architecture/adr/0039-cognitive-scheduler-v1-authority-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 80,
+      "path": "docs/architecture/adr/0040-workflow-lockfile-discipline.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 91,
+      "path": "docs/architecture/adr/0041-provider-model-suitability-boundary-v2.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 85,
+      "path": "docs/architecture/adr/0042-public-prompt-records-publication-boundary.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 150,
+      "path": "docs/architecture/adr/CANDIDATE_ADRS.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 274,
+      "path": "docs/architecture/csdlc-v2/CSDLC_V1_BASELINE_AND_V2_BUDGETS.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 56,
+      "path": "docs/architecture/csdlc-v2/CSDLC_V2_GATE1_RECOMMENDATION.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 35,
+      "path": "docs/architecture/csdlc-v2/CSDLC_V2_GATE1_VALIDATION.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 84,
+      "path": "docs/architecture/csdlc-v2/csdlc_v2_block_diagram.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 1,
+      "path": "docs/architecture/csdlc-v2/csdlc_v2_block_diagram.svg",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 128,
+      "path": "docs/architecture/csdlc-v2/csdlc_v2_card_contracts.v1.json",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 90,
+      "path": "docs/architecture/csdlc-v2/csdlc_v2_contracts_and_cots.v1.json",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 139,
+      "path": "docs/architecture/csdlc-v2/csdlc_v2_public_contracts.v1.json",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 162,
+      "path": "docs/architecture/csdlc-v2/csdlc_v2_retained_behavior.v1.json",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 12,
+      "path": "docs/architecture/csdlc-v2/gate10a/COEXISTENCE.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 5,
+      "path": "docs/architecture/csdlc-v2/gate10a/DESIGN.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 5,
+      "path": "docs/architecture/csdlc-v2/gate10b/DESIGN.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 157,
+      "path": "docs/architecture/csdlc-v2/gate10b/PRE_SWITCH_EVIDENCE.json",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 15,
+      "path": "docs/architecture/csdlc-v2/gate10b/PRE_SWITCH_PROOF.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 17,
+      "path": "docs/architecture/csdlc-v2/gate10c/CUTOVER.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 70,
+      "path": "docs/architecture/csdlc-v2/gate10c/CUTOVER_EVIDENCE.json",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 7,
+      "path": "docs/architecture/csdlc-v2/gate10c/DESIGN.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 38,
+      "path": "docs/architecture/csdlc-v2/gate10d1/DESIGN.md",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 10,
+      "path": "docs/architecture/csdlc-v2/gate10d1/ELIGIBILITY.mmd",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    },
+    {
+      "category": "architecture_docs",
+      "line_count": 27,
+      "path": "docs/architecture/csdlc-v2/gate10d1/ELIGIBILITY_EVIDENCE.json",
+      "reason": "architecture documentation surface",
+      "specialist_lanes": [
+        "architecture",
+        "diagrams",
+        "docs",
+        "redaction",
+        "synthesis"
+      ]
+    }
+  ],
+  "schema": "codebuddy.repo_packet.evidence.v1"
+}

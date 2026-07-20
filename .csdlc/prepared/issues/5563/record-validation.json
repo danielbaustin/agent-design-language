@@ -1,0 +1,19 @@
+{
+  "issue": 5563,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "a0c350054ec1e276447f1deee2b4dd77e22033b5b249c0735a73f3a3f3a51d4e",
+  "claim_id": "claim-5563-initialized-design-recovery",
+  "actor": "codex-closeout-audit",
+  "reason": "Record focused regression and strict static-analysis proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo","test","--manifest-path","csdlc-v2/Cargo.toml","--test","gate2","initialized_approved_stale_design_can_be_reapproved_before_readiness"],
+      "purpose": "Prove redundant initialized approval rejects, stale approved inputs recover atomically, and doctor readiness resumes.",
+      "outcome": "passed",
+      "evidence_ref": "Focused regression 1 passed, 0 failed; strict all-target all-feature Clippy passed. Existing non-Git Gate 2 fixture failure remains independently tracked in #5548."
+    }
+  },
+  "fail_after_backup": false
+}

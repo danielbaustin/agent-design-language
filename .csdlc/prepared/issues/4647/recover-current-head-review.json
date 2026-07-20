@@ -1,0 +1,8 @@
+{
+  "issue": 4647,
+  "expected_generation": 4,
+  "expected_digest": "3cad8c9ddbfc8824ef95724ccdd4fa8c18f8ec1abcb3989623ad811bc7e1d473",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:issue-4647",
+  "reason": "Typed doctor reports review_publication_dead_end after lifecycle metadata commits; recover to implemented for exact current-head review before publication."
+}

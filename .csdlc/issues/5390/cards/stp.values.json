@@ -7,7 +7,7 @@
     "title": "Make Runtime v3 Observatory local HTTPS and report bound control address",
     "slug": "runtime-v3-local-https-bound-address",
     "version": "v0.91.7",
-    "generation": 37
+    "generation": 41
   },
   "status": "ready",
   "content": {

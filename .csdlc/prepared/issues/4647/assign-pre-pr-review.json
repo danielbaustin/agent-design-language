@@ -1,0 +1,31 @@
+{
+  "issue": 4647,
+  "expected_generation": 2,
+  "expected_digest": "de30c7fda49b3a29ffb187e384fe4a1c68ee45e5e508ce8a05b751def287f6ef",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "reviewer": "subagent:019f7d35-6809-7b53-bc24-cc8ae7c55919",
+  "assigned_by": "codex:issue-4647",
+  "scope": [
+    "adl/src/csm_runtime_api.rs",
+    "adl/src/provider/http_family.rs",
+    "adl/src/provider/http_family/config.rs",
+    "adl/src/provider/http_family/tests.rs",
+    "adl/src/provider/local.rs",
+    "adl/tools/check_coverage_impact.sh",
+    "adl/tools/run_authoritative_coverage_lane.sh",
+    "adl/tools/test_check_coverage_impact.sh",
+    "adl/tools/test_ci_runtime_contracts.sh",
+    "adl/tools/test_run_authoritative_coverage_lane.sh",
+    "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+    "docs/milestones/v0.91.7/review/ADL_v0.91.7_THIRD_PARTY_REVIEW_HANDOFF.md",
+    "docs/milestones/v0.91.7/review/V0917_EXTERNAL_REVIEW_VERIFICATION_2026-07-19.md",
+    "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+    "docs/milestones/v0.91.7/review/external_review_4646/FINDINGS_REGISTER.md",
+    "docs/milestones/v0.91.7/review/external_review_4646/PUBLICATION_SAFE_MANIFEST.md",
+    "docs/milestones/v0.91.7/review/wp20_remediation_4647/PRE_PR_REVIEW_4647.md",
+    "docs/milestones/v0.91.7/review/wp20_remediation_4647/WP19_FINDING_REMEDIATION_MATRIX_4647.md",
+    "docs/milestones/v0.91.7/review/wp20_remediation_5544/RELEASE_TRUTH_GATE_STATUS_5544.md",
+    "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/setup/5383/DIAGRAM.mmd"
+  ]
+}

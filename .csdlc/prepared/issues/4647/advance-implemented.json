@@ -1,0 +1,13 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "3ca6b5e7b654c99fed9fbc5fde5e89fba62928de0e7b0fe5233fed43cad18088",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:issue-4647",
+  "reason": "All 22 retained WP-19 findings have local remediation or current-code disposition, focused validation has passed, and pre-PR subagent review findings are fixed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

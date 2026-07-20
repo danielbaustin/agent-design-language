@@ -1,0 +1,28 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5563,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Recover stale approved design in initialized records",
+    "slug": "initialized-stale-design-recovery",
+    "version": "v0.91.8",
+    "generation": 5
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Exact implementation revision before publication.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Is recovery limited to truly stale initialized-approved inputs?",
+        "Are CAS, claim, atomicity, and readiness gates preserved?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

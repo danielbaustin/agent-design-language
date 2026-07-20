@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5489,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-21A][planning] Prepare next milestone docs closeout plan",
+    "slug": "v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Prepare and execute the WP-21A next-milestone docs closeout plan.",
+      "required_outcome": "A retained closeout-planning packet gives WP-22 current next-milestone docs review input without reopening closed #4648 scope.",
+      "declared_scope": [
+        "next-milestone docs closeout planning",
+        "v0.91.8/v0.92 planning authority and supersession truth",
+        "WP-22 review handoff input"
+      ],
+      "authority_boundary": [
+        "Issue #5489 owns WP-21A execution",
+        "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml and WBS_v0.91.7.md define the work package",
+        "Preparation is not execution or completion evidence"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

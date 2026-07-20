@@ -1,5 +1,6 @@
 use super::*;
 use base64::Engine;
+use ed25519_dalek::{Signer, SigningKey};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::hash::{Hash, Hasher};
@@ -270,20 +271,44 @@ fn reserve_ephemeral_csm_test_port(label: &str) -> (std::net::TcpListener, Strin
 }
 
 fn request_governed_stop_and_wait(spec: &std::path::Path, child: &mut std::process::Child) {
+    let locked_spec: serde_json::Value = serde_json::from_slice(
+        &fs::read(
+            spec.parent()
+                .expect("shutdown probe spec parent")
+                .join("state/agent_spec.locked.json"),
+        )
+        .expect("read locked shutdown probe spec"),
+    )
+    .expect("parse locked shutdown probe spec");
+    let agent_id = locked_spec["agent_instance_id"]
+        .as_str()
+        .expect("locked shutdown probe agent id");
+    let operator = std::env::var("USER")
+        .or_else(|_| std::env::var("USERNAME"))
+        .expect("test process OS identity");
+    let reason = "test cleanup requested governed runtime stop";
+    let intent = "recoverability_drill";
+    let requested_at = chrono::Utc::now().to_rfc3339();
+    let payload = format!(
+        "adl.csm.governed_stop.authorization.v1\n{agent_id}\n{operator}\n{intent}\n{requested_at}\n{reason}"
+    );
+    let signing_key = SigningKey::from_bytes(&[7_u8; 32]);
+    let authorization = base64::engine::general_purpose::STANDARD
+        .encode(signing_key.sign(payload.as_bytes()).to_bytes());
     let stop = run_csm(&[
         "governed-stop",
         "--spec",
         spec.to_str().expect("utf8 spec"),
         "--reason",
-        "test cleanup requested governed runtime stop",
+        reason,
         "--operator",
-        "cli-smoke",
+        &operator,
         "--authorization",
-        "test-governed-stop",
+        &authorization,
         "--intent",
         "recoverability_drill",
         "--requested-at",
-        "2026-07-07T16:00:00Z",
+        &requested_at,
         "--json",
     ]);
     assert!(
@@ -315,6 +340,12 @@ fn wait_for_governed_shutdown_child(child: &mut std::process::Child) {
 
 fn write_shutdown_probe_spec(root: &std::path::Path, agent_id: &str) -> std::path::PathBuf {
     let spec = root.join("agent.yaml");
+    let signing_key = SigningKey::from_bytes(&[7_u8; 32]);
+    let public_key_b64 =
+        base64::engine::general_purpose::STANDARD.encode(signing_key.verifying_key().to_bytes());
+    let operator = std::env::var("USER")
+        .or_else(|_| std::env::var("USERNAME"))
+        .expect("test process OS identity");
     fs::write(
         &spec,
         format!(
@@ -338,6 +369,10 @@ safety:
   financial_advice: false
   max_cycle_runtime_secs: 120
   max_consecutive_failures: 2
+  governed_stop_authority:
+    public_key_b64: {public_key_b64}
+    operators:
+      - {operator}
 memory:
   namespace: smoke/{agent_id}
   write_policy: append_only
@@ -350,6 +385,7 @@ memory:
 
 fn wait_for_shutdown_probe_running(root: &std::path::Path) {
     let status_path = root.join("state/daemon_status.json");
+    let locked_spec_path = root.join("state/agent_spec.locked.json");
     let started = std::time::Instant::now();
     loop {
         let running = fs::read(&status_path)
@@ -363,7 +399,7 @@ fn wait_for_shutdown_probe_running(root: &std::path::Path) {
             })
             .as_deref()
             == Some("running");
-        if running {
+        if running && locked_spec_path.is_file() {
             return;
         }
         assert!(
@@ -1012,9 +1048,16 @@ memory:
 fn csm_runtime_api_serves_status_health_ready_metrics_and_events() {
     let root = unique_test_temp_dir("csm-runtime-api");
     let spec = root.join("agent.yaml");
+    let signing_key = SigningKey::from_bytes(&[7_u8; 32]);
+    let public_key_b64 =
+        base64::engine::general_purpose::STANDARD.encode(signing_key.verifying_key().to_bytes());
+    let operator = std::env::var("USER")
+        .or_else(|_| std::env::var("USERNAME"))
+        .expect("test process OS identity");
     fs::write(
         &spec,
-        r#"schema: adl.long_lived_agent_spec.v1
+        format!(
+            r#"schema: adl.long_lived_agent_spec.v1
 agent_instance_id: api-agent
 display_name: API Agent
 state_root: state
@@ -1037,10 +1080,15 @@ safety:
   financial_advice: false
   max_cycle_runtime_secs: 120
   max_consecutive_failures: 2
+  governed_stop_authority:
+    public_key_b64: {public_key_b64}
+    operators:
+      - {operator}
 memory:
   namespace: smoke/api-agent
   write_policy: append_only
-"#,
+"#
+        ),
     )
     .expect("write API agent spec");
 
@@ -1403,7 +1451,7 @@ memory:
     assert_eq!(status["daemon_liveness"]["state"], "running");
     assert_eq!(
         status["daemon_liveness"]["supervisor_pid_liveness"],
-        "live_pid"
+        "unknown"
     );
     assert_eq!(
         status["backpressure"]["schema"],
@@ -3703,6 +3751,7 @@ memory:
                         || value == "curiosity_engine_not_ready"
                         || value == "reasoning_runtime_starting"
                         || value == "constructability_gate_blocked"
+                        || value == "constructability_gate_not_ready"
                         || value == "cav_security_validation_fail_closed"
                 })
             }),
@@ -3870,6 +3919,12 @@ memory:
 fn csm_governed_stop_records_checkpoint_safe_fail_lifelog_and_notices() {
     let root = unique_test_temp_dir("csm-governed-stop");
     let spec = root.join("agent.yaml");
+    let signing_key = SigningKey::from_bytes(&[7_u8; 32]);
+    let public_key_b64 =
+        base64::engine::general_purpose::STANDARD.encode(signing_key.verifying_key().to_bytes());
+    let operator = std::env::var("USER")
+        .or_else(|_| std::env::var("USERNAME"))
+        .expect("test process OS identity");
     fs::write(
         &spec,
         r#"schema: adl.long_lived_agent_spec.v1
@@ -3894,10 +3949,16 @@ safety:
   require_public_artifact_sanitization: true
   financial_advice: false
   max_cycle_runtime_secs: 120
+  governed_stop_authority:
+    public_key_b64: "__PUBLIC_KEY__"
+    operators:
+      - "__OPERATOR__"
 memory:
   namespace: smoke/governed-stop-agent
   write_policy: append_only
-"#,
+"#
+        .replace("__PUBLIC_KEY__", &public_key_b64)
+        .replace("__OPERATOR__", &operator),
     )
     .expect("write agent spec");
     let service_root = root.join("service");
@@ -3965,21 +4026,30 @@ memory:
     );
     std::thread::sleep(std::time::Duration::from_millis(1500));
 
+    let reason = "operator requested recoverable polis stop";
+    let intent = "emergency_polis_stop";
+    let requested_at = chrono::Utc::now().to_rfc3339();
+    let payload = format!(
+        "adl.csm.governed_stop.authorization.v1\ngoverned-stop-agent\n{}\n{}\n{}\n{}",
+        operator, intent, requested_at, reason
+    );
+    let authorization = base64::engine::general_purpose::STANDARD
+        .encode(signing_key.sign(payload.as_bytes()).to_bytes());
     let stop = run_csm_with_env(
         &[
             "governed-stop",
             "--spec",
             spec.to_str().expect("utf8 spec"),
             "--reason",
-            "operator requested recoverable polis stop",
+            reason,
             "--operator",
-            "codex-test-operator",
+            &operator,
             "--authorization",
-            "test-approval-ticket-5005",
+            &authorization,
             "--intent",
-            "emergency_polis_stop",
+            intent,
             "--requested-at",
-            "2026-07-07T16:00:00Z",
+            &requested_at,
             "--json",
         ],
         &[

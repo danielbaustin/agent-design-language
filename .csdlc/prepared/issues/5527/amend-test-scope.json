@@ -1,0 +1,10 @@
+{
+  "issue": 5527,
+  "claim_id": "claim-5527-terminal-sor-artifact-repair",
+  "expected_generation": 1,
+  "expected_digest": "5fd80fea08ec6ddf0665d91e217fe99e9100531809e9108d3592ee58eeb7e7a1",
+  "now_unix_seconds": 1784418712,
+  "actor": "codex-closeout-audit",
+  "reason": "Use the existing full terminal lifecycle fixture for receipt-bound atomic repair coverage.",
+  "add_protected_paths": ["csdlc-v2/tests/gate7_lifecycle.rs"]
+}

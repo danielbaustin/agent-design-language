@@ -1,0 +1,1 @@
+{"issue":5566,"card":"sor","expected_generation":3,"expected_digest":"94809642eb5ab7567fc93bde5e4dc396ad070a16f154128e6a610c58523f5e72","claim_id":"claim-5566-existing-worktree-bind","actor":"codex-closeout-audit","reason":"Bounded implementation and focused validation are recorded.","operation":{"operation":"advance_phase","phase":"implemented"},"fail_after_backup":false}

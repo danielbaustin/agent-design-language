@@ -1,0 +1,14 @@
+{
+  "issue": 4647,
+  "card": "spp",
+  "expected_generation": 5,
+  "expected_digest": "98cbeec47a98c902fa0b0e8623975808ec2e2b85d68a58b8c43f465d79ca7195",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "WP-20 execution confirmed live issue/dependency truth before remediation and review validation.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S1",
+    "status": "completed"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "issue": 5551,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "16f56480e1ac4891f52dfdeef30a3a26fb42866cf49ce2eead1849d05587b827",
+  "claim_id": "claim-5551-terminal-plan-truth",
+  "actor": "codex-closeout-audit",
+  "reason": "Issue-specific design, plan, authority boundary, and validation lanes are ready for binding.",
+  "operation": {"operation":"advance_phase","phase":"ready"},
+  "fail_after_backup": false
+}

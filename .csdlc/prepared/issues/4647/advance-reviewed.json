@@ -1,0 +1,13 @@
+{
+  "issue": 4647,
+  "card": "srp",
+  "expected_generation": 3,
+  "expected_digest": "bc040001c9007a99d37544ec6ebc04fdf195e6ca0bcbd45f43538f269929067e",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:issue-4647",
+  "reason": "Bounded pre-PR review was recorded; its two P3 findings were fixed and focused tests passed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "6d74e30508fda1bf25e5d05cab3da26fc830da1e1840a5e825eacdd85fda07cf",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record focused Bedrock diagnostic redaction proof for the final retained WP-19 residual.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "-p",
+        "adl",
+        "bedrock_error_sanitizer",
+        "--",
+        "--nocapture"
+      ],
+      "purpose": "Prove Bedrock diagnostics redact signed AWS values, AWS ARNs, and raw account IDs while retaining useful AccessDenied context.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, 3 passed"
+    }
+  }
+}

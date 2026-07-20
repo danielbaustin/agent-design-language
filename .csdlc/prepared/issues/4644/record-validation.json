@@ -1,0 +1,22 @@
+{
+  "issue": 4644,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "9e1f456090fb5a8f84057b9c03cbfb2e23748b514d7cf9e8e4c6fcc9ec0bb6be",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The final merged WP-17 documentation inventory, links, structured artifacts, ADRs, Cargo manifests, and diff hygiene passed the executable typed PVF lane.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby .csdlc/prepared/issues/4644/validate_docs_alignment.rb .",
+        "csdlc-validate --request .csdlc/prepared/issues/4644/validate-docs.json",
+        "csdlc-doctor --repo . --issue 4644"
+      ],
+      "purpose": "Prove complete README and v0.91.7 documentation alignment with reproducible path digests, resolved local links, expected structured-evidence exceptions only, ADR integrity, locked Cargo metadata, diff hygiene, and passing typed lifecycle state.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/4644/validation-receipt.json"
+    }
+  }
+}

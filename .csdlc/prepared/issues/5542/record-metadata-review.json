@@ -1,0 +1,45 @@
+{
+  "issue": 5542,
+  "expected_generation": 9,
+  "expected_digest": "9e4299aea8b79874b7c6d4b2ebc755743060f3bc6372e65617795aae8aa2973c",
+  "claim_id": "claim-5542-wp17-closeout-truth",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "evidence": {
+    "reviewer": "codex-subagent:019f77b1-4c8d-7560-8489-bb10c675a6b0",
+    "scope": [
+      ".csdlc/issues/5542",
+      ".csdlc/prepared/issues/5542"
+    ],
+    "reviewed_revision": "git-blake3:166a380d96bff5c2293800ad1f3f411c28e1891b:541ddcb1ae256802b2f3e733a62f16df830644fd050b75416e44ac110d4f22d2",
+    "findings": [],
+    "residual_risks": [
+      "Substantive documentation remains covered by the exact-revision review of f873efb34d6a1bc98c3df9dfe8649b1fc2899e22.",
+      "PR #5543 must reconcile the sprint-review register before #5542 merges.",
+      "GitHub CI remains publication-time evidence; no AWS command or service was used."
+    ],
+    "completed": true,
+    "non_substantive_proof": {
+      "from_commit": "f873efb34d6a1bc98c3df9dfe8649b1fc2899e22",
+      "to_commit": "166a380d96bff5c2293800ad1f3f411c28e1891b",
+      "from_revision": "git-blake3:f873efb34d6a1bc98c3df9dfe8649b1fc2899e22:124a18c5facd78eccf3204b8618ecb2cd933b207bfd2c3956686c214c596688b",
+      "to_revision": "git-blake3:166a380d96bff5c2293800ad1f3f411c28e1891b:541ddcb1ae256802b2f3e733a62f16df830644fd050b75416e44ac110d4f22d2",
+      "changed_paths": [
+        ".csdlc/issues/5542/audit.jsonl",
+        ".csdlc/issues/5542/cards/sip.values.json",
+        ".csdlc/issues/5542/cards/sor.md",
+        ".csdlc/issues/5542/cards/sor.values.json",
+        ".csdlc/issues/5542/cards/spp.values.json",
+        ".csdlc/issues/5542/cards/srp.md",
+        ".csdlc/issues/5542/cards/srp.values.json",
+        ".csdlc/issues/5542/cards/stp.values.json",
+        ".csdlc/issues/5542/cards/vpp.values.json",
+        ".csdlc/issues/5542/index.json",
+        ".csdlc/prepared/issues/5542/advance-reviewed.json",
+        ".csdlc/prepared/issues/5542/assign-final-review.json",
+        ".csdlc/prepared/issues/5542/record-final-review.json",
+        ".csdlc/prepared/issues/5542/recover-metadata-review.json"
+      ],
+      "policy": "metadata_only_review_projection"
+    }
+  }
+}

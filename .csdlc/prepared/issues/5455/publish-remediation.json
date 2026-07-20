@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5455,
+  "expected_generation": 14,
+  "expected_digest": "a4892deaa9806107d4474551142d8d00368efb5a5d3f2f749b10a4d75d5f5ca1",
+  "claim_id": "claim-5455-closeout-recovery",
+  "actor": "codex-closeout-audit",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5455-stale-owner-provenance",
+  "title": "[v0.91.8][csdlc-v2] Complete #5455 provenance acceptance remediation",
+  "body": "Closes #5540\n\nCompletes the retrospective acceptance and closeout recovery for #5455. Trusted Git provenance is now issued only by building all typed binaries from an unchanged, fully clean tracked-and-untracked csdlc-v2 source tree. Direct artifact installs retain content provenance and fail repository coexistence verification. Gate 10A now proves stale artifacts and untracked build inputs fail closed, and exercises implemented-phase approve-design through the installed editor.\n\nFocused proof: Gate 10A 10/10; strict all-target all-feature Clippy passed. The unrelated stale v1 command-guidance owner-lane blocker is tracked separately in #5558.",
+  "draft": true,
+  "token_file": null
+}

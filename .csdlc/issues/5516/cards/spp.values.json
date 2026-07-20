@@ -1,0 +1,73 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5516,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Correct #5494 retained Runtime v3 design truth",
+    "slug": "v0-91-7-wp07a-correct-5494-retained-runtime-v3-design",
+    "version": "v0.91.7",
+    "generation": 19
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Initialize the narrow authority, run typed terminal design repair, validate digests and lifecycle truth, review, publish, merge, and close out.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Prepare corrected design and diagram sources",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Apply typed terminal design repair and validate",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Review, publish, merge, and close out",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Terminal repair uses typed C-SDLC v2 operations",
+        "Runtime source remains byte-identical to origin/main",
+        "Runtime v3 weather ownership remains explicit"
+      ],
+      "risks": [
+        "Manual edits could break terminal receipt and card digest parity",
+        "Historical planning prose could be mistaken for current architecture truth"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Repair requires runtime source changes",
+        "Typed terminal receipt validation fails",
+        "Exact review finds unresolved architecture contradiction"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5516/retained/design.md",
+      "design_digest": "d35dc188153a0cfb654d3bc99e5fef6e3672974f725e60d4f8dbd189f4e9a13d",
+      "diagram_ref": ".csdlc/issues/5516/retained/diagram.mmd",
+      "diagram_digest": "d2edc9d5ff9516383e01aa249b3b10fca568be5db3a38f210f8b2681960b16b0"
+    }
+  }
+}

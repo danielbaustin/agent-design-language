@@ -1,0 +1,13 @@
+{
+  "issue": 4645,
+  "card": "sor",
+  "expected_generation": 19,
+  "expected_digest": "bf0a661ae4790b48b7ec4761967e0535a85c9be53a3f49d02aa6bf24bc4ccee0",
+  "claim_id": "claim-4645-v0917-internal-review-prep",
+  "actor": "codex-closeout-audit",
+  "reason": "Final exact-revision remediation review passed with no findings; F-4645-3 is fixed by immutable pinned-range proof.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

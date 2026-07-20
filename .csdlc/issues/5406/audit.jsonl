@@ -47,3 +47,6 @@
 {"sequence":47,"generation":41,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
 {"sequence":48,"generation":42,"actor":"codex","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
 {"sequence":49,"generation":43,"actor":"codex","reason":"Materialize authoritative terminal receipt after merged closeout PR #5421","operation":"reconcile_terminal"}
+{"sequence":50,"generation":44,"actor":"codex-closeout-audit","reason":"Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.","operation":"reconcile_terminal"}
+{"sequence":51,"generation":45,"actor":"codex-closeout-audit","reason":"Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.","operation":"reconcile_terminal"}
+{"sequence":52,"generation":46,"actor":"codex-closeout-audit","reason":"Refresh canonical projection and terminal receipt parity in the exhaustive v0.91.7 audit.","operation":"reconcile_terminal"}

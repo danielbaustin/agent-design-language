@@ -1,0 +1,20 @@
+{
+  "schema": "csdlc.merged_publication_reconciliation_request.v1",
+  "pull_request": 5522,
+  "publication": {
+    "schema": "csdlc.publication_request.v1",
+    "issue": 5521,
+    "repository": "danielbaustin/agent-design-language",
+    "expected_generation": 11,
+    "expected_digest": "2b47537e0e039c98b6c60c690159ba6a183efce114148ff3e18142cd913bac3d",
+    "claim_id": "claim-5521-terminal-plan-repair",
+    "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "remote": "origin",
+    "base": "main",
+    "head": "codex/5521-terminal-plan-repair",
+    "title": "[v0.91.7][csdlc-v2][closeout] Complete #5518 terminal plan-step truth",
+    "body": "Closes #5521\n\n## Summary\n- use the typed terminal repair from PR #5519\n- advance only #5518 SPP S4 from pending to completed\n- refresh #5518 card projections, audit, index digest, and retained receipt atomically\n- retain a two-step authority plan with no recursive closeout step\n\n## Validation\n- csdlc-doctor passes for #5518 and #5521\n- #5518 remains closed out and claim-free\n- local index, all six cards, and shared receipt match exactly\n- exact publication-head subagent review is clean\n- git diff check passes\n\nRecords only. No source, Runtime, Runtime v2, or Runtime v3 changes. No AWS execution.",
+    "draft": false,
+    "token_file": "/Users/daniel/keys/github.token"
+  }
+}

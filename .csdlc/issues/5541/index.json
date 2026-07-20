@@ -1,0 +1,320 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5541,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "052e24c4cff26aa0a876c9dbf6153fa4defcfab8fe44e5ce3547cb681dacb8f6",
+  "phase": "closed_out",
+  "generation": 13,
+  "digest": "dc7db9bffc8f6062ebd6abdad9846b0f336fbfe144b6990d4af2f1d3daece876",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+    "assigned_by": "codex-closeout-audit",
+    "revision": "git-blake3:2cb41ac01d82c68262b8b6ec99160fb2825d3f16:98f0e459f1b80adf0ec4413522fd89e39cbb434aa340398e422b759de2171644",
+    "scope": [
+      "csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md",
+      "docs/default_workflow.md",
+      "csdlc-v2/tests/gate10a.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+    "scope": [
+      "csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md",
+      "docs/default_workflow.md",
+      "csdlc-v2/tests/gate10a.rs"
+    ],
+    "reviewed_revision": "git-blake3:2cb41ac01d82c68262b8b6ec99160fb2825d3f16:98f0e459f1b80adf0ec4413522fd89e39cbb434aa340398e422b759de2171644",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5541,
+    "pull_request": 5568,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5568",
+    "base": "main",
+    "head": "codex/5541-gate10d2-authority-docs",
+    "revision": "git-blake3:8e206363ee75f5517862a03d8cc5dc07efa4128a:7989181b5afdd9d6e3af86569d2eac13960ca8ec2001307f5d99f02452fced5a",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5568,
+    "head_sha": "8e206363ee75f5517862a03d8cc5dc07efa4128a",
+    "checks": [
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5568,
+    "disposition": "merged",
+    "observed_sha": "8e206363ee75f5517862a03d8cc5dc07efa4128a",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5541.json",
+    "released_branch": "codex/5541-gate10d2-authority-docs",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5541",
+      ".csdlc/prepared/issues/5541",
+      "csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md",
+      "docs/default_workflow.md",
+      "csdlc-v2/tests/gate10a.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5541/retained/design.md",
+  "diagram_path": ".csdlc/issues/5541/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-closeout-audit",
+      "revision": "c9414eecb80e10539771549706400354580c98762b800aebf0c683bc155d2c79"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "cec0c2abd395b4db86f374497320287eb30d0eeb198d10b7e608f1e36ee3ade3",
+      "rendered_digest": "16a818e829224e92ee2b4122aa0a27483f0b953d54af7f14262b7ad96fec07a1",
+      "ast_digest": "36b4b023632ff75cef23d81021629998935de1095fb917dddbabcf97ae28a929"
+    },
+    "stp": {
+      "values_digest": "c4474d1a6782d1666e2184ceb38e0558f40383b069a40b44a60deb348acf389c",
+      "rendered_digest": "1882917af1c0c9c0037afa734f45c2746ebd1cf11a714df815ef0d24a0b4b693",
+      "ast_digest": "3fa58118b1cc836f56a1d36ea152a175a17b6e2480d4937ebb8b415e8aab176f"
+    },
+    "spp": {
+      "values_digest": "1d99c0c804d4d5d9ebeaba733fd6338c698b104d67bdd033cc4e5730a92c09a3",
+      "rendered_digest": "39b7dafb79a4de1aa53295fbf28518c0adc963f3196a8771ffdef3e71472ffab",
+      "ast_digest": "963ac209bc500e3a13e115c9fa2d5633c903422c0bb8bea7fd4871bcab26953e"
+    },
+    "vpp": {
+      "values_digest": "7649857173b1e8fdf41af70cd89bb88f98c0dcb6a276e806246c6b5d8211ab72",
+      "rendered_digest": "f46435bbfb12f7fc3ce0f26a00da80e485fb4a0b91b86d6d7ee7d0cc9dfd2966",
+      "ast_digest": "ddb71da2a94d78f1b6156b722e0d758a5cf4001792626a8f126c5cad041984ef"
+    },
+    "srp": {
+      "values_digest": "9c9258366b62c925628ea1a44d21d1715ec3d669303c1ef08c8895deda96fe19",
+      "rendered_digest": "f87f83f98156d8c8163ef7a1e81b4f78dea020684425d2f7dd22aa65cf0cca47",
+      "ast_digest": "1d91753c745097efb88b04d1f9445b1159c81f402488f53ba4c9335c3a7e7be5"
+    },
+    "sor": {
+      "values_digest": "935a5cb56c7cbd8886b3278d84aec0f9042f101eda93855c32beaffa58926169",
+      "rendered_digest": "1cb558e9bf27e0bc7b14b43a6d56bb877a648accf46a18198fd5ac2e7befd2d1",
+      "ast_digest": "99b5defce7b0d2694a85f6f0c7ec46be1aeb65588f430bf888befef498c635d8"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-closeout-audit",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-closeout-audit",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex-closeout-audit",
+      "reason": "Both #5306 P1 guidance findings are remediated with focused executable guard proof."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex-closeout-audit",
+      "reason": "Exact-revision review passed after dispositioning both review-driven guard findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex-closeout-audit",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex-closeout-audit",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex-closeout-audit",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex-closeout-audit",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex-closeout-audit",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex-closeout-audit",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex-closeout-audit",
+      "reason": "Record the bounded final-authority guidance remediation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Aligned the retained init skill with final v1_sunset authority and guarded all current typed skills plus the current default workflow against sunset routes.\",\"changes\":[\"Replace the stale preserve-v1-default instruction with the installed v2 sole-authority contract.\",\"Verify the already-correct current default workflow names the typed v2 lifecycle and treats v1 only as historical evidence.\",\"Add a focused Gate 10A regression over all nine current skills and the current default workflow.\"],\"artifacts\":[\"csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md\",\"docs/default_workflow.md\",\"csdlc-v2/tests/gate10a.rs\",\"#5306 retrospective P1 findings\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex-closeout-audit",
+      "reason": "Record focused current-guidance guard and strict static-analysis proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate10a\",\"current_operator_guidance_has_no_sunset_v1_route\"],\"purpose\":\"Prove all current operational skills and the current default workflow reject sunset v1 guidance.\",\"outcome\":\"passed\",\"evidence_ref\":\"Focused Gate 10A guard passed 1/1; cargo fmt --check, strict all-target all-feature Clippy, and git diff --check passed. No AWS or Spot used.\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex-closeout-audit",
+      "reason": "The retained skill and current workflow now agree with final v2 authority.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"fix-guidance\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex-closeout-audit",
+      "reason": "Focused guard, strict validation, and review-ready scope complete the second plan step.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"guard-review\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex-closeout-audit",
+      "reason": "Both #5306 P1 guidance findings are remediated with focused executable guard proof.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex-closeout-audit",
+      "reason": "Record the review-driven normalized stale-command mutation proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate10a\",\"guidance\"],\"purpose\":\"Prove current guidance is v2-only and the exact former bash ./adl/tools/pr.sh command is rejected after normalization.\",\"outcome\":\"passed\",\"evidence_ref\":\"Three guidance-focused Gate 10A tests passed, including exact former wrapper mutation; strict Clippy, fmt, and diff hygiene passed.\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex-closeout-audit",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex-closeout-audit",
+      "reason": "Exact-revision review passed after dispositioning both review-driven guard findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize retained terminal receipt during exhaustive v0.91.7 closed-issue audit.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

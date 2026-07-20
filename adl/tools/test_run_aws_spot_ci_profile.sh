@@ -196,7 +196,13 @@ assert_backend_snapshot grep -F 'name: adl-coverage' "$CI_WORKFLOW"
 assert_backend_snapshot grep -F 'name: adl-ci' "$CI_WORKFLOW"
 assert_backend_snapshot grep -F '"adl_demo_proof:${{ needs.adl_demo_proof.result }}" \' "$CI_WORKFLOW"
 assert_backend_snapshot grep -F '"adl_spot_ci_and_coverage:${{ needs.adl_spot_ci_and_coverage.result }}"' "$CI_WORKFLOW"
-[[ "$backend_snapshot_checks" -eq 17 ]]
+assert_backend_snapshot grep -F "contains(github.event.pull_request.labels.*.name, 'ci:spot')" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F -- "--spot-opt-in \"\$SPOT_OPT_IN\"" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true') && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "if: needs.adl_path_policy.outputs.heavy_ci_backend == 'spot' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'ci:spot') && (needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' || needs.adl_path_policy.outputs.coverage_required == 'true')" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "if: needs.adl_path_policy.outputs.coverage_required == 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))" "$CI_WORKFLOW"
+[[ "$backend_snapshot_checks" -eq 23 ]]
 
 [[ "$(bash "$RESOLVE_CI_BACKEND")" == hosted ]]
 [[ "$(bash "$RESOLVE_CI_BACKEND" hosted)" == hosted ]]
@@ -212,6 +218,10 @@ rm -f "$invalid_backend_log"
 test "$(grep -Fc 'builder_image_tag: v0.91.7-coverage-5243' "$CI_WORKFLOW")" -eq 1
 test "$(grep -Fc 'source_event_name: ${{ github.event_name }}' "$CI_WORKFLOW")" -eq 1
 test "$(grep -Fc 'python3 adl/tools/verify_ci_backend_route.py' "$CI_WORKFLOW")" -eq 2
+test "$(grep -Fc 'SPOT_OPT_IN: ${{ github.event_name == '"'"'pull_request'"'"' && contains(github.event.pull_request.labels.*.name, '"'"'ci:spot'"'"') }}' "$CI_WORKFLOW")" -eq 2
+test "$(grep -Fc -- '--spot-opt-in "$SPOT_OPT_IN"' "$CI_WORKFLOW")" -eq 2
+test "$(grep -Fc 'SPOT_WORK_REQUIRED:' "$CI_WORKFLOW")" -eq 2
+test "$(grep -Fc -- '--spot-work-required "$SPOT_WORK_REQUIRED"' "$CI_WORKFLOW")" -eq 2
 test "$(grep -Fc 'name: adl-spot-ci-and-coverage' "$CI_WORKFLOW")" -eq 1
 grep -F "profile: \${{ needs.adl_path_policy.outputs.coverage_required == 'true' && 'adl-ci-and-coverage' || 'adl-ci' }}" "$CI_WORKFLOW" >/dev/null
 if grep -E 'name: adl-spot-(ci|coverage)$' "$CI_WORKFLOW" >/dev/null; then
@@ -247,32 +257,72 @@ fi
 
 python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend spot \
   --event-name pull_request --same-repo-pr true --work-required true \
+  --spot-opt-in true \
   --rust-required true --demo-required true \
   --path-policy-result success --spot-result success \
-  --hosted-result rust=skipped >/dev/null
-python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend hosted \
+  --hosted-result rust-fmt-clippy=skipped \
+  --hosted-result rust-tests=skipped \
+  --hosted-result demo-proof=skipped >/dev/null
+python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend spot \
   --event-name pull_request --same-repo-pr true --work-required true \
+  --spot-opt-in false \
   --rust-required true --demo-required false \
   --path-policy-result success --spot-result skipped \
   --hosted-result rust-fmt-clippy=success \
   --hosted-result rust-tests=success \
   --hosted-result demo-proof=success >/dev/null
+python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend hosted \
+  --event-name pull_request --same-repo-pr true --work-required true \
+  --spot-opt-in false \
+  --rust-required true --demo-required false \
+  --path-policy-result success --spot-result skipped \
+  --hosted-result rust-fmt-clippy=success \
+  --hosted-result rust-tests=success \
+  --hosted-result demo-proof=success >/dev/null
+python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend hosted \
+  --event-name pull_request --same-repo-pr true --work-required false \
+  --spot-opt-in false \
+  --rust-required false --demo-required false \
+  --path-policy-result success --spot-result skipped \
+  --hosted-result rust-fmt-clippy=skipped \
+  --hosted-result rust-tests=skipped \
+  --hosted-result demo-proof=skipped >/dev/null
 python3 "$VERIFY_BACKEND_ROUTE" --surface adl-coverage --backend spot \
   --event-name pull_request --same-repo-pr true --work-required true \
+  --spot-opt-in true \
   --path-policy-result success --spot-result success \
   --hosted-result coverage=skipped >/dev/null
 python3 "$VERIFY_BACKEND_ROUTE" --surface adl-coverage --backend spot \
+  --event-name pull_request --same-repo-pr true --work-required true \
+  --spot-opt-in false \
+  --path-policy-result success --spot-result skipped \
+  --hosted-result coverage=success >/dev/null
+python3 "$VERIFY_BACKEND_ROUTE" --surface adl-coverage --backend spot \
   --event-name pull_request --same-repo-pr true --work-required false \
+  --spot-opt-in true \
   --path-policy-result success --spot-result skipped \
   --hosted-result coverage=skipped >/dev/null
+python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend spot \
+  --event-name pull_request --same-repo-pr true --work-required false \
+  --spot-work-required true \
+  --spot-opt-in true \
+  --rust-required false --demo-required false \
+  --path-policy-result success --spot-result success \
+  --hosted-result rust-fmt-clippy=skipped \
+  --hosted-result rust-tests=skipped \
+  --hosted-result demo-proof=skipped >/dev/null
 for invalid_route in \
   'adl-coverage spot pull_request true true success skipped coverage=skipped' \
   'adl-coverage hosted push false true skipped skipped coverage=success' \
-  'adl-coverage hosted push false true success skipped coverage=skipped'
+  'adl-coverage hosted push false true success skipped coverage=skipped' \
+  'adl-coverage spot pull_request true false success success coverage=success' \
+  'adl-coverage hosted pull_request true false success skipped coverage=success' \
+  'adl-ci hosted pull_request true false success skipped demo-proof=success'
 do
   read -r surface backend event same_repo required path_result spot_result hosted_result <<<"$invalid_route"
   if python3 "$VERIFY_BACKEND_ROUTE" --surface "$surface" --backend "$backend" \
       --event-name "$event" --same-repo-pr "$same_repo" --work-required "$required" \
+      --spot-opt-in false \
       --path-policy-result "$path_result" --spot-result "$spot_result" \
       --hosted-result "$hosted_result" >/dev/null 2>&1; then
     echo "backend-route verifier accepted invalid route: $invalid_route" >&2
@@ -281,6 +331,7 @@ do
 done
 if python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend spot \
     --event-name pull_request --same-repo-pr true --work-required true \
+    --spot-opt-in true \
     --rust-required true --demo-required true \
     --path-policy-result success --spot-result skipped \
     --hosted-result rust-fmt-clippy=skipped --hosted-result rust-tests=skipped \
@@ -288,13 +339,34 @@ if python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend spot \
   echo "backend-route verifier accepted a skipped selected Spot lane" >&2
   exit 1
 fi
+if python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend spot \
+    --event-name pull_request --same-repo-pr true --work-required true \
+    --spot-opt-in true \
+    --rust-required true --demo-required true \
+    --path-policy-result success --spot-result success \
+    --hosted-result rust-fmt-clippy=success --hosted-result rust-tests=skipped \
+    --hosted-result demo-proof=skipped >/dev/null 2>&1; then
+  echo "backend-route verifier accepted a selected Spot route with a hosted lane also running" >&2
+  exit 1
+fi
 if python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend hosted \
     --event-name pull_request --same-repo-pr true --work-required true \
+    --spot-opt-in false \
     --rust-required true --demo-required false \
     --path-policy-result success --spot-result skipped \
     --hosted-result rust-fmt-clippy=skipped --hosted-result rust-tests=skipped \
     --hosted-result demo-proof=success >/dev/null 2>&1; then
   echo "backend-route verifier let demo success mask skipped required Rust lanes" >&2
+  exit 1
+fi
+if python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend hosted \
+    --event-name pull_request --same-repo-pr true --work-required true \
+    --spot-opt-in false \
+    --rust-required true --demo-required false \
+    --path-policy-result success --spot-result success \
+    --hosted-result rust-fmt-clippy=success --hosted-result rust-tests=success \
+    --hosted-result demo-proof=success >/dev/null 2>&1; then
+  echo "backend-route verifier accepted a hosted route with the Spot lane also running" >&2
   exit 1
 fi
 

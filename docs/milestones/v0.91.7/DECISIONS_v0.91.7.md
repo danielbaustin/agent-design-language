@@ -4,7 +4,8 @@
 
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Date: `2026-06-21`
+- Created: `2026-06-21`
+- Last verified: `2026-07-18`
 - Owner: ADL maintainers
 
 ## Purpose
@@ -27,6 +28,11 @@ Capture significant second-tranche implementation decisions and open questions.
 | D-10 | Runtime Soak #2 and Observatory/demo readiness remain required handoff surfaces. | accepted | First birthday evidence needs visible runtime/workflow confidence, not planning prose alone. | Runtime and demo readiness are scheduled before v0.92 handoff. | `SPRINT_PLAN_v0.91.7.md` |
 
 ## Open Questions
+
+The questions below are retained from milestone planning. Current
+dispositions are recorded by closed WP-10 through WP-13 issues and their
+review packets; any broader activation claim still depends on the remaining
+release-tail gates.
 
 - Which Curiosity proof becomes the first governed discovery-cycle issue?
 - Which Constructability validators must block public/shared-reality claims?

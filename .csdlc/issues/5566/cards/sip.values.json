@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5566,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Activate an exact reserved claim from its existing issue worktree",
+    "slug": "existing-worktree-bind",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Restore a legal typed bind path for a prepared claim whose registered worktree already exists.",
+      "required_outcome": "An exact reserved claim can activate from its matching existing Git worktree without writing lifecycle state on main.",
+      "declared_scope": [
+        "csdlc-v2/src/lifecycle.rs",
+        "csdlc-v2/tests/gate2.rs"
+      ],
+      "authority_boundary": [
+        "Typed csdlc-bind operation only"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

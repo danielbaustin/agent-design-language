@@ -1,0 +1,53 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5563,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Recover stale approved design in initialized records",
+    "slug": "initialized-stale-design-recovery",
+    "version": "v0.91.8",
+    "generation": 5
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "gate2-design-recovery",
+          "proof_role": "Typed lifecycle and atomic card recovery",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 6000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate2",
+            "initialized_approved_stale_design"
+          ],
+          "parallel_group": "csdlc-v2-focused",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed without exact stale-input, CAS, claim, and reviewer evidence.",
+      "design_ref": ".csdlc/prepared/issues/5563/design.md",
+      "design_digest": "eeed304cf7c34edc67aa6b88bbecf20b2b656a593408eae8ce9b9281b768a62a",
+      "diagram_ref": ".csdlc/prepared/issues/5563/diagram.mmd",
+      "diagram_digest": "66c20481a67365c9df61647104a24804abb263f9efdceafe6712d371732ead62"
+    }
+  }
+}

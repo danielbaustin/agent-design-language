@@ -1,0 +1,24 @@
+{
+  "issue": 5544,
+  "card": "sor",
+  "expected_generation": 16,
+  "expected_digest": "b78469597cbc5dc03640ddc54d73453373e3ed543d2d365ecfaf56ddd758b2b7",
+  "claim_id": "claim-5544-v0-91-7-wp20-release-truth-gates",
+  "actor": "codex:issue-5544",
+  "reason": "Focused validation passed after rebasing #5553 onto merged #5552/current origin/main.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git diff --check",
+        "jq . docs/milestones/v0.91.7/review/wp20_remediation_5544/live_state_summary_5544.json",
+        "jq . .csdlc/evidence/5544/live-state/github_state.json",
+        "jq . .csdlc/evidence/5544/live-state/issue_5489.json",
+        "ruby -e 'require yaml; YAML.load_file(...)'"
+      ],
+      "purpose": "Re-prove #5544 documentation and retained evidence after rebasing onto #5552's canonical WP-21A correction.",
+      "outcome": "passed",
+      "evidence_ref": "local #5544 post-rebase validation output"
+    }
+  }
+}

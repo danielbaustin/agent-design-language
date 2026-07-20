@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "a1ce191172a445886835ae006aeeacd5a05ac2cd4c6ee5ee10060bcd8436f21f",
   "phase": "closed_out",
-  "generation": 37,
-  "digest": "00463934ebcd914dbb080aaf239ba8815bfa16355474d3dfaee96d2e3a2a6105",
+  "generation": 41,
+  "digest": "c975bd65a55a4cd2e4b01d039a3ee337c2e6ce7cc246d804c15b8112b1af7b80",
   "claim": null,
   "review_assignment": {
     "reviewer": "subagents-019f66d7-019f66f8-and-019f671d",
@@ -142,8 +142,8 @@
     "base": "main",
     "head": "codex/5390-runtime-v3-local-https-bound-address",
     "revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
-    "draft": true,
-    "observed_state": "open"
+    "draft": false,
+    "observed_state": "merged"
   },
   "readiness": {
     "pull_request": 5396,
@@ -233,7 +233,7 @@
     "disposition": "merged",
     "observed_sha": "699da9a4c5ea9643e64da599bf06f5d1b7286040",
     "observed_state": "merged",
-    "receipt_path": "/Volumes/FastWork/adl-5390-control/.git/csdlc-v2/closeout/5390.json",
+    "receipt_path": "csdlc-v2/closeout/5390.json",
     "released_branch": "codex/5390-runtime-v3-local-https-bound-address",
     "released_worktree": ".worktrees/adl-wp-5390",
     "released_protected_paths": [
@@ -250,8 +250,8 @@
     ]
   },
   "migration": null,
-  "design_path": ".csdlc/issues/5390/design.md",
-  "diagram_path": ".csdlc/issues/5390/diagram.mmd",
+  "design_path": ".csdlc/issues/5390/retained/design.md",
+  "diagram_path": ".csdlc/issues/5390/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex",
@@ -260,34 +260,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "53508f87382e4a0fcfe189c1b2bddae8b458feee0c06cfe2f550db1e04da3dc5",
+      "values_digest": "4d2df267436e38fd6ea84934077b2ae3ca72fee4e1bc05d5e77c43be15f52a45",
       "rendered_digest": "ff68d2f1d6e56599397260c1edb8e6e01d7513d078d0250e7877298ecd84d8aa",
       "ast_digest": "5224dce45e10edd30ea8292bd2cbe94728bcf21f98a6a8d9a5e7fae2bb0de091"
     },
     "stp": {
-      "values_digest": "227c451ce2d8164938461455925fcdf107790e59e95618e473db23b36b4e8cd9",
+      "values_digest": "0948cd1d567b4f27f6223dd4833442af241aa7f9b3ce3787257bb87523cf8673",
       "rendered_digest": "767441e6e7a9e4fb02dedc0981a6550cfa818dc3c6681235983227616943b4e9",
       "ast_digest": "67697393ecf942dd3297cabe2232689c6102b0706c3315ddffe54642d0d7bd67"
     },
     "spp": {
-      "values_digest": "b7fe5fd1fce7d48c1ac1a576f93a8f1a0c6b8f23af455128244e3c5d833790c5",
-      "rendered_digest": "eb33d53d98b4f6235d6811db5c3979a3edc213cfa9e44868f1768ebd389bf108",
-      "ast_digest": "953646f726cb52ae26de70b16400ab237a3666771f803c0dff2d72eb5365d074"
+      "values_digest": "30c5cf0302c28aff5805a0dcafdf6204e313e531fcd44570b227d70d5df81f84",
+      "rendered_digest": "e6087dba0a47a8d71a7fd2aa0b5c0ccee0f61fff1c38aced1b8907b7716867e4",
+      "ast_digest": "4af9ce56bfda840298190c33165289f54a2af082e314bdadd8ca9dec31510ca5"
     },
     "vpp": {
-      "values_digest": "3fdf01ae0be421723d98e7683ddc9cb527159b48121abc29438baaaab266a9f6",
-      "rendered_digest": "3c53aecc7718437fcdcd9d049da5482781ef52b855ba70480ea15fa352bfb432",
-      "ast_digest": "a69af00dbf1cad312a5580dde63222536d296f4c3eab151bd5699d5ad4a96dd0"
+      "values_digest": "7bd5ba439cbfa5f8d7632438800320bbe61e4c699d585cda9aa913b0c5c05134",
+      "rendered_digest": "50732e6b8a40a38cf99747b16fe56108fc628d3cc82c5581835ca761fbb6302f",
+      "ast_digest": "59a04a5b3b35626830a42e0e9108429353a5290513f3d52c09d70639eb36f40e"
     },
     "srp": {
-      "values_digest": "38b88501c741bcff6b5a583c345963568199686dea7f29a55eecc627af8327a1",
-      "rendered_digest": "78de0fc397027d5eb9c43c1eb5115091536cc7a249fa6e28c1407c3571002598",
-      "ast_digest": "969b2716d91da4c5d6c5c7b55d5d568f3ac28843499934ed69ae15c12f5e196e"
+      "values_digest": "020e1bd7bb4de85e179b70deecb162924abb5accb8d612d237da25615bce6985",
+      "rendered_digest": "fbeb8c1a77de6ffc137c2692e8551e686235a44529cbbdbc4022a7556e3d1a4b",
+      "ast_digest": "68c5470900dec94e87b80dda46e17840ae84d96cc0d26dce911b6cdaabf02666"
     },
     "sor": {
-      "values_digest": "6a5f9213111f05559e27c3412fa9eb77a7159ebfa54b82c34dbb862e99226900",
-      "rendered_digest": "6a52f9b2d9ea2d222420ca44b94c5a6dd4731ee7862419d30fbc645d08a2c7e0",
-      "ast_digest": "fd5367b6673128305daa8a538186b9227e73ea9bf8eae269c0611bdade147082"
+      "values_digest": "ac8b14b0b6c6385801f975e5b0619123db2f98879c6f3f8e9d829e82803830c8",
+      "rendered_digest": "77c48356f2d44d220287bc6926f76b74450636a17b7c773aecde9e90790cc02b",
+      "ast_digest": "e2dfd0ac515c043813717fd2e1953ec21e4db19777c9537d347def2b200a8518"
     }
   },
   "transitions": [
@@ -740,6 +740,34 @@
       "actor": "codex",
       "reason": "atomically finalize SOR/index and release claim/protected paths",
       "operation": "record_terminal"
+    },
+    {
+      "sequence": 45,
+      "generation": 38,
+      "actor": "csdlc-closeout",
+      "reason": "normalize legacy terminal receipt path to portable reference",
+      "operation": "normalize_terminal_receipt_ref"
+    },
+    {
+      "sequence": 46,
+      "generation": 39,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt during the complete v0.91.7 closed-issue audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 47,
+      "generation": 40,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize retained #5390 terminal truth before typed SOR artifact-reference repair.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 48,
+      "generation": 41,
+      "actor": "codex-closeout-audit",
+      "reason": "typed terminal SOR artifact repair authorized by issue 5527",
+      "operation": "repair_terminal_sor_artifact:.csdlc/issues/5390/diagram.mmd->.csdlc/issues/5390/retained/diagram.mmd"
     }
   ]
 }

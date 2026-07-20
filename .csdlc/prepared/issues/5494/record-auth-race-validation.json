@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 26,
+  "expected_digest": "cba48e8d529a320506339e635eb4389e40b62fef1b24a5921a3ded4381146aee",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The focused credential suite proves serialized revocation and generation-bound gateway overlap.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl-runtime/Cargo.toml", "runtime_api_auth::tests"],
+      "purpose": "Prove credential lifecycle, authorization-versus-revocation serialization, and current/previous gateway signature validation",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 11 focused Runtime v3 credential tests passed"
+    }
+  }
+}

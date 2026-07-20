@@ -21,33 +21,26 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the active v0.91.6 release-tail review and v0.91.7 handoff preparation,
-start with:
+For the active v0.91.7 closeout-tail review, start with:
 
-- `docs/milestones/v0.91.6/README.md`
-- `docs/milestones/v0.91.6/WBS_v0.91.6.md`
-- `docs/milestones/v0.91.6/SPRINT_PLAN_v0.91.6.md`
-- `docs/milestones/v0.91.6/WP_ISSUE_WAVE_v0.91.6.yaml`
-- `docs/milestones/v0.91.6/FEATURE_DOCS_v0.91.6.md`
-- `docs/milestones/v0.91.6/DEMO_MATRIX_v0.91.6.md`
-- `docs/milestones/v0.91.6/MILESTONE_CHECKLIST_v0.91.6.md`
-- `docs/milestones/v0.91.6/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.6.md`
-- `docs/milestones/v0.91.6/RELEASE_PLAN_v0.91.6.md`
-- `docs/milestones/v0.91.6/RELEASE_NOTES_v0.91.6.md`
-- `docs/milestones/v0.91.6/OPERATIONAL_COMPLETION_GATE_v0.91.6.md`
-- `docs/milestones/v0.91.6/CLOSEOUT_TAIL_SPRINT_v0.91.6.md`
-- `docs/milestones/v0.91.6/review/internal_review/V0916_INTERNAL_REVIEW_FINDINGS_REGISTER_2026-06-27.md`
-- `docs/milestones/v0.91.6/review/internal_review/V0916_INTERNAL_REVIEW_SYNTHESIS_2026-06-27.md`
-- `docs/milestones/v0.91.6/review/internal_review/V0916_INTERNAL_REVIEW_REMEDIATION_QUEUE_2026-06-27.md`
-- `docs/milestones/v0.91.6/review/internal_review/V0916_INTERNAL_REVIEW_HANDOFF_2026-06-27.md`
-- `docs/milestones/v0.91.6/review/internal_review/V0916_PRE_V092_BURN_DOWN_CHECKLIST_2026-06-27.md`
-- `docs/milestones/v0.91.6/review/internal_review/V0916_FULL_CODE_REVIEW_2026-06-27.md`
-- `docs/milestones/v0.91.6/review/external_review/V0916_EXTERNAL_REVIEW_FINDINGS_2026-06-28.md`
-- `docs/milestones/v0.91.6/features/`
 - `docs/milestones/v0.91.7/README.md`
+- `docs/milestones/v0.91.7/WBS_v0.91.7.md`
+- `docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md`
 - `docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md`
 - `docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml`
+- `docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md`
+- `docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md`
+- `docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md`
+- `docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md`
+- `docs/milestones/v0.91.7/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md`
+- `docs/milestones/v0.91.7/RELEASE_PLAN_v0.91.7.md`
+- `docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md`
 - `docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md`
+- `docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md`
+- `docs/milestones/v0.91.7/review/V0917_ADR_INDEX_4989.md`
+- `docs/milestones/v0.91.7/review/`
+- `docs/milestones/v0.91.7/features/`
+- `docs/milestones/v0.91.6/README.md` and its retained handoff/review packets
 - `docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md`
 - `docs/templates/prompts/`
 - `docs/cognitive-sdlc/`
@@ -89,26 +82,26 @@ minimum, inspect and update every applicable item in this checklist:
 Tail closeout docs review is complete only when this surface has either been
 updated, confirmed current, or explicitly ruled not applicable with evidence.
 
-The current review posture is v0.91.6 release-tail review and dependency-gated
-v0.91.7 planning. WP-14A `#4582` is closed, WP-15 `#3980` has already run and
-failed on stale handoff truth, and WP-16 `#3981` remains the canonical
-remediation/final-preflight sink. v0.91.7 planning may be prepared, but
-v0.91.7 execution must not begin until v0.91.6 WP-15/WP-16 truth is complete,
-blocked, deferred, or explicitly routed.
+The current review posture is the v0.91.7 closeout tail. WP-01 through WP-17
+are closed; WP-17 closed through issue #4644 and merged PR #5539. WP-18,
+WP-19, WP-20, and WP-23 remain open; WP-21 and WP-22 are closed retained
+planning/review evidence. Reviewers must use live issue truth together with the
+sprint-review register because closed umbrellas can retain findings, blocked
+rows, or explicit non-claims.
 
 Important active non-claims:
 
-- v0.91.6 does not claim release readiness until external review,
-  remediation/final preflight, next-milestone review, and release ceremony
-  truth settle.
-- v0.91.7 planning docs do not prove runtime, demo, provider, scheduler, AWS,
-  C-SDLC, validation, or v0.92 activation readiness.
-- EC2 Spot or remote-builder work is planned/proof-routed for v0.91.7 WP-06;
-  it is not yet an accepted release-critical validation lane.
+- v0.91.7 does not claim release readiness until WP-18, WP-19, WP-20, and
+  WP-23 settle with current review and closeout truth.
+- Closed v0.91.7 planning, implementation, demo, or remediation issues do not
+  prove broad runtime, provider, security, observability, or v0.92 activation
+  readiness beyond their retained packets.
+- Remote-builder and AWS evidence remains bounded by its retained proof and
+  non-claims; it is not a default validation requirement for this docs review.
 - Mocks, seams, docs, and component tests count as prerequisites, not as
   product/runtime feature completion.
-- v0.92 activation remains blocked until each named activation surface is
-  complete, blocked, deferred, or routed.
+- v0.92 activation consumes the reviewed v0.91.8 bridge, not v0.91.7 handoff
+  prose as direct approval.
 
 For historical v0.91.5 Sprint 4 release-tail review, start with:
 

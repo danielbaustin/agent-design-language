@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5521,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5521-terminal-plan-repair",
+  "title": "[v0.91.7][csdlc-v2][closeout] Complete #5518 terminal plan-step truth",
+  "body": "Closes #5521\n\n## Summary\n- use the typed terminal repair from PR #5519\n- advance only #5518 SPP S4 from pending to completed\n- refresh #5518 card projections, audit, index digest, and retained receipt atomically\n- retain a two-step authority plan with no recursive closeout step\n\n## Validation\n- csdlc-doctor passes for #5518 and #5521\n- #5518 remains closed out and claim-free\n- local index, all six cards, and shared receipt match exactly\n- exact publication-head subagent review is clean\n- git diff check passes\n\nRecords only. No source, Runtime, Runtime v2, or Runtime v3 changes. No AWS execution.",
+  "draft": false,
+  "revision": "git-blake3:f21e98155441271d095c9d1d43d8d4d343aaac4b:051bbcf7496fe0268cb83b54a9b085e64750358991ad16b77d97e1f36f43868c",
+  "commit_sha": "f21e98155441271d095c9d1d43d8d4d343aaac4b"
+}

@@ -9,7 +9,7 @@ packets, demos, and milestone evidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.91.6%20bridge-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.91.7%20closeout-blue)
 
 ![ADL deterministic cognitive architecture overview](docs/assets/ADL-overview.png)
 
@@ -149,14 +149,31 @@ from issue
 
 ## Recent Milestones
 
-### v0.91.6 - Active Release-Tail Bridge Tranche
+### v0.91.7 - Active Closeout Tail
 
-v0.91.6 is the active first pre-v0.92 bridge/readiness tranche. Its bridge
-implementation and proof waves have landed through WP-12, including demo/proof
-convergence and the quality gate. The current release-tail frontier is internal
-review under `#4582`, with sprint umbrella `#4604` tracking the remaining
-ordered closeout path through external review, remediation/preflight,
-next-milestone handoff, and ceremony.
+v0.91.7 is the active closeout tail feeding the required v0.91.8 bridge.
+WP-01 through WP-17 are closed; WP-17 closed through issue #4644 and merged
+PR #5539. The remaining v0.91.7 gates are WP-18, WP-19, WP-20, WP-21A, and
+WP-23; WP-21 and WP-22 are closed retained planning/review evidence. Closed issue
+state does not imply release readiness, and the milestone sprint-review
+register retains residual findings and non-claims. v0.92 consumes the reviewed
+v0.91.8 exact-revision handoff, not v0.91.7 prose as direct approval.
+
+Start here:
+
+- [v0.91.7 README](docs/milestones/v0.91.7/README.md)
+- [v0.91.7 sprint plan](docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md)
+- [v0.91.7 issue wave](docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml)
+- [v0.91.7 feature-doc index](docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md)
+- [v0.91.7 sprint-review register](docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md)
+- [v0.91.8 bridge package](docs/milestones/v0.91.8/README.md)
+- [v0.91.8 to v0.92 handoff](docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md)
+
+### v0.91.6 - Completed First Bridge Tranche
+
+v0.91.6 is the completed first pre-v0.92 bridge/readiness tranche. Its retained
+handoff and release-tail evidence are inputs to v0.91.7; they are historical
+records rather than the current review entrypoint.
 
 Start here:
 
@@ -291,13 +308,14 @@ production markets.
 
 ## Project Status
 
-- Active milestone: v0.91.6
-- Current crate version: 0.91.6
-- Most recently completed milestone: v0.91.5
-- Current milestone state: v0.91.6 is in release-tail execution after WP-12;
-  internal review `#4582` is the next active child under sprint umbrella
-  `#4604`.
-- Previous completed milestone before v0.91.2: v0.91.1
+- Active milestone: v0.91.7 closeout tail
+- Required next bridge: v0.91.8 exact-revision platform acceptance and handoff
+- Current ADL and Runtime v2 crate version: 0.91.7
+- Independent Runtime v3 kernel package version: 0.92.0; it remains separately
+  versioned and does not by itself claim v0.92 activation readiness
+- Most recently completed milestone: v0.91.6
+- Current milestone state: WP-01 through WP-17 are closed; WP-18, WP-19,
+  WP-20, WP-21A, and WP-23 remain open; WP-21 and WP-22 are closed retained evidence
 - Primary implementation language: Rust
 
 ADL is under active development. The repository contains implemented runtime

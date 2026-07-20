@@ -1,0 +1,13 @@
+{
+  "issue": 5455,
+  "claim_id": "claim-5455-closeout-recovery",
+  "expected_generation": 8,
+  "expected_digest": "99d2ca32f2065879b3d5ea8d93a9433086ece638eb740e644971b14b29d5ad96",
+  "now_unix_seconds": 1784423579,
+  "actor": "codex-closeout-audit",
+  "reason": "Add the tightly coupled typed installer API and CLI paths required by the accepted provenance remediation design.",
+  "add_protected_paths": [
+    "csdlc-v2/src/bin/csdlc-install.rs",
+    "csdlc-v2/src/lib.rs"
+  ]
+}

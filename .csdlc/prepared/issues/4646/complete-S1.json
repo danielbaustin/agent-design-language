@@ -1,0 +1,10 @@
+{
+  "issue": 4646,
+  "card": "spp",
+  "expected_generation": 0,
+  "expected_digest": "3016c2723a8e5021ce1c26d674f48b46ea5da694389cc928a51036df74267c58",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "Confirmed live predecessor, remediation, and external-review dependency truth on 2026-07-19.",
+  "operation": {"operation":"update_plan_step","step_id":"S1","status":"completed"}
+}

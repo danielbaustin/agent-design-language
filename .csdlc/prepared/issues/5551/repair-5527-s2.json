@@ -1,0 +1,13 @@
+{
+  "authority_issue": 5551,
+  "target_issue": 5527,
+  "expected_authority_generation": 1,
+  "expected_authority_digest": "6710482330e63f116194cc16e9d696d70176f21e1b8d4ebffd80606240e54770",
+  "expected_target_generation": 26,
+  "expected_target_digest": "123f4991293d328e470ecba04dbc6318797f5ecd434d83bc30b5dd2437a64a10",
+  "expected_receipt_digest": "3f3912cc53544698dcf9e378d5e6a57f3f568699e11399dd8b4b3345a640ffa5",
+  "authority_claim_id": "claim-5551-terminal-plan-truth",
+  "actor": "codex-closeout-audit",
+  "step_id": "S2",
+  "fail_after_stage": null
+}

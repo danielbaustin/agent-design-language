@@ -1,0 +1,26 @@
+{
+  "issue": 4646,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "b3c24d46e864138cb099272b4d30c716fd4dc2b5c11a940a1c3347ead1e01584",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "Prepared the v0.91.7 WP-19 exact-revision external-review send gate without performing the review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Reconciled live predecessor and remediation truth, replaced the stale blocked handoff, added a not-run external finding register, and made PR #5574 the only transient stable-corpus hold while classifying #5571 as a non-blocking v0.91.8 residual.",
+    "changes": [
+      "Updated v0.91.7 README, WBS, issue wave, sprint review register, and WP-18 handoff to current closed/open truth",
+      "Expanded the WP-19 handoff with send gates, exact-revision and digest requirements, evidence manifest, reviewer authority, return path, and non-claims",
+      "Added the external-review packet README and an explicit not-run finding register",
+      "Removed nonexistent tracked C-SDLC projections from the public evidence manifest"
+    ],
+    "artifacts": [
+      "docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_HANDOFF_4646.md",
+      "docs/milestones/v0.91.7/review/external_review_4646/README.md",
+      "docs/milestones/v0.91.7/review/external_review_4646/FINDINGS_REGISTER.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ]
+  }
+}

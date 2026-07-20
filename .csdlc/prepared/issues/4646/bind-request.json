@@ -1,0 +1,22 @@
+{
+  "issue": 4646,
+  "base_branch": "main",
+  "branch": "codex/4646-v0917-external-review",
+  "worktree": ".worktrees/adl-wp-4646",
+  "claim": {
+    "id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/4646-v0917-external-review",
+    "worktree": ".worktrees/adl-wp-4646",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/external_review_4646",
+      "docs/milestones/v0.91.7/review/V0917_WP19_EXTERNAL_REVIEW_4646.md",
+      ".csdlc/issues/4646"
+    ],
+    "purpose": "Prepare and later execute WP-19 without claiming completion from setup"
+  }
+}

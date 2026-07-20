@@ -8,8 +8,9 @@ Required inputs:
 - opt-in soak;
 - rollback proof;
 - selector transaction proof;
+- C-SDLC v2 acceptance from `#5358`;
+- Runtime v3 acceptance from `#5361`;
 - deletion eligibility manifest;
 - post-deletion validation.
 
 No code deletion is approved by this planning package.
-

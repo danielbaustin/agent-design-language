@@ -1,0 +1,77 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5487,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Add typed terminal design repair before receipt reconciliation",
+    "slug": "typed-terminal-design-repair",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Model an explicit terminal repair request, validate authority and hashes, journal the receipt/artifact transaction, prove rollback and materialization, then repair #5467 through the typed route.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Map terminal receipt and retained artifact ownership and define the typed repair contract",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement atomic repair, rollback, and reconcile-terminal materialization",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Add focused tests and repair #5467 through the typed route",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "No repair without explicit authority and exact CAS identity",
+        "Artifact hashes are verified before and after the transaction",
+        "Receipt and retained artifacts never expose mixed generations",
+        "Failure is fail-closed and rollback-safe"
+      ],
+      "risks": [
+        "Terminal receipts are intentionally immutable outside this narrow typed route",
+        "AST and rendered-card digests must remain synchronized",
+        "Repair must not reopen closed-out lifecycle state"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Atomic success and rollback are proven",
+        "#5467 retained artifacts are repaired through the typed route",
+        "Focused tests and subagent review are green"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5487/retained/design.md",
+      "design_digest": "81a40365f0d648c8c8d149c38d161a04d795654827a41cabb955c3eea07f89b6",
+      "diagram_ref": ".csdlc/issues/5487/retained/diagram.mmd",
+      "diagram_digest": "7e76d4342be9738403c6ebf17ba7949033daaf9c768be8c2d310f5407ea5b439"
+    }
+  }
+}

@@ -5,19 +5,21 @@ use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use fs2::FileExt;
+use markdown::{to_mdast, ParseOptions};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::cards::{
     apply, digest, initial_cards, render, terminal_validation_passed, validate_cross_card,
     validate_identity_version, CardContent, CardKind, CardValues, InitialCardInput,
-    SemanticOperation,
+    SemanticOperation, StepStatus,
 };
 use crate::error::{ErrorCode, Result, V2Error};
 use crate::model::{
     AuditEvent, CardProjection, Claim, DesignReview, IssueRecord, LifecyclePhase,
     PublicationEvidence, ReadinessEvidence, ReconcileTerminalRequest, ReviewAssignment,
-    ReviewEvidence, TerminalEvidence, TerminalReceipt, TransitionEvent,
+    ReviewEvidence, TerminalDesignRepairRequest, TerminalEvidence, TerminalPlanStepRepairRequest,
+    TerminalReceipt, TerminalSorArtifactRepairRequest, TransitionEvent,
 };
 use crate::review::evaluate_publication_review_in_repo;
 
@@ -86,6 +88,24 @@ impl Store {
             .join(format!("{issue}.json")))
     }
 
+    fn terminal_repair_lock(&self) -> Result<File> {
+        let common = crate::git::run(
+            &self.root,
+            &["rev-parse", "--path-format=absolute", "--git-common-dir"],
+        )?
+        .stdout;
+        let dir = PathBuf::from(common).join("csdlc-v2");
+        fs::create_dir_all(&dir)?;
+        let file = OpenOptions::new()
+            .create(true)
+            .truncate(false)
+            .read(true)
+            .write(true)
+            .open(dir.join("terminal-repairs.lock"))?;
+        file.lock_exclusive()?;
+        Ok(file)
+    }
+
     fn lock(&self, issue: u64) -> Result<File> {
         let dir = self.root.join(".csdlc/locks");
         fs::create_dir_all(&dir)?;
@@ -145,6 +165,7 @@ impl Store {
             }
         };
         validate_identity_version(version)?;
+        let _terminal_repair_lock = self.terminal_repair_lock()?;
         let (first, second) = if request.authority_issue < request.target_issue {
             (request.authority_issue, request.target_issue)
         } else {
@@ -152,8 +173,8 @@ impl Store {
         };
         let _first_lock = self.lock(first)?;
         let _second_lock = self.lock(second)?;
-        self.recover_if_needed(request.authority_issue)?;
-        self.recover_if_needed(request.target_issue)?;
+        self.recover_with_terminal_lock(request.authority_issue)?;
+        self.recover_with_terminal_lock(request.target_issue)?;
         let authority = self.load_record(request.authority_issue)?;
         let mut target = self.load_record(request.target_issue)?;
         if authority.generation != request.expected_authority_generation
@@ -236,6 +257,585 @@ impl Store {
             return Err(error);
         }
         Ok(target)
+    }
+
+    pub fn repair_terminal_design(
+        &self,
+        request: TerminalDesignRepairRequest,
+    ) -> Result<IssueRecord> {
+        if request.authority_issue == request.target_issue
+            || request.actor.trim().is_empty()
+            || request.reviewer.trim().is_empty()
+            || request.expected_authority_digest.trim().is_empty()
+            || request.expected_target_digest.trim().is_empty()
+            || request.expected_receipt_digest.trim().is_empty()
+            || request.expected_design_digest.trim().is_empty()
+            || request.expected_diagram_digest.trim().is_empty()
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "terminal design repair identity or authority is incomplete",
+            ));
+        }
+        for path in [&request.source_design_path, &request.source_diagram_path] {
+            if !crate::pvf::clean_relative(Path::new(path)) {
+                return Err(V2Error::new(
+                    ErrorCode::InvalidInput,
+                    "terminal design repair source path must be repository-relative",
+                ));
+            }
+        }
+        let _terminal_repair_lock = self.terminal_repair_lock()?;
+        let (first, second) = if request.authority_issue < request.target_issue {
+            (request.authority_issue, request.target_issue)
+        } else {
+            (request.target_issue, request.authority_issue)
+        };
+        let _first_lock = self.lock(first)?;
+        let _second_lock = self.lock(second)?;
+        self.recover_with_terminal_lock(request.authority_issue)?;
+        self.recover_with_terminal_lock(request.target_issue)?;
+        let authority = self.load_record(request.authority_issue)?;
+        let mut target = self.load_record(request.target_issue)?;
+        if authority.generation != request.expected_authority_generation
+            || authority.digest != request.expected_authority_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "repair authority record is stale",
+            ));
+        }
+        if target.generation != request.expected_target_generation
+            || target.digest != request.expected_target_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "repair target record is stale",
+            ));
+        }
+        if target.phase != LifecyclePhase::ClosedOut || target.claim.is_some() {
+            return Err(V2Error::new(
+                ErrorCode::InvalidTransition,
+                "terminal design repair requires a closed-out target without a claim",
+            ));
+        }
+        authority
+            .claim
+            .as_ref()
+            .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "repair authority claim missing"))?
+            .validate(&request.authority_claim_id, now_seconds()?)?;
+        let receipt_path = self.terminal_receipt_path(request.target_issue)?;
+        let original_receipt_bytes = fs::read(&receipt_path)?;
+        let original_receipt: TerminalReceipt = serde_json::from_slice(&original_receipt_bytes)?;
+        validate_terminal_receipt(&original_receipt)?;
+        if original_receipt.digest != request.expected_receipt_digest
+            || original_receipt.record.digest != target.digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "terminal receipt is stale",
+            ));
+        }
+        let design = fs::read(self.root.join(&request.source_design_path))?;
+        let diagram = fs::read(self.root.join(&request.source_diagram_path))?;
+        let design_digest = digest(&design);
+        let diagram_digest = digest(&diagram);
+        if design_digest != request.expected_design_digest
+            || diagram_digest != request.expected_diagram_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "repair artifact hash does not match request",
+            ));
+        }
+        let design_text = String::from_utf8(design).map_err(|_| {
+            V2Error::new(
+                ErrorCode::InvalidInput,
+                "repair design must be UTF-8 Markdown",
+            )
+        })?;
+        let diagram_text = String::from_utf8(diagram).map_err(|_| {
+            V2Error::new(
+                ErrorCode::InvalidInput,
+                "repair diagram must be UTF-8 Mermaid",
+            )
+        })?;
+        if design_text.trim().is_empty() || diagram_text.trim().is_empty() {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "repair artifacts must not be empty",
+            ));
+        }
+        if !valid_mermaid_diagram(&diagram_text) {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "repair diagram is not recognized Mermaid source",
+            ));
+        }
+        to_mdast(&design_text, &ParseOptions::gfm()).map_err(|error| {
+            V2Error::new(
+                ErrorCode::InvalidInput,
+                format!("repair design Markdown failed AST validation: {error}"),
+            )
+        })?;
+        let mut cards = self.load_cards(request.target_issue)?;
+        verify_cards(self, &target, &cards)?;
+        for kind in [CardKind::Spp, CardKind::Vpp] {
+            match &mut cards.get_mut(&kind).expect("design-bearing card").content {
+                CardContent::Spp(values) => {
+                    values.design_digest = design_digest.clone();
+                    values.diagram_digest = diagram_digest.clone();
+                }
+                CardContent::Vpp(values) => {
+                    values.design_digest = design_digest.clone();
+                    values.diagram_digest = diagram_digest.clone();
+                }
+                _ => unreachable!("design-bearing card"),
+            }
+        }
+        target.design_review = DesignReview::Approved {
+            reviewer: request.reviewer.clone(),
+            revision: design_digest.clone(),
+        };
+        target.generation += 1;
+        for values in cards.values_mut() {
+            values.identity.generation = target.generation;
+        }
+        target.audit.push(AuditEvent {
+            sequence: target.audit.len() as u64 + 1,
+            generation: target.generation,
+            actor: request.actor.clone(),
+            reason: format!(
+                "typed terminal design repair authorized by issue {}",
+                request.authority_issue
+            ),
+            operation: "repair_terminal_design".into(),
+        });
+        hydrate_projections(&mut target, &cards)?;
+        target.digest = record_digest(&target)?;
+        let authored_artifacts = BTreeMap::from([
+            (target.design_path.clone(), design_text),
+            (target.diagram_path.clone(), diagram_text),
+        ]);
+        let mut repaired_receipt = original_receipt.clone();
+        repaired_receipt.record = target.clone();
+        repaired_receipt.cards = cards.clone();
+        repaired_receipt.authored_artifacts = authored_artifacts.clone();
+        repaired_receipt.digest.clear();
+        repaired_receipt.digest = terminal_receipt_digest(&repaired_receipt)?;
+        validate_terminal_receipt(&repaired_receipt)?;
+        let target_receipt = serde_json::to_vec_pretty(&repaired_receipt)?;
+        let mut journal = TerminalTransactionJournal {
+            schema: "csdlc.terminal_transaction.v1".into(),
+            issue: request.target_issue,
+            stage: "prepared_terminal_design_repair".into(),
+            original_record_digest: original_receipt.record.digest.clone(),
+            target_record_digest: target.digest.clone(),
+            original_receipt: Some(original_receipt_bytes),
+            target_receipt,
+        };
+        self.write_terminal_transaction_journal(&journal)?;
+        if request.fail_after_stage.as_deref() == Some("after_journal") {
+            return Err(V2Error::new(
+                ErrorCode::InterruptedTransaction,
+                "injected repair failure",
+            ));
+        }
+        if let Err(error) = self.commit_with_authored(
+            request.target_issue,
+            &target,
+            &cards,
+            false,
+            Some(&authored_artifacts),
+        ) {
+            let _ = self.recover_terminal_transaction(request.target_issue);
+            return Err(error);
+        }
+        journal.stage = "projection_committed_terminal_design_repair".into();
+        self.write_terminal_transaction_journal(&journal)?;
+        if request.fail_after_stage.as_deref() == Some("after_projection") {
+            let _ = self.recover_terminal_transaction(request.target_issue);
+            return Err(V2Error::new(
+                ErrorCode::InterruptedTransaction,
+                "injected repair failure",
+            ));
+        }
+        self.replace_receipt_bytes(&receipt_path, Some(&journal.target_receipt))?;
+        journal.stage = "receipt_committed_terminal_design_repair".into();
+        self.write_terminal_transaction_journal(&journal)?;
+        self.remove_terminal_transaction_journal(request.target_issue)?;
+        Ok(target)
+    }
+
+    pub fn repair_terminal_plan_step(
+        &self,
+        request: TerminalPlanStepRepairRequest,
+    ) -> Result<IssueRecord> {
+        if request.authority_issue == request.target_issue
+            || request.actor.trim().is_empty()
+            || request.step_id.trim().is_empty()
+            || request.expected_authority_digest.trim().is_empty()
+            || request.expected_target_digest.trim().is_empty()
+            || request.expected_receipt_digest.trim().is_empty()
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "terminal plan repair identity or authority is incomplete",
+            ));
+        }
+        let _terminal_repair_lock = self.terminal_repair_lock()?;
+        let (first, second) = if request.authority_issue < request.target_issue {
+            (request.authority_issue, request.target_issue)
+        } else {
+            (request.target_issue, request.authority_issue)
+        };
+        let _first_lock = self.lock(first)?;
+        let _second_lock = self.lock(second)?;
+        self.recover_with_terminal_lock(request.authority_issue)?;
+        self.recover_with_terminal_lock(request.target_issue)?;
+        let authority = self.load_record(request.authority_issue)?;
+        let mut target = self.load_record(request.target_issue)?;
+        if authority.generation != request.expected_authority_generation
+            || authority.digest != request.expected_authority_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "repair authority record is stale",
+            ));
+        }
+        if target.generation != request.expected_target_generation
+            || target.digest != request.expected_target_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "repair target record is stale",
+            ));
+        }
+        if target.phase != LifecyclePhase::ClosedOut || target.claim.is_some() {
+            return Err(V2Error::new(
+                ErrorCode::InvalidTransition,
+                "terminal plan repair requires a closed-out target without a claim",
+            ));
+        }
+        authority
+            .claim
+            .as_ref()
+            .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "repair authority claim missing"))?
+            .validate(&request.authority_claim_id, now_seconds()?)?;
+        if !authority
+            .claim
+            .as_ref()
+            .is_some_and(|claim| claim_covers_issue(claim, request.target_issue))
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "repair authority claim does not cover the target issue",
+            ));
+        }
+
+        let receipt_path = self.terminal_receipt_path(request.target_issue)?;
+        let original_receipt_bytes = fs::read(&receipt_path)?;
+        let original_receipt: TerminalReceipt = serde_json::from_slice(&original_receipt_bytes)?;
+        validate_terminal_receipt(&original_receipt)?;
+        if original_receipt.digest != request.expected_receipt_digest
+            || original_receipt.record.digest != target.digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "terminal receipt is stale",
+            ));
+        }
+        let original_cards = self.load_cards(request.target_issue)?;
+        verify_cards(self, &target, &original_cards)?;
+        let mut cards = original_cards.clone();
+        complete_terminal_plan_step(&mut cards, &request.step_id)?;
+
+        let original_target = target.clone();
+        target.generation += 1;
+        for values in cards.values_mut() {
+            values.identity.generation = target.generation;
+        }
+        target.audit.push(AuditEvent {
+            sequence: target.audit.len() as u64 + 1,
+            generation: target.generation,
+            actor: request.actor.clone(),
+            reason: format!(
+                "typed terminal plan repair authorized by issue {}",
+                request.authority_issue
+            ),
+            operation: format!("repair_terminal_plan_step:{}", request.step_id),
+        });
+        hydrate_projections(&mut target, &cards)?;
+        target.digest = record_digest(&target)?;
+
+        let mut repaired_receipt = original_receipt.clone();
+        repaired_receipt.record = target.clone();
+        repaired_receipt.cards = cards.clone();
+        repaired_receipt.digest.clear();
+        repaired_receipt.digest = terminal_receipt_digest(&repaired_receipt)?;
+        validate_terminal_receipt(&repaired_receipt)?;
+        let target_receipt = serde_json::to_vec_pretty(&repaired_receipt)?;
+        let mut journal = TerminalTransactionJournal {
+            schema: "csdlc.terminal_transaction.v1".into(),
+            issue: request.target_issue,
+            stage: "prepared_terminal_plan_repair".into(),
+            original_record_digest: original_receipt.record.digest.clone(),
+            target_record_digest: target.digest.clone(),
+            original_receipt: Some(original_receipt_bytes.clone()),
+            target_receipt,
+        };
+        self.write_terminal_transaction_journal(&journal)?;
+        if request.fail_after_stage.as_deref() == Some("after_journal") {
+            self.remove_terminal_transaction_journal(request.target_issue)?;
+            return Err(V2Error::new(
+                ErrorCode::InterruptedTransaction,
+                "injected repair failure",
+            ));
+        }
+        if let Err(error) = self.commit(request.target_issue, &target, &cards, false) {
+            let _ = self.remove_terminal_transaction_journal(request.target_issue);
+            return Err(error);
+        }
+        journal.stage = "projection_committed_terminal_plan_repair".into();
+        self.write_terminal_transaction_journal(&journal)?;
+        if request.fail_after_stage.as_deref() == Some("after_projection") {
+            self.rollback_terminal_repair(
+                request.target_issue,
+                &original_target,
+                &original_cards,
+                &receipt_path,
+                &original_receipt_bytes,
+            )?;
+            return Err(V2Error::new(
+                ErrorCode::InterruptedTransaction,
+                "injected repair failure",
+            ));
+        }
+        if let Err(error) = self.replace_receipt_bytes(&receipt_path, Some(&journal.target_receipt))
+        {
+            self.rollback_terminal_repair(
+                request.target_issue,
+                &original_target,
+                &original_cards,
+                &receipt_path,
+                &original_receipt_bytes,
+            )?;
+            return Err(error);
+        }
+        journal.stage = "receipt_committed_terminal_plan_repair".into();
+        self.write_terminal_transaction_journal(&journal)?;
+        self.remove_terminal_transaction_journal(request.target_issue)?;
+        Ok(target)
+    }
+
+    pub fn repair_terminal_sor_artifact(
+        &self,
+        request: TerminalSorArtifactRepairRequest,
+    ) -> Result<IssueRecord> {
+        if request.authority_issue == request.target_issue
+            || request.actor.trim().is_empty()
+            || request.expected_authority_digest.trim().is_empty()
+            || request.expected_target_digest.trim().is_empty()
+            || request.expected_receipt_digest.trim().is_empty()
+            || request.expected_artifact_digest.trim().is_empty()
+            || request.stale_ref == request.retained_ref
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "terminal SOR artifact repair identity or authority is incomplete",
+            ));
+        }
+        for path in [&request.stale_ref, &request.retained_ref] {
+            if !crate::pvf::clean_relative(Path::new(path)) {
+                return Err(V2Error::new(
+                    ErrorCode::InvalidInput,
+                    "terminal SOR artifact repair paths must be repository-relative",
+                ));
+            }
+        }
+
+        let _terminal_repair_lock = self.terminal_repair_lock()?;
+        let (first, second) = if request.authority_issue < request.target_issue {
+            (request.authority_issue, request.target_issue)
+        } else {
+            (request.target_issue, request.authority_issue)
+        };
+        let _first_lock = self.lock(first)?;
+        let _second_lock = self.lock(second)?;
+        self.recover_with_terminal_lock(request.authority_issue)?;
+        self.recover_with_terminal_lock(request.target_issue)?;
+        let authority = self.load_record(request.authority_issue)?;
+        let mut target = self.load_record(request.target_issue)?;
+        if authority.generation != request.expected_authority_generation
+            || authority.digest != request.expected_authority_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "repair authority record is stale",
+            ));
+        }
+        if target.generation != request.expected_target_generation
+            || target.digest != request.expected_target_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "repair target record is stale",
+            ));
+        }
+        if target.phase != LifecyclePhase::ClosedOut || target.claim.is_some() {
+            return Err(V2Error::new(
+                ErrorCode::InvalidTransition,
+                "terminal SOR artifact repair requires a closed-out target without a claim",
+            ));
+        }
+        authority
+            .claim
+            .as_ref()
+            .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "repair authority claim missing"))?
+            .validate(&request.authority_claim_id, now_seconds()?)?;
+        if !authority
+            .claim
+            .as_ref()
+            .is_some_and(|claim| claim_covers_issue(claim, request.target_issue))
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "repair authority claim does not cover the target issue",
+            ));
+        }
+
+        let receipt_path = self.terminal_receipt_path(request.target_issue)?;
+        let original_receipt_bytes = fs::read(&receipt_path)?;
+        let original_receipt: TerminalReceipt = serde_json::from_slice(&original_receipt_bytes)?;
+        validate_terminal_receipt(&original_receipt)?;
+        if original_receipt.digest != request.expected_receipt_digest
+            || original_receipt.record.digest != target.digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "terminal receipt is stale",
+            ));
+        }
+        if request.retained_ref != target.design_path && request.retained_ref != target.diagram_path
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "replacement is not a canonical retained authored artifact",
+            ));
+        }
+        let retained_bytes = original_receipt
+            .authored_artifacts
+            .get(&request.retained_ref)
+            .ok_or_else(|| {
+                V2Error::new(
+                    ErrorCode::InvalidInput,
+                    "replacement artifact is absent from the terminal receipt",
+                )
+            })?;
+        if digest(retained_bytes.as_bytes()) != request.expected_artifact_digest {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "replacement artifact bytes differ from the request",
+            ));
+        }
+
+        let original_cards = self.load_cards(request.target_issue)?;
+        verify_cards(self, &target, &original_cards)?;
+        let mut cards = original_cards.clone();
+        replace_terminal_sor_artifact(&mut cards, &request.stale_ref, &request.retained_ref)?;
+
+        let original_target = target.clone();
+        target.generation += 1;
+        for values in cards.values_mut() {
+            values.identity.generation = target.generation;
+        }
+        target.audit.push(AuditEvent {
+            sequence: target.audit.len() as u64 + 1,
+            generation: target.generation,
+            actor: request.actor.clone(),
+            reason: format!(
+                "typed terminal SOR artifact repair authorized by issue {}",
+                request.authority_issue
+            ),
+            operation: format!(
+                "repair_terminal_sor_artifact:{}->{}",
+                request.stale_ref, request.retained_ref
+            ),
+        });
+        hydrate_projections(&mut target, &cards)?;
+        target.digest = record_digest(&target)?;
+
+        let mut repaired_receipt = original_receipt.clone();
+        repaired_receipt.record = target.clone();
+        repaired_receipt.cards = cards.clone();
+        repaired_receipt.digest.clear();
+        repaired_receipt.digest = terminal_receipt_digest(&repaired_receipt)?;
+        validate_terminal_receipt(&repaired_receipt)?;
+        let target_receipt = serde_json::to_vec_pretty(&repaired_receipt)?;
+        let mut journal = TerminalTransactionJournal {
+            schema: "csdlc.terminal_transaction.v1".into(),
+            issue: request.target_issue,
+            stage: "prepared_terminal_sor_artifact_repair".into(),
+            original_record_digest: original_receipt.record.digest.clone(),
+            target_record_digest: target.digest.clone(),
+            original_receipt: Some(original_receipt_bytes.clone()),
+            target_receipt,
+        };
+        self.write_terminal_transaction_journal(&journal)?;
+        if request.fail_after_stage.as_deref() == Some("after_journal") {
+            self.remove_terminal_transaction_journal(request.target_issue)?;
+            return Err(V2Error::new(
+                ErrorCode::InterruptedTransaction,
+                "injected repair failure",
+            ));
+        }
+        if let Err(error) = self.commit(request.target_issue, &target, &cards, false) {
+            let _ = self.remove_terminal_transaction_journal(request.target_issue);
+            return Err(error);
+        }
+        journal.stage = "projection_committed_terminal_sor_artifact_repair".into();
+        self.write_terminal_transaction_journal(&journal)?;
+        if request.fail_after_stage.as_deref() == Some("after_projection") {
+            self.rollback_terminal_repair(
+                request.target_issue,
+                &original_target,
+                &original_cards,
+                &receipt_path,
+                &original_receipt_bytes,
+            )?;
+            return Err(V2Error::new(
+                ErrorCode::InterruptedTransaction,
+                "injected repair failure",
+            ));
+        }
+        if let Err(error) = self.replace_receipt_bytes(&receipt_path, Some(&journal.target_receipt))
+        {
+            self.rollback_terminal_repair(
+                request.target_issue,
+                &original_target,
+                &original_cards,
+                &receipt_path,
+                &original_receipt_bytes,
+            )?;
+            return Err(error);
+        }
+        journal.stage = "receipt_committed_terminal_sor_artifact_repair".into();
+        self.write_terminal_transaction_journal(&journal)?;
+        self.remove_terminal_transaction_journal(request.target_issue)?;
+        Ok(target)
+    }
+
+    fn rollback_terminal_repair(
+        &self,
+        issue: u64,
+        record: &IssueRecord,
+        cards: &BTreeMap<CardKind, CardValues>,
+        receipt_path: &Path,
+        receipt: &[u8],
+    ) -> Result<()> {
+        self.commit(issue, record, cards, false)?;
+        self.replace_receipt_bytes(receipt_path, Some(receipt))?;
+        self.remove_terminal_transaction_journal(issue)
     }
 
     fn refresh_terminal_receipt(
@@ -452,8 +1052,9 @@ impl Store {
     }
 
     pub fn retain_terminal_receipt(&self, issue: u64) -> Result<TerminalReceipt> {
+        let _terminal_repair_lock = self.terminal_repair_lock()?;
         let _lock = self.lock(issue)?;
-        self.recover_if_needed(issue)?;
+        self.recover_with_terminal_lock(issue)?;
         let mut record = self.load_record(issue)?;
         let mut cards = self.load_cards(issue)?;
         let receipt_ref = format!("csdlc-v2/closeout/{issue}.json");
@@ -561,26 +1162,42 @@ impl Store {
                 "terminal reconciliation requires the declared dedicated branch and worktree",
             ));
         }
+        let _terminal_repair_lock = self.terminal_repair_lock()?;
         let _lock = self.lock(request.issue)?;
-        self.recover_if_needed(request.issue)?;
-        let local = self.load_record(request.issue)?;
-        if local.initialization_digest != request.expected_initialization_digest {
-            return Err(V2Error::new(
-                ErrorCode::StaleDigest,
-                "local initialization digest differs from reconciliation request",
-            ));
-        }
+        self.recover_with_terminal_lock(request.issue)?;
         let mut receipt = self
             .load_terminal_receipt(request.issue)?
             .ok_or_else(|| V2Error::new(ErrorCode::InvalidInput, "terminal receipt missing"))?;
-        if receipt.initialization_digest != local.initialization_digest
-            || receipt.repository != local.repository
-        {
+        if receipt.issue != request.issue {
             return Err(V2Error::new(
                 ErrorCode::ReconciliationRequired,
-                "terminal receipt identity differs from local issue",
+                "terminal receipt issue differs from reconciliation request",
             ));
         }
+        if receipt.initialization_digest != request.expected_initialization_digest {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "terminal receipt initialization digest differs from reconciliation request",
+            ));
+        }
+        let issue_dir = self.issue_dir(request.issue);
+        let local = match self.load_record(request.issue) {
+            Ok(local) => {
+                if receipt.initialization_digest != local.initialization_digest
+                    || receipt.repository != local.repository
+                {
+                    return Err(V2Error::new(
+                        ErrorCode::ReconciliationRequired,
+                        "terminal receipt identity differs from local issue",
+                    ));
+                }
+                local
+            }
+            Err(error) if error.code == ErrorCode::Io && !issue_dir.exists() => {
+                receipt.record.clone()
+            }
+            Err(error) => return Err(error),
+        };
         let requested_follow_ups = request
             .follow_ups
             .iter()
@@ -604,16 +1221,20 @@ impl Store {
             }
             _ => BTreeSet::new(),
         };
+        let local_cards = match self.load_cards(request.issue) {
+            Ok(cards) => Some(cards),
+            Err(error) if !issue_dir.exists() => None,
+            Err(error) => return Err(error),
+        };
         let local_integrity = (|| -> Result<bool> {
             verify_record(&local)?;
-            let current_cards = self.load_cards(request.issue)?;
+            let Some(current_cards) = local_cards.as_ref() else {
+                return Ok(false);
+            };
             let mut checked = local.clone();
-            hydrate_projections(&mut checked, &current_cards)?;
-            Ok(checked.digest == record_digest(&checked)?
-                && checked.digest == local.digest
-                && checked.cards == receipt.record.cards)
-        })()
-        .unwrap_or(false);
+            hydrate_projections(&mut checked, current_cards)?;
+            Ok(checked.digest == record_digest(&checked)? && checked.digest == local.digest)
+        })()?;
         if local.phase == LifecyclePhase::ClosedOut
             && local.terminal == receipt.record.terminal
             && local.publication.as_ref().is_some_and(|publication| {
@@ -629,8 +1250,50 @@ impl Store {
         {
             return Ok(local);
         }
-        let mut projection = receipt.record;
-        let mut cards = receipt.cards;
+        // A complete, valid tracked terminal projection may contain newer
+        // append-only audit provenance than the machine-local receipt. Preserve
+        // that history and refresh the receipt from it; use the receipt as the
+        // recovery authority only when the tracked projection is absent,
+        // incomplete, or invalid.
+        let local_cards_match_receipt_semantics = local_cards.as_ref().is_some_and(|values| {
+            let mut local_values = values.clone();
+            let mut receipt_values = receipt.cards.clone();
+            for card in local_values.values_mut() {
+                card.identity.generation = 0;
+            }
+            for card in receipt_values.values_mut() {
+                card.identity.generation = 0;
+            }
+            local_values == receipt_values
+        });
+        let prefer_local = local_integrity
+            && local.phase == LifecyclePhase::ClosedOut
+            && local.claim.is_none()
+            && local.terminal == receipt.record.terminal
+            && local_cards_match_receipt_semantics;
+        let (mut projection, mut cards) = if prefer_local {
+            (local.clone(), local_cards.expect("validated local cards"))
+        } else {
+            (receipt.record, receipt.cards)
+        };
+        if local_integrity
+            && local.phase == LifecyclePhase::ClosedOut
+            && local.claim.is_none()
+            && local.terminal == projection.terminal
+        {
+            for (retained, tracked) in projection.audit.iter_mut().zip(local.audit.iter()) {
+                if retained.sequence != tracked.sequence
+                    || retained.generation != tracked.generation
+                    || retained.operation != tracked.operation
+                {
+                    break;
+                }
+                // Sequence, generation, and operation identify the same durable
+                // event. Preserve the tracked actor/reason provenance when an
+                // older machine-local receipt retained different attribution.
+                *retained = tracked.clone();
+            }
+        }
         if let (Some(publication), Some(terminal)) = (
             projection.publication.as_mut(),
             projection.terminal.as_ref(),
@@ -743,13 +1406,6 @@ impl Store {
         receipt_lock.lock_exclusive()?;
         let original_receipt = fs::read(&receipt_path)?;
         drop(receipt_lock);
-        self.commit_with_authored(
-            request.issue,
-            &projection,
-            &cards,
-            false,
-            Some(&retained_artifacts),
-        )?;
         receipt.record = projection.clone();
         receipt.cards = cards.clone();
         receipt.authored_artifacts = retained_artifacts.clone();
@@ -766,6 +1422,7 @@ impl Store {
             original_receipt: Some(original_receipt),
             target_receipt,
         };
+        Self::maybe_interrupt_terminal_transaction(request.issue, "before_journal")?;
         self.write_terminal_transaction_journal(&journal)?;
         Self::maybe_interrupt_terminal_transaction(request.issue, "after_journal")?;
         if let Err(error) = self.commit_with_authored(
@@ -816,7 +1473,7 @@ impl Store {
         Ok(projection)
     }
 
-    fn recover_if_needed(&self, issue: u64) -> Result<()> {
+    fn recover_local_transaction(&self, issue: u64) -> Result<()> {
         let current = self.issue_dir(issue);
         let backup = self.interrupted_backup(issue);
         let staging = self.staging_dir(issue);
@@ -826,6 +1483,22 @@ impl Store {
         if staging.exists() {
             fs::remove_dir_all(staging)?;
         }
+        Ok(())
+    }
+
+    fn recover_if_needed(&self, issue: u64) -> Result<()> {
+        self.recover_local_transaction(issue)?;
+        if self.terminal_transaction_path(issue)?.is_file() {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "terminal transaction recovery requires the shared terminal lock",
+            ));
+        }
+        Ok(())
+    }
+
+    fn recover_with_terminal_lock(&self, issue: u64) -> Result<()> {
+        self.recover_local_transaction(issue)?;
         self.recover_terminal_transaction(issue)?;
         Ok(())
     }
@@ -1552,21 +2225,6 @@ pub fn approve_design(store: &Store, request: ApproveDesignRequest) -> Result<Is
             "design reviewer is required",
         ));
     }
-    let initial_approval = record.phase == LifecyclePhase::Initialized
-        && matches!(
-            record.design_review,
-            DesignReview::Pending | DesignReview::ChangesRequired { .. }
-        );
-    let reapproval = matches!(
-        record.phase,
-        LifecyclePhase::Bound | LifecyclePhase::Implemented
-    );
-    if !initial_approval && !reapproval {
-        return Err(V2Error::new(
-            ErrorCode::InvalidTransition,
-            "design approval is allowed only before readiness or during bound/implemented reapproval",
-        ));
-    }
     record
         .claim
         .as_ref()
@@ -1576,6 +2234,34 @@ pub fn approve_design(store: &Store, request: ApproveDesignRequest) -> Result<Is
     verify_card_projections(store, &record, &cards)?;
     let design_digest = digest(&fs::read(store.root.join(&record.design_path))?);
     let diagram_digest = digest(&fs::read(store.root.join(&record.diagram_path))?);
+    let initial_approval = record.phase == LifecyclePhase::Initialized
+        && matches!(
+            record.design_review,
+            DesignReview::Pending | DesignReview::ChangesRequired { .. }
+        );
+    let initialized_reapproval = record.phase == LifecyclePhase::Initialized
+        && matches!(record.design_review, DesignReview::Approved { .. })
+        && [CardKind::Spp, CardKind::Vpp]
+            .iter()
+            .any(|kind| match &cards[kind].content {
+                CardContent::Spp(values) => {
+                    values.design_digest != design_digest || values.diagram_digest != diagram_digest
+                }
+                CardContent::Vpp(values) => {
+                    values.design_digest != design_digest || values.diagram_digest != diagram_digest
+                }
+                _ => unreachable!("design-bearing card"),
+            });
+    let lifecycle_reapproval = matches!(
+        record.phase,
+        LifecyclePhase::Bound | LifecyclePhase::Implemented
+    );
+    if !initial_approval && !initialized_reapproval && !lifecycle_reapproval {
+        return Err(V2Error::new(
+            ErrorCode::InvalidTransition,
+            "design approval requires pending initialized review, stale initialized approved inputs, or bound/implemented reapproval",
+        ));
+    }
     for kind in [CardKind::Spp, CardKind::Vpp] {
         match &mut cards.get_mut(&kind).expect("card").content {
             CardContent::Spp(values) => {
@@ -1604,7 +2290,9 @@ pub fn approve_design(store: &Store, request: ApproveDesignRequest) -> Result<Is
         sequence: record.audit.len() as u64 + 1,
         generation: record.generation,
         actor: request.reviewer,
-        reason: if reapproval {
+        reason: if initialized_reapproval {
+            "reapprove stale initialized issue design"
+        } else if lifecycle_reapproval {
             "reapprove changed issue design"
         } else {
             "approve completed issue design"
@@ -2437,4 +3125,265 @@ pub(crate) fn now_seconds() -> Result<u64> {
 fn enum_iterator() -> impl Iterator<Item = CardKind> {
     use strum::IntoEnumIterator;
     CardKind::iter()
+}
+
+fn complete_terminal_plan_step(
+    cards: &mut BTreeMap<CardKind, CardValues>,
+    step_id: &str,
+) -> Result<()> {
+    let spp = match &mut cards.get_mut(&CardKind::Spp).expect("SPP").content {
+        CardContent::Spp(values) => values,
+        _ => unreachable!("SPP card content"),
+    };
+    let step = spp
+        .steps
+        .iter_mut()
+        .find(|step| step.id == step_id)
+        .ok_or_else(|| {
+            V2Error::new(ErrorCode::InvalidInput, "terminal plan step does not exist")
+        })?;
+    complete_step_status(&mut step.status)
+}
+
+fn replace_terminal_sor_artifact(
+    cards: &mut BTreeMap<CardKind, CardValues>,
+    stale_ref: &str,
+    retained_ref: &str,
+) -> Result<()> {
+    let sor = match &mut cards.get_mut(&CardKind::Sor).expect("SOR").content {
+        CardContent::Sor(values) => values,
+        _ => unreachable!("SOR card content"),
+    };
+    let stale_count = sor
+        .artifacts
+        .iter()
+        .filter(|artifact| artifact.as_str() == stale_ref)
+        .count();
+    if stale_count != 1 {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "terminal SOR artifact repair requires exactly one stale reference",
+        ));
+    }
+    if sor
+        .artifacts
+        .iter()
+        .any(|artifact| artifact == retained_ref)
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidTransition,
+            "terminal SOR artifact replacement is already present",
+        ));
+    }
+    *sor.artifacts
+        .iter_mut()
+        .find(|artifact| artifact.as_str() == stale_ref)
+        .expect("count checked") = retained_ref.to_owned();
+    Ok(())
+}
+
+fn claim_covers_issue(claim: &Claim, issue: u64) -> bool {
+    let target = format!(".csdlc/issues/{issue}");
+    claim
+        .protected_paths
+        .iter()
+        .any(|path| path.trim_end_matches('/') == target)
+}
+
+fn complete_step_status(status: &mut StepStatus) -> Result<()> {
+    if !matches!(*status, StepStatus::Pending | StepStatus::InProgress) {
+        return Err(V2Error::new(
+            ErrorCode::InvalidTransition,
+            "terminal plan repair only allows forward completion",
+        ));
+    }
+    *status = StepStatus::Completed;
+    Ok(())
+}
+
+fn valid_mermaid_diagram(diagram: &str) -> bool {
+    let first = diagram
+        .lines()
+        .find(|line| !line.trim().is_empty())
+        .unwrap_or_default()
+        .trim();
+    (first.starts_with("flowchart ")
+        || first == "stateDiagram-v2"
+        || first.starts_with("sequenceDiagram"))
+        && diagram.lines().count() >= 2
+}
+
+#[cfg(test)]
+mod terminal_design_repair_tests {
+    use super::*;
+
+    #[test]
+    fn terminal_design_repair_rejects_incomplete_authority_before_io() {
+        let root = tempfile::tempdir().expect("temp root");
+        let error = Store::new(root.path())
+            .repair_terminal_design(TerminalDesignRepairRequest {
+                authority_issue: 5487,
+                target_issue: 5467,
+                expected_authority_generation: 1,
+                expected_authority_digest: String::new(),
+                expected_target_generation: 18,
+                expected_target_digest: "target".into(),
+                expected_receipt_digest: "receipt".into(),
+                authority_claim_id: "claim".into(),
+                actor: "codex".into(),
+                reviewer: "reviewer".into(),
+                source_design_path: "design.md".into(),
+                source_diagram_path: "diagram.mmd".into(),
+                expected_design_digest: "design".into(),
+                expected_diagram_digest: "diagram".into(),
+                fail_after_stage: None,
+            })
+            .expect_err("missing authority digest must fail closed");
+        assert_eq!(error.code.to_string(), "invalid_input");
+    }
+
+    #[test]
+    fn terminal_design_repair_mermaid_guard_is_fail_closed() {
+        assert!(valid_mermaid_diagram("flowchart LR\n  A-->B\n"));
+        assert!(!valid_mermaid_diagram("not mermaid\n  A-->B\n"));
+        assert!(!valid_mermaid_diagram("flowchart LR\n"));
+    }
+
+    #[test]
+    fn terminal_plan_repair_rejects_incomplete_authority_before_io() {
+        let root = tempfile::tempdir().expect("temp root");
+        let error = Store::new(root.path())
+            .repair_terminal_plan_step(TerminalPlanStepRepairRequest {
+                authority_issue: 5518,
+                target_issue: 5516,
+                expected_authority_generation: 0,
+                expected_authority_digest: String::new(),
+                expected_target_generation: 18,
+                expected_target_digest: "target".into(),
+                expected_receipt_digest: "receipt".into(),
+                authority_claim_id: "claim".into(),
+                actor: "codex".into(),
+                step_id: "S3".into(),
+                fail_after_stage: None,
+            })
+            .expect_err("missing authority digest must fail closed");
+        assert_eq!(error.code.to_string(), "invalid_input");
+    }
+
+    #[test]
+    fn terminal_plan_repair_status_is_forward_only() {
+        for initial in [StepStatus::Pending, StepStatus::InProgress] {
+            let mut status = initial;
+            complete_step_status(&mut status).expect("forward completion");
+            assert_eq!(status, StepStatus::Completed);
+        }
+        let mut completed = StepStatus::Completed;
+        let error = complete_step_status(&mut completed).expect_err("no rewrite");
+        assert_eq!(error.code.to_string(), "invalid_transition");
+    }
+
+    #[test]
+    fn terminal_plan_repair_requires_exact_target_scope() {
+        let mut claim = Claim {
+            id: "claim".into(),
+            owner: "agent".into(),
+            generation: 0,
+            acquired_unix_seconds: 1,
+            expires_unix_seconds: u64::MAX,
+            heartbeat_unix_seconds: 1,
+            branch: "issue".into(),
+            worktree: ".".into(),
+            protected_paths: vec![".csdlc/issues/5517".into()],
+            purpose: "repair".into(),
+        };
+        assert!(!claim_covers_issue(&claim, 5516));
+        claim.protected_paths.push(".csdlc/issues/5516/".into());
+        assert!(claim_covers_issue(&claim, 5516));
+    }
+
+    #[test]
+    fn terminal_sor_artifact_repair_rejects_incomplete_authority_before_io() {
+        let root = tempfile::tempdir().expect("temp root");
+        let error = Store::new(root.path())
+            .repair_terminal_sor_artifact(TerminalSorArtifactRepairRequest {
+                authority_issue: 5527,
+                target_issue: 5390,
+                expected_authority_generation: 0,
+                expected_authority_digest: String::new(),
+                expected_target_generation: 39,
+                expected_target_digest: "target".into(),
+                expected_receipt_digest: "receipt".into(),
+                authority_claim_id: "claim".into(),
+                actor: "codex".into(),
+                stale_ref: ".csdlc/issues/5390/diagram.mmd".into(),
+                retained_ref: ".csdlc/issues/5390/retained/diagram.mmd".into(),
+                expected_artifact_digest: "diagram".into(),
+                fail_after_stage: None,
+            })
+            .expect_err("missing authority digest must fail closed");
+        assert_eq!(error.code.to_string(), "invalid_input");
+    }
+
+    #[test]
+    fn terminal_sor_artifact_replacement_is_exact_and_nonduplicating() {
+        let mut cards = initial_cards(
+            1,
+            "example/repo",
+            "docs/design.md",
+            "design",
+            "docs/diagram.mmd",
+            "diagram",
+            InitialCardInput {
+                title: "test".into(),
+                slug: "test".into(),
+                version: "v0.91.7".into(),
+                goal: "test".into(),
+                required_outcome: "test".into(),
+                declared_scope: vec!["test".into()],
+                authority_boundary: vec!["test".into()],
+                task_boundary: "test".into(),
+                deliverables: vec!["test".into()],
+                acceptance_criteria: vec!["test".into()],
+                dependencies: vec!["test".into()],
+                repo_inputs: vec!["test".into()],
+                non_goals: vec!["test".into()],
+                plan_summary: "test".into(),
+                steps: vec![crate::cards::PlanStep {
+                    id: "S1".into(),
+                    action: "test".into(),
+                    acceptance_ids: vec!["AC-1".into()],
+                    status: StepStatus::Pending,
+                }],
+                invariants: vec!["test".into()],
+                risks: vec!["test".into()],
+                planning_profile: crate::cards::PlanningProfile::Small,
+                stop_conditions: vec!["test".into()],
+                validation_lanes: vec![crate::cards::ValidationLane {
+                    lane: "test".into(),
+                    proof_role: "test".into(),
+                    acceptance_ids: vec!["AC-1".into()],
+                    deterministic: true,
+                    resource_profile: crate::cards::ResourceProfile::Small,
+                    budget_seconds: 1,
+                    budget_tokens: 1,
+                    argv: vec!["test".into()],
+                    parallel_group: "test".into(),
+                    defer_reason: None,
+                }],
+                failure_policy: "test".into(),
+                review_prompts: vec!["test".into()],
+            },
+        )
+        .expect("cards");
+        let CardContent::Sor(sor) = &mut cards.get_mut(&CardKind::Sor).unwrap().content else {
+            panic!("SOR");
+        };
+        sor.artifacts = vec!["old".into()];
+        replace_terminal_sor_artifact(&mut cards, "old", "retained").expect("replacement");
+        let CardContent::Sor(sor) = &cards[&CardKind::Sor].content else {
+            panic!("SOR");
+        };
+        assert_eq!(sor.artifacts, vec!["retained"]);
+        assert!(replace_terminal_sor_artifact(&mut cards, "old", "retained").is_err());
+    }
 }

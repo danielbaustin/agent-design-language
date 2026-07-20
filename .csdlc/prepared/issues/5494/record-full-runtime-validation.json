@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 28,
+  "expected_digest": "c3a673683ee28b4f89a098db3b7a5cea2c6582930d70d8152bddeec1f69c995a",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The complete independent Runtime v3 crate remains green after authentication remediation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl-runtime/Cargo.toml"],
+      "purpose": "Prove all Runtime v3 behavior and the independent-crate boundary after the review fixes",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 124 Runtime v3 unit tests plus 1 independence test passed"
+    }
+  }
+}

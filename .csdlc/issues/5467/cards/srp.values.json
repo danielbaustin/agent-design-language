@@ -7,9 +7,9 @@
     "title": "Repair unreachable backend-snapshot contract assertions",
     "slug": "backend-snapshot-contract",
     "version": "v0.91.7",
-    "generation": 18
+    "generation": 23
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

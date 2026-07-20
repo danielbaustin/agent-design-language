@@ -1,5 +1,6 @@
 use super::*;
 use reqwest::Url;
+use std::net::IpAddr;
 
 pub(super) fn cfg_str<'a>(cfg: &'a HashMap<String, Value>, key: &str) -> Option<&'a str> {
     cfg.get(key).and_then(|v| v.as_str()).map(str::trim)
@@ -23,10 +24,14 @@ fn endpoint_host(endpoint: &str) -> Option<String> {
 }
 
 fn is_loopback_endpoint(endpoint: &str) -> bool {
-    matches!(
-        endpoint_host(endpoint).as_deref(),
-        Some("localhost") | Some("127.0.0.1") | Some("::1")
-    )
+    let Some(host) = endpoint_host(endpoint) else {
+        return false;
+    };
+    let host = host
+        .strip_prefix('[')
+        .and_then(|value| value.strip_suffix(']'))
+        .unwrap_or(&host);
+    host == "localhost" || host.parse::<IpAddr>().is_ok_and(|addr| addr.is_loopback())
 }
 
 fn is_trusted_vendor_endpoint(endpoint: &str, trusted_hosts: &[&str]) -> bool {
@@ -46,6 +51,17 @@ pub(super) fn validate_vendor_credential_endpoint(
     default_auth_env: &str,
     trusted_hosts: &[&str],
 ) -> Result<()> {
+    if Url::parse(endpoint)
+        .ok()
+        .is_some_and(|url| url.scheme() == "http" && !is_loopback_endpoint(endpoint))
+    {
+        return Err(invalid_config(
+            provider_label,
+            format!(
+                "refusing to send {auth_env} credentials to plaintext non-loopback endpoint '{endpoint}'"
+            ),
+        ));
+    }
     if is_loopback_endpoint(endpoint)
         || is_trusted_vendor_endpoint(endpoint, trusted_hosts)
         || cfg_bool(&spec.config, "trust_custom_endpoint", provider_label)?

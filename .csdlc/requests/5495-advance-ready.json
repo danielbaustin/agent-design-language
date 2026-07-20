@@ -1,0 +1,10 @@
+{
+  "issue": 5495,
+  "card": "sip",
+  "expected_generation": 0,
+  "expected_digest": "cd9c7db7d8482844a43ae37daf060763fbecc59ac11b01ae70d7c1c75bf91bb6",
+  "claim_id": "claim-5495-publication-metadata",
+  "actor": "codex",
+  "reason": "Bootstrap cards and design are complete; advance to ready for local binding.",
+  "operation": {"operation":"advance_phase","phase":"ready"}
+}

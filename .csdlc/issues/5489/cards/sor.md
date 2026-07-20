@@ -1,0 +1,83 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5489
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: complete
+
+## Summary
+
+Fixed the v0.91.8 wave readiness factory so executable sidecar issues #5343 and #5347 are included in the missing-projection set before implementation can start.
+
+## Artifacts
+
+- docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md
+- docs/milestones/v0.91.8/SPRINT_PLAN_v0.91.8.md
+- docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml
+- docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md
+- docs/milestones/v0.91.8/WBS_v0.91.8.md
+- docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml
+
+## Execution
+
+- Add planned-only PARALLEL_EXECUTION_PLAN_v0.91.8.md
+- Link the parallel execution plan from SPRINT_PLAN_v0.91.8.md
+- Promote WP-10A #5497 into wp_issue_map and work_packages while keeping #5498-#5502 as children
+- Add WP-09 provider child #5526 and C-SDLC acceptance inventory defects #5540/#5541/#5558
+- Update WBS and execution-readiness so WP-11 waits for WP-10 and completed WP-10A live proof
+- Update deletion readiness so WP-13 waits for WP-12 plus current #5358/#5361 acceptance
+- Add #5343 to parallel_execution.card_factory.missing_projection_issues
+- Add #5347 to parallel_execution.card_factory.missing_projection_issues
+
+## Validation
+
+[
+  {
+    "command": [
+      "git diff --check",
+      "ruby -e 'require \"yaml\"; YAML.safe_load(File.read(\"docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml\"), aliases: true)'",
+      "ruby targeted WP-10A/WP-11/WP-13 dependency assertions",
+      "rg stale-wording and ordering checks",
+      "Fable 5 attempt 001: blocked due missing evidence in prompt",
+      "Fable 5 attempt 002: failed provider_empty_text_output with full evidence",
+      "Fable 5 attempt 003: failed provider_empty_text_output with smaller evidence"
+    ],
+    "purpose": "Prove touched planning docs parse cleanly, the new parallel plan is included in review scope, WP-10A and deletion dependency truth are represented consistently, stale #5383 wording is absent, and external shadow review truth is fail-closed rather than fabricated.",
+    "outcome": "passed",
+    "evidence_ref": "local focused validation output; uncommitted .adl/local-artifacts/fable5-review-5489/ result and run logs retained locally only"
+  },
+  {
+    "command": [
+      "git diff --check",
+      "ruby -e 'require \"yaml\"; YAML.safe_load(File.read(\"docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml\"), aliases: true)'",
+      "ruby targeted assertions for #5343/#5347 missing_projection_issues, WP-10A, WP-11, WP-13, and WIP controls",
+      "rg stale-wording checks"
+    ],
+    "purpose": "Prove the post-review fix keeps the v0.91.8 wave YAML parseable and includes every executable cutover/deletion sidecar in typed readiness gating.",
+    "outcome": "passed",
+    "evidence_ref": "local focused validation output in #5489 worktree"
+  }
+]
+
+## Integration
+
+merged
+
+## Publication
+
+Publication: closed
+
+Merge: merged
+
+## Closeout
+
+complete
+
+## Follow Ups
+
+- none

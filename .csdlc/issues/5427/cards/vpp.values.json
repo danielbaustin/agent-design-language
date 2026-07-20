@@ -7,7 +7,7 @@
     "title": "[v0.91.7][csdlc-v2][cards] Add typed repair for stale card identity metadata",
     "slug": "v0-91-7-typed-card-identity-repair",
     "version": "v0.91.7",
-    "generation": 10
+    "generation": 12
   },
   "status": "ready",
   "content": {
@@ -42,9 +42,9 @@
       "planned_validation_seconds": 1200,
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on malformed identity or partial projection; preserve prior canonical state and evidence.",
-      "design_ref": ".csdlc/prepared/issues/5427/design.md",
+      "design_ref": ".csdlc/issues/5427/retained/design.md",
       "design_digest": "466ae2bb60432db07310e17f7ee398b820574150f97cb39fecf67618d9d78f22",
-      "diagram_ref": ".csdlc/prepared/issues/5427/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5427/retained/diagram.mmd",
       "diagram_digest": "58fdfa7edeec79f2bb33de2b26a8aed64354afcf090b644eb45c884c842cae66"
     }
   }

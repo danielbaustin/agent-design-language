@@ -1,0 +1,13 @@
+{
+  "issue": 5514,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "89e31a6757284c4664b158dfabb6524c38766f16473936c1efa04783c836884f",
+  "claim_id": "claim-5514-complete-csm-coverage",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The P1 binary-ownership finding is fixed and the exact revision is review-clean.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

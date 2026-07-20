@@ -1,0 +1,15 @@
+{
+  "issue": 4647,
+  "expected_generation": 27,
+  "expected_digest": "7591d13bcb620f833561d9dc7c70055a527c4d3d5b0f54af23975208eb889a5d",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "reviewer": "subagent:019f7e00-3942-7ce3-b123-a8d6bbff9803",
+  "assigned_by": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "scope": [
+    ".csdlc/issues/4647",
+    ".csdlc/prepared/issues/4647",
+    "adl/src/provider/http_family.rs",
+    "adl/src/provider/http_family/tests.rs",
+    "adl/src/provider/local.rs"
+  ]
+}

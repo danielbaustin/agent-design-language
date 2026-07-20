@@ -1,0 +1,13 @@
+{
+  "issue": 4644,
+  "card": "srp",
+  "expected_generation": 11,
+  "expected_digest": "fd75147ebec1d41e279876afa81c39d28dfe0d59994989681b6a25da95621181",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The assigned exact-revision metadata review is complete, has no open findings, and is recorded in the SRP projection.",
+  "operation": {
+    "operation": "advance_status",
+    "status": "ready"
+  }
+}

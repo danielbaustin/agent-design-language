@@ -1,0 +1,69 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4641,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-14] Launch and v0.92 birthday handoff",
+    "slug": "v0-91-7-wp14-launch-v092-birthday-handoff",
+    "version": "v0.91.7",
+    "generation": 19
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "prep-doctor",
+          "proof_role": "Validate typed C-SDLC prep state and issue-local cards",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+            "--repo",
+            ".",
+            "--issue",
+            "4641"
+          ],
+          "parallel_group": "prep",
+          "defer_reason": null
+        },
+        {
+          "lane": "artifact-integrity",
+          "proof_role": "Validate future tracked artifacts are clean after execution",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "prep",
+          "defer_reason": "Run after execution artifacts are written"
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on stale live truth, missing retained evidence, overclaim, or dependency ambiguity.",
+      "design_ref": ".csdlc/issues/4641/retained/design.md",
+      "design_digest": "81201aebef52effe741c3ecf69e531133aec9526caf8823f13699bf10b210d1a",
+      "diagram_ref": ".csdlc/issues/4641/retained/diagram.mmd",
+      "diagram_digest": "b67777fae192af9512bdd1ebc5b12e541355b120c064c94fd13f7264863c9f3d"
+    }
+  }
+}

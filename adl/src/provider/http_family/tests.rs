@@ -1,5 +1,6 @@
 use super::*;
 use crate::model_identity::{ModelIdentityStrengthV1, ModelIdentityV1};
+use crate::provider::is_retryable_error;
 use crate::provider_substrate::{
     CapabilityModeV1, CapabilitySupportV1, ProviderCapabilitiesV1, ProviderInvocationTargetV1,
     ProviderTransportV1,
@@ -9,9 +10,25 @@ use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::net::TcpListener;
+use std::process::Command;
 use std::sync::{Arc, Mutex, OnceLock};
 use std::thread;
 use tiny_http::{Header, Response, Server};
+
+macro_rules! bedrock_invocation_record {
+    ($model:expr, $prompt:expr, $output:expr, $http_status:expr, $profile:expr, $region:expr, $account_id_sha256:expr, $account_profile_validation_status:expr $(,)?) => {
+        BedrockInvocationRecord {
+            model: $model,
+            prompt: $prompt,
+            output: $output,
+            http_status: $http_status,
+            profile: $profile,
+            region: $region,
+            account_id_sha256: $account_id_sha256,
+            account_profile_validation_status: $account_profile_validation_status,
+        }
+    };
+}
 
 #[derive(Debug, Clone)]
 struct CapturedRequest {
@@ -211,6 +228,43 @@ fn bedrock_error_sanitizer_removes_signed_aws_values() {
 }
 
 #[test]
+fn bedrock_error_sanitizer_removes_arns_and_account_ids() {
+    let sanitized = sanitize_bedrock_error(
+        "AccessDeniedException: User arn:aws:iam::123456789012:role/adl-prod denied bedrock:InvokeModel for account 123456789012 by resource policy",
+    );
+
+    assert!(sanitized.contains("AccessDeniedException"));
+    assert!(sanitized.contains("denied bedrock:InvokeModel"));
+    assert!(sanitized.contains("resource policy"));
+    assert!(sanitized.contains("<redacted-aws-arn>"));
+    assert!(sanitized.contains("<redacted-aws-account-id>"));
+    assert!(!sanitized.contains("arn:aws:"));
+    assert!(!sanitized.contains("123456789012"));
+    assert!(!sanitized.contains("adl-prod"));
+}
+
+#[test]
+fn bedrock_error_sanitizer_removes_partition_arns() {
+    let sanitized = sanitize_bedrock_error(
+        "AccessDeniedException: principals arn:aws-us-gov:iam::123456789012:role/gov-role, arn:aws-cn:iam::210987654321:role/cn-role, and arn:aws-iso:iam::111122223333:role/iso-role denied bedrock:InvokeModel",
+    );
+
+    assert!(sanitized.contains("AccessDeniedException"));
+    assert!(sanitized.contains("principals"));
+    assert!(sanitized.contains("denied bedrock:InvokeModel"));
+    assert!(sanitized.contains("<redacted-aws-arn>"));
+    assert!(!sanitized.contains("arn:aws-us-gov:"));
+    assert!(!sanitized.contains("arn:aws-cn:"));
+    assert!(!sanitized.contains("arn:aws-iso:"));
+    assert!(!sanitized.contains("123456789012"));
+    assert!(!sanitized.contains("210987654321"));
+    assert!(!sanitized.contains("111122223333"));
+    assert!(!sanitized.contains("gov-role"));
+    assert!(!sanitized.contains("cn-role"));
+    assert!(!sanitized.contains("iso-role"));
+}
+
+#[test]
 fn bedrock_invocation_artifact_records_profile_region_and_account_hash() {
     let _guard = env_lock();
     let artifact = std::env::temp_dir().join(format!(
@@ -223,7 +277,7 @@ fn bedrock_invocation_artifact_records_profile_region_and_account_hash() {
     let _ = fs::remove_dir(invocation_lock_path(&artifact));
     env::set_var("ADL_PROVIDER_INVOCATIONS_PATH", &artifact);
 
-    write_bedrock_invocation_record(
+    write_bedrock_invocation_record(bedrock_invocation_record!(
         "amazon.nova-lite-v1:0",
         "hello bedrock",
         "bedrock ok",
@@ -231,9 +285,10 @@ fn bedrock_invocation_artifact_records_profile_region_and_account_hash() {
         "agent-logic-admin",
         "us-west-2",
         Some("account-hash"),
-    )
+        "account_hash_verified",
+    ))
     .expect("first bedrock invocation record should write");
-    write_bedrock_invocation_record(
+    write_bedrock_invocation_record(bedrock_invocation_record!(
         "amazon.nova-pro-v1:0",
         "second",
         "ok",
@@ -241,7 +296,8 @@ fn bedrock_invocation_artifact_records_profile_region_and_account_hash() {
         "agent-logic-admin",
         "us-east-1",
         None,
-    )
+        "account_hash_verified",
+    ))
     .expect("second bedrock invocation record should append");
 
     let payload: serde_json::Value =
@@ -263,7 +319,7 @@ fn bedrock_invocation_artifact_records_profile_region_and_account_hash() {
     assert_eq!(invocations[0]["account_id_sha256"], "account-hash");
     assert_eq!(
         invocations[0]["account_profile_validation_status"],
-        "sts_verified"
+        "account_hash_verified"
     );
     assert_eq!(invocations[1]["account_id_sha256"], serde_json::Value::Null);
 
@@ -285,7 +341,7 @@ fn bedrock_invocation_artifact_rejects_invalid_existing_payloads() {
     env::set_var("ADL_PROVIDER_INVOCATIONS_PATH", &artifact);
 
     fs::write(&artifact, b"{not-json").expect("write invalid json");
-    let err = write_bedrock_invocation_record(
+    let err = write_bedrock_invocation_record(bedrock_invocation_record!(
         "amazon.nova-lite-v1:0",
         "prompt",
         "output",
@@ -293,14 +349,15 @@ fn bedrock_invocation_artifact_rejects_invalid_existing_payloads() {
         "agent-logic-admin",
         "us-west-2",
         Some("account-hash"),
-    )
+        "account_hash_verified",
+    ))
     .expect_err("invalid existing artifact should fail closed");
     assert!(err
         .to_string()
         .contains("provider invocation artifact is invalid JSON"));
 
     fs::write(&artifact, br#"{"schema_version":"x"}"#).expect("write missing array");
-    let err = write_bedrock_invocation_record(
+    let err = write_bedrock_invocation_record(bedrock_invocation_record!(
         "amazon.nova-lite-v1:0",
         "prompt",
         "output",
@@ -308,7 +365,8 @@ fn bedrock_invocation_artifact_rejects_invalid_existing_payloads() {
         "agent-logic-admin",
         "us-west-2",
         None,
-    )
+        "account_hash_verified",
+    ))
     .expect_err("missing invocations array should fail closed");
     assert!(err
         .to_string()
@@ -319,6 +377,149 @@ fn bedrock_invocation_artifact_rejects_invalid_existing_payloads() {
 }
 
 #[test]
+#[cfg(unix)]
+fn bedrock_invocation_artifact_read_io_failure_is_non_retryable_partial_success_unknown() {
+    let _guard = env_lock();
+    use std::os::unix::fs::PermissionsExt;
+
+    let temp_root = std::env::temp_dir().join(format!(
+        "adl-bedrock-provider-invocation-read-{}-{}",
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("unix epoch")
+            .as_nanos()
+    ));
+    fs::create_dir_all(&temp_root).expect("temp root");
+    let artifact = temp_root.join("invocations.json");
+    let prev_artifact = env::var_os("ADL_PROVIDER_INVOCATIONS_PATH");
+    let _ = fs::remove_dir(invocation_lock_path(&artifact));
+    fs::write(&artifact, br#"{"invocations":[]}"#).expect("artifact seed");
+    let mut permissions = fs::metadata(&artifact)
+        .expect("artifact metadata")
+        .permissions();
+    permissions.set_mode(0o000);
+    fs::set_permissions(&artifact, permissions).expect("remove artifact read permissions");
+    env::set_var("ADL_PROVIDER_INVOCATIONS_PATH", &artifact);
+
+    let err = write_bedrock_invocation_record(bedrock_invocation_record!(
+        "amazon.nova-lite-v1:0",
+        "prompt-after-provider",
+        "output-after-provider",
+        200,
+        "agent-logic-admin",
+        "us-west-2",
+        Some("account-hash"),
+        "account_hash_verified",
+    ))
+    .expect_err("post-success artifact read failure should fail closed");
+    assert!(
+        err.to_string()
+            .contains("partial_success_unknown_invocation_record_io_failure"),
+        "post-success Bedrock artifact read I/O failure must be partial-success-unknown: {err}"
+    );
+    assert!(
+        !is_retryable_error(&err),
+        "post-success Bedrock artifact read I/O failure must not retry"
+    );
+
+    let mut permissions = fs::metadata(&artifact)
+        .expect("artifact metadata after failure")
+        .permissions();
+    permissions.set_mode(0o600);
+    fs::set_permissions(&artifact, permissions).expect("restore artifact permissions");
+    restore_env_var("ADL_PROVIDER_INVOCATIONS_PATH", prev_artifact);
+    fs::remove_dir_all(&temp_root).expect("cleanup temp root");
+}
+
+#[test]
+fn bedrock_invocation_artifact_write_io_failure_is_non_retryable_partial_success_unknown() {
+    let _guard = env_lock();
+    let temp_root = std::env::temp_dir().join(format!(
+        "adl-bedrock-provider-invocation-write-{}-{}",
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("unix epoch")
+            .as_nanos()
+    ));
+    fs::create_dir_all(&temp_root).expect("temp root");
+    let artifact = temp_root.join("invocations.json");
+    fs::create_dir(&artifact).expect("directory artifact path");
+    let prev_artifact = env::var_os("ADL_PROVIDER_INVOCATIONS_PATH");
+    let _ = fs::remove_dir(invocation_lock_path(&artifact));
+    env::set_var("ADL_PROVIDER_INVOCATIONS_PATH", &artifact);
+
+    let err = write_bedrock_invocation_record(bedrock_invocation_record!(
+        "amazon.nova-lite-v1:0",
+        "prompt-after-provider",
+        "output-after-provider",
+        200,
+        "agent-logic-admin",
+        "us-west-2",
+        Some("account-hash"),
+        "account_hash_verified",
+    ))
+    .expect_err("post-success artifact write failure should fail closed");
+    assert!(
+        err.to_string()
+            .contains("partial_success_unknown_invocation_record_io_failure"),
+        "post-success Bedrock artifact write I/O failure must be partial-success-unknown: {err}"
+    );
+    assert!(
+        !is_retryable_error(&err),
+        "post-success Bedrock artifact write I/O failure must not retry"
+    );
+
+    restore_env_var("ADL_PROVIDER_INVOCATIONS_PATH", prev_artifact);
+    fs::remove_dir_all(&temp_root).expect("cleanup temp root");
+}
+
+#[test]
+fn bedrock_invocation_artifact_create_dir_failure_is_non_retryable_partial_success_unknown() {
+    let _guard = env_lock();
+    let temp_root = std::env::temp_dir().join(format!(
+        "adl-bedrock-provider-invocation-create-dir-{}-{}",
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("unix epoch")
+            .as_nanos()
+    ));
+    fs::create_dir_all(&temp_root).expect("temp root");
+    let parent_file = temp_root.join("not-a-directory");
+    fs::write(&parent_file, b"blocks mkdir").expect("parent blocker file");
+    let artifact = parent_file.join("invocations.json");
+    let prev_artifact = env::var_os("ADL_PROVIDER_INVOCATIONS_PATH");
+    let _ = fs::remove_dir(invocation_lock_path(&artifact));
+    env::set_var("ADL_PROVIDER_INVOCATIONS_PATH", &artifact);
+
+    let err = write_bedrock_invocation_record(bedrock_invocation_record!(
+        "amazon.nova-lite-v1:0",
+        "prompt-after-provider",
+        "output-after-provider",
+        200,
+        "agent-logic-admin",
+        "us-west-2",
+        Some("account-hash"),
+        "account_hash_verified",
+    ))
+    .expect_err("post-success artifact directory creation failure should fail closed");
+    assert!(
+        err.to_string()
+            .contains("partial_success_unknown_invocation_record_io_failure"),
+        "post-success Bedrock artifact create-dir failure must be partial-success-unknown: {err}"
+    );
+    assert!(
+        !is_retryable_error(&err),
+        "post-success Bedrock artifact create-dir failure must not retry"
+    );
+
+    restore_env_var("ADL_PROVIDER_INVOCATIONS_PATH", prev_artifact);
+    fs::remove_dir_all(&temp_root).expect("cleanup temp root");
+}
+
+#[test]
 fn bedrock_constructor_and_helpers_cover_default_safe_paths() {
     let _guard = env_lock();
     let prev_profile = env::var_os("ADL_AWS_PROFILE");
@@ -326,11 +527,13 @@ fn bedrock_constructor_and_helpers_cover_default_safe_paths() {
     let prev_region = env::var_os("AWS_REGION");
     let prev_default_region = env::var_os("AWS_DEFAULT_REGION");
     let prev_artifact = env::var_os("ADL_PROVIDER_INVOCATIONS_PATH");
+    let prev_expected_account = env::var_os("ADL_AWS_BEDROCK_ACCOUNT_SHA256");
     env::remove_var("ADL_AWS_PROFILE");
     env::remove_var("AWS_PROFILE");
     env::remove_var("AWS_REGION");
     env::remove_var("AWS_DEFAULT_REGION");
     env::remove_var("ADL_PROVIDER_INVOCATIONS_PATH");
+    env::remove_var("ADL_AWS_BEDROCK_ACCOUNT_SHA256");
 
     let spec = adl::ProviderSpec {
         id: Some("bedrock_primary".to_string()),
@@ -358,6 +561,34 @@ fn bedrock_constructor_and_helpers_cover_default_safe_paths() {
     assert_eq!(provider.profile, DEFAULT_BEDROCK_PROFILE);
     assert_eq!(provider.max_tokens, 321);
     assert_eq!(provider.timeout_secs, None);
+    assert_eq!(provider.expected_account_sha256, None);
+
+    let env_hash = sha256_hex("env-agent-logic-account");
+    let config_hash = sha256_hex("config-agent-logic-account");
+    env::set_var(
+        "ADL_AWS_BEDROCK_ACCOUNT_SHA256",
+        env_hash.to_ascii_uppercase(),
+    );
+    let mut matching_spec = spec.clone();
+    matching_spec.config.insert(
+        "expected_account_sha256".to_string(),
+        json!(env_hash.clone()),
+    );
+    let matching_provider = AwsBedrockProvider::from_target(&matching_spec, &target)
+        .expect("matching env/config account pins should construct");
+    assert_eq!(
+        matching_provider.expected_account_sha256.as_deref(),
+        Some(env_hash.as_str())
+    );
+    let mut conflicting_spec = spec.clone();
+    conflicting_spec
+        .config
+        .insert("expected_account_sha256".to_string(), json!(config_hash));
+    let conflict = AwsBedrockProvider::from_target(&conflicting_spec, &target)
+        .expect_err("host env account pin must be authoritative");
+    assert!(conflict
+        .to_string()
+        .contains("ADL_AWS_BEDROCK_ACCOUNT_SHA256 is authoritative"));
 
     let fallback = extract_bedrock_nova_output_text(&json!({
         "outputText": " fallback bedrock text "
@@ -373,7 +604,7 @@ fn bedrock_constructor_and_helpers_cover_default_safe_paths() {
     assert_eq!(account_hash.len(), 64);
     assert!(account_hash.chars().all(|ch| ch.is_ascii_hexdigit()));
 
-    write_bedrock_invocation_record(
+    write_bedrock_invocation_record(bedrock_invocation_record!(
         "amazon.nova-lite-v1:0",
         "prompt",
         "output",
@@ -381,7 +612,8 @@ fn bedrock_constructor_and_helpers_cover_default_safe_paths() {
         DEFAULT_BEDROCK_PROFILE,
         DEFAULT_BEDROCK_REGION,
         None,
-    )
+        "account_hash_verified",
+    ))
     .expect("missing artifact path should be a no-op");
 
     restore_env_var("ADL_AWS_PROFILE", prev_profile);
@@ -389,6 +621,55 @@ fn bedrock_constructor_and_helpers_cover_default_safe_paths() {
     restore_env_var("AWS_REGION", prev_region);
     restore_env_var("AWS_DEFAULT_REGION", prev_default_region);
     restore_env_var("ADL_PROVIDER_INVOCATIONS_PATH", prev_artifact);
+    restore_env_var("ADL_AWS_BEDROCK_ACCOUNT_SHA256", prev_expected_account);
+}
+
+#[test]
+fn bedrock_account_identity_requires_operator_approved_hash() {
+    let observed = sha256_hex("123456789012");
+
+    verify_bedrock_account_identity(Some(&observed), Some(&observed))
+        .expect("matching account hash should verify");
+    verify_bedrock_account_identity(Some(&observed), Some(&observed.to_ascii_uppercase()))
+        .expect("uppercase expected account hash should normalize and verify");
+
+    let missing_expected = verify_bedrock_account_identity(Some(&observed), None)
+        .expect_err("missing expected account hash should fail closed");
+    assert!(missing_expected
+        .to_string()
+        .contains("requires operator-approved expected account hash"));
+
+    let missing_observed = verify_bedrock_account_identity(None, Some(&observed))
+        .expect_err("missing STS account should fail closed");
+    assert!(missing_observed
+        .to_string()
+        .contains("STS identity did not include an account id"));
+
+    let mismatch = verify_bedrock_account_identity(Some(&observed), Some(&sha256_hex("other")))
+        .expect_err("mismatched account should fail closed");
+    assert!(mismatch
+        .to_string()
+        .contains("does not match expected Agent Logic account hash"));
+
+    let malformed = verify_bedrock_account_identity(Some(&observed), Some("not-a-sha"))
+        .expect_err("malformed expected account hash should fail closed");
+    assert!(malformed
+        .to_string()
+        .contains("64-character SHA-256 hex digest"));
+}
+
+#[test]
+fn invocation_artifact_lock_child_process_helper() {
+    let Some(lock_path) = env::var_os("ADL_INVOCATION_LOCK_CHILD_PATH") else {
+        return;
+    };
+    let artifact = PathBuf::from(lock_path);
+    let marker =
+        PathBuf::from(env::var_os("ADL_INVOCATION_LOCK_CHILD_MARKER").expect("child marker env"));
+    let _lock = acquire_invocation_artifact_lock(&artifact).expect("child lock");
+    fs::write(marker, "locked").expect("child marker write");
+    std::thread::sleep(Duration::from_millis(50));
+    std::process::exit(0);
 }
 
 fn provider_spec(
@@ -1444,6 +1725,7 @@ fn invocation_artifact_and_http_constructor_error_paths_are_exercised() {
 
     let artifact = temp_root.join("invocations.json");
     let prev_artifact = env::var_os("ADL_PROVIDER_INVOCATIONS_PATH");
+    let prev_lock_timeout = env::var_os("ADL_INVOCATION_LOCK_TIMEOUT_MS");
     env::set_var("ADL_PROVIDER_INVOCATIONS_PATH", &artifact);
 
     write_native_invocation_record("openai", "gpt-test", "hello", "world", 200)
@@ -1509,9 +1791,130 @@ fn invocation_artifact_and_http_constructor_error_paths_are_exercised() {
         "concurrent writes should preserve every invocation entry"
     );
 
+    write_native_invocation_record("openai", "gpt-test", "after-lock", "recorded", 200)
+        .expect("advisory invocation lock should write after concurrent writers");
+    let recovered_payload: Value =
+        serde_json::from_slice(&std::fs::read(&artifact).expect("read recovered artifact"))
+            .expect("recovered artifact json");
+    assert_eq!(
+        recovered_payload["invocations"]
+            .as_array()
+            .expect("recovered invocations array")
+            .len(),
+        thread_count + 1
+    );
+
+    let stress_iterations = 25usize;
+    let contender_count = 8usize;
+    for iteration in 0..stress_iterations {
+        let active = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let max_seen = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let mut contender_handles = Vec::new();
+        for _ in 0..contender_count {
+            let artifact = artifact.clone();
+            let active = Arc::clone(&active);
+            let max_seen = Arc::clone(&max_seen);
+            contender_handles.push(std::thread::spawn(move || {
+                let _lock = acquire_invocation_artifact_lock(&artifact)?;
+                let now = active.fetch_add(1, std::sync::atomic::Ordering::SeqCst) + 1;
+                max_seen.fetch_max(now, std::sync::atomic::Ordering::SeqCst);
+                std::thread::sleep(Duration::from_millis(1));
+                active.fetch_sub(1, std::sync::atomic::Ordering::SeqCst);
+                std::io::Result::Ok(())
+            }));
+        }
+        for handle in contender_handles {
+            handle
+                .join()
+                .expect("lock contender thread should not panic")
+                .expect("lock contender should wait safely");
+        }
+        assert_eq!(
+            max_seen.load(std::sync::atomic::Ordering::SeqCst),
+            1,
+            "advisory invocation lock must preserve mutual exclusion in iteration {iteration}"
+        );
+    }
+
+    let held_lock = acquire_invocation_artifact_lock(&artifact).expect("held advisory lock");
+    env::set_var("ADL_INVOCATION_LOCK_TIMEOUT_MS", "5");
+    let native_timeout_err = write_native_invocation_record(
+        "openai",
+        "gpt-test",
+        "prompt-after-provider",
+        "output-after-provider",
+        200,
+    )
+    .expect_err("held lock should force native timeout classification");
+    assert!(
+        native_timeout_err
+            .to_string()
+            .contains("partial_success_unknown_invocation_record_lock_unavailable"),
+        "native timeout should be classified as non-retryable partial-success-unknown: {native_timeout_err}"
+    );
+    assert!(
+        native_timeout_err.to_string().contains("timed out"),
+        "native timeout cause should remain visible: {native_timeout_err}"
+    );
+    assert!(
+        !is_retryable_error(&native_timeout_err),
+        "native invocation artifact lock timeout after provider completion must be non-retryable"
+    );
+    let bedrock_timeout_err = write_bedrock_invocation_record(bedrock_invocation_record!(
+        "amazon.nova-lite-v1:0",
+        "prompt-after-provider",
+        "output-after-provider",
+        200,
+        DEFAULT_BEDROCK_PROFILE,
+        DEFAULT_BEDROCK_REGION,
+        Some("account-hash"),
+        "account_hash_verified",
+    ))
+    .expect_err("held lock should force timeout classification");
+    assert!(
+        bedrock_timeout_err
+            .to_string()
+            .contains("partial_success_unknown_invocation_record_lock_unavailable"),
+        "Bedrock timeout should be classified as non-retryable partial-success-unknown: {bedrock_timeout_err}"
+    );
+    assert!(
+        bedrock_timeout_err.to_string().contains("timed out"),
+        "Bedrock timeout cause should remain visible: {bedrock_timeout_err}"
+    );
+    assert!(
+        !is_retryable_error(&bedrock_timeout_err),
+        "Bedrock invocation artifact lock timeout after provider completion must be non-retryable"
+    );
+    drop(held_lock);
+
+    let child_artifact = temp_root.join("child-invocations.json");
+    let marker = temp_root.join("child-lock-marker");
+    let child_status = Command::new(env::current_exe().expect("current test executable"))
+        .arg("--exact")
+        .arg("provider::http_family::tests::invocation_artifact_lock_child_process_helper")
+        .arg("--nocapture")
+        .env("ADL_INVOCATION_LOCK_CHILD_PATH", &child_artifact)
+        .env("ADL_INVOCATION_LOCK_CHILD_MARKER", &marker)
+        .status()
+        .expect("spawn child lock helper");
+    assert!(
+        child_status.success(),
+        "child lock helper should exit cleanly"
+    );
+    assert!(
+        marker.exists(),
+        "child helper must prove it acquired the lock"
+    );
+    acquire_invocation_artifact_lock(&child_artifact)
+        .expect("OS must release advisory invocation lock after child process exits");
+
     match prev_artifact {
         Some(v) => env::set_var("ADL_PROVIDER_INVOCATIONS_PATH", v),
         None => env::remove_var("ADL_PROVIDER_INVOCATIONS_PATH"),
+    }
+    match prev_lock_timeout {
+        Some(v) => env::set_var("ADL_INVOCATION_LOCK_TIMEOUT_MS", v),
+        None => env::remove_var("ADL_INVOCATION_LOCK_TIMEOUT_MS"),
     }
 
     let target = provider_target(
@@ -1586,4 +1989,152 @@ fn invocation_artifact_and_http_constructor_error_paths_are_exercised() {
         .insert("trust_custom_endpoint".to_string(), json!(true));
     HttpProvider::from_target(&untrusted_bearer_spec, &target)
         .expect("explicitly trusted remote bearer endpoint should build");
+
+    let ipv6_loopback_target = provider_target(
+        "http",
+        "http://[::1]:11434/v1/complete".to_string(),
+        "local-model",
+    );
+    let ipv6_loopback_spec = provider_spec(
+        "http",
+        "http://[::1]:11434/v1/complete",
+        Some("HTTP_API_KEY"),
+        &[],
+    );
+    HttpProvider::from_target(&ipv6_loopback_spec, &ipv6_loopback_target)
+        .expect("bracketed IPv6 loopback bearer endpoint should be trusted as loopback");
+}
+
+#[test]
+#[cfg(unix)]
+fn native_invocation_artifact_read_io_failure_is_non_retryable_partial_success_unknown() {
+    let _guard = env_lock();
+    use std::os::unix::fs::PermissionsExt;
+
+    let temp_root = std::env::temp_dir().join(format!(
+        "adl-native-provider-invocation-read-{}-{}",
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("unix epoch")
+            .as_nanos()
+    ));
+    std::fs::create_dir_all(&temp_root).expect("temp root");
+    let artifact = temp_root.join("invocations.json");
+    let prev_artifact = env::var_os("ADL_PROVIDER_INVOCATIONS_PATH");
+    let _ = std::fs::remove_dir(invocation_lock_path(&artifact));
+    std::fs::write(&artifact, br#"{"invocations":[]}"#).expect("artifact seed");
+    let mut permissions = std::fs::metadata(&artifact)
+        .expect("artifact metadata")
+        .permissions();
+    permissions.set_mode(0o000);
+    std::fs::set_permissions(&artifact, permissions).expect("remove artifact read permissions");
+    env::set_var("ADL_PROVIDER_INVOCATIONS_PATH", &artifact);
+
+    let err = write_native_invocation_record(
+        "openai",
+        "gpt-test",
+        "prompt-after-provider",
+        "output-after-provider",
+        200,
+    )
+    .expect_err("post-success artifact read failure should fail closed");
+    assert!(
+        err.to_string()
+            .contains("partial_success_unknown_invocation_record_io_failure"),
+        "post-success native artifact read I/O failure must be partial-success-unknown: {err}"
+    );
+    assert!(
+        !is_retryable_error(&err),
+        "post-success native artifact read I/O failure must not retry"
+    );
+
+    let mut permissions = std::fs::metadata(&artifact)
+        .expect("artifact metadata after failure")
+        .permissions();
+    permissions.set_mode(0o600);
+    std::fs::set_permissions(&artifact, permissions).expect("restore artifact permissions");
+    restore_env_var("ADL_PROVIDER_INVOCATIONS_PATH", prev_artifact);
+    std::fs::remove_dir_all(&temp_root).expect("cleanup temp root");
+}
+
+#[test]
+fn native_invocation_artifact_write_io_failure_is_non_retryable_partial_success_unknown() {
+    let _guard = env_lock();
+    let temp_root = std::env::temp_dir().join(format!(
+        "adl-native-provider-invocation-write-{}-{}",
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("unix epoch")
+            .as_nanos()
+    ));
+    std::fs::create_dir_all(&temp_root).expect("temp root");
+    let artifact = temp_root.join("invocations.json");
+    std::fs::create_dir(&artifact).expect("directory artifact path");
+    let prev_artifact = env::var_os("ADL_PROVIDER_INVOCATIONS_PATH");
+    let _ = std::fs::remove_dir(invocation_lock_path(&artifact));
+    env::set_var("ADL_PROVIDER_INVOCATIONS_PATH", &artifact);
+
+    let err = write_native_invocation_record(
+        "openai",
+        "gpt-test",
+        "prompt-after-provider",
+        "output-after-provider",
+        200,
+    )
+    .expect_err("post-success artifact write failure should fail closed");
+    assert!(
+        err.to_string()
+            .contains("partial_success_unknown_invocation_record_io_failure"),
+        "post-success native artifact write I/O failure must be partial-success-unknown: {err}"
+    );
+    assert!(
+        !is_retryable_error(&err),
+        "post-success native artifact write I/O failure must not retry"
+    );
+
+    restore_env_var("ADL_PROVIDER_INVOCATIONS_PATH", prev_artifact);
+    std::fs::remove_dir_all(&temp_root).expect("cleanup temp root");
+}
+
+#[test]
+fn native_invocation_artifact_create_dir_failure_is_non_retryable_partial_success_unknown() {
+    let _guard = env_lock();
+    let temp_root = std::env::temp_dir().join(format!(
+        "adl-native-provider-invocation-create-dir-{}-{}",
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("unix epoch")
+            .as_nanos()
+    ));
+    std::fs::create_dir_all(&temp_root).expect("temp root");
+    let parent_file = temp_root.join("not-a-directory");
+    std::fs::write(&parent_file, b"blocks mkdir").expect("parent blocker file");
+    let artifact = parent_file.join("invocations.json");
+    let prev_artifact = env::var_os("ADL_PROVIDER_INVOCATIONS_PATH");
+    let _ = std::fs::remove_dir(invocation_lock_path(&artifact));
+    env::set_var("ADL_PROVIDER_INVOCATIONS_PATH", &artifact);
+
+    let err = write_native_invocation_record(
+        "openai",
+        "gpt-test",
+        "prompt-after-provider",
+        "output-after-provider",
+        200,
+    )
+    .expect_err("post-success artifact directory creation failure should fail closed");
+    assert!(
+        err.to_string()
+            .contains("partial_success_unknown_invocation_record_io_failure"),
+        "post-success native artifact create-dir failure must be partial-success-unknown: {err}"
+    );
+    assert!(
+        !is_retryable_error(&err),
+        "post-success native artifact create-dir failure must not retry"
+    );
+
+    restore_env_var("ADL_PROVIDER_INVOCATIONS_PATH", prev_artifact);
+    std::fs::remove_dir_all(&temp_root).expect("cleanup temp root");
 }

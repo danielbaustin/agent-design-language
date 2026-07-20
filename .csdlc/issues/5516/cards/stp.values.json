@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5516,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Correct #5494 retained Runtime v3 design truth",
+    "slug": "v0-91-7-wp07a-correct-5494-retained-runtime-v3-design",
+    "version": "v0.91.7",
+    "generation": 19
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair retained design metadata and terminal documentation without changing runtime source.",
+      "deliverables": [
+        "Corrected #5494 retained design",
+        "Corrected #5494 retained architecture diagram",
+        "Regenerated typed design and diagram digests",
+        "Reviewed terminal reconciliation packet"
+      ],
+      "acceptance_criteria": [
+        "AC1: retained #5494 design no longer claims Runtime v2-only or no Runtime v3 changes",
+        "AC2: retained diagram shows Runtime v3 soak, CSM production integration, and weather ownership",
+        "AC3: typed terminal design repair succeeds and doctor passes",
+        "AC4: docs and live issue/PR state agree",
+        "AC5: exact review is clean before publication"
+      ],
+      "dependencies": [
+        "Merged PR #5504",
+        "Closed-out #5494 terminal receipt",
+        "Typed csdlc-closeout repair-design operation"
+      ],
+      "repo_inputs": [
+        "Final terminal review finding on #5494 retained design",
+        "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+        ".csdlc/issues/5494/retained/design.md"
+      ],
+      "non_goals": [
+        "Runtime source changes",
+        "Runtime v2 source work",
+        "Weather-service implementation",
+        "AWS execution"
+      ]
+    }
+  }
+}

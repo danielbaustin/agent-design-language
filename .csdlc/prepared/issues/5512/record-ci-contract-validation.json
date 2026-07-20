@@ -1,0 +1,18 @@
+{
+  "issue": 5512,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "aaef32090c60074de42246dd3375894d609820940b988818a758238467a21262",
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The static CI runtime contract now verifies the owning-crate ADL coverage expression.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_ci_runtime_contracts.sh"],
+      "purpose": "Prove the CI contract accepts the reviewed owning-crate coverage variable",
+      "outcome": "passed",
+      "evidence_ref": "local:5512-ci-runtime-contract-pass"
+    }
+  }
+}

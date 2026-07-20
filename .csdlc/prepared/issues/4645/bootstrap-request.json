@@ -1,0 +1,164 @@
+{
+  "issue": 4645,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/4645/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4645/diagram.mmd",
+  "design_reviewer": "codex-prep-only",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-4645-v0917-internal-review-prep",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784359768,
+    "expires_unix_seconds": 1784964568,
+    "heartbeat_unix_seconds": 1784359768,
+    "branch": "codex/4645-v0917-internal-review",
+    "worktree": ".worktrees/adl-wp-4645",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_INTERNAL_REVIEW_4645.md",
+      "docs/milestones/v0.91.7/review/internal_review_4645",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/reviews/v0.91.7/internal-review-4645",
+      ".csdlc/issues/4645"
+    ],
+    "purpose": "Prepare and later run the v0.91.7 WP-18 internal milestone review without claiming release readiness"
+  },
+  "initial": {
+    "title": "[v0.91.7][WP-18][review] Internal review",
+    "slug": "v0-91-7-wp18-internal-review",
+    "version": "v0.91.7",
+    "goal": "Run the v0.91.7 WP-18 internal milestone review using the established ADL findings-first review process.",
+    "required_outcome": "A retained internal review packet and finding register identify missing surfaces, stale claims, overclaims, unowned blockers, validation gaps, lifecycle truth drift, and release-readiness non-claims before external review.",
+    "declared_scope": [
+      "v0.91.7 milestone docs and release-tail planning surfaces",
+      "v0.91.7 sprint-review register and retained sprint packets",
+      "Open and closed WP issue truth for v0.91.7 WP-01 through WP-23",
+      "Lifecycle cards, PR state, validation evidence, and closeout records needed for milestone release-review truth",
+      "v0.92 activation bridge consumption boundaries"
+    ],
+    "authority_boundary": [
+      "Issue #4645 owns WP-18 internal review",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml defines WP-18 as Internal review",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md is the current sprint-review register",
+      "docs/reviews/v0.91.7/remaining-sprints-5403/ is retained findings-first sprint review evidence",
+      "This issue may find and route blockers but must not silently remediate sibling WP work"
+    ],
+    "task_boundary": "Prepare and execute only the WP-18 internal review packet; do not perform WP-19 external review, WP-20 remediation, WP-22 next-milestone review, or WP-23 release ceremony.",
+    "deliverables": [
+      "Retained v0.91.7 internal milestone review packet",
+      "Findings register with severity, evidence, disposition, and owner route",
+      "Specialist lane coverage matrix",
+      "Validation adequacy and release-readiness boundary summary",
+      "Explicit non-claims and follow-up routing"
+    ],
+    "acceptance_criteria": [
+      "AC-1: The review covers WP-01 through WP-23 and named closed sprint packets without silently skipping open or blocked rows",
+      "AC-2: Findings are evidence-bound, severity-ranked, and routed to existing or proposed owners",
+      "AC-3: The packet distinguishes release-ready, blocked-with-evidence, open, superseded, and not-reviewed surfaces",
+      "AC-4: Validation evidence states what was freshly checked, what is retained evidence, and what remains unproven",
+      "AC-5: The review does not claim v0.91.7 release readiness or v0.92 activation readiness"
+    ],
+    "dependencies": [
+      "Current root main checkout",
+      "Issue #4645 live GitHub truth",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/reviews/v0.91.7/remaining-sprints-5403/",
+      "Open remediation issue state for #5404 through #5413 where applicable"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.91.7/README.md",
+      "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/reviews/v0.91.7/remaining-sprints-5403/",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+    ],
+    "non_goals": [
+      "Do not execute WP-19 external review",
+      "Do not fix findings as part of the review issue unless separately assigned",
+      "Do not claim release ceremony readiness",
+      "Do not use AWS or remote paid validation lanes for review preparation",
+      "Do not rerun broad Rust or runtime suites unless the review execution changes code or tooling"
+    ],
+    "plan_summary": "Prepare the typed issue state, bind the review worktree, then run the future milestone review with sprint-review, repo-packet-builder, gap-analysis, specialist review lanes, synthesis, and review-quality evaluation.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Prepare typed lifecycle state and bind the WP-18 review worktree",
+        "acceptance_ids": ["AC-1", "AC-5"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Build a bounded evidence packet for the v0.91.7 milestone review",
+        "acceptance_ids": ["AC-1", "AC-3", "AC-4"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run findings-first specialist lanes and synthesize the internal review packet",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Validate retained review artifacts and lifecycle truth before publication",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-5"],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "Findings lead the review output",
+      "Review is not remediation",
+      "Open issue and PR truth must be verified live during execution",
+      "Release and v0.92 readiness claims require integrated proof or explicit blocked/operator-scoped-out evidence",
+      "No AWS use for this review preparation"
+    ],
+    "risks": [
+      "v0.91.7 issue and PR state is moving quickly, so review execution must refresh live truth",
+      "Retained sprint packets may be current for their scope but stale after remediation merges",
+      "The review can be tempted to absorb remediation work that belongs to WP-20 or child fixes"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "Required live issue/PR state cannot be verified",
+      "Review scope expands into implementation/remediation without operator assignment",
+      "A release-readiness claim depends on unproven or paid remote validation",
+      "Root checkout is dirty or tracked issue work would occur on main"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "review-prep-card-validation",
+        "proof_role": "Validate typed #4645 C-SDLC state and preparation-only review inputs",
+        "acceptance_ids": ["AC-1", "AC-5"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 300,
+        "budget_tokens": 3000,
+        "argv": [".adl/bin/csdlc-v2/csdlc-validate", "--repo", ".", "--issue", "4645"],
+        "parallel_group": "review-prep",
+        "defer_reason": null
+      },
+      {
+        "lane": "review-artifact-integrity",
+        "proof_role": "Validate future review artifacts are whitespace-clean and retained on tracked paths",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-5"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 300,
+        "budget_tokens": 3000,
+        "argv": ["git", "diff", "--check"],
+        "parallel_group": "review-prep",
+        "defer_reason": "Run after the internal review artifacts are written"
+      }
+    ],
+    "failure_policy": "Fail closed on stale issue truth, missing retained evidence, overclaim, or unowned blocker ambiguity.",
+    "review_prompts": [
+      "Does the internal review cover every v0.91.7 WP and retained sprint packet it claims to cover?",
+      "Are release-readiness and v0.92 activation claims bounded by integrated proof?",
+      "Are findings severity-ranked and routed without absorbing remediation into the review issue?",
+      "Does the packet distinguish retained proof, fresh validation, skipped validation, and non-claims?"
+    ]
+  }
+}

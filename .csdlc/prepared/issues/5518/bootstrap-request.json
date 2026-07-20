@@ -1,0 +1,68 @@
+{
+  "issue": 5518,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5518/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5518/diagram.mmd",
+  "design_reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5518-terminal-plan-repair",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784387769,
+    "expires_unix_seconds": 1784474169,
+    "heartbeat_unix_seconds": 1784387769,
+    "branch": "codex/5518-terminal-plan-repair",
+    "worktree": ".",
+    "protected_paths": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/tests/gate7_terminal_plan_repair_5518.rs",
+      ".csdlc/issues/5516",
+      ".csdlc/issues/5518",
+      ".csdlc/prepared/issues/5518"
+    ],
+    "purpose": "Add atomic typed terminal plan-step repair and correct #5516 SPP S3"
+  },
+  "initial": {
+    "title": "[v0.91.7][csdlc-v2][closeout] Repair stale terminal plan-step truth atomically",
+    "slug": "v0-91-7-csdlc-v2-terminal-plan-step-repair",
+    "version": "v0.91.7",
+    "goal": "Provide one fail-closed typed repair for stale completed work in a closed-out SPP.",
+    "required_outcome": "The typed operation atomically completes #5516 SPP S3 and refreshes its terminal receipt without permitting general terminal mutation.",
+    "declared_scope": ["csdlc-v2 terminal repair store and CLI", "focused terminal repair tests", "#5516 terminal plan and receipt", "#5518 lifecycle records"],
+    "authority_boundary": ["#5518 is the active repair authority", "#5516 is the closed-out target", "Only forward SPP step completion is allowed"],
+    "task_boundary": "Add and prove one atomic terminal plan-step repair operation, then use it on #5516.",
+    "deliverables": ["Typed repair request and store operation", "Focused fail-closed and rollback tests", "Corrected #5516 SPP S3 and receipt", "Reviewed terminal reconciliation"],
+    "acceptance_criteria": [
+      "AC1: only pending or in-progress terminal SPP steps may advance to completed",
+      "AC2: stale authority, target, artifact, or receipt identity fails closed",
+      "AC3: invalid phase, claim, step, or transition fails closed",
+      "AC4: receipt refresh failure rolls target and receipt back",
+      "AC5: #5516 SPP S3 and terminal receipt agree at completed",
+      "AC6: focused tests and exact review pass"
+    ],
+    "dependencies": ["Closed #5516", "Typed C-SDLC v2 terminal design repair pattern"],
+    "repo_inputs": ["#5516 terminal review finding", "csdlc-v2/src/store.rs", "csdlc-v2/src/bin/csdlc-closeout.rs"],
+    "non_goals": ["General terminal card editing", "Audit rewriting", "Runtime changes", "Runtime v2 changes", "AWS execution"],
+    "plan_summary": "Implement the narrow repair operation, prove fail-closed atomic behavior, repair #5516, review, publish, merge, and close out.",
+    "steps": [
+      {"id":"S1","action":"Design and bind the terminal repair authority","status":"completed","acceptance_ids":["AC-1","AC-2","AC-3"]},
+      {"id":"S2","action":"Implement and test atomic terminal plan-step repair","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4"]},
+      {"id":"S3","action":"Repair #5516 and validate receipt parity","status":"pending","acceptance_ids":["AC-5"]},
+      {"id":"S4","action":"Review, publish, merge, and close out","status":"pending","acceptance_ids":["AC-6"]}
+    ],
+    "risks": ["Overbroad terminal mutation would weaken immutability", "Receipt refresh failure could split record truth"],
+    "invariants": ["Separate authority issue is mandatory", "Target is closed-out and claim-free", "Only a forward step completion is allowed", "Receipt and target roll back together"],
+    "stop_conditions": ["Repair requires runtime changes", "Operation permits arbitrary terminal edits", "Rollback proof fails", "Exact review finds unresolved atomicity defects"],
+    "review_prompts": ["Is the operation narrower than terminal design repair?", "Are all CAS and receipt checks fail closed?", "Can a failed refresh leave split truth?", "Does #5516 S3 match its SOR after repair?"],
+    "planning_profile": "small",
+    "validation_lanes": [
+      {"lane":"terminal-plan-repair-tests","proof_role":"Prove forward-only atomic repair and rollback","deterministic":true,"resource_profile":"small","parallel_group":"rust","budget_seconds":180,"budget_tokens":2000,"argv":["cargo","test","--manifest-path","csdlc-v2/Cargo.toml","terminal_plan_repair"],"acceptance_ids":["AC-1","AC-2","AC-3","AC-4"]},
+      {"lane":"target-doctor","proof_role":"Prove #5516 terminal plan and receipt parity","deterministic":true,"resource_profile":"small","parallel_group":"records","budget_seconds":60,"budget_tokens":500,"argv":["csdlc-doctor","--issue","5516"],"acceptance_ids":["AC-5"]},
+      {"lane":"exact-review","proof_role":"Prove bounded implementation and terminal truth","deterministic":true,"resource_profile":"small","parallel_group":"review","budget_seconds":120,"budget_tokens":1000,"argv":["git","diff","--check"],"acceptance_ids":["AC-6"]}
+    ],
+    "failure_policy": "Fail closed on stale identity, missing authority, nonterminal target, invalid step transition, receipt mismatch, rollback failure, runtime changes, or unresolved review findings."
+  }
+}

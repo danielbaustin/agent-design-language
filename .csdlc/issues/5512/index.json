@@ -1,0 +1,443 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5512,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "6a72c9067697b3b298b9ee9ad97efc1a57d61a7b5674ba9b4b6f737dc246c769",
+  "phase": "closed_out",
+  "generation": 19,
+  "digest": "f9dd8ca505b4fc15c112454bb862bb7e76899b464f911540a65ba6d9a49046d6",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f7532-dfd0-7b52-a750-7df6cce35b42",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:325d8f490129f4198198222e9a95c0c94fa9410c:15b9757310e7be810f31123e96d61bc2cafa46c3847bddb6491bb5d36addd5c8",
+    "scope": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f7532-dfd0-7b52-a750-7df6cce35b42",
+    "scope": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "reviewed_revision": "git-blake3:325d8f490129f4198198222e9a95c0c94fa9410c:15b9757310e7be810f31123e96d61bc2cafa46c3847bddb6491bb5d36addd5c8",
+    "findings": [
+      {
+        "id": "F-5512-1",
+        "severity": "p2",
+        "summary": "Substring bridge detection could silently discard unrelated coverage selectors.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:325d8f490129f4198198222e9a95c0c94fa9410c:15b9757310e7be810f31123e96d61bc2cafa46c3847bddb6491bb5d36addd5c8",
+        "route": null
+      },
+      {
+        "id": "F-5512-2",
+        "severity": "p3",
+        "summary": "Zero-valued fake summaries did not prove both coverage inputs were composed.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:325d8f490129f4198198222e9a95c0c94fa9410c:15b9757310e7be810f31123e96d61bc2cafa46c3847bddb6491bb5d36addd5c8",
+        "route": null
+      },
+      {
+        "id": "F-5512-3",
+        "severity": "p2",
+        "summary": "The static CI runtime contract still required the superseded direct filter variable.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:325d8f490129f4198198222e9a95c0c94fa9410c:15b9757310e7be810f31123e96d61bc2cafa46c3847bddb6491bb5d36addd5c8",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "The rerun of hosted CI remains the final integration proof after the static contract repair."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5512,
+    "pull_request": 5513,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5513",
+    "base": "main",
+    "head": "codex/5512-runtime-v3-csm-coverage-filter",
+    "revision": "git-blake3:325d8f490129f4198198222e9a95c0c94fa9410c:15b9757310e7be810f31123e96d61bc2cafa46c3847bddb6491bb5d36addd5c8",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5513,
+    "head_sha": "325d8f490129f4198198222e9a95c0c94fa9410c",
+    "checks": [
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29644914534/job/88081437826"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29644914534/job/88081453706"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29644914534/job/88081453709"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29644914534/job/88081474686"
+      },
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29644914534/job/88081518507"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5513,
+    "disposition": "merged",
+    "observed_sha": "325d8f490129f4198198222e9a95c0c94fa9410c",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5512.json",
+    "released_branch": "codex/5512-runtime-v3-csm-coverage-filter",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5512/retained/design.md",
+  "diagram_path": ".csdlc/issues/5512/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "revision": "389e313a0101bd380a9294b090884d97ad96e2933198b03831d3cdac1f5ced55"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "d02b046ebfe7d7b858ae0630603884c06c2e33aed052dcb61d06282e53518840",
+      "rendered_digest": "1899d3145001e0d19020adbf8ef7a6408ec31c46c54245320c071fa3da96dff0",
+      "ast_digest": "50f89b85216f5fe0b17aa25ff4886f4ab0305e4de152b6acbbee1f1d2f3e5469"
+    },
+    "stp": {
+      "values_digest": "b5b653a48f65f33065a24b9df23cb2cb47e6977433d62a206246ccf41988129c",
+      "rendered_digest": "d448e2be59e3c1eeaeffaa44b942a899a65cd095ca54414a44fcfb15482dfd15",
+      "ast_digest": "be3895138b394fddc09253e37415b8ecfe8583efed941511ec139556ef7821af"
+    },
+    "spp": {
+      "values_digest": "9b8bbff0d470d3372b2c9eb3d77ebb18eae4d232480d4d6b155006dc00492221",
+      "rendered_digest": "d1525bd8c4b19a0e2ed1ccf5af8f1fbc3d939172aca12e20dd6570e7a8130515",
+      "ast_digest": "1ef870d410114c5cf5c98e435798f8725cf9e3460f4e079b0bff3fdd7fd3c05c"
+    },
+    "vpp": {
+      "values_digest": "72f3f708e55b5bcbdd2f2e8e491abb8839386e2b9c4cc0264bb13baea33a93c7",
+      "rendered_digest": "59c98b950cb5dfe1fc7cce5e27988c960aa26e787632984ef16671efcc7c8d8f",
+      "ast_digest": "398c1cfecd3206dc772bff40aae12632b8546a252063fce6d3200dd07b3f3512"
+    },
+    "srp": {
+      "values_digest": "df88bd5f7cb40a49b1e4979056581af5aad226ed255ff94c73cf43a39cafc4a1",
+      "rendered_digest": "dc5439f8d2d5afb3287c449b1e77e0ce5738a6ee13880dcd711ccaf67872c22e",
+      "ast_digest": "2a9f0b6a35f131a4f76727796c3b7d0b2ba36ed15125add7d38b972783c35ccc"
+    },
+    "sor": {
+      "values_digest": "26ab0251dfdd537e10df331b51f984623985e3e9a255c875c61646cade77ec2b",
+      "rendered_digest": "325b6752d40deb279105d2e2d42fc624c16cbb196dc722582cdad1cb71769e6b",
+      "ast_digest": "017909f519f48e3777763eadc4f5dad2a9689beee954a015f14dcef77afb04bc"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The owning-crate coverage split and exact regression proof are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Both review findings are fixed and the exact-head re-review is clean."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover exact review identity after committing typed review metadata; both substantive tooling blobs are byte-identical."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact metadata head is covered by non-substantive proof and the substantive repair remains review-clean."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover implementation after hosted CI exposed a stale static contract for the reviewed owning-crate coverage variable."
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The CI contract finding is fixed and the exact three-file head is review-clean."
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 11,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 12,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 13,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Split the bounded Runtime v3 and CSM coverage expression by owning crate.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Replace the invalid mixed coverage expression with valid ADL and Runtime v3 owning-crate expressions only for the bounded bridge route.\",\"changes\":[\"Detect the already bounded Runtime v3 and CSM bridge selector family\",\"Run the ADL coverage invocation with only CSM, long-lived-agent, and csmctl selectors\",\"Run auth, supervision, and topology selectors only through adl-runtime\",\"Use the exact failed GitHub expression as the regression fixture\"],\"artifacts\":[\"adl/tools/run_pr_fast_coverage_lane.sh\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact failed-expression coverage contract passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\"],\"purpose\":\"Prove owning-crate filter splitting, foreign-selector exclusion, and composed summaries\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5512-exact-29644007246-expression-contract-pass\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The surrounding path-policy and fast-test contracts passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\"],\"purpose\":\"Prove the narrow repair preserves existing validation routing contracts\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5512-ci-path-policy-contract-pass\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The owning-crate coverage split and exact regression proof are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "subagent:019f7532-dfd0-7b52-a750-7df6cce35b42",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Both review findings are fixed and the exact-head re-review is clean.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover exact review identity after committing typed review metadata; both substantive tooling blobs are byte-identical.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "subagent:019f7532-dfd0-7b52-a750-7df6cce35b42",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact metadata head is covered by non-substantive proof and the substantive repair remains review-clean.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover implementation after hosted CI exposed a stale static contract for the reviewed owning-crate coverage variable.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Align the static CI runtime contract with the reviewed owning-crate coverage variable exposed by hosted CI.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/test_ci_runtime_contracts.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The static CI runtime contract now verifies the owning-crate ADL coverage expression.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove the CI contract accepts the reviewed owning-crate coverage variable\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5512-ci-runtime-contract-pass\"}}"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "subagent:019f7532-dfd0-7b52-a750-7df6cce35b42",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The CI contract finding is fixed and the exact three-file head is review-clean.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt during the complete v0.91.7 closed-issue audit.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

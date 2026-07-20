@@ -1,0 +1,1 @@
+{"issue":5455,"expected_generation":5,"expected_digest":"f1952ed8d8cfbe229aed0b75acc13aa90ad7bc31b442e73684c5110afc370d9e","claim_id":"claim-5455-closeout-recovery","reviewer":"subagent:019f669a-596c-71e2-adb3-bd753875989d","assigned_by":"codex-closeout-audit","scope":["csdlc-v2/src/operator.rs","csdlc-v2/tests/gate10a.rs"]}

@@ -1,0 +1,87 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5489,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-21A][planning] Prepare next milestone docs closeout plan",
+    "slug": "v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Bind WP-21A to its issue worktree, then execute the future work with focused evidence and truthful review/closeout records.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Confirm live issue and dependency truth before execution",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Produce the declared deliverables on protected tracked paths",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run focused validation and record fresh/retained/skipped proof truth",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Update SRP/SOR truth and preserve non-claims before publication",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Work stays issue-local",
+        "Findings and claims remain evidence-bound",
+        "No release or activation readiness is inferred from prep",
+        "No AWS use for preparation"
+      ],
+      "risks": [
+        "Dependencies may not yet be clean enough for execution",
+        "Review/remediation scope can be mistaken for sibling work",
+        "Retained evidence can become stale if live issue truth changes"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 21600,
+        "total_tokens": 80000,
+        "validation_seconds": 3600
+      },
+      "stop_conditions": [
+        "Required dependency remains open or blocked without operator approval",
+        "Execution would require sibling WP remediation",
+        "Release-readiness claim cannot be backed by retained or fresh proof",
+        "AWS or paid remote validation would be required for preparation"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5489/retained/design.md",
+      "design_digest": "6c8fad08d8c732b470f0c29378cc6566d23b7f4626218b8c27d19209564f7556",
+      "diagram_ref": ".csdlc/issues/5489/retained/diagram.mmd",
+      "diagram_digest": "7646182d813c913c307ed060acb15d05ac113dcf20158cd1a477b35bec1a9ce5"
+    }
+  }
+}

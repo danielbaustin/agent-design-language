@@ -1,0 +1,23 @@
+{
+  "issue": 4646,
+  "card": "sor",
+  "expected_generation": 19,
+  "expected_digest": "5512195e98e7691a214d90beaf7bede22f5c602c9a68f731a3b4162d6ae7903f",
+  "claim_id": "claim-4646-v0-91-7-wp19-external-third-party-review",
+  "actor": "codex:issue-4646",
+  "reason": "Disposition the review finding by explicitly superseding stale SOR and recovery statements.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Current #4646 truth supersedes the historical execution and validation entries below: #5571 and #5573 are closed, WP-19 is open at replacement-review preparation, and no replacement external review has run.",
+    "changes": [
+      "Supersede the historical SOR statements that #5571 or #5573 are open.",
+      "Supersede the historical SOR statement that WP-19 is ready for external review; the replacement corpus still requires exact-revision preflight and review.",
+      "Correct audit sequence 25: its phrase '#5573 audit truth is incomplete' was erroneous; the recovery is justified only by current-main corpus drift.",
+      "Classify earlier 66-file validation entries as historical proof for the superseded PR #5579 target, not current WP-19 completion proof."
+    ],
+    "artifacts": [
+      ".csdlc/issues/4646/cards/sor.md",
+      ".csdlc/issues/4646/index.json"
+    ]
+  }
+}

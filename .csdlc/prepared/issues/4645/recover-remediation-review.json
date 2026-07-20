@@ -1,0 +1,1 @@
+{"issue":4645,"expected_generation":17,"expected_digest":"e0d46e7427310e882cecaa7cedfa280e8c72372938f993dd07b2065196b33fdd","claim_id":"claim-4645-v0917-internal-review-prep","actor":"codex-closeout-audit","reason":"Remediate F-4645-3 by replacing the moving reproduction range with exact commit endpoints, then run exact-head re-review."}

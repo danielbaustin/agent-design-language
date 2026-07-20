@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5569,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Repair #5547 terminal plan-step truth",
+    "slug": "repair-5547-terminal-plan",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "terminal-plan-parity",
+          "proof_role": "Typed terminal record and receipt consistency",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            "csdlc-doctor",
+            "--repo",
+            ".",
+            "--issue",
+            "5547"
+          ],
+          "parallel_group": "records",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on any record, receipt, generation, digest, claim, or evidence mismatch.",
+      "design_ref": ".csdlc/issues/5569/retained/design.md",
+      "design_digest": "4ccd1b246a65bb5dc475aa6c4f0bf607e4c238a1481c7078261489a297fa2c52",
+      "diagram_ref": ".csdlc/issues/5569/retained/diagram.mmd",
+      "diagram_digest": "6e86ac1f0e6dff62099dd5f22f65e75678534cbe39584a7975ca990a4c500074"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "issue": 5516,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "fa602bbcc03a5e33ef139e593f6e45b797125f8498883e396f919406ed8f7a04",
+  "claim_id": "claim-5516-5494-terminal-design-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The typed terminal repair and its lifecycle projections pass focused validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "csdlc-v2/Cargo.toml", "terminal_design_repair"],
+      "purpose": "Prove fail-closed terminal design repair and validate the repaired #5494 and authority #5516 records with current typed doctor",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 2 focused repair tests passed; csdlc-doctor passed for #5494 generation 61 and #5516 generation 0"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "issue": 5489,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "63f49386692dfebccbe6d99e16e3157ec87e50e9203faa0605987547a8b9b715",
+  "claim_id": "claim-5489-v0-91-7-wp21a-next-milestone-docs-closeout-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "The planned-only v0.91.8 parallel execution plan and linked planning-surface reconciliation are implemented and focused validation has passed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

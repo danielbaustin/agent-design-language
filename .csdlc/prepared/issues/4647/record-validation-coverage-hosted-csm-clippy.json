@@ -1,0 +1,27 @@
+{
+  "issue": 4647,
+  "card": "sor",
+  "expected_generation": 32,
+  "expected_digest": "1a4711add581c734aadf64bee6374d843190965ef16f06cc06cd088c4dfbeef0",
+  "claim_id": "claim-4647-v0-91-7-wp20-review-remediation-preflight",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record clippy proof after the CSM API Gateway response-finalization repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "purpose": "Verify the CSM bridge response-finalization repair keeps the all-target clippy gate clean before PR #5588 republish.",
+      "outcome": "passed",
+      "evidence_ref": "local stdout, CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/4647/adl-target, Finished dev profile in 19.81s"
+    }
+  }
+}

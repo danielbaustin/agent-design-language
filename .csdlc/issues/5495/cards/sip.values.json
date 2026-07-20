@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5495,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][publish] Avoid stale review loop after publication metadata commit",
+    "slug": "publication-metadata-review-loop",
+    "version": "v0.91.7",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Permit approved typed lifecycle metadata commits after review without weakening substantive review guards.",
+      "required_outcome": "A reviewed publication remains publishable after a commit containing only recognized C-SDLC lifecycle metadata, while source changes still require re-review.",
+      "declared_scope": [
+        "csdlc-v2/src/git.rs",
+        "csdlc-v2/src/review.rs",
+        "csdlc-v2/tests/gate5.rs"
+      ],
+      "authority_boundary": [
+        "Only bounded C-SDLC metadata paths qualify for automatic non-substantive proof",
+        "Substantive repository paths remain review-authority controlled",
+        "Merged-publication reconciliation retains exact remote identity checks"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}
