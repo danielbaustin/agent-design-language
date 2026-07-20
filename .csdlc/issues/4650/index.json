@@ -3,13 +3,13 @@
   "issue": 4650,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "c605f6dcd0449eee34f7f59bcb9e54397e5b23c62b96d1a36483b7bf158c12f6",
-  "phase": "reviewed",
-  "generation": 11,
-  "digest": "dff71442e8063b31a1bd3eec4a6096556a34cd3c6bdd489b92a164abb9f8c847",
+  "phase": "published",
+  "generation": 12,
+  "digest": "972022988084310ccae91afe4ea1944b1069228f42e4d0a21a92d85d0eb8b27b",
   "claim": {
     "id": "claim-4650-v0-91-7-wp23-release-ceremony",
     "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
-    "generation": 11,
+    "generation": 12,
     "acquired_unix_seconds": 1784360472,
     "expires_unix_seconds": 1784965272,
     "heartbeat_unix_seconds": 1784360472,
@@ -86,7 +86,17 @@
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 4650,
+    "pull_request": 5593,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5593",
+    "base": "main",
+    "head": "codex/4650-v0917-release-ceremony",
+    "revision": "git-blake3:e9e1646aef322c5216c87ea1fb2d26a68ea89078:64c596870b285852096f27460c8e130de8935a23afb219dd378bd7428ea51706",
+    "draft": true,
+    "observed_state": "open"
+  },
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -100,34 +110,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "af4059d5004896ad06a86f03152ac6bef69c3872b66e9707ecfdb0fbdfb5e04c",
+      "values_digest": "192837e66830391b595006377cb42559f37d226af8652364706b5b54580f45f4",
       "rendered_digest": "98e34c20f64641cac9ddde41b5bf69d1595c5b510c84312bf6cbea017f27af37",
       "ast_digest": "988c512bf2999431565822bde6985d29287bcafd7e8b870ef1fb66704099eb7a"
     },
     "stp": {
-      "values_digest": "dc28234c227b26e2d4589106571fab96369733f43094ed2920e354c0af0597a8",
+      "values_digest": "12f45ec0660fa1281b046172aa17f0cc77d964176f71ac55aa80ce6df00041d6",
       "rendered_digest": "590aa4245e7cdcae7ace74839a11912a14a5ef0cbe8e377f6e7fbe04c892377f",
       "ast_digest": "ba86408c715522d4ee9c21925f7bc5fe8a7261a28ee627e9501d6575cfe1ceb0"
     },
     "spp": {
-      "values_digest": "dac972be627c47651fa3a6a0746225d5597deae761aae4f0d8f0112cf042357f",
+      "values_digest": "d454bb021781dabc006d39f6777b41ff829b256288ec90f929a736f30c2cf313",
       "rendered_digest": "2d46cbbc787185bb836f2b8979058f8333d87a2e659fa1464b6bfbabfce6039a",
       "ast_digest": "bb465008f155f9fec6b123f5cee92b50c9f48c60085e54c0161358bf22efbfa4"
     },
     "vpp": {
-      "values_digest": "0a3b4286fa0454d01c2cbbd84fa45ff8373005758ce6beb56a533950e6eea3c0",
+      "values_digest": "83da8ab620436f356e57e8c8928cce9f0bf81ba0dcb684fb2d250f59ad801625",
       "rendered_digest": "6a661afad83ae057693c91cf4aaad5a09bac19a55f6557703a4d5632b46ae658",
       "ast_digest": "b2a6b778297dd9deb228054edc3eaeeb706aa52b91b259955e20c07c3af608d8"
     },
     "srp": {
-      "values_digest": "51125b23dcab26fe71b0b76a761d760b7f9d6f856ec52c871fc7e8a59dbff815",
+      "values_digest": "d83b9d31656216c589d5dce70184a2c1cba3097c5baaf38dbac7c593f0c60f7a",
       "rendered_digest": "47f5de309afff20d6fa1d2696d7954229ced757512e33c6734c8896404da7bfd",
       "ast_digest": "203147720dd1fcceeff2689a4191292a66a27a2a66314492de4c5b1b8bf86cd1"
     },
     "sor": {
-      "values_digest": "b1ef9f11dfa640c95a8c925d2205c4f7fe297cd6c20e8466e4557c57a9515544",
-      "rendered_digest": "c55eb8094d009c8419dcffbd4f91ff107b16e69c678bd005bbfbdbdee8a52412",
-      "ast_digest": "920fdb54fbc597fa74a8fdf1902282227b39a2b20d87fef684128880ac72af07"
+      "values_digest": "8cb184a91328f9207ea6ce4328f91f77f07414be6cdb15f1c9cc4370deb895e3",
+      "rendered_digest": "334ea723939f125a95f67b1f5a1f5fe246a3284266ab95407d585f63c40bd3d5",
+      "ast_digest": "eda6b894cd1b39dde2b7ff94c2501da98935b4ad7d14d958ebbaa9771f99f602"
     }
   },
   "transitions": [
@@ -158,6 +168,13 @@
       "to": "reviewed",
       "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
       "reason": "Exact clean-commit review is recorded, every actionable finding was fixed, final confirmation returned CLEAN, and all four SPP steps are complete."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact PR after current review"
     }
   ],
   "audit": [
@@ -279,6 +296,13 @@
       "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
       "reason": "Exact clean-commit review is recorded, every actionable finding was fixed, final confirmation returned CLEAN, and all four SPP steps are complete.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
     }
   ]
 }

@@ -54,11 +54,11 @@ Prepared the final v0.91.7 release ceremony packet after verifying #4650 is the 
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: draft
 
 Merge: not_merged
 
