@@ -10,7 +10,7 @@
   "head": "codex/4650-v0917-release-ceremony",
   "title": "[v0.91.7][WP-23] Complete release ceremony (#4650)",
   "body": "Closes #4650\n\nCompletes the bounded v0.91.7 WP-23 release ceremony after WP-20 fixed all 22 WP-19 findings.\n\nHighlights:\n- Retains human-readable and machine-readable ceremony evidence.\n- Reconciles the canonical milestone status surfaces to live WP-20/WP-23 truth.\n- Binds the WP-20 typed terminal receipt and labels older tracked records as pre-terminal snapshots.\n- Preserves the mandatory reviewed v0.91.8 bridge before v0.92.\n\nValidation:\n- Typed PVF passed five required lanes: staged diff, JSON/YAML, local links, protected scope, and C-SDLC doctor.\n- Bounded subagent review found five initial findings, three residuals, and one final heading defect; every finding was fixed and the final review returned CLEAN.\n- C-SDLC doctor passed at reviewed generation 11.\n\nNon-claims:\n- No Git tag or hosted release is created.\n- No binary or service is deployed.\n- No AWS operation was performed.\n- Runtime v3 is not made default, Runtime v2 is not decommissioned, and v0.92 is not activated.",
-  "draft": false,
+  "draft": true,
   "remote": "origin",
   "token_file": null
 }
