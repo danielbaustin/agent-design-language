@@ -1,8 +1,8 @@
 {
   "schema": "csdlc.publication_request.v1",
   "issue": 4650,
-  "expected_generation": 11,
-  "expected_digest": "dff71442e8063b31a1bd3eec4a6096556a34cd3c6bdd489b92a164abb9f8c847",
+  "expected_generation": 12,
+  "expected_digest": "972022988084310ccae91afe4ea1944b1069228f42e4d0a21a92d85d0eb8b27b",
   "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
   "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
   "repository": "danielbaustin/agent-design-language",
