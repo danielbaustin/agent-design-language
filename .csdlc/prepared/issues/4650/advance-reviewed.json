@@ -1,0 +1,10 @@
+{
+  "issue": 4650,
+  "card": "srp",
+  "expected_generation": 10,
+  "expected_digest": "cf1de7b988ff19f2c96fc2d8f3d30397436378ec6e6f9e3ffe1d0f5a49f7b3a9",
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Exact clean-commit review is recorded, every actionable finding was fixed, final confirmation returned CLEAN, and all four SPP steps are complete.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"}
+}

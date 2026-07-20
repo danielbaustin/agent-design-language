@@ -1,0 +1,10 @@
+{
+  "issue": 4650,
+  "card": "spp",
+  "expected_generation": 9,
+  "expected_digest": "0d61ab34c05023387eb1834dd9a6f81e6ce6a8829491388f026b48c6963bea92",
+  "claim_id": "claim-4650-v0-91-7-wp23-release-ceremony",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "SRP and SOR now retain execution, validation, exact-revision review, fixed findings, and final release non-claims before publication.",
+  "operation": {"operation": "update_plan_step", "step_id": "S4", "status": "completed"}
+}
