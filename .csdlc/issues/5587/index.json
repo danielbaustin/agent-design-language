@@ -5,7 +5,7 @@
   "initialization_digest": "a5944a332503136886e500c86d1c782c64846fad42b1a325ca4e5fe8e748f8d2",
   "phase": "bound",
   "generation": 0,
-  "digest": "94916ae1da86827984c0eddf15a41f2e19e3df4ab8b97bedddf63eaabc182d94",
+  "digest": "7abe10f3ab1816b35ec3838efc362ad4853d051bf70e9c6edb7d3ad24473276a",
   "claim": {
     "id": "claim-5587-google-drive-context-mirror",
     "owner": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
@@ -16,11 +16,16 @@
     "branch": "codex/5587-google-drive-context-mirror",
     "worktree": ".",
     "protected_paths": [
-      "adl/src/adl_gws_native.rs",
-      "adl/src/adl_gws_drive_sync.rs",
+      "adl/Cargo.toml",
       "adl/src/adl_gws_context_mirror.rs",
+      "adl/src/adl_gws_drive_sync.rs",
+      "adl/src/adl_gws_native.rs",
       "adl/src/bin/demo_adl_gws_context_mirror.rs",
-      "adl/Cargo.toml"
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md"
     ],
     "purpose": "Make the ADL Google Drive context mirror work and verify content end to end"
   },
@@ -100,6 +105,20 @@
       "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
       "reason": "bind branch/worktree and activate claim",
       "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "The issue explicitly requires an operator runbook for success and controlled failure behavior.",
+      "operation": "{\"add_protected_paths\":[\"docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 0,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Pre-PR review found the production binary rename must propagate through focused coverage and PR-fast selectors and their exact contract tests.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/check_coverage_impact.sh\",\"adl/tools/run_pr_fast_test_lane.sh\",\"adl/tools/test_check_coverage_impact.sh\",\"adl/tools/test_run_pr_fast_test_lane.sh\"],\"operation\":\"amend_claim_scope\"}"
     }
   ]
 }

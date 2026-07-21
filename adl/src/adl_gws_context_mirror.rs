@@ -204,9 +204,11 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
         sync_results.push(report.result);
     }
 
-    if config.recursive_sync_enabled {
+    if config.recursive_sync_enabled && matches!(live_mode, WorkspaceExecutionMode::Execute) {
         let repo_root = Path::new(&config.repo_root);
-        for source_path in recursive_markdown_files(repo_root)? {
+        let recursive_files = recursive_markdown_files(repo_root)?;
+        let recursive_result_count = recursive_files.len();
+        for source_path in recursive_files {
             let relative = source_path.strip_prefix(repo_root).with_context(|| {
                 format!(
                     "mirror source '{}' escaped repo root",
@@ -258,8 +260,12 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
             ));
             sync_results.push(report.result);
         }
-        if matches!(live_mode, WorkspaceExecutionMode::Execute)
-            && sync_results.iter().all(|result| result.verification_ok)
+        if recursive_result_count > 0
+            && sync_results
+                .iter()
+                .rev()
+                .take(recursive_result_count)
+                .all(|result| result.verification_ok)
         {
             recursive_mirror_status = WorkspaceRecursiveMirrorStatus::RecursiveLive;
         }
@@ -284,7 +290,7 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
                     .to_string()
             }
             WorkspaceRecursiveMirrorStatus::RecursivePending => {
-                "Recursive mirror status is RecursivePending; recursive docs mirroring is not implemented in this workflow yet."
+                "Recursive mirror status is RecursivePending; this non-execute run did not claim live recursive Drive mutation."
                     .to_string()
             }
             WorkspaceRecursiveMirrorStatus::RecursiveLive => {
@@ -332,11 +338,40 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
 }
 
 fn recursive_markdown_files(repo_root: &Path) -> Result<Vec<PathBuf>> {
+    let repo_metadata = std::fs::symlink_metadata(repo_root)
+        .with_context(|| format!("inspect repository root '{}'", repo_root.display()))?;
+    if repo_metadata.file_type().is_symlink() {
+        bail!(
+            "recursive mirror refuses symlink repository root '{}'.",
+            repo_root.display()
+        );
+    }
+    let canonical_repo_root = std::fs::canonicalize(repo_root)
+        .with_context(|| format!("canonicalize repository root '{}'", repo_root.display()))?;
     let mut files = Vec::new();
     for relative_root in [Path::new("docs"), Path::new(".adl/docs/TBD")] {
         let root = repo_root.join(relative_root);
-        if !root.exists() {
-            continue;
+        let metadata = std::fs::symlink_metadata(&root)
+            .with_context(|| format!("inspect declared mirror root '{}'", root.display()))?;
+        if metadata.file_type().is_symlink() {
+            bail!(
+                "recursive mirror refuses symlink source root '{}'",
+                root.display()
+            );
+        }
+        if !metadata.is_dir() {
+            bail!(
+                "declared mirror root is not a directory: '{}'",
+                root.display()
+            );
+        }
+        let canonical_root = std::fs::canonicalize(&root)
+            .with_context(|| format!("canonicalize mirror root '{}'", root.display()))?;
+        if !canonical_root.starts_with(&canonical_repo_root) {
+            bail!(
+                "declared mirror root escaped repository: '{}'",
+                root.display()
+            );
         }
         collect_markdown_files(&root, &mut files)?;
     }
@@ -777,7 +812,7 @@ mod tests {
         assert!(report
             .summary_lines
             .iter()
-            .any(|line| line.contains("not implemented")));
+            .any(|line| line.contains("did not claim live recursive")));
         for file_name in context_seed_file_names() {
             tokio::fs::remove_file(staging_dir.join(file_name))
                 .await
@@ -902,5 +937,24 @@ mod tests {
         tokio::fs::remove_dir_all(repo_root)
             .await
             .expect("remove recursive mirror fixture");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn recursive_mirror_rejects_a_symlink_declared_root() {
+        use std::os::unix::fs::symlink;
+
+        let repo_root = unique_temp_path("context-mirror-symlink-root");
+        let outside = unique_temp_path("context-mirror-symlink-outside");
+        std::fs::create_dir_all(repo_root.join(".adl/docs/TBD")).expect("create declared TBD root");
+        std::fs::create_dir_all(&outside).expect("create outside directory");
+        std::fs::write(outside.join("outside.md"), "# outside\n").expect("write outside file");
+        symlink(&outside, repo_root.join("docs")).expect("link docs outside repo");
+
+        let error = super::recursive_markdown_files(&repo_root)
+            .expect_err("symlink source root must fail closed");
+        assert!(error.to_string().contains("symlink source root"));
+        std::fs::remove_dir_all(repo_root).expect("remove symlink repo fixture");
+        std::fs::remove_dir_all(outside).expect("remove outside fixture");
     }
 }

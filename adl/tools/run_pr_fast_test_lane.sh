@@ -556,7 +556,7 @@ TOKEN_MAP = {
     "csdlc_binary_smoke": 'binary_id(adl::cli_smoke) and test(/^(csdlc_cli_binary_help_and_version_smoke|adl_csdlc_cli_binary_help_and_version_smoke)$/)',
     "scheduler_cli": 'test(/^cli::scheduler_cmd::tests::/) or test(/^cli::tests::runtime_dispatch_exposes_help_and_version_without_csdlc_dispatch$/) or test(/^cli::tests::open_usage::usage_mentions_v0_4_and_legacy_examples$/)',
     "scheduler_economics": 'test(/^scheduler::tests::/) or test(/^provider::tests::provider_mod_/) or binary_id(adl::provider_tests) and test(/^profiles::/)',
-    "demo_adl_gws_context_mirror": 'binary_id(adl::bin/demo-adl-gws-context-mirror) and test(/^tests::/)',
+    "demo_adl_gws_context_mirror": 'binary_id(adl::bin/adl-gws-context-mirror) and test(/^tests::/)',
     "demo_adl_gws_native_drive_sync": 'binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)',
     "run_v0916_integrated_runtime_soak": 'binary_id(adl::bin/run_v0916_integrated_runtime_soak) and test(/^tests::/)',
     "run_v0917_integrated_resilience_failure_injection": 'binary_id(adl::bin/run_v0917_integrated_resilience_failure_injection) and test(/^tests::/)',

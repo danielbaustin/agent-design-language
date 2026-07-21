@@ -77,13 +77,20 @@ async fn run_demo_with_transport<T: WorkspaceDriveTransport>(
     config: &DemoContextMirrorRunConfig,
     transport: &T,
 ) -> Result<PathBuf> {
-    let report = run_workspace_context_mirror_with_transport(
+    let report = match run_workspace_context_mirror_with_transport(
         config.live_mode.clone(),
         config.write_approval_present,
         config.mirror_config.clone(),
         transport,
     )
-    .await?;
+    .await
+    {
+        Ok(report) => report,
+        Err(error) => {
+            write_failure_report(&config.out_path, config, &error).await?;
+            return Err(error);
+        }
+    };
     write_workspace_context_mirror_report(&config.out_path, &report).await?;
     if matches!(config.live_mode, WorkspaceExecutionMode::Execute)
         && (report.skipped_reason.is_some()
@@ -96,6 +103,30 @@ async fn run_demo_with_transport<T: WorkspaceDriveTransport>(
         bail!("context mirror report contains unverified Drive results");
     }
     Ok(config.out_path.clone())
+}
+
+async fn write_failure_report(
+    out_path: &std::path::Path,
+    config: &DemoContextMirrorRunConfig,
+    error: &anyhow::Error,
+) -> Result<()> {
+    if let Some(parent) = out_path.parent() {
+        tokio::fs::create_dir_all(parent).await?;
+    }
+    let failure = serde_json::json!({
+        "schema_version": "adl_gws_context_mirror_failure.v1",
+        "status": "failed",
+        "live_mode": config.live_mode,
+        "drive_root_folder_id": config.mirror_config.drive_root_folder_id,
+        "drive_seed_folder_id": config.mirror_config.drive_seed_folder_id,
+        "recursive_sync_enabled": config.mirror_config.recursive_sync_enabled,
+        "failure_class": "context_mirror_execution",
+        "message": error.to_string(),
+        "retryable": false,
+        "credential_material_included": false
+    });
+    tokio::fs::write(out_path, serde_json::to_vec_pretty(&failure)?).await?;
+    Ok(())
 }
 
 #[tokio::main]
@@ -229,5 +260,33 @@ mod tests {
         tokio::fs::remove_dir(&staging_dir)
             .await
             .expect("remove staging dir");
+    }
+
+    #[tokio::test]
+    async fn context_mirror_execution_error_writes_durable_failure_report() {
+        let out_path = unique_temp_path("context-mirror-failure", "json");
+        let missing_root = unique_temp_path("context-mirror-missing-root", "dir");
+        let args = vec![
+            "--out".to_string(),
+            out_path.display().to_string(),
+            "--drive-root-folder-id".to_string(),
+            "demo-root".to_string(),
+            "--drive-seed-folder-id".to_string(),
+            "demo-root".to_string(),
+        ];
+        let mut config = build_demo_config(&args, WorkspaceExecutionMode::Execute, true, true);
+        config.mirror_config.repo_root = missing_root.display().to_string();
+        let error = run_demo_with_transport(&config, &InMemoryDriveTransportForDemo::new())
+            .await
+            .expect_err("missing repository root must fail");
+        assert!(error.to_string().contains("read repo README"));
+        let body = tokio::fs::read_to_string(&out_path)
+            .await
+            .expect("read durable failure report");
+        assert!(body.contains("adl_gws_context_mirror_failure.v1"));
+        assert!(body.contains("\"status\": \"failed\""));
+        tokio::fs::remove_file(out_path)
+            .await
+            .expect("remove failure report");
     }
 }
