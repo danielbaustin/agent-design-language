@@ -1,0 +1,27 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5614,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[security] Remove AWS temporary access-key literals from redaction fixtures",
+    "slug": "secret-scanning-fixtures",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Pre-execution output record.",
+      "actual_changes": [],
+      "artifacts": [],
+      "actual_validation": [],
+      "integration_state": "not_started",
+      "publication_state": "not_published",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}
