@@ -7,22 +7,24 @@
     "title": "[security] Remove AWS temporary access-key literals from redaction fixtures",
     "slug": "secret-scanning-fixtures",
     "version": "v0.91.8",
-    "generation": 4
+    "generation": 6
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
       "review_scope": "adl/tools/test_run_aws_spot_ci_profile.sh",
-      "review_revision": null,
-      "reviewer": null,
+      "review_revision": "git-blake3:01cfd77d10bdf18ae6160bf3b90b2df45f139f90:46bb869b618153dbf9c5021b8f14a484d248296b9f9734adf9b5cccfcbb5d5d9",
+      "reviewer": "subagent:review_5614",
       "review_prompts": [
         "Does the fixture still exercise the same runtime pattern?",
         "Does any matching literal remain in tracked source?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "Historical scanner locations remain until alert #1 is explicitly resolved after the corrected source reaches main."
+      ],
+      "review_result": "pass"
     }
   }
 }

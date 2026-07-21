@@ -29,12 +29,12 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- Historical scanner locations remain until alert #1 is explicitly resolved after the corrected source reaches main.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:01cfd77d10bdf18ae6160bf3b90b2df45f139f90:46bb869b618153dbf9c5021b8f14a484d248296b9f9734adf9b5cccfcbb5d5d9")
 
-Reviewer: None
+Reviewer: Some("subagent:review_5614")
 
-Result: pre_review
+Result: pass
