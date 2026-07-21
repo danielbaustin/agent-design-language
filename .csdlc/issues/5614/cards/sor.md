@@ -48,11 +48,11 @@ Replaced the tracked AWS temporary-key-shaped literal with runtime construction 
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: draft
 
 Merge: not_merged
 

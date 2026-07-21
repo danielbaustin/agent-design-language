@@ -3,13 +3,13 @@
   "issue": 5614,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "681c1ac4b68abe097bfd58b7f23f1b74ad60ba465cc4b8f085c4bc91d31d9c9c",
-  "phase": "reviewed",
-  "generation": 6,
-  "digest": "8ed8fab2c5e0e5d864af6d48e697e7fda16801cfea369ea46cb0af6ce89564f6",
+  "phase": "published",
+  "generation": 7,
+  "digest": "db665ba5ed17ac9360e77ce2d080a68e204096af021b436a55ffdb544acce26f",
   "claim": {
     "id": "claim-5614-secret-scanning-fixtures",
     "owner": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
-    "generation": 6,
+    "generation": 7,
     "acquired_unix_seconds": 1784665090,
     "expires_unix_seconds": 1784751490,
     "heartbeat_unix_seconds": 1784665090,
@@ -41,7 +41,17 @@
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5614,
+    "pull_request": 5616,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5616",
+    "base": "main",
+    "head": "codex/5614-secret-scanning-fixtures",
+    "revision": "git-blake3:9e006366958546f3286d1b45baf40d06ab8fe67f:d96d3d16f395a05a288d43f9c37cb27a48581c97e7f18540cf663200b7f37c2b",
+    "draft": true,
+    "observed_state": "open"
+  },
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -55,34 +65,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "e40f7597c84e71ccf8ce08b283161c8dd94d61bb189a4bfde3231f8aa8072184",
+      "values_digest": "e9f120680e5ecf24d259774e4a95704af17c235383751ac9990ed826925c3a08",
       "rendered_digest": "bb55d4c117388e48aafea77e12350fbd2218533134d36aeff1355ee76ce05734",
       "ast_digest": "70246dc72c4da50f4628063c448d472c7b728cc96228714922534350b006e6bd"
     },
     "stp": {
-      "values_digest": "cbd8c0b1b0de613660560f318745899e9ca72cc85add9bc8828e056bc31cc005",
+      "values_digest": "9e03f85f5b48f4bc76951e1204acd982648e2791e83e25738fbdf20e415efd6f",
       "rendered_digest": "fbb66e30cd44880da5ef81a5bcf818581aec4ddbf2f945607898e4ddea2c4c12",
       "ast_digest": "e3d95484bc34fb631bef66ecef17d2c37442f248fc1884e787081c61e1a5e732"
     },
     "spp": {
-      "values_digest": "1590708a36bf93d3ace995b1bb4ba63c6745db04e9185002cbc1067c579a4f53",
+      "values_digest": "715da6c40d018a22e9eff74186b2afd42f31e750d36957b9ab4456112d68f270",
       "rendered_digest": "2bdcdc2c052aa86f4443a204b47edf078c3c8be57f4872707e452f49b83b9913",
       "ast_digest": "b884cafe551623726e0b4d081ca4e32e94183b5ed95332e2a9e64b830fe34f80"
     },
     "vpp": {
-      "values_digest": "f8e1e88ea2591db87c93ef455963efb3420dceb0c6acacef65fda3b352b56000",
+      "values_digest": "5efe40ded7dc7fd4fc23d01088dadf05bb99aacf214f0829c74e9abff3d0b3b9",
       "rendered_digest": "6e53843737ebee4dbb3cb5f6e00a5715098be69d5cce740a1c6c0bf7f77248eb",
       "ast_digest": "e8cedee6c51ded9e0be587cf5ae861fb12505ff46d956f0d69fe4a49bf15bb21"
     },
     "srp": {
-      "values_digest": "c0d6067d6ac96829d4d82b686e90a12bf58dae942fcc2ac0ba556c40e38e1f7c",
+      "values_digest": "9eeadb7f35251927612c89081f2573be1cb266403d24f9f15ad43ea463300679",
       "rendered_digest": "0b300aa1a3f97927a84d8a7457e9adbb92dd7dbb0831886921c433656c002005",
       "ast_digest": "897f13d75f90ec082ea9def6b01a95c02cdc45c2d4644347e99f4e1787770c80"
     },
     "sor": {
-      "values_digest": "6d74ee5991699c5ee3cd00e33874af635489f53d1fc417d25fad54469c651e69",
-      "rendered_digest": "dae8cfb58b1086d0146094455713216e221ce08d3842448e64fb0b7d7eabd3e0",
-      "ast_digest": "b169c9ced3c43e44bf45fb33a696f3c5e1cfa07b04cde65168a1bf7d259ff9e0"
+      "values_digest": "ed360a633d1085ee9b4075f3c03a305171fbb9a1190c7b82417cb9cd18e897c6",
+      "rendered_digest": "0bea9cfa53275e5212dbc88948067062736c0544791a21147fa4a1de25bf37e4",
+      "ast_digest": "b2bb8ed4cbb48cf8f0e519139eabf072fade1d3bdd28c5c73629937484b046fd"
     }
   },
   "transitions": [
@@ -113,6 +123,13 @@
       "to": "reviewed",
       "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
       "reason": "Exact-revision bounded security review completed with no actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "observed exact PR after current review"
     }
   ],
   "audit": [
@@ -178,6 +195,13 @@
       "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
       "reason": "Exact-revision bounded security review completed with no actionable findings.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
     }
   ]
 }

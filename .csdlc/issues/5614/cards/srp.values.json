@@ -7,7 +7,7 @@
     "title": "[security] Remove AWS temporary access-key literals from redaction fixtures",
     "slug": "secret-scanning-fixtures",
     "version": "v0.91.8",
-    "generation": 6
+    "generation": 7
   },
   "status": "pre_phase",
   "content": {
