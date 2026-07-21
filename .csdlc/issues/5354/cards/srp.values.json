@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5354,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15] Converge integrated ADL Runtime and C-SDLC demos",
+    "slug": "v0918-wp15-integrated-demo-convergence",
+    "version": "v0.91.8",
+    "generation": 1
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5354\n.csdlc/locks/5354.lock\n.csdlc/prepared/issues/5354\n.csdlc/evidence/5354",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Can any fixture, screenshot, prose, metadata row, product-local test, or partial lifecycle path be mistaken for the required integrated deployed proof?",
+        "Is #5384 merge, typed closed_out, claim release, retained receipt, and ancestry gating exact and impossible to bypass?",
+        "Does the scenario compose accepted ADL v2, Runtime v3, and C-SDLC v2 interfaces without introducing a duplicate orchestrator or lifecycle authority?",
+        "Are evidence identity, redaction, network/address configuration, public claim boundaries, and negative tests complete and fail-closed?",
+        "Are COTS, protected-path amendment, LoC/module/assertion/time budgets, PVF, no-deferral, exact review, CI, serialized merge, and post-merge contracts complete?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

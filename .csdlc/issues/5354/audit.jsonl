@@ -1,0 +1,3 @@
+{"sequence":1,"generation":0,"actor":"codex:5354-preparation-owner","reason":"initialize issue record and all six cards","operation":"bootstrap"}
+{"sequence":2,"generation":0,"actor":"codex:5354-preparation-owner","reason":"bind branch/worktree and activate claim","operation":"bind"}
+{"sequence":3,"generation":1,"actor":"subagent:codex-cli-5354-design-rereview","reason":"reapprove changed issue design","operation":"approve_design"}

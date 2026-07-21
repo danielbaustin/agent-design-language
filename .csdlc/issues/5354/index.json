@@ -1,0 +1,111 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5354,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "c9e538886b9fe939fe6a89f44b9ef31a4d75733f7a7e60cdbb4bf47dd806bfc9",
+  "phase": "bound",
+  "generation": 1,
+  "digest": "e8466c9fd9b8f5fef63344f2624cc8632449054572f507c901daf00a14b0952d",
+  "claim": {
+    "id": "claim-5354-v0918-wp15-demo-preparation",
+    "owner": "codex:5354-preparation-owner",
+    "generation": 1,
+    "acquired_unix_seconds": 1784664208,
+    "expires_unix_seconds": 1785269008,
+    "heartbeat_unix_seconds": 1784664208,
+    "branch": "codex/5354-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5354",
+      ".csdlc/locks/5354.lock",
+      ".csdlc/prepared/issues/5354",
+      ".csdlc/evidence/5354"
+    ],
+    "purpose": "Prepare and review #5354 only; claim no product or demo path and perform no implementation until WP-14A #5384 is merged, typed closed_out, claim-free, retained-receipt-backed, and ancestral"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5354/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5354/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "subagent:codex-cli-5354-design-rereview",
+      "revision": "42ddc15eee066ce47c0d7e6942593e2777421326e169c91fbc58910dcd078e48"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "7e0ab500725f69dced5af3b003cdfe9b22eb1ae2f059ee26bf0f7771a214b9eb",
+      "rendered_digest": "e842eaeba6122151cdb5edb96814a78b32509238169446a82c02c9eb66877981",
+      "ast_digest": "39ef15d3feddac90905427c8f05b3d16770ca9035a47aaab9e96b188ce1413bf"
+    },
+    "stp": {
+      "values_digest": "07f0a48dcfd0804eda3bdea94d3ec8a55a7328e91b22f4dd660a37ba17f13eb5",
+      "rendered_digest": "35b07c4da8c5ca104518e5df33358b113aed29be2c34acb182c3b0b8031274e0",
+      "ast_digest": "8c570228ccd0f717d35271d8244ea9b668e8aac7d7d3183cd6cb31f1b50130d7"
+    },
+    "spp": {
+      "values_digest": "dbd213fd489c60185dc70be902add54fbe5d8e94591cdafcfc3396581eef9c1c",
+      "rendered_digest": "ba19141667e74672e14f6043420a539a708c70f9806b028297ab76883cc3f521",
+      "ast_digest": "ed3869f0714ad4f327ffdebe85f1aaed476b888a3aeabb27b923b2eee5325aeb"
+    },
+    "vpp": {
+      "values_digest": "0be10c5ad98aa7b1301e9c49d32dc5821fbb951d619492d45280e5fca9eadf08",
+      "rendered_digest": "10a705df8b99ad388129ac3cd8bf104fbf712fb27e49a85c5b1be00273130ce0",
+      "ast_digest": "7e97ff40bd045b559c3535f65bac011993e6dc65aa9949309fbcd05e3c47c61f"
+    },
+    "srp": {
+      "values_digest": "8acaf1a13122037ed4331aac48034b07988bf48afc9f0439f7907edee7c64adb",
+      "rendered_digest": "831b956fbfb268349d216750192b877051c3f85579eb02ca4b458fbce7ded8c4",
+      "ast_digest": "11b29892d082ad3f5c05d2abce2772308fd56feb2e57753d3c0b9e1c06d42008"
+    },
+    "sor": {
+      "values_digest": "e497ea89df11550013eaf75501dfd2772d8f97ae77deb8894bc70325ddfaaf66",
+      "rendered_digest": "a5ba407185e868e86b577334368860df5256133836b52a7fc8ac47488b656c05",
+      "ast_digest": "6bf831ed5ae3beff8ddd181648851ad6626d427936486c315b97f2b931790eb6"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5354-preparation-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5354-preparation-owner",
+      "reason": "verified Git worktree binding"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5354-preparation-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5354-preparation-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "subagent:codex-cli-5354-design-rereview",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    }
+  ]
+}
