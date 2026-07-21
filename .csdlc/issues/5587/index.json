@@ -1,0 +1,105 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5587,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "a5944a332503136886e500c86d1c782c64846fad42b1a325ca4e5fe8e748f8d2",
+  "phase": "bound",
+  "generation": 0,
+  "digest": "94916ae1da86827984c0eddf15a41f2e19e3df4ab8b97bedddf63eaabc182d94",
+  "claim": {
+    "id": "claim-5587-google-drive-context-mirror",
+    "owner": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+    "generation": 0,
+    "acquired_unix_seconds": 1784659080,
+    "expires_unix_seconds": 1784745480,
+    "heartbeat_unix_seconds": 1784659080,
+    "branch": "codex/5587-google-drive-context-mirror",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/src/adl_gws_native.rs",
+      "adl/src/adl_gws_drive_sync.rs",
+      "adl/src/adl_gws_context_mirror.rs",
+      "adl/src/bin/demo_adl_gws_context_mirror.rs",
+      "adl/Cargo.toml"
+    ],
+    "purpose": "Make the ADL Google Drive context mirror work and verify content end to end"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5587/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5587/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "revision": "196bd587d9658475dab103e296fb196be3adb7428841932b3863c862741b8eb0"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "5f99067fe581d372cf0fe3c64978016e34f5a71f81ea5e7301cab0514921bbe6",
+      "rendered_digest": "867bf9115b60902dab9b8c648a00a25b8b7d36d855ebce19c4b82b0756b4cd6d",
+      "ast_digest": "5db72db4a2e2230d6da78375077b0441985f175d427474e9370898dff43d3b14"
+    },
+    "stp": {
+      "values_digest": "d0c03034265c90193c3ee5a2fb68f048278261832b6c5109586b23967a7c205a",
+      "rendered_digest": "be4864ed0f1e4bf50f8cf47d142659362982eb9d969f2e3fb446cd1c3b8f3933",
+      "ast_digest": "55d986feaa9113104e8a50bf8198e19112d391f78ffab0a6add7545ca72f0634"
+    },
+    "spp": {
+      "values_digest": "03cf8c8c4f431e4480b1bab6b04f01467f8f15c1f3f78ea212dca9f26336f57e",
+      "rendered_digest": "30e2dd52266eeca38592583b434c88b7f429a48ae0efdec52674f8960aeb459d",
+      "ast_digest": "88fd5c2643cc42d34449fa8c8969d9cbce11f70ca3d92f4e5d2dadede0ad3bcc"
+    },
+    "vpp": {
+      "values_digest": "566753ac229bb6e19abf6a622a79a0346126a14731fed11090e31b42c05e181b",
+      "rendered_digest": "b26cf896bc0c86323db9ff567aa3e55c51f27d20c4575ffac443f25548150a51",
+      "ast_digest": "3ea6c927b7b5fa4f25d17da1cf18c09d3ef3f104d77b593f40e3da9d8f802373"
+    },
+    "srp": {
+      "values_digest": "0eb60a9e9f0899a5ad359fd6a587e249eb6ec92b98ceeaee6d0c2b4333c2bd00",
+      "rendered_digest": "920b687ea46a6a5238513de0836d6ca573540d8634ed22a9bda8beb3b026e9ab",
+      "ast_digest": "b21ed3e77d7fc393a15168760dcb6352eba7d51befb95d86ea84fca97031097b"
+    },
+    "sor": {
+      "values_digest": "b1fbbe58cb0c754a0776d8d63de26708946109c395c0f943dd230f874b58b265",
+      "rendered_digest": "a6c1c0eddb5469d372f06ad27b29fb993b77a2db78a3091e22b78b2646af22d7",
+      "ast_digest": "ff818c0d61312b9a60396dc8c061ad721e32c0ba731ab6eefd41c525fa6e4e8e"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "verified Git worktree binding"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    }
+  ]
+}

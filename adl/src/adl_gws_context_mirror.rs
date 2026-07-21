@@ -47,6 +47,7 @@ pub struct WorkspaceContextMirrorReport {
     pub files_considered: Vec<String>,
     pub files_created: Vec<String>,
     pub files_updated: Vec<String>,
+    pub files_unchanged: Vec<String>,
     pub files_skipped: Vec<String>,
     pub verification_results: Vec<String>,
     pub milestone_truth: WorkspaceMilestoneTruthRecord,
@@ -106,11 +107,12 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
     let mut files_considered = Vec::new();
     let mut files_created = Vec::new();
     let mut files_updated = Vec::new();
+    let mut files_unchanged = Vec::new();
     let mut files_skipped = Vec::new();
     let mut verification_results = Vec::new();
     let mut sync_results = Vec::new();
     let milestone_truth = read_milestone_truth(Path::new(&config.repo_root))?;
-    let recursive_mirror_status = recursive_mirror_status(&config);
+    let mut recursive_mirror_status = recursive_mirror_status(&config);
 
     if config.drive_root_folder_id.trim().is_empty()
         || config.drive_seed_folder_id.trim().is_empty()
@@ -139,6 +141,7 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
             files_considered,
             files_created,
             files_updated,
+            files_unchanged,
             files_skipped,
             verification_results,
             milestone_truth,
@@ -189,6 +192,9 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
         match report.result.disposition {
             WorkspaceDriveFileSyncDisposition::Created => files_created.push(file_name.to_string()),
             WorkspaceDriveFileSyncDisposition::Updated => files_updated.push(file_name.to_string()),
+            WorkspaceDriveFileSyncDisposition::Unchanged => {
+                files_unchanged.push(file_name.to_string())
+            }
             WorkspaceDriveFileSyncDisposition::Skipped => files_skipped.push(file_name.to_string()),
         }
         verification_results.push(format!(
@@ -197,11 +203,75 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
         ));
         sync_results.push(report.result);
     }
+
+    if config.recursive_sync_enabled {
+        let repo_root = Path::new(&config.repo_root);
+        for source_path in recursive_markdown_files(repo_root)? {
+            let relative = source_path.strip_prefix(repo_root).with_context(|| {
+                format!(
+                    "mirror source '{}' escaped repo root",
+                    source_path.display()
+                )
+            })?;
+            let file_name = relative
+                .file_name()
+                .and_then(|name| name.to_str())
+                .context("recursive mirror file name is not UTF-8")?;
+            let folder_path = relative
+                .parent()
+                .into_iter()
+                .flat_map(Path::components)
+                .map(|component| component.as_os_str().to_string_lossy().into_owned())
+                .collect::<Vec<_>>();
+            let display = relative.display().to_string();
+            files_considered.push(display.clone());
+            let request = WorkspaceDriveFileSyncRequest {
+                source_file: source_path.display().to_string(),
+                target: crate::adl_gws_native::WorkspaceScopeBinding {
+                    root_folder_id: config.drive_root_folder_id.clone(),
+                    folder_path,
+                    file_name: Some(file_name.to_string()),
+                    file_id: None,
+                },
+                target_file_name: file_name.to_string(),
+                mime_type: "text/markdown".to_string(),
+                policy: WorkspaceDriveSyncPolicy::CreateOrUpdate,
+            };
+            let report = sync_drive_file_with_transport(
+                live_mode.clone(),
+                write_approval_present,
+                request,
+                transport,
+            )
+            .await?;
+            match report.result.disposition {
+                WorkspaceDriveFileSyncDisposition::Created => files_created.push(display.clone()),
+                WorkspaceDriveFileSyncDisposition::Updated => files_updated.push(display.clone()),
+                WorkspaceDriveFileSyncDisposition::Unchanged => {
+                    files_unchanged.push(display.clone())
+                }
+                WorkspaceDriveFileSyncDisposition::Skipped => files_skipped.push(display.clone()),
+            }
+            verification_results.push(format!(
+                "{}: {}",
+                display, report.result.verification_message
+            ));
+            sync_results.push(report.result);
+        }
+        if matches!(live_mode, WorkspaceExecutionMode::Execute)
+            && sync_results.iter().all(|result| result.verification_ok)
+        {
+            recursive_mirror_status = WorkspaceRecursiveMirrorStatus::RecursiveLive;
+        }
+    }
     let summary_lines = vec![
         format!(
-            "Seed sync considered {} files and updated {} total targets.",
+            "Context mirror considered {} files: {} created, {} updated, {} unchanged, and {} skipped.",
             files_considered.len(),
-            files_created.len() + files_updated.len()
+            files_created.len(),
+            files_updated.len(),
+            files_unchanged.len(),
+            files_skipped.len()
         ),
         format!(
             "ChatGPT-facing current milestone remains '{}', with truthful sequence {}.",
@@ -241,6 +311,7 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
         files_considered,
         files_created,
         files_updated,
+        files_unchanged,
         files_skipped,
         verification_results,
         milestone_truth,
@@ -258,6 +329,41 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
             "This context mirror does not authorize canonical tracked repo edits from Workspace state.",
         ],
     })
+}
+
+fn recursive_markdown_files(repo_root: &Path) -> Result<Vec<PathBuf>> {
+    let mut files = Vec::new();
+    for relative_root in [Path::new("docs"), Path::new(".adl/docs/TBD")] {
+        let root = repo_root.join(relative_root);
+        if !root.exists() {
+            continue;
+        }
+        collect_markdown_files(&root, &mut files)?;
+    }
+    files.sort();
+    files.dedup();
+    Ok(files)
+}
+
+fn collect_markdown_files(directory: &Path, files: &mut Vec<PathBuf>) -> Result<()> {
+    for entry in std::fs::read_dir(directory)
+        .with_context(|| format!("read recursive mirror directory '{}'", directory.display()))?
+    {
+        let entry = entry?;
+        let file_type = entry.file_type()?;
+        let path = entry.path();
+        if file_type.is_symlink() {
+            bail!("recursive mirror refuses symlink '{}'", path.display());
+        }
+        if file_type.is_dir() {
+            collect_markdown_files(&path, files)?;
+        } else if file_type.is_file()
+            && path.extension().and_then(|extension| extension.to_str()) == Some("md")
+        {
+            files.push(path);
+        }
+    }
+    Ok(())
 }
 
 async fn ensure_seed_folder_within_root<T: WorkspaceDriveTransport>(
@@ -358,7 +464,7 @@ mod tests {
         read_milestone_truth, recursive_mirror_status, run_workspace_context_mirror_with_transport,
         write_workspace_context_mirror_report, WorkspaceContextMirrorConfig,
     };
-    use crate::adl_gws_drive_sync::WorkspaceDriveTransport;
+    use crate::adl_gws_drive_sync::{InMemoryDriveTransportForDemo, WorkspaceDriveTransport};
     use crate::adl_gws_native::WorkspaceExecutionMode;
     use crate::adl_gws_native::WorkspaceSkipReason;
     use anyhow::Result;
@@ -392,6 +498,9 @@ mod tests {
                 modified_time: Some("2026-06-21T23:00:00Z".to_string()),
                 web_view_link: None,
             })
+        }
+        async fn read_file_bytes(&self, _file_id: &str) -> Result<Vec<u8>> {
+            Ok(Vec::new())
         }
         async fn create_folder(
             &self,
@@ -465,6 +574,10 @@ mod tests {
                 modified_time: Some("2026-06-21T23:00:00Z".to_string()),
                 web_view_link: None,
             })
+        }
+
+        async fn read_file_bytes(&self, _file_id: &str) -> Result<Vec<u8>> {
+            Ok(Vec::new())
         }
 
         async fn create_folder(
@@ -709,5 +822,85 @@ mod tests {
             recursive_mirror_status(&config),
             super::WorkspaceRecursiveMirrorStatus::RecursivePending
         );
+    }
+
+    #[tokio::test]
+    async fn execute_mode_recursively_mirrors_markdown_with_verified_content() {
+        let repo_root = unique_temp_path("context-mirror-recursive-repo");
+        let staging_dir = repo_root.join("staging");
+        tokio::fs::create_dir_all(repo_root.join("docs/nested"))
+            .await
+            .expect("create docs tree");
+        tokio::fs::create_dir_all(repo_root.join(".adl/docs/TBD"))
+            .await
+            .expect("create TBD tree");
+        tokio::fs::create_dir_all(repo_root.join("docs/milestones/v0.91.7"))
+            .await
+            .expect("create milestone tree");
+        tokio::fs::create_dir_all(repo_root.join("docs/milestones/v0.92"))
+            .await
+            .expect("create v0.92 tree");
+        tokio::fs::create_dir_all(&staging_dir)
+            .await
+            .expect("create staging tree");
+        tokio::fs::write(repo_root.join("README.md"), "Active milestone: v0.91.7\n")
+            .await
+            .expect("write README");
+        tokio::fs::write(
+            repo_root.join("docs/milestones/v0.91.7/README.md"),
+            "# v0.91.7\n",
+        )
+        .await
+        .expect("write milestone README");
+        tokio::fs::write(
+            repo_root.join("docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"),
+            "activation remains blocked\n",
+        )
+        .await
+        .expect("write activation ledger");
+        tokio::fs::write(repo_root.join("docs/nested/a.md"), "# A\n")
+            .await
+            .expect("write nested doc");
+        tokio::fs::write(repo_root.join(".adl/docs/TBD/b.md"), "# B\n")
+            .await
+            .expect("write TBD doc");
+        for file_name in context_seed_file_names() {
+            tokio::fs::write(staging_dir.join(file_name), format!("# {file_name}\n"))
+                .await
+                .expect("write seed file");
+        }
+
+        let report = run_workspace_context_mirror_with_transport(
+            WorkspaceExecutionMode::Execute,
+            true,
+            WorkspaceContextMirrorConfig {
+                repo_root: repo_root.display().to_string(),
+                staging_dir: staging_dir.display().to_string(),
+                drive_root_folder_id: "demo-root".to_string(),
+                drive_seed_folder_id: "demo-root".to_string(),
+                recursive_sync_enabled: true,
+            },
+            &InMemoryDriveTransportForDemo::new(),
+        )
+        .await
+        .expect("run recursive mirror");
+
+        assert_eq!(
+            report.recursive_mirror_status,
+            super::WorkspaceRecursiveMirrorStatus::RecursiveLive
+        );
+        assert!(report
+            .files_considered
+            .contains(&"docs/nested/a.md".to_string()));
+        assert!(report
+            .files_considered
+            .contains(&".adl/docs/TBD/b.md".to_string()));
+        assert!(report
+            .sync_results
+            .iter()
+            .all(|result| result.verification_ok));
+        tokio::fs::remove_dir_all(repo_root)
+            .await
+            .expect("remove recursive mirror fixture");
     }
 }

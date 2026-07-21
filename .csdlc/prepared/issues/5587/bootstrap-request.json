@@ -1,0 +1,66 @@
+{
+  "issue": 5587,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5587/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5587/diagram.mmd",
+  "design_reviewer": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5587-google-drive-context-mirror",
+    "owner": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+    "generation": 0,
+    "acquired_unix_seconds": 1784659080,
+    "expires_unix_seconds": 1784745480,
+    "heartbeat_unix_seconds": 1784659080,
+    "branch": "codex/5587-google-drive-context-mirror",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/src/adl_gws_native.rs",
+      "adl/src/adl_gws_drive_sync.rs",
+      "adl/src/adl_gws_context_mirror.rs",
+      "adl/src/bin/demo_adl_gws_context_mirror.rs",
+      "adl/Cargo.toml"
+    ],
+    "purpose": "Make the ADL Google Drive context mirror work and verify content end to end"
+  },
+  "initial": {
+    "title": "[v0.91.8][google-workspace][automation] Make ADL Drive context mirror work end to end",
+    "slug": "google-drive-context-mirror",
+    "version": "v0.91.8",
+    "goal": "Run the ADL context mirror against Google Drive with recursive, content-verified, least-privilege behavior.",
+    "required_outcome": "Execute mode uses the native Drive transport, mirrors the declared repository surfaces recursively, and succeeds only after exact remote-content readback.",
+    "declared_scope": ["adl/src/adl_gws_native.rs", "adl/src/adl_gws_drive_sync.rs", "adl/src/adl_gws_context_mirror.rs", "adl/src/bin/demo_adl_gws_context_mirror.rs", "adl/Cargo.toml"],
+    "authority_boundary": ["Issue #5587 owns production Drive mirror behavior and its focused proof", "Remote deletion and broader Workspace access are excluded", "AWS and Spot are excluded"],
+    "task_boundary": "Correct transport selection, recursive traversal, exact readback verification, and success-only automation semantics.",
+    "deliverables": ["Production native transport route", "Exact content verification", "Recursive Markdown mirroring", "Focused tests and live proof"],
+    "acceptance_criteria": [
+      "AC-1: execute mode performs a real Drive create or update and exact readback verification",
+      "AC-2: docs and .adl/docs/TBD Markdown trees mirror recursively with preserved relative paths",
+      "AC-3: least-privilege scopes and explicit write approval remain enforced",
+      "AC-4: automation archives only fully verified successes and retains deduplicated failures",
+      "AC-5: fixture and focused tests prove deterministic success and fail-closed behavior"
+    ],
+    "dependencies": ["Google Drive credentials and configured root folder", "Issue #5587 operator authorization"],
+    "repo_inputs": ["adl/src/adl_gws_native.rs", "adl/src/adl_gws_drive_sync.rs", "adl/src/adl_gws_context_mirror.rs"],
+    "non_goals": ["No remote deletion", "No AWS", "No unrelated Google Workspace providers"],
+    "plan_summary": "Implement native execution and exact readback, add recursive mirroring, validate locally and live, then review and publish through typed v2.",
+    "steps": [
+      {"id":"S1","action":"Implement native execute transport and exact content verification","status":"pending","acceptance_ids":["AC-1","AC-3","AC-5"]},
+      {"id":"S2","action":"Implement recursive path-preserving Markdown mirroring and automation result semantics","status":"pending","acceptance_ids":["AC-2","AC-4","AC-5"]},
+      {"id":"S3","action":"Run focused and live proof, review, publish, and close out","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5"]}
+    ],
+    "risks": ["Remote write targets the wrong folder", "Metadata-only verification masks stale content", "Recursive traversal escapes declared roots"],
+    "invariants": ["All writes require explicit approval", "Every reported write is content-verified", "Remote content is never deleted"],
+    "stop_conditions": ["Credentials resolve outside approved sources", "Target folder identity is ambiguous", "Readback differs from local bytes"],
+    "review_prompts": ["Can execute mode still select an in-memory transport?", "Can a successful report be emitted without exact readback?", "Can traversal escape docs or .adl/docs/TBD?"],
+    "operator_constraints": ["Use typed C-SDLC v2 only", "No AWS or Spot", "Use a bound issue worktree"],
+    "review_scope": "adl/src/adl_gws_native.rs\nadl/src/adl_gws_drive_sync.rs\nadl/src/adl_gws_context_mirror.rs\nadl/src/bin/demo_adl_gws_context_mirror.rs\nadl/Cargo.toml",
+    "planning_profile": "medium",
+    "validation_lanes": [
+      {"lane":"gws-drive-sync-tests","proof_role":"Prove native contract, exact readback, approval, and failure behavior","deterministic":true,"resource_profile":"small","parallel_group":"gws-focused","budget_seconds":300,"budget_tokens":3000,"argv":["cargo","test","adl_gws_drive_sync"],"acceptance_ids":["AC-1","AC-3","AC-5"]},
+      {"lane":"gws-context-mirror-tests","proof_role":"Prove recursive path preservation and truthful reporting","deterministic":true,"resource_profile":"small","parallel_group":"gws-focused","budget_seconds":300,"budget_tokens":3000,"argv":["cargo","test","adl_gws_context_mirror"],"acceptance_ids":["AC-2","AC-4","AC-5"]}
+    ],
+    "failure_policy": "Fail closed on missing approval, credentials, path escape, ambiguous remote children, API failure, or content mismatch."
+  }
+}
+

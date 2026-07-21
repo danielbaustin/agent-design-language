@@ -3,12 +3,14 @@ use adl::adl_gws_context_mirror::{
     write_workspace_context_mirror_report, WorkspaceContextMirrorConfig,
     ADL_GWS_CONTEXT_MIRROR_REPORT_ARTIFACT_PATH,
 };
-use adl::adl_gws_drive_sync::{InMemoryDriveTransportForDemo, WorkspaceDriveTransport};
+use adl::adl_gws_drive_sync::{
+    InMemoryDriveTransportForDemo, NativeWorkspaceDriveTransport, WorkspaceDriveTransport,
+};
 use adl::adl_gws_native::{
     parse_workspace_execution_mode_from_env, parse_workspace_write_approval_from_env,
-    WorkspaceExecutionMode,
+    DefaultWorkspaceAccessTokenProvider, WorkspaceExecutionMode,
 };
-use anyhow::Result;
+use anyhow::{bail, Result};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone)]
@@ -47,12 +49,16 @@ fn build_demo_config(
     }
     if let Some(root_id) = parse_arg(args, "--drive-root-folder-id") {
         mirror_config.drive_root_folder_id = root_id;
-    } else if mirror_config.drive_root_folder_id.is_empty() {
+    } else if mirror_config.drive_root_folder_id.is_empty()
+        && !matches!(live_mode, WorkspaceExecutionMode::Execute)
+    {
         mirror_config.drive_root_folder_id = "demo-root".to_string();
     }
     if let Some(seed_id) = parse_arg(args, "--drive-seed-folder-id") {
         mirror_config.drive_seed_folder_id = seed_id;
-    } else if mirror_config.drive_seed_folder_id.is_empty() {
+    } else if mirror_config.drive_seed_folder_id.is_empty()
+        && !matches!(live_mode, WorkspaceExecutionMode::Execute)
+    {
         mirror_config.drive_seed_folder_id = "demo-root".to_string();
     }
     if recursive_sync_enabled {
@@ -79,30 +85,48 @@ async fn run_demo_with_transport<T: WorkspaceDriveTransport>(
     )
     .await?;
     write_workspace_context_mirror_report(&config.out_path, &report).await?;
+    if matches!(config.live_mode, WorkspaceExecutionMode::Execute)
+        && (report.skipped_reason.is_some()
+            || report.sync_results.is_empty()
+            || report
+                .sync_results
+                .iter()
+                .any(|result| !result.verification_ok))
+    {
+        bail!("context mirror report contains unverified Drive results");
+    }
     Ok(config.out_path.clone())
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
-    let recursive_sync_enabled = matches!(
-        std::env::var("ADL_GWS_RECURSIVE_SYNC")
-            .unwrap_or_default()
-            .to_ascii_lowercase()
-            .as_str(),
-        "1" | "true" | "yes" | "enabled"
-    );
+    let live_mode = match parse_workspace_execution_mode_from_env() {
+        WorkspaceExecutionMode::FixtureBacked => WorkspaceExecutionMode::DryRun,
+        mode => mode,
+    };
+    let recursive_sync_enabled = std::env::var("ADL_GWS_RECURSIVE_SYNC")
+        .ok()
+        .map(|value| {
+            matches!(
+                value.to_ascii_lowercase().as_str(),
+                "1" | "true" | "yes" | "enabled"
+            )
+        })
+        .unwrap_or_else(|| matches!(live_mode, WorkspaceExecutionMode::Execute));
     let config = build_demo_config(
         &args,
-        match parse_workspace_execution_mode_from_env() {
-            WorkspaceExecutionMode::FixtureBacked => WorkspaceExecutionMode::DryRun,
-            mode => mode,
-        },
+        live_mode,
         parse_workspace_write_approval_from_env(),
         recursive_sync_enabled,
     );
-    let transport = InMemoryDriveTransportForDemo::new();
-    let out_path = run_demo_with_transport(&config, &transport).await?;
+    let out_path = if matches!(config.live_mode, WorkspaceExecutionMode::Execute) {
+        let transport = NativeWorkspaceDriveTransport::new(DefaultWorkspaceAccessTokenProvider)?;
+        run_demo_with_transport(&config, &transport).await?
+    } else {
+        let transport = InMemoryDriveTransportForDemo::new();
+        run_demo_with_transport(&config, &transport).await?
+    };
     println!("{}", out_path.display());
     Ok(())
 }

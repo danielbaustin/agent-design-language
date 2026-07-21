@@ -1,0 +1,18 @@
+{
+  "issue": 5587,
+  "base_branch": "main",
+  "branch": "codex/5587-google-drive-context-mirror",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5587-google-drive-context-mirror",
+    "owner": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+    "generation": 0,
+    "acquired_unix_seconds": 1784659080,
+    "expires_unix_seconds": 1784745480,
+    "heartbeat_unix_seconds": 1784659080,
+    "branch": "codex/5587-google-drive-context-mirror",
+    "worktree": ".",
+    "protected_paths": ["adl/src/adl_gws_native.rs", "adl/src/adl_gws_drive_sync.rs", "adl/src/adl_gws_context_mirror.rs", "adl/src/bin/demo_adl_gws_context_mirror.rs", "adl/Cargo.toml"],
+    "purpose": "Make the ADL Google Drive context mirror work and verify content end to end"
+  }
+}

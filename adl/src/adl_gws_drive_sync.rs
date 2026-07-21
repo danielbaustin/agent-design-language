@@ -2,7 +2,7 @@ use crate::adl_gws_native::{
     default_drive_method_catalog, metadata_fields_selector, scopes_as_refs,
     WorkspaceAccessTokenProvider, WorkspaceAuthContext, WorkspaceDriveMethodCatalog,
     WorkspaceExecutionMode, WorkspaceFileRef, WorkspaceScopeBinding, WorkspaceSkipReason,
-    ADL_GWS_DEFAULT_SCOPE,
+    ADL_GWS_DEFAULT_SCOPE, ADL_GWS_SCOPE_DRIVE_FILE,
 };
 use anyhow::{anyhow, bail, Context, Result};
 use async_trait::async_trait;
@@ -23,6 +23,7 @@ pub const DRIVE_FOLDER_MIME_TYPE: &str = "application/vnd.google-apps.folder";
 pub enum WorkspaceDriveFileSyncDisposition {
     Created,
     Updated,
+    Unchanged,
     Skipped,
 }
 
@@ -79,6 +80,7 @@ pub struct WorkspaceDriveSyncReport {
 pub trait WorkspaceDriveTransport: Send + Sync {
     async fn list_children(&self, parent_id: &str) -> Result<Vec<WorkspaceFileRef>>;
     async fn read_file_metadata(&self, file_id: &str) -> Result<WorkspaceFileRef>;
+    async fn read_file_bytes(&self, file_id: &str) -> Result<Vec<u8>>;
     async fn create_folder(&self, parent_id: &str, name: &str) -> Result<WorkspaceFileRef>;
     async fn create_file(
         &self,
@@ -223,6 +225,16 @@ impl WorkspaceDriveTransport for InMemoryDriveTransportForDemo {
             .ok_or_else(|| anyhow!("missing file {file_id}"))
     }
 
+    async fn read_file_bytes(&self, file_id: &str) -> Result<Vec<u8>> {
+        self.state
+            .lock()
+            .expect("lock drive state")
+            .file_bytes
+            .get(file_id)
+            .cloned()
+            .ok_or_else(|| anyhow!("missing file content {file_id}"))
+    }
+
     async fn create_folder(&self, parent_id: &str, name: &str) -> Result<WorkspaceFileRef> {
         let id = self.insert_file(parent_id, name, DRIVE_FOLDER_MIME_TYPE, &[]);
         self.read_file_metadata(&id).await
@@ -313,6 +325,26 @@ where
             })
             .await?;
         parse_drive_file(response).await
+    }
+
+    async fn read_file_bytes(&self, file_id: &str) -> Result<Vec<u8>> {
+        let url = format!("https://www.googleapis.com/drive/v3/files/{file_id}");
+        let (response, _) = self
+            .authorized_request(&[ADL_GWS_SCOPE_DRIVE_FILE.to_string()], |token| {
+                self.client
+                    .get(&url)
+                    .bearer_auth(token)
+                    .query(&[("alt", "media")])
+            })
+            .await?;
+        let response = response
+            .error_for_status()
+            .context("Drive content read request failed")?;
+        Ok(response
+            .bytes()
+            .await
+            .context("read Drive file content")?
+            .to_vec())
     }
 
     async fn create_folder(&self, parent_id: &str, name: &str) -> Result<WorkspaceFileRef> {
@@ -661,23 +693,36 @@ pub async fn sync_drive_file_with_transport<T: WorkspaceDriveTransport>(
                 ));
             }
             _ => {
-                let updated = transport
-                    .update_file(
-                        &file.file_id,
-                        &request.target_file_name,
-                        &request.mime_type,
-                        &source_bytes,
-                    )
-                    .await?;
-                traces.push(proving_trace(
-                    "workspace.drive.update_file",
-                    format!(
-                        "Updated existing Drive file '{}'.",
-                        request.target_file_name
-                    ),
-                    WorkspaceDriveFileSyncDisposition::Updated,
-                ));
-                (updated, WorkspaceDriveFileSyncDisposition::Updated)
+                let existing_bytes = transport.read_file_bytes(&file.file_id).await?;
+                if existing_bytes == source_bytes {
+                    traces.push(proving_trace(
+                        "workspace.drive.verify_existing_content",
+                        format!(
+                            "Drive file '{}' already matches the source bytes.",
+                            request.target_file_name
+                        ),
+                        WorkspaceDriveFileSyncDisposition::Unchanged,
+                    ));
+                    (file, WorkspaceDriveFileSyncDisposition::Unchanged)
+                } else {
+                    let updated = transport
+                        .update_file(
+                            &file.file_id,
+                            &request.target_file_name,
+                            &request.mime_type,
+                            &source_bytes,
+                        )
+                        .await?;
+                    traces.push(proving_trace(
+                        "workspace.drive.update_file",
+                        format!(
+                            "Updated existing Drive file '{}'.",
+                            request.target_file_name
+                        ),
+                        WorkspaceDriveFileSyncDisposition::Updated,
+                    ));
+                    (updated, WorkspaceDriveFileSyncDisposition::Updated)
+                }
             }
         },
         None => match request.policy {
@@ -727,23 +772,31 @@ pub async fn sync_drive_file_with_transport<T: WorkspaceDriveTransport>(
     };
 
     let verified = transport.read_file_metadata(&synced.file_id).await?;
-    let verification_ok = verified.name == request.target_file_name
+    let verified_bytes = transport.read_file_bytes(&synced.file_id).await?;
+    let metadata_ok = verified.name == request.target_file_name
         && verified.parent_ids.iter().any(|id| id == &target_folder_id);
+    let content_ok = verified_bytes == source_bytes;
+    let verification_ok = metadata_ok && content_ok;
     let verification_message = if verification_ok {
-        "Drive metadata verification passed after sync.".to_string()
+        format!(
+            "Drive metadata and exact content verification passed ({} bytes).",
+            source_bytes.len()
+        )
     } else {
-        "Drive metadata verification failed after sync.".to_string()
+        format!(
+            "Drive verification failed: metadata_match={metadata_ok}, content_match={content_ok}."
+        )
     };
     if !verification_ok {
         traces.push(skipped_trace(
             "workspace.drive.verify_file_state",
-            "Post-write metadata verification did not match the bounded target.",
+            "Post-sync metadata or exact content did not match the bounded target.",
             WorkspaceSkipReason::VerificationMismatch,
         ));
     } else {
         traces.push(proving_trace(
             "workspace.drive.verify_file_state",
-            "Verified post-write Drive metadata for the bounded target file.",
+            "Verified post-sync Drive metadata and exact content for the bounded target file.",
             disposition.clone(),
         ));
     }
@@ -1046,6 +1099,16 @@ mod tests {
                 .get(file_id)
                 .cloned()
                 .ok_or_else(|| anyhow!("missing file {file_id}"))
+        }
+
+        async fn read_file_bytes(&self, file_id: &str) -> Result<Vec<u8>> {
+            self.state
+                .lock()
+                .expect("lock drive state")
+                .file_bytes
+                .get(file_id)
+                .cloned()
+                .ok_or_else(|| anyhow!("missing file content {file_id}"))
         }
 
         async fn create_folder(&self, parent_id: &str, name: &str) -> Result<WorkspaceFileRef> {
@@ -1570,6 +1633,10 @@ mod tests {
                     file.parent_ids = vec!["wrong-parent".to_string()];
                 }
                 Ok(file)
+            }
+
+            async fn read_file_bytes(&self, file_id: &str) -> Result<Vec<u8>> {
+                self.inner.read_file_bytes(file_id).await
             }
 
             async fn create_folder(&self, parent_id: &str, name: &str) -> Result<WorkspaceFileRef> {

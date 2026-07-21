@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5587,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][google-workspace][automation] Make ADL Drive context mirror work end to end",
+    "slug": "google-drive-context-mirror",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Run the ADL context mirror against Google Drive with recursive, content-verified, least-privilege behavior.",
+      "required_outcome": "Execute mode uses the native Drive transport, mirrors the declared repository surfaces recursively, and succeeds only after exact remote-content readback.",
+      "declared_scope": [
+        "adl/src/adl_gws_native.rs",
+        "adl/src/adl_gws_drive_sync.rs",
+        "adl/src/adl_gws_context_mirror.rs",
+        "adl/src/bin/demo_adl_gws_context_mirror.rs",
+        "adl/Cargo.toml"
+      ],
+      "authority_boundary": [
+        "Issue #5587 owns production Drive mirror behavior and its focused proof",
+        "Remote deletion and broader Workspace access are excluded",
+        "AWS and Spot are excluded"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use typed C-SDLC v2 only",
+        "No AWS or Spot",
+        "Use a bound issue worktree"
+      ]
+    }
+  }
+}
