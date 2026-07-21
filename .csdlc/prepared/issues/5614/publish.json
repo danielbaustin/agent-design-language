@@ -11,6 +11,6 @@
   "head":"codex/5614-secret-scanning-fixtures",
   "title":"[security] Remove AWS key literal from redaction fixture",
   "body":"Closes #5614\n\nRemoves the AWS temporary access-key-shaped literal reported by secret-scanning alert #1 while preserving the exact runtime sanitizer test through fragment-based construction. No AWS access or credential handling is involved.\n\nFocused sanitizer and artifact-finalizer contracts pass, the tracked-source pattern scan is clean, and bounded security review found no actionable issues. After merge, alert #1 will be resolved explicitly as test-only.",
-  "draft":false,
+  "draft":true,
   "token_file":"/Users/daniel/keys/github.token"
 }
