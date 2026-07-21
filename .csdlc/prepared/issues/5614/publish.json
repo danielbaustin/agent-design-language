@@ -1,0 +1,16 @@
+{
+  "schema":"csdlc.publication_request.v1",
+  "issue":5614,
+  "expected_generation":6,
+  "expected_digest":"8ed8fab2c5e0e5d864af6d48e697e7fda16801cfea369ea46cb0af6ce89564f6",
+  "claim_id":"claim-5614-secret-scanning-fixtures",
+  "actor":"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+  "repository":"danielbaustin/agent-design-language",
+  "remote":"origin",
+  "base":"main",
+  "head":"codex/5614-secret-scanning-fixtures",
+  "title":"[security] Remove AWS key literal from redaction fixture",
+  "body":"Closes #5614\n\nRemoves the AWS temporary access-key-shaped literal reported by secret-scanning alert #1 while preserving the exact runtime sanitizer test through fragment-based construction. No AWS access or credential handling is involved.\n\nFocused sanitizer and artifact-finalizer contracts pass, the tracked-source pattern scan is clean, and bounded security review found no actionable issues. After merge, alert #1 will be resolved explicitly as test-only.",
+  "draft":false,
+  "token_file":"/Users/daniel/keys/github.token"
+}
