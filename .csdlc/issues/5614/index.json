@@ -3,13 +3,13 @@
   "issue": 5614,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "681c1ac4b68abe097bfd58b7f23f1b74ad60ba465cc4b8f085c4bc91d31d9c9c",
-  "phase": "bound",
-  "generation": 0,
-  "digest": "9200cb02aff64752b911dd79d44cd7d560561341b37319ba328e72b5ff8b19f7",
+  "phase": "implemented",
+  "generation": 4,
+  "digest": "e2d4a33409f2054f160bc3095ec91fed281c9807dd88ac080902a0ba984689e4",
   "claim": {
     "id": "claim-5614-secret-scanning-fixtures",
     "owner": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
-    "generation": 0,
+    "generation": 4,
     "acquired_unix_seconds": 1784665090,
     "expires_unix_seconds": 1784751490,
     "heartbeat_unix_seconds": 1784665090,
@@ -36,34 +36,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "3d0167ac55661b2914d3f3077442c454224b8ce6c49a8574bd555e7c41c713a1",
+      "values_digest": "2394edfa260ce89292e6be491479f302ba8ae7ee102d641da5a51cc82b74ccc6",
       "rendered_digest": "bb55d4c117388e48aafea77e12350fbd2218533134d36aeff1355ee76ce05734",
       "ast_digest": "70246dc72c4da50f4628063c448d472c7b728cc96228714922534350b006e6bd"
     },
     "stp": {
-      "values_digest": "6bc37f3a81113aa0680525a5134b9442223ac9d920fd2d71cef34777cb685dff",
+      "values_digest": "58aef240bb1a2f06ed2dd32e4420207037e854810bf0e7bbd4dd56484268623b",
       "rendered_digest": "fbb66e30cd44880da5ef81a5bcf818581aec4ddbf2f945607898e4ddea2c4c12",
       "ast_digest": "e3d95484bc34fb631bef66ecef17d2c37442f248fc1884e787081c61e1a5e732"
     },
     "spp": {
-      "values_digest": "287249ed24db17a4c277d46022cffb2df7c723650eb442df25aa42d256809f2b",
+      "values_digest": "03bfe6ebdc4bc12112c212ee7e4cf8c437d38cb818958011e0d5df743f16b69a",
       "rendered_digest": "2bdcdc2c052aa86f4443a204b47edf078c3c8be57f4872707e452f49b83b9913",
       "ast_digest": "b884cafe551623726e0b4d081ca4e32e94183b5ed95332e2a9e64b830fe34f80"
     },
     "vpp": {
-      "values_digest": "36471dfdc729eb988012aa5cc6f82dec8e1ed1f3b2a391cda814fbd82f6efbf2",
+      "values_digest": "bff53f5133329d2b8e29efada06fe9ccb267874ed219cad19558173fa4724cf2",
       "rendered_digest": "6e53843737ebee4dbb3cb5f6e00a5715098be69d5cce740a1c6c0bf7f77248eb",
       "ast_digest": "e8cedee6c51ded9e0be587cf5ae861fb12505ff46d956f0d69fe4a49bf15bb21"
     },
     "srp": {
-      "values_digest": "a4e7d18d5b3c924e61305830862b3886920155cecdc290be7a9984988fd3ca24",
+      "values_digest": "5421ad8a0b771fefb4a5ad5d60875c13e92721edc5b299d94709aa7abf533911",
       "rendered_digest": "7a2a748d12bce2a31b1d91b758cb36d56c4112b57eff383a58415c8a9904ddbd",
       "ast_digest": "324b75c9c6e61628aa1491648be8326fb4d48e121465224d8664db7a070df05e"
     },
     "sor": {
-      "values_digest": "6772857eafcc6b51392561ad658735a839ed10fd65932a59b0a5cab4e44d30bf",
-      "rendered_digest": "f4d8a9e1d397b640338273c04dd3f2ea400bc1992954a3085b5f8c1483fe28f5",
-      "ast_digest": "aeba4b5a355ae329b99de1486082c3451d79d90cbf8b83a794b7ec901aba61d8"
+      "values_digest": "5f07a105f52a7798f0f6edea855890484110108583cf15b5e660ebe8e2ecdd5c",
+      "rendered_digest": "dae8cfb58b1086d0146094455713216e221ce08d3842448e64fb0b7d7eabd3e0",
+      "ast_digest": "b169c9ced3c43e44bf45fb33a696f3c5e1cfa07b04cde65168a1bf7d259ff9e0"
     }
   },
   "transitions": [
@@ -80,6 +80,13 @@
       "to": "bound",
       "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
       "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "The scanner-safe runtime fixture, focused sanitizer tests, tracked-source pattern scan, and bounded review are complete."
     }
   ],
   "audit": [
@@ -96,6 +103,34 @@
       "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
       "reason": "bind branch/worktree and activate claim",
       "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Record the bounded scanner-safe fixture implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Replaced the tracked AWS temporary-key-shaped literal with runtime construction from non-secret fragments while preserving the sanitizer assertion.\",\"changes\":[\"adl/tools/test_run_aws_spot_ci_profile.sh\"],\"artifacts\":[\"secret-scanning alert #1\",\"commit 7d302ba36\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Record focused fake-toolchain sanitizer proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_aws_spot_ci_profile.sh\"],\"purpose\":\"Prove runtime AWS temporary-key-shaped data is sanitized without any AWS call.\",\"outcome\":\"passed\",\"evidence_ref\":\"local exit 0 on commit 7d302ba36\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Record coupled artifact-finalizer sanitizer proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_aws_spot_artifact_finalize.sh\"],\"purpose\":\"Prove coupled artifact redaction and finalization behavior remains green.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS on commit 7d302ba36\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "The scanner-safe runtime fixture, focused sanitizer tests, tracked-source pattern scan, and bounded review are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
     }
   ]
 }

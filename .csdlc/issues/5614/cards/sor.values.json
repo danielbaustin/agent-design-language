@@ -7,16 +7,40 @@
     "title": "[security] Remove AWS temporary access-key literals from redaction fixtures",
     "slug": "secret-scanning-fixtures",
     "version": "v0.91.8",
-    "generation": 0
+    "generation": 4
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "sor",
     "values": {
-      "summary": "Pre-execution output record.",
-      "actual_changes": [],
-      "artifacts": [],
-      "actual_validation": [],
+      "summary": "Replaced the tracked AWS temporary-key-shaped literal with runtime construction from non-secret fragments while preserving the sanitizer assertion.",
+      "actual_changes": [
+        "adl/tools/test_run_aws_spot_ci_profile.sh"
+      ],
+      "artifacts": [
+        "secret-scanning alert #1",
+        "commit 7d302ba36"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_run_aws_spot_ci_profile.sh"
+          ],
+          "purpose": "Prove runtime AWS temporary-key-shaped data is sanitized without any AWS call.",
+          "outcome": "passed",
+          "evidence_ref": "local exit 0 on commit 7d302ba36"
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_aws_spot_artifact_finalize.sh"
+          ],
+          "purpose": "Prove coupled artifact redaction and finalization behavior remains green.",
+          "outcome": "passed",
+          "evidence_ref": "local PASS on commit 7d302ba36"
+        }
+      ],
       "integration_state": "not_started",
       "publication_state": "not_published",
       "merge_state": "not_merged",
