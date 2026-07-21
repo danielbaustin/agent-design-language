@@ -8,3 +8,4 @@
 {"sequence":8,"generation":5,"actor":"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":9,"generation":6,"actor":"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061","reason":"Exact-revision bounded security review completed with no actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":10,"generation":7,"actor":"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":11,"generation":8,"actor":"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061","reason":"record exact existing PR ready-for-review after remote success","operation":"record_ready_publication"}
