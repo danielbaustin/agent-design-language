@@ -1,0 +1,18 @@
+{
+  "issue": 5605,
+  "expected_generation": 6,
+  "expected_digest": "f8c0d1092b7dab856c219b4f3d194f7b9b70862531a643b47a0997bb07f206af",
+  "claim_id": "csdlc-issue-5605-20260722t190651z",
+  "reviewer": "subagent:019f8b4a-979c-7b02-b4ec-b1c246d0e5ce",
+  "assigned_by": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "scope": [
+    "docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/README.md",
+    "docs/milestones/v0.91.8/review/README.md",
+    "docs/milestones/v0.91.8/review/podcast_studio_5605/README.md",
+    "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_LAUNCH_READINESS_5605.md",
+    "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_TOPIC_SLATE_5605.md",
+    "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+    "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md"
+  ]
+}
