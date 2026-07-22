@@ -42,7 +42,8 @@ A successful execute report must show all of the following:
 - the four staged seed files were created, updated, or already identical;
 - recursive status is `recursive_live` when recursive mirroring is enabled;
 - every result has `verification_ok: true`;
-- each result was verified by Drive ID, bounded parent, name, and exact downloaded bytes;
+- each result was verified by a post-write folder listing, Drive ID, bounded parent, name, MIME type, and exact downloaded bytes;
+- the report records only the redacted credential source label and requested least-privilege scopes, never token material;
 - no authentication, upload, listing, ambiguity, readback, or recursive traversal warning remains.
 
 `unchanged` is a verified success: the remote bytes were downloaded and compared before avoiding an unnecessary update. Metadata-only verification is insufficient.
@@ -67,6 +68,8 @@ The recursive execute test uses the in-memory transport only as deterministic pr
 - Write approval: omit `ADL_GWS_WRITE_APPROVAL`. The report must be skipped/unverified and the command must exit unsuccessfully.
 - Write/API failure: use a bounded test transport that rejects create or update. The run must return an error; it must not emit success.
 - Readback mismatch: use a bounded test transport that returns bytes different from the uploaded source. The result must set `verification_ok: false` with `verification_mismatch`.
+- Listing mismatch: use a bounded test transport whose metadata GET succeeds but whose parent listing omits the file. The result must fail verification.
+- MIME mismatch: use a bounded test transport that reports a MIME type different from the requested type. The result must fail verification.
 - Recursive pending: use dry-run or fixture mode with recursion enabled. The report must say `recursive_pending`, never `recursive_live`.
 
 Do not induce live failures by corrupting production Drive files or credentials.

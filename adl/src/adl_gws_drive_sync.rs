@@ -78,6 +78,9 @@ pub struct WorkspaceDriveSyncReport {
 
 #[async_trait]
 pub trait WorkspaceDriveTransport: Send + Sync {
+    async fn auth_context(&self, _scopes: &[&str]) -> Result<Option<WorkspaceAuthContext>> {
+        Ok(None)
+    }
     async fn list_children(&self, parent_id: &str) -> Result<Vec<WorkspaceFileRef>>;
     async fn read_file_metadata(&self, file_id: &str) -> Result<WorkspaceFileRef>;
     async fn read_file_bytes(&self, file_id: &str) -> Result<Vec<u8>>;
@@ -279,6 +282,11 @@ impl<P> WorkspaceDriveTransport for NativeWorkspaceDriveTransport<P>
 where
     P: WorkspaceAccessTokenProvider,
 {
+    async fn auth_context(&self, scopes: &[&str]) -> Result<Option<WorkspaceAuthContext>> {
+        let (_, context) = self.token_provider.access_token(scopes).await?;
+        Ok(Some(context))
+    }
+
     async fn list_children(&self, parent_id: &str) -> Result<Vec<WorkspaceFileRef>> {
         let query = format!(
             "'{}' in parents and trashed = false",
@@ -592,6 +600,12 @@ pub async fn sync_drive_file_with_transport<T: WorkspaceDriveTransport>(
         ));
     }
 
+    let auth_context = transport
+        .auth_context(&[
+            crate::adl_gws_native::ADL_GWS_SCOPE_DRIVE_METADATA_READONLY,
+            ADL_GWS_SCOPE_DRIVE_FILE,
+        ])
+        .await?;
     let source_bytes = tokio::fs::read(&request.source_file)
         .await
         .with_context(|| format!("read source file '{}'", request.source_file))?;
@@ -663,7 +677,6 @@ pub async fn sync_drive_file_with_transport<T: WorkspaceDriveTransport>(
         Err(error) => return Err(error),
     };
 
-    let auth_context = None;
     let (synced, disposition) = match existing {
         Some(file) => match request.policy {
             WorkspaceDriveSyncPolicy::CreateOnly => {
@@ -773,30 +786,43 @@ pub async fn sync_drive_file_with_transport<T: WorkspaceDriveTransport>(
 
     let verified = transport.read_file_metadata(&synced.file_id).await?;
     let verified_bytes = transport.read_file_bytes(&synced.file_id).await?;
+    let listed_matches = transport
+        .list_children(&target_folder_id)
+        .await?
+        .into_iter()
+        .filter(|child| {
+            child.file_id == synced.file_id
+                && child.name == request.target_file_name
+                && child.mime_type == request.mime_type
+                && child.parent_ids.iter().any(|id| id == &target_folder_id)
+        })
+        .count();
     let metadata_ok = verified.name == request.target_file_name
+        && verified.mime_type == request.mime_type
         && verified.parent_ids.iter().any(|id| id == &target_folder_id);
+    let listing_ok = listed_matches == 1;
     let content_ok = verified_bytes == source_bytes;
-    let verification_ok = metadata_ok && content_ok;
+    let verification_ok = metadata_ok && listing_ok && content_ok;
     let verification_message = if verification_ok {
         format!(
-            "Drive metadata and exact content verification passed ({} bytes).",
+            "Drive list, metadata, MIME, and exact content verification passed ({} bytes).",
             source_bytes.len()
         )
     } else {
         format!(
-            "Drive verification failed: metadata_match={metadata_ok}, content_match={content_ok}."
+            "Drive verification failed: metadata_match={metadata_ok}, listing_match={listing_ok}, content_match={content_ok}."
         )
     };
     if !verification_ok {
         traces.push(skipped_trace(
             "workspace.drive.verify_file_state",
-            "Post-sync metadata or exact content did not match the bounded target.",
+            "Post-sync listing, metadata, MIME, or exact content did not match the bounded target.",
             WorkspaceSkipReason::VerificationMismatch,
         ));
     } else {
         traces.push(proving_trace(
             "workspace.drive.verify_file_state",
-            "Verified post-sync Drive metadata and exact content for the bounded target file.",
+            "Verified post-sync Drive listing, metadata, MIME, and exact content for the bounded target file.",
             disposition.clone(),
         ));
     }
@@ -1150,12 +1176,152 @@ mod tests {
         }
     }
 
+    #[derive(Clone)]
+    struct OmitFromListingTransport(InMemoryDriveTransport);
+
+    #[async_trait]
+    impl WorkspaceDriveTransport for OmitFromListingTransport {
+        async fn list_children(&self, _parent_id: &str) -> Result<Vec<WorkspaceFileRef>> {
+            Ok(vec![])
+        }
+        async fn read_file_metadata(&self, file_id: &str) -> Result<WorkspaceFileRef> {
+            self.0.read_file_metadata(file_id).await
+        }
+        async fn read_file_bytes(&self, file_id: &str) -> Result<Vec<u8>> {
+            self.0.read_file_bytes(file_id).await
+        }
+        async fn create_folder(&self, parent_id: &str, name: &str) -> Result<WorkspaceFileRef> {
+            self.0.create_folder(parent_id, name).await
+        }
+        async fn create_file(
+            &self,
+            parent_id: &str,
+            name: &str,
+            mime_type: &str,
+            bytes: &[u8],
+        ) -> Result<WorkspaceFileRef> {
+            self.0.create_file(parent_id, name, mime_type, bytes).await
+        }
+        async fn update_file(
+            &self,
+            file_id: &str,
+            name: &str,
+            mime_type: &str,
+            bytes: &[u8],
+        ) -> Result<WorkspaceFileRef> {
+            self.0.update_file(file_id, name, mime_type, bytes).await
+        }
+    }
+
+    #[derive(Clone)]
+    struct WrongMimeReadbackTransport(InMemoryDriveTransport);
+
+    #[async_trait]
+    impl WorkspaceDriveTransport for WrongMimeReadbackTransport {
+        async fn list_children(&self, parent_id: &str) -> Result<Vec<WorkspaceFileRef>> {
+            self.0.list_children(parent_id).await
+        }
+        async fn read_file_metadata(&self, file_id: &str) -> Result<WorkspaceFileRef> {
+            let mut file = self.0.read_file_metadata(file_id).await?;
+            if file.mime_type != DRIVE_FOLDER_MIME_TYPE {
+                file.mime_type = "application/octet-stream".to_string();
+            }
+            Ok(file)
+        }
+        async fn read_file_bytes(&self, file_id: &str) -> Result<Vec<u8>> {
+            self.0.read_file_bytes(file_id).await
+        }
+        async fn create_folder(&self, parent_id: &str, name: &str) -> Result<WorkspaceFileRef> {
+            self.0.create_folder(parent_id, name).await
+        }
+        async fn create_file(
+            &self,
+            parent_id: &str,
+            name: &str,
+            mime_type: &str,
+            bytes: &[u8],
+        ) -> Result<WorkspaceFileRef> {
+            self.0.create_file(parent_id, name, mime_type, bytes).await
+        }
+        async fn update_file(
+            &self,
+            file_id: &str,
+            name: &str,
+            mime_type: &str,
+            bytes: &[u8],
+        ) -> Result<WorkspaceFileRef> {
+            self.0.update_file(file_id, name, mime_type, bytes).await
+        }
+    }
+
+    #[derive(Clone)]
+    struct AuthEvidenceTransport(InMemoryDriveTransport);
+
+    #[async_trait]
+    impl WorkspaceDriveTransport for AuthEvidenceTransport {
+        async fn auth_context(
+            &self,
+            scopes: &[&str],
+        ) -> Result<Option<crate::adl_gws_native::WorkspaceAuthContext>> {
+            Ok(Some(crate::adl_gws_native::WorkspaceAuthContext {
+                source: "approved_test_store".to_string(),
+                quota_project: None,
+                scopes: scopes.iter().map(|scope| (*scope).to_string()).collect(),
+            }))
+        }
+        async fn list_children(&self, parent_id: &str) -> Result<Vec<WorkspaceFileRef>> {
+            self.0.list_children(parent_id).await
+        }
+        async fn read_file_metadata(&self, file_id: &str) -> Result<WorkspaceFileRef> {
+            self.0.read_file_metadata(file_id).await
+        }
+        async fn read_file_bytes(&self, file_id: &str) -> Result<Vec<u8>> {
+            self.0.read_file_bytes(file_id).await
+        }
+        async fn create_folder(&self, parent_id: &str, name: &str) -> Result<WorkspaceFileRef> {
+            self.0.create_folder(parent_id, name).await
+        }
+        async fn create_file(
+            &self,
+            parent_id: &str,
+            name: &str,
+            mime_type: &str,
+            bytes: &[u8],
+        ) -> Result<WorkspaceFileRef> {
+            self.0.create_file(parent_id, name, mime_type, bytes).await
+        }
+        async fn update_file(
+            &self,
+            file_id: &str,
+            name: &str,
+            mime_type: &str,
+            bytes: &[u8],
+        ) -> Result<WorkspaceFileRef> {
+            self.0.update_file(file_id, name, mime_type, bytes).await
+        }
+    }
+
     fn unique_temp_path(prefix: &str) -> std::path::PathBuf {
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .expect("valid time")
             .as_nanos();
         std::env::temp_dir().join(format!("{prefix}-{nanos}.json"))
+    }
+
+    fn root_file_request(source: &std::path::Path) -> WorkspaceDriveFileSyncRequest {
+        WorkspaceDriveFileSyncRequest {
+            source_file: source.display().to_string(),
+            target: WorkspaceScopeBinding {
+                root_folder_id: "root".to_string(),
+                folder_path: vec![],
+                file_name: Some("state.md".to_string()),
+                file_id: None,
+            },
+            target_file_name: "state.md".to_string(),
+            mime_type: "text/markdown".to_string(),
+            policy: WorkspaceDriveSyncPolicy::CreateOrUpdate,
+        }
     }
 
     #[tokio::test]
@@ -1700,6 +1866,83 @@ mod tests {
         tokio::fs::remove_file(&source)
             .await
             .expect("remove source");
+    }
+
+    #[tokio::test]
+    async fn drive_sync_requires_post_write_folder_listing() {
+        let source = unique_temp_path("workspace-drive-source-list-verification");
+        tokio::fs::write(&source, b"seed body")
+            .await
+            .expect("write source");
+        let report = sync_drive_file_with_transport(
+            WorkspaceExecutionMode::Execute,
+            true,
+            root_file_request(&source),
+            &OmitFromListingTransport(InMemoryDriveTransport::new()),
+        )
+        .await
+        .expect("listing mismatch report");
+        assert!(!report.result.verification_ok);
+        assert_eq!(
+            report.result.skip_reason,
+            Some(WorkspaceSkipReason::VerificationMismatch)
+        );
+        assert!(report
+            .result
+            .verification_message
+            .contains("listing_match=false"));
+        tokio::fs::remove_file(source).await.expect("remove source");
+    }
+
+    #[tokio::test]
+    async fn drive_sync_requires_exact_mime_readback() {
+        let source = unique_temp_path("workspace-drive-source-mime-verification");
+        tokio::fs::write(&source, b"seed body")
+            .await
+            .expect("write source");
+        let report = sync_drive_file_with_transport(
+            WorkspaceExecutionMode::Execute,
+            true,
+            root_file_request(&source),
+            &WrongMimeReadbackTransport(InMemoryDriveTransport::new()),
+        )
+        .await
+        .expect("MIME mismatch report");
+        assert!(!report.result.verification_ok);
+        assert_eq!(
+            report.result.skip_reason,
+            Some(WorkspaceSkipReason::VerificationMismatch)
+        );
+        assert!(report
+            .result
+            .verification_message
+            .contains("metadata_match=false"));
+        tokio::fs::remove_file(source).await.expect("remove source");
+    }
+
+    #[tokio::test]
+    async fn drive_sync_records_redacted_auth_source_and_scopes() {
+        let source = unique_temp_path("workspace-drive-source-auth-evidence");
+        tokio::fs::write(&source, b"seed body")
+            .await
+            .expect("write source");
+        let report = sync_drive_file_with_transport(
+            WorkspaceExecutionMode::Execute,
+            true,
+            root_file_request(&source),
+            &AuthEvidenceTransport(InMemoryDriveTransport::new()),
+        )
+        .await
+        .expect("authenticated report");
+        let auth = report.auth_context.expect("redacted auth evidence");
+        assert_eq!(auth.source, "approved_test_store");
+        assert!(auth
+            .scopes
+            .contains(&crate::adl_gws_native::ADL_GWS_SCOPE_DRIVE_FILE.to_string()));
+        assert!(auth
+            .scopes
+            .contains(&crate::adl_gws_native::ADL_GWS_SCOPE_DRIVE_METADATA_READONLY.to_string()));
+        tokio::fs::remove_file(source).await.expect("remove source");
     }
 
     #[tokio::test]

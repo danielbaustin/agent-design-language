@@ -1,7 +1,8 @@
 use adl::adl_gws_context_mirror::{
     default_context_mirror_config, regenerate_context_seed_files,
     run_workspace_context_mirror_with_transport, write_workspace_context_mirror_report,
-    WorkspaceContextMirrorConfig, ADL_GWS_CONTEXT_MIRROR_REPORT_ARTIFACT_PATH,
+    WorkspaceContextMirrorConfig, WorkspaceRecursiveMirrorStatus,
+    ADL_GWS_CONTEXT_MIRROR_REPORT_ARTIFACT_PATH,
 };
 use adl::adl_gws_drive_sync::{
     InMemoryDriveTransportForDemo, NativeWorkspaceDriveTransport, WorkspaceDriveTransport,
@@ -102,12 +103,13 @@ async fn run_demo_with_transport<T: WorkspaceDriveTransport>(
     if matches!(config.live_mode, WorkspaceExecutionMode::Execute)
         && (report.skipped_reason.is_some()
             || report.sync_results.is_empty()
+            || report.recursive_mirror_status != WorkspaceRecursiveMirrorStatus::RecursiveLive
             || report
                 .sync_results
                 .iter()
                 .any(|result| !result.verification_ok))
     {
-        bail!("context mirror report contains unverified Drive results");
+        bail!("context mirror report is not a fully verified recursive Drive sync");
     }
     Ok(config.out_path.clone())
 }
@@ -293,6 +295,14 @@ mod tests {
             .await
             .expect("read second generated seed");
         assert_eq!(first_seed, second_seed);
+        let mut seed_only_execute = config.clone();
+        seed_only_execute.live_mode = WorkspaceExecutionMode::Execute;
+        seed_only_execute.write_approval_present = true;
+        let error =
+            run_demo_with_transport(&seed_only_execute, &InMemoryDriveTransportForDemo::new())
+                .await
+                .expect_err("execute mode must reject a seed-only sync");
+        assert!(error.to_string().contains("not a fully verified recursive"));
         tokio::fs::remove_file(&out_path)
             .await
             .expect("remove report");
