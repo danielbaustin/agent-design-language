@@ -1,7 +1,7 @@
 use adl::adl_gws_context_mirror::{
-    default_context_mirror_config, run_workspace_context_mirror_with_transport,
-    write_workspace_context_mirror_report, WorkspaceContextMirrorConfig,
-    ADL_GWS_CONTEXT_MIRROR_REPORT_ARTIFACT_PATH,
+    default_context_mirror_config, regenerate_context_seed_files,
+    run_workspace_context_mirror_with_transport, write_workspace_context_mirror_report,
+    WorkspaceContextMirrorConfig, ADL_GWS_CONTEXT_MIRROR_REPORT_ARTIFACT_PATH,
 };
 use adl::adl_gws_drive_sync::{
     InMemoryDriveTransportForDemo, NativeWorkspaceDriveTransport, WorkspaceDriveTransport,
@@ -44,6 +44,9 @@ fn build_demo_config(
 ) -> DemoContextMirrorRunConfig {
     let out_path = resolve_out_path(parse_arg(args, "--out"));
     let mut mirror_config = default_context_mirror_config();
+    if let Some(repo_root) = parse_arg(args, "--repo-root") {
+        mirror_config.repo_root = repo_root;
+    }
     if let Some(staging_dir) = parse_arg(args, "--staging-dir") {
         mirror_config.staging_dir = staging_dir;
     }
@@ -77,6 +80,10 @@ async fn run_demo_with_transport<T: WorkspaceDriveTransport>(
     config: &DemoContextMirrorRunConfig,
     transport: &T,
 ) -> Result<PathBuf> {
+    if let Err(error) = regenerate_context_seed_files(&config.mirror_config) {
+        write_failure_report(&config.out_path, config, &error).await?;
+        return Err(error);
+    }
     let report = match run_workspace_context_mirror_with_transport(
         config.live_mode.clone(),
         config.write_approval_present,
@@ -201,6 +208,8 @@ mod tests {
             "tmp/context.json".to_string(),
             "--staging-dir".to_string(),
             "tmp/staging".to_string(),
+            "--repo-root".to_string(),
+            "tmp/repo".to_string(),
             "--drive-root-folder-id".to_string(),
             "root-1".to_string(),
             "--drive-seed-folder-id".to_string(),
@@ -212,6 +221,7 @@ mod tests {
             std::path::PathBuf::from("tmp/context.json")
         );
         assert_eq!(config.mirror_config.staging_dir, "tmp/staging");
+        assert_eq!(config.mirror_config.repo_root, "tmp/repo");
         assert_eq!(config.mirror_config.drive_root_folder_id, "root-1");
         assert_eq!(config.mirror_config.drive_seed_folder_id, "seed-1");
         assert!(config.mirror_config.recursive_sync_enabled);
@@ -221,15 +231,38 @@ mod tests {
 
     #[tokio::test]
     async fn context_mirror_demo_runs_and_writes_report() {
-        let staging_dir = unique_temp_path("context-mirror-staging", "dir");
+        let repo_root = unique_temp_path("context-mirror-repo", "dir");
+        let staging_dir = repo_root.join("staging");
+        tokio::fs::create_dir_all(repo_root.join("docs/milestones/v0.91.8"))
+            .await
+            .expect("create milestone tree");
+        tokio::fs::create_dir_all(repo_root.join("docs/milestones/v0.92"))
+            .await
+            .expect("create activation tree");
+        tokio::fs::create_dir_all(repo_root.join(".adl/docs/TBD"))
+            .await
+            .expect("create TBD tree");
         tokio::fs::create_dir_all(&staging_dir)
             .await
             .expect("create staging dir");
-        for file_name in adl::adl_gws_context_mirror::context_seed_file_names() {
-            tokio::fs::write(staging_dir.join(file_name), format!("# {file_name}\n"))
-                .await
-                .expect("write staged file");
-        }
+        tokio::fs::write(repo_root.join("README.md"), "Active milestone: v0.91.8\n")
+            .await
+            .expect("write README");
+        tokio::fs::write(
+            repo_root.join("docs/milestones/v0.91.8/README.md"),
+            "# v0.91.8\n",
+        )
+        .await
+        .expect("write milestone README");
+        tokio::fs::write(
+            repo_root.join("docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"),
+            "activation remains blocked\n",
+        )
+        .await
+        .expect("write activation ledger");
+        tokio::fs::write(repo_root.join(".adl/docs/TBD/PLAN.md"), "# Plan\n")
+            .await
+            .expect("write TBD source");
         let out_path = unique_temp_path("context-mirror-report", "json");
         let args = vec![
             "--out".to_string(),
@@ -241,7 +274,8 @@ mod tests {
             "--drive-seed-folder-id".to_string(),
             "demo-root".to_string(),
         ];
-        let config = build_demo_config(&args, WorkspaceExecutionMode::DryRun, false, false);
+        let mut config = build_demo_config(&args, WorkspaceExecutionMode::DryRun, false, false);
+        config.mirror_config.repo_root = repo_root.display().to_string();
         let written = run_demo_with_transport(&config, &InMemoryDriveTransportForDemo::new())
             .await
             .expect("run demo");
@@ -249,17 +283,22 @@ mod tests {
             .await
             .expect("read report");
         assert!(body.contains("adl_gws_context_mirror.v1"));
+        let first_seed = tokio::fs::read(staging_dir.join("ADL_GOOGLE_DRIVE_SYNC_INDEX.md"))
+            .await
+            .expect("read first generated seed");
+        run_demo_with_transport(&config, &InMemoryDriveTransportForDemo::new())
+            .await
+            .expect("rerun deterministic generation");
+        let second_seed = tokio::fs::read(staging_dir.join("ADL_GOOGLE_DRIVE_SYNC_INDEX.md"))
+            .await
+            .expect("read second generated seed");
+        assert_eq!(first_seed, second_seed);
         tokio::fs::remove_file(&out_path)
             .await
             .expect("remove report");
-        for file_name in adl::adl_gws_context_mirror::context_seed_file_names() {
-            tokio::fs::remove_file(staging_dir.join(file_name))
-                .await
-                .expect("remove staged file");
-        }
-        tokio::fs::remove_dir(&staging_dir)
+        tokio::fs::remove_dir_all(&repo_root)
             .await
-            .expect("remove staging dir");
+            .expect("remove repo fixture");
     }
 
     #[tokio::test]

@@ -6,6 +6,7 @@ use crate::adl_gws_drive_sync::{
 use crate::adl_gws_native::{tracked_path, WorkspaceExecutionMode, WorkspaceSkipReason};
 use anyhow::{bail, Context, Result};
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
@@ -86,6 +87,120 @@ pub fn context_seed_file_names() -> Vec<&'static str> {
     ]
 }
 
+/// Regenerate the four bounded context seeds from the current checkout.
+///
+/// The generated directory is operational cache, never repository authority.
+/// Generation completes before any Drive request so a failed generation cannot
+/// upload a partially refreshed packet.
+pub fn regenerate_context_seed_files(config: &WorkspaceContextMirrorConfig) -> Result<()> {
+    let repo_root = Path::new(&config.repo_root);
+    let staging_dir = Path::new(&config.staging_dir);
+    let milestone = read_milestone_truth(repo_root)?;
+    let recursive_files = recursive_markdown_files(repo_root)?;
+    let sequence = milestone.planning_sequence.join(" -> ");
+
+    let mut indexed_sources = Vec::with_capacity(recursive_files.len());
+    for source in &recursive_files {
+        let relative = source.strip_prefix(repo_root).with_context(|| {
+            format!("seed source '{}' escaped repository root", source.display())
+        })?;
+        let bytes = std::fs::read(source)
+            .with_context(|| format!("read seed source '{}'", source.display()))?;
+        indexed_sources.push((
+            relative.display().to_string(),
+            format!("{:x}", Sha256::digest(bytes)),
+        ));
+    }
+    let mut inventory_hasher = Sha256::new();
+    for (path, digest) in &indexed_sources {
+        inventory_hasher.update(path.as_bytes());
+        inventory_hasher.update([0]);
+        inventory_hasher.update(digest.as_bytes());
+        inventory_hasher.update([b'\n']);
+    }
+    let inventory_digest = format!("{:x}", inventory_hasher.finalize());
+
+    std::fs::create_dir_all(staging_dir)
+        .with_context(|| format!("create seed staging directory '{}'", staging_dir.display()))?;
+
+    let read_me = format!(
+        "# READ ME FIRST: ADL Current State\n\nGenerated deterministically from repository inventory `{inventory_digest}`.\n\n\
+         This folder is a verified Google Drive mirror of selected ADL repository context. \
+         The repository remains source truth.\n\n\
+         ## Source Truth\n\n- Repository root: `agent-design-language`\n- Source roots: `docs/`, `.adl/docs/TBD/`\n\
+         - Drive root folder: `{}`\n- Seed folder: `{}`\n\n\
+         ## Current Milestone Truth\n\n- Current milestone: `{}`\n- Planning sequence: `{sequence}`\n\
+         - v0.92 activation blocked: `{}`\n\n\
+         ## Start Here\n\n1. `READ_ME_FIRST_ADL_CURRENT_STATE.md`\n2. `ADL_GOOGLE_DRIVE_MIRROR_POLICY.md`\n\
+         3. `ADL_GOOGLE_DRIVE_SYNC_INDEX.md`\n4. `ADL_CURRENT_CONTEXT_BUNDLE_v0.91.6_TO_v0.92.md`\n\n\
+         The mirrored source trees contain {count} Markdown files. When Drive and the repository disagree, the repository wins.\n",
+        config.drive_root_folder_id,
+        config.drive_seed_folder_id,
+        milestone.chatgpt_facing_current_milestone,
+        milestone.v092_activation_blocked,
+        count = indexed_sources.len(),
+    );
+    let policy = format!(
+        "# ADL Google Drive Mirror Policy\n\nGenerated deterministically from repository inventory `{inventory_digest}`.\n\n\
+         ## Authority\n\nThe ADL repository is canonical. Google Drive is a read-oriented context mirror.\n\n\
+         ## Source Roots\n\nMirror regular Markdown files recursively from `docs/` and `.adl/docs/TBD/`, \
+         preserving repository-relative paths. Symlinks and path escapes fail closed.\n\n\
+         ## Write And Verification Contract\n\nA live success requires explicit write approval, an approved external credential source, \
+         least-privilege Drive scopes, bounded root and seed folder IDs, and exact post-write metadata and byte readback. \
+         Local staging, dry-run, fixture, partial seed sync, or metadata-only readback is not success.\n\n\
+         ## Automation Contract\n\nArchive a run only after all four seed files and every selected recursive file verify exactly. \
+         Keep one deduplicated actionable task visible for authentication, upload, listing, readback, parity, or recursion failure.\n\n\
+         ## Non-Claims\n\nThis mirror does not authorize repository edits from Drive, broaden Drive permissions, \
+         or claim v0.92 activation readiness.\n"
+    );
+    let mut index = format!(
+        "# ADL Google Drive Sync Index\n\nGenerated deterministically from repository inventory `{inventory_digest}`.\n\n\
+         ## Bound Folders\n\n- Drive root folder: `{}`\n- Seed folder: `{}`\n\n\
+         ## Current Source Inventory\n\n- Current milestone: `{}`\n- Planning sequence: `{sequence}`\n\
+         - Markdown files selected recursively: {}\n\n| Repository-relative path | SHA-256 |\n| --- | --- |\n",
+        config.drive_root_folder_id,
+        config.drive_seed_folder_id,
+        milestone.chatgpt_facing_current_milestone,
+        indexed_sources.len(),
+    );
+    for (path, digest) in &indexed_sources {
+        index.push_str(&format!("| `{path}` | `{digest}` |\n"));
+    }
+    let bundle = format!(
+        "# ADL Current Context Bundle: v0.91.6 to v0.92\n\nGenerated deterministically from repository inventory `{inventory_digest}`.\n\n\
+         ## Current Context\n\nADL's current milestone is `{}`. The current planning sequence is `{sequence}`. \
+         The repository's active milestone package and exact lifecycle evidence remain authoritative; this file is orientation only.\n\n\
+         ## Current Entry Points\n\n- `README.md`\n- `docs/milestones/{}/README.md`\n\
+         - `docs/milestones/{}/SPRINT_PLAN_{}.md`\n- `docs/milestones/{}/WP_ISSUE_WAVE_{}.yaml`\n\
+         - `docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md`\n- `.adl/docs/TBD/`\n\n\
+         ## Mirror Inventory\n\nThis packet was generated from the same checkout as {count} recursively selected Markdown files. \
+         `ADL_GOOGLE_DRIVE_SYNC_INDEX.md` records their repository-relative paths and SHA-256 digests. \
+         A run is successful only when the Drive report records exact content verification for this packet and all recursive files.\n",
+        milestone.chatgpt_facing_current_milestone,
+        milestone.chatgpt_facing_current_milestone,
+        milestone.chatgpt_facing_current_milestone,
+        milestone.chatgpt_facing_current_milestone,
+        milestone.chatgpt_facing_current_milestone,
+        milestone.chatgpt_facing_current_milestone,
+        count = indexed_sources.len(),
+    );
+
+    for (name, contents) in [
+        ("READ_ME_FIRST_ADL_CURRENT_STATE.md", read_me),
+        ("ADL_GOOGLE_DRIVE_MIRROR_POLICY.md", policy),
+        ("ADL_GOOGLE_DRIVE_SYNC_INDEX.md", index),
+        ("ADL_CURRENT_CONTEXT_BUNDLE_v0.91.6_TO_v0.92.md", bundle),
+    ] {
+        let destination = staging_dir.join(name);
+        let temporary = staging_dir.join(format!(".{name}.tmp"));
+        std::fs::write(&temporary, contents)
+            .with_context(|| format!("write temporary seed '{}'", temporary.display()))?;
+        std::fs::rename(&temporary, &destination)
+            .with_context(|| format!("publish generated seed '{}'", destination.display()))?;
+    }
+    Ok(())
+}
+
 fn recursive_mirror_status(
     config: &WorkspaceContextMirrorConfig,
 ) -> WorkspaceRecursiveMirrorStatus {
@@ -160,12 +275,14 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
         });
     }
 
-    ensure_seed_folder_within_root(
-        transport,
-        &config.drive_root_folder_id,
-        &config.drive_seed_folder_id,
-    )
-    .await?;
+    if matches!(live_mode, WorkspaceExecutionMode::Execute) {
+        ensure_seed_folder_within_root(
+            transport,
+            &config.drive_root_folder_id,
+            &config.drive_seed_folder_id,
+        )
+        .await?;
+    }
 
     for file_name in files {
         let source_path = staging_dir.join(file_name);
@@ -449,38 +566,33 @@ pub async fn write_workspace_context_mirror_report(
 pub fn read_milestone_truth(repo_root: &Path) -> Result<WorkspaceMilestoneTruthRecord> {
     let readme = std::fs::read_to_string(repo_root.join("README.md"))
         .with_context(|| "read repo README".to_string())?;
-    let v0917 = std::fs::read_to_string(repo_root.join("docs/milestones/v0.91.7/README.md"))
-        .with_context(|| "read v0.91.7 README".to_string())?;
     let v092_ledger = std::fs::read_to_string(
         repo_root.join("docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"),
     )
     .with_context(|| "read v0.92 activation ledger".to_string())?;
 
     let current = detect_current_milestone(&readme);
-    let has_v0917 = v0917.contains("v0.91.7");
     let v092_blocked = v092_ledger.contains("activation remains blocked");
+    let planning_sequence = if current == "v0.92" {
+        vec!["v0.92".to_string()]
+    } else if current == "unknown" {
+        vec![]
+    } else {
+        vec![current.clone(), "v0.92".to_string()]
+    };
     Ok(WorkspaceMilestoneTruthRecord {
         chatgpt_facing_current_milestone: current,
-        planning_sequence: if has_v0917 {
-            vec![
-                "v0.91.6".to_string(),
-                "v0.91.7".to_string(),
-                "v0.92".to_string(),
-            ]
-        } else {
-            vec!["v0.91.6".to_string(), "v0.92".to_string()]
-        },
+        planning_sequence,
         v092_activation_blocked: v092_blocked,
     })
 }
 
 fn detect_current_milestone(readme: &str) -> String {
-    for milestone in ["v0.92", "v0.91.7", "v0.91.6"] {
+    for milestone in ["v0.92", "v0.91.8", "v0.91.7", "v0.91.6"] {
         let active_patterns = [
             format!("Active milestone: {milestone}"),
             format!("Current milestone state: {milestone}"),
-            format!("milestone-{milestone}"),
-            format!("### {milestone} - "),
+            format!("### {milestone} - Active"),
         ];
         if active_patterns
             .iter()
@@ -696,11 +808,11 @@ mod tests {
     fn milestone_truth_reads_current_repo_story() {
         let repo_root = crate::adl_gws_native::tracked_path("");
         let truth = read_milestone_truth(&repo_root).expect("milestone truth");
-        assert!(["v0.91.6", "v0.91.7", "v0.92"]
+        assert!(["v0.91.6", "v0.91.7", "v0.91.8", "v0.92"]
             .contains(&truth.chatgpt_facing_current_milestone.as_str()));
         assert_eq!(
             truth.planning_sequence.first().map(String::as_str),
-            Some("v0.91.6")
+            Some(truth.chatgpt_facing_current_milestone.as_str())
         );
         assert_eq!(
             truth.planning_sequence.last().map(String::as_str),

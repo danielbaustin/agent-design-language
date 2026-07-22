@@ -11,11 +11,14 @@ ADL_GWS_LIVE_MODE=execute \
 ADL_GWS_WRITE_APPROVAL=approved \
 ADL_GWS_RECURSIVE_SYNC=enabled \
 .adl/bin/adl-gws-context-mirror \
+  --repo-root "$PWD" \
   --drive-root-folder-id 1BmGQeRK-W2_CUWy2I_r59iAMrWEtSq19 \
   --drive-seed-folder-id 1T66xWxk6v2LG3MFRzRiMRfQnqOZSu04Z
 ```
 
 Execute mode selects `NativeWorkspaceDriveTransport`; fixture and dry-run modes select the in-memory transport. Execute mode does not substitute demo folder IDs. The command exits unsuccessfully if its report is empty, skipped, or contains any unverified result.
+
+Before any Drive request, the command regenerates all four seed files from the current checkout. The generated sync index records every selected Markdown path and its SHA-256 digest, and the current-state packet derives its milestone truth from the repository README and activation ledger. Seed generation failure writes the durable failure report and prevents all Drive mutation; a stale ignored staging directory is never accepted as current input.
 
 By default, execute mode recursively mirrors regular Markdown files below `docs/` and `.adl/docs/TBD/`. It preserves repository-relative folders under the configured Drive root. Symlinks, ambiguous same-name Drive children, parent-chain escapes, API failures, and content mismatches fail closed.
 
@@ -78,4 +81,3 @@ Automation `sync-adl-google-drive-context-mirror` stays paused until one live wr
 - never archive an authentication, upload, listing, readback, parity, or recursive-sync failure.
 
 The 2026-07-21 connector preflight created and read back `ADL_GWS_CONTEXT_MIRROR_LIVE_PROOF_5587.md` in the configured seed folder. That proves current connector write/list/content-read access; it does not by itself prove the native command has unattended credentials or that all four production seed files are current.
-
