@@ -95,6 +95,25 @@
       "reason": "standalone_csdlc_v2_surface_requires_only_its_independent_focused_suite"
     },
     {
+      "id": "adl_v2_standalone",
+      "lane_class": "rust_unit",
+      "default_surface": "tooling",
+      "owner": "adl-v2",
+      "proof_role": "standalone_regression",
+      "requirement_ids": [
+        "adl_v2_standalone"
+      ],
+      "path_selectors": [
+        "adl-v2/**"
+      ],
+      "path_hints": [
+        "adl-v2/**"
+      ],
+      "command": "bash adl/tools/run_adl_v2_standalone.sh",
+      "run_command": "bash adl/tools/run_adl_v2_standalone.sh",
+      "reason": "standalone_adl_v2_surface_requires_only_its_independent_focused_suite"
+    },
+    {
       "id": "prompt_template_contracts",
       "lane_class": "cli_workflow",
       "default_surface": "tooling",

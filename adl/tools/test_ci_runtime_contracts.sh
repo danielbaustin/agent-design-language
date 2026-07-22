@@ -235,6 +235,7 @@ for required_fragment in (
 for required_fragment in (
     "adl_path_policy:",
     "csdlc_v2_standalone:",
+    "adl_v2_standalone:",
     "adl_tooling_contracts:",
     "adl_rust_fmt_clippy:",
     "adl_rust_tests:",

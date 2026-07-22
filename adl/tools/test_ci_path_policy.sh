@@ -95,6 +95,12 @@ assert_current_coverage_workflow_contract() {
   assert_file_has "$workflow" 'selected C-SDLC v2 standalone lane is $CSDLC_V2_STANDALONE_RESULT; expected success'
   assert_file_has "$workflow" 'unselected C-SDLC v2 standalone lane is $CSDLC_V2_STANDALONE_RESULT; expected skipped'
   assert_file_has "$workflow" 'csdlc_v2_standalone_required must be exactly true or false'
+  assert_file_has "$workflow" 'name: adl-v2-standalone'
+  assert_file_has "$workflow" "if: needs.adl_path_policy.outputs.adl_v2_standalone_required == 'true'"
+  assert_file_has "$workflow" 'adl_v2_standalone:${{ needs.adl_v2_standalone.result }}'
+  assert_file_has "$workflow" 'selected ADL v2 standalone lane is $ADL_V2_STANDALONE_RESULT; expected success'
+  assert_file_has "$workflow" 'unselected ADL v2 standalone lane is $ADL_V2_STANDALONE_RESULT; expected skipped'
+  assert_file_has "$workflow" 'adl_v2_standalone_required must be exactly true or false'
   assert_file_has "$workflow" 'Full workspace coverage gate deferred for PR'
   assert_file_has "$workflow" 'adl/target/coverage-impact-summary.json'
   assert_file_not_has "$workflow" '--authority "adl_coverage_always_on"'
@@ -254,6 +260,22 @@ PY
   assert_has "$csdlc_v2_output" "coverage_required=false"
   assert_has "$csdlc_v2_output" "full_coverage_required=false"
   assert_has "$csdlc_v2_output" "reason=standalone_csdlc_v2_surface_requires_only_its_independent_focused_suite"
+
+  git checkout -q -b adl-v2-standalone "$base_sha"
+  mkdir -p adl-v2/crates/adl-records/src
+  printf 'pub fn signed_record() {}\n' > adl-v2/crates/adl-records/src/lib.rs
+  git add adl-v2/crates/adl-records/src/lib.rs
+  git commit -q -m adl-v2-standalone
+  adl_v2_head="$(git rev-parse HEAD)"
+  adl_v2_output="$($POLICY --event-name pull_request --base "$base_sha" --head "$adl_v2_head" --ref "refs/pull/1/merge")"
+  assert_has "$adl_v2_output" "validation_profile_run_lanes=adl_v2_standalone"
+  assert_has "$adl_v2_output" "adl_v2_standalone_required=true"
+  assert_has "$adl_v2_output" "csdlc_v2_standalone_required=false"
+  assert_has "$adl_v2_output" "rust_required=false"
+  assert_has "$adl_v2_output" "coverage_required=false"
+  assert_has "$adl_v2_output" "full_coverage_required=false"
+  assert_has "$adl_v2_output" "demo_smoke_required=false"
+  assert_has "$adl_v2_output" "reason=standalone_adl_v2_surface_requires_only_its_independent_focused_suite"
 
   git checkout -q -b csdlc-v2-operator-surface "$base_sha"
   mkdir -p csdlc-v2/operator/skills/example

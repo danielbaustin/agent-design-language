@@ -54,6 +54,7 @@ jobs:
       validation_profile_escalation_lanes: ${{ steps.path-policy.outputs.validation_profile_escalation_lanes }}
       runtime_v3_fast_required: ${{ steps.path-policy.outputs.runtime_v3_fast_required }}
       csdlc_v2_standalone_required: ${{ steps.path-policy.outputs.csdlc_v2_standalone_required }}
+      adl_v2_standalone_required: ${{ steps.path-policy.outputs.adl_v2_standalone_required }}
       heavy_ci_backend: ${{ steps.path-policy.outputs.heavy_ci_backend }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -107,6 +108,18 @@ jobs:
               ;;
           esac
 
+      - name: Validate standalone ADL v2 selector
+        env:
+          ADL_V2_STANDALONE_REQUIRED: ${{ steps.path-policy.outputs.adl_v2_standalone_required }}
+        run: |
+          case "$ADL_V2_STANDALONE_REQUIRED" in
+            true|false) ;;
+            *)
+              echo "::error::adl_v2_standalone_required must be exactly true or false"
+              exit 1
+              ;;
+          esac
+
   csdlc_v2_standalone:
     name: csdlc-v2-standalone
     needs: adl_path_policy
@@ -138,6 +151,30 @@ jobs:
 
       - name: C-SDLC v2 strict Clippy
         run: bash adl/tools/run_cargo_validation.sh cargo clippy --locked --manifest-path csdlc-v2/Cargo.toml --all-targets -- -D warnings
+
+  adl_v2_standalone:
+    name: adl-v2-standalone
+    needs: adl_path_policy
+    if: needs.adl_path_policy.outputs.adl_v2_standalone_required == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Prepare external Cargo build root
+        run: |
+          build_root="$RUNNER_TEMP/adl-v2"
+          mkdir -p "$build_root"
+          echo "ADL_CARGO_BUILD_ROOT=$build_root" >> "$GITHUB_ENV"
+
+      - name: ADL v2 standalone validation
+        run: bash adl/tools/run_adl_v2_standalone.sh
 
   adl_tooling_contracts:
     name: adl-tooling-contracts
@@ -559,6 +596,7 @@ jobs:
     needs:
       - adl_path_policy
       - csdlc_v2_standalone
+      - adl_v2_standalone
       - adl_tooling_contracts
       - adl_runtime_v3_fast
       - adl_rust_fmt_clippy
@@ -583,6 +621,8 @@ jobs:
           RUST_REQUIRED: ${{ needs.adl_path_policy.outputs.rust_required == 'true' }}
           CSDLC_V2_STANDALONE_REQUIRED: ${{ needs.adl_path_policy.outputs.csdlc_v2_standalone_required }}
           CSDLC_V2_STANDALONE_RESULT: ${{ needs.csdlc_v2_standalone.result }}
+          ADL_V2_STANDALONE_REQUIRED: ${{ needs.adl_path_policy.outputs.adl_v2_standalone_required }}
+          ADL_V2_STANDALONE_RESULT: ${{ needs.adl_v2_standalone.result }}
           DEMO_REQUIRED: ${{ needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' }}
         run: |
           set -euo pipefail
@@ -601,6 +641,24 @@ jobs:
               ;;
             *)
               echo "::error::csdlc_v2_standalone_required must be exactly true or false"
+              exit 1
+              ;;
+          esac
+          case "$ADL_V2_STANDALONE_REQUIRED" in
+            true)
+              if [ "$ADL_V2_STANDALONE_RESULT" != success ]; then
+                echo "::error::selected ADL v2 standalone lane is $ADL_V2_STANDALONE_RESULT; expected success"
+                exit 1
+              fi
+              ;;
+            false)
+              if [ "$ADL_V2_STANDALONE_RESULT" != skipped ]; then
+                echo "::error::unselected ADL v2 standalone lane is $ADL_V2_STANDALONE_RESULT; expected skipped"
+                exit 1
+              fi
+              ;;
+            *)
+              echo "::error::adl_v2_standalone_required must be exactly true or false"
               exit 1
               ;;
           esac
@@ -623,6 +681,7 @@ jobs:
           for lane in \
             "adl_path_policy:${{ needs.adl_path_policy.result }}" \
             "csdlc_v2_standalone:${{ needs.csdlc_v2_standalone.result }}" \
+            "adl_v2_standalone:${{ needs.adl_v2_standalone.result }}" \
             "adl_tooling_contracts:${{ needs.adl_tooling_contracts.result }}" \
             "adl_runtime_v3_fast:${{ needs.adl_runtime_v3_fast.result }}" \
             "adl_rust_fmt_clippy:${{ needs.adl_rust_fmt_clippy.result }}" \
@@ -648,6 +707,7 @@ jobs:
             echo "|---|---|"
             echo "| adl_path_policy | \`${{ needs.adl_path_policy.result }}\` |"
             echo "| csdlc_v2_standalone | \`${{ needs.csdlc_v2_standalone.result }}\` |"
+            echo "| adl_v2_standalone | \`${{ needs.adl_v2_standalone.result }}\` |"
             echo "| adl_tooling_contracts | \`${{ needs.adl_tooling_contracts.result }}\` |"
             echo "| adl_runtime_v3_fast | \`${{ needs.adl_runtime_v3_fast.result }}\` |"
             echo "| adl_rust_fmt_clippy | \`${{ needs.adl_rust_fmt_clippy.result }}\` |"

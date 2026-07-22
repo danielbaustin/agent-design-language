@@ -89,6 +89,7 @@ validation_profile_report=""
 validation_profile_contract_lanes_selected="$bool_false"
 runtime_v3_fast_required="$bool_false"
 csdlc_v2_standalone_required="$bool_false"
+adl_v2_standalone_required="$bool_false"
 large_file_lines="${COVERAGE_IMPACT_LARGE_FILE_LINES:-200}"
 large_file_delta="${COVERAGE_IMPACT_LARGE_FILE_DELTA:-80}"
 pvf_slow_proof_policy_change=false
@@ -1238,14 +1239,18 @@ apply_validation_manager_routing() {
   if [ "$validation_profile_status" = "ready_to_run" ] \
     && [ "$validation_profile_escalation_required" = "false" ]; then
     selected_csdlc_v2=false
+    selected_adl_v2=false
     selected_runtime_kernel=false
     case ",$validation_profile_run_lanes," in
       *,csdlc_v2_standalone,*) selected_csdlc_v2=true ;;
     esac
     case ",$validation_profile_run_lanes," in
+      *,adl_v2_standalone,*) selected_adl_v2=true ;;
+    esac
+    case ",$validation_profile_run_lanes," in
       *,runtime_kernel_contracts,*) selected_runtime_kernel=true ;;
     esac
-    if [ "$selected_csdlc_v2" = true ] || [ "$selected_runtime_kernel" = true ]; then
+    if [ "$selected_csdlc_v2" = true ] || [ "$selected_adl_v2" = true ] || [ "$selected_runtime_kernel" = true ]; then
       coverage_lane="skip"
       coverage_authority="not_required"
       coverage_execution_state="skipped_by_path_policy"
@@ -1253,10 +1258,15 @@ apply_validation_manager_routing() {
         csdlc_v2_standalone_required=true
         ci_contracts_required=true
       fi
+      if [ "$selected_adl_v2" = true ]; then
+        adl_v2_standalone_required=true
+      fi
       if [ "$selected_runtime_kernel" = true ]; then
         runtime_v3_fast_required=true
       fi
-      if [ "$selected_csdlc_v2" = true ] && [ "$selected_runtime_kernel" = true ]; then
+      if [ "$selected_adl_v2" = true ] && [ "$selected_csdlc_v2" != true ] && [ "$selected_runtime_kernel" != true ]; then
+        reason="standalone_adl_v2_surface_requires_only_its_independent_focused_suite"
+      elif [ "$selected_csdlc_v2" = true ] && [ "$selected_runtime_kernel" = true ]; then
         reason="csdlc_v2_and_runtime_v3_surfaces_run_both_independent_focused_lanes"
       elif [ "$selected_csdlc_v2" = true ]; then
         reason="standalone_csdlc_v2_surface_requires_only_its_independent_focused_suite"
@@ -1432,6 +1442,9 @@ else
       case "$path" in
         csdlc-v2/*)
           csdlc_v2_standalone_required=true
+          ;;
+        adl-v2/*)
+          adl_v2_standalone_required=true
           ;;
       esac
     done <<EOF
@@ -1663,6 +1676,7 @@ emit "skill_author_contracts_required" "$skill_author_contracts_required"
 emit "validation_profile_contract_lanes_selected" "$validation_profile_contract_lanes_selected"
 emit "runtime_v3_fast_required" "$runtime_v3_fast_required"
 emit "csdlc_v2_standalone_required" "$csdlc_v2_standalone_required"
+emit "adl_v2_standalone_required" "$adl_v2_standalone_required"
 emit "fail_closed" "$fail_closed"
 emit "coverage_lane" "$coverage_lane"
 emit "coverage_authority" "$coverage_authority"
