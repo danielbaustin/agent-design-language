@@ -13,3 +13,7 @@
 {"sequence":13,"generation":8,"actor":"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061","reason":"Exact-head review of 2fd292cd7 completed with no findings after all prior findings were remediated.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":14,"generation":9,"actor":"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":15,"generation":10,"actor":"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061","reason":"record exact existing PR ready-for-review after remote success","operation":"record_ready_publication"}
+{"sequence":16,"generation":11,"actor":"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061","reason":"Recover review truth after the exact CI head exposed missing PR-fast coverage mappings for the three native Google Drive library sources.","operation":"recover_review"}
+{"sequence":17,"generation":11,"actor":"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":18,"generation":12,"actor":"codex-subagent:review_5587_exact_head","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
+{"sequence":19,"generation":13,"actor":"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061","reason":"Exact-head review of 80404b54a found no issues after the CI coverage-selector repair, and the narrow selector proof passed.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
