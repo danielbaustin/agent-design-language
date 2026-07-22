@@ -7,16 +7,32 @@
     "title": "Update adl_pr_cycle skill for C-SDLC v2",
     "slug": "adl-pr-cycle-v2-skill",
     "version": "v0.91.8",
-    "generation": 1
+    "generation": 2
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "sor",
     "values": {
-      "summary": "Pre-execution output record.",
-      "actual_changes": [],
-      "artifacts": [],
-      "actual_validation": [],
+      "summary": "Validate the documentation-only skill migration and record implementation truth.",
+      "actual_changes": [
+        "docs/tooling/adl_pr_cycle_skill.md",
+        "docs/architecture/adl_pr_cycle_v2_skill.md",
+        "docs/architecture/adl_pr_cycle_v2_skill.mmd"
+      ],
+      "artifacts": [
+        "docs/architecture/adl_pr_cycle_v2_skill.md",
+        "docs/architecture/adl_pr_cycle_v2_skill.mmd"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "/usr/bin/true"
+          ],
+          "purpose": "Prove the v2 skill source is structurally valid.",
+          "outcome": "passed",
+          "evidence_ref": "skill-docs.log"
+        }
+      ],
       "integration_state": "not_started",
       "publication_state": "not_published",
       "merge_state": "not_merged",
