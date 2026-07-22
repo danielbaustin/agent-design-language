@@ -11,6 +11,9 @@ run.
   dispositions.
 - [THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md](THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md)
   is the prepared formal milestone third-party review handoff.
+- [podcast_studio_5605/](podcast_studio_5605/) records the AI Agent Podcast
+  Studio weekly launch-readiness packet for `#5605`; it is planning evidence,
+  not public launch proof.
 
 ## Review Boundary
 
