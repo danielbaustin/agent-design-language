@@ -3,13 +3,13 @@
   "issue": 5587,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "a5944a332503136886e500c86d1c782c64846fad42b1a325ca4e5fe8e748f8d2",
-  "phase": "reviewed",
-  "generation": 13,
-  "digest": "f9ccb13f5059a5676aa8631aa5584c4922e4a227caaef2d3d1afe99a07434390",
+  "phase": "published",
+  "generation": 14,
+  "digest": "91ed72c00ece684e61f339255d183386ffed9270e031361079b255fc931a6689",
   "claim": {
     "id": "claim-5587-google-drive-context-mirror",
     "owner": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
-    "generation": 13,
+    "generation": 14,
     "acquired_unix_seconds": 1784659080,
     "expires_unix_seconds": 1784745480,
     "heartbeat_unix_seconds": 1784659080,
@@ -69,7 +69,17 @@
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5587,
+    "pull_request": 5626,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5626",
+    "base": "main",
+    "head": "codex/5587-google-drive-context-mirror",
+    "revision": "git-blake3:cf0088572d59f807994ad221d0190300a53a35be:7bc3b8dba805a0f648a36c299dadf507f7e26934227ca1a045fd57a645028d0b",
+    "draft": false,
+    "observed_state": "open"
+  },
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -83,34 +93,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "2bcf216ff47ca08f77c175d1bf4926be5c1a36add08e07458eab2187a354e8da",
+      "values_digest": "f485c3be473436dc77357af0e8694275663c820a9eee2c8942afd92a7eabce96",
       "rendered_digest": "867bf9115b60902dab9b8c648a00a25b8b7d36d855ebce19c4b82b0756b4cd6d",
       "ast_digest": "5db72db4a2e2230d6da78375077b0441985f175d427474e9370898dff43d3b14"
     },
     "stp": {
-      "values_digest": "aeae76a55ad5b60ccfbb45044654a8712b85651165fd34a315053ee43aa449b8",
+      "values_digest": "dd6f798edd51d2d4dd077006c9fc2e09284dcb978ba8562ca8e9ccdae5225abd",
       "rendered_digest": "be4864ed0f1e4bf50f8cf47d142659362982eb9d969f2e3fb446cd1c3b8f3933",
       "ast_digest": "55d986feaa9113104e8a50bf8198e19112d391f78ffab0a6add7545ca72f0634"
     },
     "spp": {
-      "values_digest": "656d7231874326a55426e437e4940ab5b210bd7162a7b6139fffd310f9d11438",
+      "values_digest": "edf0dc1db230c6236cb2a90cb2fc92c45ad0e22b217f960e1d62ff0ff270dcbd",
       "rendered_digest": "30e2dd52266eeca38592583b434c88b7f429a48ae0efdec52674f8960aeb459d",
       "ast_digest": "88fd5c2643cc42d34449fa8c8969d9cbce11f70ca3d92f4e5d2dadede0ad3bcc"
     },
     "vpp": {
-      "values_digest": "7ce1dafe39022fb4f513e8c00602b2f7abcc84351434c46304f6bfd8a9e9c339",
+      "values_digest": "7b63e01c1fa47e6c1b7c36e9a5cab3f945c438be2bf4d3846bbae0ef03fd91da",
       "rendered_digest": "b26cf896bc0c86323db9ff567aa3e55c51f27d20c4575ffac443f25548150a51",
       "ast_digest": "3ea6c927b7b5fa4f25d17da1cf18c09d3ef3f104d77b593f40e3da9d8f802373"
     },
     "srp": {
-      "values_digest": "254312002b1280505d3b3626a2f6cf0068d61171f83095e0cf24b69beb1a6b4e",
+      "values_digest": "b9a23b9561f030dd4b25cb74f08ed3f3585ff0265d889002006fb45a31c3b0fe",
       "rendered_digest": "6e3685d58f4306bdfb2c6b42bea53b726ba97557197d27c3f3a45498bc18375d",
       "ast_digest": "9a43fad848709d60406686d46e2ed9abe80cbfddee15bb649bbeb25d0644f633"
     },
     "sor": {
-      "values_digest": "8b371a3bd54220fc8e20c9fa8e81ebfc5ff036a9e3a45208245a7613ae26144b",
-      "rendered_digest": "a95b9e90e43f777c41a3f1905bd597c80ee6e0e39fbfffecfa2217e95557a624",
-      "ast_digest": "bffbf6d704482702714c1501877d920ce9316f0b709b9efe0ffcd294c05587a3"
+      "values_digest": "e45d75781c3138e6a4f883c9529dec9cf56852782080b43558040513996315e6",
+      "rendered_digest": "fde7c8f19c1cda2f12938274f94550ba03d13191f74138623b43fe05ea214fb6",
+      "ast_digest": "fcdb4e46d354b113cceceb412aefa2dddcff11843e46450d83586dba35a190ea"
     }
   },
   "transitions": [
@@ -162,6 +172,13 @@
       "to": "reviewed",
       "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
       "reason": "Exact-head review of 80404b54a found no issues after the CI coverage-selector repair, and the narrow selector proof passed."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "observed exact PR after current review"
     }
   ],
   "audit": [
@@ -297,6 +314,13 @@
       "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
       "reason": "Exact-head review of 80404b54a found no issues after the CI coverage-selector repair, and the narrow selector proof passed.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
     }
   ]
 }
