@@ -1,0 +1,23 @@
+{
+  "issue": 5359,
+  "base_branch": "main",
+  "branch": "codex/5359-v0918-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5359-v0918-preparation",
+    "owner": "codex:5359-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784754875,
+    "expires_unix_seconds": 1785359675,
+    "heartbeat_unix_seconds": 1784754875,
+    "branch": "codex/5359-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5359",
+      ".csdlc/locks/5359.lock",
+      ".csdlc/prepared/issues/5359",
+      ".csdlc/evidence/5359"
+    ],
+    "purpose": "Prepare #5359 WP-22 next-milestone planning review only; no execution until WP-21A #5355 is live-merged and ancestral"
+  }
+}

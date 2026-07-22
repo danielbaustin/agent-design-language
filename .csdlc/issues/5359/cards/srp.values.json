@@ -1,0 +1,28 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5359,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-22] Review next-milestone planning before opening v0.92",
+    "slug": "v0918-wp22-next-milestone-planning-review",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Future review only; preparation performs no review churn.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Are blockers and overclaims classified?",
+        "Does the review avoid opening v0.92 by implication?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

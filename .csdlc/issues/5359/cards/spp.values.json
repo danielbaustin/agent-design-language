@@ -1,0 +1,84 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5359,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-22] Review next-milestone planning before opening v0.92",
+    "slug": "v0918-wp22-next-milestone-planning-review",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Prepare now; execute only after #5355 is live-merged and ancestral.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Verify typed preparation packet and #5355 live merge plus ancestry",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Review v0.92 inputs for blockers and overclaims",
+          "acceptance_ids": [
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Record dispositions and release-tail handoff truth",
+          "acceptance_ids": [
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Preserve blockers or release WP-23 without preparation-scope mutations",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "live merge plus ancestry is the dependency gate",
+        "receipts audit-only",
+        "no preparation review churn",
+        "no implementation in preparation"
+      ],
+      "risks": [
+        "review may approve stale assumptions",
+        "v0.92 opening may be implied without evidence",
+        "closeout planning gaps may be hidden"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "#5355 not live-merged",
+        "#5355 merge not ancestral",
+        "review input missing",
+        "unsupported v0.92 claim found"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5359/design.md",
+      "design_digest": "5619d3b151e28b39156f65b20941bd27f585395588a923d27395d9674c0a884a",
+      "diagram_ref": ".csdlc/prepared/issues/5359/diagram.mmd",
+      "diagram_digest": "a6408f350363eeb048885dacec70599034f331539abc51ed41f0383aac07c794"
+    }
+  }
+}

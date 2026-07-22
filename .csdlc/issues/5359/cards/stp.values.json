@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5359,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-22] Review next-milestone planning before opening v0.92",
+    "slug": "v0918-wp22-next-milestone-planning-review",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare lifecycle packet only; planning review is future execution work.",
+      "deliverables": [
+        "generated six-card preparation packet",
+        "concise design and diagram",
+        "focused typed doctor validation"
+      ],
+      "acceptance_criteria": [
+        "AC-1: preparation packet is generated through typed C-SDLC v2",
+        "AC-2: future execution is blocked on #5355 live merge and ancestry",
+        "AC-3: receipts are recorded as audit evidence only",
+        "AC-4: no implementation, PR, AWS, raw gh, or root-main tracked write occurs"
+      ],
+      "dependencies": [
+        "WP-21A #5355 live merged into origin/main",
+        "#5355 observed merge SHA ancestral to exact #5359 execution base"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+        "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+        "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+        "issue #5359"
+      ],
+      "non_goals": [
+        "planning review during preparation",
+        "v0.92 opening",
+        "PR publication",
+        "receipt-gated execution"
+      ]
+    }
+  }
+}

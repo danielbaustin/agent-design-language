@@ -1,0 +1,8 @@
+flowchart TD
+    A["WP-21A #5355 live merged on origin/main"] --> B{"Merge SHA ancestral to #5359 base?"}
+    B -- "No" --> X["Block execution"]
+    B -- "Yes" --> C["Review v0.92 inputs"]
+    C --> D["Classify blockers and overclaims"]
+    D --> E["Record dispositions"]
+    E --> F["Exact revision review before any PR"]
+    F --> G["Release WP-23"]

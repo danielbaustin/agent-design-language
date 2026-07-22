@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5359,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-22] Review next-milestone planning before opening v0.92",
+    "slug": "v0918-wp22-next-milestone-planning-review",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Review v0.92 inputs for missing blockers, stale assumptions, and overclaims.",
+      "required_outcome": "v0.92 planning review packet and dispositions.",
+      "declared_scope": [
+        "v0.92 input review",
+        "blocker and overclaim disposition",
+        "release-tail handoff truth"
+      ],
+      "authority_boundary": [
+        "typed C-SDLC v2 only",
+        "no execution before live predecessor merge plus ancestry",
+        "receipts audit-only",
+        "no raw gh, AWS, PR, merge, or closeout during preparation"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "preparation only",
+        "no tracked root-main writes",
+        "one issue-bound FastWork branch",
+        "minimal packet: six cards, design, diagram, focused doctor validation"
+      ]
+    }
+  }
+}
