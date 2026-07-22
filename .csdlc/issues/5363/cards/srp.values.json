@@ -1,0 +1,28 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5363,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-20] Remediate review findings and run release preflight",
+    "slug": "v0918-wp20-remediation-release-preflight",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Future review only; preparation performs no review churn.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Did execution fix only accepted findings?",
+        "Did preflight preserve blockers instead of hiding them?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

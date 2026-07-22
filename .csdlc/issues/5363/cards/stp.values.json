@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5363,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-20] Remediate review findings and run release preflight",
+    "slug": "v0918-wp20-remediation-release-preflight",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare lifecycle packet only; remediation is future execution work.",
+      "deliverables": [
+        "generated six-card preparation packet",
+        "concise design and diagram",
+        "focused typed doctor validation"
+      ],
+      "acceptance_criteria": [
+        "AC-1: preparation packet is generated through typed C-SDLC v2",
+        "AC-2: future execution is blocked on #5357 live merge and ancestry",
+        "AC-3: receipts are recorded as audit evidence only",
+        "AC-4: no implementation, PR, AWS, raw gh, or root-main tracked write occurs"
+      ],
+      "dependencies": [
+        "WP-19 #5357 live merged into origin/main",
+        "#5357 observed merge SHA ancestral to exact #5363 execution base"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+        "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+        "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+        "issue #5363"
+      ],
+      "non_goals": [
+        "remediation implementation",
+        "review reruns",
+        "PR publication",
+        "receipt-gated execution"
+      ]
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5363,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-20] Remediate review findings and run release preflight",
+    "slug": "v0918-wp20-remediation-release-preflight",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "preparation-doctor",
+          "proof_role": "Validate the generated typed C-SDLC v2 preparation packet",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 1000,
+          "argv": [
+            "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+            "--repo",
+            ".",
+            "--issue",
+            "5363"
+          ],
+          "parallel_group": "release-tail-preparation",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on missing live predecessor merge, stale ancestry, unclear finding ownership, or unsupported release claims.",
+      "design_ref": ".csdlc/prepared/issues/5363/design.md",
+      "design_digest": "dccf65698eb9db306de735bdb37c53c6a1a6fe7282a5127476a99cc6a78c0db0",
+      "diagram_ref": ".csdlc/prepared/issues/5363/diagram.mmd",
+      "diagram_digest": "55f29bf52d9d8e66b22df7f27bc3958d08e6c19bd7a88b6da409a852e1e58290"
+    }
+  }
+}

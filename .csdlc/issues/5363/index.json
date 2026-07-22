@@ -1,0 +1,104 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5363,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "c2f8d9e79f0da319534884d82aacc23a5270691c6389119d93c096763fd020e2",
+  "phase": "bound",
+  "generation": 0,
+  "digest": "d59d848b5bd70b67d1bce64045f10b8de30619efd412d96d3f8bb22e166d69a9",
+  "claim": {
+    "id": "claim-5363-v0918-preparation",
+    "owner": "codex:5363-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784754875,
+    "expires_unix_seconds": 1785359675,
+    "heartbeat_unix_seconds": 1784754875,
+    "branch": "codex/5363-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5363",
+      ".csdlc/locks/5363.lock",
+      ".csdlc/prepared/issues/5363",
+      ".csdlc/evidence/5363"
+    ],
+    "purpose": "Prepare #5363 WP-20 release-tail remediation and preflight only; no implementation until WP-19 #5357 is live-merged and ancestral"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5363/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5363/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator-policy:release-tail-preparation",
+      "revision": "dccf65698eb9db306de735bdb37c53c6a1a6fe7282a5127476a99cc6a78c0db0"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "a6f9e2625c30d4b6afc2e342c685c78e27aaa0a20583c8977a16b248df82e382",
+      "rendered_digest": "c2278612542c28830e083f7ab85c195b63baaff327244e5297566b01e7b83f54",
+      "ast_digest": "b426477fcacb83d017b2d285d3c383f186e13d4a79a8e1a4522405c25fb5699d"
+    },
+    "stp": {
+      "values_digest": "be895a604285b2a98bc4bfedab03ce207f5ef5c5971e464c2bf4bbfe1785b5d6",
+      "rendered_digest": "88c3899d412aed87d69a1a8d8c9d691ef5c6681ca5fcdd3fd6fde250413e09dd",
+      "ast_digest": "67cb5d1baac09b15a19c80b4ac3c16d409d0e34a72fbf0ab342d60d599d85bbe"
+    },
+    "spp": {
+      "values_digest": "e85241369f2da97102e674fe3f38b983550795604861ceaf57059389dc641ce1",
+      "rendered_digest": "31c8c93efe3ab763bb517c5a39de9b4055de39b1282846df1f925a5f83e24252",
+      "ast_digest": "2a9011ffdfcc52c8a8cf5f748ddb853cbdca07902745bee828077214ead1d133"
+    },
+    "vpp": {
+      "values_digest": "46e1fb1840285d272f8742be626810fe5e83b774d1da4b6de3bb616df202713b",
+      "rendered_digest": "a5f8f07134113a6cc1db3184f7120667db2ab32b3f2eabea7f17c4cb7e9913c1",
+      "ast_digest": "a839deb1d10c5ae397b1e7abd5b60f2a4083d89a389d09987f08b1bd04099b5c"
+    },
+    "srp": {
+      "values_digest": "2d16976b06122238015e6ccfd46582ed7040a7d29bc0ffb3ef8f679216347d14",
+      "rendered_digest": "3005007eafc54cd54e0181d70c000a06df4d88299e7a50b4a208520726154fca",
+      "ast_digest": "fc8d91684f12bad15327b0d7d839a359fb33c90ac295f6baed4855bf9c7319b3"
+    },
+    "sor": {
+      "values_digest": "040e1ea7ef0e3f438de5392603f551452ae7dcd55848a58930064068185592a4",
+      "rendered_digest": "68fca7af275e5ea46eb6b418009d7743e2fa7dd596aaefbc4c85ca846cd8fe20",
+      "ast_digest": "24f76f46e4d0874efabfd0a6f017c7b48c95d8b6da77c2c5a20ace0f94fd900f"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5363-preparation-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5363-preparation-owner",
+      "reason": "verified Git worktree binding"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5363-preparation-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5363-preparation-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    }
+  ]
+}

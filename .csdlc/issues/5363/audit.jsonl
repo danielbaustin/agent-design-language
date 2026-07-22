@@ -1,0 +1,2 @@
+{"sequence":1,"generation":0,"actor":"codex:5363-preparation-owner","reason":"initialize issue record and all six cards","operation":"bootstrap"}
+{"sequence":2,"generation":0,"actor":"codex:5363-preparation-owner","reason":"bind branch/worktree and activate claim","operation":"bind"}
