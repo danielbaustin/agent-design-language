@@ -9,3 +9,4 @@
 {"sequence":9,"generation":6,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":10,"generation":7,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":11,"generation":8,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"Exact-revision bounded podcast planning review completed clean after metadata hygiene repair.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":12,"generation":9,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}

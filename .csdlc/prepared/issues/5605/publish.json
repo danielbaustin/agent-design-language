@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5605,
+  "expected_generation": 8,
+  "expected_digest": "71a1d41ddd84b0ecd1d0edb9b6e9d29cd42dad091abec641f13d24b02868c874",
+  "claim_id": "csdlc-issue-5605-20260722t190651z",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5605-v0-91-8-podcast-revive-ai-agent-podcast-weekly-cadence",
+  "title": "[v0.91.8][podcast] Prepare weekly AI agent podcast launch plan",
+  "body": "Closes #5605\n\nPrepares the AI agent podcast revival for weekly launch readiness without claiming live publication. The docs inventory the old v0.91.1/v0.91.3 podcast evidence, define the future `agent-logic.ai/podcast` route and studio launch gates, and capture the first ten approachable topic candidates including the week-two DeepSeek invitation option.\n\nValidation:\n- referenced historical and new podcast paths exist\n- `bash adl/tools/demo_v0913_podcast_studio_v2.sh`\n- `bash adl/tools/test_podcast_studio_v2_packet.sh`\n- `git diff --check` plus docs secret/host-path hygiene scan\n- bounded subagent review clean after lifecycle metadata hygiene repair\n\nNon-claims: no live website route, RSS feed, audio publication, guest acceptance, or durable weekly cadence is claimed by this planning issue.",
+  "draft": true,
+  "token_file": "/Users/daniel/keys/github.token"
+}

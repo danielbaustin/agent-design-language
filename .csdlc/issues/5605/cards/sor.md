@@ -75,11 +75,11 @@ Authored #5605 podcast revival planning surfaces for the week-of-July-27 launch 
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: draft
 
 Merge: not_merged
 
