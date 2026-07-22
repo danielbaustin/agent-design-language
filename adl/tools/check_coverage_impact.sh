@@ -324,6 +324,15 @@ candidate_filter_for_path() {
     adl/src/gws_live_capability_execution_surface.rs|adl/src/gws_live_content_card_roundtrip.rs|adl/src/gws_live_content_card_roundtrip/*.rs|adl/src/gws_live_safety_package.rs|adl/src/gws_live_test_support.rs)
       printf 'gws_live'
       ;;
+    adl/src/adl_gws_context_mirror.rs)
+      printf 'adl_gws_context_mirror'
+      ;;
+    adl/src/adl_gws_drive_sync.rs)
+      printf 'adl_gws_drive_sync'
+      ;;
+    adl/src/adl_gws_native.rs)
+      printf 'adl_gws_native'
+      ;;
     adl/src/uts_acc_multi_model_benchmark.rs|adl/src/uts_acc_multi_model_benchmark/*.rs|adl/src/uts_acc_multi_model_benchmark/*/*.rs)
       printf 'uts_acc_multi_model_benchmark::'
       ;;
