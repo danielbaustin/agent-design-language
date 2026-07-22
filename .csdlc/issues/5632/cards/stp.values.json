@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5632,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Update adl_pr_cycle skill for C-SDLC v2",
+    "slug": "adl-pr-cycle-v2-skill",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Update the canonical skill source and prove installer parity without changing runtime or v2 binaries.",
+      "deliverables": [
+        "v2-routed canonical skill",
+        "architecture design",
+        "block diagram",
+        "installer parity proof"
+      ],
+      "acceptance_criteria": [
+        "No executable v1 lifecycle command remains in the skill",
+        "Typed v2 operation sequence is complete",
+        "Review is required before publication",
+        "Installed copy is byte-identical to canonical source"
+      ],
+      "dependencies": [
+        "csdlc-v2 operator skill contracts",
+        "install_adl_pr_cycle_skill.sh"
+      ],
+      "repo_inputs": [
+        "docs/tooling/adl_pr_cycle_skill.md",
+        "csdlc-v2/operator/skills/",
+        "adl/tools/install_adl_pr_cycle_skill.sh"
+      ],
+      "non_goals": [
+        "editing other lifecycle skills",
+        "changing C-SDLC binaries",
+        "deleting historical v1 evidence"
+      ]
+    }
+  }
+}

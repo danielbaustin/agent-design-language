@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5632,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Update adl_pr_cycle skill for C-SDLC v2",
+    "slug": "adl-pr-cycle-v2-skill",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "docs/tooling/adl_pr_cycle_skill.md and its design/diagram artifacts at the exact revision",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does the skill route only through v2 typed binaries?",
+        "Are review, claims, budgets, and stop boundaries explicit?",
+        "Does any instruction accidentally revive a v1 wrapper?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

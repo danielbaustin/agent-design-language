@@ -1,0 +1,69 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5632,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Update adl_pr_cycle skill for C-SDLC v2",
+    "slug": "adl-pr-cycle-v2-skill",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "skill-frontmatter",
+          "proof_role": "structure",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 1000,
+          "argv": [
+            "bash",
+            "adl/tools/validate_skill_frontmatter.sh",
+            "docs/tooling/adl_pr_cycle_skill.md"
+          ],
+          "parallel_group": "docs",
+          "defer_reason": null
+        },
+        {
+          "lane": "installer-parity",
+          "proof_role": "generated-copy",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 1000,
+          "argv": [
+            "bash",
+            "adl/tools/install_adl_pr_cycle_skill.sh"
+          ],
+          "parallel_group": "docs",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed, preserve evidence, and report one typed recovery operation.",
+      "design_ref": "docs/architecture/adl_pr_cycle_v2_skill.md",
+      "design_digest": "08d2aaa63f7c27f840497c060f87354914369966d68b2e148896dee5896fcfc9",
+      "diagram_ref": "docs/architecture/adl_pr_cycle_v2_skill.mmd",
+      "diagram_digest": "91cddb3902e14c12f23b125a2fbb01e2d2077e04713733e004772750894cba82"
+    }
+  }
+}

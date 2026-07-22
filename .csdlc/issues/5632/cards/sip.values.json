@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5632,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Update adl_pr_cycle skill for C-SDLC v2",
+    "slug": "adl-pr-cycle-v2-skill",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Replace sunset lifecycle guidance in the authoring skill with the independent typed C-SDLC v2 route.",
+      "required_outcome": "The canonical and installed skill describe only v2 binaries, typed cards, bounded validation, review-before-publication, and truthful stop boundaries.",
+      "declared_scope": [
+        "docs/tooling/adl_pr_cycle_skill.md",
+        "docs/architecture/adl_pr_cycle_v2_skill.md",
+        "docs/architecture/adl_pr_cycle_v2_skill.mmd"
+      ],
+      "authority_boundary": [
+        "C-SDLC v2 operator skills and Rust binaries are lifecycle authority",
+        "This skill routes and reports but does not own state"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "never write tracked files on main",
+        "no AWS",
+        "no raw GitHub CLI",
+        "do not invoke sunset v1 wrappers"
+      ]
+    }
+  }
+}
