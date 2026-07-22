@@ -40,11 +40,11 @@ Every actionable finding requires a terminal disposition.
 ## Residual Risk
 
 - Native unattended credentials remain operator-managed outside the repository; the accepted live proof used the approved authenticated Drive connector.
-- GitHub CI must rerun the repaired coverage selector against the published head.
+- GitHub CI must rerun against the strict-Clippy-clean published head.
 
 ## Review Result
 
-Revision: Some("git-blake3:80404b54ad9c01fd8b25b9418a9af8b12e634a54:434a3be4a55892b04376b4e3c5c678f1c85a8dcf86020dc141b82134d0e22573")
+Revision: Some("git-blake3:97a6fe6e10b8d7b89dc13d01cdaac7dc17170050:aef968c237c59533ef426d45107820448b91abfcd88c65f841d4a4e47b984854")
 
 Reviewer: Some("codex-subagent:review_5587_exact_head")
 
