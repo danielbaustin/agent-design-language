@@ -1,0 +1,23 @@
+{
+  "issue": 5605,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "db09112f8dd469d585b138b8e9e8166d07e27a5962ddf1704f5a9e29ec44b54a",
+  "claim_id": "csdlc-issue-5605-20260722t190651z",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record docs hygiene proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "-lc",
+        "git diff --check && ! rg -n \"AKIA|SECRET|PRIVATE KEY|BEGIN .*KEY|(/[[:alnum:]_.-]+){2,}|agent-logic-admin|password|token\" docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md docs/milestones/v0.91.8/review/podcast_studio_5605 docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md docs/milestones/v0.91.8/features/README.md docs/milestones/v0.91.8/review/README.md"
+      ],
+      "outcome": "passed",
+      "evidence_ref": "local exit 0 before commit ffb08a03c after removing host-path references and using generic absolute-path scan pattern",
+      "purpose": "Prove whitespace hygiene and absence of obvious secrets or local host paths in #5605 docs."
+    }
+  },
+  "fail_after_backup": false
+}

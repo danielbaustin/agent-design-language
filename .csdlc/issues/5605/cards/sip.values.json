@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5605,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast][planning] Revive AI agent podcast weekly cadence",
+    "slug": "v0-91-8-podcast-revive-ai-agent-podcast-weekly-cadence",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Revive the earlier AI agent podcast work into a weekly launch-readiness plan for the week of July 27, 2026.",
+      "required_outcome": "Tracked v0.91.8 planning docs identify old podcast evidence, the `agent-logic.ai/podcast` launch requirements, studio workflow, first ten topics, and non-claims before future implementation.",
+      "declared_scope": [
+        "v0.91.8 podcast feature planning",
+        "v0.91.8 review packet for #5605",
+        "v0.91.8 demo/proof coverage references"
+      ],
+      "authority_boundary": [
+        "Issue #5605 owns planning and launch-readiness docs only",
+        "No website deployment, RSS publication, audio rendering, guest outreach, or live cadence claim in this issue"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use repo tools only",
+        "Typed C-SDLC v2 only",
+        "No main edits",
+        "Planning only; no publication/live hosting claim"
+      ]
+    }
+  }
+}
