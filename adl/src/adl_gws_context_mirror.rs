@@ -116,7 +116,7 @@ pub fn regenerate_context_seed_files(config: &WorkspaceContextMirrorConfig) -> R
         inventory_hasher.update(path.as_bytes());
         inventory_hasher.update([0]);
         inventory_hasher.update(digest.as_bytes());
-        inventory_hasher.update([b'\n']);
+        inventory_hasher.update(b"\n");
     }
     let inventory_digest = format!("{:x}", inventory_hasher.finalize());
 
