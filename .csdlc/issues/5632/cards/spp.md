@@ -71,7 +71,7 @@ Revision 1
 
 docs/architecture/adl_pr_cycle_v2_skill.md
 
-Digest: 08d2aaa63f7c27f840497c060f87354914369966d68b2e148896dee5896fcfc9
+Digest: fed7a7b36183bd305af4e66d0f093808967dea7082f5b872cf7969ee3c9cbc1c
 
 ## Diagram
 
