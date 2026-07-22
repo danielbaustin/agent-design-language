@@ -1,0 +1,13 @@
+{
+  "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+  "card": "srp",
+  "claim_id": "claim-5587-google-drive-context-mirror",
+  "expected_digest": "a5efd51eb1fc1c6d6633c7cfc160be83316a7d784342b25ce5bd78083b7c7b43",
+  "expected_generation": 7,
+  "issue": 5587,
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "reason": "Exact-head review of 2fd292cd7 completed with no findings after all prior findings were remediated."
+}

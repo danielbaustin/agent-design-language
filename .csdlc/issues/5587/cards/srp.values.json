@@ -7,23 +7,25 @@
     "title": "[v0.91.8][google-workspace][automation] Make ADL Drive context mirror work end to end",
     "slug": "google-drive-context-mirror",
     "version": "v0.91.8",
-    "generation": 0
+    "generation": 8
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "adl/src/adl_gws_native.rs\nadl/src/adl_gws_drive_sync.rs\nadl/src/adl_gws_context_mirror.rs\nadl/src/bin/demo_adl_gws_context_mirror.rs\nadl/Cargo.toml",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "adl/Cargo.toml\nadl/src/adl_gws_context_mirror.rs\nadl/src/adl_gws_drive_sync.rs\nadl/src/adl_gws_native.rs\nadl/src/bin/demo_adl_gws_context_mirror.rs\nadl/tools/check_coverage_impact.sh\nadl/tools/run_pr_fast_test_lane.sh\nadl/tools/test_check_coverage_impact.sh\nadl/tools/test_run_pr_fast_test_lane.sh\ndocs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md",
+      "review_revision": "git-blake3:2fd292cd76e61062691c6196eb44c1349d28ba5c:19ff9851fdd62d41f5a0231423a27c4d888db27e5609064be7b722c9058a8a15",
+      "reviewer": "codex-subagent:review_5587_exact_head",
       "review_prompts": [
         "Can execute mode still select an in-memory transport?",
         "Can a successful report be emitted without exact readback?",
         "Can traversal escape docs or .adl/docs/TBD?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "Native unattended credentials remain operator-managed outside the repository; the accepted live proof used the approved authenticated Drive connector."
+      ],
+      "review_result": "pass"
     }
   }
 }

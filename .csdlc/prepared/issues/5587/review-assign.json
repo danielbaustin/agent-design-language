@@ -1,0 +1,20 @@
+{
+  "issue": 5587,
+  "expected_generation": 6,
+  "expected_digest": "65942317857a60a6be194c1e158baf2fcea52adf8fba760f91ebf7b187d3e849",
+  "claim_id": "claim-5587-google-drive-context-mirror",
+  "reviewer": "codex-subagent:review_5587_exact_head",
+  "assigned_by": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+  "scope": [
+    "adl/Cargo.toml",
+    "adl/src/adl_gws_context_mirror.rs",
+    "adl/src/adl_gws_drive_sync.rs",
+    "adl/src/adl_gws_native.rs",
+    "adl/src/bin/demo_adl_gws_context_mirror.rs",
+    "adl/tools/check_coverage_impact.sh",
+    "adl/tools/run_pr_fast_test_lane.sh",
+    "adl/tools/test_check_coverage_impact.sh",
+    "adl/tools/test_run_pr_fast_test_lane.sh",
+    "docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md"
+  ]
+}
