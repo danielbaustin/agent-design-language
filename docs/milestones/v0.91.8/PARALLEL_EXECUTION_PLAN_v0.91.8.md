@@ -142,11 +142,11 @@ defines acceptance criteria rather than implementing ADL core internals:
 - Runtime v3 acceptance lane: `#5361`
 
 They are parallel to early ADL core prep, but they cannot approve WP-14A or
-v0.92 handoff alone. Their outputs become acceptance inputs for WP-14A.
-C-SDLC acceptance preflight must inventory current defects `#5540`, `#5541`,
-`#5548`, and `#5558` without absorbing them into the acceptance issue. Runtime v3
-acceptance may start preflight early, but `#5361` closure consumes the live
-distributed workcell proof from `#5501`.
+v0.92 handoff alone. Their accepted revisions become WP-14A inputs.
+C-SDLC acceptance retains `#5540` and `#5541` repair history; current tooling
+defects `#5548` and `#5558` are owned by WP-20 `#5363` and do not block
+`#5358` or WP-14A. Runtime v3 acceptance may start preflight early, but `#5361`
+closure consumes the live distributed workcell proof from `#5501`.
 
 ## Wave 2: ADL Core Critical Path
 
@@ -211,8 +211,9 @@ Parity, soak, cutover, acceptance, and deletion are constrained:
 2. Runtime v3 acceptance `#5361`, consuming the four parity lanes and `#5501`.
 3. WP-12 soak `#5344` after closed `#5361` acceptance.
 4. WP-12 reversible default switch `#5343` after the soak proof.
-5. C-SDLC v2 acceptance `#5358`, after inventorying `#5540`, `#5541`,
-   `#5548`, and `#5558`, must close before deletion.
+5. C-SDLC v2 acceptance `#5358`, retaining `#5540` and `#5541` repair
+   history, must close before deletion. WP-20 owns `#5548` and `#5558`; they
+   do not block this acceptance or deletion gate.
 6. WP-13 deletion may execute in parallel only on disjoint manifests:
    - `#5346` final replaced ADL language compiler engine and CLI.
    - `#5347` externally owned incumbent ADL bands.
@@ -234,12 +235,13 @@ Fan-out candidates:
 - ADL v2 accepted/deployed exact revision.
 - Runtime v3 accepted/deployed exact revision.
 - C-SDLC v2 accepted/deployed exact revision.
-- v0.92 handoff ledger and activation map inputs.
-- Launch-readiness and Memory Palace sidecar inputs when their owners are
-  current.
 
 Convergence remains serialized under the conductor: one acceptance packet, one
 review synthesis, one integration queue, and one operator decision boundary.
+
+WP-21 `#5362` independently owns the v0.92 handoff ledger, activation map,
+launch-readiness, Memory Palace, identity/birthday, capability-envelope, and
+Adaptive Learning inputs after WP-14A accepts the platform.
 
 ## Wave 6: Release Tail
 

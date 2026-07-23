@@ -5,7 +5,7 @@
   "initialization_digest": "c9e538886b9fe939fe6a89f44b9ef31a4d75733f7a7e60cdbb4bf47dd806bfc9",
   "phase": "bound",
   "generation": 1,
-  "digest": "dcf68db28b72c02321622dbdcc78be70443c4e83edf33a1c7557acd5932cff4d",
+  "digest": "5d3e653269451e8caab28111297dca0988c0b2c9626e1125127130f5159c676a",
   "claim": {
     "id": "claim-5354-v0918-wp15-demo-preparation",
     "owner": "codex:5354-preparation-owner",
@@ -27,6 +27,7 @@
       "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
       "docs/milestones/v0.91.8/MILESTONE_CHECKLIST_v0.91.8.md",
       "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
       "docs/milestones/v0.91.8/README.md",
       "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md",
       "docs/milestones/v0.91.8/SPRINT_PLAN_v0.91.8.md",
@@ -34,6 +35,7 @@
       "docs/milestones/v0.91.8/WBS_v0.91.8.md",
       "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
       "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json",
+      "docs/milestones/v0.91.8/features/CSDLC_V2_ACCEPTANCE_v0.91.8.md",
       "docs/milestones/v0.91.8/features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md",
       "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
       "docs/planning/ADL_FEATURE_LIST.md"
@@ -151,6 +153,13 @@
       "actor": "codex:5354-wp14-decomposition",
       "reason": "Align the canonical v0.91.8 package with the operator-approved decomposition of WP-14A into existing WP-15, WP-20, and WP-21 tracks.",
       "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.8/README.md\",\"docs/milestones/v0.91.8/SPRINT_PLAN_v0.91.8.md\",\"docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md\",\"docs/milestones/v0.91.8/MILESTONE_CHECKLIST_v0.91.8.md\",\"docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md\",\"docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md\",\"docs/milestones/v0.91.8/DECISIONS_v0.91.8.md\",\"docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 1,
+      "actor": "codex:5354-wp14-decomposition",
+      "reason": "Resolve the final review findings in active C-SDLC acceptance and parallel-execution planning truth.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md\",\"docs/milestones/v0.91.8/features/CSDLC_V2_ACCEPTANCE_v0.91.8.md\"],\"operation\":\"amend_claim_scope\"}"
     }
   ]
 }
