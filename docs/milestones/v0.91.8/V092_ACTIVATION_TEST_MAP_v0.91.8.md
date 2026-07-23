@@ -1,5 +1,8 @@
 # v0.92 Activation Test Map from v0.91.8
 
+WP-21 `#5362` owns the handoff rows below after WP-14A accepts the platform.
+These rows do not block WP-14A itself.
+
 | v0.92 input | v0.91.8 source | Required evidence |
 | --- | --- | --- |
 | Platform install | #5345, #5343, #5384 | Stable install and selector receipt |
@@ -10,7 +13,7 @@
 | Unity Observatory demo proof | #5354, #4739, #4741, #5332 | WP-15 project/port/editor alignment and batch proof, or an explicit Unity tooling disposition |
 | Lifecycle governance | #5358 | C-SDLC v2 typed lifecycle proof |
 | Capability envelope | #4761 | Evidence-backed capability envelope |
-| Memory Palace | #4760, #5007 | Implementation proof and ADR acceptance |
+| Memory Palace | #4760, #5007 | Acceptance boundary, handoff evidence, and ADR acceptance |
 | Birth witnesses/receipt | #4762 | Auditable receipt package |
 | Public launch docs | #4758, #4763 | Claim-bounded launch docs |
 | Adaptive Learning DAG | #5107 | Queued prerequisites and non-claims |

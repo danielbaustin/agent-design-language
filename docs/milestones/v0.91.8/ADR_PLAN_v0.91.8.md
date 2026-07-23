@@ -7,5 +7,4 @@
 | C-SDLC v2 final authority | #5358 | Required before lifecycle claims |
 | Records signing and trust | #5342 | Required if signing profile becomes release contract |
 | Generation selector and rollback | #5343, #5345 | Required before default switch |
-| Memory Palace acceptance | #5007 | Required only after complete WP-14A proof |
-
+| Memory Palace acceptance | #5007, WP-21 #5362 | Prepared after WP-14A platform acceptance; does not block WP-14A |

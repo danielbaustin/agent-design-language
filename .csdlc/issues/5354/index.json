@@ -5,7 +5,7 @@
   "initialization_digest": "c9e538886b9fe939fe6a89f44b9ef31a4d75733f7a7e60cdbb4bf47dd806bfc9",
   "phase": "bound",
   "generation": 1,
-  "digest": "76eb1e2c50d80c3f5627c327661085aaed265ebe44241fda6209f4d482962c57",
+  "digest": "dcf68db28b72c02321622dbdcc78be70443c4e83edf33a1c7557acd5932cff4d",
   "claim": {
     "id": "claim-5354-v0918-wp15-demo-preparation",
     "owner": "codex:5354-preparation-owner",
@@ -20,13 +20,22 @@
       ".csdlc/issues/5354",
       ".csdlc/locks/5354.lock",
       ".csdlc/prepared/issues/5354",
+      "docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/DECISIONS_v0.91.8.md",
       "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
       "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/MILESTONE_CHECKLIST_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/README.md",
+      "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/SPRINT_PLAN_v0.91.8.md",
       "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
       "docs/milestones/v0.91.8/WBS_v0.91.8.md",
       "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
       "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json",
       "docs/milestones/v0.91.8/features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
       "docs/planning/ADL_FEATURE_LIST.md"
     ],
     "purpose": "Prepare and review #5354 only; claim no product or demo path and perform no implementation until WP-14A #5384 is merged, typed closed_out, claim-free, retained-receipt-backed, and ancestral"
@@ -135,6 +144,13 @@
       "actor": "codex:5354-unity-routing-correction",
       "reason": "Resolve the bounded review finding by aligning the active feature-preservation crosswalk with WP-15 Unity ownership.",
       "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 1,
+      "actor": "codex:5354-wp14-decomposition",
+      "reason": "Align the canonical v0.91.8 package with the operator-approved decomposition of WP-14A into existing WP-15, WP-20, and WP-21 tracks.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.8/README.md\",\"docs/milestones/v0.91.8/SPRINT_PLAN_v0.91.8.md\",\"docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md\",\"docs/milestones/v0.91.8/MILESTONE_CHECKLIST_v0.91.8.md\",\"docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md\",\"docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md\",\"docs/milestones/v0.91.8/DECISIONS_v0.91.8.md\",\"docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md\"],\"operation\":\"amend_claim_scope\"}"
     }
   ]
 }

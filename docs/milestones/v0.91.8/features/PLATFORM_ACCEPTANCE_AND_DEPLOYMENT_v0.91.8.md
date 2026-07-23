@@ -1,12 +1,16 @@
 # Platform Acceptance and Deployment
 
-WP-14A (`#5384`) is the integrated platform acceptance and v0.92 handoff gate.
+WP-14A (`#5384`) is the integrated platform acceptance and deployment gate.
 
-It consumes ADL v2, Runtime v3, C-SDLC v2, moved launch/birthday handoff
-children, Memory Palace ADR state, and Adaptive Learning DAG queue truth.
+It directly consumes C-SDLC v2 acceptance `#5358`, Runtime v3 acceptance
+`#5361`, and accepted ADL v2 deployment evidence.
 
-It may close only when every child is closed with evidence or explicitly
-blocked with operator approval.
+It may close when those platform revisions are reviewed, deployable, and
+accepted. Downstream feature and planning tracks consume that acceptance.
 
 Unity Observatory tooling and proof belong to WP-15 `#5354`; `#4739`, `#4741`,
 and `#5332` are not WP-14A acceptance blockers.
+
+C-SDLC tooling defects `#5548` and `#5558` belong to WP-20 `#5363`.
+Exact-revision handoff, launch/activation, Memory Palace, identity/birthday,
+capability, and Adaptive Learning planning belong to WP-21 `#5362`.

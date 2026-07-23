@@ -15,9 +15,9 @@ and lifecycle closeout.
 5. C-SDLC v2 lifecycle deployment proof.
 6. Rollback and reversible selector proof.
 7. Deletion eligibility and post-deletion validation.
-8. WP-14A acceptance/deployment handoff.
+8. WP-14A acceptance and deployment.
 9. Demo, quality, docs, internal/external review, remediation, and preflight.
-10. Release ceremony closeout.
+10. WP-21 exact-revision handoff and release ceremony closeout.
 
 The release-tail review sequence must remain `WP-21 -> WP-21A -> WP-22` before
 release ceremony: WP-21 aligns feature-list and planning truth, future v0.91.8
