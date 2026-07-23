@@ -1,0 +1,58 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5627,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][performance] Collapse routine lifecycle into four commands",
+    "slug": "csdlc-four-command-lifecycle",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Delete or combine routine lifecycle ceremony while preserving exact scope, atomic failure, publication identity, and terminal receipts.",
+      "deliverables": [
+        "Atomic csdlc-validate finalize operation",
+        "Assignment-free exact csdlc-review record operation that advances Reviewed",
+        "Direct ready-PR publication with active-draft compatibility",
+        "Untracked shared-Git one-shot request convention",
+        "Measured four-command and at-most-two-artifact regression"
+      ],
+      "acceptance_criteria": [
+        "AC-1: #5624-equivalent routine lifecycle requires four typed commands including unchanged closeout",
+        "AC-2: post-product durable request/evidence artifacts are two or fewer",
+        "AC-3: failed validation, stale review, claim mismatch, and wrong PR identity perform zero state writes",
+        "AC-4: exact scoped review and terminal receipt integrity are unchanged",
+        "AC-5: existing active draft publications remain reconcilable",
+        "AC-6: focused Gate 4-7 and complete four-command lifecycle regressions pass under /Volumes/FastWork"
+      ],
+      "dependencies": [
+        "Current origin/main including merged issue 5624 state",
+        "Existing typed C-SDLC v2 store locking, claim, review, publication, and closeout contracts"
+      ],
+      "repo_inputs": [
+        "csdlc-v2/src/pvf.rs",
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/review.rs",
+        "csdlc-v2/src/publication.rs",
+        "csdlc-v2/src/doctor.rs",
+        "csdlc-v2/src/cards.rs",
+        "csdlc-v2/src/bin",
+        "csdlc-v2/tests/gate4.rs",
+        "csdlc-v2/tests/gate5.rs",
+        "csdlc-v2/tests/gate6.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs",
+        "Rust standard library and existing workspace dependencies"
+      ],
+      "non_goals": [
+        "No Runtime or AWS work",
+        "No broad workflow redesign or new dependency",
+        "No weakening of claims, review scope, validation, publication identity, or closeout",
+        "No compatibility retention beyond active draft reconciliation"
+      ]
+    }
+  }
+}

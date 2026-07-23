@@ -1,0 +1,25 @@
+{
+  "issue": 5589,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "0e6e2a94677548429984961156b25aa7eaec3562992aea89103f911ce76fffed",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "actor": "codex:019f836b-dd65-7ab1-be66-7408ee2312f6",
+  "reason": "Record complete FastWork validation of the review-fix redesign and preserve the non-authorizing budget exception for exact re-review.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "seven exact inventory-guarded Parity-C lanes (25 discovered and executed tests)",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5589/full-redesign cargo test --manifest-path adl-runtime-kernel/Cargo.toml",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5589/clippy-redesign cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets --all-features -- -D warnings",
+        "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --all -- --check",
+        "bash adl/tools/report_runtime_v3_loc.sh",
+        "git diff --check"
+      ],
+      "purpose": "Prove the corrected live signed-authority, canonical-ingress, Agent/Shepherd/Scheduler/provider/tool, identity/capability-state, trusted-time, durable checkpoint, retry/revocation, lifelog, shutdown, zero-degraded-credit, complete-kernel, lint, format, budget, and diff outcomes. Budget is exactly 13,496 physical lines and 220 tests: +1,287 over pinned baseline 12,209 and requires explicit review disposition because the 20,000 safety ceiling is non-authorizing.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5589/implementation"
+    }
+  }
+}

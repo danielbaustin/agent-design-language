@@ -489,6 +489,27 @@ mod tests {
     }
 
     #[test]
+    fn provider_mod_registry_keeps_expanded_vendor_identities_distinct() {
+        let names = provider_profile_names();
+        for name in [
+            "kimi:k2.5",
+            "minimax:m2.5",
+            "qwen:qwen3-max",
+            "xai:grok-4.5",
+            "mistral:medium-3.5",
+            "cohere:command-a-plus",
+            "deepseek:v4",
+            "gemini:3.1-pro-preview",
+        ] {
+            assert!(names.contains(&name.to_string()), "missing profile {name}");
+        }
+        assert_ne!(
+            provider_profile_registry()["kimi:k2.5"].provider_model_id,
+            provider_profile_registry()["xai:grok-4.5"].provider_model_id
+        );
+    }
+
+    #[test]
     fn provider_mod_cfg_numeric_helpers_cover_all_supported_and_rejected_types() {
         let mut cfg = HashMap::new();
         cfg.insert("f64".to_string(), serde_json::json!(0.5));

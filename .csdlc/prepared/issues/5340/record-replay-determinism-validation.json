@@ -1,0 +1,19 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 37,
+  "expected_digest": "a107e274b308f17e4ff7a95c80f2d63b9ff95d09dda2fcf1ca51e2f9874df192",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record deterministic canonical turn-replay proof on the exact remediation revision.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-validate", "--request", ".csdlc/prepared/issues/5340/pvf/determinism.json"],
+      "purpose": "Prove completion-order invariance, fresh-process equivalence, canonical turn replay, exact snapshot reconstruction, contiguous attempts, and outcome-bound receipts.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-determinism/engine-determinism.log at substantive commit f89b321eac7433e9e3d9cc0cfdfc8aca6ce0ae75"
+    }
+  },
+  "fail_after_backup": false
+}

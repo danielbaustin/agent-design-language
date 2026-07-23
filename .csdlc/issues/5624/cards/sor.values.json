@@ -1,0 +1,74 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5624,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][prune] Resolve issue-local terminal worktree topology safely",
+    "slug": "csdlc-prune-topology",
+    "version": "v0.91.8",
+    "generation": 22
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Resolve terminal worktree identity canonically while preserving exact branch, topology, cleanliness, and receipt invariants.",
+      "actual_changes": [
+        "Resolve literal dot to the canonical current issue worktree",
+        "Resolve clean repository-relative and absolute terminal worktree paths exactly",
+        "Reject malformed, missing, suffix-collision, wrong-checkout, wrong-branch, and dirty targets",
+        "Preserve terminal receipt bytes during validation"
+      ],
+      "artifacts": [
+        "csdlc-v2/src/readiness.rs",
+        "csdlc-v2/tests/gate7.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs",
+        ".csdlc/evidence/5624/validation-380a9eab1.json"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "bash",
+            ".csdlc/prepared/issues/5624/run_focused_validation.sh"
+          ],
+          "purpose": "Prove canonical prune topology, receipt immutability, the command-level issue-local worktree path, all C-SDLC v2 targets, formatting, and strict Clippy.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5624/validation-380a9eab1.json"
+        },
+        {
+          "command": [
+            "bash",
+            ".csdlc/prepared/issues/5624/run_focused_validation.sh"
+          ],
+          "purpose": "Prove the external Cargo target contract, Gate 10A provenance, guarded prune behavior, complete C-SDLC v2 suite, formatting, and strict Clippy in one FastWork run.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5624/validation-a2c79708e.json"
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_run_cargo_validation.sh",
+            "and",
+            "cargo",
+            "test",
+            "--test",
+            "gate2",
+            "and",
+            "fmt",
+            "and",
+            "strict-clippy"
+          ],
+          "purpose": "Prove deterministic validation-only Git identity, all affected Gate2 fixture commits, formatting, and strict Clippy.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5624/validation-git-identity.json"
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "ready",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

@@ -1,0 +1,358 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5587,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "a5944a332503136886e500c86d1c782c64846fad42b1a325ca4e5fe8e748f8d2",
+  "phase": "reviewed",
+  "generation": 17,
+  "digest": "d3142ef418bc7b908714f8aa5c3fb9348bd562da1d6974f4536dcbf5d5e8fd52",
+  "claim": {
+    "id": "claim-5587-google-drive-context-mirror",
+    "owner": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+    "generation": 17,
+    "acquired_unix_seconds": 1784659080,
+    "expires_unix_seconds": 1784745480,
+    "heartbeat_unix_seconds": 1784659080,
+    "branch": "codex/5587-google-drive-context-mirror",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/Cargo.toml",
+      "adl/src/adl_gws_context_mirror.rs",
+      "adl/src/adl_gws_drive_sync.rs",
+      "adl/src/adl_gws_native.rs",
+      "adl/src/bin/demo_adl_gws_context_mirror.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md"
+    ],
+    "purpose": "Make the ADL Google Drive context mirror work and verify content end to end"
+  },
+  "review_assignment": {
+    "reviewer": "codex-subagent:review_5587_exact_head",
+    "assigned_by": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+    "revision": "git-blake3:97a6fe6e10b8d7b89dc13d01cdaac7dc17170050:aef968c237c59533ef426d45107820448b91abfcd88c65f841d4a4e47b984854",
+    "scope": [
+      "adl/Cargo.toml",
+      "adl/src/adl_gws_context_mirror.rs",
+      "adl/src/adl_gws_drive_sync.rs",
+      "adl/src/adl_gws_native.rs",
+      "adl/src/bin/demo_adl_gws_context_mirror.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-subagent:review_5587_exact_head",
+    "scope": [
+      "adl/Cargo.toml",
+      "adl/src/adl_gws_context_mirror.rs",
+      "adl/src/adl_gws_drive_sync.rs",
+      "adl/src/adl_gws_native.rs",
+      "adl/src/bin/demo_adl_gws_context_mirror.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md"
+    ],
+    "reviewed_revision": "git-blake3:97a6fe6e10b8d7b89dc13d01cdaac7dc17170050:aef968c237c59533ef426d45107820448b91abfcd88c65f841d4a4e47b984854",
+    "findings": [],
+    "residual_risks": [
+      "Native unattended credentials remain operator-managed outside the repository; the accepted live proof used the approved authenticated Drive connector.",
+      "GitHub CI must rerun against the strict-Clippy-clean published head."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5587/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5587/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "revision": "196bd587d9658475dab103e296fb196be3adb7428841932b3863c862741b8eb0"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "531b32e4e8ad32ba5b3247add4c9124831f66704e939ced0d08a7d8e4c39073e",
+      "rendered_digest": "867bf9115b60902dab9b8c648a00a25b8b7d36d855ebce19c4b82b0756b4cd6d",
+      "ast_digest": "5db72db4a2e2230d6da78375077b0441985f175d427474e9370898dff43d3b14"
+    },
+    "stp": {
+      "values_digest": "94ab525eb5b76a75fca210ff88381b0d977cc7e547e1c68ee852c13b43d68879",
+      "rendered_digest": "be4864ed0f1e4bf50f8cf47d142659362982eb9d969f2e3fb446cd1c3b8f3933",
+      "ast_digest": "55d986feaa9113104e8a50bf8198e19112d391f78ffab0a6add7545ca72f0634"
+    },
+    "spp": {
+      "values_digest": "df1353c3fe2de89e06741e5181a1e5e7d1542c4528234285d4f8dd202f7ae110",
+      "rendered_digest": "30e2dd52266eeca38592583b434c88b7f429a48ae0efdec52674f8960aeb459d",
+      "ast_digest": "88fd5c2643cc42d34449fa8c8969d9cbce11f70ca3d92f4e5d2dadede0ad3bcc"
+    },
+    "vpp": {
+      "values_digest": "0e1e5d35720efb00a6441d579e1cf433d35345ef9a589e14f42294d744e8c998",
+      "rendered_digest": "b26cf896bc0c86323db9ff567aa3e55c51f27d20c4575ffac443f25548150a51",
+      "ast_digest": "3ea6c927b7b5fa4f25d17da1cf18c09d3ef3f104d77b593f40e3da9d8f802373"
+    },
+    "srp": {
+      "values_digest": "591a9a8300df5fe9a8954bb2117b715c1d7e13a5ba4d1fddbb4ce8bf3d895723",
+      "rendered_digest": "98de558e57695c5e598569574226113c2ca0ac5b533a679586ab43be5b927904",
+      "ast_digest": "39326df7690a54ebdac9eaa8a44eb66e229bb6125d184648b6b2223530da7abd"
+    },
+    "sor": {
+      "values_digest": "36d29fefcf8dece28941c585ca5f3c4228b4cb72a561f8b2ce3311006af36143",
+      "rendered_digest": "a95b9e90e43f777c41a3f1905bd597c80ee6e0e39fbfffecfa2217e95557a624",
+      "ast_digest": "bffbf6d704482702714c1501877d920ce9316f0b709b9efe0ffcd294c05587a3"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Implementation, focused validation, bounded live proof, and exact-head review remediation are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Exact-head review of 2fd292cd7 completed with no findings after all prior findings were remediated."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Recover review truth after the exact CI head exposed missing PR-fast coverage mappings for the three native Google Drive library sources."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Exact-head review of 80404b54a found no issues after the CI coverage-selector repair, and the narrow selector proof passed."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Recover review truth after exact-head strict Clippy required the byte-slice spelling fix in the Drive inventory hasher."
+    },
+    {
+      "sequence": 10,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Exact-head review of 97a6fe6e1 confirmed the byte-slice Clippy repair is behaviorally identical, and focused Clippy plus 11 context-mirror tests passed."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "The issue explicitly requires an operator runbook for success and controlled failure behavior.",
+      "operation": "{\"add_protected_paths\":[\"docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 0,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Pre-PR review found the production binary rename must propagate through focused coverage and PR-fast selectors and their exact contract tests.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/check_coverage_impact.sh\",\"adl/tools/run_pr_fast_test_lane.sh\",\"adl/tools/test_check_coverage_impact.sh\",\"adl/tools/test_run_pr_fast_test_lane.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Record truthful pre-publication execution and bounded live proof for issue #5587.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented production native Drive execution, deterministic current seed generation, recursive Markdown mirroring, exact list/metadata/MIME/content verification, durable failure truth, and success-only automation policy. A bounded authenticated connector proof updated and read back all four configured seeds plus docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md with exact SHA-256 parity.\",\"changes\":[\"Native execute transport and redacted auth source/scope evidence\",\"Deterministic four-seed regeneration from current repository inventory\",\"Recursive path-preserving docs and .adl/docs/TBD Markdown mirroring\",\"Post-write listing, metadata, MIME, parent, ID, and exact-byte verification\",\"Fail-closed seed-only, traversal, ambiguity, API, and mismatch handling\",\"Paused automation updated with success-only archive and failure deduplication contract\"],\"artifacts\":[\"docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md\",\".adl/tmp/google_workspace_cms/adl_gws_context_mirror_report.json\",\"Google Drive seed IDs 12JB-icrnN5ol1uMLMBgnRGBx-LDnuLw2, 1cQobWgcBb2PYs1F7Af4rqMscluqXGIQg, 13FpgMu2JAkIfYoxtBsv3gFhFhourVMdT, 1L5_K_q9dkvq3esepXyrmH21bTj_u8plh\",\"Google Drive recursive proof ID 1C-eEfbQtpQ8iHe-b2LzK8Ard6YXqgmaF\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Record the focused Drive transport and verification lane.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"adl_gws_drive_sync\"],\"purpose\":\"Prove approval, auth evidence, create/update/unchanged, post-write listing, MIME, exact content, ambiguity, and mismatch contracts.\",\"outcome\":\"passed\",\"evidence_ref\":\"exact HEAD 2fd292cd7: 21 focused Drive-sync tests passed\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Record the focused context-mirror lane.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"adl_gws_context_mirror\"],\"purpose\":\"Prove deterministic seed generation, current milestone truth, recursive path preservation, exact verification, and traversal fail-closed behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\"exact HEAD 2fd292cd7: 11 focused context-mirror tests passed\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Record the production binary lane.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"--bin\",\"adl-gws-context-mirror\"],\"purpose\":\"Prove production transport selection, deterministic generation, durable failure reporting, and rejection of seed-only execute success.\",\"outcome\":\"passed\",\"evidence_ref\":\"exact HEAD 2fd292cd7: 5 binary tests passed\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Record the bounded authenticated live Google Drive proof without credential material.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"google-drive-connector\",\"update-list-fetch-sha256\",\"configured-seeds-and-bounded-recursive-file\"],\"purpose\":\"Prove authenticated live Drive update plus list/metadata/content readback for all four current seeds and one changed path-preserving recursive document.\",\"outcome\":\"passed\",\"evidence_ref\":\"Seed IDs and SHA-256: 12JB...=be3af46d..., 1cQ...=e827a69b..., 13F...=902ba321..., 1L5...=4ab74063...; recursive ID 1C-e...=8735b567...; all exact_match=true with configured parents and text/markdown MIME\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Implementation, focused validation, bounded live proof, and exact-head review remediation are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 6,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 7,
+      "actor": "codex-subagent:review_5587_exact_head",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Exact-head review of 2fd292cd7 completed with no findings after all prior findings were remediated.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "record exact existing PR ready-for-review after remote success",
+      "operation": "record_ready_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Recover review truth after the exact CI head exposed missing PR-fast coverage mappings for the three native Google Drive library sources.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 11,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex-subagent:review_5587_exact_head",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Exact-head review of 80404b54a found no issues after the CI coverage-selector repair, and the narrow selector proof passed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Recover review truth after exact-head strict Clippy required the byte-slice spelling fix in the Drive inventory hasher.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 15,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 16,
+      "actor": "codex-subagent:review_5587_exact_head",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Exact-head review of 97a6fe6e1 confirmed the byte-slice Clippy repair is behaviorally identical, and focused Clippy plus 11 context-mirror tests passed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    }
+  ]
+}

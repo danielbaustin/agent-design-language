@@ -318,10 +318,24 @@ pub fn build_and_install_binaries(repo: &Path, destination: &Path) -> Result<Ins
             "refusing to stamp owner binaries from dirty csdlc-v2 sources",
         ));
     }
+    if destination.is_dir() {
+        let inventory = CoexistenceInventory::load()?;
+        if verify_coexistence(repo, destination, &inventory)
+            .map(|report| report.pass)
+            .unwrap_or(false)
+        {
+            return serde_json::from_slice(
+                &fs::read(destination.join("install-receipt.json")).map_err(io_error)?,
+            )
+            .map_err(Into::into);
+        }
+    }
+    let target = external_cargo_target(repo)?;
     let status = std::process::Command::new("cargo")
-        .args(["build", "--manifest-path"])
+        .args(["build", "--locked", "--manifest-path"])
         .arg(&manifest_path)
         .arg("--bins")
+        .env("CARGO_TARGET_DIR", &target)
         .current_dir(repo)
         .status()
         .map_err(io_error)?;
@@ -339,10 +353,52 @@ pub fn build_and_install_binaries(repo: &Path, destination: &Path) -> Result<Ins
         ));
     }
     install_binaries_with_revision(
-        &repo.join("csdlc-v2/target/debug"),
+        &target.join("debug"),
         destination,
         Some(format!("git:{}", after.stdout)),
     )
+}
+
+pub(crate) fn external_cargo_target(repo: &Path) -> Result<PathBuf> {
+    let target = std::env::var_os("CARGO_TARGET_DIR").ok_or_else(|| {
+        V2Error::new(
+            ErrorCode::ValidationFailed,
+            "CARGO_TARGET_DIR must name the validated external Cargo target",
+        )
+    })?;
+    validate_external_cargo_target(repo, Path::new(&target))
+}
+
+pub fn validate_external_cargo_target(repo: &Path, target: &Path) -> Result<PathBuf> {
+    if !target.is_absolute() || target.as_os_str().is_empty() {
+        return Err(V2Error::new(
+            ErrorCode::ValidationFailed,
+            "CARGO_TARGET_DIR must be an absolute existing directory",
+        ));
+    }
+    let canonical_repo = fs::canonicalize(repo).map_err(io_error)?;
+    let canonical_target = fs::canonicalize(target).map_err(|_| {
+        V2Error::new(
+            ErrorCode::ValidationFailed,
+            "CARGO_TARGET_DIR must be an absolute existing directory",
+        )
+    })?;
+    if canonical_target != target
+        || canonical_target == canonical_repo
+        || canonical_target.starts_with(&canonical_repo)
+    {
+        return Err(V2Error::new(
+            ErrorCode::ValidationFailed,
+            "CARGO_TARGET_DIR must resolve exactly outside the repository",
+        ));
+    }
+    if !fs::metadata(&canonical_target).map_err(io_error)?.is_dir() {
+        return Err(V2Error::new(
+            ErrorCode::ValidationFailed,
+            "CARGO_TARGET_DIR must be an absolute existing directory",
+        ));
+    }
+    Ok(canonical_target)
 }
 
 fn csdlc_sources_are_clean(repo: &Path) -> Result<bool> {

@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.ready_publication_request.v1",
+  "issue": 5624,
+  "expected_generation": 7,
+  "expected_digest": "517d11ca5f60040bf906c341a9ca2713e5f75321d86bf45bace509467ac1acf7",
+  "claim_id": "claim-5624-csdlc-prune-topology",
+  "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5625,
+  "expected_head_sha": "855b84dce36d4c90a763061462232d55a23b927b",
+  "token_file": "/Users/daniel/keys/github.token"
+}

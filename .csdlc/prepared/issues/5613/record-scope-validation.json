@@ -1,0 +1,18 @@
+{
+  "issue": 5613,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "92c90182b597bd4d770dcbfa4e918a4d39b4b45099ea477d36f19fa4016b609f",
+  "claim_id": "claim-5613-terminal-projection-repair",
+  "actor": "codex:issue-5613-owner",
+  "reason": "Record exact scope, dependency, and fresh-checkout proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", ".csdlc/prepared/issues/5613/validate_fresh_checkout.sh"],
+      "purpose": "Prove a fresh checkout sees released terminal claims, closed-out doctors and receipts, portable issue 5591 SOR truth, no unsupported guardian artifact, and no out-of-scope product changes.",
+      "outcome": "passed",
+      "evidence_ref": "issue-5613:fresh-checkout-scope-and-terminal-proof:pass"
+    }
+  }
+}

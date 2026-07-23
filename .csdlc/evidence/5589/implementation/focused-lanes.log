@@ -1,0 +1,7 @@
+lane=parity-c-live-governance discovered=5 executed=5 zero_match_guard=pass
+lane=parity-c-delegation-resources discovered=5 executed=5 zero_match_guard=pass
+lane=parity-c-provider-scheduler-tools discovered=4 executed=4 zero_match_guard=pass
+lane=parity-c-private-identity discovered=4 executed=4 zero_match_guard=pass
+lane=parity-c-time-continuity discovered=6 executed=6 zero_match_guard=pass
+lane=parity-c-production-credit discovered=2 executed=2 zero_match_guard=pass
+lane=parity-c-boundary-scan discovered=2 executed=2 zero_match_guard=pass

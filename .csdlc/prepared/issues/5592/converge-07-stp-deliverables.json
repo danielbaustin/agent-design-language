@@ -1,0 +1,22 @@
+{
+  "issue": 5592,
+  "card": "stp",
+  "expected_generation": 7,
+  "expected_digest": "c2a65dccf7564ead77273dbe381afa3694b5927c0d0e70558b78457585674ad5",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
+  "reason": "Converge refined preparation contract field stp-deliverables",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "deliverables",
+    "values": [
+      "complete issue-specific SIP, STP, SPP, VPP, SRP, and SOR generated from the current typed v2 native templates",
+      "Runtime v3 Parity-B design and dependency/control-flow diagram",
+      "acceptance and owned-feature disposition matrix preserving every safe claim and boundary",
+      "typed disjoint preparation-only protected-path claim plus a non-authoritative deferred product-scope procedure",
+      "future live graph, loop, adaptation, affect-isolation, monotonic-governance, rollback, and feature-preservation proof contract",
+      "typed preparation validation and doctor evidence at the committed revision"
+    ]
+  },
+  "fail_after_backup": false
+}

@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-14][runtime-v3][parity-a] Make kernel, continuity, and domain ingress live",
     "slug": "v0-91-8-runtime-v3-parity-a-kernel-continuity-ingress",
     "version": "v0.91.8",
-    "generation": 30
+    "generation": 40
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -46,7 +46,7 @@
           ],
           "purpose": "Prove governed routing, terminal-pressure race safety, delayed-work checkpoint ordering, deterministic retries, and focused Runtime v3 regressions; assembly 4, control 21, operations 9, ingress atomic admission, and focused process pressure/signed shutdown yielded 36 unique passing tests",
           "outcome": "passed",
-          "evidence_ref": "subagent:019f8277-0050-7db0-a96b-05593df9c703@6f19349e6d6227c362f5d73dce2c977aab41c1db:36-focused-tests:/Volumes/FastWork/adl-5591-rereview-target"
+          "evidence_ref": "subagent:019f8277-0050-7db0-a96b-05593df9c703@6f19349e6d6227c362f5d73dce2c977aab41c1db:36-focused-tests:<retained-external-build-proof>"
         },
         {
           "command": [
@@ -61,15 +61,15 @@
           ],
           "purpose": "Prove the Parity-A implementation and test targets are warning-free under strict Clippy",
           "outcome": "passed",
-          "evidence_ref": "owner:019f8189-8205-7dd3-bbe2-f7f4dddd098a@6f19349e6d6227c362f5d73dce2c977aab41c1db:/Volumes/FastWork/adl-5591/runtime-target"
+          "evidence_ref": "owner:019f8189-8205-7dd3-bbe2-f7f4dddd098a@6f19349e6d6227c362f5d73dce2c977aab41c1db:<retained-external-build-proof>"
         },
         {
           "command": [
-            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/integrated-focused cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test assembly --test control --test operations",
-            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/integrated-full cargo test --manifest-path adl-runtime-kernel/Cargo.toml",
-            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/integrated-clippy cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets --all-features -- -D warnings",
-            "ADL_HORUST_BIN=/Volumes/FastWork/adl-5591/horust-install/bin/horust CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/integrated-horust cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak horust_restarts_once_and_restores_continuity -- --ignored --exact",
-            "ADL_HORUST_BIN=/Volumes/FastWork/adl-5591/horust-install/bin/horust CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/integrated-horust cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak horust_allowlists_child_environment -- --ignored --exact",
+            "CARGO_TARGET_DIR=<external-build-root> cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test assembly --test control --test operations",
+            "CARGO_TARGET_DIR=<external-build-root> cargo test --manifest-path adl-runtime-kernel/Cargo.toml",
+            "CARGO_TARGET_DIR=<external-build-root> cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets --all-features -- -D warnings",
+            "ADL_HORUST_BIN=<operator-provided-horust> CARGO_TARGET_DIR=<external-build-root> cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak horust_restarts_once_and_restores_continuity -- --ignored --exact",
+            "ADL_HORUST_BIN=<operator-provided-horust> CARGO_TARGET_DIR=<external-build-root> cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak horust_allowlists_child_environment -- --ignored --exact",
             "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --all -- --check",
             "cargo tree --locked --manifest-path adl-runtime-kernel/Cargo.toml",
             "bash adl/tools/report_runtime_v3_loc.sh",
@@ -77,7 +77,7 @@
           ],
           "purpose": "Prove the integrated Parity-A head: 34 focused and 187 complete-suite tests, strict all-target/all-feature lint, Horust restart/continuity and environment isolation, formatting and diff hygiene, locked COTS inventory, and exact budget truth. The report records 12,683 physical lines and 195 tests: 683 lines above the 12,000 reviewed target but within the explicit 20,000 exception ceiling, requiring review disposition.",
           "outcome": "passed",
-          "evidence_ref": "owner:019f8362-357c-7621-95b7-afb314e0c61d@740a65ba2c60d06915ce8c6e08b8b5756d245ccc:/Volumes/FastWork/adl-5591/integrated-*"
+          "evidence_ref": "owner:019f8362-357c-7621-95b7-afb314e0c61d@740a65ba2c60d06915ce8c6e08b8b5756d245ccc:<retained-external-build-proof>"
         },
         {
           "command": [
@@ -91,22 +91,22 @@
         },
         {
           "command": [
-            "for iteration in 1..25: CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/guardian-defect cargo test --locked --manifest-path adl-runtime/Cargo.toml guardian::tests::child_exit_terminates_descendants_and_bounds_inherited_pipe_capture -- --exact",
-            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/guardian-full cargo test --locked --manifest-path adl-runtime/Cargo.toml",
+            "for iteration in 1..25: CARGO_TARGET_DIR=<external-build-root> cargo test --locked --manifest-path adl-runtime/Cargo.toml guardian::tests::child_exit_terminates_descendants_and_bounds_inherited_pipe_capture -- --exact",
+            "CARGO_TARGET_DIR=<external-build-root> cargo test --locked --manifest-path adl-runtime/Cargo.toml",
             "cargo fmt --manifest-path adl-runtime/Cargo.toml -- --check",
             "git diff --check"
           ],
           "purpose": "Prove the guardian descendant installs its SIGTERM disposition before the parent exits, eliminating the hosted coverage startup race without changing guardian shutdown behavior. The exact regression passed 25 consecutive runs; the complete adl-runtime crate passed 127 tests including independence; formatting and diff hygiene passed.",
           "outcome": "passed",
-          "evidence_ref": "owner:019f8362-357c-7621-95b7-afb314e0c61d@8871cb4847a50e483092c6771462c8e59c969085:/Volumes/FastWork/adl-5591/guardian-*"
+          "evidence_ref": "owner:019f8362-357c-7621-95b7-afb314e0c61d@8871cb4847a50e483092c6771462c8e59c969085:<retained-external-build-proof>"
         },
         {
           "command": [
-            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/final-kernel-focused cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test assembly --test control --test operations",
-            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/final-kernel-full cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml",
-            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/final-kernel-clippy cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --all-targets --all-features -- -D warnings",
-            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/final-runtime-full cargo test --locked --manifest-path adl-runtime/Cargo.toml",
-            "for iteration in 1..25: CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/final-guardian-stress cargo test --locked --manifest-path adl-runtime/Cargo.toml guardian::tests::child_exit_terminates_descendants_and_bounds_inherited_pipe_capture -- --exact",
+            "CARGO_TARGET_DIR=<external-build-root> cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test assembly --test control --test operations",
+            "CARGO_TARGET_DIR=<external-build-root> cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml",
+            "CARGO_TARGET_DIR=<external-build-root> cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --all-targets --all-features -- -D warnings",
+            "CARGO_TARGET_DIR=<external-build-root> cargo test --locked --manifest-path adl-runtime/Cargo.toml",
+            "for iteration in 1..25: CARGO_TARGET_DIR=<external-build-root> cargo test --locked --manifest-path adl-runtime/Cargo.toml guardian::tests::child_exit_terminates_descendants_and_bounds_inherited_pipe_capture -- --exact",
             "bash adl/tools/test_merge_coverage_summaries.sh",
             "cargo fmt --manifest-path adl-runtime/Cargo.toml -- --check",
             "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --all -- --check",
@@ -115,24 +115,24 @@
           ],
           "purpose": "Prove the one-time final integration: 34 focused and 187 complete Runtime v3 kernel tests, strict kernel lint, 127 adl-runtime tests, 25 consecutive guardian race regressions, the corrected shared coverage merger, formatting and diff hygiene, and unchanged budget truth of 12,683 lines with the reviewed +474 exception over pinned baseline 12,209.",
           "outcome": "passed",
-          "evidence_ref": "owner:019f8362-357c-7621-95b7-afb314e0c61d@7725c67db7b82f076e56e9d560e5a292a5171496:/Volumes/FastWork/adl-5591/final-*"
+          "evidence_ref": "owner:019f8362-357c-7621-95b7-afb314e0c61d@7725c67db7b82f076e56e9d560e5a292a5171496:<retained-external-build-proof>"
         },
         {
           "command": [
-            "ADL_COVERAGE_BUILD_ROOT=/Volumes/FastWork/adl-5591/ci-coverage ADL_COVERAGE_RUN_ID=local-pr-5591-final bash adl/tools/run_authoritative_coverage_lane.sh --profile adl-runtime --authority pr_full_runtime --event-name pull_request",
-            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5591/final-test-target cargo test --manifest-path adl-runtime/Cargo.toml",
+            "ADL_COVERAGE_BUILD_ROOT=<external-build-root> ADL_COVERAGE_RUN_ID=local-pr-5591-final bash adl/tools/run_authoritative_coverage_lane.sh --profile adl-runtime --authority pr_full_runtime --event-name pull_request",
+            "CARGO_TARGET_DIR=<external-build-root> cargo test --manifest-path adl-runtime/Cargo.toml",
             "cargo fmt --manifest-path adl-runtime/Cargo.toml -- --check",
             "git diff --check"
           ],
           "purpose": "Prove deterministic fail-closed guardian configuration and missing-program handling without weakening policy. Exact PR-mode coverage exercises 530 of 639 guardian.rs lines (82.94%, above the 80% gate); the complete adl-runtime crate passes 128 tests including independence; formatting and diff hygiene pass.",
           "outcome": "passed",
-          "evidence_ref": "owner:019f8362-357c-7621-95b7-afb314e0c61d@469a18c11a849450cacc4f69d439c0cedd09c2d7:/Volumes/FastWork/adl-5591/ci-coverage/coverage-output/local-pr-5591-final"
+          "evidence_ref": "owner:019f8362-357c-7621-95b7-afb314e0c61d@469a18c11a849450cacc4f69d439c0cedd09c2d7:<retained-external-build-proof>"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

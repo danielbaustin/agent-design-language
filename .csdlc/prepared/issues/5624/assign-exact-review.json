@@ -1,0 +1,16 @@
+{
+  "issue": 5624,
+  "expected_generation": 4,
+  "expected_digest": "8c297e2dc6ec8d317859a7cf2a34d1abde4d5e25039e8b6f17759663dcb5c62c",
+  "claim_id": "claim-5624-csdlc-prune-topology",
+  "reviewer": "subagent:codex-5624-exact-review",
+  "assigned_by": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+  "scope": [
+    "csdlc-v2/src/readiness.rs",
+    "csdlc-v2/tests/gate7.rs",
+    "csdlc-v2/tests/gate7_lifecycle.rs",
+    ".csdlc/issues/5624",
+    ".csdlc/prepared/issues/5624",
+    ".csdlc/evidence/5624"
+  ]
+}

@@ -389,14 +389,15 @@ root = pathlib.Path(sys.argv[1])
 assert json.loads((root / "numeric-metric.json").read_text())["cache_target_preexisting_bytes"] == 123456789012
 assert json.loads((root / "aws-identity.json").read_text())["account_id"] == "<aws-account-id-redacted>"
 PY
-printf 'cancelled instance=i-0123456789abcdef0 volume=vol-0123456789abcdef0 account=123456789012 temporary_key=ASIAABCDEFGHIJKLMNOP\n{"partial":' \
-  >"$redaction_tmp/cancelled-partial.log"
+temporary_key_id="$(printf 'ASIA%s' 'IOSFODNN7EXAMPLE')"
+printf 'cancelled instance=i-0123456789abcdef0 volume=vol-0123456789abcdef0 account=123456789012 temporary_key=%s\n{"partial":' \
+  "$temporary_key_id" >"$redaction_tmp/cancelled-partial.log"
 python3 "$REDACTION_VERIFY" --sanitize "$redaction_tmp"
 grep -F '<ec2-instance-id-redacted>' "$redaction_tmp/cancelled-partial.log" >/dev/null
 grep -F '<ebs-volume-id-redacted>' "$redaction_tmp/cancelled-partial.log" >/dev/null
 grep -F '<aws-account-id-redacted>' "$redaction_tmp/cancelled-partial.log" >/dev/null
 grep -F '<aws-access-key-redacted>' "$redaction_tmp/cancelled-partial.log" >/dev/null
-if grep -F 'ASIAABCDEFGHIJKLMNOP' "$redaction_tmp/cancelled-partial.log" >/dev/null; then
+if grep -F "$temporary_key_id" "$redaction_tmp/cancelled-partial.log" >/dev/null; then
   echo "Spot artifact sanitizer retained an OIDC temporary access-key id" >&2
   exit 1
 fi

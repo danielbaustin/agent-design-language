@@ -1,0 +1,1 @@
+{"issue":5614,"expected_generation":4,"expected_digest":"e2d4a33409f2054f160bc3095ec91fed281c9807dd88ac080902a0ba984689e4","claim_id":"claim-5614-secret-scanning-fixtures","reviewer":"subagent:review_5614","assigned_by":"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061","scope":["adl/tools/test_run_aws_spot_ci_profile.sh"]}

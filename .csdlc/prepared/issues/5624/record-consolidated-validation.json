@@ -1,0 +1,18 @@
+{
+  "issue": 5624,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "3a21bdb80ff2bc211322f05eb6b7b3eeaaeb2964f83194e60a2a2ef1d0171f4e",
+  "claim_id": "claim-5624-csdlc-prune-topology",
+  "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+  "reason": "Record the single consolidated post-CI-repair validation packet.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", ".csdlc/prepared/issues/5624/run_focused_validation.sh"],
+      "purpose": "Prove the external Cargo target contract, Gate 10A provenance, guarded prune behavior, complete C-SDLC v2 suite, formatting, and strict Clippy in one FastWork run.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5624/validation-a2c79708e.json"
+    }
+  }
+}

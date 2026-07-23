@@ -1,0 +1,12 @@
+{
+  "issue": 5592,
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "expected_generation": 6,
+  "expected_digest": "ccddab4422106a4ef8feba8c76541c6d425a57b13040f43064258bae15425074",
+  "now_unix_seconds": 1784664608,
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Exact review requires the smallest disjoint schema-only route from the existing guardian-launched canonical ingress into the persistent Parity-B executor; coordinator confirmed operations.rs is outside #5589 and #5590 exact claims.",
+  "add_protected_paths": [
+    "adl-runtime-kernel/src/operations.rs"
+  ]
+}

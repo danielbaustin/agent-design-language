@@ -1,0 +1,18 @@
+{
+  "issue": 5613,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "17b4d05d8ad00b2ad1a69a2e0a023d12e9f96da72c2d8a761f6098ded620c979",
+  "claim_id": "claim-5613-terminal-projection-repair",
+  "actor": "codex:issue-5613-owner",
+  "reason": "Record exact five-projection, retained-receipt, portable-SOR, and unsupported-artifact proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", ".csdlc/prepared/issues/5613/validate_terminal_projections.sh"],
+      "purpose": "Prove all five terminal projections match retained closed-out receipts and original PR identities, issue 5591 SOR paths are portable, and guardian-soak JSON is absent.",
+      "outcome": "passed",
+      "evidence_ref": "issue-5613:terminal-projection-proof:pass"
+    }
+  }
+}

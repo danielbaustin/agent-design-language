@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5615,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][ci][tooling] Route C-SDLC proof and FastWork builds correctly",
+    "slug": "csdlc-ci-fastwork-routing",
+    "version": "v0.91.8",
+    "generation": 20
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make C-SDLC-only CI proof focused, deterministic, truthful, and fast while preserving stable required checks.",
+      "required_outcome": "Lifecycle metadata, standalone C-SDLC v2 Rust, Runtime, ADL workspace, and mixed diffs select exactly their intended proof lanes, and local Cargo validation uses a declared writable external root or FastWork.",
+      "declared_scope": [
+        "Existing CI path classifier outputs and exact regression fixtures",
+        "One standalone C-SDLC v2 hosted job and stable aggregate wiring",
+        "One portable Cargo validation wrapper and focused shell contract tests",
+        "Issue-local typed lifecycle and retained validation evidence"
+      ],
+      "authority_boundary": [
+        "Issue 5615 owns only CI classification, workflow dispatch wiring, its portable validation wrapper, and issue-local records",
+        "Existing required check names and non-C-SDLC routes remain authoritative",
+        "C-SDLC v2 lifecycle semantics and Runtime behavior are outside scope"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 only",
+        "Work only in `/Volumes/FastWork/adl-wp-5615`",
+        "Use external writable Cargo home and target",
+        "No raw gh, AWS, Runtime v2, or root-main edits",
+        "Keep the change small and complete"
+      ]
+    }
+  }
+}

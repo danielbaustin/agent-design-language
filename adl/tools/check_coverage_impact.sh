@@ -264,7 +264,8 @@ candidate_filter_for_path() {
     adl/src/provider/http_family/config.rs|\
     adl/src/provider/local.rs|\
     adl/src/provider/mod.rs|\
-    adl/src/provider/profiles.rs)
+    adl/src/provider/profiles.rs|\
+    adl/src/provider_substrate.rs)
       printf 'provider_hardening'
       ;;
     adl/src/cli/tooling_cmd/markdown.rs)
@@ -276,7 +277,8 @@ candidate_filter_for_path() {
     adl/src/cli/runtime_v3_cmd.rs)
       printf 'runtime_v3_selector'
       ;;
-    adl-runtime/src/guardian.rs)
+    adl-runtime/src/guardian.rs|\
+    adl-runtime/src/bin/adl-runtime-guardian.rs)
       printf 'runtime_v3_guardian'
       ;;
     adl-runtime/src/runtime_api_auth.rs)
@@ -323,6 +325,15 @@ candidate_filter_for_path() {
       ;;
     adl/src/gws_live_capability_execution_surface.rs|adl/src/gws_live_content_card_roundtrip.rs|adl/src/gws_live_content_card_roundtrip/*.rs|adl/src/gws_live_safety_package.rs|adl/src/gws_live_test_support.rs)
       printf 'gws_live'
+      ;;
+    adl/src/adl_gws_context_mirror.rs)
+      printf 'adl_gws_context_mirror'
+      ;;
+    adl/src/adl_gws_drive_sync.rs)
+      printf 'adl_gws_drive_sync'
+      ;;
+    adl/src/adl_gws_native.rs)
+      printf 'adl_gws_native'
       ;;
     adl/src/uts_acc_multi_model_benchmark.rs|adl/src/uts_acc_multi_model_benchmark/*.rs|adl/src/uts_acc_multi_model_benchmark/*/*.rs)
       printf 'uts_acc_multi_model_benchmark::'
@@ -424,7 +435,7 @@ nextest_expression_for_filter() {
       printf 'binary_id(adl::bin/adl) and test(/^cli::runtime_v3_cmd::tests::/)'
       ;;
     runtime_v3_guardian)
-      printf 'test(/^guardian::tests::/)'
+      printf 'test(/^guardian::tests::/) or (binary_id(adl-runtime::bin/adl-runtime-guardian) and test(/^tests::guardian_cli_requires_complete_bounded_configuration$/)) or (binary_id(adl-runtime::guardian_cli) and test(/^guardian_cli_/))'
       ;;
     runtime_v3_auth)
       printf 'test(/^runtime_api_auth::tests::/)'
@@ -433,7 +444,7 @@ nextest_expression_for_filter() {
       printf 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)'
       ;;
     demo_adl_gws_context_mirror)
-      printf 'binary_id(adl::bin/demo-adl-gws-context-mirror) and test(/^tests::/)'
+      printf 'binary_id(adl::bin/adl-gws-context-mirror) and test(/^tests::/)'
       ;;
     demo_adl_gws_native_drive_sync)
       printf 'binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)'

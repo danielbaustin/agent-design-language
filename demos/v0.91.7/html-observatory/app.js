@@ -77,7 +77,9 @@ const OBSERVATORY_VERSION = "v0.91.7";
 const OBSERVATORY_MANIFOLD_LABEL = `${OBSERVATORY_VERSION} CSM runtime mirror`;
 const OBSERVATORY_PACKET_LABEL = `${OBSERVATORY_VERSION} Observatory proof packet`;
 const RUNTIME_V3_OBSERVATORY_ENDPOINT = "/v1/observatory";
+const RUNTIME_V3_OBSERVATORY_WS_ENDPOINT = "/v1/observatory/ws";
 const RUNTIME_V3_OBSERVATORY_SCHEMA = "adl.runtime_v3.observatory_feed.v2";
+const RUNTIME_V3_OBSERVATORY_WS_AUTH_SCHEMA = "adl.runtime_v3.observatory_ws_auth.v1";
 
 const AWS_LINKAGES = [
   {
@@ -623,6 +625,10 @@ async function fetchRuntimeV3ObservatorySnapshot(apiBase) {
     throw new Error(`${RUNTIME_V3_OBSERVATORY_ENDPOINT} returned ${response.status}`);
   }
   const feed = await response.json();
+  return runtimeV3SnapshotFromFeed(feed);
+}
+
+function runtimeV3SnapshotFromFeed(feed) {
   if (feed.schema !== RUNTIME_V3_OBSERVATORY_SCHEMA) {
     throw new Error(`Unsupported Runtime v3 Observatory schema: ${feed.schema || "missing"}`);
   }
@@ -682,6 +688,41 @@ async function fetchRuntimeV3ObservatorySnapshot(apiBase) {
     proof: feed.proof,
     errors: {}
   };
+}
+
+function connectRuntimeV3ObservatoryWebSocket(apiBase, onSnapshot, onError, onClose = onError) {
+  const base = normalizeApiBase(apiBase);
+  if (!isRuntimeV3ApiBase(base)) {
+    throw new Error("Runtime v3 selection requires a configured HTTPS runtime API base.");
+  }
+  const readToken = globalThis.sessionStorage?.getItem("adl.runtimeV3.observatoryToken") || "";
+  if (!readToken) {
+    throw new Error("Runtime v3 Observatory read token is not configured in session storage.");
+  }
+  const endpoint = new URL(`${base}${RUNTIME_V3_OBSERVATORY_WS_ENDPOINT}`);
+  endpoint.protocol = "wss:";
+  const socket = new WebSocket(endpoint.toString());
+  socket.addEventListener("open", () => {
+    socket.send(JSON.stringify({
+      schema: RUNTIME_V3_OBSERVATORY_WS_AUTH_SCHEMA,
+      bearer_token: readToken
+    }));
+  });
+  socket.addEventListener("message", (event) => {
+    try {
+      onSnapshot(runtimeV3SnapshotFromFeed(JSON.parse(String(event.data))));
+    } catch (error) {
+      onError(error instanceof Error ? error : new Error("Runtime v3 Observatory frame is invalid."));
+      socket.close(1008, "invalid_observatory_frame");
+    }
+  });
+  socket.addEventListener("error", () => {
+    onError(new Error("Runtime v3 Observatory WebSocket failed."));
+  });
+  socket.addEventListener("close", (event) => {
+    onClose(new Error(`Runtime v3 Observatory WebSocket closed (${event.code}).`));
+  });
+  return socket;
 }
 
 async function fetchRetainedRuntimeSnapshot(refs = {}) {
@@ -1322,6 +1363,7 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
   const dashboardStop = document.getElementById("dashboard-stop-live");
   let lastLiveError = null;
   let runtimeBaseActive = false;
+  let liveSocket = null;
   const refs = {
     statusRef: document.querySelector(".observatory")?.dataset.csmStatusRef || "",
     healthRef: document.querySelector(".observatory")?.dataset.csmHealthRef || "",
@@ -1421,6 +1463,10 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
   };
 
   const stopPolling = () => {
+    if (liveSocket) {
+      liveSocket.close(1000, "operator_stop");
+      liveSocket = null;
+    }
     if (livePollTimer) {
       clearInterval(livePollTimer);
       livePollTimer = null;
@@ -1437,6 +1483,35 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
 
   const connectLive = () => {
     stopPolling();
+    if (requestedRuntimeSelection() === "v3") {
+      const base = readApiBase();
+      runtimeBaseActive = true;
+      setText("live-status", "connecting secure stream");
+      setRuntimeTestStatus("connecting secure stream", `Opening ${base}${RUNTIME_V3_OBSERVATORY_WS_ENDPOINT}.`);
+      try {
+        let socket;
+        socket = connectRuntimeV3ObservatoryWebSocket(
+          base,
+          (snapshot) => {
+            lastLiveError = null;
+            renderPanopticon(snapshot, packet);
+            setText("live-status", "live secure stream");
+            setRuntimeTestStatus("live secure stream", "Runtime v3 authenticated WebSocket feed is active.");
+          },
+          (error) => renderLiveError(error),
+          (error) => {
+            if (liveSocket === socket) {
+              liveSocket = null;
+              renderLiveError(error);
+            }
+          }
+        );
+        liveSocket = socket;
+      } catch (error) {
+        renderLiveError(error);
+      }
+      return;
+    }
     refreshLive();
     livePollTimer = setInterval(refreshLive, 3000);
   };
@@ -1531,6 +1606,8 @@ globalThis.AdlHtmlObservatory = {
   getQueryApiBase,
   fetchRuntimeSnapshot,
   fetchRuntimeV3ObservatorySnapshot,
+  runtimeV3SnapshotFromFeed,
+  connectRuntimeV3ObservatoryWebSocket,
   fetchRetainedRuntimeSnapshot,
   requestedRuntimeSelection,
   isRuntimeV3ApiBase,

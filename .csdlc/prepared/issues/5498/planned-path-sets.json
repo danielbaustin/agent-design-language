@@ -1,0 +1,18 @@
+{
+  "schema": "adl.v0918.wp10a.planned_path_sets.v1",
+  "issues": {
+    "5499": ["adl-v2/crates/adl-workcell-conductor"],
+    "5498": ["adl-v2/crates/adl-workcell-task-adapter"],
+    "5500": ["docs/tooling/milestone-dashboard"],
+    "5502": ["adl-v2/crates/adl-workcell-convergence"]
+  },
+  "authority": {
+    "5498": "planned product path after terminal dependency gates and typed claim amendment",
+    "adjacent": "confirmed disjoint against the current issue-owner preparation claims and reviewed product reservations"
+  },
+  "confirmations": {
+    "5499": "confirmed",
+    "5500": "confirmed",
+    "5502": "confirmed"
+  }
+}

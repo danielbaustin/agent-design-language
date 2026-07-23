@@ -1,0 +1,407 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5615,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "36d04edef06074ba46ddc14aab9493fc35023e2395b1fac82d2c714b0cde44e0",
+  "phase": "merge_ready",
+  "generation": 20,
+  "digest": "719065eb69c6d69f863a25d44cc2d41c6d67794ef0bd5779e0a9b1c3f46b157e",
+  "claim": {
+    "id": "claim-5615-csdlc-ci-fastwork-routing",
+    "owner": "codex:5615-owner",
+    "generation": 20,
+    "acquired_unix_seconds": 1784669026,
+    "expires_unix_seconds": 1784755426,
+    "heartbeat_unix_seconds": 1784669026,
+    "branch": "codex/5615-csdlc-ci-fastwork-routing",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5615",
+      ".csdlc/issues/5615",
+      ".csdlc/prepared/issues/5615",
+      ".github/workflows/ci.yaml",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_run_cargo_validation.sh",
+      "adl/tools/test_select_validation_lanes.sh"
+    ],
+    "purpose": "Implement focused C-SDLC CI classification and portable external Cargo build routing"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:019f86da-0771-72d1-bbeb-a9aead4be515",
+    "assigned_by": "codex:5615-owner",
+    "revision": "git-blake3:9e90d958e9cf86c72ee12fe7200289a29973d847:9c26ce5021525e7b890389f5ff3a3127883beebc8a556f1809c181c298b4bd14",
+    "scope": [
+      ".csdlc/issues/5615",
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f86da-0771-72d1-bbeb-a9aead4be515",
+    "scope": [
+      ".csdlc/issues/5615",
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "reviewed_revision": "git-blake3:9e90d958e9cf86c72ee12fe7200289a29973d847:9c26ce5021525e7b890389f5ff3a3127883beebc8a556f1809c181c298b4bd14",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5615,
+    "pull_request": 5622,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5622",
+    "base": "main",
+    "head": "codex/5615-csdlc-ci-fastwork-routing",
+    "revision": "git-blake3:4e8d515d046469171f4f9b301cd764f4643a3717:69b3dfa89fb0f0b4b955e30639ee8da6f74e78f5d3ebb71a07248131a08f29d1",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": {
+    "pull_request": 5622,
+    "head_sha": "4e8d515d046469171f4f9b301cd764f4643a3717",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29925055505/job/88940260843"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29925055505/job/88940064722"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29925055505/job/88940006624"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29925055505/job/88939961157"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5615/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5615/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "subagent:019f8696-9290-7a62-beb7-05787fe35c4c",
+      "revision": "0c99ade6527878996824cfa55544c5afde8b9340f601cfd48eb6add71d2ba557"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "b2cb93ad55436a15edd611f5fdf6de50af0951dd5b0c33208abc0507ae3e8385",
+      "rendered_digest": "be640d024da16ba461e342ca879bd18ccb5a94d3e2e30929a32e8cd5c5f934e8",
+      "ast_digest": "bc5391a707067b1bbc3d2de5e4c96dc08f93b1432936430e49ca9d1b800dff97"
+    },
+    "stp": {
+      "values_digest": "16f23eab6d6c2eb3b9070a2fca71f6454e51203757e5d48834050d394460584c",
+      "rendered_digest": "f7a191e9d029748eb3099859f1538f9aad0d923ec8b93be1fe014c1e81608ca8",
+      "ast_digest": "b64629174c1fb8dd2121ab2ca4b014eaca6d4249bd88572a9bada856f3b1fe15"
+    },
+    "spp": {
+      "values_digest": "2ac458fc6b82e073c82d73191ca77cd11b7ddd8456153bdb63082f4530678a28",
+      "rendered_digest": "973dd60787d6042b0950e1a9a8c8fc276f57b00b6dfaca30337d1111749b7fce",
+      "ast_digest": "396c5db84e434ad1a9493920bf66c41387cb028376e4d47a8a7c7115f5721fc9"
+    },
+    "vpp": {
+      "values_digest": "dba845c38f2ba174a96a3d804861420b32d42ec7d612c52844d868d76ccd2c2b",
+      "rendered_digest": "1a0def1323d9b5974aa111585d67017f3dd9ae217d48107f0f33f6ba0ac54929",
+      "ast_digest": "0924498c22b4cdffb38c7c2b3a69f979a971b4f52b1111cbde5322bbc0237bc7"
+    },
+    "srp": {
+      "values_digest": "d97640c1e899be27cdfcccc56b240a974a7e53fe45657c6f7639e64c0535a47c",
+      "rendered_digest": "ac75da82076ea873b4d1b08d11dc8b89c4649b1ccefd948d21ec6d7a673f46da",
+      "ast_digest": "eba3f7bb9cff55f78554c6d2c4b60bc7189595ac767ef99b6ec3b866daf87e69"
+    },
+    "sor": {
+      "values_digest": "399636277eb0b39a3acf303b5d868004c89427bf4d571c404bf9b0e32579ad5a",
+      "rendered_digest": "72a643ec019d0d4aeb9386ddd02b1af2c3835d58b2c2853c96534d8b48903261",
+      "ast_digest": "310bf4b4d47bc5cb59e41a27e2a7682722e4d3b50a77ab31846c4cd9b28ff2c2"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5615-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5615-owner",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5615-owner",
+      "reason": "The bounded classifier, standalone job, fail-closed aggregate, portable wrapper, and all local proof are complete for exact review."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5615-owner",
+      "reason": "Exact remediation review passed with zero findings after all three P1s were fixed and revalidated."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5615-owner",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5615-owner",
+      "reason": "Recover exact review truth after GitHub rejected the published workflow because runner.temp is unavailable in job-level env; move the external build-root initialization into a step and add a regression contract."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5615-owner",
+      "reason": "Exact workflow-expression repair review passed with zero findings."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5615-owner",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5615-owner",
+      "reason": "observed required checks, review, and conflict readiness"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5615-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "subagent:019f8696-9290-7a62-beb7-05787fe35c4c",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5615-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5615-owner",
+      "reason": "Preparation review proved the validation-manager selector and its exact contract test are authoritative parts of the classifier repair.",
+      "operation": "{\"add_protected_paths\":[\"adl/config/validation_lane_selector.v0.91.6.json\",\"adl/tools/test_select_validation_lanes.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "subagent:019f8696-9290-7a62-beb7-05787fe35c4c",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5615-owner",
+      "reason": "Record the focused C-SDLC v2 CI route and portable external Cargo validation implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Separate lifecycle metadata from standalone C-SDLC v2 Rust proof, require the selected lane in stable adl-ci, preserve coverage truth, and route Cargo state to a validated external root.\",\"changes\":[\"Split .csdlc metadata and csdlc-v2 Rust selectors in validation-manager authority\",\"Add an explicit standalone C-SDLC v2 selector output and hosted test/format/strict-Clippy job\",\"Fail closed on malformed selector output and required-but-skipped standalone proof\",\"Preserve Runtime v3 focused routing when issue lifecycle metadata is present\",\"Add an external Cargo build-root wrapper with FastWork fallback and compatibility symlink\"],\"artifacts\":[\".github/workflows/ci.yaml\",\"adl/config/validation_lane_selector.v0.91.6.json\",\"adl/tools/ci_path_policy.sh\",\"adl/tools/run_cargo_validation.sh\",\"adl/tools/test_ci_path_policy.sh\",\"adl/tools/test_ci_runtime_contracts.sh\",\"adl/tools/test_run_cargo_validation.sh\",\"adl/tools/test_select_validation_lanes.sh\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5615-owner",
+      "reason": "Record exact classifier, workflow aggregation, selector, and external-root contract proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\",\"&&\",\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\",\"&&\",\"bash\",\"adl/tools/test_run_cargo_validation.sh\"],\"purpose\":\"Prove metadata-only, standalone C-SDLC v2, Runtime-plus-lifecycle, stable aggregate, selector, and external build-root behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\"issue-5615:focused-ci-routing-and-wrapper-contracts:pass\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5615-owner",
+      "reason": "Record complete standalone C-SDLC v2 test, format, and strict-Clippy proof on FastWork.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\".csdlc/prepared/issues/5615/run_csdlc_v2_standalone.sh\"],\"purpose\":\"Prove all C-SDLC v2 targets with locked tests, formatting, and strict Clippy while Cargo state remains on the external SSD.\",\"outcome\":\"passed\",\"evidence_ref\":\"issue-5615:csdlc-v2-standalone-fastwork:test-fmt-clippy-pass\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5615-owner",
+      "reason": "The bounded classifier, standalone job, fail-closed aggregate, portable wrapper, and all local proof are complete for exact review.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5615-owner",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 6,
+      "actor": "codex:5615-owner",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 7,
+      "actor": "subagent:019f86ae-7d7a-7161-b2e4-67264db9ef0f",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:5615-owner",
+      "reason": "Record the bounded remediation for all three exact-review P1 findings.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Fix all exact-review routing and external-build-root findings without widening issue scope.\",\"changes\":[\"Derive standalone C-SDLC v2 proof from the selector's complete csdlc-v2 surface\",\"Compose standalone C-SDLC v2 and Runtime v3 focused lanes for mixed changes\",\"Reject pre-created Cargo child symlinks and require canonical child containment\",\"Add exact operator-path, mixed-lane, and symlink-escape regressions\"],\"artifacts\":[\"adl/tools/ci_path_policy.sh\",\"adl/tools/run_cargo_validation.sh\",\"adl/tools/test_ci_path_policy.sh\",\"adl/tools/test_run_cargo_validation.sh\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:5615-owner",
+      "reason": "Record focused adversarial contracts and complete standalone C-SDLC v2 proof after exact-review remediation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\",\"&&\",\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\",\"&&\",\"bash\",\"adl/tools/test_run_cargo_validation.sh\",\"&&\",\"bash\",\"adl/tools/test_select_validation_lanes.sh\",\"&&\",\"bash\",\".csdlc/prepared/issues/5615/run_csdlc_v2_standalone.sh\"],\"purpose\":\"Prove selector/classifier agreement, compositional Runtime routing, child-symlink rejection, and the complete C-SDLC v2 test/fmt/strict-Clippy lane on FastWork.\",\"outcome\":\"passed\",\"evidence_ref\":\"issue-5615:exact-review-remediation:focused-and-standalone-pass\"}}"
+    },
+    {
+      "sequence": 15,
+      "generation": 9,
+      "actor": "codex:5615-owner",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 9,
+      "actor": "codex:5615-owner",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 10,
+      "actor": "subagent:019f86c0-2ed0-7783-9f63-bb0dc38861ae",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 11,
+      "actor": "codex:5615-owner",
+      "reason": "Exact remediation review passed with zero findings after all three P1s were fixed and revalidated.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 12,
+      "actor": "codex:5615-owner",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 20,
+      "generation": 13,
+      "actor": "codex:5615-owner",
+      "reason": "record exact existing PR ready-for-review after remote success",
+      "operation": "record_ready_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 14,
+      "actor": "codex:5615-owner",
+      "reason": "Recover exact review truth after GitHub rejected the published workflow because runner.temp is unavailable in job-level env; move the external build-root initialization into a step and add a regression contract.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 15,
+      "actor": "codex:5615-owner",
+      "reason": "Record the bounded GitHub workflow expression repair found by exact hosted parsing.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Initialize the standalone C-SDLC v2 external Cargo root inside a run step using RUNNER_TEMP and export it through GITHUB_ENV.\",\"changes\":[\"Remove the invalid runner.temp expression from job-level env\",\"Create the external Cargo root in the preparation step from RUNNER_TEMP\",\"Export ADL_CARGO_BUILD_ROOT through GITHUB_ENV for later steps\",\"Add a contract rejecting runner.temp at standalone job scope\"],\"artifacts\":[\".github/workflows/ci.yaml\",\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 16,
+      "actor": "codex:5615-owner",
+      "reason": "Record YAML parsing and focused CI contract proof for the hosted workflow expression repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby\",\"-e\",\"YAML.safe_load(File.read('.github/workflows/ci.yaml'), permitted_classes: [Date], aliases: true)\",\"&&\",\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\",\"&&\",\"bash\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\"],\"purpose\":\"Prove the workflow parses, the standalone build root is initialized through RUNNER_TEMP and GITHUB_ENV, and the stable CI contract remains fail closed.\",\"outcome\":\"passed\",\"evidence_ref\":\"issue-5615:workflow-expression-repair:yaml-and-contracts-pass\"}}"
+    },
+    {
+      "sequence": 24,
+      "generation": 16,
+      "actor": "codex:5615-owner",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 17,
+      "actor": "subagent:019f86da-0771-72d1-bbeb-a9aead4be515",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:5615-owner",
+      "reason": "Exact workflow-expression repair review passed with zero findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 19,
+      "actor": "codex:5615-owner",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 28,
+      "generation": 20,
+      "actor": "codex:5615-owner",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    }
+  ]
+}

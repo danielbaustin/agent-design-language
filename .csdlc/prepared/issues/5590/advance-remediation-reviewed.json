@@ -1,0 +1,14 @@
+{
+  "issue": 5590,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "921f58a2c7687b53cdeb658de632963e0ed73639a252fd884527df8257044ca3",
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "actor": "codex:5590-sole-writer-takeover",
+  "reason": "Exact remediation rereview passed with all six findings fixed, zero blockers, and a reviewed necessary +159-line delta.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,19 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "673d13bb73ccec8ada770f7136feda4af64f0ba8829bf94fa6b99892b89ce55e",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record the focused FastWork acceptance proof for the implemented portable bounded engine.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", ".csdlc/prepared/issues/5340/validate-engine.sh", "focused"],
+      "purpose": "Prove the bounded engine's focused functional, boundary, failure, join, cancellation, retry, compiler-edge, port, checkpoint, resume, and fresh-process contracts.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-focused/engine-focused.log at substantive commit c2f4e072b8049daa68b18e1d917b57747864b6b7"
+    }
+  },
+  "fail_after_backup": false
+}

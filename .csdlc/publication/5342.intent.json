@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5342,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5342-v0918-wp07-records-signing",
+  "title": "[v0.91.8][adl-v2][records] Add portable signed record contracts",
+  "body": "Closes #5342\n\nImplements bounded ADL v2 record contracts with deterministic canonical bytes, real Ed25519 signing, external trust policy, replay protection, strict channel decoding, and fail-closed tamper rejection. Runtime v2 and Runtime v3 are untouched.\n\nExact FastWork validation passed: 1039 implementation LoC, 878 test/fixture LoC, 10 records tests, 5 tamper/channel tests, schema diff, repeated tamper proof, formatting, strict Clippy, COTS, scope, and dependency checks. The final gpt-5.5 review found no blockers.",
+  "draft": false,
+  "revision": "git-blake3:bb34c22f21b570910f9c4b1190163716df224cc3:d4d00ba5327f0ce1b81077ef8a2a81e2bfbb5df6ef46770f4419fcd36a0de6d7",
+  "commit_sha": "bb34c22f21b570910f9c4b1190163716df224cc3"
+}

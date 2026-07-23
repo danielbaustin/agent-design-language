@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5587,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][google-workspace][automation] Make ADL Drive context mirror work end to end",
+    "slug": "google-drive-context-mirror",
+    "version": "v0.91.8",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Correct transport selection, recursive traversal, exact readback verification, and success-only automation semantics.",
+      "deliverables": [
+        "Production native transport route",
+        "Exact content verification",
+        "Recursive Markdown mirroring",
+        "Focused tests and live proof"
+      ],
+      "acceptance_criteria": [
+        "AC-1: execute mode performs a real Drive create or update and exact readback verification",
+        "AC-2: docs and .adl/docs/TBD Markdown trees mirror recursively with preserved relative paths",
+        "AC-3: least-privilege scopes and explicit write approval remain enforced",
+        "AC-4: automation archives only fully verified successes and retains deduplicated failures",
+        "AC-5: fixture and focused tests prove deterministic success and fail-closed behavior"
+      ],
+      "dependencies": [
+        "Google Drive credentials and configured root folder",
+        "Issue #5587 operator authorization"
+      ],
+      "repo_inputs": [
+        "adl/src/adl_gws_native.rs",
+        "adl/src/adl_gws_drive_sync.rs",
+        "adl/src/adl_gws_context_mirror.rs"
+      ],
+      "non_goals": [
+        "No remote deletion",
+        "No AWS",
+        "No unrelated Google Workspace providers"
+      ]
+    }
+  }
+}

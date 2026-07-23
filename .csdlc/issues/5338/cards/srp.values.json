@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5338,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-05] Implement pure deterministic ADL compiler",
+    "slug": "v0918-wp05-pure-deterministic-adl-compiler",
+    "version": "v0.91.8",
+    "generation": 26
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl-v2/crates/adl-compiler\n.csdlc/issues/5338\n.csdlc/prepared/issues/5338\n.csdlc/evidence/5338",
+      "review_revision": "git-blake3:44e8470ce3fcf0396885c74c0dd0347279449ecd:a8a7ef14f7dd8856a0c09e3a089cd3994d2cc9f943197fe326ad5e9bfacfe466",
+      "reviewer": "subagent:/root/review_5338_exact",
+      "review_prompts": [
+        "Does the compiler consume only the landed typed #5339 document and avoid duplicating parser or language-policy authority?",
+        "Are reference resolution, composition and pattern expansion, bounds, graph lowering, and diagnostic ordering completely specified and deterministic?",
+        "Is the stable node identity preimage versioned, domain-separated, length-delimited, meaning-complete, and free of traversal or machine state?",
+        "Can equivalent input syntax, nested metadata order, collection permutation, hash collision, or clean-process replay change plan bytes or diagnostics?",
+        "Is ExecutionPlan inert data with a clean WP-06 boundary and no hidden scheduling, retry, runtime, provider, IO, or lifecycle authority?",
+        "Are every #5339 fixture mapping, COTS choice, protected path, source/test budget, and time budget explicit, executable, and fail closed?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Legacy pattern fixtures remain intentionally outside the compiler input model because the landed language boundary rejects them; this boundary is explicitly classified and tested."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "issue": 5589,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "dbfb4144ba740ebcca69793e86e76185a232a1408524683a2e9731be0616f57c",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "actor": "codex:019f8288-9fd3-7103-a3a5-9e3fe61aad90",
+  "reason": "Mark only the completed preparation step while preserving every implementation and publication step as pending",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S1",
+    "status": "completed"
+  },
+  "fail_after_backup": false
+}

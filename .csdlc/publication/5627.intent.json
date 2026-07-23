@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5627,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5627-csdlc-four-command-lifecycle",
+  "title": "fix(csdlc-v2): collapse routine lifecycle into four commands",
+  "body": "Closes #5627\n\nCollapses the normal post-implementation lifecycle into finalize, review, publish, and closeout. CI no longer nests owner-binary Cargo builds: Gate 10A reuses Cargo-built artifacts, while explicit installation reuses a verified current installation and otherwise performs one locked build.",
+  "draft": false,
+  "revision": "git-blake3:57a678e81bdbccc583c2187afb287718771ceb53:704549bb8147499baa97f56a25c0fde5c1a4f79c2647583aa8a0401df5b0de55",
+  "commit_sha": "57a678e81bdbccc583c2187afb287718771ceb53"
+}

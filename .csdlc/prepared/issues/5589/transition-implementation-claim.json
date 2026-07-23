@@ -1,0 +1,17 @@
+{
+  "issue": 5589,
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "expected_owner": "codex:019f8288-9fd3-7103-a3a5-9e3fe61aad90",
+  "expected_generation": 4,
+  "expected_digest": "03021201e4eb0b69ef84aa2c651b7b128a44e2e363c748bd820dda1f61ccfa9e",
+  "now_unix_seconds": 1784662823,
+  "actor": "codex:019f836b-dd65-7ab1-be66-7408ee2312f6",
+  "reason": "Activate Runtime v3 Parity-C immediately after verified #5591 merged typed closeout while preserving disjoint Parity-B and Parity-D ownership.",
+  "expected_purpose": "Prepare complete Runtime v3 Parity-C contracts and proof gates without product implementation until #5591 has a clean reviewed contract and disjoint paths",
+  "purpose": "Implement every #5589 Runtime v3 Parity-C governed-operations adapter and live authority, identity, continuity, shutdown, budget, review, publication, integration, and closeout outcome.",
+  "add_protected_paths": [
+    "adl-runtime-kernel/src/governed_operations.rs",
+    "adl-runtime-kernel/src/bin/adl-runtime-governed-operations.rs",
+    "adl-runtime-kernel/tests/governed_operations.rs"
+  ]
+}

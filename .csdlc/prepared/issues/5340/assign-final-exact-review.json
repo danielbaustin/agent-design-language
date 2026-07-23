@@ -1,0 +1,9 @@
+{
+  "issue": 5340,
+  "expected_generation": 33,
+  "expected_digest": "88cd8fa137061474e76fff4e95d007339e7c730c07611c1626d6424f98296208",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "reviewer": "subagent:/root/review_5340_exact",
+  "assigned_by": "codex:5340-owner-watch",
+  "scope": ["adl-v2/crates/adl-engine"]
+}

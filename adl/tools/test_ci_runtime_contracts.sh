@@ -234,6 +234,8 @@ for required_fragment in (
 
 for required_fragment in (
     "adl_path_policy:",
+    "csdlc_v2_standalone:",
+    "adl_v2_standalone:",
     "adl_tooling_contracts:",
     "adl_rust_fmt_clippy:",
     "adl_rust_tests:",
@@ -249,14 +251,33 @@ for required_fragment in (
             f"missing fragment: {required_fragment}"
         )
 
+csdlc_v2_job = job_block("csdlc_v2_standalone")
+for required_fragment in (
+    'build_root="$RUNNER_TEMP/adl-csdlc-v2"',
+    'echo "ADL_CARGO_BUILD_ROOT=$build_root" >> "$GITHUB_ENV"',
+):
+    if required_fragment not in csdlc_v2_job:
+        raise SystemExit(
+            "C-SDLC v2 standalone job must derive its external Cargo root from RUNNER_TEMP; "
+            f"missing fragment: {required_fragment}"
+        )
+if "runner.temp" in csdlc_v2_job:
+    raise SystemExit(
+        "C-SDLC v2 standalone job must not use unavailable runner context in job-level env"
+    )
+
 aggregator_block = step_block("Aggregate split adl-ci lanes")
 for required_fragment in (
     "needs.adl_path_policy.result",
+    "needs.csdlc_v2_standalone.result",
     "needs.adl_tooling_contracts.result",
     "needs.adl_rust_fmt_clippy.result",
     "needs.adl_rust_tests.result",
     "needs.adl_demo_proof.result",
     "success|skipped",
+    "selected C-SDLC v2 standalone lane",
+    "unselected C-SDLC v2 standalone lane",
+    "csdlc_v2_standalone_required must be exactly true or false",
     "::error::split adl-ci lane failure(s):",
 ):
     if required_fragment not in aggregator_block:

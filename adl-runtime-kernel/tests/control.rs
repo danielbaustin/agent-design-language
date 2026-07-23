@@ -1031,7 +1031,7 @@ async fn observatory_cors_allows_only_configured_origins_and_reports_canonical_p
         b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://other.example.test\r\nAuthorization: Bearer test-observatory-token-0000000002\r\nConnection: close\r\n\r\n",
     )
     .await;
-    assert!(response.starts_with("HTTP/1.1 200 OK"));
+    assert!(response.starts_with("HTTP/1.1 403 Forbidden"));
     assert!(!response.contains("access-control-allow-origin"));
 
     server.abort();
@@ -1185,10 +1185,15 @@ fn runtime_identity_and_shutdown_bounds_are_owned_by_standard_crates() {
 #[test]
 fn ready_event_reports_the_bound_ephemeral_port() {
     let address = std::net::SocketAddr::from(([127, 0, 0, 1], 43_123));
-    let event = adl_runtime_kernel::control_ready_event("instance-1", address);
+    let event = adl_runtime_kernel::control_ready_event(
+        "instance-1",
+        address,
+        "https://runtime.example.test:43123",
+    );
     assert!(event.contains("event=control_ready"));
     assert!(event.contains("port=43123"));
     assert!(!event.contains("port=20997"));
+    assert!(event.contains("public_base_url=https://runtime.example.test:43123"));
 }
 
 #[test]

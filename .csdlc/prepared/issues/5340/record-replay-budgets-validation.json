@@ -1,0 +1,19 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 38,
+  "expected_digest": "253a7c5f031d3fe25a0e31e80fbbafd8bcba226f97dae6499feb51f30ebe9f13",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record final complete release-budget proof after canonical turn-replay remediation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-validate", "--request", ".csdlc/prepared/issues/5340/pvf/budgets.json"],
+      "purpose": "Prove exact dependency, COTS, source authority, sole-writer scope, all tests, LoC ceilings, and validation deadlines on the final substantive revision.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-budgets/engine-budgets.log: implementation_lines=2928; test_fixture_lines=1946; unbudgeted_code=[]; substantive commit f89b321eac7433e9e3d9cc0cfdfc8aca6ce0ae75"
+    }
+  },
+  "fail_after_backup": false
+}

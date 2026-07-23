@@ -1,0 +1,5 @@
+filtered_test_inventory manifest=fake/Cargo.toml filter=present count=2
+operational_selector_transition candidate=candidate prior=prior health=restored
+filtered_zero_match=denied filtered_positive_count=2 selector_transition=2 health_checks=2
+filtered test lane matched zero tests: manifest=fake/Cargo.toml filter=absent
+candidate health URL must use HTTPS

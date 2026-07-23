@@ -1,0 +1,46 @@
+{"schema":"adl.csdlc.dependency-gate.v2","issue":5340,"dependency_issue":5338,"repository":"danielbaustin/agent-design-language","phase":"closed_out","disposition":"merged","observed_state":"merged","pull_request":5617,"merged_sha":"2c0cdd4522e6d7a062595706249894be3e16b2b3","origin_main_sha":"09c0bd1784216dbce1ad4cdebfe2d453af6e3d9d","fetched_unix_seconds":1784674173,"head_sha":"f89b321eac7433e9e3d9cc0cfdfc8aca6ce0ae75","typed_receipt_digest":"d8410dda41515b144fcec22a2e9af7e0fd6f029680e9659970aa5b3bf3b21bb1","typed_receipt_validation":"scratch_retain_receipt_passed","ancestry":["merge_to_origin_main","merge_to_head","origin_main_to_head"],"sole_writer":true,"outcome":"passed"}
+
+running 8 tests
+test event_and_turn_budgets_fail_closed_without_partial_state ... ok
+test canonical_ready_and_dispatch_order_survives_saturation ... ok
+test all_at_least_and_fail_fast_joins_have_explicit_outcomes ... ok
+test plan_node_and_edge_limits_accept_below_and_at_then_reject_above ... ok
+test checkpoint_byte_limit_accepts_exact_minimum_and_rejects_one_less ... ok
+test plan_policy_and_turn_input_limits_cover_below_at_and_above_edges ... ok
+test ready_in_flight_and_attempt_limits_cover_below_at_and_above_edges ... ok
+test request_envelope_limit_is_admission_bound ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+
+running 9 tests
+test duplicate_completion_is_idempotent_but_changed_replay_is_protocol_error ... ok
+test retry_delay_and_attempt_exhaustion_are_monotonic ... ok
+test cancellation_emits_once_and_same_turn_terminal_completion_wins ... ok
+test completion_permutations_produce_identical_snapshots_and_events ... ok
+test output_limit_accepts_below_and_at_then_rejects_above_atomically ... ok
+test checkpoint_rejects_in_flight_noncanonical_truncated_and_changed_contracts ... ok
+test quiescent_resume_matches_uninterrupted_retry_execution ... ok
+test resume_binds_contiguous_attempts_completion_digests_and_terminal_output ... ok
+test resume_rejects_semantically_unreachable_graph_and_journal_mutations ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 7 tests
+test at_least_join_threshold_has_a_fixed_width_serialized_contract ... ok
+test policy_must_exactly_cover_nodes_and_only_declared_tools ... ok
+test retry_policy_and_join_thresholds_are_admission_bounded ... ok
+test completion_kind_unknown_identity_and_attempt_mismatch_fail_closed ... ok
+test pending_ready_retry_and_dispatched_cancellation_paths_are_distinct ... ok
+test provider_and_tool_effects_are_separate_stable_typed_ports ... ok
+test compiler_sequential_and_state_dependency_edges_are_both_admitted ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+{"fresh_process_runs":2,"byte_identical":true,"artifact_sha256":"29c982ebc5ec7ef465adef7f2426d31a97dead4488ccbf9b88b7c429fe032075"}
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/bounded_schedule.rs (/Volumes/FastWork/adl-wp-5340/target/debug/deps/bounded_schedule-077cf109dba0d5a0)
+     Running tests/failure_resume.rs (/Volumes/FastWork/adl-wp-5340/target/debug/deps/failure_resume-585a080a00769614)
+     Running tests/port_contracts.rs (/Volumes/FastWork/adl-wp-5340/target/debug/deps/port_contracts-83b138b220f6837a)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s

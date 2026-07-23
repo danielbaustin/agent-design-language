@@ -1,0 +1,76 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5340,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-06] Implement portable bounded execution engine",
+    "slug": "v0918-wp06-portable-bounded-execution-engine",
+    "version": "v0.91.8",
+    "generation": 44
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare, review, bind, and watch now; after the exact #5338 terminal gate implement only the portable adl-engine state machine and proof. Do not absorb compiler, records, Runtime, adapter, CLI, selector, parity, deletion, release, or deployment work.",
+      "deliverables": [
+        "Independent adl-engine crate consuming the landed adl-compiler ExecutionPlan",
+        "Deterministic bounded scheduling and join state machine with stable transitions and limits",
+        "Typed provider/tool request-completion effects and stable idempotency contract",
+        "Bounded retry, cancellation, failure propagation, saturation, and resource-exhaustion semantics",
+        "Canonical quiescent checkpoint and strict resume-equivalence contract",
+        "Mapped #5338 plan/port fixtures plus golden, negative, permutation, saturation, and fresh-process resume proofs",
+        "Exact COTS, forbidden dependency, source LoC, test/fixture LoC, scope, and validation-latency evidence",
+        "Typed lifecycle, reviewed design/diagram, dependency watch, exact-revision review, publication, merge, post-merge, closeout, and retained receipt truth"
+      ],
+      "acceptance_criteria": [
+        "AC-1: The engine consumes only the landed inert #5338 ExecutionPlan and produces typed state/effects/results without parser, compiler, Runtime, adapter, lifecycle, network, filesystem, database, process, thread, wall-clock, credential, cloud, or async-runtime authority",
+        "AC-2: Ready selection, dispatch, completion application, and final results are byte-deterministic across input collection order, completion arrival permutations, repeated runs, and fresh processes, with canonical node identity as the tie-break",
+        "AC-3: Joins, retries, cancellation, failure propagation, admission, saturation, attempts, bytes, events, checkpoints, and logical turns are explicitly bounded and prove limit-minus-one, limit, and limit-plus-one behavior without work loss or budget reset",
+        "AC-4: Provider and tool ports use distinct typed request/completion variants with stable request identity, attempt, idempotency, timeout, bounded payload, and fail-closed duplicate/unknown/mismatched completion behavior; production adapters remain outside WP-06",
+        "AC-5: Canonical checkpoints are emitted only when quiescent, reject every incompatible or truncated plan/state/limit/budget/sequence variant, and resumed execution is byte-equivalent to uninterrupted execution from the same boundary",
+        "AC-6: Every applicable landed #5338 plan, edge, and port fixture is mapped; engine cases pass and non-engine cases have explicit reviewed classifications with no silent skips or broad normalization",
+        "AC-7: Direct dependencies are exactly the landed adl-compiler crate plus reviewed serde, serde_json, sha2, and hex COTS; incumbent ADL, Runtime v2/v3, C-SDLC, async, HTTP, cloud, provider, database, graph, workflow, scheduler, retry, persistence, and RNG dependencies are absent",
+        "AC-8: WP-06 stays at or below 4000 Rust implementation LoC and 3500 test/fixture LoC; focused and quality validation each finish within 120 seconds, ordering/resume proof within 300 seconds, and the complete suite within 600 seconds under /Volumes/FastWork",
+        "AC-9: Product implementation starts only after #5338 is GitHub merged and a retained typed closed_out receipt with disposition merged and non-empty observed SHA exists, and that SHA is an ancestor of the #5340 implementation revision",
+        "AC-10: Exact-revision subagent review and fixes, typed review/publication, green required checks, authorized merge, post-merge validation, typed closeout, retained receipt, and guarded prune are all mandatory with no deferred acceptance row"
+      ],
+      "dependencies": [
+        "Sole direct gate #5338: implementation PR is GitHub merged and typed publication observes merged",
+        "#5338 retained typed lifecycle phase is closed_out with terminal disposition and observed state merged",
+        "#5338 retained receipt identifies the governed pull request and non-empty observed PR head SHA",
+        "#5338 observed PR head SHA is an ancestor of fetch-refreshed origin/main and the #5340 implementation revision, and current origin/main is an ancestor of that revision",
+        "Landed reviewed adl-compiler public ExecutionPlan, node, edge, port, digest, diagnostic, and canonical fixture contracts are available on current origin/main"
+      ],
+      "repo_inputs": [
+        "AGENTS.md",
+        "GitHub issue #5340 source prompt",
+        "docs/templates/prompts/current.json",
+        "csdlc-v2/operator/generation-selector.json",
+        "docs/milestones/v0.91.8/README.md",
+        "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+        "docs/milestones/v0.91.8/DESIGN_v0.91.8.md",
+        "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+        "docs/milestones/v0.91.8/SPRINT_PLAN_v0.91.8.md",
+        "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+        "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+        "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+        "docs/milestones/v0.91.8/features/ADL_V2_CORE_v0.91.8.md",
+        "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+        "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+        "#5336 transitive architecture, clean-room provenance, product ownership, and milestone budget authority",
+        "future landed adl-v2/crates/adl-compiler public API and checked fixtures from #5338"
+      ],
+      "non_goals": [
+        "Language parsing, validation, canonicalization, compiler lowering, and stable plan-node identity owned by #5339 and #5338",
+        "Records, signing, trust, events, traces, results, artifacts, and verification owned by #5342",
+        "Runtime v2 or Runtime v3 source, operational scheduler, supervision, recovery, service, or policy changes",
+        "Provider, model, HTTP, governed-tool, compatibility, credential, sandbox, database, persistence, cloud, or AWS adapters owned by #5349 or later integration issues",
+        "CLI, selector, parity, cutover, deletion, release, deployment, process supervision, cognitive runtime services, or v0.92 birthday scope",
+        "Mid-request checkpoint/recovery, distributed scheduling, wall-clock timers, unbounded retry, autonomous adaptation, or active ADL v2 selection",
+        "Copying, moving, adapting, linking, or changing incumbent ADL or Runtime v2 implementation"
+      ]
+    }
+  }
+}

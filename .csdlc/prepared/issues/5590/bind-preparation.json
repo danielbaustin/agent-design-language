@@ -1,0 +1,23 @@
+{
+  "issue": 5590,
+  "base_branch": "main",
+  "branch": "codex/5590-runtime-v3-parity-d",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5590-runtime-v3-parity-d-preparation",
+    "owner": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+    "generation": 0,
+    "acquired_unix_seconds": 1784601952,
+    "expires_unix_seconds": 1785206752,
+    "heartbeat_unix_seconds": 1784601952,
+    "branch": "codex/5590-runtime-v3-parity-d",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5590",
+      ".csdlc/issues/5590",
+      ".csdlc/locks/5590.lock",
+      ".csdlc/prepared/issues/5590"
+    ],
+    "purpose": "Prepare and review complete six-card Runtime v3 Parity-D truth without product edits until #5591 integration eligibility is confirmed"
+  }
+}

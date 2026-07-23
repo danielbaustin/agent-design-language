@@ -3,7 +3,7 @@ use csdlc_v2::cards::{
     StepStatus, ValidationLane, ValidationResult,
 };
 use csdlc_v2::{
-    assign_review, closeout_issue, edit_issue, prepare_ready_publication,
+    assign_review, closeout_issue, edit_issue, prepare_publication, prepare_ready_publication,
     prepare_ready_reconciliation, record_merged_publication, record_publication, record_readiness,
     record_ready_publication, record_review, validate_ready_reconciliation_state,
     validate_ready_remote, BootstrapRequest, CardKind, Claim, ConflictState, EditRequest,
@@ -40,6 +40,63 @@ fn install_native_authority(root: &std::path::Path) {
         include_bytes!("../operator/native-card-shape.json"),
     )
     .unwrap();
+}
+
+#[test]
+fn routine_publication_prepares_and_records_ready_pr_directly() {
+    let (_temp, store, reviewed, sha) = fixture_with_validation_history_and_publication(
+        5627,
+        "Four command publication fixture",
+        "four-command-publication",
+        vec![],
+        false,
+    );
+    let request = PublicationRequest {
+        schema: "csdlc.publication_request.v1".into(),
+        issue: 5627,
+        expected_generation: reviewed.generation,
+        expected_digest: reviewed.digest,
+        claim_id: "claim".into(),
+        actor: "publisher".into(),
+        repository: "example/repo".into(),
+        base: "main".into(),
+        head: "issue-7".into(),
+        title: "Four command fixture".into(),
+        body: "Closes #5627".into(),
+        draft: false,
+        remote: "origin".into(),
+        token_file: None,
+    };
+    let intent = prepare_publication(&store, &request).expect("ready intent");
+    assert!(!intent.draft);
+    let published = record_publication(
+        &store,
+        &request,
+        &intent,
+        RemotePullRequest {
+            number: 5627,
+            url: "https://example.invalid/5627".into(),
+            repository: "example/repo".into(),
+            base: "main".into(),
+            head: "issue-7".into(),
+            title: "Four command fixture".into(),
+            body: "Closes #5627".into(),
+            draft: false,
+            state: "open".into(),
+            head_sha: sha,
+        },
+    )
+    .expect("record ready publication");
+    assert_eq!(published.phase, LifecyclePhase::Published);
+    assert!(!published.publication.as_ref().expect("publication").draft);
+    let cards = store.load_cards(5627).expect("cards");
+    let CardContent::Sor(sor) = &cards[&CardKind::Sor].content else {
+        panic!("SOR")
+    };
+    assert_eq!(
+        sor.publication_state,
+        csdlc_v2::cards::PublicationState::Ready
+    );
 }
 
 fn bootstrap_issue(
@@ -483,6 +540,24 @@ fn fixture_with_validation_history_and_publication(
     validation_history: Vec<ValidationResult>,
     publish: bool,
 ) -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord, String) {
+    fixture_with_validation_history_publication_and_worktree(
+        issue,
+        title,
+        scenario,
+        validation_history,
+        publish,
+        false,
+    )
+}
+
+fn fixture_with_validation_history_publication_and_worktree(
+    issue: u64,
+    title: &str,
+    scenario: &str,
+    validation_history: Vec<ValidationResult>,
+    publish: bool,
+    issue_local_worktree: bool,
+) -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord, String) {
     let temp = tempfile::tempdir().unwrap();
     std::fs::create_dir_all(temp.path().join("docs")).unwrap();
     std::fs::write(temp.path().join("docs/design.md"), "# design\n").unwrap();
@@ -521,7 +596,11 @@ fn fixture_with_validation_history_and_publication(
                 expires_unix_seconds: u64::MAX,
                 heartbeat_unix_seconds: 1,
                 branch: "issue-7".into(),
-                worktree: temp.path().to_string_lossy().into_owned(),
+                worktree: if issue_local_worktree {
+                    ".".into()
+                } else {
+                    temp.path().to_string_lossy().into_owned()
+                },
                 protected_paths: vec!["src".into()],
                 purpose: "gate7 fixture".into(),
             },
@@ -712,6 +791,87 @@ fn fixture_with_validation_history_and_publication(
     record = Store::new(store.root()).load_record(issue).unwrap();
     assert_eq!(record.phase, LifecyclePhase::Published);
     (temp, store, record, sha)
+}
+
+#[test]
+fn prune_command_accepts_issue_local_terminal_without_rewriting_receipt() {
+    let issue = 5624;
+    let (temp, store, record, sha) = fixture_with_validation_history_publication_and_worktree(
+        issue,
+        "Issue-local prune fixture",
+        "issue-local-prune",
+        vec![ValidationResult {
+            command: vec!["cargo".into(), "test".into()],
+            purpose: "prune proof".into(),
+            outcome: EvidenceOutcome::Passed,
+            evidence_ref: "evidence.json".into(),
+        }],
+        true,
+        true,
+    );
+    let ready = record_readiness(
+        &store,
+        ReadinessRequest {
+            schema: "csdlc.readiness_request.v1".into(),
+            issue,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            claim_id: "claim".into(),
+            actor: "shepherd".into(),
+            pull_request: 70,
+            head_sha: sha.clone(),
+            required_checks: vec!["fast".into()],
+            require_review: true,
+            checks: vec![csdlc_v2::CheckObservation {
+                name: "fast".into(),
+                requirement: csdlc_v2::CheckRequirement::Required,
+                conclusion: csdlc_v2::CheckConclusion::Success,
+                details_url: None,
+            }],
+            review_state: RemoteReviewState::Approved,
+            conflict_state: ConflictState::Clean,
+            post_publication_findings: vec![],
+        },
+    )
+    .unwrap();
+    closeout_issue(
+        &store,
+        TerminalObservation {
+            schema: "csdlc.terminal_observation.v1".into(),
+            issue,
+            expected_generation: ready.generation,
+            expected_digest: ready.digest,
+            claim_id: "claim".into(),
+            actor: "closer".into(),
+            pull_request: Some(70),
+            disposition: TerminalDisposition::Merged,
+            observed_sha: Some(sha),
+            observed_state: "merged".into(),
+            approved_no_pr_reason: None,
+            receipt_path: format!("csdlc-v2/closeout/{issue}.json"),
+        },
+    )
+    .unwrap();
+    store.retain_terminal_receipt(issue).unwrap();
+    git(temp.path(), &["add", "."]);
+    git(temp.path(), &["commit", "-m", "terminal projection"]);
+
+    let receipt_path = store.terminal_receipt_path(issue).unwrap();
+    let receipt_before = fs::read(&receipt_path).unwrap();
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_csdlc-closeout"))
+        .current_dir(temp.path())
+        .args(["--root", ".", "validate-prune", "--issue", "5624"])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(report["eligible"], true);
+    assert_eq!(report["pruned"], false);
+    assert_eq!(fs::read(receipt_path).unwrap(), receipt_before);
 }
 
 #[test]
@@ -2106,6 +2266,47 @@ fn later_failure_blocks_merged_and_closed_unmerged_terminal_closeout() {
         Store::new(temp.path()).load_record(issue).unwrap().phase,
         LifecyclePhase::Reviewed
     );
+}
+
+#[test]
+fn no_pr_closeout_produces_doctor_valid_terminal_state() {
+    let issue = 75;
+    let (temp, store, record, _) = fixture_with_validation_history_and_publication(
+        issue,
+        "Gate 7 no-PR closeout fixture",
+        "no-pr-closeout",
+        vec![ValidationResult {
+            command: vec!["cargo".into(), "test".into()],
+            purpose: "proof".into(),
+            outcome: EvidenceOutcome::Passed,
+            evidence_ref: "evidence.json".into(),
+        }],
+        false,
+    );
+    let closed = closeout_issue(
+        &store,
+        TerminalObservation {
+            schema: "csdlc.terminal_observation.v1".into(),
+            issue,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            claim_id: "claim".into(),
+            actor: "closer".into(),
+            pull_request: None,
+            disposition: TerminalDisposition::ClosedNoPr,
+            observed_sha: None,
+            observed_state: "closed_no_pr".into(),
+            approved_no_pr_reason: Some("operator-approved no-PR closeout".into()),
+            receipt_path: format!("csdlc-v2/closeout/{issue}.json"),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(closed.phase, LifecyclePhase::ClosedOut);
+    assert!(closed.claim.is_none());
+    let doctor = csdlc_v2::diagnose(&Store::new(temp.path()), issue);
+    assert_eq!(doctor.phase, Some(LifecyclePhase::ClosedOut));
+    assert!(doctor.findings.is_empty());
 }
 
 #[test]

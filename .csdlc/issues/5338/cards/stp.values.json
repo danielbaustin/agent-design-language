@@ -1,0 +1,63 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5338,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-05] Implement pure deterministic ADL compiler",
+    "slug": "v0918-wp05-pure-deterministic-adl-compiler",
+    "version": "v0.91.8",
+    "generation": 26
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare, then after the exact dependency gate implement only the pure deterministic compiler and its inert ExecutionPlan contract; do not absorb language parsing, execution engine, records, adapters, Runtime, CLI, selector, parity, deletion, or release work.",
+      "deliverables": [
+        "Independent adl-compiler crate consuming the typed adl-language crate",
+        "Canonical serializable ExecutionPlan with typed nodes, edges, ports, provenance, source digest, and stable diagnostics",
+        "Pure deterministic identity/reference resolution plus composition and pattern expansion pipeline",
+        "Versioned domain-separated stable node identity algorithm with golden vectors",
+        "Canonical plan fixtures and negative ambiguity, cycle, conflict, bound, and collision fixtures",
+        "Equivalent-input permutation, repeated-run, clean-process, identity-locality, and #5339 fixture-map proofs",
+        "COTS, dependency exclusion, source LoC, test/fixture LoC, and validation latency evidence"
+      ],
+      "acceptance_criteria": [
+        "AC-1: The compiler consumes only a validated typed adl-language document and returns a typed ExecutionPlan or stable sorted diagnostics without parser, executor, provider, runtime, lifecycle, network, filesystem-mutation, clock, randomness, environment, credential, cloud, or database authority",
+        "AC-2: Resolution, composition, pattern expansion, lowering, and topological ordering are explicit, bounded, deterministic, and fail closed on ambiguity, conflicts, invalid cycles, identity collision, or resource-bound violation",
+        "AC-3: ExecutionPlan is a versioned inert data contract with canonical nodes, dependency edges, input/output ports, provenance, and source digest, and contains no callbacks, futures, handles, retry loops, runtime policies, timestamps, or host paths",
+        "AC-4: Stable node IDs derive from a versioned domain-separated length-delimited semantic preimage and remain identical across equivalent syntax, collection permutations, traversal order, repeated runs, and clean processes",
+        "AC-5: Canonical ExecutionPlan JSON and diagnostics are byte-identical across every equivalent #5339 input representation and repeated compilation, while semantic identity changes affect only the required nodes",
+        "AC-6: Every applicable landed #5339 positive and negative fixture is mapped; compiler cases pass and non-compiler cases have explicit reviewed classifications with no silent skips",
+        "AC-7: Direct dependencies are exactly the landed adl-language crate plus reviewed serde, serde_json, sha2, and hex COTS; incumbent ADL, Runtime v2/v3, C-SDLC, async, HTTP, cloud, provider, database, execution-engine, petgraph, and RNG dependencies are absent",
+        "AC-8: WP-05 stays at or below 3500 Rust implementation LoC and 3500 test/fixture LoC, focused warm validation completes within 120 seconds, and complete deterministic validation completes within 600 seconds using /Volumes/FastWork; variance requires exact-revision design amendment and review",
+        "AC-9: Product implementation starts only after live evidence proves #5339 merged and retained typed phase closed_out; exact-revision review, typed publication, green required CI, authorized merge, post-merge proof, and typed closeout remain mandatory"
+      ],
+      "dependencies": [
+        "#5336 architecture, clean-room provenance, ownership, and milestone budget authority integrated",
+        "#5339 implementation PR merged",
+        "#5339 retained typed lifecycle phase closed_out",
+        "Landed reviewed adl-language public API, schemas, canonicalization contract, and fixture map available on current origin/main"
+      ],
+      "repo_inputs": [
+        "AGENTS.md",
+        "docs/milestones/v0.91.8/DESIGN_v0.91.8.md",
+        "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+        "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+        "docs/milestones/v0.91.8/features/ADL_V2_CORE_v0.91.8.md",
+        "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+        "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+        "future landed adl-v2/crates/adl-language public API and checked fixtures from #5339"
+      ],
+      "non_goals": [
+        "Language model, YAML or JSON parsing, schema generation, and source semantic policy owned by #5339",
+        "Scheduling, retry, joins, resume, failure propagation, runtime ports, and execution owned by #5340",
+        "Portable records, signing, trust, events, traces, results, and verification owned by #5342",
+        "Runtime v2 or v3, provider/tool adapters, CLI, selector, parity, cutover, deletion, release, deployment, or AWS work",
+        "Compatibility behavior absent from the reviewed characterization and language contracts",
+        "Selecting ADL v2 as active or deleting incumbent compiler surfaces"
+      ]
+    }
+  }
+}

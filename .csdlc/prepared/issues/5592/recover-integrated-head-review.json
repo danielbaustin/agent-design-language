@@ -1,0 +1,8 @@
+{
+  "issue": 5592,
+  "expected_generation": 13,
+  "expected_digest": "66cdce9b775192b01841cd23bb02483fba98b4a2d001fd120d1000d8ca459454",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Current main advanced after publication; recover published review truth for exact integrated-head validation and rereview after the clean disjoint main merge."
+}

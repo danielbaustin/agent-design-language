@@ -1,0 +1,13 @@
+{
+  "issue": 5615,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "ea3a989da3fa6ef5ec5ab0a63ef8bb58cda57bec504c1f8379db8d1a4fff97cc",
+  "claim_id": "claim-5615-csdlc-ci-fastwork-routing",
+  "actor": "codex:5615-owner",
+  "reason": "The bounded classifier, standalone job, fail-closed aggregate, portable wrapper, and all local proof are complete for exact review.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

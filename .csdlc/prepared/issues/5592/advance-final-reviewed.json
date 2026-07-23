@@ -1,0 +1,14 @@
+{
+  "issue": 5592,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "6d4f5086998ba13c996e5b00089efdf9ac392d76357f1dffe72fbdcb0f0afd8a",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Fresh exact-head review passed with zero actionable findings; retain the explicit accepted 13,547-line cohesive-scope exception.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,15 @@
+{
+  "issue": 5499,
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "expected_owner": "codex:issue-5499-preparation",
+  "expected_generation": 10,
+  "expected_digest": "82e7d55691305897ca174a0c149fccbddb5272fd12b909a5150ae9aa7996d5c2",
+  "expected_purpose": "Prepare and review WP-10A conductor contracts only; product implementation remains blocked on merged typed closeout for #5349 and direct dependencies",
+  "now_unix_seconds": 1784758813,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Activate issue #5499 after the live merge and ancestry dependency gate passed for #5340, #5341, #5342, and #5349.",
+  "purpose": "Implement, validate, review, publish, merge, and close issue #5499 within the isolated pure conductor crate boundary.",
+  "add_protected_paths": [
+    "adl-v2/crates/adl-workcell-conductor"
+  ]
+}

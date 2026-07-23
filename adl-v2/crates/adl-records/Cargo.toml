@@ -1,0 +1,26 @@
+[package]
+name = "adl-records"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "Portable bounded records, signing, and trust contracts for ADL v2"
+
+[dependencies]
+ed25519-dalek = { version = "=2.2.0", default-features = false, features = ["std"] }
+hex = "=0.4.3"
+schemars = { version = "=1.2.1", default-features = false, features = ["derive", "std"] }
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.151"
+sha2 = "=0.10.9"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[dev-dependencies]
+jsonschema = { version = "=0.48.2", default-features = false }
+
+[[test]]
+name = "fresh_process_driver"
+path = "tests/fresh_process_driver.rs"
+harness = false

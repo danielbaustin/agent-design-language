@@ -1,0 +1,10 @@
+
+running 3 tests
+test canonical_ingress_preserves_closed_failure ... ok
+test canonical_ingress_preserves_unsupported_failure ... ok
+test canonical_ingress_maps_success_and_result_record ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running tests/adapter.rs (/Volumes/FastWork/adl-5341/target/debug/deps/adapter-6b8e184b4d5aff9d)

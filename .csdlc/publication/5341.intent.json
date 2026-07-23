@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5341,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5341-v0918-runtime-v3-adapter",
+  "title": "[v0.91.8][WP-08] Implement Runtime v3 adapter",
+  "body": "Closes #5341\n\nAdds the thin ADL v2 to Runtime v3 adapter. The adapter verifies signed records, binds execution identity and digests, rejects replay and authority drift, enters only through CanonicalIngress, and maps bounded Runtime outcomes back into ADL engine completions and signed record payloads.\n\nFocused proof: 19 adapter tests pass and strict all-target Clippy passes using FastWork. One bounded GPT-5.5 review was completed immediately before publication; all actionable findings are fixed and the exact reviewed product revision is retained. No Runtime v2, AWS, listener, scheduler, retry, or signing ownership was added.",
+  "draft": false,
+  "revision": "git-blake3:1e76adc88fb73f8dd663f4d0194fa00338f4d348:702340dc908b7c72ea39cfccd3d682a54d6b3c90bd244515f3da4c248aa50aa9",
+  "commit_sha": "1e76adc88fb73f8dd663f4d0194fa00338f4d348"
+}

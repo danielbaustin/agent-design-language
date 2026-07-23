@@ -1,0 +1,15 @@
+{
+  "schema": "adl.wp10a.product_path_reservations.v1",
+  "issue": 5500,
+  "planned_paths": [
+    "docs/tooling/milestone-dashboard",
+    "adl/tools/test_milestone_dashboard.sh"
+  ],
+  "siblings": {
+    "5499": ["adl-v2/crates/adl-workcell-conductor"],
+    "5498": ["adl-v2/crates/adl-codex-task-adapter"],
+    "5502": ["adl-v2/crates/adl-workcell-convergence"],
+    "5501": ["docs/milestones/v0.91.8/review/workcell-live-proof"]
+  },
+  "policy": "Reservations are preparation evidence only. Before implementation, amend the typed claim and re-run collision checks against all active claims."
+}

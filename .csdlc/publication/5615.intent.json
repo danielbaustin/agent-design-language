@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5615,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5615-csdlc-ci-fastwork-routing",
+  "title": "[v0.91.8][CI] Require truthful C-SDLC v2 and Runtime validation routing",
+  "body": "Closes #5615\n\nRepairs CI classification so C-SDLC v2 Rust changes run their standalone test, format, and strict-Clippy proof, lifecycle metadata alone remains lightweight, and mixed Runtime v3 plus C-SDLC v2 changes require both focused lanes. Stable aggregation now fails closed when a selected standalone lane is skipped or malformed. Cargo validation state is routed to a validated external build root with child-symlink escape rejection.\n\nFocused classifier, Runtime, selector, workflow, and external-root contracts pass. The complete standalone C-SDLC v2 test/fmt/strict-Clippy suite passes on /Volumes/FastWork. Mandatory exact review found three P1 gaps; all were fixed, revalidated, and exact re-review passed with zero findings.",
+  "draft": true,
+  "revision": "git-blake3:5fea2d3e77ed788adc80f796ee92ecdf5b78344f:314ad2574fabde4648b7a9bb3a868c10d6ac56fda628ba66003833ea7577ec46",
+  "commit_sha": "5fea2d3e77ed788adc80f796ee92ecdf5b78344f"
+}

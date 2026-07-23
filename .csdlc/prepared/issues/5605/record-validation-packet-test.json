@@ -1,0 +1,22 @@
+{
+  "issue": 5605,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "a385818363fe1d2186835fc6460531b9c8d261631d98d9e0117ee8f0cab42473",
+  "claim_id": "csdlc-issue-5605-20260722t190651z",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record podcast packet contract proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_podcast_studio_v2_packet.sh"
+      ],
+      "outcome": "passed",
+      "evidence_ref": "local PASS before commit ffb08a03c",
+      "purpose": "Prove the existing v0.91.3 podcast studio packet remains deterministic and truthfully reported."
+    }
+  },
+  "fail_after_backup": false
+}

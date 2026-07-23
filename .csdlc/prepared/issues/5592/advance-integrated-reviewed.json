@@ -1,0 +1,11 @@
+{
+  "issue": 5592,
+  "card": "sor",
+  "expected_generation": 16,
+  "expected_digest": "dea892b60414e2488487bf5303cb43bd6cb1979435c670024b26941fdef39d7e",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Integrated exact-head review passed with zero findings; retain the accepted 13,547-line exception and clean current-main ancestry.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"},
+  "fail_after_backup": false
+}

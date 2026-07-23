@@ -7,9 +7,9 @@
     "title": "[v0.91.8][CI] Prevent partition-local llvm-cov report crashes from failing hosted coverage",
     "slug": "hosted-coverage-no-report",
     "version": "v0.91.8",
-    "generation": 29
+    "generation": 31
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -40,10 +40,10 @@
           "evidence_ref": "local:5602-authoritative-coverage-contract-pass"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

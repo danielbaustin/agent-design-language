@@ -1,0 +1,24 @@
+{
+  "schema": "adl.csdlc_v2.issue_validation.v1",
+  "issue": 5624,
+  "revision": "a2c79708e",
+  "result": "passed",
+  "supersedes": ".csdlc/evidence/5624/validation-380a9eab1.json",
+  "build_root": "/Volumes/FastWork/adl-5624-cargo-target",
+  "proof": [
+    {"lane": "cargo_wrapper_contract", "result": "passed"},
+    {"lane": "gate10a", "result": "passed", "tests": "13 passed"},
+    {"lane": "prune_guard", "result": "passed", "tests": "3 passed"},
+    {"lane": "command_level_issue_local_prune", "result": "passed", "tests": "1 passed"},
+    {"lane": "csdlc_v2_all_targets", "result": "passed"},
+    {"lane": "format", "result": "passed"},
+    {"lane": "strict_clippy_all_targets", "result": "passed"}
+  ],
+  "invariants": [
+    "no csdlc-v2/target checkout artifact is created",
+    "installer and proof binaries resolve only from an exact existing external CARGO_TARGET_DIR",
+    "missing, relative, aliased, or repository-contained target directories fail closed",
+    "stable owner binaries remain installed only under the dedicated .adl/bin/csdlc-v2 generation directory",
+    "guarded prune topology and terminal receipt immutability remain proven"
+  ]
+}

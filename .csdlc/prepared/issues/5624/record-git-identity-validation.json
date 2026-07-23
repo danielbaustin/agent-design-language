@@ -1,0 +1,18 @@
+{
+  "issue": 5624,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "494ef0474edfe5fc0874cc8782d4b108a9d10e8e2ca057c00bc4a80047d761d7",
+  "claim_id": "claim-5624-csdlc-prune-topology",
+  "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+  "reason": "Record the exact hosted-CI Git identity repair proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_run_cargo_validation.sh", "and", "cargo", "test", "--test", "gate2", "and", "fmt", "and", "strict-clippy"],
+      "purpose": "Prove deterministic validation-only Git identity, all affected Gate2 fixture commits, formatting, and strict Clippy.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5624/validation-git-identity.json"
+    }
+  }
+}

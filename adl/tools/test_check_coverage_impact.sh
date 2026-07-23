@@ -315,10 +315,33 @@ runtime_v3_surfaces_changed="$TMP/runtime-v3-surfaces-changed.txt"
 cat >"$runtime_v3_surfaces_changed" <<'EOF'
 M	adl/src/cli/runtime_v3_cmd.rs
 M	adl-runtime/src/guardian.rs
+A	adl-runtime/src/bin/adl-runtime-guardian.rs
 EOF
 runtime_v3_expression="$(bash "$SCRIPT" --changed-files "$runtime_v3_surfaces_changed" --print-risk-nextest-expression)"
 grep -F "binary_id(adl::bin/adl) and test(/^cli::runtime_v3_cmd::tests::/)" <<<"$runtime_v3_expression" >/dev/null
 grep -F "test(/^guardian::tests::/)" <<<"$runtime_v3_expression" >/dev/null
+grep -F "binary_id(adl-runtime::bin/adl-runtime-guardian) and test(/^tests::guardian_cli_requires_complete_bounded_configuration$/)" <<<"$runtime_v3_expression" >/dev/null
+grep -F "binary_id(adl-runtime::guardian_cli) and test(/^guardian_cli_/)" <<<"$runtime_v3_expression" >/dev/null
+runtime_v3_filters="$TMP/runtime-v3-filters.txt"
+bash "$SCRIPT" --changed-files "$runtime_v3_surfaces_changed" --print-risk-filters >"$runtime_v3_filters"
+[ "$(grep -Fxc runtime_v3_guardian "$runtime_v3_filters")" -eq 1 ]
+runtime_v3_guardian_changed="$TMP/runtime-v3-guardian-changed.txt"
+cat >"$runtime_v3_guardian_changed" <<'EOF'
+M	adl-runtime/src/guardian.rs
+A	adl-runtime/src/bin/adl-runtime-guardian.rs
+EOF
+runtime_v3_guardian_expression="$(bash "$SCRIPT" --changed-files "$runtime_v3_guardian_changed" --print-risk-nextest-expression)"
+runtime_v3_inventory="$TMP/runtime-v3-inventory.txt"
+cargo nextest list --manifest-path "$ROOT/adl-runtime/Cargo.toml" \
+  -E "$runtime_v3_guardian_expression" >"$runtime_v3_inventory"
+grep -Fx "adl-runtime::bin/adl-runtime-guardian tests::guardian_cli_requires_complete_bounded_configuration" \
+  "$runtime_v3_inventory" >/dev/null
+grep -Fx "adl-runtime::guardian_cli guardian_cli_reports_successful_portable_child_as_json" \
+  "$runtime_v3_inventory" >/dev/null
+grep -Fx "adl-runtime::guardian_cli guardian_cli_reports_spawn_failure_without_restart" \
+  "$runtime_v3_inventory" >/dev/null
+grep -Fx "adl-runtime::guardian_cli guardian_cli_rejects_incomplete_unknown_and_invalid_numeric_arguments" \
+  "$runtime_v3_inventory" >/dev/null
 if grep -Fq "binary_id(adl-runtime)" <<<"$runtime_v3_expression"; then
   echo "Runtime v3 guardian mapping must remain parseable in the adl workspace" >&2
   exit 1
@@ -395,8 +418,24 @@ bash "$SCRIPT" --changed-files "$native_gws_demo_bins_changed" --print-risk-filt
 grep -Fx "demo_adl_gws_context_mirror" "$native_gws_demo_bins_filters" >/dev/null
 grep -Fx "demo_adl_gws_native_drive_sync" "$native_gws_demo_bins_filters" >/dev/null
 native_gws_demo_bins_expression="$(bash "$SCRIPT" --changed-files "$native_gws_demo_bins_changed" --print-risk-nextest-expression)"
-grep -F "binary_id(adl::bin/demo-adl-gws-context-mirror) and test(/^tests::/)" <<<"$native_gws_demo_bins_expression" >/dev/null
+grep -F "binary_id(adl::bin/adl-gws-context-mirror) and test(/^tests::/)" <<<"$native_gws_demo_bins_expression" >/dev/null
 grep -F "binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)" <<<"$native_gws_demo_bins_expression" >/dev/null
+
+native_gws_library_surfaces_changed="$TMP/native-gws-library-surfaces-changed.txt"
+cat >"$native_gws_library_surfaces_changed" <<'EOF'
+M	adl/src/adl_gws_context_mirror.rs
+M	adl/src/adl_gws_drive_sync.rs
+M	adl/src/adl_gws_native.rs
+EOF
+native_gws_library_surfaces_filters="$TMP/native-gws-library-surfaces-filters.txt"
+bash "$SCRIPT" --changed-files "$native_gws_library_surfaces_changed" --print-risk-filters >"$native_gws_library_surfaces_filters"
+grep -Fx "adl_gws_context_mirror" "$native_gws_library_surfaces_filters" >/dev/null
+grep -Fx "adl_gws_drive_sync" "$native_gws_library_surfaces_filters" >/dev/null
+grep -Fx "adl_gws_native" "$native_gws_library_surfaces_filters" >/dev/null
+native_gws_library_surfaces_expression="$(bash "$SCRIPT" --changed-files "$native_gws_library_surfaces_changed" --print-risk-nextest-expression)"
+grep -F "test(adl_gws_context_mirror)" <<<"$native_gws_library_surfaces_expression" >/dev/null
+grep -F "test(adl_gws_drive_sync)" <<<"$native_gws_library_surfaces_expression" >/dev/null
+grep -F "test(adl_gws_native)" <<<"$native_gws_library_surfaces_expression" >/dev/null
 
 aws_remote_validation_bin_changed="$TMP/aws-remote-validation-bin-changed.txt"
 printf 'M\tadl/src/bin/adl_aws_remote_validation.rs\n' >"$aws_remote_validation_bin_changed"

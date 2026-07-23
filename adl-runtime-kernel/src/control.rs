@@ -11,7 +11,10 @@ use std::{
 use async_trait::async_trait;
 use axum::{
     body::Bytes,
-    extract::State,
+    extract::{
+        ws::{close_code, CloseFrame, Message, WebSocket, WebSocketUpgrade},
+        State,
+    },
     http::{header, HeaderMap, HeaderValue, StatusCode},
     response::{IntoResponse, Response},
     routing::{get, post},
@@ -36,15 +39,28 @@ pub const OBSERVATORY_FEED_SCHEMA: &str = "adl.runtime_v3.observatory_feed.v2";
 pub const DEFAULT_CONTROL_API_PORT: u16 = 20_997;
 pub const MAX_SHUTDOWN_GRACE_MILLIS: u64 = 60_000;
 pub const CONTROL_API_SHUTDOWN_GRACE: Duration = Duration::from_secs(2);
+pub const OBSERVATORY_WS_PATH: &str = "/v1/observatory/ws";
+pub const OBSERVATORY_WS_AUTH_SCHEMA: &str = "adl.runtime_v3.observatory_ws_auth.v1";
+pub const MAX_OBSERVATORY_WS_FRAME_BYTES: usize = 64 * 1024;
+const OBSERVATORY_WS_AUTH_TIMEOUT: Duration = Duration::from_secs(5);
+const OBSERVATORY_WS_REFRESH: Duration = Duration::from_secs(1);
 
-pub fn control_ready_event(instance_id: &str, address: SocketAddr) -> String {
+pub fn control_ready_event(
+    instance_id: &str,
+    address: SocketAddr,
+    public_base_url: &str,
+) -> String {
     assert!(
         is_safe_identifier(instance_id),
         "runtime instance id must be bounded"
     );
+    assert!(
+        is_safe_https_base(public_base_url),
+        "runtime public base URL must be bounded HTTPS"
+    );
     format!(
-        "adl_event schema=adl.runtime.instance.v1 event=control_ready instance_id={instance_id} port={}",
-        address.port()
+        "adl_event schema=adl.runtime.instance.v1 event=control_ready instance_id={instance_id} port={} public_base_url={public_base_url}",
+        address.port(),
     )
 }
 
@@ -260,6 +276,7 @@ pub struct ControlService<C> {
     observatory_allowed_origins: BTreeSet<String>,
     agent_population: AgentPopulationFeed,
     control_addr: Mutex<SocketAddr>,
+    public_base_url: Mutex<String>,
     canonical_ingress: Option<CanonicalIngress>,
 }
 
@@ -334,6 +351,7 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
             observatory_allowed_origins,
             agent_population,
             control_addr: Mutex::new(SocketAddr::from(([127, 0, 0, 1], DEFAULT_CONTROL_API_PORT))),
+            public_base_url: Mutex::new(format!("https://localhost:{DEFAULT_CONTROL_API_PORT}")),
             canonical_ingress: None,
         }
     }
@@ -407,11 +425,36 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
         )
     }
 
+    fn observatory_token_authorized(&self, token: &str) -> bool {
+        let Some(expected) = *self
+            .observatory_bearer_digest
+            .lock()
+            .expect("observatory credential mutex poisoned")
+        else {
+            return false;
+        };
+        constant_time_eq(
+            expected.as_bytes(),
+            blake3::hash(token.as_bytes()).as_bytes(),
+        )
+    }
+
     pub fn set_control_addr(&self, address: SocketAddr) {
         *self
             .control_addr
             .lock()
             .expect("control address mutex poisoned") = address;
+    }
+
+    pub fn set_public_base_url(&self, public_base_url: &str) -> Result<(), ControlError> {
+        if !is_safe_https_base(public_base_url) {
+            return Err(ControlError::InvalidBounds);
+        }
+        *self
+            .public_base_url
+            .lock()
+            .expect("public base URL mutex poisoned") = public_base_url.to_owned();
+        Ok(())
     }
 
     pub async fn close_admission_and_drain(&self, deadline: Duration) -> Result<(), IngressError> {
@@ -483,7 +526,13 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
                     .lock()
                     .expect("control address mutex poisoned")
                     .port(),
+                public_base_url: self
+                    .public_base_url
+                    .lock()
+                    .expect("public base URL mutex poisoned")
+                    .clone(),
                 read_endpoint: "/v1/observatory".to_owned(),
+                websocket_endpoint: OBSERVATORY_WS_PATH.to_owned(),
                 signed_command_endpoint: "/v1/control".to_owned(),
                 signed_commands_required_for_mutation: true,
                 bearer_token_required_for_read: true,
@@ -662,7 +711,9 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ObservatoryControlFeed {
     pub port: u16,
+    pub public_base_url: String,
     pub read_endpoint: String,
+    pub websocket_endpoint: String,
     pub signed_command_endpoint: String,
     pub signed_commands_required_for_mutation: bool,
     pub bearer_token_required_for_read: bool,
@@ -831,6 +882,7 @@ where
             "/v1/observatory",
             get(observatory_feed_handler::<C>).options(observatory_preflight_handler::<C>),
         )
+        .route(OBSERVATORY_WS_PATH, get(observatory_ws_handler::<C>))
         .route("/v1/control", post(control_handler::<C>))
         .with_state(service);
     let handle = axum_server::Handle::new();
@@ -866,6 +918,9 @@ async fn observatory_feed_handler<C: LifecycleControl + 'static>(
     headers: HeaderMap,
 ) -> Response {
     let allowed_origin = allowed_origin(&service, &headers);
+    if headers.contains_key(header::ORIGIN) && allowed_origin.is_none() {
+        return StatusCode::FORBIDDEN.into_response();
+    }
     if !service.observatory_authorized(&headers) {
         return observatory_json(
             StatusCode::UNAUTHORIZED,
@@ -877,6 +932,92 @@ async fn observatory_feed_handler<C: LifecycleControl + 'static>(
         );
     }
     observatory_json(StatusCode::OK, service.observatory_feed(), allowed_origin)
+}
+
+async fn observatory_ws_handler<C: LifecycleControl + 'static>(
+    ws: WebSocketUpgrade,
+    State(service): State<Arc<ControlService<C>>>,
+    headers: HeaderMap,
+) -> Response {
+    if allowed_origin(&service, &headers).is_none() {
+        return StatusCode::FORBIDDEN.into_response();
+    }
+    ws.max_frame_size(MAX_OBSERVATORY_WS_FRAME_BYTES)
+        .max_message_size(MAX_OBSERVATORY_WS_FRAME_BYTES)
+        .on_upgrade(move |socket| observatory_ws_session(socket, service))
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ObservatoryWsAuth {
+    schema: String,
+    bearer_token: String,
+}
+
+async fn observatory_ws_session<C: LifecycleControl + 'static>(
+    mut socket: WebSocket,
+    service: Arc<ControlService<C>>,
+) {
+    let authenticated = tokio::time::timeout(OBSERVATORY_WS_AUTH_TIMEOUT, socket.recv()).await;
+    let bearer_token = match authenticated {
+        Ok(Some(Ok(Message::Text(payload)))) if payload.len() <= MAX_OBSERVATORY_WS_FRAME_BYTES => {
+            serde_json::from_str::<ObservatoryWsAuth>(&payload)
+                .ok()
+                .filter(|auth| auth.schema == OBSERVATORY_WS_AUTH_SCHEMA)
+                .and_then(|auth| {
+                    service
+                        .observatory_token_authorized(&auth.bearer_token)
+                        .then_some(auth.bearer_token)
+                })
+        }
+        _ => None,
+    };
+    let Some(bearer_token) = bearer_token else {
+        let _ = socket
+            .send(Message::Close(Some(CloseFrame {
+                code: close_code::POLICY,
+                reason: "authentication_failed".into(),
+            })))
+            .await;
+        return;
+    };
+
+    let mut refresh = tokio::time::interval(OBSERVATORY_WS_REFRESH);
+    loop {
+        tokio::select! {
+            _ = refresh.tick() => {
+                if !service.observatory_token_authorized(&bearer_token) {
+                    let _ = socket.send(Message::Close(Some(CloseFrame {
+                        code: close_code::POLICY,
+                        reason: "credential_revoked".into(),
+                    }))).await;
+                    break;
+                }
+                let Ok(payload) = serde_json::to_string(&service.observatory_feed()) else {
+                    break;
+                };
+                if socket.send(Message::Text(payload.into())).await.is_err() {
+                    break;
+                }
+            }
+            message = socket.recv() => match message {
+                Some(Ok(Message::Ping(payload))) => {
+                    if socket.send(Message::Pong(payload)).await.is_err() {
+                        break;
+                    }
+                }
+                Some(Ok(Message::Pong(_))) => {}
+                Some(Ok(Message::Close(_))) | None => break,
+                Some(Ok(Message::Text(_))) | Some(Ok(Message::Binary(_))) | Some(Err(_)) => {
+                    let _ = socket.send(Message::Close(Some(CloseFrame {
+                        code: close_code::POLICY,
+                        reason: "read_only_observatory".into(),
+                    }))).await;
+                    break;
+                }
+            }
+        }
+    }
 }
 
 async fn observatory_preflight_handler<C: LifecycleControl + 'static>(
@@ -1061,6 +1202,13 @@ fn is_safe_identifier(value: &str) -> bool {
         && value
             .bytes()
             .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b':' | b'_' | b'-'))
+}
+
+fn is_safe_https_base(value: &str) -> bool {
+    value.starts_with("https://")
+        && value.len() <= 2_048
+        && !value.ends_with('/')
+        && !value.contains(['\r', '\n', '\t', ' ', '?', '#'])
 }
 
 fn is_correlation_id(value: &str) -> bool {

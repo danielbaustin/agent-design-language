@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -53,22 +53,32 @@ Made each run-target schema branch require the corresponding non-null string or 
     "purpose": "Prove the six-primitives language model, strict parsing and schema alignment, semantic diagnostics, canonical ordering, #5337 corpus mapping, dependency boundary, LoC budgets, and latency budget.",
     "outcome": "passed",
     "evidence_ref": "Focused: 9 tests passed. Quality: strict Clippy passed. Parity: 3 mapped corpus tests passed. Budgets: 637 implementation lines, 254 test lines, exact five-dependency COTS set, no forbidden dependency family, warm all-target validation 0 seconds. git diff --check passed."
+  },
+  {
+    "command": [
+      "csdlc-validate",
+      "--request",
+      ".csdlc/prepared/issues/5339/validate-implementation.json"
+    ],
+    "purpose": "Prove focused tests, strict Clippy, characterization parity, dependency/LoC/latency budgets, and diff hygiene on the actual merged commit.",
+    "outcome": "passed",
+    "evidence_ref": "Merge commit 860aa9f18946a2cd9407b610d5c00d44ddc89053; typed PVF disposition local_pass with all four lanes passed. Retained logs: .csdlc/evidence/5339/post-merge/."
   }
 ]
 
 ## Integration
 
-pr_open
+merged
 
 ## Publication
 
-Publication: ready
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

@@ -1,0 +1,23 @@
+{
+  "issue": 5615,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "d6b41d50fc6a57cbb7be15361ee01227d091b9c065be10a0180711f44e11d04e",
+  "claim_id": "claim-5615-csdlc-ci-fastwork-routing",
+  "actor": "codex:5615-owner",
+  "reason": "Record the bounded GitHub workflow expression repair found by exact hosted parsing.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Initialize the standalone C-SDLC v2 external Cargo root inside a run step using RUNNER_TEMP and export it through GITHUB_ENV.",
+    "changes": [
+      "Remove the invalid runner.temp expression from job-level env",
+      "Create the external Cargo root in the preparation step from RUNNER_TEMP",
+      "Export ADL_CARGO_BUILD_ROOT through GITHUB_ENV for later steps",
+      "Add a contract rejecting runner.temp at standalone job scope"
+    ],
+    "artifacts": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ]
+  }
+}

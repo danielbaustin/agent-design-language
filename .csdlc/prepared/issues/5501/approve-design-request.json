@@ -1,0 +1,7 @@
+{
+  "issue": 5501,
+  "expected_generation": 0,
+  "expected_digest": "695bd5f167d0ac2e79870a3268795d9a7229582d46389eff401893faad76badf",
+  "claim_id": "claim-5501-v0918-live-workcell-proof-preparation",
+  "reviewer": "codex-subagent:gpt-5.4-mini:019f8650-2547-7822-bf4d-863f36428162"
+}

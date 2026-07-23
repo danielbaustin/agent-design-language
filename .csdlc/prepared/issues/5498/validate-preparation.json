@@ -1,0 +1,101 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "typed-doctor",
+        "proof_role": "Typed lifecycle and six-card consistency for #5498 preparation",
+        "purpose": "Verify the bound #5498 record and native six-card projection are doctor-clean",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation-local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "bash",
+        "argv": [".csdlc/prepared/issues/5498/run-typed-doctor.sh"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "preparation-contract",
+        "proof_role": "Complete issue-specific cards, design, dependency, path, COTS, budget, privacy, and no-product-change proof",
+        "purpose": "Verify all six cards, preparation-only claim, truthful waiting gates, and zero product changes",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation-local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5498/validate-preparation.rb"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "dependency-gate",
+        "proof_role": "Live merge dependency, adjacent path confirmation, and ancestry gate",
+        "purpose": "Fail closed until #5499 and #5349 are live-merged into origin/main with dependency revisions ancestral to the execution base and adjacent owner confirmations; retained receipts are audit-only",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "future-adapter",
+        "release_gate": "optional",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5498/check-dependencies.rb"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "task-adapter-contract",
+        "proof_role": "Offline focused adapter tests and strict Clippy after dependency admission",
+        "purpose": "Retain the future product lane without selecting it during preparation",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 2, "memory_mib": 512, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": ["dependency-gate"],
+        "parallel_group": "future-adapter",
+        "release_gate": "optional",
+        "execution": "local",
+        "timeout_seconds": 180,
+        "executable": "bash",
+        "argv": [".csdlc/prepared/issues/5498/validate-task-adapter.sh"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "diff-hygiene",
+        "proof_role": "Preparation patch hygiene and issue-local scope",
+        "purpose": "Verify the committed #5498 preparation patch is issue-local and whitespace-clean",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation-local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "bash",
+        "argv": [".csdlc/prepared/issues/5498/check-preparation-diff.sh"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["typed-doctor", "preparation-contract", "diff-hygiene"],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {"max_parallel": 3, "cpu_units": 4, "memory_mib": 768, "tokens": 0},
+  "root": ".",
+  "evidence_dir": ".csdlc/prepared/issues/5498/validation/preparation",
+  "cancellation_file": null
+}

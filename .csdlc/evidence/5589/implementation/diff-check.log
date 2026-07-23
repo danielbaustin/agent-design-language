@@ -1,0 +1,2 @@
+2026-07-21 current-main integrated validation: PASS
+command=git diff --check

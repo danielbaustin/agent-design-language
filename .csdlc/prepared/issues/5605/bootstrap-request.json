@@ -1,0 +1,216 @@
+{
+  "issue": 5605,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5605/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5605/diagram.mmd",
+  "design_reviewer": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "design_approved": true,
+  "claim": {
+    "id": "csdlc-issue-5605-20260722t190651z",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784742411,
+    "expires_unix_seconds": 1784828811,
+    "heartbeat_unix_seconds": 1784748048,
+    "branch": "codex/5605-v0-91-8-podcast-revive-ai-agent-podcast-weekly-cadence",
+    "worktree": ".",
+    "protected_paths": [
+      "docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/README.md",
+      "docs/milestones/v0.91.8/review/README.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/README.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_LAUNCH_READINESS_5605.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_TOPIC_SLATE_5605.md",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md"
+    ],
+    "purpose": "Prepare AI agent podcast weekly launch readiness docs without publishing live hosting"
+  },
+  "initial": {
+    "title": "[v0.91.8][podcast][planning] Revive AI agent podcast weekly cadence",
+    "slug": "v0-91-8-podcast-revive-ai-agent-podcast-weekly-cadence",
+    "version": "v0.91.8",
+    "goal": "Revive the earlier AI agent podcast work into a weekly launch-readiness plan for the week of July 27, 2026.",
+    "required_outcome": "Tracked v0.91.8 planning docs identify old podcast evidence, the `agent-logic.ai/podcast` launch requirements, studio workflow, first ten topics, and non-claims before future implementation.",
+    "declared_scope": [
+      "v0.91.8 podcast feature planning",
+      "v0.91.8 review packet for #5605",
+      "v0.91.8 demo/proof coverage references"
+    ],
+    "authority_boundary": [
+      "Issue #5605 owns planning and launch-readiness docs only",
+      "No website deployment, RSS publication, audio rendering, guest outreach, or live cadence claim in this issue"
+    ],
+    "task_boundary": "Create and validate podcast revival planning artifacts for future launch execution.",
+    "deliverables": [
+      "Podcast studio feature plan",
+      "Launch-readiness packet for `agent-logic.ai/podcast`",
+      "First ten-topic slate",
+      "v0.91.8 feature/review/demo/proof index links"
+    ],
+    "acceptance_criteria": [
+      "AC-1: old v0.91.1/v0.91.3 podcast artifacts are inventoried as historical evidence, not live proof",
+      "AC-2: `agent-logic.ai/podcast` route, page, archive, feed, studio, and launch gates are specified",
+      "AC-3: first ten weekly topics are documented with a non-geeky audience posture and week-two DeepSeek invitation option",
+      "AC-4: v0.91.8 feature, review, demo, and proof indexes link the new planning surfaces",
+      "AC-5: validation proves referenced paths exist, stale host paths/secrets are absent, old packet demo still passes, and bounded review is clean"
+    ],
+    "dependencies": [
+      "Historical podcast demos and packets from v0.91.1 and v0.91.3",
+      "Future agent-logic.ai website execution issue for live route deployment"
+    ],
+    "repo_inputs": [
+      "demos/v0.91.1/multiagent_podcast_pilot_demo.md",
+      "demos/v0.91.1/multiagent_podcast_audio_demo.md",
+      "adl/tools/demo_v0911_multiagent_podcast_pilot.sh",
+      "adl/tools/demo_v0911_multiagent_podcast_audio.sh",
+      "adl/tools/demo_v0913_podcast_studio_v2.sh",
+      "adl/tools/generate_podcast_studio_v2_packet.py",
+      "docs/milestones/v0.91.3/review/podcast_studio_v2/",
+      "demos/v0.91.3/adl_podcast_studio_v2_episode_card.html"
+    ],
+    "non_goals": [
+      "No live `agent-logic.ai/podcast` deployment",
+      "No RSS feed publication",
+      "No new audio production",
+      "No guest outreach or representation that a guest has accepted",
+      "No durable weekly cadence claim"
+    ],
+    "plan_summary": "Inventory prior podcast evidence, author launch-readiness and topic-planning docs, update v0.91.8 indexes, validate, review, and publish.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Inventory old podcast evidence and current non-claims",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-1"
+        ]
+      },
+      {
+        "id": "S2",
+        "action": "Author launch-readiness, hosting, studio workflow, and topic-slate docs",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3"
+        ]
+      },
+      {
+        "id": "S3",
+        "action": "Link v0.91.8 indexes and record proof boundaries",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-4"
+        ]
+      },
+      {
+        "id": "S4",
+        "action": "Run focused validation, bounded review, publish, and close out truthfully",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-5"
+        ]
+      }
+    ],
+    "risks": [
+      "Overclaiming a live public podcast before the website route and feed exist",
+      "Treating historical demo packets as current production proof"
+    ],
+    "invariants": [
+      "Historical proof stays labeled historical",
+      "No secrets, absolute host paths, or provider credentials in planning artifacts",
+      "Future launch gates remain explicit and fail closed"
+    ],
+    "stop_conditions": [
+      "Any request to publish live web/audio/RSS surfaces inside #5605",
+      "Any need for provider credentials, AWS, or external guest outreach"
+    ],
+    "review_prompts": [
+      "Do the docs avoid claiming the podcast is already live or operating weekly?",
+      "Are the prior podcast artifacts linked as historical evidence with truthful proof boundaries?",
+      "Are launch gates and future implementation requirements complete enough for next-week execution?"
+    ],
+    "operator_constraints": [
+      "Use repo tools only",
+      "Typed C-SDLC v2 only",
+      "No main edits",
+      "Planning only; no publication/live hosting claim"
+    ],
+    "review_scope": "Podcast planning docs and v0.91.8 index updates for #5605",
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "referenced-path-check",
+        "proof_role": "Prove all launch-readiness references point to tracked repo surfaces",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "docs",
+        "budget_seconds": 60,
+        "budget_tokens": 500,
+        "argv": [
+          "bash",
+          "-lc",
+          "test referenced podcast paths exist"
+        ],
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ]
+      },
+      {
+        "lane": "old-podcast-demo-regression",
+        "proof_role": "Prove the existing v0.91.3 podcast packet generator still works",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "docs",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": [
+          "bash",
+          "adl/tools/demo_v0913_podcast_studio_v2.sh"
+        ],
+        "acceptance_ids": [
+          "AC-1"
+        ]
+      },
+      {
+        "lane": "old-podcast-packet-test",
+        "proof_role": "Prove the existing v0.91.3 podcast packet contract remains deterministic",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "docs",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": [
+          "bash",
+          "adl/tools/test_podcast_studio_v2_packet.sh"
+        ],
+        "acceptance_ids": [
+          "AC-1",
+          "AC-5"
+        ]
+      },
+      {
+        "lane": "redaction-and-diff-check",
+        "proof_role": "Prove docs contain no secrets or host paths and pass whitespace diff checks",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "docs",
+        "budget_seconds": 60,
+        "budget_tokens": 500,
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "acceptance_ids": [
+          "AC-3",
+          "AC-5"
+        ]
+      }
+    ],
+    "failure_policy": "Fail closed if any referenced evidence path is missing, any artifact overclaims live publication, or bounded review finds actionable issues."
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5589,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][runtime-v3][parity-c] Replace degraded governed operations adapters",
+    "slug": "v0-91-8-runtime-v3-parity-c-governed-operations",
+    "version": "v0.91.8",
+    "generation": 20
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Complete and validate preparation truth; wait for #5591 clean reviewed contract and claim narrowing; amend to the smallest disjoint product paths; implement production governed-operation and private-continuity adapters; prove all positive and negative outcomes live at one revision; delete placeholders within budget; exact-review and publish only after every gate is green.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Prepare all six cards, design, diagram, adapter/authority matrix, complete proof contract, and disjoint preparation claim without product edits",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Verify #5591 has a current clean reviewed Parity-A contract, pin its exact accepted revision, confirm its claim is narrowed or released, and use typed csdlc-bind to add only collision-free #5589 product paths",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-8"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Implement production governance, Freedom Gate/AEE, delegation, resources, cancellation, agent, Shepherd, scheduler, provider, and governed-tool adapters behind the reviewed kernel contracts",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S4",
+          "action": "Implement identity-scoped memory/private state, qualified Chronosense time, authenticated checkpoint, non-authoritative lifelog, shutdown, and restart recovery adapters",
+          "acceptance_ids": [
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S5",
+          "action": "Run live multi-agent/provider/scheduler/tool positive proof and governance, delegation, cancellation, identity, time, continuity, provider, and shutdown negative proof against a configured initialized kernel",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S6",
+          "action": "Delete or consolidate degraded and duplicate placeholders, prove zero fixture/degraded parity credit, inventory maintained COTS use, and satisfy exact source/test budgets",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-8"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S7",
+          "action": "Run every release-gating PVF lane at one clean committed revision, obtain bounded subagent review, fix all actionable findings, revalidate, and only then prepare publication",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "no product implementation before current clean #5591 review truth and collision-free typed claim authority",
+        "governance and current revocation are checked before every actuation and recovery dispatch",
+        "delegation attenuates and resources, cancellation, retry, and idempotency remain bounded",
+        "provider and tool output never grants authority",
+        "citizen identity controls private state across provider sessions and restart",
+        "qualified time is monotonic and participates in authority and continuity decisions",
+        "checkpoint is the sole recovery authority and lifelog is observational only",
+        "DegradedOperationExecutor and fixtures always receive zero parity credit",
+        "no secrets, credentials, prompts, machine-local paths, or private state appear in retained evidence",
+        "all acceptance is live-process, exact-revision, non-deferred, reviewed, and green"
+      ],
+      "risks": [
+        "#5591 implementation commits may be mistaken for a clean reviewed contract despite absent typed review truth",
+        "broad #5591 parent-path claims may make a product claim collision unavoidable",
+        "passive governance metadata may be mistaken for gate-before-actuation",
+        "test executors or canned provider output may be mistaken for production adapters",
+        "scheduler retry or recovery may duplicate a side effect after cancellation or revocation",
+        "provider/session identifiers may accidentally become identity authority",
+        "lifelog may be misused as restore state or disclose private content",
+        "budget pressure may encourage retaining degraded placeholders or weakening proof"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 43200,
+        "total_tokens": 140000,
+        "validation_seconds": 7200
+      },
+      "stop_conditions": [
+        "#5591 lacks a current clean typed review record with no actionable findings",
+        "#5591 contract revision is not pinned or changes after #5589 implementation begins",
+        "typed claim amendment reports overlap with #5591, #5592, #5590, or another active issue",
+        "any adapter remains DegradedOperationExecutor-backed or only fixture/mock/metadata/library evidence is available",
+        "any required positive, negative, continuity, shutdown, budget, or exact-revision lane is skipped, deferred, degraded, nondeterministic, or failing",
+        "completion would require AWS, Runtime v2 edits, credentials in evidence, cutover/default switch, or scope owned by another parity lane"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5589/design.md",
+      "design_digest": "6c6bae9d4a320b3f50953784a0309f60f293b8ad88da3f43c2fa96ca4a240a5e",
+      "diagram_ref": ".csdlc/prepared/issues/5589/diagram.mmd",
+      "diagram_digest": "e5be41e90e1c13f1219b5f928fdc06c27add29c0f0818e6c8c7b7ac031c84760"
+    }
+  }
+}

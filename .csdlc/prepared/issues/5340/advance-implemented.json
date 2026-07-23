@@ -1,0 +1,11 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 21,
+  "expected_digest": "96721a6b4d0191935cfa11bba14ccb672df3e17faf7ad811825484b21e66f2db",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "The bounded engine implementation and every pre-review FastWork acceptance lane are complete with retained evidence; advance to implemented for exact-revision review.",
+  "operation": {"operation": "advance_phase", "phase": "implemented"},
+  "fail_after_backup": false
+}

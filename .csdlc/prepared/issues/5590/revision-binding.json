@@ -1,0 +1,21 @@
+{
+  "schema": "adl.runtime_v3.parity_d.preparation_revision_binding.v1",
+  "issue": 5590,
+  "exact_base": "6d0f6115632a06619544b8ad4792792e741f1f31",
+  "first_reviewed_head": "2f26da4455efd4dfc7ab6c65df5d19327fe765c8",
+  "substantive_repair_head": "f2eda77cf6a36d9a07d7d64041d8eae99b18239b",
+  "range_proof": {
+    "range": "6d0f6115632a06619544b8ad4792792e741f1f31..f2eda77cf6a36d9a07d7d64041d8eae99b18239b",
+    "changed_path_inventory": ".csdlc/prepared/issues/5590/revision-scope-inventory.txt",
+    "inventory_match": "exact",
+    "requires_non_empty_range": true,
+    "requires_range_bound_diff_check": true
+  },
+  "boundaries": {
+    "substantive": "The exact base-through-f2eda77 range contains the complete #5590 preparation packet and all five first-round finding repairs.",
+    "evidence_only": "A descendant commit may add or refresh only #5590 revision-binding, range-verifier, inventory, validation-manifest, validator, and retained preparation evidence needed to repair this proof. It does not change cards, design, product behavior, or publication truth. Its exact head is the re-review target reported after push."
+  },
+  "supersedes": ".csdlc/evidence/5590/preparation/diff-hygiene.log, which checked an unscoped working-tree diff and is retained only as historical evidence",
+  "repair_requirement": "Every repair and re-review revision must descend from substantive_repair_head",
+  "scope": "Preparation-only issue records, design, diagram, matrix, executable guard contracts, and retained validation evidence"
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "adl.csdlc_v2.issue_validation.v1",
+  "issue": 5624,
+  "revision": "380a9eab1de47ae6e8a807377f8b0d7e5691e83d",
+  "result": "passed",
+  "build_root": "/Volumes/FastWork/adl-5624-cargo-target",
+  "proof": [
+    {
+      "lane": "focused_prune_guard",
+      "result": "passed",
+      "tests": "3 passed"
+    },
+    {
+      "lane": "command_level_issue_local_prune",
+      "result": "passed",
+      "tests": "1 passed"
+    },
+    {
+      "lane": "csdlc_v2_all_targets",
+      "result": "passed",
+      "tests": "all targets passed"
+    },
+    {
+      "lane": "format",
+      "result": "passed"
+    },
+    {
+      "lane": "strict_clippy_all_targets",
+      "result": "passed"
+    }
+  ],
+  "invariants": [
+    "terminal receipt bytes remain unchanged during prune validation",
+    "issue-local dot, exact absolute, and repository-relative worktree identities resolve to one canonical path",
+    "malformed, missing, dirty, wrong-branch, and wrong-checkout targets fail closed as unsafe_checkout"
+  ]
+}

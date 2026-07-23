@@ -1,0 +1,2 @@
+2026-07-21 current-main integrated validation: PASS
+command=CARGO_TARGET_DIR=/Volumes/FastWork/adl-5589/post-merge-clippy cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings

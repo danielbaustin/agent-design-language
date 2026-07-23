@@ -1,0 +1,18 @@
+{
+  "issue": 5627,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "a27f7ff0b1c3ff78619160e113cc616b444852b1f70068d49e7222a6eac31383",
+  "claim_id": "claim-5627-csdlc-four-command-lifecycle",
+  "actor": "codex:issue-5627-slot-4",
+  "reason": "Record the exact hosted-CI installer repair proof without another review cycle.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--locked", "--manifest-path", "csdlc-v2/Cargo.toml", "--test", "gate10a"],
+      "purpose": "Prove installer provenance, tamper rejection, stable binary execution, and that CI tests reuse prebuilt artifacts without nested Cargo builds.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5627/ci-repair.json"
+    }
+  }
+}

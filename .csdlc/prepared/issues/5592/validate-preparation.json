@@ -1,0 +1,101 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "typed-doctor",
+        "proof_role": "Typed lifecycle and six-card structural truth",
+        "purpose": "Prove the bound #5592 preparation record is internally consistent",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/env",
+        "argv": [".adl/bin/csdlc-v2/csdlc-doctor", "--repo", ".", "--issue", "5592"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "complete-card-contract",
+        "proof_role": "Complete Parity-B outcome, boundary, and implementation-stop proof",
+        "purpose": "Prove six-card AC/step/lane coverage, current template authority, safe affect boundaries, exact issue source, live-kernel terms, disjoint claim, and zero product edits",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/env",
+        "argv": ["ruby", ".csdlc/prepared/issues/5592/validate_preparation.rb"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "diff-hygiene",
+        "proof_role": "Preparation patch hygiene",
+        "purpose": "Prove the #5592 preparation packet has no whitespace errors",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/env",
+        "argv": ["git", "diff", "--check"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "exact-future-live-test-contract",
+        "proof_role": "Exact future live-test inventory and zero-match rejection",
+        "purpose": "Prove exact identities are accepted while the legacy metadata substring earns no live-kernel credit",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/env",
+        "argv": ["ruby", ".csdlc/prepared/issues/5592/run_exact_live_test_lane.rb", "--self-test"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "base-to-final-head-scope",
+        "proof_role": "Explicit base-to-final-head path and diff proof",
+        "purpose": "Prove the exact 6d0f6115 base through reviewed content head 44c36edd6 changes only the claimed #5592 preparation surfaces",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/env",
+        "argv": ["ruby", ".csdlc/prepared/issues/5592/validate_range_scope.rb", "44c36edd600c24a651d332e9f4cd61f0f3df19e2"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["typed-doctor", "complete-card-contract", "diff-hygiene", "exact-future-live-test-contract", "base-to-final-head-scope"],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {"max_parallel": 5, "cpu_units": 5, "memory_mib": 640, "tokens": 0},
+  "root": ".",
+  "evidence_dir": ".csdlc/prepared/issues/5592/evidence/preparation",
+  "cancellation_file": null
+}

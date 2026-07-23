@@ -1,0 +1,12 @@
+{
+  "issue": 5590,
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "expected_generation": 12,
+  "expected_digest": "f7166e3a7b373c3d638f12657f4509cb50cad5e86fdd9c511203e72e95c77ab2",
+  "now_unix_seconds": 1784729000,
+  "actor": "codex:5590-sole-writer-takeover",
+  "reason": "Add one black-box guardian CLI integration test required to lift the newly mapped guardian binary above the changed-source coverage threshold after exact review found it at 0/135 and focused proof reached only 87/135.",
+  "add_protected_paths": [
+    "adl-runtime/tests/guardian_cli.rs"
+  ]
+}

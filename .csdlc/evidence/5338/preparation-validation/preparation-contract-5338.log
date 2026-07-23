@@ -1,0 +1,1 @@
+{"schema":"adl.csdlc.preparation-proof.v1","issue":5338,"checks":["dependency gate","implementation budget","test budget","FastWork build boundary","no Runtime v2 authority","stable identity","COTS decision"],"outcome":"passed"}

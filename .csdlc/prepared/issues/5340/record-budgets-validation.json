@@ -1,0 +1,19 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 17,
+  "expected_digest": "9728d0019d11b93b41d31b3ef5f7c02cef8f1d2969ac3e6a6a7105a1e262cefb",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record the implementation, fixture, resource, dependency, and authority budget proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", ".csdlc/prepared/issues/5340/validate-engine.sh", "budgets"],
+      "purpose": "Prove the engine stays within 4,000 implementation LoC and 3,500 test/fixture LoC, preserves exact COTS pins and sole-writer scope, and completes under the declared bounded validation budgets.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-budgets/engine-budgets.log: implementation_lines=1876; test_fixture_lines=1204; unbudgeted_code=[]; substantive commit c2f4e072b8049daa68b18e1d917b57747864b6b7"
+    }
+  },
+  "fail_after_backup": false
+}

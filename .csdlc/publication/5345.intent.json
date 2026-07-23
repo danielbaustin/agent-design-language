@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5345,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5345-v0918-wp10-thin-cli-selector",
+  "title": "[v0.91.8][WP-10] Implement thin ADL CLI and authoritative selector",
+  "body": "Implements #5345. Adds the thin Rust ADL v2 CLI, records signing and verification adapters, atomic generation selector, verified rollback, and stable installer proof.\n\nValidation: focused cargo tests, strict Clippy, preparation/implementation gates, and installer-selector integration lane.",
+  "draft": true,
+  "revision": "git-blake3:2b17be0a22c99cbc32bcf91583c923ca04b5dd4a:0c7bc971f6ce4ef189431b1bc8551ba229edc5c0e0c331c9c4bedc9a63bff49f",
+  "commit_sha": "2b17be0a22c99cbc32bcf91583c923ca04b5dd4a"
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.ready_publication_request.v1",
+  "issue": 5615,
+  "expected_generation": 12,
+  "expected_digest": "ab9638f91032214fd32acf146d540ef0d1cb2e086835100846ce3a26f9c5eafc",
+  "claim_id": "claim-5615-csdlc-ci-fastwork-routing",
+  "actor": "codex:5615-owner",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5622,
+  "expected_head_sha": "019bb7f62cea886c65daec6cfed24776bbc3919f",
+  "token_file": "/Users/daniel/keys/github.token"
+}

@@ -299,6 +299,47 @@ fn assignment_and_recording_update_index_and_srp_without_publication_side_effect
 }
 
 #[test]
+fn direct_exact_review_records_and_advances_without_assignment() {
+    let (_temp, store, record) = implemented_fixture();
+    assert!(record.review_assignment.is_none());
+    let revision = csdlc_v2::git::substantive_revision(store.root(), &["src".into()])
+        .expect("exact scoped revision");
+    let before = std::fs::read(store.issue_dir(7).join("index.json")).expect("before");
+    let mut stale = ReviewRecordRequest {
+        issue: 7,
+        expected_generation: record.generation,
+        expected_digest: record.digest.clone(),
+        claim_id: "claim".into(),
+        actor: "reviewer".into(),
+        evidence: ReviewEvidence {
+            reviewer: "reviewer".into(),
+            scope: vec!["src".into()],
+            reviewed_revision: "git-blake3:stale:stale".into(),
+            findings: vec![],
+            residual_risks: vec![],
+            completed: true,
+            non_substantive_proof: None,
+        },
+    };
+    assert_eq!(
+        record_review(&store, stale.clone()).unwrap_err().code,
+        ErrorCode::UnsafeCheckout
+    );
+    assert_eq!(
+        std::fs::read(store.issue_dir(7).join("index.json")).expect("unchanged"),
+        before
+    );
+    stale.evidence.reviewed_revision = revision;
+    let reviewed = record_review(&store, stale).expect("direct exact review");
+    assert_eq!(reviewed.phase, LifecyclePhase::Reviewed);
+    assert!(reviewed.review_assignment.is_none());
+    assert_eq!(
+        reviewed.audit.last().expect("audit").operation,
+        "record_review"
+    );
+}
+
+#[test]
 fn dirty_substantive_tree_is_rejected_before_review_assignment() {
     let (temp, store, record) = implemented_fixture();
     std::fs::write(temp.path().join("docs/design.md"), "# changed design\n").expect("dirty");
@@ -704,7 +745,6 @@ fn typed_publication_metadata_commit_does_not_stale_review_but_source_drift_does
         (".csdlc/issues/7/cards/sor.md", "card\n"),
         (".csdlc/issues/7/cards/sor.values.json", "{}\n"),
         (".csdlc/prepared/issues/7/publication.json", "{}\n"),
-        (".csdlc/requests/7-publish.json", "{}\n"),
         (".csdlc/publication/7.intent.json", "{}\n"),
     ] {
         let target = temp.path().join(path);
@@ -715,6 +755,21 @@ fn typed_publication_metadata_commit_does_not_stale_review_but_source_drift_does
     let to = git_out(temp.path(), &["rev-parse", "HEAD"]);
     let current = csdlc_v2::git::clean_commit_revision(&to);
     assert!(evaluate_publication_review_in_repo(temp.path(), Some(&evidence), &current).ready);
+
+    std::fs::write(temp.path().join(".csdlc/requests/7-publish.json"), "{}\n")
+        .expect("obsolete tracked request");
+    git(temp.path(), &["add", ".csdlc/requests/7-publish.json"]);
+    git(
+        temp.path(),
+        &["commit", "-m", "obsolete tracked request drift"],
+    );
+    let request_drift = git_out(temp.path(), &["rev-parse", "HEAD"]);
+    let request_drift_revision = csdlc_v2::git::clean_commit_revision(&request_drift);
+    let request_report =
+        evaluate_publication_review_in_repo(temp.path(), Some(&evidence), &request_drift_revision);
+    assert!(request_report
+        .blocker_codes
+        .contains(&"review_stale".into()));
 
     std::fs::write(
         temp.path().join(".csdlc/issues/7/cards/sor.md"),

@@ -1,0 +1,177 @@
+{
+  "issue": 5615,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5615/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5615/diagram.mmd",
+  "design_reviewer": "subagent:pending-preparation-review-5615",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5615-csdlc-ci-fastwork-routing",
+    "owner": "codex:5615-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784669026,
+    "expires_unix_seconds": 1784755426,
+    "heartbeat_unix_seconds": 1784669026,
+    "branch": "codex/5615-csdlc-ci-fastwork-routing",
+    "worktree": ".",
+    "protected_paths": [
+      ".github/workflows/ci.yaml",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_select_validation_lanes.sh",
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/test_run_cargo_validation.sh",
+      ".csdlc/issues/5615",
+      ".csdlc/prepared/issues/5615",
+      ".csdlc/evidence/5615"
+    ],
+    "purpose": "Implement focused C-SDLC CI classification and portable external Cargo build routing"
+  },
+  "initial": {
+    "title": "[v0.91.8][ci][tooling] Route C-SDLC proof and FastWork builds correctly",
+    "slug": "csdlc-ci-fastwork-routing",
+    "version": "v0.91.8",
+    "goal": "Make C-SDLC-only CI proof focused, deterministic, truthful, and fast while preserving stable required checks.",
+    "required_outcome": "Lifecycle metadata, standalone C-SDLC v2 Rust, Runtime, ADL workspace, and mixed diffs select exactly their intended proof lanes, and local Cargo validation uses a declared writable external root or FastWork.",
+    "declared_scope": [
+      "Existing CI path classifier outputs and exact regression fixtures",
+      "One standalone C-SDLC v2 hosted job and stable aggregate wiring",
+      "One portable Cargo validation wrapper and focused shell contract tests",
+      "Issue-local typed lifecycle and retained validation evidence"
+    ],
+    "authority_boundary": [
+      "Issue 5615 owns only CI classification, workflow dispatch wiring, its portable validation wrapper, and issue-local records",
+      "Existing required check names and non-C-SDLC routes remain authoritative",
+      "C-SDLC v2 lifecycle semantics and Runtime behavior are outside scope"
+    ],
+    "task_boundary": "Add the smallest explicit standalone C-SDLC v2 route, preserve truthful aggregates, and provide portable external Cargo cache/target execution.",
+    "deliverables": [
+      "Metadata-only and C-SDLC v2 source/test classifier behavior",
+      "Standalone C-SDLC v2 test/fmt/Clippy job with fail-closed stable aggregation",
+      "Portable external Cargo home/target wrapper",
+      "Exact focused regressions and hosted proof"
+    ],
+    "acceptance_criteria": [
+      "AC-1: `.csdlc/**` metadata-only diffs run focused lifecycle/path/tooling proof without ADL workspace or Runtime coverage",
+      "AC-2: `csdlc-v2/**` source, manifest, and test diffs require a standalone C-SDLC v2 test/fmt/strict-Clippy job without unrelated ADL workspace or Runtime coverage",
+      "AC-3: `csdlc-v2/tests/gate7_lifecycle.rs` is an exact regression fixture for the standalone route",
+      "AC-4: Runtime, ADL workspace, and mixed diffs preserve their intended existing lanes; mixed C-SDLC v2 diffs also require standalone C-SDLC proof",
+      "AC-5: Stable `adl-ci` fails closed if selected standalone C-SDLC proof is absent, skipped, cancelled, or failed",
+      "AC-6: Stable `adl-coverage` remains truthful and existing required-check names do not change",
+      "AC-7: The local wrapper exports writable external `CARGO_HOME` and `CARGO_TARGET_DIR`, honors a declared root, otherwise prefers writable FastWork, and fails clearly without either",
+      "AC-8: Hosted CI declares its own writable runner-temporary root and has no dependency on local FastWork",
+      "AC-9: Focused tests, exact-revision review, hosted checks, post-merge proof, and typed closeout pass with no unresolved findings"
+    ],
+    "dependencies": [
+      "Issue 5613 merged terminal projections at origin/main 09c0bd1784216dbce1ad4cdebfe2d453af6e3d9d",
+      "Existing CI classifier, required aggregates, and pinned GitHub Actions"
+    ],
+    "repo_inputs": [
+      ".github/workflows/ci.yaml",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_select_validation_lanes.sh",
+      "Bash, Cargo, jq, git, and existing pinned GitHub Actions"
+    ],
+    "non_goals": [
+      "No CI architecture or validation-manager redesign",
+      "No C-SDLC v2 lifecycle implementation change",
+      "No Runtime behavior, Runtime v2, or ADL-v2 semantic change",
+      "No AWS, Spot execution, credentials, or provider access",
+      "No new Rust crate or third-party dependency"
+    ],
+    "plan_summary": "Prepare and bind; write failing route/wrapper fixtures; implement the smallest classifier, standalone job, aggregate, and wrapper changes; validate and review; publish, merge, post-merge validate, and close out.",
+    "steps": [
+      {"id":"S1","action":"Prepare, review, initialize, bind, and establish exact failing regressions","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-7"]},
+      {"id":"S2","action":"Implement focused classifier and portable wrapper behavior","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-7","AC-8"]},
+      {"id":"S3","action":"Wire the standalone job and truthful stable aggregates","status":"pending","acceptance_ids":["AC-2","AC-5","AC-6","AC-8"]},
+      {"id":"S4","action":"Run focused proof, exact-revision review, and fix every actionable finding","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8","AC-9"]},
+      {"id":"S5","action":"Publish, shepherd hosted checks, merge, post-merge validate, and close out","status":"pending","acceptance_ids":["AC-5","AC-6","AC-8","AC-9"]}
+    ],
+    "risks": [
+      "A selected standalone lane could be omitted from the stable aggregate",
+      "A mixed diff could accidentally suppress required ADL or Runtime proof",
+      "A local wrapper could silently fall back to an unwritable or repository-local Cargo home",
+      "Workflow changes could trigger their own full coverage route"
+    ],
+    "invariants": [
+      "Selected proof jobs are fail-closed in stable aggregates",
+      "No C-SDLC-only path launches unrelated ADL workspace or Runtime coverage",
+      "Existing non-C-SDLC route semantics and required-check names remain",
+      "Hosted CI never depends on `/Volumes/FastWork`"
+    ],
+    "stop_conditions": [
+      "Any active protected-path collision",
+      "Any need to alter Runtime behavior, C-SDLC lifecycle semantics, or ADL-v2 semantics",
+      "Any need for AWS, credentials, or a new dependency",
+      "Any solution requiring a CI or validation-manager redesign"
+    ],
+    "review_prompts": [
+      "Can a C-SDLC v2 source/test diff report green if its standalone job is absent or skipped?",
+      "Can metadata-only or C-SDLC-only changes launch ADL workspace or Runtime coverage?",
+      "Do mixed diffs retain every stronger pre-existing proof requirement?",
+      "Does the wrapper fail closed without a declared or writable external root?",
+      "Are stable aggregate names and semantics unchanged?"
+    ],
+    "operator_constraints": [
+      "Typed C-SDLC v2 only",
+      "Work only in `/Volumes/FastWork/adl-wp-5615`",
+      "Use external writable Cargo home and target",
+      "No raw gh, AWS, Runtime v2, or root-main edits",
+      "Keep the change small and complete"
+    ],
+    "review_scope": ".github/workflows/ci.yaml\nadl/config/validation_lane_selector.v0.91.6.json\nadl/tools/ci_path_policy.sh\nadl/tools/test_ci_path_policy.sh\nadl/tools/test_ci_runtime_contracts.sh\nadl/tools/test_select_validation_lanes.sh\nadl/tools/run_cargo_validation.sh\nadl/tools/test_run_cargo_validation.sh\n.csdlc/issues/5615\n.csdlc/prepared/issues/5615",
+    "planning_profile": "medium",
+    "validation_lanes": [
+      {
+        "lane":"ci-path-policy-contract",
+        "proof_role":"Prove exact metadata-only, C-SDLC v2 Rust, Runtime, workspace, and mixed routing",
+        "deterministic":true,
+        "resource_profile":"small",
+        "parallel_group":"ci-contracts",
+        "budget_seconds":180,
+        "budget_tokens":2000,
+        "argv":["bash","adl/tools/test_ci_path_policy.sh"],
+        "acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6"]
+      },
+      {
+        "lane":"ci-runtime-contract",
+        "proof_role":"Prove standalone job materialization, stable aggregate wiring, and unchanged required check names",
+        "deterministic":true,
+        "resource_profile":"small",
+        "parallel_group":"ci-contracts",
+        "budget_seconds":180,
+        "budget_tokens":2000,
+        "argv":["bash","adl/tools/test_ci_runtime_contracts.sh"],
+        "acceptance_ids":["AC-2","AC-5","AC-6","AC-8"]
+      },
+      {
+        "lane":"portable-cargo-wrapper",
+        "proof_role":"Prove declared external root, FastWork preference, exported Cargo state, and fail-closed refusal",
+        "deterministic":true,
+        "resource_profile":"small",
+        "parallel_group":"ci-contracts",
+        "budget_seconds":60,
+        "budget_tokens":1000,
+        "argv":["bash",".csdlc/prepared/issues/5615/validate_portable_wrapper_contract.sh"],
+        "acceptance_ids":["AC-7","AC-8"]
+      },
+      {
+        "lane":"csdlc-v2-standalone",
+        "proof_role":"Prove the actual standalone C-SDLC v2 crate with tests, formatting, and strict Clippy using external Cargo state",
+        "deterministic":true,
+        "resource_profile":"medium",
+        "parallel_group":"csdlc-v2",
+        "budget_seconds":600,
+        "budget_tokens":5000,
+        "argv":["bash",".csdlc/prepared/issues/5615/run_csdlc_v2_standalone.sh"],
+        "acceptance_ids":["AC-2","AC-3","AC-7","AC-8","AC-9"]
+      }
+    ],
+    "failure_policy": "Fail closed on ambiguous routing, missing selected standalone proof, aggregate mismatch, mixed-route suppression, unwritable external Cargo state, or focused/hosted validation failure."
+  }
+}

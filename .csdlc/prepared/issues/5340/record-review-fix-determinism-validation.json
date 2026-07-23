@@ -1,0 +1,19 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 25,
+  "expected_digest": "505a2809f04de572df478b03dcfbcdc3f088648cab0b9995030465ada206b667",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record determinism and semantic-resume proof for the exact-review repairs.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-validate", "--request", ".csdlc/prepared/issues/5340/pvf/determinism.json"],
+      "purpose": "Prove deterministic scheduling and rejection of unreachable graph states, truncated journals, and altered request identities on the sealed repair commit.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-determinism/engine-determinism.log at repair commit a87c36c4a813ed0e7d0cd3292434874d7be2bb0e"
+    }
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,8 @@
+{
+  "manifest": { "schema": "csdlc.pvf.manifest.v1", "lanes": [
+    { "id": "engine-budgets", "proof_role": "release", "purpose": "Dependency gate, exact scope and COTS, LoC measurement, and complete engine suite", "determinism": "deterministic", "resources": { "cpu_units": 4, "memory_mib": 4096, "tokens": 12000 }, "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "engine", "release_gate": "required", "execution": "local", "timeout_seconds": 600, "executable": "bash", "argv": [".csdlc/prepared/issues/5340/validate-engine-lane.sh", "budgets"], "evidence": { "max_log_bytes": 1048576, "redact_values": [], "require_relative_paths": true } }
+  ] },
+  "selection": { "requested_lanes": ["engine-budgets"], "allow_network": false, "available_credentials": [] },
+  "budget": { "max_parallel": 1, "cpu_units": 4, "memory_mib": 4096, "tokens": 12000 },
+  "root": ".", "evidence_dir": ".csdlc/evidence/5340/engine-budgets", "cancellation_file": null
+}

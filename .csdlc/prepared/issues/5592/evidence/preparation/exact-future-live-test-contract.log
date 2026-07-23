@@ -1,0 +1,2 @@
+self-test=pass zero_match=fail legacy_metadata_credit=denied exact_match=pass
+legacy metadata isolation: zero exact live-kernel test matches

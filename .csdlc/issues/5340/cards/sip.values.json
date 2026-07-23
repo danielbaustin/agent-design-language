@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5340,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-06] Implement portable bounded execution engine",
+    "slug": "v0918-wp06-portable-bounded-execution-engine",
+    "version": "v0.91.8",
+    "generation": 44
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Implement a portable deterministic engine that consumes the canonical #5338 ExecutionPlan and provides bounded scheduling, retry/failure, joins, quiescent checkpoint/resume, and typed provider/tool ports.",
+      "required_outcome": "An independent adl-engine crate proves deterministic ordering, bounded saturation, explicit failure propagation, strict resume equivalence, and typed provider/tool request-completion contracts without taking Runtime, adapter, IO, or lifecycle authority.",
+      "declared_scope": [
+        "adl-v2/crates/adl-engine portable plan-level state-machine library",
+        "deterministic ready-set, bounded dispatch, join, retry, cancellation, and failure semantics",
+        "typed provider and tool request/completion effects with stable idempotency identities",
+        "canonical quiescent checkpoint and strict resume compatibility contract",
+        "admission, queue, in-flight, attempt, byte, event, checkpoint, and logical-turn bounds",
+        "golden, negative, saturation-edge, completion-permutation, and resume-equivalence proof",
+        "issue-local lifecycle, design, validation, review, watch, and evidence records"
+      ],
+      "authority_boundary": [
+        "Issue #5340 owns only adl-v2/crates/adl-engine and issue-local C-SDLC records",
+        "The merged and retained typed closed_out #5338 ExecutionPlan API and fixtures are read-only inputs",
+        "The engine owns portable plan-level orchestration state and emits typed effects; it owns no provider/tool adapter implementation",
+        "Runtime v3 retains operational scheduling, supervision, recovery, governed service, and resource-policy authority and is not modified here",
+        "Runtime v2, C-SDLC v2, records/signing, CLI/selector, parity, cutover, deletion, release, network, filesystem, database, credentials, cloud, process, thread, wall-clock, and async-runtime authority are excluded",
+        "Incumbent ADL source, tests, and fixtures are behavioral evidence only and must not be copied, adapted, imported, linked, or changed"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use installed typed C-SDLC v2 binaries and semantic card operations only",
+        "Keep the primary checkout clean on main; do not fast-forward, merge, switch, or place #5340 artifacts there",
+        "Create and bind #5340 from fetched origin/main in the dedicated issue worktree",
+        "Do not use raw gh, AWS, Runtime v2 changes, Runtime v3 changes, credentials, or live providers",
+        "Do not implement product code until #5338 is GitHub merged and retained typed closed_out with a merged SHA that is an ancestor of #5340 HEAD",
+        "Use /Volumes/FastWork for every Cargo artifact and cache",
+        "Run bounded preparation subagent review now and mandatory exact-revision subagent code review before publication",
+        "Commit and push preparation only; open no PR while the dependency gate is closed",
+        "After the gate opens, continue automatically through implementation, validation, review, typed publication, green checks, authorized self-merge, post-merge validation, typed closeout, receipt retention, and guarded prune",
+        "Report material state changes and blockers to source task 019f4b3e-6c61-7653-957b-7a2a6042a80d"
+      ]
+    }
+  }
+}

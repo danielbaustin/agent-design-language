@@ -1,0 +1,13 @@
+{
+  "issue": 5615,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "58d617616ab9d68495ee45edbf8b5fe8340da33eb944c72ff3777cf78ea403ae",
+  "claim_id": "claim-5615-csdlc-ci-fastwork-routing",
+  "actor": "codex:5615-owner",
+  "reason": "Exact remediation review passed with zero findings after all three P1s were fixed and revalidated.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

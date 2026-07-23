@@ -1,0 +1,23 @@
+{
+  "issue": 5592,
+  "card": "stp",
+  "expected_generation": 12,
+  "expected_digest": "71123c65f8d5e4296018858de3720ae0902d37e9eb43c704ca1c13774f6a9794",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
+  "reason": "Record #5341 as a downstream consumer with no preparation authority",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "#5361 Runtime v3 acceptance umbrella",
+      "#5336 reviewed architecture, feature-ledger, and budget authority",
+      "clean reviewed #5591 Parity-A canonical ingress and continuity contract before any product implementation",
+      "typed active-claim ledger showing a collision-free narrow Parity-B product scope",
+      "#5341 is downstream of the reviewed #5591 canonical ingress and accepted #5592 graph/event contract and grants no implementation authority here",
+      "#5107 downstream adaptive-learning DAG queue boundary",
+      "retained v0.91.7 reasoning, affect, curiosity, Constructability, Godel, economics-context, and skill-standard contracts"
+    ]
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,14 @@
+{
+  "issue": 5590,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "0bd603532a9407fe0e2a9a1e87783f20c48b255df5f0f06ffc7a1fe8b0eabfca",
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "actor": "codex:5590-sole-writer-takeover",
+  "reason": "The complete Runtime v3 Parity-D scope is durably implemented and its focused, full-crate, security, rollback, and operational proofs are locally green.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,148 @@
+{
+  "issue": 5342,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5342/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5342/diagram.mmd",
+  "design_reviewer": "codex:5342-owner",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5342-v0918-wp07-records-signing",
+    "owner": "codex:5342-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784727950,
+    "expires_unix_seconds": 1785332750,
+    "heartbeat_unix_seconds": 1784727950,
+    "branch": "codex/5342-v0918-wp07-records-signing",
+    "worktree": "/Volumes/FastWork/adl-wp-5342",
+    "protected_paths": [
+      ".csdlc/issues/5342",
+      ".csdlc/locks/5342.lock",
+      ".csdlc/prepared/issues/5342",
+      ".csdlc/evidence/5342",
+      "adl-v2/crates/adl-records"
+    ],
+    "purpose": "Implement and fully prove WP-07 portable records, real Ed25519 signing, deterministic canonical bytes, external trust policy, tamper rejection, and channel verification without Runtime v2/v3 changes"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-07] Implement portable records signing and trust contracts",
+    "slug": "v0918-wp07-portable-records-signing-trust",
+    "version": "v0.91.8",
+    "goal": "Implement a small portable adl-records crate with stable bounded record contracts, deterministic canonical bytes, real Ed25519 signatures, explicit trust policy, and fail-closed verification.",
+    "required_outcome": "Versioned errors, events, traces, results, and artifact descriptors cross byte channels as deterministic signed envelopes and are accepted only after exact canonical-byte, signature, trust-policy, bounds, and tamper verification.",
+    "declared_scope": [
+      "adl-v2/crates/adl-records versioned bounded record contracts",
+      "deterministic canonical bytes and SHA-256 payload identity",
+      "real Ed25519 signing and verification through ed25519-dalek",
+      "external immutable trust policy with kind, profile, validity, and revocation decisions",
+      "tamper, channel, fresh-process, schema, bounds, COTS, and budget proof",
+      "issue-local lifecycle, design, review, validation, and evidence records"
+    ],
+    "authority_boundary": [
+      "Issue #5342 owns only adl-v2/crates/adl-records and issue-local C-SDLC records",
+      "Issues #5339 and #5340 are merged read-only language and engine dependencies",
+      "Trust policy is external verifier input and cannot be self-issued by a signed envelope",
+      "The crate owns no key generation/storage, filesystem/network/process IO, telemetry backend, provider/tool adapter, Runtime v2/v3, C-SDLC, CLI, or cloud authority",
+      "Incumbent ADL and Runtime code are behavioral evidence only and cannot be copied, adapted, imported, linked, or changed"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries and semantic card operations only",
+      "Never edit tracked issue work on root main",
+      "Never use raw gh, AWS, hard-coded IPs, credentials, or provider network calls",
+      "Use /Volumes/FastWork for all Cargo build, cache, and temporary output",
+      "Coordinate product paths with active #5589, #5590, and #5615 claims",
+      "Run mandatory bounded exact-revision subagent review and fix every actionable finding before publication"
+    ],
+    "task_boundary": "Implement complete portable record, signing, trust, tamper, and channel contracts only; do not absorb Runtime v2/v3, adapters, persistence, telemetry backends, CLI, deletion, or cloud work.",
+    "deliverables": [
+      "Versioned stable ErrorRecord, EventRecord, TraceRecord, ExecutionResult, and ArtifactDescriptor contracts",
+      "Bounded deterministic canonical-byte and signed-envelope APIs",
+      "Ed25519 signing and verification profile using ed25519-dalek",
+      "External TrustPolicy with key id, profile, kind, validity, and revocation enforcement",
+      "Generated checked schemas and positive/negative fixtures",
+      "Tamper matrix plus byte-channel and fresh-process verification proof",
+      "Exact COTS, forbidden dependency, scope, LoC, and validation-latency proof"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Errors, events, traces, results, and artifacts are explicit versioned deny-unknown-fields contracts with stable identities and bounded fields",
+      "AC-2: Canonical bytes are deterministic, domain-separated, length-delimited, recursively key-sorted, exclude floating-point values, and yield stable SHA-256 identities",
+      "AC-3: Real Ed25519 signatures bind record kind, contract/profile version, key id, canonical payload digest, and canonical payload bytes without custom cryptography",
+      "AC-4: Verification uses an external immutable trust policy and fails closed for unknown keys, wrong kind/profile, logical expiry, revocation, malformed bytes, digest mismatch, or invalid signature",
+      "AC-5: Every signed field class, payload, key id, profile, signature, digest, kind, sequence, truncation, extension, unknown-field, duplicate-key, UTF-8, and bounds tamper case is rejected or exactly canonicalized as declared",
+      "AC-6: Byte-channel and fresh-process proof produces identical canonical bytes and verification outcomes across repeated runs without filesystem, network, clock, environment, provider, or runtime authority",
+      "AC-7: Generated checked schemas, Rust decoding, semantic validation, and fixtures remain aligned for every public record and envelope",
+      "AC-8: The crate uses only reviewed COTS and excludes Runtime v2/v3, incumbent ADL, C-SDLC, async, HTTP/TLS, cloud, database, telemetry-exporter, key-store, and workflow-engine dependencies",
+      "AC-9: Implementation stays within 3000 Rust implementation LoC and 3000 test/fixture LoC, with focused/quality proof under 120 seconds, channel/tamper proof under 300 seconds, and full proof under 600 seconds",
+      "AC-10: Exact #5339/#5340 terminal receipts, released claims, actual merge ancestry, disjoint protected paths, review truth, stable CI, post-merge proof, and typed closeout are retained"
+    ],
+    "dependencies": [
+      "#5339 typed closed_out receipt with released claim and merge commit ancestry on current origin/main",
+      "#5340 typed closed_out receipt with released claim and merge commit ancestry on current origin/main",
+      "Landed adl-language and adl-engine contracts are read-only inputs"
+    ],
+    "repo_inputs": [
+      "AGENTS.md",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/DESIGN_v0.91.8.md",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/ADL_V2_CORE_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md",
+      "adl-v2/crates/adl-language",
+      "adl-v2/crates/adl-engine"
+    ],
+    "non_goals": [
+      "Runtime v2 or Runtime v3 source, control, supervision, ingress, continuity, networking, or Observatory changes",
+      "Provider/tool adapters, persistence, object stores, databases, telemetry exporters, key stores, PKI, TLS, CLI, or selector work",
+      "Key generation, credential discovery, environment scanning, trust-on-first-use, or self-authorized trust policy",
+      "Compatibility with undocumented incumbent binary record formats"
+    ],
+    "plan_summary": "Verify terminal dependencies and disjoint ownership; implement the isolated bounded record crate with COTS Ed25519 and deterministic canonical bytes; prove schema, tamper, trust, channel, fresh-process, COTS, scope, and budgets; complete exact review, publication, CI, merge, post-merge proof, and typed closeout.",
+    "steps": [
+      {"id":"S1","action":"Complete and independently review all six cards, design, diagram, dependencies, COTS, budgets, protected paths, and PVF contract","acceptance_ids":["AC-8","AC-9","AC-10"],"status":"pending"},
+      {"id":"S2","action":"Implement bounded versioned records, canonical bytes, stable schemas, and typed diagnostics","acceptance_ids":["AC-1","AC-2","AC-7","AC-9"],"status":"pending"},
+      {"id":"S3","action":"Implement real Ed25519 signed envelopes and external trust-policy verification","acceptance_ids":["AC-3","AC-4","AC-8"],"status":"pending"},
+      {"id":"S4","action":"Complete tamper, channel, fresh-process, determinism, bounds, COTS, scope, LoC, and latency proof","acceptance_ids":["AC-5","AC-6","AC-7","AC-8","AC-9"],"status":"pending"},
+      {"id":"S5","action":"Run exact-revision review, fix all findings, publish, shepherd green checks, merge, post-merge validate, and typed closeout","acceptance_ids":["AC-10"],"status":"pending"}
+    ],
+    "invariants": [
+      "No trust decision is self-issued by the envelope being verified",
+      "No custom signature primitive or random key generation is implemented",
+      "Canonical bytes and verdicts are deterministic for identical explicit inputs",
+      "Every input and retained collection is bounded before allocation or cloning",
+      "Verification fails closed and never returns partially trusted records",
+      "No Runtime v2/v3, adapter, persistence, backend, CLI, or cloud authority enters the crate"
+    ],
+    "risks": [
+      "Canonical JSON ambiguity could permit signature confusion",
+      "Trust policy could accidentally become caller- or envelope-forgeable",
+      "Schema and decoder behavior could drift",
+      "Artifact metadata could imply payload persistence authority",
+      "Test-only convenience could introduce hidden time, RNG, filesystem, or network dependencies"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "Either dependency receipt is nonterminal, claimed, invalid, or not ancestral through its actual merge commit",
+      "Any active protected path overlaps adl-v2/crates/adl-records or issue-local #5342 paths",
+      "Real acceptance requires Runtime v2/v3 or adapter source changes",
+      "Cryptographic or canonicalization behavior would require hand-rolled primitives available from reviewed COTS",
+      "A required bound, tamper class, channel proof, or trust decision remains deferred",
+      "Budget variance lacks exact evidence-backed review"
+    ],
+    "validation_lanes": [
+      {"lane":"typed-preparation","proof_role":"Validate six cards, design/diagram, dependencies, scope, COTS, budgets, PVF, and root safety","acceptance_ids":["AC-8","AC-9","AC-10"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":2500,"argv":["/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor","--repo",".","--issue","5342"],"parallel_group":"preparation","defer_reason":null},
+      {"lane":"records-focused","proof_role":"Prove all record contracts, schemas, canonical bytes, real signatures, and trust decisions","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-7"],"deterministic":true,"resource_profile":"medium","budget_seconds":120,"budget_tokens":7000,"argv":["bash",".csdlc/prepared/issues/5342/validate-records.sh","focused"],"parallel_group":"records-local","defer_reason":"Run after implementation exists"},
+      {"lane":"records-quality","proof_role":"Prove formatting, strict Clippy, and forbidden authority/dependency absence","acceptance_ids":["AC-1","AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":3000,"argv":["bash",".csdlc/prepared/issues/5342/validate-records.sh","quality"],"parallel_group":"records-local","defer_reason":"Run after implementation exists"},
+      {"lane":"tamper-channel","proof_role":"Prove complete tamper matrix, bounds, byte-channel and fresh-process determinism","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-6"],"deterministic":true,"resource_profile":"medium","budget_seconds":300,"budget_tokens":7000,"argv":["bash",".csdlc/prepared/issues/5342/validate-records.sh","tamper"],"parallel_group":"records-security","defer_reason":"Run after implementation exists"},
+      {"lane":"records-budgets","proof_role":"Enforce dependency receipts, scope, exact COTS, forbidden graph, LoC ceilings, and complete offline proof","acceptance_ids":["AC-8","AC-9","AC-10"],"deterministic":true,"resource_profile":"medium","budget_seconds":600,"budget_tokens":5000,"argv":["bash",".csdlc/prepared/issues/5342/validate-records.sh","all"],"parallel_group":"records-budget","defer_reason":"Run at exact implementation revision"},
+      {"lane":"post-merge-exact","proof_role":"Validate the exact governed PR head inside its landed current-main integration tree before closeout","acceptance_ids":["AC-1","AC-3","AC-4","AC-5","AC-6","AC-10"],"deterministic":true,"resource_profile":"medium","budget_seconds":600,"budget_tokens":8000,"argv":["bash",".csdlc/prepared/issues/5342/validate-records.sh","post-merge"],"parallel_group":"post-merge","defer_reason":"Mandatory after merge and before closeout"}
+    ],
+    "failure_policy": "Fail closed without publication on invalid dependency/ancestry, path collision, noncanonical bytes, signature or trust bypass, schema drift, incomplete tamper/bounds/channel proof, forbidden authority, CI failure, or unsupported budget variance.",
+    "review_prompts": [
+      "Can two semantically different records produce the same canonical bytes, digest, or signed preimage?",
+      "Can an envelope select or modify the trust policy, key permissions, profile, kind, validity, or revocation decision that authorizes it?",
+      "Does every malformed, tampered, oversized, replayed, unknown-field, duplicate-key, and wrong-key/profile/kind case fail closed?",
+      "Are channel and fresh-process proofs genuinely independent of in-process object identity and implicit host state?",
+      "Are all cryptographic operations delegated to reviewed COTS and all product inputs explicitly bounded?"
+    ],
+    "review_scope": ".csdlc/issues/5342\n.csdlc/locks/5342.lock\n.csdlc/prepared/issues/5342\n.csdlc/evidence/5342\nadl-v2/crates/adl-records"
+  }
+}

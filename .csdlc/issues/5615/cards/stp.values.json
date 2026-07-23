@@ -1,0 +1,54 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5615,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][ci][tooling] Route C-SDLC proof and FastWork builds correctly",
+    "slug": "csdlc-ci-fastwork-routing",
+    "version": "v0.91.8",
+    "generation": 20
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Add the smallest explicit standalone C-SDLC v2 route, preserve truthful aggregates, and provide portable external Cargo cache/target execution.",
+      "deliverables": [
+        "Metadata-only and C-SDLC v2 source/test classifier behavior",
+        "Standalone C-SDLC v2 test/fmt/Clippy job with fail-closed stable aggregation",
+        "Portable external Cargo home/target wrapper",
+        "Exact focused regressions and hosted proof"
+      ],
+      "acceptance_criteria": [
+        "AC-1: `.csdlc/**` metadata-only diffs run focused lifecycle/path/tooling proof without ADL workspace or Runtime coverage",
+        "AC-2: `csdlc-v2/**` source, manifest, and test diffs require a standalone C-SDLC v2 test/fmt/strict-Clippy job without unrelated ADL workspace or Runtime coverage",
+        "AC-3: `csdlc-v2/tests/gate7_lifecycle.rs` is an exact regression fixture for the standalone route",
+        "AC-4: Runtime, ADL workspace, and mixed diffs preserve their intended existing lanes; mixed C-SDLC v2 diffs also require standalone C-SDLC proof",
+        "AC-5: Stable `adl-ci` fails closed if selected standalone C-SDLC proof is absent, skipped, cancelled, or failed",
+        "AC-6: Stable `adl-coverage` remains truthful and existing required-check names do not change",
+        "AC-7: The local wrapper exports writable external `CARGO_HOME` and `CARGO_TARGET_DIR`, honors a declared root, otherwise prefers writable FastWork, and fails clearly without either",
+        "AC-8: Hosted CI declares its own writable runner-temporary root and has no dependency on local FastWork",
+        "AC-9: Focused tests, exact-revision review, hosted checks, post-merge proof, and typed closeout pass with no unresolved findings"
+      ],
+      "dependencies": [
+        "Issue 5613 merged terminal projections at origin/main 09c0bd1784216dbce1ad4cdebfe2d453af6e3d9d",
+        "Existing CI classifier, required aggregates, and pinned GitHub Actions"
+      ],
+      "repo_inputs": [
+        ".github/workflows/ci.yaml",
+        "adl/tools/ci_path_policy.sh",
+        "adl/tools/test_ci_path_policy.sh",
+        "adl/tools/test_ci_runtime_contracts.sh",
+        "Bash, Cargo, jq, git, and existing pinned GitHub Actions"
+      ],
+      "non_goals": [
+        "No CI architecture or validation-manager redesign",
+        "No C-SDLC v2 lifecycle implementation change",
+        "No Runtime behavior, Runtime v2, or ADL-v2 semantic change",
+        "No AWS, Spot execution, credentials, or provider access",
+        "No new Rust crate or third-party dependency"
+      ]
+    }
+  }
+}

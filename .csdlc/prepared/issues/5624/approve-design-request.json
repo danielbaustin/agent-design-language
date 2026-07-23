@@ -1,0 +1,7 @@
+{
+  "issue": 5624,
+  "expected_generation": 0,
+  "expected_digest": "4079be6d96a03f6102c29da7f23d6762516085f33aae12b5d8f63985c5a3ac2c",
+  "claim_id": "claim-5624-csdlc-prune-topology",
+  "reviewer": "subagent:019f8a27-d67e-7fe2-9f95-ce25aae9dac6"
+}

@@ -1,0 +1,28 @@
+{
+  "issue": 5589,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "0a62a7cb2ef17380570ab119db798d32b707e5805c39c1f3995e933e93bf091c",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "actor": "codex:019f836b-dd65-7ab1-be66-7408ee2312f6",
+  "reason": "Record the substantive redesign that fixes every changes-required exact-review finding before re-review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Replaced the rejected self-authorizing candidate with a live canonical-ingress implementation that accepts independently signed commitment/delegation evidence, uses trusted runtime time and revocation configuration, runs resident bounded Agent/Shepherd/Scheduler/provider adapters, canonicalizes governed-tool paths, and durably serializes capability-scoped recovery state.",
+    "changes": [
+      "Removed service-held policy and authority signing keys; runtime configuration contains only their public verification keys, while commands carry signed commitments and authority chains",
+      "Moved governance time and revocation truth out of caller input into trusted runtime configuration and revalidates revocation before cached replay",
+      "Started CanonicalIngress and operational Agent, Shepherd, Scheduler, and governed provider components under the Runtime v3 Kernel for each admitted process request",
+      "Invoked a configured external provider executable and a canonical-root allowlisted metadata tool; symlink escape fails before tool actuation",
+      "Serialized cross-process state transitions with a checkpoint lock, unique temporary files, file and directory fsync, authenticated state, and capability-scoped private-state keys",
+      "Cleared pending requests after pre-side-effect cancellation/provider/tool failure so retry can requalify; retained quarantine only for genuine incomplete recovery",
+      "Strengthened the 25 named tests to exercise signed authority, expiry, attenuation/widening, provider classifications and retry, symlink escape, identity/capability scope, current revocation, checkpoint tamper authentication, trusted-time regression, and lifelog failure isolation"
+    ],
+    "artifacts": [
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-governed-operations.rs",
+      "adl-runtime-kernel/tests/governed_operations.rs",
+      ".csdlc/evidence/5589/implementation"
+    ]
+  }
+}

@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-03] Build normalized characterization and determinism corpus",
     "slug": "v0918-wp03-characterization-corpus-preparation",
     "version": "v0.91.8",
-    "generation": 63
+    "generation": 66
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -150,10 +150,10 @@
           "evidence_ref": "Commit 13f21e6bc: 25 cases, 75 observations, 23 behaviors, two equivalence groups, one difference group, status pass; committed observations contain no /Users, /private/var, /Volumes, /tmp, or /home paths."
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

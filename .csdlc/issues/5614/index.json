@@ -1,0 +1,214 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5614,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "681c1ac4b68abe097bfd58b7f23f1b74ad60ba465cc4b8f085c4bc91d31d9c9c",
+  "phase": "published",
+  "generation": 8,
+  "digest": "bb0e8a312e07078b6b3f0ecde21c5f61c02c5837c7368ab670daab0619d06231",
+  "claim": {
+    "id": "claim-5614-secret-scanning-fixtures",
+    "owner": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+    "generation": 8,
+    "acquired_unix_seconds": 1784665090,
+    "expires_unix_seconds": 1784751490,
+    "heartbeat_unix_seconds": 1784665090,
+    "branch": "codex/5614-secret-scanning-fixtures",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/tools/test_run_aws_spot_ci_profile.sh"
+    ],
+    "purpose": "Remove AWS temporary access-key literals from test fixtures"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:review_5614",
+    "assigned_by": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+    "revision": "git-blake3:01cfd77d10bdf18ae6160bf3b90b2df45f139f90:46bb869b618153dbf9c5021b8f14a484d248296b9f9734adf9b5cccfcbb5d5d9",
+    "scope": [
+      "adl/tools/test_run_aws_spot_ci_profile.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:review_5614",
+    "scope": [
+      "adl/tools/test_run_aws_spot_ci_profile.sh"
+    ],
+    "reviewed_revision": "git-blake3:01cfd77d10bdf18ae6160bf3b90b2df45f139f90:46bb869b618153dbf9c5021b8f14a484d248296b9f9734adf9b5cccfcbb5d5d9",
+    "findings": [],
+    "residual_risks": [
+      "Historical scanner locations remain until alert #1 is explicitly resolved after the corrected source reaches main."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5614,
+    "pull_request": 5616,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5616",
+    "base": "main",
+    "head": "codex/5614-secret-scanning-fixtures",
+    "revision": "git-blake3:88d756c72f684d7b6efcf0d50b123cc27c7833f1:141accd204b3fd821be9b4d4eb80fc3079fc0171ae98fb4a598fcb9ad48f8baa",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5614/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5614/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "revision": "8a80b4faad8381581898dddb5f0e787ff41598f47c0f6ca729c29d585b76ba3f"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "20eea5f8bc3e525927f62f5d34ce10653ba8d79c34aeef49306f7318b5e4d82d",
+      "rendered_digest": "bb55d4c117388e48aafea77e12350fbd2218533134d36aeff1355ee76ce05734",
+      "ast_digest": "70246dc72c4da50f4628063c448d472c7b728cc96228714922534350b006e6bd"
+    },
+    "stp": {
+      "values_digest": "a2413971f4f4f49a510c9958258290ea62884878559252a173f5d42d2d47a307",
+      "rendered_digest": "fbb66e30cd44880da5ef81a5bcf818581aec4ddbf2f945607898e4ddea2c4c12",
+      "ast_digest": "e3d95484bc34fb631bef66ecef17d2c37442f248fc1884e787081c61e1a5e732"
+    },
+    "spp": {
+      "values_digest": "3f5e092faec11bb4c742c5a6ebe95d1a687dc0f38769218529013fb2fa0eaf59",
+      "rendered_digest": "2bdcdc2c052aa86f4443a204b47edf078c3c8be57f4872707e452f49b83b9913",
+      "ast_digest": "b884cafe551623726e0b4d081ca4e32e94183b5ed95332e2a9e64b830fe34f80"
+    },
+    "vpp": {
+      "values_digest": "28a12153bf1e0717f4ff99ca5e78f63d1f098d4b86c08dab88bfc7262fc82d39",
+      "rendered_digest": "6e53843737ebee4dbb3cb5f6e00a5715098be69d5cce740a1c6c0bf7f77248eb",
+      "ast_digest": "e8cedee6c51ded9e0be587cf5ae861fb12505ff46d956f0d69fe4a49bf15bb21"
+    },
+    "srp": {
+      "values_digest": "12c35c8646a297e2ed355a217c45cc21c36206d217f247ffd0bd026afdda4c6c",
+      "rendered_digest": "0b300aa1a3f97927a84d8a7457e9adbb92dd7dbb0831886921c433656c002005",
+      "ast_digest": "897f13d75f90ec082ea9def6b01a95c02cdc45c2d4644347e99f4e1787770c80"
+    },
+    "sor": {
+      "values_digest": "ffdfb1465faf7382d00abc73fe12e5229800a48ed20310cb3e82fd128ba987a3",
+      "rendered_digest": "c6eab1d992ee55806b8bbc9431b9365aad7e0263f9a41f8243b154768eb693c5",
+      "ast_digest": "b3ea6e59cd016d1960cf0ed141a128f924dbd727db5a9cfa9c34e87c77c30536"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "The scanner-safe runtime fixture, focused sanitizer tests, tracked-source pattern scan, and bounded review are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Exact-revision bounded security review completed with no actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Record the bounded scanner-safe fixture implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Replaced the tracked AWS temporary-key-shaped literal with runtime construction from non-secret fragments while preserving the sanitizer assertion.\",\"changes\":[\"adl/tools/test_run_aws_spot_ci_profile.sh\"],\"artifacts\":[\"secret-scanning alert #1\",\"commit 7d302ba36\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Record focused fake-toolchain sanitizer proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_aws_spot_ci_profile.sh\"],\"purpose\":\"Prove runtime AWS temporary-key-shaped data is sanitized without any AWS call.\",\"outcome\":\"passed\",\"evidence_ref\":\"local exit 0 on commit 7d302ba36\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Record coupled artifact-finalizer sanitizer proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_aws_spot_artifact_finalize.sh\"],\"purpose\":\"Prove coupled artifact redaction and finalization behavior remains green.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS on commit 7d302ba36\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "The scanner-safe runtime fixture, focused sanitizer tests, tracked-source pattern scan, and bounded review are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "Exact-revision bounded security review completed with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "record exact existing PR ready-for-review after remote success",
+      "operation": "record_ready_publication"
+    }
+  ]
+}

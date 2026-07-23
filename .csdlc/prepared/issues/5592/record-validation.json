@@ -1,0 +1,26 @@
+{
+  "issue": 5592,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "4a32a1639a7e466b4fe4771cbcff13029c083afcbb862319b84cabb43a5175ec",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Retain complete exact-lane, full-kernel, strict-lint, budget, dependency, and hygiene proof from FastWork",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5592/exact-target ruby .csdlc/prepared/issues/5592/run_exact_live_test_lane.rb --lane <each-seven-declared-lanes>",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5592/full-target cargo test --manifest-path adl-runtime-kernel/Cargo.toml",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5592/clippy-target cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets --all-features -- -D warnings",
+        "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --all -- --check",
+        "cargo tree --locked --manifest-path adl-runtime-kernel/Cargo.toml",
+        "bash adl/tools/report_runtime_v3_loc.sh",
+        "git diff --check"
+      ],
+      "purpose": "Prove all seven exact Parity-B identities, the complete 203-test Runtime v3 suite, strict warning-free code, formatting, dependency independence, collision hygiene, and exact budget truth. Runtime v3 is 13,146 physical lines: +937 over the pinned 12,209 baseline and +1,146 over the reviewed target, under the 20,000 safety ceiling but requiring exact review disposition.",
+      "outcome": "passed",
+      "evidence_ref": "owner:019f836b-dfdb-7b33-8e27-4c9478b75421@working-tree:/Volumes/FastWork/adl-5592/{exact-target,full-target,clippy-target}"
+    }
+  }
+}

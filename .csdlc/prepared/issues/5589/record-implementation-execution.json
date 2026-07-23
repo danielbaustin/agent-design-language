@@ -1,0 +1,26 @@
+{
+  "issue": 5589,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "507820ee3aa64ba9692bf2497abaee1d4383f4056841b9105f5ffb9b53c11c3d",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "actor": "codex:019f836b-dd65-7ab1-be66-7408ee2312f6",
+  "reason": "Record the complete bounded Parity-C implementation before exact-revision validation and review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented a live Runtime v3 governed-operations process with signed Freedom Gate and AEE dispatch, production local provider and governed-tool adapters, identity-scoped authenticated checkpoints, monotonic qualified time, redacted non-authoritative lifelog, idempotent recovery, cancellation/failure classification, and fail-closed shutdown.",
+    "changes": [
+      "Added the process-backed adl-runtime-governed-operations production entrypoint without changing Runtime v2, main, AWS, or cross-lane paths",
+      "Bound signed commitments, attenuating grants, policy, payload digest, identity, resources, and qualified time before AEE actuation",
+      "Added a COTS-backed local digest provider and real allowlisted file-metadata governed tool with deterministic bounded dispatch",
+      "Persisted authenticated identity-scoped checkpoints with pending-request crash quarantine and idempotent replay",
+      "Kept lifelog append-only, redacted, non-authoritative, and isolated from checkpoint and actuation success",
+      "Added all 25 exact named positive, negative, restart, shutdown, production-credit, and boundary tests"
+    ],
+    "artifacts": [
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-governed-operations.rs",
+      "adl-runtime-kernel/tests/governed_operations.rs"
+    ]
+  }
+}

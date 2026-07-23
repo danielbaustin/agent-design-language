@@ -1,0 +1,15 @@
+{
+  "issue": 5340,
+  "card": "spp",
+  "expected_generation": 12,
+  "expected_digest": "8fb422c623eea362eb0233a8fc70221213428ef4948e6701597435a24e73b907",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "The landed compiler contract exactly matches the reviewed path and direct COTS pins; begin the isolated engine implementation and proof with no material design drift",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S3",
+    "status": "in_progress"
+  },
+  "fail_after_backup": false
+}

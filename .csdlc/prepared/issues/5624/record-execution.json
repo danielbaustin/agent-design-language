@@ -1,0 +1,25 @@
+{
+  "issue": 5624,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "ee1ef175533942f001e78dac44782bb685bb0c08db903b08dd33f801136260d4",
+  "claim_id": "claim-5624-csdlc-prune-topology",
+  "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+  "reason": "Record the bounded guarded-prune topology repair at committed revision 380a9eab1.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Resolve terminal worktree identity canonically while preserving exact branch, topology, cleanliness, and receipt invariants.",
+    "changes": [
+      "Resolve literal dot to the canonical current issue worktree",
+      "Resolve clean repository-relative and absolute terminal worktree paths exactly",
+      "Reject malformed, missing, suffix-collision, wrong-checkout, wrong-branch, and dirty targets",
+      "Preserve terminal receipt bytes during validation"
+    ],
+    "artifacts": [
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/tests/gate7.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      ".csdlc/evidence/5624/validation-380a9eab1.json"
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "issue": 5342,
+  "expected_generation": 1,
+  "expected_digest": "f0182cf29bfa14cad50b0df4e2c3f79854fced406cf40063ab5dcebd74f7605f",
+  "claim_id": "claim-5342-v0918-wp07-records-signing",
+  "reviewer": "subagent:codex-exec-5342-preparation"
+}

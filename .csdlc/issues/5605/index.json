@@ -1,0 +1,242 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5605,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "fa1288e1b1188df16ff899e92ae7b2706878105ce29dad6485283bec972cf504",
+  "phase": "published",
+  "generation": 9,
+  "digest": "10fb2714be8aa597760b657301de4ca2b39439dd5794216087e3c9036b23b8fe",
+  "claim": {
+    "id": "csdlc-issue-5605-20260722t190651z",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 9,
+    "acquired_unix_seconds": 1784742411,
+    "expires_unix_seconds": 1784828811,
+    "heartbeat_unix_seconds": 1784748048,
+    "branch": "codex/5605-v0-91-8-podcast-revive-ai-agent-podcast-weekly-cadence",
+    "worktree": ".",
+    "protected_paths": [
+      "docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/README.md",
+      "docs/milestones/v0.91.8/review/README.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/README.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_LAUNCH_READINESS_5605.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_TOPIC_SLATE_5605.md",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md"
+    ],
+    "purpose": "Prepare AI agent podcast weekly launch readiness docs without publishing live hosting"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:019f8b4a-979c-7b02-b4ec-b1c246d0e5ce",
+    "assigned_by": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "revision": "git-blake3:913daa6f1752430ad6d54cb6884458ac338aba3c:9f7ef4dd0062e6993cc3c13474aa5b1d1401ddb92fa5429f63bfd4bc6c9a19e4",
+    "scope": [
+      "docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/README.md",
+      "docs/milestones/v0.91.8/review/README.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/README.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_LAUNCH_READINESS_5605.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_TOPIC_SLATE_5605.md",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f8b4a-979c-7b02-b4ec-b1c246d0e5ce",
+    "scope": [
+      "docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/README.md",
+      "docs/milestones/v0.91.8/review/README.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/README.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_LAUNCH_READINESS_5605.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_TOPIC_SLATE_5605.md",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md"
+    ],
+    "reviewed_revision": "git-blake3:913daa6f1752430ad6d54cb6884458ac338aba3c:9f7ef4dd0062e6993cc3c13474aa5b1d1401ddb92fa5429f63bfd4bc6c9a19e4",
+    "findings": [],
+    "residual_risks": [
+      "This issue prepares planning and launch-readiness docs only; live site route, RSS/feed publication, audio production, and guest outreach remain future execution gates."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5605,
+    "pull_request": 5633,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5633",
+    "base": "main",
+    "head": "codex/5605-v0-91-8-podcast-revive-ai-agent-podcast-weekly-cadence",
+    "revision": "git-blake3:388c602f4fe708c2628e5cf17926021c98a6893d:5ee919f0999217b46eee914d3c322e7d2541c7521260fedd5d83c2989712311d",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5605/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5605/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "revision": "e3fcb8332789c997907ab91e0c713aebb1c788a5c88fc6b1c284cc058b315edd"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "032eeeab4acc58032b755157a7d163a0ffa339fdf5412e965d9c9889f97999e7",
+      "rendered_digest": "7cf6dd885aef14a48f286e831e0f219c09200598f1b64c4253184956a298539b",
+      "ast_digest": "2712124f3dc9e8295c4357c5953c742015ed2987eaa19c4d5269ba072ba6aa01"
+    },
+    "stp": {
+      "values_digest": "fe15a58a0d178cb636cd535d1f92d775468f4b0fed82c3941af9b052542e1e13",
+      "rendered_digest": "6d016087785ecda669235beacf3086e705fec007f359450b8ef2bfc46b3a36a4",
+      "ast_digest": "7dd48f592860a318592403b3f0c419be578e0aab414d034787ac847a0c0086e7"
+    },
+    "spp": {
+      "values_digest": "aae19abf15faf0f3429dbb19a835ae81a695fef0bec75ac7f215de18735581fd",
+      "rendered_digest": "6697ecf8ece904fdc22dcf2b2d28d5375a7595111e16e5fcef69feb3374da026",
+      "ast_digest": "a3ac4572c5b29e98b6b4e5af15b2eb397d156bb7752fee839ed2ab123b08548d"
+    },
+    "vpp": {
+      "values_digest": "ebc1891cc1c8860ad4f5e935726957a197ba1b43f0ddb00918f20aa7501a4de4",
+      "rendered_digest": "1c5921c379362742a0e376aee62c4a444227011cf678752f074547a42e161d72",
+      "ast_digest": "f6e69948e52e60e0d7d091b383b549f2bcb06a0d7c5c23b18c4f41602877a477"
+    },
+    "srp": {
+      "values_digest": "1252fc970eb550868911c7bb73bd4d67ad2a73ad352a1aadea04dd119f4aa710",
+      "rendered_digest": "15f0cc2ad1838ba26a6cf87c249e0704cc842177dd756673b0a9eada16a4af67",
+      "ast_digest": "4a05aacf7ecc28945b2ae199562f90aa9dad492124d3262a3ecf6bfb1b39c6e2"
+    },
+    "sor": {
+      "values_digest": "8d423579a1fbda79eb8c505e14e1b288527d7f255babf93b8b28eeab306f774c",
+      "rendered_digest": "245065952587eaba27bb77591b0e029e9b7cb684bb712fa49ce3b95f602a28b1",
+      "ast_digest": "ed62f058c0c69320130134b4595d721ea2071474ae3a188390451c732b2e6fbe"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Podcast planning docs, validation, and clean bounded review are complete for pre-publication."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Exact-revision bounded podcast planning review completed clean after metadata hygiene repair."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record completed podcast planning artifacts.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Authored #5605 podcast revival planning surfaces for the week-of-July-27 launch preparation, including the agent-logic.ai/podcast hosting requirements, weekly studio workflow, first ten topic slate, and v0.91.8 index links without claiming live publication.\",\"changes\":[\"docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md\",\"docs/milestones/v0.91.8/features/README.md\",\"docs/milestones/v0.91.8/review/README.md\",\"docs/milestones/v0.91.8/review/podcast_studio_5605/README.md\",\"docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_LAUNCH_READINESS_5605.md\",\"docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_TOPIC_SLATE_5605.md\",\"docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md\",\"docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md\"],\"artifacts\":[\"commit ffb08a03c5c05ae5bdc6f325f58f52ae466b32f4\",\"bounded subagent review agent 019f8b3e-c988-7942-a3fc-f3c1141ceac8\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record referenced-path validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"-lc\",\"for p in demos/v0.91.1/multiagent_podcast_pilot_demo.md demos/v0.91.1/multiagent_podcast_audio_demo.md adl/tools/demo_v0911_multiagent_podcast_pilot.sh adl/tools/demo_v0911_multiagent_podcast_audio.sh adl/tools/demo_v0913_podcast_studio_v2.sh adl/tools/generate_podcast_studio_v2_packet.py docs/milestones/v0.91.3/review/podcast_studio_v2 demos/v0.91.3/adl_podcast_studio_v2_episode_card.html docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_LAUNCH_READINESS_5605.md docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_TOPIC_SLATE_5605.md; do test -e \\\"$p\\\" || { echo \\\"MISSING $p\\\"; exit 1; }; done; echo PASS referenced paths exist\"],\"purpose\":\"Prove historical and new podcast planning references resolve to repo surfaces.\",\"outcome\":\"passed\",\"evidence_ref\":\"local exit 0 before commit ffb08a03c\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record existing podcast demo generator proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/demo_v0913_podcast_studio_v2.sh\"],\"purpose\":\"Prove the existing v0.91.3 podcast studio packet generator still runs.\",\"outcome\":\"passed\",\"evidence_ref\":\"local exit 0 before commit ffb08a03c\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record podcast packet contract proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_podcast_studio_v2_packet.sh\"],\"purpose\":\"Prove the existing v0.91.3 podcast studio packet remains deterministic and truthfully reported.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS before commit ffb08a03c\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record docs hygiene proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"-lc\",\"git diff --check && ! rg -n \\\"AKIA|SECRET|PRIVATE KEY|BEGIN .*KEY|(/[[:alnum:]_.-]+){2,}|agent-logic-admin|password|token\\\" docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md docs/milestones/v0.91.8/review/podcast_studio_5605 docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md docs/milestones/v0.91.8/features/README.md docs/milestones/v0.91.8/review/README.md\"],\"purpose\":\"Prove whitespace hygiene and absence of obvious secrets or local host paths in #5605 docs.\",\"outcome\":\"passed\",\"evidence_ref\":\"local exit 0 before commit ffb08a03c after removing host-path references and using generic absolute-path scan pattern\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Podcast planning docs, validation, and clean bounded review are complete for pre-publication.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Exact-revision bounded podcast planning review completed clean after metadata hygiene repair.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

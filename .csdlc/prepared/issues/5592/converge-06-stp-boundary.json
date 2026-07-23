@@ -1,0 +1,15 @@
+{
+  "issue": 5592,
+  "card": "stp",
+  "expected_generation": 6,
+  "expected_digest": "c5900fc8c1036ad2bbab25b1e1fb681b792d159ef837b83f595534431c659628",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
+  "reason": "Converge refined preparation contract field stp-boundary",
+  "operation": {
+    "operation": "replan",
+    "field": "task_boundary",
+    "value": "Prepare and validate the complete Parity-B execution contract now; do not implement product code, amend into product paths, publish, or claim runtime acceptance until #5591 has a clean reviewed Parity-A contract and a typed disjoint claim can be established."
+  },
+  "fail_after_backup": false
+}

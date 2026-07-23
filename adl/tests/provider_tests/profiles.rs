@@ -84,6 +84,39 @@ run:
 }
 
 #[test]
+fn expand_provider_profiles_rejects_vendor_identity_override() {
+    let doc = adl_doc_from_yaml(
+        r#"
+version: "0.5"
+providers:
+  kimi_primary:
+    profile: "kimi:k2.5"
+    config:
+      vendor: "openai"
+agents:
+  a1:
+    provider: "kimi_primary"
+    model: "kimi-k2.5"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#,
+    );
+    let err = expand_provider_profiles(&doc).expect_err("profile vendor override must fail");
+    assert!(
+        err.to_string().contains("conflicts with profile vendor"),
+        "{err:#}"
+    );
+}
+
+#[test]
 fn expand_provider_profiles_is_byte_stable_across_runs() {
     let doc = adl_doc_from_yaml(
         r#"

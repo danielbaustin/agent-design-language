@@ -1,0 +1,441 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5624,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "304bc75a127522c6590ce93430b3be8b667c66b0bf3e3655403207b67290c8f5",
+  "phase": "published",
+  "generation": 22,
+  "digest": "d0ef25a346544777034018eafb279829067c6d7ad74c9ebf930dceb7c27c17d7",
+  "claim": {
+    "id": "claim-5624-csdlc-prune-topology",
+    "owner": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+    "generation": 22,
+    "acquired_unix_seconds": 1784728873,
+    "expires_unix_seconds": 1784815273,
+    "heartbeat_unix_seconds": 1784728873,
+    "branch": "codex/5624-csdlc-prune-topology",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5624",
+      ".csdlc/issues/5624",
+      ".csdlc/prepared/issues/5624",
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/test_run_cargo_validation.sh",
+      "csdlc-v2/src/operator.rs",
+      "csdlc-v2/src/proof.rs",
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate10a.rs",
+      "csdlc-v2/tests/gate7.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "purpose": "Repair guarded prune topology resolution without changing terminal evidence"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:019f8ab8-7865-7263-832c-2922bae1b9d3",
+    "assigned_by": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+    "revision": "git-blake3:0794c7282bcfe1d39fa21baa4b9b4a71d17890c6:9198f9170b47dce50a1a1054266f3c0d26aba7d7fad3e93cc6e999e0f9492ec1",
+    "scope": [
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/test_run_cargo_validation.sh",
+      "csdlc-v2/src/operator.rs",
+      "csdlc-v2/src/proof.rs",
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate10a.rs",
+      "csdlc-v2/tests/gate7.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      ".csdlc/issues/5624",
+      ".csdlc/prepared/issues/5624",
+      ".csdlc/evidence/5624"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f8ab8-7865-7263-832c-2922bae1b9d3",
+    "scope": [
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/test_run_cargo_validation.sh",
+      "csdlc-v2/src/operator.rs",
+      "csdlc-v2/src/proof.rs",
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate10a.rs",
+      "csdlc-v2/tests/gate7.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      ".csdlc/issues/5624",
+      ".csdlc/prepared/issues/5624",
+      ".csdlc/evidence/5624"
+    ],
+    "reviewed_revision": "git-blake3:0794c7282bcfe1d39fa21baa4b9b4a71d17890c6:9198f9170b47dce50a1a1054266f3c0d26aba7d7fad3e93cc6e999e0f9492ec1",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5624,
+    "pull_request": 5625,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5625",
+    "base": "main",
+    "head": "codex/5624-csdlc-prune-topology",
+    "revision": "git-blake3:031a1c4ba2c71492a2a879c5fd926013a7b1a1ff:d83213a63e380d8e22c61dd3057e541ce3529ea1b72f6abbcf31f220cd59d42a",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5624/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5624/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "subagent:019f8a27-d67e-7fe2-9f95-ce25aae9dac6",
+      "revision": "cff74b3020ec2e81e97296726d4d6333b471397c999d18f596682865d33435ff"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "83d270bc2ce9285f4acfe69d6e7c7b3e0ab04b22ce065c303768957a6fe79274",
+      "rendered_digest": "06e5ab1be8cc7d5816ec72758e04559f7684d528bd7b46c0647bede733c57a22",
+      "ast_digest": "094674ef061582ab0bcf312f027c55d3877cfc2fc61d0952750ecb201e691d86"
+    },
+    "stp": {
+      "values_digest": "bbfd9014fcb91b3fe924f7a8ee5f3f0c95b034bf636d48fd19fc040ab7ea02c7",
+      "rendered_digest": "eebaf5f062ae8503f17e787a5637e20cd0437a0d319929cce3f45871fff97f0f",
+      "ast_digest": "1230e46e7ca236a55a6d951e35884fd82b312507f9cf49b1090f995fa3faecba"
+    },
+    "spp": {
+      "values_digest": "9c8699d4760c8099c895da3ece42fda9237dca3fd92519a0a65261d1ea568656",
+      "rendered_digest": "02a13340e8e4f6f2ea9374b9dd5f07ecc531f7ae16d32fe3f1a47dd9f72ad379",
+      "ast_digest": "df1bdf54aeec330351e91915758d99b1c3f77841dda23f7cc50e5cc8773a4182"
+    },
+    "vpp": {
+      "values_digest": "4f4693e3cecc97037123e6b2f896abcab1f604e72ec18434a69870ae22cf8228",
+      "rendered_digest": "45f9cff3c88464d4edeff0d54ffd43a4fa96ec78056407d165d40cf98daab741",
+      "ast_digest": "859e4740d233dfd2bf86a0cbc3cd81d5d4a158bc4754f3cf37587c79f646519e"
+    },
+    "srp": {
+      "values_digest": "038f9c137d026b587fe539268457096c77f4533dff944330ce4396c3b47f4ebf",
+      "rendered_digest": "839972b40af539a8574cd99bf266e6e7ad407eb2ff5c9f5db331a0bb9d9f78d7",
+      "ast_digest": "bf150cbef5c51941955ebd4a7ddd3d1c7fdb00c2afd54958f839d706f322c0b6"
+    },
+    "sor": {
+      "values_digest": "7f7c5b3bb5003bd938ec76f81464f3cb5ddada6853b54c4585a68698772f3ca1",
+      "rendered_digest": "1dd11670c785159cff67ef8de2b54883f58390a0082bf2f0def6f22760f07f1d",
+      "ast_digest": "b4fc58d05ce1364a3635066c0660a087bde91d99db7212af06aa872ed6e756c8"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "The bounded readiness/prune topology repair and all local validation are complete for exact review."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "The single assigned exact-revision review completed with zero findings and zero blockers."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "Recover the published review after exact-head CI proved the checkout target symlink violates Gate 10A clean-source provenance."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "The single exact-revision CI-repair review completed with zero findings and zero blockers."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "Recover the published review after exact-head CI proved standalone fixture commits lacked deterministic Git author identity."
+    },
+    {
+      "sequence": 10,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "The final exact-revision hosted-CI repair review completed with zero findings and zero blockers."
+    },
+    {
+      "sequence": 11,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 12,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "Recover stale publication truth after the exact-head standalone Clippy repair."
+    },
+    {
+      "sequence": 13,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "The final exact-revision repair review completed with zero findings and zero blockers."
+    },
+    {
+      "sequence": 14,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "subagent:019f8a27-d67e-7fe2-9f95-ce25aae9dac6",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "Record the bounded guarded-prune topology repair at committed revision 380a9eab1.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Resolve terminal worktree identity canonically while preserving exact branch, topology, cleanliness, and receipt invariants.\",\"changes\":[\"Resolve literal dot to the canonical current issue worktree\",\"Resolve clean repository-relative and absolute terminal worktree paths exactly\",\"Reject malformed, missing, suffix-collision, wrong-checkout, wrong-branch, and dirty targets\",\"Preserve terminal receipt bytes during validation\"],\"artifacts\":[\"csdlc-v2/src/readiness.rs\",\"csdlc-v2/tests/gate7.rs\",\"csdlc-v2/tests/gate7_lifecycle.rs\",\".csdlc/evidence/5624/validation-380a9eab1.json\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "Record focused, complete, format, and strict-Clippy proof on the external FastWork build root.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\".csdlc/prepared/issues/5624/run_focused_validation.sh\"],\"purpose\":\"Prove canonical prune topology, receipt immutability, the command-level issue-local worktree path, all C-SDLC v2 targets, formatting, and strict Clippy.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5624/validation-380a9eab1.json\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "The bounded readiness/prune topology repair and all local validation are complete for exact review.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "subagent:codex-5624-exact-review",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "The single assigned exact-revision review completed with zero findings and zero blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "record exact existing PR ready-for-review after remote success",
+      "operation": "record_ready_publication"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "Recover the published review after exact-head CI proved the checkout target symlink violates Gate 10A clean-source provenance.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "Operator-authorized exact causal CI repair: remove checkout target symlink and validate external installer target provenance directly.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/run_cargo_validation.sh\",\"adl/tools/test_run_cargo_validation.sh\",\"csdlc-v2/src/proof.rs\",\"csdlc-v2/src/operator.rs\",\"csdlc-v2/tests/gate10a.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "Record the single consolidated post-CI-repair validation packet.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\".csdlc/prepared/issues/5624/run_focused_validation.sh\"],\"purpose\":\"Prove the external Cargo target contract, Gate 10A provenance, guarded prune behavior, complete C-SDLC v2 suite, formatting, and strict Clippy in one FastWork run.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5624/validation-a2c79708e.json\"}}"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "subagent:codex-5624-ci-repair-review",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "The single exact-revision CI-repair review completed with zero findings and zero blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "Recover the published review after exact-head CI proved standalone fixture commits lacked deterministic Git author identity.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "Record the exact hosted-CI Git identity repair proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_cargo_validation.sh\",\"and\",\"cargo\",\"test\",\"--test\",\"gate2\",\"and\",\"fmt\",\"and\",\"strict-clippy\"],\"purpose\":\"Prove deterministic validation-only Git identity, all affected Gate2 fixture commits, formatting, and strict Clippy.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5624/validation-git-identity.json\"}}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "subagent:codex-5624-final-ci-review",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "The final exact-revision hosted-CI repair review completed with zero findings and zero blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "Recover stale publication truth after the exact-head standalone Clippy repair.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 26,
+      "generation": 19,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "Include the exact one-line strict-Clippy repair in the existing issue claim and review scope.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/run_cargo_validation.sh\",\"adl/tools/test_run_cargo_validation.sh\",\"csdlc-v2/src/proof.rs\",\"csdlc-v2/src/operator.rs\",\"csdlc-v2/tests/gate10a.rs\",\"csdlc-v2/src/store.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 19,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 20,
+      "actor": "subagent:019f8ab8-7865-7263-832c-2922bae1b9d3",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "The final exact-revision repair review completed with zero findings and zero blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 22,
+      "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

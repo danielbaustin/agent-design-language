@@ -273,6 +273,13 @@ async fn main() -> ExitCode {
                 eprintln!("runtime Observatory read token is invalid");
                 return ExitCode::from(78);
             }
+            if service
+                .set_public_base_url(&init.api.public_base_url)
+                .is_err()
+            {
+                eprintln!("runtime public HTTPS base is invalid");
+                return ExitCode::from(78);
+            }
             service.set_weather_stale_after(std::time::Duration::from_millis(
                 init.weather.sample_millis.saturating_mul(2),
             ));
@@ -298,7 +305,11 @@ async fn main() -> ExitCode {
             };
             eprintln!(
                 "{}",
-                adl_runtime_kernel::control_ready_event(&instance_id, bound_address)
+                adl_runtime_kernel::control_ready_event(
+                    &instance_id,
+                    bound_address,
+                    &init.api.public_base_url,
+                )
             );
             let mut pressure_retry_at = None;
             'serve: loop {

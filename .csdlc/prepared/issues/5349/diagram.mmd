@@ -1,0 +1,51 @@
+flowchart LR
+    subgraph P["Terminal predecessor contracts"]
+        E["WP-06 #5340\nengine provider/tool ports"]
+        R["WP-07 #5342\nrecords and trust"]
+        V["WP-08 #5341\nRuntime v3 adapter"]
+    end
+
+    subgraph A["#5349 owned boundary after dependency gate"]
+        G["Dependency gate\nmerge + closed_out + receipt + ancestry"]
+        M["Deterministic mock adapter"]
+        H["Bounded HTTPS adapter\nruntime-issued endpoint permit"]
+        T["Governed-tool adapter\nverified authorization envelope"]
+        C["Compatibility adapter\nversioned allowlist"]
+        N["Negative authority and secret-hygiene guard"]
+    end
+
+    subgraph X["External and runtime-owned effects"]
+        RP["Runtime v3 admitted invocation"]
+        HP["Permitted HTTPS endpoint"]
+        GT["Named governed-tool port"]
+        O["Typed result, denial, or error"]
+    end
+
+    G --> M
+    G --> H
+    G --> T
+    G --> C
+    E -->|"typed invocation and outcomes"| A
+    R -->|"verified identity and evidence"| A
+    V -->|"admitted Runtime context"| A
+    RP --> A
+    H -->|"one bounded request"| HP
+    T -->|"one authorized call"| GT
+    M --> O
+    H --> O
+    T --> O
+    C --> O
+    N -.->|"constrains"| M
+    N -.->|"constrains"| H
+    N -.->|"constrains"| T
+    N -.->|"constrains"| C
+
+    A -. "must not own" .-> S["Scheduling, retry, admission, supervision"]
+    A -. "must not own" .-> F["Freedom Gate or policy decisions"]
+    A -. "must not touch" .-> V2["Runtime v2"]
+    A -. "must not use" .-> AWS["AWS or provider credentials"]
+    A -. "must not mutate" .-> L["C-SDLC v2 lifecycle"]
+
+    A --> Q["FastWork PVF + exact-revision review"]
+    Q --> Z["Later typed publish, CI, merge and closeout"]
+    Z --> K["#5526 provider expansion consumes frozen interfaces"]

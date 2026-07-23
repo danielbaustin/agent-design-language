@@ -1,0 +1,63 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "typed-doctor",
+        "proof_role": "Typed lifecycle, card projection, values, rendered shape, and digest consistency",
+        "purpose": "Verify the bound #5500 record and all six native cards are doctor-clean",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "preparation-local", "release_gate": "required", "execution": "local", "timeout_seconds": 60,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5500/run-typed-doctor.rb"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "preparation-contract",
+        "proof_role": "Complete cards, design, dependency, path, COTS, budget, security, and no-product-change proof",
+        "purpose": "Verify preparation truth and fail-closed execution boundaries",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "preparation-local", "release_gate": "required", "execution": "local", "timeout_seconds": 120,
+        "executable": "ruby", "argv": [".csdlc/prepared/issues/5500/validate-preparation.rb"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "diff-hygiene",
+        "proof_role": "Tracked, staged, unstaged, and untracked preparation path hygiene",
+        "purpose": "Reject every out-of-scope preparation path and whitespace error",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "preparation-local", "release_gate": "required", "execution": "local", "timeout_seconds": 60,
+        "executable": "bash", "argv": [".csdlc/prepared/issues/5500/check-preparation-diff.sh"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "diagram-parse",
+        "proof_role": "Executable Mermaid syntax and render proof",
+        "purpose": "Reject a dashboard architecture diagram that cannot be rendered",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 0},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "browser-local", "release_gate": "optional", "execution": "local", "timeout_seconds": 60,
+        "executable": "bash", "argv": [".csdlc/prepared/issues/5500/check-diagram.sh"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "dashboard-contract",
+        "proof_role": "Future deterministic fixture, security, responsive layout, and zero-mutation product proof",
+        "purpose": "Retain but do not select the product lane until dependencies are terminal",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 0},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "future-dashboard", "release_gate": "optional", "execution": "local", "timeout_seconds": 120,
+        "executable": "bash", "argv": [".csdlc/prepared/issues/5500/validate-dashboard.sh"],
+        "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {"requested_lanes": ["typed-doctor", "preparation-contract", "diff-hygiene"], "allow_network": false, "available_credentials": []},
+  "budget": {"max_parallel": 3, "cpu_units": 3, "memory_mib": 512, "tokens": 0},
+  "root": ".",
+  "evidence_dir": ".csdlc/prepared/issues/5500/validation/preparation",
+  "cancellation_file": null
+}

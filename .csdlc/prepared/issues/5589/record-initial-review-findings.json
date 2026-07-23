@@ -1,0 +1,34 @@
+{
+  "issue": 5589,
+  "expected_generation": 12,
+  "expected_digest": "d28e1aefa32d15dc78a4f22e051e587a0e514d70b9ec430ae2cc148c3c2738be",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "actor": "subagent:/root/review_5589_exact",
+  "evidence": {
+    "reviewer": "subagent:/root/review_5589_exact",
+    "scope": [
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-governed-operations.rs",
+      "adl-runtime-kernel/tests/governed_operations.rs",
+      ".csdlc/issues/5589/cards/sor.values.json",
+      ".csdlc/issues/5589/cards/srp.values.json",
+      ".csdlc/evidence/5589/implementation"
+    ],
+    "reviewed_revision": "git-blake3:3bd3d7cd629eff184a2b56368ff74dc2c2998c8e:5471805aff15682acaba30fe978e9057d743a2acaff4f29dbe9ec8e8995a329a",
+    "findings": [
+      {"id":"self-issued-authority","severity":"p1","summary":"The service mints commitment and root authority from caller-controlled fields instead of enforcing independently established authenticated authority.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"caller-controlled-governance-time","severity":"p1","summary":"Caller-controlled qualified time can mint fresh grants and poison persisted monotonic time.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"checkpoint-concurrency-race","severity":"p1","summary":"Unlocked cross-process checkpoint read-modify-write and a shared temporary path permit duplicate actuation and checkpoint corruption.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"tool-allowlist-escape","severity":"p1","summary":"Relative-path validation follows symlinks and is not anchored to a configured canonical allowlist root.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"missing-parity-components","severity":"p1","summary":"The implementation lacks the declared authenticated ingress, bounded scheduler and reservations, resident Agent and Shepherd adapters, configured production provider port, and current-revocation recovery; tests do not prove those claims.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"retry-quarantine","severity":"p2","summary":"Pre-side-effect provider, tool, quota, cancellation, and unavailable failures leave pending requests quarantined forever instead of permitting truthful cleanup and retry.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"checkpoint-durability","severity":"p2","summary":"Checkpoint writes do not fsync the file and parent directory, so crash recovery and no-duplicate claims are unproved.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"state-capability-scope","severity":"p2","summary":"Persisted private state is keyed only by citizen and overwrites across action, resource, and capability scope.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"mislabeled-release-tests","severity":"p2","summary":"Named expiry, appeal, saturation, authentication, cancellation, and lifelog-failure tests do not exercise their claimed scenarios.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"budget-exception-unjustified","severity":"p1","summary":"The 935-line additive implementation has no offset deletion and materially under-delivers its parity contract, so the baseline exception is not justified.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null}
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

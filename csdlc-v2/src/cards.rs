@@ -1133,7 +1133,7 @@ fn validate_status_guard(values: &CardValues, next: CardStatus) -> Result<()> {
     Ok(())
 }
 
-fn validate_result(result: &ValidationResult) -> Result<()> {
+pub(crate) fn validate_result(result: &ValidationResult) -> Result<()> {
     if result.command.is_empty()
         || result.command.iter().any(|part| part.trim().is_empty())
         || result.purpose.trim().is_empty()

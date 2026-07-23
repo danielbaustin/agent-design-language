@@ -1,0 +1,113 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5615,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][ci][tooling] Route C-SDLC proof and FastWork builds correctly",
+    "slug": "csdlc-ci-fastwork-routing",
+    "version": "v0.91.8",
+    "generation": 20
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Prepare and bind; write failing route/wrapper fixtures; implement the smallest classifier, standalone job, aggregate, and wrapper changes; validate and review; publish, merge, post-merge validate, and close out.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Prepare, review, initialize, bind, and establish exact failing regressions",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-7"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement focused classifier and portable wrapper behavior",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-7",
+            "AC-8"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Wire the standalone job and truthful stable aggregates",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-5",
+            "AC-6",
+            "AC-8"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Run focused proof, exact-revision review, and fix every actionable finding",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8",
+            "AC-9"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S5",
+          "action": "Publish, shepherd hosted checks, merge, post-merge validate, and close out",
+          "acceptance_ids": [
+            "AC-5",
+            "AC-6",
+            "AC-8",
+            "AC-9"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Selected proof jobs are fail-closed in stable aggregates",
+        "No C-SDLC-only path launches unrelated ADL workspace or Runtime coverage",
+        "Existing non-C-SDLC route semantics and required-check names remain",
+        "Hosted CI never depends on `/Volumes/FastWork`"
+      ],
+      "risks": [
+        "A selected standalone lane could be omitted from the stable aggregate",
+        "A mixed diff could accidentally suppress required ADL or Runtime proof",
+        "A local wrapper could silently fall back to an unwritable or repository-local Cargo home",
+        "Workflow changes could trigger their own full coverage route"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 21600,
+        "total_tokens": 80000,
+        "validation_seconds": 3600
+      },
+      "stop_conditions": [
+        "Any active protected-path collision",
+        "Any need to alter Runtime behavior, C-SDLC lifecycle semantics, or ADL-v2 semantics",
+        "Any need for AWS, credentials, or a new dependency",
+        "Any solution requiring a CI or validation-manager redesign"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5615/design.md",
+      "design_digest": "0c99ade6527878996824cfa55544c5afde8b9340f601cfd48eb6add71d2ba557",
+      "diagram_ref": ".csdlc/prepared/issues/5615/diagram.mmd",
+      "diagram_digest": "d42e8e86c1a6711cf71ab414f43d25ed96388aa3997f785010b00817ad86d2fe"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+flowchart TD
+    A["Terminal released worktree"] --> B{"Recorded form"}
+    B -->|"."| C["Canonical current issue worktree"]
+    B -->|"absolute"| D["Canonical absolute path"]
+    B -->|"clean relative"| E["Primary repository root + relative path"]
+    B -->|"invalid or missing"| X["unsafe_checkout"]
+    C --> F["Exact expected canonical path"]
+    D --> F
+    E --> F
+    F --> G{"Current branch + current root + live worktree tuple match"}
+    G -->|"no"| X
+    G -->|"yes"| H{"Worktree clean"}
+    H -->|"no"| X
+    H -->|"yes"| I["Prune eligible"]
+    I --> J["Retained terminal receipt unchanged"]

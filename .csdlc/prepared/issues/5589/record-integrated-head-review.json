@@ -1,0 +1,16 @@
+{
+  "issue": 5589,
+  "expected_generation": 17,
+  "expected_digest": "85c45ea0c88f77eb8c71f50a401828ed84c62d78abb6fe217b5b20bef2648a91",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "actor": "subagent:/root/review_5589_exact",
+  "evidence": {
+    "reviewer": "subagent:/root/review_5589_exact",
+    "scope": ["adl-runtime-kernel/src/governed_operations.rs", "adl-runtime-kernel/src/bin/adl-runtime-governed-operations.rs", "adl-runtime-kernel/tests/governed_operations.rs", ".csdlc/issues/5589/cards/sor.values.json", ".csdlc/issues/5589/cards/srp.values.json", ".csdlc/evidence/5589/implementation"],
+    "reviewed_revision": "git-blake3:1103b3b784f570d651a54f5e9ced80960b978d48:4bf9e5c9c336295939b5d4199b835c97bc060503d93c801887ca1ef848270a47",
+    "findings": [],
+    "residual_risks": ["The exact +1,096 source delta over the authoritative 12,683 post-#5591 baseline is accepted as functionally necessary and non-duplicative."],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "manifest": { "schema": "csdlc.pvf.manifest.v1", "lanes": [
+    { "id": "post-merge-exact", "proof_role": "post_merge", "purpose": "Validate the exact observed merge SHA in a detached FastWork clone before closeout", "determinism": "deterministic", "resources": { "cpu_units": 4, "memory_mib": 4096, "tokens": 12000 }, "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "postmerge", "release_gate": "required", "execution": "local", "timeout_seconds": 600, "executable": "bash", "argv": [".csdlc/prepared/issues/5340/validate-post-merge-lane.sh"], "evidence": { "max_log_bytes": 1048576, "redact_values": [], "require_relative_paths": true } }
+  ] },
+  "selection": { "requested_lanes": ["post-merge-exact"], "allow_network": false, "available_credentials": [] },
+  "budget": { "max_parallel": 1, "cpu_units": 4, "memory_mib": 4096, "tokens": 12000 },
+  "root": ".", "evidence_dir": ".csdlc/evidence/5340/post-merge", "cancellation_file": null
+}

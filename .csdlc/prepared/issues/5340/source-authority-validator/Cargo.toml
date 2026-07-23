@@ -1,0 +1,8 @@
+[package]
+name = "adl-wp5340-source-authority-validator"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+syn = { version = "=2.0.118", default-features = false, features = ["full", "parsing", "visit"] }

@@ -1,0 +1,11 @@
+{
+  "issue": 5342,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "9f3bf21c9d5fb156c329bf2d563c5096c5d09d88fbbf8a1fc8cce0afd5cd38bc",
+  "claim_id": "claim-5342-v0918-wp07-records-signing",
+  "actor": "codex:5342-owner",
+  "reason": "All six cards, reviewed design, executable preparation proof, terminal dependencies, and disjoint ownership are ready.",
+  "operation": {"operation":"advance_phase","phase":"ready"},
+  "fail_after_backup": false
+}

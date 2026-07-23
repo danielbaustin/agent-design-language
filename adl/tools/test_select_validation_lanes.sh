@@ -36,6 +36,16 @@ assert_has "$TMP/docs.out" "aggregate_status=selected"
 assert_has "$TMP/docs.out" "docs_diff_check status=selected"
 assert_not_has "$TMP/docs.out" "rust_pr_fast"
 
+csdlc_metadata="$TMP/csdlc-metadata.txt"
+printf 'M\t.csdlc/issues/5615/index.json\n' >"$csdlc_metadata"
+bash "$SCRIPT" --changed-files "$csdlc_metadata" >"$TMP/csdlc-metadata.out"
+assert_not_has "$TMP/csdlc-metadata.out" "csdlc_v2_standalone status=selected"
+
+csdlc_v2="$TMP/csdlc-v2.txt"
+printf 'M\tcsdlc-v2/tests/gate7_lifecycle.rs\n' >"$csdlc_v2"
+bash "$SCRIPT" --changed-files "$csdlc_v2" >"$TMP/csdlc-v2.out"
+assert_has "$TMP/csdlc-v2.out" "csdlc_v2_standalone status=selected"
+
 prompt_template="$TMP/prompt-template.txt"
 printf 'M\tdocs/templates/prompts/current.json\n' >"$prompt_template"
 bash "$SCRIPT" --changed-files "$prompt_template" >"$TMP/prompt.out"

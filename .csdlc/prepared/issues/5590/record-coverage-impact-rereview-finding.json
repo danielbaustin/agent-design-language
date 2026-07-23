@@ -1,0 +1,34 @@
+{
+  "issue": 5590,
+  "expected_generation": 11,
+  "expected_digest": "7f35f42586ca8798ff4a072d160055489d5080931324a41137a856f7149325e7",
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "actor": "subagent:019f8692-79df-7fe0-98bd-8d42df9b5f1a",
+  "evidence": {
+    "reviewer": "subagent:019f8692-79df-7fe0-98bd-8d42df9b5f1a",
+    "scope": [
+      ".csdlc/issues/5590/audit.jsonl",
+      ".csdlc/issues/5590/index.json",
+      ".csdlc/prepared/issues/5590/recover-after-coverage-impact-failure.json",
+      ".csdlc/prepared/issues/5590/transition-coverage-impact-claim.json",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/test_check_coverage_impact.sh"
+    ],
+    "reviewed_revision": "git-blake3:60da76bcee609930a34c1f409be7131aef75e13d:48ee173827b26195151190f46876d1f72b3a4f5b9edc0a0fe9b21ead0b507f94",
+    "findings": [
+      {
+        "id": "guardian-binary-coverage-selection",
+        "severity": "p1",
+        "summary": "The guardian binary path maps only to guardian library tests; it omits the binary unit test, leaving adl-runtime-guardian.rs at 0/135 under focused llvm-cov.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

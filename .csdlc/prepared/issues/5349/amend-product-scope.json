@@ -1,0 +1,12 @@
+{
+  "issue": 5349,
+  "claim_id": "claim-5349-v0918-wp09-preparation",
+  "expected_generation": 4,
+  "expected_digest": "c57037577a4086a6465abfade77a038d37e992dcae3acc484988c35ef8f89af4",
+  "now_unix_seconds": 1784749336,
+  "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+  "reason": "Required engine and record interfaces are present on origin/main; receipts are non-blocking audit evidence, so protect the bounded WP-09 adapter crate now under implementation.",
+  "add_protected_paths": [
+    "adl-v2/crates/adl-adapters"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "preparation-tool-cache",
+        "proof_role": "setup",
+        "purpose": "Fetch the exact locked syn validator closure into FastWork before the offline preparation proof",
+        "determinism": "controlled_external",
+        "resources": { "cpu_units": 1, "memory_mib": 512, "tokens": 500 },
+        "credentials": [],
+        "network": "external",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "optional",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "bash",
+        "argv": [".csdlc/prepared/issues/5340/warm-source-authority-validator.sh"],
+        "evidence": {
+          "max_log_bytes": 262144,
+          "redact_values": [],
+          "require_relative_paths": true
+        }
+      },
+      {
+        "id": "preparation-contract",
+        "proof_role": "issue_contract",
+        "purpose": "Validate issue-specific preparation after typed doctor establishes canonical card and lifecycle integrity",
+        "determinism": "deterministic",
+        "resources": { "cpu_units": 1, "memory_mib": 256, "tokens": 1000 },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": ["preparation-tool-cache"],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5340/validate-preparation.rb"],
+        "evidence": {
+          "max_log_bytes": 262144,
+          "redact_values": [],
+          "require_relative_paths": true
+        }
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["preparation-tool-cache", "preparation-contract"],
+    "allow_network": true,
+    "available_credentials": []
+  },
+  "budget": { "max_parallel": 1, "cpu_units": 1, "memory_mib": 512, "tokens": 1500 },
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5340/preparation",
+  "cancellation_file": null
+}

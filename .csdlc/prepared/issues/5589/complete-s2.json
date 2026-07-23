@@ -1,0 +1,14 @@
+{
+  "issue": 5589,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "adbeb3928c353077b4741bb709b951a421d509e8068205fc0000a3d7b9d5e5e2",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "actor": "codex:019f836b-dd65-7ab1-be66-7408ee2312f6",
+  "reason": "Verified #5591 merged typed closeout at generation 34, integrated current main, confirmed #5592/#5590 disjoint claims, and transitioned #5589 into its three-path implementation scope.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S2",
+    "status": "completed"
+  }
+}

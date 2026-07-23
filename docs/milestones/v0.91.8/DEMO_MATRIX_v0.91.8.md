@@ -8,5 +8,6 @@
 | C-SDLC v2 lifecycle | #5358 | Init/bind/review/publish/shepherd/closeout lifecycle proof | Lifecycle governance only |
 | Distributed C-SDLC workcell | #5497, #5499, #5498, #5500, #5502, #5501 | Workcell coordination, task-adapter observation/output contract proof, and umbrella convergence | Workcell acceptance only; does not prove release by itself |
 | Integrated three-product stack | #5384, #5354 | End-to-end planned scenario after deployment | Public claims must cite accepted revisions |
+| AI Agent Podcast Studio launch readiness | #5605 | Weekly episode plan, first-ten topic slate, and `agent-logic.ai/podcast` route checklist | Planning only; does not prove public launch, RSS, final audio, or durable weekly cadence |
 | Unity Observatory readiness | #5354, #4739, #4741, #5332 | WP-15 reliable project/port/editor proof or blocker | No Unity claim if ILPP/tooling remains blocked; does not block WP-14A platform acceptance |
 | v0.92 handoff inspection | #5352, #5362 | Exact-revision handoff packet | Handoff is not birthday implementation |

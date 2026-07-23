@@ -1,0 +1,13 @@
+{
+  "issue": 5615,
+  "card": "sor",
+  "expected_generation": 17,
+  "expected_digest": "9579b109b3b3d852219ff20a0d1af965f2d0bd2f1e299957521570857bd1675b",
+  "claim_id": "claim-5615-csdlc-ci-fastwork-routing",
+  "actor": "codex:5615-owner",
+  "reason": "Exact workflow-expression repair review passed with zero findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

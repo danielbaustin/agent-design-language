@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::cards::{FindingDisposition, ReviewResult};
 use crate::model::{LifecyclePhase, ReviewAssignment, ReviewEvidence};
-use crate::store::Store;
+use crate::store::{ReviewCommit, Store};
 use crate::{ErrorCode, IssueRecord, Result, V2Error};
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -117,11 +117,18 @@ pub fn record_review(store: &Store, request: ReviewRecordRequest) -> Result<Issu
         &request.expected_digest,
         &request.claim_id,
     )?;
-    let assignment = record
-        .review_assignment
-        .as_ref()
-        .ok_or_else(|| V2Error::new(ErrorCode::InvalidInput, "review assignment missing"))?;
-    validate_evidence(assignment, &request.evidence)?;
+    if record.phase != LifecyclePhase::Implemented {
+        return Err(V2Error::new(
+            ErrorCode::InvalidTransition,
+            "review recording requires implemented phase",
+        ));
+    }
+    let direct = record.review_assignment.is_none();
+    if let Some(assignment) = record.review_assignment.as_ref() {
+        validate_evidence(assignment, &request.evidence)?;
+    } else {
+        validate_direct_evidence(store, &request.evidence)?;
+    }
     let result = if request.evidence.completed
         && request.evidence.findings.iter().all(|f| {
             !f.actionable
@@ -135,14 +142,38 @@ pub fn record_review(store: &Store, request: ReviewRecordRequest) -> Result<Issu
     } else {
         ReviewResult::ChangesRequired
     };
-    store.commit_review(
-        request.issue,
-        &record.digest,
-        request.actor,
-        &request.claim_id,
-        request.evidence,
+    store.commit_review(ReviewCommit {
+        issue: request.issue,
+        expected_digest: record.digest,
+        actor: request.actor,
+        claim_id: request.claim_id,
+        evidence: request.evidence,
         result,
-    )
+        advance_reviewed: direct,
+    })
+}
+
+fn validate_direct_evidence(store: &Store, evidence: &ReviewEvidence) -> Result<()> {
+    if evidence.reviewer.trim().is_empty()
+        || evidence.scope.is_empty()
+        || evidence.scope.iter().any(|path| path.trim().is_empty())
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "direct review evidence requires reviewer and non-empty scope",
+        ));
+    }
+    let revision = crate::git::substantive_revision(store.root(), &evidence.scope)?;
+    let head = crate::git::run(store.root(), &["rev-parse", "HEAD"])?.stdout;
+    if revision != crate::git::clean_commit_revision(&head)
+        || evidence.reviewed_revision != revision
+    {
+        return Err(V2Error::new(
+            ErrorCode::UnsafeCheckout,
+            "direct review evidence must match the clean exact scoped commit",
+        ));
+    }
+    validate_findings(evidence)
 }
 
 fn require_cas_claim(
@@ -181,6 +212,10 @@ fn validate_evidence(assignment: &ReviewAssignment, evidence: &ReviewEvidence) -
             "review evidence does not match assignment",
         ));
     }
+    validate_findings(evidence)
+}
+
+fn validate_findings(evidence: &ReviewEvidence) -> Result<()> {
     let mut ids = std::collections::BTreeSet::new();
     for f in &evidence.findings {
         if f.id.trim().is_empty() || f.summary.trim().is_empty() || !ids.insert(&f.id) {

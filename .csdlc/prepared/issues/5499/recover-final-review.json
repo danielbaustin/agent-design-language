@@ -1,0 +1,8 @@
+{
+  "issue": 5499,
+  "expected_generation": 13,
+  "expected_digest": "ff24dee76e4b8bd82c5743c369780be9e8a48cd5115102f6bae27e304cd2a533",
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Continue the single final review after fixing its claim-containment and exact diff-hygiene findings."
+}

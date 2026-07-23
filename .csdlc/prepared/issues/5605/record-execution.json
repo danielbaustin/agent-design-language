@@ -1,0 +1,28 @@
+{
+  "issue": 5605,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "134b191fc2c20a02b04f59c3c2d6d8113d9ef34bb6ac03dc580428a128415889",
+  "claim_id": "csdlc-issue-5605-20260722t190651z",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record completed podcast planning artifacts.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Authored #5605 podcast revival planning surfaces for the week-of-July-27 launch preparation, including the agent-logic.ai/podcast hosting requirements, weekly studio workflow, first ten topic slate, and v0.91.8 index links without claiming live publication.",
+    "changes": [
+      "docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/README.md",
+      "docs/milestones/v0.91.8/review/README.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/README.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_LAUNCH_READINESS_5605.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_TOPIC_SLATE_5605.md",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md"
+    ],
+    "artifacts": [
+      "commit ffb08a03c5c05ae5bdc6f325f58f52ae466b32f4",
+      "bounded subagent review agent 019f8b3e-c988-7942-a3fc-f3c1141ceac8"
+    ]
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5499,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10A][multi-agent] Implement issue-graph-to-live-task conductor",
+    "slug": "v0-91-8-wp-10a-issue-graph-live-task-conductor",
+    "version": "v0.91.8",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Prepare a small deterministic conductor that converts typed C-SDLC v2 issue graphs and ADL v2 plans into safe live-task assignments without acquiring task, GitHub, integration, or closeout authority.",
+      "required_outcome": "After WP-09 and direct dependencies are terminal, the conductor admits only ready disjoint shards, selects serial or parallel lanes, and emits typed deterministic assignments or fail-closed refusals for the #5498 task adapter.",
+      "declared_scope": [
+        "typed issue graph and ADL v2 execution-plan ingestion",
+        "dependency, cycle, claim freshness, validation-lane, WIP, and path-overlap checks",
+        "deterministic assignment and refusal records",
+        "serialized review, publication, integration, and closeout gate preservation"
+      ],
+      "authority_boundary": [
+        "C-SDLC v2 remains lifecycle and claim authority",
+        "ADL v2 remains execution-plan authority",
+        "#5499 plans assignments but never creates tasks or mutates GitHub",
+        "#5498 owns explicit task and context transport operations",
+        "#5502 owns output convergence and deterministic replanning",
+        "review, merge, post-merge validation, and closeout remain serialized"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use installed typed C-SDLC v2 binaries and semantic card operations only",
+        "Keep the primary checkout clean on main; all tracked #5499 work stays in the dedicated issue worktree",
+        "Do not use raw gh, AWS, credentials, network providers, Runtime v2, or product implementation during preparation",
+        "Product implementation may start only after #5340, #5341, #5342, and final WP-09 gate #5349 are live-merged and their merged revisions are ancestral to the execution base; typed closeout and receipts are audit-only and must not block readiness by themselves",
+        "Use /Volumes/FastWork for every Cargo artifact, cache, and temporary build surface",
+        "Run the mandatory exact-revision code review immediately before PR publication; do not add preparation review churn",
+        "Preparation may be committed and pushed, but no PR may be opened and no publication may occur in this preparation-only task"
+      ]
+    }
+  }
+}

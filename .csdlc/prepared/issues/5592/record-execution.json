@@ -1,0 +1,25 @@
+{
+  "issue": 5592,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "0132d9845e9758f4e41305eddbea64ebc55acaf34615be9c843e9139423c90a9",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Record the complete bounded Parity-B implementation before exact-revision review",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented canonical-ingress Runtime v3 reasoning graphs, deterministic bounded loops, authenticated replay-safe evidence, signed one-shot adaptation, safe advisory affect and curiosity controls, monotonic cognition gates, and complete feature dispositions without Runtime v2 or AWS.",
+    "changes": [
+      "Add a production Parity-B operation executor for typed canonical-ingress graph requests",
+      "Retain deterministic loop, checkpoint, restore, idempotency, and tamper-evident evidence identity",
+      "Compose existing signed mutation authority with one-shot consumption and verified rollback",
+      "Reject task-content authority, unsupported subjective claims, hidden-state inference, unbounded curiosity, Freedom Gate denial, and shutdown bypass",
+      "Retain twelve explicit live Runtime v3 or accepted non-authoritative feature dispositions"
+    ],
+    "artifacts": [
+      "adl-runtime-kernel/src/parity_b.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs"
+    ]
+  }
+}

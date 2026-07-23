@@ -1,0 +1,18 @@
+{
+  "issue": 5615,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "9e21feadb7b67cd4a76fbc7ba476a09e93f59ffb4f6ee6136015da0fce1d2829",
+  "claim_id": "claim-5615-csdlc-ci-fastwork-routing",
+  "actor": "codex:5615-owner",
+  "reason": "Record exact classifier, workflow aggregation, selector, and external-root contract proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_ci_path_policy.sh", "&&", "bash", "adl/tools/test_ci_runtime_contracts.sh", "&&", "bash", "adl/tools/test_run_cargo_validation.sh"],
+      "purpose": "Prove metadata-only, standalone C-SDLC v2, Runtime-plus-lifecycle, stable aggregate, selector, and external build-root behavior.",
+      "outcome": "passed",
+      "evidence_ref": "issue-5615:focused-ci-routing-and-wrapper-contracts:pass"
+    }
+  }
+}

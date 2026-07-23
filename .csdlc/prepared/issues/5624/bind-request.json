@@ -1,0 +1,25 @@
+{
+  "issue": 5624,
+  "base_branch": "main",
+  "branch": "codex/5624-csdlc-prune-topology",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5624-csdlc-prune-topology",
+    "owner": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+    "generation": 1,
+    "acquired_unix_seconds": 1784728873,
+    "expires_unix_seconds": 1784815273,
+    "heartbeat_unix_seconds": 1784728873,
+    "branch": "codex/5624-csdlc-prune-topology",
+    "worktree": ".",
+    "protected_paths": [
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/tests/gate7.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      ".csdlc/issues/5624",
+      ".csdlc/prepared/issues/5624",
+      ".csdlc/evidence/5624"
+    ],
+    "purpose": "Repair guarded prune topology resolution without changing terminal evidence"
+  }
+}

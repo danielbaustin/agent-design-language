@@ -1,0 +1,15 @@
+{
+  "issue": 5592,
+  "card": "spp",
+  "expected_generation": 0,
+  "expected_digest": "ba46d5a0c5bc9ebaa65416087ce0d4168797195fbf60b15b1bc9dbe73b945e43",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Activate the operator-authorized full Parity-B implementation and publication lane after #5591 typed closeout",
+  "operation": {
+    "operation": "replan",
+    "field": "plan_summary",
+    "value": "At the integrated post-#5591 baseline, claim only exact collision-free Parity-B files, implement every reasoning graph, bounded loop, adaptation, affect, curiosity, governed-cognition, feature-disposition, and exact-evidence outcome, run all FastWork proof, fix exact-revision review findings, publish, shepherd green CI through authorized merge, run post-merge validation, and complete typed closeout without deferred acceptance."
+  },
+  "fail_after_backup": false
+}

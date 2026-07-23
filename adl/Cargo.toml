@@ -51,7 +51,7 @@ name = "demo-adl-gws-native-drive-sync"
 path = "src/bin/demo_adl_gws_native_drive_sync.rs"
 
 [[bin]]
-name = "demo-adl-gws-context-mirror"
+name = "adl-gws-context-mirror"
 path = "src/bin/demo_adl_gws_context_mirror.rs"
 
 [[bin]]

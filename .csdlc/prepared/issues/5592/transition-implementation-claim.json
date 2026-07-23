@@ -1,0 +1,18 @@
+{
+  "issue": 5592,
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "expected_owner": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
+  "expected_generation": 2,
+  "expected_digest": "d4c43d3805e48b968bf83df36dbe1bbb25b517bdc034ec01c1061e50ea30e382",
+  "now_unix_seconds": 1784619000,
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Begin complete Parity-B implementation after verified #5591 merge, typed closeout, claim release, current-main integration, and disjoint Parity-C coordination",
+  "expected_purpose": "Prepare complete six-card Runtime v3 Parity-B truth without product edits while #5591 remains the implementation dependency and overlapping claim owner",
+  "purpose": "Implement every #5592 Runtime v3 Parity-B reasoning graph, bounded loop, governed adaptation, affect, curiosity, cognition, feature-disposition, exact-proof, review, publication, and closeout outcome",
+  "add_protected_paths": [
+    ".csdlc/evidence/5592",
+    "adl-runtime-kernel/src/parity_b.rs",
+    "adl-runtime-kernel/tests/parity_b_live_kernel.rs",
+    "adl-runtime-kernel/src/lib.rs"
+  ]
+}

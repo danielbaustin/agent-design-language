@@ -1,5 +1,6 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use std::path::{Component, Path, PathBuf};
 use strum::{AsRefStr, Display, EnumString};
 
 use crate::error::{ErrorCode, Result, V2Error};
@@ -250,27 +251,15 @@ pub fn validate_prune_surface(
     expected_worktree: &str,
 ) -> Result<()> {
     let branch = crate::git::current_branch(root)?;
-    let canonical = root.canonicalize()?;
+    let canonical = root.canonicalize().map_err(|_| unsafe_checkout())?;
+    let expected = resolve_terminal_worktree(root, expected_worktree)?;
     let topology = crate::git::worktrees(root)?;
-    let observed = topology.iter().find(|(candidate_branch, candidate_path)| {
-        let expected_path = std::path::Path::new(expected_worktree);
-        let path_matches = if expected_path.is_absolute() {
-            expected_path.canonicalize().ok()
-                == std::path::Path::new(candidate_path).canonicalize().ok()
-        } else {
-            std::path::Path::new(candidate_path).ends_with(expected_path)
-        };
-        candidate_branch == expected_branch && path_matches
+    let observed = topology.iter().any(|(candidate_branch, candidate_path)| {
+        candidate_branch == expected_branch
+            && Path::new(candidate_path).canonicalize().ok().as_ref() == Some(&canonical)
     });
-    if branch != expected_branch
-        || observed.is_none_or(|(_, path)| {
-            std::path::Path::new(path).canonicalize().ok().as_ref() != Some(&canonical)
-        })
-    {
-        return Err(V2Error::new(
-            ErrorCode::UnsafeCheckout,
-            "prune target does not match terminal claim topology",
-        ));
+    if branch != expected_branch || canonical != expected || !observed {
+        return Err(unsafe_checkout());
     }
     if !crate::git::run(root, &["status", "--porcelain", "--untracked-files=all"])?
         .stdout
@@ -282,6 +271,46 @@ pub fn validate_prune_surface(
         ));
     }
     Ok(())
+}
+
+fn resolve_terminal_worktree(root: &Path, expected_worktree: &str) -> Result<PathBuf> {
+    if expected_worktree == "." {
+        return root.canonicalize().map_err(|_| unsafe_checkout());
+    }
+    let expected = Path::new(expected_worktree);
+    if expected_worktree.is_empty()
+        || expected
+            .components()
+            .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
+    {
+        return Err(unsafe_checkout());
+    }
+    let candidate = if expected.is_absolute() {
+        expected.to_path_buf()
+    } else {
+        if !expected
+            .components()
+            .all(|component| matches!(component, Component::Normal(_)))
+        {
+            return Err(unsafe_checkout());
+        }
+        let common = crate::git::run(
+            root,
+            &["rev-parse", "--path-format=absolute", "--git-common-dir"],
+        )?;
+        PathBuf::from(common.stdout)
+            .parent()
+            .ok_or_else(unsafe_checkout)?
+            .join(expected)
+    };
+    candidate.canonicalize().map_err(|_| unsafe_checkout())
+}
+
+fn unsafe_checkout() -> V2Error {
+    V2Error::new(
+        ErrorCode::UnsafeCheckout,
+        "prune target does not match terminal claim topology",
+    )
 }
 
 pub(crate) fn terminal_phase_allowed(

@@ -1,0 +1,68 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5587,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][google-workspace][automation] Make ADL Drive context mirror work end to end",
+    "slug": "google-drive-context-mirror",
+    "version": "v0.91.8",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "gws-drive-sync-tests",
+          "proof_role": "Prove native contract, exact readback, approval, and failure behavior",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            "cargo",
+            "test",
+            "adl_gws_drive_sync"
+          ],
+          "parallel_group": "gws-focused",
+          "defer_reason": null
+        },
+        {
+          "lane": "gws-context-mirror-tests",
+          "proof_role": "Prove recursive path preservation and truthful reporting",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            "cargo",
+            "test",
+            "adl_gws_context_mirror"
+          ],
+          "parallel_group": "gws-focused",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on missing approval, credentials, path escape, ambiguous remote children, API failure, or content mismatch.",
+      "design_ref": ".csdlc/prepared/issues/5587/design.md",
+      "design_digest": "196bd587d9658475dab103e296fb196be3adb7428841932b3863c862741b8eb0",
+      "diagram_ref": ".csdlc/prepared/issues/5587/diagram.mmd",
+      "diagram_digest": "0a1ebe4263daff456c834757e1a3324001489f71a08a25651298529cf6ba4874"
+    }
+  }
+}

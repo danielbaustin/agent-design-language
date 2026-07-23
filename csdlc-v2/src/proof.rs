@@ -327,7 +327,7 @@ fn measure(repo: &Path, steps: &[StepEvidence]) -> Result<ProofMeasurements> {
             }
         }
     }
-    let target = repo.join("csdlc-v2/target/debug");
+    let target = crate::operator::external_cargo_target(repo)?.join("debug");
     let mut debug_binary_bytes = Vec::new();
     for name in BINARY_NAMES.into_iter().collect::<BTreeSet<_>>() {
         let path = target.join(name);

@@ -1,0 +1,60 @@
+{
+  "schema": "adl.runtime-v3.parity-b.exact-test-inventory.v1",
+  "issue": 5592,
+  "proof_class": "future_live_kernel",
+  "manifest_path": "adl-runtime-kernel/Cargo.toml",
+  "test_target": "parity_b_live_kernel",
+  "required_runtime_path": "guardian_canonical_ingress",
+  "zero_matches": "fail",
+  "forbidden_credit": [
+    "metadata",
+    "fixture",
+    "direct_library",
+    "fixed_bootstrap",
+    "runtime_v2"
+  ],
+  "lanes": [
+    {
+      "id": "runtime-v3-parity-b-live-graph",
+      "exact_tests": [
+        "live_graph_executes_through_guardian_canonical_ingress"
+      ]
+    },
+    {
+      "id": "runtime-v3-parity-b-bounded-loop",
+      "exact_tests": [
+        "bounded_loop_resume_preserves_budgets_and_effect_identity"
+      ]
+    },
+    {
+      "id": "runtime-v3-parity-b-adaptation",
+      "exact_tests": [
+        "adaptive_learning_consumes_exact_one_shot_mutation_authority"
+      ]
+    },
+    {
+      "id": "runtime-v3-parity-b-affect-isolation",
+      "exact_tests": [
+        "affect_control_rejects_adversarial_signal_authority"
+      ]
+    },
+    {
+      "id": "runtime-v3-parity-b-curiosity-boundary",
+      "exact_tests": [
+        "curiosity_and_theory_of_mind_remain_non_authoritative"
+      ]
+    },
+    {
+      "id": "runtime-v3-parity-b-authority",
+      "exact_tests": [
+        "governed_cognition_cannot_bypass_shutdown_or_freedom_gate"
+      ]
+    },
+    {
+      "id": "runtime-v3-parity-b-feature-dispositions",
+      "exact_tests": [
+        "feature_dispositions_require_live_kernel_or_accepted_boundary"
+      ]
+    }
+  ]
+}

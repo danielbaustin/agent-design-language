@@ -1,0 +1,22 @@
+{
+  "issue": 5592,
+  "base_branch": "main",
+  "branch": "codex/5592-runtime-v3-parity-b",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5592-runtime-v3-parity-b-preparation",
+    "owner": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
+    "generation": 0,
+    "acquired_unix_seconds": 1784601544,
+    "expires_unix_seconds": 1785206344,
+    "heartbeat_unix_seconds": 1784601544,
+    "branch": "codex/5592-runtime-v3-parity-b",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5592",
+      ".csdlc/locks/5592.lock",
+      ".csdlc/prepared/issues/5592"
+    ],
+    "purpose": "Prepare complete six-card Runtime v3 Parity-B truth without product edits while #5591 remains the implementation dependency and overlapping claim owner"
+  }
+}

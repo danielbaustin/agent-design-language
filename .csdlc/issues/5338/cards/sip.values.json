@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5338,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-05] Implement pure deterministic ADL compiler",
+    "slug": "v0918-wp05-pure-deterministic-adl-compiler",
+    "version": "v0.91.8",
+    "generation": 26
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Compile validated ADL v2 language documents through pure resolution, composition and pattern expansion, stable node identity, and canonical lowering into a byte-deterministic ExecutionPlan.",
+      "required_outcome": "An independent adl-compiler crate consumes only the landed typed adl-language boundary, produces canonical ExecutionPlan data or stable diagnostics with no side effects, and proves identical plan bytes and node identities across equivalent inputs, permutations, repeated runs, and clean processes.",
+      "declared_scope": [
+        "adl-v2/crates/adl-compiler pure compiler library",
+        "typed canonical ExecutionPlan, plan-node, edge, port, provenance, and diagnostic contracts",
+        "deterministic reference resolution plus composition and pattern expansion",
+        "domain-separated stable execution-node identity",
+        "canonical node, edge, port, metadata, diagnostic, and JSON ordering",
+        "golden, negative, replay, permutation, identity-stability, and #5339 fixture-map proof",
+        "issue-local lifecycle, design, validation, review, and evidence records"
+      ],
+      "authority_boundary": [
+        "Issue #5338 owns only adl-v2/crates/adl-compiler and issue-local C-SDLC records",
+        "The merged and typed closed_out #5339 adl-language API and fixtures are read-only inputs",
+        "The compiler accepts an already parsed and validated document and owns no source parser or language-policy duplication",
+        "ExecutionPlan is inert deterministic data; scheduling, retry, joins, resume, failure propagation, runtime ports, and side effects belong to #5340",
+        "The crate owns no Runtime v2 or v3, provider or tool IO, records/signing, CLI, selector, C-SDLC, network, filesystem mutation, clock, randomness, environment, credentials, cloud, or database authority",
+        "Incumbent ADL source, tests, and fixtures are behavioral evidence only and must not be copied, adapted, imported, or linked"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use installed typed C-SDLC v2 binaries and semantic card operations only",
+        "Never edit, switch, pull, fast-forward, or leave artifacts in root main",
+        "Do not use raw gh, AWS, Runtime v2, credentials, or network providers",
+        "Keep all canonical #5338 lifecycle, card, design, validation, and implementation artifacts in the dedicated issue worktree",
+        "Do not implement product code until #5339 is merged and typed closed_out",
+        "Use /Volumes/FastWork for all Rust build output",
+        "Run bounded subagent preparation review now and exact-revision code review before publication",
+        "Continue automatically through typed review, publication, green CI, authorized merge, post-merge proof, and typed closeout once the dependency gate opens"
+      ]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "issue": 5624,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "702a4329842399783ac108223024a87651db6d45837427fa78e11946acd07b7b",
+  "claim_id": "claim-5624-csdlc-prune-topology",
+  "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+  "reason": "Record focused, complete, format, and strict-Clippy proof on the external FastWork build root.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", ".csdlc/prepared/issues/5624/run_focused_validation.sh"],
+      "purpose": "Prove canonical prune topology, receipt immutability, the command-level issue-local worktree path, all C-SDLC v2 targets, formatting, and strict Clippy.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5624/validation-380a9eab1.json"
+    }
+  }
+}

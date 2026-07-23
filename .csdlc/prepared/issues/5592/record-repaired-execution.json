@@ -1,0 +1,27 @@
+{
+  "issue": 5592,
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "56f3cc0be626d22304f8c8f4b2186f31bfc790c304a7fc60bb444af2c169429f",
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Record the complete exact-review repair and real guardian-launched Parity-B execution path.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented signed-policy Runtime v3 Parity-B graph execution through the external production guardian, TLS signed control API, canonical ingress, narrow schema router, and persistent configured executor, with bounded resume, one-shot adaptation, advisory isolation, monotonic cognition gates, authenticated recovery, and truthful feature dispositions.",
+    "changes": [
+      "Route only the signed Parity-B request schema from the existing Agent operational adapter into one persistent environment-configured ParityBExecutor; retain all other operation behavior unchanged",
+      "Authenticate policy signals and gates with configured Ed25519 authority and reject forged policy before persistent executor initialization",
+      "Halt review-required work, persist shutdown across signed checkpoint restore, validate receipt sequence and evidence-anchor semantics, and preserve remaining iteration/deadline/cancellation budgets",
+      "Compose signed one-shot MutationGate evidence into canonical execution and retain deterministic rollback proof",
+      "Replace in-process guardian claims with an external production guardian, TLS Observatory identity, signed /v1/control submission, canonical ingress result, adversarial rejection, and deterministic terminal identity proof",
+      "Assign every retained feature one evidence-specific live or explicit accepted-boundary disposition without metadata-only live credit"
+    ],
+    "artifacts": [
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/src/parity_b.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs"
+    ]
+  }
+}

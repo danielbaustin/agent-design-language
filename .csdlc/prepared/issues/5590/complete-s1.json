@@ -1,0 +1,15 @@
+{
+  "issue": 5590,
+  "card": "spp",
+  "expected_generation": 0,
+  "expected_digest": "48ebd0be4d1f7d2dbb42af19d875e3d503538621841e89038c030f334b991cfe",
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "actor": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+  "reason": "Mark the completed six-card design, diagram, security matrix, validator, and preparation-only claim step truthfully complete after typed regeneration",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S1",
+    "status": "completed"
+  },
+  "fail_after_backup": false
+}

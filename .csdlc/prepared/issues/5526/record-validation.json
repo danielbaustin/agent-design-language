@@ -1,0 +1,18 @@
+{
+  "issue": 5526,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "42c83bcf99a16795f16ce038a421b34f51b6d64d508316367beef6b36cdd6034",
+  "claim_id": "claim-5526-v0918-provider-expansion-preparation",
+  "actor": "codex:5526-execution",
+  "reason": "Focused provider/model expansion lane passed without credentials or live provider calls.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl/Cargo.toml", "provider_"],
+      "purpose": "Prove expanded provider identities, deterministic model identifiers, vendor inference, adapter redaction, and provider regression behavior.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5526/implementation/provider-expansion.log"
+    }
+  }
+}

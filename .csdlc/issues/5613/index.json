@@ -1,0 +1,298 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5613,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "07b04572fcd246d29c269aaca54e7008ed6db05c08914a976a6f6a506f7fb4fc",
+  "phase": "published",
+  "generation": 13,
+  "digest": "37ac9a43b4aab3059ad6954da5249ec010c62a0f29813a6697202f3f7e095ee3",
+  "claim": {
+    "id": "claim-5613-terminal-projection-repair",
+    "owner": "codex:issue-5613-owner",
+    "generation": 13,
+    "acquired_unix_seconds": 1784664530,
+    "expires_unix_seconds": 1784750930,
+    "heartbeat_unix_seconds": 1784664530,
+    "branch": "codex/5613-terminal-projection-repair",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5591/exact-revision/guardian-soak.json",
+      ".csdlc/evidence/5613",
+      ".csdlc/issues/5337",
+      ".csdlc/issues/5339",
+      ".csdlc/issues/5358",
+      ".csdlc/issues/5591",
+      ".csdlc/issues/5602",
+      ".csdlc/issues/5613",
+      ".csdlc/prepared/issues/5613",
+      "csdlc-v2/operator/skills/csdlc-v2-closeout/SKILL.md",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/model.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate7_terminal_sor_validation_repair_5613.rs"
+    ],
+    "purpose": "Atomically repair terminal SOR validation evidence and materialize proven terminal projections"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:019f867f-9b7d-7fc2-99bd-5bda9a7a067a",
+    "assigned_by": "codex:issue-5613-owner",
+    "revision": "git-blake3:48013eaf1748c7d162b1ed75ce058122a88325bd:0ad1b2639a865319e3c3b0a51b8a185ca864c803f0f7821d513ed88d84130520",
+    "scope": [
+      "csdlc-v2/src/cards.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/model.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/operator/skills/csdlc-v2-closeout/SKILL.md",
+      "csdlc-v2/tests/gate7_terminal_sor_validation_repair_5613.rs",
+      ".csdlc/issues/5337",
+      ".csdlc/issues/5339",
+      ".csdlc/issues/5358",
+      ".csdlc/issues/5591",
+      ".csdlc/issues/5602",
+      ".csdlc/issues/5613",
+      ".csdlc/prepared/issues/5613"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f867f-9b7d-7fc2-99bd-5bda9a7a067a",
+    "scope": [
+      "csdlc-v2/src/cards.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/model.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/operator/skills/csdlc-v2-closeout/SKILL.md",
+      "csdlc-v2/tests/gate7_terminal_sor_validation_repair_5613.rs",
+      ".csdlc/issues/5337",
+      ".csdlc/issues/5339",
+      ".csdlc/issues/5358",
+      ".csdlc/issues/5591",
+      ".csdlc/issues/5602",
+      ".csdlc/issues/5613",
+      ".csdlc/prepared/issues/5613"
+    ],
+    "reviewed_revision": "git-blake3:48013eaf1748c7d162b1ed75ce058122a88325bd:0ad1b2639a865319e3c3b0a51b8a185ca864c803f0f7821d513ed88d84130520",
+    "findings": [],
+    "residual_risks": [
+      "Append-only audit provenance intentionally retains original machine-local validation paths; the portable boundary applies to current projected and retained SOR validation arrays."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5613,
+    "pull_request": 5619,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5619",
+    "base": "main",
+    "head": "codex/5613-terminal-projection-repair",
+    "revision": "git-blake3:b04845b033b454a482eaa35bd96b91c83d0cc6dc:20b50a58c95354bfa12ad61c90ec5e94e0ca67cc29275141c565f77233b13d4f",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5613/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5613/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "subagent:019f8654-f522-7ef3-8d22-6d4b8d9a643b",
+      "revision": "b01c122e173be0d1192a373fb9c9052b07529e19950e86516cfb68f725b26362"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "861b649a669a14829728beeee12c78708581901c4ddd4e4bed7249e8275413c7",
+      "rendered_digest": "f8f4aa970408ca8f1fe60b054b7d34d9f88123250e16914f7e7aba78ad683dfd",
+      "ast_digest": "f9a6244d35d0fb37415150cf8a36f8a70891272c91190ce4f1d01a88bcc41e9b"
+    },
+    "stp": {
+      "values_digest": "04f9a2cccf47ca389b1912140735550a64ccf94269448d4666b464b7b3e4c6e6",
+      "rendered_digest": "c29e9fca09e5cea67cc5179e8c2230241229c7cc16657be74f9fda3e12078f9b",
+      "ast_digest": "22451a3da261805337710bbb8001f93e836f0798c667b074a38aeba8fb29b937"
+    },
+    "spp": {
+      "values_digest": "37e7a550ff7c8abdfdec6fbf8987c2057fc325bb111b7455ef0814cdc052b591",
+      "rendered_digest": "7ef6d172a897ebeb07f0157f6971e47031518ef9a151fac5572f2f4eac82801d",
+      "ast_digest": "7131b33ab141adc7e9d660bb81d1b50052389ee785172b0fb7a30841c150bd34"
+    },
+    "vpp": {
+      "values_digest": "d460485234c2439178d4972a14deefc3597246406c54504509672f1fa828c429",
+      "rendered_digest": "a63e75aa9d960a9dd351b9d5fcdada6d9d8ddf1d4883d017f077210c0c97bbdd",
+      "ast_digest": "512c378b68fc8a7f65a92151d6929af88481f44ee9bf1668a87418e9d77a6630"
+    },
+    "srp": {
+      "values_digest": "ffa7eae16cfb862c61f5d0141236aaacdd21c2d72c87f101e5f37b361c8b3f9e",
+      "rendered_digest": "d1e8c4cf0443ac2fbfef0d0a4ac87369aae64a97e7dbd23ed35aa02b7d2d3338",
+      "ast_digest": "db0b21f32f957fccd4bf6b5f320708b0b502f1797ba24bb2f30f93bf6f373f28"
+    },
+    "sor": {
+      "values_digest": "a05c2ccb9a30e1f65a33adc09fdcc7740f691752cdb618e13b07059d91ab7dc0",
+      "rendered_digest": "a1021e24ba7bbf2e20039217ff97c8e2d9acc56f976a7eef1db9c92f68d35d5b",
+      "ast_digest": "076fa093c9284592d15277c68108ca84a1133d832ab6a65e1d47d8bb4d294849"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5613-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5613-owner",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5613-owner",
+      "reason": "The bounded terminal repair, five reconciliations, focused proof, strict lint, and fresh-checkout proof are complete for exact review."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5613-owner",
+      "reason": "Exact product and assigned scoped-revision reviews passed with zero findings after all concrete portability findings were fixed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5613-owner",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5613-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "subagent:019f8654-f522-7ef3-8d22-6d4b8d9a643b",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:issue-5613-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:issue-5613-owner",
+      "reason": "Include only the newly proven stale terminal projections for #5358 and #5602 in the existing atomic reconciliation batch.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/issues/5358\",\".csdlc/issues/5602\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:issue-5613-owner",
+      "reason": "Resolve all reviewed terminal inputs to full commit identities before binding.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"Retained terminal receipts for issues 5337, 5339, 5358, 5591, and 5602\",\"Terminal commits 461713dc10d26fa5336a054c07ef1844f804ec8f, 817126889942fc57820bf9f05f5cc40e2debd683, 23ea342fd, 8cfb7b25ad246dd411a57ecc4fda8e47665912fc, and fa1b5b6f2\",\"Existing terminal transaction and receipt-refresh implementation\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:issue-5613-owner",
+      "reason": "Resolve the two added stale terminal projections to full commit identities.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"Retained terminal receipts for issues 5337, 5339, 5358, 5591, and 5602\",\"Terminal commits 461713dc10d26fa5336a054c07ef1844f804ec8f, 817126889942fc57820bf9f05f5cc40e2debd683, 23ea342fdc1e4080a4e8d2236c8514ab4a9fc15f, 8cfb7b25ad246dd411a57ecc4fda8e47665912fc, and 5fc1ec96e5f1e8f2080af16caf1344295fb13064\",\"Existing terminal transaction and receipt-refresh implementation\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:issue-5613-owner",
+      "reason": "Record the minimal atomic terminal projection repair and five proven reconciliations.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Add one typed CAS-bound terminal SOR validation-result repair, reuse the existing journaled projection transaction, and reconcile five stranded closed-out projections from retained receipts.\",\"changes\":[\"Add exact authority, target, receipt, and old-result CAS validation\",\"Reuse the shared projection, receipt, journal, and rollback transaction\",\"Reject non-portable terminal validation replacements structurally\",\"Materialize proven terminal projections for issues 5337, 5339, 5358, 5591, and 5602\",\"Replace issue 5591 machine-local SOR validation paths without rewriting append-only audit provenance\",\"Omit the unsupported unbound guardian-soak artifact\"],\"artifacts\":[\"csdlc-v2/src/store.rs\",\"csdlc-v2/src/model.rs\",\"csdlc-v2/src/schema.rs\",\"csdlc-v2/src/bin/csdlc-closeout.rs\",\"csdlc-v2/tests/gate7_terminal_sor_validation_repair_5613.rs\",\".csdlc/issues/5337\",\".csdlc/issues/5339\",\".csdlc/issues/5358\",\".csdlc/issues/5591\",\".csdlc/issues/5602\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:issue-5613-owner",
+      "reason": "Record focused atomicity, CAS, rollback, portability, and public contract proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"terminal_sor_validation_repair\",\"--\",\"--nocapture\"],\"purpose\":\"Prove the typed terminal validation repair, exact CAS rejection, journaled rollback, structural portability boundary, and public request schema.\",\"outcome\":\"passed\",\"evidence_ref\":\"issue-5613:focused-terminal-repair-tests:4-unit-plus-1-public-contract\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:issue-5613-owner",
+      "reason": "Record exact five-projection, retained-receipt, portable-SOR, and unsupported-artifact proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\".csdlc/prepared/issues/5613/validate_terminal_projections.sh\"],\"purpose\":\"Prove all five terminal projections match retained closed-out receipts and original PR identities, issue 5591 SOR paths are portable, and guardian-soak JSON is absent.\",\"outcome\":\"passed\",\"evidence_ref\":\"issue-5613:terminal-projection-proof:pass\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:issue-5613-owner",
+      "reason": "Record strict all-target C-SDLC v2 lint proof on FastWork.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Prove the supported terminal repair command, transaction reuse, portability parser, tests, and all C-SDLC v2 targets are warning-free.\",\"outcome\":\"passed\",\"evidence_ref\":\"issue-5613:strict-all-target-clippy:pass\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:issue-5613-owner",
+      "reason": "Record exact scope, dependency, and fresh-checkout proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\".csdlc/prepared/issues/5613/validate_fresh_checkout.sh\"],\"purpose\":\"Prove a fresh checkout sees released terminal claims, closed-out doctors and receipts, portable issue 5591 SOR truth, no unsupported guardian artifact, and no out-of-scope product changes.\",\"outcome\":\"passed\",\"evidence_ref\":\"issue-5613:fresh-checkout-scope-and-terminal-proof:pass\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:issue-5613-owner",
+      "reason": "The bounded terminal repair, five reconciliations, focused proof, strict lint, and fresh-checkout proof are complete for exact review.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:issue-5613-owner",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "subagent:019f867f-9b7d-7fc2-99bd-5bda9a7a067a",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:issue-5613-owner",
+      "reason": "Exact product and assigned scoped-revision reviews passed with zero findings after all concrete portability findings were fixed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:issue-5613-owner",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:issue-5613-owner",
+      "reason": "record exact existing PR ready-for-review after remote success",
+      "operation": "record_ready_publication"
+    }
+  ]
+}

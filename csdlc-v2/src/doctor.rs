@@ -152,10 +152,8 @@ pub fn diagnose(store: &Store, issue: u64) -> DoctorReport {
         record.phase,
         LifecyclePhase::Reviewed | LifecyclePhase::Published | LifecyclePhase::MergeReady
     ) {
-        if let (Some(assignment), Some(review)) =
-            (record.review_assignment.as_ref(), record.review.as_ref())
-        {
-            let current = crate::git::substantive_revision(store.root(), &assignment.scope);
+        if let Some(review) = record.review.as_ref() {
+            let current = crate::git::substantive_revision(store.root(), &review.scope);
             let stale = current.as_ref().is_ok_and(|current| {
                 evaluate_publication_review_in_repo(store.root(), Some(review), current)
                     .blocker_codes

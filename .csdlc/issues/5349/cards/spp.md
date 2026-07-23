@@ -1,0 +1,150 @@
+# Structured Planning Prompt
+
+Template: 1.0.0
+
+Issue: 5349
+
+Repository: danielbaustin/agent-design-language
+
+Card: spp
+
+Status: ready
+
+## Summary
+
+Prepare and exact-review the complete adapter contract now; bind only issue-local paths and durably push the packet. After #5340 and #5341 are terminal and ancestral, amend the typed claim to the single adapter crate, implement the four contract-driven adapter families, run every no-deferral FastWork lane, exact-review, publish, require green CI, merge, post-merge validate, and typed-closeout without making any ungrounded live-provider claim.
+
+## Plan
+
+Revision 7
+
+## Steps
+
+[
+  {
+    "id": "S1",
+    "action": "Verify required source interfaces, clean worktree ownership, active claim collisions, and disjoint issue-local/product paths",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-8"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S2",
+    "action": "Generate and review all six cards, design, diagram, COTS/budget/PVF gates, bind issue scope, doctor, commit, and push preparation",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-8",
+      "AC-9",
+      "AC-11",
+      "AC-12"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S3",
+    "action": "After required source-interface clearance and typed claim amendment, implement deterministic mock and bounded HTTPS adapters with stable outcomes and secret hygiene",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-6",
+      "AC-7",
+      "AC-8"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S4",
+    "action": "Implement verified governed-tool and versioned compatibility adapters with denial preservation and no policy, shell, incumbent, or fallback authority",
+    "acceptance_ids": [
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-8",
+      "AC-12"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S5",
+    "action": "Run every FastWork PVF lane, exact COTS/LoC/test/time inventory, negative authority and no-live-claim proof, fixing every failure without deferral",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7",
+      "AC-8",
+      "AC-9",
+      "AC-11",
+      "AC-12"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S6",
+    "action": "Obtain bounded exact-revision review, fix every actionable finding, typed-publish, require green CI, merge exact head, and post-merge validate; receipt capture is non-blocking audit work",
+    "acceptance_ids": [
+      "AC-10"
+    ],
+    "status": "pending"
+  }
+]
+
+## Invariants
+
+- product code and product-path claims require the WP-06 engine and WP-07 record source interfaces plus typed claim scope; receipts never block execution
+- root main remains clean/read-only and every #5349 mutation stays in the dedicated FastWork worktree
+- one admitted invocation yields one bounded adapter outcome with no adapter-owned retry, scheduling, policy, signing, supervision, or lifecycle action
+- identical canonical mock input and observed HTTP/tool response yield identical normalized records and error classifications
+- authorization can only be preserved or reduced; adapters cannot mint, widen, or infer authority
+- secrets are never serializable, printable, retained, or used as request identity
+- no Runtime v2, incumbent source, AWS, provider SDK, shell, dynamic loading, database, alternate TLS/HTTP stack, shared manifest, or sibling-owner path
+- no credentialed/live-provider claim belongs to parent deterministic acceptance
+- every acceptance claim is exact-revision, locally FastWork-proven, reviewed, CI-green, integrated, and post-merge-validated; receipts remain non-blocking audit evidence
+
+## Risks
+
+- port contracts may drift before terminal predecessors merge, making preview interfaces unsafe implementation authority
+- an HTTP convenience layer may acquire endpoint, proxy, credential, retry, redirect, or provider-selection authority
+- a governed-tool adapter may accidentally duplicate Freedom Gate policy or turn denial into fallback execution
+- compatibility translation may hide lossy or ambiguous incumbent behavior and become an undeclared v1 dependency
+- secret values may leak through URL, header, Debug, error, trace, fixture, snapshot, or retained evidence surfaces
+- provider child #5526 scope may be absorbed into the parent or mock/protocol proof may be mislabeled live readiness
+- adapter growth or COTS sprawl may create a second runtime/provider subsystem instead of a thin boundary
+
+## Estimates
+
+{
+  "elapsed_seconds": 43200,
+  "total_tokens": 140000,
+  "validation_seconds": 7200
+}
+
+## Design
+
+.csdlc/prepared/issues/5349/design.md
+
+Digest: 7177d15645c5c229ec641ae9e25df5112a4badfd4febb9e8fbb95d6802763844
+
+## Diagram
+
+.csdlc/prepared/issues/5349/diagram.mmd
+
+Digest: bb6c679095660863f74d37ff239cca90d2315a2b5132b867d988aee6f1b11f2c
+
+## Stop Conditions
+
+- Required WP-06 engine-port or WP-07 record-contract source interfaces are absent from current origin/main when product work would begin; receipt absence is never a stop condition
+- an active or recovered claim overlaps issue-local preparation paths or adl-v2/crates/adl-adapters
+- terminal predecessor contracts contradict the prepared port, authority, COTS, budget, test, or validation assumptions and typed replanning has not completed
+- implementation requires any path outside the exact adapter crate, including shared manifests, sibling ADL v2 crates, Runtime source trees, Runtime v2, or C-SDLC product code
+- implementation requires provider SDKs, AWS, credential files, live providers, shells/processes, dynamic plugins, policy decisions, or another HTTP/TLS stack
+- any required deterministic, denial, secret, error, compatibility, COTS, budget, exact-revision, review, CI, post-merge, or closeout proof is absent, stale, weakened, or deferred
+- source, module, test, COTS, 3600-second lane allocation, or 7200-second hard validation ceiling cannot be met without reducing functionality or proof
+
+## Handoff
+
+Proceed only after doctor readiness.

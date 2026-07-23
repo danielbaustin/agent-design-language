@@ -1,0 +1,15 @@
+{
+  "issue": 5590,
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "expected_owner": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+  "expected_generation": 3,
+  "expected_digest": "013fda079423d60898538eea8eac7bf9f2a01fc2ac76a2154df4468b0b6a26f0",
+  "expected_purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof",
+  "now_unix_seconds": 1784668200,
+  "actor": "codex:5590-sole-writer-takeover",
+  "reason": "Add one bounded black-box proof runner for the claimed guardian, HTTPS, authenticated Observatory, continuity, and operational rollback behavior",
+  "purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof",
+  "add_protected_paths": [
+    "adl/tools/run_runtime_v3_operational_proof.sh"
+  ]
+}

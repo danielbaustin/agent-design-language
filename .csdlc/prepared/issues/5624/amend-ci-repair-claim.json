@@ -1,0 +1,17 @@
+{
+  "issue": 5624,
+  "claim_id": "claim-5624-csdlc-prune-topology",
+  "expected_generation": 19,
+  "expected_digest": "8917308f6a94c58d6bee9d102d6a402848ddf80c777878240088cbf26641809f",
+  "now_unix_seconds": 1784730848,
+  "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+  "reason": "Include the exact one-line strict-Clippy repair in the existing issue claim and review scope.",
+  "add_protected_paths": [
+    "adl/tools/run_cargo_validation.sh",
+    "adl/tools/test_run_cargo_validation.sh",
+    "csdlc-v2/src/proof.rs",
+    "csdlc-v2/src/operator.rs",
+    "csdlc-v2/tests/gate10a.rs",
+    "csdlc-v2/src/store.rs"
+  ]
+}

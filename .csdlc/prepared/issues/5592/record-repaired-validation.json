@@ -1,0 +1,26 @@
+{
+  "issue": 5592,
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "d212e8d14279ec87eae65b472def714c803dcee40f92f53888029bbb73fed770",
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Record final exact guardian, focused, complete, strict-lint, dependency, hygiene, and budget proof before fresh exact review.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5592/exact-final ruby .csdlc/prepared/issues/5592/run_exact_live_test_lane.rb --lane <each-seven-declared-lanes>",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5592/full-final cargo test --manifest-path adl-runtime-kernel/Cargo.toml",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5592/guardian-route cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets --all-features -- -D warnings",
+        "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --all -- --check",
+        "cargo tree --locked --manifest-path adl-runtime-kernel/Cargo.toml",
+        "bash adl/tools/report_runtime_v3_loc.sh",
+        "git diff --check"
+      ],
+      "purpose": "Prove all seven exact Parity-B identities including external guardian-launched TLS signed-control canonical ingress, the complete Runtime v3 suite, strict warning-free code, format/dependency/collision hygiene, and exact budget truth. Runtime v3 is 13,504 physical lines: +1,295 over pinned baseline and +1,504 over reviewed target, under the 20,000 safety ceiling but requiring explicit exact-review exception disposition.",
+      "outcome": "passed",
+      "evidence_ref": "owner:019f836b-dfdb-7b33-8e27-4c9478b75421@fa7a37551:/Volumes/FastWork/adl-5592/{exact-final,full-final,guardian-route}"
+    }
+  }
+}

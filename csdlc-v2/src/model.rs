@@ -4,7 +4,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use strum::{AsRefStr, Display, EnumIter, EnumString};
 
-use crate::cards::{CardKind, CardValues, FindingDisposition, FindingSeverity};
+use crate::cards::{CardKind, CardValues, FindingDisposition, FindingSeverity, ValidationResult};
 use crate::error::{ErrorCode, Result, V2Error};
 
 #[derive(
@@ -45,6 +45,7 @@ impl LifecyclePhase {
                 | (Self::Implemented, Self::Reviewed)
                 | (Self::Reviewed, Self::Implemented)
                 | (Self::Reviewed, Self::Published)
+                | (Self::Reviewed, Self::ClosedOut)
                 | (Self::Published, Self::Implemented)
                 | (Self::MergeReady, Self::Implemented)
                 | (Self::Published, Self::MergeReady)
@@ -230,6 +231,23 @@ pub struct TerminalSorArtifactRepairRequest {
     pub stale_ref: String,
     pub retained_ref: String,
     pub expected_artifact_digest: String,
+    #[serde(default)]
+    pub fail_after_stage: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct TerminalSorValidationRepairRequest {
+    pub authority_issue: u64,
+    pub target_issue: u64,
+    pub expected_authority_generation: u64,
+    pub expected_authority_digest: String,
+    pub expected_target_generation: u64,
+    pub expected_target_digest: String,
+    pub expected_receipt_digest: String,
+    pub authority_claim_id: String,
+    pub actor: String,
+    pub expected_result: ValidationResult,
+    pub replacement_result: ValidationResult,
     #[serde(default)]
     pub fail_after_stage: Option<String>,
 }

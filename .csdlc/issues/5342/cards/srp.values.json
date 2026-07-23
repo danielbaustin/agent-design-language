@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5342,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-07] Implement portable records signing and trust contracts",
+    "slug": "v0918-wp07-portable-records-signing-trust",
+    "version": "v0.91.8",
+    "generation": 12
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl-v2/crates/adl-records\n.csdlc/issues/5342\n.csdlc/prepared/issues/5342",
+      "review_revision": "git-blake3:7fbc7200674250cda3e6a743bb5f3f0c77a4a855:a04296b217516695393d6b9be61a29330e98b8fc59167f9effa4cde1fbd8fb67",
+      "reviewer": "subagent:019f8a9c-c932-70d1-a78d-e1fd5ae66b18",
+      "review_prompts": [
+        "Can two semantically different records produce the same canonical bytes, digest, or signed preimage?",
+        "Can an envelope select or modify the trust policy, key permissions, profile, kind, validity, or revocation decision that authorizes it?",
+        "Does every malformed, tampered, oversized, replayed, unknown-field, duplicate-key, and wrong-key/profile/kind case fail closed?",
+        "Are channel and fresh-process proofs genuinely independent of in-process object identity and implicit host state?",
+        "Are all cryptographic operations delegated to reviewed COTS and all product inputs explicitly bounded?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pass"
+    }
+  }
+}

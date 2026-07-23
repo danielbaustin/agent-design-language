@@ -1,0 +1,430 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5590,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "23af54704a287240d22af7ec75e979b61e6577225862d85aa2bc509d532b60b1",
+  "phase": "published",
+  "generation": 16,
+  "digest": "a8b9d8a2673c60fb528217aca4cdbcf64adec791b5423d1089f5109a5305f181",
+  "claim": {
+    "id": "claim-5590-runtime-v3-parity-d-preparation",
+    "owner": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+    "generation": 16,
+    "acquired_unix_seconds": 1784601952,
+    "expires_unix_seconds": 1785206752,
+    "heartbeat_unix_seconds": 1784601952,
+    "branch": "codex/5590-runtime-v3-parity-d",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5590",
+      ".csdlc/issues/5590",
+      ".csdlc/locks/5590.lock",
+      ".csdlc/prepared/issues/5590",
+      "adl-runtime-kernel/Cargo.lock",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/config.rs",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/telemetry.rs",
+      "adl-runtime-kernel/tests/configuration.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/observatory.rs",
+      "adl-runtime-kernel/tests/telemetry.rs",
+      "adl-runtime/src/bin/adl-runtime-guardian.rs",
+      "adl-runtime/src/guardian.rs",
+      "adl-runtime/tests/guardian_cli.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_runtime_v3_guardian_soak.sh",
+      "adl/tools/run_runtime_v3_operational_proof.sh",
+      "adl/tools/runtime_v3_operational_selector.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_runtime_v3_operational_selector.sh",
+      "demos/v0.91.7/html-observatory",
+      "infra/runtime-v3"
+    ],
+    "purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:019f8692-79df-7fe0-98bd-8d42df9b5f1a",
+    "assigned_by": "codex:5590-sole-writer-takeover",
+    "revision": "git-blake3:1e24b7dd7131cda8fc92ca51e96084f1a723a3e1:7aa622c6bf751f95de6f80fffc44ee827f9cb45d2f2b59e129263048440d1424",
+    "scope": [
+      ".csdlc/issues/5590/audit.jsonl",
+      ".csdlc/issues/5590/index.json",
+      ".csdlc/prepared/issues/5590/record-guardian-coverage-portability-finding.json",
+      "adl-runtime/tests/guardian_cli.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/test_check_coverage_impact.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f8692-79df-7fe0-98bd-8d42df9b5f1a",
+    "scope": [
+      ".csdlc/issues/5590/audit.jsonl",
+      ".csdlc/issues/5590/index.json",
+      ".csdlc/prepared/issues/5590/record-guardian-coverage-portability-finding.json",
+      "adl-runtime/tests/guardian_cli.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/test_check_coverage_impact.sh"
+    ],
+    "reviewed_revision": "git-blake3:1e24b7dd7131cda8fc92ca51e96084f1a723a3e1:7aa622c6bf751f95de6f80fffc44ee827f9cb45d2f2b59e129263048440d1424",
+    "findings": [
+      {
+        "id": "guardian-binary-coverage-selection",
+        "severity": "p1",
+        "summary": "The mapping now selects guardian library tests, the exact binary unit test, and all guardian CLI integration tests; focused llvm-cov reports 125/135 binary lines covered.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:1e24b7dd7131cda8fc92ca51e96084f1a723a3e1:7aa622c6bf751f95de6f80fffc44ee827f9cb45d2f2b59e129263048440d1424",
+        "route": null
+      },
+      {
+        "id": "guardian-cli-portability",
+        "severity": "p2",
+        "summary": "The positive black-box proof builds and supervises a native temporary Rust executable using PATH-resolved rustc and the platform executable suffix; no Unix executable path remains.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:1e24b7dd7131cda8fc92ca51e96084f1a723a3e1:7aa622c6bf751f95de6f80fffc44ee827f9cb45d2f2b59e129263048440d1424",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Whole-crate all-target Clippy still reports two pre-existing cav.rs lib-test warnings outside the #5590 protected paths; focused guardian_cli Clippy passes."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5590,
+    "pull_request": 5621,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5621",
+    "base": "main",
+    "head": "codex/5590-runtime-v3-parity-d",
+    "revision": "git-blake3:04e1a02fe958529af31f8ecc52017855a36fad99:eb9d4df2dac2a085a26daacaca2db54b33ee4e0a5daf0670ed73fc4be1778823",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5590/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5590/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+      "revision": "7a800211ce03930cd0fe590615cc611084bb346b2923539216dd325800dad005"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "f378ee1d6091795d426fd0f31e22215f02e1230d84d0fd90af2e30e59d6426a3",
+      "rendered_digest": "e88f17d82847eda7ebf748e6c5c0db98b6dcb4035390cd6e8e990e7d271cf925",
+      "ast_digest": "cafd78c5558bddede73d9c794101793129f298be4d15bfa1dc68b8e94b94104f"
+    },
+    "stp": {
+      "values_digest": "d2fea151fad1f8d297f8041570a1ecc0f7282dc5a8c7d1d70ea08d5b673ae807",
+      "rendered_digest": "3ce05fb3e369f9f1b6d6456f7340b025e10df76e891e73a2ba55828aa33f4a36",
+      "ast_digest": "062ccdf6b207cd880685dabf22082d9d1d3b5644eb0a931e8b041091b225099e"
+    },
+    "spp": {
+      "values_digest": "49831231e84a0ce6f7328aca1c8b1b881631b1d0ebbf07cbab3ab6fe30356337",
+      "rendered_digest": "99669c02524aa94692d53473e4a79cb2efa7f8b4c28e037150268db97b2546cd",
+      "ast_digest": "eca6800a4ab66571e1763a76ef7d1ad673b08d4effedb0bc3bacb21155117849"
+    },
+    "vpp": {
+      "values_digest": "085170bdc549b3ff3657f860c92ed2d12a6f21d64b062d6e0f572afc3237bd44",
+      "rendered_digest": "cf314ec09a7efd878b8586f1629211c9c42136f40fe5625bdc193e099e569755",
+      "ast_digest": "88550d94d71abf970d92338718154e89d69115e0e48ca926f3927d92ed06b1a7"
+    },
+    "srp": {
+      "values_digest": "363b77ec1aab88204d55b84c8c678259087df9e9df5f2ec7f931ca44a4fb2508",
+      "rendered_digest": "e995801391e090de93127d2a29deccbeffdbd45767eff28b5c82d3d210009f6d",
+      "ast_digest": "95a05e45a4938782d79ec2ed4105045b4aefc1005d542ea2a841b94191e54e2d"
+    },
+    "sor": {
+      "values_digest": "500e54f675998e9cca6db98c05b59524699fdc23e12aaf195e32e9576cbcf177",
+      "rendered_digest": "9e41f00807b6a29a55e32e3d004957cbdff359027c7bb43d2aa1960306420a82",
+      "ast_digest": "9699d1fd040e94ef7ed105498b34833281b41a2b9c1f9172124187d1fe616118"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "The complete Runtime v3 Parity-D scope is durably implemented and its focused, full-crate, security, rollback, and operational proofs are locally green."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Exact remediation rereview passed with all six findings fixed, zero blockers, and a reviewed necessary +159-line delta."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Exact-head hosted CI failed closed because the new external Runtime v3 guardian binary lacks an explicit PR-fast coverage mapping; recover review and publication truth for the bounded mapping correction."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Exact guardian coverage remediation rereview passed with the P1 and P2 fixed and zero actionable blockers."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+      "reason": "Mark the completed six-card design, diagram, security matrix, validator, and preparation-only claim step truthfully complete after typed regeneration",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+      "reason": "Replace filtered lanes with positive inventory and zero-match guards and split operational selector rollback from guardian soak",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-secure-config-access\",\"proof_role\":\"Inventory a positive configuration test count, fail closed on zero matches, then prove init validation, TLS-only configured local/remote access, actual listener discovery, and negative transport/authority cases\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5590/run_filtered_test_lane.sh\",\"adl-runtime-kernel/Cargo.toml\",\"configuration\"],\"parallel_group\":\"runtime-v3-access\",\"defer_reason\":null},{\"lane\":\"runtime-v3-observatory-http-websocket\",\"proof_role\":\"Inventory a positive Observatory test count, fail closed on zero matches, then prove authenticated live HTTP and WebSocket state plus origin, bearer, session, malformed, and oversized-frame negatives\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5590/run_filtered_test_lane.sh\",\"adl-runtime-kernel/Cargo.toml\",\"observatory\"],\"parallel_group\":\"runtime-v3-access\",\"defer_reason\":null},{\"lane\":\"runtime-v3-guardian-recovery\",\"proof_role\":\"Inventory a positive guardian test count, fail closed on zero matches, then prove launch, signals, reaping, bounded restart, pressure serialization, restore, and invalid-config/intended-stop negatives\",\"acceptance_ids\":[\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":900,\"budget_tokens\":5000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5590/run_filtered_test_lane.sh\",\"adl-runtime/Cargo.toml\",\"guardian\"],\"parallel_group\":\"runtime-v3-operations\",\"defer_reason\":null},{\"lane\":\"runtime-v3-vector-telemetry\",\"proof_role\":\"Inventory a positive telemetry test count, fail closed on zero matches, then prove redacted stderr to Vector routing and truthful collector-degraded kernel behavior without custom OTel\",\"acceptance_ids\":[\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":450,\"budget_tokens\":3000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5590/run_filtered_test_lane.sh\",\"adl-runtime-kernel/Cargo.toml\",\"telemetry\"],\"parallel_group\":\"runtime-v3-operations\",\"defer_reason\":null},{\"lane\":\"runtime-v3-operational-selector-rollback\",\"proof_role\":\"Execute candidate Runtime v3 health, operational selector transition to the prior approved Runtime v3 target, and restored authenticated HTTPS health; report-only selection fails\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5590/run_operational_selector_transition.sh\",\"<selector-executable>\",\"<candidate-selector-ref>\",\"<prior-selector-ref>\",\"<candidate-health-url>\",\"<prior-health-url>\"],\"parallel_group\":\"runtime-v3-full\",\"defer_reason\":null},{\"lane\":\"runtime-v3-guardian-soak\",\"proof_role\":\"Execute the bounded guardian launch, pressure-stop, restart, and recovery soak independently of selector rollback\",\"acceptance_ids\":[\"AC-5\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/run_runtime_v3_guardian_soak.sh\"],\"parallel_group\":\"runtime-v3-full\",\"defer_reason\":null},{\"lane\":\"runtime-v3-full-kernel\",\"proof_role\":\"Run the complete independent Runtime v3 kernel test suite\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":900,\"budget_tokens\":8000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\"],\"parallel_group\":\"runtime-v3-full\",\"defer_reason\":null},{\"lane\":\"runtime-v3-strict-quality\",\"proof_role\":\"Prove strict lint plus exact dependency, LoC, module-growth, test-count, boundary, and evidence hygiene\",\"acceptance_ids\":[\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":5000,\"argv\":[\"cargo\",\"clippy\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--all-targets\",\"--all-features\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"runtime-v3-quality\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Verify the exact issue patch has no whitespace or unrelated product changes\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"local-control\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+      "reason": "Require an authenticated health-probe executable around the operational candidate-to-prior Runtime v3 selector transition",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-secure-config-access\",\"proof_role\":\"Inventory a positive configuration test count, fail closed on zero matches, then prove init validation, TLS-only configured local/remote access, actual listener discovery, and negative transport/authority cases\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5590/run_filtered_test_lane.sh\",\"adl-runtime-kernel/Cargo.toml\",\"configuration\"],\"parallel_group\":\"runtime-v3-access\",\"defer_reason\":null},{\"lane\":\"runtime-v3-observatory-http-websocket\",\"proof_role\":\"Inventory a positive Observatory test count, fail closed on zero matches, then prove authenticated live HTTP and WebSocket state plus origin, bearer, session, malformed, and oversized-frame negatives\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5590/run_filtered_test_lane.sh\",\"adl-runtime-kernel/Cargo.toml\",\"observatory\"],\"parallel_group\":\"runtime-v3-access\",\"defer_reason\":null},{\"lane\":\"runtime-v3-guardian-recovery\",\"proof_role\":\"Inventory a positive guardian test count, fail closed on zero matches, then prove launch, signals, reaping, bounded restart, pressure serialization, restore, and invalid-config/intended-stop negatives\",\"acceptance_ids\":[\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":900,\"budget_tokens\":5000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5590/run_filtered_test_lane.sh\",\"adl-runtime/Cargo.toml\",\"guardian\"],\"parallel_group\":\"runtime-v3-operations\",\"defer_reason\":null},{\"lane\":\"runtime-v3-vector-telemetry\",\"proof_role\":\"Inventory a positive telemetry test count, fail closed on zero matches, then prove redacted stderr to Vector routing and truthful collector-degraded kernel behavior without custom OTel\",\"acceptance_ids\":[\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":450,\"budget_tokens\":3000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5590/run_filtered_test_lane.sh\",\"adl-runtime-kernel/Cargo.toml\",\"telemetry\"],\"parallel_group\":\"runtime-v3-operations\",\"defer_reason\":null},{\"lane\":\"runtime-v3-operational-selector-rollback\",\"proof_role\":\"Execute authenticated candidate Runtime v3 health, operational selector transition to the prior approved Runtime v3 target, and restored authenticated HTTPS health; report-only selection fails\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5590/run_operational_selector_transition.sh\",\"<selector-executable>\",\"<authenticated-health-probe-executable>\",\"<candidate-selector-ref>\",\"<prior-selector-ref>\",\"<candidate-health-url>\",\"<prior-health-url>\"],\"parallel_group\":\"runtime-v3-full\",\"defer_reason\":null},{\"lane\":\"runtime-v3-guardian-soak\",\"proof_role\":\"Execute the bounded guardian launch, pressure-stop, restart, and recovery soak independently of selector rollback\",\"acceptance_ids\":[\"AC-5\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/run_runtime_v3_guardian_soak.sh\"],\"parallel_group\":\"runtime-v3-full\",\"defer_reason\":null},{\"lane\":\"runtime-v3-full-kernel\",\"proof_role\":\"Run the complete independent Runtime v3 kernel test suite\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":900,\"budget_tokens\":8000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\"],\"parallel_group\":\"runtime-v3-full\",\"defer_reason\":null},{\"lane\":\"runtime-v3-strict-quality\",\"proof_role\":\"Prove strict lint plus exact dependency, LoC, module-growth, test-count, boundary, and evidence hygiene\",\"acceptance_ids\":[\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":5000,\"argv\":[\"cargo\",\"clippy\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--all-targets\",\"--all-features\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"runtime-v3-quality\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Verify the exact issue patch has no whitespace or unrelated product changes\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"local-control\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:019f836b-e186-7ed3-b80d-bd6536cdcbf1",
+      "reason": "Activate sole-writer Runtime v3 Parity-D after retained #5591 closed_out generation 34 receipt released all Runtime product paths; preserve concrete module-level disjointness from #5592 reasoning/adaptation and #5589 governed operational adapters",
+      "operation": "{\"add_protected_paths\":[\".csdlc/evidence/5590\",\"adl-runtime-kernel/src/config.rs\",\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/src/telemetry.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/tests/configuration.rs\",\"adl-runtime-kernel/tests/control.rs\",\"adl-runtime-kernel/tests/observatory.rs\",\"adl-runtime-kernel/tests/telemetry.rs\",\"adl-runtime/src/guardian.rs\",\"infra/runtime-v3\",\"demos/v0.91.7/html-observatory\",\"adl/tools/run_runtime_v3_guardian_soak.sh\",\"adl/tools/runtime_v3_operational_selector.sh\",\"adl/tools/test_runtime_v3_operational_selector.sh\"],\"expected_owner\":\"codex:019f828e-8480-7242-a054-1b9df00f2f17\",\"expected_purpose\":\"Prepare and review complete six-card Runtime v3 Parity-D truth without product edits until #5591 integration eligibility is confirmed\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Prepare and review complete six-card Runtime v3 Parity-D truth without product edits until #5591 integration eligibility is confirmed\",\"purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:019f836b-e186-7ed3-b80d-bd6536cdcbf1",
+      "reason": "Add only the Runtime v3 kernel manifest needed to enable maintained Axum WebSocket transport for #5590; #5592 and #5589 declared no manifest ownership",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/Cargo.toml\"],\"expected_owner\":\"codex:019f828e-8480-7242-a054-1b9df00f2f17\",\"expected_purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\",\"purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 3,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Add the standalone external guardian executable that launches only the canonical Runtime v3 kernel through the existing adl-runtime guardian library; no Parity-B, Parity-C, Runtime v2, or sidecar path is included",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime/src/bin/adl-runtime-guardian.rs\"],\"expected_owner\":\"codex:019f828e-8480-7242-a054-1b9df00f2f17\",\"expected_purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\",\"purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 3,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Add one bounded black-box proof runner for the claimed guardian, HTTPS, authenticated Observatory, continuity, and operational rollback behavior",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/run_runtime_v3_operational_proof.sh\"],\"expected_owner\":\"codex:019f828e-8480-7242-a054-1b9df00f2f17\",\"expected_purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\",\"purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 3,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Protect the kernel lockfile required by the already-claimed WebSocket manifest dependency change before the durability checkpoint",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/Cargo.lock\"],\"expected_owner\":\"codex:019f828e-8480-7242-a054-1b9df00f2f17\",\"expected_purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\",\"purpose\":\"Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 4,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Record the complete durable Runtime v3 Parity-D implementation and exact local proof before bounded review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented secure Runtime v3 local and remote Observatory access through configured HTTPS and authenticated WebSocket transport, an external guardian executable, actual-address discovery, Vector-owned telemetry boundaries, operational selector rollback, and signed continuity proof for candidate and restored prior runtimes.\",\"changes\":[\"Expose actual bound control address, configured public HTTPS base, and WSS discovery in Runtime-owned readiness and Observatory feeds\",\"Require configured-origin WebSocket upgrades and bounded session bearer authentication before read-only live feed delivery\",\"Run the HTML Observatory over authenticated HTTP fallback and authenticated WSS live updates without hard-coded deployment addresses\",\"Add the standalone external guardian binary over the existing guardian library with bounded restart, backoff, and shutdown controls\",\"Add an operational process selector that activates candidate or prior Runtime v3 launch contracts and performs bounded graceful replacement\",\"Prove candidate-to-prior rollback over real TLS processes with signed generation-1 continuity for both shutdowns\",\"Align the WebSocket test dependency with Axum's protocol version and retain exact lockfile truth\"],\"artifacts\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/tests/control.rs\",\"adl-runtime-kernel/tests/observatory.rs\",\"adl-runtime/src/bin/adl-runtime-guardian.rs\",\"adl/tools/runtime_v3_operational_selector.sh\",\"adl/tools/test_runtime_v3_operational_selector.sh\",\"adl/tools/run_runtime_v3_operational_proof.sh\",\"demos/v0.91.7/html-observatory/app.js\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 5,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "The complete Runtime v3 Parity-D scope is durably implemented and its focused, full-crate, security, rollback, and operational proofs are locally green.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 5,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 5,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 6,
+      "actor": "subagent:019f8692-79df-7fe0-98bd-8d42df9b5f1a",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 6,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 7,
+      "actor": "subagent:019f8692-79df-7fe0-98bd-8d42df9b5f1a",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 8,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Exact remediation rereview passed with all six findings fixed, zero blockers, and a reviewed necessary +159-line delta.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 9,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 20,
+      "generation": 10,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "record exact existing PR ready-for-review after remote success",
+      "operation": "record_ready_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 11,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Exact-head hosted CI failed closed because the new external Runtime v3 guardian binary lacks an explicit PR-fast coverage mapping; recover review and publication truth for the bounded mapping correction.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 11,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Add the exact PR-fast coverage mapping and regression required for the new external Runtime v3 guardian binary after hosted CI failed closed on the unmapped source path",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/check_coverage_impact.sh\",\"adl/tools/test_check_coverage_impact.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 11,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 12,
+      "actor": "subagent:019f8692-79df-7fe0-98bd-8d42df9b5f1a",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 12,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Add one black-box guardian CLI integration test required to lift the newly mapped guardian binary above the changed-source coverage threshold after exact review found it at 0/135 and focused proof reached only 87/135.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime/tests/guardian_cli.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 12,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 13,
+      "actor": "subagent:019f8692-79df-7fe0-98bd-8d42df9b5f1a",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 13,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 29,
+      "generation": 14,
+      "actor": "subagent:019f8692-79df-7fe0-98bd-8d42df9b5f1a",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 30,
+      "generation": 15,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Exact guardian coverage remediation rereview passed with the P1 and P2 fixed and zero actionable blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 31,
+      "generation": 16,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

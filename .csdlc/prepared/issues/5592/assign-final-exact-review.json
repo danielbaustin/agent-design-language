@@ -1,0 +1,18 @@
+{
+  "issue": 5592,
+  "expected_generation": 9,
+  "expected_digest": "ac71574497472699be41f90668c9350d40219ec7550a3bc6f2be6950987f0c39",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "reviewer": "subagent:/root/review_5592_final_exact",
+  "assigned_by": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "scope": [
+    "adl-runtime-kernel/src/operations.rs",
+    "adl-runtime-kernel/src/parity_b.rs",
+    "adl-runtime-kernel/src/reasoning.rs",
+    "adl-runtime-kernel/src/lib.rs",
+    "adl-runtime-kernel/tests/parity_b_live_kernel.rs",
+    ".csdlc/issues/5592/cards/sor.values.json",
+    ".csdlc/issues/5592/cards/srp.values.json",
+    ".csdlc/issues/5592/cards/vpp.values.json"
+  ]
+}

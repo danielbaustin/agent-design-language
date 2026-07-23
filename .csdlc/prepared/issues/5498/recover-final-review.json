@@ -1,0 +1,8 @@
+{
+  "issue": 5498,
+  "expected_generation": 9,
+  "expected_digest": "4245197de098fec3833f802d3371d20daa6053671da47f8c709e0a131977e95a",
+  "claim_id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Refresh the same required review cycle after fixing its four actionable findings at exact head 6bf3b1e5d."
+}

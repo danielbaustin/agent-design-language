@@ -1,0 +1,20 @@
+{
+  "issue": 5615,
+  "expected_generation": 16,
+  "expected_digest": "51fed1a7c7fbc9a95535a650a4a70441f53f0533a10fa8168955e85d0ccc97c7",
+  "claim_id": "claim-5615-csdlc-ci-fastwork-routing",
+  "actor": "subagent:019f86da-0771-72d1-bbeb-a9aead4be515",
+  "evidence": {
+    "reviewer": "subagent:019f86da-0771-72d1-bbeb-a9aead4be515",
+    "scope": [
+      ".csdlc/issues/5615",
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "reviewed_revision": "git-blake3:9e90d958e9cf86c72ee12fe7200289a29973d847:9c26ce5021525e7b890389f5ff3a3127883beebc8a556f1809c181c298b4bd14",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema": "csdlc.validation_evidence.v1",
+  "issue": 5627,
+  "revision": "25b7b21ac",
+  "cause": "Gate 10A installer tests launched nested Cargo builds and raced source-cleanliness checks.",
+  "repair": "Gate 10A reuses Cargo-built binaries; explicit installation reuses a verified current installation and otherwise performs one locked build.",
+  "validation": {
+    "gate10a": {"passed": 12, "failed": 0},
+    "strict_clippy": "passed",
+    "target_dir": "/Volumes/FastWork/adl-5627-ci-repro-target",
+    "local_repo_target_created": false
+  }
+}

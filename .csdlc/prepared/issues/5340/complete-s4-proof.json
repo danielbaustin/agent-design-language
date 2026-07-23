@@ -1,0 +1,11 @@
+{
+  "issue": 5340,
+  "card": "spp",
+  "expected_generation": 20,
+  "expected_digest": "06e6077fadccbd0f16fa0e869f1caa999f18570beb7e280ad4561bf88cb5ee84",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "All required fixture mappings, negative cases, completion permutations, saturation boundaries, fresh-process resume equivalence, dependency, COTS, scope, LoC, latency, and FastWork lanes passed with retained evidence.",
+  "operation": {"operation": "update_plan_step", "step_id": "S4", "status": "completed"},
+  "fail_after_backup": false
+}

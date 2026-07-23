@@ -1,0 +1,32 @@
+[package]
+name = "adl-adapters"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "Bounded provider and governed-tool adapters for ADL v2"
+
+[features]
+default = []
+test-transport = []
+
+[dependencies]
+adl-engine = { path = "../adl-engine" }
+adl-records = { path = "../adl-records" }
+reqwest = { version = "=0.13.4", default-features = false, features = ["json", "rustls", "stream"] }
+secrecy = "=0.10.3"
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.151"
+tokio = { version = "=1.53.1", default-features = false, features = ["io-util", "rt", "sync", "time"] }
+url = "=2.5.8"
+
+[dev-dependencies]
+wiremock = "=0.6.5"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[[test]]
+name = "https_adapter"
+path = "tests/https_adapter.rs"
+required-features = ["test-transport"]

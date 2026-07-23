@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5624,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][prune] Resolve issue-local terminal worktree topology safely",
+    "slug": "csdlc-prune-topology",
+    "version": "v0.91.8",
+    "generation": 22
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "guarded-prune-focused",
+          "proof_role": "Prove exact issue-local, relative, absolute, malformed, wrong-checkout, dirty, and receipt-stability behavior",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "bash",
+            ".csdlc/prepared/issues/5624/run_focused_validation.sh"
+          ],
+          "parallel_group": "csdlc-v2-prune",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on any non-exact topology, malformed path, receipt drift, validation failure, unresolved review finding, or protected-path expansion.",
+      "design_ref": ".csdlc/prepared/issues/5624/design.md",
+      "design_digest": "cff74b3020ec2e81e97296726d4d6333b471397c999d18f596682865d33435ff",
+      "diagram_ref": ".csdlc/prepared/issues/5624/diagram.mmd",
+      "diagram_digest": "d9191dc1bfad775a15feeaa8e1c011cf9c51d4e30d3efa07369fc4abbccdbca9"
+    }
+  }
+}

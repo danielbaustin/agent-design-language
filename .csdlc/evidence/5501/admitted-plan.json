@@ -1,0 +1,23 @@
+{
+  "schema": "adl.wp10a.admitted-plan.v1",
+  "source_issue": 5499,
+  "component": "adl-workcell-conductor",
+  "source_head": "26a08cf896693c03fdf8dcc503e734bad56e61dc",
+  "merge": "d8f02c5b77099552c376436acd695f2bf8922de6",
+  "contract_refs": [
+    "adl-v2/crates/adl-workcell-conductor/src/planner.rs",
+    "adl-v2/crates/adl-workcell-conductor/tests/conductor.rs"
+  ],
+  "admitted_live_shards": [
+    5500,
+    5502
+  ],
+  "serialized_gates": [
+    "review",
+    "publication",
+    "merge",
+    "post_merge_validation",
+    "closeout"
+  ],
+  "truth_boundary": "The proof consumes the reviewed conductor contract and the already completed real shard executions; it does not claim a new task transport invocation from #5501."
+}

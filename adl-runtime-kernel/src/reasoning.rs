@@ -640,6 +640,7 @@ impl MutationGrant {
     }
 }
 
+#[derive(Clone)]
 pub struct MutationAuthority {
     keys: BTreeMap<String, TrustedMutationKey>,
 }
@@ -686,6 +687,7 @@ impl MutationAuthority {
     }
 }
 
+#[derive(Clone)]
 pub struct TrustedMutationKey {
     pub principal: String,
     pub verifying_key: VerifyingKey,
@@ -826,6 +828,32 @@ impl MutationGate {
             .expect("mutation gate mutex poisoned")
             .evidence
             .clone()
+    }
+
+    pub fn snapshot_bytes(&self) -> Result<Vec<u8>, ReasoningError> {
+        let state = self
+            .state
+            .lock()
+            .map_err(|_| ReasoningError::MutationEvidence)?;
+        let adaptation = self.adaptation.state();
+        serde_json::to_vec(&MutationGateSnapshot {
+            schema: MUTATION_GATE_SCHEMA.to_owned(),
+            policy_hash: self.policy_hash.clone(),
+            graph: state.graph.definition.clone(),
+            consumed_grants: state.consumed_grants.clone(),
+            evidence: state.evidence.clone(),
+            adaptation,
+        })
+        .map_err(|error| ReasoningError::Encoding(error.to_string()))
+    }
+
+    pub fn restore_from_snapshot(&self, bytes: &[u8]) -> Result<Self, ReasoningError> {
+        Self::restore(
+            bytes,
+            self.authority.clone(),
+            self.trusted_time.clone(),
+            self.max_evidence,
+        )
     }
 
     pub fn adaptation(&self) -> Arc<AdaptationStore> {
@@ -999,20 +1027,7 @@ impl CheckpointParticipant for MutationGate {
     }
 
     async fn snapshot(&self) -> Result<Vec<u8>, String> {
-        let state = self
-            .state
-            .lock()
-            .map_err(|_| "mutation gate mutex poisoned".to_owned())?;
-        let adaptation = self.adaptation.state();
-        serde_json::to_vec(&MutationGateSnapshot {
-            schema: MUTATION_GATE_SCHEMA.to_owned(),
-            policy_hash: self.policy_hash.clone(),
-            graph: state.graph.definition.clone(),
-            consumed_grants: state.consumed_grants.clone(),
-            evidence: state.evidence.clone(),
-            adaptation,
-        })
-        .map_err(|error| error.to_string())
+        self.snapshot_bytes().map_err(|error| error.to_string())
     }
 }
 

@@ -1,0 +1,109 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5613
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: pre_phase
+
+## Summary
+
+Add one typed CAS-bound terminal SOR validation-result repair, reuse the existing journaled projection transaction, and reconcile five stranded closed-out projections from retained receipts.
+
+## Artifacts
+
+- csdlc-v2/src/store.rs
+- csdlc-v2/src/model.rs
+- csdlc-v2/src/schema.rs
+- csdlc-v2/src/bin/csdlc-closeout.rs
+- csdlc-v2/tests/gate7_terminal_sor_validation_repair_5613.rs
+- .csdlc/issues/5337
+- .csdlc/issues/5339
+- .csdlc/issues/5358
+- .csdlc/issues/5591
+- .csdlc/issues/5602
+
+## Execution
+
+- Add exact authority, target, receipt, and old-result CAS validation
+- Reuse the shared projection, receipt, journal, and rollback transaction
+- Reject non-portable terminal validation replacements structurally
+- Materialize proven terminal projections for issues 5337, 5339, 5358, 5591, and 5602
+- Replace issue 5591 machine-local SOR validation paths without rewriting append-only audit provenance
+- Omit the unsupported unbound guardian-soak artifact
+
+## Validation
+
+[
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "terminal_sor_validation_repair",
+      "--",
+      "--nocapture"
+    ],
+    "purpose": "Prove the typed terminal validation repair, exact CAS rejection, journaled rollback, structural portability boundary, and public request schema.",
+    "outcome": "passed",
+    "evidence_ref": "issue-5613:focused-terminal-repair-tests:4-unit-plus-1-public-contract"
+  },
+  {
+    "command": [
+      "bash",
+      ".csdlc/prepared/issues/5613/validate_terminal_projections.sh"
+    ],
+    "purpose": "Prove all five terminal projections match retained closed-out receipts and original PR identities, issue 5591 SOR paths are portable, and guardian-soak JSON is absent.",
+    "outcome": "passed",
+    "evidence_ref": "issue-5613:terminal-projection-proof:pass"
+  },
+  {
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "purpose": "Prove the supported terminal repair command, transaction reuse, portability parser, tests, and all C-SDLC v2 targets are warning-free.",
+    "outcome": "passed",
+    "evidence_ref": "issue-5613:strict-all-target-clippy:pass"
+  },
+  {
+    "command": [
+      "bash",
+      ".csdlc/prepared/issues/5613/validate_fresh_checkout.sh"
+    ],
+    "purpose": "Prove a fresh checkout sees released terminal claims, closed-out doctors and receipts, portable issue 5591 SOR truth, no unsupported guardian artifact, and no out-of-scope product changes.",
+    "outcome": "passed",
+    "evidence_ref": "issue-5613:fresh-checkout-scope-and-terminal-proof:pass"
+  }
+]
+
+## Integration
+
+pr_open
+
+## Publication
+
+Publication: ready
+
+Merge: not_merged
+
+## Closeout
+
+not_started
+
+## Follow Ups
+
+- none

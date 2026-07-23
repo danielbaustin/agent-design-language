@@ -1,0 +1,13 @@
+{
+  "issue": 5615,
+  "claim_id": "claim-5615-csdlc-ci-fastwork-routing",
+  "expected_generation": 1,
+  "expected_digest": "b71725b2b89376e612250eab384f6d9c5dea52f633924bf7344e1d3a65c824ba",
+  "now_unix_seconds": 1784669635,
+  "actor": "codex:5615-owner",
+  "reason": "Preparation review proved the validation-manager selector and its exact contract test are authoritative parts of the classifier repair.",
+  "add_protected_paths": [
+    "adl/config/validation_lane_selector.v0.91.6.json",
+    "adl/tools/test_select_validation_lanes.sh"
+  ]
+}

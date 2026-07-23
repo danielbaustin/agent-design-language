@@ -1,0 +1,30 @@
+{
+  "issue": 5615,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "a43857a76ac88b3656d2fb1d06762b3843520d7b87bdb7d91482b330c7e46346",
+  "claim_id": "claim-5615-csdlc-ci-fastwork-routing",
+  "actor": "codex:5615-owner",
+  "reason": "Record the focused C-SDLC v2 CI route and portable external Cargo validation implementation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Separate lifecycle metadata from standalone C-SDLC v2 Rust proof, require the selected lane in stable adl-ci, preserve coverage truth, and route Cargo state to a validated external root.",
+    "changes": [
+      "Split .csdlc metadata and csdlc-v2 Rust selectors in validation-manager authority",
+      "Add an explicit standalone C-SDLC v2 selector output and hosted test/format/strict-Clippy job",
+      "Fail closed on malformed selector output and required-but-skipped standalone proof",
+      "Preserve Runtime v3 focused routing when issue lifecycle metadata is present",
+      "Add an external Cargo build-root wrapper with FastWork fallback and compatibility symlink"
+    ],
+    "artifacts": [
+      ".github/workflows/ci.yaml",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_run_cargo_validation.sh",
+      "adl/tools/test_select_validation_lanes.sh"
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "issue": 5592,
+  "expected_generation": 8,
+  "expected_digest": "ada9693c0d0bd2330e5aa82886fb5555426d6b0a01a723d4dd310dbd8bef9389",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "subagent:/root/review_5592_repaired_exact",
+  "evidence": {
+    "reviewer": "subagent:/root/review_5592_repaired_exact",
+    "scope": [
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/src/parity_b.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs",
+      ".csdlc/issues/5592/cards/sor.values.json",
+      ".csdlc/issues/5592/cards/srp.values.json",
+      ".csdlc/issues/5592/cards/vpp.values.json"
+    ],
+    "reviewed_revision": "git-blake3:e0276c61a3d409a87170da96ee359cb4e8b424c5:01d41ac8cc0ccb6970f62cdb7fb980d32927b1506a824c123e91678d961c398c",
+    "findings": [
+      {"id":"mutation-recovery-omits-gate-state","severity":"p1","summary":"Parity-B checkpoint omits authenticated MutationGate graph, consumed grants, evidence, and adaptation state, permitting grant reuse and adaptive rollback after restart.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"live-cancellation-and-inflight-shutdown-unreachable","severity":"p1","summary":"Loop execution uses an unreachable fresh cancellation token and does not recheck shutdown before receipt commit, so actual cancellation and in-flight monotonic shutdown are unproved.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null}
+    ],
+    "residual_risks": ["The accepted 13,504-line exception must remain explicit in final review and SOR truth."],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

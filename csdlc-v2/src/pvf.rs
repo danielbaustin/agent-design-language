@@ -14,7 +14,9 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use strum::{AsRefStr, Display, EnumString};
 
-use crate::{ErrorCode, Result, V2Error};
+use crate::cards::{EvidenceOutcome, ValidationResult};
+use crate::store::ImplementationCommit;
+use crate::{ErrorCode, IssueRecord, Result, Store, V2Error};
 
 #[derive(
     Debug,
@@ -168,6 +170,20 @@ pub struct ExecutionRequest {
     pub root: PathBuf,
     pub evidence_dir: PathBuf,
     pub cancellation_file: Option<PathBuf>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct FinalizeRequest {
+    pub schema: String,
+    pub issue: u64,
+    pub expected_generation: u64,
+    pub expected_digest: String,
+    pub claim_id: String,
+    pub actor: String,
+    pub summary: String,
+    pub changes: Vec<String>,
+    pub artifacts: Vec<String>,
+    pub execution: ExecutionRequest,
 }
 
 #[derive(
@@ -479,6 +495,141 @@ pub fn execute(request: ExecutionRequest) -> Result<ExecutionReport> {
         selected_waves: dag.waves,
         evidence,
     })
+}
+
+pub fn finalize(store: &Store, request: FinalizeRequest) -> Result<IssueRecord> {
+    if request.schema != "csdlc.finalize_request.v1"
+        || request.actor.trim().is_empty()
+        || request.summary.trim().is_empty()
+        || request.changes.is_empty()
+        || request.execution.root != store.root()
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "finalize request identity, execution root, or execution summary is invalid",
+        ));
+    }
+    let before = store.load_record(request.issue)?;
+    if before.generation != request.expected_generation || before.digest != request.expected_digest
+    {
+        return Err(V2Error::new(
+            ErrorCode::StaleDigest,
+            "finalize request does not match canonical record",
+        ));
+    }
+    before
+        .claim
+        .as_ref()
+        .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "claim missing"))?
+        .validate(&request.claim_id, crate::store::now_seconds()?)?;
+
+    let evidence_dir = request.execution.evidence_dir.clone();
+    let expected_evidence_dir = store
+        .root()
+        .join(".csdlc")
+        .join("evidence")
+        .join(request.issue.to_string());
+    if evidence_dir != expected_evidence_dir
+        || [
+            store.root().join(".csdlc"),
+            store.root().join(".csdlc/evidence"),
+        ]
+        .iter()
+        .any(|path| fs::symlink_metadata(path).is_ok_and(|metadata| metadata.is_symlink()))
+    {
+        return Err(V2Error::new(
+            ErrorCode::UnsafeCheckout,
+            "finalize evidence must use the issue-owned repository evidence directory",
+        ));
+    }
+    let evidence_parent = evidence_dir.parent().ok_or_else(|| {
+        V2Error::new(
+            ErrorCode::InvalidInput,
+            "finalize evidence directory must have a parent",
+        )
+    })?;
+    fs::create_dir_all(evidence_parent)?;
+    let nonce = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_err(|_| V2Error::new(ErrorCode::Io, "system clock is before the Unix epoch"))?
+        .as_nanos();
+    let staging_dir = evidence_parent.join(format!(
+        ".csdlc-finalize-{}-{}-{nonce}",
+        request.issue,
+        std::process::id()
+    ));
+    let mut execution = request.execution.clone();
+    execution.evidence_dir = staging_dir.clone();
+    let report = match execute(execution) {
+        Ok(report) => report,
+        Err(error) => {
+            let _ = remove_path_no_follow(&staging_dir);
+            return Err(error);
+        }
+    };
+    if report.disposition != ValidationDisposition::LocalPass {
+        let _ = remove_path_no_follow(&staging_dir);
+        return Err(V2Error::new(
+            ErrorCode::ValidationFailed,
+            "finalize requires a complete local validation pass",
+        ));
+    }
+    let validation = report
+        .evidence
+        .iter()
+        .map(|lane| ValidationResult {
+            command: lane.command.clone(),
+            purpose: lane.purpose.clone(),
+            outcome: match lane.status {
+                LaneStatus::Passed => EvidenceOutcome::Passed,
+                LaneStatus::AcceptedNonGoal => EvidenceOutcome::SkippedNonGoal,
+                LaneStatus::DeferredCi => EvidenceOutcome::Deferred,
+                LaneStatus::Failed | LaneStatus::TimedOut => EvidenceOutcome::Failed,
+                LaneStatus::Blocked => EvidenceOutcome::Blocked,
+            },
+            evidence_ref: lane
+                .log_ref
+                .clone()
+                .unwrap_or_else(|| format!("pvf:{}", lane.lane)),
+        })
+        .collect();
+    let committed = store.commit_implementation(
+        ImplementationCommit {
+            issue: request.issue,
+            expected_generation: request.expected_generation,
+            expected_digest: request.expected_digest,
+            claim_id: request.claim_id,
+            actor: request.actor,
+            summary: request.summary,
+            changes: request.changes,
+            artifacts: request.artifacts,
+            validation,
+        },
+        &staging_dir,
+        &evidence_dir,
+    );
+    if committed.is_err() && staging_dir.exists() {
+        remove_path_no_follow(&staging_dir).map_err(|_| {
+            V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "failed to remove staged evidence after finalize rejection",
+            )
+        })?;
+    }
+    committed
+}
+
+fn remove_path_no_follow(path: &Path) -> std::io::Result<()> {
+    let metadata = match fs::symlink_metadata(path) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(error) => return Err(error),
+    };
+    if metadata.file_type().is_symlink() || metadata.is_file() {
+        fs::remove_file(path)
+    } else {
+        fs::remove_dir_all(path)
+    }
 }
 
 fn skipped_evidence(lane: &PvfLane, status: LaneStatus) -> LaneEvidence {

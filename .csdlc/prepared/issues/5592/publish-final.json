@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5592,
+  "expected_generation": 11,
+  "expected_digest": "c3205f81b41fdccbbf54f2e1afbd26a94ed568733607fe0ed752b93efbf574e4",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5592-runtime-v3-parity-b",
+  "title": "[v0.91.8][WP-14][runtime-v3][parity-b] Make reasoning, adaptive learning, and governed cognition live",
+  "body": "Closes #5592\n\nImplements signed-policy Runtime v3 Parity-B graph execution through the production guardian, TLS signed /v1/control API, canonical ingress, narrow schema router, and persistent configured executor. It includes deterministic bounded loop resume, authenticated semantic checkpoints, one-shot governed adaptation that survives restart, advisory-signal isolation, monotonic Freedom Gate and shutdown authority, and evidence-specific feature dispositions without Runtime v2 or AWS.\n\nExact proof passes all seven issue lanes, the external guardian-launched black-box test, the complete Runtime v3 suite, strict all-target Clippy, formatting, dependency isolation, and diff hygiene. Fresh exact review has zero actionable findings. Runtime v3 is 13,547 physical source lines, an explicitly accepted cohesive-scope exception of +1,338 over the pinned 12,209 baseline and +1,547 over the reviewed target, below the 20,000 hard ceiling.",
+  "draft": true,
+  "token_file": null
+}

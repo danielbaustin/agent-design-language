@@ -1,0 +1,11 @@
+{
+  "issue": 5342,
+  "card": "spp",
+  "expected_generation": 3,
+  "expected_digest": "7e7b6f7de938c2ac42884f9213f9287c9f2317855daaeb3bc4fe146a85a4a938",
+  "claim_id": "claim-5342-v0918-wp07-records-signing",
+  "actor": "codex:5342-owner",
+  "reason": "Dedicated branch and FastWork worktree match the reserved claim; advance through typed lifecycle after csdlc-bind rejected its own absolute init reservation.",
+  "operation": {"operation":"advance_phase","phase":"bound"},
+  "fail_after_backup": false
+}

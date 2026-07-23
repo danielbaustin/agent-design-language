@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use crate::error::{ErrorCode, Result, V2Error};
@@ -113,6 +113,24 @@ pub fn clean_commit_revision(commit: &str) -> String {
     let mut hasher = blake3::Hasher::new();
     hasher.update(commit.as_bytes());
     format!("git-blake3:{commit}:{}", hasher.finalize().to_hex())
+}
+
+pub fn shared_request_path(root: &Path, issue: u64) -> Result<PathBuf> {
+    if issue == 0 {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "shared request issue must be non-zero",
+        ));
+    }
+    let common = run(
+        root,
+        &["rev-parse", "--path-format=absolute", "--git-common-dir"],
+    )?
+    .stdout;
+    Ok(PathBuf::from(common)
+        .join("csdlc-v2")
+        .join("requests")
+        .join(format!("{issue}.json")))
 }
 
 pub fn metadata_only_changed_paths(
@@ -271,13 +289,6 @@ fn safe_metadata_path(path: &str) -> bool {
         {
             true
         }
-        [".csdlc", "requests", file]
-            if file
-                .split_once('-')
-                .is_some_and(|(issue, suffix)| issue_id(issue) && suffix.ends_with(".json")) =>
-        {
-            true
-        }
         [".csdlc", "publication", file]
             if file.strip_suffix(".intent.json").is_some_and(issue_id) =>
         {
@@ -301,7 +312,8 @@ fn typed_review_evidence_markdown(file: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::safe_metadata_path;
+    use super::{safe_metadata_path, shared_request_path};
+    use crate::ErrorCode;
 
     #[test]
     fn prepared_review_evidence_is_narrowly_metadata_safe() {
@@ -315,5 +327,25 @@ mod tests {
         assert!(!safe_metadata_path(
             ".csdlc/prepared/issues/5600/final-head-review-not-a-number.md"
         ));
+    }
+
+    #[test]
+    fn shared_request_path_is_one_overwritten_git_common_file_per_issue() {
+        let temp = tempfile::tempdir().expect("repo");
+        std::process::Command::new("git")
+            .args(["init", "-q"])
+            .current_dir(temp.path())
+            .status()
+            .expect("git init")
+            .success()
+            .then_some(())
+            .expect("git init success");
+        let path = shared_request_path(temp.path(), 5627).expect("request path");
+        assert!(path.ends_with(".git/csdlc-v2/requests/5627.json"));
+        assert!(!path.starts_with(temp.path().join(".csdlc")));
+        assert_eq!(
+            shared_request_path(temp.path(), 0).unwrap_err().code,
+            ErrorCode::InvalidInput
+        );
     }
 }

@@ -1,7 +1,132 @@
 use std::time::Instant;
 
 use csdlc_v2::pvf::*;
-use csdlc_v2::{classify_schedule, classify_shepherd, execute, select, ErrorCode};
+use csdlc_v2::{
+    classify_schedule, classify_shepherd, edit_issue, execute, finalize, initialize_native_json,
+    select, shared_request_path, BootstrapRequest, CardKind, Claim, EditRequest, ErrorCode,
+    FinalizeRequest, InitialCardInput, LifecyclePhase, PlanningProfile, SemanticOperation, Store,
+};
+
+fn install_native_authority(root: &std::path::Path) {
+    let registry = root.join("docs/templates/prompts/current.json");
+    let manifest = root.join("csdlc-v2/operator/native-card-shape.json");
+    std::fs::create_dir_all(registry.parent().unwrap()).unwrap();
+    std::fs::create_dir_all(manifest.parent().unwrap()).unwrap();
+    std::fs::write(
+        registry,
+        include_bytes!("../../docs/templates/prompts/current.json"),
+    )
+    .unwrap();
+    std::fs::write(
+        manifest,
+        include_bytes!("../operator/native-card-shape.json"),
+    )
+    .unwrap();
+}
+
+fn bound_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
+    let temp = tempfile::tempdir().expect("fixture");
+    assert!(std::process::Command::new("git")
+        .args(["init", "-q"])
+        .current_dir(temp.path())
+        .status()
+        .expect("git init")
+        .success());
+    install_native_authority(temp.path());
+    std::fs::create_dir_all(temp.path().join("docs")).unwrap();
+    std::fs::write(temp.path().join("docs/design.md"), "# Design\n").unwrap();
+    std::fs::write(
+        temp.path().join("docs/diagram.mmd"),
+        "flowchart LR\n A-->B\n",
+    )
+    .unwrap();
+    let store = Store::new(temp.path());
+    let mut record = initialize_native_json(
+        &store,
+        &serde_json::to_vec(&BootstrapRequest {
+            issue: 5627,
+            repository: "example/repo".into(),
+            design_path: "docs/design.md".into(),
+            diagram_path: "docs/diagram.mmd".into(),
+            design_reviewer: "operator".into(),
+            design_approved: true,
+            claim: Claim {
+                id: "claim".into(),
+                owner: "agent".into(),
+                generation: 0,
+                acquired_unix_seconds: 1,
+                expires_unix_seconds: u64::MAX,
+                heartbeat_unix_seconds: 1,
+                branch: "codex/5627".into(),
+                worktree: ".".into(),
+                protected_paths: vec!["csdlc-v2".into()],
+                purpose: "four command proof".into(),
+            },
+            initial: InitialCardInput {
+                title: "four command fixture".into(),
+                slug: "four-command".into(),
+                version: "v0.91.8".into(),
+                goal: "collapse routine lifecycle".into(),
+                required_outcome: "atomic finalize".into(),
+                declared_scope: vec!["csdlc-v2".into()],
+                authority_boundary: vec!["no runtime".into()],
+                operator_constraints: vec!["typed v2".into()],
+                task_boundary: "prove finalize".into(),
+                deliverables: vec!["finalize".into()],
+                acceptance_criteria: vec!["AC-1: atomic".into()],
+                dependencies: vec!["none".into()],
+                repo_inputs: vec!["csdlc-v2".into()],
+                non_goals: vec!["runtime".into()],
+                plan_summary: "finalize once".into(),
+                steps: vec![csdlc_v2::cards::PlanStep {
+                    id: "S1".into(),
+                    action: "finalize".into(),
+                    acceptance_ids: vec!["AC-1".into()],
+                    status: csdlc_v2::cards::StepStatus::Pending,
+                }],
+                invariants: vec!["zero partial writes".into()],
+                risks: vec!["partial state".into()],
+                planning_profile: PlanningProfile::Small,
+                stop_conditions: vec!["validation fails".into()],
+                validation_lanes: vec![csdlc_v2::cards::ValidationLane {
+                    lane: "focused".into(),
+                    proof_role: "finalize".into(),
+                    acceptance_ids: vec!["AC-1".into()],
+                    deterministic: true,
+                    resource_profile: csdlc_v2::cards::ResourceProfile::Small,
+                    budget_seconds: 30,
+                    budget_tokens: 10,
+                    argv: vec!["true".into()],
+                    parallel_group: "local".into(),
+                    defer_reason: None,
+                }],
+                failure_policy: "fail closed".into(),
+                review_prompts: vec!["review atomicity".into()],
+                review_scope: "csdlc-v2".into(),
+            },
+        })
+        .unwrap(),
+    )
+    .expect("bootstrap");
+    for phase in [LifecyclePhase::Ready, LifecyclePhase::Bound] {
+        record = edit_issue(
+            &store,
+            EditRequest {
+                issue: 5627,
+                card: CardKind::Sip,
+                expected_generation: record.generation,
+                expected_digest: record.digest,
+                claim_id: "claim".into(),
+                actor: "agent".into(),
+                reason: "fixture".into(),
+                operation: SemanticOperation::AdvancePhase { phase },
+                fail_after_backup: false,
+            },
+        )
+        .expect("advance");
+    }
+    (temp, store, record)
+}
 
 fn lane(id: &str, deps: &[&str], executable: &str, argv: &[&str]) -> PvfLane {
     PvfLane {
@@ -40,6 +165,129 @@ fn manifest() -> PvfManifest {
             lane("c", &["a", "b"], "/usr/bin/true", &[]),
         ],
     }
+}
+
+#[test]
+fn finalize_is_one_atomic_implemented_transition_and_failure_writes_no_state() {
+    let (temp, store, record) = bound_fixture();
+    let before = std::fs::read(store.issue_dir(5627).join("index.json")).expect("before");
+    let request = |executable: &str| FinalizeRequest {
+        schema: "csdlc.finalize_request.v1".into(),
+        issue: 5627,
+        expected_generation: record.generation,
+        expected_digest: record.digest.clone(),
+        claim_id: "claim".into(),
+        actor: "agent".into(),
+        summary: "implemented four-command lifecycle".into(),
+        changes: vec!["csdlc-v2".into()],
+        artifacts: vec!["publication intent".into()],
+        execution: ExecutionRequest {
+            manifest: PvfManifest {
+                schema: "csdlc.pvf.manifest.v1".into(),
+                lanes: vec![lane("focused", &[], executable, &[])],
+            },
+            selection: SelectionRequest {
+                requested_lanes: vec!["focused".into()],
+                allow_network: false,
+                available_credentials: vec![],
+            },
+            budget: ExecutionBudget {
+                max_parallel: 1,
+                cpu_units: 1,
+                memory_mib: 8,
+                tokens: 10,
+            },
+            root: temp.path().into(),
+            evidence_dir: temp.path().join(".csdlc/evidence/5627"),
+            cancellation_file: None,
+        },
+    };
+    let evidence_dir = temp.path().join(".csdlc/evidence/5627");
+    std::fs::create_dir_all(&evidence_dir).expect("prior evidence directory");
+    std::fs::write(evidence_dir.join("prior.log"), b"prior evidence\n").expect("prior evidence");
+    assert_eq!(
+        finalize(&store, request("/usr/bin/false"))
+            .unwrap_err()
+            .code,
+        ErrorCode::ValidationFailed
+    );
+    assert_eq!(
+        std::fs::read(store.issue_dir(5627).join("index.json")).expect("unchanged"),
+        before
+    );
+    assert_eq!(
+        std::fs::read(evidence_dir.join("prior.log")).expect("prior evidence remains"),
+        b"prior evidence\n"
+    );
+    assert!(std::fs::read_dir(temp.path().join(".csdlc/evidence"))
+        .expect("evidence parent")
+        .all(|entry| !entry
+            .expect("entry")
+            .file_name()
+            .to_string_lossy()
+            .starts_with(".csdlc-finalize-")));
+    let mut unsafe_request = request("/usr/bin/true");
+    unsafe_request.execution.evidence_dir = temp.path().join("unrelated");
+    assert_eq!(
+        finalize(&store, unsafe_request).unwrap_err().code,
+        ErrorCode::UnsafeCheckout
+    );
+    std::fs::create_dir_all(temp.path().join("outside")).expect("outside directory");
+    let mut symlink_request = request("/bin/sh");
+    symlink_request.execution.manifest.lanes[0].argv = vec![
+        "-c".into(),
+        "for d in .csdlc/evidence/.csdlc-finalize-*; do rm -rf \"$d\"; ln -s ../../../outside \"$d\"; done".into(),
+    ];
+    assert_eq!(
+        finalize(&store, symlink_request).unwrap_err().code,
+        ErrorCode::UnsafeCheckout
+    );
+    assert_eq!(
+        std::fs::read(evidence_dir.join("prior.log")).expect("prior evidence remains"),
+        b"prior evidence\n"
+    );
+    let implemented = finalize(&store, request("/usr/bin/true")).expect("finalize");
+    assert_eq!(implemented.phase, LifecyclePhase::Implemented);
+    assert_eq!(implemented.generation, record.generation + 1);
+    assert_eq!(
+        implemented.audit.last().expect("audit").operation,
+        "finalize_implementation"
+    );
+}
+
+#[test]
+fn routine_lifecycle_contract_measures_four_commands_and_two_artifacts() {
+    let (temp, _store, _record) = bound_fixture();
+    let routine_commands = [
+        "csdlc-validate finalize",
+        "csdlc-review record",
+        "csdlc-publish publish",
+        "csdlc-closeout closeout",
+    ];
+    let replaced_routine_commands = [
+        "csdlc-validate execute",
+        "csdlc-edit apply implemented",
+        "csdlc-review assign",
+        "csdlc-review record",
+        "csdlc-edit apply reviewed",
+        "csdlc-publish publish draft",
+        "csdlc-publish ready",
+        "csdlc-publish reconcile-merged",
+        "csdlc-closeout closeout",
+    ];
+    let durable_post_product_artifacts = [
+        ".csdlc/publication/5627.intent.json",
+        ".git/csdlc-v2/closeout/5627.json",
+    ];
+    let request = shared_request_path(temp.path(), 5627).expect("shared request path");
+
+    assert_eq!(routine_commands.len(), 4);
+    assert_eq!(replaced_routine_commands.len(), 9);
+    assert!(durable_post_product_artifacts.len() <= 2);
+    assert!(request.ends_with(".git/csdlc-v2/requests/5627.json"));
+    assert!(!durable_post_product_artifacts
+        .iter()
+        .any(|artifact| artifact.contains("requests")));
 }
 
 #[test]
@@ -565,8 +813,12 @@ fn cancellation_during_execution_terminates_process_group() {
     let mut tree = lane("tree", &[], "/bin/sh", &["-c", &script]);
     tree.timeout_seconds = 5;
     let cancel_writer = cancel.clone();
+    let pid_observer = pid_file.clone();
     let trigger = std::thread::spawn(move || {
-        std::thread::sleep(std::time::Duration::from_millis(100));
+        let deadline = Instant::now() + std::time::Duration::from_secs(1);
+        while !pid_observer.exists() && Instant::now() < deadline {
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
         std::fs::write(cancel_writer, "stop").expect("cancel");
     });
     let started = Instant::now();

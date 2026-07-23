@@ -102,10 +102,10 @@ async fn run(cli: &Cli) -> csdlc_v2::Result<serde_json::Value> {
         .map(|pr| normalize(&intent, pr))
         .transpose()?;
     if let Some(value) = &before {
-        if !value.body.contains(&format!("#{}", intent.issue)) || !value.draft {
+        if !value.body.contains(&format!("#{}", intent.issue)) || value.draft != intent.draft {
             return Err(V2Error::new(
                 ErrorCode::ReconciliationRequired,
-                "existing PR is not this issue's draft",
+                "existing PR does not match this issue's governed publication mode",
             ));
         }
     }

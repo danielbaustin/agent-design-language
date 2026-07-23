@@ -1,0 +1,24 @@
+{
+  "issue": 5589,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "862858e785607ce354cce9d2122c3ac43503a21b40adca8ce3a5c3d3fc225ca3",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "actor": "codex:019f8288-9fd3-7103-a3a5-9e3fe61aad90",
+  "reason": "Record the explicit full repair and evidence range after the final retained-revision re-review finding passes validation",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5589/validate_review_range.rb",
+        "--request",
+        ".csdlc/prepared/issues/5589/review-range.json"
+      ],
+      "purpose": "Validate the complete base-to-final-evidence-head range and exact 15-path post-substantive metadata/evidence inventory for title synchronization, fail-closed focused test inventories, claim scope, and diff hygiene",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5589/preparation/committed-review-range.log"
+    }
+  },
+  "fail_after_backup": false
+}

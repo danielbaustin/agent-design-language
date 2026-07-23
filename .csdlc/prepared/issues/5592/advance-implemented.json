@@ -1,0 +1,14 @@
+{
+  "issue": 5592,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "7768c8044e04f53cf2c54c4f221428eb75d89c42d134847eac297cc76c2e10a2",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Complete Parity-B implementation and FastWork proof are ready for exact-revision review",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

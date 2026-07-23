@@ -1,0 +1,18 @@
+{
+  "issue": 5613,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "8d3cc5805423abce9ae83381b5722da212a239295db88c47e8f307206a53b3f6",
+  "claim_id": "claim-5613-terminal-projection-repair",
+  "actor": "codex:issue-5613-owner",
+  "reason": "Record strict all-target C-SDLC v2 lint proof on FastWork.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "clippy", "--locked", "--manifest-path", "csdlc-v2/Cargo.toml", "--all-targets", "--", "-D", "warnings"],
+      "purpose": "Prove the supported terminal repair command, transaction reuse, portability parser, tests, and all C-SDLC v2 targets are warning-free.",
+      "outcome": "passed",
+      "evidence_ref": "issue-5613:strict-all-target-clippy:pass"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "issue": 5340,
+  "expected_generation": 28,
+  "expected_digest": "a4dc0e82e584d6a537dc8c2e577f2f7149f8d9d258264a7a9299cf0a56f558e9",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "reviewer": "subagent:/root/review_5340_exact"
+}

@@ -1,6 +1,6 @@
 ---
 name: adl_pr_cycle
-description: "Deterministic Codex.app workflow for the real ADL authoring control plane: pr init, pr start, pr run, and pr finish, with bounded editor-adapter truth and required reporting."
+description: "Compatibility entrypoint for routing a tracked ADL issue through the independent C-SDLC v2 Rust lifecycle, from typed bootstrap through reviewable publication and closeout handoff."
 ---
 
 # adl_pr_cycle
@@ -15,103 +15,126 @@ Install or resync the local skill with:
 bash adl/tools/install_adl_pr_cycle_skill.sh
 ```
 
-## Skill Prompt
+## Skill prompt
 
 ```text
 You are running skill: adl_pr_cycle.
+
+Purpose:
+- Route one tracked issue through the independent C-SDLC v2 Rust control plane.
+- Preserve the name as a compatibility entrypoint; do not revive sunset v1
+  lifecycle wrappers or their card paths.
 
 Inputs:
 - issue_num (required)
 - slug (required)
 - title (required)
-- paths (required, comma-separated tracked repo paths)
-- version (optional; when omitted, infer from the issue labels or current milestone band)
+- paths (required, comma-separated tracked paths)
+- version (required; use the issue's milestone/version label)
 - mode (optional: apply|suggest, default apply)
-- run_cmd (optional; required only when the issue's proof surface needs a bounded runtime execution or replay step)
-- open_pr (optional, default true)
-- merge (optional, default false)
-- delete_branch (optional, default false)
+- validation_profile (optional; a named repository validation profile, never an
+  arbitrary shell string)
+- publish (optional, default false)
+- merge (optional, default false; requires explicit operator authorization)
+
+Authority and binaries:
+- Resolve the selected generation with `csdlc-install resolve`.
+- Use only the installed Rust binaries under `.adl/bin/csdlc-v2/` and the typed
+  skills under `csdlc-v2/operator/skills/`.
+- The v2 state store and six-card projections under `.csdlc/` are machine truth.
+- Cards are constructed and edited through the typed card-editor route, which
+  uses the markdown.rs AST and the active template registry. Never patch a
+  rendered card by hand.
 
 Hard guardrails:
-1) Deterministic state machine only:
-   preflight -> issue_ready -> init -> start -> codex -> run_if_required -> finish -> report
-2) Never work on main.
-3) Use the repo-local execution clone when available:
-   .worktrees/adl-wp-<issue_num>
-4) Do not edit outside:
-   - <paths>
-   - .adl/cards
-   - .adl/logs
-   - .adl/reports
-5) Never stage or commit .adl/** files.
-6) Retry transient command failures at most 2 times.
-7) Always produce a report file even on failure.
-8) Browser/editor direct support remains bounded to:
-   adl/tools/editor_action.sh start
-   Do not imply direct browser/editor invocation of pr init, pr run, or pr finish.
+1) Deterministic state machine:
+   preflight -> init -> bind -> design/plan -> implement -> validate -> review
+   -> publish -> shepherd -> closeout
+2) Never work on `main`. Bind one issue to one branch/worktree before tracked
+   implementation edits and keep the primary checkout clean.
+3) Do not invoke sunset v1 wrappers, prompt-template commands, or compatibility
+   shell lifecycle surfaces. The control plane never evaluates shell/Python
+   strings. A repository-declared validation profile may run a bounded external
+   proof command only when its typed argv, lane, budget, and evidence contract
+   are recorded in VPP truth.
+4) Do not edit `.csdlc` state or Markdown cards directly. Use `csdlc-edit` and
+   `csdlc-validate`; preserve the canonical SIP -> STP -> SPP -> VPP -> SRP ->
+   SOR lifecycle and active session claim/lease invariants.
+5) Do not publish until `csdlc-review` has current exact-head review evidence.
+   Publication must fail closed without it. Do not merge or close the issue
+   unless the operator explicitly authorizes that terminal action.
+6) Keep retries bounded and preserve every failure artifact. Never hide a
+   stale-generation, claim, review, validation, or ancestry error by retrying
+   around it.
 
 Procedure:
 1) Preflight
-   - Validate required inputs are non-empty.
-   - Compute branch: codex/<issue_num>-<slug>.
-   - Compute task_id: issue-<zero-padded issue_num>.
-   - Resolve version:
-     - use the explicit input when provided
-     - otherwise infer from the issue labels/current milestone band
-   - Compute:
-     - stp_path=.adl/<version>/tasks/<task_id>__<slug>/stp.md
-     - input_card=.adl/cards/<issue_num>/input_<issue_num>.md
-     - output_card=.adl/cards/<issue_num>/output_<issue_num>.md
-     - report_dir=.adl/reports/pr-cycle/<issue_num>/<timestamp_utc_z>/
-   - Prefer executing from .worktrees/adl-wp-<issue_num> when that repo-local clone exists and is writable.
+   - Confirm the issue exists, the repository is identified, and the primary
+     checkout is clean on `main` (unrelated user changes are preserved and are
+     not part of this issue).
+   - Resolve the issue's version and derive `codex/<issue_num>-<slug>` plus the
+     bound worktree path.
+   - Confirm all six cards, the design, and the diagram are present or can be
+     generated from the current versioned prompt registry.
 2) Init
-   - Run:
-     bash ./adl/tools/pr.sh init <issue_num> --slug <slug> [--version <version>]
-   - Confirm canonical STP exists at <stp_path>.
-3) Issue-ready check
-   - Confirm the GitHub issue already exists and matches the intended issue_num.
-   - Do not invoke `pr create`; issue creation/reconciliation is outside the ADL command surface.
-4) Start
-   - Run:
-     bash ./adl/tools/pr.sh start <issue_num> --slug <slug> [--version <version>]
-   - Confirm canonical cards exist:
-     .adl/cards/<issue_num>/input_<issue_num>.md
-     .adl/cards/<issue_num>/output_<issue_num>.md
-5) Codex
-   - Read the input card.
-   - Execute only within the allowed edit fence.
-   - Tee Codex output to .adl/logs/<issue_num>/codex.log when possible.
-6) Run (conditional, but use the real command surface when required)
-   - If the issue's proof surface requires bounded runtime execution, replay, or emitted run artifacts, run:
-     bash ./adl/tools/pr.sh run ...
-     using the documented issue-specific arguments or the provided run_cmd.
-   - If the issue is docs-only or otherwise does not require runtime execution, state that explicitly in the report and output card instead of inventing a run step.
-7) Finish
-   - Run:
-     bash ./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>" -f .adl/cards/<issue_num>/input_<issue_num>.md --output-card .adl/cards/<issue_num>/output_<issue_num>.md
-   - If open_pr=false, include --no-open.
-   - If merge=true, include --merge only when an open PR already exists or open_pr=true.
-8) Report (always)
-   - Write:
-     .adl/reports/pr-cycle/<issue_num>/<timestamp_utc_z>/report.md
-   - Include:
-     - Input values
-     - Derived branch and task paths
-     - Whether repo-local .worktrees/adl-wp-<issue_num> was used
-     - Commands attempted (in order)
-     - Modified tracked files excluding .adl/**
-     - Validation/check results
-     - Whether pr run was executed or truthfully skipped
-     - PR URL (if available)
-     - Exactly one next action command
+   - Submit a typed bootstrap request to `csdlc-init`; this is the atomic,
+     pre-binding creation of the issue record and six initial projections. It
+     includes design and diagram paths, the claim, operator constraints, review
+     scope, and explicit validation budgets; it is not implementation editing.
+3) Bind
+   - Submit a typed `csdlc-bind` request for the issue branch/worktree.
+   - Preserve the claim owner, heartbeat/lease, protected paths, and stale-claim
+     recovery evidence in the shared ledger.
+4) Design/plan, implement, and validate
+   - After binding, use `csdlc-v2-card-editor` for all semantic card
+     construction/repair and run `csdlc-validate` after every accepted edit.
+   - Make only the requested tracked changes in the bound worktree.
+   - Run the smallest proving named validation profile through `csdlc-validate`;
+     record local proof separately from deferred hosted proof.
+5) Review and publish
+   - Obtain bounded subagent review of the exact worktree revision and record it
+     with `csdlc-review`.
+   - Run `csdlc-validate finalize` and then `csdlc-publish` only when review truth,
+     ancestry, staged paths, and validation evidence are current.
+   - Hand the published PR to `csdlc-shepherd`; do not treat a draft or a green
+     local check as merge proof.
+6) Closeout
+   - After the issue/PR reaches its authorized terminal state, run
+     `csdlc-closeout` and retain the observed revision, receipts, and terminal
+     transition. Stop and report if any dependency or external guardian blocks
+     the terminal transition.
 
-Truth boundaries:
-- The active authoring control-plane exists in repo truth.
-- The browser/editor adapter remains narrower than the full control plane.
-- Use docs/tooling/editor/command_adapter.md and docs/tooling/editor/five_command_demo.md as the canonical proof surfaces for that boundary.
-- Use bash adl/tools/test_five_command_regression_suite.sh as the canonical regression proof surface for the full implemented lifecycle.
+Required evidence/report:
+- `.csdlc/issues/<issue_num>/index.json` and its six card projections
+- `.git/csdlc-v2/requests/<issue_num>.json` for each typed operation
+- bound branch/worktree, exact revision, validation lanes and budgets
+- review assignment/result, publication receipt, shepherd observation, and
+  closeout receipt when those phases are reached
+- one concise report containing inputs, changed tracked paths, commands/typed
+  operations attempted, validation results, blockers, and exactly one next
+  action
 
-Failure policy:
-- Fail fast on non-transient errors.
-- On failure, still write the report and include one next-action command.
+Stop boundaries:
+- `mode=suggest` stops after reporting the next typed operation.
+- `publish=false` stops after exact-head review and final validation.
+- `merge=false` stops before merge/closeout even when the PR is green.
+- Any stale claim, stale revision, missing card, missing budget, failed proof,
+  missing review, or ancestry drift is a blocker; preserve evidence and report
+  the typed recovery operation instead of improvising.
 ```
+
+## Truth boundaries
+
+- This skill is a compatibility-facing router. The independent Rust v2 binaries
+  and their typed operator skills are the only active lifecycle authority.
+- Repository-declared validation may invoke bounded external tools, including a
+  shell or Python program, but only as an explicit typed proof command. The
+  C-SDLC control plane itself never depends on shell/Python lifecycle logic.
+- Historical v1 records remain evidence only; they are not executable guidance.
+
+## Failure policy
+
+Fail closed on invalid input, missing authority, stale claims or revisions,
+missing review truth, failed validation, publication drift, or incomplete
+closeout. Preserve the machine-readable error and report one typed recovery
+operation; do not silently fall back to a legacy command surface.

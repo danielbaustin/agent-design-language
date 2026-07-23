@@ -3,30 +3,10 @@
   "issue": 5591,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "15adf7b7416edeaa3d5f0271ecca522561d01dc7f7059074b47a1d556e341cf8",
-  "phase": "published",
-  "generation": 30,
-  "digest": "048ca8b133beb33a344f36681a68c69b94a0f6a7021999db7a01b01aea7ef0da",
-  "claim": {
-    "id": "claim-5591-runtime-v3-parity-a-preparation",
-    "owner": "codex:019f8189-8205-7dd3-bbe2-f7f4dddd098a",
-    "generation": 30,
-    "acquired_unix_seconds": 1784584932,
-    "expires_unix_seconds": 1785189732,
-    "heartbeat_unix_seconds": 1784584932,
-    "branch": "codex/5591-runtime-v3-parity-a-preparation",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/evidence/5591",
-      ".csdlc/issues/5591",
-      ".csdlc/locks/5591.lock",
-      ".csdlc/prepared/issues/5591",
-      "adl-runtime",
-      "adl-runtime-kernel",
-      "adl/tools/run_runtime_v3_guardian_soak.sh",
-      "infra/runtime-v3"
-    ],
-    "purpose": "Implement every #5591 Runtime v3 Parity-A outcome: guardian-launched canonical secure ingress, deterministic checkpoint replay and resume, pressure serialization and shutdown, configured access, Observatory output, negative proof, and exact LoC and test budgets"
-  },
+  "phase": "closed_out",
+  "generation": 40,
+  "digest": "78b3fe688e748478a5170f2dfeebd4579b4bc1ab9b80e0c5b1caeefbc29d273d",
+  "claim": null,
   "review_assignment": {
     "reviewer": "subagent:/root/review_5591_coverage_fix",
     "assigned_by": "codex:019f8362-357c-7621-95b7-afb314e0c61d",
@@ -60,12 +40,52 @@
     "url": "https://github.com/danielbaustin/agent-design-language/pull/5608",
     "base": "main",
     "head": "codex/5591-runtime-v3-parity-a-preparation",
-    "revision": "git-blake3:1011fec54f7a8214404931ad1262eb0cb3b167cf:b9ab7409a6b848af595b844cb11e1f839e25862aea5289b7f75d2e50eb4a3f11",
+    "revision": "git-blake3:59b61985c9964e56d83272efa7035f12be462fd7:8fd45b5e641edb67c29de299bfe7acd5875ef8e8473c0a0d70116e758962b177",
     "draft": false,
-    "observed_state": "open"
+    "observed_state": "merged"
   },
-  "readiness": null,
-  "terminal": null,
+  "readiness": {
+    "pull_request": 5608,
+    "head_sha": "59b61985c9964e56d83272efa7035f12be462fd7",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29859740523/job/88736147040"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29859740523/job/88739235550"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5608,
+    "disposition": "merged",
+    "observed_sha": "59b61985c9964e56d83272efa7035f12be462fd7",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5591.json",
+    "released_branch": "codex/5591-runtime-v3-parity-a-preparation",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5591",
+      ".csdlc/issues/5591",
+      ".csdlc/locks/5591.lock",
+      ".csdlc/prepared/issues/5591",
+      "adl-runtime",
+      "adl-runtime-kernel",
+      "adl/tools/run_runtime_v3_guardian_soak.sh",
+      "infra/runtime-v3"
+    ]
+  },
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5591/design.md",
   "diagram_path": ".csdlc/prepared/issues/5591/diagram.mmd",
@@ -77,34 +97,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "718cabc4885dc99f39792bdd70793ec36251199b54fcb128a1106909dea3d252",
+      "values_digest": "e79374094036d07ffe12b9c6c77f41575e99b8beb2cd3ec8bcc60aebb09a1dc5",
       "rendered_digest": "9aed3a330bad2a622b11a3bff66bbb9aa87a9dd522daa4e1f20c31ae9351797b",
       "ast_digest": "b7080536fadc62b24587634576eef15ff183a56261661f58665dad63c089fe41"
     },
     "stp": {
-      "values_digest": "979031e2746d754604bbc85c2922ed4303992b4355e5380d03f44d70b23d408b",
+      "values_digest": "5b12b5118e419533ef0bdd1769eb4243e6e1cca96187f17ba74d46fe6332e718",
       "rendered_digest": "ce5a1a442c29faec36740a7d68a5949d650391f19de5c7103f2d26cee0af6f0e",
       "ast_digest": "79d917926ba940eacba00258454fbf34c5b850c0cf3f7e944fef95783ef3afd8"
     },
     "spp": {
-      "values_digest": "7eabcbc7bb2177fc05d8e38b221c6daf6c30b167bca43386d8aaf0f268ec889e",
+      "values_digest": "616239031d03ca403d5e554f35ee2c9a02b3731282631fafddace153f0c331b2",
       "rendered_digest": "c0389b0842ed1399d836d9a9e40ebfa94eaa11a84175362fc709480cfd868398",
       "ast_digest": "e33505d82ae92a9e2c743f6560e16fccda48e19310c716f4a75ca6c351f0a6dc"
     },
     "vpp": {
-      "values_digest": "6c95c6eaba13e87c7bb63f79f7c280e5c3d3f0880e6a99719d12152bfe713576",
+      "values_digest": "2e31aab02fee758570fe89c9313a576518b67f6112770d532db4a8f76ac62a11",
       "rendered_digest": "78bfe529b13c4b7d36967c746a3854f7c930b187d501ac407885230c43015bd0",
       "ast_digest": "b1498a69e2e424375d478f1a80460130b123d1a4884c9b3a10e22e92c2a0748c"
     },
     "srp": {
-      "values_digest": "c2dcedb537615b1abaa900d895d034290d8047e39fa0b4edcfaf9393e4a30387",
+      "values_digest": "4696f93bc588ae3e05b2e069550d5dc9d4205fb86968dfcf9da13d18f51ba2ed",
       "rendered_digest": "e695caf943c1c3592896dcfacd306b429e2e225accba9f4b456b8f90bf36af29",
       "ast_digest": "43082f47eeb1e775353527256ca413451c394dc3f165ee66a7e64c656b0ab957"
     },
     "sor": {
-      "values_digest": "7baafbf7386c8e93acbecb67bbd47a29a3e33d2e9f0c38a84562d48bc54e7e3f",
-      "rendered_digest": "c3c9f0145bae9be47682881d80ce36bc460eb0433631f65595be2064c7fcba7e",
-      "ast_digest": "f4c66e595e8c67f9a5d9c8c84b38546375c26ef766e6bb187b826eb2237fa20d"
+      "values_digest": "f2e30213723b20b3305930641bd7430de43f2e23e34f4dbb19de79f917d0713f",
+      "rendered_digest": "b87f830caa56c441144c943071dde2a660c5faa4a03c71c96e5c2e611f4fa713",
+      "ast_digest": "c4d0ff50f06cd29997f037098fd87b223bc609e21176a770e6594e61edfa36df"
     }
   },
   "transitions": [
@@ -212,6 +232,27 @@
       "to": "published",
       "actor": "codex:019f8362-357c-7621-95b7-afb314e0c61d",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 16,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 17,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 18,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -494,6 +535,76 @@
       "actor": "codex:019f8362-357c-7621-95b7-afb314e0c61d",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 41,
+      "generation": 31,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 42,
+      "generation": 32,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 43,
+      "generation": 33,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 44,
+      "generation": 34,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 45,
+      "generation": 35,
+      "actor": "codex:issue-5613-owner",
+      "reason": "typed terminal SOR validation repair authorized by issue 5613",
+      "operation": "repair_terminal_sor_validation"
+    },
+    {
+      "sequence": 46,
+      "generation": 36,
+      "actor": "codex:issue-5613-owner",
+      "reason": "typed terminal SOR validation repair authorized by issue 5613",
+      "operation": "repair_terminal_sor_validation"
+    },
+    {
+      "sequence": 47,
+      "generation": 37,
+      "actor": "codex:issue-5613-owner",
+      "reason": "typed terminal SOR validation repair authorized by issue 5613",
+      "operation": "repair_terminal_sor_validation"
+    },
+    {
+      "sequence": 48,
+      "generation": 38,
+      "actor": "codex:issue-5613-owner",
+      "reason": "typed terminal SOR validation repair authorized by issue 5613",
+      "operation": "repair_terminal_sor_validation"
+    },
+    {
+      "sequence": 49,
+      "generation": 39,
+      "actor": "codex:issue-5613-owner",
+      "reason": "typed terminal SOR validation repair authorized by issue 5613",
+      "operation": "repair_terminal_sor_validation"
+    },
+    {
+      "sequence": 50,
+      "generation": 40,
+      "actor": "codex:issue-5613-owner",
+      "reason": "typed terminal SOR validation repair authorized by issue 5613",
+      "operation": "repair_terminal_sor_validation"
     }
   ]
 }

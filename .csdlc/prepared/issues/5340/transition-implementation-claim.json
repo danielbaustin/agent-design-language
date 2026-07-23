@@ -1,0 +1,15 @@
+{
+  "issue": 5340,
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "expected_owner": "codex:5340-owner-watch",
+  "expected_purpose": "Permanently own, prepare, and watch #5340 one dependency wave ahead; product implementation remains prohibited until #5338 is GitHub merged and retained typed closed_out with merged-SHA ancestry",
+  "expected_generation": 11,
+  "expected_digest": "1a2b13640e0ad3690cf0a8f17fa9215e862d329344d5a82d0487cf45f3de4191",
+  "now_unix_seconds": 1784669010,
+  "actor": "codex:5340-owner-watch",
+  "reason": "The exact #5338 typed terminal, claim-release, receipt, and current-main ancestry gate passed; begin the already reviewed isolated WP-06 implementation without changing its protected paths",
+  "purpose": "Implement, validate, exact-revision review, publish, shepherd, authorized-merge, post-merge validate, and typed-closeout #5340's portable bounded adl-engine while preserving the five disjoint protected paths and excluding Runtime v2/v3, adapters, CLI, cloud, and incumbent ADL authority",
+  "add_protected_paths": [
+    "adl-v2/crates/adl-engine"
+  ]
+}

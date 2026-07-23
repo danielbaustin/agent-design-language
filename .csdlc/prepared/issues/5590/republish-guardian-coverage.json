@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5590,
+  "expected_generation": 15,
+  "expected_digest": "599e2c5cda94549b52320c88fa625973d13c47ae328b2c457bac0cbab7bfd2a2",
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "actor": "codex:5590-sole-writer-takeover",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5590-runtime-v3-parity-d",
+  "title": "[v0.91.8][WP-14][runtime-v3][parity-d] Prove secure access, Observatory, guardian, and rollback",
+  "body": "Closes #5590\n\nCompletes Runtime v3 Parity-D with one configuration-driven HTTPS access model, bearer-protected HTTP and WSS Observatory feeds, actual listener discovery, an external guardian executable, Vector-owned telemetry boundaries, and operational candidate-to-prior rollback. The selector serializes transitions and uses instance-owned stop receipts instead of externally signaling stored PIDs; replacement waits for guardian descendant cleanup. Live WebSockets are revoked after token rotation and the browser downgrades state on close.\n\nFastWork proof passed: complete Runtime v3 kernel tests, strict kernel Clippy, 127 adl-runtime tests plus guardian and independence tests, Observatory WebSocket tests, selector adversarial tests, HTML Observatory integration, and an external guardian rollback proof that cryptographically restores both candidate and prior signed continuity lineages. The hosted coverage repair now maps the guardian library, binary unit test, and three portable black-box CLI tests; exact focused llvm-cov passed 15/15 and covered 125/135 guardian-binary lines (92.59%). Exact remediation review verified the P1 mapping defect and P2 portability defect fixed with zero blockers.\n\nRuntime v3 remains within the reviewed 20K ceiling. A SIGKILL during selector transition may leave a stale lock that fails closed and requires operator recovery. No AWS, Runtime v2, plaintext access, hard-coded IP, sidecar, custom OTel path, or hard-coded Unix executable path is included.",
+  "draft": true,
+  "token_file": "/Users/daniel/keys/github.token"
+}

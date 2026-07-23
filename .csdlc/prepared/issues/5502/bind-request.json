@@ -1,0 +1,23 @@
+{
+  "issue": 5502,
+  "base_branch": "main",
+  "branch": "codex/5502-v0918-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5502-v0918-output-convergence-preparation",
+    "owner": "codex:5502-preparation-owner",
+    "generation": 1,
+    "acquired_unix_seconds": 1784662362,
+    "expires_unix_seconds": 1785267162,
+    "heartbeat_unix_seconds": 1784662362,
+    "branch": "codex/5502-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5502",
+      ".csdlc/locks/5502.lock",
+      ".csdlc/prepared/issues/5502",
+      ".csdlc/evidence/5502"
+    ],
+    "purpose": "Prepare #5502 output convergence and deterministic replanning contracts only; no product implementation until #5499 and #5498 are live GitHub merged and ancestral. Typed closeout, receipts, and claim release are audit-only readiness signals."
+  }
+}

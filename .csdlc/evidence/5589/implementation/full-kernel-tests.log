@@ -1,0 +1,4 @@
+2026-07-21 current-main integrated validation: PASS
+command=CARGO_TARGET_DIR=/Volumes/FastWork/adl-5589/post-merge-main cargo test --manifest-path adl-runtime-kernel/Cargo.toml --all-targets
+result=242 tests discovered; all non-ignored tests passed; 8 explicitly declared environment/process tests ignored
+focused_governed_operations=28 passed, 0 failed, 0 ignored

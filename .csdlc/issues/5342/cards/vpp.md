@@ -1,0 +1,181 @@
+# Validation Planning Prompt
+
+Template: 1.0.0
+
+Issue: 5342
+
+Repository: danielbaustin/agent-design-language
+
+Card: vpp
+
+Status: ready
+
+## Summary
+
+Execute the smallest proving validation DAG.
+
+## Lane Inputs
+
+Design: .csdlc/prepared/issues/5342/design.md
+
+Diagram: .csdlc/prepared/issues/5342/diagram.mmd
+
+## Selected Lanes
+
+[
+  {
+    "lane": "typed-preparation",
+    "proof_role": "Validate six cards, design/diagram, dependencies, scope, COTS, budgets, PVF, and root safety",
+    "acceptance_ids": [
+      "AC-8",
+      "AC-9",
+      "AC-10"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 2500,
+    "argv": [
+      "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+      "--repo",
+      ".",
+      "--issue",
+      "5342"
+    ],
+    "parallel_group": "preparation",
+    "defer_reason": null
+  },
+  {
+    "lane": "records-focused",
+    "proof_role": "Prove all record contracts, schemas, canonical bytes, real signatures, and trust decisions",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 120,
+    "budget_tokens": 7000,
+    "argv": [
+      "bash",
+      ".csdlc/prepared/issues/5342/validate-records.sh",
+      "focused"
+    ],
+    "parallel_group": "records-local",
+    "defer_reason": "Run after implementation exists"
+  },
+  {
+    "lane": "records-quality",
+    "proof_role": "Prove formatting, strict Clippy, and forbidden authority/dependency absence",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-8"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 3000,
+    "argv": [
+      "bash",
+      ".csdlc/prepared/issues/5342/validate-records.sh",
+      "quality"
+    ],
+    "parallel_group": "records-local",
+    "defer_reason": "Run after implementation exists"
+  },
+  {
+    "lane": "tamper-channel",
+    "proof_role": "Prove complete tamper matrix, bounds, byte-channel and fresh-process determinism",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 300,
+    "budget_tokens": 7000,
+    "argv": [
+      "bash",
+      ".csdlc/prepared/issues/5342/validate-records.sh",
+      "tamper"
+    ],
+    "parallel_group": "records-security",
+    "defer_reason": "Run after implementation exists"
+  },
+  {
+    "lane": "records-budgets",
+    "proof_role": "Enforce dependency receipts, scope, exact COTS, forbidden graph, LoC ceilings, and complete offline proof",
+    "acceptance_ids": [
+      "AC-8",
+      "AC-9",
+      "AC-10"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 600,
+    "budget_tokens": 5000,
+    "argv": [
+      "bash",
+      ".csdlc/prepared/issues/5342/validate-records.sh",
+      "all"
+    ],
+    "parallel_group": "records-budget",
+    "defer_reason": "Run at exact implementation revision"
+  },
+  {
+    "lane": "post-merge-exact",
+    "proof_role": "Validate the exact governed PR head inside its landed current-main integration tree before closeout",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-10"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 600,
+    "budget_tokens": 8000,
+    "argv": [
+      "bash",
+      ".csdlc/prepared/issues/5342/validate-records.sh",
+      "post-merge"
+    ],
+    "parallel_group": "post-merge",
+    "defer_reason": "Mandatory after merge and before closeout"
+  }
+]
+
+## Parallelization
+
+Only declared parallel groups may overlap.
+
+## Budgets
+
+Seconds: 7200
+
+Tokens: 50000
+
+## Commands
+
+- `/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor --repo . --issue 5342`
+- `bash .csdlc/prepared/issues/5342/validate-records.sh focused`
+- `bash .csdlc/prepared/issues/5342/validate-records.sh quality`
+- `bash .csdlc/prepared/issues/5342/validate-records.sh tamper`
+- `bash .csdlc/prepared/issues/5342/validate-records.sh all`
+- `bash .csdlc/prepared/issues/5342/validate-records.sh post-merge`
+
+## Failure Semantics
+
+Fail closed without publication on invalid dependency/ancestry, path collision, noncanonical bytes, signature or trust bypass, schema drift, incomplete tamper/bounds/channel proof, forbidden authority, CI failure, or unsupported budget variance.
+
+## Handoff
+
+Retain typed evidence before convergence.

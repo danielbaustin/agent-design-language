@@ -1,0 +1,167 @@
+{
+  "issue": 5590,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5590/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5590/diagram.mmd",
+  "design_reviewer": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5590-runtime-v3-parity-d-preparation",
+    "owner": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+    "generation": 0,
+    "acquired_unix_seconds": 1784601952,
+    "expires_unix_seconds": 1785206752,
+    "heartbeat_unix_seconds": 1784601952,
+    "branch": "codex/5590-runtime-v3-parity-d",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5590",
+      ".csdlc/issues/5590",
+      ".csdlc/locks/5590.lock",
+      ".csdlc/prepared/issues/5590"
+    ],
+    "purpose": "Prepare and review complete six-card Runtime v3 Parity-D truth without product edits until #5591 integration eligibility is confirmed"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-14][runtime-v3][parity-d] Prove secure access, Observatory, guardian, and rollback",
+    "slug": "v0-91-8-runtime-v3-parity-d-secure-operations",
+    "version": "v0.91.8",
+    "goal": "Make Runtime v3 simple to operate locally and remotely through one secure configuration-driven API, external guardian supervision, live Observatory consumption, Vector telemetry, and reviewed rollback.",
+    "required_outcome": "At one exact revision, the external guardian reads the init file and launches the canonical Runtime v3 kernel; configured HTTPS HTTP and WebSocket routes expose authenticated live agent and Runtime state to the HTML Observatory, discovery reports the actual listener, Vector receives redacted telemetry without owning liveness, pressure and crash recovery are bounded, and explicit selector rollback succeeds without Runtime v2 source edits or AWS execution.",
+    "declared_scope": [
+      "single deny-unknown-fields Runtime init contract for listener, public HTTPS base, TLS, allowed origins, agents, and weather",
+      "configuration-driven secure local and remote HTTPS API access through one Axum and rustls router",
+      "authenticated HTTP and WebSocket HTML Observatory live consumption",
+      "actual bound-address and public-base discovery with port 20997 retained only as a configured default",
+      "external guardian launch, signal, child reaping, bounded restart, pressure stop, and checkpoint restore",
+      "tracing stderr and Vector-owned telemetry collection/export boundary",
+      "explicit selector rollback and exact-revision operational evidence",
+      "COTS, LoC, module-growth, test-count, and bounded-soak budget proof"
+    ],
+    "authority_boundary": [
+      "#5361 owns integrated Runtime v3 acceptance and #5590 owns Parity-D evidence",
+      "#5336 owns architecture and budget authority",
+      "#5591 owns canonical kernel ingress, continuity, and pressure contracts and must be integrated before Parity-D product edits",
+      "Axum/rustls own transport, Ed25519 and bearer/session policy own authority, Vector owns export mechanics, and the external guardian owns the child process",
+      "Runtime v2 source, AWS execution, cloud deployment, automatic cutover, decommission, and unrelated product scope are not authorized"
+    ],
+    "operator_constraints": [
+      "Use typed C-SDLC v2 only; no raw gh, AWS, product edits on main, Runtime v2 implementation paths, hard-coded IP addresses, HTTP Runtime access, or sidecars",
+      "Keep this claim preparation-only and issue-local until #5591 integration eligibility is confirmed and collision checks permit a typed scope amendment",
+      "Use /Volumes/FastWork for Rust build artifacts and maintained COTS crates rather than custom transport, TLS, telemetry, or supervision frameworks",
+      "Port 20997 is configuration-driven and discovery must report the actual bound listener rather than a constant",
+      "Implement AC-1 through AC-8 without deferred, fixture-only, degraded, metadata-only, prose-only, or partial acceptance",
+      "Run bounded exact-revision review, fix every actionable finding, and publish or merge only green work",
+      "Bind preparation validation to exact base 6d0f6115632a06619544b8ad4792792e741f1f31 and reviewed head 2f26da4455efd4dfc7ab6c65df5d19327fe765c8, and require every repair to descend from that reviewed head"
+    ],
+    "task_boundary": "Prepare, validate, review, commit, and push the complete six-card design package now; do not touch Runtime product code, claim implementation authority, publish acceptance, or claim readiness until #5591 integration eligibility is confirmed.",
+    "deliverables": [
+      "complete six-card typed issue package",
+      "source-grounded Parity-D design and current Runtime v3 diagram",
+      "security and acceptance matrix covering positive and fail-closed behavior",
+      "future disjoint implementation claim-scope proposal",
+      "configured HTTPS HTTP/WebSocket access and live Observatory implementation proof",
+      "guardian launch, pressure-stop, restart, soak, and operational selector transition with restored authenticated HTTPS service-health proof",
+      "Vector telemetry route and degraded-collector proof",
+      "exact-revision COTS, LoC, module-growth, test-count, lint, and evidence report"
+    ],
+    "acceptance_criteria": [
+      "AC-1: One deny-unknown-fields init file configures listener, HTTPS public base, TLS paths, allowed Observatory origins, agents, and weather; the guardian reads it and invalid or secret-bearing configuration fails before readiness",
+      "AC-2: Local and remote clients use one configuration-driven rustls Axum router with identical authentication and authorization; plain HTTP, missing or invalid credentials, authority escalation, and unlisted origins fail closed",
+      "AC-3: The HTML Observatory consumes live admitted-agent and Runtime state through authenticated HTTP and WebSocket routes, while missing bearer, bad origin, malformed or oversized frames, token-in-URL, and stale session cases fail closed",
+      "AC-4: Readiness, feed, and discovery expose the actual bound or configured listener and public HTTPS base, including ephemeral test ports, without hard-coded IPs or substitution of default port 20997",
+      "AC-5: The external guardian starts and reaps one canonical kernel child, forwards graceful signals, permits pressure serialization and checkpoint restore, bounds eligible crash restarts, and does not restart intentional stop or invalid configuration",
+      "AC-6: Redacted structured tracing events reach the checked-in Vector route while absent Vector degrades truthfully without disabling stderr, health, control, or shutdown; secrets, key material, unsafe errors, and host paths never emit",
+      "AC-7: An executable operational selector transitions the candidate Runtime v3 process/configuration to the previous approved Runtime v3 process/configuration and authenticated HTTPS health passes before and after; report-only selection, metadata assertions, environment echoes, in-memory facades, Runtime v2 edits, sidecars, cloud deployment, and AWS receive no credit",
+      "AC-8: Exact-revision positive and negative tests, strict lint, dependency inventory, source LoC, module growth, test count, and bounded soak satisfy #5336 without fixture-only, deferred, skipped, stale, or prose-only parity credit"
+    ],
+    "dependencies": [
+      "#5361 prepared Runtime v3 acceptance umbrella",
+      "#5336 architecture and budget authority",
+      "#5591 clean-reviewed Parity-A contracts and confirmed integration eligibility before any Runtime product edit",
+      "disjoint protected paths from #5592 Parity-B and #5589 Parity-C",
+      "existing Runtime v3 control, configuration, guardian, Observatory, telemetry, and rollback source evidence",
+      "exact preparation base 6d0f6115632a06619544b8ad4792792e741f1f31 and first reviewed preparation head 2f26da4455efd4dfc7ab6c65df5d19327fe765c8"
+    ],
+    "repo_inputs": [
+      "https://github.com/danielbaustin/agent-design-language/issues/5590",
+      "https://github.com/danielbaustin/agent-design-language/issues/5594",
+      "adl-runtime-kernel/src/config.rs",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/telemetry.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/vector/runtime-v3.yaml",
+      "infra/runtime-v3/runtime-init.toml",
+      "demos/v0.91.7/html-observatory/app.js",
+      "docs/architecture/RUNTIME_V3_CONTROL_OBSERVABILITY_ARCHITECTURE.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md",
+      "docs/architecture/RUNTIME_V3_SOAK_ROLLBACK_5253.md"
+    ],
+    "non_goals": [
+      "Runtime product edits before #5591 integration eligibility is confirmed",
+      "Runtime v2 source reuse, modification, deletion, defaulting, or decommission",
+      "AWS execution, cloud deployment, credential use, or public endpoint claim",
+      "plain HTTP Runtime access, hard-coded IP addresses, unauthenticated Observatory access, or token-bearing URLs",
+      "in-process guardian sidecars, custom OpenTelemetry collection, or replacement of COTS Axum/rustls/Vector behavior",
+      "Parity-B reasoning/learning or Parity-C operational adapter implementation"
+    ],
+    "plan_summary": "Prepare and exact-review the full Parity-D contract, wait only for #5591 integration eligibility, amend the typed claim to collision-free Runtime v3 paths, implement one secure configured API and Observatory plus guardian/Vector/rollback proof, run every positive and negative lane at one revision, then publish only green truth.",
+    "steps": [
+      {"id":"S1","action":"Create and typed-validate all six cards, source-grounded design, diagram, security matrix, preparation validator, and issue-local disjoint claim","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"]},
+      {"id":"S2","action":"After #5591 integration eligibility, synchronize the accepted contracts, check active claim collisions, and amend only the smallest Runtime v3 product paths","status":"pending","acceptance_ids":["AC-7","AC-8"]},
+      {"id":"S3","action":"Implement one configuration-driven HTTPS Axum router, actual-listener discovery, and identical local/remote authority using existing COTS crates","status":"pending","acceptance_ids":["AC-1","AC-2","AC-4","AC-8"]},
+      {"id":"S4","action":"Implement authenticated bounded HTTP and WebSocket Observatory consumption against live admitted-agent and Runtime state with fail-closed origin/session/frame handling","status":"pending","acceptance_ids":["AC-2","AC-3","AC-4"]},
+      {"id":"S5","action":"Complete external guardian launch/reaping/restart/pressure recovery, Vector routing/degradation/redaction, and an executable candidate-to-prior Runtime v3 selector transition with authenticated HTTPS health before and after","status":"pending","acceptance_ids":["AC-5","AC-6","AC-7"]},
+      {"id":"S6","action":"Run exact-revision positive and negative tests, strict lint, dependency and budget reports, bounded soak, exact review, remediation, and green publication","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"]}
+    ],
+    "invariants": [
+      "one independent canonical Runtime v3 kernel and one configuration-driven secure API",
+      "TLS and explicit authentication are mandatory for local and remote Runtime access",
+      "network location never grants authority and discovery reports actual listener truth",
+      "external guardian ownership does not create a sidecar or second Runtime control plane",
+      "Vector owns telemetry export while kernel liveness remains independent",
+      "pressure stop serializes accepted work before terminal exit or eligible restart",
+      "retained evidence is exact-revision, bounded, deterministic, relative, and redacted",
+      "Runtime v2 code and AWS execution remain untouched"
+    ],
+    "risks": [
+      "local convenience could weaken TLS or authentication",
+      "WebSocket upgrade could bypass HTTP capability, origin, frame, or redaction policy",
+      "discovery could report port 20997 instead of an actual non-default listener",
+      "guardian restart policy could loop on invalid configuration or restart intentional shutdown",
+      "collector failure could be mistaken for kernel failure or custom telemetry code could regrow",
+      "rollback evidence could overclaim Runtime v2 modification or automatic cutover",
+      "Parity-D claim expansion could collide with active Parity-B or Parity-C paths"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "#5591 integration eligibility is not confirmed for Runtime product edits",
+      "typed claim amendment reports protected-path collision or includes Runtime v2, cloud, or unrelated paths",
+      "the accepted #5336 architecture contradicts this design and requires typed replanning",
+      "any required HTTPS, authentication, WebSocket, discovery, guardian, telemetry, rollback, budget, or negative lane is deferred, skipped, degraded, fixture-only, stale, or failing",
+      "completion would require HTTP Runtime access, hard-coded IP, sidecar, AWS operation, or unsupported deployment claim"
+    ],
+    "validation_lanes": [
+      {"lane":"runtime-v3-secure-config-access","proof_role":"Inventory a positive configuration test count, fail closed on zero matches, then prove init validation, TLS-only configured local/remote access, actual listener discovery, and negative transport/authority cases","acceptance_ids":["AC-1","AC-2","AC-4"],"deterministic":true,"resource_profile":"large","budget_seconds":600,"budget_tokens":4000,"argv":["bash",".csdlc/prepared/issues/5590/run_filtered_test_lane.sh","adl-runtime-kernel/Cargo.toml","configuration"],"parallel_group":"runtime-v3-access","defer_reason":null},
+      {"lane":"runtime-v3-observatory-http-websocket","proof_role":"Inventory a positive Observatory test count, fail closed on zero matches, then prove authenticated live HTTP and WebSocket state plus origin, bearer, session, malformed, and oversized-frame negatives","acceptance_ids":["AC-2","AC-3","AC-4"],"deterministic":true,"resource_profile":"large","budget_seconds":600,"budget_tokens":4000,"argv":["bash",".csdlc/prepared/issues/5590/run_filtered_test_lane.sh","adl-runtime-kernel/Cargo.toml","observatory"],"parallel_group":"runtime-v3-access","defer_reason":null},
+      {"lane":"runtime-v3-guardian-recovery","proof_role":"Inventory a positive guardian test count, fail closed on zero matches, then prove launch, signals, reaping, bounded restart, pressure serialization, restore, and invalid-config/intended-stop negatives","acceptance_ids":["AC-5","AC-7"],"deterministic":true,"resource_profile":"large","budget_seconds":900,"budget_tokens":5000,"argv":["bash",".csdlc/prepared/issues/5590/run_filtered_test_lane.sh","adl-runtime/Cargo.toml","guardian"],"parallel_group":"runtime-v3-operations","defer_reason":null},
+      {"lane":"runtime-v3-vector-telemetry","proof_role":"Inventory a positive telemetry test count, fail closed on zero matches, then prove redacted stderr to Vector routing and truthful collector-degraded kernel behavior without custom OTel","acceptance_ids":["AC-6"],"deterministic":true,"resource_profile":"large","budget_seconds":450,"budget_tokens":3000,"argv":["bash",".csdlc/prepared/issues/5590/run_filtered_test_lane.sh","adl-runtime-kernel/Cargo.toml","telemetry"],"parallel_group":"runtime-v3-operations","defer_reason":null},
+      {"lane":"runtime-v3-operational-selector-rollback","proof_role":"Execute authenticated candidate Runtime v3 health, operational selector transition to the prior approved Runtime v3 target, and restored authenticated HTTPS health; report-only selection fails","acceptance_ids":["AC-7"],"deterministic":true,"resource_profile":"large","budget_seconds":600,"budget_tokens":4000,"argv":["bash",".csdlc/prepared/issues/5590/run_operational_selector_transition.sh","<selector-executable>","<authenticated-health-probe-executable>","<candidate-selector-ref>","<prior-selector-ref>","<candidate-health-url>","<prior-health-url>"],"parallel_group":"runtime-v3-full","defer_reason":null},
+      {"lane":"runtime-v3-guardian-soak","proof_role":"Execute the bounded guardian launch, pressure-stop, restart, and recovery soak independently of selector rollback","acceptance_ids":["AC-5","AC-8"],"deterministic":true,"resource_profile":"large","budget_seconds":900,"budget_tokens":4000,"argv":["bash","adl/tools/run_runtime_v3_guardian_soak.sh"],"parallel_group":"runtime-v3-full","defer_reason":null},
+      {"lane":"runtime-v3-full-kernel","proof_role":"Run the complete independent Runtime v3 kernel test suite","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"deterministic":true,"resource_profile":"large","budget_seconds":900,"budget_tokens":8000,"argv":["cargo","test","--manifest-path","adl-runtime-kernel/Cargo.toml"],"parallel_group":"runtime-v3-full","defer_reason":null},
+      {"lane":"runtime-v3-strict-quality","proof_role":"Prove strict lint plus exact dependency, LoC, module-growth, test-count, boundary, and evidence hygiene","acceptance_ids":["AC-6","AC-7","AC-8"],"deterministic":true,"resource_profile":"large","budget_seconds":600,"budget_tokens":5000,"argv":["cargo","clippy","--manifest-path","adl-runtime-kernel/Cargo.toml","--all-targets","--all-features","--","-D","warnings"],"parallel_group":"runtime-v3-quality","defer_reason":null},
+      {"lane":"diff-hygiene","proof_role":"Verify the exact issue patch has no whitespace or unrelated product changes","acceptance_ids":["AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":500,"argv":["git","diff","--check"],"parallel_group":"local-control","defer_reason":null}
+    ],
+    "failure_policy": "Fail closed on missing #5591 integration eligibility, claim collision, plaintext access, weak or missing authentication, fake discovery, WebSocket policy bypass, secret leakage, unbounded restart, lost pressure state, collector-owned liveness, Runtime v2 edits, AWS use, hard-coded IPs, sidecars, deferred proof, budget breach, actionable review findings, or non-green exact-revision state.",
+    "review_prompts": [
+      "Does one init model and one Axum/rustls router truthfully cover local and remote access without hard-coded addresses or HTTP?",
+      "Do HTTP and WebSocket Observatory paths share authentication, origin, authority, frame, redaction, and live-state contracts?",
+      "Does discovery report the actual listener and configured public HTTPS base for default, non-default, and ephemeral ports?",
+      "Does the external guardian distinguish intentional stop, invalid config, bounded retry, pressure serialization, and checkpoint restore without sidecars?",
+      "Does Vector own collection/export while Runtime stderr, health, control, and shutdown survive collector absence?",
+      "Is rollback explicit, reviewed, evidence-preserving, and free of Runtime v2 source edits, automatic cutover, AWS, or deployment claims?",
+      "Do S1 through S6 and all lanes cover AC-1 through AC-8 with no deferred or fixture-only parity credit?"
+    ],
+    "review_scope": "Review exact #5590 preparation truth across all six typed cards, design, current Runtime v3 diagram, security matrix, preparation-only claim, future disjoint scope, AC-1 through AC-8, S1 through S6, and every positive and negative validation lane. Reject product edits, weak local access, HTTP, hard-coded IPs, fake port discovery, unauthenticated WebSockets, secret leakage, sidecars, custom OTel, unbounded guardian behavior, Runtime v2 coupling, AWS, partial acceptance, or premature readiness."
+  }
+}

@@ -17,6 +17,23 @@ pub(crate) struct ProviderProfilePreset {
 const HTTP_PROFILE_PLACEHOLDER_ENDPOINT: &str = "https://api.example.invalid/v1/complete";
 const INVALID_ENDPOINT_HOST_MARKER: &str = "example.invalid";
 
+fn profile_vendor(profile: &str) -> Option<&'static str> {
+    match profile.split_once(':').map(|(family, _)| family) {
+        Some("kimi") => Some("kimi"),
+        Some("minimax") => Some("minimax"),
+        Some("qwen") => Some("qwen"),
+        Some("xai") => Some("xai"),
+        Some("mistral") => Some("mistral"),
+        Some("cohere") => Some("cohere"),
+        Some("deepseek") => Some("deepseek"),
+        Some("z_ai" | "zai" | "zhipu") => Some("z_ai"),
+        Some("gemini") => Some("google"),
+        Some("chatgpt") => Some("openai"),
+        Some("claude") => Some("anthropic"),
+        _ => None,
+    }
+}
+
 /// Validate that a profile-provided endpoint is usable and non-placeholder.
 pub(crate) fn validate_profile_endpoint(
     provider_id: &str,
@@ -69,6 +86,16 @@ pub(crate) const OPENROUTER_CHAT_COMPLETIONS_ENDPOINT: &str =
     "https://openrouter.ai/api/v1/chat/completions";
 pub(crate) const Z_AI_CHAT_COMPLETIONS_ENDPOINT: &str =
     "https://open.bigmodel.cn/api/paas/v4/chat/completions";
+pub(crate) const KIMI_CHAT_COMPLETIONS_ENDPOINT: &str =
+    "https://api.moonshot.ai/v1/chat/completions";
+pub(crate) const MINIMAX_CHAT_COMPLETIONS_ENDPOINT: &str =
+    "https://api.minimax.io/v1/text/chatcompletion_v2";
+pub(crate) const QWEN_CHAT_COMPLETIONS_ENDPOINT: &str =
+    "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
+pub(crate) const XAI_CHAT_COMPLETIONS_ENDPOINT: &str = "https://api.x.ai/v1/chat/completions";
+pub(crate) const MISTRAL_CHAT_COMPLETIONS_ENDPOINT: &str =
+    "https://api.mistral.ai/v1/chat/completions";
+pub(crate) const COHERE_CHAT_ENDPOINT: &str = "https://api.cohere.com/v2/chat";
 /// Canonical Anthropic API version used by the HTTP adapter.
 pub(crate) const ANTHROPIC_VERSION: &str = "2023-06-01";
 
@@ -153,6 +180,77 @@ pub(crate) fn provider_profile_registry() -> BTreeMap<&'static str, ProviderProf
             endpoint: Some(Z_AI_CHAT_COMPLETIONS_ENDPOINT),
         },
     );
+    // First-class hosted provider identities. These profiles intentionally
+    // share the bounded HTTP transport while retaining vendor/model identity.
+    for (name, model, endpoint) in [
+        ("kimi:k2.5", "kimi-k2.5", KIMI_CHAT_COMPLETIONS_ENDPOINT),
+        (
+            "minimax:m2.5",
+            "MiniMax-M2.5",
+            MINIMAX_CHAT_COMPLETIONS_ENDPOINT,
+        ),
+        (
+            "qwen:qwen3-max",
+            "qwen3-max",
+            QWEN_CHAT_COMPLETIONS_ENDPOINT,
+        ),
+        ("xai:grok-4.5", "grok-4.5", XAI_CHAT_COMPLETIONS_ENDPOINT),
+        (
+            "mistral:medium-3.5",
+            "mistral-medium-3.5",
+            MISTRAL_CHAT_COMPLETIONS_ENDPOINT,
+        ),
+        (
+            "mistral:small-4",
+            "mistral-small-4",
+            MISTRAL_CHAT_COMPLETIONS_ENDPOINT,
+        ),
+        (
+            "mistral:devstral-2",
+            "devstral-2",
+            MISTRAL_CHAT_COMPLETIONS_ENDPOINT,
+        ),
+        (
+            "cohere:command-a-plus",
+            "command-a-plus",
+            COHERE_CHAT_ENDPOINT,
+        ),
+        (
+            "cohere:north-mini-code",
+            "north-mini-code",
+            COHERE_CHAT_ENDPOINT,
+        ),
+        (
+            "deepseek:v4",
+            "deepseek-v4",
+            DEEPSEEK_CHAT_COMPLETIONS_ENDPOINT,
+        ),
+        (
+            "z_ai:glm-5-current",
+            "glm-5",
+            Z_AI_CHAT_COMPLETIONS_ENDPOINT,
+        ),
+        (
+            "gemini:3.1-pro-preview",
+            "gemini-3.1-pro-preview",
+            "https://generativelanguage.googleapis.com/v1beta/models",
+        ),
+        (
+            "gemini:3.1-flash-lite",
+            "gemini-3.1-flash-lite",
+            "https://generativelanguage.googleapis.com/v1beta/models",
+        ),
+    ] {
+        m.insert(
+            name,
+            ProviderProfilePreset {
+                kind: "http",
+                default_model: Some(model),
+                provider_model_id: Some(model),
+                endpoint: Some(endpoint),
+            },
+        );
+    }
     // HTTP presets (explicit fixed endpoint placeholders; no secrets)
     for (name, model) in [
         ("http:gpt-4o-mini", "gpt-4o-mini"),
@@ -252,6 +350,20 @@ pub fn expand_provider_profiles(doc: &adl::AdlDoc) -> Result<adl::AdlDoc> {
         };
 
         let mut config = spec.config.clone();
+        if let (Some(explicit), Some(expected)) = (
+            config.get("vendor").and_then(|value| value.as_str()),
+            profile_vendor(profile_name),
+        ) {
+            let normalized = explicit.trim().to_ascii_lowercase();
+            if normalized != expected {
+                return Err(anyhow!(
+                    "providers.{provider_id}.config.vendor '{}' conflicts with profile vendor '{}'",
+                    explicit.trim(),
+                    expected
+                ));
+            }
+        }
+
         if let Some(provider_model_id) = preset.provider_model_id {
             config
                 .entry("provider_model_id".to_string())

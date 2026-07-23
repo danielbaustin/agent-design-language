@@ -1,0 +1,18 @@
+{
+  "schema": "adl.csdlc_v2.issue_validation.v1",
+  "issue": 5624,
+  "result": "passed",
+  "build_root": "/Volumes/FastWork/adl-5624-cargo-target",
+  "proof": [
+    {"lane": "cargo_wrapper_contract", "result": "passed"},
+    {"lane": "gate2", "result": "passed", "tests": "44 passed"},
+    {"lane": "format", "result": "passed"},
+    {"lane": "strict_clippy_all_targets", "result": "passed"}
+  ],
+  "invariants": [
+    "ephemeral validation repositories receive deterministic fallback Git author and committer identity",
+    "caller-provided Git identity is preserved",
+    "no repository Git configuration is mutated",
+    "no csdlc-v2/target checkout artifact is created"
+  ]
+}

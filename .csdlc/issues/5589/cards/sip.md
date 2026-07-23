@@ -1,0 +1,51 @@
+# Structured Intent Prompt
+
+Template: 1.0.0
+
+Issue: 5589
+
+Repository: danielbaustin/agent-design-language
+
+Card: sip
+
+Status: ready
+
+## Goal
+
+Replace Runtime v3 degraded operational placeholders with small production component adapters that execute governed work through the canonical kernel.
+
+## Required Outcome
+
+At one exact reviewed revision, representative admitted work executes through production or COTS-backed Parity-C adapters in adl-runtime-kernel with signed gate-before-actuation, attenuating delegation, bounded resources and cancellation, live multi-agent provider/scheduler/governed-tool behavior, identity/private-state isolation, qualified time, checkpoint/lifelog continuity, and fail-closed shutdown; fixtures and degraded adapters receive zero parity credit.
+
+## Scope
+
+- governance, Freedom Gate, AEE, appeals, revocation, and quarantine
+- attenuating delegation, resource reservations, cancellation, retry, and idempotency
+- agents, Shepherd, production providers, bounded scheduler, and governed tools
+- citizen identity, memory, private state, and cross-identity isolation
+- Chronosense qualified time, checkpoint authority, lifelog evidence, restart continuity, and graceful shutdown
+- production/COTS adapter inventory, placeholder deletion, and exact Runtime v3 budget proof
+
+## Authority
+
+- #5361 owns integrated Runtime v3 acceptance and #5336 owns architecture and budget authority
+- #5591 owns canonical ingress, kernel lifecycle, topology/backpressure, configuration, and base continuity contracts
+- #5592 owns reasoning and adaptive cognition; #5590 owns ACIP/A2A/cloud, remote access, Observatory, guardian/soak, and rollback
+- #5589 owns only Parity-C governed operational adapters, identity/private state, qualified time, checkpoint, and lifelog behavior
+- ADL v2 language authority and C-SDLC v2 lifecycle authority remain outside Runtime v3
+- Runtime v2 edits, AWS, cutover, default switch, deletion, and new product scope are not authorized
+
+## Assumptions
+
+- none
+
+## Operator Constraints
+
+- Use only typed C-SDLC v2 owner binaries and current template authority; never use v1 wrappers, raw gh, AWS, or product edits on main
+- Keep the active claim preparation-only and disjoint from every Runtime product path until #5591 records a current clean review with no actionable findings
+- Require a typed collision-free claim amendment after #5591 narrows or releases its broad adl-runtime-kernel and adl-runtime reservations
+- Do not grant parity credit to DegradedOperationExecutor, fixtures, mocks, metadata projections, library-only helpers, or fixed bootstrap graphs
+- Require production or maintained COTS-backed adapters and live initialized-process positive, negative, continuity, shutdown, and recovery proof
+- Use /Volumes/FastWork for Rust build artifacts when implementation validation begins and keep credentials out of retained evidence
+- Run bounded subagent review at the exact committed implementation revision, fix every actionable finding, and publish only green truth

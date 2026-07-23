@@ -1,0 +1,19 @@
+{
+  "schema": "csdlc.readiness_request.v1",
+  "issue": 5340,
+  "expected_generation": 43,
+  "expected_digest": "689e12b14ab0f94607ec043530674efc4f471a201e8e66ecac1b9745c5d2d670",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5623,
+  "required_checks": [
+    "adl-ci",
+    "adl-coverage",
+    "adl-tooling-contracts",
+    "adl-path-policy",
+    "adl-demo-proof"
+  ],
+  "require_review": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}

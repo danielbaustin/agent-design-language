@@ -1,0 +1,10 @@
+{
+  "issue": 5592,
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "expected_generation": 9,
+  "expected_digest": "348308b9539663ad322be9144bda6d23858e910d10e0054352fb630bcd27d92d",
+  "now_unix_seconds": 1784665700,
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Fresh exact review requires a minimal public authenticated MutationGate snapshot helper so Parity-B restart recovery retains mutated graph, consumed grants, evidence, and adaptation state.",
+  "add_protected_paths": ["adl-runtime-kernel/src/reasoning.rs"]
+}

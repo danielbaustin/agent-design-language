@@ -9,6 +9,7 @@ use csdlc_v2::{
     CheckRequirement, ConflictState, PostPublicationFinding, ReadinessRequest, RemoteReviewState,
     Store, TerminalDesignRepairRequest, TerminalDisposition, TerminalObservation,
     TerminalPlanStepRepairRequest, TerminalSorArtifactRepairRequest,
+    TerminalSorValidationRepairRequest,
 };
 use octocrab::models::pulls::{MergeableState, ReviewState};
 use octocrab::params::repos::Commitish;
@@ -54,6 +55,10 @@ enum Command {
         request: PathBuf,
     },
     RepairSorArtifact {
+        #[arg(long)]
+        request: PathBuf,
+    },
+    RepairSorValidation {
         #[arg(long)]
         request: PathBuf,
     },
@@ -134,6 +139,9 @@ async fn run(cli: &Cli) -> csdlc_v2::Result<serde_json::Value> {
             store
                 .repair_terminal_sor_artifact(read::<TerminalSorArtifactRepairRequest>(request)?)?,
         ),
+        Command::RepairSorValidation { request } => json(store.repair_terminal_sor_validation(
+            read::<TerminalSorValidationRepairRequest>(request)?,
+        )?),
         Command::ValidatePrune { issue } | Command::Prune { issue } => {
             let record = store.load_record(*issue)?;
             if record.phase != csdlc_v2::LifecyclePhase::ClosedOut {

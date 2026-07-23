@@ -1,0 +1,22 @@
+{
+  "issue": 5500,
+  "base_branch": "main",
+  "branch": "codex/5500-v0918-wp10a-dashboard",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5500-v0918-wp10a-dashboard-preparation",
+    "owner": "codex:issue-5500-preparation",
+    "generation": 1,
+    "acquired_unix_seconds": 1784670000,
+    "expires_unix_seconds": 1785274800,
+    "heartbeat_unix_seconds": 1784670000,
+    "branch": "codex/5500-v0918-wp10a-dashboard",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5500",
+      ".csdlc/locks/5500.lock",
+      ".csdlc/prepared/issues/5500"
+    ],
+    "purpose": "Prepare and review the read-only WP-10A operator dashboard only; product implementation remains blocked on #5498 and final WP-09 gate #5349"
+  }
+}

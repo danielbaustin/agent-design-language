@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5499,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10A][multi-agent] Implement issue-graph-to-live-task conductor",
+    "slug": "v0-91-8-wp-10a-issue-graph-live-task-conductor",
+    "version": "v0.91.8",
+    "generation": 17
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Implemented a pure deterministic ADL v2 conductor that validates typed lifecycle snapshots, checks dependency graphs and path ownership, enforces WIP limits, and emits canonical assignments while retaining serialized lifecycle gates.",
+      "actual_changes": [
+        "Added the isolated adl-workcell-conductor crate with the four reviewed COTS dependencies",
+        "Added fail-closed validation for cards, claims, dependencies, lanes, paths, authority fields, and WIP limits",
+        "Added deterministic wave planning and content-derived BLAKE3 correlation identifiers",
+        "Added focused positive and adversarial contract tests"
+      ],
+      "artifacts": [
+        "adl-v2/crates/adl-workcell-conductor"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "bash",
+            ".csdlc/prepared/issues/5499/validate-conductor.sh"
+          ],
+          "purpose": "Prove the pure conductor contract and all #5499 acceptance criteria offline",
+          "outcome": "passed",
+          "evidence_ref": "local:5499-fastwork-10-tests-strict-clippy-601-impl-loc-218-test-loc-under-5s"
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "ready",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "issue": 5592,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "78d2e3d13c4b7d1150204a63d853ce5587edaa151f35a57524eff71061c28dfb",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Declare the collision-free Parity-B implementation and proof areas coordinated with Parity-C and Parity-D",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "affected_areas",
+    "values": [
+      "adl-runtime-kernel/src/parity_b.rs production reasoning, bounded-loop, adaptation, affect, curiosity, and governed-cognition module",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs exact canonical-ingress integration proof",
+      "adl-runtime-kernel/src/lib.rs module export only",
+      "issue-local .csdlc/issues/5592, .csdlc/prepared/issues/5592, and .csdlc/evidence/5592"
+    ]
+  },
+  "fail_after_backup": false
+}

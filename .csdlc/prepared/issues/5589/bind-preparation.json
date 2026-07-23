@@ -1,0 +1,23 @@
+{
+  "issue": 5589,
+  "base_branch": "origin/main",
+  "branch": "codex/5589-runtime-v3-parity-c",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5589-runtime-v3-parity-c-preparation",
+    "owner": "codex:019f8288-9fd3-7103-a3a5-9e3fe61aad90",
+    "generation": 0,
+    "acquired_unix_seconds": 1784601578,
+    "expires_unix_seconds": 1785206378,
+    "heartbeat_unix_seconds": 1784601578,
+    "branch": "codex/5589-runtime-v3-parity-c",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5589",
+      ".csdlc/issues/5589",
+      ".csdlc/locks/5589.lock",
+      ".csdlc/prepared/issues/5589"
+    ],
+    "purpose": "Prepare complete Runtime v3 Parity-C contracts and proof gates without product implementation until #5591 has a clean reviewed contract and disjoint paths"
+  }
+}

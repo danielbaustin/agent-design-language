@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.ready_publication_request.v1",
+  "issue": 5590,
+  "expected_generation": 9,
+  "expected_digest": "97b39c23135488add8da87f7164f1cb6b4ec748a46aa6263bbd0de3e609f38fa",
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "actor": "codex:5590-sole-writer-takeover",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5621,
+  "expected_head_sha": "db0cf4591c87d63c9924fef76a14bec4e375df7c",
+  "token_file": "/Users/daniel/keys/github.token"
+}

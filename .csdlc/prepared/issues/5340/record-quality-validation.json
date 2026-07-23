@@ -1,0 +1,19 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 15,
+  "expected_digest": "b38fadf2ae9f1faa6ba9fcb7154d7eab17eee35ba2ae421935533a6df5d5e052",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record the strict offline quality proof for the implemented engine.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", ".csdlc/prepared/issues/5340/validate-engine.sh", "quality"],
+      "purpose": "Prove formatting, all-target compilation and tests, strict linting, source-authority boundaries, and the exact direct COTS dependency graph.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-quality/engine-quality.log at substantive commit c2f4e072b8049daa68b18e1d917b57747864b6b7"
+    }
+  },
+  "fail_after_backup": false
+}

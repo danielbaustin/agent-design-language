@@ -1,0 +1,24 @@
+{
+  "issue": 5342,
+  "base_branch": "main",
+  "branch": "codex/5342-v0918-wp07-records-signing",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5342-v0918-wp07-records-signing",
+    "owner": "codex:5342-owner",
+    "generation": 1,
+    "acquired_unix_seconds": 1784727950,
+    "expires_unix_seconds": 1785332750,
+    "heartbeat_unix_seconds": 1784727950,
+    "branch": "codex/5342-v0918-wp07-records-signing",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5342",
+      ".csdlc/locks/5342.lock",
+      ".csdlc/prepared/issues/5342",
+      ".csdlc/evidence/5342",
+      "adl-v2/crates/adl-records"
+    ],
+    "purpose": "Implement and fully prove WP-07 portable records, real Ed25519 signing, deterministic canonical bytes, external trust policy, tamper rejection, and channel verification without Runtime v2/v3 changes"
+  }
+}

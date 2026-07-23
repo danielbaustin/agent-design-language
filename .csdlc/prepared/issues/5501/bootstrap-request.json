@@ -1,0 +1,151 @@
+{
+  "issue": 5501,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5501/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5501/diagram.mmd",
+  "design_reviewer": "codex:5501-preparation-review",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5501-v0918-live-workcell-proof-preparation",
+    "owner": "codex:5501-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784663431,
+    "expires_unix_seconds": 1785268231,
+    "heartbeat_unix_seconds": 1784663431,
+    "branch": "codex/5501-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5501",
+      ".csdlc/locks/5501.lock",
+      ".csdlc/prepared/issues/5501",
+      ".csdlc/evidence/5501"
+    ],
+    "purpose": "Prepare #5501 live distributed Codex workcell proof contracts only; no execution or product work until #5349, #5499, #5498, #5500, and #5502 have live merged heads ancestral to execution revision; typed closeout and retained receipts are audit-only"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-10A][multi-agent][proof] Run live distributed Codex workcell end to end",
+    "slug": "v0918-wp10a-live-distributed-codex-workcell-proof",
+    "version": "v0.91.8",
+    "goal": "Prepare the exact contracts for one real distributed Codex workcell proof spanning admitted planning, bounded context handoff, at least two disjoint writable shards, live dashboard observations, review, convergence, serialized integration, closeout, and a fair bounded single-agent comparison.",
+    "required_outcome": "After every implementation dependency is terminal, a retained exact-revision packet proves the complete supported distributed workcell with real Codex tasks; fixtures, mocks, screenshots, library tests, and prose alone cannot satisfy the issue.",
+    "declared_scope": [
+      "issue-local typed lifecycle, preparation, validation, review, and evidence records",
+      "future bounded live proof orchestration using already reviewed #5499, #5498, #5500, and #5502 interfaces",
+      "real two-or-more-shard task, claim, branch, worktree, protected-path, context, output, review, convergence, integration, and closeout evidence",
+      "timing, coordination overhead, failure, retry, and equivalent bounded single-agent baseline comparison"
+    ],
+    "authority_boundary": [
+      "#5499 owns issue-graph planning and admitted task/shard plans",
+      "#5498 owns Codex task creation, messaging, handoff, context, and output transport",
+      "#5500 owns read-only dashboard and blackboard projection",
+      "#5502 owns output convergence and deterministic integrate, replan, or blocked decisions",
+      "#5501 owns only the integrated live proof packet and does not gain autonomous review, publication, merge, or closeout authority"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries and current-registry semantic card operations only",
+      "Keep root main untouched; all tracked #5501 preparation stays in /Volumes/FastWork/adl-wp-5501",
+      "Preparation only: no live task execution, product implementation, PR, publication, merge, Runtime v2, AWS, raw gh, credentials, provider calls, paid services, or hidden network authority",
+      "Do not execute the live workcell until #5349, #5499, #5498, #5500, and #5502 have live merged heads ancestral to the execution revision; typed closeout and retained receipts are audit-only signals, not readiness blockers",
+      "Future proof requires at least two real writable Codex shards with distinct issue claims, branches, worktrees, and disjoint protected paths",
+      "Fixture-only, mock-only, prose-only, screenshot-only, and library-only evidence never counts as the live proof",
+      "Use /Volumes/FastWork for generated validation output",
+      "One bounded review immediately before PR is required by operator policy; do not add preparation review churn"
+    ],
+    "task_boundary": "Prepare all six cards, design, diagram, exact dependency and proof gates, COTS, budgets, and PVF; do not execute tasks, add preparation review churn, open a PR, or claim product paths.",
+    "deliverables": [
+      "all six issue-specific current-registry typed cards",
+      "live distributed workcell proof design and Mermaid diagram",
+      "exact preparation-only protected paths and fail-closed live merge plus ancestry dependency gate",
+      "executable preparation and future live-proof validation contracts",
+      "zero-new-dependency COTS posture, LoC/shard/time budgets, and PVF classification",
+      "zero preparation review churn; one bounded review remains immediately before PR"
+    ],
+    "acceptance_criteria": [
+      "AC-1: The admitted plan creates at least two real parallel writable Codex shards with distinct issues, typed claims, branches, worktrees, and disjoint protected/write paths; fixture or prose substitutes fail",
+      "AC-2: The conductor emits the admitted plan and at least one real fail-closed negative case, while bounded context transfer binds source revision, task, issue, claim, paths, artifacts, and digests without credentials or unrelated transcript content",
+      "AC-3: #5500 dashboard observations are derived from typed lifecycle and live task/dependency state without manual green assertions, and every output is reviewed then classified by #5502 as integrate, replan, or blocked",
+      "AC-4: Publication, PR/checks, review, merge, post-merge validation, and closeout remain serialized and truthful, with exact-revision continuity and no autonomous lifecycle authority",
+      "AC-5: The retained packet records timing, coordination overhead, failures, retries, and a fair bounded single-agent baseline over equivalent declared work",
+      "AC-6: The proof adds no product implementation by default, keeps issue-local harness and structured fixtures within 2,500 lines, uses two to four writable shards, fewer than 100 focused assertions, 1,800-second live and baseline limits, a 3,600-second complete limit, and zero new dependencies"
+    ],
+    "dependencies": [
+      "parent WP-10A umbrella #5497 remains open until this proof and child convergence complete",
+      "WP-09 provider and governed-tool adapter #5349 live merged head must be ancestral to the execution revision",
+      "conductor #5499 live merged head must be ancestral to the execution revision",
+      "Codex task and bounded context adapter #5498 live merged head must be ancestral to the execution revision",
+      "live dashboard #5500 live merged head must be ancestral to the execution revision",
+      "output convergence and deterministic replanning #5502 live merged head must be ancestral to the execution revision",
+      "typed closeout state and retained receipts for #5349, #5499, #5498, #5500, and #5502 are audit-only and must not block execution readiness when live merge plus ancestry truth is satisfied",
+      "Runtime v3 acceptance #5361 and shadow parity #5350 consume the completed live proof"
+    ],
+    "repo_inputs": [
+      "AGENTS.md",
+      "GitHub issue #5501 live body",
+      "docs/templates/prompts/current.json",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+      "future live merge evidence and audit-only terminal receipts"
+    ],
+    "non_goals": [
+      "live task execution or product implementation during preparation",
+      "fixture-only, mock-only, prose-only, screenshot-only, or library-only substitution for real Codex workcell proof",
+      "reimplementing conductor, task transport, dashboard, convergence, Runtime, scheduler, or lifecycle storage",
+      "automatic issue creation, review approval, publication, GitHub mutation, merge, or closeout",
+      "Runtime v2 edits, AWS, provider credentials, paid services, unbounded sessions, hidden network, or private transcript retention"
+    ],
+    "plan_summary": "Render and validate six cards; freeze the real live-proof boundary, exact dependency gates, preparation-only ownership, zero-new-dependency COTS posture, budgets, PVF, evidence identity, negative case, dashboard, convergence, serialized integration, and fair baseline contracts; obtain bounded review and fix findings; commit and push preparation only.",
+    "steps": [
+      {"id":"S1","action":"Complete six cards, design, diagram, dependency and preparation validators, exact protected paths, COTS, budgets, and PVF without live, product, PR, or additional preparation-review work","status":"pending","acceptance_ids":["AC-1","AC-4","AC-6"]},
+      {"id":"S2","action":"Wait fail-closed for #5349, #5499, #5498, #5500, and #5502 live merged heads to be ancestral to the execution revision; typed closeout and retained receipts are audit-only signals, not readiness blockers","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3"]},
+      {"id":"S3","action":"Validate the admitted live-run manifest and execute at least two real disjoint writable Codex shards with bounded provenance-bearing context, negative-case refusal, dashboard observations, output review, and convergence","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-6"]},
+      {"id":"S4","action":"Run the equivalent bounded single-agent baseline, compare timing and coordination overhead, retain exact proof, complete serialized review/publication/checks/merge/post-merge validation/closeout, and hand evidence to #5497, #5350, and #5361","status":"pending","acceptance_ids":["AC-4","AC-5","AC-6"]}
+    ],
+    "invariants": [
+      "no live or product work before every execution dependency has live merge plus ancestry truth",
+      "typed closeout state and retained receipts are audit-only and do not block readiness when live merge plus ancestry truth is satisfied",
+      "preparation claim protects only issue-local lifecycle and evidence paths",
+      "at least two real writable shards have distinct issue claims, branches, worktrees, and disjoint protected paths",
+      "fixture, mock, prose, screenshot, or library-only evidence cannot satisfy live proof",
+      "context and outputs are bounded, redaction-safe, provenance-bearing, exact-revision continuous, and stale-detectable",
+      "dashboard status is observed, never manually asserted",
+      "review, publication, merge, post-merge validation, and closeout remain serialized and independently authorized",
+      "all applicable acceptance and PVF lanes complete without deferral"
+    ],
+    "risks": [
+      "a staged demo could be mistaken for a real distributed workcell",
+      "task or context identity could drift between conductor admission and shard execution",
+      "overlapping claims or write sets could corrupt parallel output",
+      "dashboard projections could present manually asserted or stale green status",
+      "convergence summaries could hide failures, residual blockers, or review gaps",
+      "the single-agent baseline could be incomparable or timings could omit coordination overhead",
+      "the proof harness could grow into a second scheduler or lifecycle store"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "any execution dependency lacks a live merged head ancestral to the execution revision",
+      "fewer than two real writable shards can be admitted with disjoint typed claims and paths",
+      "task, context, output, review, dashboard, convergence, or closeout identity cannot be proven",
+      "the negative case or single-agent baseline cannot be executed truthfully",
+      "execution requires out-of-claim product writes, Runtime v2, AWS, credentials, paid services, hidden authority, or deferred acceptance proof"
+    ],
+    "validation_lanes": [
+      {"lane":"preparation-contract","proof_role":"Prove six-card, design, diagram, live-merge dependency, scope, COTS, budget, PVF, and zero-product-change preparation truth","deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":3000,"argv":["ruby",".csdlc/prepared/issues/5501/validate-preparation.rb"],"parallel_group":"preparation","acceptance_ids":["AC-1","AC-4","AC-6"]},
+      {"lane":"dependency-terminal-gate","proof_role":"Fail closed until #5349, #5499, #5498, #5500, and #5502 live merged heads are ancestral to the execution revision; typed closeout and retained receipts remain audit-only","deterministic":true,"resource_profile":"small","budget_seconds":60,"budget_tokens":1500,"argv":["ruby",".csdlc/prepared/issues/5501/check-dependencies.rb"],"parallel_group":"execution-gate","acceptance_ids":["AC-1","AC-2","AC-3"],"defer_reason":"Run only when execution is requested; it must fail closed until every dependency has live merge plus ancestry truth"},
+      {"lane":"live-manifest","proof_role":"Validate two-to-four real shard identities, disjoint claims and paths, bounded context, negative case, dashboard observation plan, serialized gates, timing plan, and fair baseline before task creation","deterministic":true,"resource_profile":"medium","budget_seconds":120,"budget_tokens":4000,"argv":["ruby",".csdlc/prepared/issues/5501/run-validation-lane.rb","live-manifest"],"parallel_group":"execution","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6"],"defer_reason":"Mandatory after terminal dependencies and before live task creation; not selected during preparation"},
+      {"lane":"live-two-shard","proof_role":"Execute and retain the real admitted multi-task workcell with negative refusal, live observations, review, convergence, and serialized integration truth","deterministic":false,"resource_profile":"large","budget_seconds":1800,"budget_tokens":12000,"argv":["ruby",".csdlc/prepared/issues/5501/run-validation-lane.rb","live-two-shard"],"parallel_group":"live-proof","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-6"],"defer_reason":"Mandatory execution proof after dependency admission; forbidden during preparation"},
+      {"lane":"baseline-comparison","proof_role":"Run equivalent bounded single-agent work and retain elapsed, coordination, failure, retry, and comparability evidence","deterministic":false,"resource_profile":"large","budget_seconds":1800,"budget_tokens":8000,"argv":["ruby",".csdlc/prepared/issues/5501/run-validation-lane.rb","baseline-comparison"],"parallel_group":"live-proof","acceptance_ids":["AC-5","AC-6"],"defer_reason":"Mandatory execution evidence after the live workcell; forbidden during preparation"},
+      {"lane":"post-merge-exact","proof_role":"Re-run dependency ancestry, evidence identity, redaction, comparison, CI, exact review, and consumer handoff after authorized merge","deterministic":true,"resource_profile":"large","budget_seconds":3300,"budget_tokens":10000,"argv":["ruby",".csdlc/prepared/issues/5501/run-validation-lane.rb","post-merge-exact"],"parallel_group":"post-merge","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6"],"defer_reason":"Mandatory after authorized merge and before closeout"}
+    ],
+    "failure_policy": "Fail closed without task execution, publication, merge, closeout, or consumer handoff on incomplete dependencies, claim collision, fewer than two real disjoint writable shards, stale or unbounded context, manual dashboard assertions, missing negative case, unreviewed output, ambiguous convergence, unserialized integration, incomparable baseline, secret/path leakage, red CI, stale review, deferred proof, or budget breach.",
+    "review_prompts": [
+      "Can fixtures, mocks, prose, screenshots, or library tests be mistaken for the required real multi-task workcell?",
+      "Are every shard, claim, branch, worktree, protected path, context envelope, output, review, decision, and closeout record exact-revision bound and stale-detectable?",
+      "Can overlapping paths, manual green assertions, missing outputs, or changed assumptions bypass fail-closed refusal or truthful replanning?",
+      "Is the single-agent baseline equivalent and are all coordination overhead, failures, retries, and timing boundaries retained without selective omission?",
+      "Are dependency, COTS, protected-path, LoC/shard/time, PVF, no-deferral, CI, exact-review, and post-merge contracts complete?"
+    ],
+    "review_scope": ".csdlc/issues/5501\n.csdlc/locks/5501.lock\n.csdlc/prepared/issues/5501\n.csdlc/evidence/5501"
+  }
+}

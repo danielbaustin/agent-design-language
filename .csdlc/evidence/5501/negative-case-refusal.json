@@ -1,0 +1,13 @@
+{
+  "schema": "adl.wp10a.negative-case.v1",
+  "kind": "overlapping_active_claim_path_refusal",
+  "source_issue": 5502,
+  "component": "adl-workcell-convergence",
+  "source_head": "3b900210cd30ee381c860a624499d1e4d8aea0d8",
+  "source_ref": "adl-v2/crates/adl-workcell-convergence/tests/convergence.rs::blocks_overlapping_active_claims",
+  "refused": true,
+  "refusal_code": "PathOverlap",
+  "evidence_ref": ".csdlc/evidence/5502/implementation-validation/convergence-contract.log",
+  "evidence_excerpt": "test blocks_overlapping_active_claims ... ok",
+  "truth_boundary": "This is a real merged fail-closed contract proof from #5502, not a fresh overlapping write attempt by #5501."
+}

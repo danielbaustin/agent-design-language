@@ -1,0 +1,14 @@
+{
+  "issue": 5605,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "aafc44d495729442f2ca663a808d7b17a6cbc614ab07a68ced1c0b1a7bb488de",
+  "claim_id": "csdlc-issue-5605-20260722t190651z",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Podcast planning docs, validation, and clean bounded review are complete for pre-publication.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

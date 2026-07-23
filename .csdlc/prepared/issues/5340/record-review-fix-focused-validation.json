@@ -1,0 +1,23 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 23,
+  "expected_digest": "966f7a1a30d4db3a9cc996c5804c61a14fbb20451a772c42047c2e339e8864cf",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record focused FastWork proof for the exact-review repairs.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "csdlc-validate",
+        "--request",
+        ".csdlc/prepared/issues/5340/pvf/focused.json"
+      ],
+      "purpose": "Prove the repaired state dataflow, bounded turn inputs, compiler fixture mapping, and surrounding portable engine contracts on the sealed repair commit.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-focused/engine-focused.log at repair commit a87c36c4a813ed0e7d0cd3292434874d7be2bb0e"
+    }
+  },
+  "fail_after_backup": false
+}

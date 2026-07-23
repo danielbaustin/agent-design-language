@@ -1,0 +1,24 @@
+{
+  "issue": 5589,
+  "expected_generation": 15,
+  "expected_digest": "b7cbf7534f54b82a61927e276cfc502b8f9bd576d83e55d75cfb6a1716cba1f9",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "actor": "subagent:/root/review_5589_exact",
+  "evidence": {
+    "reviewer": "subagent:/root/review_5589_exact",
+    "scope": ["adl-runtime-kernel/src/governed_operations.rs","adl-runtime-kernel/src/bin/adl-runtime-governed-operations.rs","adl-runtime-kernel/tests/governed_operations.rs",".csdlc/issues/5589/cards/sor.values.json",".csdlc/issues/5589/cards/srp.values.json",".csdlc/evidence/5589/implementation"],
+    "reviewed_revision": "git-blake3:353459e57e5f9b3cd96a5372d927088f8c4f8e34:089d7652ef41a655f6879ea90345ddf0cf9e5d6f3b090ea45729306760f1ad20",
+    "findings": [
+      {"id":"replay-fingerprint-bypass","severity":"p1","summary":"Cached replay compares only request and citizen identity, allowing changed governed fields and a substituted unrevoked commitment to bypass gate validation.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"provider-io-unbounded","severity":"p1","summary":"Blocking process wait cannot be preempted by the Tokio timeout and accumulates unbounded stdout before checking its limit.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"crash-stale-lock","severity":"p1","summary":"Directory locking removed only by Drop leaves state permanently busy after process or host crash.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"synthetic-per-request-services","severity":"p1","summary":"Fresh passthrough scheduler and shepherd adapters plus a global operation lock do not establish shared resident multi-agent scheduling, saturation, resource races, or cleanup.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"proof-name-overstatement","severity":"p2","summary":"Appeal, cancellation-race, scheduler-saturation, and append-only non-authority tests still do not exercise their named semantics.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"unbounded-authoritative-state","severity":"p2","summary":"Completed, request-id, and private-state checkpoint collections grow without a declared bound.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"budget-exception-still-unjustified","severity":"p1","summary":"The 13,496-line result is additive, duplicates existing assembly patterns, retains synthetic components, and does not justify the +1,287 baseline exception.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null}
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

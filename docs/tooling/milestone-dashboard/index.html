@@ -67,6 +67,38 @@
         </article>
       </section>
 
+      <section class="surface workcell-surface">
+        <div class="surface-head">
+          <div>
+            <p class="section-kicker">Workcell operator view</p>
+            <h3>Read-only C-SDLC workcell and Runtime Observatory posture</h3>
+          </div>
+          <div id="workcell-status" class="status-badge"></div>
+        </div>
+        <div id="workcell-summary" class="workcell-summary"></div>
+        <div class="workcell-grid">
+          <div>
+            <p class="rail-label">Ownership and dependencies</p>
+            <div id="workcell-dependencies" class="issues-list"></div>
+          </div>
+          <div>
+            <p class="rail-label">Agent topology</p>
+            <div id="workcell-agents" class="issues-list"></div>
+          </div>
+          <div>
+            <p class="rail-label">Freshness and authority</p>
+            <div id="workcell-authority" class="issues-list"></div>
+          </div>
+        </div>
+        <div class="runtime-strip">
+          <div>
+            <p class="rail-label">Runtime Observatory</p>
+            <p id="runtime-live-status" class="runtime-status"></p>
+          </div>
+          <div id="runtime-observatory-list" class="runtime-observatory-list"></div>
+        </div>
+      </section>
+
       <section class="hero-grid">
         <article class="surface metric-surface">
           <div class="surface-head">

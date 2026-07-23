@@ -1,0 +1,20 @@
+{
+  "issue": 5342,
+  "expected_generation": 9,
+  "expected_digest": "f4cca54b77a4bb4426c528f20be094a9b21916d6b875bc32fab68a6fccad6ded",
+  "claim_id": "claim-5342-v0918-wp07-records-signing",
+  "actor": "codex:5342-owner",
+  "evidence": {
+    "reviewer": "subagent:019f8a9c-c932-70d1-a78d-e1fd5ae66b18",
+    "scope": [
+      "adl-v2/crates/adl-records",
+      ".csdlc/issues/5342",
+      ".csdlc/prepared/issues/5342"
+    ],
+    "reviewed_revision": "git-blake3:7fbc7200674250cda3e6a743bb5f3f0c77a4a855:a04296b217516695393d6b9be61a29330e98b8fc59167f9effa4cde1fbd8fb67",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

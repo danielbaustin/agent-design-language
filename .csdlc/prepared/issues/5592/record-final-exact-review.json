@@ -1,0 +1,27 @@
+{
+  "issue": 5592,
+  "expected_generation": 9,
+  "expected_digest": "a2195ee51344a00f03b22ee30b6e94d69573d117d352108869609237ff0515da",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "subagent:/root/review_5592_final_exact",
+  "evidence": {
+    "reviewer": "subagent:/root/review_5592_final_exact",
+    "scope": [
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/src/parity_b.rs",
+      "adl-runtime-kernel/src/reasoning.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs",
+      ".csdlc/issues/5592/cards/sor.values.json",
+      ".csdlc/issues/5592/cards/srp.values.json",
+      ".csdlc/issues/5592/cards/vpp.values.json"
+    ],
+    "reviewed_revision": "git-blake3:b6a63af868ca140e817c485dc2c3491222ab4675:65b144b8ccfe0c11c263284ab0ec0d1e8b08b35728123b0bee8b575f615c5352",
+    "findings": [],
+    "residual_risks": [
+      "Runtime v3 is 13,547 physical lines, an explicitly accepted +1,338 exception over the pinned 12,209 baseline and +1,547 over the reviewed target; it remains below the 20,000 hard ceiling and exact review found the cohesive issue scope complete and non-deferred."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

@@ -194,3 +194,111 @@ fn prune_guard_requires_exact_topology_and_clean_worktree() {
     std::fs::write(temp.path().join("dirty"), "dirty").unwrap();
     assert!(csdlc_v2::readiness::validate_prune_surface(temp.path(), "terminal-7", &path).is_err());
 }
+
+#[test]
+fn prune_guard_resolves_issue_local_and_repository_relative_topology_exactly() {
+    let temp = tempfile::tempdir().unwrap();
+    let git = |root: &std::path::Path, args: &[&str]| {
+        let output = std::process::Command::new("git")
+            .current_dir(root)
+            .args(args)
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+    };
+    git(temp.path(), &["init", "-b", "main"]);
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "C-SDLC Test"]);
+    std::fs::write(temp.path().join("tracked"), "clean").unwrap();
+    git(temp.path(), &["add", "tracked"]);
+    git(temp.path(), &["commit", "-m", "fixture"]);
+
+    let issue = temp.path().join("other/.worktrees/issue-7");
+    std::fs::create_dir_all(issue.parent().unwrap()).unwrap();
+    git(
+        temp.path(),
+        &[
+            "worktree",
+            "add",
+            "-b",
+            "terminal-7",
+            issue.to_str().unwrap(),
+        ],
+    );
+
+    csdlc_v2::readiness::validate_prune_surface(&issue, "terminal-7", ".").unwrap();
+    csdlc_v2::readiness::validate_prune_surface(&issue, "terminal-7", "other/.worktrees/issue-7")
+        .unwrap();
+    csdlc_v2::readiness::validate_prune_surface(&issue, "terminal-7", issue.to_str().unwrap())
+        .unwrap();
+
+    for invalid in [
+        "",
+        "..",
+        "../issue-7",
+        "other/../issue-7",
+        ".worktrees/issue-7",
+        "missing/issue-7",
+    ] {
+        let error =
+            csdlc_v2::readiness::validate_prune_surface(&issue, "terminal-7", invalid).unwrap_err();
+        assert_eq!(error.code, csdlc_v2::ErrorCode::UnsafeCheckout, "{invalid}");
+    }
+    assert_eq!(
+        csdlc_v2::readiness::validate_prune_surface(&issue, "main", ".")
+            .unwrap_err()
+            .code,
+        csdlc_v2::ErrorCode::UnsafeCheckout
+    );
+    assert_eq!(
+        csdlc_v2::readiness::validate_prune_surface(
+            temp.path(),
+            "terminal-7",
+            issue.to_str().unwrap(),
+        )
+        .unwrap_err()
+        .code,
+        csdlc_v2::ErrorCode::UnsafeCheckout
+    );
+
+    std::fs::write(issue.join("dirty"), "dirty").unwrap();
+    assert_eq!(
+        csdlc_v2::readiness::validate_prune_surface(&issue, "terminal-7", ".")
+            .unwrap_err()
+            .code,
+        csdlc_v2::ErrorCode::UnsafeCheckout
+    );
+}
+
+#[test]
+fn prune_guard_validation_does_not_modify_retained_receipt_bytes() {
+    let temp = tempfile::tempdir().unwrap();
+    let git = |args: &[&str]| {
+        let output = std::process::Command::new("git")
+            .current_dir(temp.path())
+            .args(args)
+            .output()
+            .unwrap();
+        assert!(output.status.success());
+    };
+    git(&["init", "-b", "terminal-7"]);
+    git(&["config", "user.email", "test@example.invalid"]);
+    git(&["config", "user.name", "C-SDLC Test"]);
+    std::fs::write(temp.path().join("tracked"), "clean").unwrap();
+    git(&["add", "tracked"]);
+    git(&["commit", "-m", "fixture"]);
+
+    let receipt = temp.path().join(".git/csdlc-v2/closeout/7.json");
+    std::fs::create_dir_all(receipt.parent().unwrap()).unwrap();
+    std::fs::write(&receipt, b"immutable terminal receipt\n").unwrap();
+    let before = std::fs::read(&receipt).unwrap();
+    csdlc_v2::readiness::validate_prune_surface(temp.path(), "terminal-7", ".").unwrap();
+    assert_eq!(std::fs::read(receipt).unwrap(), before);
+}

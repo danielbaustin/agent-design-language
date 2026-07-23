@@ -1,0 +1,53 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5624,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][prune] Resolve issue-local terminal worktree topology safely",
+    "slug": "csdlc-prune-topology",
+    "version": "v0.91.8",
+    "generation": 22
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Replace suffix matching with exact repository-rooted canonical topology matching and prove fail-closed behavior.",
+      "deliverables": [
+        "Canonical resolver for issue-local, absolute, and clean relative terminal worktree identities",
+        "Exact branch, current-root, and live-worktree tuple guard",
+        "Focused sentinel, collision, traversal, missing, wrong-checkout, dirty, and receipt-stability regressions",
+        "Typed validation, review, publication, merge, and terminal receipt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: `.` resolves to the canonical current issue worktree and passes only for an exact branch and live topology match",
+        "AC-2: clean relative worktrees resolve from the primary repository root and absolute worktrees require exact canonical identity",
+        "AC-3: empty, missing, traversal-bearing, wrong-branch, wrong-checkout, suffix-collision, and dirty candidates return unsafe_checkout",
+        "AC-4: validate-prune leaves retained terminal receipt bytes unchanged",
+        "AC-5: a #5340-equivalent closed-out terminal record validates without changing #5340 state or receipt",
+        "AC-6: focused Rust tests, strict Clippy, exact-revision review, hosted checks, post-merge validation, and typed closeout pass"
+      ],
+      "dependencies": [
+        "Issue 5340 terminal evidence as read-only defect provenance",
+        "Existing typed C-SDLC v2 binding and Git worktree topology semantics"
+      ],
+      "repo_inputs": [
+        "csdlc-v2/src/readiness.rs",
+        "csdlc-v2/src/lifecycle.rs",
+        "csdlc-v2/src/git.rs",
+        "csdlc-v2/src/bin/csdlc-closeout.rs",
+        "csdlc-v2/tests/gate7.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs",
+        "Rust standard library and existing tempfile test dependency"
+      ],
+      "non_goals": [
+        "No #5340 lifecycle or receipt mutation",
+        "No terminal schema or record migration",
+        "No manual prune bypass or clean-worktree weakening",
+        "No Runtime, AWS, provider, or unrelated milestone work",
+        "No new third-party dependency"
+      ]
+    }
+  }
+}

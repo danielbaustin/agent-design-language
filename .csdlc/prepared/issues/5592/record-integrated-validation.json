@@ -1,0 +1,24 @@
+{
+  "issue": 5592,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "49f823d14321b410940ab10a94aab9c252678902cc256f2bf11c05cab68ddc50",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+  "reason": "Record exact integrated-main FastWork proof before integrated-head rereview.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5592/integrated cargo test --manifest-path adl-runtime-kernel/Cargo.toml",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5592/integrated-clippy cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",
+        "git merge --no-edit origin/main",
+        "git diff --check"
+      ],
+      "purpose": "Prove current main integrates without protected-path collision and the complete Runtime v3 suite, guardian black-box path, operations regressions, and strict lint remain green at the integrated head.",
+      "outcome": "passed",
+      "evidence_ref": "owner:019f836b-dfdb-7b33-8e27-4c9478b75421@05dc14883:/Volumes/FastWork/adl-5592/{integrated,integrated-clippy}"
+    }
+  },
+  "fail_after_backup": false
+}

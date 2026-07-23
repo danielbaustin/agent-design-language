@@ -15,6 +15,7 @@
 | Provider/tool adapters | #5349 | Mock/HTTP/governed-tool adapter tests and policy proof |
 | CLI and selector | #5345, #5343 | Stable install, generation selection, rollback |
 | Distributed C-SDLC workcell | #5497, #5499, #5498, #5500, #5502, #5501 | Conductor/task-adapter/dashboard/convergence/live-workcell proof without autonomous merge or closeout authority |
+| AI Agent Podcast Studio weekly launch readiness | #5605 | Historical podcast-demo inventory, first-ten topic slate, launch-week checklist, and `agent-logic.ai/podcast` route plan; does not prove public launch, final audio, RSS, or durable cadence |
 | Shadow parity | #5350 | Normalized corpus comparison and mismatch disposition |
 | C-SDLC v2 deployment | #5358, #5540, #5541 | Typed lifecycle acceptance and retained repair history |
 | WP-14A platform acceptance | #5384, #5358, #5361 | Exact reviewed platform revisions and deployment proof |

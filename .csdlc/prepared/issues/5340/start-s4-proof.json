@@ -1,0 +1,11 @@
+{
+  "issue": 5340,
+  "card": "spp",
+  "expected_generation": 19,
+  "expected_digest": "6243607879b30a386932a05096008566991c098a3c4be3df389f2c8fcf1e2a31",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Begin formal lifecycle recording of the completed fixture, boundary, determinism, COTS, scope, LoC, latency, and FastWork proof.",
+  "operation": {"operation": "update_plan_step", "step_id": "S4", "status": "in_progress"},
+  "fail_after_backup": false
+}

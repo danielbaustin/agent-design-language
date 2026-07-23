@@ -398,7 +398,7 @@ native_gws_demo_bins_output="$(bash "$SCRIPT" --changed-files "$native_gws_demo_
 assert_has "$native_gws_demo_bins_output" "mode=focused"
 assert_has "$native_gws_demo_bins_output" "reason=bounded_rust_surface_runs_focused_nextest"
 assert_has "$native_gws_demo_bins_output" "filter_tokens=demo_adl_gws_context_mirror,demo_adl_gws_native_drive_sync"
-assert_has "$native_gws_demo_bins_output" "filter_expression=binary_id(adl::bin/demo-adl-gws-context-mirror) and test(/^tests::/) or binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)"
+assert_has "$native_gws_demo_bins_output" "filter_expression=binary_id(adl::bin/adl-gws-context-mirror) and test(/^tests::/) or binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)"
 
 slow_proof_inventory="$TMP/slow_proof_inventory.txt"
 cat >"$slow_proof_inventory" <<'EOF'

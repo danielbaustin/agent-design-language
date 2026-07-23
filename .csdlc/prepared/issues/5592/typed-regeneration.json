@@ -1,0 +1,18 @@
+{
+  "schema": "csdlc.typed-card-regeneration.v1",
+  "issue": 5592,
+  "reason": "synchronize the operator-directed canonical [WP-14] title across bootstrap and all six card identities",
+  "prior_revision": "e022c9d98e474caa7149760b700d1cd223b46344",
+  "prior_generation": 15,
+  "prior_digest": "3ceb6db515b6f93fe8467b44c9dbafbdab8db0b1701dddb157e308de6e5a1f51",
+  "typed_route": [
+    "csdlc-install resolve",
+    "csdlc-edit bootstrap",
+    "csdlc-bind"
+  ],
+  "result_generation": 0,
+  "result_digest": "ba46d5a0c5bc9ebaa65416087ce0d4168797195fbf60b15b1bc9dbe73b945e43",
+  "result_phase": "bound",
+  "product_paths_changed": false,
+  "publication_authorized": false
+}

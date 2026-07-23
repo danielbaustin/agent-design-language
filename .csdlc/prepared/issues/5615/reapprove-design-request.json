@@ -1,0 +1,7 @@
+{
+  "issue": 5615,
+  "expected_generation": 1,
+  "expected_digest": "a702e5fe5c5e901c1ee363ef50fc20d2166b22aa94959b156ab9c0929bf216cd",
+  "claim_id": "claim-5615-csdlc-ci-fastwork-routing",
+  "reviewer": "subagent:019f8696-9290-7a62-beb7-05787fe35c4c"
+}

@@ -1,0 +1,153 @@
+{
+  "issue": 5624,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5624/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5624/diagram.mmd",
+  "design_reviewer": "subagent:019f8623-dc6c-7262-8866-b1dc35c5fef2",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5624-csdlc-prune-topology",
+    "owner": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+    "generation": 0,
+    "acquired_unix_seconds": 1784728873,
+    "expires_unix_seconds": 1784815273,
+    "heartbeat_unix_seconds": 1784728873,
+    "branch": "codex/5624-csdlc-prune-topology",
+    "worktree": ".",
+    "protected_paths": [
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/tests/gate7.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      ".csdlc/issues/5624",
+      ".csdlc/prepared/issues/5624",
+      ".csdlc/evidence/5624"
+    ],
+    "purpose": "Repair guarded prune topology resolution without changing terminal evidence"
+  },
+  "initial": {
+    "title": "[v0.91.8][csdlc-v2][prune] Resolve issue-local terminal worktree topology safely",
+    "slug": "csdlc-prune-topology",
+    "version": "v0.91.8",
+    "goal": "Make guarded prune accept the supported issue-local worktree sentinel only for the exact safe checkout.",
+    "required_outcome": "Guarded prune uses repository-rooted canonical identity, accepts truthful issue-local terminal topology, rejects ambiguous or unsafe checkouts, and never rewrites retained terminal receipts.",
+    "declared_scope": [
+      "Canonical terminal worktree resolution in csdlc-v2 readiness",
+      "Focused library and command-level prune regressions",
+      "Issue-local typed lifecycle and validation evidence"
+    ],
+    "authority_boundary": [
+      "Issue 5624 owns only readiness.rs, focused prune tests, and issue-local records",
+      "Terminal records and retained receipts remain immutable authority",
+      "Issue 5340, Runtime code, and unrelated lifecycle behavior remain outside scope"
+    ],
+    "task_boundary": "Replace suffix matching with exact repository-rooted canonical topology matching and prove fail-closed behavior.",
+    "deliverables": [
+      "Canonical resolver for issue-local, absolute, and clean relative terminal worktree identities",
+      "Exact branch, current-root, and live-worktree tuple guard",
+      "Focused sentinel, collision, traversal, missing, wrong-checkout, dirty, and receipt-stability regressions",
+      "Typed validation, review, publication, merge, and terminal receipt"
+    ],
+    "acceptance_criteria": [
+      "AC-1: `.` resolves to the canonical current issue worktree and passes only for an exact branch and live topology match",
+      "AC-2: clean relative worktrees resolve from the primary repository root and absolute worktrees require exact canonical identity",
+      "AC-3: empty, missing, traversal-bearing, wrong-branch, wrong-checkout, suffix-collision, and dirty candidates return unsafe_checkout",
+      "AC-4: validate-prune leaves retained terminal receipt bytes unchanged",
+      "AC-5: a #5340-equivalent closed-out terminal record validates without changing #5340 state or receipt",
+      "AC-6: focused Rust tests, strict Clippy, exact-revision review, hosted checks, post-merge validation, and typed closeout pass"
+    ],
+    "dependencies": [
+      "Issue 5340 terminal evidence as read-only defect provenance",
+      "Existing typed C-SDLC v2 binding and Git worktree topology semantics"
+    ],
+    "repo_inputs": [
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/git.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/tests/gate7.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      "Rust standard library and existing tempfile test dependency"
+    ],
+    "non_goals": [
+      "No #5340 lifecycle or receipt mutation",
+      "No terminal schema or record migration",
+      "No manual prune bypass or clean-worktree weakening",
+      "No Runtime, AWS, provider, or unrelated milestone work",
+      "No new third-party dependency"
+    ],
+    "plan_summary": "Prepare and bind; add failing topology regressions; implement exact canonical resolution; validate and review; publish, merge, post-merge validate, close out, retain the receipt, and prune only through the repaired guard.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Prepare, review, initialize, and bind the issue-local typed lifecycle",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"]
+      },
+      {
+        "id": "S2",
+        "action": "Add focused failing regressions and implement exact canonical topology resolution",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"]
+      },
+      {
+        "id": "S3",
+        "action": "Run FastWork proof, exact-revision review, and fix every actionable finding",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"]
+      },
+      {
+        "id": "S4",
+        "action": "Publish, shepherd exact-head checks, merge, post-merge validate, close out, retain receipt, and guarded-prune if safe",
+        "status": "pending",
+        "acceptance_ids": ["AC-4", "AC-5", "AC-6"]
+      }
+    ],
+    "risks": [
+      "A permissive relative-path rule could prune a same-suffix checkout",
+      "A sentinel special case could ignore branch or live topology identity",
+      "A repair could accidentally rewrite immutable terminal evidence",
+      "A test could prove only a helper while missing command-level behavior"
+    ],
+    "invariants": [
+      "Eligibility requires exact branch, canonical root, and live Git topology identity",
+      "Dirty worktrees remain ineligible",
+      "Invalid and ambiguous paths fail with unsafe_checkout",
+      "Terminal evidence and retained receipt bytes are unchanged"
+    ],
+    "stop_conditions": [
+      "Any need to mutate #5340 or migrate terminal records",
+      "Any protected-path collision",
+      "Any need to change Runtime code, use AWS, or add a dependency",
+      "Any proposed rule that accepts suffix-only or traversal-bearing identity"
+    ],
+    "review_prompts": [
+      "Can `.` validate any checkout other than the exact current terminal branch worktree?",
+      "Can two repositories with the same relative worktree suffix collide?",
+      "Do malformed, missing, wrong, and dirty candidates fail with unsafe_checkout?",
+      "Can validation alter the terminal record or retained receipt?",
+      "Does command-level proof exercise the same path as issue 5340?"
+    ],
+    "operator_constraints": [
+      "Typed C-SDLC v2 only",
+      "Work only in /Volumes/FastWork/adl-wp-5624",
+      "No raw gh, AWS, Runtime changes, #5340 mutation, or root-main edits",
+      "No approval pauses; complete the authorized issue end to end"
+    ],
+    "review_scope": "csdlc-v2/src/readiness.rs\ncsdlc-v2/tests/gate7.rs\ncsdlc-v2/tests/gate7_lifecycle.rs\n.csdlc/issues/5624\n.csdlc/prepared/issues/5624",
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "guarded-prune-focused",
+        "proof_role": "Prove exact issue-local, relative, absolute, malformed, wrong-checkout, dirty, and receipt-stability behavior",
+        "deterministic": true,
+        "resource_profile": "medium",
+        "parallel_group": "csdlc-v2-prune",
+        "budget_seconds": 600,
+        "budget_tokens": 4000,
+        "argv": ["bash", ".csdlc/prepared/issues/5624/run_focused_validation.sh"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"]
+      }
+    ],
+    "failure_policy": "Fail closed on any non-exact topology, malformed path, receipt drift, validation failure, unresolved review finding, or protected-path expansion."
+  }
+}

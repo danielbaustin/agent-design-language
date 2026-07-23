@@ -1,0 +1,16 @@
+{
+  "issue": 5590,
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "expected_owner": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+  "expected_generation": 11,
+  "expected_digest": "ccee2b0d18b7b459faf4bf9c8742e18a3762e7b4e376d157c707c02194616eed",
+  "expected_purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof",
+  "now_unix_seconds": 1784670752,
+  "actor": "codex:5590-sole-writer-takeover",
+  "reason": "Add the exact PR-fast coverage mapping and regression required for the new external Runtime v3 guardian binary after hosted CI failed closed on the unmapped source path",
+  "purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof",
+  "add_protected_paths": [
+    "adl/tools/check_coverage_impact.sh",
+    "adl/tools/test_check_coverage_impact.sh"
+  ]
+}

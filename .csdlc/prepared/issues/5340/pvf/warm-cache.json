@@ -1,0 +1,8 @@
+{
+  "manifest": { "schema": "csdlc.pvf.manifest.v1", "lanes": [
+    { "id": "engine-warm-cache", "proof_role": "setup", "purpose": "Fetch the exact locked crates closure into FastWork before offline proof", "determinism": "controlled_external", "resources": { "cpu_units": 2, "memory_mib": 1024, "tokens": 1000 }, "credentials": [], "network": "external", "dependencies": [], "parallel_group": "engine", "release_gate": "optional", "execution": "local", "timeout_seconds": 120, "executable": "bash", "argv": [".csdlc/prepared/issues/5340/validate-engine-lane.sh", "warm-cache"], "evidence": { "max_log_bytes": 1048576, "redact_values": [], "require_relative_paths": true } }
+  ] },
+  "selection": { "requested_lanes": ["engine-warm-cache"], "allow_network": true, "available_credentials": [] },
+  "budget": { "max_parallel": 1, "cpu_units": 2, "memory_mib": 1024, "tokens": 1000 },
+  "root": ".", "evidence_dir": ".csdlc/evidence/5340/engine-warm-cache", "cancellation_file": null
+}

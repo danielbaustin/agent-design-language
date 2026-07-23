@@ -1,0 +1,11 @@
+{
+  "issue": 5340,
+  "card": "spp",
+  "expected_generation": 18,
+  "expected_digest": "83859bb333f2b5c8de11c25f3bfd67b1dc7521b2307c3745855b852d4b16aa37",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "The landed compiler API is reconciled and the isolated deterministic bounded engine, typed ports, bounds, joins, retry, failure, cancellation, checkpoint, and strict resume contracts are implemented.",
+  "operation": {"operation": "update_plan_step", "step_id": "S3", "status": "completed"},
+  "fail_after_backup": false
+}

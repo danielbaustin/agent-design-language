@@ -1,0 +1,8 @@
+{
+  "issue": 5587,
+  "expected_generation": 10,
+  "expected_digest": "6d6e29e693710361648ea3a7f29b1ddfbac84a11548a9fcd779764c47d755150",
+  "claim_id": "claim-5587-google-drive-context-mirror",
+  "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+  "reason": "Recover review truth after the exact CI head exposed missing PR-fast coverage mappings for the three native Google Drive library sources."
+}

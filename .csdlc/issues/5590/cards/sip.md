@@ -1,0 +1,52 @@
+# Structured Intent Prompt
+
+Template: 1.0.0
+
+Issue: 5590
+
+Repository: danielbaustin/agent-design-language
+
+Card: sip
+
+Status: ready
+
+## Goal
+
+Make Runtime v3 simple to operate locally and remotely through one secure configuration-driven API, external guardian supervision, live Observatory consumption, Vector telemetry, and reviewed rollback.
+
+## Required Outcome
+
+At one exact revision, the external guardian reads the init file and launches the canonical Runtime v3 kernel; configured HTTPS HTTP and WebSocket routes expose authenticated live agent and Runtime state to the HTML Observatory, discovery reports the actual listener, Vector receives redacted telemetry without owning liveness, pressure and crash recovery are bounded, and explicit selector rollback succeeds without Runtime v2 source edits or AWS execution.
+
+## Scope
+
+- single deny-unknown-fields Runtime init contract for listener, public HTTPS base, TLS, allowed origins, agents, and weather
+- configuration-driven secure local and remote HTTPS API access through one Axum and rustls router
+- authenticated HTTP and WebSocket HTML Observatory live consumption
+- actual bound-address and public-base discovery with port 20997 retained only as a configured default
+- external guardian launch, signal, child reaping, bounded restart, pressure stop, and checkpoint restore
+- tracing stderr and Vector-owned telemetry collection/export boundary
+- explicit selector rollback and exact-revision operational evidence
+- COTS, LoC, module-growth, test-count, and bounded-soak budget proof
+
+## Authority
+
+- #5361 owns integrated Runtime v3 acceptance and #5590 owns Parity-D evidence
+- #5336 owns architecture and budget authority
+- #5591 owns canonical kernel ingress, continuity, and pressure contracts and must be integrated before Parity-D product edits
+- Axum/rustls own transport, Ed25519 and bearer/session policy own authority, Vector owns export mechanics, and the external guardian owns the child process
+- Runtime v2 source, AWS execution, cloud deployment, automatic cutover, decommission, and unrelated product scope are not authorized
+
+## Assumptions
+
+- none
+
+## Operator Constraints
+
+- Use typed C-SDLC v2 only; no raw gh, AWS, product edits on main, Runtime v2 implementation paths, hard-coded IP addresses, HTTP Runtime access, or sidecars
+- Keep this claim preparation-only and issue-local until #5591 integration eligibility is confirmed and collision checks permit a typed scope amendment
+- Use /Volumes/FastWork for Rust build artifacts and maintained COTS crates rather than custom transport, TLS, telemetry, or supervision frameworks
+- Port 20997 is configuration-driven and discovery must report the actual bound listener rather than a constant
+- Implement AC-1 through AC-8 without deferred, fixture-only, degraded, metadata-only, prose-only, or partial acceptance
+- Run bounded exact-revision review, fix every actionable finding, and publish or merge only green work
+- Bind preparation validation to exact base 6d0f6115632a06619544b8ad4792792e741f1f31 and reviewed head 2f26da4455efd4dfc7ab6c65df5d19327fe765c8, and require every repair to descend from that reviewed head

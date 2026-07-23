@@ -1,0 +1,22 @@
+{
+  "issue": 5592,
+  "card": "sip",
+  "expected_generation": 3,
+  "expected_digest": "994a70aef6ac0f96e302bf05a09c69afdd3b740b31ac4ab3c29a2442d8a5b826",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
+  "reason": "Converge refined preparation contract field sip-scope",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "declared_scope",
+    "values": [
+      "reasoning graphs, deterministic bounded loops, adaptive DAG execution, and policy-governed mutation",
+      "affect reasoning-control with operational-only safe non-claims and adversarial task-content signal isolation",
+      "governed cognition with Freedom Gate, shutdown, constructability, review, and mutation-authority non-bypass",
+      "bounded curiosity/discovery and Theory-of-Mind evidence boundaries",
+      "Constructability, Godel mechanics, guild, economics-context, and adl.skill.v1 feature-preservation dispositions",
+      "live-kernel positive and negative proof, exact-revision evidence, rollback, clean-room dependency proof, and duplicate Runtime v3 reasoning consolidation"
+    ]
+  },
+  "fail_after_backup": false
+}

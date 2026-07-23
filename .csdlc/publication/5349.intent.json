@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5349,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5349-v0918-wp09-provider-tool-adapters",
+  "title": "[v0.91.8][WP-09] Add bounded provider and governed-tool adapters",
+  "body": "Closes #5349\n\nImplements the deterministic mock, bounded permit-authorized HTTPS, verified governed-tool, and explicit lossless compatibility adapters for ADL v2. Receipts are non-blocking audit evidence and are never consulted as execution, publication, or integration gates.\n\nProof: the aggregate FastWork lane passed dependency/source checks, 54 adapter tests, secret and negative-authority checks, formatting, strict Clippy, exact COTS inventory, and LoC/test budgets. Independent exact-revision review completed with its one actionable validation-runner finding fixed.",
+  "draft": false,
+  "revision": "git-blake3:f9d275ef571a329a790d60640369083b6569c54e:ba6a553fa5ac915ee124629b81b5194c2d00a445f64e2ea71a2d51167070eea5",
+  "commit_sha": "f9d275ef571a329a790d60640369083b6569c54e"
+}

@@ -1,0 +1,588 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "contract": "adl.records.schema-bundle.v1",
+  "record": {
+    "$defs": {
+      "ArtifactDescriptor": {
+        "additionalProperties": false,
+        "properties": {
+          "byte_length": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "content_digest": {
+            "type": "string"
+          },
+          "header": {
+            "$ref": "#/$defs/RecordHeader"
+          },
+          "media_type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "header",
+          "media_type",
+          "content_digest",
+          "byte_length"
+        ],
+        "type": "object"
+      },
+      "ErrorRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "header": {
+            "$ref": "#/$defs/RecordHeader"
+          },
+          "message": {
+            "type": "string"
+          },
+          "retryable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "header",
+          "code",
+          "message",
+          "retryable"
+        ],
+        "type": "object"
+      },
+      "EventRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "detail": {
+            "type": "string"
+          },
+          "header": {
+            "$ref": "#/$defs/RecordHeader"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "header",
+          "name",
+          "detail"
+        ],
+        "type": "object"
+      },
+      "ExecutionResult": {
+        "additionalProperties": false,
+        "properties": {
+          "diagnostic": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "header": {
+            "$ref": "#/$defs/RecordHeader"
+          },
+          "output_digest": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "header",
+          "status"
+        ],
+        "type": "object"
+      },
+      "RecordHeader": {
+        "additionalProperties": false,
+        "properties": {
+          "contract_version": {
+            "type": "string"
+          },
+          "logical_timestamp": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {},
+            "type": "object"
+          },
+          "record_id": {
+            "type": "string"
+          },
+          "sequence": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "subject_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "contract_version",
+          "record_id",
+          "subject_id",
+          "sequence",
+          "logical_timestamp"
+        ],
+        "type": "object"
+      },
+      "TraceRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "attributes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {},
+            "type": "object"
+          },
+          "header": {
+            "$ref": "#/$defs/RecordHeader"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "parent_span_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "span_id": {
+            "type": "string"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "header",
+          "trace_id",
+          "span_id",
+          "operation"
+        ],
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "oneOf": [
+      {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "error",
+            "type": "string"
+          },
+          "record": {
+            "$ref": "#/$defs/ErrorRecord"
+          }
+        },
+        "required": [
+          "kind",
+          "record"
+        ],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "event",
+            "type": "string"
+          },
+          "record": {
+            "$ref": "#/$defs/EventRecord"
+          }
+        },
+        "required": [
+          "kind",
+          "record"
+        ],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "trace",
+            "type": "string"
+          },
+          "record": {
+            "$ref": "#/$defs/TraceRecord"
+          }
+        },
+        "required": [
+          "kind",
+          "record"
+        ],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "execution_result",
+            "type": "string"
+          },
+          "record": {
+            "$ref": "#/$defs/ExecutionResult"
+          }
+        },
+        "required": [
+          "kind",
+          "record"
+        ],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "artifact",
+            "type": "string"
+          },
+          "record": {
+            "$ref": "#/$defs/ArtifactDescriptor"
+          }
+        },
+        "required": [
+          "kind",
+          "record"
+        ],
+        "type": "object"
+      }
+    ],
+    "title": "Record"
+  },
+  "semantic_validation": "Record::validate and verify_envelope are mandatory stage-two validation",
+  "signed_envelope": {
+    "$defs": {
+      "ArtifactDescriptor": {
+        "additionalProperties": false,
+        "properties": {
+          "byte_length": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "content_digest": {
+            "type": "string"
+          },
+          "header": {
+            "$ref": "#/$defs/RecordHeader"
+          },
+          "media_type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "header",
+          "media_type",
+          "content_digest",
+          "byte_length"
+        ],
+        "type": "object"
+      },
+      "ErrorRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "header": {
+            "$ref": "#/$defs/RecordHeader"
+          },
+          "message": {
+            "type": "string"
+          },
+          "retryable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "header",
+          "code",
+          "message",
+          "retryable"
+        ],
+        "type": "object"
+      },
+      "EventRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "detail": {
+            "type": "string"
+          },
+          "header": {
+            "$ref": "#/$defs/RecordHeader"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "header",
+          "name",
+          "detail"
+        ],
+        "type": "object"
+      },
+      "ExecutionResult": {
+        "additionalProperties": false,
+        "properties": {
+          "diagnostic": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "header": {
+            "$ref": "#/$defs/RecordHeader"
+          },
+          "output_digest": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "header",
+          "status"
+        ],
+        "type": "object"
+      },
+      "Record": {
+        "oneOf": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "error",
+                "type": "string"
+              },
+              "record": {
+                "$ref": "#/$defs/ErrorRecord"
+              }
+            },
+            "required": [
+              "kind",
+              "record"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "event",
+                "type": "string"
+              },
+              "record": {
+                "$ref": "#/$defs/EventRecord"
+              }
+            },
+            "required": [
+              "kind",
+              "record"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "trace",
+                "type": "string"
+              },
+              "record": {
+                "$ref": "#/$defs/TraceRecord"
+              }
+            },
+            "required": [
+              "kind",
+              "record"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "execution_result",
+                "type": "string"
+              },
+              "record": {
+                "$ref": "#/$defs/ExecutionResult"
+              }
+            },
+            "required": [
+              "kind",
+              "record"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "artifact",
+                "type": "string"
+              },
+              "record": {
+                "$ref": "#/$defs/ArtifactDescriptor"
+              }
+            },
+            "required": [
+              "kind",
+              "record"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "RecordHeader": {
+        "additionalProperties": false,
+        "properties": {
+          "contract_version": {
+            "type": "string"
+          },
+          "logical_timestamp": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {},
+            "type": "object"
+          },
+          "record_id": {
+            "type": "string"
+          },
+          "sequence": {
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "subject_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "contract_version",
+          "record_id",
+          "subject_id",
+          "sequence",
+          "logical_timestamp"
+        ],
+        "type": "object"
+      },
+      "RecordKind": {
+        "enum": [
+          "error",
+          "event",
+          "trace",
+          "execution_result",
+          "artifact"
+        ],
+        "type": "string"
+      },
+      "TraceRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "attributes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {},
+            "type": "object"
+          },
+          "header": {
+            "$ref": "#/$defs/RecordHeader"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "parent_span_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "span_id": {
+            "type": "string"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "header",
+          "trace_id",
+          "span_id",
+          "operation"
+        ],
+        "type": "object"
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "properties": {
+      "contract_version": {
+        "type": "string"
+      },
+      "key_id": {
+        "type": "string"
+      },
+      "payload": {
+        "$ref": "#/$defs/Record"
+      },
+      "payload_digest": {
+        "type": "string"
+      },
+      "profile_version": {
+        "format": "uint16",
+        "maximum": 65535,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "record_kind": {
+        "$ref": "#/$defs/RecordKind"
+      },
+      "signature": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "profile_version",
+      "record_kind",
+      "contract_version",
+      "key_id",
+      "payload_digest",
+      "payload",
+      "signature"
+    ],
+    "title": "SignedEnvelope",
+    "type": "object"
+  }
+}

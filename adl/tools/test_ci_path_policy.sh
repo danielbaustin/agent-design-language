@@ -89,6 +89,18 @@ assert_current_coverage_workflow_contract() {
   assert_file_has "$workflow" "if: needs.adl_path_policy.outputs.runtime_v3_fast_required == 'true'"
   assert_file_has "$workflow" 'cargo test --manifest-path adl-runtime-kernel/Cargo.toml'
   assert_file_has "$workflow" 'adl_runtime_v3_fast:${{ needs.adl_runtime_v3_fast.result }}'
+  assert_file_has "$workflow" 'name: csdlc-v2-standalone'
+  assert_file_has "$workflow" "if: needs.adl_path_policy.outputs.csdlc_v2_standalone_required == 'true'"
+  assert_file_has "$workflow" 'csdlc_v2_standalone:${{ needs.csdlc_v2_standalone.result }}'
+  assert_file_has "$workflow" 'selected C-SDLC v2 standalone lane is $CSDLC_V2_STANDALONE_RESULT; expected success'
+  assert_file_has "$workflow" 'unselected C-SDLC v2 standalone lane is $CSDLC_V2_STANDALONE_RESULT; expected skipped'
+  assert_file_has "$workflow" 'csdlc_v2_standalone_required must be exactly true or false'
+  assert_file_has "$workflow" 'name: adl-v2-standalone'
+  assert_file_has "$workflow" "if: needs.adl_path_policy.outputs.adl_v2_standalone_required == 'true'"
+  assert_file_has "$workflow" 'adl_v2_standalone:${{ needs.adl_v2_standalone.result }}'
+  assert_file_has "$workflow" 'selected ADL v2 standalone lane is $ADL_V2_STANDALONE_RESULT; expected success'
+  assert_file_has "$workflow" 'unselected ADL v2 standalone lane is $ADL_V2_STANDALONE_RESULT; expected skipped'
+  assert_file_has "$workflow" 'adl_v2_standalone_required must be exactly true or false'
   assert_file_has "$workflow" 'Full workspace coverage gate deferred for PR'
   assert_file_has "$workflow" 'adl/target/coverage-impact-summary.json'
   assert_file_not_has "$workflow" '--authority "adl_coverage_always_on"'
@@ -224,6 +236,80 @@ assert profile["selected_profile"] == "docs_diff_check_profile"
 assert profile["status"] == "ready_to_run"
 assert [item["lane_id"] for item in profile["run"]] == ["docs_diff_check"]
 PY
+
+  git checkout -q -b csdlc-metadata-only "$base_sha"
+  mkdir -p .csdlc/issues/1
+  printf '{"phase":"bound"}\n' > .csdlc/issues/1/index.json
+  git add .csdlc/issues/1/index.json
+  git commit -q -m csdlc-metadata-only
+  csdlc_metadata_head="$(git rev-parse HEAD)"
+  csdlc_metadata_output="$($POLICY --event-name pull_request --base "$base_sha" --head "$csdlc_metadata_head" --ref "refs/pull/1/merge")"
+  assert_has "$csdlc_metadata_output" "csdlc_v2_standalone_required=false"
+  assert_has "$csdlc_metadata_output" "rust_required=false"
+  assert_has "$csdlc_metadata_output" "coverage_required=false"
+
+  git checkout -q -b csdlc-v2-standalone "$base_sha"
+  mkdir -p csdlc-v2/tests
+  printf '#[test]\nfn gate7_contract() {}\n' > csdlc-v2/tests/gate7_lifecycle.rs
+  git add csdlc-v2/tests/gate7_lifecycle.rs
+  git commit -q -m csdlc-v2-standalone
+  csdlc_v2_head="$(git rev-parse HEAD)"
+  csdlc_v2_output="$($POLICY --event-name pull_request --base "$base_sha" --head "$csdlc_v2_head" --ref "refs/pull/1/merge")"
+  assert_has "$csdlc_v2_output" "csdlc_v2_standalone_required=true"
+  assert_has "$csdlc_v2_output" "rust_required=false"
+  assert_has "$csdlc_v2_output" "coverage_required=false"
+  assert_has "$csdlc_v2_output" "full_coverage_required=false"
+  assert_has "$csdlc_v2_output" "reason=standalone_csdlc_v2_surface_requires_only_its_independent_focused_suite"
+
+  git checkout -q -b adl-v2-standalone "$base_sha"
+  mkdir -p adl-v2/crates/adl-records/src
+  printf 'pub fn signed_record() {}\n' > adl-v2/crates/adl-records/src/lib.rs
+  git add adl-v2/crates/adl-records/src/lib.rs
+  git commit -q -m adl-v2-standalone
+  adl_v2_head="$(git rev-parse HEAD)"
+  adl_v2_output="$($POLICY --event-name pull_request --base "$base_sha" --head "$adl_v2_head" --ref "refs/pull/1/merge")"
+  assert_has "$adl_v2_output" "validation_profile_run_lanes=adl_v2_standalone"
+  assert_has "$adl_v2_output" "adl_v2_standalone_required=true"
+  assert_has "$adl_v2_output" "csdlc_v2_standalone_required=false"
+  assert_has "$adl_v2_output" "rust_required=false"
+  assert_has "$adl_v2_output" "coverage_required=false"
+  assert_has "$adl_v2_output" "full_coverage_required=false"
+  assert_has "$adl_v2_output" "demo_smoke_required=false"
+  assert_has "$adl_v2_output" "reason=standalone_adl_v2_surface_requires_only_its_independent_focused_suite"
+
+  git checkout -q -b csdlc-v2-operator-surface "$base_sha"
+  mkdir -p csdlc-v2/operator/skills/example
+  printf 'contract\n' > csdlc-v2/operator/skills/example/SKILL.md
+  git add csdlc-v2/operator/skills/example/SKILL.md
+  git commit -q -m csdlc-v2-operator-surface
+  csdlc_v2_operator_head="$(git rev-parse HEAD)"
+  csdlc_v2_operator_output="$($POLICY --event-name pull_request --base "$base_sha" --head "$csdlc_v2_operator_head" --ref "refs/pull/1/merge")"
+  assert_has "$csdlc_v2_operator_output" "validation_profile_run_lanes=csdlc_v2_standalone"
+  assert_has "$csdlc_v2_operator_output" "csdlc_v2_standalone_required=true"
+
+  git checkout -q -b runtime-v3-with-lifecycle "$base_sha"
+  mkdir -p adl-runtime-kernel/src .csdlc/issues/5589
+  printf 'pub fn governed_operations() {}\n' > adl-runtime-kernel/src/governed_operations.rs
+  printf '{"phase":"published"}\n' > .csdlc/issues/5589/index.json
+  git add adl-runtime-kernel/src/governed_operations.rs .csdlc/issues/5589/index.json
+  git commit -q -m runtime-v3-with-lifecycle
+  runtime_v3_lifecycle_head="$(git rev-parse HEAD)"
+  runtime_v3_lifecycle_output="$($POLICY --event-name pull_request --base "$base_sha" --head "$runtime_v3_lifecycle_head" --ref "refs/pull/1/merge")"
+  assert_has "$runtime_v3_lifecycle_output" "runtime_v3_fast_required=true"
+  assert_has "$runtime_v3_lifecycle_output" "csdlc_v2_standalone_required=false"
+
+  git checkout -q -b runtime-v3-with-csdlc-v2 "$base_sha"
+  mkdir -p adl-runtime-kernel/src csdlc-v2/operator/skills/example
+  printf 'pub fn governed_operations() {}\n' > adl-runtime-kernel/src/governed_operations.rs
+  printf 'contract\n' > csdlc-v2/operator/skills/example/SKILL.md
+  git add adl-runtime-kernel/src/governed_operations.rs csdlc-v2/operator/skills/example/SKILL.md
+  git commit -q -m runtime-v3-with-csdlc-v2
+  runtime_v3_csdlc_head="$(git rev-parse HEAD)"
+  runtime_v3_csdlc_output="$($POLICY --event-name pull_request --base "$base_sha" --head "$runtime_v3_csdlc_head" --ref "refs/pull/1/merge")"
+  assert_has "$runtime_v3_csdlc_output" "validation_profile_run_lanes=csdlc_v2_standalone,runtime_kernel_contracts"
+  assert_has "$runtime_v3_csdlc_output" "csdlc_v2_standalone_required=true"
+  assert_has "$runtime_v3_csdlc_output" "runtime_v3_fast_required=true"
+  assert_has "$runtime_v3_csdlc_output" "reason=csdlc_v2_and_runtime_v3_surfaces_run_both_independent_focused_lanes"
 
   git checkout -q -b runtime-v3-only "$base_sha"
   mkdir -p infra/runtime-v3

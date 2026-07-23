@@ -1,0 +1,13 @@
+{
+  "issue": 5342,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "fb6f931b874d3e07d26ecd5d514fdd574eb5cf5d670545a61d46f8800fabc41e",
+  "claim_id": "claim-5342-v0918-wp07-records-signing",
+  "actor": "codex:5342-owner",
+  "reason": "The bounded exact-revision gpt-5.5 review completed with zero findings and zero blockers.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

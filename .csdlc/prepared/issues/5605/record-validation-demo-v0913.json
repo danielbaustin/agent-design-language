@@ -1,0 +1,22 @@
+{
+  "issue": 5605,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "d582980848a252297fbf1202b4e77e612090c6bcd3b36acda873d8323bc8a0c8",
+  "claim_id": "csdlc-issue-5605-20260722t190651z",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record existing podcast demo generator proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/demo_v0913_podcast_studio_v2.sh"
+      ],
+      "outcome": "passed",
+      "evidence_ref": "local exit 0 before commit ffb08a03c",
+      "purpose": "Prove the existing v0.91.3 podcast studio packet generator still runs."
+    }
+  },
+  "fail_after_backup": false
+}

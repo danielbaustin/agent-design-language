@@ -1,0 +1,18 @@
+flowchart LR
+    I[Typed issue inputs] --> R[adl_pr_cycle router]
+    R --> S[csdlc-install resolve]
+    S --> B[csdlc-init / csdlc-bind]
+    B --> C[AST card editor\nSIP STP SPP VPP SRP SOR]
+    C --> V[csdlc-validate\nclaims + budgets + proof]
+    V --> Q[csdlc-review\nexact-head evidence]
+    Q --> P[csdlc-publish]
+    P --> H[csdlc-shepherd]
+    H --> O[csdlc-closeout]
+    V -. bounded external proof .-> X[repository-declared argv]
+    X --> V
+    T[(.csdlc canonical JSON\n+six projections + receipts)] --- B
+    T --- C
+    T --- V
+    T --- Q
+    T --- P
+    T --- H

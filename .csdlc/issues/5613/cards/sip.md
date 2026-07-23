@@ -1,0 +1,46 @@
+# Structured Intent Prompt
+
+Template: 1.0.0
+
+Issue: 5613
+
+Repository: danielbaustin/agent-design-language
+
+Card: sip
+
+Status: ready
+
+## Goal
+
+Make terminal closeout truth durable on main while preserving exact terminal identity and receipt integrity.
+
+## Required Outcome
+
+A typed atomic terminal SOR validation-result repair exists, issue 5591 has portable retained validation truth, and fresh checkout sees issues 5337, 5339, and 5591 closed-out and claim-free.
+
+## Scope
+
+- One typed terminal SOR validation-result repair contract and implementation
+- Focused CAS, authority, validation, ambiguity, rollback, and receipt-parity tests
+- Terminal projection materialization for issues 5337, 5339, and 5591
+- Portable issue 5591 terminal validation truth
+- Removal of unsupported unbound guardian-soak JSON
+
+## Authority
+
+- Issue 5613 is the distinct active repair authority
+- Targets 5337, 5339, and 5591 remain closed-out and claim-free
+- Original merged PR identities, initialization identities, and terminal dispositions are immutable
+- Terminal state comes only from exact commits and retained receipts
+
+## Assumptions
+
+- none
+
+## Operator Constraints
+
+- Use typed C-SDLC v2 only for lifecycle
+- Work only in /Volumes/FastWork/adl-wp-5613
+- No raw gh, AWS, Runtime v2, or ADL-v2 product changes
+- Use FastWork for Rust build output
+- Do not hand-copy or hand-edit terminal records or receipts

@@ -1,0 +1,57 @@
+{
+  "issue": 5340,
+  "expected_generation": 27,
+  "expected_digest": "e5001d340ca7413b9f3a37209ac0327db9278827b68604767ee58eea06364249",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "subagent:/root/review_5340_exact",
+  "evidence": {
+    "reviewer": "subagent:/root/review_5340_exact",
+    "scope": ["adl-v2/crates/adl-engine"],
+    "reviewed_revision": "git-blake3:2bed30d6d2a298eb0a3db2d030f06f20901e22de:4b52630fa14ff4ef854bfa4a9485367e01fadbb4623debfab2d866d6085270f2",
+    "findings": [
+      {
+        "id": "F-5340-6-resume-journal-reachability",
+        "severity": "p1",
+        "summary": "Quiescent resume accepts root Ready and cancelled-to-Pending states and does not bind contiguous attempts or terminal outcomes to completion receipts.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5340-7-state-materialization-bound",
+        "severity": "p1",
+        "summary": "Repeated state references can clone expanded outputs before max_request enforcement and encode_bounded allocates the full serialization first.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5340-8-applicable-fixtures-not-executed",
+        "severity": "p1",
+        "summary": "The landed applicable fixture inventory is name-checked but none of the six actual files is parsed, compiled, and engine-executed.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5340-9-design-truth-drift",
+        "severity": "p2",
+        "summary": "Approved design/SPP/VPP truth omits the public byte/cardinality bounds and JSON/text state-output contract added during remediation.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

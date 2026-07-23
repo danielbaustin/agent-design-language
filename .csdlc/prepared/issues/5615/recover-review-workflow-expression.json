@@ -1,0 +1,8 @@
+{
+  "issue": 5615,
+  "expected_generation": 13,
+  "expected_digest": "98e2f765df53ce5d46b91db00af456ba613835939ae153095df24362a6b81099",
+  "claim_id": "claim-5615-csdlc-ci-fastwork-routing",
+  "actor": "codex:5615-owner",
+  "reason": "Recover exact review truth after GitHub rejected the published workflow because runner.temp is unavailable in job-level env; move the external build-root initialization into a step and add a regression contract."
+}

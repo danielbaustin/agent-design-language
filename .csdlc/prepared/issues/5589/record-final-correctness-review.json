@@ -1,0 +1,16 @@
+{
+  "issue": 5589,
+  "expected_generation": 16,
+  "expected_digest": "3682ec30088ec856b60e83ff7d7331b466ba9943276f6cf376c263a8a0505e85",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "actor": "subagent:/root/review_5589_exact",
+  "evidence": {
+    "reviewer": "subagent:/root/review_5589_exact",
+    "scope": ["adl-runtime-kernel/src/governed_operations.rs", "adl-runtime-kernel/src/bin/adl-runtime-governed-operations.rs", "adl-runtime-kernel/tests/governed_operations.rs", ".csdlc/issues/5589/cards/sor.values.json", ".csdlc/issues/5589/cards/srp.values.json", ".csdlc/evidence/5589/implementation"],
+    "reviewed_revision": "git-blake3:df71546b6711bab72b7abece94d74317079bedec:1fc64a5141bff924f7b291829fde9103863493aad426fac0f7954e6b1b3d25a4",
+    "findings": [],
+    "residual_risks": ["The exact +1,095 source delta over the authoritative 12,683 post-#5591 baseline is accepted as functionally necessary and non-duplicative; optional classification/inventory consolidation is non-gating cleanup."],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

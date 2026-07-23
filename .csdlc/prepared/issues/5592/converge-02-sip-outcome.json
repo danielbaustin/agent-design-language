@@ -1,0 +1,15 @@
+{
+  "issue": 5592,
+  "card": "sip",
+  "expected_generation": 2,
+  "expected_digest": "06e9e527da90d9e01aa15f9ee5e689911c7ba628cf76bbf108d0e06ca2f0b7bd",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
+  "reason": "Converge refined preparation contract field sip-outcome",
+  "operation": {
+    "operation": "replan",
+    "field": "required_outcome",
+    "value": "At one clean reviewed exact revision after #5591 supplies canonical ingress, representative graphs execute through the guardian-launched adl-runtime-kernel path with deterministic replay and resume, bounded termination, signed one-shot mutation authority, durable evidence, rollback, adversarial signal isolation, monotonic governance, complete feature dispositions, and no Runtime v2 implementation reuse."
+  },
+  "fail_after_backup": false
+}

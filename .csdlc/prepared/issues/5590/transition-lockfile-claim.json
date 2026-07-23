@@ -1,0 +1,15 @@
+{
+  "issue": 5590,
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "expected_owner": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+  "expected_generation": 3,
+  "expected_digest": "5b87f6332b7b9047c00d3c32c5092eae5c27d0262062166c5c2f227352bddf66",
+  "expected_purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof",
+  "now_unix_seconds": 1784672400,
+  "actor": "codex:5590-sole-writer-takeover",
+  "reason": "Protect the kernel lockfile required by the already-claimed WebSocket manifest dependency change before the durability checkpoint",
+  "purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof",
+  "add_protected_paths": [
+    "adl-runtime-kernel/Cargo.lock"
+  ]
+}

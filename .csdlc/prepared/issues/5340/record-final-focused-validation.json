@@ -1,0 +1,19 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 29,
+  "expected_digest": "8260f63869bb72af511e41210ae756935903f121c576c88e84f695681d71a594",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record final focused FastWork proof after all exact-review repairs and amended design approval.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-validate", "--request", ".csdlc/prepared/issues/5340/pvf/focused.json"],
+      "purpose": "Prove all portable engine behavior including bounded state materialization, actual fixture execution, and strict resume contracts.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-focused/engine-focused.log at substantive commit 0b0c0b2c2d934482b3eed7d481f1e44f2ecd28c4"
+    }
+  },
+  "fail_after_backup": false
+}

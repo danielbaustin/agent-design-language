@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.ready_publication_request.v1",
+  "issue": 5613,
+  "expected_generation": 12,
+  "expected_digest": "79a1ec75d780330f5010e65062e8384797ab8ea52ccfb912d6ee2b10e4790f20",
+  "claim_id": "claim-5613-terminal-projection-repair",
+  "actor": "codex:issue-5613-owner",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5619,
+  "expected_head_sha": "b04845b033b454a482eaa35bd96b91c83d0cc6dc",
+  "token_file": "/Users/daniel/keys/github.token"
+}

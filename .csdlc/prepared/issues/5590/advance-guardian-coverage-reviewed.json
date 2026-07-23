@@ -1,0 +1,14 @@
+{
+  "issue": 5590,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "335a42c4f95ae289028fbb9d0bd2e5b2637422d27363c1475226ce1bf1e0a04e",
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "actor": "codex:5590-sole-writer-takeover",
+  "reason": "Exact guardian coverage remediation rereview passed with the P1 and P2 fixed and zero actionable blockers.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

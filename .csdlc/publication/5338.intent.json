@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5338,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5338-v0918-wp05-deterministic-compiler",
+  "title": "[v0.91.8][WP-05] Add pure deterministic compiler",
+  "body": "Closes #5338\n\nAdds an independent pure Rust compiler from validated adl-language documents to a versioned inert ExecutionPlan. It deterministically resolves workflows, tasks, agents, providers, models, effective tools, declared ports, prompts, saved-state dependencies, and provenance; uses lexical graph ordering and canonical JSON; enforces construction-time graph and aggregate input bounds; and generates explicit node_v1 identities from canonical effective node semantics.\n\nAll nineteen landed characterization fixtures are mechanically classified with fail-on-new-fixture behavior. Legacy patterns remain explicitly outside the compiler boundary because the landed language model rejects them. FastWork proof passes 18 tests including JSON/YAML permutations, clean subprocess plan and diagnostic replay, stable-identity locality and golden vectors, strict Clippy, exact five-package COTS guards, 577 implementation and 519 test/fixture lines, and all declared time ceilings. Bounded exact-revision review passes with no actionable findings after remediation. No Runtime v2, AWS, scheduling, retry, provider invocation, I/O, control-plane, database, selector, or migration authority was added.",
+  "draft": true,
+  "revision": "git-blake3:2e2d7bf0c2817ee0b215fd2c8bbdec7d37648a09:9b45350d5db95f61b473cac34156dc5469c2bdfb5b671460ed03913611495766",
+  "commit_sha": "2e2d7bf0c2817ee0b215fd2c8bbdec7d37648a09"
+}

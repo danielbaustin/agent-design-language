@@ -1,0 +1,84 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "typed-doctor",
+        "proof_role": "Typed lifecycle and six-card structural truth",
+        "purpose": "Prove the bound #5590 preparation record is internally consistent",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/env",
+        "argv": [".adl/bin/csdlc-v2/csdlc-doctor", "--repo", ".", "--issue", "5590"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "complete-card-contract",
+        "proof_role": "Complete non-deferred Parity-D preparation truth",
+        "purpose": "Prove six cards, AC coverage, no deferred lanes, architecture terms, matrix, and preparation-only claim",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/env",
+        "argv": ["ruby", ".csdlc/prepared/issues/5590/validate_preparation.rb"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "preparation-guard-contracts",
+        "proof_role": "Executable zero-match and operational-selector guard contracts",
+        "purpose": "Prove filtered tests deny zero matches and operational rollback requires two HTTPS health checks around a real selector transition",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/env",
+        "argv": ["bash", ".csdlc/prepared/issues/5590/test_preparation_guards.sh"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "revision-scope-proof",
+        "proof_role": "Exact non-empty base-through-repair revision and path-scope proof",
+        "purpose": "Prove the full base-through-f2eda77 preparation range exactly matches its retained path inventory, stays in #5590 scope, and passes range-bound whitespace validation",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/env",
+        "argv": ["bash", ".csdlc/prepared/issues/5590/run_revision_scope_proof.sh", "6d0f6115632a06619544b8ad4792792e741f1f31", "f2eda77cf6a36d9a07d7d64041d8eae99b18239b", ".csdlc/prepared/issues/5590/revision-scope-inventory.txt"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["typed-doctor", "complete-card-contract", "preparation-guard-contracts", "revision-scope-proof"],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {"max_parallel": 4, "cpu_units": 4, "memory_mib": 512, "tokens": 0},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5590/preparation",
+  "cancellation_file": null
+}

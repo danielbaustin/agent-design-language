@@ -1,0 +1,19 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 30,
+  "expected_digest": "116d4c5842126f768c552286d0b548d0eb7e9ff11cd9315e3d5d57853d2e4aef",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record final strict quality proof after all exact-review repairs.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-validate", "--request", ".csdlc/prepared/issues/5340/pvf/quality.json"],
+      "purpose": "Prove formatting, strict linting, COTS-first capped serialization, and the narrow source-authority contract.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-quality/engine-quality.log at substantive commit 0b0c0b2c2d934482b3eed7d481f1e44f2ecd28c4"
+    }
+  },
+  "fail_after_backup": false
+}

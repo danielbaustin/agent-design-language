@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5499,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_generation": 16,
+  "expected_digest": "c9d53292f6832b43fb1d9fe4d9ae91523a53d0403557fc0c7fb1f822ded1e6b6",
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5499-v0918-wp10a-conductor",
+  "title": "[v0.91.8][WP-10A] Implement deterministic workcell conductor",
+  "body": "Closes #5499\n\n## Summary\n- add a pure typed ADL v2 conductor with no task, network, filesystem, GitHub, runtime, or scheduler authority\n- validate six-card lifecycle state, active claims, dependency graphs, validation lanes, WIP bounds, and claim-contained disjoint paths\n- emit canonical serial/parallel waves with BLAKE3-derived correlation identifiers while retaining serialized lifecycle gates\n\n## Validation\n- 11/11 focused offline tests\n- strict all-target Clippy and rustfmt\n- exact diff hygiene and live dependency ancestry gate\n- one bounded GPT-5.5 pre-PR review; both findings fixed; final blocker count 0\n\nNo AWS or Runtime v2 changes.",
+  "draft": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}

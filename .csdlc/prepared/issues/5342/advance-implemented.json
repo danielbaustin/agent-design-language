@@ -1,0 +1,11 @@
+{
+  "issue": 5342,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "6f3bad4a0e8741a37c201f73ccb085abf73d5cbebdd8ce2f13e30d7e29018430",
+  "claim_id": "claim-5342-v0918-wp07-records-signing",
+  "actor": "codex:5342-owner",
+  "reason": "Complete implementation and exact FastWork proof are recorded; enter mandatory exact-revision review.",
+  "operation": {"operation":"advance_phase","phase":"implemented"},
+  "fail_after_backup": false
+}

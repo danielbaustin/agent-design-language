@@ -1,0 +1,21 @@
+{
+  "issue": 5342,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "a79d21c899908a665fbda64aefa87d9cec319afc451e70c0fd9aa60526d31457",
+  "claim_id": "claim-5342-v0918-wp07-records-signing",
+  "actor": "codex:5342-owner",
+  "reason": "Record the complete portable records implementation at commit 77c354522.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented bounded ADL v2 stable record contracts, exact canonical bytes, real Ed25519 signed envelopes, external trust policy, atomic replay control, strict channel decoding, and fresh-process verification.",
+    "changes": [
+      "Added deny-unknown-fields stable error, event, trace, execution-result, and artifact contracts with explicit limits",
+      "Added exact tagged canonical grammar, SHA-256 payload identities, complete Ed25519 preimage binding, and strict duplicate-key channel decoding",
+      "Added immutable external trust policy plus caller-owned replay guard with duplicate, rollback, and capacity rejection",
+      "Added deterministic fresh-process, tamper, bounds, schema, trust, COTS, scope, LoC, formatting, and strict lint proof"
+    ],
+    "artifacts": ["adl-v2/crates/adl-records", ".csdlc/prepared/issues/5342/validate-records.sh"]
+  },
+  "fail_after_backup": false
+}

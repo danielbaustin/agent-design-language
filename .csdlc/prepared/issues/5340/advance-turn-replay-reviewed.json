@@ -1,0 +1,11 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 40,
+  "expected_digest": "141b3601a5002b9df91adc16658d89d6929bb9902307c1b48c744ce2c22dc97b",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Fresh exact scoped review fixed all nine prior findings and approved the canonical turn-replay revision for publication.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"},
+  "fail_after_backup": false
+}

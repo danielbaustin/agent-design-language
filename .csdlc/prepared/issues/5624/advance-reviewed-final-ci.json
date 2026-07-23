@@ -1,0 +1,13 @@
+{
+  "issue": 5624,
+  "card": "sor",
+  "expected_generation": 20,
+  "expected_digest": "6c9f8afc7f693ec1cc50a68be128490225f7e894fde8336d364d34d7c4eefba6",
+  "claim_id": "claim-5624-csdlc-prune-topology",
+  "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+  "reason": "The final exact-revision repair review completed with zero findings and zero blockers.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

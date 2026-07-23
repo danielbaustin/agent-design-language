@@ -1,0 +1,15 @@
+{
+  "issue": 5590,
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "expected_owner": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+  "expected_generation": 3,
+  "expected_digest": "6001b1e3a645150bf20aad00d79ccc8a793e7b600113829a26743cf596501671",
+  "expected_purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof",
+  "now_unix_seconds": 1784662901,
+  "actor": "codex:019f836b-e186-7ed3-b80d-bd6536cdcbf1",
+  "reason": "Add only the Runtime v3 kernel manifest needed to enable maintained Axum WebSocket transport for #5590; #5592 and #5589 declared no manifest ownership",
+  "purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof",
+  "add_protected_paths": [
+    "adl-runtime-kernel/Cargo.toml"
+  ]
+}

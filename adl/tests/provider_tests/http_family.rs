@@ -45,6 +45,44 @@ config:
 }
 
 #[test]
+fn expanded_kimi_profile_uses_chat_payload_and_choice_response() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+    std::thread::spawn(move || {
+        let (mut stream, _) = server.accept().unwrap();
+        let request = read_http_request(&mut stream);
+        assert!(request.contains("\"model\":\"kimi-k2.5\""));
+        assert!(request.contains("\"messages\":[{"));
+        assert!(request.contains("hello kimi"));
+        let body = r#"{"choices":[{"message":{"content":"KIMI_OK"}}]}"#;
+        let resp = format!(
+            "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let _ = stream.write_all(resp.as_bytes());
+    });
+    let spec = provider_spec_from_yaml(&format!(
+        r#"
+type: http
+profile: "kimi:k2.5"
+config:
+  endpoint: "http://{addr}/v1/chat/completions"
+  provider_model_id: "kimi-k2.5"
+"#
+    ));
+    let provider = build_provider(&spec, None).expect("kimi profile should build");
+    assert_eq!(
+        provider.complete("hello kimi").expect("kimi call"),
+        "KIMI_OK"
+    );
+}
+
+#[test]
 fn openai_provider_translates_native_response() {
     let server = match std::net::TcpListener::bind("127.0.0.1:0") {
         Ok(s) => s,

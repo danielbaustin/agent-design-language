@@ -1,0 +1,15 @@
+{
+  "issue": 5340,
+  "card": "spp",
+  "expected_generation": 11,
+  "expected_digest": "4b19a3824ea82fede48c9bf7b65c695e0799eefaa5daf7bc781875d01322740e",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "#5338 is retained typed closed_out generation 29 with claim released; PR #5617 observed merged and both governed head and merge commit are ancestral to the fetched current-main revision integrated into #5340; the exact dependency verifier and sole-writer scope proof pass",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S2",
+    "status": "completed"
+  },
+  "fail_after_backup": false
+}

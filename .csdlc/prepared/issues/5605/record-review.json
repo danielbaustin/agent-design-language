@@ -1,0 +1,27 @@
+{
+  "issue": 5605,
+  "expected_generation": 6,
+  "expected_digest": "5c95bae09baec7267d7fb0184952f91d92062b9f257e6eff685cccd9f16f33c2",
+  "claim_id": "csdlc-issue-5605-20260722t190651z",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "evidence": {
+    "reviewer": "subagent:019f8b4a-979c-7b02-b4ec-b1c246d0e5ce",
+    "scope": [
+      "docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/README.md",
+      "docs/milestones/v0.91.8/review/README.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/README.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_LAUNCH_READINESS_5605.md",
+      "docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_TOPIC_SLATE_5605.md",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md"
+    ],
+    "reviewed_revision": "git-blake3:913daa6f1752430ad6d54cb6884458ac338aba3c:9f7ef4dd0062e6993cc3c13474aa5b1d1401ddb92fa5429f63bfd4bc6c9a19e4",
+    "findings": [],
+    "residual_risks": [
+      "This issue prepares planning and launch-readiness docs only; live site route, RSS/feed publication, audio production, and guest outreach remain future execution gates."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

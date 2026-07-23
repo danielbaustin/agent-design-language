@@ -1,0 +1,19 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 31,
+  "expected_digest": "ce3cb8b6da472ce5980292cb8bc5da2bc9e10b70edad8e62cd6c1302fc580c1d",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record final deterministic scheduling and exact resume-journal proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-validate", "--request", ".csdlc/prepared/issues/5340/pvf/determinism.json"],
+      "purpose": "Prove completion-order invariance, fresh-process equivalence, exact-initial and quiescent reachability, contiguous attempts, and outcome-bound receipts.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-determinism/engine-determinism.log at substantive commit 0b0c0b2c2d934482b3eed7d481f1e44f2ecd28c4"
+    }
+  },
+  "fail_after_backup": false
+}

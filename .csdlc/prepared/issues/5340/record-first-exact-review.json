@@ -1,0 +1,67 @@
+{
+  "issue": 5340,
+  "expected_generation": 22,
+  "expected_digest": "82bc7f639629539de5a4a511ee0d1663eaad5334bda435420800667b524e863a",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "subagent:/root/review_5340_exact",
+  "evidence": {
+    "reviewer": "subagent:/root/review_5340_exact",
+    "scope": ["adl-v2/crates/adl-engine"],
+    "reviewed_revision": "git-blake3:b9ba0c37f4bc381cb2d74589ad0d27dc1b6fe7be:154cca22aa607086e7ec9fb5109c5671db2c2d96dbe850335766f04c59873c72",
+    "findings": [
+      {
+        "id": "F-5340-1-state-dataflow-unresolved",
+        "severity": "p1",
+        "summary": "Landed state-dependency outputs are never resolved into downstream requests or request identity.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5340-2-turn-input-unbounded",
+        "severity": "p1",
+        "summary": "Completion/cancellation cardinality and payload, plan bytes, and policy bytes are unbounded before processing.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5340-3-resume-semantic-truncation",
+        "severity": "p1",
+        "summary": "Resume accepts canonical but semantically unreachable graph states and truncated or arbitrary completion journals.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5340-4-compiler-fixture-mapping-absent",
+        "severity": "p1",
+        "summary": "AC-6 lacks a mechanically checked landed compiler-fixture inventory and actual compiler-produced plan coverage.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5340-5-usize-policy-contract",
+        "severity": "p2",
+        "summary": "JoinPolicy::AtLeast serializes an architecture-width-dependent usize threshold.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

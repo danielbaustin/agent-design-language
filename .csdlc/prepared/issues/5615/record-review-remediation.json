@@ -1,0 +1,25 @@
+{
+  "issue": 5615,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "01d90fabb22ff902d36f571581fae6fa96726eac13a1ac61412bca77fe30a1d2",
+  "claim_id": "claim-5615-csdlc-ci-fastwork-routing",
+  "actor": "codex:5615-owner",
+  "reason": "Record the bounded remediation for all three exact-review P1 findings.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Fix all exact-review routing and external-build-root findings without widening issue scope.",
+    "changes": [
+      "Derive standalone C-SDLC v2 proof from the selector's complete csdlc-v2 surface",
+      "Compose standalone C-SDLC v2 and Runtime v3 focused lanes for mixed changes",
+      "Reject pre-created Cargo child symlinks and require canonical child containment",
+      "Add exact operator-path, mixed-lane, and symlink-escape regressions"
+    ],
+    "artifacts": [
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_run_cargo_validation.sh"
+    ]
+  }
+}

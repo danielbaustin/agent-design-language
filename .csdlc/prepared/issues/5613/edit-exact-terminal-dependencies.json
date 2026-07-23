@@ -1,0 +1,18 @@
+{
+  "issue": 5613,
+  "card": "stp",
+  "expected_generation": 2,
+  "expected_digest": "224b8f198fc594027c046a2cac3c0f068a27797697928d9db0c65069b96a7723",
+  "claim_id": "claim-5613-terminal-projection-repair",
+  "actor": "codex:issue-5613-owner",
+  "reason": "Resolve the two added stale terminal projections to full commit identities.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "Retained terminal receipts for issues 5337, 5339, 5358, 5591, and 5602",
+      "Terminal commits 461713dc10d26fa5336a054c07ef1844f804ec8f, 817126889942fc57820bf9f05f5cc40e2debd683, 23ea342fdc1e4080a4e8d2236c8514ab4a9fc15f, 8cfb7b25ad246dd411a57ecc4fda8e47665912fc, and 5fc1ec96e5f1e8f2080af16caf1344295fb13064",
+      "Existing terminal transaction and receipt-refresh implementation"
+    ]
+  }
+}

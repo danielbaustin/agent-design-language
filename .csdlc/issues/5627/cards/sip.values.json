@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5627,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][performance] Collapse routine lifecycle into four commands",
+    "slug": "csdlc-four-command-lifecycle",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Reduce routine post-implementation lifecycle ceremony to four typed commands without weakening safety or evidence.",
+      "required_outcome": "Validation finalizes implementation atomically, review records exact scope and advances Reviewed, publication creates a ready PR directly, and closeout remains unchanged.",
+      "declared_scope": [
+        "C-SDLC v2 validation, review, publication, store, and focused operator contracts",
+        "Focused Gate 4-7 regressions and complete four-command lifecycle proof",
+        "Issue-local typed lifecycle, measurement, review, publication, and closeout evidence"
+      ],
+      "authority_boundary": [
+        "Issue 5627 owns only declared csdlc-v2 lifecycle paths and issue-local records",
+        "Existing active draft publications retain compatibility reconciliation",
+        "Runtime, AWS, unrelated milestones, and new dependencies remain outside scope"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 only",
+        "Work only in /Volumes/FastWork/adl-wp-5627 on codex/5627-csdlc-four-command-lifecycle",
+        "No raw gh, AWS, Runtime changes, extra preparation ceremony, or root-main edits",
+        "Execute continuously through authorized merge and typed closeout"
+      ]
+    }
+  }
+}

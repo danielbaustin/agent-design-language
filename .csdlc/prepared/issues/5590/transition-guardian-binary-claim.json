@@ -1,0 +1,15 @@
+{
+  "issue": 5590,
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "expected_owner": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+  "expected_generation": 3,
+  "expected_digest": "5965ce72feced194bd865b20d3e4c69da827c16297b203456fea335182e74789",
+  "expected_purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof",
+  "now_unix_seconds": 1784664755,
+  "actor": "codex:5590-sole-writer-takeover",
+  "reason": "Add the standalone external guardian executable that launches only the canonical Runtime v3 kernel through the existing adl-runtime guardian library; no Parity-B, Parity-C, Runtime v2, or sidecar path is included",
+  "purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof",
+  "add_protected_paths": [
+    "adl-runtime/src/bin/adl-runtime-guardian.rs"
+  ]
+}

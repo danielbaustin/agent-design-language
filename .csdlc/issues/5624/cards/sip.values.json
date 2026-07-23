@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5624,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][prune] Resolve issue-local terminal worktree topology safely",
+    "slug": "csdlc-prune-topology",
+    "version": "v0.91.8",
+    "generation": 22
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make guarded prune accept the supported issue-local worktree sentinel only for the exact safe checkout.",
+      "required_outcome": "Guarded prune uses repository-rooted canonical identity, accepts truthful issue-local terminal topology, rejects ambiguous or unsafe checkouts, and never rewrites retained terminal receipts.",
+      "declared_scope": [
+        "Canonical terminal worktree resolution in csdlc-v2 readiness",
+        "Focused library and command-level prune regressions",
+        "Issue-local typed lifecycle and validation evidence"
+      ],
+      "authority_boundary": [
+        "Issue 5624 owns only readiness.rs, focused prune tests, and issue-local records",
+        "Terminal records and retained receipts remain immutable authority",
+        "Issue 5340, Runtime code, and unrelated lifecycle behavior remain outside scope"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 only",
+        "Work only in /Volumes/FastWork/adl-wp-5624",
+        "No raw gh, AWS, Runtime changes, #5340 mutation, or root-main edits",
+        "No approval pauses; complete the authorized issue end to end"
+      ]
+    }
+  }
+}

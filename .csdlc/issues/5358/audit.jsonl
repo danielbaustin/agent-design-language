@@ -48,3 +48,6 @@
 {"sequence":48,"generation":37,"actor":"provider:deepseek:deepseek-chat","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":49,"generation":38,"actor":"codex:issue-5358-slot-3","reason":"Advance #5358 after exact DeepSeek review of the stale CI runtime-contract assertion repair passed with no actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":50,"generation":39,"actor":"codex:issue-5358-slot-3","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":51,"generation":40,"actor":"codex:issue-5358-slot-3","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":52,"generation":41,"actor":"codex:issue-5358-slot-3","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":53,"generation":42,"actor":"codex:issue-5358-slot-3","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}

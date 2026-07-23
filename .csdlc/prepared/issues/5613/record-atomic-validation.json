@@ -1,0 +1,18 @@
+{
+  "issue": 5613,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "47c79028e1e0ed7656659ef7bd72f35fe0077eaeaebd2f4b7b4bba83c7602801",
+  "claim_id": "claim-5613-terminal-projection-repair",
+  "actor": "codex:issue-5613-owner",
+  "reason": "Record focused atomicity, CAS, rollback, portability, and public contract proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--locked", "--manifest-path", "csdlc-v2/Cargo.toml", "terminal_sor_validation_repair", "--", "--nocapture"],
+      "purpose": "Prove the typed terminal validation repair, exact CAS rejection, journaled rollback, structural portability boundary, and public request schema.",
+      "outcome": "passed",
+      "evidence_ref": "issue-5613:focused-terminal-repair-tests:4-unit-plus-1-public-contract"
+    }
+  }
+}

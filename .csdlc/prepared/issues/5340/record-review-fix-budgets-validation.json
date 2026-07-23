@@ -1,0 +1,19 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 26,
+  "expected_digest": "a4a4af668cb85f09d4d72ebb4b722a58d615e42d2bd7a81264bdc6fe6c615515",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record release-budget and full-suite proof for the exact-review repairs.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-validate", "--request", ".csdlc/prepared/issues/5340/pvf/budgets.json"],
+      "purpose": "Prove the repaired engine remains within declared LoC, COTS, authority, scope, dependency, and validation-time budgets and passes the complete offline suite.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-budgets/engine-budgets.log: implementation_lines=2579; test_fixture_lines=1647; unbudgeted_code=[]; repair commit a87c36c4a813ed0e7d0cd3292434874d7be2bb0e"
+    }
+  },
+  "fail_after_backup": false
+}

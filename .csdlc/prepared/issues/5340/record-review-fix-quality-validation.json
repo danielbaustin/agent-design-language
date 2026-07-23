@@ -1,0 +1,19 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 24,
+  "expected_digest": "209ac5f839800adba28c0d7437bd2de6e4e9de0543c40616e199b4d8e4267144",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record strict offline quality proof for the exact-review repairs.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-validate", "--request", ".csdlc/prepared/issues/5340/pvf/quality.json"],
+      "purpose": "Prove formatting, strict all-target linting, and the issue-local syn source-authority boundary on the sealed repair commit.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-quality/engine-quality.log at repair commit a87c36c4a813ed0e7d0cd3292434874d7be2bb0e"
+    }
+  },
+  "fail_after_backup": false
+}

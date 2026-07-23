@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.ready_publication_request.v1",
+  "issue": 5498,
+  "expected_generation": 14,
+  "expected_digest": "0a8839ddbec2db0be7778ba8130357b2447b8dc15684fdbc8c87f6a35f7751eb",
+  "claim_id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5639,
+  "expected_head_sha": "8116d35879ea3f16b703a9276de5e997dac90d04",
+  "token_file": null
+}

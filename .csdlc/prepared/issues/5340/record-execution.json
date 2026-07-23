@@ -1,0 +1,33 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "b85742d05f955a174e24394af203ee2c22c5e46a88eae00bfaa10165a3c23065",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record the complete isolated WP-06 implementation at substantive commit c2f4e072b8049daa68b18e1d917b57747864b6b7",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented an independent portable adl-engine crate that consumes the landed inert adl-compiler ExecutionPlan and provides a deterministic, transactional, explicitly bounded state machine with typed provider/tool effects and strict quiescent resume.",
+    "changes": [
+      "Added canonical node readiness, bounded ready/in-flight dispatch, all/at-least/fail-fast joins, and stable dependency failure propagation",
+      "Added monotonic attempt accounting, explicit logical-tick retry schedules, stable failure classes, saturation reporting, deterministic cancellation, and idempotent completion replay",
+      "Added separate typed provider, governed-tool, and cancellation request/completion contracts with SHA-256 request and idempotency identities",
+      "Added canonical plan/policy/limit-bound snapshots, quiescent-only checkpoints, canonical encoding enforcement, strict counter/state compatibility checks, and uninterrupted-versus-resumed equivalence",
+      "Added complete boundary, negative, permutation, port, cancellation, retry, join, checkpoint, and fresh-process proof under FastWork",
+      "Kept product source free of I/O, networking, clocks, processes, threads, async runtimes, Runtime v2/v3, adapters, C-SDLC, unsafe code, and source-authority parser expansion"
+    ],
+    "artifacts": [
+      "adl-v2/crates/adl-engine/Cargo.toml",
+      "adl-v2/crates/adl-engine/Cargo.lock",
+      "adl-v2/crates/adl-engine/README.md",
+      "adl-v2/crates/adl-engine/src",
+      "adl-v2/crates/adl-engine/tests",
+      ".csdlc/evidence/5340/engine-focused/engine-focused.log",
+      ".csdlc/evidence/5340/engine-quality/engine-quality.log",
+      ".csdlc/evidence/5340/engine-determinism/engine-determinism.log",
+      ".csdlc/evidence/5340/engine-budgets/engine-budgets.log"
+    ]
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,8 @@
+{
+  "manifest": { "schema": "csdlc.pvf.manifest.v1", "lanes": [
+    { "id": "engine-focused", "proof_role": "contract", "purpose": "State transitions, dispatch, joins, retries, failures, and typed ports", "determinism": "deterministic", "resources": { "cpu_units": 4, "memory_mib": 4096, "tokens": 4000 }, "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "engine", "release_gate": "required", "execution": "local", "timeout_seconds": 120, "executable": "bash", "argv": [".csdlc/prepared/issues/5340/validate-engine-lane.sh", "focused"], "evidence": { "max_log_bytes": 1048576, "redact_values": [], "require_relative_paths": true } }
+  ] },
+  "selection": { "requested_lanes": ["engine-focused"], "allow_network": false, "available_credentials": [] },
+  "budget": { "max_parallel": 1, "cpu_units": 4, "memory_mib": 4096, "tokens": 4000 },
+  "root": ".", "evidence_dir": ".csdlc/evidence/5340/engine-focused", "cancellation_file": null
+}

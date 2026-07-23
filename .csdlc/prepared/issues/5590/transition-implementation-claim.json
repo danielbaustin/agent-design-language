@@ -1,0 +1,29 @@
+{
+  "issue": 5590,
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "expected_owner": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
+  "expected_generation": 3,
+  "expected_digest": "1b733a313cb604806ebbabf1e6266b76f93be39a6a6d47e3f7a8f674e6b354b6",
+  "expected_purpose": "Prepare and review complete six-card Runtime v3 Parity-D truth without product edits until #5591 integration eligibility is confirmed",
+  "now_unix_seconds": 1784662805,
+  "actor": "codex:019f836b-e186-7ed3-b80d-bd6536cdcbf1",
+  "reason": "Activate sole-writer Runtime v3 Parity-D after retained #5591 closed_out generation 34 receipt released all Runtime product paths; preserve concrete module-level disjointness from #5592 reasoning/adaptation and #5589 governed operational adapters",
+  "purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof",
+  "add_protected_paths": [
+    ".csdlc/evidence/5590",
+    "adl-runtime-kernel/src/config.rs",
+    "adl-runtime-kernel/src/control.rs",
+    "adl-runtime-kernel/src/telemetry.rs",
+    "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+    "adl-runtime-kernel/tests/configuration.rs",
+    "adl-runtime-kernel/tests/control.rs",
+    "adl-runtime-kernel/tests/observatory.rs",
+    "adl-runtime-kernel/tests/telemetry.rs",
+    "adl-runtime/src/guardian.rs",
+    "infra/runtime-v3",
+    "demos/v0.91.7/html-observatory",
+    "adl/tools/run_runtime_v3_guardian_soak.sh",
+    "adl/tools/runtime_v3_operational_selector.sh",
+    "adl/tools/test_runtime_v3_operational_selector.sh"
+  ]
+}

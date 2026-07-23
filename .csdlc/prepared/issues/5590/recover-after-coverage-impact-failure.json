@@ -1,0 +1,8 @@
+{
+  "issue": 5590,
+  "expected_generation": 10,
+  "expected_digest": "1c1b3801e5abbae2648208881cb37431c0f192581a4b66a0580cd831794a1e80",
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "actor": "codex:5590-sole-writer-takeover",
+  "reason": "Exact-head hosted CI failed closed because the new external Runtime v3 guardian binary lacks an explicit PR-fast coverage mapping; recover review and publication truth for the bounded mapping correction."
+}

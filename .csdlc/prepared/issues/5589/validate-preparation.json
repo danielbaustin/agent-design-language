@@ -1,0 +1,67 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "complete-preparation-contract",
+        "proof_role": "Complete six-card, design, adapter matrix, disjoint claim, and dependency-blocker proof",
+        "purpose": "Prove #5589 preparation is complete, product-free, non-deferred, and truthfully blocked on #5591 review and claim disjointness",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/env",
+        "argv": ["ruby", ".csdlc/prepared/issues/5589/validate_preparation.rb"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "committed-review-range",
+        "proof_role": "Explicit base-to-final-evidence-head committed-range proof",
+        "purpose": "Prove the full retained repair range and exact 15-path post-substantive metadata/evidence delta are non-empty, scoped, content-verifiable, and diff-clean",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/env",
+        "argv": ["ruby", ".csdlc/prepared/issues/5589/validate_review_range.rb", "--request", ".csdlc/prepared/issues/5589/review-range.json"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "diff-hygiene",
+        "proof_role": "Preparation patch hygiene",
+        "purpose": "Prove the #5589 preparation packet has no whitespace errors",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/env",
+        "argv": ["git", "diff", "--check"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["complete-preparation-contract", "committed-review-range", "diff-hygiene"],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {"max_parallel": 3, "cpu_units": 3, "memory_mib": 384, "tokens": 0},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5589/preparation",
+  "cancellation_file": null
+}

@@ -1,0 +1,173 @@
+{
+  "issue": 5589,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5589/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5589/diagram.mmd",
+  "design_reviewer": "codex:019f8288-9fd3-7103-a3a5-9e3fe61aad90",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5589-runtime-v3-parity-c-preparation",
+    "owner": "codex:019f8288-9fd3-7103-a3a5-9e3fe61aad90",
+    "generation": 0,
+    "acquired_unix_seconds": 1784601578,
+    "expires_unix_seconds": 1785206378,
+    "heartbeat_unix_seconds": 1784601578,
+    "branch": "codex/5589-runtime-v3-parity-c",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5589",
+      ".csdlc/issues/5589",
+      ".csdlc/locks/5589.lock",
+      ".csdlc/prepared/issues/5589"
+    ],
+    "purpose": "Prepare complete Runtime v3 Parity-C contracts and proof gates without product implementation until #5591 has a clean reviewed contract and disjoint paths"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-14][runtime-v3][parity-c] Replace degraded governed operations adapters",
+    "slug": "v0-91-8-runtime-v3-parity-c-governed-operations",
+    "version": "v0.91.8",
+    "goal": "Replace Runtime v3 degraded operational placeholders with small production component adapters that execute governed work through the canonical kernel.",
+    "required_outcome": "At one exact reviewed revision, representative admitted work executes through production or COTS-backed Parity-C adapters in adl-runtime-kernel with signed gate-before-actuation, attenuating delegation, bounded resources and cancellation, live multi-agent provider/scheduler/governed-tool behavior, identity/private-state isolation, qualified time, checkpoint/lifelog continuity, and fail-closed shutdown; fixtures and degraded adapters receive zero parity credit.",
+    "declared_scope": [
+      "governance, Freedom Gate, AEE, appeals, revocation, and quarantine",
+      "attenuating delegation, resource reservations, cancellation, retry, and idempotency",
+      "agents, Shepherd, production providers, bounded scheduler, and governed tools",
+      "citizen identity, memory, private state, and cross-identity isolation",
+      "Chronosense qualified time, checkpoint authority, lifelog evidence, restart continuity, and graceful shutdown",
+      "production/COTS adapter inventory, placeholder deletion, and exact Runtime v3 budget proof"
+    ],
+    "authority_boundary": [
+      "#5361 owns integrated Runtime v3 acceptance and #5336 owns architecture and budget authority",
+      "#5591 owns canonical ingress, kernel lifecycle, topology/backpressure, configuration, and base continuity contracts",
+      "#5592 owns reasoning and adaptive cognition; #5590 owns ACIP/A2A/cloud, remote access, Observatory, guardian/soak, and rollback",
+      "#5589 owns only Parity-C governed operational adapters, identity/private state, qualified time, checkpoint, and lifelog behavior",
+      "ADL v2 language authority and C-SDLC v2 lifecycle authority remain outside Runtime v3",
+      "Runtime v2 edits, AWS, cutover, default switch, deletion, and new product scope are not authorized"
+    ],
+    "operator_constraints": [
+      "Use only typed C-SDLC v2 owner binaries and current template authority; never use v1 wrappers, raw gh, AWS, or product edits on main",
+      "Keep the active claim preparation-only and disjoint from every Runtime product path until #5591 records a current clean review with no actionable findings",
+      "Require a typed collision-free claim amendment after #5591 narrows or releases its broad adl-runtime-kernel and adl-runtime reservations",
+      "Do not grant parity credit to DegradedOperationExecutor, fixtures, mocks, metadata projections, library-only helpers, or fixed bootstrap graphs",
+      "Require production or maintained COTS-backed adapters and live initialized-process positive, negative, continuity, shutdown, and recovery proof",
+      "Use /Volumes/FastWork for Rust build artifacts when implementation validation begins and keep credentials out of retained evidence",
+      "Run bounded subagent review at the exact committed implementation revision, fix every actionable finding, and publish only green truth"
+    ],
+    "task_boundary": "Complete and validate the full six-card preparation contract, design, diagram, adapter/authority matrix, and disjoint preparation claim now; do not edit product code, run implementation acceptance, amend into Runtime product paths, or claim implementation readiness before #5591 has a clean reviewed Parity-A contract and typed path disjointness passes.",
+    "deliverables": [
+      "production or maintained COTS-backed adapters for every owned degraded operational component",
+      "signed gate-before-actuation and live negative governance evidence",
+      "attenuating delegation plus resource, cancellation, retry, idempotency, and cleanup evidence",
+      "live multi-agent provider, bounded scheduler, and governed-tool execution evidence",
+      "citizen identity, memory, private-state isolation, redaction, and revocation evidence",
+      "qualified-time, checkpoint, lifelog, graceful shutdown, restart, and no-duplicate continuity evidence",
+      "adapter/authority matrix with explicit zero-credit classifications",
+      "placeholder and duplicate deletion plus exact-revision Runtime v3 source/test budget proof"
+    ],
+    "acceptance_criteria": [
+      "AC-1: A live initialized adl-runtime-kernel process admits representative work through the reviewed #5591 ingress and invokes only production or maintained COTS-backed Parity-C adapters; DegradedOperationExecutor, fixture, mock, metadata-only, library-only, and fixed-bootstrap evidence receives zero parity credit",
+      "AC-2: Signed Freedom Gate and AEE decisions bind identity, delegation, policy, operation digest, and qualified time before provider or tool actuation, with live denial, appeal disposition, revocation, quarantine, replay, expiry, and no-post-denial invocation proof",
+      "AC-3: Delegation only attenuates authority and live work proves bounded resource reservation, cancellation precedence, retry/idempotency limits, saturation cleanup, delegation widening rejection, and no leaked work or capacity",
+      "AC-4: At least two admitted agents including Shepherd execute scheduled governed work through one configured production provider and one real governed tool, with deterministic dispatch plus timeout, auth, quota, cancellation, malformed-output, and unavailable-service classifications",
+      "AC-5: Citizen identity and memory/private state remain partitioned by authoritative identity and capability scope across restart, while revoked identity, cross-identity reads/writes, display/provider identity substitution, and retained-evidence disclosure fail closed",
+      "AC-6: Chronosense supplies qualified monotonic time and stale, regressing, or unqualified time cannot authorize actuation, delegation, checkpoint transition, scheduler dispatch, or recovery",
+      "AC-7: Authenticated checkpoints are the sole execution-recovery authority and linked redacted lifelog entries remain non-authoritative; live restart proves no duplicate side effects, corruption/replay rejection, lifelog failure isolation, final shutdown checkpoint, and current revocation revalidation",
+      "AC-8: Exact-revision focused/full tests, strict format/lint, negative proof, COTS inventory, protected-path disjointness, placeholder/degraded inventory, deletion accounting, source LoC, and test count all pass without AWS, Runtime v2 edits, cutover, default switch, weakened behavior, or unresolved review findings"
+    ],
+    "dependencies": [
+      "#5361 prepared Runtime v3 acceptance umbrella",
+      "#5336 architecture, ownership, source-line, and test-budget authority",
+      "#5591 current clean reviewed Parity-A ingress/service contract before any #5589 product implementation",
+      "#5591 protected-path claim narrowed or released before a typed #5589 product-path amendment",
+      "#5349 provider and governed-tool contract alignment",
+      "#5592 and #5590 disjoint ownership boundaries"
+    ],
+    "repo_inputs": [
+      ".adl/local-artifacts/wp5594/live-v0918-issues.json",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/src/governance.rs",
+      "adl-runtime-kernel/src/identity_memory.rs",
+      "adl-runtime-kernel/src/private_state.rs",
+      "adl-runtime-kernel/src/live_continuity.rs",
+      "adl-runtime-kernel/src/time.rs",
+      "adl-runtime/src/continuity_history.rs",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      ".csdlc/prepared/issues/5589/adapter-authority-matrix.md"
+    ],
+    "non_goals": [
+      "product implementation before a clean reviewed #5591 contract and collision-free typed claim",
+      "Parity-A ingress/lifecycle, Parity-B cognition, or Parity-D access/Observatory/guardian ownership",
+      "fixture, mock, degraded, metadata-only, or library-only parity acceptance",
+      "Runtime v2 source modification, reuse as Runtime v3 authority, cutover, default switch, or deletion",
+      "AWS, remote/GPU deployment, new provider product scope, or credential-bearing retained proof",
+      "subjective consciousness, affect, suffering, happiness, or unbounded self-improvement claims"
+    ],
+    "plan_summary": "Complete and validate preparation truth; wait for #5591 clean reviewed contract and claim narrowing; amend to the smallest disjoint product paths; implement production governed-operation and private-continuity adapters; prove all positive and negative outcomes live at one revision; delete placeholders within budget; exact-review and publish only after every gate is green.",
+    "steps": [
+      {"id":"S1","action":"Prepare all six cards, design, diagram, adapter/authority matrix, complete proof contract, and disjoint preparation claim without product edits","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"status":"pending"},
+      {"id":"S2","action":"Verify #5591 has a current clean reviewed Parity-A contract, pin its exact accepted revision, confirm its claim is narrowed or released, and use typed csdlc-bind to add only collision-free #5589 product paths","acceptance_ids":["AC-1","AC-8"],"status":"pending"},
+      {"id":"S3","action":"Implement production governance, Freedom Gate/AEE, delegation, resources, cancellation, agent, Shepherd, scheduler, provider, and governed-tool adapters behind the reviewed kernel contracts","acceptance_ids":["AC-1","AC-2","AC-3","AC-4"],"status":"pending"},
+      {"id":"S4","action":"Implement identity-scoped memory/private state, qualified Chronosense time, authenticated checkpoint, non-authoritative lifelog, shutdown, and restart recovery adapters","acceptance_ids":["AC-5","AC-6","AC-7"],"status":"pending"},
+      {"id":"S5","action":"Run live multi-agent/provider/scheduler/tool positive proof and governance, delegation, cancellation, identity, time, continuity, provider, and shutdown negative proof against a configured initialized kernel","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7"],"status":"pending"},
+      {"id":"S6","action":"Delete or consolidate degraded and duplicate placeholders, prove zero fixture/degraded parity credit, inventory maintained COTS use, and satisfy exact source/test budgets","acceptance_ids":["AC-1","AC-8"],"status":"pending"},
+      {"id":"S7","action":"Run every release-gating PVF lane at one clean committed revision, obtain bounded subagent review, fix all actionable findings, revalidate, and only then prepare publication","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"status":"pending"}
+    ],
+    "invariants": [
+      "no product implementation before current clean #5591 review truth and collision-free typed claim authority",
+      "governance and current revocation are checked before every actuation and recovery dispatch",
+      "delegation attenuates and resources, cancellation, retry, and idempotency remain bounded",
+      "provider and tool output never grants authority",
+      "citizen identity controls private state across provider sessions and restart",
+      "qualified time is monotonic and participates in authority and continuity decisions",
+      "checkpoint is the sole recovery authority and lifelog is observational only",
+      "DegradedOperationExecutor and fixtures always receive zero parity credit",
+      "no secrets, credentials, prompts, machine-local paths, or private state appear in retained evidence",
+      "all acceptance is live-process, exact-revision, non-deferred, reviewed, and green"
+    ],
+    "risks": [
+      "#5591 implementation commits may be mistaken for a clean reviewed contract despite absent typed review truth",
+      "broad #5591 parent-path claims may make a product claim collision unavoidable",
+      "passive governance metadata may be mistaken for gate-before-actuation",
+      "test executors or canned provider output may be mistaken for production adapters",
+      "scheduler retry or recovery may duplicate a side effect after cancellation or revocation",
+      "provider/session identifiers may accidentally become identity authority",
+      "lifelog may be misused as restore state or disclose private content",
+      "budget pressure may encourage retaining degraded placeholders or weakening proof"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "#5591 lacks a current clean typed review record with no actionable findings",
+      "#5591 contract revision is not pinned or changes after #5589 implementation begins",
+      "typed claim amendment reports overlap with #5591, #5592, #5590, or another active issue",
+      "any adapter remains DegradedOperationExecutor-backed or only fixture/mock/metadata/library evidence is available",
+      "any required positive, negative, continuity, shutdown, budget, or exact-revision lane is skipped, deferred, degraded, nondeterministic, or failing",
+      "completion would require AWS, Runtime v2 edits, credentials in evidence, cutover/default switch, or scope owned by another parity lane"
+    ],
+    "validation_lanes": [
+      {"lane":"parity-c-live-governance","proof_role":"Prove signed Freedom Gate/AEE gate-before-actuation and denial, appeal, revocation, quarantine, replay, and expiry negatives on live work; fail closed unless the exact nonzero test inventory matches","acceptance_ids":["AC-1","AC-2"],"deterministic":true,"resource_profile":"large","budget_seconds":600,"budget_tokens":4000,"argv":["ruby",".csdlc/prepared/issues/5589/run_focused_test_lane.rb","--inventory",".csdlc/prepared/issues/5589/focused-test-inventory.json","--lane","parity-c-live-governance","--manifest","adl-runtime-kernel/Cargo.toml"],"parallel_group":"parity-c-live","defer_reason":null},
+      {"lane":"parity-c-delegation-resources","proof_role":"Prove attenuating delegation, resource bounds, cancellation precedence, retry/idempotency, saturation, and cleanup; fail closed unless the exact nonzero test inventory matches","acceptance_ids":["AC-3"],"deterministic":true,"resource_profile":"large","budget_seconds":600,"budget_tokens":4000,"argv":["ruby",".csdlc/prepared/issues/5589/run_focused_test_lane.rb","--inventory",".csdlc/prepared/issues/5589/focused-test-inventory.json","--lane","parity-c-delegation-resources","--manifest","adl-runtime-kernel/Cargo.toml"],"parallel_group":"parity-c-live","defer_reason":null},
+      {"lane":"parity-c-provider-scheduler-tools","proof_role":"Prove live multi-agent Shepherd/provider/scheduler/governed-tool execution and provider/scheduler negative classifications; fail closed unless the exact nonzero test inventory matches","acceptance_ids":["AC-1","AC-4"],"deterministic":true,"resource_profile":"large","budget_seconds":900,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5589/run_focused_test_lane.rb","--inventory",".csdlc/prepared/issues/5589/focused-test-inventory.json","--lane","parity-c-provider-scheduler-tools","--manifest","adl-runtime-kernel/Cargo.toml"],"parallel_group":"parity-c-live","defer_reason":null},
+      {"lane":"parity-c-private-identity","proof_role":"Prove authoritative identity, private-state partitioning, restart persistence, revocation, cross-identity rejection, and evidence redaction; fail closed unless the exact nonzero test inventory matches","acceptance_ids":["AC-5"],"deterministic":true,"resource_profile":"large","budget_seconds":600,"budget_tokens":4000,"argv":["ruby",".csdlc/prepared/issues/5589/run_focused_test_lane.rb","--inventory",".csdlc/prepared/issues/5589/focused-test-inventory.json","--lane","parity-c-private-identity","--manifest","adl-runtime-kernel/Cargo.toml"],"parallel_group":"parity-c-state","defer_reason":null},
+      {"lane":"parity-c-time-continuity","proof_role":"Prove qualified time, authenticated checkpoints, non-authoritative lifelog, restart/no-duplicate continuity, corruption/replay rejection, failure isolation, and final shutdown checkpoint; fail closed unless the exact nonzero test inventory matches","acceptance_ids":["AC-6","AC-7"],"deterministic":true,"resource_profile":"large","budget_seconds":900,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5589/run_focused_test_lane.rb","--inventory",".csdlc/prepared/issues/5589/focused-test-inventory.json","--lane","parity-c-time-continuity","--manifest","adl-runtime-kernel/Cargo.toml"],"parallel_group":"parity-c-state","defer_reason":null},
+      {"lane":"parity-c-production-credit","proof_role":"Reject DegradedOperationExecutor, fixture, mock, metadata-only, library-only, and fixed-bootstrap parity credit and inventory production/COTS adapters; fail closed unless the exact nonzero test inventory matches","acceptance_ids":["AC-1","AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":300,"budget_tokens":2000,"argv":["ruby",".csdlc/prepared/issues/5589/run_focused_test_lane.rb","--inventory",".csdlc/prepared/issues/5589/focused-test-inventory.json","--lane","parity-c-production-credit","--manifest","adl-runtime-kernel/Cargo.toml"],"parallel_group":"parity-c-quality","defer_reason":null},
+      {"lane":"runtime-v3-full-kernel","proof_role":"Run the complete canonical Runtime v3 kernel suite after focused Parity-C proof","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"deterministic":true,"resource_profile":"large","budget_seconds":1200,"budget_tokens":8000,"argv":["cargo","test","--manifest-path","adl-runtime-kernel/Cargo.toml"],"parallel_group":"parity-c-full","defer_reason":null},
+      {"lane":"runtime-v3-strict-lint","proof_role":"Prove format and strict warning-free Runtime v3 code","acceptance_ids":["AC-8"],"deterministic":true,"resource_profile":"large","budget_seconds":900,"budget_tokens":4000,"argv":["cargo","clippy","--manifest-path","adl-runtime-kernel/Cargo.toml","--all-targets","--all-features","--","-D","warnings"],"parallel_group":"parity-c-quality","defer_reason":null},
+      {"lane":"runtime-v3-budget","proof_role":"Measure exact Runtime v3 source lines and test count and account for placeholder/duplicate deletion","acceptance_ids":["AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":180,"budget_tokens":1500,"argv":["bash","adl/tools/report_runtime_v3_loc.sh"],"parallel_group":"parity-c-quality","defer_reason":null},
+      {"lane":"parity-c-boundary-scan","proof_role":"Reject Runtime v2, AWS, credential, machine-local, degraded-credit, and cross-lane ownership drift; fail closed unless the exact nonzero test inventory matches","acceptance_ids":["AC-1","AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":300,"budget_tokens":2000,"argv":["ruby",".csdlc/prepared/issues/5589/run_focused_test_lane.rb","--inventory",".csdlc/prepared/issues/5589/focused-test-inventory.json","--lane","parity-c-boundary-scan","--manifest","adl-runtime-kernel/Cargo.toml"],"parallel_group":"parity-c-quality","defer_reason":null},
+      {"lane":"diff-hygiene","proof_role":"Verify exact issue-branch patch hygiene","acceptance_ids":["AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":1000,"argv":["git","diff","--check"],"parallel_group":"local-control","defer_reason":null}
+    ],
+    "failure_policy": "Fail closed on absent clean #5591 review truth, claim collision, unpinned contract drift, degraded or fixture-only credit, governance bypass, widened delegation, leaked resources, cancellation/revocation races, identity/private-state disclosure, unqualified time, ambiguous recovery, duplicate side effects, provider/tool misclassification, skipped proof, AWS or Runtime v2 use, budget breach, actionable review findings, or non-green exact-revision state.",
+    "review_prompts": [
+      "Does every capability require a production or maintained COTS-backed adapter invoked by a live initialized kernel, with explicit zero credit for degraded and fixture evidence?",
+      "Is signed governance observably before every provider/tool actuation and recovery dispatch, including revocation, replay, expiry, appeal, and quarantine negatives?",
+      "Are delegation attenuation, resource cleanup, cancellation precedence, retry/idempotency, and scheduler race behavior fully bounded?",
+      "Do provider, scheduler, governed-tool, Agent, and Shepherd proofs execute live multi-agent work without treating provider output as authority?",
+      "Are citizen identity, private state, qualified time, checkpoint authority, lifelog non-authority, redaction, restart, and no-duplicate continuity complete?",
+      "Are #5591, #5592, #5590, ADL v2, C-SDLC v2, Runtime v2, AWS, cutover, and publication boundaries explicit and disjoint?",
+      "Do SPP steps and VPP lanes cover AC-1 through AC-8 bidirectionally with no deferral and no nonexistent proof command at implementation time?",
+      "Does the current preparation claim protect only #5589 lifecycle/evidence paths and preserve the #5591 review and collision blockers truthfully?"
+    ],
+    "review_scope": "Review the exact #5589 preparation revision across all six generated cards, design, Mermaid diagram, adapter/authority matrix, typed bootstrap and bind requests, preparation-only protected paths, AC-1 through AC-8 coverage, S1 through S7 plan, every live positive and negative PVF lane, production/COTS credit rule, #5591 clean-review and collision gates, and zero publication/product implementation truth. Reject partial, deferred, degraded, fixture-only, metadata-only, library-only, governance-bypassing, identity-leaking, continuity-ambiguous, AWS, Runtime v2, cross-lane, budget-weakening, product-edit, readiness, publication, or acceptance claims."
+  }
+}

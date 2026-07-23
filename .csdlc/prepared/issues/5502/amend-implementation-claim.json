@@ -1,0 +1,15 @@
+{
+  "issue": 5502,
+  "claim_id": "claim-5502-v0918-output-convergence-preparation",
+  "expected_generation": 10,
+  "expected_digest": "5ee32267df98ecdf2a4f30a7255f2d555c2fb611cc85c47bd8eac2b5bacb6f39",
+  "now_unix_seconds": 1784764615,
+  "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+  "reason": "Dependencies #5499 and #5498 are live merged and ancestral; add the isolated #5502 convergence implementation paths to the active claim.",
+  "add_protected_paths": [
+    ".csdlc/prepared/issues/5502/run-validation-lane.rb",
+    "adl-v2/Cargo.lock",
+    "adl-v2/Cargo.toml",
+    "adl-v2/crates/adl-workcell-convergence"
+  ]
+}

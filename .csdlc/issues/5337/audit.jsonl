@@ -69,3 +69,6 @@
 {"sequence":69,"generation":61,"actor":"codex:019f8188-089f-7580-8ae8-fffef0d52539","reason":"Advance the clean exact review of the typed ready-projection recovery.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":70,"generation":62,"actor":"codex:019f8188-089f-7580-8ae8-fffef0d52539","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":71,"generation":63,"actor":"codex:019f8188-089f-7580-8ae8-fffef0d52539","reason":"record exact existing PR ready-for-review after remote success","operation":"record_ready_publication"}
+{"sequence":72,"generation":64,"actor":"codex:019f8188-089f-7580-8ae8-fffef0d52539","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":73,"generation":65,"actor":"codex:019f8188-089f-7580-8ae8-fffef0d52539","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":74,"generation":66,"actor":"codex:019f8188-089f-7580-8ae8-fffef0d52539","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}

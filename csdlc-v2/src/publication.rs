@@ -20,7 +20,7 @@ pub struct PublicationRequest {
     pub head: String,
     pub title: String,
     pub body: String,
-    #[serde(default = "default_draft")]
+    #[serde(default)]
     pub draft: bool,
     pub remote: String,
     pub token_file: Option<String>,
@@ -243,10 +243,6 @@ pub fn validate_ready_reconciliation_state(record: &IssueRecord) -> Result<()> {
     Ok(())
 }
 
-fn default_draft() -> bool {
-    true
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct PublicationIntent {
     pub schema: String,
@@ -321,7 +317,6 @@ pub fn prepare_publication(
         || request.head.trim().is_empty()
         || request.title.trim().is_empty()
         || !request.body.contains(&format!("#{}", request.issue))
-        || !request.draft
         || !valid_remote_name(&request.remote)
         || !valid_ref_name(&request.base)
         || !valid_ref_name(&request.head)
@@ -333,11 +328,11 @@ pub fn prepare_publication(
     }
     let record = store.load_record(request.issue)?;
     verify_record(&record, request)?;
-    let assignment = record
-        .review_assignment
+    let review = record
+        .review
         .as_ref()
-        .ok_or_else(|| V2Error::new(ErrorCode::InvalidTransition, "review assignment missing"))?;
-    let revision = crate::git::substantive_revision(store.root(), &assignment.scope)?;
+        .ok_or_else(|| V2Error::new(ErrorCode::InvalidTransition, "review evidence missing"))?;
+    let revision = crate::git::substantive_revision(store.root(), &review.scope)?;
     let commit_sha = crate::git::run(store.root(), &["rev-parse", "HEAD"])?.stdout;
     if revision != crate::git::clean_commit_revision(&commit_sha) {
         return Err(V2Error::new(
@@ -413,7 +408,7 @@ pub fn validate_remote(intent: &PublicationIntent, remote: &RemotePullRequest) -
     {
         return Err(V2Error::new(
             ErrorCode::ReconciliationRequired,
-            "remote PR did not converge to the exact reviewed draft intent",
+            "remote PR did not converge to the exact reviewed publication intent",
         ));
     }
     Ok(())

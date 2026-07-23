@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5340,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5340-v0918-wp06-portable-engine",
+  "title": "[v0.91.8][WP-06] Implement portable bounded execution engine",
+  "body": "Closes #5340\n\nIntroduces the independent portable `adl-engine` crate over the landed compiler contract, with deterministic bounded scheduling, joins, retry, cancellation, typed provider/tool ports, capped state materialization, and strict checkpoint resume through bounded canonical turn replay. It does not change Runtime v2/v3 or add external-I/O authority.\n\nAll four FastWork PVF lanes pass, including 28 tests, strict clippy, fixture execution, COTS/source-boundary proof, deterministic resume, and LoC/time budgets. Fresh exact-revision review fixed and closed all nine findings.",
+  "draft": true,
+  "revision": "git-blake3:4e1b99e039830d2601ac945515691a39eb4dcb61:e14dd385e90f90aa04a2549bfdb5274b5090d8998ea9c569732487039e4ce79e",
+  "commit_sha": "4e1b99e039830d2601ac945515691a39eb4dcb61"
+}

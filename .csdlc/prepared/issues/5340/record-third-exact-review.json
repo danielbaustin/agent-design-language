@@ -1,0 +1,26 @@
+{
+  "issue": 5340,
+  "expected_generation": 33,
+  "expected_digest": "782a30a1588f362c66034492ce020b7368c6012cd095d44c3766a53351828169",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "subagent:/root/review_5340_exact",
+  "evidence": {
+    "reviewer": "subagent:/root/review_5340_exact",
+    "scope": ["adl-v2/crates/adl-engine"],
+    "reviewed_revision": "git-blake3:485d5058d893a7e68fc187dd2a685382cc5d5dbd:84c331d8cfe2d88347396cdd2ec687104e228908527d7864f92f462b452b8380",
+    "findings": [
+      {"id":"F-5340-1-state-dataflow-unresolved","severity":"p1","summary":"State dependency resolution and request identity are fixed.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:485d5058d893a7e68fc187dd2a685382cc5d5dbd:84c331d8cfe2d88347396cdd2ec687104e228908527d7864f92f462b452b8380","route":null},
+      {"id":"F-5340-2-turn-input-unbounded","severity":"p1","summary":"Plan, policy, turn, completion, and materialization work is bounded.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:485d5058d893a7e68fc187dd2a685382cc5d5dbd:84c331d8cfe2d88347396cdd2ec687104e228908527d7864f92f462b452b8380","route":null},
+      {"id":"F-5340-3-resume-semantic-truncation","severity":"p1","summary":"Base semantic resume checks are fixed, but residual completion-history reachability remains in F-5340-6.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"F-5340-4-compiler-fixture-mapping-absent","severity":"p1","summary":"All six applicable landed fixtures are parsed, compiled, classified, and engine-executed.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:485d5058d893a7e68fc187dd2a685382cc5d5dbd:84c331d8cfe2d88347396cdd2ec687104e228908527d7864f92f462b452b8380","route":null},
+      {"id":"F-5340-5-usize-policy-contract","severity":"p2","summary":"JoinPolicy threshold uses a fixed-width u64 contract.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:485d5058d893a7e68fc187dd2a685382cc5d5dbd:84c331d8cfe2d88347396cdd2ec687104e228908527d7864f92f462b452b8380","route":null},
+      {"id":"F-5340-6-resume-journal-reachability","severity":"p1","summary":"Resume does not reconstruct intermediate completion, tick, turn, and event history and accepts a coherently altered impossible retry history.","actionable":true,"in_scope":true,"disposition":"open","fix_revision":null,"route":null},
+      {"id":"F-5340-7-state-materialization-bound","severity":"p1","summary":"Repeated state materialization is charged before clones and serialization uses a capped writer.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:485d5058d893a7e68fc187dd2a685382cc5d5dbd:84c331d8cfe2d88347396cdd2ec687104e228908527d7864f92f462b452b8380","route":null},
+      {"id":"F-5340-8-applicable-fixtures-not-executed","severity":"p1","summary":"Actual applicable landed fixture content is exercised end to end.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:485d5058d893a7e68fc187dd2a685382cc5d5dbd:84c331d8cfe2d88347396cdd2ec687104e228908527d7864f92f462b452b8380","route":null},
+      {"id":"F-5340-9-design-truth-drift","severity":"p2","summary":"Amended design, diagram, SPP/VPP artifact digests, and typed approval are current.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:485d5058d893a7e68fc187dd2a685382cc5d5dbd:84c331d8cfe2d88347396cdd2ec687104e228908527d7864f92f462b452b8380","route":null}
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

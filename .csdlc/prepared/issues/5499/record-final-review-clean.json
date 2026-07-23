@@ -1,0 +1,22 @@
+{
+  "issue": 5499,
+  "expected_generation": 14,
+  "expected_digest": "7fbf603b8c31a4278dda37ec2aafbec27e2163bb9a7f6bb8754a13c2193e193d",
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "actor": "subagent:019f8bf0-a08b-7c92-ac2f-ca70c074bde7",
+  "evidence": {
+    "reviewer": "subagent:019f8bf0-a08b-7c92-ac2f-ca70c074bde7",
+    "scope": [
+      "adl-v2/crates/adl-workcell-conductor",
+      ".csdlc/issues/5499",
+      ".csdlc/prepared/issues/5499"
+    ],
+    "reviewed_revision": "git-blake3:3830eedb32fac3034e07022ed643cb8588bc9360:57c23716de491338b6fb7938d40e52eb32ee86686be141f93e0aed0609c62b73",
+    "findings": [],
+    "residual_risks": [
+      "Hosted PR checks and downstream #5498 integration remain pending."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

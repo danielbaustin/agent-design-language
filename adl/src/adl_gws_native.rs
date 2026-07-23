@@ -61,6 +61,7 @@ pub struct WorkspaceFileRef {
 pub struct WorkspaceAuthContext {
     pub source: String,
     pub quota_project: Option<String>,
+    pub scopes: Vec<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -106,6 +107,7 @@ impl WorkspaceAccessTokenProvider for DefaultWorkspaceAccessTokenProvider {
                     WorkspaceAuthContext {
                         source: ADL_GWS_TOKEN_ENV.to_string(),
                         quota_project: quota_project_hint(),
+                        scopes: scopes.iter().map(|scope| (*scope).to_string()).collect(),
                     },
                 ));
             }
@@ -118,6 +120,7 @@ impl WorkspaceAccessTokenProvider for DefaultWorkspaceAccessTokenProvider {
             WorkspaceAuthContext {
                 source: "credential_store".to_string(),
                 quota_project: quota_project_hint(),
+                scopes: scopes.iter().map(|scope| (*scope).to_string()).collect(),
             },
         ))
     }

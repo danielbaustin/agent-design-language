@@ -38,3 +38,13 @@
 {"sequence":38,"generation":28,"actor":"subagent:/root/review_5591_coverage_fix","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":39,"generation":29,"actor":"codex:019f8362-357c-7621-95b7-afb314e0c61d","reason":"Exact-head coverage-impact rereview passed with zero findings; retain the pinned +474 budget exception and ignored fixed-port Horust SIGTERM residual.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":40,"generation":30,"actor":"codex:019f8362-357c-7621-95b7-afb314e0c61d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":41,"generation":31,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":42,"generation":32,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":43,"generation":33,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":44,"generation":34,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":45,"generation":35,"actor":"codex:issue-5613-owner","reason":"typed terminal SOR validation repair authorized by issue 5613","operation":"repair_terminal_sor_validation"}
+{"sequence":46,"generation":36,"actor":"codex:issue-5613-owner","reason":"typed terminal SOR validation repair authorized by issue 5613","operation":"repair_terminal_sor_validation"}
+{"sequence":47,"generation":37,"actor":"codex:issue-5613-owner","reason":"typed terminal SOR validation repair authorized by issue 5613","operation":"repair_terminal_sor_validation"}
+{"sequence":48,"generation":38,"actor":"codex:issue-5613-owner","reason":"typed terminal SOR validation repair authorized by issue 5613","operation":"repair_terminal_sor_validation"}
+{"sequence":49,"generation":39,"actor":"codex:issue-5613-owner","reason":"typed terminal SOR validation repair authorized by issue 5613","operation":"repair_terminal_sor_validation"}
+{"sequence":50,"generation":40,"actor":"codex:issue-5613-owner","reason":"typed terminal SOR validation repair authorized by issue 5613","operation":"repair_terminal_sor_validation"}

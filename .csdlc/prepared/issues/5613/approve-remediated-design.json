@@ -1,0 +1,7 @@
+{
+  "issue": 5613,
+  "expected_generation": 0,
+  "expected_digest": "15aa0835354a90b1b41eff5d70b4fb7c3320c143b1d21900621d3007d482623f",
+  "claim_id": "claim-5613-terminal-projection-repair",
+  "reviewer": "subagent:019f8654-f522-7ef3-8d22-6d4b8d9a643b"
+}

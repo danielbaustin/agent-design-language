@@ -1,0 +1,23 @@
+{
+  "issue": 5605,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "6cda424075a8d3e9841f1ec0559155a762c4d5fe8639538e34dd9e61f3c73aa3",
+  "claim_id": "csdlc-issue-5605-20260722t190651z",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record referenced-path validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "-lc",
+        "for p in demos/v0.91.1/multiagent_podcast_pilot_demo.md demos/v0.91.1/multiagent_podcast_audio_demo.md adl/tools/demo_v0911_multiagent_podcast_pilot.sh adl/tools/demo_v0911_multiagent_podcast_audio.sh adl/tools/demo_v0913_podcast_studio_v2.sh adl/tools/generate_podcast_studio_v2_packet.py docs/milestones/v0.91.3/review/podcast_studio_v2 demos/v0.91.3/adl_podcast_studio_v2_episode_card.html docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_LAUNCH_READINESS_5605.md docs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_TOPIC_SLATE_5605.md; do test -e \"$p\" || { echo \"MISSING $p\"; exit 1; }; done; echo PASS referenced paths exist"
+      ],
+      "outcome": "passed",
+      "evidence_ref": "local exit 0 before commit ffb08a03c",
+      "purpose": "Prove historical and new podcast planning references resolve to repo surfaces."
+    }
+  },
+  "fail_after_backup": false
+}

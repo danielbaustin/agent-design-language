@@ -1,0 +1,23 @@
+{
+  "issue": 5624,
+  "expected_generation": 4,
+  "expected_digest": "3bae9a5026478b61d2303cdb41432b0a5fb97c403a7dd4dd581281b1e525def5",
+  "claim_id": "claim-5624-csdlc-prune-topology",
+  "actor": "subagent:codex-5624-exact-review",
+  "evidence": {
+    "reviewer": "subagent:codex-5624-exact-review",
+    "scope": [
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/tests/gate7.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      ".csdlc/issues/5624",
+      ".csdlc/prepared/issues/5624",
+      ".csdlc/evidence/5624"
+    ],
+    "reviewed_revision": "git-blake3:e970ffa2eaa4ece145af4960bd82250fb181901e:3ce7f05bc4c2508c984fdbefa80727d2c69375f85829978105afb53c111433f4",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

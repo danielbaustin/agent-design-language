@@ -1,0 +1,187 @@
+{
+  "issue": 5613,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5613/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5613/diagram.mmd",
+  "design_reviewer": "subagent:pending-preparation-review-5613",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5613-terminal-projection-repair",
+    "owner": "codex:issue-5613-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784664530,
+    "expires_unix_seconds": 1784750930,
+    "heartbeat_unix_seconds": 1784664530,
+    "branch": "codex/5613-terminal-projection-repair",
+    "worktree": ".",
+    "protected_paths": [
+      "csdlc-v2/src/model.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/operator/skills/csdlc-v2-closeout/SKILL.md",
+      "csdlc-v2/tests/gate7_terminal_sor_validation_repair_5613.rs",
+      ".csdlc/issues/5337",
+      ".csdlc/issues/5339",
+      ".csdlc/issues/5591",
+      ".csdlc/evidence/5591/exact-revision/guardian-soak.json",
+      ".csdlc/issues/5613",
+      ".csdlc/prepared/issues/5613",
+      ".csdlc/evidence/5613"
+    ],
+    "purpose": "Atomically repair terminal SOR validation evidence and materialize proven terminal projections"
+  },
+  "initial": {
+    "title": "[v0.91.8][csdlc-v2][closeout] Reconcile stranded terminal projections atomically",
+    "slug": "terminal-projection-repair",
+    "version": "v0.91.8",
+    "goal": "Make terminal closeout truth durable on main while preserving exact terminal identity and receipt integrity.",
+    "required_outcome": "A typed atomic terminal SOR validation-result repair exists, issue 5591 has portable retained validation truth, and fresh checkout sees issues 5337, 5339, and 5591 closed-out and claim-free.",
+    "declared_scope": [
+      "One typed terminal SOR validation-result repair contract and implementation",
+      "Focused CAS, authority, validation, ambiguity, rollback, and receipt-parity tests",
+      "Terminal projection materialization for issues 5337, 5339, and 5591",
+      "Portable issue 5591 terminal validation truth",
+      "Removal of unsupported unbound guardian-soak JSON"
+    ],
+    "authority_boundary": [
+      "Issue 5613 is the distinct active repair authority",
+      "Targets 5337, 5339, and 5591 remain closed-out and claim-free",
+      "Original merged PR identities, initialization identities, and terminal dispositions are immutable",
+      "Terminal state comes only from exact commits and retained receipts"
+    ],
+    "operator_constraints": [
+      "Use typed C-SDLC v2 only for lifecycle",
+      "Work only in /Volumes/FastWork/adl-wp-5613",
+      "No raw gh, AWS, Runtime v2, or ADL-v2 product changes",
+      "Use FastWork for Rust build output",
+      "Do not hand-copy or hand-edit terminal records or receipts"
+    ],
+    "task_boundary": "Add the narrow atomic operation, repair only issue 5591 terminal validation portability, and integrate the three exact terminal projections.",
+    "deliverables": [
+      "Typed repair request schema and closeout command",
+      "Atomic store implementation with exact CAS and rollback",
+      "Focused terminal repair regression suite",
+      "Portable issue 5591 SOR and regenerated receipt",
+      "Integrated terminal projections for 5337, 5339, and 5591",
+      "Fresh-checkout collision-free proof"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Distinct active authority and exact authority/target/receipt CAS are required",
+      "AC-2: Target must remain closed-out and claim-free",
+      "AC-3: Exactly one complete old validation result must match",
+      "AC-4: Malformed or machine-local replacement results fail closed",
+      "AC-5: Success atomically regenerates SOR, projections, audit, digest, and retained receipt",
+      "AC-6: Interrupted receipt update restores prior record, cards, audit, and receipt bytes",
+      "AC-7: Issue 5591 retained SOR contains no machine-local absolute path",
+      "AC-8: Unsupported guardian-soak JSON is absent from the corrective branch",
+      "AC-9: Issues 5337, 5339, and 5591 preserve original terminal identities and dispositions",
+      "AC-10: Fresh checkout sees all three targets closed-out, claim-free, doctor-clean, and non-colliding"
+    ],
+    "dependencies": [
+      "Retained terminal receipts for issues 5337, 5339, and 5591",
+      "Terminal commits 461713dc10d26fa5336a054c07ef1844f804ec8f, 817126889, and 8cfb7b25a",
+      "Existing terminal transaction and receipt-refresh implementation"
+    ],
+    "repo_inputs": [
+      "csdlc-v2 existing serde, serde_json, and schemars dependencies",
+      "csdlc-v2 terminal repair operations and transaction journal",
+      ".git/csdlc-v2/closeout/5337.json",
+      ".git/csdlc-v2/closeout/5339.json",
+      ".git/csdlc-v2/closeout/5591.json"
+    ],
+    "non_goals": [
+      "No Runtime implementation changes",
+      "No Runtime v2 or ADL-v2 changes",
+      "No broad terminal card editor",
+      "No issue reopening or terminal identity replacement",
+      "No new third-party crate",
+      "No AWS or external provider execution"
+    ],
+    "plan_summary": "Prepare and bind; implement the narrow typed transaction; validate and review; apply the typed issue 5591 repair; materialize exact terminal commits; prove fresh-checkout truth; publish, merge, and close out.",
+    "steps": [
+      {"id":"S1","action":"Prepare, review, initialize, and bind issue 5613","status":"pending","acceptance_ids":["AC-1","AC-2","AC-9"]},
+      {"id":"S2","action":"Implement typed atomic terminal SOR validation-result repair","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6"]},
+      {"id":"S3","action":"Apply portable issue 5591 repair and materialize exact terminal projections","status":"pending","acceptance_ids":["AC-7","AC-8","AC-9"]},
+      {"id":"S4","action":"Run focused, full, fresh-checkout, and exact-review proof","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8","AC-9","AC-10"]},
+      {"id":"S5","action":"Publish, merge, post-merge validate, and close out","status":"pending","acceptance_ids":["AC-9","AC-10"]}
+    ],
+    "invariants": [
+      "Terminal targets never regain a claim or leave closed_out",
+      "Original PR identity and terminal disposition never change",
+      "Record and receipt digests remain mutually consistent",
+      "All target mutations are exact-CAS and atomic",
+      "No machine-local evidence path survives in issue 5591 terminal SOR"
+    ],
+    "risks": [
+      "A broad repair API could become an unsafe terminal editor",
+      "A partial receipt write could strand projection and receipt truth",
+      "Commit materialization could overwrite newer terminal evidence",
+      "Portable wording could overstate what actually ran"
+    ],
+    "planning_profile": "medium",
+    "stop_conditions": [
+      "Any claim collision not discharged by a valid retained terminal receipt",
+      "Any need to reopen a terminal target",
+      "Any need to hand-edit a terminal record or receipt",
+      "Any Runtime, ADL-v2, AWS, or unrelated milestone scope",
+      "Any new crate dependency"
+    ],
+    "validation_lanes": [
+      {
+        "lane":"terminal-sor-validation-repair",
+        "proof_role":"Prove exact success, CAS, authority, ambiguity, validation, rollback, and receipt parity",
+        "deterministic":true,
+        "resource_profile":"small",
+        "parallel_group":"csdlc-v2",
+        "budget_seconds":300,
+        "budget_tokens":4000,
+        "argv":["cargo","test","--locked","--manifest-path","csdlc-v2/Cargo.toml","--test","gate7_terminal_sor_validation_repair_5613"],
+        "acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6"]
+      },
+      {
+        "lane":"csdlc-v2-strict",
+        "proof_role":"Prove the complete C-SDLC v2 target remains warning-free and compatible",
+        "deterministic":true,
+        "resource_profile":"medium",
+        "parallel_group":"csdlc-v2",
+        "budget_seconds":600,
+        "budget_tokens":6000,
+        "argv":["cargo","clippy","--locked","--manifest-path","csdlc-v2/Cargo.toml","--all-targets","--","-D","warnings"],
+        "acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6"]
+      },
+      {
+        "lane":"terminal-projection-proof",
+        "proof_role":"Prove target identity, portable SOR truth, unsupported artifact omission, and receipt parity",
+        "deterministic":true,
+        "resource_profile":"small",
+        "parallel_group":"records",
+        "budget_seconds":180,
+        "budget_tokens":2000,
+        "argv":["bash",".csdlc/prepared/issues/5613/validate_terminal_projections.sh"],
+        "acceptance_ids":["AC-7","AC-8","AC-9"]
+      },
+      {
+        "lane":"fresh-checkout-proof",
+        "proof_role":"Prove a fresh checkout resolves all targets closed-out, claim-free, doctor-clean, and collision-free",
+        "deterministic":true,
+        "resource_profile":"small",
+        "parallel_group":"records",
+        "budget_seconds":180,
+        "budget_tokens":2000,
+        "argv":["bash",".csdlc/prepared/issues/5613/validate_fresh_checkout.sh"],
+        "acceptance_ids":["AC-10"]
+      }
+    ],
+    "failure_policy": "Fail closed without mutation on stale authority, target, or receipt CAS; missing or ambiguous old results; malformed or machine-local replacements; target identity drift; or interrupted receipt update.",
+    "review_prompts": [
+      "Can any caller mutate a terminal SOR without a distinct live authority claim and exact CAS?",
+      "Can matching select zero or multiple validation results?",
+      "Can a failed receipt update leave projection and receipt divergent?",
+      "Does portable issue 5591 evidence remain truthful and preserve original outcomes?",
+      "Do all three terminal projections preserve original PR identity and disposition?",
+      "Does fresh checkout prove collision-free terminal truth?"
+    ],
+    "review_scope": "csdlc-v2/src/model.rs\ncsdlc-v2/src/store.rs\ncsdlc-v2/src/schema.rs\ncsdlc-v2/src/bin/csdlc-closeout.rs\ncsdlc-v2/operator/skills/csdlc-v2-closeout/SKILL.md\ncsdlc-v2/tests/gate7_terminal_sor_validation_repair_5613.rs\n.csdlc/issues/5337\n.csdlc/issues/5339\n.csdlc/issues/5591\n.csdlc/issues/5613\n.csdlc/prepared/issues/5613"
+  }
+}

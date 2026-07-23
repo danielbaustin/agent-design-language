@@ -1,0 +1,22 @@
+{
+  "issue": 5498,
+  "base_branch": "main",
+  "branch": "codex/5498-v0918-wp10a-task-context-adapter",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+    "owner": "codex:issue-5498-preparation",
+    "generation": 1,
+    "acquired_unix_seconds": 1784664000,
+    "expires_unix_seconds": 1785268800,
+    "heartbeat_unix_seconds": 1784664000,
+    "branch": "codex/5498-v0918-wp10a-task-context-adapter",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5498",
+      ".csdlc/locks/5498.lock",
+      ".csdlc/prepared/issues/5498"
+    ],
+    "purpose": "Prepare and review WP-10A task and context-handoff adapter contracts only; implementation remains blocked on #5499 and the WP-09 interface gate"
+  }
+}

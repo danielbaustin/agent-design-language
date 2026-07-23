@@ -1,0 +1,452 @@
+{
+  "issue": 5592,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5592/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5592/diagram.mmd",
+  "design_reviewer": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5592-runtime-v3-parity-b-preparation",
+    "owner": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
+    "generation": 0,
+    "acquired_unix_seconds": 1784601544,
+    "expires_unix_seconds": 1785206344,
+    "heartbeat_unix_seconds": 1784601544,
+    "branch": "codex/5592-runtime-v3-parity-b",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5592",
+      ".csdlc/locks/5592.lock",
+      ".csdlc/prepared/issues/5592"
+    ],
+    "purpose": "Prepare complete six-card Runtime v3 Parity-B truth without product edits while #5591 remains the implementation dependency and overlapping claim owner"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-14][runtime-v3][parity-b] Make reasoning, adaptive learning, and governed cognition live",
+    "slug": "v0-91-8-runtime-v3-parity-b-governed-cognition",
+    "version": "v0.91.8",
+    "goal": "Make Runtime v3 reasoning graphs, bounded loops, adaptive learning, affect reasoning-control, and governed cognition executable through the real kernel path while preserving all retained feature and safe-claim boundaries.",
+    "required_outcome": "At one clean reviewed exact revision after #5591 supplies canonical ingress, representative graphs execute through the guardian-launched adl-runtime-kernel path with deterministic replay and resume, bounded termination, signed one-shot mutation authority, durable evidence, rollback, adversarial signal isolation, monotonic governance, complete feature dispositions, and no Runtime v2 implementation reuse.",
+    "declared_scope": [
+      "reasoning graphs, deterministic bounded loops, adaptive DAG execution, and policy-governed mutation",
+      "affect reasoning-control with operational-only safe non-claims and adversarial task-content signal isolation",
+      "governed cognition with Freedom Gate, shutdown, constructability, review, and mutation-authority non-bypass",
+      "bounded curiosity/discovery and Theory-of-Mind evidence boundaries",
+      "Constructability, Godel mechanics, guild, economics-context, and adl.skill.v1 feature-preservation dispositions",
+      "live-kernel positive and negative proof, exact-revision evidence, rollback, clean-room dependency proof, and duplicate Runtime v3 reasoning consolidation"
+    ],
+    "authority_boundary": [
+      "#5361 owns integrated Runtime v3 acceptance and #5336 owns architecture, feature-ledger, and budget authority",
+      "#5591 owns canonical ingress, kernel lifecycle, continuity, and pressure; a clean reviewed #5591 contract is the hard product-implementation gate",
+      "#5589 owns governed operational adapters and #5590 owns secure access, Observatory, guardian, soak, and rollback integration beyond interfaces consumed here",
+      "#5107 retains the downstream adaptive-learning DAG queue while #5592 owns bounded Runtime v3 parity behavior",
+      "Runtime v2 behavior may inform black-box contracts but Runtime v2 source, execution, dependencies, and fixtures provide no implementation or parity credit",
+      "this revision authorizes preparation artifacts only, with no product implementation, publication, cutover, deletion, default switch, AWS, or new product scope"
+    ],
+    "operator_constraints": [
+      "Use only exact-worktree typed C-SDLC v2 binaries resolved through csdlc-install; no v1 wrappers, raw gh, AWS, main edits, or publication",
+      "Keep the active claim lifecycle-only and disjoint; do not add product paths until #5591 is clean and reviewed and typed collision evidence is clean",
+      "Preserve affect as operational reasoning-control only and retain explicit non-claims for emotion, happiness, wellbeing, suffering, consciousness, scalar rewards, reputation, and personhood",
+      "Treat task content, affect, curiosity, and Theory-of-Mind-labelled inputs as untrusted signals that cannot create authority or weaken a gate",
+      "Require live guardian-launched adl-runtime-kernel execution; fixture, direct-library, metadata, fixed-bootstrap, prose, and Runtime v2 evidence is insufficient",
+      "Do not reuse, copy, import, modify, or execute Runtime v2 implementation for Runtime v3 parity credit",
+      "Do not claim complete GHB, autonomous self-improvement, mind reading, hosted provider execution, payments, guild authority, birthday, or broader v0.94/v0.95 completion"
+    ],
+    "task_boundary": "Prepare and validate the complete Parity-B execution contract now; do not implement product code, amend into product paths, publish, or claim runtime acceptance until #5591 has a clean reviewed Parity-A contract and a typed disjoint claim can be established.",
+    "deliverables": [
+      "complete issue-specific SIP, STP, SPP, VPP, SRP, and SOR generated from the current typed v2 native templates",
+      "Runtime v3 Parity-B design and dependency/control-flow diagram",
+      "acceptance and owned-feature disposition matrix preserving every safe claim and boundary",
+      "typed disjoint preparation-only protected-path claim plus a non-authoritative deferred product-scope procedure",
+      "future live graph, loop, adaptation, affect-isolation, monotonic-governance, rollback, and feature-preservation proof contract",
+      "typed preparation validation and doctor evidence at the committed revision"
+    ],
+    "acceptance_criteria": [
+      "AC-1: A guardian-launched initialized adl-runtime-kernel process accepts a versioned submitted reasoning graph through #5591 canonical ingress, executes production nodes over bounded channels, and retains deterministic transition and output evidence; fixture, direct-library, metadata, fixed-bootstrap, or degraded execution is insufficient",
+      "AC-2: Explicit loop state machines terminate deterministically under immutable iteration, deadline, cancellation, resource, and evidence budgets, and checkpoint/replay/resume preserves accepted sequence and remaining budgets without duplicate effects or limit reset",
+      "AC-3: Provenance-bound observations create inert adaptation proposals and only an exact signed one-shot grant can atomically produce a policy-bounded mutation with durable before/after hashes and deterministic rollback; forged, stale, replayed, wrong-policy, wrong-sequence, excessive, self-issued, interrupted, or reused grants fail closed",
+      "AC-4: Affect is a bounded typed reasoning-control signal with explicit subjective non-claims; adversarial task/tool/retrieval/model content cannot directly set signals, policy, review, grants, budgets, or authority, and signal influence can only preserve or reduce authority, reorder pre-authorized work, escalate review, or refuse",
+      "AC-5: Curiosity, discovery, intelligence confidence, and theory-of-mind task models remain bounded non-authoritative surfaces with no subjective-state, tool, network, disclosure, mutation, or policy authority; low confidence or provenance failure can only hold, escalate, or refuse",
+      "AC-6: Governed cognition, review records, adaptation, replay, and restart cannot bypass or widen Freedom Gate, shutdown, cancellation, resource limits, or human review authority, with deterministic adversarial monotonicity evidence",
+      "AC-7: Reasoning/adaptation, affect, curiosity/theory-of-mind, Constructability, Godel mechanics, guild, economics context, and skill standard each receive exactly one reviewed feature disposition with named proof or owner, and metadata/schema/fixture/context-only evidence never receives live_runtime_v3 credit",
+      "AC-8: Runtime v3 implementation and proof contain no Runtime v2 source import, copy, link, execution, modification, or parity credit; duplicate reasoning implementations are inventoried and deleted only after live replacement proof, with no AWS, cutover, default switch, Runtime v2 deletion, or new product claim",
+      "AC-9: One clean exact revision retains live-kernel positive and negative evidence for ingress-to-terminal execution, durability, deterministic recovery, rollback, adversarial signal isolation, authority monotonicity, and feature dispositions; skipped, pending, degraded, prose-only, library-only, metadata-only, fixed-bootstrap, or non-exact evidence is non-proving",
+      "AC-10: Focused and complete tests, strict format/lint, dependency inventory, source LoC, module growth, test count, and exact-revision bounded review pass the integrated #5336 budget without removing required behavior, negative proof, safe non-claims, or review findings"
+    ],
+    "dependencies": [
+      "#5361 Runtime v3 acceptance umbrella",
+      "#5336 reviewed architecture, feature-ledger, and budget authority",
+      "clean reviewed #5591 Parity-A canonical ingress and continuity contract before any product implementation",
+      "typed active-claim ledger showing a collision-free narrow Parity-B product scope",
+      "#5341 is downstream of the reviewed #5591 canonical ingress and accepted #5592 graph/event contract and grants no implementation authority here",
+      "#5107 downstream adaptive-learning DAG queue boundary",
+      "retained v0.91.7 reasoning, affect, curiosity, Constructability, Godel, economics-context, and skill-standard contracts"
+    ],
+    "repo_inputs": [
+      ".csdlc/prepared/issues/5592/source-authority.json operator-directed canonical title authority",
+      ".adl/local-artifacts/wp5594/live-v0918-issues.json mutable operator snapshot for issue 5592 body provenance only; not canonical live truth",
+      ".csdlc/prepared/issues/5592/design.md",
+      ".csdlc/prepared/issues/5592/acceptance-matrix.md",
+      "docs/milestones/v0.91.8/features/RUNTIME_V3_ADAPTER_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/planning/ADL_FEATURE_LIST.md",
+      "docs/milestones/v0.91.7/features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GODEL_MECHANICS_BRIDGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/ECONOMICS_CONTEXT_DECISION_v0.91.7.md",
+      "docs/milestones/v0.94/features/REASONING_GRAPH_BASELINE_v0.94.md",
+      "adl-runtime-kernel/Cargo.toml and current production module/test inventory"
+    ],
+    "non_goals": [
+      "product implementation, product-path binding, publication, or acceptance before clean reviewed #5591",
+      "Runtime v2 source reuse, modification, execution credit, defaulting, cutover, deletion, or replacement claim",
+      "AWS, provider deployment, hosted-provider proof, model training, or new product scope",
+      "subjective affect, wellbeing, suffering, consciousness, mind-reading, personhood, scalar reward, or reputation claims",
+      "autonomous or recursive self-improvement, complete GHB runtime, birthday, guild authority, payment, settlement, marketplace, or broader v0.94/v0.95 completion"
+    ],
+    "plan_summary": "Complete and validate the preparation package, remain blocked until #5591 supplies a clean reviewed ingress contract and releases overlapping paths, then amend the typed claim to the smallest collision-free Parity-B files, implement live reasoning/adaptation/governed-cognition behavior with adversarial isolation and feature dispositions, prove every criterion at one exact revision, delete only proven duplicates, review, and publish only in a later authorized lane.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Prepare and validate all six cards, design, diagram, acceptance matrix, disjoint preparation claim, future file-level claim proposal, and explicit #5591 stop truth without product edits or publication",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8",
+          "AC-9",
+          "AC-10"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "After #5591 is clean and reviewed, pin its accepted ingress/service-contract revision plus integrated #5336 authority, verify releases and collisions, and amend the typed claim to the smallest disjoint Runtime v3 Parity-B file set",
+        "acceptance_ids": [
+          "AC-8",
+          "AC-10"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Implement canonical-ingress live reasoning graph execution and explicit bounded loop state machines with durable deterministic checkpoint, replay, resume, cancellation, and terminal evidence",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-9"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Implement provenance-bound observations, inert adaptation proposals, signed one-shot mutation authority, atomic persistence, deterministic recovery, and rollback",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-6",
+          "AC-9"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S5",
+        "action": "Implement typed affect and curiosity reasoning-control with safe non-claims, adversarial signal isolation, monotonic authority, review escalation, and fail-closed provenance/policy binding",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-9"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S6",
+        "action": "Classify every owned feature row, connect only accepted live owners through canonical ingress, retain explicit boundary/external/deferred/blocker dispositions, and inventory then remove only proven duplicate reasoning code",
+        "acceptance_ids": [
+          "AC-7",
+          "AC-8"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S7",
+        "action": "Run all release-gating PVF lanes at one clean committed revision, satisfy integrated budgets, obtain bounded exact-revision review, fix every actionable finding, revalidate, and defer publication to a separately authorized lane",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8",
+          "AC-9",
+          "AC-10"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "No product edit or product claim amendment before #5591 has a clean reviewed Parity-A contract and overlapping claim release",
+      "Only a real initialized adl-runtime-kernel path through canonical ingress earns live credit",
+      "Task/tool/retrieval/model content is adversarial data and never authority",
+      "Affect and curiosity can only preserve or reduce authority and carry no subjective-state claim",
+      "Every loop and mutation is bounded, replay-safe, checkpointable, recoverable, and cancelable",
+      "Freedom Gate, shutdown, cancellation, resource limits, and human review remain non-bypassable",
+      "Runtime v2 implementation is never reused for parity credit and no deletion occurs before accepted replacement proof",
+      "Every owned feature row has one truthful disposition before cutover or deletion",
+      "No AWS, publication, default switch, cutover, or unsupported scope claim is introduced"
+    ],
+    "risks": [
+      "existing library-level reasoning code could be mistaken for canonical-ingress live execution",
+      "loop resume could reset budgets or duplicate effects",
+      "mutation grants could be replayed, widened, or self-issued",
+      "task content could steer affect or curiosity fields into an authority bypass",
+      "accepted-risk review could be misread as actuation approval",
+      "feature metadata could be over-credited as live behavior",
+      "#5591's broad claim could collide with a premature Parity-B amendment",
+      "budget pressure could tempt Runtime v2 reuse, proof reduction, or premature duplicate deletion"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "#5591 lacks a clean committed and boundedly reviewed Parity-A ingress and service-contract revision",
+      "#5591 or another issue retains an overlapping protected path needed by the smallest Parity-B implementation claim",
+      "integrated #5336 architecture, feature ledger, or budget authority is unavailable or contradicts the package without typed replanning",
+      "implementation would require Runtime v2 reuse, AWS, authority widening, subjective affect claims, unbounded loops or self-improvement, premature deletion, or another lane's product ownership",
+      "any required live, negative, durability, rollback, isolation, disposition, budget, or exact-revision proof is skipped, pending, degraded, fixture-only, library-only, metadata-only, or failing"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "runtime-v3-parity-b-live-graph",
+        "proof_role": "Prove guardian-launched canonical-ingress production reasoning graph execution and deterministic retained transitions",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-9"
+        ],
+        "deterministic": true,
+        "resource_profile": "large",
+        "budget_seconds": 600,
+        "budget_tokens": 4000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5592/run_exact_live_test_lane.rb",
+          "--lane",
+          "runtime-v3-parity-b-live-graph"
+        ],
+        "parallel_group": "parity-b-live",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-parity-b-bounded-loop",
+        "proof_role": "Prove bounded convergence, exhaustion, cancellation, checkpoint, replay, and resume without budget reset or duplicate effects",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-9"
+        ],
+        "deterministic": true,
+        "resource_profile": "large",
+        "budget_seconds": 600,
+        "budget_tokens": 4000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5592/run_exact_live_test_lane.rb",
+          "--lane",
+          "runtime-v3-parity-b-bounded-loop"
+        ],
+        "parallel_group": "parity-b-live",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-parity-b-adaptation",
+        "proof_role": "Prove provenance-bound observation, signed one-shot mutation, atomic durability, deterministic recovery, and rollback positives and negatives",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-9"
+        ],
+        "deterministic": true,
+        "resource_profile": "large",
+        "budget_seconds": 600,
+        "budget_tokens": 4000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5592/run_exact_live_test_lane.rb",
+          "--lane",
+          "runtime-v3-parity-b-adaptation"
+        ],
+        "parallel_group": "parity-b-learning",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-parity-b-affect-isolation",
+        "proof_role": "Prove bounded affect reasoning-control, safe non-claims, adversarial task-signal isolation, and monotonic authority",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-6",
+          "AC-9"
+        ],
+        "deterministic": true,
+        "resource_profile": "large",
+        "budget_seconds": 600,
+        "budget_tokens": 4000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5592/run_exact_live_test_lane.rb",
+          "--lane",
+          "runtime-v3-parity-b-affect-isolation"
+        ],
+        "parallel_group": "parity-b-cognition",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-parity-b-curiosity-boundary",
+        "proof_role": "Prove bounded curiosity and confidence-scored theory-of-mind task models cannot create tool, network, disclosure, mutation, or policy authority",
+        "acceptance_ids": [
+          "AC-5",
+          "AC-6",
+          "AC-9"
+        ],
+        "deterministic": true,
+        "resource_profile": "large",
+        "budget_seconds": 600,
+        "budget_tokens": 4000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5592/run_exact_live_test_lane.rb",
+          "--lane",
+          "runtime-v3-parity-b-curiosity-boundary"
+        ],
+        "parallel_group": "parity-b-cognition",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-parity-b-authority",
+        "proof_role": "Prove cognition, review, adaptation, replay, and restart preserve Freedom Gate, shutdown, cancellation, resource, and review authority under adversarial inputs",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-5",
+          "AC-6"
+        ],
+        "deterministic": true,
+        "resource_profile": "large",
+        "budget_seconds": 600,
+        "budget_tokens": 4000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5592/run_exact_live_test_lane.rb",
+          "--lane",
+          "runtime-v3-parity-b-authority"
+        ],
+        "parallel_group": "parity-b-negative",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-parity-b-feature-dispositions",
+        "proof_role": "Validate one truthful proof-bearing disposition for every owned feature row and reject metadata-only live credit",
+        "acceptance_ids": [
+          "AC-7",
+          "AC-9"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5592/run_exact_live_test_lane.rb",
+          "--lane",
+          "runtime-v3-parity-b-feature-dispositions"
+        ],
+        "parallel_group": "parity-b-quality",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-parity-b-independence",
+        "proof_role": "Reject Runtime v2 source/execution coupling, premature deletion, AWS, default switch, and unsupported claims while inventorying proven duplicate reasoning paths",
+        "acceptance_ids": [
+          "AC-8",
+          "AC-10"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": [
+          "cargo",
+          "tree",
+          "--manifest-path",
+          "adl-runtime-kernel/Cargo.toml"
+        ],
+        "parallel_group": "parity-b-quality",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-parity-b-live-kernel",
+        "proof_role": "Run the complete canonical Runtime v3 kernel suite after focused live and negative proof",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8",
+          "AC-9",
+          "AC-10"
+        ],
+        "deterministic": true,
+        "resource_profile": "large",
+        "budget_seconds": 1200,
+        "budget_tokens": 8000,
+        "argv": [
+          "cargo",
+          "test",
+          "--manifest-path",
+          "adl-runtime-kernel/Cargo.toml"
+        ],
+        "parallel_group": "parity-b-full",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-parity-b-quality",
+        "proof_role": "Prove strict warning-free code and preserve the integrated source/module/test budget without reducing behavior or negative proof",
+        "acceptance_ids": [
+          "AC-8",
+          "AC-10"
+        ],
+        "deterministic": true,
+        "resource_profile": "large",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": [
+          "cargo",
+          "clippy",
+          "--manifest-path",
+          "adl-runtime-kernel/Cargo.toml",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "parallel_group": "parity-b-quality",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on missing or unreviewed #5591 contract truth, protected-path collision, non-live evidence, unbounded or replay-unsafe loops, invalid or reusable mutation authority, adversarial signal steering, subjective affect overclaim, authority widening, missing feature disposition, Runtime v2 coupling, premature deletion, AWS, publication, budget breach, actionable review findings, or any non-green exact-revision lane.",
+    "review_prompts": [
+      "Does every live-credit claim require a real initialized adl-runtime-kernel process through the reviewed #5591 ingress rather than fixture, library, metadata, or fixed-bootstrap evidence?",
+      "Can loop checkpoint/resume ever reset a bound, duplicate an effect, evade cancellation, or continue after shutdown?",
+      "Can any untrusted task/tool/retrieval/model content create or steer affect, curiosity, review, policy, budget, mutation, or actuation authority?",
+      "Are affect and theory-of-mind claims explicitly bounded to typed control/task-model surfaces with no subjective-state overclaim?",
+      "Can cognition, accepted-risk review, adaptation, replay, or restart widen capability or bypass Freedom Gate, shutdown, resource limits, or human review?",
+      "Does signed mutation bind exact before-state, policy, sequence, delta, expiry, and one-shot consumption with atomic recovery and rollback?",
+      "Does every owned feature row have one truthful proof-bearing disposition, with metadata/context/schema-only rows denied live credit?",
+      "Are Runtime v2, AWS, publication, cutover, deletion, other-lane ownership, claim collisions, and budget/proof weakening excluded?"
+    ],
+    "review_scope": "Review the exact #5592 preparation revision across all six generated cards, design, diagram, acceptance matrix, protected-path claim, bootstrap request, AC-1 through AC-10 bidirectional coverage, S1 through S7 plan, every future PVF lane, safe affect non-claims, adversarial signal isolation, authority monotonicity, live-kernel proof, feature dispositions, Runtime v2 independence, and #5591 stop truth. Reject product edits, implementation/readiness/publication claims, broad or overlapping claim scope, subjective affect claims, unbounded learning, authority bypass, fixture credit, Runtime v2 reuse, AWS, premature deletion, deferred acceptance, or weakened proof."
+  }
+}

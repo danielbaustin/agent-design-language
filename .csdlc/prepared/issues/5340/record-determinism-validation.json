@@ -1,0 +1,19 @@
+{
+  "issue": 5340,
+  "card": "sor",
+  "expected_generation": 16,
+  "expected_digest": "3bbc6b0e250e9ec7efe349534bc604f0f5d24cd98cfcd7a03fcfb049c65f9b33",
+  "claim_id": "claim-5340-v0918-wp06-owner-watch",
+  "actor": "codex:5340-owner-watch",
+  "reason": "Record the exact determinism and resume-equivalence proof for the implemented engine.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", ".csdlc/prepared/issues/5340/validate-engine.sh", "determinism"],
+      "purpose": "Prove byte-identical fresh-process transcripts, canonical quiescent checkpoint round trips, completion-order invariance, and uninterrupted-versus-resumed equivalence.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5340/engine-determinism/engine-determinism.log at substantive commit c2f4e072b8049daa68b18e1d917b57747864b6b7"
+    }
+  },
+  "fail_after_backup": false
+}

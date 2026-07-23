@@ -1,0 +1,13 @@
+{
+  "issue": 5627,
+  "claim_id": "claim-5627-csdlc-four-command-lifecycle",
+  "expected_generation": 4,
+  "expected_digest": "478f88b6f3c62ef38d27b0e374d37d65590648afa24202d4c0f2323b2556adb2",
+  "now_unix_seconds": 1784740267,
+  "actor": "codex:issue-5627-slot-4",
+  "reason": "Repair the exact #5627 hosted C-SDLC installer failure without creating another issue.",
+  "add_protected_paths": [
+    "csdlc-v2/src/operator.rs",
+    "csdlc-v2/tests/gate10a.rs"
+  ]
+}

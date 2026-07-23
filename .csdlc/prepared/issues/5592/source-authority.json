@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.issue-source-authority.v1",
+  "issue": 5592,
+  "canonical_title": "[v0.91.8][WP-14][runtime-v3][parity-b] Make reasoning, adaptive learning, and governed cognition live",
+  "authority": "operator_directive_2026-07-20",
+  "card_identity_role": "typed_regenerated_canonical_title",
+  "card_identity_update_path": "csdlc-edit bootstrap followed by csdlc-bind",
+  "retained_snapshot": ".adl/local-artifacts/wp5594/live-v0918-issues.json",
+  "snapshot_role": "mutable_operator_snapshot_for_body_provenance_only",
+  "snapshot_is_canonical_live_truth": false,
+  "publication_authorized": false
+}

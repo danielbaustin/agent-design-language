@@ -1,0 +1,46 @@
+{
+  "schema": "adl.csdlc.issue_5341_dependency_gate.v1",
+  "status": "ready",
+  "origin_main": "49efcde07796bd50d357464bc54db18223460fee",
+  "results": [
+    {
+      "issue": 5340,
+      "receipt": "/Users/daniel/git/agent-design-language/.git/csdlc-v2/closeout/5340.json",
+      "github_merged": true,
+      "typed_closed_out": true,
+      "receipt_retained": true,
+      "merged_sha_ancestral": true,
+      "closeout_pending": false,
+      "reasons": [
+
+      ],
+      "merged_sha": "f38f662acb3988ef0704a54da055b14812c898d9"
+    },
+    {
+      "issue": 5342,
+      "receipt": "/Users/daniel/git/agent-design-language/.git/csdlc-v2/closeout/5342.json",
+      "github_merged": true,
+      "typed_closed_out": false,
+      "receipt_retained": false,
+      "merged_sha_ancestral": true,
+      "closeout_pending": true,
+      "reasons": [
+        "typed_closeout_pending_non_blocking"
+      ],
+      "merged_sha": "34186ad77c84f50fe5e4ae097cfce14314b0e983"
+    },
+    {
+      "issue": 5591,
+      "receipt": "/Users/daniel/git/agent-design-language/.git/csdlc-v2/closeout/5591.json",
+      "github_merged": true,
+      "typed_closed_out": true,
+      "receipt_retained": true,
+      "merged_sha_ancestral": true,
+      "closeout_pending": false,
+      "reasons": [
+
+      ],
+      "merged_sha": "59b61985c9964e56d83272efa7035f12be462fd7"
+    }
+  ]
+}

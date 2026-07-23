@@ -1,0 +1,17 @@
+{
+  "issue": 5590,
+  "expected_generation": 12,
+  "expected_digest": "39f9fe1b9ee33aaecd0e2382c775e14dc3b1b4f3057cd5b7953ac37c28398200",
+  "claim_id": "claim-5590-runtime-v3-parity-d-preparation",
+  "reviewer": "subagent:019f8692-79df-7fe0-98bd-8d42df9b5f1a",
+  "assigned_by": "codex:5590-sole-writer-takeover",
+  "scope": [
+    ".csdlc/issues/5590/audit.jsonl",
+    ".csdlc/issues/5590/index.json",
+    ".csdlc/prepared/issues/5590/amend-guardian-cli-coverage-claim.json",
+    ".csdlc/prepared/issues/5590/record-coverage-impact-rereview-finding.json",
+    "adl-runtime/tests/guardian_cli.rs",
+    "adl/tools/check_coverage_impact.sh",
+    "adl/tools/test_check_coverage_impact.sh"
+  ]
+}

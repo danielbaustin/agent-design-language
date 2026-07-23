@@ -1,0 +1,7 @@
+{
+  "issue": 5342,
+  "expected_generation": 7,
+  "expected_digest": "f7810e8ed4ccac067b854f18b7a05cec9cc8b565dd7b48ba751727ba8d77d09f",
+  "claim_id": "claim-5342-v0918-wp07-records-signing",
+  "reviewer": "subagent:019f8a51-f6d9-7620-beff-9c2249046612"
+}

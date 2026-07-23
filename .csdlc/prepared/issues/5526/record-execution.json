@@ -1,0 +1,25 @@
+{
+  "issue": 5526,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "09f0e51ec4250d8bd97a8e08d3f45f2f92698de54c69f3d5d958fc76dc40ae5d",
+  "claim_id": "claim-5526-v0918-provider-expansion-preparation",
+  "actor": "codex:5526-execution",
+  "reason": "Record the bounded provider/model expansion implementation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Added deterministic first-class provider profiles and preserved vendor identity across the shared HTTP transport for current Kimi, MiniMax, hosted Qwen, xAI/Grok, Mistral, Cohere, DeepSeek v4, Z.ai GLM-5, and Gemini 3.1 model lanes.",
+    "changes": [
+      "Added stable provider profile names, endpoints, and provider model identifiers for each expanded vendor lane.",
+      "Extended provider substrate vendor inference so shared transport does not collapse distinct vendor identities.",
+      "Added focused registry and substrate tests for deterministic identity and model selection.",
+      "Kept credentials, live calls, AWS/Bedrock, and OpenRouter routing out of the deterministic implementation lane."
+    ],
+    "artifacts": [
+      "adl/src/provider/profiles.rs",
+      "adl/src/provider_substrate.rs",
+      "adl/src/provider/mod.rs",
+      ".csdlc/evidence/5526/implementation/provider-expansion.log"
+    ]
+  }
+}

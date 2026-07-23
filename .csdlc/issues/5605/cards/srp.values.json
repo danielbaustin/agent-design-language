@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5605,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast][planning] Revive AI agent podcast weekly cadence",
+    "slug": "v0-91-8-podcast-revive-ai-agent-podcast-weekly-cadence",
+    "version": "v0.91.8",
+    "generation": 9
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "docs/milestones/v0.91.8/features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md\ndocs/milestones/v0.91.8/features/README.md\ndocs/milestones/v0.91.8/review/README.md\ndocs/milestones/v0.91.8/review/podcast_studio_5605/README.md\ndocs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_LAUNCH_READINESS_5605.md\ndocs/milestones/v0.91.8/review/podcast_studio_5605/PODCAST_STUDIO_TOPIC_SLATE_5605.md\ndocs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md\ndocs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "review_revision": "git-blake3:913daa6f1752430ad6d54cb6884458ac338aba3c:9f7ef4dd0062e6993cc3c13474aa5b1d1401ddb92fa5429f63bfd4bc6c9a19e4",
+      "reviewer": "subagent:019f8b4a-979c-7b02-b4ec-b1c246d0e5ce",
+      "review_prompts": [
+        "Do the docs avoid claiming the podcast is already live or operating weekly?",
+        "Are the prior podcast artifacts linked as historical evidence with truthful proof boundaries?",
+        "Are launch gates and future implementation requirements complete enough for next-week execution?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "This issue prepares planning and launch-readiness docs only; live site route, RSS/feed publication, audio production, and guest outreach remain future execution gates."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

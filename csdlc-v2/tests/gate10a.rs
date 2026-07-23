@@ -1,9 +1,11 @@
+use csdlc_v2::operator::validate_external_cargo_target;
 use csdlc_v2::{
     build_and_install_binaries, edit_issue, install_binaries, resolve_operator_generation,
     verify_coexistence, BootstrapRequest, CardKind, Claim, CoexistenceInventory, EditRequest,
     Generation, LifecyclePhase, SemanticOperation, SkillManifest, Store,
 };
 use std::fs;
+use std::path::Path;
 use std::process::Command;
 
 #[test]
@@ -78,7 +80,7 @@ fn installer_records_provenance_without_replacing_other_files() {
     let destination_parent = tempfile::tempdir().unwrap();
     let destination = destination_parent.path().join("csdlc-v2");
     fs::write(destination_parent.path().join("v1-stays"), b"v1").unwrap();
-    let receipt = build_and_install_binaries(&repo, &destination).unwrap();
+    let receipt = install_binaries(prebuilt_binaries(), &destination).unwrap();
     assert_eq!(receipt.binaries.len(), 12);
     assert_eq!(
         fs::read(destination_parent.path().join("v1-stays")).unwrap(),
@@ -98,6 +100,7 @@ fn installer_records_provenance_without_replacing_other_files() {
             0
         );
     }
+    stamp_current_revision(&repo, &destination);
     let inventory = CoexistenceInventory::load().unwrap();
     assert!(
         verify_coexistence(&repo, &destination, &inventory)
@@ -123,6 +126,30 @@ fn installer_records_provenance_without_replacing_other_files() {
         fs::remove_file(destination.join("install-receipt.json")).unwrap();
         symlink("/bin/true", destination.join("install-receipt.json")).unwrap();
         assert!(verify_coexistence(&repo, &destination, &inventory).is_err());
+    }
+}
+
+#[test]
+fn external_cargo_target_is_exact_existing_and_outside_checkout() {
+    let repo = tempfile::tempdir().unwrap();
+    let external = tempfile::tempdir().unwrap();
+    let external = std::fs::canonicalize(external.path()).unwrap();
+    assert_eq!(
+        validate_external_cargo_target(repo.path(), &external).unwrap(),
+        external
+    );
+
+    assert!(validate_external_cargo_target(repo.path(), Path::new("relative-target")).is_err());
+    assert!(validate_external_cargo_target(repo.path(), &repo.path().join("missing")).is_err());
+    std::fs::create_dir(repo.path().join("inside")).unwrap();
+    assert!(validate_external_cargo_target(repo.path(), &repo.path().join("inside")).is_err());
+
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::symlink;
+        let alias = repo.path().join("external-alias");
+        symlink(&external, &alias).unwrap();
+        assert!(validate_external_cargo_target(repo.path(), &alias).is_err());
     }
 }
 
@@ -219,10 +246,9 @@ fn untracked_build_input_is_rejected_before_cargo_runs() {
 
 #[test]
 fn freshly_installed_stable_edit_binary_is_executable() {
-    let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
     let parent = tempfile::tempdir().unwrap();
     let destination = parent.path().join("csdlc-v2");
-    build_and_install_binaries(&repo, &destination).unwrap();
+    install_binaries(prebuilt_binaries(), &destination).unwrap();
 
     let fixture = tempfile::tempdir().unwrap();
     git(fixture.path(), &["init", "-b", "main"]);
@@ -501,10 +527,32 @@ fn symlinked_installed_binaries_fail_coexistence() {
     let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
     let parent = tempfile::tempdir().unwrap();
     let bins = parent.path().join("csdlc-v2");
-    build_and_install_binaries(&repo, &bins).unwrap();
+    install_binaries(prebuilt_binaries(), &bins).unwrap();
+    stamp_current_revision(&repo, &bins);
     fs::remove_file(bins.join("csdlc-init")).unwrap();
     symlink("/bin/true", bins.join("csdlc-init")).unwrap();
     let report = verify_coexistence(&repo, &bins, &CoexistenceInventory::load().unwrap()).unwrap();
     assert!(!report.pass);
     assert_eq!(report.missing_v2_binaries, vec!["csdlc-init"]);
+}
+
+fn prebuilt_binaries() -> &'static std::path::Path {
+    std::path::Path::new(env!("CARGO_BIN_EXE_csdlc-install"))
+        .parent()
+        .expect("Cargo binary directory")
+}
+
+fn stamp_current_revision(repo: &std::path::Path, bins: &std::path::Path) {
+    let output = Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .current_dir(repo)
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let revision = String::from_utf8(output.stdout).unwrap();
+    let receipt_path = bins.join("install-receipt.json");
+    let mut receipt: serde_json::Value =
+        serde_json::from_slice(&fs::read(&receipt_path).unwrap()).unwrap();
+    receipt["source_revision"] = serde_json::Value::String(format!("git:{}", revision.trim()));
+    fs::write(receipt_path, serde_json::to_vec_pretty(&receipt).unwrap()).unwrap();
 }

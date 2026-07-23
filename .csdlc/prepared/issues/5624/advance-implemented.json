@@ -1,0 +1,13 @@
+{
+  "issue": 5624,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "f233733747a9e1f4affcf32f2058ab86b3897498ae21bde052dda08edae1727b",
+  "claim_id": "claim-5624-csdlc-prune-topology",
+  "actor": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+  "reason": "The bounded readiness/prune topology repair and all local validation are complete for exact review.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

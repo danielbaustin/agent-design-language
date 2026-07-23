@@ -1,0 +1,20 @@
+
+running 13 tests
+test mapping_rejects_cancel_for_unknown_node ... ok
+test mapping_rejects_invalid_request_identity ... ok
+test mapping_rejects_provider_drift ... ok
+test mapping_rejects_effect_digest_mismatch ... ok
+test mapping_accepts_verified_provider_dispatch ... ok
+test mapping_rejects_plan_digest_mismatch ... ok
+test mapping_rejects_subject_mismatch ... ok
+test mapping_rejects_unallowlisted_tool ... ok
+test mapping_rejects_tampered_signature ... ok
+test mapping_is_byte_deterministic ... ok
+test mapping_rejects_unknown_plan_contract ... ok
+test mapping_rejects_replay ... ok
+test mapping_accepts_allowlisted_tool ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running tests/adapter.rs (/Volumes/FastWork/adl-5341/target/debug/deps/adapter-6b8e184b4d5aff9d)

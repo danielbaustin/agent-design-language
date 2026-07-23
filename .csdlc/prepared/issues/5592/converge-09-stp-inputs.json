@@ -1,0 +1,28 @@
+{
+  "issue": 5592,
+  "card": "stp",
+  "expected_generation": 9,
+  "expected_digest": "a486bb2eed30a57d54a50ea5c3219cc2efc1484ce75977e8591c735ca632c462",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
+  "reason": "Converge refined preparation contract field stp-inputs",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "repo_inputs",
+    "values": [
+      ".csdlc/prepared/issues/5592/source-authority.json operator-directed canonical title authority",
+      ".adl/local-artifacts/wp5594/live-v0918-issues.json mutable operator snapshot for issue 5592 body provenance only; not canonical live truth",
+      ".csdlc/prepared/issues/5592/design.md",
+      ".csdlc/prepared/issues/5592/acceptance-matrix.md",
+      "docs/milestones/v0.91.8/features/RUNTIME_V3_ADAPTER_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/planning/ADL_FEATURE_LIST.md",
+      "docs/milestones/v0.91.7/features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GODEL_MECHANICS_BRIDGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/ECONOMICS_CONTEXT_DECISION_v0.91.7.md",
+      "docs/milestones/v0.94/features/REASONING_GRAPH_BASELINE_v0.94.md",
+      "adl-runtime-kernel/Cargo.toml and current production module/test inventory"
+    ]
+  },
+  "fail_after_backup": false
+}

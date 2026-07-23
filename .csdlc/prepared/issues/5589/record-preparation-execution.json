@@ -1,0 +1,29 @@
+{
+  "issue": 5589,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "a50f893355bec78ae575eb27374d98a444f56898b310338e8c3664f5f062a4f9",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "actor": "codex:019f8288-9fd3-7103-a3a5-9e3fe61aad90",
+  "reason": "Record truthful completion of the preparation-only lane without claiming product implementation or publication",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Completed the repaired #5589 preparation-only package with all six typed cards synchronized to the canonical [WP-14] title, approved design and diagram, adapter/authority matrix, disjoint lifecycle claim, fail-closed focused-test inventory guards, and explicit #5591 implementation blockers; no product code or publication was performed.",
+    "changes": [
+      "generated issue-specific SIP, STP, SPP, VPP, SRP, and SOR through csdlc-init",
+      "bound a preparation-only claim protecting only #5589 lifecycle and evidence paths",
+      "authored the Runtime v3 Parity-C design, diagram, adapter/authority matrix, and readiness-blocker record",
+      "declared complete live positive, negative, continuity, shutdown, budget, and zero-degraded-credit proof lanes",
+      "made every eventual focused test lane require an exact nonzero inventory before executing each named test"
+    ],
+    "artifacts": [
+      ".csdlc/prepared/issues/5589/design.md",
+      ".csdlc/prepared/issues/5589/diagram.mmd",
+      ".csdlc/prepared/issues/5589/adapter-authority-matrix.md",
+      ".csdlc/prepared/issues/5589/readiness-blockers.md",
+      ".csdlc/prepared/issues/5589/focused-test-inventory.json",
+      ".csdlc/prepared/issues/5589/run_focused_test_lane.rb"
+    ]
+  },
+  "fail_after_backup": false
+}

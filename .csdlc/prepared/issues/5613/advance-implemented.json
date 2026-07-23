@@ -1,0 +1,13 @@
+{
+  "issue": 5613,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "7d51a574a59c5c09cf0cdbc6a19fd460f7332e34337ec9cbcd48834f9108d03b",
+  "claim_id": "claim-5613-terminal-projection-repair",
+  "actor": "codex:issue-5613-owner",
+  "reason": "The bounded terminal repair, five reconciliations, focused proof, strict lint, and fresh-checkout proof are complete for exact review.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

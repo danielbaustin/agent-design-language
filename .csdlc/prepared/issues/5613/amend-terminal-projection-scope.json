@@ -1,0 +1,13 @@
+{
+  "issue": 5613,
+  "claim_id": "claim-5613-terminal-projection-repair",
+  "expected_generation": 1,
+  "expected_digest": "ed816976c88c33b70387ed8bb370a4c519473a9faf782dd3674c8fc5d0e8eded",
+  "now_unix_seconds": 1784666000,
+  "actor": "codex:issue-5613-owner",
+  "reason": "Include only the newly proven stale terminal projections for #5358 and #5602 in the existing atomic reconciliation batch.",
+  "add_protected_paths": [
+    ".csdlc/issues/5358",
+    ".csdlc/issues/5602"
+  ]
+}

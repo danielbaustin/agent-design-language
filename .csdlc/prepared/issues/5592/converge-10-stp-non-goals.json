@@ -1,0 +1,21 @@
+{
+  "issue": 5592,
+  "card": "stp",
+  "expected_generation": 10,
+  "expected_digest": "1acd4ff7a33db86635aaf756ce21fcc61ded951a721947fa679701c4fad55753",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
+  "reason": "Converge refined preparation contract field stp-non-goals",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "non_goals",
+    "values": [
+      "product implementation, product-path binding, publication, or acceptance before clean reviewed #5591",
+      "Runtime v2 source reuse, modification, execution credit, defaulting, cutover, deletion, or replacement claim",
+      "AWS, provider deployment, hosted-provider proof, model training, or new product scope",
+      "subjective affect, wellbeing, suffering, consciousness, mind-reading, personhood, scalar reward, or reputation claims",
+      "autonomous or recursive self-improvement, complete GHB runtime, birthday, guild authority, payment, settlement, marketplace, or broader v0.94/v0.95 completion"
+    ]
+  },
+  "fail_after_backup": false
+}

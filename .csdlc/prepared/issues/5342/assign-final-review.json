@@ -1,0 +1,13 @@
+{
+  "issue": 5342,
+  "expected_generation": 9,
+  "expected_digest": "cf8274cca5de5b19ebf423b4db534fc1032686f1b7384d365da717eacff57187",
+  "claim_id": "claim-5342-v0918-wp07-records-signing",
+  "reviewer": "subagent:019f8a9c-c932-70d1-a78d-e1fd5ae66b18",
+  "assigned_by": "codex:5342-owner",
+  "scope": [
+    "adl-v2/crates/adl-records",
+    ".csdlc/issues/5342",
+    ".csdlc/prepared/issues/5342"
+  ]
+}

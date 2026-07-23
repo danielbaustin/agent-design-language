@@ -16,12 +16,20 @@ use tokio::sync::{Mutex, RwLock, Semaphore};
 use crate::{
     channel, BoundedReceiver, BoundedSender, Capability, CapabilityRequirement, ChannelFullPolicy,
     Component, ComponentContext, ComponentError, ComponentFactory, ComponentId, ComponentSpec,
-    DeterminismClass, ExecutionPermit, FailurePolicy, LifecycleGuarantees, PortSpec, SendError,
-    ServiceContract, SERVICE_CONTRACT_SCHEMA,
+    DeterminismClass, ExecutionPermit, FailurePolicy, LifecycleGuarantees, ParityBExecutor,
+    ParityBRequest, PortSpec, SendError, ServiceContract, PARITY_B_REQUEST_SCHEMA,
+    SERVICE_CONTRACT_SCHEMA,
 };
 
 pub const OPERATION_REQUEST_SCHEMA: &str = "adl.runtime.operation_request.v1";
 pub const OPERATION_RESULT_SCHEMA: &str = "adl.runtime.operation_result.v1";
+
+static PARITY_B_EXECUTOR: OnceCell<Arc<ParityBExecutor>> = OnceCell::const_new();
+
+#[derive(Deserialize)]
+struct PayloadSchemaProbe {
+    schema: String,
+}
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -398,9 +406,24 @@ impl OperationalAdapter {
         &self,
         request: &OperationRequest,
     ) -> Result<OperationResult, OperationError> {
+        let executor: Arc<dyn OperationExecutor> =
+            if self.kind == AdapterKind::Agent && parity_b_payload(&request.payload) {
+                let parity_request: ParityBRequest = serde_json::from_slice(&request.payload)
+                    .map_err(|_| OperationError::InvalidRequest)?;
+                PARITY_B_EXECUTOR
+                    .get_or_try_init(|| async {
+                        ParityBExecutor::from_environment(&parity_request)
+                            .map(Arc::new)
+                            .map_err(|error| OperationError::Fatal(error.to_string()))
+                    })
+                    .await?
+                    .clone()
+            } else {
+                self.executor.clone()
+            };
         let timeout = Duration::from_millis(self.policy.timeout_millis);
         for attempt in 1..=self.policy.max_attempts {
-            let outcome = tokio::time::timeout(timeout, self.executor.execute(request)).await;
+            let outcome = tokio::time::timeout(timeout, executor.execute(request)).await;
             match outcome {
                 Ok(Ok(payload)) => {
                     let result = OperationResult {
@@ -529,6 +552,11 @@ impl OperationalAdapter {
             failure_policy: spec.failure_policy,
         }
     }
+}
+
+fn parity_b_payload(payload: &[u8]) -> bool {
+    serde_json::from_slice::<PayloadSchemaProbe>(payload)
+        .is_ok_and(|probe| probe.schema == PARITY_B_REQUEST_SCHEMA)
 }
 
 fn request_fingerprint(request: &OperationRequest) -> String {

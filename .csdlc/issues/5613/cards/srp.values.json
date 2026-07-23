@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5613,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Reconcile stranded terminal projections atomically",
+    "slug": "terminal-projection-repair",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2/src/cards.rs\ncsdlc-v2/src/lib.rs\ncsdlc-v2/src/model.rs\ncsdlc-v2/src/schema.rs\ncsdlc-v2/src/store.rs\ncsdlc-v2/src/bin/csdlc-closeout.rs\ncsdlc-v2/operator/skills/csdlc-v2-closeout/SKILL.md\ncsdlc-v2/tests/gate7_terminal_sor_validation_repair_5613.rs\n.csdlc/issues/5337\n.csdlc/issues/5339\n.csdlc/issues/5358\n.csdlc/issues/5591\n.csdlc/issues/5602\n.csdlc/issues/5613\n.csdlc/prepared/issues/5613",
+      "review_revision": "git-blake3:48013eaf1748c7d162b1ed75ce058122a88325bd:0ad1b2639a865319e3c3b0a51b8a185ca864c803f0f7821d513ed88d84130520",
+      "reviewer": "subagent:019f867f-9b7d-7fc2-99bd-5bda9a7a067a",
+      "review_prompts": [
+        "Can any caller mutate a terminal SOR without a distinct live authority claim and exact CAS?",
+        "Can matching select zero or multiple validation results?",
+        "Can a failed receipt update leave projection and receipt divergent?",
+        "Does portable issue 5591 evidence remain truthful and preserve original outcomes?",
+        "Do all three terminal projections preserve original PR identity and disposition?",
+        "Does fresh checkout prove collision-free terminal truth?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Append-only audit provenance intentionally retains original machine-local validation paths; the portable boundary applies to current projected and retained SOR validation arrays."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

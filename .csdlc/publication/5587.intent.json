@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5587,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5587-google-drive-context-mirror",
+  "title": "[v0.91.8][google-workspace][automation] Make ADL Drive context mirror work end to end",
+  "body": "Closes #5587\n\nImplements native Google Drive execution for the ADL context mirror, deterministic regeneration of the four declared seed files, recursive path-preserving mirroring of declared Markdown trees, and fail-closed verification of listings, metadata, MIME type, parent, identity, exact bytes, and SHA-256. The automation contract archives successful sync tasks only after complete verification and preserves actionable failures.\n\nFocused proof: 21 Drive-sync tests, 11 context-mirror tests, 5 production-binary tests, proof-selector contract tests, exact-head review with no findings, and authenticated live Drive readback with exact content parity. No AWS or Spot used.",
+  "draft": true,
+  "revision": "git-blake3:a7e2e1a5965b3638ce755540917dc18dc04bbbd0:138377c70cb1e1c3d9bb76004b429d66715da789075d6f3e1d2220e165b12f88",
+  "commit_sha": "a7e2e1a5965b3638ce755540917dc18dc04bbbd0"
+}

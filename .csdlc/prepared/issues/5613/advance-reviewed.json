@@ -1,0 +1,13 @@
+{
+  "issue": 5613,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "de03f667c232ef08243423a1dda94e8778e2c86e7b53cc239a0e7b81a0e2dc03",
+  "claim_id": "claim-5613-terminal-projection-repair",
+  "actor": "codex:issue-5613-owner",
+  "reason": "Exact product and assigned scoped-revision reviews passed with zero findings after all concrete portability findings were fixed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

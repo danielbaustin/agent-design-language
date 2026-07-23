@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5613,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5613-terminal-projection-repair",
+  "title": "[v0.91.8][csdlc-v2][closeout] Reconcile stranded terminal projections atomically",
+  "body": "Closes #5613\n\nAdds one narrow typed terminal SOR validation-result repair with exact authority, target, receipt, and old-result CAS. It reuses the existing journaled projection/receipt transaction and proves rollback under injected interruption.\n\nReconciles the proven closed-out projections for #5337, #5339, #5358, #5591, and #5602 from their retained receipts while preserving original PR identities. #5591 current SOR validation paths are portable; append-only audit provenance remains unchanged; unsupported guardian-soak JSON is absent.\n\nFocused terminal repair tests, public schema contract, strict all-target Clippy, terminal projection proof, exact scope proof, and fresh-checkout proof pass. Exact bounded review found zero blockers. No Runtime v2, ADL-v2, AWS, CI, or #5615 scope is included.",
+  "draft": true,
+  "revision": "git-blake3:b04845b033b454a482eaa35bd96b91c83d0cc6dc:20b50a58c95354bfa12ad61c90ec5e94e0ca67cc29275141c565f77233b13d4f",
+  "commit_sha": "b04845b033b454a482eaa35bd96b91c83d0cc6dc"
+}

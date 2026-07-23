@@ -1,0 +1,15 @@
+{
+  "issue": 5592,
+  "card": "sip",
+  "expected_generation": 1,
+  "expected_digest": "75d40f07982f0242b2047896713c075274a0f2ba5b4f1584432ce6905a5a4fcc",
+  "claim_id": "claim-5592-runtime-v3-parity-b-preparation",
+  "actor": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
+  "reason": "Converge refined preparation contract field sip-goal",
+  "operation": {
+    "operation": "replan",
+    "field": "goal",
+    "value": "Make Runtime v3 reasoning graphs, bounded loops, adaptive learning, affect reasoning-control, and governed cognition executable through the real kernel path while preserving all retained feature and safe-claim boundaries."
+  },
+  "fail_after_backup": false
+}

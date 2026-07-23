@@ -1,0 +1,22 @@
+{
+  "issue": 5624,
+  "expected_generation": 19,
+  "expected_digest": "853cb8cec8dd1180e95add3cce05956a159c793cebc3a2a70d1fc53e80bee70e",
+  "claim_id": "claim-5624-csdlc-prune-topology",
+  "reviewer": "subagent:019f8ab8-7865-7263-832c-2922bae1b9d3",
+  "assigned_by": "codex:019f8a1b-1c34-7960-8535-6624e0be29f6",
+  "scope": [
+    "adl/tools/run_cargo_validation.sh",
+    "adl/tools/test_run_cargo_validation.sh",
+    "csdlc-v2/src/operator.rs",
+    "csdlc-v2/src/proof.rs",
+    "csdlc-v2/src/readiness.rs",
+    "csdlc-v2/src/store.rs",
+    "csdlc-v2/tests/gate10a.rs",
+    "csdlc-v2/tests/gate7.rs",
+    "csdlc-v2/tests/gate7_lifecycle.rs",
+    ".csdlc/issues/5624",
+    ".csdlc/prepared/issues/5624",
+    ".csdlc/evidence/5624"
+  ]
+}

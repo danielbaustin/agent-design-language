@@ -1,0 +1,25 @@
+{
+  "issue": 5589,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "c99ed12c2bcc3f05a30d0b74a4525741d8fb4a09f8ac2e48dbafc8b04953aaf6",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "actor": "codex:019f836b-dd65-7ab1-be66-7408ee2312f6",
+  "reason": "Record complete FastWork validation and exact budget truth for the Parity-C implementation candidate.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "seven exact inventory-guarded Parity-C lanes (25 discovered and executed tests)",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5589/full cargo test --manifest-path adl-runtime-kernel/Cargo.toml",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5589/clippy cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets --all-features -- -D warnings",
+        "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --all -- --check",
+        "bash adl/tools/report_runtime_v3_loc.sh",
+        "git diff --check"
+      ],
+      "purpose": "Prove all Parity-C live positive, negative, identity, continuity, shutdown, production-credit, and boundary outcomes plus the complete Runtime v3 suite, strict lint, format, budget, and diff hygiene. Budget result is 13,266 physical lines and 220 tests: +1,057 over pinned #5336 baseline, including merged #5591, and requires explicit exact-review disposition because the 20,000 safety ceiling is non-authorizing.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5589/implementation"
+    }
+  }
+}

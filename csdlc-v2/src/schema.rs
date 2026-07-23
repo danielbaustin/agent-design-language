@@ -9,13 +9,15 @@ use crate::migration::{ImportReport, LegacyImportRequest, NormalizedOutcome, Sha
 use crate::model::IssueRecord;
 use crate::model::{
     ReconcileTerminalRequest, TerminalDesignRepairRequest, TerminalPlanStepRepairRequest,
-    TerminalReceipt, TerminalSorArtifactRepairRequest,
+    TerminalReceipt, TerminalSorArtifactRepairRequest, TerminalSorValidationRepairRequest,
 };
 use crate::publication::{
     MergedPublicationReconciliationRequest, PublicationIntent, PublicationRequest,
     ReadyPublicationReconciliationRequest, ReadyPublicationRequest, RemotePullRequest,
 };
-use crate::pvf::{ExecutionReport, ExecutionRequest, PvfManifest, ScheduleReport, ShepherdReport};
+use crate::pvf::{
+    ExecutionReport, ExecutionRequest, FinalizeRequest, PvfManifest, ScheduleReport, ShepherdReport,
+};
 use crate::readiness::{ReadinessReport, ReadinessRequest, TerminalObservation};
 use crate::review::{
     PublicationReviewReport, ReviewAssignmentRequest, ReviewRecordRequest, ReviewRecoveryRequest,
@@ -43,9 +45,11 @@ pub fn public_schema_bundle() -> Value {
         "terminal_design_repair_request": schemars::schema_for!(TerminalDesignRepairRequest),
         "terminal_plan_step_repair_request": schemars::schema_for!(TerminalPlanStepRepairRequest),
         "terminal_sor_artifact_repair_request": schemars::schema_for!(TerminalSorArtifactRepairRequest),
+        "terminal_sor_validation_repair_request": schemars::schema_for!(TerminalSorValidationRepairRequest),
         "doctor_report": schemars::schema_for!(DoctorReport),
         "pvf_manifest": schemars::schema_for!(PvfManifest),
         "pvf_execution_request": schemars::schema_for!(ExecutionRequest),
+        "finalize_request": schemars::schema_for!(FinalizeRequest),
         "pvf_execution_report": schemars::schema_for!(ExecutionReport),
         "scheduler_report": schemars::schema_for!(ScheduleReport),
         "shepherd_report": schemars::schema_for!(ShepherdReport),

@@ -1,0 +1,16 @@
+{
+  "issue": 5589,
+  "expected_generation": 15,
+  "expected_digest": "81aefdefd81518c60aa4c2e9b1525e8e674a6e1b768a2d328244554889fa9f66",
+  "claim_id": "claim-5589-runtime-v3-parity-c-preparation",
+  "reviewer": "subagent:/root/review_5589_exact",
+  "assigned_by": "codex:019f836b-dd65-7ab1-be66-7408ee2312f6",
+  "scope": [
+    "adl-runtime-kernel/src/governed_operations.rs",
+    "adl-runtime-kernel/src/bin/adl-runtime-governed-operations.rs",
+    "adl-runtime-kernel/tests/governed_operations.rs",
+    ".csdlc/issues/5589/cards/sor.values.json",
+    ".csdlc/issues/5589/cards/srp.values.json",
+    ".csdlc/evidence/5589/implementation"
+  ]
+}

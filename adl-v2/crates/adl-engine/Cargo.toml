@@ -1,0 +1,25 @@
+[package]
+name = "adl-engine"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "Portable deterministic bounded execution engine for inert ADL plans"
+
+[dependencies]
+adl-compiler = { path = "../adl-compiler" }
+hex = "=0.4.3"
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.151"
+sha2 = "=0.10.9"
+
+[dev-dependencies]
+adl-language = { path = "../adl-language" }
+
+[[test]]
+name = "fresh_process_driver"
+path = "tests/fresh_process_driver.rs"
+harness = false
+
+[lints.rust]
+unsafe_code = "forbid"

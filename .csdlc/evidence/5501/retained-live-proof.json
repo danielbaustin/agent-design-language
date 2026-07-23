@@ -1,0 +1,68 @@
+{
+  "schema": "adl.wp10a.retained-live-proof.v1",
+  "run_id": "wp10a-5501-fa49c2d0",
+  "issue": 5501,
+  "execution_head": "1d84d3fba125fa3aff84fe4b33ae258773beda57",
+  "execution_head_role": "dependency_integration_head",
+  "review_binding_ref": ".csdlc/prepared/issues/5501/evidence-review-binding.json",
+  "merged_dependency_head": "fa49c2d0f32147547f0aafdca8bfbc841c49258a",
+  "task_content_boundary": "Task identifiers, revisions, paths, timestamps, outcomes, and source-grounded evidence refs only; private transcript content is not retained.",
+  "shards": [
+    {
+      "issue": 5500,
+      "task_id": "019f8c3b-ec87-7741-a212-812501f7fc4a",
+      "claim_id": "claim-5500-v0918-wp10a-dashboard-preparation",
+      "claim_generation": 11,
+      "claim_owner": "codex:issue-5500-preparation",
+      "branch": "codex/5500-v0918-wp10a-dashboard",
+      "worktree": "/Volumes/FastWork/adl-wp-5500",
+      "source_revision": "a24992cfaecfb6adaa2f82ea1b780dd7d1cc6803",
+      "merge_revision": "fa49c2d0f32147547f0aafdca8bfbc841c49258a",
+      "pull_request": 5640,
+      "commit_time": "2026-07-22T17:02:20-07:00",
+      "outcome": "merged",
+      "protected_paths": [
+        "docs/tooling/milestone-dashboard",
+        "adl/tools/test_milestone_dashboard.sh"
+      ],
+      "write_paths": [
+        "docs/tooling/milestone-dashboard",
+        "adl/tools/test_milestone_dashboard.sh"
+      ],
+      "context_ref": ".csdlc/prepared/issues/5500/finalize-implementation.json",
+      "output_ref": ".csdlc/evidence/5500/dashboard-contract.log",
+      "review_ref": ".csdlc/issues/5500/index.json"
+    },
+    {
+      "issue": 5502,
+      "task_id": "019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+      "claim_id": "claim-5502-v0918-output-convergence-preparation",
+      "claim_generation": 15,
+      "claim_owner": "codex:5502-preparation-owner",
+      "branch": "codex/5502-v0918-preparation",
+      "worktree": "/Volumes/FastWork/adl-wp-5502",
+      "source_revision": "3b900210cd30ee381c860a624499d1e4d8aea0d8",
+      "merge_revision": "1cbbf4eb5531814f7b4f0fdc9edeaa1df78410cd",
+      "pull_request": 5641,
+      "commit_time": "2026-07-22T17:25:43-07:00",
+      "outcome": "merged",
+      "protected_paths": [
+        "adl-v2/Cargo.toml",
+        "adl-v2/Cargo.lock",
+        "adl-v2/crates/adl-workcell-convergence"
+      ],
+      "write_paths": [
+        "adl-v2/Cargo.toml",
+        "adl-v2/Cargo.lock",
+        "adl-v2/crates/adl-workcell-convergence"
+      ],
+      "context_ref": ".csdlc/prepared/issues/5502/record-execution.json",
+      "output_ref": ".csdlc/evidence/5502/implementation-validation/convergence-contract.log",
+      "review_ref": ".csdlc/prepared/issues/5502/record-gpt55-review.json"
+    }
+  ],
+  "negative_case_ref": ".csdlc/evidence/5501/negative-case-refusal.json",
+  "dashboard_observation_ref": ".csdlc/evidence/5500/dashboard-contract.log",
+  "convergence_decision_ref": ".csdlc/evidence/5501/convergence-decision.json",
+  "baseline_ref": ".csdlc/evidence/5501/single-agent-comparison.json"
+}
