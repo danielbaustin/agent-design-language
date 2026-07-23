@@ -10,7 +10,8 @@
 | Reasoning graphs, bounded loops, and adaptive learning | #5592, #5107 | Live Runtime v3 graph/loop/adaptation proof or explicit retained/deferred disposition for every feature row; #5107 remains the downstream Adaptive Learning DAG queue |
 | Affect reasoning-control and governed cognition | #5592 | Adversarial signal-steering, monotonicity, authority-isolation, safe-claims, and Freedom Gate/shutdown non-bypass proof |
 | Governed operations, identity, and continuity services | #5589 | Production component adapters and live negative governance/continuity evidence; degraded fixtures do not count |
-| Secure Runtime access, guardian, Observatory, and telemetry | #5590, #4739, #4741, #5332 | Configuration-driven HTTPS local/remote access, live authenticated Observatory HTTP/WebSocket consumption, guardian/rollback proof, and Vector-owned telemetry route |
+| Secure Runtime access, guardian, HTML Observatory, and telemetry | #5590 | Configuration-driven HTTPS local/remote access, live authenticated HTML Observatory HTTP/WebSocket consumption, guardian/rollback proof, and Vector-owned telemetry route |
+| Unity Observatory tooling and demo proof | #5354, #4739, #4741, #5332 | WP-15 project/port/editor alignment and batch proof, or a precise non-release-blocking Unity tooling disposition |
 | Provider/tool adapters | #5349 | Mock/HTTP/governed-tool adapter tests and policy proof |
 | CLI and selector | #5345, #5343 | Stable install, generation selection, rollback |
 | Distributed C-SDLC workcell | #5497, #5499, #5498, #5500, #5502, #5501 | Conductor/task-adapter/dashboard/convergence/live-workcell proof without autonomous merge or closeout authority |

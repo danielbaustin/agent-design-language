@@ -1,0 +1,12 @@
+{
+  "issue": 5354,
+  "claim_id": "claim-5354-v0918-wp15-demo-preparation",
+  "expected_generation": 1,
+  "expected_digest": "c454cf4a75e1e974727e98142eac34180f883723a40b99dfc3710055a27256b8",
+  "now_unix_seconds": 1784785580,
+  "actor": "codex:5354-unity-routing-correction",
+  "reason": "Resolve the bounded review finding by aligning the active feature-preservation crosswalk with WP-15 Unity ownership.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json"
+  ]
+}

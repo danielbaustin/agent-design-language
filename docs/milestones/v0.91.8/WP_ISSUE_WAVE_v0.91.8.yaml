@@ -80,9 +80,9 @@ sidecar_routes:
   - {issue: 4762, live_wp: WP-14, parent_wp: WP-14A, assignment: "Birth witnesses and receipt package"}
   - {issue: 4763, live_wp: WP-14, parent_wp: WP-14A, assignment: "First-birthday docs and external launch surfaces"}
   - {issue: 5007, live_wp: WP-14, parent_wp: WP-14A, assignment: "Memory Palace ADR acceptance after complete platform proof"}
-  - {issue: 4739, live_wp: WP-14, parent_wp: WP-14A, assignment: "Unity-MCP live project and port proof"}
-  - {issue: 4741, live_wp: WP-14, parent_wp: WP-14A, assignment: "Unity editor liveness and batch proof"}
-  - {issue: 5332, live_wp: WP-14, parent_wp: WP-14A, assignment: "Unity ILPP GetDomainName loop"}
+  - {issue: 4739, live_wp: WP-15, parent_issue: 5354, assignment: "Unity-MCP live project and port proof"}
+  - {issue: 4741, live_wp: WP-15, parent_issue: 5354, assignment: "Unity editor liveness and batch proof"}
+  - {issue: 5332, live_wp: WP-15, parent_issue: 5354, assignment: "Unity ILPP GetDomainName loop"}
   - {issue: 5107, live_wp: WP-14, parent_wp: WP-14A, assignment: "Adaptive Learning DAG downstream queue"}
 parallel_execution:
   status: planned
@@ -228,9 +228,9 @@ work_packages:
   - wp: WP-15
     issue: 5354
     title: Converge integrated ADL Runtime and C-SDLC demos
-    outcome: Demonstrate the deployed three-product stack and public claim boundaries.
+    outcome: Demonstrate the deployed three-product stack, converge Unity Observatory proof, and preserve public claim boundaries.
     depends_on: ["WP-14A"]
-    deliverables: ["demo packet", "claim-boundary matrix"]
+    deliverables: ["demo packet", "Unity Observatory proof or explicit blocker", "claim-boundary matrix"]
   - wp: WP-16
     issue: 5351
     title: Run integrated platform quality gate

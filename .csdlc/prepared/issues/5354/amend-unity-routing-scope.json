@@ -1,0 +1,17 @@
+{
+  "issue": 5354,
+  "claim_id": "claim-5354-v0918-wp15-demo-preparation",
+  "expected_generation": 1,
+  "expected_digest": "e8466c9fd9b8f5fef63344f2624cc8632449054572f507c901daf00a14b0952d",
+  "now_unix_seconds": 1784785164,
+  "actor": "codex:5354-unity-routing-correction",
+  "reason": "Move Unity Observatory proof issues from the mistakenly assigned WP-14A acceptance topology into the existing WP-15 demo-convergence lane.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+    "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md",
+    "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+    "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+    "docs/planning/ADL_FEATURE_LIST.md"
+  ]
+}

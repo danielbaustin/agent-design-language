@@ -30,9 +30,13 @@
 
 ## WP-14A Child Topology
 
-WP-14A consumes `#5358`, `#5361`, `#5352`, `#4758`-`#4763`, `#5007`, `#4739`,
-`#4741`, `#5332`, and `#5107`. Each child must close with evidence or remain
+WP-14A consumes `#5358`, `#5361`, `#5352`, `#4758`-`#4763`, `#5007`, and
+`#5107`. Each child must close with evidence or remain
 blocked with operator-approved evidence before WP-14A can claim readiness.
+
+Unity Observatory tooling and proof issues `#4739`, `#4741`, and `#5332` belong
+to WP-15 `#5354`. They feed demo convergence independently and do not block
+WP-14A platform acceptance.
 
 Runtime v3 acceptance `#5361` is a nested umbrella under milestone sprint
 `#5595`. It owns Parity-A `#5591`, then Parity-B `#5592`, Parity-C `#5589`, and

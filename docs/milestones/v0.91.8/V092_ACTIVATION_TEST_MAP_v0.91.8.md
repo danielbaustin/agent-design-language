@@ -6,7 +6,8 @@
 | Runtime execution and canonical ingress | #5341, #5361, #5591 | Runtime v3 consumer plus guardian-launched live ingress and continuity proof |
 | Reasoning graphs, loops, affect control, and adaptive cognition | #5592, #5107 | Live Runtime v3 proof or explicit retained/deferred/non-runtime disposition with safe non-claims |
 | Governed runtime operations | #5589 | Production adapter, identity/private-state, provider/scheduler, checkpoint, and lifelog proof |
-| Secure local/remote access and HTML Observatory | #5590, #4739, #4741, #5332 | Configuration-driven HTTPS, authenticated HTTP/WebSocket consumption, guardian, telemetry, rollback, and Unity disposition |
+| Secure local/remote access and HTML Observatory | #5590 | Configuration-driven HTTPS, authenticated HTTP/WebSocket consumption, guardian, telemetry, and rollback |
+| Unity Observatory demo proof | #5354, #4739, #4741, #5332 | WP-15 project/port/editor alignment and batch proof, or an explicit Unity tooling disposition |
 | Lifecycle governance | #5358 | C-SDLC v2 typed lifecycle proof |
 | Capability envelope | #4761 | Evidence-backed capability envelope |
 | Memory Palace | #4760, #5007 | Implementation proof and ADR acceptance |
