@@ -1,0 +1,19 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "1b525f77f53c109ba3a748d55a7d4a4d1bb920a7c57c2244c0dc52b969fa0b6e",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record superseding FastWork governed-operation validation after exact-review fixes.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5663/target", "--test", "governed_operations"],
+      "purpose": "Prove governed local Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, and shutdown behavior after review fixes.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-governed.log"
+    }
+  },
+  "fail_after_backup": false
+}

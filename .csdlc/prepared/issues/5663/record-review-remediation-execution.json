@@ -1,0 +1,25 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "d66491c94d0c467e6a06c4097088c83d13c1d7fc0c88f30f7307ce0238b328f6",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record exact pre-PR review remediations before final review rerun.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented durable bounded local Runtime v3 adapters, fixed exact-review findings for restart-stable local checkpoints and missing failure proofs, refreshed FastWork validation evidence, and retained net physical LoC reduction: before 2481, after 2471, net -10.",
+    "changes": [
+      "Made the default local Runtime v3 adapter state directory stable for the same runtime working directory instead of process/id scoped.",
+      "Added isolated assembly proof for restart restore, timeout, cancellation, duplicate idempotency, malformed request, missing checkpoint, and corrupt checkpoint boundaries.",
+      "Superseded pre-review validation with FastWork target-dir lanes and corrected the net physical LoC measurement to -10."
+    ],
+    "artifacts": [
+      ".csdlc/prepared/issues/5663/validate-after-review.json",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log"
+    ]
+  },
+  "fail_after_backup": false
+}

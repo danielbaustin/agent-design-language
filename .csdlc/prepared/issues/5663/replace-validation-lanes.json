@@ -1,0 +1,75 @@
+{
+  "issue": 5663,
+  "card": "vpp",
+  "expected_generation": 0,
+  "expected_digest": "1455b830a7d4e73c615c14bc20cf9d1864919cda94b2e70f9b252f44684a2988",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Align validation truth with the amended Runtime v3 local adapter scope and retained net LoC reduction gate.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "runtime-v3-local-adapters-assembly",
+        "proof_role": "Prove production assembly uses real bounded local adapters and fails closed for external transports",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7", "AC-8"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 840,
+        "budget_tokens": 4000,
+        "argv": ["cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--test", "assembly"],
+        "parallel_group": "runtime-v3-local-adapters",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-local-adapters-operations",
+        "proof_role": "Prove operation executor retry, idempotency, admission, saturation, timeout, and shutdown bounds remain intact after deleting duplicate fixture topology paths",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": ["cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--test", "operations"],
+        "parallel_group": "runtime-v3-local-adapters",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-local-adapters-governed",
+        "proof_role": "Prove governed local Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, and shutdown behavior remains green after production executor consolidation",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": ["cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--test", "governed_operations"],
+        "parallel_group": "runtime-v3-local-adapters",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-local-adapters-clippy",
+        "proof_role": "Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate",
+        "acceptance_ids": ["AC-7", "AC-8"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": ["cargo", "clippy", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--all-targets", "--", "-D", "warnings"],
+        "parallel_group": "runtime-v3-local-adapters",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-local-adapters-loc",
+        "proof_role": "Retain physical LoC measurement for the claimed source and test paths; before 2481, after 2461, net -20",
+        "acceptance_ids": ["AC-8"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--numstat", "--", "adl-runtime-kernel/src/assembly.rs", "adl-runtime-kernel/src/governed_operations.rs", "adl-runtime-kernel/tests/assembly.rs", "adl-runtime-kernel/tests/operations.rs"],
+        "parallel_group": "runtime-v3-local-adapters",
+        "defer_reason": null
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

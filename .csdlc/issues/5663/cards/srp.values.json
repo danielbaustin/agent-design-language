@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5663,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][adapters] Implement durable local Runtime v3 adapters",
+    "slug": "runtime-v3-durable-local-adapters",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl-runtime-kernel/src/assembly.rs\nadl-runtime-kernel/tests/assembly.rs\n.csdlc/evidence/5663\n.csdlc/issues/5663",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Can any of the six local adapters still earn production success with only a generic receipt?",
+        "Are timeout, cancellation, saturation, duplicate, restart, shutdown, checkpoint restore, and lifelog redaction behaviors real and tested?",
+        "Does the implementation stay out of Provider, ACIP, A2A, Cloud Bridge, AWS, and WP-12 scope?",
+        "Is the before/after physical LoC measurement truthful and net-negative?",
+        "Do focused tests and strict Clippy prove the owned surface without relying on fixture-only credit?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

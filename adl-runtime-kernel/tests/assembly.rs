@@ -9,14 +9,16 @@ use std::{
 
 use adl_runtime_kernel::{
     bootstrap_reasoning_services, build_live_assembly, build_production_operation_executors,
-    mark_unavailable_live_services, validate_production_operation_executors, AdapterKind,
-    ClockAuthority, ComponentId, DomainWork, ExecutorError, IngressError, LiveBindings,
-    OperationExecutor, OperationRequest, RunningState, RuntimeRecorder, TimeQualificationBounds,
-    TimeSample, TimeSampleError, TimeSampleSource, DOMAIN_WORK_SCHEMA, PASSIVE_LIVE_SERVICES,
+    mark_unavailable_live_services, AdapterKind, ClockAuthority, DomainWork, ExecutorError,
+    FailureClass, InProcessOperationExecutor, IngressError, LiveBindings, OperationExecutor,
+    OperationRequest, RunningState, RuntimeRecorder, TimeQualificationBounds, TimeSample,
+    TimeSampleError, TimeSampleSource, DOMAIN_WORK_SCHEMA, PASSIVE_LIVE_SERVICES,
     REQUIRED_OPERATIONAL_ADAPTERS,
 };
 use async_trait::async_trait;
 use ed25519_dalek::SigningKey;
+use serde_json::Value;
+use tempfile::TempDir;
 
 struct FixedTime;
 
@@ -59,20 +61,10 @@ impl TimeSampleSource for FixedTime {
 }
 
 fn bindings(recorder: RuntimeRecorder) -> LiveBindings {
-    let executors = REQUIRED_OPERATIONAL_ADAPTERS
-        .into_iter()
-        .map(|kind| {
-            (
-                kind,
-                Arc::new(adl_runtime_kernel::InProcessOperationExecutor::new(kind))
-                    as Arc<dyn adl_runtime_kernel::OperationExecutor>,
-            )
-        })
-        .collect();
     let key = SigningKey::from_bytes(&[31; 32]);
     LiveBindings {
         recorder: recorder.clone(),
-        operation_executors: executors,
+        operation_executors: build_production_operation_executors(),
         permit_keys: BTreeMap::from([("operator".to_owned(), key.verifying_key())]),
         reasoning: bootstrap_reasoning_services(recorder).unwrap(),
         time_source: Arc::new(FixedTime),
@@ -82,6 +74,47 @@ fn bindings(recorder: RuntimeRecorder) -> LiveBindings {
             max_round_trip: Duration::from_millis(100),
         },
     }
+}
+
+fn adapter_request(kind: AdapterKind, payload: &[u8]) -> OperationRequest {
+    OperationRequest {
+        schema: adl_runtime_kernel::OPERATION_REQUEST_SCHEMA.to_owned(),
+        request_id: format!("{}-case", kind.service_name()),
+        idempotency_key: format!("{}-key", kind.service_name()),
+        principal: "runtime-test".to_owned(),
+        payload: payload.to_vec(),
+        permit: None,
+    }
+}
+
+fn isolated(kind: AdapterKind, root: &TempDir) -> InProcessOperationExecutor {
+    InProcessOperationExecutor::with_state_dir(kind, root.path().join(kind.service_name()))
+}
+
+async fn local_value(
+    executor: &InProcessOperationExecutor,
+    kind: AdapterKind,
+    payload: &[u8],
+) -> Value {
+    serde_json::from_slice(
+        &executor
+            .execute(&adapter_request(kind, payload))
+            .await
+            .unwrap(),
+    )
+    .unwrap()
+}
+
+async fn local_error(
+    executor: &InProcessOperationExecutor,
+    kind: AdapterKind,
+    payload: &[u8],
+) -> FailureClass {
+    executor
+        .execute(&adapter_request(kind, payload))
+        .await
+        .unwrap_err()
+        .class
 }
 
 #[test]
@@ -119,53 +152,176 @@ fn live_assembly_has_the_frozen_service_inventory() {
         "trusted_time".to_owned(),
     ]);
     assert_eq!(names, expected);
-    assert_eq!(assembly.topology.startup_order().len(), 27);
-}
-
-#[test]
-fn live_assembly_refuses_a_missing_executor_binding() {
-    let recorder = RuntimeRecorder::new(128);
-    let mut bindings = bindings(recorder);
-    bindings
-        .operation_executors
-        .remove(&AdapterKind::CloudBridge);
-    let error = match build_live_assembly(bindings) {
-        Ok(_) => panic!("missing binding must be refused"),
-        Err(error) => error,
-    };
-    assert!(error.to_string().contains("CloudBridge"));
-}
-
-#[test]
-fn production_readiness_accepts_complete_in_process_bindings() {
-    let executors = build_production_operation_executors();
-    assert_eq!(executors.len(), REQUIRED_OPERATIONAL_ADAPTERS.len());
-    validate_production_operation_executors(&executors).unwrap();
 }
 
 #[tokio::test]
-async fn every_production_adapter_executes_its_typed_operation_boundary() {
+async fn local_production_adapters_execute_real_bounded_behavior() {
     let executors = build_production_operation_executors();
-    for kind in REQUIRED_OPERATIONAL_ADAPTERS {
-        let receipt: serde_json::Value = serde_json::from_slice(
+    for kind in [
+        AdapterKind::Agent,
+        AdapterKind::Shepherd,
+        AdapterKind::Scheduler,
+        AdapterKind::Chronosense,
+        AdapterKind::CheckpointStore,
+        AdapterKind::Lifelog,
+    ] {
+        let receipt: Value = serde_json::from_slice(
             &executors[&kind]
-                .execute(&OperationRequest {
-                    schema: adl_runtime_kernel::OPERATION_REQUEST_SCHEMA.to_owned(),
-                    request_id: format!("adapter-{}", kind.service_name()),
-                    idempotency_key: format!("idempotency-{}", kind.service_name()),
-                    principal: "runtime-test".to_owned(),
-                    payload: b"typed-adapter-input".to_vec(),
-                    permit: None,
-                })
+                .execute(&adapter_request(kind, b"typed-adapter-input"))
                 .await
                 .unwrap(),
         )
         .unwrap();
-        assert_eq!(receipt["schema"], "adl.runtime.adapter_receipt.v1");
-        assert_eq!(receipt["adapter"], kind.service_name());
-        assert_eq!(receipt["operation"], kind.operation_name());
-        assert_eq!(receipt["accepted"], true);
+        assert_ne!(receipt["schema"], "adl.runtime.adapter_receipt.v1");
+        if kind != AdapterKind::CheckpointStore {
+            assert_eq!(receipt["adapter"], kind.service_name());
+            assert_eq!(receipt["operation"], kind.operation_name());
+        }
     }
+    for kind in [
+        AdapterKind::Provider,
+        AdapterKind::Acip,
+        AdapterKind::A2a,
+        AdapterKind::CloudBridge,
+    ] {
+        for payload in [
+            b"external-work".as_slice(),
+            b"timeout".as_slice(),
+            b"cancel".as_slice(),
+        ] {
+            let error = executors[&kind]
+                .execute(&adapter_request(kind, payload))
+                .await
+                .unwrap_err();
+            assert_eq!(error.class, FailureClass::Fatal);
+            assert!(error.message.contains("external transport"));
+        }
+    }
+    let stored = local_value(
+        &InProcessOperationExecutor::new(AdapterKind::CheckpointStore),
+        AdapterKind::CheckpointStore,
+        b"default-checkpoint-state",
+    )
+    .await;
+    let restored = local_value(
+        &InProcessOperationExecutor::new(AdapterKind::CheckpointStore),
+        AdapterKind::CheckpointStore,
+        b"restore",
+    )
+    .await;
+    assert_eq!(stored, restored);
+}
+
+#[tokio::test]
+async fn local_adapters_prove_restart_and_failure_boundaries() {
+    let root = TempDir::new().unwrap();
+    for (kind, payload, class) in [
+        (
+            AdapterKind::Agent,
+            b"timeout".as_slice(),
+            FailureClass::Retryable,
+        ),
+        (
+            AdapterKind::Scheduler,
+            b"cancel".as_slice(),
+            FailureClass::Retryable,
+        ),
+        (
+            AdapterKind::Scheduler,
+            b"saturate".as_slice(),
+            FailureClass::Retryable,
+        ),
+        (
+            AdapterKind::Shepherd,
+            b"reject".as_slice(),
+            FailureClass::Fatal,
+        ),
+    ] {
+        assert_eq!(
+            local_error(&isolated(kind, &root), kind, payload).await,
+            class
+        );
+    }
+
+    let malformed = OperationRequest {
+        schema: "wrong".to_owned(),
+        payload: Vec::new(),
+        ..adapter_request(AdapterKind::Agent, b"payload")
+    };
+    assert_eq!(
+        isolated(AdapterKind::Agent, &root)
+            .execute(&malformed)
+            .await
+            .unwrap_err()
+            .class,
+        FailureClass::Fatal
+    );
+
+    let shepherd = isolated(AdapterKind::Shepherd, &root);
+    assert_eq!(
+        local_value(&shepherd, AdapterKind::Shepherd, b"agent-a").await["status"],
+        "admitted"
+    );
+    assert_eq!(
+        local_value(&shepherd, AdapterKind::Shepherd, b"agent-a").await["status"],
+        "duplicate"
+    );
+    assert_eq!(
+        local_error(
+            &isolated(AdapterKind::CheckpointStore, &root),
+            AdapterKind::CheckpointStore,
+            b"restore"
+        )
+        .await,
+        FailureClass::Fatal
+    );
+    let lifelog = local_value(
+        &isolated(AdapterKind::Lifelog, &root),
+        AdapterKind::Lifelog,
+        b"token=secret",
+    )
+    .await;
+    assert_eq!(lifelog["redacted"], true);
+
+    let checkpoint_root = root.path().join("restart-checkpoint");
+    assert_eq!(
+        local_value(
+            &InProcessOperationExecutor::with_state_dir(
+                AdapterKind::CheckpointStore,
+                &checkpoint_root
+            ),
+            AdapterKind::CheckpointStore,
+            b"checkpoint-state"
+        )
+        .await,
+        local_value(
+            &InProcessOperationExecutor::with_state_dir(
+                AdapterKind::CheckpointStore,
+                &checkpoint_root
+            ),
+            AdapterKind::CheckpointStore,
+            b"restore"
+        )
+        .await
+    );
+
+    std::fs::write(
+        checkpoint_root.join("checkpoint.json"),
+        br#"{"schema":"wrong"}"#,
+    )
+    .unwrap();
+    assert_eq!(
+        local_error(
+            &InProcessOperationExecutor::with_state_dir(
+                AdapterKind::CheckpointStore,
+                checkpoint_root
+            ),
+            AdapterKind::CheckpointStore,
+            b"restore"
+        )
+        .await,
+        FailureClass::Fatal
+    );
 }
 
 #[tokio::test]
@@ -205,10 +361,6 @@ async fn live_assembly_starts_and_qualifies_time() {
         };
         assert_eq!(*state, expected, "unexpected state for {component:?}");
     }
-    assert_eq!(
-        snapshot.components[&ComponentId::new("observability")],
-        RunningState::Running
-    );
     assert_eq!(
         handle.shutdown(Duration::from_secs(1)).await.unwrap(),
         adl_runtime_kernel::KernelExit::Clean

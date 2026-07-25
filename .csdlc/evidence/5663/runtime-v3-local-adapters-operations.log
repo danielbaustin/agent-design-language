@@ -1,0 +1,10 @@
+
+running 3 tests
+test governed_provider_retries_and_deduplicates_without_live_credentials ... ok
+test concurrent_idempotency_is_single_flight_and_conflicts_fail_closed ... ok
+test timeout_and_failure_classes_remain_bounded ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/operations.rs (/Volumes/FastWork/adl-wp-5663/target/debug/deps/operations-e2e90790fd29649b)
