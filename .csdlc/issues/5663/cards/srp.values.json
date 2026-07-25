@@ -7,15 +7,15 @@
     "title": "[v0.91.8][runtime-v3][adapters] Implement durable local Runtime v3 adapters",
     "slug": "runtime-v3-durable-local-adapters",
     "version": "v0.91.8",
-    "generation": 15
+    "generation": 16
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "adl-runtime-kernel/src/assembly.rs\nadl-runtime-kernel/tests/assembly.rs\n.csdlc/evidence/5663\n.csdlc/issues/5663",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "adl-runtime-kernel/src/assembly.rs\nadl-runtime-kernel/src/governed_operations.rs\nadl-runtime-kernel/src/operations.rs\nadl-runtime-kernel/tests/assembly.rs\nadl-runtime-kernel/tests/governed_operations.rs\nadl-runtime-kernel/tests/operations.rs",
+      "review_revision": "git-blake3:d3d646cab612f5a08ab9406a505cd09855c02646:a2f4211179446b4f74f5490bcacd30848f3d5013d5f6d1a4669675d79877046a",
+      "reviewer": "Maxwell 019f9a5d-ab19-7a33-837b-63f2e67eb0c4",
       "review_prompts": [
         "Can any of the six local adapters still earn production success with only a generic receipt?",
         "Are timeout, cancellation, saturation, duplicate, restart, shutdown, checkpoint restore, and lifelog redaction behaviors real and tested?",
@@ -24,8 +24,10 @@
         "Do focused tests and strict Clippy prove the owned surface without relying on fixture-only credit?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "Branch is behind current origin/main by 13 commits, but current main has no merge-base-to-origin changes in the protected Runtime v3 source/test paths."
+      ],
+      "review_result": "pass"
     }
   }
 }

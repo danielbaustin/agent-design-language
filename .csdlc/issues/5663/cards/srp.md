@@ -13,9 +13,11 @@ Status: pre_phase
 ## Scope
 
 adl-runtime-kernel/src/assembly.rs
+adl-runtime-kernel/src/governed_operations.rs
+adl-runtime-kernel/src/operations.rs
 adl-runtime-kernel/tests/assembly.rs
-.csdlc/evidence/5663
-.csdlc/issues/5663
+adl-runtime-kernel/tests/governed_operations.rs
+adl-runtime-kernel/tests/operations.rs
 
 ## Prompts
 
@@ -35,12 +37,12 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- Branch is behind current origin/main by 13 commits, but current main has no merge-base-to-origin changes in the protected Runtime v3 source/test paths.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:d3d646cab612f5a08ab9406a505cd09855c02646:a2f4211179446b4f74f5490bcacd30848f3d5013d5f6d1a4669675d79877046a")
 
-Reviewer: None
+Reviewer: Some("Maxwell 019f9a5d-ab19-7a33-837b-63f2e67eb0c4")
 
-Result: pre_review
+Result: pass
