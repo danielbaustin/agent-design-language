@@ -542,6 +542,7 @@ impl ProtocolFrame {
             && self.issued_unix_millis > 0
             && self.expires_unix_millis > self.issued_unix_millis
             && freshness_millis <= MAX_PROTOCOL_FRAME_FRESHNESS_MILLIS
+            && now_unix_millis >= self.issued_unix_millis
             && now_unix_millis <= self.expires_unix_millis
             && payload_hash
                 .as_ref()
@@ -733,5 +734,45 @@ fn fatal(message: impl Into<String>) -> ExecutorError {
     ExecutorError {
         class: FailureClass::Fatal,
         message: message.into(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn protocol_frame_rejects_mac_valid_future_issued_freshness() {
+        let secret = ProtocolSecret::from_key([91; 32]);
+        let now = 1_000_000;
+        let issued = now + 10_000;
+        let challenge = "future-challenge".to_owned();
+        let mut frame = ProtocolFrame {
+            schema: PROTOCOL_FRAME_SCHEMA.to_owned(),
+            adapter: AdapterKind::Provider,
+            operation: AdapterKind::Provider.operation_name().to_owned(),
+            request_id: "future-request".to_owned(),
+            idempotency_key: "future-idempotency".to_owned(),
+            principal: "future-principal".to_owned(),
+            permit: None,
+            capability: AdapterKind::Provider.service_name().to_owned(),
+            payload_hex: hex::encode(b"future-payload"),
+            challenge,
+            issued_unix_millis: issued,
+            expires_unix_millis: issued + 1_000,
+            nonce: String::new(),
+            mac: String::new(),
+        };
+        frame.nonce = format!(
+            "{}:{}:{}:{}",
+            frame.adapter.service_name(),
+            frame.principal,
+            frame.idempotency_key,
+            frame.challenge
+        );
+        frame.mac = secret.mac(&frame);
+
+        assert!(!frame.verify_at(&secret, now));
+        assert!(frame.verify_at(&secret, issued));
     }
 }
