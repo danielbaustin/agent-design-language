@@ -3,13 +3,13 @@
   "issue": 5663,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9ae48371048e17e2df859779e157e43a5d9e4ada902e49a33a66eddacd56daf5",
-  "phase": "reviewed",
-  "generation": 16,
-  "digest": "5e187d3f9fcce2b24850d7fefb07d5f580d3344592dd991c5c4ba15b953fad6c",
+  "phase": "published",
+  "generation": 17,
+  "digest": "833d459e2057397f4c0eb4dcd8eb7673a548265c33b8fa3b4e442552980764e8",
   "claim": {
     "id": "claim-5663-runtime-v3-durable-local-adapters",
     "owner": "codex:issue-5663-runtime-adapters",
-    "generation": 16,
+    "generation": 17,
     "acquired_unix_seconds": 1784998096,
     "expires_unix_seconds": 1785602896,
     "heartbeat_unix_seconds": 1784998096,
@@ -48,7 +48,17 @@
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5663,
+    "pull_request": 5669,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5669",
+    "base": "main",
+    "head": "codex/5663-runtime-v3-durable-local-adapters",
+    "revision": "git-blake3:8cf3eb07c3dac115d3bf328c3e80297af43fffd3:e0c079444541413396409ea333fe44d12d2b1c5b00708b04600d5609bb29f6aa",
+    "draft": false,
+    "observed_state": "open"
+  },
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -62,34 +72,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "3f49d3139678c4ccc92b555e160b9600a0b51959a1d2cbe942cac465932fa043",
+      "values_digest": "cbdf03ee7313bb2fe460c1a277635f89d07698c3230d733f265d99ecf811fbf4",
       "rendered_digest": "dd9a80fb70cba5ab51ce7219aa7d6bcb896f05905288c9ed337ca78b0433956c",
       "ast_digest": "236c4929b368dcdbd83131534e0477c144bc2586d06f79a6b924f7e97453893b"
     },
     "stp": {
-      "values_digest": "805d280e060d4d8bd45fdf8ad79d65b7461d39ad81e4b537e4f51c19a2ab132e",
+      "values_digest": "40d3c4db1c1b3b6efdb04aaecdce5336f46182cac51ab0fababe324ec7599ae0",
       "rendered_digest": "860089b661813be46a57d17782652a3753affcb7867a42b867720d39bd4b8148",
       "ast_digest": "716150200b112efd93bfbc429f7eb7a1842fa1f1cec75462ceec9f4756213e4f"
     },
     "spp": {
-      "values_digest": "c8f890e4fd7f3a688acf31772d65f79ee8f6baf5c44ca835ef7eea6204f50802",
+      "values_digest": "00046023a8bcc94becf3b07c2edac6e8404504662f5c03324ae7c535864d7ea6",
       "rendered_digest": "f47b64dc50a64f2b29879548eb057bceafeec18bf087abed5fecf43f123b6ff5",
       "ast_digest": "59926c4cc452fe34c471dd023ed178f785f11ff49ca307427c1487da48d4d0bb"
     },
     "vpp": {
-      "values_digest": "a1798b41fa21aadadf4011c32fe707f666821a8ff019821d77c244f96ddc0ff8",
+      "values_digest": "4c59a6f9211227b60ef2bec38703f01b0937c2354476d2990a3c2e9db1fb1350",
       "rendered_digest": "09ba3fb16cd3e97a0c459440f48c117df7788dc92aa5c4c5bfa4407fb7475ae8",
       "ast_digest": "d999105a4367abe2f8fc4dbd6dc980281277fd8805de547baa5784624dd69857"
     },
     "srp": {
-      "values_digest": "d9121190737afe21665fbf84908dda224801397e57a5310e1f5ed361af92ca0e",
+      "values_digest": "2ef0f9b514d9ff1c47dda296b04be03df9606e7708f803ea6786b5f302dc62b5",
       "rendered_digest": "6feceb724b459b3bbb604f77bfd74f244694e496d6fcd94dd2162fe286b116c0",
       "ast_digest": "f1914c97ec6ed1d867c81066e58785060e63b31e531ee42e27117b7c36049197"
     },
     "sor": {
-      "values_digest": "210ac04abfa8cdd4cfc6d31e9d5f4b6b94be3bb0aeebb1093099db3ab58c3e2c",
-      "rendered_digest": "38803cc4168c2d337be262a2a8c7327b066a7895e4bd7945d1075cd8ab1c7873",
-      "ast_digest": "905ef3fbbaedd11fa4124e2f4dffa7fc0c3608bea68886462f35708a44fd75bd"
+      "values_digest": "91bea21de02a5dc58cc78659f65017ddc21fd3bc8a7cadfbe47f07e85e98cb28",
+      "rendered_digest": "090f15f040edce9307e0efa35c7199d413304458b802811590ec71b3c66463aa",
+      "ast_digest": "1a8f4538754ed79203526f2a5e6e9f6aab13749264fc4e56bf0e21a4a8ebc31e"
     }
   },
   "transitions": [
@@ -120,6 +130,13 @@
       "to": "reviewed",
       "actor": "codex:issue-5663-runtime-adapters",
       "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "observed exact PR after current review"
     }
   ],
   "audit": [
@@ -255,6 +272,13 @@
       "actor": "codex:issue-5663-runtime-adapters",
       "reason": "atomically record exact review evidence and reviewed phase",
       "operation": "record_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 17,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
     }
   ]
 }

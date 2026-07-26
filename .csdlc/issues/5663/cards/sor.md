@@ -241,11 +241,11 @@ Implemented durable bounded local Runtime v3 adapters with final review fixes. C
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 
