@@ -44,6 +44,7 @@ pub const REQUIRED_OPERATIONAL_ADAPTERS: [AdapterKind; 10] = [
     AdapterKind::CheckpointStore,
     AdapterKind::Lifelog,
 ];
+const LOCAL_WRITER_LOCK_SCHEMA: &str = "adl.runtime.local_writer_lock.v1";
 
 pub const PASSIVE_LIVE_SERVICES: [&str; 9] = [
     "governance_ingress",
@@ -121,7 +122,7 @@ pub fn build_live_assembly(bindings: LiveBindings) -> Result<LiveAssembly, Assem
         let policy = AdapterPolicy {
             capacity: 64,
             max_in_flight: 16,
-            timeout_millis: 5_000,
+            shutdown_grace_millis: 5_000,
             max_attempts: 3,
             idempotency_entries: 1_024,
             authority: if matches!(kind, AdapterKind::Provider | AdapterKind::CloudBridge) {
@@ -475,7 +476,7 @@ struct LocalRuntimeState {
     writer_lock_path: PathBuf,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
 struct WriterLockOwner {
     schema: String,
     writer_id: String,
@@ -554,7 +555,7 @@ fn acquire_writer_lock(lock_path: &Path, writer_id: &str, pid: u32) -> io::Resul
 
 fn write_writer_lock_owner(lock_path: &Path, writer_id: &str, pid: u32) -> io::Result<()> {
     let bytes = serde_json::to_vec(&WriterLockOwner {
-        schema: "adl.runtime.local_writer_lock.v1".to_owned(),
+        schema: LOCAL_WRITER_LOCK_SCHEMA.to_owned(),
         writer_id: writer_id.to_owned(),
         pid,
     })
@@ -569,19 +570,59 @@ fn write_writer_lock_owner(lock_path: &Path, writer_id: &str, pid: u32) -> io::R
 
 fn recover_stale_writer_lock(lock_path: &Path) -> io::Result<bool> {
     match read_writer_lock_owner(lock_path) {
-        Ok(Some(owner)) if writer_pid_active(owner.pid) => return Ok(false),
-        Ok(Some(_)) | Ok(None) => {}
-        Err(error) if error.kind() == io::ErrorKind::InvalidData => {}
-        Err(error) => return Err(error),
-    };
+        Ok(Some(owner)) if writer_lock_owner_recoverable(&owner) => {
+            recover_writer_lock_after_owner_check(lock_path, Some(owner))
+        }
+        Ok(Some(_)) => Ok(false),
+        Ok(None) => recover_writer_lock_after_owner_check(lock_path, None),
+        Err(error) if error.kind() == io::ErrorKind::InvalidData => Ok(false),
+        Err(error) => Err(error),
+    }
+}
+
+fn recover_writer_lock_after_owner_check(
+    lock_path: &Path,
+    expected_owner: Option<WriterLockOwner>,
+) -> io::Result<bool> {
     let stale_path =
         lock_path.with_file_name(format!("writer.lock.stale.{}", uuid::Uuid::new_v4()));
     match fs::rename(lock_path, &stale_path) {
         Ok(()) => {
-            let _ = fs::remove_dir_all(stale_path);
-            Ok(true)
+            let moved_owner = match read_writer_lock_owner(&stale_path) {
+                Ok(owner) => owner,
+                Err(error) if error.kind() == io::ErrorKind::InvalidData => {
+                    restore_unrecovered_writer_lock(lock_path, &stale_path)?;
+                    return Ok(false);
+                }
+                Err(error) => {
+                    restore_unrecovered_writer_lock(lock_path, &stale_path)?;
+                    return Err(error);
+                }
+            };
+            let owner_still_recoverable = match (&expected_owner, &moved_owner) {
+                (Some(expected), Some(moved)) => {
+                    expected == moved && writer_lock_owner_recoverable(moved)
+                }
+                (None, None) => true,
+                _ => false,
+            };
+            if owner_still_recoverable {
+                let _ = fs::remove_dir_all(stale_path);
+                Ok(true)
+            } else {
+                restore_unrecovered_writer_lock(lock_path, &stale_path)?;
+                Ok(false)
+            }
         }
         Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(true),
+        Err(error) => Err(error),
+    }
+}
+
+fn restore_unrecovered_writer_lock(lock_path: &Path, stale_path: &Path) -> io::Result<()> {
+    match fs::rename(stale_path, lock_path) {
+        Ok(()) => Ok(()),
+        Err(error) if error.kind() == io::ErrorKind::AlreadyExists || lock_path.exists() => Ok(()),
         Err(error) => Err(error),
     }
 }
@@ -603,9 +644,25 @@ fn read_writer_lock_owner(lock_path: &Path) -> io::Result<Option<WriterLockOwner
         Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
         Err(error) => return Err(error),
     };
-    serde_json::from_slice(&bytes)
-        .map(Some)
-        .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))
+    let owner = serde_json::from_slice::<WriterLockOwner>(&bytes)
+        .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
+    if owner.schema != LOCAL_WRITER_LOCK_SCHEMA {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            "local writer lock schema is invalid",
+        ));
+    }
+    Ok(Some(owner))
+}
+
+#[cfg(unix)]
+fn writer_lock_owner_recoverable(owner: &WriterLockOwner) -> bool {
+    !writer_pid_active(owner.pid)
+}
+
+#[cfg(not(unix))]
+fn writer_lock_owner_recoverable(_owner: &WriterLockOwner) -> bool {
+    false
 }
 
 #[cfg(unix)]

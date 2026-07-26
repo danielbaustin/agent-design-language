@@ -1,7 +1,7 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
     num::NonZeroUsize,
-    sync::Arc,
+    sync::{Arc, Mutex as StdMutex},
     time::Duration,
 };
 
@@ -104,7 +104,7 @@ pub enum AuthorityMode {
 pub struct AdapterPolicy {
     pub capacity: usize,
     pub max_in_flight: usize,
-    pub timeout_millis: u64,
+    pub shutdown_grace_millis: u64,
     pub max_attempts: u16,
     pub idempotency_entries: usize,
     pub authority: AuthorityMode,
@@ -114,7 +114,7 @@ impl AdapterPolicy {
     pub fn validate(&self) -> Result<(), OperationError> {
         if self.capacity == 0
             || self.max_in_flight == 0
-            || self.timeout_millis == 0
+            || self.shutdown_grace_millis == 0
             || self.max_attempts == 0
             || self.idempotency_entries == 0
         {
@@ -165,8 +165,6 @@ pub enum OperationError {
     Saturated,
     #[error("adapter admission is closed")]
     AdmissionClosed,
-    #[error("adapter execution timed out")]
-    Timeout,
     #[error("adapter failed after {attempts} attempts: {message}")]
     Exhausted { attempts: u16, message: String },
     #[error("adapter degraded: {0}")]
@@ -208,7 +206,7 @@ pub struct OperationalAdapter {
     permits: Semaphore,
     permit_keys: BTreeMap<String, ed25519_dalek::VerifyingKey>,
     completed: Mutex<LruCache<String, CompletedOperation>>,
-    in_flight: Mutex<BTreeMap<String, InFlightOperation>>,
+    in_flight: StdMutex<BTreeMap<String, InFlightOperation>>,
     consumed_permits: Mutex<BTreeSet<String>>,
 }
 
@@ -221,6 +219,38 @@ struct CompletedOperation {
 struct InFlightOperation {
     fingerprint: String,
     result: watch::Receiver<Option<OperationOutcome>>,
+}
+
+struct InFlightOwnerGuard<'a> {
+    adapter: &'a OperationalAdapter,
+    idempotency_key: String,
+    active: bool,
+}
+
+impl<'a> InFlightOwnerGuard<'a> {
+    fn new(adapter: &'a OperationalAdapter, idempotency_key: String) -> Self {
+        Self {
+            adapter,
+            idempotency_key,
+            active: true,
+        }
+    }
+
+    fn disarm(&mut self) {
+        self.active = false;
+    }
+}
+
+impl Drop for InFlightOwnerGuard<'_> {
+    fn drop(&mut self) {
+        if self.active {
+            self.adapter
+                .in_flight
+                .lock()
+                .expect("operation in-flight state poisoned")
+                .remove(&self.idempotency_key);
+        }
+    }
 }
 
 struct OperationEnvelope {
@@ -307,7 +337,17 @@ impl Component for OperationalComponent {
                         let _ = envelope.reply.send(Err(OperationError::AdmissionClosed));
                     }
                     drop(receiver);
-                    while tasks.join_next().await.is_some() {}
+                    let shutdown_grace =
+                        Duration::from_millis(self.adapter.policy.shutdown_grace_millis);
+                    if tokio::time::timeout(shutdown_grace, async {
+                        while tasks.join_next().await.is_some() {}
+                    })
+                    .await
+                    .is_err()
+                    {
+                        tasks.abort_all();
+                        while tasks.join_next().await.is_some() {}
+                    }
                     return Ok(());
                 },
                 Some(_) = tasks.join_next(), if !tasks.is_empty() => {},
@@ -365,7 +405,7 @@ impl OperationalAdapter {
             kind,
             permits: Semaphore::new(policy.max_in_flight),
             completed: Mutex::new(LruCache::new(entries)),
-            in_flight: Mutex::new(BTreeMap::new()),
+            in_flight: StdMutex::new(BTreeMap::new()),
             consumed_permits: Mutex::new(BTreeSet::new()),
             permit_keys,
             policy,
@@ -405,7 +445,10 @@ impl OperationalAdapter {
             };
         }
         let (mut result_rx, result_tx, _permit) = {
-            let mut in_flight = self.in_flight.lock().await;
+            let mut in_flight = self
+                .in_flight
+                .lock()
+                .expect("operation in-flight state poisoned");
             match in_flight.get(&request.idempotency_key) {
                 Some(entry) if entry.fingerprint == fingerprint => {
                     (entry.result.clone(), None, None)
@@ -429,15 +472,15 @@ impl OperationalAdapter {
             }
         };
         let owner = result_tx.is_some();
+        let mut owner_guard =
+            owner.then(|| InFlightOwnerGuard::new(self, request.idempotency_key.clone()));
         if owner && self.policy.authority == AuthorityMode::Governed {
             if let Some(permit) = &request.permit {
                 let mut consumed = self.consumed_permits.lock().await;
                 if consumed.len() >= self.policy.idempotency_entries {
-                    self.in_flight.lock().await.remove(&request.idempotency_key);
                     return notify_in_flight_owner_error(result_tx, OperationError::Saturated);
                 }
                 if !consumed.insert(permit.permit_id.clone()) {
-                    self.in_flight.lock().await.remove(&request.idempotency_key);
                     return notify_in_flight_owner_error(
                         result_tx,
                         OperationError::MissingAuthority,
@@ -478,7 +521,13 @@ impl OperationalAdapter {
                     },
                 );
             }
-            self.in_flight.lock().await.remove(&request.idempotency_key);
+            self.in_flight
+                .lock()
+                .expect("operation in-flight state poisoned")
+                .remove(&request.idempotency_key);
+            if let Some(guard) = owner_guard.as_mut() {
+                guard.disarm();
+            }
         }
         result
     }
@@ -610,7 +659,7 @@ impl OperationalAdapter {
                 readiness_required: true,
                 bounded_shutdown_millis: self
                     .policy
-                    .timeout_millis
+                    .shutdown_grace_millis
                     .saturating_mul(u64::from(self.policy.max_attempts)),
                 restart_safe: true,
                 idempotent_start: true,

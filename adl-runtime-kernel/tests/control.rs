@@ -125,7 +125,7 @@ fn test_ingress_with(
             AdapterPolicy {
                 capacity,
                 max_in_flight: capacity,
-                timeout_millis: 1_000,
+                shutdown_grace_millis: 1_000,
                 max_attempts: 1,
                 idempotency_entries: 16,
                 authority: AuthorityMode::Internal,

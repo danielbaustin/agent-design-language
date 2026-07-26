@@ -41,7 +41,8 @@ fn packaging_preserves_one_guardian_neutral_child_contract() {
     assert!(horust.contains("signal = \"TERM\""));
     assert!(horust.contains(" serve "));
     assert!(horust.contains("ADL_RUNTIME_V3_LOCAL_STATE_DIR"));
-    assert!(systemd.contains("ADL_RUNTIME_V3_LOCAL_STATE_DIR=/var/lib/adl/runtime-v3/local-state"));
+    assert!(systemd.contains("ADL_RUNTIME_V3_LOCAL_STATE_DIR=%S/adl/runtime-v3/local-state"));
+    assert!(systemd.contains("StateDirectory=adl/runtime-v3"));
     assert!(rustysd.contains("ADL_RUNTIME_V3_LOCAL_STATE_DIR=/var/lib/adl/runtime-v3/local-state"));
     assert!(horust_bakeoff.contains(" fatal-once "));
     let matrix: serde_json::Value = serde_json::from_str(include_str!(

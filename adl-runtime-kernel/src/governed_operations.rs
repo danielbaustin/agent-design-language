@@ -499,7 +499,7 @@ async fn start_services(config: &RuntimeConfig) -> Result<LiveServices, String> 
         } else {
             16
         },
-        timeout_millis: 2_000,
+        shutdown_grace_millis: 2_000,
         max_attempts: 1,
         idempotency_entries: 64,
         authority: AuthorityMode::Internal,

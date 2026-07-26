@@ -2,10 +2,10 @@ use std::{collections::BTreeMap, path::Path, sync::Arc, time::Duration};
 
 use adl_runtime_kernel::{
     bootstrap_reasoning_services, build_live_assembly, build_production_operation_executors,
-    AdapterKind, AdapterPolicy, AuthorityMode, DomainWork, ExecutorError, FailureClass,
-    InProcessOperationExecutor, LiveBindings, OperationError, OperationExecutor, OperationRequest,
-    OperationalAdapter, RuntimeRecorder, TimeQualificationBounds, TimeSample, TimeSampleError,
-    TimeSampleSource, DOMAIN_WORK_SCHEMA,
+    AdapterKind, AdapterPolicy, AuthorityMode, ComponentRegistry, DomainWork, ExecutorError,
+    FailureClass, InProcessOperationExecutor, LiveBindings, OperationError, OperationExecutor,
+    OperationRequest, OperationalAdapter, OperationalFactory, RuntimeRecorder,
+    TimeQualificationBounds, TimeSample, TimeSampleError, TimeSampleSource, DOMAIN_WORK_SCHEMA,
 };
 use async_trait::async_trait;
 use ed25519_dalek::SigningKey;
@@ -16,6 +16,8 @@ use tokio_util::sync::CancellationToken;
 struct FixedTime;
 
 struct PendingExecutor;
+
+struct NonCooperativeExecutor;
 
 #[async_trait]
 impl TimeSampleSource for FixedTime {
@@ -32,6 +34,21 @@ impl TimeSampleSource for FixedTime {
 #[async_trait]
 impl OperationExecutor for PendingExecutor {
     async fn execute(&self, _request: &OperationRequest) -> Result<Vec<u8>, ExecutorError> {
+        std::future::pending().await
+    }
+}
+
+#[async_trait]
+impl OperationExecutor for NonCooperativeExecutor {
+    async fn execute(&self, _request: &OperationRequest) -> Result<Vec<u8>, ExecutorError> {
+        std::future::pending().await
+    }
+
+    async fn execute_with_cancellation(
+        &self,
+        _request: &OperationRequest,
+        _cancellation: &CancellationToken,
+    ) -> Result<Vec<u8>, ExecutorError> {
         std::future::pending().await
     }
 }
@@ -158,7 +175,7 @@ fn internal_policy() -> AdapterPolicy {
     AdapterPolicy {
         capacity: 8,
         max_in_flight: 1,
-        timeout_millis: 1_000,
+        shutdown_grace_millis: 1_000,
         max_attempts: 1,
         idempotency_entries: 8,
         authority: AuthorityMode::Internal,
@@ -174,6 +191,16 @@ fn write_lock_owner(lock: &Path, writer_id: &str, pid: u32) {
         lock.join("owner.json"),
         format!(
             r#"{{"schema":"adl.runtime.local_writer_lock.v1","writer_id":"{writer_id}","pid":{pid}}}"#
+        ),
+    )
+    .unwrap();
+}
+
+fn write_foreign_lock_owner(lock: &Path, writer_id: &str, pid: u32) {
+    std::fs::write(
+        lock.join("owner.json"),
+        format!(
+            r#"{{"schema":"foreign.runtime.writer_lock.v1","writer_id":"{writer_id}","pid":{pid}}}"#
         ),
     )
     .unwrap();
@@ -397,6 +424,22 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
     drop(recovered);
     assert!(!stale_lock.exists());
 
+    let active_foreign_root = root.path().join("active-foreign-writer");
+    let active_foreign_lock = active_foreign_root.join("writer.lock");
+    std::fs::create_dir_all(&active_foreign_lock).unwrap();
+    write_lock_owner(&active_foreign_lock, "active-foreign", std::process::id());
+    assert!(try_lifelog(&active_foreign_root).is_err());
+    assert!(active_foreign_lock.join("owner.json").exists());
+    std::fs::remove_dir_all(active_foreign_lock).unwrap();
+
+    let malformed_foreign_root = root.path().join("malformed-foreign-writer");
+    let malformed_foreign_lock = malformed_foreign_root.join("writer.lock");
+    std::fs::create_dir_all(&malformed_foreign_lock).unwrap();
+    write_foreign_lock_owner(&malformed_foreign_lock, "foreign", u32::MAX);
+    assert!(try_lifelog(&malformed_foreign_root).is_err());
+    assert!(malformed_foreign_lock.join("owner.json").exists());
+    std::fs::remove_dir_all(malformed_foreign_lock).unwrap();
+
     let partial_root = root.path().join("partial-writer");
     let partial_lock = partial_root.join("writer.lock");
     std::fs::create_dir_all(&partial_lock).unwrap();
@@ -483,7 +526,7 @@ async fn operation_policy_timeout_does_not_synthesize_adapter_failure() {
             AdapterPolicy {
                 capacity: 1,
                 max_in_flight: 1,
-                timeout_millis: 10,
+                shutdown_grace_millis: 10,
                 max_attempts: 1,
                 idempotency_entries: 1,
                 authority: AuthorityMode::Internal,
@@ -515,6 +558,94 @@ async fn operation_policy_timeout_does_not_synthesize_adapter_failure() {
         running.await.unwrap().unwrap_err(),
         OperationError::AdmissionClosed
     );
+}
+
+#[tokio::test]
+async fn aborted_operation_owner_releases_in_flight_idempotency_key() {
+    let adapter = Arc::new(
+        OperationalAdapter::new(
+            AdapterKind::Agent,
+            AdapterPolicy {
+                capacity: 1,
+                max_in_flight: 1,
+                shutdown_grace_millis: 10,
+                max_attempts: 1,
+                idempotency_entries: 1,
+                authority: AuthorityMode::Internal,
+            },
+            Arc::new(PendingExecutor),
+        )
+        .unwrap(),
+    );
+    let request = agent_sleep_request(1, "abort-owner-retry");
+    let owner = {
+        let adapter = adapter.clone();
+        let request = request.clone();
+        tokio::spawn(async move { adapter.invoke(request).await })
+    };
+    tokio::time::sleep(Duration::from_millis(20)).await;
+    owner.abort();
+    assert!(owner.await.unwrap_err().is_cancelled());
+
+    let retry_token = CancellationToken::new();
+    let retry = {
+        let adapter = adapter.clone();
+        let request = request.clone();
+        let retry_token = retry_token.clone();
+        tokio::spawn(async move { adapter.invoke_with_cancellation(request, retry_token).await })
+    };
+    tokio::time::sleep(Duration::from_millis(20)).await;
+    assert!(
+        !retry.is_finished(),
+        "aborted owner must not leave a poisoned in-flight entry"
+    );
+    retry_token.cancel();
+    assert_eq!(
+        retry.await.unwrap().unwrap_err(),
+        OperationError::AdmissionClosed
+    );
+}
+
+#[tokio::test]
+async fn shutdown_grace_aborts_non_cooperative_operation_executor() {
+    let adapter = Arc::new(
+        OperationalAdapter::new(
+            AdapterKind::Agent,
+            AdapterPolicy {
+                capacity: 1,
+                max_in_flight: 1,
+                shutdown_grace_millis: 10,
+                max_attempts: 1,
+                idempotency_entries: 1,
+                authority: AuthorityMode::Internal,
+            },
+            Arc::new(NonCooperativeExecutor),
+        )
+        .unwrap(),
+    );
+    let factory = OperationalFactory::new(adapter, Vec::new());
+    let mut registry = ComponentRegistry::new();
+    registry.register(factory.clone());
+    let handle =
+        adl_runtime_kernel::Kernel::new(registry.validate().unwrap(), RuntimeRecorder::new(16))
+            .start()
+            .await
+            .unwrap();
+    let submitted = tokio::spawn(async move {
+        factory
+            .submit(agent_sleep_request(1, "shutdown-aborts-hung-executor"))
+            .await
+    });
+    tokio::time::sleep(Duration::from_millis(20)).await;
+    let shutdown = tokio::time::timeout(
+        Duration::from_secs(1),
+        handle.shutdown(Duration::from_secs(1)),
+    )
+    .await
+    .expect("shutdown must not wait forever for a hung operation executor")
+    .unwrap();
+    assert_eq!(shutdown, adl_runtime_kernel::KernelExit::Clean);
+    assert!(submitted.await.unwrap().is_err());
 }
 
 #[tokio::test]
