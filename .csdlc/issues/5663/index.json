@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9ae48371048e17e2df859779e157e43a5d9e4ada902e49a33a66eddacd56daf5",
   "phase": "implemented",
-  "generation": 25,
-  "digest": "4b7b802b5315632a465be1e175130377bd368dd5c6cf27a7b16884983ce110d2",
+  "generation": 28,
+  "digest": "cbdd47957efd68d222603b91b615ac7a5d0ad3086e159b1d2e263f65d1cbc7d1",
   "claim": {
     "id": "claim-5663-runtime-v3-durable-local-adapters",
     "owner": "codex:issue-5663-runtime-adapters",
-    "generation": 25,
+    "generation": 28,
     "acquired_unix_seconds": 1784998096,
     "expires_unix_seconds": 1785602896,
     "heartbeat_unix_seconds": 1784998096,
@@ -45,34 +45,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "c48844552f2bada8529ce482ffccac40ee19d6c70f97828343264c16c81f5e06",
+      "values_digest": "650d90ac5d2a0a4deb11fd84866da0af4bab6b5e1177d6c56e3297aa2a7ed770",
       "rendered_digest": "dd9a80fb70cba5ab51ce7219aa7d6bcb896f05905288c9ed337ca78b0433956c",
       "ast_digest": "236c4929b368dcdbd83131534e0477c144bc2586d06f79a6b924f7e97453893b"
     },
     "stp": {
-      "values_digest": "fb0db4d053b206def3b07601f6aa34d25a867b1028f801997ab32d5c939fc9bf",
+      "values_digest": "cbe7df64e0a7df5716f76822575572e35105679fbed652e3d0e1f81361905e23",
       "rendered_digest": "860089b661813be46a57d17782652a3753affcb7867a42b867720d39bd4b8148",
       "ast_digest": "716150200b112efd93bfbc429f7eb7a1842fa1f1cec75462ceec9f4756213e4f"
     },
     "spp": {
-      "values_digest": "f9aea68d2dd9ae0967bb7e86558f3078947cca93142e7d427b750654188ec791",
+      "values_digest": "ed1e208de6e17bc467915f883879585332039ef55c77554077fb5b9b53736033",
       "rendered_digest": "f47b64dc50a64f2b29879548eb057bceafeec18bf087abed5fecf43f123b6ff5",
       "ast_digest": "59926c4cc452fe34c471dd023ed178f785f11ff49ca307427c1487da48d4d0bb"
     },
     "vpp": {
-      "values_digest": "aa6b5fa4c294d9f10eab32458b8af482df69976ede4fe1e3f8232421ca42d8a2",
-      "rendered_digest": "3be9606cf736c477c26989231934ad51222f73eebf2dcf3df513d7501ca6ff4c",
-      "ast_digest": "8f91133ccf389cba3ec1476bb65a2ace82d32e0562b3df74fa80f3a4705d88f4"
+      "values_digest": "b0d21388ff4f0c5fe185e96566adc3be086b472afe4bcbd04fd39f5cc88f4ba5",
+      "rendered_digest": "cc38ea8835d12b7730b8f7abcbb9e9f40a2d4c1a02a8a4e296ec3c4a603c6b2a",
+      "ast_digest": "aaff7c9fbea0b41ed9c506642bc634f7d6a3837aca13df8791b66f5e08f1c4d2"
     },
     "srp": {
-      "values_digest": "bc4a986250351037a27c50c216a3f05804d56cad832d69acd9ba3779b3072410",
+      "values_digest": "0491dcbc5a86aa8ae9958039e446f5f9a393aef599ebaa1573033d2ffd820721",
       "rendered_digest": "5357d33319fc16981236d6b0212a61392fe1101fa6001dc9484ff960d147c145",
       "ast_digest": "825c3fb47a623bb1b2269f2f01d240dbf7f64fdf05860d09ee49fd275f32e747"
     },
     "sor": {
-      "values_digest": "5383bd79e5add8fc1e6c54e26af580d8309b10197ccf4608e8d0573ce64f0c70",
-      "rendered_digest": "5c04d2742d04fc2af6049804d88f7ab9514e71238e4f976067d4d22eba53c9fa",
-      "ast_digest": "aa29dc026eebe0fa2a47dd7379a012f0894cd4d4c05fb0d382f6748e8641e2f5"
+      "values_digest": "1cca042ce1b6b370a36d49519c3064494383e15b54ed51e0c833749d7050f5c5",
+      "rendered_digest": "427b50906ebf5453a1aecf58063b914951f1166b082be5459ee129f90c4d3b64",
+      "ast_digest": "92d354f978c90582ea6c3b9ff31602372038b60c3dd1b152c128bd563d18b99c"
     }
   },
   "transitions": [
@@ -315,6 +315,27 @@
       "actor": "codex:issue-5663-runtime-adapters",
       "reason": "Record diff whitespace hygiene after regenerating proof logs.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove tracked diff whitespace hygiene after source, test, typed evidence, and retained proof updates.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log\"}}"
+    },
+    {
+      "sequence": 29,
+      "generation": 26,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Replace validation lanes after fixing the consolidated exact-review blockers for cancellation idempotency retry, writer-lock ownership/stale recovery, and production state configuration errors.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-local-adapters-assembly\",\"proof_role\":\"Prove real Agent execution, scheduler retirement/reuse, checkpoint byte persistence/restore with integrity and identity checks, live cancellation retry semantics, safe configured storage locking with ownership/stale recovery, production assembly wiring, ingress dispatch, and fail-closed external transports.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":840,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"assembly\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-governed\",\"proof_role\":\"Prove governed Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, provider, and shutdown behavior remains green after local adapter correction.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"governed_operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-clippy\",\"proof_role\":\"Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate.\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-loc\",\"proof_role\":\"Retain physical LoC measurement for touched source and test paths; before 3796, after 3737, net -59.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--numstat\",\"origin/main\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/src/operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-diff-check\",\"proof_role\":\"Prove tracked diff whitespace hygiene after regenerating evidence logs.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 30,
+      "generation": 27,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record implementation of the consolidated exact-review blocker fixes before rerouting exact review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Resolved the consolidated exact-review blockers on top of the five real adapter fixes. Cancellation results are no longer cached as completed idempotent work, so the same cancelled request key can be retried successfully. writer.lock is now an owner-recorded directory lock with pid-based stale recovery and ownership-checked release. Production local executor construction now returns configuration errors to callers instead of panicking. Current touched source/test physical LoC is before 3796, after 3737, net -59.\",\"changes\":[\"Skipped completed-idempotency caching for AdmissionClosed cancellation results and added same-idempotency retry proof.\",\"Replaced the plain writer.lock file with an owner.json directory lock, live-pid stale detection, atomic stale-lock rename recovery, and ownership-checked drop cleanup.\",\"Changed build_production_operation_executors to return io::Result and updated binary/governed/test callers to handle invalid configured state roots without panic.\",\"Trimmed duplicate assembly tests while preserving real end-to-end proofs for the five required behaviors and review blockers.\"],\"artifacts\":[\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/operations.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\".csdlc/prepared/issues/5663/validate-real-fixes.json\",\".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-governed.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log\"]}"
+    },
+    {
+      "sequence": 31,
+      "generation": 28,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record typed PVF local_pass after consolidated exact-review blocker fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate\",\"--root\",\".\",\"--request\",\".csdlc/prepared/issues/5663/validate-real-fixes.json\"],\"purpose\":\"Run the typed PVF manifest covering real adapter assembly behavior, governed regression, strict Clippy, net-negative LoC, and diff hygiene after the consolidated exact-review blocker fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663\"}}"
     }
   ]
 }

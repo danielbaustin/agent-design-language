@@ -12,7 +12,7 @@ Status: pre_phase
 
 ## Summary
 
-Fixed all five in-scope PR #5669 exact-review findings with real local Runtime v3 behavior. Agent now executes bounded typed work; Scheduler retires completed jobs and remains reusable; CheckpointStore persists and restores state bytes with principal/integrity checks; cancellation propagates through CancellationToken state; production local storage requires an explicit absolute state root with a single-writer lock. Current touched source/test physical LoC is before 3796, after 3728, net -68. Publication and merge remain held for exact external Opus 5 review.
+Resolved the consolidated exact-review blockers on top of the five real adapter fixes. Cancellation results are no longer cached as completed idempotent work, so the same cancelled request key can be retried successfully. writer.lock is now an owner-recorded directory lock with pid-based stale recovery and ownership-checked release. Production local executor construction now returns configuration errors to callers instead of panicking. Current touched source/test physical LoC is before 3796, after 3737, net -59.
 
 ## Artifacts
 
@@ -36,6 +36,17 @@ Fixed all five in-scope PR #5669 exact-review findings with real local Runtime v
 - adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
 - adl-runtime-kernel/src/governed_operations.rs
 - adl-runtime-kernel/tests/assembly.rs
+- .csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log
+- .csdlc/evidence/5663/runtime-v3-local-adapters-governed.log
+- .csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log
+- .csdlc/evidence/5663/runtime-v3-local-adapters-loc.log
+- .csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log
+- adl-runtime-kernel/src/assembly.rs
+- adl-runtime-kernel/src/operations.rs
+- adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
+- adl-runtime-kernel/src/governed_operations.rs
+- adl-runtime-kernel/tests/assembly.rs
+- .csdlc/prepared/issues/5663/validate-real-fixes.json
 - .csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log
 - .csdlc/evidence/5663/runtime-v3-local-adapters-governed.log
 - .csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log
@@ -65,6 +76,10 @@ Fixed all five in-scope PR #5669 exact-review findings with real local Runtime v
 - Replaced payload-text cancellation triggers with CancellationToken propagation through OperationalAdapter and in-process Agent execution.
 - Removed cwd/temp fallback state creation from production local adapters; callers must provide an explicit absolute state root guarded by writer.lock unique-writer behavior.
 - Deleted the superseded fixture-only operations test target and folded real adapter proof into assembly/governed end-to-end tests.
+- Skipped completed-idempotency caching for AdmissionClosed cancellation results and added same-idempotency retry proof.
+- Replaced the plain writer.lock file with an owner.json directory lock, live-pid stale detection, atomic stale-lock rename recovery, and ownership-checked drop cleanup.
+- Changed build_production_operation_executors to return io::Result and updated binary/governed/test callers to handle invalid configured state roots without panic.
+- Trimmed duplicate assembly tests while preserving real end-to-end proofs for the five required behaviors and review blockers.
 
 ## Validation
 
@@ -330,6 +345,18 @@ Fixed all five in-scope PR #5669 exact-review findings with real local Runtime v
     "purpose": "Prove tracked diff whitespace hygiene after source, test, typed evidence, and retained proof updates.",
     "outcome": "passed",
     "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log"
+  },
+  {
+    "command": [
+      "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate",
+      "--root",
+      ".",
+      "--request",
+      ".csdlc/prepared/issues/5663/validate-real-fixes.json"
+    ],
+    "purpose": "Run the typed PVF manifest covering real adapter assembly behavior, governed regression, strict Clippy, net-negative LoC, and diff hygiene after the consolidated exact-review blocker fixes.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5663"
   }
 ]
 

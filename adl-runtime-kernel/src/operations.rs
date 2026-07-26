@@ -435,13 +435,15 @@ impl OperationalAdapter {
             .await
             .clone();
         if owner {
-            self.completed.lock().await.put(
-                request.idempotency_key.clone(),
-                CompletedOperation {
-                    fingerprint,
-                    result: result.clone(),
-                },
-            );
+            if !matches!(result, Err(OperationError::AdmissionClosed)) {
+                self.completed.lock().await.put(
+                    request.idempotency_key.clone(),
+                    CompletedOperation {
+                        fingerprint,
+                        result: result.clone(),
+                    },
+                );
+            }
             self.in_flight.lock().await.remove(&request.idempotency_key);
         }
         result

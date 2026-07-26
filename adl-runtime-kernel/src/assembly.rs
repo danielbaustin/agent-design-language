@@ -1,8 +1,8 @@
 use std::{
     collections::{BTreeMap, BTreeSet, VecDeque},
-    fs::{self, File},
-    io::Write,
-    path::PathBuf,
+    fs,
+    io::{self, Write},
+    path::{Path, PathBuf},
     sync::{
         atomic::{AtomicU64, Ordering},
         Arc, Mutex,
@@ -11,6 +11,7 @@ use std::{
 };
 
 use semver::{Version, VersionReq};
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tokio_util::sync::CancellationToken;
 
@@ -470,7 +471,15 @@ struct LocalRuntimeState {
     scheduled: Mutex<VecDeque<String>>,
     state_dir: PathBuf,
     writer_id: String,
-    _writer_lock: File,
+    writer_pid: u32,
+    writer_lock_path: PathBuf,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct WriterLockOwner {
+    schema: String,
+    writer_id: String,
+    pid: u32,
 }
 
 impl LocalRuntimeState {
@@ -483,20 +492,17 @@ impl LocalRuntimeState {
         }
         fs::create_dir_all(&state_dir)?;
         let writer_id = uuid::Uuid::new_v4().to_string();
+        let writer_pid = std::process::id();
         let lock_path = state_dir.join("writer.lock");
-        let mut writer_lock = fs::OpenOptions::new()
-            .write(true)
-            .create_new(true)
-            .open(&lock_path)?;
-        writer_lock.write_all(writer_id.as_bytes())?;
-        writer_lock.sync_all()?;
+        acquire_writer_lock(&lock_path, &writer_id, writer_pid)?;
         Ok(Self {
             sequence: AtomicU64::new(0),
             admitted: Mutex::new(BTreeSet::new()),
             scheduled: Mutex::new(VecDeque::new()),
             state_dir,
             writer_id,
-            _writer_lock: writer_lock,
+            writer_pid,
+            writer_lock_path: lock_path,
         })
     }
 
@@ -507,18 +513,106 @@ impl LocalRuntimeState {
 
 impl Drop for LocalRuntimeState {
     fn drop(&mut self) {
-        let _ = fs::remove_file(self.state_dir.join("writer.lock"));
+        let _ = release_writer_lock(&self.writer_lock_path, &self.writer_id, self.writer_pid);
     }
+}
+
+fn acquire_writer_lock(lock_path: &Path, writer_id: &str, pid: u32) -> io::Result<()> {
+    loop {
+        match fs::create_dir(lock_path) {
+            Ok(()) => {
+                let owner = WriterLockOwner {
+                    schema: "adl.runtime.local_writer_lock.v1".to_owned(),
+                    writer_id: writer_id.to_owned(),
+                    pid,
+                };
+                let bytes = serde_json::to_vec(&owner).map_err(io::Error::other)?;
+                let owner_path = lock_path.join("owner.json");
+                let mut file = fs::OpenOptions::new()
+                    .write(true)
+                    .create_new(true)
+                    .open(owner_path)?;
+                file.write_all(&bytes)?;
+                file.sync_all()?;
+                return Ok(());
+            }
+            Err(error) if error.kind() == io::ErrorKind::AlreadyExists => {
+                if !recover_stale_writer_lock(lock_path)? {
+                    return Err(io::Error::new(
+                        io::ErrorKind::AlreadyExists,
+                        "state root is already locked by a live writer",
+                    ));
+                }
+            }
+            Err(error) => return Err(error),
+        }
+    }
+}
+
+fn recover_stale_writer_lock(lock_path: &Path) -> io::Result<bool> {
+    let Some(owner) = read_writer_lock_owner(lock_path)? else {
+        return Ok(false);
+    };
+    if writer_pid_active(owner.pid) {
+        return Ok(false);
+    }
+    let stale_path =
+        lock_path.with_file_name(format!("writer.lock.stale.{}", uuid::Uuid::new_v4()));
+    match fs::rename(lock_path, &stale_path) {
+        Ok(()) => {
+            let _ = fs::remove_dir_all(stale_path);
+            Ok(true)
+        }
+        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(true),
+        Err(error) => Err(error),
+    }
+}
+
+fn release_writer_lock(lock_path: &Path, writer_id: &str, pid: u32) -> io::Result<()> {
+    let Some(owner) = read_writer_lock_owner(lock_path)? else {
+        return Ok(());
+    };
+    if owner.writer_id == writer_id && owner.pid == pid {
+        fs::remove_dir_all(lock_path)?;
+    }
+    Ok(())
+}
+
+fn read_writer_lock_owner(lock_path: &Path) -> io::Result<Option<WriterLockOwner>> {
+    let owner_path = lock_path.join("owner.json");
+    let bytes = match fs::read(owner_path) {
+        Ok(bytes) => bytes,
+        Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
+        Err(error) => return Err(error),
+    };
+    serde_json::from_slice(&bytes)
+        .map(Some)
+        .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))
+}
+
+#[cfg(unix)]
+fn writer_pid_active(pid: u32) -> bool {
+    let pid = match i32::try_from(pid) {
+        Ok(pid) if pid > 0 => pid,
+        _ => return false,
+    };
+    let result = unsafe { libc::kill(pid, 0) };
+    result == 0
+        || io::Error::last_os_error()
+            .raw_os_error()
+            .is_some_and(|code| code == libc::EPERM)
+}
+
+#[cfg(not(unix))]
+fn writer_pid_active(pid: u32) -> bool {
+    pid == std::process::id()
 }
 
 pub fn build_production_operation_executors(
     state_dir: impl Into<PathBuf>,
-) -> BTreeMap<AdapterKind, Arc<dyn OperationExecutor>> {
-    let state = Arc::new(
-        LocalRuntimeState::new_in(state_dir.into())
-            .expect("local runtime state root must be configured and writable"),
-    );
-    REQUIRED_OPERATIONAL_ADAPTERS
+) -> io::Result<BTreeMap<AdapterKind, Arc<dyn OperationExecutor>>> {
+    let state = Arc::new(LocalRuntimeState::new_in(state_dir.into())?);
+    Ok(REQUIRED_OPERATIONAL_ADAPTERS
         .into_iter()
         .map(|kind| {
             (
@@ -527,7 +621,7 @@ pub fn build_production_operation_executors(
                     as Arc<dyn OperationExecutor>,
             )
         })
-        .collect()
+        .collect())
 }
 
 #[async_trait::async_trait]

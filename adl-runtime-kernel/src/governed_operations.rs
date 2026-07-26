@@ -528,7 +528,8 @@ async fn start_services(config: &RuntimeConfig) -> Result<LiveServices, String> 
         .map_err(|_| "scheduler_configuration".to_owned())?,
     );
     let mut executors =
-        build_production_operation_executors(config.state_dir.join("local-adapters"));
+        build_production_operation_executors(config.state_dir.join("local-adapters"))
+            .map_err(|error| format!("local_adapter_state: {error}"))?;
     let agent_executor = Arc::new(GovernedExecutor {
         permit_key,
         scheduler,
