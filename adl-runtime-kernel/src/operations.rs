@@ -12,6 +12,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tokio::sync::{oneshot, OnceCell};
 use tokio::sync::{Mutex, RwLock, Semaphore};
+use tokio_util::sync::CancellationToken;
 
 use crate::{
     channel, BoundedReceiver, BoundedSender, Capability, CapabilityRequirement, ChannelFullPolicy,
@@ -176,6 +177,20 @@ pub enum OperationError {
 #[async_trait]
 pub trait OperationExecutor: Send + Sync + 'static {
     async fn execute(&self, request: &OperationRequest) -> Result<Vec<u8>, ExecutorError>;
+
+    async fn execute_with_cancellation(
+        &self,
+        request: &OperationRequest,
+        cancellation: &CancellationToken,
+    ) -> Result<Vec<u8>, ExecutorError> {
+        tokio::select! {
+            _ = cancellation.cancelled() => Err(ExecutorError {
+                class: FailureClass::Fatal,
+                message: "operation cancelled".to_owned(),
+            }),
+            result = self.execute(request) => result,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Error, Eq, PartialEq)]
@@ -288,8 +303,11 @@ impl Component for OperationalComponent {
                 envelope = async { self.receiver.lock().await.recv().await }, if tasks.len() < max_in_flight => {
                     let Some(envelope) = envelope else { return Ok(()); };
                     let adapter = self.adapter.clone();
+                    let cancellation = context.cancellation.child_token();
                     tasks.spawn(async move {
-                        let result = adapter.invoke(envelope.request).await;
+                        let result = adapter
+                            .invoke_with_cancellation(envelope.request, cancellation)
+                            .await;
                         let _ = envelope.reply.send(result);
                     });
                 }
@@ -348,7 +366,19 @@ impl OperationalAdapter {
         &self,
         request: OperationRequest,
     ) -> Result<OperationResult, OperationError> {
+        self.invoke_with_cancellation(request, CancellationToken::new())
+            .await
+    }
+
+    pub async fn invoke_with_cancellation(
+        &self,
+        request: OperationRequest,
+        cancellation: CancellationToken,
+    ) -> Result<OperationResult, OperationError> {
         self.validate_request(&request)?;
+        if cancellation.is_cancelled() {
+            return Err(OperationError::AdmissionClosed);
+        }
         let fingerprint = request_fingerprint(&request);
         if let Some(completed) = self
             .completed
@@ -401,7 +431,7 @@ impl OperationalAdapter {
             }
         }
         let result = cell
-            .get_or_init(|| self.execute_with_policy(&request))
+            .get_or_init(|| self.execute_with_policy(&request, &cancellation))
             .await
             .clone();
         if owner {
@@ -420,6 +450,7 @@ impl OperationalAdapter {
     async fn execute_with_policy(
         &self,
         request: &OperationRequest,
+        cancellation: &CancellationToken,
     ) -> Result<OperationResult, OperationError> {
         let executor: Arc<dyn OperationExecutor> =
             if self.kind == AdapterKind::Agent && parity_b_payload(&request.payload) {
@@ -438,7 +469,13 @@ impl OperationalAdapter {
             };
         let timeout = Duration::from_millis(self.policy.timeout_millis);
         for attempt in 1..=self.policy.max_attempts {
-            let outcome = tokio::time::timeout(timeout, executor.execute(request)).await;
+            let outcome = tokio::select! {
+                _ = cancellation.cancelled() => return Err(OperationError::AdmissionClosed),
+                outcome = tokio::time::timeout(
+                    timeout,
+                    executor.execute_with_cancellation(request, cancellation),
+                ) => outcome,
+            };
             match outcome {
                 Ok(Ok(payload)) => {
                     let result = OperationResult {
@@ -449,6 +486,9 @@ impl OperationalAdapter {
                         payload,
                     };
                     return Ok(result);
+                }
+                Ok(Err(_)) if cancellation.is_cancelled() => {
+                    return Err(OperationError::AdmissionClosed);
                 }
                 Err(_) if attempt == self.policy.max_attempts => {
                     return Err(OperationError::Exhausted {

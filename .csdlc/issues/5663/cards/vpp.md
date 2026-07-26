@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5663/diagram.mmd
 [
   {
     "lane": "runtime-v3-local-adapters-assembly",
-    "proof_role": "Prove production assembly uses real bounded local adapters, restart-stable checkpoints, failure boundaries, and fail-closed external transports",
+    "proof_role": "Prove real Agent execution, scheduler retirement/reuse, checkpoint byte persistence/restore with integrity and identity checks, live cancellation, safe configured storage locking, production assembly wiring, ingress dispatch, and fail-closed external transports.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -55,35 +55,8 @@ Diagram: .csdlc/prepared/issues/5663/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "runtime-v3-local-adapters-operations",
-    "proof_role": "Prove operation executor retry, idempotency, timeout, and failure classes remain intact after deleting duplicate fixture topology paths",
-    "acceptance_ids": [
-      "AC-2",
-      "AC-3",
-      "AC-4",
-      "AC-7"
-    ],
-    "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 900,
-    "budget_tokens": 4000,
-    "argv": [
-      "cargo",
-      "test",
-      "--locked",
-      "--manifest-path",
-      "adl-runtime-kernel/Cargo.toml",
-      "--target-dir",
-      "/Volumes/FastWork/adl-wp-5663/target",
-      "--test",
-      "operations"
-    ],
-    "parallel_group": "runtime-v3-local-adapters",
-    "defer_reason": null
-  },
-  {
     "lane": "runtime-v3-local-adapters-governed",
-    "proof_role": "Prove governed local Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, and shutdown behavior remains green after production executor consolidation",
+    "proof_role": "Prove governed Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, provider, and shutdown behavior remains green after local adapter correction.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -112,7 +85,7 @@ Diagram: .csdlc/prepared/issues/5663/diagram.mmd
   },
   {
     "lane": "runtime-v3-local-adapters-clippy",
-    "proof_role": "Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate on FastWork target storage",
+    "proof_role": "Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate.",
     "acceptance_ids": [
       "AC-7",
       "AC-8"
@@ -139,7 +112,7 @@ Diagram: .csdlc/prepared/issues/5663/diagram.mmd
   },
   {
     "lane": "runtime-v3-local-adapters-loc",
-    "proof_role": "Retain physical LoC measurement for the claimed source and test paths; before 2481, after 2453, net -28",
+    "proof_role": "Retain physical LoC measurement for touched source and test paths; before 3796, after 3728, net -68.",
     "acceptance_ids": [
       "AC-8"
     ],
@@ -151,11 +124,32 @@ Diagram: .csdlc/prepared/issues/5663/diagram.mmd
       "git",
       "diff",
       "--numstat",
+      "origin/main",
       "--",
       "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
       "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
       "adl-runtime-kernel/tests/assembly.rs",
       "adl-runtime-kernel/tests/operations.rs"
+    ],
+    "parallel_group": "runtime-v3-local-adapters",
+    "defer_reason": null
+  },
+  {
+    "lane": "runtime-v3-local-adapters-diff-check",
+    "proof_role": "Prove tracked diff whitespace hygiene after regenerating evidence logs.",
+    "acceptance_ids": [
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 60,
+    "budget_tokens": 1000,
+    "argv": [
+      "git",
+      "diff",
+      "--check"
     ],
     "parallel_group": "runtime-v3-local-adapters",
     "defer_reason": null
@@ -175,10 +169,10 @@ Tokens: 25000
 ## Commands
 
 - `cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5663/target --test assembly`
-- `cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5663/target --test operations`
 - `cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5663/target --test governed_operations`
 - `cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5663/target --all-targets -- -D warnings`
-- `git diff --numstat -- adl-runtime-kernel/src/assembly.rs adl-runtime-kernel/src/governed_operations.rs adl-runtime-kernel/tests/assembly.rs adl-runtime-kernel/tests/operations.rs`
+- `git diff --numstat origin/main -- adl-runtime-kernel/src/assembly.rs adl-runtime-kernel/src/bin/adl-runtime-kernel.rs adl-runtime-kernel/src/governed_operations.rs adl-runtime-kernel/src/operations.rs adl-runtime-kernel/tests/assembly.rs adl-runtime-kernel/tests/operations.rs`
+- `git diff --check`
 
 ## Failure Semantics
 

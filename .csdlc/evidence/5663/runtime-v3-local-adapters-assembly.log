@@ -1,12 +1,12 @@
 
 running 5 tests
-test live_assembly_has_the_frozen_service_inventory ... ok
-test local_adapters_prove_restart_and_failure_boundaries ... ok
 test local_production_adapters_execute_real_bounded_behavior ... ok
-test canonical_ingress_dispatches_allowlisted_work_and_commits_only_success ... ok
+test local_adapters_prove_real_restart_and_failure_boundaries ... ok
+test agent_scheduler_checkpoint_cancellation_and_storage_are_real ... ok
+test canonical_ingress_dispatches_real_agent_work ... ok
 test live_assembly_starts_and_qualifies_time ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
 
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
      Running tests/assembly.rs (/Volumes/FastWork/adl-wp-5663/target/debug/deps/assembly-3b6b49ade7fcff40)

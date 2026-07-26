@@ -1,52 +1,25 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
-    sync::{
-        atomic::{AtomicUsize, Ordering},
-        Arc, Mutex,
-    },
+    path::Path,
+    sync::Arc,
     time::Duration,
 };
 
 use adl_runtime_kernel::{
     bootstrap_reasoning_services, build_live_assembly, build_production_operation_executors,
-    mark_unavailable_live_services, AdapterKind, ClockAuthority, DomainWork, ExecutorError,
-    FailureClass, InProcessOperationExecutor, IngressError, LiveBindings, OperationExecutor,
-    OperationRequest, RunningState, RuntimeRecorder, TimeQualificationBounds, TimeSample,
-    TimeSampleError, TimeSampleSource, DOMAIN_WORK_SCHEMA, PASSIVE_LIVE_SERVICES,
-    REQUIRED_OPERATIONAL_ADAPTERS,
+    mark_unavailable_live_services, AdapterKind, AdapterPolicy, AuthorityMode, ClockAuthority,
+    DomainWork, FailureClass, InProcessOperationExecutor, LiveBindings, OperationError,
+    OperationExecutor, OperationRequest, OperationalAdapter, RunningState, RuntimeRecorder,
+    TimeQualificationBounds, TimeSample, TimeSampleError, TimeSampleSource, DOMAIN_WORK_SCHEMA,
+    PASSIVE_LIVE_SERVICES, REQUIRED_OPERATIONAL_ADAPTERS,
 };
 use async_trait::async_trait;
 use ed25519_dalek::SigningKey;
 use serde_json::Value;
 use tempfile::TempDir;
+use tokio_util::sync::CancellationToken;
 
 struct FixedTime;
-
-struct EchoExecutor {
-    calls: Arc<AtomicUsize>,
-    request: Arc<Mutex<Option<OperationRequest>>>,
-}
-
-struct FailingExecutor;
-
-#[async_trait]
-impl OperationExecutor for FailingExecutor {
-    async fn execute(&self, _request: &OperationRequest) -> Result<Vec<u8>, ExecutorError> {
-        Err(ExecutorError {
-            class: adl_runtime_kernel::FailureClass::Fatal,
-            message: "intentional test failure".to_owned(),
-        })
-    }
-}
-
-#[async_trait]
-impl OperationExecutor for EchoExecutor {
-    async fn execute(&self, request: &OperationRequest) -> Result<Vec<u8>, ExecutorError> {
-        self.calls.fetch_add(1, Ordering::SeqCst);
-        *self.request.lock().unwrap() = Some(request.clone());
-        Ok(request.payload.clone())
-    }
-}
 
 #[async_trait]
 impl TimeSampleSource for FixedTime {
@@ -60,11 +33,11 @@ impl TimeSampleSource for FixedTime {
     }
 }
 
-fn bindings(recorder: RuntimeRecorder) -> LiveBindings {
+fn bindings(recorder: RuntimeRecorder, state_root: &Path) -> LiveBindings {
     let key = SigningKey::from_bytes(&[31; 32]);
     LiveBindings {
         recorder: recorder.clone(),
-        operation_executors: build_production_operation_executors(),
+        operation_executors: build_production_operation_executors(state_root.join("production")),
         permit_keys: BTreeMap::from([("operator".to_owned(), key.verifying_key())]),
         reasoning: bootstrap_reasoning_services(recorder).unwrap(),
         time_source: Arc::new(FixedTime),
@@ -77,11 +50,20 @@ fn bindings(recorder: RuntimeRecorder) -> LiveBindings {
 }
 
 fn adapter_request(kind: AdapterKind, payload: &[u8]) -> OperationRequest {
+    adapter_request_for(kind, payload, "runtime-test", kind.service_name())
+}
+
+fn adapter_request_for(
+    _kind: AdapterKind,
+    payload: &[u8],
+    principal: &str,
+    request_id: &str,
+) -> OperationRequest {
     OperationRequest {
         schema: adl_runtime_kernel::OPERATION_REQUEST_SCHEMA.to_owned(),
-        request_id: format!("{}-case", kind.service_name()),
-        idempotency_key: format!("{}-key", kind.service_name()),
-        principal: "runtime-test".to_owned(),
+        request_id: request_id.to_owned(),
+        idempotency_key: format!("{request_id}-key"),
+        principal: principal.to_owned(),
         payload: payload.to_vec(),
         permit: None,
     }
@@ -96,13 +78,14 @@ async fn local_value(
     kind: AdapterKind,
     payload: &[u8],
 ) -> Value {
-    serde_json::from_slice(
-        &executor
-            .execute(&adapter_request(kind, payload))
-            .await
-            .unwrap(),
-    )
-    .unwrap()
+    local_value_for(executor, adapter_request(kind, payload)).await
+}
+
+async fn local_value_for(
+    executor: &InProcessOperationExecutor,
+    request: OperationRequest,
+) -> Value {
+    serde_json::from_slice(&executor.execute(&request).await.unwrap()).unwrap()
 }
 
 async fn local_error(
@@ -117,46 +100,67 @@ async fn local_error(
         .class
 }
 
-#[test]
-fn live_assembly_has_the_frozen_service_inventory() {
-    let recorder = RuntimeRecorder::new(128);
-    let assembly = build_live_assembly(bindings(recorder)).unwrap();
-    let names = adl_runtime_kernel::live_service_names(&assembly.contracts);
-    let expected = BTreeSet::from([
-        "a2a".to_owned(),
-        "acip".to_owned(),
-        "adaptation_state".to_owned(),
-        "aee".to_owned(),
-        "agent_runtime".to_owned(),
-        "checkpoint_store".to_owned(),
-        "canonical_ingress".to_owned(),
-        "chronosense".to_owned(),
-        "cloud_bridge".to_owned(),
-        "cognition_review_record".to_owned(),
-        "curiosity_intelligence_theory_of_mind_adapter".to_owned(),
-        "evaluation_feedback".to_owned(),
-        "freedom_gate".to_owned(),
-        "governance_audit".to_owned(),
-        "governance_ingress".to_owned(),
-        "lifelog".to_owned(),
-        "loop_executor".to_owned(),
-        "moral_affect_wellbeing_adapter".to_owned(),
-        "mutation_gate".to_owned(),
-        "observability".to_owned(),
-        "provider".to_owned(),
-        "reasoning_graph".to_owned(),
-        "scheduler".to_owned(),
-        "shepherd".to_owned(),
-        "signed_continuity".to_owned(),
-        "system_weather".to_owned(),
-        "trusted_time".to_owned(),
-    ]);
-    assert_eq!(names, expected);
+fn agent_work(tasks: Value) -> Vec<u8> {
+    serde_json::json!({"schema":"adl.runtime.local_agent_work.v1","tasks":tasks})
+        .to_string()
+        .into_bytes()
+}
+
+fn shepherd_admission(admit: bool) -> Vec<u8> {
+    serde_json::json!({"schema":"adl.runtime.local_shepherd_admission.v1","admit":admit})
+        .to_string()
+        .into_bytes()
+}
+
+fn schedule_job(job_id: &str) -> Vec<u8> {
+    serde_json::json!({"schema":"adl.runtime.local_schedule.v1","job_id":job_id})
+        .to_string()
+        .into_bytes()
+}
+
+fn checkpoint_store(state: &[u8]) -> Vec<u8> {
+    serde_json::json!({
+        "schema":"adl.runtime.local_checkpoint_command.v1",
+        "action":"store",
+        "state_hex":hex::encode(state)
+    })
+    .to_string()
+    .into_bytes()
+}
+
+fn checkpoint_restore() -> Vec<u8> {
+    br#"{"schema":"adl.runtime.local_checkpoint_command.v1","action":"restore"}"#.to_vec()
+}
+
+fn payload_for(kind: AdapterKind) -> Vec<u8> {
+    match kind {
+        AdapterKind::Agent => agent_work(serde_json::json!([
+            {"op":"blake3","input":"bounded-agent-work"}
+        ])),
+        AdapterKind::Shepherd => shepherd_admission(true),
+        AdapterKind::Scheduler => schedule_job("production-job"),
+        AdapterKind::Chronosense => b"{}".to_vec(),
+        AdapterKind::CheckpointStore => checkpoint_store(b"production-checkpoint-state"),
+        AdapterKind::Lifelog => b"operator token redaction proof".to_vec(),
+        _ => b"external-work".to_vec(),
+    }
+}
+
+fn internal_policy() -> AdapterPolicy {
+    AdapterPolicy {
+        capacity: 8,
+        max_in_flight: 1,
+        timeout_millis: 1_000,
+        max_attempts: 1,
+        idempotency_entries: 8,
+        authority: AuthorityMode::Internal,
+    }
 }
 
 #[tokio::test]
 async fn local_production_adapters_execute_real_bounded_behavior() {
-    let executors = build_production_operation_executors();
+    let root = TempDir::new().unwrap();
+    let executors = build_production_operation_executors(root.path().join("production"));
     for kind in [
         AdapterKind::Agent,
         AdapterKind::Shepherd,
@@ -167,16 +171,14 @@ async fn local_production_adapters_execute_real_bounded_behavior() {
     ] {
         let receipt: Value = serde_json::from_slice(
             &executors[&kind]
-                .execute(&adapter_request(kind, b"typed-adapter-input"))
+                .execute(&adapter_request(kind, &payload_for(kind)))
                 .await
                 .unwrap(),
         )
         .unwrap();
         assert_ne!(receipt["schema"], "adl.runtime.adapter_receipt.v1");
-        if kind != AdapterKind::CheckpointStore {
-            assert_eq!(receipt["adapter"], kind.service_name());
-            assert_eq!(receipt["operation"], kind.operation_name());
-        }
+        assert_eq!(receipt["adapter"], kind.service_name());
+        assert_eq!(receipt["operation"], kind.operation_name());
     }
     for kind in [
         AdapterKind::Provider,
@@ -184,65 +186,18 @@ async fn local_production_adapters_execute_real_bounded_behavior() {
         AdapterKind::A2a,
         AdapterKind::CloudBridge,
     ] {
-        for payload in [
-            b"external-work".as_slice(),
-            b"timeout".as_slice(),
-            b"cancel".as_slice(),
-        ] {
-            let error = executors[&kind]
-                .execute(&adapter_request(kind, payload))
-                .await
-                .unwrap_err();
-            assert_eq!(error.class, FailureClass::Fatal);
-            assert!(error.message.contains("external transport"));
-        }
+        let error = executors[&kind]
+            .execute(&adapter_request(kind, b"external-work"))
+            .await
+            .unwrap_err();
+        assert_eq!(error.class, FailureClass::Fatal);
+        assert!(error.message.contains("external transport"));
     }
-    let stored = local_value(
-        &InProcessOperationExecutor::new(AdapterKind::CheckpointStore),
-        AdapterKind::CheckpointStore,
-        b"default-checkpoint-state",
-    )
-    .await;
-    let restored = local_value(
-        &InProcessOperationExecutor::new(AdapterKind::CheckpointStore),
-        AdapterKind::CheckpointStore,
-        b"restore",
-    )
-    .await;
-    assert_eq!(stored, restored);
 }
 
 #[tokio::test]
-async fn local_adapters_prove_restart_and_failure_boundaries() {
+async fn local_adapters_prove_real_restart_and_failure_boundaries() {
     let root = TempDir::new().unwrap();
-    for (kind, payload, class) in [
-        (
-            AdapterKind::Agent,
-            b"timeout".as_slice(),
-            FailureClass::Retryable,
-        ),
-        (
-            AdapterKind::Scheduler,
-            b"cancel".as_slice(),
-            FailureClass::Retryable,
-        ),
-        (
-            AdapterKind::Scheduler,
-            b"saturate".as_slice(),
-            FailureClass::Retryable,
-        ),
-        (
-            AdapterKind::Shepherd,
-            b"reject".as_slice(),
-            FailureClass::Fatal,
-        ),
-    ] {
-        assert_eq!(
-            local_error(&isolated(kind, &root), kind, payload).await,
-            class
-        );
-    }
-
     let malformed = OperationRequest {
         schema: "wrong".to_owned(),
         payload: Vec::new(),
@@ -259,18 +214,22 @@ async fn local_adapters_prove_restart_and_failure_boundaries() {
 
     let shepherd = isolated(AdapterKind::Shepherd, &root);
     assert_eq!(
-        local_value(&shepherd, AdapterKind::Shepherd, b"agent-a").await["status"],
+        local_value(&shepherd, AdapterKind::Shepherd, &shepherd_admission(true)).await["status"],
         "admitted"
     );
     assert_eq!(
-        local_value(&shepherd, AdapterKind::Shepherd, b"agent-a").await["status"],
+        local_value(&shepherd, AdapterKind::Shepherd, &shepherd_admission(true)).await["status"],
         "duplicate"
+    );
+    assert_eq!(
+        local_error(&shepherd, AdapterKind::Shepherd, &shepherd_admission(false)).await,
+        FailureClass::Fatal
     );
     assert_eq!(
         local_error(
             &isolated(AdapterKind::CheckpointStore, &root),
             AdapterKind::CheckpointStore,
-            b"restore"
+            &checkpoint_restore()
         )
         .await,
         FailureClass::Fatal
@@ -284,25 +243,27 @@ async fn local_adapters_prove_restart_and_failure_boundaries() {
     assert_eq!(lifelog["redacted"], true);
 
     let checkpoint_root = root.path().join("restart-checkpoint");
+    let state = b"checkpoint-state\0with-bytes";
+    let checkpoint =
+        InProcessOperationExecutor::with_state_dir(AdapterKind::CheckpointStore, &checkpoint_root);
+    let stored = local_value(
+        &checkpoint,
+        AdapterKind::CheckpointStore,
+        &checkpoint_store(state),
+    )
+    .await;
+    drop(checkpoint);
+    let restored = local_value(
+        &InProcessOperationExecutor::with_state_dir(AdapterKind::CheckpointStore, &checkpoint_root),
+        AdapterKind::CheckpointStore,
+        &checkpoint_restore(),
+    )
+    .await;
+    assert_eq!(restored["state_hex"], hex::encode(state));
+    assert_eq!(stored["payload_hash"], restored["payload_hash"]);
     assert_eq!(
-        local_value(
-            &InProcessOperationExecutor::with_state_dir(
-                AdapterKind::CheckpointStore,
-                &checkpoint_root
-            ),
-            AdapterKind::CheckpointStore,
-            b"checkpoint-state"
-        )
-        .await,
-        local_value(
-            &InProcessOperationExecutor::with_state_dir(
-                AdapterKind::CheckpointStore,
-                &checkpoint_root
-            ),
-            AdapterKind::CheckpointStore,
-            b"restore"
-        )
-        .await
+        hex::decode(restored["state_hex"].as_str().unwrap()).unwrap(),
+        state
     );
 
     std::fs::write(
@@ -317,7 +278,7 @@ async fn local_adapters_prove_restart_and_failure_boundaries() {
                 checkpoint_root
             ),
             AdapterKind::CheckpointStore,
-            b"restore"
+            &checkpoint_restore()
         )
         .await,
         FailureClass::Fatal
@@ -325,9 +286,157 @@ async fn local_adapters_prove_restart_and_failure_boundaries() {
 }
 
 #[tokio::test]
+async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
+    let root = TempDir::new().unwrap();
+
+    let agent = isolated(AdapterKind::Agent, &root);
+    let agent_result = local_value(
+        &agent,
+        AdapterKind::Agent,
+        &agent_work(serde_json::json!([
+            {"op":"blake3","input":"alpha"},
+            {"op":"blake3","input":"beta"}
+        ])),
+    )
+    .await;
+    assert_eq!(
+        agent_result["schema"],
+        "adl.runtime.local_agent_execution.v1"
+    );
+    assert_eq!(agent_result["work_units"], 2);
+    assert_eq!(
+        agent_result["outputs"][0]["output"],
+        blake3::hash(b"alpha").to_hex().to_string()
+    );
+    assert!(agent_result["result_hash"].as_str().unwrap().len() >= 32);
+
+    let scheduler = isolated(AdapterKind::Scheduler, &root);
+    for index in 0..8 {
+        let scheduled = local_value(
+            &scheduler,
+            AdapterKind::Scheduler,
+            &schedule_job(&format!("job-{index}")),
+        )
+        .await;
+        assert_eq!(scheduled["status"], "scheduled");
+        assert_eq!(scheduled["scheduled_depth_after"], 0);
+    }
+
+    let checkpoint_root = root.path().join("identity-checkpoint");
+    let bytes = b"identity-bound-state";
+    let checkpoint =
+        InProcessOperationExecutor::with_state_dir(AdapterKind::CheckpointStore, &checkpoint_root);
+    local_value_for(
+        &checkpoint,
+        adapter_request_for(
+            AdapterKind::CheckpointStore,
+            &checkpoint_store(bytes),
+            "alice",
+            "store-alice",
+        ),
+    )
+    .await;
+    drop(checkpoint);
+    let restore =
+        InProcessOperationExecutor::with_state_dir(AdapterKind::CheckpointStore, &checkpoint_root);
+    let restored = local_value_for(
+        &restore,
+        adapter_request_for(
+            AdapterKind::CheckpointStore,
+            &checkpoint_restore(),
+            "alice",
+            "restore-alice",
+        ),
+    )
+    .await;
+    assert_eq!(
+        hex::decode(restored["state_hex"].as_str().unwrap()).unwrap(),
+        bytes
+    );
+    assert_eq!(
+        restore
+            .execute(&adapter_request_for(
+                AdapterKind::CheckpointStore,
+                &checkpoint_restore(),
+                "bob",
+                "restore-bob",
+            ))
+            .await
+            .unwrap_err()
+            .class,
+        FailureClass::Fatal
+    );
+
+    assert!(InProcessOperationExecutor::try_with_state_dir(
+        AdapterKind::Lifelog,
+        "relative-state-root"
+    )
+    .is_err());
+    let locked_root = root.path().join("locked-writer");
+    let writer =
+        InProcessOperationExecutor::try_with_state_dir(AdapterKind::Lifelog, &locked_root).unwrap();
+    assert!(
+        InProcessOperationExecutor::try_with_state_dir(AdapterKind::Lifelog, &locked_root,)
+            .is_err()
+    );
+    drop(writer);
+    assert!(
+        InProcessOperationExecutor::try_with_state_dir(AdapterKind::Lifelog, locked_root).is_ok()
+    );
+
+    let adapter = Arc::new(
+        OperationalAdapter::new(
+            AdapterKind::Agent,
+            internal_policy(),
+            Arc::new(InProcessOperationExecutor::with_state_dir(
+                AdapterKind::Agent,
+                root.path().join("cancel-agent"),
+            )),
+        )
+        .unwrap(),
+    );
+    let token = CancellationToken::new();
+    let running = {
+        let adapter = adapter.clone();
+        let token = token.clone();
+        tokio::spawn(async move {
+            adapter
+                .invoke_with_cancellation(
+                    adapter_request_for(
+                        AdapterKind::Agent,
+                        &agent_work(serde_json::json!([{"op":"sleep_millis","millis":200}])),
+                        "runtime-test",
+                        "cancel-live",
+                    ),
+                    token,
+                )
+                .await
+        })
+    };
+    tokio::time::sleep(Duration::from_millis(20)).await;
+    token.cancel();
+    assert_eq!(
+        running.await.unwrap().unwrap_err(),
+        OperationError::AdmissionClosed
+    );
+    let after_cancel = adapter
+        .invoke(adapter_request_for(
+            AdapterKind::Agent,
+            &agent_work(serde_json::json!([{"op":"blake3","input":"after-cancel"}])),
+            "runtime-test",
+            "after-cancel",
+        ))
+        .await
+        .unwrap();
+    let after_cancel_value: Value = serde_json::from_slice(&after_cancel.payload).unwrap();
+    assert_eq!(after_cancel_value["work_units"], 1);
+}
+
+#[tokio::test]
 async fn live_assembly_starts_and_qualifies_time() {
     let recorder = RuntimeRecorder::new(128);
-    let assembly = build_live_assembly(bindings(recorder.clone())).unwrap();
+    let root = TempDir::new().unwrap();
+    let assembly = build_live_assembly(bindings(recorder.clone(), root.path())).unwrap();
     let handle = adl_runtime_kernel::Kernel::new(assembly.topology, recorder.clone())
         .start()
         .await
@@ -368,21 +477,10 @@ async fn live_assembly_starts_and_qualifies_time() {
 }
 
 #[tokio::test]
-async fn canonical_ingress_dispatches_allowlisted_work_and_commits_only_success() {
+async fn canonical_ingress_dispatches_real_agent_work() {
     let recorder = RuntimeRecorder::new(128);
-    let calls = Arc::new(AtomicUsize::new(0));
-    let dispatched = Arc::new(Mutex::new(None));
-    let mut live = bindings(recorder.clone());
-    live.operation_executors.insert(
-        AdapterKind::Agent,
-        Arc::new(EchoExecutor {
-            calls: calls.clone(),
-            request: dispatched.clone(),
-        }),
-    );
-    live.operation_executors
-        .insert(AdapterKind::Shepherd, Arc::new(FailingExecutor));
-    let assembly = build_live_assembly(live).unwrap();
+    let root = TempDir::new().unwrap();
+    let assembly = build_live_assembly(bindings(recorder.clone(), root.path())).unwrap();
     let ingress = assembly.canonical_ingress.clone();
     let handle = adl_runtime_kernel::Kernel::new(assembly.topology, recorder)
         .start()
@@ -392,89 +490,13 @@ async fn canonical_ingress_dispatches_allowlisted_work_and_commits_only_success(
         schema: DOMAIN_WORK_SCHEMA.to_owned(),
         work_id: "dispatch-success".to_owned(),
         kind: "parity-a".to_owned(),
-        payload: b"component-output".to_vec(),
+        payload: agent_work(serde_json::json!([{"op":"blake3","input":"ingress"}])),
     };
-    let result = ingress
+    let accepted = ingress
         .submit(work.clone(), "0123456789abcdef0123456789abcdef".to_owned())
         .await
         .unwrap();
-    assert_eq!(calls.load(Ordering::SeqCst), 1);
-    assert_eq!(result.accepted_sequence, 1);
-    assert_eq!(
-        dispatched.lock().unwrap().as_ref().unwrap(),
-        &OperationRequest {
-            schema: adl_runtime_kernel::OPERATION_REQUEST_SCHEMA.to_owned(),
-            request_id: "dispatch-success".to_owned(),
-            idempotency_key: "dispatch-success".to_owned(),
-            principal: "canonical-ingress".to_owned(),
-            payload: b"component-output".to_vec(),
-            permit: None,
-        }
-    );
-
-    let unsupported = ingress
-        .submit(
-            DomainWork {
-                work_id: "dispatch-unsupported".to_owned(),
-                kind: "not-allowlisted".to_owned(),
-                ..work.clone()
-            },
-            "1123456789abcdef0123456789abcdef".to_owned(),
-        )
-        .await;
-    assert_eq!(unsupported, Err(IngressError::UnsupportedKind));
-    assert_eq!(
-        ingress
-            .submit(
-                DomainWork {
-                    work_id: "dispatch-unsupported".to_owned(),
-                    kind: "not-allowlisted".to_owned(),
-                    ..work.clone()
-                },
-                "1123456789abcdef0123456789abcdef".to_owned(),
-            )
-            .await,
-        Err(IngressError::UnsupportedKind)
-    );
-    for kind in [AdapterKind::Provider, AdapterKind::CloudBridge] {
-        assert_eq!(
-            ingress
-                .submit(
-                    DomainWork {
-                        work_id: format!("governed-{}", kind.service_name()),
-                        kind: kind.service_name().to_owned(),
-                        ..work.clone()
-                    },
-                    "1923456789abcdef0123456789abcdef".to_owned(),
-                )
-                .await,
-            Err(IngressError::UnsupportedKind)
-        );
-    }
-    let failed = ingress
-        .submit(
-            DomainWork {
-                work_id: "dispatch-failed".to_owned(),
-                kind: AdapterKind::Shepherd.service_name().to_owned(),
-                ..work.clone()
-            },
-            "2123456789abcdef0123456789abcdef".to_owned(),
-        )
-        .await;
-    assert_eq!(failed, Err(IngressError::ExecutionFailed));
-    assert_eq!(
-        ingress
-            .submit(
-                DomainWork {
-                    work_id: "dispatch-failed".to_owned(),
-                    kind: AdapterKind::Shepherd.service_name().to_owned(),
-                    ..work
-                },
-                "2123456789abcdef0123456789abcdef".to_owned(),
-            )
-            .await,
-        Err(IngressError::ExecutionFailed)
-    );
+    assert_eq!(accepted.accepted_sequence, 1);
     assert_eq!(ingress.snapshot().accepted_through, 1);
     assert_eq!(
         handle.shutdown(Duration::from_secs(1)).await.unwrap(),

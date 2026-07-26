@@ -79,7 +79,17 @@ async fn main() -> ExitCode {
                     return ExitCode::from(78);
                 }
             };
-            let operation_executors = build_production_operation_executors();
+            let operation_state_dir = match std::env::var("ADL_RUNTIME_V3_LOCAL_STATE_DIR")
+                .ok()
+                .filter(|value| !value.trim().is_empty())
+            {
+                Some(value) => std::path::PathBuf::from(value),
+                None => {
+                    eprintln!("runtime local adapter state root is missing");
+                    return ExitCode::from(78);
+                }
+            };
+            let operation_executors = build_production_operation_executors(operation_state_dir);
             if let Err(error) = validate_production_operation_executors(&operation_executors) {
                 eprintln!("runtime live operation adapters unavailable: {error}");
                 return ExitCode::from(78);

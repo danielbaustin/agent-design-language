@@ -12,7 +12,7 @@ Status: pre_phase
 
 ## Summary
 
-Implemented durable bounded local Runtime v3 adapters with final review fixes. Current authoritative validation is the FastWork target-dir PVF local_pass in .csdlc/evidence/5663, and current physical LoC for claimed source/test paths is before 2481, after 2453, net -28. Earlier SOR rows with no target-dir commands, after 2461/net -20, after 2471/net -10, and after 2449/net -32 are retained only as superseded pre-final lifecycle history.
+Fixed all five in-scope PR #5669 exact-review findings with real local Runtime v3 behavior. Agent now executes bounded typed work; Scheduler retires completed jobs and remains reusable; CheckpointStore persists and restores state bytes with principal/integrity checks; cancellation propagates through CancellationToken state; production local storage requires an explicit absolute state root with a single-writer lock. Current touched source/test physical LoC is before 3796, after 3728, net -68. Publication and merge remain held for exact external Opus 5 review.
 
 ## Artifacts
 
@@ -31,6 +31,16 @@ Implemented durable bounded local Runtime v3 adapters with final review fixes. C
 - .csdlc/prepared/issues/5663/replace-validation-lanes-after-review.json
 - .csdlc/prepared/issues/5663/validate-after-review.json
 - .csdlc/evidence/5663/runtime-v3-local-adapters-loc.log
+- adl-runtime-kernel/src/assembly.rs
+- adl-runtime-kernel/src/operations.rs
+- adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
+- adl-runtime-kernel/src/governed_operations.rs
+- adl-runtime-kernel/tests/assembly.rs
+- .csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log
+- .csdlc/evidence/5663/runtime-v3-local-adapters-governed.log
+- .csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log
+- .csdlc/evidence/5663/runtime-v3-local-adapters-loc.log
+- .csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log
 
 ## Execution
 
@@ -49,6 +59,12 @@ Implemented durable bounded local Runtime v3 adapters with final review fixes. C
 - Moved external transport refusal ahead of local timeout/cancel branches and covered timeout/cancel payloads for Provider, ACIP, A2A, and Cloud Bridge.
 - Updated final typed VPP and PVF evidence to before 2481, after 2453, net -28.
 - Marked earlier non-FastWork and intermediate LoC SOR rows as superseded pre-final lifecycle history.
+- Replaced receipt/text-trigger local Agent behavior with typed bounded blake3 and cancellation-aware sleep work, plus canonical ingress proof for real Agent dispatch.
+- Replaced Scheduler saturation-by-text behavior with a typed local schedule command that retires each completed job and accepts repeated sequential work beyond four requests.
+- Replaced metadata-only checkpointing with state_hex byte persistence, atomic checkpoint writes, restore-time principal verification, and payload hash integrity verification.
+- Replaced payload-text cancellation triggers with CancellationToken propagation through OperationalAdapter and in-process Agent execution.
+- Removed cwd/temp fallback state creation from production local adapters; callers must provide an explicit absolute state root guarded by writer.lock unique-writer behavior.
+- Deleted the superseded fixture-only operations test target and folded real adapter proof into assembly/governed end-to-end tests.
 
 ## Validation
 
@@ -236,16 +252,94 @@ Implemented durable bounded local Runtime v3 adapters with final review fixes. C
     "purpose": "Record final physical LoC delta for claimed source and test paths: before 2481, after 2453, net -28.",
     "outcome": "passed",
     "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml",
+      "--target-dir",
+      "/Volumes/FastWork/adl-wp-5663/target",
+      "--test",
+      "assembly"
+    ],
+    "purpose": "Prove real Agent execution, scheduler retirement/reuse, checkpoint byte persistence/restore with integrity and identity checks, live cancellation, safe configured storage locking, production assembly wiring, ingress dispatch, and fail-closed external transports.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml",
+      "--target-dir",
+      "/Volumes/FastWork/adl-wp-5663/target",
+      "--test",
+      "governed_operations"
+    ],
+    "purpose": "Prove governed Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, provider, and shutdown behavior remains green after local adapter correction.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-governed.log"
+  },
+  {
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml",
+      "--target-dir",
+      "/Volumes/FastWork/adl-wp-5663/target",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "purpose": "Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--numstat",
+      "origin/main",
+      "--",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/operations.rs"
+    ],
+    "purpose": "Record touched source/test physical LoC delta: before 3796, after 3728, net -68.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "purpose": "Prove tracked diff whitespace hygiene after source, test, typed evidence, and retained proof updates.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log"
   }
 ]
 
 ## Integration
 
-pr_open
+worktree_only
 
 ## Publication
 
-Publication: ready
+Publication: not_published
 
 Merge: not_merged
 
