@@ -7,7 +7,7 @@
   "evidence": {
     "reviewer": "codex:5675-opus-review",
     "scope": ["adl/src/provider_adapter.rs", "adl/src/provider/profiles.rs"],
-    "reviewed_revision": "git-blake3:6c02cce870e71cbef5dafcc248b702ba30c4dd7e:890660a5eb33aa26f7dc91be0d6fb113c2dafbf6484d0146535e633c485c12e4",
+    "reviewed_revision": "git-blake3:5866733e820430bb999af71dbbe608770e03a2bc:fe8ed4621a1918f5ebc6f9a9b74deac5cdfa4bd0574f13e2b075d9a67b97d51e",
     "findings": [],
     "residual_risks": [
       "Live Kimi and MiniMax completion success remains unproven because both approved accounts reported insufficient balance; adapter reachability and typed billing failure paths are proven.",
@@ -17,9 +17,9 @@
     "non_substantive_proof": {
       "policy": "Only lifecycle metadata, evidence, generated cards, design/diagram artifacts, and the bounded Opus review runbook changed after the source review; provider implementation paths are unchanged.",
       "from_revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
-      "to_revision": "git-blake3:6c02cce870e71cbef5dafcc248b702ba30c4dd7e:890660a5eb33aa26f7dc91be0d6fb113c2dafbf6484d0146535e633c485c12e4",
+      "to_revision": "git-blake3:5866733e820430bb999af71dbbe608770e03a2bc:fe8ed4621a1918f5ebc6f9a9b74deac5cdfa4bd0574f13e2b075d9a67b97d51e",
       "from_commit": "14bc05cf77eadda51abe680c5d720586847276a6",
-      "to_commit": "6c02cce870e71cbef5dafcc248b702ba30c4dd7e",
+      "to_commit": "5866733e820430bb999af71dbbe608770e03a2bc",
       "changed_paths": [
         ".adl/TBD/OPUS_REVIEW_RUNBOOK.md",
         ".adl/live-provider-probe-disposition.md",
