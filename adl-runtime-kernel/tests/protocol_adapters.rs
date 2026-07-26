@@ -6,11 +6,13 @@ use std::{
 };
 
 use adl_runtime_kernel::{
-    build_protocol_production_operation_executors, AdapterKind, AdapterPolicy, AuthorityMode,
-    FailureClass, OperationError, OperationExecutor, OperationRequest, OperationalAdapter,
-    ProtocolAdapter, ProtocolEndpoint, ProtocolFrame, ProtocolResponse, ProtocolSecret,
-    ProtocolSecurity, ProtocolStatus, MAX_PROTOCOL_RESPONSE_BYTES, OPERATION_REQUEST_SCHEMA,
+    build_production_operation_executors, build_protocol_production_operation_executors,
+    AdapterKind, AdapterPolicy, AuthorityMode, ExecutionPermit, FailureClass, OperationError,
+    OperationExecutor, OperationRequest, OperationalAdapter, ProtocolAdapter, ProtocolEndpoint,
+    ProtocolFrame, ProtocolResponse, ProtocolSecret, ProtocolSecurity, ProtocolStatus,
+    MAX_PROTOCOL_FRAME_FRESHNESS_MILLIS, MAX_PROTOCOL_RESPONSE_BYTES, OPERATION_REQUEST_SCHEMA,
 };
+use ed25519_dalek::SigningKey;
 use rcgen::{generate_simple_self_signed, CertifiedKey};
 use tokio::{
     io::{AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader},
@@ -39,6 +41,29 @@ fn operation(id: &str, payload: &[u8]) -> OperationRequest {
     }
 }
 
+fn operation_with_permit(id: &str, payload: &[u8], key: &SigningKey) -> OperationRequest {
+    let mut request = operation(id, payload);
+    request.permit = Some(
+        ExecutionPermit {
+            permit_id: format!("permit-{id}"),
+            request_hash: blake3::hash(id.as_bytes()).to_hex().to_string(),
+            request_id: id.to_owned(),
+            principal: request.principal.clone(),
+            action: "provider.invoke".to_owned(),
+            resource: "provider".to_owned(),
+            units: 1,
+            payload_hash: blake3::hash(payload).to_hex().to_string(),
+            policy_hash: blake3::hash(b"policy").to_hex().to_string(),
+            evidence_hash: blake3::hash(b"evidence").to_hex().to_string(),
+            signing_key_id: "permit-key".to_owned(),
+            signature: String::new(),
+        }
+        .sign(key)
+        .unwrap(),
+    );
+    request
+}
+
 fn endpoint(
     address: std::net::SocketAddr,
     kind: AdapterKind,
@@ -48,6 +73,7 @@ fn endpoint(
         address,
         security: ProtocolSecurity::PlainForLocalTest,
         timeout: Duration::from_millis(250),
+        frame_freshness: Duration::from_millis(250),
         secret,
         capabilities: BTreeSet::from([kind.service_name().to_owned()]),
     }
@@ -95,6 +121,17 @@ async fn spawn_tampered_peer(secret: ProtocolSecret) -> std::net::SocketAddr {
     tokio::spawn(async move {
         if let Ok((stream, _)) = listener.accept().await {
             handle_tampered_peer_stream(stream, secret).await;
+        }
+    });
+    address
+}
+
+async fn spawn_expiring_peer(secret: ProtocolSecret, delay: Duration) -> std::net::SocketAddr {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let address = listener.local_addr().unwrap();
+    tokio::spawn(async move {
+        if let Ok((stream, _)) = listener.accept().await {
+            handle_expiring_peer_stream(stream, secret, delay).await;
         }
     });
     address
@@ -239,6 +276,37 @@ async fn handle_peer_stream<S>(
     let _ = stream.write_all(&bytes).await;
 }
 
+async fn handle_expiring_peer_stream<S>(stream: S, secret: ProtocolSecret, delay: Duration)
+where
+    S: AsyncRead + AsyncWrite + Unpin,
+{
+    let mut reader = BufReader::new(stream);
+    let mut line = String::new();
+    if reader.read_line(&mut line).await.unwrap_or_default() == 0 {
+        return;
+    }
+    let Ok(frame) = serde_json::from_str::<ProtocolFrame>(&line) else {
+        return;
+    };
+    tokio::time::sleep(delay).await;
+    let status = if frame.verify(&secret) {
+        ProtocolStatus::Ok
+    } else {
+        ProtocolStatus::Unauthorized
+    };
+    let response = ProtocolResponse::signed(
+        &secret,
+        &frame,
+        status,
+        b"peer-response",
+        (status != ProtocolStatus::Ok).then(|| "peer rejected".to_owned()),
+    );
+    let mut stream = reader.into_inner();
+    let mut bytes = serde_json::to_vec(&response).unwrap();
+    bytes.push(b'\n');
+    let _ = stream.write_all(&bytes).await;
+}
+
 async fn handle_tampered_peer_stream<S>(stream: S, secret: ProtocolSecret)
 where
     S: AsyncRead + AsyncWrite + Unpin,
@@ -282,6 +350,127 @@ async fn provider_dispatch_uses_real_authenticated_transport_and_rejects_replay(
         .unwrap_err();
     assert_eq!(replay.class, FailureClass::Fatal);
     assert!(replay.message.contains("replay"));
+}
+
+#[test]
+fn endpoint_validation_rejects_plaintext_nonloopback_zero_timeout_and_missing_capability() {
+    let secret = ProtocolSecret::from_key([19; 32]);
+    let nonloopback = ProtocolEndpoint {
+        address: "192.0.2.1:443".parse().unwrap(),
+        ..endpoint(
+            "127.0.0.1:1".parse().unwrap(),
+            AdapterKind::Provider,
+            secret.clone(),
+        )
+    };
+    assert!(
+        ProtocolAdapter::new(AdapterKind::Provider, nonloopback, CancellationToken::new()).is_err()
+    );
+
+    let zero_timeout = ProtocolEndpoint {
+        timeout: Duration::ZERO,
+        ..endpoint(
+            "127.0.0.1:1".parse().unwrap(),
+            AdapterKind::Provider,
+            secret.clone(),
+        )
+    };
+    assert!(ProtocolAdapter::new(
+        AdapterKind::Provider,
+        zero_timeout,
+        CancellationToken::new()
+    )
+    .is_err());
+
+    let missing_capability = ProtocolEndpoint {
+        capabilities: BTreeSet::from(["agent_runtime".to_owned()]),
+        ..endpoint(
+            "127.0.0.1:1".parse().unwrap(),
+            AdapterKind::Provider,
+            secret,
+        )
+    };
+    assert!(ProtocolAdapter::new(
+        AdapterKind::Provider,
+        missing_capability,
+        CancellationToken::new()
+    )
+    .is_err());
+}
+
+#[tokio::test]
+async fn protocol_frame_freshness_is_mac_bound_and_peer_verifiable() {
+    let secret = ProtocolSecret::from_key([17; 32]);
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let address = listener.local_addr().unwrap();
+    let adapter = ProtocolAdapter::new(
+        AdapterKind::Provider,
+        endpoint(address, AdapterKind::Provider, secret.clone()),
+        CancellationToken::new(),
+    )
+    .unwrap();
+    let permit_key = SigningKey::from_bytes(&[41; 32]);
+    let client = tokio::spawn(async move {
+        adapter
+            .execute(&operation_with_permit(
+                "freshness-ok",
+                b"dispatch",
+                &permit_key,
+            ))
+            .await
+            .unwrap()
+    });
+    let (stream, _) = listener.accept().await.unwrap();
+    let mut reader = BufReader::new(stream);
+    let mut line = String::new();
+    assert!(reader.read_line(&mut line).await.unwrap() > 0);
+    let frame = serde_json::from_str::<ProtocolFrame>(&line).unwrap();
+    assert!(frame.verify(&secret));
+    assert!(!frame.challenge.is_empty());
+    assert!(frame.permit.is_some());
+    assert!(frame.nonce.ends_with(&frame.challenge));
+    assert!(frame.expires_unix_millis > frame.issued_unix_millis);
+    assert!(
+        frame.expires_unix_millis - frame.issued_unix_millis <= MAX_PROTOCOL_FRAME_FRESHNESS_MILLIS
+    );
+    assert!(!frame.verify_at(&secret, frame.expires_unix_millis + 1));
+    let mut tampered = frame.clone();
+    tampered.expires_unix_millis += 1;
+    assert!(!tampered.verify_at(&secret, frame.issued_unix_millis));
+    let mut tampered_permit = frame.clone();
+    tampered_permit.permit.as_mut().unwrap().payload_hash =
+        blake3::hash(b"other").to_hex().to_string();
+    assert!(!tampered_permit.verify_at(&secret, frame.issued_unix_millis));
+
+    let response =
+        ProtocolResponse::signed(&secret, &frame, ProtocolStatus::Ok, b"peer-response", None);
+    let mut stream = reader.into_inner();
+    let mut bytes = serde_json::to_vec(&response).unwrap();
+    bytes.push(b'\n');
+    stream.write_all(&bytes).await.unwrap();
+    assert_eq!(client.await.unwrap(), b"peer-response");
+}
+
+#[tokio::test]
+async fn stale_protocol_frame_is_rejected_without_local_replay_state() {
+    let secret = ProtocolSecret::from_key([18; 32]);
+    let address = spawn_expiring_peer(secret.clone(), Duration::from_millis(80)).await;
+    let adapter = ProtocolAdapter::new(
+        AdapterKind::Provider,
+        ProtocolEndpoint {
+            timeout: Duration::from_millis(500),
+            frame_freshness: Duration::from_millis(20),
+            ..endpoint(address, AdapterKind::Provider, secret)
+        },
+        CancellationToken::new(),
+    )
+    .unwrap();
+    let error = adapter
+        .execute(&operation("stale-frame", b"dispatch"))
+        .await
+        .unwrap_err();
+    assert_eq!(error.class, FailureClass::Fatal);
+    assert!(error.message.contains("unauthorized"));
 }
 
 #[tokio::test]
@@ -523,31 +712,41 @@ fn production_builder_returns_no_partial_executors_when_protocol_config_is_missi
         "ADL_RUNTIME_PROVIDER_CA_DER_FILE",
         "ADL_RUNTIME_PROVIDER_SERVER_NAME",
         "ADL_RUNTIME_PROVIDER_TIMEOUT_MILLIS",
+        "ADL_RUNTIME_PROVIDER_FRESHNESS_MILLIS",
+        "ADL_RUNTIME_PROVIDER_CAPABILITIES",
         "ADL_RUNTIME_ACIP_ENDPOINT",
         "ADL_RUNTIME_ACIP_SECRET_FILE",
         "ADL_RUNTIME_ACIP_CA_DER_FILE",
         "ADL_RUNTIME_ACIP_SERVER_NAME",
         "ADL_RUNTIME_ACIP_TIMEOUT_MILLIS",
+        "ADL_RUNTIME_ACIP_FRESHNESS_MILLIS",
+        "ADL_RUNTIME_ACIP_CAPABILITIES",
         "ADL_RUNTIME_A2A_ENDPOINT",
         "ADL_RUNTIME_A2A_SECRET_FILE",
         "ADL_RUNTIME_A2A_CA_DER_FILE",
         "ADL_RUNTIME_A2A_SERVER_NAME",
         "ADL_RUNTIME_A2A_TIMEOUT_MILLIS",
+        "ADL_RUNTIME_A2A_FRESHNESS_MILLIS",
+        "ADL_RUNTIME_A2A_CAPABILITIES",
         "ADL_RUNTIME_CLOUD_BRIDGE_ENDPOINT",
         "ADL_RUNTIME_CLOUD_BRIDGE_SECRET_FILE",
         "ADL_RUNTIME_CLOUD_BRIDGE_CA_DER_FILE",
         "ADL_RUNTIME_CLOUD_BRIDGE_SERVER_NAME",
         "ADL_RUNTIME_CLOUD_BRIDGE_TIMEOUT_MILLIS",
+        "ADL_RUNTIME_CLOUD_BRIDGE_FRESHNESS_MILLIS",
+        "ADL_RUNTIME_CLOUD_BRIDGE_CAPABILITIES",
     ];
     let previous = keys.map(|key| (key, env::var(key).ok()));
     for key in keys {
         env::remove_var(key);
     }
     let executors = build_protocol_production_operation_executors();
+    let canonical = build_production_operation_executors();
     for (key, value) in previous {
         if let Some(value) = value {
             env::set_var(key, value);
         }
     }
     assert!(executors.is_empty());
+    assert!(canonical.is_empty());
 }

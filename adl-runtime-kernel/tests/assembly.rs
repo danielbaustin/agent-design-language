@@ -8,7 +8,7 @@ use std::{
 };
 
 use adl_runtime_kernel::{
-    bootstrap_reasoning_services, build_live_assembly, build_production_operation_executors,
+    bootstrap_reasoning_services, build_live_assembly, build_local_production_operation_executors,
     mark_unavailable_live_services, validate_production_operation_executors, AdapterKind,
     ClockAuthority, ComponentId, DomainWork, ExecutorError, IngressError, LiveBindings,
     OperationExecutor, OperationRequest, RunningState, RuntimeRecorder, TimeQualificationBounds,
@@ -138,14 +138,14 @@ fn live_assembly_refuses_a_missing_executor_binding() {
 
 #[test]
 fn production_readiness_accepts_complete_in_process_bindings() {
-    let executors = build_production_operation_executors();
+    let executors = build_local_production_operation_executors();
     assert_eq!(executors.len(), REQUIRED_OPERATIONAL_ADAPTERS.len());
     validate_production_operation_executors(&executors).unwrap();
 }
 
 #[tokio::test]
 async fn every_production_adapter_executes_its_typed_operation_boundary() {
-    let executors = build_production_operation_executors();
+    let executors = build_local_production_operation_executors();
     for kind in REQUIRED_OPERATIONAL_ADAPTERS {
         let receipt: serde_json::Value = serde_json::from_slice(
             &executors[&kind]

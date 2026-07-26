@@ -153,6 +153,9 @@ async fn live_graph_executes_through_guardian_canonical_ingress() {
     );
     guardian.restart_budget = 0;
     guardian.env = guardian_environment(&control_key, &operation_key);
+    guardian
+        .env
+        .extend(test_protocol_env(directory.path(), &certificate_der));
     let guardian_task = tokio::spawn(run_guardian(guardian, shutdown.clone()));
     let connector = tls_connector(certificate_der);
     let observatory = match wait_for_runtime(
@@ -673,6 +676,39 @@ fn guardian_environment(
             hex::encode(SigningKey::from_bytes(&[42; 32]).verifying_key().as_bytes()),
         ),
     ]
+}
+
+#[cfg(unix)]
+fn test_protocol_env(directory: &std::path::Path, certificate_der: &[u8]) -> Vec<(String, String)> {
+    let secret = directory.join("runtime-protocol-secret.bin");
+    let ca = directory.join("runtime-protocol-ca.der");
+    std::fs::write(&secret, [72_u8; 32]).unwrap();
+    std::fs::write(&ca, certificate_der).unwrap();
+    [
+        ("ADL_RUNTIME_PROVIDER", "provider"),
+        ("ADL_RUNTIME_ACIP", "acip"),
+        ("ADL_RUNTIME_A2A", "a2a"),
+        ("ADL_RUNTIME_CLOUD_BRIDGE", "cloud_bridge"),
+    ]
+    .into_iter()
+    .flat_map(|(prefix, capability)| {
+        [
+            (format!("{prefix}_ENDPOINT"), "127.0.0.1:1".to_owned()),
+            (
+                format!("{prefix}_SECRET_FILE"),
+                secret.to_string_lossy().into_owned(),
+            ),
+            (
+                format!("{prefix}_CA_DER_FILE"),
+                ca.to_string_lossy().into_owned(),
+            ),
+            (format!("{prefix}_SERVER_NAME"), "localhost".to_owned()),
+            (format!("{prefix}_TIMEOUT_MILLIS"), "250".to_owned()),
+            (format!("{prefix}_FRESHNESS_MILLIS"), "250".to_owned()),
+            (format!("{prefix}_CAPABILITIES"), capability.to_owned()),
+        ]
+    })
+    .collect()
 }
 
 #[cfg(unix)]

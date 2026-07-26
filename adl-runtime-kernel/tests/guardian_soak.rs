@@ -655,6 +655,39 @@ sample_limit = 1
 }
 
 #[cfg(unix)]
+fn test_protocol_env(directory: &Path, certificate_der: &[u8]) -> Vec<(String, String)> {
+    let secret = directory.join("runtime-protocol-secret.bin");
+    let ca = directory.join("runtime-protocol-ca.der");
+    std::fs::write(&secret, [71_u8; 32]).unwrap();
+    std::fs::write(&ca, certificate_der).unwrap();
+    [
+        ("ADL_RUNTIME_PROVIDER", "provider"),
+        ("ADL_RUNTIME_ACIP", "acip"),
+        ("ADL_RUNTIME_A2A", "a2a"),
+        ("ADL_RUNTIME_CLOUD_BRIDGE", "cloud_bridge"),
+    ]
+    .into_iter()
+    .flat_map(|(prefix, capability)| {
+        [
+            (format!("{prefix}_ENDPOINT"), "127.0.0.1:1".to_owned()),
+            (
+                format!("{prefix}_SECRET_FILE"),
+                secret.to_string_lossy().into_owned(),
+            ),
+            (
+                format!("{prefix}_CA_DER_FILE"),
+                ca.to_string_lossy().into_owned(),
+            ),
+            (format!("{prefix}_SERVER_NAME"), "localhost".to_owned()),
+            (format!("{prefix}_TIMEOUT_MILLIS"), "250".to_owned()),
+            (format!("{prefix}_FRESHNESS_MILLIS"), "250".to_owned()),
+            (format!("{prefix}_CAPABILITIES"), capability.to_owned()),
+        ]
+    })
+    .collect()
+}
+
+#[cfg(unix)]
 fn write_executable(path: &Path, contents: &str) {
     use std::os::unix::fs::PermissionsExt;
 
@@ -698,7 +731,8 @@ fn serve_handles_guardian_sigterm_with_a_clean_checkpointed_exit() {
     let probe = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
     let address = probe.local_addr().unwrap();
     drop(probe);
-    let init = write_test_runtime_init(directory.path(), address);
+    let (init, certificate_der) =
+        write_test_runtime_init_with_certificate(directory.path(), address);
     let verifying_key = SigningKey::from_bytes(&[17_u8; 32]).verifying_key();
     let mut child = std::process::Command::new(env!("CARGO_BIN_EXE_adl-runtime-kernel"))
         .arg("serve")
@@ -726,6 +760,7 @@ fn serve_handles_guardian_sigterm_with_a_clean_checkpointed_exit() {
             "ADL_RUNTIME_OBSERVATORY_TOKEN",
             "guardian-observatory-token-00000002",
         )
+        .envs(test_protocol_env(directory.path(), &certificate_der))
         .stdout(std::process::Stdio::null())
         .stderr(std::process::Stdio::piped())
         .spawn()
@@ -775,7 +810,8 @@ fn pressure_checkpoint_failure_keeps_signal_shutdown_responsive() {
     let probe = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
     let address = probe.local_addr().unwrap();
     drop(probe);
-    let init = write_test_runtime_init(directory.path(), address);
+    let (init, certificate_der) =
+        write_test_runtime_init_with_certificate(directory.path(), address);
     let mut init_text = std::fs::read_to_string(&init).unwrap();
     init_text.push_str(
         r#"
@@ -821,6 +857,7 @@ cpu_stop_basis_points = 2
             "ADL_RUNTIME_OBSERVATORY_TOKEN",
             "guardian-observatory-token-00000003",
         )
+        .envs(test_protocol_env(directory.path(), &certificate_der))
         .stdout(Stdio::null())
         .stderr(Stdio::piped())
         .spawn()
@@ -933,6 +970,7 @@ disk_recover_free_bytes = {}
             "ADL_RUNTIME_OBSERVATORY_TOKEN",
             "pressure-observatory-token-000001",
         )
+        .envs(test_protocol_env(directory.path(), &certificate_der))
         .stdout(Stdio::null())
         .stderr(Stdio::piped())
         .spawn()
@@ -1011,7 +1049,8 @@ fn serve_refuses_reused_continuity_and_operation_keys() {
     let probe = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
     let address = probe.local_addr().unwrap();
     drop(probe);
-    let init = write_test_runtime_init(directory.path(), address);
+    let (init, certificate_der) =
+        write_test_runtime_init_with_certificate(directory.path(), address);
     let reused = SigningKey::from_bytes(&[23_u8; 32]);
     let output = Command::new(env!("CARGO_BIN_EXE_adl-runtime-kernel"))
         .arg("serve")
@@ -1036,6 +1075,7 @@ fn serve_refuses_reused_continuity_and_operation_keys() {
                     .as_bytes(),
             ),
         )
+        .envs(test_protocol_env(directory.path(), &certificate_der))
         .output()
         .unwrap();
     assert_eq!(output.status.code(), Some(78));
@@ -1090,6 +1130,7 @@ async fn signed_https_shutdown_checkpoints_and_forgery_cannot_stop_the_process()
             "ADL_RUNTIME_OBSERVATORY_TOKEN",
             "guardian-observatory-token-00000004",
         )
+        .envs(test_protocol_env(directory.path(), &certificate_der))
         .stdout(Stdio::null())
         .stderr(Stdio::piped())
         .spawn()

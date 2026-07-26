@@ -4,7 +4,7 @@ use std::{
     net::SocketAddr,
     path::Path,
     sync::{Arc, Mutex},
-    time::Duration,
+    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 use async_trait::async_trait;
@@ -22,12 +22,13 @@ use tokio_rustls::{
 use tokio_util::sync::CancellationToken;
 
 use crate::{
-    assembly::REQUIRED_OPERATIONAL_ADAPTERS, AdapterKind, ExecutorError, FailureClass,
-    OperationExecutor, OperationRequest, OPERATION_REQUEST_SCHEMA,
+    assembly::REQUIRED_OPERATIONAL_ADAPTERS, AdapterKind, ExecutionPermit, ExecutorError,
+    FailureClass, OperationExecutor, OperationRequest, OPERATION_REQUEST_SCHEMA,
 };
 
 pub const PROTOCOL_FRAME_SCHEMA: &str = "adl.runtime.protocol_frame.v1";
 pub const PROTOCOL_RESPONSE_SCHEMA: &str = "adl.runtime.protocol_response.v1";
+pub const MAX_PROTOCOL_FRAME_FRESHNESS_MILLIS: u64 = 60_000;
 pub const MAX_PROTOCOL_RESPONSE_BYTES: usize = 64 * 1024;
 
 const ADAPTERS: [(AdapterKind, &str); 4] = [
@@ -80,6 +81,7 @@ pub struct ProtocolEndpoint {
     pub address: SocketAddr,
     pub security: ProtocolSecurity,
     pub timeout: Duration,
+    pub frame_freshness: Duration,
     pub secret: ProtocolSecret,
     pub capabilities: BTreeSet<String>,
 }
@@ -150,7 +152,7 @@ pub enum ProtocolBuildError {
     },
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ProtocolFrame {
     pub schema: String,
@@ -159,8 +161,12 @@ pub struct ProtocolFrame {
     pub request_id: String,
     pub idempotency_key: String,
     pub principal: String,
+    pub permit: Option<ExecutionPermit>,
     pub capability: String,
     pub payload_hex: String,
+    pub challenge: String,
+    pub issued_unix_millis: u64,
+    pub expires_unix_millis: u64,
     pub nonce: String,
     pub mac: String,
 }
@@ -259,6 +265,25 @@ impl ProtocolAdapter {
         if !endpoint.capabilities.contains(kind.service_name()) {
             return Err(ProtocolBuildError::MissingCapability);
         }
+        if endpoint.timeout.is_zero() {
+            return Err(config("TIMEOUT_MILLIS", "expected non-zero timeout"));
+        }
+        if matches!(endpoint.security, ProtocolSecurity::PlainForLocalTest)
+            && (!cfg!(debug_assertions) || !endpoint.address.ip().is_loopback())
+        {
+            return Err(config(
+                "SECURITY",
+                "plaintext protocol transport is restricted to local debug tests",
+            ));
+        }
+        let freshness_millis =
+            u64::try_from(endpoint.frame_freshness.as_millis()).unwrap_or(u64::MAX);
+        if freshness_millis == 0 || freshness_millis > MAX_PROTOCOL_FRAME_FRESHNESS_MILLIS {
+            return Err(config(
+                "FRESHNESS_MILLIS",
+                format!("expected 1..={MAX_PROTOCOL_FRAME_FRESHNESS_MILLIS} milliseconds"),
+            ));
+        }
         Ok(Arc::new(Self {
             kind,
             endpoint,
@@ -279,11 +304,19 @@ impl ProtocolAdapter {
         {
             return Err(fatal("malformed operation request"));
         }
+        let issued_unix_millis = unix_millis_now()?;
+        let freshness_millis =
+            u64::try_from(self.endpoint.frame_freshness.as_millis()).unwrap_or(u64::MAX);
+        let expires_unix_millis = issued_unix_millis
+            .checked_add(freshness_millis)
+            .ok_or_else(|| fatal("protocol frame freshness overflow"))?;
+        let challenge = uuid::Uuid::new_v4().to_string();
         let nonce = format!(
-            "{}:{}:{}",
+            "{}:{}:{}:{}",
             self.kind.service_name(),
             request.principal,
-            request.idempotency_key
+            request.idempotency_key,
+            challenge
         );
         let mut frame = ProtocolFrame {
             schema: PROTOCOL_FRAME_SCHEMA.to_owned(),
@@ -292,8 +325,12 @@ impl ProtocolAdapter {
             request_id: request.request_id.clone(),
             idempotency_key: request.idempotency_key.clone(),
             principal: request.principal.clone(),
+            permit: request.permit.clone(),
             capability: self.kind.service_name().to_owned(),
             payload_hex: hex::encode(&request.payload),
+            challenge,
+            issued_unix_millis,
+            expires_unix_millis,
             nonce,
             mac: String::new(),
         };
@@ -303,8 +340,13 @@ impl ProtocolAdapter {
 
     async fn execute_once(&self, request: &OperationRequest) -> Result<Vec<u8>, ExecutorError> {
         let frame = self.frame(request)?;
-        let nonce = frame.nonce.clone();
-        let reservation = ReplayReservation::acquire(nonce, self.replay.clone())?;
+        let replay_key = format!(
+            "{}:{}:{}",
+            self.kind.service_name(),
+            request.principal,
+            request.idempotency_key
+        );
+        let reservation = ReplayReservation::acquire(replay_key, self.replay.clone())?;
         let exchange = async {
             let mut stream = self.open().await?;
             let mut bytes = serde_json::to_vec(&frame).map_err(|error| fatal(error.to_string()))?;
@@ -469,13 +511,55 @@ impl OperationExecutor for LocalRuntimeExecutor {
 
 impl ProtocolFrame {
     pub fn verify(&self, secret: &ProtocolSecret) -> bool {
+        let Ok(now_unix_millis) = unix_millis_now() else {
+            return false;
+        };
+        self.verify_at(secret, now_unix_millis)
+    }
+
+    pub fn verify_at(&self, secret: &ProtocolSecret, now_unix_millis: u64) -> bool {
+        let freshness_millis = self
+            .expires_unix_millis
+            .saturating_sub(self.issued_unix_millis);
+        let payload_hash = hex::decode(&self.payload_hex)
+            .ok()
+            .map(|payload| blake3::hash(&payload).to_hex().to_string());
+        let expected_nonce = format!(
+            "{}:{}:{}:{}",
+            self.adapter.service_name(),
+            self.principal,
+            self.idempotency_key,
+            self.challenge
+        );
         self.schema == PROTOCOL_FRAME_SCHEMA
             && self.operation == self.adapter.operation_name()
             && self.capability == self.adapter.service_name()
             && !self.request_id.trim().is_empty()
             && !self.principal.trim().is_empty()
             && !self.idempotency_key.trim().is_empty()
+            && !self.challenge.trim().is_empty()
+            && self.nonce == expected_nonce
+            && self.issued_unix_millis > 0
+            && self.expires_unix_millis > self.issued_unix_millis
+            && freshness_millis <= MAX_PROTOCOL_FRAME_FRESHNESS_MILLIS
+            && now_unix_millis <= self.expires_unix_millis
+            && payload_hash
+                .as_ref()
+                .is_some_and(|payload_hash| self.permit_binds_request(payload_hash))
             && constant_time_eq(secret.mac(self).as_bytes(), self.mac.as_bytes())
+    }
+
+    fn permit_binds_request(&self, payload_hash: &str) -> bool {
+        self.permit.as_ref().is_none_or(|permit| {
+            permit.request_id == self.request_id
+                && permit.principal == self.principal
+                && permit.payload_hash == payload_hash
+                && permit.action == format!("{}.invoke", self.adapter.service_name())
+                && permit.resource == self.adapter.service_name()
+                && !permit.permit_id.trim().is_empty()
+                && !permit.signing_key_id.trim().is_empty()
+                && !permit.signature.trim().is_empty()
+        })
     }
 
     fn signing_bytes(&self) -> Vec<u8> {
@@ -486,8 +570,12 @@ impl ProtocolFrame {
             &self.request_id,
             &self.idempotency_key,
             &self.principal,
+            &self.permit,
             &self.capability,
             &self.payload_hex,
+            &self.challenge,
+            self.issued_unix_millis,
+            self.expires_unix_millis,
             &self.nonce,
         ))
         .expect("protocol frame signing tuple is serializable")
@@ -567,9 +655,26 @@ fn endpoint_from_env(
             server_name: required_var(prefix, "SERVER_NAME")?,
         },
         timeout: Duration::from_millis(optional_u64(prefix, "TIMEOUT_MILLIS", 5_000)?),
+        frame_freshness: Duration::from_millis(optional_u64(prefix, "FRESHNESS_MILLIS", 5_000)?),
         secret,
-        capabilities: BTreeSet::from([kind.service_name().to_owned()]),
+        capabilities: capabilities_from_env(prefix, kind)?,
     })
+}
+
+fn capabilities_from_env(
+    prefix: &'static str,
+    kind: AdapterKind,
+) -> Result<BTreeSet<String>, ProtocolBuildError> {
+    let capabilities = required_var(prefix, "CAPABILITIES")?
+        .split(',')
+        .map(str::trim)
+        .filter(|capability| !capability.is_empty())
+        .map(ToOwned::to_owned)
+        .collect::<BTreeSet<_>>();
+    if !capabilities.contains(kind.service_name()) {
+        return Err(ProtocolBuildError::MissingCapability);
+    }
+    Ok(capabilities)
 }
 
 fn required_var(prefix: &'static str, suffix: &'static str) -> Result<String, ProtocolBuildError> {
@@ -597,6 +702,13 @@ fn config(field: &'static str, error: impl ToString) -> ProtocolBuildError {
         field,
         message: error.to_string(),
     }
+}
+
+fn unix_millis_now() -> Result<u64, ExecutorError> {
+    let duration = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(|_| fatal("system clock is before Unix epoch"))?;
+    u64::try_from(duration.as_millis()).map_err(|_| fatal("system clock millis overflow"))
 }
 
 fn constant_time_eq(left: &[u8], right: &[u8]) -> bool {
