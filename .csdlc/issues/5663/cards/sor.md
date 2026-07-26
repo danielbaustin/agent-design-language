@@ -12,7 +12,7 @@ Status: pre_phase
 
 ## Summary
 
-Resolved the consolidated exact-review blockers on top of the five real adapter fixes. Cancellation results are no longer cached as completed idempotent work, so the same cancelled request key can be retried successfully. writer.lock is now an owner-recorded directory lock with pid-based stale recovery and ownership-checked release. Production local executor construction now returns configuration errors to callers instead of panicking. Current touched source/test physical LoC is before 3796, after 3737, net -59.
+Resolved the two remaining consolidated review findings after the five real Runtime v3 adapter fixes. Duplicate in-flight callers now wait on the owner result through a cancellation-aware watch channel and cannot become synthetic executors; each waiter can cancel independently without poisoning the owner result. writer.lock acquisition now publishes owner.json through a pending lock directory and recovers partial locks without owner metadata. Current touched source/test physical LoC is before 3796, after 3791, net -5.
 
 ## Artifacts
 
@@ -52,6 +52,15 @@ Resolved the consolidated exact-review blockers on top of the five real adapter 
 - .csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log
 - .csdlc/evidence/5663/runtime-v3-local-adapters-loc.log
 - .csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log
+- adl-runtime-kernel/src/assembly.rs
+- adl-runtime-kernel/src/operations.rs
+- adl-runtime-kernel/tests/assembly.rs
+- .csdlc/prepared/issues/5663/validate-real-fixes.json
+- .csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log
+- .csdlc/evidence/5663/runtime-v3-local-adapters-governed.log
+- .csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log
+- .csdlc/evidence/5663/runtime-v3-local-adapters-loc.log
+- .csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log
 
 ## Execution
 
@@ -80,6 +89,11 @@ Resolved the consolidated exact-review blockers on top of the five real adapter 
 - Replaced the plain writer.lock file with an owner.json directory lock, live-pid stale detection, atomic stale-lock rename recovery, and ownership-checked drop cleanup.
 - Changed build_production_operation_executors to return io::Result and updated binary/governed/test callers to handle invalid configured state roots without panic.
 - Trimmed duplicate assembly tests while preserving real end-to-end proofs for the five required behaviors and review blockers.
+- Replaced duplicate in-flight OnceCell get_or_init waiting with owner-only execution plus watch-based result notification, so duplicate callers honor their own CancellationToken and never initialize work.
+- Notified duplicate waiters on owner-side governed admission errors before removing the in-flight record.
+- Changed writer-lock acquisition to write owner.json inside a pending directory before publishing writer.lock, and to recover missing or invalid owner metadata as stale partial locks.
+- Kept ownership-checked writer lock release, live-pid stale detection, and explicit configured absolute state roots.
+- Trimmed the proof harness while retaining end-to-end coverage for real execution, scheduler reuse, checkpoint restore identity/integrity, live cancellation, and safe storage locking.
 
 ## Validation
 
@@ -355,6 +369,18 @@ Resolved the consolidated exact-review blockers on top of the five real adapter 
       ".csdlc/prepared/issues/5663/validate-real-fixes.json"
     ],
     "purpose": "Run the typed PVF manifest covering real adapter assembly behavior, governed regression, strict Clippy, net-negative LoC, and diff hygiene after the consolidated exact-review blocker fixes.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5663"
+  },
+  {
+    "command": [
+      "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate",
+      "--root",
+      ".",
+      "--request",
+      ".csdlc/prepared/issues/5663/validate-real-fixes.json"
+    ],
+    "purpose": "Run the typed PVF manifest covering real Agent owner/duplicate cancellation, scheduler reuse, checkpoint byte restore identity/integrity, safe durable storage locking including partial-lock recovery, governed regression, strict Clippy, net-negative LoC, and diff hygiene after the remaining exact-review fixes.",
     "outcome": "passed",
     "evidence_ref": ".csdlc/evidence/5663"
   }

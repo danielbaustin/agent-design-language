@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9ae48371048e17e2df859779e157e43a5d9e4ada902e49a33a66eddacd56daf5",
   "phase": "implemented",
-  "generation": 28,
-  "digest": "cbdd47957efd68d222603b91b615ac7a5d0ad3086e159b1d2e263f65d1cbc7d1",
+  "generation": 31,
+  "digest": "e1f52b0c113e8cc9262c03e395a326881e9b75aa3c22dfb2fd6dba0a16157691",
   "claim": {
     "id": "claim-5663-runtime-v3-durable-local-adapters",
     "owner": "codex:issue-5663-runtime-adapters",
-    "generation": 28,
+    "generation": 31,
     "acquired_unix_seconds": 1784998096,
     "expires_unix_seconds": 1785602896,
     "heartbeat_unix_seconds": 1784998096,
@@ -45,34 +45,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "650d90ac5d2a0a4deb11fd84866da0af4bab6b5e1177d6c56e3297aa2a7ed770",
+      "values_digest": "dce05035f93045c2288afc649f66e59155042cafb7f30b9cf6b767f5bd99d8cc",
       "rendered_digest": "dd9a80fb70cba5ab51ce7219aa7d6bcb896f05905288c9ed337ca78b0433956c",
       "ast_digest": "236c4929b368dcdbd83131534e0477c144bc2586d06f79a6b924f7e97453893b"
     },
     "stp": {
-      "values_digest": "cbe7df64e0a7df5716f76822575572e35105679fbed652e3d0e1f81361905e23",
+      "values_digest": "27200496afade5381cdec34221accd162fa2186b520e266e655c3ebab34c211d",
       "rendered_digest": "860089b661813be46a57d17782652a3753affcb7867a42b867720d39bd4b8148",
       "ast_digest": "716150200b112efd93bfbc429f7eb7a1842fa1f1cec75462ceec9f4756213e4f"
     },
     "spp": {
-      "values_digest": "ed1e208de6e17bc467915f883879585332039ef55c77554077fb5b9b53736033",
+      "values_digest": "35b14b60151a6bee74a29705c0cab49f26a18aa4cd18c110aa553aaedf046508",
       "rendered_digest": "f47b64dc50a64f2b29879548eb057bceafeec18bf087abed5fecf43f123b6ff5",
       "ast_digest": "59926c4cc452fe34c471dd023ed178f785f11ff49ca307427c1487da48d4d0bb"
     },
     "vpp": {
-      "values_digest": "b0d21388ff4f0c5fe185e96566adc3be086b472afe4bcbd04fd39f5cc88f4ba5",
-      "rendered_digest": "cc38ea8835d12b7730b8f7abcbb9e9f40a2d4c1a02a8a4e296ec3c4a603c6b2a",
-      "ast_digest": "aaff7c9fbea0b41ed9c506642bc634f7d6a3837aca13df8791b66f5e08f1c4d2"
+      "values_digest": "a5e4ff99be4f61c85b9ea01a819b41001bee77c6e03e2d6691d0d64836639e54",
+      "rendered_digest": "b5cc90927572f7e74248ac6831edb43f8ceba6acb544d3557b1bc23631dba9a8",
+      "ast_digest": "26b94e9e146151db3ba1a5775fcefb161014918e120c350c45f6bfdaef9d5f7f"
     },
     "srp": {
-      "values_digest": "0491dcbc5a86aa8ae9958039e446f5f9a393aef599ebaa1573033d2ffd820721",
+      "values_digest": "d0e68538d822a686b25541a7e119a33b85043471728af05ece8c569ae16dac1b",
       "rendered_digest": "5357d33319fc16981236d6b0212a61392fe1101fa6001dc9484ff960d147c145",
       "ast_digest": "825c3fb47a623bb1b2269f2f01d240dbf7f64fdf05860d09ee49fd275f32e747"
     },
     "sor": {
-      "values_digest": "1cca042ce1b6b370a36d49519c3064494383e15b54ed51e0c833749d7050f5c5",
-      "rendered_digest": "427b50906ebf5453a1aecf58063b914951f1166b082be5459ee129f90c4d3b64",
-      "ast_digest": "92d354f978c90582ea6c3b9ff31602372038b60c3dd1b152c128bd563d18b99c"
+      "values_digest": "a052b258e3b767a080ca6f1810ca24c4fbe318b573c331db85b9001f799f97c4",
+      "rendered_digest": "d0511c7f708923645f6deeeb325807fe4c35cd789dd32465be735e9812a5c943",
+      "ast_digest": "f1b1a82414b0e08534efaa8b4fbef813e5397814b8fe1bf7372bc84fa692168c"
     }
   },
   "transitions": [
@@ -336,6 +336,27 @@
       "actor": "codex:issue-5663-runtime-adapters",
       "reason": "Record typed PVF local_pass after consolidated exact-review blocker fixes.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate\",\"--root\",\".\",\"--request\",\".csdlc/prepared/issues/5663/validate-real-fixes.json\"],\"purpose\":\"Run the typed PVF manifest covering real adapter assembly behavior, governed regression, strict Clippy, net-negative LoC, and diff hygiene after the consolidated exact-review blocker fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663\"}}"
+    },
+    {
+      "sequence": 32,
+      "generation": 29,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Refresh validation lanes after fixing the remaining exact-review blockers for duplicate waiter cancellation and partial writer-lock recovery.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-local-adapters-assembly\",\"proof_role\":\"Prove real Agent execution, scheduler retirement/reuse, checkpoint byte persistence/restore with integrity and identity checks, live owner and duplicate-waiter cancellation semantics, safe configured storage locking with ownership/stale/partial-lock recovery, production assembly wiring, ingress dispatch, and fail-closed external transports.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":840,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"assembly\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-governed\",\"proof_role\":\"Prove governed Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, provider, and shutdown behavior remains green after local adapter correction.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"governed_operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-clippy\",\"proof_role\":\"Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate.\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-loc\",\"proof_role\":\"Retain physical LoC measurement for touched source and test paths; before 3796, after 3791, net -5.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--numstat\",\"origin/main\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/src/operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-diff-check\",\"proof_role\":\"Prove tracked diff whitespace hygiene after regenerating evidence logs.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 30,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record implementation of the remaining exact-review fixes before consolidated exact-head review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Resolved the two remaining consolidated review findings after the five real Runtime v3 adapter fixes. Duplicate in-flight callers now wait on the owner result through a cancellation-aware watch channel and cannot become synthetic executors; each waiter can cancel independently without poisoning the owner result. writer.lock acquisition now publishes owner.json through a pending lock directory and recovers partial locks without owner metadata. Current touched source/test physical LoC is before 3796, after 3791, net -5.\",\"changes\":[\"Replaced duplicate in-flight OnceCell get_or_init waiting with owner-only execution plus watch-based result notification, so duplicate callers honor their own CancellationToken and never initialize work.\",\"Notified duplicate waiters on owner-side governed admission errors before removing the in-flight record.\",\"Changed writer-lock acquisition to write owner.json inside a pending directory before publishing writer.lock, and to recover missing or invalid owner metadata as stale partial locks.\",\"Kept ownership-checked writer lock release, live-pid stale detection, and explicit configured absolute state roots.\",\"Trimmed the proof harness while retaining end-to-end coverage for real execution, scheduler reuse, checkpoint restore identity/integrity, live cancellation, and safe storage locking.\"],\"artifacts\":[\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\".csdlc/prepared/issues/5663/validate-real-fixes.json\",\".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-governed.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log\"]}"
+    },
+    {
+      "sequence": 34,
+      "generation": 31,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record typed PVF local_pass after remaining exact-review fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate\",\"--root\",\".\",\"--request\",\".csdlc/prepared/issues/5663/validate-real-fixes.json\"],\"purpose\":\"Run the typed PVF manifest covering real Agent owner/duplicate cancellation, scheduler reuse, checkpoint byte restore identity/integrity, safe durable storage locking including partial-lock recovery, governed regression, strict Clippy, net-negative LoC, and diff hygiene after the remaining exact-review fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663\"}}"
     }
   ]
 }

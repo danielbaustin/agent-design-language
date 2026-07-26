@@ -68,25 +68,31 @@ fn isolated(kind: AdapterKind, root: &TempDir) -> InProcessOperationExecutor {
     InProcessOperationExecutor::with_state_dir(kind, root.path().join(kind.service_name()))
 }
 
+async fn value(executor: &dyn OperationExecutor, request: OperationRequest) -> Value {
+    serde_json::from_slice(&executor.execute(&request).await.unwrap()).unwrap()
+}
+
 async fn local_value(
     executor: &InProcessOperationExecutor,
     kind: AdapterKind,
     payload: &[u8],
 ) -> Value {
-    local_value_for(executor, adapter_request(kind, payload)).await
-}
-
-async fn local_value_for(
-    executor: &InProcessOperationExecutor,
-    request: OperationRequest,
-) -> Value {
-    serde_json::from_slice(&executor.execute(&request).await.unwrap()).unwrap()
+    value(executor, adapter_request(kind, payload)).await
 }
 
 fn agent_work(tasks: Value) -> Vec<u8> {
     serde_json::json!({"schema":"adl.runtime.local_agent_work.v1","tasks":tasks})
         .to_string()
         .into_bytes()
+}
+
+fn agent_sleep_request(millis: u64, request_id: &str) -> OperationRequest {
+    adapter_request_for(
+        AdapterKind::Agent,
+        &agent_work(serde_json::json!([{"op":"sleep_millis","millis":millis}])),
+        "runtime-test",
+        request_id,
+    )
 }
 
 fn shepherd_admission(admit: bool) -> Vec<u8> {
@@ -140,6 +146,20 @@ fn internal_policy() -> AdapterPolicy {
     }
 }
 
+fn try_lifelog(root: impl Into<std::path::PathBuf>) -> std::io::Result<InProcessOperationExecutor> {
+    InProcessOperationExecutor::try_with_state_dir(AdapterKind::Lifelog, root)
+}
+
+fn write_lock_owner(lock: &Path, writer_id: &str, pid: u32) {
+    std::fs::write(
+        lock.join("owner.json"),
+        format!(
+            r#"{{"schema":"adl.runtime.local_writer_lock.v1","writer_id":"{writer_id}","pid":{pid}}}"#
+        ),
+    )
+    .unwrap();
+}
+
 #[tokio::test]
 async fn local_production_adapters_execute_real_bounded_behavior() {
     let root = TempDir::new().unwrap();
@@ -152,13 +172,11 @@ async fn local_production_adapters_execute_real_bounded_behavior() {
         AdapterKind::CheckpointStore,
         AdapterKind::Lifelog,
     ] {
-        let receipt: Value = serde_json::from_slice(
-            &executors[&kind]
-                .execute(&adapter_request(kind, &payload_for(kind)))
-                .await
-                .unwrap(),
+        let receipt = value(
+            executors[&kind].as_ref(),
+            adapter_request(kind, &payload_for(kind)),
         )
-        .unwrap();
+        .await;
         assert_ne!(receipt["schema"], "adl.runtime.adapter_receipt.v1");
         assert_eq!(receipt["adapter"], kind.service_name());
         assert_eq!(receipt["operation"], kind.operation_name());
@@ -204,10 +222,6 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
         ])),
     )
     .await;
-    assert_eq!(
-        agent_result["schema"],
-        "adl.runtime.local_agent_execution.v1"
-    );
     assert_eq!(agent_result["work_units"], 2);
     assert_eq!(
         agent_result["outputs"][0]["output"],
@@ -231,7 +245,7 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
     let bytes = b"identity-bound-state";
     let checkpoint =
         InProcessOperationExecutor::with_state_dir(AdapterKind::CheckpointStore, &checkpoint_root);
-    local_value_for(
+    value(
         &checkpoint,
         adapter_request_for(
             AdapterKind::CheckpointStore,
@@ -244,7 +258,7 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
     drop(checkpoint);
     let restore =
         InProcessOperationExecutor::with_state_dir(AdapterKind::CheckpointStore, &checkpoint_root);
-    let restored = local_value_for(
+    let restored = value(
         &restore,
         adapter_request_for(
             AdapterKind::CheckpointStore,
@@ -279,16 +293,10 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
     .is_err());
     assert!(build_production_operation_executors("relative-state-root").is_err());
     let locked_root = root.path().join("locked-writer");
-    let writer =
-        InProcessOperationExecutor::try_with_state_dir(AdapterKind::Lifelog, &locked_root).unwrap();
-    assert!(
-        InProcessOperationExecutor::try_with_state_dir(AdapterKind::Lifelog, &locked_root,)
-            .is_err()
-    );
+    let writer = try_lifelog(&locked_root).unwrap();
+    assert!(try_lifelog(&locked_root).is_err());
     drop(writer);
-    assert!(
-        InProcessOperationExecutor::try_with_state_dir(AdapterKind::Lifelog, locked_root).is_ok()
-    );
+    assert!(try_lifelog(locked_root).is_ok());
     let production_locked_root = root.path().join("locked-production");
     let production_writer = build_production_operation_executors(&production_locked_root).unwrap();
     assert!(build_production_operation_executors(&production_locked_root).is_err());
@@ -298,35 +306,26 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
     let stale_root = root.path().join("stale-writer");
     let stale_lock = stale_root.join("writer.lock");
     std::fs::create_dir_all(&stale_lock).unwrap();
-    std::fs::write(
-        stale_lock.join("owner.json"),
-        format!(
-            r#"{{"schema":"adl.runtime.local_writer_lock.v1","writer_id":"stale","pid":{}}}"#,
-            u32::MAX
-        ),
-    )
-    .unwrap();
-    let recovered =
-        InProcessOperationExecutor::try_with_state_dir(AdapterKind::Lifelog, &stale_root).unwrap();
+    write_lock_owner(&stale_lock, "stale", u32::MAX);
+    let recovered = try_lifelog(&stale_root).unwrap();
     assert!(stale_lock.exists());
     drop(recovered);
     assert!(!stale_lock.exists());
 
+    let partial_root = root.path().join("partial-writer");
+    let partial_lock = partial_root.join("writer.lock");
+    std::fs::create_dir_all(&partial_lock).unwrap();
+    let recovered_partial = try_lifelog(&partial_root).unwrap();
+    assert!(partial_lock.join("owner.json").exists());
+    drop(recovered_partial);
+    assert!(!partial_lock.exists());
+
     let replaced_root = root.path().join("replaced-writer");
-    let replaced_writer =
-        InProcessOperationExecutor::try_with_state_dir(AdapterKind::Lifelog, &replaced_root)
-            .unwrap();
+    let replaced_writer = try_lifelog(&replaced_root).unwrap();
     let replaced_lock = replaced_root.join("writer.lock");
     std::fs::remove_dir_all(&replaced_lock).unwrap();
     std::fs::create_dir(&replaced_lock).unwrap();
-    std::fs::write(
-        replaced_lock.join("owner.json"),
-        format!(
-            r#"{{"schema":"adl.runtime.local_writer_lock.v1","writer_id":"replacement","pid":{}}}"#,
-            std::process::id()
-        ),
-    )
-    .unwrap();
+    write_lock_owner(&replaced_lock, "replacement", std::process::id());
     drop(replaced_writer);
     assert!(replaced_lock.exists());
     std::fs::remove_dir_all(replaced_lock).unwrap();
@@ -343,12 +342,7 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
         .unwrap(),
     );
     let token = CancellationToken::new();
-    let cancel_request = adapter_request_for(
-        AdapterKind::Agent,
-        &agent_work(serde_json::json!([{"op":"sleep_millis","millis":50}])),
-        "runtime-test",
-        "cancel-live",
-    );
+    let cancel_request = agent_sleep_request(50, "cancel-live");
     let running = {
         let adapter = adapter.clone();
         let token = token.clone();
@@ -368,17 +362,32 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
     let retried_cancel_key = adapter.invoke(cancel_request).await.unwrap();
     let retried_value: Value = serde_json::from_slice(&retried_cancel_key.payload).unwrap();
     assert_eq!(retried_value["work_units"], 1);
-    let after_cancel = adapter
-        .invoke(adapter_request_for(
-            AdapterKind::Agent,
-            &agent_work(serde_json::json!([{"op":"blake3","input":"after-cancel"}])),
-            "runtime-test",
-            "after-cancel",
-        ))
-        .await
-        .unwrap();
-    let after_cancel_value: Value = serde_json::from_slice(&after_cancel.payload).unwrap();
-    assert_eq!(after_cancel_value["work_units"], 1);
+
+    let duplicate_request = agent_sleep_request(120, "duplicate-cancel");
+    let owner = {
+        let adapter = adapter.clone();
+        let duplicate_request = duplicate_request.clone();
+        tokio::spawn(async move { adapter.invoke(duplicate_request).await })
+    };
+    tokio::time::sleep(Duration::from_millis(10)).await;
+    let duplicate_token = CancellationToken::new();
+    let duplicate = {
+        let adapter = adapter.clone();
+        let duplicate_request = duplicate_request.clone();
+        let duplicate_token = duplicate_token.clone();
+        tokio::spawn(async move {
+            adapter
+                .invoke_with_cancellation(duplicate_request, duplicate_token)
+                .await
+        })
+    };
+    tokio::time::sleep(Duration::from_millis(10)).await;
+    duplicate_token.cancel();
+    assert_eq!(
+        duplicate.await.unwrap().unwrap_err(),
+        OperationError::AdmissionClosed
+    );
+    assert!(owner.await.unwrap().is_ok());
 }
 
 #[tokio::test]

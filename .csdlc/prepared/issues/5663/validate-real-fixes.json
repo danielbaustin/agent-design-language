@@ -55,7 +55,7 @@
       },
       {
         "id": "runtime-v3-local-adapters-loc",
-        "proof_role": "Retain physical LoC measurement for touched source and test paths; before 3796, after 3737, net -59.",
+        "proof_role": "Retain physical LoC measurement for touched source and test paths; before 3796, after 3791, net -5.",
         "purpose": "Record the touched source/test physical LoC delta after all five fixes.",
         "determinism": "deterministic",
         "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 1000},

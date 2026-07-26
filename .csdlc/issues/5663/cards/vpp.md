@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5663/diagram.mmd
 [
   {
     "lane": "runtime-v3-local-adapters-assembly",
-    "proof_role": "Prove real Agent execution, scheduler retirement/reuse, checkpoint byte persistence/restore with integrity and identity checks, live cancellation retry semantics, safe configured storage locking with ownership/stale recovery, production assembly wiring, ingress dispatch, and fail-closed external transports.",
+    "proof_role": "Prove real Agent execution, scheduler retirement/reuse, checkpoint byte persistence/restore with integrity and identity checks, live owner and duplicate-waiter cancellation semantics, safe configured storage locking with ownership/stale/partial-lock recovery, production assembly wiring, ingress dispatch, and fail-closed external transports.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -112,7 +112,7 @@ Diagram: .csdlc/prepared/issues/5663/diagram.mmd
   },
   {
     "lane": "runtime-v3-local-adapters-loc",
-    "proof_role": "Retain physical LoC measurement for touched source and test paths; before 3796, after 3737, net -59.",
+    "proof_role": "Retain physical LoC measurement for touched source and test paths; before 3796, after 3791, net -5.",
     "acceptance_ids": [
       "AC-8"
     ],

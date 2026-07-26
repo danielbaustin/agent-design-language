@@ -1,0 +1,32 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 29,
+  "expected_digest": "e54cadc0259d2dc01952613c7b0f88dd1ff13e544e12e655fb728a5f0d7dbb90",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record implementation of the remaining exact-review fixes before consolidated exact-head review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Resolved the two remaining consolidated review findings after the five real Runtime v3 adapter fixes. Duplicate in-flight callers now wait on the owner result through a cancellation-aware watch channel and cannot become synthetic executors; each waiter can cancel independently without poisoning the owner result. writer.lock acquisition now publishes owner.json through a pending lock directory and recovers partial locks without owner metadata. Current touched source/test physical LoC is before 3796, after 3791, net -5.",
+    "changes": [
+      "Replaced duplicate in-flight OnceCell get_or_init waiting with owner-only execution plus watch-based result notification, so duplicate callers honor their own CancellationToken and never initialize work.",
+      "Notified duplicate waiters on owner-side governed admission errors before removing the in-flight record.",
+      "Changed writer-lock acquisition to write owner.json inside a pending directory before publishing writer.lock, and to recover missing or invalid owner metadata as stale partial locks.",
+      "Kept ownership-checked writer lock release, live-pid stale detection, and explicit configured absolute state roots.",
+      "Trimmed the proof harness while retaining end-to-end coverage for real execution, scheduler reuse, checkpoint restore identity/integrity, live cancellation, and safe storage locking."
+    ],
+    "artifacts": [
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      ".csdlc/prepared/issues/5663/validate-real-fixes.json",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-governed.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log"
+    ]
+  },
+  "fail_after_backup": false
+}

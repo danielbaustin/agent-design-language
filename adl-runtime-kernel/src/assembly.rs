@@ -485,8 +485,8 @@ struct WriterLockOwner {
 impl LocalRuntimeState {
     fn new_in(state_dir: PathBuf) -> std::io::Result<Self> {
         if state_dir.as_os_str().is_empty() || !state_dir.is_absolute() {
-            return Err(std::io::Error::new(
-                std::io::ErrorKind::InvalidInput,
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
                 "state root must be an absolute configured path",
             ));
         }
@@ -518,25 +518,18 @@ impl Drop for LocalRuntimeState {
 }
 
 fn acquire_writer_lock(lock_path: &Path, writer_id: &str, pid: u32) -> io::Result<()> {
+    let pending_path = lock_path.with_file_name(format!("writer.lock.pending.{writer_id}"));
     loop {
-        match fs::create_dir(lock_path) {
-            Ok(()) => {
-                let owner = WriterLockOwner {
-                    schema: "adl.runtime.local_writer_lock.v1".to_owned(),
-                    writer_id: writer_id.to_owned(),
-                    pid,
-                };
-                let bytes = serde_json::to_vec(&owner).map_err(io::Error::other)?;
-                let owner_path = lock_path.join("owner.json");
-                let mut file = fs::OpenOptions::new()
-                    .write(true)
-                    .create_new(true)
-                    .open(owner_path)?;
-                file.write_all(&bytes)?;
-                file.sync_all()?;
-                return Ok(());
-            }
-            Err(error) if error.kind() == io::ErrorKind::AlreadyExists => {
+        let _ = fs::remove_dir_all(&pending_path);
+        fs::create_dir(&pending_path)?;
+        if let Err(error) = write_writer_lock_owner(&pending_path, writer_id, pid) {
+            let _ = fs::remove_dir_all(&pending_path);
+            return Err(error);
+        }
+        match fs::rename(&pending_path, lock_path) {
+            Ok(()) => return Ok(()),
+            Err(error) if error.kind() == io::ErrorKind::AlreadyExists || lock_path.exists() => {
+                let _ = fs::remove_dir_all(&pending_path);
                 if !recover_stale_writer_lock(lock_path)? {
                     return Err(io::Error::new(
                         io::ErrorKind::AlreadyExists,
@@ -544,18 +537,36 @@ fn acquire_writer_lock(lock_path: &Path, writer_id: &str, pid: u32) -> io::Resul
                     ));
                 }
             }
-            Err(error) => return Err(error),
+            Err(error) => {
+                let _ = fs::remove_dir_all(&pending_path);
+                return Err(error);
+            }
         }
     }
 }
 
+fn write_writer_lock_owner(lock_path: &Path, writer_id: &str, pid: u32) -> io::Result<()> {
+    let bytes = serde_json::to_vec(&WriterLockOwner {
+        schema: "adl.runtime.local_writer_lock.v1".to_owned(),
+        writer_id: writer_id.to_owned(),
+        pid,
+    })
+    .map_err(io::Error::other)?;
+    let mut file = fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(lock_path.join("owner.json"))?;
+    file.write_all(&bytes)?;
+    file.sync_all()
+}
+
 fn recover_stale_writer_lock(lock_path: &Path) -> io::Result<bool> {
-    let Some(owner) = read_writer_lock_owner(lock_path)? else {
-        return Ok(false);
+    match read_writer_lock_owner(lock_path) {
+        Ok(Some(owner)) if writer_pid_active(owner.pid) => return Ok(false),
+        Ok(Some(_)) | Ok(None) => {}
+        Err(error) if error.kind() == io::ErrorKind::InvalidData => {}
+        Err(error) => return Err(error),
     };
-    if writer_pid_active(owner.pid) {
-        return Ok(false);
-    }
     let stale_path =
         lock_path.with_file_name(format!("writer.lock.stale.{}", uuid::Uuid::new_v4()));
     match fs::rename(lock_path, &stale_path) {
@@ -569,7 +580,7 @@ fn recover_stale_writer_lock(lock_path: &Path) -> io::Result<bool> {
 }
 
 fn release_writer_lock(lock_path: &Path, writer_id: &str, pid: u32) -> io::Result<()> {
-    let Some(owner) = read_writer_lock_owner(lock_path)? else {
+    let Some(owner) = read_writer_lock_owner(lock_path).ok().flatten() else {
         return Ok(());
     };
     if owner.writer_id == writer_id && owner.pid == pid {

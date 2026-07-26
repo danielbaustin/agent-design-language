@@ -10,7 +10,7 @@ use lru::LruCache;
 use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use tokio::sync::{oneshot, OnceCell};
+use tokio::sync::{oneshot, watch, OnceCell};
 use tokio::sync::{Mutex, RwLock, Semaphore};
 use tokio_util::sync::CancellationToken;
 
@@ -26,6 +26,7 @@ pub const OPERATION_REQUEST_SCHEMA: &str = "adl.runtime.operation_request.v1";
 pub const OPERATION_RESULT_SCHEMA: &str = "adl.runtime.operation_result.v1";
 
 static PARITY_B_EXECUTOR: OnceCell<Arc<ParityBExecutor>> = OnceCell::const_new();
+type OperationOutcome = Result<OperationResult, OperationError>;
 
 #[derive(Deserialize)]
 struct PayloadSchemaProbe {
@@ -214,17 +215,27 @@ pub struct OperationalAdapter {
 #[derive(Clone)]
 struct CompletedOperation {
     fingerprint: String,
-    result: Result<OperationResult, OperationError>,
+    result: OperationOutcome,
 }
 
 struct InFlightOperation {
     fingerprint: String,
-    result: Arc<OnceCell<Result<OperationResult, OperationError>>>,
+    result: watch::Receiver<Option<OperationOutcome>>,
 }
 
 struct OperationEnvelope {
     request: OperationRequest,
-    reply: oneshot::Sender<Result<OperationResult, OperationError>>,
+    reply: oneshot::Sender<OperationOutcome>,
+}
+
+fn notify_in_flight_owner_error(
+    result_tx: Option<watch::Sender<Option<OperationOutcome>>>,
+    error: OperationError,
+) -> OperationOutcome {
+    if let Some(result_tx) = result_tx {
+        let _ = result_tx.send(Some(Err(error.clone())));
+    }
+    Err(error)
 }
 
 #[derive(Clone)]
@@ -393,11 +404,11 @@ impl OperationalAdapter {
                 Err(OperationError::InvalidRequest)
             };
         }
-        let (cell, owner, _permit) = {
+        let (mut result_rx, result_tx, _permit) = {
             let mut in_flight = self.in_flight.lock().await;
             match in_flight.get(&request.idempotency_key) {
                 Some(entry) if entry.fingerprint == fingerprint => {
-                    (entry.result.clone(), false, None)
+                    (entry.result.clone(), None, None)
                 }
                 Some(_) => return Err(OperationError::InvalidRequest),
                 None => {
@@ -405,35 +416,58 @@ impl OperationalAdapter {
                         .permits
                         .try_acquire()
                         .map_err(|_| OperationError::Saturated)?;
-                    let cell = Arc::new(OnceCell::new());
+                    let (result_tx, result_rx) = watch::channel(None);
                     in_flight.insert(
                         request.idempotency_key.clone(),
                         InFlightOperation {
                             fingerprint: fingerprint.clone(),
-                            result: cell.clone(),
+                            result: result_rx.clone(),
                         },
                     );
-                    (cell, true, Some(permit))
+                    (result_rx, Some(result_tx), Some(permit))
                 }
             }
         };
+        let owner = result_tx.is_some();
         if owner && self.policy.authority == AuthorityMode::Governed {
             if let Some(permit) = &request.permit {
                 let mut consumed = self.consumed_permits.lock().await;
                 if consumed.len() >= self.policy.idempotency_entries {
                     self.in_flight.lock().await.remove(&request.idempotency_key);
-                    return Err(OperationError::Saturated);
+                    return notify_in_flight_owner_error(result_tx, OperationError::Saturated);
                 }
                 if !consumed.insert(permit.permit_id.clone()) {
                     self.in_flight.lock().await.remove(&request.idempotency_key);
-                    return Err(OperationError::MissingAuthority);
+                    return notify_in_flight_owner_error(
+                        result_tx,
+                        OperationError::MissingAuthority,
+                    );
                 }
             }
         }
-        let result = cell
-            .get_or_init(|| self.execute_with_policy(&request, &cancellation))
-            .await
-            .clone();
+        let result = if owner {
+            let result = self.execute_with_policy(&request, &cancellation).await;
+            if let Some(result_tx) = result_tx {
+                let _ = result_tx.send(Some(result.clone()));
+            }
+            result
+        } else {
+            loop {
+                if let Some(result) = result_rx.borrow().clone() {
+                    break result;
+                }
+                tokio::select! {
+                    _ = cancellation.cancelled() => return Err(OperationError::AdmissionClosed),
+                    changed = result_rx.changed() => {
+                        if changed.is_err() {
+                            return Err(OperationError::Fatal(
+                                "operation owner dropped before completion".to_owned(),
+                            ));
+                        }
+                    }
+                }
+            }
+        };
         if owner {
             if !matches!(result, Err(OperationError::AdmissionClosed)) {
                 self.completed.lock().await.put(
