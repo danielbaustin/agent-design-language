@@ -3,13 +3,13 @@
   "issue": 5663,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9ae48371048e17e2df859779e157e43a5d9e4ada902e49a33a66eddacd56daf5",
-  "phase": "implemented",
-  "generation": 31,
-  "digest": "e1f52b0c113e8cc9262c03e395a326881e9b75aa3c22dfb2fd6dba0a16157691",
+  "phase": "reviewed",
+  "generation": 33,
+  "digest": "269df8eaf31829374861d679c23cfe4325ee50bfb977eacc7388da4bbd7128b2",
   "claim": {
     "id": "claim-5663-runtime-v3-durable-local-adapters",
     "owner": "codex:issue-5663-runtime-adapters",
-    "generation": 31,
+    "generation": 33,
     "acquired_unix_seconds": 1784998096,
     "expires_unix_seconds": 1785602896,
     "heartbeat_unix_seconds": 1784998096,
@@ -29,8 +29,35 @@
     ],
     "purpose": "Implement durable local Runtime v3 adapter behavior for Agent, Shepherd, Scheduler, Chronosense, CheckpointStore, and Lifelog without external transport or WP-12 scope"
   },
-  "review_assignment": null,
-  "review": null,
+  "review_assignment": {
+    "reviewer": "external:consolidated-opus-5",
+    "assigned_by": "codex:issue-5663-runtime-adapters",
+    "revision": "git-blake3:9e388b86b2c731381f7a195185652db87db3746d:98a12f92d966aca16fdc5d21ffec6ad7b578ceb3995c7d109cd5703bc5108f4b",
+    "scope": [
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/operations.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "external:consolidated-opus-5",
+    "scope": [
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/operations.rs"
+    ],
+    "reviewed_revision": "git-blake3:9e388b86b2c731381f7a195185652db87db3746d:98a12f92d966aca16fdc5d21ffec6ad7b578ceb3995c7d109cd5703bc5108f4b",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -45,32 +72,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "dce05035f93045c2288afc649f66e59155042cafb7f30b9cf6b767f5bd99d8cc",
+      "values_digest": "647b41a98103beb340408eb4b47debe0d7a76e991a76a099f6d6182c8d9cfdeb",
       "rendered_digest": "dd9a80fb70cba5ab51ce7219aa7d6bcb896f05905288c9ed337ca78b0433956c",
       "ast_digest": "236c4929b368dcdbd83131534e0477c144bc2586d06f79a6b924f7e97453893b"
     },
     "stp": {
-      "values_digest": "27200496afade5381cdec34221accd162fa2186b520e266e655c3ebab34c211d",
+      "values_digest": "54b872358385b6842375529b1894d126adf7b244a644841de13feaa25948f21a",
       "rendered_digest": "860089b661813be46a57d17782652a3753affcb7867a42b867720d39bd4b8148",
       "ast_digest": "716150200b112efd93bfbc429f7eb7a1842fa1f1cec75462ceec9f4756213e4f"
     },
     "spp": {
-      "values_digest": "35b14b60151a6bee74a29705c0cab49f26a18aa4cd18c110aa553aaedf046508",
+      "values_digest": "5fb86a1daad19fff4bf4399d9e888e36453cfabe841cba53b452e09d4ab4df13",
       "rendered_digest": "f47b64dc50a64f2b29879548eb057bceafeec18bf087abed5fecf43f123b6ff5",
       "ast_digest": "59926c4cc452fe34c471dd023ed178f785f11ff49ca307427c1487da48d4d0bb"
     },
     "vpp": {
-      "values_digest": "a5e4ff99be4f61c85b9ea01a819b41001bee77c6e03e2d6691d0d64836639e54",
+      "values_digest": "ee7f79419258a74323a6cc653222e7ce33aaef11b9c636973f5a1102259530eb",
       "rendered_digest": "b5cc90927572f7e74248ac6831edb43f8ceba6acb544d3557b1bc23631dba9a8",
       "ast_digest": "26b94e9e146151db3ba1a5775fcefb161014918e120c350c45f6bfdaef9d5f7f"
     },
     "srp": {
-      "values_digest": "d0e68538d822a686b25541a7e119a33b85043471728af05ece8c569ae16dac1b",
-      "rendered_digest": "5357d33319fc16981236d6b0212a61392fe1101fa6001dc9484ff960d147c145",
-      "ast_digest": "825c3fb47a623bb1b2269f2f01d240dbf7f64fdf05860d09ee49fd275f32e747"
+      "values_digest": "aed6f1b735ad3c3b8a23c7a1ca541148aaa965e3b6766389909d9437f1b02e34",
+      "rendered_digest": "c78429b4b37a4826d149fb15aec19724c4db8548c0ea92db07b3ba1feadf5d11",
+      "ast_digest": "bb33101a1f31a3522b861053826665ebf00eb64025dbaa059126d83ca0eaf6db"
     },
     "sor": {
-      "values_digest": "a052b258e3b767a080ca6f1810ca24c4fbe318b573c331db85b9001f799f97c4",
+      "values_digest": "b4bbe391080f9969a2bc4f3b5e438d5748f08261d993e5d0525bccfcd09c008d",
       "rendered_digest": "d0511c7f708923645f6deeeb325807fe4c35cd789dd32465be735e9812a5c943",
       "ast_digest": "f1b1a82414b0e08534efaa8b4fbef813e5397814b8fe1bf7372bc84fa692168c"
     }
@@ -117,6 +144,13 @@
       "to": "implemented",
       "actor": "codex:issue-5663-runtime-adapters",
       "reason": "Recover from published/reviewed state to implemented after exact PR review found five in-scope Runtime v3 adapter findings requiring substantive code and proof corrections before merge."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Consolidated external exact-head review passed with zero findings."
     }
   ],
   "audit": [
@@ -357,6 +391,27 @@
       "actor": "codex:issue-5663-runtime-adapters",
       "reason": "Record typed PVF local_pass after remaining exact-review fixes.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate\",\"--root\",\".\",\"--request\",\".csdlc/prepared/issues/5663/validate-real-fixes.json\"],\"purpose\":\"Run the typed PVF manifest covering real Agent owner/duplicate cancellation, scheduler reuse, checkpoint byte restore identity/integrity, safe durable storage locking including partial-lock recovery, governed regression, strict Clippy, net-negative LoC, and diff hygiene after the remaining exact-review fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663\"}}"
+    },
+    {
+      "sequence": 35,
+      "generation": 31,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 36,
+      "generation": 32,
+      "actor": "external:consolidated-opus-5",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 37,
+      "generation": 33,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Consolidated external exact-head review passed with zero findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
     }
   ]
 }

@@ -12,7 +12,12 @@ Status: draft
 
 ## Scope
 
-
+adl-runtime-kernel/src/assembly.rs
+adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
+adl-runtime-kernel/src/governed_operations.rs
+adl-runtime-kernel/src/operations.rs
+adl-runtime-kernel/tests/assembly.rs
+adl-runtime-kernel/tests/operations.rs
 
 ## Prompts
 
@@ -36,8 +41,8 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:9e388b86b2c731381f7a195185652db87db3746d:98a12f92d966aca16fdc5d21ffec6ad7b578ceb3995c7d109cd5703bc5108f4b")
 
-Reviewer: None
+Reviewer: Some("external:consolidated-opus-5")
 
-Result: pre_review
+Result: pass

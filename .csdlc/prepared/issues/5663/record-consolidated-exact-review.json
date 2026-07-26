@@ -1,0 +1,23 @@
+{
+  "issue": 5663,
+  "expected_generation": 31,
+  "expected_digest": "131c3db713e3b24bbd5bf86988cf02509e7868dee96095780ec78b50495af6f0",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "external:consolidated-opus-5",
+  "evidence": {
+    "reviewer": "external:consolidated-opus-5",
+    "scope": [
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/operations.rs"
+    ],
+    "reviewed_revision": "git-blake3:9e388b86b2c731381f7a195185652db87db3746d:98a12f92d966aca16fdc5d21ffec6ad7b578ceb3995c7d109cd5703bc5108f4b",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}
