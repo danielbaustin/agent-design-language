@@ -1,7 +1,8 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
+    path::PathBuf,
     sync::Arc,
-    time::Duration,
+    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 use adl_engine::{CompletionOutcome, EngineEffect, ExecutionPlan, FailureClass, PortCompletion};
@@ -10,8 +11,9 @@ use adl_records::{
     TrustEntry, TrustPolicy,
 };
 use adl_runtime_kernel::{
-    AdapterKind, AdapterPolicy, AuthorityMode, CanonicalIngress, ComponentRegistry, IngressError,
-    Kernel, LocalAgentExecutor, OperationalAdapter, OperationalFactory, RuntimeRecorder,
+    AdapterKind, AdapterPolicy, AuthorityMode, CanonicalIngress, ComponentRegistry,
+    InProcessOperationExecutor, IngressError, Kernel, OperationalAdapter, OperationalFactory,
+    RuntimeRecorder,
 };
 use adl_runtime_v3_adapter::{
     dispatch_event_header, dispatch_metadata, map_runtime_outcome, prepare, submit, AdapterError,
@@ -334,20 +336,37 @@ fn mapping_rejects_cancel_for_unknown_node() {
     ));
 }
 
-async fn ingress(kind: Option<&str>) -> (CanonicalIngress, adl_runtime_kernel::KernelHandle) {
+fn unique_state_root() -> PathBuf {
+    let nanos = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_nanos();
+    std::env::temp_dir().join(format!(
+        "adl-runtime-v3-adapter-{}-{nanos}",
+        std::process::id()
+    ))
+}
+
+async fn ingress(
+    kind: Option<&str>,
+) -> (CanonicalIngress, adl_runtime_kernel::KernelHandle, PathBuf) {
     let recorder = RuntimeRecorder::new(16);
+    let state_root = unique_state_root();
     let adapter = Arc::new(
         OperationalAdapter::new(
-            AdapterKind::Agent,
+            AdapterKind::Lifelog,
             AdapterPolicy {
                 capacity: 4,
                 max_in_flight: 4,
-                timeout_millis: 1_000,
+                shutdown_grace_millis: 1_000,
                 max_attempts: 1,
                 idempotency_entries: 16,
                 authority: AuthorityMode::Internal,
             },
-            Arc::new(LocalAgentExecutor),
+            Arc::new(InProcessOperationExecutor::with_state_dir(
+                AdapterKind::Lifelog,
+                state_root.join("lifelog"),
+            )),
         )
         .unwrap(),
     );
@@ -363,12 +382,12 @@ async fn ingress(kind: Option<&str>) -> (CanonicalIngress, adl_runtime_kernel::K
         .start()
         .await
         .unwrap();
-    (ingress, handle)
+    (ingress, handle, state_root)
 }
 
 #[tokio::test]
 async fn canonical_ingress_maps_success_and_result_record() {
-    let (ingress, handle) = ingress(Some(WORK_KIND)).await;
+    let (ingress, handle, state_root) = ingress(Some(WORK_KIND)).await;
     let outcome = submit(&ingress, prepared(&plan(), provider_effect())).await;
     assert!(
         matches!(outcome.completion, PortCompletion::Provider(ref value) if matches!(value.outcome, CompletionOutcome::Success(_)))
@@ -377,17 +396,19 @@ async fn canonical_ingress_maps_success_and_result_record() {
         matches!(outcome.record, Record::ExecutionResult(ref value) if value.status == "succeeded" && value.output_digest.is_some())
     );
     handle.shutdown(Duration::from_secs(1)).await.unwrap();
+    let _ = std::fs::remove_dir_all(state_root);
 }
 
 #[tokio::test]
 async fn canonical_ingress_preserves_unsupported_failure() {
-    let (ingress, handle) = ingress(None).await;
+    let (ingress, handle, state_root) = ingress(None).await;
     let outcome = submit(&ingress, prepared(&plan(), provider_effect())).await;
     assert!(
         matches!(outcome.completion, PortCompletion::Provider(ref value) if matches!(value.outcome, CompletionOutcome::Failure(ref failure) if failure.class == FailureClass::InvalidRequest))
     );
     assert!(matches!(outcome.record, Record::Error(ref value) if value.code == "invalidrequest"));
     handle.shutdown(Duration::from_secs(1)).await.unwrap();
+    let _ = std::fs::remove_dir_all(state_root);
 }
 
 #[tokio::test]

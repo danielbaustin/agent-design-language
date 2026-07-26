@@ -526,18 +526,16 @@ impl Drop for LocalRuntimeState {
 }
 
 fn acquire_writer_lock(lock_path: &Path, writer_id: &str, pid: u32) -> io::Result<()> {
-    let pending_path = lock_path.with_file_name(format!("writer.lock.pending.{writer_id}"));
     loop {
-        let _ = fs::remove_dir_all(&pending_path);
-        fs::create_dir(&pending_path)?;
-        if let Err(error) = write_writer_lock_owner(&pending_path, writer_id, pid) {
-            let _ = fs::remove_dir_all(&pending_path);
-            return Err(error);
-        }
-        match fs::rename(&pending_path, lock_path) {
-            Ok(()) => return Ok(()),
+        match fs::create_dir(lock_path) {
+            Ok(()) => {
+                if let Err(error) = write_writer_lock_owner(lock_path, writer_id, pid) {
+                    let _ = fs::remove_dir_all(lock_path);
+                    return Err(error);
+                }
+                return Ok(());
+            }
             Err(error) if error.kind() == io::ErrorKind::AlreadyExists || lock_path.exists() => {
-                let _ = fs::remove_dir_all(&pending_path);
                 if !recover_stale_writer_lock(lock_path)? {
                     return Err(io::Error::new(
                         io::ErrorKind::AlreadyExists,
@@ -545,10 +543,7 @@ fn acquire_writer_lock(lock_path: &Path, writer_id: &str, pid: u32) -> io::Resul
                     ));
                 }
             }
-            Err(error) => {
-                let _ = fs::remove_dir_all(&pending_path);
-                return Err(error);
-            }
+            Err(error) => return Err(error),
         }
     }
 }
@@ -571,10 +566,10 @@ fn write_writer_lock_owner(lock_path: &Path, writer_id: &str, pid: u32) -> io::R
 fn recover_stale_writer_lock(lock_path: &Path) -> io::Result<bool> {
     match read_writer_lock_owner(lock_path) {
         Ok(Some(owner)) if writer_lock_owner_recoverable(&owner) => {
-            recover_writer_lock_after_owner_check(lock_path, Some(owner))
+            recover_writer_lock_after_owner_check(lock_path, owner)
         }
         Ok(Some(_)) => Ok(false),
-        Ok(None) => recover_writer_lock_after_owner_check(lock_path, None),
+        Ok(None) => Ok(false),
         Err(error) if error.kind() == io::ErrorKind::InvalidData => Ok(false),
         Err(error) => Err(error),
     }
@@ -582,7 +577,7 @@ fn recover_stale_writer_lock(lock_path: &Path) -> io::Result<bool> {
 
 fn recover_writer_lock_after_owner_check(
     lock_path: &Path,
-    expected_owner: Option<WriterLockOwner>,
+    expected_owner: WriterLockOwner,
 ) -> io::Result<bool> {
     let stale_path =
         lock_path.with_file_name(format!("writer.lock.stale.{}", uuid::Uuid::new_v4()));
@@ -600,10 +595,9 @@ fn recover_writer_lock_after_owner_check(
                 }
             };
             let owner_still_recoverable = match (&expected_owner, &moved_owner) {
-                (Some(expected), Some(moved)) => {
+                (expected, Some(moved)) => {
                     expected == moved && writer_lock_owner_recoverable(moved)
                 }
-                (None, None) => true,
                 _ => false,
             };
             if owner_still_recoverable {

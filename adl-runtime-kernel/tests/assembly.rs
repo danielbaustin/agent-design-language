@@ -443,10 +443,9 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
     let partial_root = root.path().join("partial-writer");
     let partial_lock = partial_root.join("writer.lock");
     std::fs::create_dir_all(&partial_lock).unwrap();
-    let recovered_partial = try_lifelog(&partial_root).unwrap();
-    assert!(partial_lock.join("owner.json").exists());
-    drop(recovered_partial);
-    assert!(!partial_lock.exists());
+    assert!(try_lifelog(&partial_root).is_err());
+    assert!(partial_lock.exists());
+    std::fs::remove_dir_all(partial_lock).unwrap();
 
     let replaced_root = root.path().join("replaced-writer");
     let replaced_writer = try_lifelog(&replaced_root).unwrap();

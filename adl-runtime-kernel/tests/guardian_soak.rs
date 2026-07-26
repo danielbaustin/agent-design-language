@@ -42,6 +42,7 @@ fn packaging_preserves_one_guardian_neutral_child_contract() {
     assert!(horust.contains(" serve "));
     assert!(horust.contains("ADL_RUNTIME_V3_LOCAL_STATE_DIR"));
     assert!(systemd.contains("ADL_RUNTIME_V3_LOCAL_STATE_DIR=%S/adl/runtime-v3/local-state"));
+    assert!(systemd.contains("--continuity-root %S/adl/runtime-v3/continuity"));
     assert!(systemd.contains("StateDirectory=adl/runtime-v3"));
     assert!(rustysd.contains("ADL_RUNTIME_V3_LOCAL_STATE_DIR=/var/lib/adl/runtime-v3/local-state"));
     assert!(horust_bakeoff.contains(" fatal-once "));
