@@ -46,7 +46,7 @@ Implemented typed Kimi/Moonshot and MiniMax hosted routes with bounded budgets, 
 
 ## Integration
 
-not_started
+worktree_only
 
 ## Publication
 

@@ -6,3 +6,7 @@
 {"sequence":6,"generation":3,"actor":"codex:5675-execution","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":7,"generation":4,"actor":"codex:5675-opus-review","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":8,"generation":5,"actor":"codex:5675-execution","reason":"Opus exact-head review completed; all actionable findings fixed and re-reviewed clean.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":9,"generation":6,"actor":"codex:5675-execution","reason":"Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication.","operation":"recover_review"}
+{"sequence":10,"generation":7,"actor":"codex:5675-execution","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
+{"sequence":11,"generation":8,"actor":"codex:5675-execution","reason":"Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication.","operation":"recover_review"}
+{"sequence":12,"generation":9,"actor":"codex:5675-execution","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
