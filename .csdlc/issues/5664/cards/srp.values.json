@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5664,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][protocols] Implement real Provider, ACIP, A2A, and Cloud Bridge adapters",
+    "slug": "v0-91-8-runtime-v3-protocol-adapters",
+    "version": "v0.91.8",
+    "generation": 1
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Review the exact #5664 issue worktree revision across protocol adapter source, module export, black-box tests, LoC accounting, focused validation evidence, and protected-path disjointness.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Do Provider, ACIP, A2A, and Cloud Bridge each perform a real authenticated transport exchange rather than returning receipts?",
+        "Are retry, timeout, cancellation, replay rejection, and shutdown bounded and tested?",
+        "Does Rustls appear as a real configuration boundary for networked transports without tracked credential material?",
+        "Are #5657, #5663, and #5665 protected paths untouched?",
+        "Do black-box tests prove fail-closed malformed, unauthorized, timeout, replay, unsupported capability, and shutdown cases?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

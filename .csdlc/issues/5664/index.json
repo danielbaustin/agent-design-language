@@ -1,0 +1,139 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5664,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "5c4f0b80a55fc6a22577fde823f493baa9e2e6fd707b7a7966ab6a241f78a977",
+  "phase": "implemented",
+  "generation": 1,
+  "digest": "78c7da67541df09b8471b3a4ab8da3f6becf1e3d59072cc272f052efdda1dc23",
+  "claim": {
+    "id": "claim-5664-runtime-v3-protocol-adapters",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 1,
+    "acquired_unix_seconds": 1784998013,
+    "expires_unix_seconds": 1785602813,
+    "heartbeat_unix_seconds": 1784998013,
+    "branch": "codex/5664-runtime-v3-protocol-adapters",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5664",
+      ".csdlc/issues/5664",
+      ".csdlc/locks/5664.lock",
+      ".csdlc/prepared/issues/5664",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/src/protocol_adapters.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/operations.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ],
+    "purpose": "Implement real Runtime v3 Provider, ACIP, A2A, and Cloud Bridge protocol adapters with bounded Tokio/Rustls-ready transport proof"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5664/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5664/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:5664",
+      "revision": "f147b4efce2025891338fe9668a0cabe923b75dd24f98b8c2af6226e1b534b17"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "5895652941e556f48bb358629dca3558487a6952b7460f11e4899f29fdc8edbf",
+      "rendered_digest": "2ff4d42bf592fa7a8e3c7db9b60977fa5d559b6b2ef512b99b3f75ca37891b6d",
+      "ast_digest": "58af9abe8352b3cc20c252c930c9c6f0f5c5bc07de7ea737cfcb60d494ac35e0"
+    },
+    "stp": {
+      "values_digest": "7a6f868a047d04d4211b9ea974fff3188acd77bd52cd91e601b2febfa80ad81a",
+      "rendered_digest": "ebd4375a918f0b3b601ba52e2977b4b23e866b56a90cf0467d490e4ab1667ce5",
+      "ast_digest": "62fc797c14b2ff5b2f8a94664e1c3212ff7e60a5417bdc1de60c25462326a155"
+    },
+    "spp": {
+      "values_digest": "5a03424a9c508845f9ce15a1e7c23164a77e1edfee79f397116f91fd6d80cac5",
+      "rendered_digest": "d83d290dbba51d7d52252e8e5d99102b52e469d5f992acf1d38bee44fc332923",
+      "ast_digest": "a00c37e4be848f812489601f2646fc715f87524ca067072bf3aba077a464d270"
+    },
+    "vpp": {
+      "values_digest": "a3f2ef00b81519c495f9c26b249b91b941737c532d8a79ca7af215c3e52cf268",
+      "rendered_digest": "63471152dcd0f8f5b387ba75321598e3054fec83c19ac56c7a3d0f1049b67a96",
+      "ast_digest": "7f79aeaa65f405c6a4826cc428d82c785c11c279886ed790cb51f63897368404"
+    },
+    "srp": {
+      "values_digest": "224f822985e6446338716ad667f595701929144d9e8338fda6ffc5dcc063c0c1",
+      "rendered_digest": "67c1a8bf20a892dabfe378661e06c7681c16d1e1dd8e71c82264f22d4726e634",
+      "ast_digest": "8262a4c1a3ef7c3688566fc4bc4356213f5e5596e2a584332856bb2683284feb"
+    },
+    "sor": {
+      "values_digest": "70755cf7fc324e10dabbc482f1cc2d40232abc3154336ad48843bc79b5b2f88a",
+      "rendered_digest": "db9ec4ebde2578e63cec74284f03b30fc7b768cb21f172f0e3b5d0df0efb88df",
+      "ast_digest": "1b066f19452d3b5bc55ee9eae2d8c8c81f4d9942e1740fbb06e0053dd5563244"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "execution and passing validation finalized atomically"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Reserve Runtime v3 kernel manifest and assembly integration paths required for real protocol adapters while remaining disjoint from #5657 and #5665 protected paths.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/Cargo.toml\",\"adl-runtime-kernel/src/assembly.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Reserve superseded Runtime v3 receipt-only protocol test surfaces so #5664 can delete obsolete in-process external-adapter proof and satisfy net LoC reduction.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5664,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][protocols] Implement real Provider, ACIP, A2A, and Cloud Bridge adapters",
+    "slug": "v0-91-8-runtime-v3-protocol-adapters",
+    "version": "v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "runtime-v3-protocol-black-box",
+          "proof_role": "Run deterministic local black-box protocol adapter tests",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--test",
+            "protocol_adapters"
+          ],
+          "parallel_group": "runtime-v3-protocol",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-protocol-clippy",
+          "proof_role": "Run strict Clippy for Runtime v3 protocol adapter changes",
+          "acceptance_ids": [
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 600,
+          "budget_tokens": 3000,
+          "argv": [
+            "cargo",
+            "clippy",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--all-targets",
+            "--all-features",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "parallel_group": "runtime-v3-protocol",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-protocol-loc",
+          "proof_role": "Measure before/after physical LoC and net reduction",
+          "acceptance_ids": [
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "bash",
+            "adl/tools/report_runtime_v3_loc.sh"
+          ],
+          "parallel_group": "runtime-v3-protocol",
+          "defer_reason": null
+        },
+        {
+          "lane": "diff-hygiene",
+          "proof_role": "Verify patch whitespace and path hygiene",
+          "acceptance_ids": [
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "local-control",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on claim collision, missing #5659 ancestry, degraded or receipt-only production adapter behavior, plaintext credential artifacts, unbounded retry/timeout/cancellation/shutdown, replay acceptance, AWS use, protected-path overlap, failing focused validation, or unresolved exact-review findings.",
+      "design_ref": ".csdlc/prepared/issues/5664/design.md",
+      "design_digest": "f147b4efce2025891338fe9668a0cabe923b75dd24f98b8c2af6226e1b534b17",
+      "diagram_ref": ".csdlc/prepared/issues/5664/diagram.mmd",
+      "diagram_digest": "709cd35e9d8f190aa93ed4b0e5597a202600b922e255d6c932023122a1e80b3e"
+    }
+  }
+}

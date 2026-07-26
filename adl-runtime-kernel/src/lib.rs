@@ -17,6 +17,7 @@ pub mod parity;
 pub mod parity_b;
 pub mod private_state;
 pub mod proof;
+pub mod protocol_adapters;
 pub mod reasoning;
 pub mod supervisor;
 pub mod telemetry;
@@ -24,7 +25,12 @@ pub mod time;
 pub mod topology;
 pub mod weather;
 
-pub use assembly::*;
+pub use assembly::{
+    bootstrap_reasoning_services, build_live_assembly, build_production_operation_executors,
+    live_service_names, mark_unavailable_live_services, validate_production_operation_executors,
+    AssemblyError, InProcessOperationExecutor, LiveAssembly, LiveBindings, LocalAgentExecutor,
+    PASSIVE_LIVE_SERVICES, REQUIRED_OPERATIONAL_ADAPTERS,
+};
 pub use channel::{channel, BoundedReceiver, BoundedSender, ChannelFullPolicy, SendError};
 pub use cognition::*;
 pub use component::{
@@ -43,6 +49,12 @@ pub use operations::*;
 pub use parity::*;
 pub use parity_b::*;
 pub use private_state::*;
+pub use protocol_adapters::{
+    build_production_operation_executors as build_protocol_production_operation_executors,
+    protocol_operation_executors, protocol_operation_executors_from_env, ProtocolAdapter,
+    ProtocolBuildError, ProtocolEndpoint, ProtocolFrame, ProtocolResponse, ProtocolSecret,
+    ProtocolSecurity, ProtocolStatus, PROTOCOL_FRAME_SCHEMA, PROTOCOL_RESPONSE_SCHEMA,
+};
 pub use reasoning::*;
 pub use supervisor::{Kernel, KernelControl, KernelError, KernelExit, KernelHandle};
 pub use telemetry::*;

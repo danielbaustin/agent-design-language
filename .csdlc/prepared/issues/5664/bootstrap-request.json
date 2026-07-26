@@ -1,0 +1,142 @@
+{
+  "issue": 5664,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5664/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5664/diagram.mmd",
+  "design_reviewer": "operator:5664",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5664-runtime-v3-protocol-adapters",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784998013,
+    "expires_unix_seconds": 1785602813,
+    "heartbeat_unix_seconds": 1784998013,
+    "branch": "codex/5664-runtime-v3-protocol-adapters",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5664",
+      ".csdlc/issues/5664",
+      ".csdlc/locks/5664.lock",
+      ".csdlc/prepared/issues/5664",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/src/protocol_adapters.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ],
+    "purpose": "Implement real Runtime v3 Provider, ACIP, A2A, and Cloud Bridge protocol adapters with bounded Tokio/Rustls-ready transport proof"
+  },
+  "initial": {
+    "title": "[v0.91.8][runtime-v3][protocols] Implement real Provider, ACIP, A2A, and Cloud Bridge adapters",
+    "slug": "v0-91-8-runtime-v3-protocol-adapters",
+    "version": "v0.91.8",
+    "goal": "Implement the four external-facing Runtime v3 adapter contracts as real bounded Rust/Tokio integrations.",
+    "required_outcome": "Provider, ACIP, A2A, and Cloud Bridge adapters perform real authenticated request/response or bidirectional message exchange with bounded timeout, cancellation, retry, replay rejection, shutdown, Rustls-ready transport configuration, and deterministic black-box proof without AWS or plaintext credentials.",
+    "declared_scope": [
+      "Provider dispatch adapter",
+      "ACIP bidirectional exchange adapter",
+      "A2A authenticated message exchange adapter",
+      "Cloud Bridge capability forwarding adapter",
+      "Tokio transport, Rustls configuration boundary, authentication, retry, cancellation, replay rejection, shutdown, and black-box tests"
+    ],
+    "authority_boundary": [
+      "#5659 merged into main satisfies the #5657 ancestry dependency for this lane; #5657 typed closeout is parallel post-merge work",
+      "#5657 retains launch, Guardian, config, control, observatory, guardian_soak, and runtime-init protected paths",
+      "#5663 owns durable local Runtime v3 adapters and does not own external protocol transports",
+      "#5665 owns Runtime API/WSS/Observatory feature proof paths and remains disjoint",
+      "AWS provisioning, AWS execution, Runtime v2 edits, cutover, and default-switch work are excluded"
+    ],
+    "operator_constraints": [
+      "Use only typed C-SDLC v2 lifecycle operations and the issue-bound worktree",
+      "Do not edit main",
+      "Do not touch #5657, #5663, or #5665 protected paths",
+      "No receipt-only or degraded production substitute",
+      "No plaintext credentials or credential material in tracked artifacts",
+      "Reuse existing COTS dependencies and Runtime v3 primitives",
+      "Measure before/after physical LoC and require net reduction where superseded paths are deleted"
+    ],
+    "task_boundary": "Implement only the bounded protocol adapter surface and focused tests for #5664.",
+    "deliverables": [
+      "Runtime v3 protocol adapter module",
+      "Provider, ACIP, A2A, and Cloud Bridge executor builders",
+      "Local deterministic Tokio black-box tests",
+      "LoC before/after measurement",
+      "Focused test and strict Clippy evidence",
+      "Exact pre-PR review evidence"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Provider dispatch performs real authenticated exchange with bounded timeout, cancellation, retry, idempotency, and replay rejection",
+      "AC-2: ACIP performs real bidirectional exchange and fails closed for malformed, unauthorized, replay, timeout, and shutdown cases",
+      "AC-3: A2A performs real authenticated message exchange and rejects replay and unauthorized messages",
+      "AC-4: Cloud Bridge forwards only declared capabilities and classifies unsupported, unavailable, unauthorized, malformed, timeout, retry exhaustion, and shutdown outcomes explicitly",
+      "AC-5: Networked transport exposes Rustls configuration and avoids plaintext credential material in tracked artifacts",
+      "AC-6: Deterministic local black-box tests, focused Rust tests, strict Clippy, LoC measurement, and exact pre-PR review pass"
+    ],
+    "dependencies": [
+      "PR #5659 merged into current main from #5657",
+      "#5663 disjoint durable local adapter scope",
+      "#5665 disjoint Runtime API/WSS/Observatory scope"
+    ],
+    "repo_inputs": [
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/tests/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs"
+    ],
+    "non_goals": [
+      "AWS provisioning or cloud account experiments",
+      "Runtime API/WSS/Observatory feature proof implementation",
+      "Guardian launch, runtime config, or runtime-init edits",
+      "Durable local checkpoint/lifelog/scheduler/Chronosense adapter work",
+      "Runtime v2 edits",
+      "Cutover or default switch"
+    ],
+    "plan_summary": "Bind #5664 on a disjoint issue worktree, add a dedicated Runtime v3 protocol-adapter module reusing existing operation primitives and Rustls/Tokio COTS dependencies, prove local authenticated transport behavior through black-box tests, run focused validation and strict Clippy, measure LoC, review exact head, and stop before publication unless explicitly requested.",
+    "steps": [
+      {"id": "S1", "action": "Initialize and bind disjoint #5664 C-SDLC v2 ownership", "acceptance_ids": ["AC-6"], "status": "pending"},
+      {"id": "S2", "action": "Implement shared authenticated protocol transport and replay cache", "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"], "status": "pending"},
+      {"id": "S3", "action": "Implement Provider, ACIP, A2A, and Cloud Bridge executor builders", "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"], "status": "pending"},
+      {"id": "S4", "action": "Add deterministic Tokio black-box tests for success and fail-closed cases", "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"], "status": "pending"},
+      {"id": "S5", "action": "Measure LoC, run focused tests, strict Clippy, exact review, and fix findings", "acceptance_ids": ["AC-6"], "status": "pending"}
+    ],
+    "invariants": [
+      "All protocol calls require authenticated identity and request freshness",
+      "Replay is rejected before remote actuation",
+      "Timeout, cancellation, retry, and shutdown are bounded",
+      "Credentials are represented only by opaque runtime secret handles or in-memory test values",
+      "Cloud Bridge capability declarations are fail-closed",
+      "No AWS path is executed",
+      "No #5657/#5663/#5665 protected path is modified"
+    ],
+    "risks": [
+      "Existing operation adapter receipt paths could be mistaken for real external transport proof",
+      "Runtime API/WSS work in #5665 could overlap if protocol code is placed in runtime_api files",
+      "Retry or idempotency could allow duplicate side effects if replay cache is late",
+      "TLS configuration could be claimed without a typed Rustls boundary"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "Typed claim collision with #5657, #5663, #5665, or another active issue",
+      "Current main no longer contains PR #5659 merge ancestry",
+      "Implementation requires editing #5657/#5663/#5665 protected paths",
+      "Implementation requires AWS provisioning or execution",
+      "Any production path remains receipt-only or degraded"
+    ],
+    "validation_lanes": [
+      {"lane": "runtime-v3-protocol-black-box", "proof_role": "Run deterministic local black-box protocol adapter tests", "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"], "deterministic": true, "resource_profile": "medium", "budget_seconds": 600, "budget_tokens": 4000, "argv": ["cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--test", "protocol_adapters"], "parallel_group": "runtime-v3-protocol", "defer_reason": null},
+      {"lane": "runtime-v3-protocol-clippy", "proof_role": "Run strict Clippy for Runtime v3 protocol adapter changes", "acceptance_ids": ["AC-6"], "deterministic": true, "resource_profile": "medium", "budget_seconds": 600, "budget_tokens": 3000, "argv": ["cargo", "clippy", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--all-targets", "--all-features", "--", "-D", "warnings"], "parallel_group": "runtime-v3-protocol", "defer_reason": null},
+      {"lane": "runtime-v3-protocol-loc", "proof_role": "Measure before/after physical LoC and net reduction", "acceptance_ids": ["AC-6"], "deterministic": true, "resource_profile": "small", "budget_seconds": 120, "budget_tokens": 1000, "argv": ["bash", "adl/tools/report_runtime_v3_loc.sh"], "parallel_group": "runtime-v3-protocol", "defer_reason": null},
+      {"lane": "diff-hygiene", "proof_role": "Verify patch whitespace and path hygiene", "acceptance_ids": ["AC-6"], "deterministic": true, "resource_profile": "small", "budget_seconds": 120, "budget_tokens": 1000, "argv": ["git", "diff", "--check"], "parallel_group": "local-control", "defer_reason": null}
+    ],
+    "failure_policy": "Fail closed on claim collision, missing #5659 ancestry, degraded or receipt-only production adapter behavior, plaintext credential artifacts, unbounded retry/timeout/cancellation/shutdown, replay acceptance, AWS use, protected-path overlap, failing focused validation, or unresolved exact-review findings.",
+    "review_prompts": [
+      "Do Provider, ACIP, A2A, and Cloud Bridge each perform a real authenticated transport exchange rather than returning receipts?",
+      "Are retry, timeout, cancellation, replay rejection, and shutdown bounded and tested?",
+      "Does Rustls appear as a real configuration boundary for networked transports without tracked credential material?",
+      "Are #5657, #5663, and #5665 protected paths untouched?",
+      "Do black-box tests prove fail-closed malformed, unauthorized, timeout, replay, unsupported capability, and shutdown cases?"
+    ],
+    "review_scope": "Review the exact #5664 issue worktree revision across protocol adapter source, module export, black-box tests, LoC accounting, focused validation evidence, and protected-path disjointness."
+  }
+}
+
