@@ -468,7 +468,7 @@ impl InProcessOperationExecutor {
 struct LocalRuntimeState {
     sequence: AtomicU64,
     admitted: Mutex<BTreeSet<String>>,
-    scheduled: Mutex<VecDeque<String>>,
+    scheduled: Mutex<LocalSchedulerState>,
     state_dir: PathBuf,
     writer_id: String,
     writer_pid: u32,
@@ -498,7 +498,7 @@ impl LocalRuntimeState {
         Ok(Self {
             sequence: AtomicU64::new(0),
             admitted: Mutex::new(BTreeSet::new()),
-            scheduled: Mutex::new(VecDeque::new()),
+            scheduled: Mutex::new(LocalSchedulerState::default()),
             state_dir,
             writer_id,
             writer_pid,
@@ -509,6 +509,13 @@ impl LocalRuntimeState {
     fn next_sequence(&self) -> u64 {
         self.sequence.fetch_add(1, Ordering::Relaxed) + 1
     }
+}
+
+#[derive(Default)]
+struct LocalSchedulerState {
+    pending: VecDeque<String>,
+    active: BTreeSet<String>,
+    completed_count: u64,
 }
 
 impl Drop for LocalRuntimeState {
@@ -713,12 +720,24 @@ impl InProcessOperationExecutor {
             if cancellation.is_cancelled() {
                 return Err(adapter_error(FailureClass::Fatal, "operation cancelled"));
             }
-            let output = match task["op"].as_str().unwrap_or_default() {
-                "blake3" => blake3::hash(task["input"].as_str().unwrap_or_default().as_bytes())
-                    .to_hex()
-                    .to_string(),
+            let op = task["op"]
+                .as_str()
+                .ok_or_else(|| adapter_error(FailureClass::Fatal, "agent_work_malformed"))?;
+            let output = match op {
+                "blake3" => blake3::hash(
+                    task["input"]
+                        .as_str()
+                        .ok_or_else(|| {
+                            adapter_error(FailureClass::Fatal, "agent_blake3_malformed")
+                        })?
+                        .as_bytes(),
+                )
+                .to_hex()
+                .to_string(),
                 "sleep_millis" => {
-                    let millis = task["millis"].as_u64().unwrap_or(0);
+                    let millis = task["millis"].as_u64().ok_or_else(|| {
+                        adapter_error(FailureClass::Fatal, "agent_sleep_malformed")
+                    })?;
                     if millis > 250 {
                         return Err(adapter_error(FailureClass::Fatal, "agent_sleep_bound"));
                     }
@@ -786,32 +805,76 @@ impl InProcessOperationExecutor {
         let command: serde_json::Value = serde_json::from_slice(&request.payload).map_err(|e| {
             adapter_error(FailureClass::Fatal, format!("scheduler_job_invalid: {e}"))
         })?;
-        if command["schema"] != "adl.runtime.local_schedule.v1"
-            || command["job_id"]
-                .as_str()
-                .unwrap_or_default()
-                .trim()
-                .is_empty()
-        {
+        if command["schema"] != "adl.runtime.local_schedule.v1" {
             return Err(adapter_error(FailureClass::Fatal, "scheduler_job_schema"));
         }
+        let action = command["action"].as_str().unwrap_or("schedule");
         let mut scheduled = self
             .state
             .scheduled
             .lock()
             .expect("local scheduler state poisoned");
-        if scheduled.len() >= 4 {
-            return Err(adapter_error(
-                FailureClass::Retryable,
-                "scheduler_saturated",
-            ));
+        match action {
+            "schedule" => {
+                let job_id = command["job_id"]
+                    .as_str()
+                    .filter(|value| !value.trim().is_empty())
+                    .ok_or_else(|| adapter_error(FailureClass::Fatal, "scheduler_job_schema"))?
+                    .to_owned();
+                if scheduled.pending.len() + scheduled.active.len() >= 4 {
+                    return Err(adapter_error(
+                        FailureClass::Retryable,
+                        "scheduler_saturated",
+                    ));
+                }
+                if scheduled.pending.contains(&job_id) || scheduled.active.contains(&job_id) {
+                    return Err(adapter_error(
+                        FailureClass::Fatal,
+                        "scheduler_job_duplicate",
+                    ));
+                }
+                scheduled.pending.push_back(job_id.clone());
+                let mut value = self.result(request, "scheduled");
+                value["job_id"] = job_id.into();
+                value["scheduled_depth"] = scheduled.pending.len().into();
+                value["active_depth"] = scheduled.active.len().into();
+                value["completed_jobs"] = scheduled.completed_count.into();
+                Ok(value)
+            }
+            "dispatch_next" => {
+                let Some(job_id) = scheduled.pending.pop_front() else {
+                    return Err(adapter_error(FailureClass::Retryable, "scheduler_empty"));
+                };
+                scheduled.active.insert(job_id.clone());
+                let mut value = self.result(request, "dispatched");
+                value["job_id"] = job_id.into();
+                value["scheduled_depth"] = scheduled.pending.len().into();
+                value["active_depth"] = scheduled.active.len().into();
+                value["completed_jobs"] = scheduled.completed_count.into();
+                Ok(value)
+            }
+            "retire" => {
+                let job_id = command["job_id"]
+                    .as_str()
+                    .filter(|value| !value.trim().is_empty())
+                    .ok_or_else(|| adapter_error(FailureClass::Fatal, "scheduler_job_schema"))?
+                    .to_owned();
+                if !scheduled.active.remove(&job_id) {
+                    return Err(adapter_error(
+                        FailureClass::Fatal,
+                        "scheduler_job_not_active",
+                    ));
+                }
+                scheduled.completed_count = scheduled.completed_count.saturating_add(1);
+                let mut value = self.result(request, "retired");
+                value["job_id"] = job_id.into();
+                value["scheduled_depth"] = scheduled.pending.len().into();
+                value["active_depth"] = scheduled.active.len().into();
+                value["completed_jobs"] = scheduled.completed_count.into();
+                Ok(value)
+            }
+            _ => Err(adapter_error(FailureClass::Fatal, "scheduler_job_action")),
         }
-        scheduled.push_back(command["job_id"].as_str().unwrap().to_owned());
-        let mut value = self.result(request, "scheduled");
-        value["scheduled_depth"] = scheduled.len().into();
-        scheduled.pop_front();
-        value["scheduled_depth_after"] = scheduled.len().into();
-        Ok(value)
     }
 
     fn chronosense(&self, request: &OperationRequest) -> Result<serde_json::Value, ExecutorError> {

@@ -40,6 +40,9 @@ fn packaging_preserves_one_guardian_neutral_child_contract() {
     assert!(horust.contains("successful-exit-code = [0]"));
     assert!(horust.contains("signal = \"TERM\""));
     assert!(horust.contains(" serve "));
+    assert!(horust.contains("ADL_RUNTIME_V3_LOCAL_STATE_DIR"));
+    assert!(systemd.contains("ADL_RUNTIME_V3_LOCAL_STATE_DIR=/var/lib/adl/runtime-v3/local-state"));
+    assert!(rustysd.contains("ADL_RUNTIME_V3_LOCAL_STATE_DIR=/var/lib/adl/runtime-v3/local-state"));
     assert!(horust_bakeoff.contains(" fatal-once "));
     let matrix: serde_json::Value = serde_json::from_str(include_str!(
         "../../docs/architecture/runtime_v3_guardian_matrix.v1.json"
@@ -386,6 +389,10 @@ async fn horust_forwards_sigterm_and_runtime_checkpoints_cleanly() {
             .env("ADL_RUNTIME_INIT", init)
             .env("ADL_RUNTIME_CONTINUITY_ROOT", &continuity_root)
             .env(
+                "ADL_RUNTIME_V3_LOCAL_STATE_DIR",
+                local_state_root(directory.path(), "horust-sigterm-local-state"),
+            )
+            .env(
                 "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
                 hex::encode(control_key.verifying_key().as_bytes()),
             )
@@ -437,7 +444,7 @@ async fn horust_forwards_sigterm_and_runtime_checkpoints_cleanly() {
                 schema: DOMAIN_WORK_SCHEMA.to_owned(),
                 work_id: "guardian-work".to_owned(),
                 kind: "parity-a".to_owned(),
-                payload: b"horust-live-ingress".to_vec(),
+                payload: live_agent_work("horust-live-ingress"),
             },
         },
         "guardian-test",
@@ -670,6 +677,22 @@ fn toml_path(path: &Path) -> String {
 }
 
 #[cfg(unix)]
+fn local_state_root(directory: &Path, name: &str) -> PathBuf {
+    let root = directory.join(name);
+    std::fs::create_dir_all(&root).unwrap();
+    root.canonicalize().unwrap()
+}
+
+fn live_agent_work(input: &str) -> Vec<u8> {
+    serde_json::json!({
+        "schema":"adl.runtime.local_agent_work.v1",
+        "tasks":[{"op":"blake3","input":input}]
+    })
+    .to_string()
+    .into_bytes()
+}
+
+#[cfg(unix)]
 fn wait_for_control_port(guardian: &mut std::process::Child) {
     let deadline = std::time::Instant::now() + Duration::from_secs(5);
     loop {
@@ -705,6 +728,10 @@ fn serve_handles_guardian_sigterm_with_a_clean_checkpointed_exit() {
         .arg("--init")
         .arg(&init)
         .arg(&continuity_root)
+        .env(
+            "ADL_RUNTIME_V3_LOCAL_STATE_DIR",
+            local_state_root(directory.path(), "sigterm-local-state"),
+        )
         .env(
             "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
             hex::encode(verifying_key.as_bytes()),
@@ -793,9 +820,13 @@ cpu_stop_basis_points = 2
     let mut child = Command::new(env!("CARGO_BIN_EXE_adl-runtime-kernel"))
         .arg("serve")
         .arg("--init")
-        .arg(init)
+        .arg(&init)
         .arg("--continuity-root")
         .arg(&continuity_root)
+        .env(
+            "ADL_RUNTIME_V3_LOCAL_STATE_DIR",
+            local_state_root(directory.path(), "pressure-failure-local-state"),
+        )
         .env(
             "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
             hex::encode(
@@ -911,6 +942,10 @@ disk_recover_free_bytes = {}
         .arg("--continuity-root")
         .arg(&continuity_root)
         .env(
+            "ADL_RUNTIME_V3_LOCAL_STATE_DIR",
+            local_state_root(directory.path(), "pressure-success-local-state"),
+        )
+        .env(
             "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
             hex::encode(control_key.verifying_key().as_bytes()),
         )
@@ -974,7 +1009,7 @@ disk_recover_free_bytes = {}
                 schema: DOMAIN_WORK_SCHEMA.to_owned(),
                 work_id: "pressure-work".to_owned(),
                 kind: "parity-a".to_owned(),
-                payload: b"serialize-before-stop".to_vec(),
+                payload: live_agent_work("serialize-before-stop"),
             },
         },
         "pressure-test",
@@ -1004,6 +1039,50 @@ disk_recover_free_bytes = {}
 
 #[cfg(unix)]
 #[test]
+fn serve_requires_explicit_local_state_root_before_live_adapters_start() {
+    use ed25519_dalek::SigningKey;
+
+    let directory = tempfile::tempdir().unwrap();
+    let probe = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = probe.local_addr().unwrap();
+    drop(probe);
+    let init = write_test_runtime_init(directory.path(), address);
+    let output = Command::new(env!("CARGO_BIN_EXE_adl-runtime-kernel"))
+        .arg("serve")
+        .arg("--init")
+        .arg(&init)
+        .arg("--continuity-root")
+        .arg(directory.path().join("continuity"))
+        .env(
+            "ADL_RUNTIME_CONTINUITY_SIGNING_KEY_HEX",
+            hex::encode([23_u8; 32]),
+        )
+        .env("ADL_RUNTIME_CONTINUITY_MIN_GENERATION", "0")
+        .env(
+            "ADL_RUNTIME_OPERATION_PUBLIC_KEY_HEX",
+            hex::encode(
+                SigningKey::from_bytes(&[29_u8; 32])
+                    .verifying_key()
+                    .as_bytes(),
+            ),
+        )
+        .env(
+            "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
+            hex::encode(
+                SigningKey::from_bytes(&[17_u8; 32])
+                    .verifying_key()
+                    .as_bytes(),
+            ),
+        )
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(78));
+    assert!(String::from_utf8_lossy(&output.stderr)
+        .contains("runtime local adapter state root is missing"));
+}
+
+#[cfg(unix)]
+#[test]
 fn serve_refuses_reused_continuity_and_operation_keys() {
     use ed25519_dalek::SigningKey;
 
@@ -1019,6 +1098,10 @@ fn serve_refuses_reused_continuity_and_operation_keys() {
         .arg(init)
         .arg("--continuity-root")
         .arg(directory.path().join("continuity"))
+        .env(
+            "ADL_RUNTIME_V3_LOCAL_STATE_DIR",
+            local_state_root(directory.path(), "reused-key-local-state"),
+        )
         .env(
             "ADL_RUNTIME_CONTINUITY_SIGNING_KEY_HEX",
             hex::encode(reused.to_bytes()),
@@ -1064,9 +1147,13 @@ async fn signed_https_shutdown_checkpoints_and_forgery_cannot_stop_the_process()
     let mut child = Command::new(env!("CARGO_BIN_EXE_adl-runtime-kernel"))
         .arg("serve")
         .arg("--init")
-        .arg(init)
+        .arg(&init)
         .arg("--continuity-root")
         .arg(&continuity_root)
+        .env(
+            "ADL_RUNTIME_V3_LOCAL_STATE_DIR",
+            local_state_root(directory.path(), "remote-control-local-state"),
+        )
         .env(
             "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
             hex::encode(control_key.verifying_key().as_bytes()),
@@ -1161,7 +1248,7 @@ async fn signed_https_shutdown_checkpoints_and_forgery_cannot_stop_the_process()
         schema: DOMAIN_WORK_SCHEMA.to_owned(),
         work_id: "guardian-work-1".to_owned(),
         kind: "parity-a".to_owned(),
-        payload: b"guardian-live-ingress".to_vec(),
+        payload: live_agent_work("guardian-live-ingress"),
     };
     let submit_response = request(signed(
         "valid-submit",
@@ -1216,6 +1303,44 @@ async fn signed_https_shutdown_checkpoints_and_forgery_cannot_stop_the_process()
     .unwrap();
     assert_eq!(manifest["generation"], 1);
     assert_eq!(manifest["signing_algorithm"], "ed25519");
+    let mut restore_with_different_state = Command::new(env!("CARGO_BIN_EXE_adl-runtime-kernel"));
+    restore_with_different_state
+        .arg("serve")
+        .arg("--init")
+        .arg(&init)
+        .arg("--continuity-root")
+        .arg(&continuity_root)
+        .env(
+            "ADL_RUNTIME_V3_LOCAL_STATE_DIR",
+            local_state_root(directory.path(), "remote-control-different-local-state"),
+        )
+        .env(
+            "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
+            hex::encode(control_key.verifying_key().as_bytes()),
+        )
+        .env("ADL_RUNTIME_CONTROL_KEY_ID", "remote-test")
+        .env("ADL_RUNTIME_CONTROL_PRINCIPAL", "remote-test")
+        .env(
+            "ADL_RUNTIME_CONTINUITY_SIGNING_KEY_HEX",
+            hex::encode([23_u8; 32]),
+        )
+        .env("ADL_RUNTIME_CONTINUITY_MIN_GENERATION", "1")
+        .env(
+            "ADL_RUNTIME_OPERATION_PUBLIC_KEY_HEX",
+            hex::encode(
+                SigningKey::from_bytes(&[29_u8; 32])
+                    .verifying_key()
+                    .as_bytes(),
+            ),
+        )
+        .env(
+            "ADL_RUNTIME_OBSERVATORY_TOKEN",
+            "guardian-observatory-token-00000004",
+        );
+    let restore_output = bounded_output(&mut restore_with_different_state);
+    assert_eq!(restore_output.status.code(), Some(78));
+    assert!(String::from_utf8_lossy(&restore_output.stderr)
+        .contains("runtime continuity restore refused"));
     let checkpoint: serde_json::Value = serde_json::from_slice(
         &std::fs::read(continuity_root.join("generation-1/0000-live_kernel.bin")).unwrap(),
     )

@@ -31,6 +31,7 @@ configuration error when it matches the operation-permit public key.
 export ADL_RUNTIME_BIN=/usr/local/bin/adl-runtime-kernel
 export ADL_RUNTIME_INIT="$HOME/.adl/runtime-v3/runtime-init.toml"
 export ADL_RUNTIME_CONTINUITY_ROOT="$HOME/.adl/runtime-v3/continuity"
+export ADL_RUNTIME_V3_LOCAL_STATE_DIR="$HOME/.adl/runtime-v3/local-state"
 export ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX=<ed25519-public-key-hex>
 export ADL_RUNTIME_CONTROL_KEY_ID=operator
 export ADL_RUNTIME_CONTROL_PRINCIPAL=operator

@@ -90,7 +90,7 @@ async fn main() -> ExitCode {
                 }
             };
             let operation_executors =
-                match build_production_operation_executors(operation_state_dir) {
+                match build_production_operation_executors(operation_state_dir.clone()) {
                     Ok(executors) => executors,
                     Err(error) => {
                         eprintln!("runtime local adapter state root is invalid: {error}");
@@ -101,6 +101,13 @@ async fn main() -> ExitCode {
                 eprintln!("runtime live operation adapters unavailable: {error}");
                 return ExitCode::from(78);
             }
+            let operation_state_identity = match operation_state_dir.canonicalize() {
+                Ok(path) => path,
+                Err(error) => {
+                    eprintln!("runtime local adapter state root is invalid: {error}");
+                    return ExitCode::from(78);
+                }
+            };
             let operation_key = match std::env::var("ADL_RUNTIME_OPERATION_PUBLIC_KEY_HEX")
                 .map_err(|_| ())
                 .and_then(|value| verifying_key_from_hex(&value).map_err(|_| ()))
@@ -192,6 +199,7 @@ async fn main() -> ExitCode {
                 "control_principal": &principal,
                 "control_key": hex::encode(public_key.as_bytes()),
                 "continuity_key_id": &continuity_key_id,
+                "operation_state_root": operation_state_identity,
                 "tls_certificate_hash": tls_certificate_hash,
             });
             let config_hash = blake3::hash(

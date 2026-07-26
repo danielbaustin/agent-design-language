@@ -503,17 +503,13 @@ impl OperationalAdapter {
             } else {
                 self.executor.clone()
             };
-        let timeout = Duration::from_millis(self.policy.timeout_millis);
         for attempt in 1..=self.policy.max_attempts {
             let outcome = tokio::select! {
                 _ = cancellation.cancelled() => return Err(OperationError::AdmissionClosed),
-                outcome = tokio::time::timeout(
-                    timeout,
-                    executor.execute_with_cancellation(request, cancellation),
-                ) => outcome,
+                outcome = executor.execute_with_cancellation(request, cancellation) => outcome,
             };
             match outcome {
-                Ok(Ok(payload)) => {
+                Ok(payload) => {
                     let result = OperationResult {
                         schema: OPERATION_RESULT_SCHEMA.to_owned(),
                         request_id: request.request_id.clone(),
@@ -523,17 +519,10 @@ impl OperationalAdapter {
                     };
                     return Ok(result);
                 }
-                Ok(Err(_)) if cancellation.is_cancelled() => {
+                Err(_) if cancellation.is_cancelled() => {
                     return Err(OperationError::AdmissionClosed);
                 }
-                Err(_) if attempt == self.policy.max_attempts => {
-                    return Err(OperationError::Exhausted {
-                        attempts: attempt,
-                        message: OperationError::Timeout.to_string(),
-                    });
-                }
-                Err(_) => tokio::task::yield_now().await,
-                Ok(Err(error)) if error.class == FailureClass::Retryable => {
+                Err(error) if error.class == FailureClass::Retryable => {
                     if attempt == self.policy.max_attempts {
                         return Err(OperationError::Exhausted {
                             attempts: attempt,
@@ -542,10 +531,10 @@ impl OperationalAdapter {
                     }
                     tokio::task::yield_now().await;
                 }
-                Ok(Err(error)) if error.class == FailureClass::Degraded => {
+                Err(error) if error.class == FailureClass::Degraded => {
                     return Err(OperationError::Degraded(error.message));
                 }
-                Ok(Err(error)) => return Err(OperationError::Fatal(error.message)),
+                Err(error) => return Err(OperationError::Fatal(error.message)),
             }
         }
         unreachable!("validated attempts are non-zero")

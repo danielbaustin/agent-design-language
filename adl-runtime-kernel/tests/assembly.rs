@@ -2,7 +2,7 @@ use std::{collections::BTreeMap, path::Path, sync::Arc, time::Duration};
 
 use adl_runtime_kernel::{
     bootstrap_reasoning_services, build_live_assembly, build_production_operation_executors,
-    AdapterKind, AdapterPolicy, AuthorityMode, DomainWork, FailureClass,
+    AdapterKind, AdapterPolicy, AuthorityMode, DomainWork, ExecutorError, FailureClass,
     InProcessOperationExecutor, LiveBindings, OperationError, OperationExecutor, OperationRequest,
     OperationalAdapter, RuntimeRecorder, TimeQualificationBounds, TimeSample, TimeSampleError,
     TimeSampleSource, DOMAIN_WORK_SCHEMA,
@@ -15,6 +15,8 @@ use tokio_util::sync::CancellationToken;
 
 struct FixedTime;
 
+struct PendingExecutor;
+
 #[async_trait]
 impl TimeSampleSource for FixedTime {
     async fn sample(&self) -> Result<TimeSample, TimeSampleError> {
@@ -24,6 +26,13 @@ impl TimeSampleSource for FixedTime {
             offset_millis: 1,
             round_trip: Duration::from_millis(1),
         })
+    }
+}
+
+#[async_trait]
+impl OperationExecutor for PendingExecutor {
+    async fn execute(&self, _request: &OperationRequest) -> Result<Vec<u8>, ExecutorError> {
+        std::future::pending().await
     }
 }
 
@@ -107,6 +116,16 @@ fn schedule_job(job_id: &str) -> Vec<u8> {
         .into_bytes()
 }
 
+fn dispatch_next_job() -> Vec<u8> {
+    br#"{"schema":"adl.runtime.local_schedule.v1","action":"dispatch_next"}"#.to_vec()
+}
+
+fn retire_job(job_id: &str) -> Vec<u8> {
+    serde_json::json!({"schema":"adl.runtime.local_schedule.v1","action":"retire","job_id":job_id})
+        .to_string()
+        .into_bytes()
+}
+
 fn checkpoint_store(state: &[u8]) -> Vec<u8> {
     serde_json::json!({
         "schema":"adl.runtime.local_checkpoint_command.v1",
@@ -182,7 +201,7 @@ async fn local_production_adapters_execute_real_bounded_behavior() {
         assert_eq!(receipt["operation"], kind.operation_name());
         match kind {
             AdapterKind::Agent => assert_eq!(receipt["work_units"], 1),
-            AdapterKind::Scheduler => assert_eq!(receipt["scheduled_depth_after"], 0),
+            AdapterKind::Scheduler => assert_eq!(receipt["scheduled_depth"], 1),
             AdapterKind::CheckpointStore => {
                 assert_eq!(
                     hex::decode(receipt["state_hex"].as_str().unwrap()).unwrap(),
@@ -228,9 +247,20 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
         blake3::hash(b"alpha").to_hex().to_string()
     );
     assert!(agent_result["result_hash"].as_str().unwrap().len() >= 32);
+    for malformed in [
+        agent_work(serde_json::json!([{"op":"blake3"}])),
+        agent_work(serde_json::json!([{"op":"sleep_millis","millis":"1"}])),
+    ] {
+        let error = agent
+            .execute(&adapter_request(AdapterKind::Agent, &malformed))
+            .await
+            .unwrap_err();
+        assert_eq!(error.class, FailureClass::Fatal);
+        assert!(error.message.contains("malformed"));
+    }
 
     let scheduler = isolated(AdapterKind::Scheduler, &root);
-    for index in 0..8 {
+    for index in 0..4 {
         let scheduled = local_value(
             &scheduler,
             AdapterKind::Scheduler,
@@ -238,7 +268,62 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
         )
         .await;
         assert_eq!(scheduled["status"], "scheduled");
-        assert_eq!(scheduled["scheduled_depth_after"], 0);
+        assert_eq!(scheduled["scheduled_depth"], index + 1);
+    }
+    let saturated = scheduler
+        .execute(&adapter_request(
+            AdapterKind::Scheduler,
+            &schedule_job("job-saturated"),
+        ))
+        .await
+        .unwrap_err();
+    assert_eq!(saturated.class, FailureClass::Retryable);
+    assert_eq!(saturated.message, "scheduler_saturated");
+    for index in 0..4 {
+        let dispatched =
+            local_value(&scheduler, AdapterKind::Scheduler, &dispatch_next_job()).await;
+        assert_eq!(dispatched["status"], "dispatched");
+        assert_eq!(dispatched["job_id"], format!("job-{index}"));
+        assert_eq!(dispatched["active_depth"], 1);
+        let retired = local_value(
+            &scheduler,
+            AdapterKind::Scheduler,
+            &retire_job(&format!("job-{index}")),
+        )
+        .await;
+        assert_eq!(retired["status"], "retired");
+        assert_eq!(retired["active_depth"], 0);
+        assert_eq!(retired["completed_jobs"], index + 1);
+    }
+    for index in 4..8 {
+        let scheduled = local_value(
+            &scheduler,
+            AdapterKind::Scheduler,
+            &schedule_job(&format!("job-{index}")),
+        )
+        .await;
+        assert_eq!(scheduled["status"], "scheduled");
+    }
+    for index in 4..8 {
+        let dispatched =
+            local_value(&scheduler, AdapterKind::Scheduler, &dispatch_next_job()).await;
+        assert_eq!(dispatched["job_id"], format!("job-{index}"));
+        let retired = local_value(
+            &scheduler,
+            AdapterKind::Scheduler,
+            &retire_job(&format!("job-{index}")),
+        )
+        .await;
+        assert_eq!(retired["completed_jobs"], index + 1);
+    }
+    for index in 8..12 {
+        let scheduled = local_value(
+            &scheduler,
+            AdapterKind::Scheduler,
+            &schedule_job(&format!("job-{index}")),
+        )
+        .await;
+        assert_eq!(scheduled["status"], "scheduled");
     }
 
     let checkpoint_root = root.path().join("identity-checkpoint");
@@ -388,6 +473,48 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
         OperationError::AdmissionClosed
     );
     assert!(owner.await.unwrap().is_ok());
+}
+
+#[tokio::test]
+async fn operation_policy_timeout_does_not_synthesize_adapter_failure() {
+    let adapter = Arc::new(
+        OperationalAdapter::new(
+            AdapterKind::Agent,
+            AdapterPolicy {
+                capacity: 1,
+                max_in_flight: 1,
+                timeout_millis: 10,
+                max_attempts: 1,
+                idempotency_entries: 1,
+                authority: AuthorityMode::Internal,
+            },
+            Arc::new(PendingExecutor),
+        )
+        .unwrap(),
+    );
+    let token = CancellationToken::new();
+    let running = {
+        let adapter = adapter.clone();
+        let token = token.clone();
+        tokio::spawn(async move {
+            adapter
+                .invoke_with_cancellation(
+                    agent_sleep_request(1, "pending-without-timeout-failure"),
+                    token,
+                )
+                .await
+        })
+    };
+    tokio::time::sleep(Duration::from_millis(40)).await;
+    assert!(
+        !running.is_finished(),
+        "elapsed policy timeout must not synthesize an adapter failure"
+    );
+    token.cancel();
+    assert_eq!(
+        running.await.unwrap().unwrap_err(),
+        OperationError::AdmissionClosed
+    );
 }
 
 #[tokio::test]
