@@ -53,7 +53,8 @@ pub use protocol_adapters::{
     build_production_operation_executors as build_protocol_production_operation_executors,
     protocol_operation_executors, protocol_operation_executors_from_env, ProtocolAdapter,
     ProtocolBuildError, ProtocolEndpoint, ProtocolFrame, ProtocolResponse, ProtocolSecret,
-    ProtocolSecurity, ProtocolStatus, PROTOCOL_FRAME_SCHEMA, PROTOCOL_RESPONSE_SCHEMA,
+    ProtocolSecurity, ProtocolStatus, MAX_PROTOCOL_RESPONSE_BYTES, PROTOCOL_FRAME_SCHEMA,
+    PROTOCOL_RESPONSE_SCHEMA,
 };
 pub use reasoning::*;
 pub use supervisor::{Kernel, KernelControl, KernelError, KernelExit, KernelHandle};

@@ -9,7 +9,7 @@ use adl_runtime_kernel::{
     build_protocol_production_operation_executors, AdapterKind, AdapterPolicy, AuthorityMode,
     FailureClass, OperationError, OperationExecutor, OperationRequest, OperationalAdapter,
     ProtocolAdapter, ProtocolEndpoint, ProtocolFrame, ProtocolResponse, ProtocolSecret,
-    ProtocolSecurity, ProtocolStatus, OPERATION_REQUEST_SCHEMA,
+    ProtocolSecurity, ProtocolStatus, MAX_PROTOCOL_RESPONSE_BYTES, OPERATION_REQUEST_SCHEMA,
 };
 use rcgen::{generate_simple_self_signed, CertifiedKey};
 use tokio::{
@@ -95,6 +95,25 @@ async fn spawn_tampered_peer(secret: ProtocolSecret) -> std::net::SocketAddr {
     tokio::spawn(async move {
         if let Ok((stream, _)) = listener.accept().await {
             handle_tampered_peer_stream(stream, secret).await;
+        }
+    });
+    address
+}
+
+async fn spawn_oversized_peer() -> std::net::SocketAddr {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let address = listener.local_addr().unwrap();
+    tokio::spawn(async move {
+        if let Ok((stream, _)) = listener.accept().await {
+            let mut reader = BufReader::new(stream);
+            let mut line = String::new();
+            if reader.read_line(&mut line).await.unwrap_or_default() == 0 {
+                return;
+            }
+            let mut stream = reader.into_inner();
+            let oversized = vec![b'x'; MAX_PROTOCOL_RESPONSE_BYTES + 1];
+            let _ = stream.write_all(&oversized).await;
+            tokio::time::sleep(Duration::from_millis(50)).await;
         }
     });
     address
@@ -313,6 +332,25 @@ async fn response_tamper_and_concurrent_replay_are_rejected() {
         .count();
     assert_eq!(successes, 1);
     assert_eq!(replay_rejections, 1);
+}
+
+#[tokio::test]
+async fn oversized_non_newline_response_fails_closed() {
+    let secret = ProtocolSecret::from_key([13; 32]);
+    let address = spawn_oversized_peer().await;
+    let adapter = ProtocolAdapter::new(
+        AdapterKind::Provider,
+        endpoint(address, AdapterKind::Provider, secret),
+        CancellationToken::new(),
+    )
+    .unwrap();
+
+    let error = adapter
+        .execute(&operation("oversized-response", b"dispatch"))
+        .await
+        .unwrap_err();
+    assert_eq!(error.class, FailureClass::Fatal);
+    assert!(error.message.contains("byte limit"));
 }
 
 #[tokio::test]

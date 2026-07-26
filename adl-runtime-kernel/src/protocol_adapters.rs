@@ -11,7 +11,7 @@ use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tokio::{
-    io::{AsyncBufReadExt, AsyncWriteExt, BufReader},
+    io::{AsyncRead, AsyncReadExt, AsyncWriteExt, BufReader},
     net::TcpStream,
 };
 use tokio_rustls::{
@@ -28,6 +28,7 @@ use crate::{
 
 pub const PROTOCOL_FRAME_SCHEMA: &str = "adl.runtime.protocol_frame.v1";
 pub const PROTOCOL_RESPONSE_SCHEMA: &str = "adl.runtime.protocol_response.v1";
+pub const MAX_PROTOCOL_RESPONSE_BYTES: usize = 64 * 1024;
 
 const ADAPTERS: [(AdapterKind, &str); 4] = [
     (AdapterKind::Provider, "ADL_RUNTIME_PROVIDER"),
@@ -211,6 +212,38 @@ impl ProtocolStream {
     }
 }
 
+async fn read_response_line<R>(mut reader: BufReader<R>) -> Result<Vec<u8>, ExecutorError>
+where
+    R: AsyncRead + Unpin,
+{
+    let mut bytes = Vec::new();
+    let mut chunk = [0_u8; 1024];
+    loop {
+        if bytes.len() >= MAX_PROTOCOL_RESPONSE_BYTES {
+            return Err(fatal("protocol response frame exceeded byte limit"));
+        }
+        let remaining = MAX_PROTOCOL_RESPONSE_BYTES - bytes.len();
+        let limit = remaining.min(chunk.len());
+        let read = reader
+            .read(&mut chunk[..limit])
+            .await
+            .map_err(|error| retryable(format!("transport read failed: {error}")))?;
+        if read == 0 {
+            if bytes.is_empty() {
+                return Err(retryable("transport read closed before protocol response"));
+            }
+            return Err(fatal("protocol response frame missing newline"));
+        }
+        bytes.extend_from_slice(&chunk[..read]);
+        if let Some(newline) = bytes.iter().position(|byte| *byte == b'\n') {
+            if newline + 1 != bytes.len() {
+                return Err(fatal("protocol response frame has trailing bytes"));
+            }
+            return Ok(bytes);
+        }
+    }
+}
+
 impl ProtocolAdapter {
     pub fn new(
         kind: AdapterKind,
@@ -322,13 +355,11 @@ impl ProtocolAdapter {
         &self,
         stream: ProtocolStream,
     ) -> Result<ProtocolResponse, ExecutorError> {
-        let mut line = String::new();
-        match stream {
-            ProtocolStream::Plain(stream) => BufReader::new(stream).read_line(&mut line).await,
-            ProtocolStream::Tls(stream) => BufReader::new(stream).read_line(&mut line).await,
-        }
-        .map_err(|error| retryable(format!("transport read failed: {error}")))?;
-        serde_json::from_str(&line).map_err(|_| fatal("malformed protocol response"))
+        let bytes = match stream {
+            ProtocolStream::Plain(stream) => read_response_line(BufReader::new(stream)).await,
+            ProtocolStream::Tls(stream) => read_response_line(BufReader::new(stream)).await,
+        }?;
+        serde_json::from_slice(&bytes).map_err(|_| fatal("malformed protocol response"))
     }
 
     fn response_payload(
