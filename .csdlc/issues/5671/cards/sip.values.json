@@ -7,7 +7,7 @@
     "title": "[v0.91.8][provider] Add Anthropic Claude Opus 5 provider profile",
     "slug": "anthropic-claude-opus-5-provider",
     "version": "v0.91.8",
-    "generation": 2
+    "generation": 5
   },
   "status": "ready",
   "content": {

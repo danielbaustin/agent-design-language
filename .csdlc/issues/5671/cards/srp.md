@@ -12,7 +12,12 @@ Status: pre_phase
 
 ## Scope
 
-provider profile registry, setup template, and focused tests
+adl/src/provider/profiles.rs
+adl/src/provider/mod.rs
+adl/src/provider/http_family/tests.rs
+adl/src/cli/provider_cmd.rs
+adl/src/cli/usage.rs
+adl/tests/provider_tests/profiles.rs
 
 ## Prompts
 
@@ -22,7 +27,18 @@ provider profile registry, setup template, and focused tests
 
 ## Findings
 
-[]
+[
+  {
+    "id": "R-5671-001",
+    "severity": "p2",
+    "summary": "The initial implementation needed an end-to-end expansion/build assertion and typed scope coverage for the added integration and usage paths.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:86a1bfbc250954bfede4eec8ea8e1a2d314c07ff:4d4fe30bfe94daa9b40e484fc4897f8837ff1f3114858b35e6b85b688bb73be9",
+    "route": null
+  }
+]
 
 ## Dispositions
 
@@ -30,12 +46,12 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- No live Anthropic credential was available in the approved key-file route, so live Opus review remains unproven; mocked HTTP proof and real local adapter execution pass.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:86a1bfbc250954bfede4eec8ea8e1a2d314c07ff:4d4fe30bfe94daa9b40e484fc4897f8837ff1f3114858b35e6b85b688bb73be9")
 
-Reviewer: None
+Reviewer: Some("codex:5671-subagent-review")
 
-Result: pre_review
+Result: pass

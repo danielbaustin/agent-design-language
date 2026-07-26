@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5671,
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5671-anthropic-opus-5",
+  "title": "[v0.91.8][provider] Add Anthropic Claude Opus 5 provider profile",
+  "body": "Implements #5671. Adds the canonical claude:claude-opus-5 profile, provider setup route, end-to-end profile expansion/build proof, and mocked Anthropic Messages request validation. No live provider credential is required for the local proof; a live Opus review remains pending because no approved Anthropic key file is configured.",
+  "draft": true,
+  "expected_generation": 4,
+  "expected_digest": "fca2fcc03b8589d5023abf186aa3117e73a3c2747d244d5c88c36960b69ce964",
+  "claim_id": "claim-5671-anthropic-opus-5",
+  "actor": "codex:5671-execution",
+  "token_file": null
+}
