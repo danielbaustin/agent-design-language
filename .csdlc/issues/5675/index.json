@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "c600ad81a92f3c87eb5098faa2237f85713be1650bf3c1d713c0206a4ef263b9",
   "phase": "reviewed",
-  "generation": 5,
-  "digest": "138d4b3d499a626a1f5d92377895feff294715fdf304f458a1f1f3594b4ea50c",
+  "generation": 9,
+  "digest": "449a894c8e94414c6f5435cca5cacee47037cd209d526269bbf5ee48ecb726bd",
   "claim": {
     "id": "claim-5675-provider-adapter-routes",
     "owner": "codex:5675-execution",
-    "generation": 5,
+    "generation": 9,
     "acquired_unix_seconds": 1785107892,
     "expires_unix_seconds": 1785712692,
     "heartbeat_unix_seconds": 1785107892,
@@ -24,66 +24,18 @@
     ],
     "purpose": "Implement and validate Kimi and MiniMax hosted provider adapter routes"
   },
-  "review_assignment": {
-    "reviewer": "codex:5675-opus-review",
-    "assigned_by": "codex:5675-execution",
-    "revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
-    "scope": [
-      "adl/src/provider_adapter.rs",
-      "adl/src/provider/profiles.rs"
-    ]
-  },
+  "review_assignment": null,
   "review": {
     "reviewer": "codex:5675-opus-review",
     "scope": [
       "adl/src/provider_adapter.rs",
       "adl/src/provider/profiles.rs"
     ],
-    "reviewed_revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
-    "findings": [
-      {
-        "id": "B1",
-        "severity": "p1",
-        "summary": "MiniMax provider error envelopes were not classified before choices extraction.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
-        "route": null
-      },
-      {
-        "id": "B2",
-        "severity": "p1",
-        "summary": "Insufficient-balance responses needed non-retryable billing classification.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
-        "route": null
-      },
-      {
-        "id": "B3",
-        "severity": "p2",
-        "summary": "Provider output budgets needed bounded caller-aware defaults.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
-        "route": null
-      },
-      {
-        "id": "S3",
-        "severity": "p2",
-        "summary": "MiniMax endpoint moved to the current chat completions route.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
-        "route": null
-      }
-    ],
+    "reviewed_revision": "git-blake3:6ac376f0d72d60d8ae2fc7de0cea21bc3c1d0eb6:d2274443f705299f244e1ef85031f52b6a96a872e0815e0777b430f729204d02",
+    "findings": [],
     "residual_risks": [
-      "Live Kimi and MiniMax completion success remains unproven because both approved accounts reported insufficient balance; adapter reachability and typed billing failure paths are proven."
+      "Live Kimi and MiniMax completion success remains unproven because both approved accounts reported insufficient balance; adapter reachability and typed billing failure paths are proven.",
+      "Only lifecycle metadata, evidence, generated cards, design/diagram artifacts, and the Opus runbook changed after the source review."
     ],
     "completed": true,
     "non_substantive_proof": null
@@ -102,34 +54,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "557ae63634123b64934f7f008f78906ed15224ea016fa148b40e06db84ff4333",
+      "values_digest": "7e71ab9983f555e289ad8afde4865d3d6293ebb087494bb2787fd6f414c5805a",
       "rendered_digest": "2dc56e72c830eeb26afa62a9aabea5c3cb9cbf81b6eb0d6187be628e4bf8ef39",
       "ast_digest": "fa7619680715cdb8942ef43186a5af1d6d843567ee56dfb71aafbce1f79567d5"
     },
     "stp": {
-      "values_digest": "97ed3c8af3dd966da3dc052876f0ac0464c39d54091cb0506a25ac125267d4c1",
+      "values_digest": "73a4a5f880c8bccd86892d057504a0215ec5b64bbabc983fd203ee62b6f6bfa6",
       "rendered_digest": "da91288730d18893c5e48dfa033e63c91e686996426f678d466ac51cf3ce6851",
       "ast_digest": "ebeb2107e5c5a6401657727ddf62783563f6cb4e4a683e681aac4b67b60d80d4"
     },
     "spp": {
-      "values_digest": "e47faa6fc6bb4eb022c4669aa9a0cebf225ba1c4c7039261eac670eb57ed7f06",
+      "values_digest": "2425b2435e67214280b269d56b9142e653c4b8774e1602e02b08d3707000fe09",
       "rendered_digest": "ba7997482a91ff85139903280c6217fb382cbb93f2dd78d5c9f8e388283fa2f4",
       "ast_digest": "40081f37abee8861add7a4da099fb6ac64e90b1f94265afbf627b796d8b45fad"
     },
     "vpp": {
-      "values_digest": "ef4e292e021748ba31bce2b0a66d8ef3ff1155385c4719df7d3fc53939485563",
+      "values_digest": "767773a67af47b13dc15aef481403190760088aa6396920e9e7b804f9307a604",
       "rendered_digest": "71c431972dcae6c443ae563e8d5ca293b6fbdede90a9569a2b1cbde79a3ec297",
       "ast_digest": "b804553b02659f056d635308a1ea495cac3afa9e7f42fafa8149b81ab8479ffb"
     },
     "srp": {
-      "values_digest": "d2f1096b628b9c4872330a4686637dd4d8b48e8c3b5b3c252bd6d55f08d89c67",
-      "rendered_digest": "4fbd56dc49172e13ab4e7db5af2066ad74709330e03ceaae7203a0b5e6f0da9e",
-      "ast_digest": "4b541edd3941ecc90c280ef3b3f6f0e4921542e579ce5352bd3e3b6a176eeea0"
+      "values_digest": "41b72e62c49097622f418630472be350dd9beb256e9945c44027c4e6f368a924",
+      "rendered_digest": "e311b2fcffd4460c9d77d4ef3f7871616b9b253a381c48b0deabf1d16091a8f3",
+      "ast_digest": "e363a4cb429a93b92f34ce0b7083450845e312e3b2d77ac623dfd7d9a6609998"
     },
     "sor": {
-      "values_digest": "25cf6b8300678694d39915ca6bccb3556545986e6398c584a9136f5580389a16",
-      "rendered_digest": "ad57ad3bf49e29fb0924b4a1314e71296dcbc602b936f38965dc3b1e92067cd1",
-      "ast_digest": "b9f7634b30d435f29c5297993fb64c924d2b27c7b5f2573a81b65ee20a0e031a"
+      "values_digest": "a41c2d467ef1832929d15b7addb03b4dfffa5d7e4aede677baf117a4f21bf569",
+      "rendered_digest": "b3f0793d1c974fb91f97ef952a92fd2867866228a465fbc703b2b14e9381ca06",
+      "ast_digest": "f9594dfd0b2b8671deb78daa12f238f96c622339d695e43c8e35f6fc64a09f67"
     }
   },
   "transitions": [
@@ -160,6 +112,34 @@
       "to": "reviewed",
       "actor": "codex:5675-execution",
       "reason": "Opus exact-head review completed; all actionable findings fixed and re-reviewed clean."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:5675-execution",
+      "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5675-execution",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:5675-execution",
+      "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication."
+    },
+    {
+      "sequence": 8,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5675-execution",
+      "reason": "exact scoped review passed"
     }
   ],
   "audit": [
@@ -218,6 +198,34 @@
       "actor": "codex:5675-execution",
       "reason": "Opus exact-head review completed; all actionable findings fixed and re-reviewed clean.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5675-execution",
+      "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5675-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5675-execution",
+      "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:5675-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
     }
   ]
 }
