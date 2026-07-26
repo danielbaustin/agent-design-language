@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "dab42acf5c368379d4a37d2f3ddd8412f5146e44a6f0099cd7ae0a27a24d197b",
   "phase": "published",
-  "generation": 5,
-  "digest": "e04bb0143ad366aca3c13c5f0b907c0a93d1cf2c8c2040c09357fcea5710db7e",
+  "generation": 6,
+  "digest": "896f18df6edea8a18de256752ed5512b1465e2c2155a8b8124462f34c664daec",
   "claim": {
     "id": "claim-5671-anthropic-opus-5",
     "owner": "codex:5671-execution",
-    "generation": 5,
+    "generation": 6,
     "acquired_unix_seconds": 1784851200,
     "expires_unix_seconds": 1785456000,
     "heartbeat_unix_seconds": 1784851200,
@@ -77,7 +77,7 @@
     "url": "https://github.com/danielbaustin/agent-design-language/pull/5673",
     "base": "main",
     "head": "codex/5671-anthropic-opus-5",
-    "revision": "git-blake3:86a1bfbc250954bfede4eec8ea8e1a2d314c07ff:4d4fe30bfe94daa9b40e484fc4897f8837ff1f3114858b35e6b85b688bb73be9",
+    "revision": "git-blake3:f10d7a87020272b9cc340da35262c3d53d98e572:7dfd9ba093ef5f283b9bbfc66588b999a6384206b9ea9ed92592bba71cb0e1f3",
     "draft": true,
     "observed_state": "open"
   },
@@ -94,32 +94,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "f555fcdab93e66c20dc78e95de15e3b30f1cc0ffa52362ff7ce9e380ac4d4ff6",
+      "values_digest": "87fdd8049fa047b31c36900cc6d5b6c9ac8d69f2b0beece4702f765027c2c3f8",
       "rendered_digest": "ebea4d650aaca26229abe222dc682f70ba880618ff6ad962389c052570d031ec",
       "ast_digest": "609d791c5ec9db9ccb5bff44abce0222ecb3ae1f059b635f2133f8586dd9cfd9"
     },
     "stp": {
-      "values_digest": "12c0c66906b39699ee7750f77c9257ab760511239ef546800b4e2a4e85550e77",
+      "values_digest": "d09c13dc5f84cbd95323a070cd5e180b745a817dc8fcfea2d175abc1c6627454",
       "rendered_digest": "8b08658ad1bb340a9b8d3b83d28fca91afdddda26d12c952e0e48a8b206de719",
       "ast_digest": "f43d4248233a1f4cccc855c5da3c078ce9195c8c2b191f5e7bf650793648a391"
     },
     "spp": {
-      "values_digest": "0b24362eef6167afec859d9bb1588e334964b69ddae5e94a1e51c468f4bc6aee",
+      "values_digest": "cb83ed226a5dcb8b83696aa939b493bd59d6d70052106148da025b0d533abbb4",
       "rendered_digest": "a3505196dba4b81203e0def1f807fb36e0852ad5c77c056f05f8e12648f9d7f9",
       "ast_digest": "558fdfb30d2b37e5e60b5646303c8b91b53180b47a4ac3c6ca9c66902b91521a"
     },
     "vpp": {
-      "values_digest": "7adf15a70138bd1723ff289bf05827da7a51cc43bc82886a2a330070fd67aa01",
+      "values_digest": "a9f6e5cfb8bb50fd404353ca2df3be85a68535a84b5930c26d7363edd003ec54",
       "rendered_digest": "e09ae6cf86e8317065688f84112c9256180103601d31031b349a9bd6c1aea709",
       "ast_digest": "7a5d2278c8892c511c8d833f6ccb2e9d6c35dc5c1d9c899f9be6780e1340f33a"
     },
     "srp": {
-      "values_digest": "ca9f208dbca7a14c2e90f8ccb9fcbee9365a0e0548169a598b6e9e9ef81f5df2",
+      "values_digest": "cfdd9d2a93b5cc6a8f269af57c7e43502105df40ba6e22dae4d0347bd0028c26",
       "rendered_digest": "9850d251705a6321bb47a839a6a89c2ef204ceda22062d639da5e0fc6a921228",
       "ast_digest": "fd593eb97f04d9074455edcdd624cabe0311ffc54f06294f90b3ab998cf096b0"
     },
     "sor": {
-      "values_digest": "72c9c8ceac31e9c6cf1c17cbb4446a879f2cff77372e9dc303e7dc3736ec4687",
+      "values_digest": "74694c9b29249eca0c399458f93da5908e4289620cd124843f21bca2c6c69a62",
       "rendered_digest": "9509ccfee816dd072919907b7efced0d126df34133c40d3083fc179744bcc66a",
       "ast_digest": "24d5e001c3e8e62728d7dc70899b599b424441562e997ffda32f129061095235"
     }
@@ -221,6 +221,13 @@
     {
       "sequence": 9,
       "generation": 5,
+      "actor": "codex:5671-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
       "actor": "codex:5671-execution",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"

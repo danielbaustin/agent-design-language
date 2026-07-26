@@ -7,6 +7,6 @@
   "title": "[v0.91.8][provider] Add Anthropic Claude Opus 5 provider profile",
   "body": "Implements #5671. Adds the canonical claude:claude-opus-5 profile, provider setup route, end-to-end profile expansion/build proof, and mocked Anthropic Messages request validation. No live provider credential is required for the local proof; a live Opus review remains pending because no approved Anthropic key file is configured.",
   "draft": true,
-  "revision": "git-blake3:86a1bfbc250954bfede4eec8ea8e1a2d314c07ff:4d4fe30bfe94daa9b40e484fc4897f8837ff1f3114858b35e6b85b688bb73be9",
-  "commit_sha": "86a1bfbc250954bfede4eec8ea8e1a2d314c07ff"
+  "revision": "git-blake3:f10d7a87020272b9cc340da35262c3d53d98e572:7dfd9ba093ef5f283b9bbfc66588b999a6384206b9ea9ed92592bba71cb0e1f3",
+  "commit_sha": "f10d7a87020272b9cc340da35262c3d53d98e572"
 }
