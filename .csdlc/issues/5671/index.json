@@ -1,0 +1,137 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5671,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "dab42acf5c368379d4a37d2f3ddd8412f5146e44a6f0099cd7ae0a27a24d197b",
+  "phase": "implemented",
+  "generation": 2,
+  "digest": "16e0e05b9bd713ec0245c3b2bebde2125c37e076bd9b47bf793a0d5b6a2655f8",
+  "claim": {
+    "id": "claim-5671-anthropic-opus-5",
+    "owner": "codex:5671-execution",
+    "generation": 2,
+    "acquired_unix_seconds": 1784851200,
+    "expires_unix_seconds": 1785456000,
+    "heartbeat_unix_seconds": 1784851200,
+    "branch": "codex/5671-anthropic-opus-5",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5671",
+      ".csdlc/locks/5671.lock",
+      ".csdlc/prepared/issues/5671",
+      "adl/src/cli/provider_cmd.rs",
+      "adl/src/cli/usage.rs",
+      "adl/src/provider/http_family/tests.rs",
+      "adl/src/provider/mod.rs",
+      "adl/src/provider/profiles.rs",
+      "adl/tests/provider_tests/profiles.rs"
+    ],
+    "purpose": "Implement and validate the Claude Opus 5 provider profile and setup route"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5671/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5671/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5671-preparation-review",
+      "revision": "ed8ebae320de231a3b843b0cd646af2480f4c53752eb062a4400713e30cc0afc"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "9f33e94cd9607fc82e346775edf77cefa537ff28885177b63571bd923f5cf45b",
+      "rendered_digest": "ebea4d650aaca26229abe222dc682f70ba880618ff6ad962389c052570d031ec",
+      "ast_digest": "609d791c5ec9db9ccb5bff44abce0222ecb3ae1f059b635f2133f8586dd9cfd9"
+    },
+    "stp": {
+      "values_digest": "35527676c67506aac09b2f320e764972edefac25f72dfa7e1895f901ab6b7063",
+      "rendered_digest": "8b08658ad1bb340a9b8d3b83d28fca91afdddda26d12c952e0e48a8b206de719",
+      "ast_digest": "f43d4248233a1f4cccc855c5da3c078ce9195c8c2b191f5e7bf650793648a391"
+    },
+    "spp": {
+      "values_digest": "ec2e24d9cbf785c03d22e69af1b685ae1781a036d574d46535a8be9e4b716f53",
+      "rendered_digest": "a3505196dba4b81203e0def1f807fb36e0852ad5c77c056f05f8e12648f9d7f9",
+      "ast_digest": "558fdfb30d2b37e5e60b5646303c8b91b53180b47a4ac3c6ca9c66902b91521a"
+    },
+    "vpp": {
+      "values_digest": "ccfec3c221c4cf7125660af38e0035f9129c3673d7f95b4fc7369d72bf65dcb4",
+      "rendered_digest": "e09ae6cf86e8317065688f84112c9256180103601d31031b349a9bd6c1aea709",
+      "ast_digest": "7a5d2278c8892c511c8d833f6ccb2e9d6c35dc5c1d9c899f9be6780e1340f33a"
+    },
+    "srp": {
+      "values_digest": "241d9fe7539839cc94d81a84f6ba8cd4cf75852b3e412092ac319403c78214d8",
+      "rendered_digest": "f219550200c0e5f5c7063ec719cdaaf0c4edf5ff07f0d554684f23cd1a420ad1",
+      "ast_digest": "e71e05e7ac59e61e1e78fe6e1dc9fb8a1ef451401ff038aea8bbe6a8d4abc850"
+    },
+    "sor": {
+      "values_digest": "6ea00abe8b96a3752ba53e766ec64f919610d605b0151a7db68ba14ef9f3d057",
+      "rendered_digest": "f0875b6cb31c1d1a4b06b177cc60d9e5eeff767b89a04441b45bd96b52009992",
+      "ast_digest": "07b75e7ae9f89afb44514e9ab6b4c5543e4e4b7a945becd3d268cd0c7a148ac5"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5671-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5671-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5671-execution",
+      "reason": "execution and passing validation finalized atomically"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5671-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:5671-preparation-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5671-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5671-execution",
+      "reason": "Add the focused integration test and setup usage surface to the declared issue scope",
+      "operation": "{\"add_protected_paths\":[\"adl/tests/provider_tests/profiles.rs\",\"adl/src/cli/usage.rs\",\"adl/src/provider/http_family/tests.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5671-execution",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5671,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][provider] Add Anthropic Claude Opus 5 provider profile",
+    "slug": "anthropic-claude-opus-5-provider",
+    "version": "v0.91.8",
+    "generation": 2
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "provider-profile-focused",
+          "proof_role": "registry, expansion, setup, and mocked Anthropic request proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "provider_"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "provider-build-focused",
+          "proof_role": "compile the touched Rust provider surface",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 2000,
+          "argv": [
+            "cargo",
+            "check",
+            "--manifest-path",
+            "adl/Cargo.toml"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on model, endpoint, credential, or proof drift; repair only the bounded provider surface.",
+      "design_ref": ".csdlc/prepared/issues/5671/design.md",
+      "design_digest": "ed8ebae320de231a3b843b0cd646af2480f4c53752eb062a4400713e30cc0afc",
+      "diagram_ref": ".csdlc/prepared/issues/5671/diagram.mmd",
+      "diagram_digest": "4b776521482a4c212c66cfc858a084fe41b55c607f07450c346b299dc53c75aa"
+    }
+  }
+}

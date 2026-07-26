@@ -1,0 +1,5 @@
+{"sequence":1,"generation":0,"actor":"codex:5671-execution","reason":"initialize issue record and all six cards","operation":"bootstrap"}
+{"sequence":2,"generation":1,"actor":"codex:5671-preparation-review","reason":"approve completed issue design","operation":"approve_design"}
+{"sequence":3,"generation":1,"actor":"codex:5671-execution","reason":"bind branch/worktree and activate claim","operation":"bind"}
+{"sequence":4,"generation":1,"actor":"codex:5671-execution","reason":"Add the focused integration test and setup usage surface to the declared issue scope","operation":"{\"add_protected_paths\":[\"adl/tests/provider_tests/profiles.rs\",\"adl/src/cli/usage.rs\",\"adl/src/provider/http_family/tests.rs\"],\"operation\":\"amend_claim_scope\"}"}
+{"sequence":5,"generation":2,"actor":"codex:5671-execution","reason":"atomically record execution, validation, and implemented phase","operation":"finalize_implementation"}

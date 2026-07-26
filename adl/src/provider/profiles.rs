@@ -290,6 +290,15 @@ pub(crate) fn provider_profile_registry() -> BTreeMap<&'static str, ProviderProf
         );
     }
     // Claude-facing presets (same bounded HTTP substrate, distinct profile family)
+    m.insert(
+        "claude:claude-opus-5",
+        ProviderProfilePreset {
+            kind: "anthropic",
+            default_model: Some("claude-opus-5"),
+            provider_model_id: Some("claude-opus-5"),
+            endpoint: Some(ANTHROPIC_MESSAGES_ENDPOINT),
+        },
+    );
     for (name, model) in [
         ("claude:claude-3-7-sonnet", "claude-3-7-sonnet-latest"),
         ("claude:claude-3-5-haiku", "claude-3-5-haiku-latest"),

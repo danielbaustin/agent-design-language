@@ -1,0 +1,7 @@
+{
+  "issue": 5671,
+  "expected_generation": 0,
+  "expected_digest": "792d36350405c488b260765779e335c96eda797cd5470ff7a9d986d29c30a6c1",
+  "claim_id": "claim-5671-anthropic-opus-5",
+  "reviewer": "codex:5671-preparation-review"
+}

@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5671,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][provider] Add Anthropic Claude Opus 5 provider profile",
+    "slug": "anthropic-claude-opus-5-provider",
+    "version": "v0.91.8",
+    "generation": 2
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "provider profile registry, setup template, and focused tests",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Check that Opus 5 uses the Rust Anthropic adapter rather than generic HTTP",
+        "Check compatibility of existing Claude profiles",
+        "Check setup output, credential boundary, and mocked request proof"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

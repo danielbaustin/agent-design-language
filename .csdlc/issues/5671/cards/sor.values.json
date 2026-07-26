@@ -1,0 +1,61 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5671,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][provider] Add Anthropic Claude Opus 5 provider profile",
+    "slug": "anthropic-claude-opus-5-provider",
+    "version": "v0.91.8",
+    "generation": 2
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Implemented Claude Opus 5 profile, setup template, and focused provider proof.",
+      "actual_changes": [
+        "adl/src/provider/profiles.rs",
+        "adl/src/provider/mod.rs",
+        "adl/src/provider/http_family/tests.rs",
+        "adl/src/cli/provider_cmd.rs",
+        "adl/src/cli/usage.rs",
+        "adl/tests/provider_tests/profiles.rs"
+      ],
+      "artifacts": [
+        ".csdlc/prepared/issues/5671/validation-evidence/provider-profile-focused.log",
+        ".csdlc/prepared/issues/5671/validation-evidence/provider-build-focused.log"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "check",
+            "--manifest-path",
+            "adl/Cargo.toml"
+          ],
+          "purpose": "Compile the ADL crate after the provider change",
+          "outcome": "passed",
+          "evidence_ref": "provider-build-focused.log"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "provider_"
+          ],
+          "purpose": "Run the focused provider test suite for Opus 5",
+          "outcome": "passed",
+          "evidence_ref": "provider-profile-focused.log"
+        }
+      ],
+      "integration_state": "not_started",
+      "publication_state": "not_published",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}
