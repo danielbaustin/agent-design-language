@@ -1,0 +1,8 @@
+{
+  "issue": 5675,
+  "expected_generation": 5,
+  "expected_digest": "138d4b3d499a626a1f5d92377895feff294715fdf304f458a1f1f3594b4ea50c",
+  "claim_id": "claim-5675-provider-adapter-routes",
+  "actor": "codex:5675-execution",
+  "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication."
+}
