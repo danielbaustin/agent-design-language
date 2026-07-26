@@ -17,7 +17,7 @@ use rcgen::{generate_simple_self_signed, CertifiedKey};
 use tokio::{
     io::{AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader},
     net::TcpListener,
-    sync::Mutex,
+    sync::{Mutex, Notify},
 };
 use tokio_rustls::{
     rustls::{
@@ -171,6 +171,31 @@ async fn spawn_hanging_peer() -> std::net::SocketAddr {
         }
     });
     address
+}
+
+async fn spawn_read_then_hang_peer() -> (std::net::SocketAddr, Arc<Notify>) {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let address = listener.local_addr().unwrap();
+    let read = Arc::new(Notify::new());
+    let read_peer = read.clone();
+    tokio::spawn(async move {
+        loop {
+            let Ok((stream, _)) = listener.accept().await else {
+                break;
+            };
+            let read_peer = read_peer.clone();
+            tokio::spawn(async move {
+                let mut reader = BufReader::new(stream);
+                let mut line = String::new();
+                if reader.read_line(&mut line).await.unwrap_or_default() == 0 {
+                    return;
+                }
+                read_peer.notify_one();
+                tokio::time::sleep(Duration::from_secs(5)).await;
+            });
+        }
+    });
+    (address, read)
 }
 
 async fn spawn_tls_peer(
@@ -329,7 +354,7 @@ where
 }
 
 #[tokio::test]
-async fn provider_dispatch_uses_real_authenticated_transport_and_rejects_replay() {
+async fn provider_dispatch_uses_real_authenticated_transport_and_caches_replay_result() {
     let secret = ProtocolSecret::from_key([7; 32]);
     let address = spawn_peer(secret.clone(), vec![ProtocolStatus::Ok], Duration::ZERO).await;
     let provider = ProtocolAdapter::new(
@@ -347,9 +372,8 @@ async fn provider_dispatch_uses_real_authenticated_transport_and_rejects_replay(
     let replay = provider
         .execute(&operation("provider-ok", b"dispatch"))
         .await
-        .unwrap_err();
-    assert_eq!(replay.class, FailureClass::Fatal);
-    assert!(replay.message.contains("replay"));
+        .unwrap();
+    assert_eq!(replay, b"peer-response");
 }
 
 #[test]
@@ -488,7 +512,7 @@ async fn response_tamper_and_concurrent_replay_are_rejected() {
         .await
         .unwrap_err();
     assert_eq!(tamper.class, FailureClass::Fatal);
-    assert!(tamper.message.contains("response"));
+    assert!(tamper.message.contains("mac mismatch"));
 
     let race_secret = ProtocolSecret::from_key([12; 32]);
     let race_address = spawn_peer(
@@ -521,6 +545,36 @@ async fn response_tamper_and_concurrent_replay_are_rejected() {
         .count();
     assert_eq!(successes, 1);
     assert_eq!(replay_rejections, 1);
+}
+
+#[tokio::test]
+async fn timeout_after_write_preserves_unknown_outcome_and_blocks_duplicate_side_effects() {
+    let secret = ProtocolSecret::from_key([14; 32]);
+    let (address, read) = spawn_read_then_hang_peer().await;
+    let adapter = ProtocolAdapter::new(
+        AdapterKind::Provider,
+        ProtocolEndpoint {
+            timeout: Duration::from_millis(100),
+            ..endpoint(address, AdapterKind::Provider, secret)
+        },
+        CancellationToken::new(),
+    )
+    .unwrap();
+    let request = operation("timeout-after-write", b"dispatch");
+
+    let first_task = {
+        let adapter = adapter.clone();
+        let request = request.clone();
+        tokio::spawn(async move { adapter.execute(&request).await })
+    };
+    read.notified().await;
+    let first = first_task.await.unwrap().unwrap_err();
+    assert_eq!(first.class, FailureClass::Retryable);
+    assert!(first.message.contains("timed out"));
+
+    let duplicate = adapter.execute(&request).await.unwrap_err();
+    assert_eq!(duplicate.class, FailureClass::Fatal);
+    assert!(duplicate.message.contains("outcome unknown after write"));
 }
 
 #[tokio::test]
@@ -621,7 +675,7 @@ async fn unauthorized_malformed_timeout_retry_and_shutdown_fail_closed() {
         .await
         .unwrap_err();
     assert!(
-        matches!(timeout_error, OperationError::Exhausted { attempts: 3, .. }),
+        matches!(timeout_error, OperationError::Fatal(ref message) if message.contains("outcome unknown after write")),
         "unexpected timeout error: {timeout_error:?}"
     );
 

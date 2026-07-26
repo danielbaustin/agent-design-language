@@ -1,9 +1,12 @@
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::{BTreeMap, BTreeSet, VecDeque},
     env, fs,
     net::SocketAddr,
     path::Path,
-    sync::{Arc, Mutex},
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc, Mutex,
+    },
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
@@ -30,6 +33,7 @@ pub const PROTOCOL_FRAME_SCHEMA: &str = "adl.runtime.protocol_frame.v1";
 pub const PROTOCOL_RESPONSE_SCHEMA: &str = "adl.runtime.protocol_response.v1";
 pub const MAX_PROTOCOL_FRAME_FRESHNESS_MILLIS: u64 = 60_000;
 pub const MAX_PROTOCOL_RESPONSE_BYTES: usize = 64 * 1024;
+const MAX_PROTOCOL_REPLAY_ENTRIES: usize = 1024;
 
 const ADAPTERS: [(AdapterKind, &str); 4] = [
     (AdapterKind::Provider, "ADL_RUNTIME_PROVIDER"),
@@ -69,6 +73,7 @@ impl ProtocolSecret {
 
 #[derive(Clone)]
 pub enum ProtocolSecurity {
+    #[cfg(debug_assertions)]
     PlainForLocalTest,
     RustlsClient {
         config: Arc<ClientConfig>,
@@ -97,35 +102,111 @@ pub struct ProtocolAdapter {
 #[derive(Default)]
 struct ReplayState {
     in_flight: BTreeSet<String>,
-    completed: BTreeSet<String>,
+    completed: BTreeMap<String, ReplayEntry>,
+    order: VecDeque<String>,
+}
+
+#[derive(Clone)]
+struct ReplayEntry {
+    expires_unix_millis: u64,
+    outcome: ReplayOutcome,
+}
+
+#[derive(Clone)]
+enum ReplayOutcome {
+    Completed(Vec<u8>),
+    UnknownAfterWrite(String),
+}
+
+enum ReplayAcquire {
+    Reserved(ReplayReservation),
+    Cached(Result<Vec<u8>, ExecutorError>),
 }
 
 struct ReplayReservation {
     nonce: String,
     replay: Arc<Mutex<ReplayState>>,
+    expires_unix_millis: u64,
+    preserve_on_drop: Arc<AtomicBool>,
     completed: bool,
 }
 
 impl ReplayReservation {
-    fn acquire(nonce: String, replay: Arc<Mutex<ReplayState>>) -> Result<Self, ExecutorError> {
+    fn acquire(
+        nonce: String,
+        replay: Arc<Mutex<ReplayState>>,
+        now_unix_millis: u64,
+        expires_unix_millis: u64,
+        preserve_on_drop: Arc<AtomicBool>,
+    ) -> Result<ReplayAcquire, ExecutorError> {
         let mut state = replay.lock().expect("replay state");
-        if state.completed.contains(&nonce) || state.in_flight.contains(&nonce) {
+        state.prune(now_unix_millis);
+        if let Some(entry) = state.completed.get(&nonce) {
+            let result = match &entry.outcome {
+                ReplayOutcome::Completed(payload) => Ok(payload.clone()),
+                ReplayOutcome::UnknownAfterWrite(message) => Err(fatal(message.clone())),
+            };
+            return Ok(ReplayAcquire::Cached(result));
+        }
+        if state.in_flight.contains(&nonce) {
             return Err(fatal("protocol replay rejected"));
         }
         state.in_flight.insert(nonce.clone());
         drop(state);
-        Ok(Self {
+        Ok(ReplayAcquire::Reserved(Self {
             nonce,
             replay,
+            expires_unix_millis,
+            preserve_on_drop,
             completed: false,
-        })
+        }))
     }
 
-    fn complete(mut self) {
+    fn complete(mut self, outcome: ReplayOutcome) {
         let mut state = self.replay.lock().expect("replay state");
         state.in_flight.remove(&self.nonce);
-        state.completed.insert(self.nonce.clone());
+        state.remember(
+            self.nonce.clone(),
+            ReplayEntry {
+                expires_unix_millis: self.expires_unix_millis,
+                outcome,
+            },
+        );
         self.completed = true;
+    }
+
+    fn release(mut self) {
+        let mut state = self.replay.lock().expect("replay state");
+        state.in_flight.remove(&self.nonce);
+        self.completed = true;
+    }
+}
+
+impl ReplayState {
+    fn prune(&mut self, now_unix_millis: u64) {
+        while let Some(key) = self.order.front().cloned() {
+            let expired = self
+                .completed
+                .get(&key)
+                .is_none_or(|entry| entry.expires_unix_millis <= now_unix_millis);
+            if !expired {
+                break;
+            }
+            self.order.pop_front();
+            self.completed.remove(&key);
+        }
+    }
+
+    fn remember(&mut self, key: String, entry: ReplayEntry) {
+        if !self.completed.contains_key(&key) {
+            self.order.push_back(key.clone());
+        }
+        self.completed.insert(key, entry);
+        while self.order.len() > MAX_PROTOCOL_REPLAY_ENTRIES {
+            if let Some(oldest) = self.order.pop_front() {
+                self.completed.remove(&oldest);
+            }
+        }
     }
 }
 
@@ -134,6 +215,17 @@ impl Drop for ReplayReservation {
         if !self.completed {
             if let Ok(mut state) = self.replay.lock() {
                 state.in_flight.remove(&self.nonce);
+                if self.preserve_on_drop.load(Ordering::SeqCst) {
+                    state.remember(
+                        self.nonce.clone(),
+                        ReplayEntry {
+                            expires_unix_millis: self.expires_unix_millis,
+                            outcome: ReplayOutcome::UnknownAfterWrite(
+                                "protocol outcome unknown after write".to_owned(),
+                            ),
+                        },
+                    );
+                }
             }
         }
     }
@@ -268,6 +360,7 @@ impl ProtocolAdapter {
         if endpoint.timeout.is_zero() {
             return Err(config("TIMEOUT_MILLIS", "expected non-zero timeout"));
         }
+        #[cfg(debug_assertions)]
         if matches!(endpoint.security, ProtocolSecurity::PlainForLocalTest)
             && (!cfg!(debug_assertions) || !endpoint.address.ip().is_loopback())
         {
@@ -346,18 +439,45 @@ impl ProtocolAdapter {
             request.principal,
             request.idempotency_key
         );
-        let reservation = ReplayReservation::acquire(replay_key, self.replay.clone())?;
+        let issued_unix_millis = frame.issued_unix_millis;
+        let Some(replay_expires_unix_millis) = frame.expires_unix_millis.checked_add(
+            frame
+                .expires_unix_millis
+                .saturating_sub(frame.issued_unix_millis),
+        ) else {
+            return Err(fatal("protocol replay ttl overflow"));
+        };
+        let write_started = Arc::new(AtomicBool::new(false));
+        let reservation = match ReplayReservation::acquire(
+            replay_key,
+            self.replay.clone(),
+            issued_unix_millis,
+            replay_expires_unix_millis,
+            write_started.clone(),
+        )? {
+            ReplayAcquire::Reserved(reservation) => reservation,
+            ReplayAcquire::Cached(result) => return result,
+        };
+        let verified_response = Arc::new(AtomicBool::new(false));
         let exchange = async {
             let mut stream = self.open().await?;
             let mut bytes = serde_json::to_vec(&frame).map_err(|error| fatal(error.to_string()))?;
             bytes.push(b'\n');
+            write_started.store(true, Ordering::SeqCst);
             stream
                 .write_all(&bytes)
                 .await
                 .map_err(|error| retryable(format!("transport write failed: {error}")))?;
-            let _ = stream.shutdown().await;
-            let response = self.read_response(stream).await?;
+            let response = self.read_response(&mut stream).await?;
+            verified_response.store(
+                response.verify(&self.endpoint.secret, &frame),
+                Ordering::SeqCst,
+            );
             let payload = self.response_payload(&frame, response)?;
+            stream
+                .shutdown()
+                .await
+                .map_err(|error| retryable(format!("transport shutdown failed: {error}")))?;
             Ok(payload)
         };
         let result = tokio::select! {
@@ -366,8 +486,19 @@ impl ProtocolAdapter {
                 result.map_err(|_| retryable("protocol exchange timed out"))?
             }
         };
-        if result.is_ok() {
-            reservation.complete();
+        match &result {
+            Ok(payload) => reservation.complete(ReplayOutcome::Completed(payload.clone())),
+            Err(error)
+                if write_started.load(Ordering::SeqCst)
+                    && (!verified_response.load(Ordering::SeqCst)
+                        || error.class == FailureClass::Fatal) =>
+            {
+                reservation.complete(ReplayOutcome::UnknownAfterWrite(format!(
+                    "protocol outcome unknown after write: {}",
+                    error.message
+                )));
+            }
+            Err(_) => reservation.release(),
         }
         result
     }
@@ -377,6 +508,7 @@ impl ProtocolAdapter {
             .await
             .map_err(|error| retryable(format!("transport unavailable: {error}")))?;
         match &self.endpoint.security {
+            #[cfg(debug_assertions)]
             ProtocolSecurity::PlainForLocalTest => Ok(ProtocolStream::Plain(stream)),
             ProtocolSecurity::RustlsClient {
                 config,
@@ -395,7 +527,7 @@ impl ProtocolAdapter {
 
     async fn read_response(
         &self,
-        stream: ProtocolStream,
+        stream: &mut ProtocolStream,
     ) -> Result<ProtocolResponse, ExecutorError> {
         let bytes = match stream {
             ProtocolStream::Plain(stream) => read_response_line(BufReader::new(stream)).await,
@@ -409,18 +541,14 @@ impl ProtocolAdapter {
         frame: &ProtocolFrame,
         response: ProtocolResponse,
     ) -> Result<Vec<u8>, ExecutorError> {
-        if !response.verify(&self.endpoint.secret, frame) {
-            return Err(fatal("malformed protocol response schema"));
-        }
+        response.validate(&self.endpoint.secret, frame)?;
         match response.status {
             ProtocolStatus::Ok => {
                 hex::decode(response.payload_hex).map_err(|_| fatal("malformed protocol payload"))
             }
             ProtocolStatus::Unauthorized => Err(fatal("protocol unauthorized")),
             ProtocolStatus::Malformed => Err(fatal("protocol malformed")),
-            ProtocolStatus::UnsupportedCapability => {
-                Err(fatal("unsupported cloud bridge capability"))
-            }
+            ProtocolStatus::UnsupportedCapability => Err(fatal("unsupported protocol capability")),
             ProtocolStatus::Unavailable => Err(retryable("protocol unavailable")),
             ProtocolStatus::Retryable => Err(retryable(
                 response
@@ -489,23 +617,49 @@ pub fn build_production_operation_executors() -> BTreeMap<AdapterKind, Arc<dyn O
     }) {
         executors.insert(
             kind,
-            Arc::new(LocalRuntimeExecutor) as Arc<dyn OperationExecutor>,
+            Arc::new(FailClosedLocalExecutor { kind }) as Arc<dyn OperationExecutor>,
         );
     }
     executors
 }
 
-struct LocalRuntimeExecutor;
+struct FailClosedLocalExecutor {
+    kind: AdapterKind,
+}
 
 #[async_trait]
-impl OperationExecutor for LocalRuntimeExecutor {
+impl OperationExecutor for FailClosedLocalExecutor {
     async fn execute(&self, request: &OperationRequest) -> Result<Vec<u8>, ExecutorError> {
-        if request.schema != OPERATION_REQUEST_SCHEMA {
-            return Err(fatal(
-                "local runtime executor received an invalid operation schema",
-            ));
+        if self.kind != AdapterKind::Agent {
+            return Err(fatal(format!(
+                "{} durable local adapter is not provided by the protocol adapter builder",
+                self.kind.service_name()
+            )));
         }
-        Ok(request.payload.clone())
+        if request.schema != OPERATION_REQUEST_SCHEMA
+            || request.request_id.trim().is_empty()
+            || request.idempotency_key.trim().is_empty()
+            || request.principal.trim().is_empty()
+            || request.payload.is_empty()
+            || request.payload.len() > 1_048_576
+        {
+            return Err(fatal("protocol local agent received malformed work"));
+        }
+        serde_json::to_vec(&serde_json::json!({
+            "schema": "adl.runtime.protocol_local_agent_execution.v1",
+            "adapter": self.kind.service_name(),
+            "operation": self.kind.operation_name(),
+            "request_id": request.request_id,
+            "principal": request.principal,
+            "payload_hash": blake3::hash(&request.payload).to_hex().to_string(),
+            "work_units": 1,
+            "status": "completed"
+        }))
+        .map_err(|error| {
+            fatal(format!(
+                "protocol local agent result encoding failed: {error}"
+            ))
+        })
     }
 }
 
@@ -607,12 +761,28 @@ impl ProtocolResponse {
     }
 
     pub fn verify(&self, secret: &ProtocolSecret, frame: &ProtocolFrame) -> bool {
-        self.schema == PROTOCOL_RESPONSE_SCHEMA
-            && self.adapter == frame.adapter
-            && self.capability == frame.capability
-            && self.request_id == frame.request_id
-            && self.nonce == frame.nonce
-            && constant_time_eq(secret.response_mac(self).as_bytes(), self.mac.as_bytes())
+        self.validate(secret, frame).is_ok()
+    }
+
+    fn validate(
+        &self,
+        secret: &ProtocolSecret,
+        frame: &ProtocolFrame,
+    ) -> Result<(), ExecutorError> {
+        if self.schema != PROTOCOL_RESPONSE_SCHEMA {
+            return Err(fatal("malformed protocol response schema"));
+        }
+        if self.adapter != frame.adapter
+            || self.capability != frame.capability
+            || self.request_id != frame.request_id
+            || self.nonce != frame.nonce
+        {
+            return Err(fatal("protocol response identity mismatch"));
+        }
+        if !constant_time_eq(secret.response_mac(self).as_bytes(), self.mac.as_bytes()) {
+            return Err(fatal("protocol response mac mismatch"));
+        }
+        Ok(())
     }
 
     fn signing_bytes(&self) -> Vec<u8> {
@@ -740,6 +910,53 @@ fn fatal(message: impl Into<String>) -> ExecutorError {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn request(payload: &[u8]) -> OperationRequest {
+        OperationRequest {
+            schema: OPERATION_REQUEST_SCHEMA.to_owned(),
+            request_id: "local-request".to_owned(),
+            idempotency_key: "local-idempotency".to_owned(),
+            principal: "local-principal".to_owned(),
+            payload: payload.to_vec(),
+            permit: None,
+        }
+    }
+
+    #[tokio::test]
+    async fn protocol_builder_local_agent_computes_result_without_payload_echo() {
+        let executor = FailClosedLocalExecutor {
+            kind: AdapterKind::Agent,
+        };
+        let payload = executor
+            .execute(&request(b"local-agent-work"))
+            .await
+            .unwrap();
+        assert_ne!(payload, b"local-agent-work");
+        let value: serde_json::Value = serde_json::from_slice(&payload).unwrap();
+        assert_eq!(
+            value["schema"],
+            "adl.runtime.protocol_local_agent_execution.v1"
+        );
+        assert_eq!(
+            value["payload_hash"],
+            blake3::hash(b"local-agent-work").to_hex().to_string()
+        );
+    }
+
+    #[tokio::test]
+    async fn protocol_builder_non_agent_local_adapters_fail_closed() {
+        let executor = FailClosedLocalExecutor {
+            kind: AdapterKind::Scheduler,
+        };
+        let error = executor
+            .execute(&request(b"local-scheduler-work"))
+            .await
+            .unwrap_err();
+        assert_eq!(error.class, FailureClass::Fatal);
+        assert!(error
+            .message
+            .contains("not provided by the protocol adapter builder"));
+    }
 
     #[test]
     fn protocol_frame_rejects_mac_valid_future_issued_freshness() {
