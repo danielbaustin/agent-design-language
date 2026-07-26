@@ -10,3 +10,4 @@
 {"sequence":10,"generation":7,"actor":"codex:5675-execution","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
 {"sequence":11,"generation":8,"actor":"codex:5675-execution","reason":"Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication.","operation":"recover_review"}
 {"sequence":12,"generation":9,"actor":"codex:5675-execution","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
+{"sequence":13,"generation":10,"actor":"codex:5675-execution","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}

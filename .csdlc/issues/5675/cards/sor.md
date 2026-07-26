@@ -46,11 +46,11 @@ Implemented typed Kimi/Moonshot and MiniMax hosted routes with bounded budgets, 
 
 ## Integration
 
-worktree_only
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 
