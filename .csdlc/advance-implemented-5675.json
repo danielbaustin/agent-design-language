@@ -1,0 +1,1 @@
+{"issue":5675,"card":"sor","expected_generation":2,"expected_digest":"786bcb9313e84b3c148e581ee4994d644597ec7ed4231e07c7185081423feb3e","claim_id":"claim-5675-provider-adapter-routes","actor":"codex:5675-execution","reason":"Implementation and focused validation are complete","operation":{"operation":"advance_phase","phase":"implemented"}}

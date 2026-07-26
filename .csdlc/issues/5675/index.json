@@ -1,0 +1,223 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5675,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "c600ad81a92f3c87eb5098faa2237f85713be1650bf3c1d713c0206a4ef263b9",
+  "phase": "reviewed",
+  "generation": 5,
+  "digest": "138d4b3d499a626a1f5d92377895feff294715fdf304f458a1f1f3594b4ea50c",
+  "claim": {
+    "id": "claim-5675-provider-adapter-routes",
+    "owner": "codex:5675-execution",
+    "generation": 5,
+    "acquired_unix_seconds": 1785107892,
+    "expires_unix_seconds": 1785712692,
+    "heartbeat_unix_seconds": 1785107892,
+    "branch": "codex/5675-provider-adapter-routes-publish",
+    "worktree": ".worktrees/adl-wp-5675",
+    "protected_paths": [
+      ".csdlc/issues/5675",
+      ".csdlc/locks/5675.lock",
+      ".csdlc/prepared/issues/5675",
+      "adl/src/provider_adapter.rs",
+      "adl/src/provider/profiles.rs"
+    ],
+    "purpose": "Implement and validate Kimi and MiniMax hosted provider adapter routes"
+  },
+  "review_assignment": {
+    "reviewer": "codex:5675-opus-review",
+    "assigned_by": "codex:5675-execution",
+    "revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
+    "scope": [
+      "adl/src/provider_adapter.rs",
+      "adl/src/provider/profiles.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "codex:5675-opus-review",
+    "scope": [
+      "adl/src/provider_adapter.rs",
+      "adl/src/provider/profiles.rs"
+    ],
+    "reviewed_revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
+    "findings": [
+      {
+        "id": "B1",
+        "severity": "p1",
+        "summary": "MiniMax provider error envelopes were not classified before choices extraction.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
+        "route": null
+      },
+      {
+        "id": "B2",
+        "severity": "p1",
+        "summary": "Insufficient-balance responses needed non-retryable billing classification.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
+        "route": null
+      },
+      {
+        "id": "B3",
+        "severity": "p2",
+        "summary": "Provider output budgets needed bounded caller-aware defaults.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
+        "route": null
+      },
+      {
+        "id": "S3",
+        "severity": "p2",
+        "summary": "MiniMax endpoint moved to the current chat completions route.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Live Kimi and MiniMax completion success remains unproven because both approved accounts reported insufficient balance; adapter reachability and typed billing failure paths are proven."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5675/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5675/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5675-opus-review",
+      "revision": "ae491c4e197cfed06f0d51a0ff65dbcbb1fe0dd458a805c29c0c78659b4dd39f"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "557ae63634123b64934f7f008f78906ed15224ea016fa148b40e06db84ff4333",
+      "rendered_digest": "2dc56e72c830eeb26afa62a9aabea5c3cb9cbf81b6eb0d6187be628e4bf8ef39",
+      "ast_digest": "fa7619680715cdb8942ef43186a5af1d6d843567ee56dfb71aafbce1f79567d5"
+    },
+    "stp": {
+      "values_digest": "97ed3c8af3dd966da3dc052876f0ac0464c39d54091cb0506a25ac125267d4c1",
+      "rendered_digest": "da91288730d18893c5e48dfa033e63c91e686996426f678d466ac51cf3ce6851",
+      "ast_digest": "ebeb2107e5c5a6401657727ddf62783563f6cb4e4a683e681aac4b67b60d80d4"
+    },
+    "spp": {
+      "values_digest": "e47faa6fc6bb4eb022c4669aa9a0cebf225ba1c4c7039261eac670eb57ed7f06",
+      "rendered_digest": "ba7997482a91ff85139903280c6217fb382cbb93f2dd78d5c9f8e388283fa2f4",
+      "ast_digest": "40081f37abee8861add7a4da099fb6ac64e90b1f94265afbf627b796d8b45fad"
+    },
+    "vpp": {
+      "values_digest": "ef4e292e021748ba31bce2b0a66d8ef3ff1155385c4719df7d3fc53939485563",
+      "rendered_digest": "71c431972dcae6c443ae563e8d5ca293b6fbdede90a9569a2b1cbde79a3ec297",
+      "ast_digest": "b804553b02659f056d635308a1ea495cac3afa9e7f42fafa8149b81ab8479ffb"
+    },
+    "srp": {
+      "values_digest": "d2f1096b628b9c4872330a4686637dd4d8b48e8c3b5b3c252bd6d55f08d89c67",
+      "rendered_digest": "4fbd56dc49172e13ab4e7db5af2066ad74709330e03ceaae7203a0b5e6f0da9e",
+      "ast_digest": "4b541edd3941ecc90c280ef3b3f6f0e4921542e579ce5352bd3e3b6a176eeea0"
+    },
+    "sor": {
+      "values_digest": "25cf6b8300678694d39915ca6bccb3556545986e6398c584a9136f5580389a16",
+      "rendered_digest": "ad57ad3bf49e29fb0924b4a1314e71296dcbc602b936f38965dc3b1e92067cd1",
+      "ast_digest": "b9f7634b30d435f29c5297993fb64c924d2b27c7b5f2573a81b65ee20a0e031a"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5675-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5675-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5675-execution",
+      "reason": "Implementation and focused validation are complete"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5675-execution",
+      "reason": "Opus exact-head review completed; all actionable findings fixed and re-reviewed clean."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5675-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5675-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5675-execution",
+      "reason": "Record bounded Kimi and MiniMax adapter implementation and live probe evidence",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented typed Kimi/Moonshot and MiniMax hosted routes with bounded budgets, current MiniMax endpoint, billing envelope classification, and redacted shared extraction.\",\"changes\":[\"adl/src/provider_adapter.rs\",\"adl/src/provider/profiles.rs\"],\"artifacts\":[\".csdlc/prepared/issues/5675/design.md\",\".csdlc/prepared/issues/5675/diagram.mmd\",\".adl/provider-adapter-focused-tests.log\",\".adl/live-provider-probe-disposition.md\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5675-execution",
+      "reason": "Record focused Rust tests, exact-head review, and live provider dispositions",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_adapter::tests\",\"--lib\"],\"purpose\":\"Focused adapter routing, budget, envelope, and redaction proof\",\"outcome\":\"passed\",\"evidence_ref\":\".adl/provider-adapter-focused-tests.log\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5675-execution",
+      "reason": "Implementation and focused validation are complete",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5675-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5675-opus-review",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5675-execution",
+      "reason": "Opus exact-head review completed; all actionable findings fixed and re-reviewed clean.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+flowchart LR
+  R[Provider invocation] --> D{provider route}
+  D --> K[Kimi/Moonshot]
+  D --> M[MiniMax]
+  K --> KH[Bearer + bounded chat request]
+  M --> MH[Bearer + bounded chat request]
+  KH --> X[Shared response extraction and redacted receipt]
+  MH --> E[base_resp/error envelope classification]
+  E --> X
