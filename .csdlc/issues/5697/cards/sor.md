@@ -12,7 +12,7 @@ Status: pre_phase
 
 ## Summary
 
-Transplanted the trusted_time/Chronosense correction from #5663 into the bound #5697 lane, preserving production state-root checks, existing public builder compatibility, and typed claim-only CAS release evidence for already merged/closed predecessor claims.
+Chronosense now consumes trusted_time at startup; the CI repair preserves the no repo-local path dependency contract.
 
 ## Artifacts
 
@@ -25,6 +25,7 @@ Transplanted the trusted_time/Chronosense correction from #5663 into the bound #
 - Assembly metadata expresses trusted_time control/readiness dependency without fabricating an OperationResult data input.
 - Startup order proof requires trusted_time Running immediately before Chronosense Running and Chronosense before Scheduler/time-observing adapters.
 - Strict all-target Clippy now has the missing adl-resilience test dependency needed by the existing parity_b_live_kernel guardian include.
+- Supersedes the earlier adl-resilience dependency bullet: adl-runtime-kernel has no repo-local adl-resilience dependency; the parity guardian include uses a bounded test-only backoff shim, and strict all-target Clippy passes.
 
 ## Validation
 
