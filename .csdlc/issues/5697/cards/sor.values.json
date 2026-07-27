@@ -7,7 +7,7 @@
     "title": "[v0.91.8][runtime-v3][time] Make Chronosense consume trusted_time at startup",
     "slug": "chronosense-trusted-time",
     "version": "v0.91.8",
-    "generation": 5
+    "generation": 7
   },
   "status": "pre_phase",
   "content": {

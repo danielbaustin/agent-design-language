@@ -3,13 +3,13 @@
   "issue": 5697,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "3136fba73cac6b4c3b5d21d27082421952f27694f45781bfa414a7b43e35a90b",
-  "phase": "implemented",
-  "generation": 5,
-  "digest": "531a4aff4c83b30ac40dedf22546dc7ae651bbd66994ca0bbbb92b8b80bb675a",
+  "phase": "reviewed",
+  "generation": 7,
+  "digest": "e77c63841903f8e1fdbbacc9664a72d3c2f8178e98591ad477f45329142fc46a",
   "claim": {
     "id": "claim-5697-chronosense-trusted-time",
     "owner": "codex:issue-5697-chronosense-trusted-time",
-    "generation": 5,
+    "generation": 7,
     "acquired_unix_seconds": 1785172070,
     "expires_unix_seconds": 1785776870,
     "heartbeat_unix_seconds": 1785172070,
@@ -33,8 +33,47 @@
     ],
     "purpose": "Land the Runtime v3 Chronosense trusted_time ordering correction in follow-up issue #5697 without mutating terminal #5663 lifecycle state"
   },
-  "review_assignment": null,
-  "review": null,
+  "review_assignment": {
+    "reviewer": "subagent:019fa4c9-2198-79a0-87a8-4134f7ab8296",
+    "assigned_by": "codex:wp12-conductor",
+    "revision": "git-blake3:5f252d31a51c31fa9a4819843f5cb9026a2b7470:6710f3fe0545359b48c2ef7f01653aa21f8d409c613bb229daf39996cb7c4a4c",
+    "scope": [
+      ".csdlc/evidence/5697",
+      ".csdlc/issues/5697",
+      ".csdlc/prepared/issues/5697",
+      ".github/workflows/ci.yaml",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019fa4c9-2198-79a0-87a8-4134f7ab8296",
+    "scope": [
+      ".csdlc/evidence/5697",
+      ".csdlc/issues/5697",
+      ".csdlc/prepared/issues/5697",
+      ".github/workflows/ci.yaml",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ],
+    "reviewed_revision": "git-blake3:5f252d31a51c31fa9a4819843f5cb9026a2b7470:6710f3fe0545359b48c2ef7f01653aa21f8d409c613bb229daf39996cb7c4a4c",
+    "findings": [],
+    "residual_risks": [
+      "Hosted CI remains the final integration proof for the exact published head."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -49,32 +88,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "838e71557feb14fc478b9b1c6dab115bfb2a271675795d0b07db81b319bf59bb",
+      "values_digest": "01b1a2dda75f138882572a0f4e7253920023ba0ec45104b3c57b21bcee10c142",
       "rendered_digest": "32a3aac06fa98f3fd813d88e9b8535d1e0bb5763f4f5737adf1b93806dfd6fe2",
       "ast_digest": "4099148b24fec409bc2d6a4d5567b3fe116594a6b65647e74b04eee37d1bbbe6"
     },
     "stp": {
-      "values_digest": "d0bab1418abcab80e78c7af3e5ea165ec5731dbbb151bb08d5798dbb086a106a",
+      "values_digest": "eaee3b6a755656ec52da97d17a03fdf760a565a353fd24519e69f78a3e351c41",
       "rendered_digest": "10afa87c2801f1a86017049829c540ae662906358ee171ce218e9353984abe7a",
       "ast_digest": "8fe31204735501c97d2f1cffa83ab74b817b81670a18a37e089f5b6c176b04be"
     },
     "spp": {
-      "values_digest": "00535f63a98a5b56e82cdaa4120c1c9a091a102bfbc53cafbd4317e7d5a590d1",
+      "values_digest": "fd79e283ccf18f22607074e170c66063954d71a237de916bebff6a8689769c39",
       "rendered_digest": "c9197f36add26fe96a1b79d542541f1d73d17b1018c4a616833ffcef147bfcaf",
       "ast_digest": "20ffc017740d306ae66272adf5a0636730d6fca5b5534761f781ea834d65083d"
     },
     "vpp": {
-      "values_digest": "609a092ac2189dcd0e44db6da5b279519d5fcac2a7e251ee83960152513ccea9",
+      "values_digest": "76122be4c76998ffe06f90408e98c0e2540b5313c13c71dc4a21ab26a3644214",
       "rendered_digest": "00941d3ca49caa5363bf6c701e68a0df12de15ca848681653379e60d447596de",
       "ast_digest": "1d691e7d3bb23b49561bf172d0e10c37cbf4546951ee7d32acb3821ee098b072"
     },
     "srp": {
-      "values_digest": "4dc14ef60dc6bbe9aff150472c3fd95e14bcfcefe116c6ac7c1bd72cdd9c7b16",
-      "rendered_digest": "57b552fdb9d1018452685d54c5118a852cff8d5d97523af7bc9098370429a74d",
-      "ast_digest": "7dc9a1dfdb88ebae2c2e8e2e3e8e50dca841449db4c3d7ea5441c2c6e53523bf"
+      "values_digest": "3acf8c336dd783720530968da8de9fd4c7b8cd2bf24ed7fd6cd2f179bd72a04b",
+      "rendered_digest": "ce2efe1993e92bd2ea965e58c17b6e86e6aff859d6f0b54a244f7f165c7ae47d",
+      "ast_digest": "33663871e6d4477eb6a2860499029b4a778c6f0d608a463f669d7b6b43c08cd8"
     },
     "sor": {
-      "values_digest": "42d2e999e87f2d3620aba75bf8c6c36aeb59dd5bf558b64f4a0558bbce95549a",
+      "values_digest": "828b1898bbf06519965ea49f888a6546a22baa19a599550d26c000c97bf20f87",
       "rendered_digest": "a287eb239a7b7fd48f16daf6df097f055c4719c00df2b7cf568b718d01c347e0",
       "ast_digest": "5d6bee8aeb9a0b81df6f70bd9b29bd6c61339577551b577650763a6b4c97a25d"
     }
@@ -121,6 +160,13 @@
       "to": "implemented",
       "actor": "codex:issue-5697-chronosense-trusted-time",
       "reason": "PR #5699 CI failed adl-runtime-v3-fast because the earlier all-target Clippy workaround added forbidden repo-local adl-resilience path dependency to adl-runtime-kernel/Cargo.toml. Recover to implemented so the bounded CI repair can be made, revalidated, re-reviewed, and republished truthfully."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:wp12-conductor",
+      "reason": "Advance after the final exact-head review passed with no findings."
     }
   ],
   "audit": [
@@ -200,6 +246,27 @@
       "actor": "codex:issue-5697-chronosense-trusted-time",
       "reason": "Exact review found that the compatibility-only one-argument builder creates an unqualified private recorder. Remove that unsafe API, update its sole test caller to supply an explicitly qualified recorder, and remove stale recovered publication intent before fresh review.",
       "operation": "{\"add_protected_paths\":[\".csdlc/publication/5697.intent.json\",\"adl-runtime-kernel/tests/protocol_adapters.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 5,
+      "actor": "codex:wp12-conductor",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 6,
+      "actor": "subagent:019fa4c9-2198-79a0-87a8-4134f7ab8296",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 7,
+      "actor": "codex:wp12-conductor",
+      "reason": "Advance after the final exact-head review passed with no findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
     }
   ]
 }
