@@ -1,7 +1,7 @@
 # C-SDLC v2 agent contract
 
 - This workspace is clean-room and independent of ADL Runtime and incumbent C-SDLC implementation crates, schemas, tests, and fixtures.
-- Use only the typed Rust owners and the nine thin contracts under `operator/skills/` for v2 lifecycle work.
+- Use only the typed Rust owners and the ten thin contracts under `operator/skills/` for v2 lifecycle work.
 - Cards are generated projections. Never edit Markdown/state directly; use `csdlc-edit` and markdown.rs AST validation.
 - Read current authority only from `operator/generation-selector.json`. Gate 10C cutover is complete and Gate 10D2 records exact parity approval and final v1 sunset; historical coexistence and rollback proofs remain immutable evidence.
 - Route through `csdlc-install resolve`; it consumes the tracked selector as the sole default/override authority.

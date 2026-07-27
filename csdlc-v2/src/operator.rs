@@ -14,6 +14,8 @@ pub struct SkillManifest {
     pub schema: String,
     pub generation: String,
     pub generation_selector: String,
+    #[serde(default)]
+    pub operational_binaries: Vec<String>,
     pub skills: Vec<SkillRoute>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -80,11 +82,11 @@ impl SkillManifest {
         if self.schema != "csdlc.operator_skills.v1"
             || self.generation != "v2"
             || self.generation_selector != "csdlc-v2/operator/generation-selector.json"
-            || self.skills.len() != 9
+            || self.skills.len() != 10
         {
             return Err(V2Error::new(
                 ErrorCode::InvalidManifest,
-                "operator manifest must declare nine v2 skills bound to the tracked generation selector",
+                "operator manifest must declare ten v2 skills bound to the tracked generation selector",
             ));
         }
         let mut names = BTreeSet::new();
@@ -108,6 +110,14 @@ impl SkillManifest {
                 }
             }
         }
+        for binary in &self.operational_binaries {
+            if !binary.starts_with("csdlc-") || binary.contains('/') {
+                return Err(V2Error::new(
+                    ErrorCode::InvalidManifest,
+                    "all operational executables must be simple typed C-SDLC binary names",
+                ));
+            }
+        }
         Ok(())
     }
 
@@ -118,6 +128,7 @@ impl SkillManifest {
                 std::iter::once(route.binary.as_str())
                     .chain(route.auxiliary_binaries.iter().map(String::as_str))
             })
+            .chain(self.operational_binaries.iter().map(String::as_str))
             .collect()
     }
 
