@@ -34,6 +34,11 @@ pub const PROTOCOL_RESPONSE_SCHEMA: &str = "adl.runtime.protocol_response.v1";
 pub const MAX_PROTOCOL_FRAME_FRESHNESS_MILLIS: u64 = 60_000;
 pub const MAX_PROTOCOL_RESPONSE_BYTES: usize = 64 * 1024;
 const MAX_PROTOCOL_REPLAY_ENTRIES: usize = 1024;
+const LOCAL_AGENT_WORK_SCHEMA: &str = "adl.runtime.local_agent_work.v1";
+const LOCAL_AGENT_RESULT_SCHEMA: &str = "adl.runtime.protocol_local_agent_execution.v1";
+const MAX_LOCAL_AGENT_TASKS: usize = 8;
+const MAX_LOCAL_AGENT_INPUT_BYTES: usize = 4 * 1024;
+const MAX_LOCAL_AGENT_SLEEP_MILLIS: u64 = 250;
 
 const ADAPTERS: [(AdapterKind, &str); 4] = [
     (AdapterKind::Provider, "ADL_RUNTIME_PROVIDER"),
@@ -474,10 +479,11 @@ impl ProtocolAdapter {
                 Ordering::SeqCst,
             );
             let payload = self.response_payload(&frame, response)?;
-            stream
-                .shutdown()
-                .await
-                .map_err(|error| retryable(format!("transport shutdown failed: {error}")))?;
+            stream.shutdown().await.map_err(|error| {
+                fatal(format!(
+                    "transport shutdown failed after protocol response: {error}"
+                ))
+            })?;
             Ok(payload)
         };
         let result = tokio::select! {
@@ -636,23 +642,28 @@ impl OperationExecutor for FailClosedLocalExecutor {
                 self.kind.service_name()
             )));
         }
-        if request.schema != OPERATION_REQUEST_SCHEMA
-            || request.request_id.trim().is_empty()
-            || request.idempotency_key.trim().is_empty()
-            || request.principal.trim().is_empty()
-            || request.payload.is_empty()
-            || request.payload.len() > 1_048_576
-        {
-            return Err(fatal("protocol local agent received malformed work"));
+        validate_local_agent_request(request)?;
+        let work = parse_local_agent_work(&request.payload)?;
+        let mut outputs = Vec::with_capacity(work.tasks.len());
+        for task in work.tasks {
+            outputs.push(task.execute().await?);
         }
+        let result_bytes = serde_json::to_vec(&outputs).map_err(|error| {
+            fatal(format!(
+                "protocol local agent result hashing failed: {error}"
+            ))
+        })?;
         serde_json::to_vec(&serde_json::json!({
-            "schema": "adl.runtime.protocol_local_agent_execution.v1",
+            "schema": LOCAL_AGENT_RESULT_SCHEMA,
             "adapter": self.kind.service_name(),
             "operation": self.kind.operation_name(),
             "request_id": request.request_id,
+            "idempotency_key": request.idempotency_key,
             "principal": request.principal,
             "payload_hash": blake3::hash(&request.payload).to_hex().to_string(),
-            "work_units": 1,
+            "result_hash": blake3::hash(&result_bytes).to_hex().to_string(),
+            "work_units": outputs.len(),
+            "outputs": outputs,
             "status": "completed"
         }))
         .map_err(|error| {
@@ -661,6 +672,111 @@ impl OperationExecutor for FailClosedLocalExecutor {
             ))
         })
     }
+}
+
+fn validate_local_agent_request(request: &OperationRequest) -> Result<(), ExecutorError> {
+    if request.schema != OPERATION_REQUEST_SCHEMA
+        || request.request_id.trim().is_empty()
+        || request.idempotency_key.trim().is_empty()
+        || request.principal.trim().is_empty()
+        || request.payload.is_empty()
+        || request.payload.len() > 1_048_576
+    {
+        return Err(fatal("protocol local agent received malformed work"));
+    }
+    Ok(())
+}
+
+fn parse_local_agent_work(payload: &[u8]) -> Result<LocalAgentWork, ExecutorError> {
+    let work: LocalAgentWork = serde_json::from_slice(payload)
+        .map_err(|_| fatal("protocol local agent received malformed work"))?;
+    if work.schema != LOCAL_AGENT_WORK_SCHEMA
+        || work.tasks.is_empty()
+        || work.tasks.len() > MAX_LOCAL_AGENT_TASKS
+    {
+        return Err(fatal("protocol local agent received malformed work"));
+    }
+    for task in &work.tasks {
+        task.validate()?;
+    }
+    Ok(work)
+}
+
+#[derive(Deserialize)]
+struct LocalAgentWork {
+    schema: String,
+    tasks: Vec<LocalAgentTask>,
+}
+
+#[derive(Deserialize)]
+#[serde(tag = "op", rename_all = "snake_case")]
+enum LocalAgentTask {
+    Blake3 { input: String },
+    SleepMillis { millis: u64 },
+}
+
+#[derive(Serialize)]
+#[serde(tag = "op", rename_all = "snake_case")]
+enum LocalAgentOutput {
+    Blake3 {
+        input_hash: String,
+        output_hex: String,
+    },
+    SleepMillis {
+        millis: u64,
+        status: &'static str,
+    },
+}
+
+impl LocalAgentTask {
+    fn validate(&self) -> Result<(), ExecutorError> {
+        match self {
+            Self::Blake3 { input } => {
+                if input.is_empty() || input.len() > MAX_LOCAL_AGENT_INPUT_BYTES {
+                    return Err(fatal("protocol local agent received malformed work"));
+                }
+            }
+            Self::SleepMillis { millis } => {
+                if *millis > MAX_LOCAL_AGENT_SLEEP_MILLIS {
+                    return Err(fatal("protocol local agent received malformed work"));
+                }
+            }
+        }
+        Ok(())
+    }
+
+    async fn execute(self) -> Result<LocalAgentOutput, ExecutorError> {
+        match self {
+            Self::Blake3 { input } => {
+                let bytes = input.as_bytes();
+                Ok(LocalAgentOutput::Blake3 {
+                    input_hash: blake3::hash(bytes).to_hex().to_string(),
+                    output_hex: blake3::hash(bytes).to_hex().to_string(),
+                })
+            }
+            Self::SleepMillis { millis } => {
+                tokio::time::sleep(Duration::from_millis(millis)).await;
+                Ok(LocalAgentOutput::SleepMillis {
+                    millis,
+                    status: "slept",
+                })
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+fn local_agent_work_for_test(input: &str) -> Vec<u8> {
+    serde_json::to_vec(&serde_json::json!({
+        "schema": LOCAL_AGENT_WORK_SCHEMA,
+        "tasks": [
+            {
+                "op": "blake3",
+                "input": input
+            }
+        ]
+    }))
+    .expect("local agent work encodes")
 }
 
 impl ProtocolFrame {
@@ -927,20 +1043,36 @@ mod tests {
         let executor = FailClosedLocalExecutor {
             kind: AdapterKind::Agent,
         };
-        let payload = executor
-            .execute(&request(b"local-agent-work"))
-            .await
-            .unwrap();
-        assert_ne!(payload, b"local-agent-work");
+        let work = local_agent_work_for_test("local-agent-work");
+        let payload = executor.execute(&request(&work)).await.unwrap();
+        assert_ne!(payload, work);
         let value: serde_json::Value = serde_json::from_slice(&payload).unwrap();
-        assert_eq!(
-            value["schema"],
-            "adl.runtime.protocol_local_agent_execution.v1"
-        );
+        assert_eq!(value["schema"], LOCAL_AGENT_RESULT_SCHEMA);
         assert_eq!(
             value["payload_hash"],
+            blake3::hash(&local_agent_work_for_test("local-agent-work"))
+                .to_hex()
+                .to_string()
+        );
+        assert_eq!(value["work_units"], 1);
+        assert_eq!(value["outputs"][0]["op"], "blake3");
+        assert_eq!(
+            value["outputs"][0]["output_hex"],
             blake3::hash(b"local-agent-work").to_hex().to_string()
         );
+    }
+
+    #[tokio::test]
+    async fn protocol_builder_local_agent_rejects_arbitrary_payload_receipts() {
+        let executor = FailClosedLocalExecutor {
+            kind: AdapterKind::Agent,
+        };
+        let error = executor
+            .execute(&request(b"local-agent-work"))
+            .await
+            .unwrap_err();
+        assert_eq!(error.class, FailureClass::Fatal);
+        assert!(error.message.contains("malformed work"));
     }
 
     #[tokio::test]

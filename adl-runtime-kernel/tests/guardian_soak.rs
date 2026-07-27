@@ -23,6 +23,19 @@ use async_trait::async_trait;
 const CONTROL_TEST_HOST: &str = "localhost";
 const CONTROL_TEST_PORT: u16 = 20_997;
 
+fn local_agent_work(input: &str) -> Vec<u8> {
+    serde_json::to_vec(&serde_json::json!({
+        "schema": "adl.runtime.local_agent_work.v1",
+        "tasks": [
+            {
+                "op": "blake3",
+                "input": input
+            }
+        ]
+    }))
+    .unwrap()
+}
+
 #[test]
 fn packaging_preserves_one_guardian_neutral_child_contract() {
     let rustysd = include_str!("../../infra/rustysd/adl-runtime-kernel.service");
@@ -437,7 +450,7 @@ async fn horust_forwards_sigterm_and_runtime_checkpoints_cleanly() {
                 schema: DOMAIN_WORK_SCHEMA.to_owned(),
                 work_id: "guardian-work".to_owned(),
                 kind: "parity-a".to_owned(),
-                payload: b"horust-live-ingress".to_vec(),
+                payload: local_agent_work("horust-live-ingress"),
             },
         },
         "guardian-test",
@@ -1012,7 +1025,7 @@ disk_recover_free_bytes = {}
                 schema: DOMAIN_WORK_SCHEMA.to_owned(),
                 work_id: "pressure-work".to_owned(),
                 kind: "parity-a".to_owned(),
-                payload: b"serialize-before-stop".to_vec(),
+                payload: local_agent_work("serialize-before-stop"),
             },
         },
         "pressure-test",
@@ -1202,7 +1215,7 @@ async fn signed_https_shutdown_checkpoints_and_forgery_cannot_stop_the_process()
         schema: DOMAIN_WORK_SCHEMA.to_owned(),
         work_id: "guardian-work-1".to_owned(),
         kind: "parity-a".to_owned(),
-        payload: b"guardian-live-ingress".to_vec(),
+        payload: local_agent_work("guardian-live-ingress"),
     };
     let submit_response = request(signed(
         "valid-submit",
