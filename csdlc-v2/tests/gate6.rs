@@ -1,5 +1,5 @@
 use csdlc_v2::{
-    publication::{validate_merged_remote, validate_remote},
+    publication::{body_has_github_closing_keyword, validate_merged_remote, validate_remote},
     reconcile_action, MergedPublicationReconciliationRequest, PublicationAction, PublicationIntent,
     PublicationRequest, RemotePullRequest,
 };
@@ -56,7 +56,7 @@ fn ambiguous_create_outage_is_reconciled_by_observation_before_retry() {
 fn drifted_mutable_fields_update_same_pr() {
     let i = intent();
     let mut r = remote();
-    r.body = "Old text for #5236".into();
+    r.body = "Closes #5236\nOld text".into();
     assert_eq!(
         reconcile_action(&i, Some(&r)).unwrap(),
         PublicationAction::Update
@@ -75,6 +75,42 @@ fn base_head_or_repository_mismatch_fails_closed() {
         };
         assert!(validate_remote(&i, &r).is_err());
     }
+}
+
+#[test]
+fn publication_body_requires_github_closing_keyword_for_issue() {
+    for body in [
+        "Closes #5236",
+        "fixes #5236",
+        "Resolved #5236",
+        "Closes: agent-logic/agent-design-language#5236",
+    ] {
+        assert!(
+            body_has_github_closing_keyword(body, 5236, "agent-logic/agent-design-language"),
+            "{body:?} should close the issue"
+        );
+    }
+    for body in [
+        "Related #5236",
+        "See #5236",
+        "Closes #52360",
+        "Closes issue 5236",
+        "Close\n#5236",
+        "Closes wrong/repo#5236",
+    ] {
+        assert!(
+            !body_has_github_closing_keyword(body, 5236, "agent-logic/agent-design-language"),
+            "{body:?} should not count as GitHub auto-close linkage"
+        );
+    }
+}
+
+#[test]
+fn remote_identity_rejects_body_without_closing_keyword() {
+    let i = intent();
+    let mut r = remote();
+    r.body = "Related #5236".into();
+    assert!(validate_remote(&i, &r).is_err());
 }
 
 #[test]

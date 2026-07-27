@@ -802,16 +802,51 @@ pub async fn collect_pr_state(request: &PrStateRequest) -> crate::Result<PrState
             "PR head is absent",
         )
     })?;
-    let page = crab
+    let mut page_number = 1_u32;
+    let first_page = crab
         .checks(owner, repo)
         .list_check_runs_for_git_ref(Commitish(head.sha.clone()))
         .per_page(100)
+        .page(page_number)
         .send()
         .await
         .map_err(remote)?;
+    let total = first_page.total_count as usize;
+    let mut check_runs = first_page.check_runs;
+    while check_runs.len() < total {
+        page_number += 1;
+        let next_page = crab
+            .checks(owner, repo)
+            .list_check_runs_for_git_ref(Commitish(head.sha.clone()))
+            .per_page(100)
+            .page(page_number)
+            .send()
+            .await
+            .map_err(remote)?;
+        if next_page.check_runs.is_empty() {
+            return Err(crate::V2Error::new(
+                crate::ErrorCode::ReconciliationRequired,
+                "GitHub check-run pagination ended before total_count",
+            ));
+        }
+        check_runs.extend(next_page.check_runs);
+    }
     let mut latest = BTreeMap::new();
-    for run in page.check_runs {
-        latest.insert(run.name.clone(), run);
+    for run in check_runs {
+        let replace =
+            latest
+                .get(&run.name)
+                .is_none_or(|prior: &octocrab::models::checks::CheckRun| {
+                    run_is_newer(
+                        run.started_at.map(|time| time.timestamp_millis()),
+                        run.id.0,
+                        prior.started_at.map(|time| time.timestamp_millis()),
+                        prior.id.0,
+                    )
+                });
+        if replace {
+            latest.insert(run.name.clone(), run);
+        }
     }
     let checks = latest
         .into_values()
@@ -884,6 +919,21 @@ fn conclusion(value: Option<&str>) -> &'static str {
         _ => "unknown",
     }
 }
+
+fn run_is_newer(
+    candidate_started_millis: Option<i64>,
+    candidate_id: u64,
+    prior_started_millis: Option<i64>,
+    prior_id: u64,
+) -> bool {
+    candidate_started_millis.zip(prior_started_millis).map_or(
+        candidate_id >= prior_id,
+        |(candidate_started, prior_started)| {
+            (candidate_started, candidate_id) >= (prior_started, prior_id)
+        },
+    )
+}
+
 fn remote(error: octocrab::Error) -> crate::V2Error {
     crate::V2Error::new(
         crate::ErrorCode::RemoteFailure,
@@ -920,5 +970,15 @@ mod tests {
         assert_eq!(classify_pr_state(&packet("success"), true), "ready");
         assert_eq!(classify_pr_state(&packet("pending"), false), "waiting");
         assert_eq!(classify_pr_state(&packet("failure"), false), "failed");
+    }
+
+    #[test]
+    fn newer_check_run_identity_replaces_stale_duplicate_name() {
+        assert!(run_is_newer(Some(20), 20, Some(10), 10));
+        assert!(run_is_newer(Some(20), 30, Some(20), 20));
+        assert!(run_is_newer(None, 30, Some(20), 20));
+        assert!(run_is_newer(Some(20), 30, None, 20));
+        assert!(!run_is_newer(Some(10), 30, Some(20), 20));
+        assert!(!run_is_newer(None, 10, Some(20), 20));
     }
 }

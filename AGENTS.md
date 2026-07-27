@@ -124,6 +124,12 @@ These rules are mandatory for ADL issue work.
 5. Always review work with a subagent before opening the PR.
    - Run a bounded review subagent over the changed work product.
    - Fix all actionable findings immediately before publication.
+   - Every implementation PR body must include the correct GitHub closing
+     keyword for its tracked issue, normally `Closes #<issue>`, so GitHub closes
+     the issue immediately when the PR merges. A bare issue mention such as
+     `Related #<issue>` is not sufficient. Typed C-SDLC closeout remains a
+     separate, truthful, asynchronous follow-up after GitHub issue closure and
+     must not block independent implementation work.
 6. Always perform closeout after the issue is closed.
    - Use the normal closeout path so issue truth, cards, artifacts, and GitHub
      state all agree.

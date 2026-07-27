@@ -1,0 +1,47 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5692,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][publication] Require implementation PR closing keyword",
+    "slug": "pr-closing-linkage-policy",
+    "version": "v0.91.8",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement and prove only the closing-keyword policy and publication verifier guard for #5692.",
+      "deliverables": [
+        "AGENTS.md states implementation PR bodies must include the correct GitHub closing keyword",
+        "csdlc-publish rejects request and remote PR bodies that merely mention #<issue> without a closing keyword",
+        "Focused tests cover accepted and rejected linkage forms"
+      ],
+      "acceptance_criteria": [
+        "AC-1 AGENTS.md requires every implementation PR body to include the correct GitHub closing keyword, normally Closes #<issue>",
+        "AC-2 csdlc-publish publication request validation rejects body-only issue mentions such as Related #5692",
+        "AC-3 csdlc-publish remote validation rejects existing PRs or remote observations without a valid closing keyword for the issue",
+        "AC-4 Merge readiness can rely on GitHub auto-closing because the governed PR body contains the closing keyword; typed closeout remains nonblocking after issue closure",
+        "AC-5 The PR opened for this issue includes Closes #5692 in its body"
+      ],
+      "dependencies": [
+        "Existing csdlc-publish publication verifier",
+        "Existing csdlc-github issue close/read support"
+      ],
+      "repo_inputs": [
+        "AGENTS.md",
+        "csdlc-v2/src/publication.rs",
+        "csdlc-v2/tests/gate6.rs",
+        ".github/workflows/ci.yaml"
+      ],
+      "non_goals": [
+        "Workflow rewrite",
+        "Receipt or closeout redesign",
+        "New GitHub connector dependency",
+        "Changing legacy v1 wrappers"
+      ]
+    }
+  }
+}
