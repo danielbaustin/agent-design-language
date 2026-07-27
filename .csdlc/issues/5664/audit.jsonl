@@ -5,3 +5,4 @@
 {"sequence":5,"generation":1,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record execution, validation, and implemented phase","operation":"finalize_implementation"}
 {"sequence":6,"generation":2,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
 {"sequence":7,"generation":3,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"Recover stale exact-review evidence after the branch tip moved past reviewed code head 8c3dbdad84c4d01764321c4c5db73962da64aaed; re-enter implemented phase for exact-head review and truthful publication.","operation":"recover_review"}
+{"sequence":8,"generation":4,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}

@@ -12,7 +12,10 @@ Status: draft
 
 ## Scope
 
-
+adl-runtime-kernel/Cargo.toml
+adl-runtime-kernel/src/lib.rs
+adl-runtime-kernel/src/protocol_adapters.rs
+adl-runtime-kernel/tests/protocol_adapters.rs
 
 ## Prompts
 
@@ -32,12 +35,12 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- Production serve wiring remains outside this disjoint adapter-slice publication and is not claimed complete.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:aa78843cd00ceb3ffa860d18dfad15637a3613ac:6f6a0273508c547db4c4e4c89354ca06f947a37f691f99e6ef9e5ec1155048ce")
 
-Reviewer: None
+Reviewer: Some("codex-exact-head-review:019fa105-57ba-7463-9fe5-c837cc5eeef5")
 
-Result: pre_review
+Result: pass

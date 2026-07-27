@@ -7,15 +7,15 @@
     "title": "[v0.91.8][runtime-v3][protocols] Implement real Provider, ACIP, A2A, and Cloud Bridge adapters",
     "slug": "v0-91-8-runtime-v3-protocol-adapters",
     "version": "v0.91.8",
-    "generation": 3
+    "generation": 4
   },
   "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "adl-runtime-kernel/Cargo.toml\nadl-runtime-kernel/src/lib.rs\nadl-runtime-kernel/src/protocol_adapters.rs\nadl-runtime-kernel/tests/protocol_adapters.rs",
+      "review_revision": "git-blake3:aa78843cd00ceb3ffa860d18dfad15637a3613ac:6f6a0273508c547db4c4e4c89354ca06f947a37f691f99e6ef9e5ec1155048ce",
+      "reviewer": "codex-exact-head-review:019fa105-57ba-7463-9fe5-c837cc5eeef5",
       "review_prompts": [
         "Do Provider, ACIP, A2A, and Cloud Bridge each perform a real authenticated transport exchange rather than returning receipts?",
         "Are retry, timeout, cancellation, replay rejection, and shutdown bounded and tested?",
@@ -24,8 +24,10 @@
         "Do black-box tests prove fail-closed malformed, unauthorized, timeout, replay, unsupported capability, and shutdown cases?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "Production serve wiring remains outside this disjoint adapter-slice publication and is not claimed complete."
+      ],
+      "review_result": "pass"
     }
   }
 }

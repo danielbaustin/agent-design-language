@@ -3,13 +3,13 @@
   "issue": 5664,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "5c4f0b80a55fc6a22577fde823f493baa9e2e6fd707b7a7966ab6a241f78a977",
-  "phase": "implemented",
-  "generation": 3,
-  "digest": "0b41071a70aa28a7856b14d2b882cae58762da8e03ffdbda53a10b7a315d0ac9",
+  "phase": "reviewed",
+  "generation": 4,
+  "digest": "b92e25c61c0091e22801145ae4a373bcf7a9430a0da44866ec214c71eb2093bf",
   "claim": {
     "id": "claim-5664-runtime-v3-protocol-adapters",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 3,
+    "generation": 4,
     "acquired_unix_seconds": 1784998013,
     "expires_unix_seconds": 1785602813,
     "heartbeat_unix_seconds": 1784998013,
@@ -31,7 +31,22 @@
     "purpose": "Implement real Runtime v3 Provider, ACIP, A2A, and Cloud Bridge protocol adapters with bounded Tokio/Rustls-ready transport proof"
   },
   "review_assignment": null,
-  "review": null,
+  "review": {
+    "reviewer": "codex-exact-head-review:019fa105-57ba-7463-9fe5-c837cc5eeef5",
+    "scope": [
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/src/protocol_adapters.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ],
+    "reviewed_revision": "git-blake3:aa78843cd00ceb3ffa860d18dfad15637a3613ac:6f6a0273508c547db4c4e4c89354ca06f947a37f691f99e6ef9e5ec1155048ce",
+    "findings": [],
+    "residual_risks": [
+      "Production serve wiring remains outside this disjoint adapter-slice publication and is not claimed complete."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -46,32 +61,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "5d13d0a47d55c81a3f3c152e8f29f70947ea2a69ffb80cf85d5026a80097fae2",
+      "values_digest": "3a3075bb3244cbf8f51d8f4ff37109d769dd3ab2aa559a7d2db860c1f204566a",
       "rendered_digest": "2ff4d42bf592fa7a8e3c7db9b60977fa5d559b6b2ef512b99b3f75ca37891b6d",
       "ast_digest": "58af9abe8352b3cc20c252c930c9c6f0f5c5bc07de7ea737cfcb60d494ac35e0"
     },
     "stp": {
-      "values_digest": "4934466c8a081f649692cd8735fc87d39076df61fffbe3e975fc9065695a7da2",
+      "values_digest": "fad99d885b9115b6694eaac8883566e190bc5cd2c37e5d0fc41b234eacaf7dbf",
       "rendered_digest": "ebd4375a918f0b3b601ba52e2977b4b23e866b56a90cf0467d490e4ab1667ce5",
       "ast_digest": "62fc797c14b2ff5b2f8a94664e1c3212ff7e60a5417bdc1de60c25462326a155"
     },
     "spp": {
-      "values_digest": "32873044707e52e0f03f96af0db9c9b424cf1960dee04ee21fa11998dfb06d71",
+      "values_digest": "72f1492caeabd76779a0e1b16381870a0154fabf1d5c6062b19b5b0a9db0f3f0",
       "rendered_digest": "d83d290dbba51d7d52252e8e5d99102b52e469d5f992acf1d38bee44fc332923",
       "ast_digest": "a00c37e4be848f812489601f2646fc715f87524ca067072bf3aba077a464d270"
     },
     "vpp": {
-      "values_digest": "acc73d85ace818e5b859313051deb08a5407d5ce65337f85a01077bf775b521d",
+      "values_digest": "e6c4e438012cd492d789a40eb7245bbfd601d5e3679f8b6f650660996a2bafcb",
       "rendered_digest": "63471152dcd0f8f5b387ba75321598e3054fec83c19ac56c7a3d0f1049b67a96",
       "ast_digest": "7f79aeaa65f405c6a4826cc428d82c785c11c279886ed790cb51f63897368404"
     },
     "srp": {
-      "values_digest": "07f4b880956e6b6df07be19d5238972643bf2943e7739946cc5dedc35deff3a8",
-      "rendered_digest": "fc6cabf714cd521f67d728529e00b53c0c293d703247a2865e655e7d60663265",
-      "ast_digest": "20be5078cf4fa6be96c43a4d38bc678b87cf7b408bf569aa524459d5f25d7607"
+      "values_digest": "9a329d5ab45d167c14aacfa7e1644f70d5a08e947ae102f3900d38891bec4042",
+      "rendered_digest": "1f43d10b8084dd8cff846e0127d36ae5139e08cc5f3e8c94492086cfb6276357",
+      "ast_digest": "79f3f02802d6cde5e34580e3d1df7e8649c0d261b3bc9c4e13b4423af5d2a53e"
     },
     "sor": {
-      "values_digest": "7cddc6455f0910b9ff3341a6b31db41ccaaedcf8cf869e0dd86787367045395b",
+      "values_digest": "d889733061f728ec4007d48f998cde07dd91c0387b4c2b4dbce7510af53e9426",
       "rendered_digest": "1374555a28815855c59ab1e3a198f4e52ab55c84c726b5407c76dc8f24eefafc",
       "ast_digest": "344791691a09f229f8e926d79dcb35c12926560248684e334bd41d2d3ac358a0"
     }
@@ -111,6 +126,13 @@
       "to": "implemented",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Recover stale exact-review evidence after the branch tip moved past reviewed code head 8c3dbdad84c4d01764321c4c5db73962da64aaed; re-enter implemented phase for exact-head review and truthful publication."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "exact scoped review passed"
     }
   ],
   "audit": [
@@ -162,6 +184,13 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Recover stale exact-review evidence after the branch tip moved past reviewed code head 8c3dbdad84c4d01764321c4c5db73962da64aaed; re-enter implemented phase for exact-head review and truthful publication.",
       "operation": "recover_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
     }
   ]
 }
