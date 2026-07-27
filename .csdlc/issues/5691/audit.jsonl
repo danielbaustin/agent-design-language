@@ -8,3 +8,4 @@
 {"sequence":8,"generation":4,"actor":"codex:5691-runtime-v3-vector-otel","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":9,"generation":5,"actor":"codex:5691-runtime-v3-vector-otel","reason":"Advance #5691 after clean exact-head Claude Opus 5 review with REVIEW_COMPLETE and no actionable P1/P2 findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":10,"generation":6,"actor":"codex:5691-runtime-v3-vector-otel","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":11,"generation":7,"actor":"codex:5691-runtime-v3-vector-otel","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
