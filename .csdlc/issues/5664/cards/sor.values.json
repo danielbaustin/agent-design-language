@@ -7,7 +7,7 @@
     "title": "[v0.91.8][runtime-v3][protocols] Implement real Provider, ACIP, A2A, and Cloud Bridge adapters",
     "slug": "v0-91-8-runtime-v3-protocol-adapters",
     "version": "v0.91.8",
-    "generation": 1
+    "generation": 3
   },
   "status": "pre_phase",
   "content": {
@@ -66,7 +66,7 @@
           "evidence_ref": "protocol-adapter-tests.log"
         }
       ],
-      "integration_state": "not_started",
+      "integration_state": "worktree_only",
       "publication_state": "not_published",
       "merge_state": "not_merged",
       "closeout_state": "not_started",

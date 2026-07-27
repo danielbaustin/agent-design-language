@@ -306,13 +306,6 @@ impl ProtocolStream {
             Self::Tls(stream) => stream.write_all(bytes).await,
         }
     }
-
-    async fn shutdown(&mut self) -> std::io::Result<()> {
-        match self {
-            Self::Plain(stream) => stream.shutdown().await,
-            Self::Tls(stream) => stream.shutdown().await,
-        }
-    }
 }
 
 async fn read_response_line<R>(mut reader: BufReader<R>) -> Result<Vec<u8>, ExecutorError>
@@ -479,9 +472,7 @@ impl ProtocolAdapter {
                 Ordering::SeqCst,
             );
             let payload = self.response_payload(&frame, response)?;
-            if let Err(error) = stream.shutdown().await {
-                eprintln!("runtime protocol post-response shutdown failed: {error}");
-            }
+            drop(stream);
             Ok(payload)
         };
         let result = tokio::select! {

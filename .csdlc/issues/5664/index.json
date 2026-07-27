@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "5c4f0b80a55fc6a22577fde823f493baa9e2e6fd707b7a7966ab6a241f78a977",
   "phase": "implemented",
-  "generation": 1,
-  "digest": "78c7da67541df09b8471b3a4ab8da3f6becf1e3d59072cc272f052efdda1dc23",
+  "generation": 3,
+  "digest": "0b41071a70aa28a7856b14d2b882cae58762da8e03ffdbda53a10b7a315d0ac9",
   "claim": {
     "id": "claim-5664-runtime-v3-protocol-adapters",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 1,
+    "generation": 3,
     "acquired_unix_seconds": 1784998013,
     "expires_unix_seconds": 1785602813,
     "heartbeat_unix_seconds": 1784998013,
@@ -46,34 +46,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "5895652941e556f48bb358629dca3558487a6952b7460f11e4899f29fdc8edbf",
+      "values_digest": "5d13d0a47d55c81a3f3c152e8f29f70947ea2a69ffb80cf85d5026a80097fae2",
       "rendered_digest": "2ff4d42bf592fa7a8e3c7db9b60977fa5d559b6b2ef512b99b3f75ca37891b6d",
       "ast_digest": "58af9abe8352b3cc20c252c930c9c6f0f5c5bc07de7ea737cfcb60d494ac35e0"
     },
     "stp": {
-      "values_digest": "7a6f868a047d04d4211b9ea974fff3188acd77bd52cd91e601b2febfa80ad81a",
+      "values_digest": "4934466c8a081f649692cd8735fc87d39076df61fffbe3e975fc9065695a7da2",
       "rendered_digest": "ebd4375a918f0b3b601ba52e2977b4b23e866b56a90cf0467d490e4ab1667ce5",
       "ast_digest": "62fc797c14b2ff5b2f8a94664e1c3212ff7e60a5417bdc1de60c25462326a155"
     },
     "spp": {
-      "values_digest": "5a03424a9c508845f9ce15a1e7c23164a77e1edfee79f397116f91fd6d80cac5",
+      "values_digest": "32873044707e52e0f03f96af0db9c9b424cf1960dee04ee21fa11998dfb06d71",
       "rendered_digest": "d83d290dbba51d7d52252e8e5d99102b52e469d5f992acf1d38bee44fc332923",
       "ast_digest": "a00c37e4be848f812489601f2646fc715f87524ca067072bf3aba077a464d270"
     },
     "vpp": {
-      "values_digest": "a3f2ef00b81519c495f9c26b249b91b941737c532d8a79ca7af215c3e52cf268",
+      "values_digest": "acc73d85ace818e5b859313051deb08a5407d5ce65337f85a01077bf775b521d",
       "rendered_digest": "63471152dcd0f8f5b387ba75321598e3054fec83c19ac56c7a3d0f1049b67a96",
       "ast_digest": "7f79aeaa65f405c6a4826cc428d82c785c11c279886ed790cb51f63897368404"
     },
     "srp": {
-      "values_digest": "224f822985e6446338716ad667f595701929144d9e8338fda6ffc5dcc063c0c1",
-      "rendered_digest": "67c1a8bf20a892dabfe378661e06c7681c16d1e1dd8e71c82264f22d4726e634",
-      "ast_digest": "8262a4c1a3ef7c3688566fc4bc4356213f5e5596e2a584332856bb2683284feb"
+      "values_digest": "07f4b880956e6b6df07be19d5238972643bf2943e7739946cc5dedc35deff3a8",
+      "rendered_digest": "fc6cabf714cd521f67d728529e00b53c0c293d703247a2865e655e7d60663265",
+      "ast_digest": "20be5078cf4fa6be96c43a4d38bc678b87cf7b408bf569aa524459d5f25d7607"
     },
     "sor": {
-      "values_digest": "70755cf7fc324e10dabbc482f1cc2d40232abc3154336ad48843bc79b5b2f88a",
-      "rendered_digest": "db9ec4ebde2578e63cec74284f03b30fc7b768cb21f172f0e3b5d0df0efb88df",
-      "ast_digest": "1b066f19452d3b5bc55ee9eae2d8c8c81f4d9942e1740fbb06e0053dd5563244"
+      "values_digest": "7cddc6455f0910b9ff3341a6b31db41ccaaedcf8cf869e0dd86787367045395b",
+      "rendered_digest": "1374555a28815855c59ab1e3a198f4e52ab55c84c726b5407c76dc8f24eefafc",
+      "ast_digest": "344791691a09f229f8e926d79dcb35c12926560248684e334bd41d2d3ac358a0"
     }
   },
   "transitions": [
@@ -97,6 +97,20 @@
       "to": "implemented",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover stale exact-review evidence after the branch tip moved past reviewed code head 8c3dbdad84c4d01764321c4c5db73962da64aaed; re-enter implemented phase for exact-head review and truthful publication."
     }
   ],
   "audit": [
@@ -134,6 +148,20 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "atomically record execution, validation, and implemented phase",
       "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover stale exact-review evidence after the branch tip moved past reviewed code head 8c3dbdad84c4d01764321c4c5db73962da64aaed; re-enter implemented phase for exact-head review and truthful publication.",
+      "operation": "recover_review"
     }
   ]
 }

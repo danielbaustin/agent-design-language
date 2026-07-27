@@ -7,13 +7,13 @@
     "title": "[v0.91.8][runtime-v3][protocols] Implement real Provider, ACIP, A2A, and Cloud Bridge adapters",
     "slug": "v0-91-8-runtime-v3-protocol-adapters",
     "version": "v0.91.8",
-    "generation": 1
+    "generation": 3
   },
-  "status": "pre_phase",
+  "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "Review the exact #5664 issue worktree revision across protocol adapter source, module export, black-box tests, LoC accounting, focused validation evidence, and protected-path disjointness.",
+      "review_scope": "",
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [

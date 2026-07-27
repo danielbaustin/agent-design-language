@@ -73,7 +73,7 @@ Implemented the disjoint Provider, ACIP, A2A, and Cloud Bridge protocol adapter 
 
 ## Integration
 
-not_started
+worktree_only
 
 ## Publication
 

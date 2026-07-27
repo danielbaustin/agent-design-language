@@ -8,11 +8,11 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: pre_phase
+Status: draft
 
 ## Scope
 
-Review the exact #5664 issue worktree revision across protocol adapter source, module export, black-box tests, LoC accounting, focused validation evidence, and protected-path disjointness.
+
 
 ## Prompts
 
