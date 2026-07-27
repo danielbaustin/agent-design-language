@@ -340,6 +340,9 @@ jobs:
           workspaces: |
             adl-runtime-kernel -> target
 
+      - name: Install pinned Vector component
+        run: bash adl/tools/install_vector_component.sh
+
       - name: Runtime v3 focused tests
         run: cargo test --manifest-path adl-runtime-kernel/Cargo.toml
 

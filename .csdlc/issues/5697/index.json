@@ -5,7 +5,7 @@
   "initialization_digest": "3136fba73cac6b4c3b5d21d27082421952f27694f45781bfa414a7b43e35a90b",
   "phase": "implemented",
   "generation": 4,
-  "digest": "679229d1d4378e1da444410a61ae45139431b5607834b8629224d61e0f513c86",
+  "digest": "654e4de812437ac8dfc4eb8cfd6e5f85a27031593304e8df0e5ce2ab0b7a0e2c",
   "claim": {
     "id": "claim-5697-chronosense-trusted-time",
     "owner": "codex:issue-5697-chronosense-trusted-time",
@@ -20,12 +20,14 @@
       ".csdlc/issues/5697",
       ".csdlc/locks/5697.lock",
       ".csdlc/prepared/issues/5697",
+      ".github/workflows/ci.yaml",
       "adl-runtime-kernel/Cargo.toml",
       "adl-runtime-kernel/src/assembly.rs",
       "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
       "adl-runtime-kernel/src/governed_operations.rs",
       "adl-runtime-kernel/src/operations.rs",
-      "adl-runtime-kernel/tests/assembly.rs"
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs"
     ],
     "purpose": "Land the Runtime v3 Chronosense trusted_time ordering correction in follow-up issue #5697 without mutating terminal #5663 lifecycle state"
   },
@@ -168,6 +170,20 @@
       "actor": "codex:issue-5697-chronosense-trusted-time",
       "reason": "PR #5699 CI failed adl-runtime-v3-fast because the earlier all-target Clippy workaround added forbidden repo-local adl-resilience path dependency to adl-runtime-kernel/Cargo.toml. Recover to implemented so the bounded CI repair can be made, revalidated, re-reviewed, and republished truthfully.",
       "operation": "recover_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "CI adl-runtime-v3-fast proved the earlier dev-dependency workaround violates the Runtime v3 manifest contract. Add only the parity test file so the guardian include can compile with a local test shim while preserving the no repo-local path dependency invariant.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/tests/parity_b_live_kernel.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 4,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "After fixing the CI-proven manifest contract regression, the same adl-runtime-v3-fast command reaches existing Vector observability tests that require the pinned repo-native Vector component. Add only the CI workflow path to provision that pinned component before the Runtime v3 fast lane.",
+      "operation": "{\"add_protected_paths\":[\".github/workflows/ci.yaml\"],\"operation\":\"amend_claim_scope\"}"
     }
   ]
 }

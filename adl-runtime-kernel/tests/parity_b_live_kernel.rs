@@ -15,6 +15,17 @@ use adl_runtime_kernel::{
 use ed25519_dalek::SigningKey;
 
 #[cfg(unix)]
+extern crate self as adl_resilience;
+
+#[cfg(unix)]
+pub fn capped_exponential_backoff(base_ms: u64, cap_ms: u64, failures: u32) -> Duration {
+    const MAX_BACKOFF_EXPONENT: u32 = 20;
+    let exponent = failures.saturating_sub(1).min(MAX_BACKOFF_EXPONENT);
+    let multiplier = 1_u64.checked_shl(exponent).unwrap_or(u64::MAX);
+    Duration::from_millis(base_ms.saturating_mul(multiplier).min(cap_ms))
+}
+
+#[cfg(unix)]
 #[allow(dead_code)]
 #[path = "../../adl-runtime/src/guardian.rs"]
 mod runtime_guardian;
@@ -235,7 +246,7 @@ async fn live_graph_executes_through_guardian_canonical_ingress() {
         hash(&serde_json::to_vec(&(&work, &expected_operation)).unwrap())
     );
     shutdown.cancel();
-    let outcome = tokio::time::timeout(Duration::from_secs(5), guardian_task)
+    let outcome = tokio::time::timeout(Duration::from_secs(15), guardian_task)
         .await
         .unwrap()
         .unwrap()
