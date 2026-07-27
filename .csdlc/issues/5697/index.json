@@ -3,13 +3,13 @@
   "issue": 5697,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "3136fba73cac6b4c3b5d21d27082421952f27694f45781bfa414a7b43e35a90b",
-  "phase": "reviewed",
-  "generation": 2,
-  "digest": "99f8ea9df0a6052494904e4e0279a6411c15895184400eaa0740e9c6d6016b56",
+  "phase": "published",
+  "generation": 3,
+  "digest": "308c57d6604437cd6dc2b28480bd40421ffc0233c9b3189bf86f606ae6a83010",
   "claim": {
     "id": "claim-5697-chronosense-trusted-time",
     "owner": "codex:issue-5697-chronosense-trusted-time",
-    "generation": 2,
+    "generation": 3,
     "acquired_unix_seconds": 1785172070,
     "expires_unix_seconds": 1785776870,
     "heartbeat_unix_seconds": 1785172070,
@@ -52,7 +52,17 @@
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5697,
+    "pull_request": 5699,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5699",
+    "base": "main",
+    "head": "codex/5697-chronosense-trusted-time",
+    "revision": "git-blake3:e12022f9f0ae19dd3ed5008c704dc8c5eb6e9f70:ce28d51f552277081cfd7a32e7d2e4d5baa3546e4135018accea7f07bd30021e",
+    "draft": false,
+    "observed_state": "open"
+  },
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -66,34 +76,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "6c547d22dc593ae1ba488721c99c3bd482875a57036e3598eff5f5b40aacd1a1",
+      "values_digest": "04fac19095dc927c5879427439f7ba122a9eb126d9dce93a09a58d24e00a66b1",
       "rendered_digest": "32a3aac06fa98f3fd813d88e9b8535d1e0bb5763f4f5737adf1b93806dfd6fe2",
       "ast_digest": "4099148b24fec409bc2d6a4d5567b3fe116594a6b65647e74b04eee37d1bbbe6"
     },
     "stp": {
-      "values_digest": "c563b67f22193bea825e8b07f6cc84c5d472b46d6c2ef77cdb0df8ee1453c1e1",
+      "values_digest": "7af7571b6efe1748f24394992372fafd35f4cc6b132ed90d8364770a8ba1faee",
       "rendered_digest": "10afa87c2801f1a86017049829c540ae662906358ee171ce218e9353984abe7a",
       "ast_digest": "8fe31204735501c97d2f1cffa83ab74b817b81670a18a37e089f5b6c176b04be"
     },
     "spp": {
-      "values_digest": "6eec13f87642f9ccd0aab5d2c8d6aa4b2c3bb543b742fa9f07020641e0ce11e4",
+      "values_digest": "53c1a7986676499a739ff408157b4ae46fb35af8561ee048fb15d65a84218156",
       "rendered_digest": "c9197f36add26fe96a1b79d542541f1d73d17b1018c4a616833ffcef147bfcaf",
       "ast_digest": "20ffc017740d306ae66272adf5a0636730d6fca5b5534761f781ea834d65083d"
     },
     "vpp": {
-      "values_digest": "8c666ee111284f612db330f683c509f25bb17771ab091a3871b0e6f21ba2f8b4",
+      "values_digest": "04e4a0559b8d4deda0aa3eaca3621a04d2f50113728426492dac27f19af509e5",
       "rendered_digest": "00941d3ca49caa5363bf6c701e68a0df12de15ca848681653379e60d447596de",
       "ast_digest": "1d691e7d3bb23b49561bf172d0e10c37cbf4546951ee7d32acb3821ee098b072"
     },
     "srp": {
-      "values_digest": "ff62c17ee435ed74b24101e03e7ff0c8f9df8edada005395fee7b53b533fd9ff",
+      "values_digest": "d8049d8f49a1f950eb942ec4778542a61fb0866eab77b038fa3b7a53ffedc280",
       "rendered_digest": "dc1c0615f1c215e495daa5b58b808f9b06d1e470e24e4d8205051e85a04989ed",
       "ast_digest": "945be257878ef4cc3f1d36e63629bfa20bb797c420a002b588c5c79667828955"
     },
     "sor": {
-      "values_digest": "5bb0ed2268e1434e5b4b2c86311d00b0e56946c0a3d695a687b23e1c642ec35c",
-      "rendered_digest": "a4c6168c21f8bfc25eb6313194a5dfc495d7a44da5fdd732d5b08c3323b27fa3",
-      "ast_digest": "27e55b6906ba0574938949901d448d973c8998785ec37b15263bdd2f5b8c96de"
+      "values_digest": "23b8294ceb57fb0aa5a13e95dbe2f7bd538ac488fdcd9b9a710922ab615c28ca",
+      "rendered_digest": "7afc7a2722a6d13361b8f6bf9ed6944ed9b2c37b0f40ee261adb8d983311c0d2",
+      "ast_digest": "2ade35bf5feeb4a65602006b00fcf171cb77c341c50667c8b0bdd693ad775c7d"
     }
   },
   "transitions": [
@@ -124,6 +134,13 @@
       "to": "reviewed",
       "actor": "codex:issue-5697-chronosense-trusted-time",
       "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "observed exact PR after current review"
     }
   ],
   "audit": [
@@ -161,6 +178,13 @@
       "actor": "codex:issue-5697-chronosense-trusted-time",
       "reason": "atomically record exact review evidence and reviewed phase",
       "operation": "record_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
     }
   ]
 }
