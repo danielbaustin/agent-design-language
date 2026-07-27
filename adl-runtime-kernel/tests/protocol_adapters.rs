@@ -14,6 +14,7 @@ use adl_runtime_kernel::{
 };
 use ed25519_dalek::SigningKey;
 use rcgen::{generate_simple_self_signed, CertifiedKey};
+use tempfile::TempDir;
 use tokio::{
     io::{AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader},
     net::TcpListener,
@@ -83,7 +84,7 @@ fn policy() -> AdapterPolicy {
     AdapterPolicy {
         capacity: 8,
         max_in_flight: 2,
-        timeout_millis: 500,
+        shutdown_grace_millis: 500,
         max_attempts: 3,
         idempotency_entries: 16,
         authority: AuthorityMode::External,
@@ -795,12 +796,13 @@ fn production_builder_returns_no_partial_executors_when_protocol_config_is_missi
         env::remove_var(key);
     }
     let executors = build_protocol_production_operation_executors();
-    let canonical = build_production_operation_executors();
+    let root = TempDir::new().unwrap();
+    let canonical = build_production_operation_executors(root.path().join("local-state")).unwrap();
     for (key, value) in previous {
         if let Some(value) = value {
             env::set_var(key, value);
         }
     }
     assert!(executors.is_empty());
-    assert!(canonical.is_empty());
+    assert!(canonical.contains_key(&AdapterKind::Agent));
 }
