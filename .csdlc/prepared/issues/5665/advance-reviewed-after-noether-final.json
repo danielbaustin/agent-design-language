@@ -1,0 +1,14 @@
+{
+  "schema": "csdlc.edit_request.v1",
+  "issue": 5665,
+  "card": "srp",
+  "expected_generation": 15,
+  "expected_digest": "ae4543bee91ea93f899651366b8a94f8a3fe6280d10337eeeb228450a7b726ae",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "Advance to reviewed after Noether final exact-head review passed with P2/P3 fixed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

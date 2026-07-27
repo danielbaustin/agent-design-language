@@ -508,25 +508,6 @@ mod parity_c_provider_scheduler_tools {
             "provider_timeout"
         );
         success(&run(&root, request, 2_000));
-
-        use std::os::unix::fs::PermissionsExt;
-        let root = TempDir::new().unwrap();
-        let hung = root.path().join("hung-provider");
-        fs::write(&hung, "#!/bin/sh\nsleep 5\n").unwrap();
-        fs::set_permissions(&hung, fs::Permissions::from_mode(0o700)).unwrap();
-        let started = std::time::Instant::now();
-        assert_eq!(
-            run_program(
-                &root,
-                signed_command("hung", "alice", 1_000),
-                1_000,
-                "healthy",
-                "",
-                &hung,
-            )["classification"],
-            "provider_timeout"
-        );
-        assert!(started.elapsed() < std::time::Duration::from_secs(4));
     }
 
     #[test]

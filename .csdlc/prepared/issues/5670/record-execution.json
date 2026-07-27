@@ -1,0 +1,26 @@
+{
+  "issue": 5670,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "a6bdedcf356ed249815f844f55589110c9d682d8380b05d85c4906f0f4ff2224",
+  "claim_id": "claim-5670-coverage-shard-fanout",
+  "actor": "codex:issue-5670-slot-1",
+  "reason": "Record hosted coverage shard producer and aggregation gate implementation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented hosted coverage workspace shard producers that collect run-scoped profraw profiles and a final hosted aggregation gate that renders the authoritative workspace summary before merging with runtime coverage.",
+    "changes": [
+      "Added collect/report modes, shard selection, run-scoped profile roots, profraw import, and input validation to adl/tools/run_authoritative_coverage_lane.sh.",
+      "Fanned adl-coverage-workspace-hosted across four workspace profraw shard producers while keeping non-full PR-fast coverage on shard 1 only.",
+      "Moved authoritative full workspace summary rendering, lcov/text release artifact generation, provenance verification, and workspace/runtime summary merge into adl-coverage-hosted.",
+      "Updated coverage runner, CI runtime, and path-policy contracts to prove the new shard/aggregation topology and guard against stale workflow expectations."
+    ],
+    "artifacts": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/run_authoritative_coverage_lane.sh",
+      "adl/tools/test_run_authoritative_coverage_lane.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_ci_path_policy.sh"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "issue": 5671,
+  "expected_generation": 2,
+  "expected_digest": "16e0e05b9bd713ec0245c3b2bebde2125c37e076bd9b47bf793a0d5b6a2655f8",
+  "claim_id": "claim-5671-anthropic-opus-5",
+  "reviewer": "codex:5671-subagent-review",
+  "assigned_by": "codex:5671-execution",
+  "scope": ["adl/src/provider/profiles.rs", "adl/src/provider/mod.rs", "adl/src/provider/http_family/tests.rs", "adl/src/cli/provider_cmd.rs", "adl/src/cli/usage.rs", "adl/tests/provider_tests/profiles.rs"]
+}

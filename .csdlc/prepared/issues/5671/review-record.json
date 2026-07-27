@@ -1,0 +1,18 @@
+{
+  "issue": 5671,
+  "expected_generation": 2,
+  "expected_digest": "59e2b0522123ae9b2e009db87fb80b6263b74fdf7cbbdf8c483bcf90fc507dad",
+  "claim_id": "claim-5671-anthropic-opus-5",
+  "actor": "codex:5671-subagent-review",
+  "evidence": {
+    "reviewer": "codex:5671-subagent-review",
+    "scope": ["adl/src/provider/profiles.rs", "adl/src/provider/mod.rs", "adl/src/provider/http_family/tests.rs", "adl/src/cli/provider_cmd.rs", "adl/src/cli/usage.rs", "adl/tests/provider_tests/profiles.rs"],
+    "reviewed_revision": "git-blake3:86a1bfbc250954bfede4eec8ea8e1a2d314c07ff:4d4fe30bfe94daa9b40e484fc4897f8837ff1f3114858b35e6b85b688bb73be9",
+    "findings": [
+      {"id":"R-5671-001","severity":"p2","summary":"The initial implementation needed an end-to-end expansion/build assertion and typed scope coverage for the added integration and usage paths.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:86a1bfbc250954bfede4eec8ea8e1a2d314c07ff:4d4fe30bfe94daa9b40e484fc4897f8837ff1f3114858b35e6b85b688bb73be9","route":null}
+    ],
+    "residual_risks": ["No live Anthropic credential was available in the approved key-file route, so live Opus review remains unproven; mocked HTTP proof and real local adapter execution pass."],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

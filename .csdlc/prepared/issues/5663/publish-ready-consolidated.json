@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5663,
+  "expected_generation": 33,
+  "expected_digest": "269df8eaf31829374861d679c23cfe4325ee50bfb977eacc7388da4bbd7128b2",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5663-runtime-v3-durable-local-adapters",
+  "title": "[v0.91.8][runtime-v3][adapters] Implement durable local Runtime v3 adapters (#5663)",
+  "body": "## Summary\n\nImplements #5663 durable local Runtime v3 adapters for Agent, Shepherd, Scheduler, Chronosense, CheckpointStore, and Lifelog. Production local adapters now perform bounded real local behavior instead of receipt-only or synthetic success. Provider, ACIP, A2A, and Cloud Bridge remain fail-closed pending their separate external transport scopes.\n\n## Corrected Review Fixes\n\n- Agent execution and canonical ingress dispatch use real bounded local work.\n- Scheduler jobs retire after completion and remain reusable beyond repeated requests.\n- CheckpointStore persists and restores real state bytes with principal identity and hash integrity verification.\n- Cancellation uses live CancellationToken state, including duplicate in-flight waiter cancellation without poisoning owner execution or retry.\n- Durable local state requires an explicit absolute configured root with unique writer locking, ownership-safe release, stale-lock recovery, and partial-lock recovery.\n\n## Validation\n\n- `cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5663/target --test assembly` (3 passed)\n- `cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5663/target --test governed_operations` (28 passed)\n- `cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5663/target --all-targets -- -D warnings`\n- `git diff --check`\n- typed PVF `local_pass`\n\n## Review\n\nConsolidated exact-head external review recorded in typed C-SDLC v2: PASS, no findings. Current touched source/test physical LoC: before 3796, after 3791, net -5.",
+  "draft": false,
+  "remote": "origin",
+  "token_file": "/Users/daniel/keys/github.token"
+}

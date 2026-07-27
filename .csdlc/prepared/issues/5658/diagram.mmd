@@ -1,0 +1,6 @@
+flowchart TD
+  A[csdlc-init or bootstrap] --> B[issue-bound FastWork worktree]
+  B --> C[csdlc-bind]
+  C --> D[record/cards/lock/prepared/evidence in bound root]
+  C -. fail closed .-> E[primary main lifecycle write]
+  D --> F[doctor validate review publish closeout use same root]

@@ -1,0 +1,28 @@
+{
+  "issue": 5670,
+  "base_branch": "main",
+  "branch": "codex/5670-coverage-shard-fanout",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5670-coverage-shard-fanout",
+    "owner": "codex:issue-5670-slot-1",
+    "generation": 1,
+    "acquired_unix_seconds": 1785024000,
+    "expires_unix_seconds": 1785628800,
+    "heartbeat_unix_seconds": 1785024000,
+    "branch": "codex/5670-coverage-shard-fanout",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5670",
+      ".csdlc/issues/5670",
+      ".csdlc/locks/5670.lock",
+      ".csdlc/prepared/issues/5670",
+      ".github/workflows/ci.yaml",
+      "adl/tools/run_authoritative_coverage_lane.sh",
+      "adl/tools/test_run_authoritative_coverage_lane.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_ci_path_policy.sh"
+    ],
+    "purpose": "Parallelize hosted coverage with shard producers and an aggregation gate"
+  }
+}

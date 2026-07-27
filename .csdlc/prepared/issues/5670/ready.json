@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.ready_publication_request.v1",
+  "issue": 5670,
+  "expected_generation": 12,
+  "expected_digest": "454af1d7bb93cda75c7b091801962e471e81c59c8ab5cf8882d67c411a8210bf",
+  "claim_id": "claim-5670-coverage-shard-fanout",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5672,
+  "expected_head_sha": "8c889130bd13aaf9346412c8f8a99b15457990b8",
+  "token_file": null
+}

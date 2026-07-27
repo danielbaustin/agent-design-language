@@ -9,9 +9,9 @@ use std::path::Path;
 use std::process::Command;
 
 #[test]
-fn nine_skills_are_typed_and_bind_the_generation_selector() {
+fn ten_skills_are_typed_and_bind_the_generation_selector() {
     let manifest = SkillManifest::load().unwrap();
-    assert_eq!(manifest.skills.len(), 9);
+    assert_eq!(manifest.skills.len(), 10);
     assert_eq!(
         manifest.generation_selector,
         "csdlc-v2/operator/generation-selector.json"
@@ -81,13 +81,16 @@ fn installer_records_provenance_without_replacing_other_files() {
     let destination = destination_parent.path().join("csdlc-v2");
     fs::write(destination_parent.path().join("v1-stays"), b"v1").unwrap();
     let receipt = install_binaries(prebuilt_binaries(), &destination).unwrap();
-    assert_eq!(receipt.binaries.len(), 12);
+    let manifest = SkillManifest::load().unwrap();
+    assert_eq!(receipt.binaries.len(), manifest.required_binaries().len());
     assert_eq!(
         fs::read(destination_parent.path().join("v1-stays")).unwrap(),
         b"v1"
     );
     assert!(destination.join("install-receipt.json").is_file());
+    assert!(destination.join("csdlc-github").is_file());
     assert!(destination.join("csdlc-install").is_file());
+    assert!(destination.join("csdlc-merge").is_file());
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
@@ -463,7 +466,7 @@ fn operator_guidance_is_bound_to_manifest_and_coexistence_contract() {
     let selector: csdlc_v2::GenerationSelector =
         serde_json::from_slice(&fs::read(root.join("operator/generation-selector.json")).unwrap())
             .unwrap();
-    assert_eq!(manifest.skills.len(), 9);
+    assert_eq!(manifest.skills.len(), 10);
     assert_eq!(
         resolve_operator_generation(&root.join(".."), 5294, None).unwrap(),
         selector.default_generation
@@ -472,7 +475,7 @@ fn operator_guidance_is_bound_to_manifest_and_coexistence_contract() {
     for text in [&root_agents, &nested_agents] {
         assert!(text.contains("v1"));
         assert!(text.contains("csdlc-install"));
-        assert!(text.contains("nine"));
+        assert!(text.contains("ten"));
     }
 }
 
@@ -484,7 +487,8 @@ fn missing_late_source_leaves_prior_generation_untouched() {
     fs::create_dir(&destination).unwrap();
     fs::write(destination.join("previous"), b"known-good").unwrap();
     let manifest = SkillManifest::load().unwrap();
-    for name in manifest.required_binaries().iter().take(9) {
+    let required = manifest.required_binaries();
+    for name in required.iter().take(required.len() - 1) {
         fs::write(source.path().join(name), name.as_bytes()).unwrap();
         #[cfg(unix)]
         {

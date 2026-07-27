@@ -1,0 +1,12 @@
+[runtime_api]
+mode = "api_only"
+host = "127.0.0.1"
+port = 20997
+wss_path = "/acip/ws"
+tls = "rustls"
+auth = "runtime_api_bearer"
+html_observatory_client = "separate"
+
+[telemetry.local_jsonl]
+supported_fields = ["runtime_instance_id", "event", "health_state"]
+

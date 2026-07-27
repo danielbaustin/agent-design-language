@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5671,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][provider] Add Anthropic Claude Opus 5 provider profile",
+    "slug": "anthropic-claude-opus-5-provider",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Add a first-class Claude Opus 5 provider profile and setup route using the existing Rust-native Anthropic Messages adapter.",
+      "required_outcome": "Profile expansion, setup generation, and focused mocked adapter proof for claude-opus-5.",
+      "declared_scope": [
+        "adl/src/provider/profiles.rs",
+        "adl/src/provider/mod.rs",
+        "adl/src/cli/provider_cmd.rs"
+      ],
+      "authority_boundary": [
+        "The change defines local provider routing only; it does not provision credentials, call Anthropic live, or approve release policy."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "never write main",
+        "use typed v2 binaries",
+        "no raw gh",
+        "no AWS",
+        "no direct card/state edits"
+      ]
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "csdlc.edit_request.v1",
+  "issue": 5665,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "c770169f37d7efcfd2ae3b4e1e197c0773e6ba611bf2f88a3ff53e450c528361",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "Record superseding matrix-artifact proof with argv matching the retained full adl-runtime test log.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "adl-runtime/Cargo.toml"
+      ],
+      "purpose": "Prove the committed matrix-artifact WSS feature_matrix path as part of the full adl-runtime test suite retained in the evidence log.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5665/runtime-v3-wss-focused.log"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "csdlc.edit_request.v1",
+  "issue": 5665,
+  "card": "srp",
+  "expected_generation": 4,
+  "expected_digest": "465e79d66f0ee12d54bf6d70aee7f8d127f4baefd3d437e925bd49b4d8f17ee2",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "Advance to reviewed after Pauli exact-head review evidence was recorded for f9717b162541eafed276cc7ab1d59a43663cd6ec.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

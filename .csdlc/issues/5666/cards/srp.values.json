@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5666,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][tools][ci] Add proportional fast lane for small fixes",
+    "slug": "v0-91-8-tools-ci-throughput-fast-lane",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/evidence/5666\n.csdlc/issues/5666\n.csdlc/prepared/issues/5666\nadl/tools/test_developer_throughput_fast_lane.sh\ndocs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md\ndocs/tooling/VALIDATION_PLATFORM_ROUTING.md",
+      "review_revision": "git-blake3:30e495fda450d10a4e29b0c57195f759224a7214:bf3cbab163693daa1084c8119b458a550c59032eea66798f753f22166e22d3e6",
+      "reviewer": "subagent:sagan",
+      "review_prompts": [
+        "Does the policy make lifecycle and validation proportional without weakening typed C-SDLC v2?",
+        "Does it clearly separate tiny fixes from runtime/product work?",
+        "Does it prevent local-disk fallback when FastWork is required?",
+        "Does it stop unchanged GitHub waiting and require blocker-only updates?",
+        "Is the implementation intentionally small?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Review confirmed the initial placeholder design finding was fixed before this exact scoped revision; remaining lock file is untracked and outside HEAD."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

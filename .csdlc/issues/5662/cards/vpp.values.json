@@ -1,0 +1,90 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5662,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][demo] Polish flagship Polis Observatory visual and runtime presentation",
+    "slug": "v0918-wp15-flagship-polis-observatory-polish",
+    "version": "v0.91.8",
+    "generation": 50
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "unity-observatory-contract",
+          "proof_role": "Prove repository-owned Unity project structure, runtime contract, and guarded asset publication boundary",
+          "acceptance_ids": [
+            "AC-5",
+            "AC-6",
+            "AC-9"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 180,
+          "budget_tokens": 4000,
+          "argv": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_contract.sh"
+          ],
+          "parallel_group": "unity-static",
+          "defer_reason": null
+        },
+        {
+          "lane": "unity-observatory-diff-hygiene",
+          "proof_role": "Prove bounded source hygiene and absence of whitespace or patch corruption",
+          "acceptance_ids": [
+            "AC-9"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "unity-static",
+          "defer_reason": null
+        },
+        {
+          "lane": "unity-observatory-live-playmode",
+          "proof_role": "Prove intended project identity, loaded flagship scene, Play Mode behavior, and dual-resolution visual presentation",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8",
+            "AC-10"
+          ],
+          "deterministic": false,
+          "resource_profile": "medium",
+          "budget_seconds": 600,
+          "budget_tokens": 6000,
+          "argv": [
+            "bash",
+            "adl/tools/probe_unity_mcp_observatory_alignment.sh"
+          ],
+          "parallel_group": "unity-live",
+          "defer_reason": "The alignment probe establishes the prerequisite identity; direct Unity-MCP Play Mode and screenshot operations complete the visual proof during execution."
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on project ambiguity, compile errors, cloud fallback, unlabelled fixture data, unsupported runtime claims, licensed payload publication, player or replacement binary builds, missing dual-resolution proof, or unrecorded tooling anomalies.",
+      "design_ref": ".csdlc/prepared/issues/5662/design.md",
+      "design_digest": "839b1c7ffdd1889782e2acdaad102275bc1cb3963a0648b61ae9ee547281b94e",
+      "diagram_ref": ".csdlc/prepared/issues/5662/diagram.mmd",
+      "diagram_digest": "3a6decd7e0c4c19e795f4da0eeba9215d86eebcec4539209107430ab060fc72d"
+    }
+  }
+}

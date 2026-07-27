@@ -1,0 +1,16 @@
+{
+  "issue": 5663,
+  "expected_generation": 31,
+  "expected_digest": "e1f52b0c113e8cc9262c03e395a326881e9b75aa3c22dfb2fd6dba0a16157691",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "reviewer": "external:consolidated-opus-5",
+  "assigned_by": "codex:issue-5663-runtime-adapters",
+  "scope": [
+    "adl-runtime-kernel/src/assembly.rs",
+    "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+    "adl-runtime-kernel/src/governed_operations.rs",
+    "adl-runtime-kernel/src/operations.rs",
+    "adl-runtime-kernel/tests/assembly.rs",
+    "adl-runtime-kernel/tests/operations.rs"
+  ]
+}

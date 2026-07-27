@@ -23,7 +23,7 @@ def require_nextest_contract(source)
     tools = step.fetch("with", {}).fetch("tool", "").to_s.split(/[\s,]+/).reject(&:empty?)
     selected << [step, tools] if tools.any? { |tool| tool.match?(/\A(?:cargo-)?nextest(?:@.*)?\z/) }
   end
-  raise NextestContractError, "CI must retain exactly five declared nextest install steps" unless nextest_steps.length == 5
+  raise NextestContractError, "CI must retain exactly seven declared nextest install steps" unless nextest_steps.length == 7
 
   nextest_steps.each do |step, tools|
     name = step.fetch("name", "unnamed nextest install")
@@ -428,7 +428,7 @@ if "cargo llvm-cov nextest" in workflow:
 
 workspace_coverage_step = step_run("Workspace coverage run and summary (json)")
 for required_fragment in (
-    '--name "coverage-workspace-summary-json" --log-root ci-step-logs',
+    '--name "coverage-workspace-profraw-shard-${{ matrix.shard }}" --log-root ci-step-logs',
     'run_authoritative_coverage_lane.sh --profile workspace',
     '--authority "${{ steps.path-policy.outputs.coverage_authority }}"',
     '--event-name "${{ github.event_name }}"',
@@ -442,14 +442,14 @@ if step_if("Workspace coverage run and summary (json)") != "steps.path-policy.ou
     raise SystemExit("workspace authoritative coverage must remain limited to full_coverage_required surfaces")
 workspace_coverage_block = step_block("Workspace coverage run and summary (json)")
 for required_fragment in (
-    "ADL_AUTHORITATIVE_COVERAGE_LCOV_PATH",
-    "ADL_AUTHORITATIVE_COVERAGE_TEXT_SUMMARY_PATH",
-    "github.event_name != 'pull_request'",
-    "coverage_authority != 'pr_policy_surface_tooling_only'",
+    "ADL_AUTHORITATIVE_COVERAGE_REPORT_MODE: collect",
+    "ADL_AUTHORITATIVE_COVERAGE_SHARD_COUNT: 4",
+    "ADL_AUTHORITATIVE_COVERAGE_SHARD_INDEX: ${{ matrix.shard }}",
+    "ADL_COVERAGE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-workspace-shard-${{ matrix.shard }}",
 ):
     if required_fragment not in workspace_coverage_block:
         raise SystemExit(
-            "workspace release artifacts must be generated inside the exact isolated profile run; "
+            "workspace producer must collect run-scoped profraw profiles for its assigned shard; "
             f"missing fragment: {required_fragment}"
         )
 
@@ -485,32 +485,54 @@ for root_script_step in (
         )
 
 runtime_job = job_block("adl_coverage_runtime_hosted")
+workspace_fast_job = job_block("adl_coverage_workspace_fast_hosted")
 workspace_job = job_block("adl_coverage_workspace_hosted")
 hosted_aggregator = job_block("adl_coverage_hosted")
 required_status_job = job_block("adl-coverage")
-if "cargo llvm-cov report --lcov" in workspace_job:
+if "cargo llvm-cov report --lcov" in workspace_job + workspace_fast_job:
     raise SystemExit("workspace workflow must not run detached post-profile lcov commands")
 
-if "runs-on: ubuntu-latest" not in runtime_job or "runs-on: ubuntu-latest" not in workspace_job:
+if "runs-on: ubuntu-latest" not in runtime_job or "runs-on: ubuntu-latest" not in workspace_job or "runs-on: ubuntu-latest" not in workspace_fast_job:
     raise SystemExit("both isolated coverage producers must use fresh GitHub-hosted runners")
 if "needs.adl_path_policy.outputs.full_coverage_required == 'true'" not in runtime_job.split("runs-on:", 1)[0]:
     raise SystemExit("runtime coverage producer must run only for full authoritative coverage")
-if "needs.adl_path_policy.outputs.coverage_required == 'true'" not in workspace_job.split("runs-on:", 1)[0]:
-    raise SystemExit("workspace coverage producer must retain coverage-required and PR-fast routing")
-if "PR fast coverage summary (json)" not in workspace_job or "PR fast coverage summary (json)" in runtime_job:
-    raise SystemExit("only the workspace producer may own PR-fast coverage")
+if "needs.adl_path_policy.outputs.full_coverage_required == 'true'" not in workspace_job.split("runs-on:", 1)[0]:
+    raise SystemExit("workspace shard producer must run only for full authoritative coverage")
+if "needs.adl_path_policy.outputs.coverage_required == 'true'" not in workspace_fast_job.split("runs-on:", 1)[0] or "needs.adl_path_policy.outputs.full_coverage_required != 'true'" not in workspace_fast_job.split("runs-on:", 1)[0]:
+    raise SystemExit("workspace fast producer must retain non-full coverage-required PR-fast routing")
+if "PR fast coverage summary (json)" not in workspace_fast_job or "PR fast coverage summary (json)" in workspace_job or "PR fast coverage summary (json)" in runtime_job:
+    raise SystemExit("only the workspace fast producer may own PR-fast coverage")
 
-for job, artifact_name, summary_name, provenance_name in (
-    (runtime_job, "adl-coverage-runtime-${{ github.run_id }}-${{ github.run_attempt }}", "coverage-summary.adl-runtime.json", "coverage-provenance.adl-runtime.json"),
-    (workspace_job, "adl-coverage-workspace-${{ github.run_id }}-${{ github.run_attempt }}", "coverage-summary.adl.json", "coverage-provenance.workspace.json"),
+for required_fragment in (
+    "adl-coverage-runtime-${{ github.run_id }}-${{ github.run_attempt }}",
+    "coverage-summary.adl-runtime.json",
+    "coverage-provenance.adl-runtime.json",
+    "ci-step-logs/",
 ):
-    for required_fragment in (artifact_name, summary_name, provenance_name, "ci-step-logs/"):
-        if required_fragment not in job:
-            raise SystemExit(f"isolated producer artifact is missing {required_fragment}")
-    if "adl/ci-step-logs/" in job:
-        raise SystemExit("coverage log artifacts must upload from repo-root ci-step-logs/")
+    if required_fragment not in runtime_job:
+        raise SystemExit(f"runtime producer artifact is missing {required_fragment}")
+for required_fragment in (
+    "adl-coverage-workspace-${{ github.run_id }}-${{ github.run_attempt }}",
+    "coverage-summary.adl.json",
+    "coverage-provenance.workspace.json",
+    "ci-step-logs/",
+):
+    if required_fragment not in workspace_fast_job:
+        raise SystemExit(f"workspace fast producer artifact is missing {required_fragment}")
+for required_fragment in (
+    "adl-coverage-workspace-profraw-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }}",
+    "adl/target/llvm-cov-target/${{ github.run_id }}-${{ github.run_attempt }}-workspace-shard-${{ matrix.shard }}/workspace/*.profraw",
+    "coverage-provenance.workspace.json",
+    "ci-step-logs/",
+):
+    if required_fragment not in workspace_job:
+        raise SystemExit(f"workspace shard producer artifact is missing {required_fragment}")
+if '"shard_count": os.environ["COVERAGE_SHARD_COUNT"]' not in workspace_job or '"shard_count": os.environ["COVERAGE_SHARD_COUNT"]' in workspace_fast_job:
+    raise SystemExit("only full workspace shard provenance may include shard_count")
+if "adl/ci-step-logs/" in runtime_job or "adl/ci-step-logs/" in workspace_job or "adl/ci-step-logs/" in workspace_fast_job:
+    raise SystemExit("coverage log artifacts must upload from repo-root ci-step-logs/")
 
-for job, profile in ((runtime_job, "adl-runtime"), (workspace_job, "workspace")):
+for job, profile in ((runtime_job, "adl-runtime"), (workspace_job, "workspace"), (workspace_fast_job, "workspace")):
     for required_fragment in (
         'COVERAGE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}',
         'COVERAGE_RUN_ID: ${{ github.run_id }}',
@@ -525,6 +547,7 @@ aggregator_header = hosted_aggregator.split("steps:", 1)[0]
 for required_fragment in (
     "if: always()",
     "adl_coverage_runtime_hosted",
+    "adl_coverage_workspace_fast_hosted",
     "adl_coverage_workspace_hosted",
     "route_result: ${{ steps.producer-results.outputs.route_result }}",
 ):
@@ -534,19 +557,29 @@ for required_fragment in (
     "actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131",
     "coverage-artifacts/runtime",
     "coverage-artifacts/workspace",
+    "coverage-artifacts/workspace-profraw",
+    "pattern: adl-coverage-workspace-profraw-${{ github.run_id }}-${{ github.run_attempt }}-*",
     'document != expected',
     'coverage provenance mismatch',
+    "expected 4 workspace shard provenance files",
+    "workspace shard profraw profiles missing",
     'expected_workspace=skipped',
+    'expected_workspace_fast=skipped',
     'expected_runtime=skipped',
     'expected_workspace=success',
+    'expected_workspace_fast=success',
     'expected_runtime=success',
     'PATH_POLICY_RESULT" != success',
     'WORKSPACE_RESULT" != "$expected_workspace',
+    'WORKSPACE_FAST_RESULT" != "$expected_workspace_fast',
     'RUNTIME_RESULT" != "$expected_runtime',
     'echo "route_result=success" >> "$GITHUB_OUTPUT"',
     'echo "route_result=skipped" >> "$GITHUB_OUTPUT"',
+    "ADL_AUTHORITATIVE_COVERAGE_REPORT_MODE: report",
+    "ADL_AUTHORITATIVE_COVERAGE_IMPORT_PROFRAW_DIR: ${{ github.workspace }}/coverage-artifacts/workspace-profraw",
+    '--name "coverage-workspace-aggregate-summary-json" --log-root ci-step-logs',
     "python3 adl/tools/merge_coverage_summaries.py",
-    "--workspace coverage-artifacts/workspace/adl/coverage-summary.adl.json",
+    "--workspace adl/coverage-summary.adl.json",
     "--adl-runtime coverage-artifacts/runtime/adl/coverage-summary.adl-runtime.json",
     "--output adl/coverage-summary.json",
 ):
@@ -591,6 +624,10 @@ for required_fragment in (
     'local profile_target="$COVERAGE_RUN_TARGET_ROOT/$coverage_profile_namespace"',
     'export CARGO_TARGET_DIR="$profile_target"',
     'export CARGO_LLVM_COV_TARGET_DIR="$profile_target"',
+    'COVERAGE_REPORT_MODE="${ADL_AUTHORITATIVE_COVERAGE_REPORT_MODE:-run-and-report}"',
+    'COVERAGE_SHARD_COUNT="${ADL_AUTHORITATIVE_COVERAGE_SHARD_COUNT:-1}"',
+    'COVERAGE_SHARD_INDEX="${ADL_AUTHORITATIVE_COVERAGE_SHARD_INDEX:-1}"',
+    'IMPORT_PROFRAW_DIR="${ADL_AUTHORITATIVE_COVERAGE_IMPORT_PROFRAW_DIR:-}"',
 ):
     if required_fragment not in runner_script_text:
         raise SystemExit(
@@ -605,17 +642,6 @@ if expected_pr_fast_step not in pr_fast_step:
         "PR-fast coverage must delegate to the bounded runner script; "
         f"found: {pr_fast_step}"
     )
-for required_fragment in (
-    "export ADL_PR_FAST_COVERAGE_BUILD_ROOT=/mnt/adl-pr-fast-coverage",
-    'rm -rf "$ADL_PR_FAST_COVERAGE_BUILD_ROOT"',
-    'mkdir -p "$ADL_PR_FAST_COVERAGE_BUILD_ROOT"',
-    "PR-fast coverage scratch target:",
-):
-    if required_fragment not in pr_fast_step:
-        raise SystemExit(
-            "full-coverage PRs must run the secondary PR-fast summary on scratch space without deleting the authoritative llvm-cov cache; "
-            f"missing fragment: {required_fragment}"
-        )
 pr_fast_if = step_if("PR fast coverage summary (json)")
 if "steps.coverage-impact.outputs.needs_fast_summary == 'true'" not in pr_fast_if:
     raise SystemExit(
@@ -645,10 +671,14 @@ for forbidden_fragment in (
             f"forbidden fragment: {forbidden_fragment}"
         )
 filter_if = step_if("Determine PR fast coverage filters")
-if "github.event_name == 'pull_request'" not in filter_if or "steps.path-policy.outputs.coverage_required == 'true'" not in filter_if:
+if "github.event_name == 'pull_request'" not in filter_if:
     raise SystemExit(
         "PR-fast filter determination must be limited to coverage-requiring pull requests; "
         f"found: {filter_if}"
+    )
+if "needs.adl_path_policy.outputs.coverage_required == 'true'" not in workspace_fast_job.split("runs-on:", 1)[0]:
+    raise SystemExit(
+        "PR-fast filter determination must be inside the coverage-required workspace fast producer job"
     )
 if "steps.path-policy.outputs.full_coverage_required != 'true'" in filter_if:
     raise SystemExit(
@@ -687,8 +717,11 @@ for required_fragment in (
     "cargo nextest run \\",
     "    --workspace \\",
     "prepare_coverage_environment",
+    "prepare_coverage_report_environment",
     "cargo llvm-cov clean --workspace",
     "cargo llvm-cov show-env --sh",
+    "run_workspace_coverage_partitions",
+    "import_profraw_profiles",
     "cargo llvm-cov report \\",
     "--json \\",
     "--summary-only \\",
@@ -804,8 +837,19 @@ for step_name in (
         )
 
 workspace_artifact_if = step_if("Upload workspace coverage evidence")
-if workspace_artifact_if != "always()":
-    raise SystemExit("workspace summary/lcov/log evidence must upload even when a producer step fails")
+expected_workspace_artifact_if = "always()"
+if workspace_artifact_if != expected_workspace_artifact_if:
+    raise SystemExit(
+        "non-full workspace summary/log evidence must upload from the dedicated PR-fast producer; "
+        f"found: {workspace_artifact_if}"
+    )
+workspace_profile_artifact_if = step_if("Upload workspace coverage shard profiles")
+expected_workspace_profile_artifact_if = "always() && steps.path-policy.outputs.full_coverage_required == 'true'"
+if workspace_profile_artifact_if != expected_workspace_profile_artifact_if:
+    raise SystemExit(
+        "full workspace profraw shard evidence must upload even when a shard producer fails; "
+        f"found: {workspace_profile_artifact_if}"
+    )
 
 print("PASS test_ci_runtime_contracts")
 PY

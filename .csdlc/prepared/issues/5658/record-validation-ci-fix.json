@@ -1,0 +1,28 @@
+{
+  "issue": 5658,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "db914fc400e4c96ea8cf1d4558f791ef79252d101880d48fe14c5e54ee1fe67d",
+  "claim_id": "claim-5658-bound-worktree-lifecycle",
+  "actor": "codex:5658-execution",
+  "reason": "Record focused validation after CI standalone gate2 repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml",
+        "--test",
+        "gate2",
+        "--test",
+        "gate7_lifecycle"
+      ],
+      "purpose": "Verify CI standalone gate2 expectations now use worktree-owned lifecycle state while gate7 bound-worktree materialization invariants remain green.",
+      "outcome": "passed",
+      "evidence_ref": "local PASS on 47c29e27a with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; gate2 47 passed, gate7_lifecycle 30 passed"
+    }
+  },
+  "fail_after_backup": false
+}

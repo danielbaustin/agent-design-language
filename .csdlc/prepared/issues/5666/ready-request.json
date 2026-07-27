@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.ready_publication_request.v1",
+  "issue": 5666,
+  "expected_generation": 5,
+  "expected_digest": "8f0c172b2370de74b29290e99a265f72cd6a66fae432bb4f43e2d404fb9cbe16",
+  "claim_id": "claim-5666-throughput-fast-lane",
+  "actor": "codex:issue-5666-slot-1",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5668,
+  "expected_head_sha": "d5e1e48a5207481d4bd1b4a35b4c8e0d44281452",
+  "token_file": "/Users/daniel/keys/github.token"
+}

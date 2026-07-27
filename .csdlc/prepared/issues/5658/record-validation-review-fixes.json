@@ -1,0 +1,26 @@
+{
+  "issue": 5658,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "69e5d5efd9198d737cdbfa00462e71ba2a9f2dc61d2de8a915e54341591de38f",
+  "claim_id": "claim-5658-bound-worktree-lifecycle",
+  "actor": "codex:5658-execution",
+  "reason": "Record focused validation after pre-PR review hardening fixes.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml",
+        "--test",
+        "gate7_lifecycle"
+      ],
+      "purpose": "Verify bound-worktree lifecycle materialization, unregistered target rejection, evidence transfer, symlink fail-closed cleanup, and stale target side-state rejection after pre-PR review fixes.",
+      "outcome": "passed",
+      "evidence_ref": "local PASS on 9481fa2e0 with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; 29 passed"
+    }
+  },
+  "fail_after_backup": false
+}

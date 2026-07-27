@@ -1,0 +1,78 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5671,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][provider] Add Anthropic Claude Opus 5 provider profile",
+    "slug": "anthropic-claude-opus-5-provider",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Add the canonical Claude Opus 5 profile and setup route on the existing Rust Anthropic adapter, prove it with focused mocks, review the exact head, and publish a draft PR.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Bind the issue worktree and normalize the six lifecycle cards",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement profile expansion, setup generation, and focused mock proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run focused validation, exact-head review, and publish a draft PR",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Existing Claude profiles remain compatible",
+        "Anthropic credentials stay on ANTHROPIC_API_KEY",
+        "No live provider call is required",
+        "main remains untouched"
+      ],
+      "risks": [
+        "Routing Opus 5 through generic HTTP would lose Anthropic request semantics",
+        "setup family drift",
+        "unsupported model id claims"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "canonical model id cannot be verified",
+        "existing adapter lacks mock proof surface",
+        "focused validation fails without a bounded repair"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5671/design.md",
+      "design_digest": "ed8ebae320de231a3b843b0cd646af2480f4c53752eb062a4400713e30cc0afc",
+      "diagram_ref": ".csdlc/prepared/issues/5671/diagram.mmd",
+      "diagram_digest": "4b776521482a4c212c66cfc858a084fe41b55c607f07450c346b299dc53c75aa"
+    }
+  }
+}

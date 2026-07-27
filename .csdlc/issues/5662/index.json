@@ -1,0 +1,666 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5662,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "c133384b57de0ae1944c6c2342e7271a812f5ae28385db2b57e011d67aa1ed45",
+  "phase": "published",
+  "generation": 50,
+  "digest": "408be2ecac8e610a2237b48a5b7a5ef00d0dfc01cab869742e124b0da358a70b",
+  "claim": {
+    "id": "claim-5662-v0918-wp15-unity-observatory-polish",
+    "owner": "codex:issue-5662-execution",
+    "generation": 50,
+    "acquired_unix_seconds": 1784926413,
+    "expires_unix_seconds": 1785531213,
+    "heartbeat_unix_seconds": 1784926413,
+    "branch": "codex/5662-v0918-unity-observatory-polish",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5662",
+      ".csdlc/locks/5662.lock",
+      ".csdlc/prepared/issues/5662",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryBatchValidator.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryFlagshipStageBuilder.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Resources/ObservatoryShellRuntime.uss",
+      "demos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json",
+      "demos/v0.91.6/unity-observatory/Assets/Scenes/FlagshipObservatoryStage.unity",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs",
+      "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uss",
+      "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uxml",
+      "demos/v0.91.6/unity-observatory/PROOF_PACKET.md",
+      "demos/v0.91.6/unity-observatory/Packages/manifest.json"
+    ],
+    "purpose": "Execute #5662 as the bounded WP-15 visual and runtime presentation polish lane for the flagship Unity Observatory"
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "subagent:lagrange:019fa08a-85f5-75c1-a411-db74c1d1e031",
+    "scope": [
+      "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryFlagshipStageBuilder.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs",
+      "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uxml",
+      "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uss",
+      "demos/v0.91.6/unity-observatory/Assets/Resources/ObservatoryShellRuntime.uss",
+      "demos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json",
+      "demos/v0.91.6/unity-observatory/Assets/Scenes/FlagshipObservatoryStage.unity",
+      "demos/v0.91.6/unity-observatory/PROOF_PACKET.md",
+      ".csdlc/issues/5662",
+      ".csdlc/prepared/issues/5662"
+    ],
+    "reviewed_revision": "git-blake3:eb7403a86b2d4a9649eaff8ee247cf978e76d5d1:4ca901916f76c6397493dce538b6cfff7df290cd123e9f29dd02f4d70fb6ec92",
+    "findings": [
+      {
+        "id": "R5662-01",
+        "severity": "p1",
+        "summary": "The Unity adapter supports only unauthenticated loopback HTTP CSM reads and cannot consume the current bearer-authenticated HTTPS Runtime v3 Observatory feed.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:eb7403a86b2d4a9649eaff8ee247cf978e76d5d1:4ca901916f76c6397493dce538b6cfff7df290cd123e9f29dd02f4d70fb6ec92",
+        "route": null
+      },
+      {
+        "id": "R5662-02",
+        "severity": "p1",
+        "summary": "The communication surface falsely says no ACIP endpoint exists even though current Runtime v3 exposes authenticated control channels; Unity must report the missing signed proposal mapping instead.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:eb7403a86b2d4a9649eaff8ee247cf978e76d5d1:4ca901916f76c6397493dce538b6cfff7df290cd123e9f29dd02f4d70fb6ec92",
+        "route": null
+      },
+      {
+        "id": "R5662-03",
+        "severity": "p1",
+        "summary": "Legacy CSM schema validation accepts any suffix after the version prefix, including invalid schemas such as vgarbage, so aggregate Live classification remains fail open.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:eb7403a86b2d4a9649eaff8ee247cf978e76d5d1:4ca901916f76c6397493dce538b6cfff7df290cd123e9f29dd02f4d70fb6ec92",
+        "route": null
+      },
+      {
+        "id": "R5662-04",
+        "severity": "p2",
+        "summary": "Both retained captures expose a large floating foreground wedge and open void because the builder deactivates the foundations and supports it creates, contradicting the grounded composition acceptance criterion.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:eb7403a86b2d4a9649eaff8ee247cf978e76d5d1:4ca901916f76c6397493dce538b6cfff7df290cd123e9f29dd02f4d70fb6ec92",
+        "route": null
+      },
+      {
+        "id": "R5662-05",
+        "severity": "p2",
+        "summary": "The fixed dashboard lacks the required clear navigation iconography, bounded internal scroll surfaces, and dynamic active navigation state.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:eb7403a86b2d4a9649eaff8ee247cf978e76d5d1:4ca901916f76c6397493dce538b6cfff7df290cd123e9f29dd02f4d70fb6ec92",
+        "route": null
+      },
+      {
+        "id": "R5662-06",
+        "severity": "p1",
+        "summary": "Runtime v3 Live classification does not require the authoritative signed control endpoint to equal /v1/control.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:eb7403a86b2d4a9649eaff8ee247cf978e76d5d1:4ca901916f76c6397493dce538b6cfff7df290cd123e9f29dd02f4d70fb6ec92",
+        "route": null
+      },
+      {
+        "id": "R5662-07",
+        "severity": "p1",
+        "summary": "Runtime v3 proof overstates bearer transport and UI projection because it does not execute shared header construction or visibly assert agent, proof, continuity, and CloudWatch-route projections.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:eb7403a86b2d4a9649eaff8ee247cf978e76d5d1:4ca901916f76c6397493dce538b6cfff7df290cd123e9f29dd02f4d70fb6ec92",
+        "route": null
+      },
+      {
+        "id": "R5662-08",
+        "severity": "p2",
+        "summary": "Runtime v3 HTTP protocol errors such as 401 and 500 are passed to the classifier as transport failures and become Disconnected instead of Degraded.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:eb7403a86b2d4a9649eaff8ee247cf978e76d5d1:4ca901916f76c6397493dce538b6cfff7df290cd123e9f29dd02f4d70fb6ec92",
+        "route": null
+      },
+      {
+        "id": "R5662-09",
+        "severity": "p1",
+        "summary": "Publication truth remains pre-review with open findings and historical intermediate capture references not explicitly identified as superseded.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:eb7403a86b2d4a9649eaff8ee247cf978e76d5d1:4ca901916f76c6397493dce538b6cfff7df290cd123e9f29dd02f4d70fb6ec92",
+        "route": null
+      },
+      {
+        "id": "R5662-10",
+        "severity": "p2",
+        "summary": "The executable Runtime v3 projection validator does not assert the parsed proof state even though the publication packet claims proof projection coverage.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:eb7403a86b2d4a9649eaff8ee247cf978e76d5d1:4ca901916f76c6397493dce538b6cfff7df290cd123e9f29dd02f4d70fb6ec92",
+        "route": null
+      },
+      {
+        "id": "R5662-11",
+        "severity": "p3",
+        "summary": "The proof packet says only two PNGs are retained although the commit also retains baseline and restart captures as superseded intermediates.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:eb7403a86b2d4a9649eaff8ee247cf978e76d5d1:4ca901916f76c6397493dce538b6cfff7df290cd123e9f29dd02f4d70fb6ec92",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Runtime v3 validation is executable in-editor parser, classifier, bearer-auth construction, and UI projection proof, not a live HTTPS listener exchange.",
+      "The retained publication captures truthfully show DEMO / FIXTURE data rather than a live Polis.",
+      "Full rendering depends on operator-provisioned licensed Unity assets outside Git."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5662,
+    "pull_request": 5677,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5677",
+    "base": "main",
+    "head": "codex/5662-v0918-unity-observatory-polish",
+    "revision": "git-blake3:5a03673467efe91989f791d1ed43d8ebcff2457c:aec1c948fe87122a4a2544d63f4a6d80c80e8dcdb4bc9e8fa4efe58096416ce7",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5662/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5662/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5662-live-session",
+      "revision": "839b1c7ffdd1889782e2acdaad102275bc1cb3963a0648b61ae9ee547281b94e"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "101b96c12d0cc2a1b296d9c80d77ba45dc3dda6814499bf539f75d5fa4494e6c",
+      "rendered_digest": "c54ed0eeae66b922c99e62a881fe553ab68523a5255118b90f49c4e395f9bd56",
+      "ast_digest": "776ceac8d00ecdf4efbd6ac0e0a4d20fd1bdc1a260d250b33da282d2bf4b98ee"
+    },
+    "stp": {
+      "values_digest": "33748cac4e55b993f0163a3d8b5ec0898dfafbb6c210c14bcebda3d589a24e6b",
+      "rendered_digest": "6f5f21aa76f9fc678df2ee836968a9d03c158d75b38b2ebb3e7e814e7f817caa",
+      "ast_digest": "f7c824be35a59f9492d712780e0ebbbd7cedf3825bcfd128fa7acf5af05c9fbe"
+    },
+    "spp": {
+      "values_digest": "152b6c3c1e9f57b2ff35589d803935d0f089f4421559fe38c9cafd1a1919cd35",
+      "rendered_digest": "527937b7eed6e6d86f7ace168964fa5f3e5ba6e8484426c669148b73bff1b00f",
+      "ast_digest": "ea77a2d73d1996710dd648308d2bb19cf13774ba8e307adf7e3b9419e6e7dd0e"
+    },
+    "vpp": {
+      "values_digest": "6d15c661b53718ba4ed8259bc838a507927eb40f87fcdae7e4f0692f348688b2",
+      "rendered_digest": "cc6f38ced71df638a585dc800d676dced75d015671976d58b29eb01ef2a63d00",
+      "ast_digest": "4bacb67395a623f531a49699bad29e7024ddb7b406f005bc3a1debe0ca0ed646"
+    },
+    "srp": {
+      "values_digest": "64470823a08f4bd814e457064077de65d91c14201b5329fee7e087b779128f05",
+      "rendered_digest": "b257a9d2d261469830ff1a7f29421df130352d76ff3235e2b91e3cde8ea41eea",
+      "ast_digest": "543d0abdfc88e13cd65c467bc1260c6b194e0d8c1d6d3f0c6a478b7d0026e13f"
+    },
+    "sor": {
+      "values_digest": "44ce4f8e31b184d0baad31c94aaebe88b8325794459a7ec107bc1c5b1d7f6c01",
+      "rendered_digest": "4479eab7679dbb5a507ed0d163dd348cf401b074a09bf2715e5b4e4c5d9ae25b",
+      "ast_digest": "a56c11609e464e7bc744e86fbf6fe20c0003c2dbf4a20ee5ffe1b3feb1b36cae"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5662-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5662-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5662-execution",
+      "reason": "Implementation, direct Unity proof, focused contract validation, and retained evidence are complete; enter bounded review"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5662-execution",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:issue-5662-execution",
+      "reason": "Return to implemented so the final S6 review step can be marked complete before recording the unchanged exact PASS evidence."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5662-execution",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5662-execution",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5662-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5662-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record completed Unity project alignment and baseline proof",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record completed hero camera and spatial composition work",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record completed lighting, emission, environment, and material readability work",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record completed fixed dashboard shell, truth state, navigation, and fail-closed operator interaction work",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record completed dual-resolution Play Mode evidence, repository source synchronization, and focused validation",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S5\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Begin bounded exact-diff review and publication proof",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S6\",\"status\":\"in_progress\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the bounded Unity implementation and retained visual evidence before review",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Polished and directly proved the operator-provisioned Unity flagship Observatory as a coherent fixed command-room presentation while preserving fixture-only runtime truth and licensed-asset publication boundaries.\",\"changes\":[\"Reframed and grounded the flagship environment with a controlled hero camera, plinth, undercroft, foundation, backdrop, and reduced staging clutter.\",\"Tuned lighting, emission, screen scale, and active presentation objects for readable architectural hierarchy.\",\"Rebuilt the runtime shell as a fixed translucent dashboard with compact metrics, Panopticon topology, event stream, inspector, navigation, and fail-closed operator communication.\",\"Retained explicit DEMO DATA and CONTRACT ONLY labels because no CSM loopback runtime was bound at capture time.\",\"Updated the bounded proof packet and retained only focused baseline, Full HD, and QHD visual evidence.\"],\"artifacts\":[\".csdlc/prepared/issues/5662/baseline-1920x1080.png\",\".csdlc/prepared/issues/5662/final-playmode-1920x1080-restart.png\",\".csdlc/prepared/issues/5662/final-playmode-2560x1440.png\",\"demos/v0.91.6/unity-observatory/PROOF_PACKET.md\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record direct Unity-MCP stage validation: 43 prefab instances, 86 game objects, 4 cameras, and 7 lights",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"unity-mcp-cli\",\"run-tool\",\"script-execute\",\"UnityObservatoryFlagshipStageBuilder.ValidateFlagshipStageMenu\"],\"purpose\":\"Direct in-editor flagship scene validation in the aligned operator-provisioned project\",\"outcome\":\"passed\",\"evidence_ref\":\"demos/v0.91.6/unity-observatory/PROOF_PACKET.md\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 9,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record focused Unity Observatory contract guardrail proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_contract.sh\"],\"purpose\":\"Focused repository contract and publication-boundary guardrails\",\"outcome\":\"passed\",\"evidence_ref\":\"demos/v0.91.6/unity-observatory/PROOF_PACKET.md\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 10,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record focused Unity-MCP alignment classifier fixture proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_mcp_alignment_unit.sh\"],\"purpose\":\"Focused fail-closed Unity-MCP alignment classifier coverage\",\"outcome\":\"passed\",\"evidence_ref\":\"demos/v0.91.6/unity-observatory/PROOF_PACKET.md\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 11,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record exact 1920x1080 and 2560x1440 retained Play Mode capture dimensions",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"sips\",\"-g\",\"pixelWidth\",\"-g\",\"pixelHeight\",\".csdlc/prepared/issues/5662/final-playmode-1920x1080-restart.png\",\".csdlc/prepared/issues/5662/final-playmode-2560x1440.png\"],\"purpose\":\"Exact Full HD and QHD retained Play Mode image dimension proof\",\"outcome\":\"passed\",\"evidence_ref\":\"demos/v0.91.6/unity-observatory/PROOF_PACKET.md\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 12,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record clean repository diff hygiene",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Repository diff whitespace and conflict-marker hygiene\",\"outcome\":\"passed\",\"evidence_ref\":\"demos/v0.91.6/unity-observatory/PROOF_PACKET.md\"}}"
+    },
+    {
+      "sequence": 15,
+      "generation": 13,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Implementation, direct Unity proof, focused contract validation, and retained evidence are complete; enter bounded review",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Pre-publication review found the focused contract guardrail lacked coverage for the new runtime truth classifier, fixed dashboard, navigation, and fail-closed communication surfaces",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/test_v0916_unity_observatory_contract.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:issue-5662-execution",
+      "reason": "The live Unity compiler proved that the runtime adapter requires the standard built-in com.unity.modules.unitywebrequest module, which is currently disabled in the project manifest",
+      "operation": "{\"add_protected_paths\":[\"demos/v0.91.6/unity-observatory/Packages/manifest.json\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:issue-5662-execution",
+      "reason": "The final in-editor flagship shell validator exposed stale legacy element assertions that must be updated to prove the issue-owned command-room shell without weakening contract validation",
+      "operation": "{\"add_protected_paths\":[\"demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryBatchValidator.cs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Normalize the SOR to the final directly observed Unity implementation and proof boundary before exact-revision review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Polished and directly proved the operator-provisioned Unity flagship Observatory as a coherent fixed command-room presentation with a strict loopback CSM read adapter, explicit unsupported communication boundaries, dual-resolution Play Mode evidence, and no licensed source payload or player build.\",\"changes\":[\"Reframed and grounded the flagship environment with a controlled hero camera, plinth, undercroft, foundation, backdrop, and reduced staging clutter.\",\"Tuned lighting, emission, screen scale, and active presentation objects for readable architectural hierarchy.\",\"Rebuilt the runtime shell as a fixed translucent dashboard with compact metrics, Panopticon topology, event stream, inspector, navigation, and fail-closed operator communication.\",\"Added a loopback-only five-endpoint CSM adapter whose Live state requires matching status, health, ready, metrics, and events schemas plus healthy semantic states; partial, malformed, unhealthy, and absent inputs fail closed.\",\"Replaced retained demo event rows with parsed runtime events only when runtime documents are accepted, and kept governance and ACIP write surfaces explicitly unavailable.\",\"Enabled background Play Mode advancement and the required Unity Web Request and Particle System built-in modules, producing a clean fresh launch without missing-module component deletions.\",\"Retained exact Full HD and QHD Play Mode captures, synchronized repository-owned source only, and routed every observed tooling anomaly to issue #5662.\"],\"artifacts\":[\".csdlc/prepared/issues/5662/baseline-1920x1080.png\",\".csdlc/prepared/issues/5662/final-playmode-1920x1080-restart.png\",\".csdlc/prepared/issues/5662/final-playmode-2560x1440.png\",\".csdlc/prepared/issues/5662/live-unity-proof.md\",\"demos/v0.91.6/unity-observatory/PROOF_PACKET.md\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the final expanded in-editor shell and runtime-adapter validator proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"unity-mcp-cli\",\"run-tool\",\"script-execute\",\"UnityObservatoryBatchValidator.ValidateFlagshipObservatoryShellMenu\"],\"purpose\":\"Direct in-editor flagship shell, strict runtime adapter, loopback boundary, dynamic runtime event, and scene validation\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/prepared/issues/5662/live-unity-proof.md\"}}"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record exact SHA-256 identities for the final dual-resolution Play Mode captures.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"shasum\",\"-a\",\"256\",\".csdlc/prepared/issues/5662/final-playmode-1920x1080-restart.png\",\".csdlc/prepared/issues/5662/final-playmode-2560x1440.png\"],\"purpose\":\"Exact retained Full HD and QHD Play Mode evidence identity\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/prepared/issues/5662/live-unity-proof.md\"}}"
+    },
+    {
+      "sequence": 22,
+      "generation": 17,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the first bounded pre-publication review finding before remediation.",
+      "operation": "{\"operation\":\"record_finding\",\"finding\":{\"id\":\"R5662-01\",\"severity\":\"p1\",\"summary\":\"The Unity adapter supports only unauthenticated loopback HTTP CSM reads and cannot consume the current bearer-authenticated HTTPS Runtime v3 Observatory feed.\",\"actionable\":true,\"in_scope\":true,\"disposition\":\"open\",\"fix_revision\":null,\"route\":null}}"
+    },
+    {
+      "sequence": 23,
+      "generation": 18,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the second bounded pre-publication review finding before remediation.",
+      "operation": "{\"operation\":\"record_finding\",\"finding\":{\"id\":\"R5662-02\",\"severity\":\"p1\",\"summary\":\"The communication surface falsely says no ACIP endpoint exists even though current Runtime v3 exposes authenticated control channels; Unity must report the missing signed proposal mapping instead.\",\"actionable\":true,\"in_scope\":true,\"disposition\":\"open\",\"fix_revision\":null,\"route\":null}}"
+    },
+    {
+      "sequence": 24,
+      "generation": 19,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the third bounded pre-publication review finding before remediation.",
+      "operation": "{\"operation\":\"record_finding\",\"finding\":{\"id\":\"R5662-03\",\"severity\":\"p1\",\"summary\":\"Legacy CSM schema validation accepts any suffix after the version prefix, including invalid schemas such as vgarbage, so aggregate Live classification remains fail open.\",\"actionable\":true,\"in_scope\":true,\"disposition\":\"open\",\"fix_revision\":null,\"route\":null}}"
+    },
+    {
+      "sequence": 25,
+      "generation": 20,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the fourth bounded pre-publication review finding before remediation.",
+      "operation": "{\"operation\":\"record_finding\",\"finding\":{\"id\":\"R5662-04\",\"severity\":\"p2\",\"summary\":\"Both retained captures expose a large floating foreground wedge and open void because the builder deactivates the foundations and supports it creates, contradicting the grounded composition acceptance criterion.\",\"actionable\":true,\"in_scope\":true,\"disposition\":\"open\",\"fix_revision\":null,\"route\":null}}"
+    },
+    {
+      "sequence": 26,
+      "generation": 21,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the fifth bounded pre-publication review finding before remediation.",
+      "operation": "{\"operation\":\"record_finding\",\"finding\":{\"id\":\"R5662-05\",\"severity\":\"p2\",\"summary\":\"The fixed dashboard lacks the required clear navigation iconography, bounded internal scroll surfaces, and dynamic active navigation state.\",\"actionable\":true,\"in_scope\":true,\"disposition\":\"open\",\"fix_revision\":null,\"route\":null}}"
+    },
+    {
+      "sequence": 27,
+      "generation": 22,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the final remediated Unity Observatory implementation and truthful proof boundary before exact-revision review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Polished and directly proved the operator-provisioned Unity flagship Polis Observatory as a coherent, grounded, fixed command-room presentation. The shell now supports the current bearer-authenticated HTTPS Runtime v3 Observatory feed contract and a strictly versioned loopback legacy adapter, exposes fail-closed runtime and governed-control truth, retains exact dual-resolution Play Mode evidence, and publishes no licensed source payload, player build, or replacement runtime binary. No live Runtime v3 listener was available from the stable repo installation during capture, so the retained visuals remain explicitly DEMO/FIXTURE rather than being mislabeled live.\",\"changes\":[\"Added current Runtime v3 Observatory feed support through ADL_RUNTIME_OBSERVATORY_URL and ADL_RUNTIME_OBSERVATORY_TOKEN, bearer-authenticated HTTPS reads of /v1/observatory, exact schema adl.runtime_v3.observatory_feed.v2, and projections for control, health, agents, proof, continuity, and events.\",\"Made Runtime v3 communication truth explicit: the runtime exposes governed signed control, while the Unity shell has no governed signed operator-proposal mapping and therefore never claims a browser or Unity-originated mutation was sent.\",\"Hardened the legacy CSM adapter to loopback-only HTTP with exact accepted schema equality so malformed suffixes cannot classify Live.\",\"Grounded the observatory with active foundation, fascia, support, platform, stair, and shadow geometry; shortened the causeway and added restrained cyan guide rails to remove the floating foreground wedge and open void.\",\"Added clear navigation glyphs, dynamic active navigation state, and bounded event and inspector ScrollViews while preserving a fixed non-scrolling dashboard frame.\",\"Validated the aligned live Unity project through the local Unity-MCP HTTP server and retained fresh Full HD and QHD Play Mode render-texture captures after unpaused frame advancement.\"],\"artifacts\":[\".csdlc/prepared/issues/5662/final-playmode-1920x1080.png\",\".csdlc/prepared/issues/5662/final-playmode-2560x1440.png\",\".csdlc/prepared/issues/5662/live-unity-proof.md\",\"demos/v0.91.6/unity-observatory/PROOF_PACKET.md\"]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 23,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the successful final direct Unity-MCP validation after the editor returned to Edit Mode.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"unity-mcp-cli\",\"run-tool\",\"script-execute\",\"ObservatoryMcpProof.Run\"],\"purpose\":\"Direct Edit Mode validation of the final flagship stage, fixed shell, current Runtime v3 feed classifier, bearer-token requirement, governed-control truth, strict legacy schema boundary, navigation glyphs, active state, and bounded internal scroll surfaces in the aligned live Unity project\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/prepared/issues/5662/live-unity-proof.md\"}}"
+    },
+    {
+      "sequence": 29,
+      "generation": 24,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record exact dimensions and SHA-256 identities for the current final dual-resolution Play Mode captures.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"sips\",\"-g\",\"pixelWidth\",\"-g\",\"pixelHeight\",\".csdlc/prepared/issues/5662/final-playmode-1920x1080.png\",\".csdlc/prepared/issues/5662/final-playmode-2560x1440.png\",\"and\",\"shasum\",\"-a\",\"256\"],\"purpose\":\"Prove exact current Full HD and QHD Play Mode capture dimensions and retained identities d363009f87726387659f3d2193eb1f8009f9ad4db6183c5a0801f8a719ef6b9c and 8d4605d0352911e6584780d6b673c2c95c671c030f27fb67ffbc3632ca367e49\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/prepared/issues/5662/live-unity-proof.md\"}}"
+    },
+    {
+      "sequence": 30,
+      "generation": 25,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the fresh final focused repository contract and diff-hygiene proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_contract.sh\",\"and\",\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove the final repository-owned Runtime v3, fail-closed legacy schema, fixed dashboard, iconography, internal scrolling, communication-boundary contracts and diff hygiene\",\"outcome\":\"passed\",\"evidence_ref\":\"demos/v0.91.6/unity-observatory/PROOF_PACKET.md\"}}"
+    },
+    {
+      "sequence": 31,
+      "generation": 26,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the fresh post-review Unity-MCP and focused repository validation for the complete Runtime v3 remediation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"unity-mcp-cli\",\"run-tool\",\"script-execute\",\"ObservatoryMcpProof.Run\",\"and\",\"bash\",\"adl/tools/test_v0916_unity_observatory_contract.sh\",\"and\",\"git\",\"diff\",\"--check\"],\"purpose\":\"Post-review proof of exact signed-control capability validation, bearer-header construction, protocol-error degradation, parsed Runtime v3 agent/proof/continuity/CloudWatch UI projection, fixed shell behavior, and repository diff hygiene\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/prepared/issues/5662/live-unity-proof.md\"}}"
+    },
+    {
+      "sequence": 32,
+      "generation": 27,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the exact signed-control endpoint finding from the second bounded pre-publication review.",
+      "operation": "{\"operation\":\"record_finding\",\"finding\":{\"id\":\"R5662-06\",\"severity\":\"p1\",\"summary\":\"Runtime v3 Live classification does not require the authoritative signed control endpoint to equal /v1/control.\",\"actionable\":true,\"in_scope\":true,\"disposition\":\"open\",\"fix_revision\":null,\"route\":null}}"
+    },
+    {
+      "sequence": 33,
+      "generation": 28,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the executable Runtime v3 auth and projection proof finding from the second bounded pre-publication review.",
+      "operation": "{\"operation\":\"record_finding\",\"finding\":{\"id\":\"R5662-07\",\"severity\":\"p1\",\"summary\":\"Runtime v3 proof overstates bearer transport and UI projection because it does not execute shared header construction or visibly assert agent, proof, continuity, and CloudWatch-route projections.\",\"actionable\":true,\"in_scope\":true,\"disposition\":\"open\",\"fix_revision\":null,\"route\":null}}"
+    },
+    {
+      "sequence": 34,
+      "generation": 29,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the HTTP protocol-error truth-state finding from the second bounded pre-publication review.",
+      "operation": "{\"operation\":\"record_finding\",\"finding\":{\"id\":\"R5662-08\",\"severity\":\"p2\",\"summary\":\"Runtime v3 HTTP protocol errors such as 401 and 500 are passed to the classifier as transport failures and become Disconnected instead of Degraded.\",\"actionable\":true,\"in_scope\":true,\"disposition\":\"open\",\"fix_revision\":null,\"route\":null}}"
+    },
+    {
+      "sequence": 35,
+      "generation": 30,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record the stale publication-truth finding from the second bounded pre-publication review.",
+      "operation": "{\"operation\":\"record_finding\",\"finding\":{\"id\":\"R5662-09\",\"severity\":\"p1\",\"summary\":\"Publication truth remains pre-review with open findings and historical intermediate capture references not explicitly identified as superseded.\",\"actionable\":true,\"in_scope\":true,\"disposition\":\"open\",\"fix_revision\":null,\"route\":null}}"
+    },
+    {
+      "sequence": 36,
+      "generation": 31,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Make historical evidence and the final executable Runtime v3 proof boundary explicit before the exact implementation commit.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Polished and directly proved the operator-provisioned Unity flagship Polis Observatory as a coherent, grounded, fixed command-room presentation. The current publication evidence is final-playmode-1920x1080.png and final-playmode-2560x1440.png; earlier baseline and restart captures remain immutable intermediate evidence and are explicitly superseded. Runtime v3 support is proved as HTTPS endpoint policy, bearer-header construction, exact feed and signed-control classification, parsed UI projection, and fail-closed communication behavior, not as a live listener exchange.\",\"changes\":[\"Marked baseline-1920x1080.png and final-playmode-1920x1080-restart.png as historical intermediate evidence superseded by the two current final-playmode captures.\",\"Completed the second-review remediation for exact /v1/control truth, bearer-header construction, HTTP protocol degradation, and visible Runtime v3 agent, proof, continuity, and CloudWatch-route projection.\"],\"artifacts\":[]}"
+    },
+    {
+      "sequence": 37,
+      "generation": 32,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Fixed at 1f3358afa by adding current HTTPS bearer Runtime v3 Observatory feed support.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"R5662-01\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 38,
+      "generation": 33,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Fixed at 1f3358afa by reporting the missing governed signed Unity proposal mapping instead of denying Runtime v3 control.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"R5662-02\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 39,
+      "generation": 34,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Fixed at 1f3358afa by requiring exact legacy CSM schema equality and rejecting suffix variants.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"R5662-03\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 40,
+      "generation": 35,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Fixed at 1f3358afa by activating and validating the foundation, fascia, supports, platform, stairs, shadow, and bounded causeway.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"R5662-04\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 41,
+      "generation": 36,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Fixed at 1f3358afa by adding clear navigation glyphs, dynamic active state, and bounded event and inspector ScrollViews.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"R5662-05\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 42,
+      "generation": 37,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Fixed at 1f3358afa by requiring signed_command_endpoint to equal /v1/control and testing hostile endpoint degradation.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"R5662-06\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 43,
+      "generation": 38,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Fixed at 1f3358afa by sharing bearer-header construction with the real probe, visibly projecting Runtime v3 agent, proof, continuity, and CloudWatch-route fields, and narrowing listener claims.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"R5662-07\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 44,
+      "generation": 39,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Fixed at 1f3358afa by classifying HTTP ProtocolError responses as Degraded while retaining connection and data-processing failures as Disconnected.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"R5662-08\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 45,
+      "generation": 40,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Fixed at 1f3358afa by explicitly marking intermediate captures superseded and retaining the current final evidence boundary in SOR truth.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"R5662-09\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 46,
+      "generation": 41,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record R5662-10 from the third bounded pre-publication review.",
+      "operation": "{\"operation\":\"record_finding\",\"finding\":{\"id\":\"R5662-10\",\"severity\":\"p2\",\"summary\":\"The executable Runtime v3 projection validator does not assert the parsed proof state even though the publication packet claims proof projection coverage.\",\"actionable\":true,\"in_scope\":true,\"disposition\":\"open\",\"fix_revision\":null,\"route\":null}}"
+    },
+    {
+      "sequence": 47,
+      "generation": 42,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record R5662-11 from the third bounded pre-publication review.",
+      "operation": "{\"operation\":\"record_finding\",\"finding\":{\"id\":\"R5662-11\",\"severity\":\"p3\",\"summary\":\"The proof packet says only two PNGs are retained although the commit also retains baseline and restart captures as superseded intermediates.\",\"actionable\":true,\"in_scope\":true,\"disposition\":\"open\",\"fix_revision\":null,\"route\":null}}"
+    },
+    {
+      "sequence": 48,
+      "generation": 43,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Record fresh direct Unity-MCP and focused repository proof after resolving the third-review findings.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"unity-mcp-cli\",\"run-tool\",\"script-execute\",\"ObservatoryMcpProof.Run\",\"and\",\"bash\",\"adl/tools/test_v0916_unity_observatory_contract.sh\",\"and\",\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove the final parsed Runtime v3 proof-state assertion, superseded-capture publication wording, and focused repository contract after third-review remediation\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/prepared/issues/5662/live-unity-proof.md\"}}"
+    },
+    {
+      "sequence": 49,
+      "generation": 44,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Fixed at f466b1cf1 by asserting the visible parsed Runtime v3 proof state in the live in-editor validator.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"R5662-10\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 50,
+      "generation": 45,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Fixed at f466b1cf1 by distinguishing the two current publication frames from retained superseded intermediate captures.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"R5662-11\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 51,
+      "generation": 46,
+      "actor": "codex:issue-5662-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 52,
+      "generation": 47,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Return to implemented so the final S6 review step can be marked complete before recording the unchanged exact PASS evidence.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 53,
+      "generation": 48,
+      "actor": "codex:issue-5662-execution",
+      "reason": "Complete bounded pre-publication review after exact scoped PASS and resolution of all eleven findings.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S6\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 54,
+      "generation": 49,
+      "actor": "codex:issue-5662-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 55,
+      "generation": 50,
+      "actor": "codex:issue-5662-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

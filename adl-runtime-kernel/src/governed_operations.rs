@@ -11,12 +11,12 @@ use std::{
 };
 
 use adl_runtime_kernel::{
-    bootstrap_reasoning_services, build_live_assembly, ActuationShell, AdapterKind, AdapterPolicy,
-    Aee, AuthorityGrant, AuthorityMode, CanonicalIngress, Commitment, ExecutorError, FailureClass,
-    FreedomGate, GovernanceKeys, GovernedActionRequest, Kernel, LiveBindings, LocalAgentExecutor,
-    MediationDecision, OperationExecutor, OperationRequest, OperationalAdapter, RefusalReason,
-    RuntimeRecorder, TimeQualificationBounds, TimeSample, TimeSampleError, TimeSampleSource,
-    TrustedGovernanceTime, OPERATION_REQUEST_SCHEMA,
+    bootstrap_reasoning_services, build_live_assembly, build_production_operation_executors,
+    ActuationShell, AdapterKind, AdapterPolicy, Aee, AuthorityGrant, AuthorityMode,
+    CanonicalIngress, Commitment, ExecutorError, FailureClass, FreedomGate, GovernanceKeys,
+    GovernedActionRequest, Kernel, LiveBindings, MediationDecision, OperationExecutor,
+    OperationRequest, OperationalAdapter, RefusalReason, RuntimeRecorder, TimeQualificationBounds,
+    TimeSample, TimeSampleError, TimeSampleSource, TrustedGovernanceTime, OPERATION_REQUEST_SCHEMA,
 };
 use ed25519_dalek::{SigningKey, VerifyingKey};
 use serde::{Deserialize, Serialize};
@@ -499,7 +499,7 @@ async fn start_services(config: &RuntimeConfig) -> Result<LiveServices, String> 
         } else {
             16
         },
-        timeout_millis: 2_000,
+        shutdown_grace_millis: 2_000,
         max_attempts: 1,
         idempotency_entries: 64,
         authority: AuthorityMode::Internal,
@@ -527,15 +527,9 @@ async fn start_services(config: &RuntimeConfig) -> Result<LiveServices, String> 
         )
         .map_err(|_| "scheduler_configuration".to_owned())?,
     );
-    let mut executors = adl_runtime_kernel::REQUIRED_OPERATIONAL_ADAPTERS
-        .into_iter()
-        .map(|kind| {
-            (
-                kind,
-                Arc::new(LocalAgentExecutor) as Arc<dyn OperationExecutor>,
-            )
-        })
-        .collect::<BTreeMap<_, _>>();
+    let mut executors =
+        build_production_operation_executors(config.state_dir.join("local-adapters"))
+            .map_err(|error| format!("local_adapter_state: {error}"))?;
     let agent_executor = Arc::new(GovernedExecutor {
         permit_key,
         scheduler,

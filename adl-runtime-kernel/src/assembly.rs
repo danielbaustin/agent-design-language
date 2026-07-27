@@ -1,13 +1,19 @@
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::{BTreeMap, BTreeSet, VecDeque},
+    fs,
+    io::{self, Write},
+    path::{Path, PathBuf},
     sync::{
         atomic::{AtomicU64, Ordering},
-        Arc,
+        Arc, Mutex,
     },
+    time::{SystemTime, UNIX_EPOCH},
 };
 
 use semver::{Version, VersionReq};
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
+use tokio_util::sync::CancellationToken;
 
 use crate::{
     cognition_component_factories, cognition_service_contracts, governance_component_factories,
@@ -38,6 +44,7 @@ pub const REQUIRED_OPERATIONAL_ADAPTERS: [AdapterKind; 10] = [
     AdapterKind::CheckpointStore,
     AdapterKind::Lifelog,
 ];
+const LOCAL_WRITER_LOCK_SCHEMA: &str = "adl.runtime.local_writer_lock.v1";
 
 pub const PASSIVE_LIVE_SERVICES: [&str; 9] = [
     "governance_ingress",
@@ -115,7 +122,7 @@ pub fn build_live_assembly(bindings: LiveBindings) -> Result<LiveAssembly, Assem
         let policy = AdapterPolicy {
             capacity: 64,
             max_in_flight: 16,
-            timeout_millis: 5_000,
+            shutdown_grace_millis: 5_000,
             max_attempts: 3,
             idempotency_entries: 1_024,
             authority: if matches!(kind, AdapterKind::Provider | AdapterKind::CloudBridge) {
@@ -435,83 +442,596 @@ pub fn bootstrap_reasoning_services(
 
 pub struct InProcessOperationExecutor {
     kind: AdapterKind,
-    sequence: AtomicU64,
+    state: Arc<LocalRuntimeState>,
 }
 
-/// Compatibility adapter for the separate governed-operations executable.
-/// Runtime v3 production uses `InProcessOperationExecutor` so every binding
-/// carries its adapter identity.
-pub struct LocalAgentExecutor;
-
 impl InProcessOperationExecutor {
-    pub fn new(kind: AdapterKind) -> Self {
-        Self {
+    pub fn with_state_dir(kind: AdapterKind, state_dir: impl Into<PathBuf>) -> Self {
+        Self::try_with_state_dir(kind, state_dir)
+            .expect("local runtime state root must be configured and writable")
+    }
+
+    pub fn try_with_state_dir(
+        kind: AdapterKind,
+        state_dir: impl Into<PathBuf>,
+    ) -> std::io::Result<Self> {
+        Ok(Self {
             kind,
+            state: Arc::new(LocalRuntimeState::new_in(state_dir.into())?),
+        })
+    }
+
+    fn with_state(kind: AdapterKind, state: Arc<LocalRuntimeState>) -> Self {
+        Self { kind, state }
+    }
+}
+
+struct LocalRuntimeState {
+    sequence: AtomicU64,
+    admitted: Mutex<BTreeSet<String>>,
+    scheduled: Mutex<LocalSchedulerState>,
+    state_dir: PathBuf,
+    writer_id: String,
+    writer_pid: u32,
+    writer_lock_path: PathBuf,
+}
+
+#[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct WriterLockOwner {
+    schema: String,
+    writer_id: String,
+    pid: u32,
+}
+
+impl LocalRuntimeState {
+    fn new_in(state_dir: PathBuf) -> std::io::Result<Self> {
+        if state_dir.as_os_str().is_empty() || !state_dir.is_absolute() {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "state root must be an absolute configured path",
+            ));
+        }
+        fs::create_dir_all(&state_dir)?;
+        let writer_id = uuid::Uuid::new_v4().to_string();
+        let writer_pid = std::process::id();
+        let lock_path = state_dir.join("writer.lock");
+        acquire_writer_lock(&lock_path, &writer_id, writer_pid)?;
+        Ok(Self {
             sequence: AtomicU64::new(0),
+            admitted: Mutex::new(BTreeSet::new()),
+            scheduled: Mutex::new(LocalSchedulerState::default()),
+            state_dir,
+            writer_id,
+            writer_pid,
+            writer_lock_path: lock_path,
+        })
+    }
+
+    fn next_sequence(&self) -> u64 {
+        self.sequence.fetch_add(1, Ordering::Relaxed) + 1
+    }
+}
+
+#[derive(Default)]
+struct LocalSchedulerState {
+    pending: VecDeque<String>,
+    active: BTreeSet<String>,
+    completed_count: u64,
+}
+
+impl Drop for LocalRuntimeState {
+    fn drop(&mut self) {
+        let _ = release_writer_lock(&self.writer_lock_path, &self.writer_id, self.writer_pid);
+    }
+}
+
+fn acquire_writer_lock(lock_path: &Path, writer_id: &str, pid: u32) -> io::Result<()> {
+    loop {
+        match fs::create_dir(lock_path) {
+            Ok(()) => {
+                if let Err(error) = write_writer_lock_owner(lock_path, writer_id, pid) {
+                    let _ = fs::remove_dir_all(lock_path);
+                    return Err(error);
+                }
+                return Ok(());
+            }
+            Err(error) if error.kind() == io::ErrorKind::AlreadyExists || lock_path.exists() => {
+                if !recover_stale_writer_lock(lock_path)? {
+                    return Err(io::Error::new(
+                        io::ErrorKind::AlreadyExists,
+                        "state root is already locked by a live writer",
+                    ));
+                }
+            }
+            Err(error) => return Err(error),
         }
     }
 }
 
-pub fn build_production_operation_executors() -> BTreeMap<AdapterKind, Arc<dyn OperationExecutor>> {
-    REQUIRED_OPERATIONAL_ADAPTERS
+fn write_writer_lock_owner(lock_path: &Path, writer_id: &str, pid: u32) -> io::Result<()> {
+    let bytes = serde_json::to_vec(&WriterLockOwner {
+        schema: LOCAL_WRITER_LOCK_SCHEMA.to_owned(),
+        writer_id: writer_id.to_owned(),
+        pid,
+    })
+    .map_err(io::Error::other)?;
+    let mut file = fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(lock_path.join("owner.json"))?;
+    file.write_all(&bytes)?;
+    file.sync_all()
+}
+
+fn recover_stale_writer_lock(lock_path: &Path) -> io::Result<bool> {
+    match read_writer_lock_owner(lock_path) {
+        Ok(Some(owner)) if writer_lock_owner_recoverable(&owner) => {
+            recover_writer_lock_after_owner_check(lock_path, owner)
+        }
+        Ok(Some(_)) => Ok(false),
+        Ok(None) => Ok(false),
+        Err(error) if error.kind() == io::ErrorKind::InvalidData => Ok(false),
+        Err(error) => Err(error),
+    }
+}
+
+fn recover_writer_lock_after_owner_check(
+    lock_path: &Path,
+    expected_owner: WriterLockOwner,
+) -> io::Result<bool> {
+    let stale_path =
+        lock_path.with_file_name(format!("writer.lock.stale.{}", uuid::Uuid::new_v4()));
+    match fs::rename(lock_path, &stale_path) {
+        Ok(()) => {
+            let moved_owner = match read_writer_lock_owner(&stale_path) {
+                Ok(owner) => owner,
+                Err(error) if error.kind() == io::ErrorKind::InvalidData => {
+                    restore_unrecovered_writer_lock(lock_path, &stale_path)?;
+                    return Ok(false);
+                }
+                Err(error) => {
+                    restore_unrecovered_writer_lock(lock_path, &stale_path)?;
+                    return Err(error);
+                }
+            };
+            let owner_still_recoverable = match (&expected_owner, &moved_owner) {
+                (expected, Some(moved)) => {
+                    expected == moved && writer_lock_owner_recoverable(moved)
+                }
+                _ => false,
+            };
+            if owner_still_recoverable {
+                let _ = fs::remove_dir_all(stale_path);
+                Ok(true)
+            } else {
+                restore_unrecovered_writer_lock(lock_path, &stale_path)?;
+                Ok(false)
+            }
+        }
+        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(true),
+        Err(error) => Err(error),
+    }
+}
+
+fn restore_unrecovered_writer_lock(lock_path: &Path, stale_path: &Path) -> io::Result<()> {
+    match fs::rename(stale_path, lock_path) {
+        Ok(()) => Ok(()),
+        Err(error) if error.kind() == io::ErrorKind::AlreadyExists || lock_path.exists() => Ok(()),
+        Err(error) => Err(error),
+    }
+}
+
+fn release_writer_lock(lock_path: &Path, writer_id: &str, pid: u32) -> io::Result<()> {
+    let Some(owner) = read_writer_lock_owner(lock_path).ok().flatten() else {
+        return Ok(());
+    };
+    if owner.writer_id == writer_id && owner.pid == pid {
+        fs::remove_dir_all(lock_path)?;
+    }
+    Ok(())
+}
+
+fn read_writer_lock_owner(lock_path: &Path) -> io::Result<Option<WriterLockOwner>> {
+    let owner_path = lock_path.join("owner.json");
+    let bytes = match fs::read(owner_path) {
+        Ok(bytes) => bytes,
+        Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
+        Err(error) => return Err(error),
+    };
+    let owner = serde_json::from_slice::<WriterLockOwner>(&bytes)
+        .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
+    if owner.schema != LOCAL_WRITER_LOCK_SCHEMA {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            "local writer lock schema is invalid",
+        ));
+    }
+    Ok(Some(owner))
+}
+
+#[cfg(unix)]
+fn writer_lock_owner_recoverable(owner: &WriterLockOwner) -> bool {
+    !writer_pid_active(owner.pid)
+}
+
+#[cfg(not(unix))]
+fn writer_lock_owner_recoverable(_owner: &WriterLockOwner) -> bool {
+    false
+}
+
+#[cfg(unix)]
+fn writer_pid_active(pid: u32) -> bool {
+    let pid = match i32::try_from(pid) {
+        Ok(pid) if pid > 0 => pid,
+        _ => return false,
+    };
+    let result = unsafe { libc::kill(pid, 0) };
+    result == 0
+        || io::Error::last_os_error()
+            .raw_os_error()
+            .is_some_and(|code| code == libc::EPERM)
+}
+
+#[cfg(not(unix))]
+fn writer_pid_active(pid: u32) -> bool {
+    pid == std::process::id()
+}
+
+pub fn build_production_operation_executors(
+    state_dir: impl Into<PathBuf>,
+) -> io::Result<BTreeMap<AdapterKind, Arc<dyn OperationExecutor>>> {
+    let state = Arc::new(LocalRuntimeState::new_in(state_dir.into())?);
+    Ok(REQUIRED_OPERATIONAL_ADAPTERS
         .into_iter()
         .map(|kind| {
             (
                 kind,
-                Arc::new(InProcessOperationExecutor::new(kind)) as Arc<dyn OperationExecutor>,
+                Arc::new(InProcessOperationExecutor::with_state(kind, state.clone()))
+                    as Arc<dyn OperationExecutor>,
             )
         })
-        .collect()
+        .collect())
 }
 
 #[async_trait::async_trait]
 impl OperationExecutor for InProcessOperationExecutor {
     async fn execute(&self, request: &OperationRequest) -> Result<Vec<u8>, ExecutorError> {
+        self.execute_with_cancellation(request, &CancellationToken::new())
+            .await
+    }
+
+    async fn execute_with_cancellation(
+        &self,
+        request: &OperationRequest,
+        cancellation: &CancellationToken,
+    ) -> Result<Vec<u8>, ExecutorError> {
         if request.schema != OPERATION_REQUEST_SCHEMA
             || request.request_id.trim().is_empty()
             || request.idempotency_key.trim().is_empty()
             || request.principal.trim().is_empty()
             || request.payload.is_empty()
         {
-            return Err(ExecutorError {
-                class: FailureClass::Fatal,
-                message: format!(
+            return Err(adapter_error(
+                FailureClass::Fatal,
+                format!(
                     "{} received an invalid operation request",
                     self.kind.service_name()
                 ),
-            });
+            ));
         }
-        let sequence = self.sequence.fetch_add(1, Ordering::Relaxed) + 1;
-        let receipt = serde_json::json!({
-            "schema": "adl.runtime.adapter_receipt.v1",
-            "adapter": self.kind.service_name(),
-            "operation": self.kind.operation_name(),
-            "request_id": request.request_id,
-            "idempotency_key": request.idempotency_key,
-            "principal": request.principal,
-            "sequence": sequence,
-            "payload_hash": blake3::hash(&request.payload).to_hex().to_string(),
-            "accepted": true,
-        });
-        serde_json::to_vec(&receipt).map_err(|error| ExecutorError {
-            class: FailureClass::Fatal,
-            message: format!(
-                "{} receipt encoding failed: {error}",
-                self.kind.service_name()
-            ),
+        let value = match self.kind {
+            AdapterKind::Provider
+            | AdapterKind::Acip
+            | AdapterKind::A2a
+            | AdapterKind::CloudBridge => Err(adapter_error(
+                FailureClass::Fatal,
+                format!(
+                    "{} requires an external transport binding",
+                    self.kind.service_name()
+                ),
+            )),
+            AdapterKind::Agent => self.agent(request, cancellation).await,
+            AdapterKind::Shepherd => self.shepherd(request),
+            AdapterKind::Scheduler => self.scheduler(request),
+            AdapterKind::Chronosense => self.chronosense(request),
+            AdapterKind::CheckpointStore => self.checkpoint(request),
+            AdapterKind::Lifelog => self.lifelog(request),
+        }?;
+        serde_json::to_vec(&value).map_err(|error| {
+            adapter_error(
+                FailureClass::Fatal,
+                format!(
+                    "{} local result encoding failed: {error}",
+                    self.kind.service_name()
+                ),
+            )
         })
     }
 }
 
-#[async_trait::async_trait]
-impl OperationExecutor for LocalAgentExecutor {
-    async fn execute(&self, request: &OperationRequest) -> Result<Vec<u8>, ExecutorError> {
-        if request.schema != OPERATION_REQUEST_SCHEMA {
-            return Err(ExecutorError {
-                class: FailureClass::Fatal,
-                message: "agent_runtime received an invalid operation schema".to_owned(),
-            });
+impl InProcessOperationExecutor {
+    async fn agent(
+        &self,
+        request: &OperationRequest,
+        cancellation: &CancellationToken,
+    ) -> Result<serde_json::Value, ExecutorError> {
+        let command: serde_json::Value = serde_json::from_slice(&request.payload)
+            .map_err(|e| adapter_error(FailureClass::Fatal, format!("agent_work_invalid: {e}")))?;
+        let tasks = command["tasks"]
+            .as_array()
+            .ok_or_else(|| adapter_error(FailureClass::Fatal, "agent_work_missing"))?;
+        if command["schema"] != "adl.runtime.local_agent_work.v1"
+            || tasks.is_empty()
+            || tasks.len() > 8
+        {
+            return Err(adapter_error(FailureClass::Fatal, "agent_work_bound"));
         }
-        Ok(request.payload.clone())
+        let mut outputs = Vec::with_capacity(tasks.len());
+        for (index, task) in tasks.iter().enumerate() {
+            if cancellation.is_cancelled() {
+                return Err(adapter_error(FailureClass::Fatal, "operation cancelled"));
+            }
+            let op = task["op"]
+                .as_str()
+                .ok_or_else(|| adapter_error(FailureClass::Fatal, "agent_work_malformed"))?;
+            let output = match op {
+                "blake3" => blake3::hash(
+                    task["input"]
+                        .as_str()
+                        .ok_or_else(|| {
+                            adapter_error(FailureClass::Fatal, "agent_blake3_malformed")
+                        })?
+                        .as_bytes(),
+                )
+                .to_hex()
+                .to_string(),
+                "sleep_millis" => {
+                    let millis = task["millis"].as_u64().ok_or_else(|| {
+                        adapter_error(FailureClass::Fatal, "agent_sleep_malformed")
+                    })?;
+                    if millis > 250 {
+                        return Err(adapter_error(FailureClass::Fatal, "agent_sleep_bound"));
+                    }
+                    tokio::select! {
+                        _ = cancellation.cancelled() => return Err(adapter_error(FailureClass::Fatal, "operation cancelled")),
+                        _ = tokio::time::sleep(std::time::Duration::from_millis(millis)) => "slept".to_owned(),
+                    }
+                }
+                _ => return Err(adapter_error(FailureClass::Fatal, "agent_work_unknown")),
+            };
+            outputs.push(serde_json::json!({"unit":index,"output":output}));
+        }
+        let digest = outputs
+            .iter()
+            .fold(blake3::Hasher::new(), |mut hasher, value| {
+                hasher.update(value.to_string().as_bytes());
+                hasher
+            })
+            .finalize()
+            .to_hex()
+            .to_string();
+        let mut value = self.result(request, "completed");
+        value["schema"] = "adl.runtime.local_agent_execution.v1".into();
+        value["work_units"] = tasks.len().into();
+        value["result_hash"] = digest.into();
+        value["outputs"] = outputs.into();
+        Ok(value)
     }
+
+    fn result(&self, request: &OperationRequest, status: &str) -> serde_json::Value {
+        serde_json::json!({"schema":"adl.runtime.local_adapter_result.v1","adapter":self.kind.service_name(),"operation":self.kind.operation_name(),"request_id":request.request_id,"principal":request.principal,"sequence":self.state.next_sequence(),"writer_id":self.state.writer_id,"payload_hash":blake3::hash(&request.payload).to_hex().to_string(),"status":status})
+    }
+
+    fn shepherd(&self, request: &OperationRequest) -> Result<serde_json::Value, ExecutorError> {
+        let command: serde_json::Value = serde_json::from_slice(&request.payload).map_err(|e| {
+            adapter_error(
+                FailureClass::Fatal,
+                format!("shepherd_admission_invalid: {e}"),
+            )
+        })?;
+        if command["schema"] != "adl.runtime.local_shepherd_admission.v1" {
+            return Err(adapter_error(
+                FailureClass::Fatal,
+                "shepherd_admission_schema",
+            ));
+        }
+        if !command["admit"].as_bool().unwrap_or(false) {
+            return Err(adapter_error(
+                FailureClass::Fatal,
+                "shepherd admission rejected",
+            ));
+        }
+        let admitted = self
+            .state
+            .admitted
+            .lock()
+            .expect("local shepherd state poisoned")
+            .insert(request.idempotency_key.clone());
+        let mut value = self.result(request, if admitted { "admitted" } else { "duplicate" });
+        value["admitted"] = admitted.into();
+        Ok(value)
+    }
+
+    fn scheduler(&self, request: &OperationRequest) -> Result<serde_json::Value, ExecutorError> {
+        let command: serde_json::Value = serde_json::from_slice(&request.payload).map_err(|e| {
+            adapter_error(FailureClass::Fatal, format!("scheduler_job_invalid: {e}"))
+        })?;
+        if command["schema"] != "adl.runtime.local_schedule.v1" {
+            return Err(adapter_error(FailureClass::Fatal, "scheduler_job_schema"));
+        }
+        let action = command["action"].as_str().unwrap_or("schedule");
+        let mut scheduled = self
+            .state
+            .scheduled
+            .lock()
+            .expect("local scheduler state poisoned");
+        match action {
+            "schedule" => {
+                let job_id = command["job_id"]
+                    .as_str()
+                    .filter(|value| !value.trim().is_empty())
+                    .ok_or_else(|| adapter_error(FailureClass::Fatal, "scheduler_job_schema"))?
+                    .to_owned();
+                if scheduled.pending.len() + scheduled.active.len() >= 4 {
+                    return Err(adapter_error(
+                        FailureClass::Retryable,
+                        "scheduler_saturated",
+                    ));
+                }
+                if scheduled.pending.contains(&job_id) || scheduled.active.contains(&job_id) {
+                    return Err(adapter_error(
+                        FailureClass::Fatal,
+                        "scheduler_job_duplicate",
+                    ));
+                }
+                scheduled.pending.push_back(job_id.clone());
+                let mut value = self.result(request, "scheduled");
+                value["job_id"] = job_id.into();
+                value["scheduled_depth"] = scheduled.pending.len().into();
+                value["active_depth"] = scheduled.active.len().into();
+                value["completed_jobs"] = scheduled.completed_count.into();
+                Ok(value)
+            }
+            "dispatch_next" => {
+                let Some(job_id) = scheduled.pending.pop_front() else {
+                    return Err(adapter_error(FailureClass::Retryable, "scheduler_empty"));
+                };
+                scheduled.active.insert(job_id.clone());
+                let mut value = self.result(request, "dispatched");
+                value["job_id"] = job_id.into();
+                value["scheduled_depth"] = scheduled.pending.len().into();
+                value["active_depth"] = scheduled.active.len().into();
+                value["completed_jobs"] = scheduled.completed_count.into();
+                Ok(value)
+            }
+            "retire" => {
+                let job_id = command["job_id"]
+                    .as_str()
+                    .filter(|value| !value.trim().is_empty())
+                    .ok_or_else(|| adapter_error(FailureClass::Fatal, "scheduler_job_schema"))?
+                    .to_owned();
+                if !scheduled.active.remove(&job_id) {
+                    return Err(adapter_error(
+                        FailureClass::Fatal,
+                        "scheduler_job_not_active",
+                    ));
+                }
+                scheduled.completed_count = scheduled.completed_count.saturating_add(1);
+                let mut value = self.result(request, "retired");
+                value["job_id"] = job_id.into();
+                value["scheduled_depth"] = scheduled.pending.len().into();
+                value["active_depth"] = scheduled.active.len().into();
+                value["completed_jobs"] = scheduled.completed_count.into();
+                Ok(value)
+            }
+            _ => Err(adapter_error(FailureClass::Fatal, "scheduler_job_action")),
+        }
+    }
+
+    fn chronosense(&self, request: &OperationRequest) -> Result<serde_json::Value, ExecutorError> {
+        let millis = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map_err(|error| {
+                adapter_error(
+                    FailureClass::Fatal,
+                    format!("chronosense clock failed: {error}"),
+                )
+            })?
+            .as_millis() as u64;
+        let mut value = self.result(request, "sampled");
+        value["unix_millis"] = millis.into();
+        Ok(value)
+    }
+
+    fn checkpoint(&self, request: &OperationRequest) -> Result<serde_json::Value, ExecutorError> {
+        let command: serde_json::Value = serde_json::from_slice(&request.payload).map_err(|e| {
+            adapter_error(
+                FailureClass::Fatal,
+                format!("checkpoint_command_invalid: {e}"),
+            )
+        })?;
+        if command["schema"] != "adl.runtime.local_checkpoint_command.v1" {
+            return Err(adapter_error(
+                FailureClass::Fatal,
+                "checkpoint_command_schema",
+            ));
+        }
+        fs::create_dir_all(&self.state.state_dir)
+            .map_err(|e| local_io("checkpoint_unavailable", e))?;
+        let path = self.state.state_dir.join("checkpoint.json");
+        match command["action"].as_str().unwrap_or_default() {
+            "restore" => {
+                let bytes = fs::read(&path).map_err(|e| local_io("checkpoint_unavailable", e))?;
+                let value: serde_json::Value = serde_json::from_slice(&bytes).map_err(|e| {
+                    adapter_error(FailureClass::Fatal, format!("checkpoint_corrupt: {e}"))
+                })?;
+                if value["schema"] != "adl.runtime.local_checkpoint.v1"
+                    || value["principal"] != request.principal
+                    || value["payload_hash"]
+                        != blake3::hash(
+                            &hex::decode(value["state_hex"].as_str().unwrap_or_default()).map_err(
+                                |_| adapter_error(FailureClass::Fatal, "checkpoint_state_encoding"),
+                            )?,
+                        )
+                        .to_hex()
+                        .to_string()
+                {
+                    return Err(adapter_error(
+                        FailureClass::Fatal,
+                        "checkpoint_identity_or_integrity",
+                    ));
+                }
+                return Ok(value);
+            }
+            "store" => {}
+            _ => return Err(adapter_error(FailureClass::Fatal, "checkpoint_action")),
+        }
+        let state_hex = command["state_hex"].as_str().unwrap_or_default();
+        let state = hex::decode(state_hex)
+            .map_err(|_| adapter_error(FailureClass::Fatal, "checkpoint_state_encoding"))?;
+        let value = serde_json::json!({"schema":"adl.runtime.local_checkpoint.v1","adapter":self.kind.service_name(),"operation":self.kind.operation_name(),"request_id":request.request_id,"principal":request.principal,"generation":self.state.next_sequence(),"writer_id":self.state.writer_id,"payload_hash":blake3::hash(&state).to_hex().to_string(),"state_hex":state_hex});
+        let tmp = self
+            .state
+            .state_dir
+            .join(format!("checkpoint.{}.tmp", self.state.next_sequence()));
+        let mut file = fs::File::create(&tmp).map_err(|e| local_io("checkpoint_unavailable", e))?;
+        file.write_all(
+            &serde_json::to_vec(&value).map_err(|e| local_io("checkpoint_unavailable", e))?,
+        )
+        .and_then(|_| file.sync_all())
+        .map_err(|e| local_io("checkpoint_unavailable", e))?;
+        fs::rename(tmp, path).map_err(|e| local_io("checkpoint_unavailable", e))?;
+        Ok(value)
+    }
+
+    fn lifelog(&self, request: &OperationRequest) -> Result<serde_json::Value, ExecutorError> {
+        fs::create_dir_all(&self.state.state_dir)
+            .map_err(|e| local_io("lifelog_unavailable", e))?;
+        let text = String::from_utf8_lossy(&request.payload);
+        let lower = text.to_ascii_lowercase();
+        let redacted = ["secret", "token", "password"]
+            .iter()
+            .any(|needle| lower.contains(needle));
+        let value = serde_json::json!({"schema":"adl.runtime.local_lifelog.v1","adapter":self.kind.service_name(),"operation":self.kind.operation_name(),"request_id":request.request_id,"principal":request.principal,"sequence":self.state.next_sequence(),"payload_hash":blake3::hash(&request.payload).to_hex().to_string(),"redacted":redacted,"authoritative":false});
+        let mut file = fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(self.state.state_dir.join("lifelog.jsonl"))
+            .map_err(|e| local_io("lifelog_unavailable", e))?;
+        writeln!(file, "{value}")
+            .and_then(|_| file.sync_all())
+            .map_err(|e| local_io("lifelog_unavailable", e))?;
+        Ok(value)
+    }
+}
+
+fn adapter_error(class: FailureClass, message: impl Into<String>) -> ExecutorError {
+    ExecutorError {
+        class,
+        message: message.into(),
+    }
+}
+
+fn local_io(prefix: &str, error: impl std::fmt::Display) -> ExecutorError {
+    adapter_error(FailureClass::Fatal, format!("{prefix}: {error}"))
 }

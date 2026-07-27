@@ -1,0 +1,231 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5662
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: pre_phase
+
+## Summary
+
+Polished and directly proved the operator-provisioned Unity flagship Polis Observatory as a coherent, grounded, fixed command-room presentation. The current publication evidence is final-playmode-1920x1080.png and final-playmode-2560x1440.png; earlier baseline and restart captures remain immutable intermediate evidence and are explicitly superseded. Runtime v3 support is proved as HTTPS endpoint policy, bearer-header construction, exact feed and signed-control classification, parsed UI projection, and fail-closed communication behavior, not as a live listener exchange.
+
+## Artifacts
+
+- .csdlc/prepared/issues/5662/baseline-1920x1080.png
+- .csdlc/prepared/issues/5662/final-playmode-1920x1080-restart.png
+- .csdlc/prepared/issues/5662/final-playmode-2560x1440.png
+- demos/v0.91.6/unity-observatory/PROOF_PACKET.md
+- .csdlc/prepared/issues/5662/baseline-1920x1080.png
+- .csdlc/prepared/issues/5662/final-playmode-1920x1080-restart.png
+- .csdlc/prepared/issues/5662/final-playmode-2560x1440.png
+- .csdlc/prepared/issues/5662/live-unity-proof.md
+- demos/v0.91.6/unity-observatory/PROOF_PACKET.md
+- .csdlc/prepared/issues/5662/final-playmode-1920x1080.png
+- .csdlc/prepared/issues/5662/final-playmode-2560x1440.png
+- .csdlc/prepared/issues/5662/live-unity-proof.md
+- demos/v0.91.6/unity-observatory/PROOF_PACKET.md
+
+## Execution
+
+- Reframed and grounded the flagship environment with a controlled hero camera, plinth, undercroft, foundation, backdrop, and reduced staging clutter.
+- Tuned lighting, emission, screen scale, and active presentation objects for readable architectural hierarchy.
+- Rebuilt the runtime shell as a fixed translucent dashboard with compact metrics, Panopticon topology, event stream, inspector, navigation, and fail-closed operator communication.
+- Retained explicit DEMO DATA and CONTRACT ONLY labels because no CSM loopback runtime was bound at capture time.
+- Updated the bounded proof packet and retained only focused baseline, Full HD, and QHD visual evidence.
+- Reframed and grounded the flagship environment with a controlled hero camera, plinth, undercroft, foundation, backdrop, and reduced staging clutter.
+- Tuned lighting, emission, screen scale, and active presentation objects for readable architectural hierarchy.
+- Rebuilt the runtime shell as a fixed translucent dashboard with compact metrics, Panopticon topology, event stream, inspector, navigation, and fail-closed operator communication.
+- Added a loopback-only five-endpoint CSM adapter whose Live state requires matching status, health, ready, metrics, and events schemas plus healthy semantic states; partial, malformed, unhealthy, and absent inputs fail closed.
+- Replaced retained demo event rows with parsed runtime events only when runtime documents are accepted, and kept governance and ACIP write surfaces explicitly unavailable.
+- Enabled background Play Mode advancement and the required Unity Web Request and Particle System built-in modules, producing a clean fresh launch without missing-module component deletions.
+- Retained exact Full HD and QHD Play Mode captures, synchronized repository-owned source only, and routed every observed tooling anomaly to issue #5662.
+- Added current Runtime v3 Observatory feed support through ADL_RUNTIME_OBSERVATORY_URL and ADL_RUNTIME_OBSERVATORY_TOKEN, bearer-authenticated HTTPS reads of /v1/observatory, exact schema adl.runtime_v3.observatory_feed.v2, and projections for control, health, agents, proof, continuity, and events.
+- Made Runtime v3 communication truth explicit: the runtime exposes governed signed control, while the Unity shell has no governed signed operator-proposal mapping and therefore never claims a browser or Unity-originated mutation was sent.
+- Hardened the legacy CSM adapter to loopback-only HTTP with exact accepted schema equality so malformed suffixes cannot classify Live.
+- Grounded the observatory with active foundation, fascia, support, platform, stair, and shadow geometry; shortened the causeway and added restrained cyan guide rails to remove the floating foreground wedge and open void.
+- Added clear navigation glyphs, dynamic active navigation state, and bounded event and inspector ScrollViews while preserving a fixed non-scrolling dashboard frame.
+- Validated the aligned live Unity project through the local Unity-MCP HTTP server and retained fresh Full HD and QHD Play Mode render-texture captures after unpaused frame advancement.
+- Marked baseline-1920x1080.png and final-playmode-1920x1080-restart.png as historical intermediate evidence superseded by the two current final-playmode captures.
+- Completed the second-review remediation for exact /v1/control truth, bearer-header construction, HTTP protocol degradation, and visible Runtime v3 agent, proof, continuity, and CloudWatch-route projection.
+
+## Validation
+
+[
+  {
+    "command": [
+      "unity-mcp-cli",
+      "run-tool",
+      "script-execute",
+      "UnityObservatoryFlagshipStageBuilder.ValidateFlagshipStageMenu"
+    ],
+    "purpose": "Direct in-editor flagship scene validation in the aligned operator-provisioned project",
+    "outcome": "passed",
+    "evidence_ref": "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_v0916_unity_observatory_contract.sh"
+    ],
+    "purpose": "Focused repository contract and publication-boundary guardrails",
+    "outcome": "passed",
+    "evidence_ref": "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_v0916_unity_mcp_alignment_unit.sh"
+    ],
+    "purpose": "Focused fail-closed Unity-MCP alignment classifier coverage",
+    "outcome": "passed",
+    "evidence_ref": "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
+  },
+  {
+    "command": [
+      "sips",
+      "-g",
+      "pixelWidth",
+      "-g",
+      "pixelHeight",
+      ".csdlc/prepared/issues/5662/final-playmode-1920x1080-restart.png",
+      ".csdlc/prepared/issues/5662/final-playmode-2560x1440.png"
+    ],
+    "purpose": "Exact Full HD and QHD retained Play Mode image dimension proof",
+    "outcome": "passed",
+    "evidence_ref": "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "purpose": "Repository diff whitespace and conflict-marker hygiene",
+    "outcome": "passed",
+    "evidence_ref": "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
+  },
+  {
+    "command": [
+      "unity-mcp-cli",
+      "run-tool",
+      "script-execute",
+      "UnityObservatoryBatchValidator.ValidateFlagshipObservatoryShellMenu"
+    ],
+    "purpose": "Direct in-editor flagship shell, strict runtime adapter, loopback boundary, dynamic runtime event, and scene validation",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/prepared/issues/5662/live-unity-proof.md"
+  },
+  {
+    "command": [
+      "shasum",
+      "-a",
+      "256",
+      ".csdlc/prepared/issues/5662/final-playmode-1920x1080-restart.png",
+      ".csdlc/prepared/issues/5662/final-playmode-2560x1440.png"
+    ],
+    "purpose": "Exact retained Full HD and QHD Play Mode evidence identity",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/prepared/issues/5662/live-unity-proof.md"
+  },
+  {
+    "command": [
+      "unity-mcp-cli",
+      "run-tool",
+      "script-execute",
+      "ObservatoryMcpProof.Run"
+    ],
+    "purpose": "Direct Edit Mode validation of the final flagship stage, fixed shell, current Runtime v3 feed classifier, bearer-token requirement, governed-control truth, strict legacy schema boundary, navigation glyphs, active state, and bounded internal scroll surfaces in the aligned live Unity project",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/prepared/issues/5662/live-unity-proof.md"
+  },
+  {
+    "command": [
+      "sips",
+      "-g",
+      "pixelWidth",
+      "-g",
+      "pixelHeight",
+      ".csdlc/prepared/issues/5662/final-playmode-1920x1080.png",
+      ".csdlc/prepared/issues/5662/final-playmode-2560x1440.png",
+      "and",
+      "shasum",
+      "-a",
+      "256"
+    ],
+    "purpose": "Prove exact current Full HD and QHD Play Mode capture dimensions and retained identities d363009f87726387659f3d2193eb1f8009f9ad4db6183c5a0801f8a719ef6b9c and 8d4605d0352911e6584780d6b673c2c95c671c030f27fb67ffbc3632ca367e49",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/prepared/issues/5662/live-unity-proof.md"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      "and",
+      "git",
+      "diff",
+      "--check"
+    ],
+    "purpose": "Prove the final repository-owned Runtime v3, fail-closed legacy schema, fixed dashboard, iconography, internal scrolling, communication-boundary contracts and diff hygiene",
+    "outcome": "passed",
+    "evidence_ref": "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
+  },
+  {
+    "command": [
+      "unity-mcp-cli",
+      "run-tool",
+      "script-execute",
+      "ObservatoryMcpProof.Run",
+      "and",
+      "bash",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      "and",
+      "git",
+      "diff",
+      "--check"
+    ],
+    "purpose": "Post-review proof of exact signed-control capability validation, bearer-header construction, protocol-error degradation, parsed Runtime v3 agent/proof/continuity/CloudWatch UI projection, fixed shell behavior, and repository diff hygiene",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/prepared/issues/5662/live-unity-proof.md"
+  },
+  {
+    "command": [
+      "unity-mcp-cli",
+      "run-tool",
+      "script-execute",
+      "ObservatoryMcpProof.Run",
+      "and",
+      "bash",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      "and",
+      "git",
+      "diff",
+      "--check"
+    ],
+    "purpose": "Prove the final parsed Runtime v3 proof-state assertion, superseded-capture publication wording, and focused repository contract after third-review remediation",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/prepared/issues/5662/live-unity-proof.md"
+  }
+]
+
+## Integration
+
+pr_open
+
+## Publication
+
+Publication: ready
+
+Merge: not_merged
+
+## Closeout
+
+not_started
+
+## Follow Ups
+
+- none

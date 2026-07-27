@@ -51,17 +51,20 @@ assert_file_order() {
 assert_current_coverage_workflow_contract() {
   local workflow="$ROOT_DIR/.github/workflows/ci.yaml"
   assert_file_has "$workflow" 'Determine PR fast coverage filters'
-  assert_file_has "$workflow" "if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true'"
+  assert_file_has "$workflow" "adl_coverage_workspace_fast_hosted:"
+  assert_file_has "$workflow" "if: needs.adl_path_policy.outputs.coverage_required == 'true' && needs.adl_path_policy.outputs.full_coverage_required != 'true'"
+  assert_file_has "$workflow" "if: github.event_name == 'pull_request' && !contains(github.event.pull_request.head.ref, 'csdlc-v2')"
   assert_file_has "$workflow" '--print-risk-nextest-expression > adl/coverage-impact-filter-expression.txt'
   assert_file_has "$workflow" 'filter_expression<<ADL_COVERAGE_EXPR'
   assert_file_has "$workflow" 'PR fast coverage summary (json)'
   # runtime-bounded-pr-fast-coverage-policy-change
-  assert_file_has "$workflow" "if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true' && steps.coverage-impact.outputs.needs_fast_summary == 'true'"
+  assert_file_has "$workflow" "if: github.event_name == 'pull_request' && steps.coverage-impact.outputs.needs_fast_summary == 'true'"
   assert_file_has "$workflow" 'bash adl/tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"'
   assert_file_has "$workflow" 'PR coverage-impact preflight'
   assert_file_has "$workflow" 'args+=(--summary coverage-artifacts/workspace/adl/target/coverage-impact-summary.json)'
   assert_file_has "$workflow" 'args+=(--require-summary-for-risk)'
-  assert_file_has "$workflow" "if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'"
+  assert_file_has "$workflow" "if: needs.adl_path_policy.outputs.full_coverage_required == 'true'"
+  assert_file_has "$workflow" "if: steps.path-policy.outputs.full_coverage_required == 'true'"
   assert_file_has "$workflow" 'run: bash adl/tools/setup_required_coverage_toolchain.sh install-lld'
   assert_file_has "$workflow" 'bash adl/tools/setup_required_coverage_toolchain.sh configure "$GITHUB_ENV"'
   assert_file_has "$workflow" 'run: bash adl/tools/setup_required_coverage_toolchain.sh verify'
@@ -70,11 +73,14 @@ assert_current_coverage_workflow_contract() {
   assert_file_has "$workflow" 'Coverage not required by path policy'
   assert_file_has "$workflow" "if: steps.path-policy.outputs.coverage_required != 'true'"
   assert_file_has "$workflow" 'run: bash adl/tools/run_ci_step_with_log.sh --name "coverage-runtime-summary-json" --log-root ci-step-logs -- bash adl/tools/run_authoritative_coverage_lane.sh --profile adl-runtime --authority "${{ steps.path-policy.outputs.coverage_authority }}" --event-name "${{ github.event_name }}"'
-  assert_file_has "$workflow" 'run: bash adl/tools/run_ci_step_with_log.sh --name "coverage-workspace-summary-json" --log-root ci-step-logs -- bash adl/tools/run_authoritative_coverage_lane.sh --profile workspace --authority "${{ steps.path-policy.outputs.coverage_authority }}" --event-name "${{ github.event_name }}"'
+  assert_file_has "$workflow" 'run: bash adl/tools/run_ci_step_with_log.sh --name "coverage-workspace-profraw-shard-${{ matrix.shard }}" --log-root ci-step-logs -- bash adl/tools/run_authoritative_coverage_lane.sh --profile workspace --authority "${{ steps.path-policy.outputs.coverage_authority }}" --event-name "${{ github.event_name }}"'
+  assert_file_has "$workflow" 'run: bash adl/tools/run_ci_step_with_log.sh --name "coverage-workspace-aggregate-summary-json" --log-root ci-step-logs -- bash adl/tools/run_authoritative_coverage_lane.sh --profile workspace --authority "${{ needs.adl_path_policy.outputs.coverage_authority }}" --event-name "${{ github.event_name }}"'
   assert_file_has "$workflow" 'Upload runtime coverage evidence'
   assert_file_has "$workflow" 'Upload workspace coverage evidence'
   assert_file_has "$workflow" 'name: adl-coverage-runtime-${{ github.run_id }}-${{ github.run_attempt }}'
   assert_file_has "$workflow" 'name: adl-coverage-workspace-${{ github.run_id }}-${{ github.run_attempt }}'
+  assert_file_has "$workflow" 'name: adl-coverage-workspace-profraw-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }}'
+  assert_file_has "$workflow" 'pattern: adl-coverage-workspace-profraw-${{ github.run_id }}-${{ github.run_attempt }}-*'
   assert_file_has "$workflow" 'Coverage execution state: ${{ steps.path-policy.outputs.coverage_execution_state }}'
   assert_file_has "$workflow" 'run: bash adl/tools/setup_required_coverage_toolchain.sh stats'
   assert_file_has "$workflow" "steps.coverage-toolchain.outputs.ready == 'true'"

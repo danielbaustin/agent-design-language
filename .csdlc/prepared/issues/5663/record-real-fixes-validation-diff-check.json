@@ -1,0 +1,19 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 24,
+  "expected_digest": "2035be4e70a6f9db711b5e0f0b09be8345abd2dafc831616e90be47302e1a55c",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record diff whitespace hygiene after regenerating proof logs.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["git", "diff", "--check"],
+      "purpose": "Prove tracked diff whitespace hygiene after source, test, typed evidence, and retained proof updates.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log"
+    }
+  },
+  "fail_after_backup": false
+}

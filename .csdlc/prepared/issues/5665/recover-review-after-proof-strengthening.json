@@ -1,0 +1,9 @@
+{
+  "schema": "csdlc.review_recovery_request.v1",
+  "issue": 5665,
+  "expected_generation": 2,
+  "expected_digest": "bfbf6b7f9613167831851b1e27d6b87026de4f1d6056db16d7b7b47cb24c66b7",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "Recover reviewed state after proof-strengthening commit f9717b162541eafed276cc7ab1d59a43663cd6ec added direct WSS feature_matrix frame coverage and parsed init TOML proof."
+}

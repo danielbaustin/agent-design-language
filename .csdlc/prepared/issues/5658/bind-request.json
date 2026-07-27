@@ -1,0 +1,25 @@
+{
+  "issue": 5658,
+  "base_branch": "main",
+  "branch": "codex/5658-bound-worktree-lifecycle",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5658-bound-worktree-lifecycle",
+    "owner": "codex:5658-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1785037680,
+    "expires_unix_seconds": 1785642480,
+    "heartbeat_unix_seconds": 1785037680,
+    "branch": "codex/5658-bound-worktree-lifecycle",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5658",
+      ".csdlc/locks/5658.lock",
+      ".csdlc/prepared/issues/5658",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "purpose": "Keep typed C-SDLC lifecycle writes rooted in the bound issue worktree"
+  }
+}

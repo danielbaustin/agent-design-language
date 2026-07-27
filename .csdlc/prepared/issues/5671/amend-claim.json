@@ -1,0 +1,14 @@
+{
+  "issue": 5671,
+  "claim_id": "claim-5671-anthropic-opus-5",
+  "expected_generation": 1,
+  "expected_digest": "49105d2181b18523bc868cb708d1696e7db3be901d12d4fceff401f73e23a9fc",
+  "now_unix_seconds": 1785035311,
+  "actor": "codex:5671-execution",
+  "reason": "Add the focused integration test and setup usage surface to the declared issue scope",
+  "add_protected_paths": [
+    "adl/tests/provider_tests/profiles.rs",
+    "adl/src/cli/usage.rs",
+    "adl/src/provider/http_family/tests.rs"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "scope": [
+    "adl-runtime/src/runtime_api.rs",
+    "adl-runtime/tests/runtime_api_wss.rs",
+    "adl-runtime/Cargo.toml",
+    "adl-runtime/Cargo.lock",
+    "infra/runtime-v3/runtime-api-5665.toml",
+    "docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json",
+    ".csdlc/evidence/5665/runtime-v3-wss-focused.log",
+    ".csdlc/evidence/5665/runtime-v3-strict-clippy.log"
+  ],
+  "evidence": {
+    "reviewer": "Pauli",
+    "scope": [
+      "adl-runtime/src/runtime_api.rs",
+      "adl-runtime/tests/runtime_api_wss.rs",
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/Cargo.lock",
+      "infra/runtime-v3/runtime-api-5665.toml",
+      "docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json",
+      ".csdlc/evidence/5665/runtime-v3-wss-focused.log",
+      ".csdlc/evidence/5665/runtime-v3-strict-clippy.log"
+    ],
+    "reviewed_revision": "git-blake3:f9717b162541eafed276cc7ab1d59a43663cd6ec:31640a070e029b4a35d9c166479a0a04b91e0e926dcb4e470bb90e41f2d3b0eb",
+    "findings": [
+      {
+        "id": "P2-stale-lifecycle-review-state",
+        "severity": "p2",
+        "summary": "Committed lifecycle state at f9717b162 still recorded the older Halley review and stale residual risks, so exact pre-PR review coverage was overclaimed until typed recovery and a new review record were applied.",
+        "actionable": true,
+        "in_scope": false,
+        "disposition": "out_of_scope",
+        "fix_revision": null,
+        "route": "Resolved by typed csdlc-review recover plus this csdlc-review record metadata update; no runtime code change was required."
+      }
+    ],
+    "residual_risks": [
+      "The WSS shutdown path intentionally returns an API-only shutdown_ack and does not stop the runtime process; consumers must not treat it as runtime stop proof.",
+      "#5663 and #5664 protected-path records were not visible in this worktree; visible #5657 protected paths were disjoint from the changed paths."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

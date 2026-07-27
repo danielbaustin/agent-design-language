@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5665,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][observatory] Complete authenticated WSS and feature proofs",
+    "slug": "v0-91-8-runtime-v3-wss-feature-proofs",
+    "version": "v0.91.8",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make the API-only Runtime v3 launch and separate HTML Observatory demonstrate the complete supported feature surface truthfully.",
+      "required_outcome": "Authenticated bidirectional WSS through the existing Axum/Tokio/Rustls Runtime v3 API, Observatory health-state distinctions, sink-bounded telemetry, clean-checkout port 20997 init, and an end-to-end feature/adapter proof matrix with no unresolved claimed feature.",
+      "declared_scope": [
+        "adl-runtime Runtime v3 API/auth/observability/shutdown surfaces",
+        "real WSS handshake, authentication, bidirectional frames, rotation, revocation, and shutdown tests",
+        "health distinction between unimplemented, unavailable, failed, and healthy",
+        "telemetry fields limited to configured sink capabilities",
+        "one issue-local init/config file on port 20997",
+        "feature and adapter proof matrix"
+      ],
+      "authority_boundary": [
+        "Runtime remains API-only",
+        "HTML Observatory remains a separate client",
+        "C-SDLC v2 Rust lifecycle is the only issue lifecycle authority",
+        "#5657/#5663/#5664 protected paths remain disjoint",
+        "No AWS"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use only typed C-SDLC v2 lifecycle and an issue-bound worktree",
+        "Do not write implementation changes on main",
+        "No URL-only, fixture-only, metadata-only, Python, or degraded proof",
+        "Reuse COTS",
+        "Remove obsolete wrappers or duplicate paths when found in scope",
+        "Measure before/after physical LoC with net reduction",
+        "Run focused tests, strict Clippy, and one exact pre-PR review"
+      ]
+    }
+  }
+}

@@ -126,6 +126,15 @@ namespace ADL.Demos.UnityObservatory.Editor
         private static readonly string[] RequiredEnvironmentalBackdropObjectNames =
         {
             "Atmospheric Horizon Dome",
+            "Deep Space Backdrop",
+            "Observatory Grounding Plinth",
+            "Observatory Undercroft",
+            "Observatory Foundation Core",
+            "Observatory Front Fascia",
+            "Arrival Causeway",
+            "Left Stair Foundation",
+            "Right Stair Foundation",
+            "Horizon Light Band",
             "Distant Observatory Ridge",
             "Left Structural Support Mast",
             "Right Structural Support Mast",
@@ -341,7 +350,13 @@ namespace ADL.Demos.UnityObservatory.Editor
 
             foreach (string objectName in RequiredEnvironmentalBackdropObjectNames)
             {
-                RequireChild(backdrop, objectName);
+                GameObject child = RequireChild(backdrop, objectName);
+                if (!child.activeSelf)
+                {
+                    throw new InvalidOperationException(
+                        $"Flagship stage environmental child '{objectName}' must remain active in the hero composition."
+                    );
+                }
             }
 
             int prefabInstances = CountSceneObjects(scene.path, "--- !u!1001");
@@ -472,9 +487,9 @@ namespace ADL.Demos.UnityObservatory.Editor
             cameraObject.tag = "MainCamera";
             ConfigureProofCamera(
                 cameraObject,
-                new Vector3(10.8f, 5.55f, -15.4f),
-                new Vector3(3.8f, 3.05f, -4.9f),
-                34f,
+                new Vector3(6.5f, 4.4f, -15.8f),
+                new Vector3(3.8f, 2.95f, -4.1f),
+                35f,
                 0f
             );
         }
@@ -502,9 +517,9 @@ namespace ADL.Demos.UnityObservatory.Editor
             EnsureNamedProofCamera(
                 scene,
                 InvestorHeroCameraObjectName,
-                new Vector3(10.9f, 5.85f, -16.4f),
-                new Vector3(2.55f, 2.8f, -2.75f),
-                38f,
+                new Vector3(6.5f, 4.4f, -15.8f),
+                new Vector3(3.8f, 2.95f, -4.1f),
+                35f,
                 -18f
             );
         }
@@ -550,7 +565,7 @@ namespace ADL.Demos.UnityObservatory.Editor
             camera.depth = depth;
             camera.nearClipPlane = 0.1f;
             camera.farClipPlane = 2000f;
-            camera.backgroundColor = new Color(0.026f, 0.065f, 0.088f, 1f);
+            camera.backgroundColor = new Color(0.018f, 0.055f, 0.075f, 1f);
             camera.clearFlags = CameraClearFlags.SolidColor;
         }
 
@@ -571,9 +586,9 @@ namespace ADL.Demos.UnityObservatory.Editor
 
             light.type = LightType.Directional;
             light.color = new Color(1f, 0.94f, 0.88f, 1f);
-            light.intensity = 0.5f;
+            light.intensity = 0.38f;
             light.shadows = LightShadows.Soft;
-            lightObject.transform.rotation = Quaternion.Euler(38f, -28f, 0f);
+            lightObject.transform.rotation = Quaternion.Euler(44f, -32f, 0f);
         }
 
         private static void EnsureInvestorLighting(Scene scene)
@@ -583,7 +598,7 @@ namespace ADL.Demos.UnityObservatory.Editor
                 "Investor Cyan Rim Light",
                 new Vector3(-1.2f, 5.4f, -3.5f),
                 new Color(0.08f, 0.74f, 1f, 1f),
-                1.65f,
+                0.56f,
                 8.5f
             );
             EnsurePointLight(
@@ -591,7 +606,7 @@ namespace ADL.Demos.UnityObservatory.Editor
                 "Investor Amber Proof Wall Key",
                 new Vector3(5.4f, 3.2f, -2.6f),
                 new Color(1f, 0.72f, 0.34f, 1f),
-                0.95f,
+                0.58f,
                 5.5f
             );
             EnsurePointLight(
@@ -599,7 +614,7 @@ namespace ADL.Demos.UnityObservatory.Editor
                 "Investor Runtime Floor Wash",
                 new Vector3(3.8f, 1.25f, -7.6f),
                 new Color(0.1f, 0.95f, 0.82f, 1f),
-                0.8f,
+                0.32f,
                 6.2f
             );
             EnsurePointLight(
@@ -607,7 +622,7 @@ namespace ADL.Demos.UnityObservatory.Editor
                 "Investor Arrival Portal Glow",
                 new Vector3(0f, 2.3f, -10.2f),
                 new Color(0.34f, 0.78f, 1f, 1f),
-                1.1f,
+                0.42f,
                 7.4f
             );
             EnsurePointLight(
@@ -615,7 +630,7 @@ namespace ADL.Demos.UnityObservatory.Editor
                 "Investor Witness Rail Warmth",
                 new Vector3(-1.9f, 2.15f, -7.8f),
                 new Color(1f, 0.66f, 0.36f, 1f),
-                0.72f,
+                0.38f,
                 5.4f
             );
         }
@@ -647,7 +662,13 @@ namespace ADL.Demos.UnityObservatory.Editor
             light.color = color;
             light.intensity = intensity;
             light.range = range;
-            light.shadows = LightShadows.Soft;
+            light.shadows = string.Equals(
+                objectName,
+                "Investor Amber Proof Wall Key",
+                StringComparison.Ordinal
+            )
+                ? LightShadows.Soft
+                : LightShadows.None;
         }
 
         private static void EnsureMetadata(Scene scene)
@@ -667,7 +688,7 @@ namespace ADL.Demos.UnityObservatory.Editor
             GameObject rig = FindRoot(scene, ProofRigObjectName);
             List<Vector3> positions = new()
             {
-                new Vector3(0f, -18f, 26f),
+                new Vector3(0f, -24f, 42f),
                 new Vector3(-32f, 24f, 64f),
                 new Vector3(38f, 28f, 70f),
                 new Vector3(-7.8f, 7.4f, 5.6f),
@@ -692,6 +713,7 @@ namespace ADL.Demos.UnityObservatory.Editor
                     existing.transform.SetParent(rig.transform, false);
                     existing.name = AnchorName(index);
                     ConfigureAnchor(index, existing, positions[index]);
+                    existing.SetActive(index != 0);
                 }
             }
         }
@@ -776,8 +798,9 @@ namespace ADL.Demos.UnityObservatory.Editor
 
             globeLight.type = LightType.Point;
             globeLight.color = new Color(0.13f, 0.78f, 1f, 1f);
-            globeLight.intensity = 1.2f;
-            globeLight.range = 7f;
+            globeLight.intensity = 0.38f;
+            globeLight.range = 4.5f;
+            globeLight.shadows = LightShadows.None;
 
             for (int index = 0; index < 16; index++)
             {
@@ -817,15 +840,108 @@ namespace ADL.Demos.UnityObservatory.Editor
             Vector3 center = new Vector3(3.8f, 2.95f, -5.2f);
 
             GameObject dome = EnsurePrimitive(scene, backdrop, "Atmospheric Horizon Dome", PrimitiveType.Sphere);
-            dome.transform.localPosition = center + new Vector3(0f, 5.2f, 20.5f);
+            dome.transform.localPosition = center + new Vector3(10.5f, 8.2f, 25.5f);
             dome.transform.localRotation = Quaternion.identity;
-            dome.transform.localScale = new Vector3(26f, 8.5f, 7.5f);
-            SetMaterial(dome, new Color(0.025f, 0.12f, 0.18f, 1f), 0.72f, true);
+            dome.transform.localScale = new Vector3(3.8f, 3.8f, 3.8f);
+            SetMaterial(dome, new Color(0.07f, 0.16f, 0.22f, 1f), 0.5f, true);
+
+            GameObject space = EnsurePrimitive(scene, backdrop, "Deep Space Backdrop", PrimitiveType.Cube);
+            space.transform.localPosition = center + new Vector3(0f, 4.4f, 14.8f);
+            space.transform.localRotation = Quaternion.identity;
+            space.transform.localScale = new Vector3(42f, 14f, 0.12f);
+            SetMaterial(space, new Color(0.018f, 0.055f, 0.075f, 1f), 0.15f);
+
+            GameObject plinth = EnsurePrimitive(
+                scene,
+                backdrop,
+                "Observatory Grounding Plinth",
+                PrimitiveType.Cylinder
+            );
+            plinth.transform.localPosition = center + new Vector3(0f, -0.55f, -0.35f);
+            plinth.transform.localRotation = Quaternion.Euler(0f, 22.5f, 0f);
+            plinth.transform.localScale = new Vector3(6.6f, 0.34f, 6.6f);
+            SetMaterial(plinth, new Color(0.035f, 0.07f, 0.082f, 1f), 0.42f);
+
+            GameObject undercroft = EnsurePrimitive(
+                scene,
+                backdrop,
+                "Observatory Undercroft",
+                PrimitiveType.Cylinder
+            );
+            undercroft.transform.localPosition = center + new Vector3(0f, -1.42f, -0.35f);
+            undercroft.transform.localRotation = Quaternion.Euler(0f, 22.5f, 0f);
+            undercroft.transform.localScale = new Vector3(6.3f, 0.55f, 6.3f);
+            SetMaterial(undercroft, new Color(0.018f, 0.035f, 0.042f, 1f), 0.28f);
+
+            GameObject foundationCore = EnsurePrimitive(
+                scene,
+                backdrop,
+                "Observatory Foundation Core",
+                PrimitiveType.Cube
+            );
+            foundationCore.transform.localPosition = center + new Vector3(0f, -1.86f, -0.18f);
+            foundationCore.transform.localRotation = Quaternion.Euler(0f, 45f, 0f);
+            foundationCore.transform.localScale = new Vector3(4.7f, 0.58f, 3.65f);
+            foundationCore.SetActive(true);
+            SetMaterial(
+                foundationCore,
+                new Color(0.022f, 0.046f, 0.054f, 1f),
+                0.32f
+            );
+
+            GameObject frontFascia = EnsurePrimitive(
+                scene,
+                backdrop,
+                "Observatory Front Fascia",
+                PrimitiveType.Cube
+            );
+            frontFascia.transform.localPosition = center + new Vector3(0f, -1.48f, -3.2f);
+            frontFascia.transform.localRotation = Quaternion.identity;
+            frontFascia.transform.localScale = new Vector3(5.4f, 0.58f, 0.32f);
+            frontFascia.SetActive(true);
+            SetMaterial(frontFascia, new Color(0.035f, 0.08f, 0.09f, 1f), 0.42f);
+
+            GameObject causeway = EnsurePrimitive(scene, backdrop, "Arrival Causeway", PrimitiveType.Cube);
+            causeway.transform.localPosition = center + new Vector3(0f, -0.12f, -3.65f);
+            causeway.transform.localRotation = Quaternion.identity;
+            causeway.transform.localScale = new Vector3(1.82f, 0.12f, 2.4f);
+            SetMaterial(causeway, new Color(0.065f, 0.13f, 0.145f, 1f), 0.52f);
+            EnsureCausewayGuideRail(
+                scene,
+                backdrop,
+                "Arrival Causeway Left Guide",
+                center + new Vector3(-1.72f, -0.01f, -3.65f)
+            );
+            EnsureCausewayGuideRail(
+                scene,
+                backdrop,
+                "Arrival Causeway Right Guide",
+                center + new Vector3(1.72f, -0.01f, -3.65f)
+            );
+
+            EnsureFoundationMass(
+                scene,
+                backdrop,
+                "Left Stair Foundation",
+                center + new Vector3(-4.9f, -0.72f, -0.7f)
+            );
+            EnsureFoundationMass(
+                scene,
+                backdrop,
+                "Right Stair Foundation",
+                center + new Vector3(4.9f, -0.72f, -0.7f)
+            );
+
+            GameObject horizonBand = EnsurePrimitive(scene, backdrop, "Horizon Light Band", PrimitiveType.Cube);
+            horizonBand.transform.localPosition = center + new Vector3(0f, 0.55f, 14.55f);
+            horizonBand.transform.localRotation = Quaternion.identity;
+            horizonBand.transform.localScale = new Vector3(13.5f, 0.035f, 0.08f);
+            SetMaterial(horizonBand, new Color(0.04f, 0.34f, 0.42f, 1f), 0.55f, true);
 
             GameObject ridge = EnsurePrimitive(scene, backdrop, "Distant Observatory Ridge", PrimitiveType.Cube);
-            ridge.transform.localPosition = center + new Vector3(0f, -1.95f, 9.7f);
+            ridge.transform.localPosition = center + new Vector3(0f, -1.35f, 9.7f);
             ridge.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-            ridge.transform.localScale = new Vector3(14.5f, 0.32f, 2.2f);
+            ridge.transform.localScale = new Vector3(14.5f, 0.52f, 2.2f);
             SetMaterial(ridge, new Color(0.06f, 0.11f, 0.12f, 1f), 0.2f);
 
             EnsureSupportMast(
@@ -833,21 +949,21 @@ namespace ADL.Demos.UnityObservatory.Editor
                 backdrop,
                 "Left Structural Support Mast",
                 center + new Vector3(-4.25f, -2.55f, -1.65f),
-                3.2f
+                1.35f
             );
             EnsureSupportMast(
                 scene,
                 backdrop,
                 "Right Structural Support Mast",
                 center + new Vector3(4.25f, -2.55f, -1.65f),
-                3.2f
+                1.35f
             );
             EnsureSupportMast(
                 scene,
                 backdrop,
                 "Central Structural Support Mast",
                 center + new Vector3(0f, -2.85f, -0.15f),
-                3.6f
+                1.5f
             );
 
             GameObject platform = EnsurePrimitive(scene, backdrop, "Lower Service Platform", PrimitiveType.Cube);
@@ -855,12 +971,14 @@ namespace ADL.Demos.UnityObservatory.Editor
             platform.transform.localRotation = Quaternion.Euler(0f, 45f, 0f);
             platform.transform.localScale = new Vector3(3.2f, 0.08f, 1.45f);
             SetMaterial(platform, new Color(0.05f, 0.1f, 0.112f, 1f), 0.46f);
+            platform.SetActive(true);
 
             GameObject shadow = EnsurePrimitive(scene, backdrop, "Observatory Foundation Shadow", PrimitiveType.Cube);
             shadow.transform.localPosition = center + new Vector3(0f, -3.45f, 0.2f);
             shadow.transform.localRotation = Quaternion.Euler(0f, 45f, 0f);
             shadow.transform.localScale = new Vector3(4.4f, 0.025f, 2.15f);
             SetMaterial(shadow, new Color(0.01f, 0.016f, 0.018f, 1f), 0.06f);
+            shadow.SetActive(true);
         }
 
         private static void EnsureSupportMast(
@@ -875,7 +993,38 @@ namespace ADL.Demos.UnityObservatory.Editor
             mast.transform.localPosition = localPosition;
             mast.transform.localRotation = Quaternion.identity;
             mast.transform.localScale = new Vector3(0.12f, height, 0.12f);
+            mast.SetActive(true);
             SetMaterial(mast, new Color(0.04f, 0.075f, 0.085f, 1f), 0.38f);
+        }
+
+        private static void EnsureFoundationMass(
+            Scene scene,
+            GameObject parent,
+            string objectName,
+            Vector3 localPosition
+        )
+        {
+            GameObject foundation = EnsurePrimitive(scene, parent, objectName, PrimitiveType.Cube);
+            foundation.transform.localPosition = localPosition;
+            foundation.transform.localRotation = Quaternion.Euler(0f, 45f, 0f);
+            foundation.transform.localScale = new Vector3(1.45f, 0.46f, 1.55f);
+            foundation.SetActive(true);
+            SetMaterial(foundation, new Color(0.025f, 0.048f, 0.055f, 1f), 0.34f);
+        }
+
+        private static void EnsureCausewayGuideRail(
+            Scene scene,
+            GameObject parent,
+            string objectName,
+            Vector3 localPosition
+        )
+        {
+            GameObject rail = EnsurePrimitive(scene, parent, objectName, PrimitiveType.Cube);
+            rail.transform.localPosition = localPosition;
+            rail.transform.localRotation = Quaternion.identity;
+            rail.transform.localScale = new Vector3(0.045f, 0.035f, 2.4f);
+            rail.SetActive(true);
+            SetMaterial(rail, new Color(0.03f, 0.68f, 0.86f, 1f), 0.78f, true);
         }
 
         private static void EnsureInvestorArrivalAndDepth(Scene scene)
@@ -899,27 +1048,29 @@ namespace ADL.Demos.UnityObservatory.Editor
                 new Vector3(0.92f, 0.92f, 0.92f)
             );
 
-            EnsurePrefabChild(
+            GameObject leftStair = EnsurePrefabChild(
                 scene,
                 layer,
                 "Left Arrival Stair",
                 "Assets/Sci-Fi Styled Modular Pack/Prefabs/Stairs/stairs_big_with_emmision.prefab",
-                center + new Vector3(-5.05f, -0.18f, -2.85f),
-                Quaternion.Euler(0f, 42f, 0f),
-                new Vector3(0.42f, 0.42f, 0.42f)
+                center + new Vector3(-5.15f, -0.1f, -0.55f),
+                Quaternion.Euler(0f, 28f, 0f),
+                new Vector3(0.27f, 0.27f, 0.27f)
             );
 
-            EnsurePrefabChild(
+            GameObject rightStair = EnsurePrefabChild(
                 scene,
                 layer,
                 "Right Arrival Stair",
                 "Assets/Sci-Fi Styled Modular Pack/Prefabs/Stairs/stairs_big_with_emmision.prefab",
-                center + new Vector3(5.05f, -0.18f, -2.85f),
-                Quaternion.Euler(0f, -42f, 0f),
-                new Vector3(0.42f, 0.42f, 0.42f)
+                center + new Vector3(5.15f, -0.1f, -0.55f),
+                Quaternion.Euler(0f, -28f, 0f),
+                new Vector3(0.27f, 0.27f, 0.27f)
             );
+            leftStair.SetActive(true);
+            rightStair.SetActive(true);
 
-            EnsurePrefabChild(
+            GameObject witnessTable = EnsurePrefabChild(
                 scene,
                 layer,
                 "Left Glass Catwalk",
@@ -974,46 +1125,50 @@ namespace ADL.Demos.UnityObservatory.Editor
                 layer,
                 "Investor Witness Table",
                 "Assets/Sci-Fi Styled Modular Pack/Prefabs/Decorative elements/Tables/decorative_table_glass.prefab",
-                center + new Vector3(-4.65f, 0.16f, -3.8f),
+                center + new Vector3(-4.35f, 0.16f, 0.35f),
                 Quaternion.Euler(0f, 24f, 0f),
-                new Vector3(0.52f, 0.52f, 0.52f)
+                new Vector3(0.42f, 0.42f, 0.42f)
             );
+            witnessTable.SetActive(false);
 
             for (int index = 0; index < 4; index++)
             {
-                float z = -4.62f + (index * 0.46f);
-                EnsurePrefabChild(
+                float z = -0.45f + (index * 0.36f);
+                GameObject witnessChair = EnsurePrefabChild(
                     scene,
                     layer,
                     $"Investor Witness Chair {index + 1}",
                     "Assets/Sci-Fi Styled Modular Pack/Prefabs/Decorative elements/decorative_chair.prefab",
-                    center + new Vector3(-5.52f, 0.2f, z),
+                    center + new Vector3(-5.02f, 0.2f, z),
                     Quaternion.Euler(0f, 62f, 0f),
-                    new Vector3(0.44f, 0.44f, 0.44f)
+                    new Vector3(0.34f, 0.34f, 0.34f)
                 );
+                witnessChair.SetActive(false);
             }
 
-            EnsurePrefabChild(
+            GameObject operatorDesk = EnsurePrefabChild(
                 scene,
                 layer,
                 "Operator Review Desk",
                 "Assets/ScifiOfficeLite/Prefabs/Tables/Metal/Table Metal Variant.prefab",
-                center + new Vector3(5.65f, 0.08f, -3.95f),
-                Quaternion.Euler(0f, -58f, 0f),
-                new Vector3(0.56f, 0.56f, 0.56f)
+                center + new Vector3(4.8f, 0.08f, 0.65f),
+                Quaternion.Euler(0f, -42f, 0f),
+                new Vector3(0.4f, 0.4f, 0.4f)
             );
+            operatorDesk.SetActive(false);
 
-            EnsurePrefabChild(
+            GameObject operatorChair = EnsurePrefabChild(
                 scene,
                 layer,
                 "Operator Review Chair",
                 "Assets/ScifiOfficeLite/Prefabs/Chairs and Stools/Office Chair Variant.prefab",
-                center + new Vector3(4.95f, 0.2f, -4.55f),
-                Quaternion.Euler(0f, 32f, 0f),
-                new Vector3(0.62f, 0.62f, 0.62f)
+                center + new Vector3(4.35f, 0.2f, 0.05f),
+                Quaternion.Euler(0f, 44f, 0f),
+                new Vector3(0.42f, 0.42f, 0.42f)
             );
+            operatorChair.SetActive(false);
 
-            EnsurePrimitiveRibbon(
+            GameObject floorRibbon = EnsurePrimitiveRibbon(
                 scene,
                 layer,
                 "Governance Walkway Spine",
@@ -1052,6 +1207,7 @@ namespace ADL.Demos.UnityObservatory.Editor
                 new Vector3(4.6f, 0.025f, 0.12f),
                 new Color(0.1f, 0.86f, 0.7f, 1f)
             );
+            floorRibbon.SetActive(false);
 
             EnsureTextPanel(
                 scene,
@@ -1063,9 +1219,38 @@ namespace ADL.Demos.UnityObservatory.Editor
                 0.022f,
                 new Color(0.94f, 1f, 0.84f, 1f)
             );
+
+            foreach (string hiddenFromHero in new[]
+            {
+                "Arrival Portal Glass Door",
+                "Left Arrival Stair",
+                "Right Arrival Stair",
+                "Left Glass Catwalk",
+                "Right Glass Catwalk",
+                "Investor Witness Table",
+                "Investor Witness Chair 1",
+                "Investor Witness Chair 2",
+                "Investor Witness Chair 3",
+                "Investor Witness Chair 4",
+                "Operator Review Desk",
+                "Operator Review Chair",
+                "Arrival Threshold Glow",
+                "Investor Sightline Rails",
+                "Hero Shot Floor Ribbon",
+                "Executive Proof Caption",
+                "Left Power Generator",
+                "Right Power Generator",
+            })
+            {
+                Transform hidden = layer.transform.Find(hiddenFromHero);
+                if (hidden != null)
+                {
+                    hidden.gameObject.SetActive(false);
+                }
+            }
         }
 
-        private static void EnsurePrimitiveRibbon(
+        private static GameObject EnsurePrimitiveRibbon(
             Scene scene,
             GameObject parent,
             string objectName,
@@ -1080,6 +1265,7 @@ namespace ADL.Demos.UnityObservatory.Editor
             ribbon.transform.localRotation = localRotation;
             ribbon.transform.localScale = localScale;
             SetMaterial(ribbon, color, 0.92f, true);
+            return ribbon;
         }
 
         private static void EnsureRuntimePolisProjection(Scene scene, GameObject rig, Vector3 center)
@@ -1524,9 +1710,9 @@ namespace ADL.Demos.UnityObservatory.Editor
                 architecture,
                 "Mission Big Screen",
                 "Assets/Sci-Fi Styled Modular Pack/Prefabs/Decorative elements/big_screen.prefab",
-                center + new Vector3(3.1f, 1.75f, 1.7f),
-                Quaternion.Euler(0f, -34f, 0f),
-                new Vector3(0.5f, 0.5f, 0.5f)
+                center + new Vector3(4.05f, 1.55f, 2.35f),
+                Quaternion.Euler(0f, -42f, 0f),
+                new Vector3(0.38f, 0.38f, 0.38f)
             );
 
             EnsurePrefabChild(
@@ -1589,25 +1775,27 @@ namespace ADL.Demos.UnityObservatory.Editor
                 new Vector3(0.8f, 0.8f, 0.8f)
             );
 
-            EnsurePrefabChild(
+            GameObject leftArm = EnsurePrefabChild(
                 scene,
                 architecture,
                 "Left Mechanical Telescope Arm",
                 "Assets/ScifiOfficeLite/Prefabs/Tech Accessories/Mechanical arm 1.prefab",
-                center + new Vector3(-2.75f, 0.64f, -1.8f),
+                center + new Vector3(-3.25f, 0.64f, 0.35f),
                 Quaternion.Euler(0f, 38f, 0f),
-                new Vector3(0.72f, 0.72f, 0.72f)
+                new Vector3(0.42f, 0.42f, 0.42f)
             );
+            leftArm.SetActive(false);
 
-            EnsurePrefabChild(
+            GameObject rightArm = EnsurePrefabChild(
                 scene,
                 architecture,
                 "Right Mechanical Telescope Arm",
                 "Assets/ScifiOfficeLite/Prefabs/Tech Accessories/Mechanical arm 1.prefab",
-                center + new Vector3(2.75f, 0.64f, -1.8f),
+                center + new Vector3(3.25f, 0.64f, 0.35f),
                 Quaternion.Euler(0f, -38f, 0f),
-                new Vector3(0.72f, 0.72f, 0.72f)
+                new Vector3(0.42f, 0.42f, 0.42f)
             );
+            rightArm.SetActive(false);
 
             for (int index = 0; index < 4; index++)
             {
@@ -1757,7 +1945,7 @@ namespace ADL.Demos.UnityObservatory.Editor
             if (emissive)
             {
                 material.EnableKeyword("_EMISSION");
-                material.SetColor("_EmissionColor", color * 1.8f);
+                material.SetColor("_EmissionColor", color * 0.72f);
             }
             else
             {
@@ -1768,10 +1956,10 @@ namespace ADL.Demos.UnityObservatory.Editor
         private static void EnsureAmbientLighting()
         {
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
-            RenderSettings.ambientLight = new Color(0.14f, 0.19f, 0.24f, 1f);
+            RenderSettings.ambientLight = new Color(0.045f, 0.062f, 0.078f, 1f);
             RenderSettings.fog = true;
-            RenderSettings.fogColor = new Color(0.08f, 0.16f, 0.2f, 1f);
-            RenderSettings.fogDensity = 0.003f;
+            RenderSettings.fogColor = new Color(0.028f, 0.075f, 0.1f, 1f);
+            RenderSettings.fogDensity = 0.0055f;
         }
 
         private static string AnchorName(int index)

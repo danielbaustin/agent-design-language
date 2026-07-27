@@ -1,0 +1,27 @@
+{
+  "schema": "csdlc.edit_request.v1",
+  "issue": 5665,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "881a75c46bb33eac8f92ef09b83c95ea05ef297cda5ee8abb1cb322e77db5f96",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "Record proof that the WSS feature_matrix frame is backed by the committed #5665 feature/adapter matrix artifact rather than a test-local subset.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "adl-runtime/Cargo.toml",
+        "--test",
+        "runtime_api_wss"
+      ],
+      "purpose": "Prove the authenticated Runtime API WSS feature_matrix frame serves the committed feature/adapter matrix artifact, including health-state and telemetry rows.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5665/runtime-v3-wss-focused.log"
+    }
+  }
+}

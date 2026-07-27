@@ -153,6 +153,7 @@ Examples:
   adl scheduler plan --input adl/tests/fixtures/scheduler/economics_inputs_v1.json --out artifacts/examples/scheduler-plan.json
   adl provider setup chatgpt
   adl provider setup claude
+  adl provider setup claude-opus-5
   adl provider setup openrouter
   adl provider setup bedrock
   adl provider setup z_ai

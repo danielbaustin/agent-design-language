@@ -1,0 +1,155 @@
+{
+  "issue": 5658,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5658/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5658/diagram.mmd",
+  "design_reviewer": "codex:5658-preparation-review",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5658-bound-worktree-lifecycle",
+    "owner": "codex:5658-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1785037680,
+    "expires_unix_seconds": 1785642480,
+    "heartbeat_unix_seconds": 1785037680,
+    "branch": "codex/5658-bound-worktree-lifecycle",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5658",
+      ".csdlc/locks/5658.lock",
+      ".csdlc/prepared/issues/5658",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "purpose": "Keep typed C-SDLC lifecycle writes rooted in the bound issue worktree"
+  },
+  "initial": {
+    "title": "[v0.91.8][csdlc-v2][tooling] Keep all issue lifecycle writes in the bound worktree",
+    "slug": "csdlc-bound-worktree-lifecycle-writes",
+    "version": "v0.91.8",
+    "goal": "Make typed C-SDLC v2 lifecycle writes materialize and operate from the declared bound worktree instead of dirtying the primary checkout.",
+    "required_outcome": "Binding and later doctor/validate/review/publish/closeout use the same issue worktree root, while primary-main lifecycle writes fail closed outside explicit bootstrap/read-only paths.",
+    "declared_scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "authority_boundary": [
+      "Issue #5658 owns only typed v2 lifecycle-root behavior and focused regressions",
+      "Existing issue records and #5655 are preserved",
+      "Root main cleanup is not part of implementation"
+    ],
+    "operator_constraints": [
+      "Use FastWork only",
+      "Do not write on main",
+      "No AWS",
+      "Rust binaries only; no Python or shell lifecycle wrapper"
+    ],
+    "task_boundary": "Implement the bounded C-SDLC v2 lifecycle-root repair and prove it with focused Rust tests.",
+    "deliverables": [
+      "Bound-worktree lifecycle materialization fix",
+      "Fail-closed guard for unsafe primary-main lifecycle writes",
+      "Regression covering ignored .csdlc state in a newly-created worktree"
+    ],
+    "acceptance_criteria": [
+      "AC-1: csdlc-bind materializes or verifies issue record, cards, lock, prepared artifacts, and evidence root in the declared bound worktree",
+      "AC-2: write attempts against primary main fail closed unless explicitly bootstrap/read-only",
+      "AC-3: bound-worktree doctor, validate, review, publish, and closeout use the same repository root as implementation",
+      "AC-4: a regression covers a newly-created worktree where .csdlc paths are ignored or absent",
+      "AC-5: claim, lock, and exact-revision protections remain strict"
+    ],
+    "dependencies": [
+      "Issue #5655 typed GitHub action surface remains preserved"
+    ],
+    "repo_inputs": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      "root AGENTS.md workflow rules",
+      "GitHub issue #5658"
+    ],
+    "non_goals": [
+      "No manual copying of existing issue records",
+      "No cleanup of root #5671 artifacts in this issue",
+      "No shell/Python lifecycle wrapper",
+      "No weakening claim, lock, or exact-revision protections",
+      "No AWS"
+    ],
+    "plan_summary": "Read the current v2 lifecycle root handling, add the smallest root/materialization guard and regression, run focused Rust tests on FastWork, perform exact-head review, publish, merge, and close out.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Inspect current bind/store lifecycle root behavior and locate the unsafe primary-main write path",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3"]
+      },
+      {
+        "id": "S2",
+        "action": "Implement bound-worktree materialization and fail-closed primary-main guard",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-5"]
+      },
+      {
+        "id": "S3",
+        "action": "Add focused regression for newly-created worktree with ignored or absent .csdlc state",
+        "status": "pending",
+        "acceptance_ids": ["AC-4", "AC-5"]
+      },
+      {
+        "id": "S4",
+        "action": "Run focused FastWork validation, review, publish, merge, and closeout",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"]
+      }
+    ],
+    "invariants": [
+      "The implementation root and lifecycle root must match after binding",
+      "Primary checkout on main must remain clean for non-bootstrap issue execution",
+      "Existing claim, lock, and exact-revision protections stay fail-closed"
+    ],
+    "risks": [
+      "Overbroad main-write guard could block legitimate bootstrap or read-only operations",
+      "Materialization could accidentally fork lifecycle truth instead of moving it to the bound root",
+      "Regression may need careful temp/worktree isolation to avoid local disk writes"
+    ],
+    "planning_profile": "small",
+    "stop_conditions": [
+      "Fix requires rewriting historical issue records",
+      "Fix requires weakening claim, lock, or exact-revision checks",
+      "FastWork is unavailable for worktree or Rust output",
+      "Scope expands beyond typed v2 lifecycle roots"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "csdlc-lifecycle-focused",
+        "proof_role": "Prove bound-worktree lifecycle materialization and fail-closed primary-main behavior",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "csdlc-v2",
+        "budget_seconds": 600,
+        "budget_tokens": 3000,
+        "argv": ["cargo", "test", "-p", "csdlc-v2", "gate7_lifecycle", "--test", "gate7_lifecycle"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"]
+      },
+      {
+        "lane": "diff-hygiene",
+        "proof_role": "Prove the patch is whitespace-clean",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "hygiene",
+        "budget_seconds": 60,
+        "budget_tokens": 500,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-5"]
+      }
+    ],
+    "failure_policy": "Fail closed on any lifecycle-root ambiguity, root-main write attempt outside explicit bootstrap/read-only operation, stale claim, stale digest, lock mismatch, or exact-revision mismatch.",
+    "review_prompts": [
+      "Can any execution-phase typed command still write issue lifecycle state to primary main after binding?",
+      "Does the regression prove absent ignored .csdlc state is materialized into the bound worktree?",
+      "Were claim, lock, and exact-revision protections preserved without broad bypasses?"
+    ],
+    "review_scope": "csdlc-v2/src/lifecycle.rs\ncsdlc-v2/src/store.rs\ncsdlc-v2/tests/gate7_lifecycle.rs"
+  }
+}

@@ -7,7 +7,8 @@ Wants=network-online.target
 Type=simple
 DynamicUser=yes
 EnvironmentFile=/etc/adl/runtime-v3.env
-ExecStart=/usr/local/bin/adl-runtime-kernel serve --init /etc/adl/runtime-v3.toml --continuity-root /var/lib/adl/runtime-v3/continuity
+Environment=ADL_RUNTIME_V3_LOCAL_STATE_DIR=%S/adl/runtime-v3/local-state
+ExecStart=/usr/local/bin/adl-runtime-kernel serve --init /etc/adl/runtime-v3.toml --continuity-root %S/adl/runtime-v3/continuity
 Restart=always
 RestartSec=2s
 RestartPreventExitStatus=78

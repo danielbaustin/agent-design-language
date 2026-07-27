@@ -13,6 +13,10 @@ EVENT_NAME="push"
 MODE="full_authoritative_default_features"
 PROFILE="all"
 MERGE_HELPER="$ADL_DIR/tools/merge_coverage_summaries.py"
+COVERAGE_REPORT_MODE="${ADL_AUTHORITATIVE_COVERAGE_REPORT_MODE:-run-and-report}"
+COVERAGE_SHARD_COUNT="${ADL_AUTHORITATIVE_COVERAGE_SHARD_COUNT:-1}"
+COVERAGE_SHARD_INDEX="${ADL_AUTHORITATIVE_COVERAGE_SHARD_INDEX:-1}"
+IMPORT_PROFRAW_DIR="${ADL_AUTHORITATIVE_COVERAGE_IMPORT_PROFRAW_DIR:-}"
 
 default_coverage_build_root() {
   if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
@@ -99,6 +103,14 @@ case "$PROFILE" in
     ;;
 esac
 
+case "$COVERAGE_REPORT_MODE" in
+  run-and-report|collect|report) ;;
+  *)
+    echo "invalid coverage report mode: $COVERAGE_REPORT_MODE" >&2
+    exit 2
+    ;;
+esac
+
 if [ "$EVENT_NAME" = "pull_request" ] && [ "$AUTHORITY" = "pr_policy_surface_tooling_only" ]; then
   MODE="bounded_policy_surface_pr"
 fi
@@ -107,12 +119,29 @@ if [[ ! "$BUILD_JOBS" =~ ^[1-9][0-9]*$ ]]; then
   echo "invalid coverage cargo build job count: $BUILD_JOBS" >&2
   exit 2
 fi
+if [[ ! "$COVERAGE_SHARD_COUNT" =~ ^[1-9][0-9]*$ ]]; then
+  echo "invalid coverage shard count: $COVERAGE_SHARD_COUNT" >&2
+  exit 2
+fi
+if [[ ! "$COVERAGE_SHARD_INDEX" =~ ^[1-9][0-9]*$ ]]; then
+  echo "invalid coverage shard index: $COVERAGE_SHARD_INDEX" >&2
+  exit 2
+fi
+if (( COVERAGE_SHARD_INDEX > COVERAGE_SHARD_COUNT )); then
+  echo "coverage shard index $COVERAGE_SHARD_INDEX exceeds shard count $COVERAGE_SHARD_COUNT" >&2
+  exit 2
+fi
+if [ "$COVERAGE_REPORT_MODE" = report ] && [ "$PROFILE" = all ]; then
+  echo "coverage report mode cannot use profile=all; report workspace and runtime profiles explicitly" >&2
+  exit 2
+fi
 
 if [ "$PRINT_PLAN" = true ]; then
   printf 'authority=%s\n' "$AUTHORITY"
   printf 'event_name=%s\n' "$EVENT_NAME"
   printf 'mode=%s\n' "$MODE"
   printf 'profile=%s\n' "$PROFILE"
+  printf 'report_mode=%s\n' "$COVERAGE_REPORT_MODE"
   printf 'build_root=%s\n' "$COVERAGE_BUILD_ROOT"
   printf 'run_id=%s\n' "$COVERAGE_RUN_ID"
   printf 'profile_root=%s\n' "$COVERAGE_BUILD_ROOT/target/llvm-cov-target/$COVERAGE_RUN_ID"
@@ -121,7 +150,10 @@ if [ "$PRINT_PLAN" = true ]; then
   printf 'output_root=%s\n' "$COVERAGE_OUTPUT_ROOT"
   printf 'test_threads=%s\n' "$TEST_THREADS"
   printf 'partitions=%s\n' "$PARTITION_COUNT"
+  printf 'shard_count=%s\n' "$COVERAGE_SHARD_COUNT"
+  printf 'shard_index=%s\n' "$COVERAGE_SHARD_INDEX"
   printf 'build_jobs=%s\n' "$BUILD_JOBS"
+  printf 'import_profraw_dir=%s\n' "$IMPORT_PROFRAW_DIR"
   printf 'skip_patterns=%s\n' "$SKIP_PATTERNS_RAW"
   if [ "$MODE" = "full_authoritative_default_features" ]; then
     printf 'features=default\n'
@@ -217,7 +249,7 @@ profile_compile_ready=false
 
 run_workspace_coverage_partitions() {
   local partition_logs="$COVERAGE_BUILD_ROOT/partition-logs/${coverage_profile_namespace}-${COVERAGE_RUN_ID}"
-  local partition pids=() statuses=() test_filter_args=()
+  local partition selected_count=0 pids=() statuses=() test_filter_args=()
   profile_compile_ready=false
   local skip_pattern
   for skip_pattern in "${SKIP_PATTERNS[@]}"; do
@@ -264,6 +296,10 @@ run_workspace_coverage_partitions() {
   profile_compile_ready=true
 
   for ((partition = 1; partition <= PARTITION_COUNT; partition++)); do
+    if (( ((partition - 1) % COVERAGE_SHARD_COUNT) + 1 != COVERAGE_SHARD_INDEX )); then
+      continue
+    fi
+    selected_count=$((selected_count + 1))
     (
       LLVM_PROFILE_FILE="$CARGO_LLVM_COV_TARGET_DIR/${coverage_profile_namespace}-${COVERAGE_RUN_ID}-partition-${partition}-%p.profraw" \
         "${coverage_command[@]}" \
@@ -273,6 +309,10 @@ run_workspace_coverage_partitions() {
     ) &
     pids+=("$!")
   done
+  if (( selected_count == 0 )); then
+    echo "coverage shard $COVERAGE_SHARD_INDEX/$COVERAGE_SHARD_COUNT selected no partitions from $PARTITION_COUNT" >&2
+    return 2
+  fi
 
   local status=0 pid partition_status
   for pid in "${pids[@]}"; do
@@ -285,7 +325,9 @@ run_workspace_coverage_partitions() {
   done
 
   for ((partition = 1; partition <= PARTITION_COUNT; partition++)); do
-    cat "$partition_logs/partition-${partition}.log"
+    if [ -f "$partition_logs/partition-${partition}.log" ]; then
+      cat "$partition_logs/partition-${partition}.log"
+    fi
   done
   return "$status"
 }
@@ -308,6 +350,60 @@ prepare_coverage_environment() {
   # workflow. The file is generated locally by the installed binary.
   # shellcheck disable=SC1090
   source "$env_path"
+}
+
+prepare_coverage_report_environment() {
+  local manifest_path="${1:-}"
+  local env_path="$COVERAGE_OUTPUT_ROOT/${coverage_profile_namespace}-coverage-env.sh"
+
+  if [ -n "$manifest_path" ]; then
+    (
+      cd "$(dirname "$manifest_path")"
+      cargo llvm-cov show-env --sh
+    ) > "$env_path"
+  else
+    cargo llvm-cov show-env --sh > "$env_path"
+  fi
+  # shellcheck disable=SC1090
+  source "$env_path"
+}
+
+compile_instrumented_profile() {
+  local compile_status=0
+  local compile_command=() argument
+  for argument in "${coverage_command[@]}"; do
+    if [ "$argument" != "--no-fail-fast" ]; then
+      compile_command+=("$argument")
+    fi
+  done
+  "${compile_command[@]}" --no-run || compile_status=$?
+  return "$compile_status"
+}
+
+delete_existing_profraw_profiles() {
+  local cleanup_status=0
+  find "$CARGO_LLVM_COV_TARGET_DIR" -type f -name '*.profraw' -delete || cleanup_status=$?
+  return "$cleanup_status"
+}
+
+import_profraw_profiles() {
+  if [ -z "$IMPORT_PROFRAW_DIR" ]; then
+    return 0
+  fi
+  if [ ! -d "$IMPORT_PROFRAW_DIR" ]; then
+    echo "coverage imported profraw directory is missing: $IMPORT_PROFRAW_DIR" >&2
+    return 2
+  fi
+  local imported=0
+  while IFS= read -r -d '' profile_path; do
+    cp "$profile_path" "$CARGO_LLVM_COV_TARGET_DIR/"
+    imported=$((imported + 1))
+  done < <(find "$IMPORT_PROFRAW_DIR" -type f -name '*.profraw' -print0)
+  if (( imported == 0 )); then
+    echo "coverage imported profraw directory contains no profiles: $IMPORT_PROFRAW_DIR" >&2
+    return 2
+  fi
+  echo "Imported coverage profraw profiles: $imported"
 }
 
 run_profile() {
@@ -333,15 +429,37 @@ run_profile() {
   fi
   rm -f "$summary_path"
 
-  prepare_coverage_environment "$manifest_path" || operation_status=$?
+  if [ "$COVERAGE_REPORT_MODE" = report ]; then
+    prepare_coverage_report_environment "$manifest_path" || operation_status=$?
+  else
+    prepare_coverage_environment "$manifest_path" || operation_status=$?
+  fi
   if (( operation_status != 0 )); then
     echo "Authoritative coverage preparation failed for $profile: $operation_status; partitions and report command suppressed" >&2
     return "$operation_status"
   fi
 
-  run_workspace_coverage_partitions || status=$?
-  if [ "$profile_compile_ready" != true ]; then
-    return "$status"
+  if [ "$COVERAGE_REPORT_MODE" = report ]; then
+    compile_instrumented_profile || status=$?
+    if (( status != 0 )); then
+      echo "Authoritative coverage report compile failed for $profile: $status" >&2
+      return "$status"
+    fi
+    delete_existing_profraw_profiles || cleanup_status=$?
+    if (( cleanup_status != 0 )); then
+      echo "Authoritative coverage report profile cleanup failed for $profile: $cleanup_status" >&2
+      return "$cleanup_status"
+    fi
+    import_profraw_profiles || return $?
+    profile_compile_ready=true
+  else
+    run_workspace_coverage_partitions || status=$?
+    if [ "$profile_compile_ready" != true ]; then
+      return "$status"
+    fi
+    if [ "$COVERAGE_REPORT_MODE" = collect ]; then
+      return "$status"
+    fi
   fi
 
   if [ -n "$manifest_path" ]; then

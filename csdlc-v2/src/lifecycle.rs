@@ -145,6 +145,185 @@ fn terminally_released(store: &Store, local: &crate::IssueRecord) -> Result<bool
     Ok(true)
 }
 
+fn copy_dir_recursive(source: &Path, destination: &Path) -> Result<()> {
+    let Ok(source_metadata) = fs::symlink_metadata(source) else {
+        return Ok(());
+    };
+    if source_metadata.file_type().is_symlink() {
+        return Err(V2Error::new(
+            ErrorCode::UnsafeCheckout,
+            "bound lifecycle materialization refuses symlinked source state",
+        ));
+    }
+    if !source_metadata.is_dir() {
+        return Err(V2Error::new(
+            ErrorCode::UnsafeCheckout,
+            "bound lifecycle materialization source must be a directory",
+        ));
+    }
+    if fs::symlink_metadata(destination).is_ok_and(|metadata| metadata.file_type().is_symlink()) {
+        return Err(V2Error::new(
+            ErrorCode::UnsafeCheckout,
+            "bound lifecycle materialization refuses symlinked target state",
+        ));
+    }
+    fs::create_dir_all(destination)?;
+    for entry in fs::read_dir(source)? {
+        let entry = entry?;
+        let source_path = entry.path();
+        let destination_path = destination.join(entry.file_name());
+        let metadata = fs::symlink_metadata(&source_path)?;
+        if metadata.file_type().is_symlink() {
+            return Err(V2Error::new(
+                ErrorCode::UnsafeCheckout,
+                "bound lifecycle materialization refuses symlinked source entries",
+            ));
+        }
+        if fs::symlink_metadata(&destination_path)
+            .is_ok_and(|target| target.file_type().is_symlink())
+        {
+            return Err(V2Error::new(
+                ErrorCode::UnsafeCheckout,
+                "bound lifecycle materialization refuses symlinked target entries",
+            ));
+        }
+        if metadata.is_dir() {
+            copy_dir_recursive(&source_path, &destination_path)?;
+        } else {
+            if let Some(parent) = destination_path.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            fs::copy(&source_path, &destination_path)?;
+        }
+    }
+    Ok(())
+}
+
+fn directory_matches_recursive(source: &Path, destination: &Path) -> Result<bool> {
+    let source_metadata = match fs::symlink_metadata(source) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            return match fs::symlink_metadata(destination) {
+                Ok(metadata) if metadata.file_type().is_symlink() => Err(V2Error::new(
+                    ErrorCode::UnsafeCheckout,
+                    "bound lifecycle materialization refuses symlinked state",
+                )),
+                Ok(metadata) if metadata.is_dir() => {
+                    Ok(fs::read_dir(destination)?.next().is_none())
+                }
+                Ok(_) => Ok(false),
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(true),
+                Err(error) => Err(error.into()),
+            };
+        }
+        Err(error) => return Err(error.into()),
+    };
+    let destination_metadata = match fs::symlink_metadata(destination) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(false),
+        Err(error) => return Err(error.into()),
+    };
+    if source_metadata.file_type().is_symlink() || destination_metadata.file_type().is_symlink() {
+        return Err(V2Error::new(
+            ErrorCode::UnsafeCheckout,
+            "bound lifecycle materialization refuses symlinked state",
+        ));
+    }
+    if source_metadata.is_dir() != destination_metadata.is_dir() {
+        return Ok(false);
+    }
+    if source_metadata.is_dir() {
+        let mut source_entries = std::collections::BTreeSet::new();
+        for entry in fs::read_dir(source)? {
+            let entry = entry?;
+            source_entries.insert(entry.file_name());
+        }
+        let mut destination_entries = std::collections::BTreeSet::new();
+        for entry in fs::read_dir(destination)? {
+            let entry = entry?;
+            destination_entries.insert(entry.file_name());
+        }
+        if source_entries != destination_entries {
+            return Ok(false);
+        }
+        for entry in source_entries {
+            if !directory_matches_recursive(&source.join(&entry), &destination.join(&entry))? {
+                return Ok(false);
+            }
+        }
+        return Ok(true);
+    }
+    Ok(fs::read(source)? == fs::read(destination)?)
+}
+
+fn require_matching_tree(source: &Path, destination: &Path, message: &str) -> Result<()> {
+    if destination.exists() && !directory_matches_recursive(source, destination)? {
+        return Err(V2Error::new(ErrorCode::ReconciliationRequired, message));
+    }
+    Ok(())
+}
+
+fn materialize_bound_issue_state(source: &Store, target_root: &Path, issue: u64) -> Result<Store> {
+    let target = Store::new(target_root.to_path_buf());
+    if source.root().canonicalize()? == target.root().canonicalize()? {
+        return Ok(target);
+    }
+
+    let source_record = source.load_record(issue)?;
+    let target_issue_dir = target.issue_dir(issue);
+    if target_issue_dir.exists() {
+        let target_record = target.load_record(issue)?;
+        if target_record.issue != issue
+            || target_record.repository != source_record.repository
+            || target_record.initialization_digest != source_record.initialization_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "bound worktree already contains different issue lifecycle state",
+            ));
+        }
+        require_matching_tree(
+            &source.issue_dir(issue),
+            &target_issue_dir,
+            "bound worktree already contains stale issue lifecycle state",
+        )?;
+    } else {
+        copy_dir_recursive(&source.issue_dir(issue), &target_issue_dir)?;
+    }
+
+    let source_prepared = source
+        .root()
+        .join(".csdlc/prepared/issues")
+        .join(issue.to_string());
+    let target_prepared = target
+        .root()
+        .join(".csdlc/prepared/issues")
+        .join(issue.to_string());
+    require_matching_tree(
+        &source_prepared,
+        &target_prepared,
+        "bound worktree already contains different prepared lifecycle state",
+    )?;
+    copy_dir_recursive(&source_prepared, &target_prepared)?;
+    let source_evidence = source
+        .root()
+        .join(".csdlc/evidence")
+        .join(issue.to_string());
+    let target_evidence = target
+        .root()
+        .join(".csdlc/evidence")
+        .join(issue.to_string());
+    require_matching_tree(
+        &source_evidence,
+        &target_evidence,
+        "bound worktree already contains different evidence lifecycle state",
+    )?;
+    copy_dir_recursive(&source_evidence, &target_evidence)?;
+    fs::create_dir_all(&target_evidence)?;
+    fs::create_dir_all(target.root().join(".csdlc/locks"))?;
+    Ok(target)
+}
+
 pub(crate) fn initialize_issue(
     store: &Store,
     mut request: BootstrapRequest,
@@ -358,13 +537,19 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
     };
     let wanted_text = wanted_compare.to_string_lossy();
     let listed = git::worktrees(store.root())?;
-    if let Some((branch, _)) = listed.iter().find(|(_, path)| path == &wanted_text) {
+    let listed_for_wanted = listed.iter().find(|(_, path)| path == &wanted_text);
+    if let Some((branch, _)) = listed_for_wanted {
         if branch != &request.branch {
             return Err(V2Error::new(
                 ErrorCode::ClaimCollision,
                 "worktree is bound to a different branch",
             ));
         }
+    } else if !issue_local && wanted.exists() {
+        return Err(V2Error::new(
+            ErrorCode::ClaimCollision,
+            "requested worktree path exists but is not a registered Git worktree",
+        ));
     }
     if let Some((_, path)) = listed.iter().find(|(branch, _)| branch == &request.branch) {
         if path != &wanted_text {
@@ -410,6 +595,58 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
         }
     }
     request.claim.validate(&request.claim.id, unix_now()?)?;
+    let created = !issue_local && !wanted.exists();
+    if !issue_local && !created {
+        let target = Store::new(wanted.clone());
+        if let Ok(target_record) = target.load_record(request.issue) {
+            let source_record = store.load_record(request.issue)?;
+            if target_record.phase == crate::LifecyclePhase::Bound
+                && target_record.claim.as_ref() == Some(&request.claim)
+            {
+                if target_record.issue != request.issue
+                    || target_record.repository != source_record.repository
+                    || target_record.initialization_digest != source_record.initialization_digest
+                {
+                    return Err(V2Error::new(
+                        ErrorCode::ReconciliationRequired,
+                        "bound worktree already contains different issue lifecycle state",
+                    ));
+                }
+                let source_prepared = store
+                    .root()
+                    .join(".csdlc/prepared/issues")
+                    .join(request.issue.to_string());
+                let target_prepared = target
+                    .root()
+                    .join(".csdlc/prepared/issues")
+                    .join(request.issue.to_string());
+                require_matching_tree(
+                    &source_prepared,
+                    &target_prepared,
+                    "bound worktree already contains different prepared lifecycle state",
+                )?;
+                let source_evidence = store
+                    .root()
+                    .join(".csdlc/evidence")
+                    .join(request.issue.to_string());
+                let target_evidence = target
+                    .root()
+                    .join(".csdlc/evidence")
+                    .join(request.issue.to_string());
+                require_matching_tree(
+                    &source_evidence,
+                    &target_evidence,
+                    "bound worktree already contains different evidence lifecycle state",
+                )?;
+                return Ok(BindResult {
+                    created: false,
+                    branch: request.branch,
+                    worktree: request.worktree,
+                    claim_id: request.claim.id,
+                });
+            }
+        }
+    }
     let mut record = store.load_record(request.issue)?;
     let expected_digest = record.digest.clone();
     let was_bound = record.phase == crate::LifecyclePhase::Bound;
@@ -444,7 +681,6 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
             "issue phase cannot be bound",
         ));
     }
-    let created = !issue_local && !wanted.exists();
     if created {
         let base = request.base_branch.as_str();
         let branch = request.branch.as_str();
@@ -460,7 +696,15 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
             operation: "bind".into(),
         });
         record.digest = crate::store::record_digest(&record)?;
-        if let Err(error) = store.replace_record(request.issue, &expected_digest, &record) {
+        let commit_result = (|| {
+            let commit_store = if issue_local {
+                Store::new(store.root().to_path_buf())
+            } else {
+                materialize_bound_issue_state(store, &wanted, request.issue)?
+            };
+            commit_store.replace_record(request.issue, &expected_digest, &record)
+        })();
+        if let Err(error) = commit_result {
             if created {
                 let remove = git::run(
                     store.root(),
