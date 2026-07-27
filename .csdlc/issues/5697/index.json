@@ -3,13 +3,13 @@
   "issue": 5697,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "3136fba73cac6b4c3b5d21d27082421952f27694f45781bfa414a7b43e35a90b",
-  "phase": "published",
-  "generation": 3,
-  "digest": "308c57d6604437cd6dc2b28480bd40421ffc0233c9b3189bf86f606ae6a83010",
+  "phase": "implemented",
+  "generation": 4,
+  "digest": "679229d1d4378e1da444410a61ae45139431b5607834b8629224d61e0f513c86",
   "claim": {
     "id": "claim-5697-chronosense-trusted-time",
     "owner": "codex:issue-5697-chronosense-trusted-time",
-    "generation": 3,
+    "generation": 4,
     "acquired_unix_seconds": 1785172070,
     "expires_unix_seconds": 1785776870,
     "heartbeat_unix_seconds": 1785172070,
@@ -30,39 +30,8 @@
     "purpose": "Land the Runtime v3 Chronosense trusted_time ordering correction in follow-up issue #5697 without mutating terminal #5663 lifecycle state"
   },
   "review_assignment": null,
-  "review": {
-    "reviewer": "subagent:Pascal:019fa4a1-1e0f-7fa1-8d35-3eb25b9d5521",
-    "scope": [
-      "adl-runtime-kernel/Cargo.toml",
-      "adl-runtime-kernel/Cargo.lock",
-      "adl-runtime-kernel/src/assembly.rs",
-      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
-      "adl-runtime-kernel/src/governed_operations.rs",
-      "adl-runtime-kernel/src/operations.rs",
-      "adl-runtime-kernel/tests/assembly.rs",
-      ".csdlc/issues/5697",
-      ".csdlc/evidence/5697",
-      ".csdlc/issues/5663",
-      ".csdlc/issues/5664",
-      ".csdlc/issues/5691"
-    ],
-    "reviewed_revision": "git-blake3:f7c7f79a40499cb03f4b4730b9ee0fb76ee80900:54cdafda6016908f1002f35101a07b2a170e3b621f73aea3aec84093b908c266",
-    "findings": [],
-    "residual_risks": [],
-    "completed": true,
-    "non_substantive_proof": null
-  },
-  "publication": {
-    "repository": "danielbaustin/agent-design-language",
-    "issue": 5697,
-    "pull_request": 5699,
-    "url": "https://github.com/danielbaustin/agent-design-language/pull/5699",
-    "base": "main",
-    "head": "codex/5697-chronosense-trusted-time",
-    "revision": "git-blake3:e12022f9f0ae19dd3ed5008c704dc8c5eb6e9f70:ce28d51f552277081cfd7a32e7d2e4d5baa3546e4135018accea7f07bd30021e",
-    "draft": false,
-    "observed_state": "open"
-  },
+  "review": null,
+  "publication": null,
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -76,34 +45,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "04fac19095dc927c5879427439f7ba122a9eb126d9dce93a09a58d24e00a66b1",
+      "values_digest": "705de20f4a9db0a73c1a030f7dcac76cbf122560bb4ddca73e881597a2185831",
       "rendered_digest": "32a3aac06fa98f3fd813d88e9b8535d1e0bb5763f4f5737adf1b93806dfd6fe2",
       "ast_digest": "4099148b24fec409bc2d6a4d5567b3fe116594a6b65647e74b04eee37d1bbbe6"
     },
     "stp": {
-      "values_digest": "7af7571b6efe1748f24394992372fafd35f4cc6b132ed90d8364770a8ba1faee",
+      "values_digest": "8099ae030d4a8b9d11fb63817e4f2b570348b2327c7ac20230eb2d490b5c838b",
       "rendered_digest": "10afa87c2801f1a86017049829c540ae662906358ee171ce218e9353984abe7a",
       "ast_digest": "8fe31204735501c97d2f1cffa83ab74b817b81670a18a37e089f5b6c176b04be"
     },
     "spp": {
-      "values_digest": "53c1a7986676499a739ff408157b4ae46fb35af8561ee048fb15d65a84218156",
+      "values_digest": "2d443041553ac5a813cf4288ab4d72142521a9565a167cea848fed0d10afcdbf",
       "rendered_digest": "c9197f36add26fe96a1b79d542541f1d73d17b1018c4a616833ffcef147bfcaf",
       "ast_digest": "20ffc017740d306ae66272adf5a0636730d6fca5b5534761f781ea834d65083d"
     },
     "vpp": {
-      "values_digest": "04e4a0559b8d4deda0aa3eaca3621a04d2f50113728426492dac27f19af509e5",
+      "values_digest": "9f943f9b30ea52601640db5b17f4d2838719113d95cd7cbcf39d4b92b90db440",
       "rendered_digest": "00941d3ca49caa5363bf6c701e68a0df12de15ca848681653379e60d447596de",
       "ast_digest": "1d691e7d3bb23b49561bf172d0e10c37cbf4546951ee7d32acb3821ee098b072"
     },
     "srp": {
-      "values_digest": "d8049d8f49a1f950eb942ec4778542a61fb0866eab77b038fa3b7a53ffedc280",
-      "rendered_digest": "dc1c0615f1c215e495daa5b58b808f9b06d1e470e24e4d8205051e85a04989ed",
-      "ast_digest": "945be257878ef4cc3f1d36e63629bfa20bb797c420a002b588c5c79667828955"
+      "values_digest": "9dc8cdb29d3fa302b021c8d08632f487f58ee893516a01b86c8908ec9f9426ef",
+      "rendered_digest": "57b552fdb9d1018452685d54c5118a852cff8d5d97523af7bc9098370429a74d",
+      "ast_digest": "7dc9a1dfdb88ebae2c2e8e2e3e8e50dca841449db4c3d7ea5441c2c6e53523bf"
     },
     "sor": {
-      "values_digest": "23b8294ceb57fb0aa5a13e95dbe2f7bd538ac488fdcd9b9a710922ab615c28ca",
-      "rendered_digest": "7afc7a2722a6d13361b8f6bf9ed6944ed9b2c37b0f40ee261adb8d983311c0d2",
-      "ast_digest": "2ade35bf5feeb4a65602006b00fcf171cb77c341c50667c8b0bdd693ad775c7d"
+      "values_digest": "cd5ff0ac0cf9afe0e6c55544576679574c936c9ad7a64ded85033e35406352d5",
+      "rendered_digest": "ddede7e46372864d76a025efe8a290daab80962e5657028283048b4d1a28d509",
+      "ast_digest": "6cb09ff00b029a14c2c00018fa7c30735be8a15e62f6dadc7036d5170dbaa365"
     }
   },
   "transitions": [
@@ -141,6 +110,13 @@
       "to": "published",
       "actor": "codex:issue-5697-chronosense-trusted-time",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "PR #5699 CI failed adl-runtime-v3-fast because the earlier all-target Clippy workaround added forbidden repo-local adl-resilience path dependency to adl-runtime-kernel/Cargo.toml. Recover to implemented so the bounded CI repair can be made, revalidated, re-reviewed, and republished truthfully."
     }
   ],
   "audit": [
@@ -185,6 +161,13 @@
       "actor": "codex:issue-5697-chronosense-trusted-time",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "PR #5699 CI failed adl-runtime-v3-fast because the earlier all-target Clippy workaround added forbidden repo-local adl-resilience path dependency to adl-runtime-kernel/Cargo.toml. Recover to implemented so the bounded CI repair can be made, revalidated, re-reviewed, and republished truthfully.",
+      "operation": "recover_review"
     }
   ]
 }

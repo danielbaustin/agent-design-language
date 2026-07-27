@@ -7,15 +7,15 @@
     "title": "[v0.91.8][runtime-v3][time] Make Chronosense consume trusted_time at startup",
     "slug": "chronosense-trusted-time",
     "version": "v0.91.8",
-    "generation": 3
+    "generation": 4
   },
-  "status": "pre_phase",
+  "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "adl-runtime-kernel/Cargo.toml\nadl-runtime-kernel/Cargo.lock\nadl-runtime-kernel/src/assembly.rs\nadl-runtime-kernel/src/bin/adl-runtime-kernel.rs\nadl-runtime-kernel/src/governed_operations.rs\nadl-runtime-kernel/src/operations.rs\nadl-runtime-kernel/tests/assembly.rs\n.csdlc/issues/5697\n.csdlc/evidence/5697\n.csdlc/issues/5663\n.csdlc/issues/5664\n.csdlc/issues/5691",
-      "review_revision": "git-blake3:f7c7f79a40499cb03f4b4730b9ee0fb76ee80900:54cdafda6016908f1002f35101a07b2a170e3b621f73aea3aec84093b908c266",
-      "reviewer": "subagent:Pascal:019fa4a1-1e0f-7fa1-8d35-3eb25b9d5521",
+      "review_scope": "",
+      "review_revision": null,
+      "reviewer": null,
       "review_prompts": [
         "Does production Chronosense consume RecorderTrustedTime backed by the live RuntimeRecorder rather than SystemTime?",
         "Does Chronosense fail closed before trusted_time qualification and return monotonic qualified time afterward?",
@@ -25,7 +25,7 @@
       ],
       "findings": [],
       "residual_risk": [],
-      "review_result": "pass"
+      "review_result": "pre_review"
     }
   }
 }
