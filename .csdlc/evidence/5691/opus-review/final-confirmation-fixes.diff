@@ -1,0 +1,1188 @@
+diff --git a/adl-runtime-kernel/Cargo.toml b/adl-runtime-kernel/Cargo.toml
+index 282ec4f84..5ed7ed19a 100644
+--- a/adl-runtime-kernel/Cargo.toml
++++ b/adl-runtime-kernel/Cargo.toml
+@@ -1,46 +1,46 @@
+ [package]
+ name = "adl-runtime-kernel"
+ version = "0.92.0"
+ edition = "2021"
+ license = "MIT OR Apache-2.0"
+ description = "Independent supervised component runtime kernel proof for ADL"
+ 
+ [dependencies]
+ async-trait = "0.1"
+ axum = { version = "0.8", features = ["ws"] }
+ axum-server = { version = "0.8", features = ["tls-rustls"] }
+ blake3 = "1"
+ ed25519-dalek = "3"
+ futures = "0.3"
+ hex = "0.4"
+ lru = "0.16"
+ petgraph = "0.7"
+ rsntp = { version = "4.1.2", default-features = false }
+ semver = { version = "1", features = ["serde"] }
+ serde = { version = "1.0", features = ["derive"] }
+ serde_json = "1.0"
+ sysinfo = { version = "0.38.4", default-features = false, features = ["component", "disk", "network", "system"] }
+ thiserror = "1.0"
+ tokio = { version = "1", features = ["fs", "io-util", "macros", "net", "process", "rt-multi-thread", "signal", "sync", "time"] }
+ tokio-rustls = "0.26"
+ tokio-util = { version = "0.7", features = ["rt"] }
+ toml = "0.9"
+ tracing = "0.1"
++tracing-subscriber = "0.3"
+ uuid = { version = "1", features = ["v4"] }
+ 
+ [target.'cfg(unix)'.dependencies]
+ libc = "0.2"
+ 
+ [dev-dependencies]
+ rcgen = "0.14"
+ tempfile = "3"
+-tracing-subscriber = "0.3"
+ tokio-tungstenite = { version = "0.29", features = ["rustls-tls-webpki-roots"] }
+ 
+ [[bin]]
+ name = "adl-runtime-kernel"
+ path = "src/bin/adl-runtime-kernel.rs"
+ 
+ [[bin]]
+ name = "adl-runtime-shadow-fixture"
+ path = "src/bin/adl-runtime-shadow-fixture.rs"
+diff --git a/adl-runtime-kernel/src/bin/adl-runtime-kernel.rs b/adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
+index 6ba371d56..df45532e3 100644
+--- a/adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
++++ b/adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
+@@ -299,193 +299,216 @@ async fn main() -> ExitCode {
+                     eprintln!("runtime Observatory read token is missing");
+                     return ExitCode::from(78);
+                 }
+             };
+             if service
+                 .set_observatory_bearer_token(&observatory_token)
+                 .is_err()
+             {
+                 eprintln!("runtime Observatory read token is invalid");
+                 return ExitCode::from(78);
+             }
+             if service
+                 .set_public_base_url(&init.api.public_base_url)
+                 .is_err()
+             {
+                 eprintln!("runtime public HTTPS base is invalid");
+                 return ExitCode::from(78);
+             }
+             service.set_weather_stale_after(std::time::Duration::from_millis(
+                 init.weather.sample_millis.saturating_mul(2),
+             ));
+             let pressure_checkpoint_deadline =
+                 std::time::Duration::from_millis(init.weather.checkpoint_deadline_millis);
+             let api_shutdown = tokio_util::sync::CancellationToken::new();
+             let vector_config = match RuntimeVectorConfig::from_runtime_environment(
+                 operation_state_identity.clone(),
+                 instance_id.clone(),
+                 runtime_revision(),
+             ) {
+                 Ok(config) => config,
+                 Err(error) => {
+                     eprintln!("runtime observability configuration invalid: {error}");
+                     return ExitCode::from(78);
+                 }
+             };
+-            let observability = match RuntimeVectorPipeline::start(vector_config) {
++            let mut observability = match RuntimeVectorPipeline::start(vector_config) {
+                 Ok(pipeline) => pipeline,
+                 Err(error) => {
+                     eprintln!("runtime observability pipeline unavailable: {error}");
+                     return ExitCode::from(78);
+                 }
+             };
+             recorder.set_observability_pipeline(observability.snapshot());
+             let mut shutdown_signal = match ShutdownSignalReceiver::register() {
+                 Ok(signal) => signal,
+                 Err(error) => {
+                     eprintln!("runtime signal handler registration failed: {error}");
+                     return ExitCode::from(78);
+                 }
+             };
+             let listener = match tokio::net::TcpListener::bind(socket_addrs.as_slice()).await {
+                 Ok(listener) => listener,
+                 Err(error) => {
+                     eprintln!("runtime control API bind failed: {error}");
+                     return ExitCode::from(70);
+                 }
+             };
+             let mut handle = match Kernel::new(assembly.topology, recorder.clone())
+                 .start()
+                 .await
+             {
+                 Ok(handle) => handle,
+                 Err(error) => {
+                     eprintln!("runtime kernel failed to start: {error}");
+                     return ExitCode::from(70);
+                 }
+             };
+             let (ready_sender, ready_receiver) = tokio::sync::oneshot::channel();
+             let mut api = tokio::spawn(serve_control_listener_until_ready(
+                 service.clone(),
+                 listener,
+                 tls,
+                 ready_sender,
+                 api_shutdown.clone().cancelled_owned(),
+             ));
+             let bound_address = match ready_receiver.await {
+                 Ok(address) => address,
+                 Err(_) => {
+                     eprintln!("runtime control API failed before readiness");
+                     let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
+                     drain_control_api(&mut api).await;
+                     return ExitCode::from(70);
+                 }
+             };
+             eprintln!(
+                 "{}",
+                 adl_runtime_kernel::control_ready_event(
+                     &instance_id,
+                     bound_address,
+                     &init.api.public_base_url,
+                 )
+             );
+             let mut pressure_retry_at = None;
++            let mut observability_tick = tokio::time::interval(std::time::Duration::from_secs(1));
++            observability_tick.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
+             'serve: loop {
++                if let Err(error) = observability.poll_health() {
++                    recorder.set_observability_pipeline(observability.snapshot());
++                    eprintln!("runtime observability pipeline failed: {error}");
++                    api_shutdown.cancel();
++                    let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
++                    drain_control_api(&mut api).await;
++                    break 'serve ExitCode::from(70);
++                }
+                 recorder.set_observability_pipeline(observability.snapshot());
+                 let weather_service = service.clone();
+                 let pressure_delay = pressure_retry_at.take();
+                 let pressure_monitor = async {
+                     if let Some(deadline) = pressure_delay {
+                         tokio::time::sleep_until(deadline).await;
+                     }
+                     monitor_until_stop(
+                         init.weather.clone(),
+                         SysinfoWeatherObserver::for_path(&continuity_root),
+                         move |report| weather_service.set_weather_report(report),
+                     )
+                     .await
+                 };
+                 tokio::pin!(pressure_monitor);
+-                let trigger = tokio::select! {
+-                pressure = &mut pressure_monitor => {
+-                    eprintln!("event=resource_pressure_stop state={:?} decision={:?}",
+-                        pressure.resource_state, pressure.shutdown_decision);
+-                    TerminalTrigger::Pressure
+-                },
+-                signal = shutdown_signal.recv() => {
+-                    if let Err(error) = signal {
+-                        eprintln!("runtime signal handler failed: {error}");
+-                        api_shutdown.cancel();
+-                        let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
+-                        drain_control_api(&mut api).await;
+-                        break 'serve ExitCode::from(70);
+-                    }
+-                    TerminalTrigger::Signal
+-                },
+-                request = shutdown_requests.recv() => {
+-                    let Some(request) = request else {
+-                        eprintln!("runtime checkpoint shutdown channel closed");
+-                        api_shutdown.cancel();
+-                        let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
+-                        drain_control_api(&mut api).await;
+-                        break 'serve ExitCode::from(70);
+-                    };
+-                    TerminalTrigger::Signed(request)
+-                },
+-                exit = handle.wait_for_exit() => match exit {
+-                    Ok(exit) => {
+-                        api_shutdown.cancel();
+-                        drain_control_api(&mut api).await;
+-                        break 'serve process_exit(exit);
++                let trigger = 'wait: loop {
++                    tokio::select! {
++                    pressure = &mut pressure_monitor => {
++                        eprintln!("event=resource_pressure_stop state={:?} decision={:?}",
++                            pressure.resource_state, pressure.shutdown_decision);
++                        break 'wait TerminalTrigger::Pressure;
+                     },
+-                    Err(error) => {
+-                        eprintln!("runtime kernel task failed: {error}");
+-                        api_shutdown.cancel();
++                    _ = observability_tick.tick() => {
++                        if let Err(error) = observability.poll_health() {
++                            recorder.set_observability_pipeline(observability.snapshot());
++                            eprintln!("runtime observability pipeline failed: {error}");
++                            api_shutdown.cancel();
++                            let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
++                            drain_control_api(&mut api).await;
++                            break 'serve ExitCode::from(70);
++                        }
++                        recorder.set_observability_pipeline(observability.snapshot());
++                    },
++                    signal = shutdown_signal.recv() => {
++                        if let Err(error) = signal {
++                            eprintln!("runtime signal handler failed: {error}");
++                            api_shutdown.cancel();
++                            let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
++                            drain_control_api(&mut api).await;
++                            break 'serve ExitCode::from(70);
++                        }
++                        break 'wait TerminalTrigger::Signal;
++                    },
++                    request = shutdown_requests.recv() => {
++                        let Some(request) = request else {
++                            eprintln!("runtime checkpoint shutdown channel closed");
++                            api_shutdown.cancel();
++                            let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
++                            drain_control_api(&mut api).await;
++                            break 'serve ExitCode::from(70);
++                        };
++                        break 'wait TerminalTrigger::Signed(request);
++                    },
++                    exit = handle.wait_for_exit() => match exit {
++                        Ok(exit) => {
++                            api_shutdown.cancel();
++                            drain_control_api(&mut api).await;
++                            break 'serve process_exit(exit);
++                        },
++                        Err(error) => {
++                            eprintln!("runtime kernel task failed: {error}");
++                            api_shutdown.cancel();
++                            let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
++                            drain_control_api(&mut api).await;
++                            break 'serve ExitCode::from(70);
++                        }
++                    },
++                    result = &mut api => {
++                        match result {
++                            Ok(Ok(())) => eprintln!("runtime control API stopped unexpectedly"),
++                            Ok(Err(error)) => eprintln!("runtime control API failed: {error}"),
++                            Err(error) => eprintln!("runtime control API task failed: {error}"),
++                        }
+                         let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
+-                        drain_control_api(&mut api).await;
+                         break 'serve ExitCode::from(70);
+-                    }
+-                },
+-                result = &mut api => {
+-                    match result {
+-                        Ok(Ok(())) => eprintln!("runtime control API stopped unexpectedly"),
+-                        Ok(Err(error)) => eprintln!("runtime control API failed: {error}"),
+-                        Err(error) => eprintln!("runtime control API task failed: {error}"),
+-                    }
+-                    let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
+-                    break 'serve ExitCode::from(70);
+-                },
++                    },
++                    };
+                 };
+ 
+                 let standard_deadline = std::time::Duration::from_secs(5);
+                 let shutdown_grace = std::time::Duration::from_secs(10);
+                 let (label, deadline, grace, retry_pressure, mut request) = match trigger {
+                     TerminalTrigger::Pressure => (
+                         "pressure",
+                         pressure_checkpoint_deadline,
+                         shutdown_grace,
+                         true,
+                         None,
+                     ),
+                     TerminalTrigger::Signal => {
+                         ("signal", standard_deadline, shutdown_grace, false, None)
+                     }
+                     TerminalTrigger::Signed(request) => (
+                         "signed",
+                         standard_deadline,
+                         request.grace,
+                         false,
+                         Some(request),
+                     ),
+                 };
+                 let terminal_result = service
+                     .serialize_terminal_checkpoint(&mut continuity, deadline)
+                     .await;
+                 if let Err(error) = terminal_result {
+                     if retry_pressure {
+                         eprintln!("runtime pressure continuity checkpoint failed: {error}");
+                         if !service.reopen_admission_if_no_terminal() {
+                             eprintln!(
+                                 "event=resource_pressure_wait reason=terminal_request_pending"
+                             );
+                         }
+                         pressure_retry_at = Some(
+diff --git a/adl-runtime-kernel/src/observability.rs b/adl-runtime-kernel/src/observability.rs
+index 499d238ce..f981e273d 100644
+--- a/adl-runtime-kernel/src/observability.rs
++++ b/adl-runtime-kernel/src/observability.rs
+@@ -1,59 +1,65 @@
+ use std::{
+     collections::BTreeMap,
+     fs::{self, File, OpenOptions},
+     io::{BufRead, BufReader, Write},
+     path::{Path, PathBuf},
+     process::{Child, Command, Stdio},
+     sync::{
+         atomic::{AtomicU64, Ordering},
+         Arc, Mutex,
+     },
+     thread::sleep,
+     time::{Duration, Instant, SystemTime},
+ };
+ 
+ use adl_runtime_kernel::{
+     ObservabilityHealth, ObservabilityPipelineSnapshot, RUNTIME_MASTER_LOG_AUDIT_SCHEMA,
+     RUNTIME_MASTER_LOG_RECORD_SCHEMA, RUNTIME_OBSERVABILITY_PIPELINE_SCHEMA,
+ };
+ use serde::{Deserialize, Serialize};
+ use serde_json::{json, Value};
+ use tracing::{
+     field::{Field, Visit},
+     span, Event, Id, Metadata, Subscriber,
+ };
++use tracing_subscriber::{
++    layer::{Context, Layer},
++    prelude::*,
++    registry::LookupSpan,
++    Registry,
++};
+ 
+ pub const VECTOR_COMPONENT_VERSION: &str = "0.56.0";
+ pub const VECTOR_COMPONENT_BINARY_REF: &str = ".adl/bin/vector";
+ #[cfg(windows)]
+ pub const VECTOR_COMPONENT_WINDOWS_BINARY_REF: &str = ".adl/bin/vector.exe";
+ 
+ const STARTUP_OBSERVATION: Duration = Duration::from_millis(350);
+ const DEFAULT_DRAIN_TIMEOUT: Duration = Duration::from_millis(5_000);
+ const DEFAULT_OTLP_TIMEOUT_MILLIS: u64 = 5_000;
+ 
+ #[derive(Clone, Debug)]
+ pub struct RuntimeVectorConfig {
+     pub vector_binary: PathBuf,
+     pub state_root: PathBuf,
+     pub runtime_instance_id: String,
+     pub guardian_id: String,
+     pub process_id: u32,
+     pub revision: String,
+     pub service_name: String,
+     pub lifecycle_suite: String,
+     pub lifecycle_run: String,
+     pub lifecycle_cycle: String,
+     pub otlp_endpoint: Option<String>,
+     pub otlp_timeout_millis: u64,
+     pub drain_timeout: Duration,
+ }
+ 
+ impl RuntimeVectorConfig {
+     pub fn from_runtime_environment(
+         state_root: PathBuf,
+         runtime_instance_id: String,
+         revision: String,
+     ) -> Result<Self, String> {
+         if !state_root.is_absolute() {
+             return Err("runtime_vector_state_root_must_be_absolute".to_owned());
+@@ -97,249 +103,301 @@ impl RuntimeVectorConfig {
+                 .ok()
+                 .filter(|value| !value.trim().is_empty())
+                 .unwrap_or_else(|| "adl-runtime-v3".to_owned()),
+             lifecycle_suite: std::env::var("ADL_RUNTIME_LIFECYCLE_SUITE")
+                 .ok()
+                 .filter(|value| !value.trim().is_empty())
+                 .unwrap_or_else(|| "runtime".to_owned()),
+             lifecycle_run: std::env::var("ADL_RUNTIME_LIFECYCLE_RUN")
+                 .ok()
+                 .filter(|value| !value.trim().is_empty())
+                 .unwrap_or_else(|| "runtime-run".to_owned()),
+             lifecycle_cycle: std::env::var("ADL_RUNTIME_LIFECYCLE_CYCLE")
+                 .ok()
+                 .filter(|value| !value.trim().is_empty())
+                 .unwrap_or_else(|| "runtime-cycle".to_owned()),
+             otlp_endpoint,
+             otlp_timeout_millis,
+             drain_timeout,
+         })
+     }
+ }
+ 
+ pub struct RuntimeVectorPipeline {
+     child: Option<Child>,
+     ingress: Arc<Mutex<File>>,
+     sequence: Arc<AtomicU64>,
+     config: RuntimeVectorConfig,
+     master_log_path: PathBuf,
+     audit_path: PathBuf,
+     last_failure: Option<String>,
+     drain_complete: bool,
+ }
+ 
+ impl RuntimeVectorPipeline {
+     pub fn start(config: RuntimeVectorConfig) -> Result<Self, String> {
++        Self::start_inner(config, true)
++    }
++
++    #[cfg(test)]
++    #[allow(dead_code)]
++    pub fn start_without_subscriber_for_test(config: RuntimeVectorConfig) -> Result<Self, String> {
++        Self::start_inner(config, false)
++    }
++
++    fn start_inner(config: RuntimeVectorConfig, install_subscriber: bool) -> Result<Self, String> {
+         verify_vector_binary(&config.vector_binary)?;
+         let root = config.state_root.join("observability");
+         for relative in [
+             "config",
+             "ingress",
+             "durable",
+             "audit",
+             "vector-data",
+             "logs",
+         ] {
+             fs::create_dir_all(root.join(relative)).map_err(|_| "state_root_unavailable")?;
+         }
+         let root = root.canonicalize().map_err(|_| "state_root_unavailable")?;
+         let ingress_path = root.join("ingress/runtime-v3.jsonl");
+         let master_log_path = root.join("durable/master.log.jsonl");
+         let audit_path = root.join("audit/master-log-audit.json");
+         let config_path = root.join("config/runtime-v3-vector.json");
+         let rendered = render_vector_config(&root, &config);
+         write_json_atomic(&config_path, &rendered).map_err(|_| "vector_config_write_failed")?;
+         validate_vector_config(&config.vector_binary, &config_path, &root)?;
+         let next_sequence = next_sequence_from_log(&ingress_path).unwrap_or(0);
+         let ingress = Arc::new(Mutex::new(
+             OpenOptions::new()
+                 .create(true)
+                 .append(true)
+                 .open(&ingress_path)
+                 .map_err(|_| "runtime_vector_ingress_unavailable")?,
+         ));
+         let sequence = Arc::new(AtomicU64::new(next_sequence));
+-        tracing::subscriber::set_global_default(RuntimeTracingSubscriber::new(
+-            ingress.clone(),
+-            sequence.clone(),
+-            config.clone(),
+-        ))
+-        .map_err(|_| "runtime_tracing_subscriber_already_installed")?;
++        if install_subscriber {
++            tracing::subscriber::set_global_default(Registry::default().with(
++                RuntimeTracingLayer::new(ingress.clone(), sequence.clone(), config.clone()),
++            ))
++            .map_err(|_| "runtime_tracing_subscriber_already_installed")?;
++        }
+         let stdout = append_file(&root.join("logs/vector.stdout.log"))
+             .map_err(|_| "runtime_vector_log_unavailable")?;
+         let stderr = append_file(&root.join("logs/vector.stderr.log"))
+             .map_err(|_| "runtime_vector_log_unavailable")?;
+         let mut child = Command::new(&config.vector_binary)
+             .arg("--config-json")
+             .arg(&config_path)
+             .arg("--require-healthy")
+             .arg("true")
+             .arg("--log-format")
+             .arg("json")
+             .arg("--graceful-shutdown-limit-secs")
+             .arg(config.drain_timeout.as_secs().max(1).to_string())
+             .stdin(Stdio::null())
+             .stdout(Stdio::from(stdout))
+             .stderr(Stdio::from(stderr))
+             .spawn()
+             .map_err(|_| "vector_binary_missing_or_not_executable")?;
+         let child_pid = child.id();
+         tracing::info!(
+             target: "adl_runtime_kernel",
+             component = "observability",
+             operation = "vector_pipeline_started",
+             reason = "vector_child_supervised",
+             vector_pid = child_pid,
+             vector_version = VECTOR_COMPONENT_VERSION,
+             "Runtime v3 Vector observability pipeline started"
+         );
+         sleep(STARTUP_OBSERVATION);
+         if let Some(status) = child
+             .try_wait()
+             .map_err(|_| "vector_child_health_unknown")?
+         {
+             return Err(format!("vector_startup_failed:{status}"));
+         }
+         Ok(Self {
+             child: Some(child),
+             ingress,
+             sequence,
+             config,
+             master_log_path,
+             audit_path,
+             last_failure: None,
+             drain_complete: false,
+         })
+     }
+ 
+     pub fn snapshot(&self) -> ObservabilityPipelineSnapshot {
+         ObservabilityPipelineSnapshot {
+             schema: RUNTIME_OBSERVABILITY_PIPELINE_SCHEMA.to_owned(),
+             health: if self.last_failure.is_some() {
+                 ObservabilityHealth::Degraded {
+                     reason: adl_runtime_kernel::ObservabilityDegradation::ExporterUnavailable,
+                 }
+             } else {
+                 ObservabilityHealth::Ready
+             },
+             runtime_instance_id: self.config.runtime_instance_id.clone(),
+             vector_pid: self.child.as_ref().map(Child::id),
+             vector_version: VECTOR_COMPONENT_VERSION.to_owned(),
+             master_log_ref: self.master_log_path.to_string_lossy().into_owned(),
+             log_audit_ref: self.audit_path.to_string_lossy().into_owned(),
+             otlp_endpoint: self.config.otlp_endpoint.clone(),
+             otlp_timeout_millis: self.config.otlp_timeout_millis,
+             sequence_next: self.sequence.load(Ordering::SeqCst),
+             drain_complete: self.drain_complete,
+             last_failure: self.last_failure.clone(),
+         }
+     }
+ 
++    pub fn poll_health(&mut self) -> Result<(), String> {
++        let Some(child) = self.child.as_mut() else {
++            if self.drain_complete {
++                return Ok(());
++            }
++            let failure = self
++                .last_failure
++                .clone()
++                .unwrap_or_else(|| "vector_child_missing".to_owned());
++            self.last_failure = Some(failure.clone());
++            return Err(failure);
++        };
++        match child.try_wait() {
++            Ok(Some(status)) => {
++                let failure = format!("vector_child_exited:{status}");
++                self.last_failure = Some(failure.clone());
++                Err(failure)
++            }
++            Ok(None) => Ok(()),
++            Err(_) => {
++                let failure = "vector_child_health_unknown".to_owned();
++                self.last_failure = Some(failure.clone());
++                Err(failure)
++            }
++        }
++    }
++
+     pub fn audit_master_log(
+         &self,
+         platform: &str,
+         suite: &str,
+     ) -> std::io::Result<MasterLogAuditReport> {
+         audit_master_log_file(
+             &self.master_log_path,
+             platform,
+             suite,
+             &self.config.revision,
+         )
+     }
+ 
++    #[cfg(test)]
++    #[allow(dead_code)]
++    pub fn master_log_path_for_test(&self) -> &Path {
++        &self.master_log_path
++    }
++
+     pub fn shutdown(&mut self) {
+         if self.drain_complete {
+             return;
+         }
+         let drain_sequence = self.sequence.load(Ordering::SeqCst);
+         tracing::info!(
+             target: "adl_runtime_kernel",
+             component = "observability",
+             operation = "observability_drain_complete",
+             reason = "shutdown_drained",
+             drain = true,
+             "Runtime v3 observability drain complete"
+         );
+         if let Ok(mut ingress) = self.ingress.lock() {
+             let _ = ingress.flush();
+             let _ = ingress.sync_data();
+         }
+         self.drain_complete = self.wait_for_master_sequence(drain_sequence);
+         if !self.drain_complete {
+             self.last_failure = Some("master_log_drain_incomplete".to_owned());
+         }
+         let _ = self
+             .audit_master_log(&current_platform(), &self.config.lifecycle_suite)
+             .and_then(|report| write_json_atomic(&self.audit_path, &report));
+         self.terminate_vector();
+     }
+ 
+     fn wait_for_master_sequence(&self, sequence: u64) -> bool {
+         let deadline = Instant::now() + self.config.drain_timeout;
+         while Instant::now() < deadline {
+             if master_log_contains_sequence(&self.master_log_path, sequence) {
+                 return true;
+             }
+             sleep(Duration::from_millis(50));
+         }
+         false
+     }
+ 
+     fn terminate_vector(&mut self) {
+         let Some(mut child) = self.child.take() else {
+             return;
+         };
+         #[cfg(unix)]
+         unsafe {
+             let _ = libc::kill(child.id() as i32, libc::SIGTERM);
+         }
+         #[cfg(not(unix))]
+         {
+             let _ = child.kill();
+         }
+         let deadline = Instant::now() + self.config.drain_timeout;
+         while Instant::now() < deadline {
+             match child.try_wait() {
+                 Ok(Some(_)) => return,
+                 Ok(None) => sleep(Duration::from_millis(50)),
+                 Err(_) => break,
+             }
+         }
+         let _ = child.kill();
+         let _ = child.wait();
+     }
++
++    #[cfg(test)]
++    #[allow(dead_code)]
++    pub fn stop_vector_for_test(&mut self) {
++        if let Some(child) = self.child.as_mut() {
++            let _ = child.kill();
++            let _ = child.wait();
++        }
++    }
+ }
+ 
+ impl Drop for RuntimeVectorPipeline {
+     fn drop(&mut self) {
+         self.shutdown();
+     }
+ }
+ 
+ #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+ pub struct MasterLogAuditReport {
+     pub schema: String,
+     pub status: String,
+     pub platform: String,
+     pub suite: String,
+     pub revision: String,
+     pub master_log_sha256: String,
+     pub record_count: u64,
+     pub malformed_records: u64,
+     pub missing_required_fields: u64,
+     pub sequence_gaps: u64,
+     pub error_events: u64,
+     pub degraded_events: u64,
+     pub unexplained_restarts: u64,
+     pub incomplete_drains: u64,
+ }
+ 
+ pub fn audit_master_log_file(
+     path: &Path,
+     platform: &str,
+     suite: &str,
+     revision: &str,
+ ) -> std::io::Result<MasterLogAuditReport> {
+     let bytes = fs::read(path)?;
+     let master_log_sha256 = sha256_hex(&bytes);
+     let reader = BufReader::new(bytes.as_slice());
+@@ -510,176 +568,208 @@ pub fn render_vector_config(root: &Path, config: &RuntimeVectorConfig) -> Value
+         );
+         sinks.insert(
+             "runtime_v3_otlp".to_owned(),
+             json!({
+                 "type": "opentelemetry",
+                 "inputs": ["runtime_v3_redacted", "runtime_v3_metrics"],
+                 "protocol": {
+                     "type": "http",
+                     "uri": uri,
+                     "encoding": {"codec": "otlp"}
+                 },
+                 "healthcheck": {"enabled": true},
+                 "acknowledgements": {"enabled": true},
+                 "buffer": {"type": "disk", "max_size": 268435488, "when_full": "block"},
+                 "request": {"timeout_secs": config.otlp_timeout_millis.div_ceil(1_000).max(1)}
+             }),
+         );
+     }
+     json!({
+         "data_dir": path("vector-data"),
+         "healthchecks": {"enabled": true, "require_healthy": true},
+         "sources": {
+             "runtime_v3_ingress": {
+                 "type": "file",
+                 "include": [path("ingress/runtime-v3.jsonl")],
+                 "read_from": "beginning",
+             "fingerprint": {"strategy": "device_and_inode"}
+             }
+         },
+         "transforms": transforms,
+         "sinks": sinks
+     })
+ }
+ 
+ #[derive(Clone)]
+-struct RuntimeTracingSubscriber {
++struct RuntimeTracingLayer {
+     ingress: Arc<Mutex<File>>,
+     sequence: Arc<AtomicU64>,
+     config: RuntimeVectorConfig,
+ }
+ 
+-impl RuntimeTracingSubscriber {
++impl RuntimeTracingLayer {
+     fn new(
+         ingress: Arc<Mutex<File>>,
+         sequence: Arc<AtomicU64>,
+         config: RuntimeVectorConfig,
+     ) -> Self {
+         Self {
+             ingress,
+             sequence,
+             config,
+         }
+     }
+ 
+     fn write_record(
+         &self,
+         metadata: &Metadata<'_>,
+         mut fields: BTreeMap<String, Value>,
+         span_id: Option<u64>,
+         parent_span_id: Option<u64>,
++        trace_id: Option<String>,
+     ) {
+         let sequence = self.sequence.fetch_add(1, Ordering::SeqCst);
++        let trace_id = trace_id
++            .or_else(|| string_field(&fields, "correlation_id"))
++            .unwrap_or_else(|| format!("runtime-trace-{}", self.config.runtime_instance_id));
+         let operation = string_field(&fields, "operation")
+             .or_else(|| string_field(&fields, "event"))
+             .unwrap_or_else(|| metadata.name().to_owned());
+         let component =
+             string_field(&fields, "component").unwrap_or_else(|| metadata.target().to_owned());
+         let reason = string_field(&fields, "reason").unwrap_or_else(|| operation.clone());
+         let error_chain = string_field(&fields, "error")
+             .or_else(|| string_field(&fields, "error_chain"))
+             .unwrap_or_default();
+         fields.insert(
+             "runtime_event_count".to_owned(),
+             Value::Number(serde_json::Number::from(1)),
+         );
+         let record = json!({
+             "schema": RUNTIME_MASTER_LOG_RECORD_SCHEMA,
+             "timestamp": format!("unix:{}", epoch_millis_now()),
+             "timestamp_unix_millis": epoch_millis_now(),
+             "severity": metadata.level().as_str(),
+             "level": metadata.level().as_str(),
+             "target": metadata.target(),
+             "runtime_instance_id": self.config.runtime_instance_id,
+             "guardian_id": self.config.guardian_id,
+             "process_id": self.config.process_id,
+             "process_kind": "runtime_kernel",
+             "service_name": self.config.service_name,
+             "lifecycle_suite": self.config.lifecycle_suite,
+             "lifecycle_run": self.config.lifecycle_run,
+             "lifecycle_cycle": self.config.lifecycle_cycle,
+             "component": component,
+             "operation": operation,
+             "reason": reason,
+             "error_chain": error_chain,
+             "revision": self.config.revision,
+             "sequence": sequence,
+             "runtime_event_count": 1,
+-            "trace_id": string_field(&fields, "correlation_id").unwrap_or_else(|| format!("runtime-trace-{}", self.config.runtime_instance_id)),
++            "trace_id": trace_id,
+             "span_id": span_id.unwrap_or(sequence),
+             "parent_span_id": parent_span_id,
+             "fields": fields
+         });
+         if let Ok(mut file) = self.ingress.lock() {
+             let _ = serde_json::to_writer(&mut *file, &record);
+             let _ = file.write_all(b"\n");
+             let _ = file.flush();
+         }
+     }
+ }
+ 
+-impl Subscriber for RuntimeTracingSubscriber {
+-    fn enabled(&self, _metadata: &Metadata<'_>) -> bool {
+-        true
+-    }
++#[derive(Clone, Debug)]
++struct SpanLogContext {
++    span_id: u64,
++    parent_span_id: Option<u64>,
++    trace_id: String,
++}
+ 
+-    fn new_span(&self, attrs: &span::Attributes<'_>) -> Id {
+-        let span_id = self.sequence.load(Ordering::SeqCst);
++impl<S> Layer<S> for RuntimeTracingLayer
++where
++    S: Subscriber + for<'lookup> LookupSpan<'lookup>,
++{
++    fn on_new_span(&self, attrs: &span::Attributes<'_>, id: &Id, ctx: Context<'_, S>) {
+         let mut visitor = JsonFieldVisitor::default();
+         attrs.record(&mut visitor);
++        let parent_context = attrs
++            .parent()
++            .and_then(|parent| ctx.span(parent))
++            .or_else(|| ctx.lookup_current())
++            .and_then(|span| span.extensions().get::<SpanLogContext>().cloned());
++        let trace_id = string_field(&visitor.fields, "correlation_id")
++            .or_else(|| {
++                parent_context
++                    .as_ref()
++                    .map(|context| context.trace_id.clone())
++            })
++            .unwrap_or_else(|| format!("runtime-trace-{}", self.config.runtime_instance_id));
++        let span_context = SpanLogContext {
++            span_id: id.into_u64(),
++            parent_span_id: parent_context.as_ref().map(|context| context.span_id),
++            trace_id,
++        };
++        if let Some(span) = ctx.span(id) {
++            span.extensions_mut().insert(span_context.clone());
++        }
+         self.write_record(
+             attrs.metadata(),
+             visitor.fields,
+-            Some(span_id),
+-            attrs.parent().map(Id::into_u64),
++            Some(span_context.span_id),
++            span_context.parent_span_id,
++            Some(span_context.trace_id),
+         );
+-        Id::from_u64(span_id)
+     }
+ 
+-    fn record(&self, _span: &Id, _values: &span::Record<'_>) {}
+-
+-    fn record_follows_from(&self, _span: &Id, _follows: &Id) {}
+-
+-    fn event(&self, event: &Event<'_>) {
++    fn on_event(&self, event: &Event<'_>, ctx: Context<'_, S>) {
+         let mut visitor = JsonFieldVisitor::default();
+         event.record(&mut visitor);
+-        self.write_record(event.metadata(), visitor.fields, None, None);
++        let span_context = ctx
++            .event_span(event)
++            .and_then(|span| span.extensions().get::<SpanLogContext>().cloned());
++        self.write_record(
++            event.metadata(),
++            visitor.fields,
++            span_context.as_ref().map(|context| context.span_id),
++            span_context
++                .as_ref()
++                .and_then(|context| context.parent_span_id),
++            span_context.map(|context| context.trace_id),
++        );
+     }
+-
+-    fn enter(&self, _span: &Id) {}
+-
+-    fn exit(&self, _span: &Id) {}
+ }
+ 
+ #[derive(Default)]
+ struct JsonFieldVisitor {
+     fields: BTreeMap<String, Value>,
+ }
+ 
+ impl Visit for JsonFieldVisitor {
+     fn record_i64(&mut self, field: &Field, value: i64) {
+         self.fields
+             .insert(field.name().to_owned(), Value::Number(value.into()));
+     }
+ 
+     fn record_u64(&mut self, field: &Field, value: u64) {
+         self.fields
+             .insert(field.name().to_owned(), Value::Number(value.into()));
+     }
+ 
+     fn record_bool(&mut self, field: &Field, value: bool) {
+         self.fields
+             .insert(field.name().to_owned(), Value::Bool(value));
+     }
+ 
+     fn record_str(&mut self, field: &Field, value: &str) {
+         self.fields.insert(
+             field.name().to_owned(),
+             Value::String(redact_field(field.name(), value)),
+         );
+     }
+ 
+     fn record_debug(&mut self, field: &Field, value: &dyn std::fmt::Debug) {
+         self.fields.insert(
+             field.name().to_owned(),
+             Value::String(redact_field(field.name(), &format!("{value:?}"))),
+         );
+diff --git a/adl-runtime-kernel/tests/observability.rs b/adl-runtime-kernel/tests/observability.rs
+index 244f87ff0..feb4f1098 100644
+--- a/adl-runtime-kernel/tests/observability.rs
++++ b/adl-runtime-kernel/tests/observability.rs
+@@ -1,46 +1,48 @@
+ #[allow(dead_code)]
+ #[path = "../src/observability.rs"]
+ mod runtime_observability;
+ 
+ use std::{
+     fs,
+     path::{Path, PathBuf},
+     process::Command,
+ };
+ 
+-use adl_runtime_kernel::{RUNTIME_MASTER_LOG_AUDIT_SCHEMA, RUNTIME_MASTER_LOG_RECORD_SCHEMA};
++use adl_runtime_kernel::{
++    ObservabilityHealth, RUNTIME_MASTER_LOG_AUDIT_SCHEMA, RUNTIME_MASTER_LOG_RECORD_SCHEMA,
++};
+ use runtime_observability::{
+     audit_master_log_file, render_vector_config, RuntimeVectorConfig, RuntimeVectorPipeline,
+ };
+ use serde_json::{json, Value};
+ 
+ #[test]
+ fn master_log_auditor_accepts_wp12_clean_report_shape() {
+     let root = test_root("clean-audit");
+     let log_path = root.join("master.log.jsonl");
+     write_records(
+         &log_path,
+         &[
+             record(0, "info", "kernel_starting", "boot", "wp-12"),
+             record(
+                 1,
+                 "info",
+                 "observability_drain_complete",
+                 "shutdown_drained",
+                 "wp-12",
+             ),
+         ],
+     );
+ 
+     let report = audit_master_log_file(&log_path, "macos", "wp-12", "rev-a").unwrap();
+ 
+     assert_eq!(report.schema, RUNTIME_MASTER_LOG_AUDIT_SCHEMA);
+     assert_eq!(report.status, "pass");
+     assert_eq!(report.platform, "macos");
+     assert_eq!(report.suite, "wp-12");
+     assert_eq!(report.revision, "rev-a");
+     assert_eq!(report.record_count, 2);
+     assert_eq!(report.master_log_sha256.len(), 64);
+     assert_eq!(report.malformed_records, 0);
+     assert_eq!(report.missing_required_fields, 0);
+     assert_eq!(report.sequence_gaps, 0);
+@@ -107,90 +109,144 @@ fn vector_config_declares_durable_master_otlp_and_bounded_buffers() {
+     );
+     let rendered_text = serde_json::to_string(&rendered).unwrap();
+     assert!(rendered_text.contains("adl_runtime_v3"));
+     assert!(!rendered_text.contains("aws_secret_access_key"));
+     assert!(!rendered_text.contains("aws_access_key_id"));
+ }
+ 
+ #[test]
+ fn pinned_vector_validates_generated_master_log_config() {
+     let root = test_root("vector-validate");
+     let config = vector_config(root.clone(), None);
+     let rendered = render_vector_config(&root, &config);
+     let config_path = root.join("runtime-v3-vector.json");
+     fs::write(&config_path, serde_json::to_vec_pretty(&rendered).unwrap()).unwrap();
+ 
+     let output = Command::new(&config.vector_binary)
+         .arg("validate")
+         .arg("--no-environment")
+         .arg("--deny-warnings")
+         .arg("--config-json")
+         .arg(&config_path)
+         .output()
+         .unwrap();
+     assert!(
+         output.status.success(),
+         "{}{}",
+         String::from_utf8_lossy(&output.stdout),
+         String::from_utf8_lossy(&output.stderr)
+     );
+ }
+ 
+ #[test]
+ fn runtime_vector_pipeline_writes_auditable_master_log() {
+     let root = test_root("runtime-vector-e2e");
+     let mut pipeline = RuntimeVectorPipeline::start(vector_config(root, None)).unwrap();
++    let span = tracing::info_span!(
++        target: "adl_runtime_kernel",
++        "observability_parent",
++        component = "test",
++        operation = "parent_span",
++        reason = "ok",
++        correlation_id = "trace-test-span"
++    );
++    {
++        let _guard = span.enter();
++        tracing::info!(
++            target: "adl_runtime_kernel",
++            component = "test",
++            operation = "child_observation",
++            reason = "ok",
++            "observability child event"
++        );
++    }
+     tracing::info!(
+         target: "adl_runtime_kernel",
+         component = "test",
+         operation = "test_observation",
+         reason = "ok",
+         "observability test event"
+     );
+     pipeline.shutdown();
+ 
+     let report = pipeline.audit_master_log("macos", "wp-12").unwrap();
+ 
+     assert_eq!(report.schema, RUNTIME_MASTER_LOG_AUDIT_SCHEMA);
+     assert_eq!(report.status, "pass");
+     assert!(report.record_count >= 2);
+     assert_eq!(report.malformed_records, 0);
+     assert_eq!(report.sequence_gaps, 0);
+     assert_eq!(report.error_events, 0);
+     assert_eq!(report.degraded_events, 0);
+     assert_eq!(report.unexplained_restarts, 0);
+     assert_eq!(report.incomplete_drains, 0);
++
++    let records = read_records(pipeline.master_log_path_for_test());
++    let parent = records
++        .iter()
++        .find(|record| record["operation"] == "parent_span")
++        .expect("parent span record");
++    let child = records
++        .iter()
++        .find(|record| record["operation"] == "child_observation")
++        .expect("child event record");
++    let parent_span_id = parent["span_id"].as_u64().expect("parent span id");
++    assert!(parent_span_id > 0);
++    assert_eq!(parent["trace_id"], "trace-test-span");
++    assert_eq!(child["trace_id"], "trace-test-span");
++    assert_eq!(child["span_id"], parent_span_id);
++    assert_eq!(child["parent_span_id"], parent["parent_span_id"]);
++}
++
++#[test]
++fn runtime_vector_pipeline_fails_closed_when_vector_child_exits() {
++    let root = test_root("runtime-vector-health");
++    let mut pipeline =
++        RuntimeVectorPipeline::start_without_subscriber_for_test(vector_config(root, None))
++            .unwrap();
++    assert!(pipeline.poll_health().is_ok());
++
++    pipeline.stop_vector_for_test();
++    let error = pipeline.poll_health().unwrap_err();
++    assert!(error.starts_with("vector_child_exited:"));
++
++    let snapshot = pipeline.snapshot();
++    assert!(matches!(
++        snapshot.health,
++        ObservabilityHealth::Degraded { .. }
++    ));
++    assert_eq!(snapshot.last_failure, Some(error));
+ }
+ 
+ #[test]
+ fn windows_vector_installer_contract_is_pinned_and_verified() {
+     let script =
+         fs::read_to_string(repo_root().join("adl/tools/install_vector_component.ps1")).unwrap();
+ 
+     assert!(script.contains("vector-0.56.0-x86_64-pc-windows-msvc.zip"));
+     assert!(script.contains("67611f6b18c3b267ab26402c0dddc59e59bbccd762c7c0ea5f654f4ec4e6bf42"));
+     assert!(script.contains("Get-FileHash -Algorithm SHA256"));
+     assert!(script.contains("Expand-Archive"));
+     assert!(script.contains(".adl/bin/vector.exe"));
+     assert!(script.contains("adl.component.provenance.v1"));
+ }
+ 
+ #[test]
+ fn shell_installer_routes_native_windows_to_powershell_installer() {
+     let script =
+         fs::read_to_string(repo_root().join("adl/tools/install_vector_component.sh")).unwrap();
+ 
+     assert!(script.contains("install_vector_component.ps1"));
+     assert!(script.contains("MINGW*|MSYS*|CYGWIN*"));
+ }
+ 
+ fn vector_config(root: PathBuf, otlp_endpoint: Option<String>) -> RuntimeVectorConfig {
+     let vector_binary = std::env::var("ADL_RUNTIME_V3_VECTOR_BINARY")
+         .map(PathBuf::from)
+         .unwrap_or_else(|_| repo_root().join(".adl/bin/vector"));
+     RuntimeVectorConfig {
+         vector_binary,
+         state_root: root.clone(),
+         runtime_instance_id: "runtime-test-instance".to_owned(),
+         guardian_id: "guardian-test".to_owned(),
+         process_id: std::process::id(),
+         revision: "test-revision".to_owned(),
+@@ -211,51 +267,59 @@ fn record(sequence: u64, severity: &str, operation: &str, reason: &str, suite: &
+         "timestamp_unix_millis": 1_700_000_000_000_u64 + sequence,
+         "severity": severity,
+         "level": severity,
+         "target": "adl_runtime_kernel",
+         "runtime_instance_id": "runtime-test-instance",
+         "guardian_id": "guardian-test",
+         "process_id": std::process::id(),
+         "process_kind": "runtime_kernel",
+         "service_name": "adl-runtime-v3",
+         "lifecycle_suite": suite,
+         "lifecycle_run": "run-1",
+         "lifecycle_cycle": "cycle-1",
+         "component": "observability",
+         "operation": operation,
+         "reason": reason,
+         "error_chain": "",
+         "revision": "test-revision",
+         "sequence": sequence,
+         "runtime_event_count": 1,
+         "trace_id": "trace-test",
+         "span_id": sequence,
+         "parent_span_id": null,
+         "fields": {}
+     })
+ }
+ 
+ fn write_records(path: &Path, records: &[Value]) {
+     let mut lines = String::new();
+     for record in records {
+         lines.push_str(&serde_json::to_string(record).unwrap());
+         lines.push('\n');
+     }
+     fs::write(path, lines).unwrap();
+ }
+ 
++fn read_records(path: &Path) -> Vec<Value> {
++    fs::read_to_string(path)
++        .unwrap()
++        .lines()
++        .map(|line| serde_json::from_str(line).unwrap())
++        .collect()
++}
++
+ fn test_root(name: &str) -> PathBuf {
+     let root = std::env::current_dir()
+         .unwrap()
+         .join("target/observability-tests")
+         .join(format!("{}-{}", name, std::process::id()));
+     let _ = fs::remove_dir_all(&root);
+     fs::create_dir_all(&root).unwrap();
+     root.canonicalize().unwrap()
+ }
+ 
+ fn repo_root() -> PathBuf {
+     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+         .parent()
+         .unwrap()
+         .to_path_buf()
+ }

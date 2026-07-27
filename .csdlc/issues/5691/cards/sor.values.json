@@ -7,16 +7,50 @@
     "title": "[v0.91.8][runtime-v3][observability] Integrate tracing with Vector durable master logging",
     "slug": "runtime-v3-vector-otel-master-log",
     "version": "v0.91.8",
-    "generation": 0
+    "generation": 5
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "sor",
     "values": {
-      "summary": "Pre-execution output record.",
-      "actual_changes": [],
-      "artifacts": [],
-      "actual_validation": [],
+      "summary": "Implemented production Runtime v3 tracing through the existing tracing facade into one pinned Vector pipeline, with durable canonical master JSONL, auditor schema for WP-12, startup signal ordering, fail-closed Vector child liveness supervision, span correlation through tracing-subscriber, redaction, bounded buffering/drain behavior, OTLP configuration, and repo-native macOS/Linux/Windows Vector provisioning.",
+      "actual_changes": [
+        "Registered the OS shutdown receiver before control API readiness is exposed and reused it in the serve loop.",
+        "Started one long-lived Vector child from an explicit repo-provisioned binary path and exposed fail-closed liveness snapshots.",
+        "Replaced the hand-rolled tracing subscriber with tracing-subscriber Registry plus a runtime logging layer.",
+        "Added canonical master log records and adl.runtime.master_log_audit.v1 report parsing for WP-12 consumption.",
+        "Added native Windows Vector 0.56.0 provisioning with official SHA-256 verification."
+      ],
+      "artifacts": [
+        "commit f8db82cf74df419555fc17c0eda8a3fc8ae5bdda",
+        ".csdlc/evidence/5691/vector-provisioning.md",
+        ".csdlc/evidence/5691/opus-review/final-confirmation.result.json",
+        "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+        "adl-runtime-kernel/src/observability.rs",
+        "adl-runtime-kernel/src/telemetry.rs",
+        "adl-runtime-kernel/tests/observability.rs",
+        "adl-runtime-kernel/vector/runtime-v3.yaml",
+        "adl/tools/install_vector_component.ps1",
+        "adl/tools/install_vector_component.sh"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--target-dir",
+            "<issue-worktree>/target",
+            "--test",
+            "observability"
+          ],
+          "purpose": "Focused Runtime v3 Vector master-log, auditor, startup signal, fail-closed supervision, tracing correlation, provisioning, and hygiene proof for #5691",
+          "outcome": "passed",
+          "evidence_ref": "local proof bundle at f8db82cf: observability 9/9 passed with real pinned Vector; configuration 15/15 passed; strict all-target Clippy passed; guardian_soak 7/7 declared ignored passed; cargo fmt --check passed; git diff --check passed; Opus final confirmation result final_status=ok and REVIEW_COMPLETE with no actionable P1/P2."
+        }
+      ],
       "integration_state": "not_started",
       "publication_state": "not_published",
       "merge_state": "not_merged",

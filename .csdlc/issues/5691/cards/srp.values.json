@@ -7,15 +7,15 @@
     "title": "[v0.91.8][runtime-v3][observability] Integrate tracing with Vector durable master logging",
     "slug": "runtime-v3-vector-otel-master-log",
     "version": "v0.91.8",
-    "generation": 0
+    "generation": 5
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "Runtime v3 observability implementation, Vector config, status/API exposure, clean-log auditor, and focused proof evidence.",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "adl-runtime-kernel/Cargo.toml\nadl-runtime-kernel/src/bin/adl-runtime-kernel.rs\nadl-runtime-kernel/src/observability.rs\nadl-runtime-kernel/src/telemetry.rs\nadl-runtime-kernel/tests/configuration.rs\nadl-runtime-kernel/tests/observability.rs\nadl-runtime-kernel/vector/runtime-v3.yaml\nadl/tools/install_vector_component.ps1\nadl/tools/install_vector_component.sh",
+      "review_revision": "git-blake3:f8db82cf74df419555fc17c0eda8a3fc8ae5bdda:64e286ab11aed5e204e01d5558674d8911ea13499eb5388a8dffc258c76a4c9d",
+      "reviewer": "external:claude-opus-5",
       "review_prompts": [
         "Verify Runtime v3 uses existing tracing plus pinned Vector, not a custom logging facade or duplicate master writer.",
         "Verify Vector owns durable output, OTLP logs/traces/metrics export, buffering, retry, redaction, drain, and failure observability.",
@@ -23,8 +23,12 @@
         "Verify all tests and evidence are issue-local and do not touch the #5344 lifecycle harness path."
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "Final Opus confirmation was intentionally bounded to the two prior P1 remediation findings and ended with REVIEW_COMPLETE; prior monolithic/slice attempts were non-proving and are not recorded as PASS.",
+        "10K launch/soak/platform acceptance is explicitly deferred until after #5691 integration and real Vector master-log/auditor proof, per operator gate.",
+        "Publication may still require resolving the active #5664 claim on adl-runtime-kernel/Cargo.toml; this is a lifecycle ownership conflict, not a product review finding."
+      ],
+      "review_result": "pass"
     }
   }
 }
