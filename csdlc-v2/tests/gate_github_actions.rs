@@ -90,6 +90,7 @@ async fn issue_create_and_comment_reconcile_by_marker_with_exact_readback() {
     assert!(error.message.contains("pull_request"));
 
     let env = LocalGithubEnv::start();
+    env.server.force_noisy_issue_search();
 
     let mut create = base_request(GithubAction::IssueCreate);
     create.token_file = Some(env.token_file());
@@ -180,6 +181,7 @@ struct LocalGithubState {
     comment: Option<Value>,
     stale_patch_readback: bool,
     extra_patch_readback: bool,
+    noisy_issue_search: bool,
 }
 
 struct LocalGithub {
@@ -286,6 +288,10 @@ impl LocalGithub {
 
     fn force_extra_patch_readback(&self) {
         self.state.lock().unwrap().extra_patch_readback = true;
+    }
+
+    fn force_noisy_issue_search(&self) {
+        self.state.lock().unwrap().noisy_issue_search = true;
     }
 }
 
@@ -434,8 +440,21 @@ fn respond(state: &Arc<Mutex<LocalGithubState>>, request: MockRequest) -> Value 
     let mut state = state.lock().unwrap();
     match (request.method.as_str(), request.path_only().as_str()) {
         ("GET", "/search/issues") => json!({
-            "total_count": state.issue.as_ref().map_or(0, |_| 1),
-            "items": state.issue.as_ref().map(|issue| vec![issue.clone()]).unwrap_or_default()
+            "total_count": state.issue.as_ref().map_or(0, |_| if state.noisy_issue_search { 2 } else { 1 }),
+            "items": state.issue.as_ref().map(|issue| {
+                let mut items = vec![issue.clone()];
+                if state.noisy_issue_search {
+                    items.push(open_issue_number(
+                        78,
+                        "Unrelated issue",
+                        "Mentions csdlc-github-operation but not the exact marker.",
+                        Vec::new(),
+                        Vec::new(),
+                        None,
+                    ));
+                }
+                items
+            }).unwrap_or_default()
         }),
         ("POST", "/repos/owner/repo/issues") => {
             let payload: Value = serde_json::from_str(&request.body).expect("issue payload");
@@ -458,6 +477,14 @@ fn respond(state: &Arc<Mutex<LocalGithubState>>, request: MockRequest) -> Value 
             issue
         }
         ("GET", "/repos/owner/repo/issues/77") => state.issue.clone().expect("issue exists"),
+        ("GET", "/repos/owner/repo/issues/78") => open_issue_number(
+            78,
+            "Unrelated issue",
+            "Mentions csdlc-github-operation but not the exact marker.",
+            Vec::new(),
+            Vec::new(),
+            None,
+        ),
         ("PATCH", "/repos/owner/repo/issues/77") => {
             let payload: Value = serde_json::from_str(&request.body).expect("patch payload");
             if state.stale_patch_readback {
@@ -535,8 +562,19 @@ fn open_issue(
     assignees: Vec<&str>,
     milestone: Option<u64>,
 ) -> Value {
+    open_issue_number(77, title, body, labels, assignees, milestone)
+}
+
+fn open_issue_number(
+    number: u64,
+    title: &str,
+    body: &str,
+    labels: Vec<&str>,
+    assignees: Vec<&str>,
+    milestone: Option<u64>,
+) -> Value {
     json!({
-        "number": 77,
+        "number": number,
         "title": title,
         "body": body,
         "state": "open",

@@ -547,13 +547,21 @@ async fn find_marked_issues(
         )
         .await
         .map_err(remote)?;
-    Ok(value
+    let candidates = value
         .get("items")
         .and_then(Value::as_array)
         .into_iter()
         .flatten()
         .filter_map(|item| item.get("number").and_then(Value::as_u64))
-        .collect())
+        .collect::<Vec<_>>();
+    let mut exact_matches = Vec::new();
+    for number in candidates {
+        let packet = read_issue_packet(crab, owner, repo, number, Some(marker)).await?;
+        if packet.marker_present {
+            exact_matches.push(number);
+        }
+    }
+    Ok(exact_matches)
 }
 
 async fn find_marked_comments(
