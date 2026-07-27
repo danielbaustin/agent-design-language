@@ -5,7 +5,7 @@
   "initialization_digest": "3136fba73cac6b4c3b5d21d27082421952f27694f45781bfa414a7b43e35a90b",
   "phase": "implemented",
   "generation": 5,
-  "digest": "779251c24e05e22f5bc2228362c5dc88dd19699821950b5679587a115aaf093d",
+  "digest": "531a4aff4c83b30ac40dedf22546dc7ae651bbd66994ca0bbbb92b8b80bb675a",
   "claim": {
     "id": "claim-5697-chronosense-trusted-time",
     "owner": "codex:issue-5697-chronosense-trusted-time",
@@ -20,6 +20,7 @@
       ".csdlc/issues/5697",
       ".csdlc/locks/5697.lock",
       ".csdlc/prepared/issues/5697",
+      ".csdlc/publication/5697.intent.json",
       ".github/workflows/ci.yaml",
       "adl-runtime-kernel/Cargo.toml",
       "adl-runtime-kernel/src/assembly.rs",
@@ -27,7 +28,8 @@
       "adl-runtime-kernel/src/governed_operations.rs",
       "adl-runtime-kernel/src/operations.rs",
       "adl-runtime-kernel/tests/assembly.rs",
-      "adl-runtime-kernel/tests/parity_b_live_kernel.rs"
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
     ],
     "purpose": "Land the Runtime v3 Chronosense trusted_time ordering correction in follow-up issue #5697 without mutating terminal #5663 lifecycle state"
   },
@@ -191,6 +193,13 @@
       "actor": "codex:issue-5697-chronosense-trusted-time",
       "reason": "Supersede the stale execution bullet identified by exact review after the CI repair.",
       "operation": "{\"operation\":\"record_execution\",\"summary\":\"Chronosense now consumes trusted_time at startup; the CI repair preserves the no repo-local path dependency contract.\",\"changes\":[\"Supersedes the earlier adl-resilience dependency bullet: adl-runtime-kernel has no repo-local adl-resilience dependency; the parity guardian include uses a bounded test-only backoff shim, and strict all-target Clippy passes.\"],\"artifacts\":[]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 5,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "Exact review found that the compatibility-only one-argument builder creates an unqualified private recorder. Remove that unsafe API, update its sole test caller to supply an explicitly qualified recorder, and remove stale recovered publication intent before fresh review.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/publication/5697.intent.json\",\"adl-runtime-kernel/tests/protocol_adapters.rs\"],\"operation\":\"amend_claim_scope\"}"
     }
   ]
 }

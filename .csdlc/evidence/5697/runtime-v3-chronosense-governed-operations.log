@@ -32,4 +32,3 @@ test parity_c_delegation_resources::in_flight_cancellation_kills_provider_and_re
 test parity_c_provider_scheduler_tools::scheduler_dispatch_is_deterministic_and_bounded ... ok
 
 test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.83s
-

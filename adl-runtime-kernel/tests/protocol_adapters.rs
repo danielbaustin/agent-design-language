@@ -6,10 +6,11 @@ use std::{
 };
 
 use adl_runtime_kernel::{
-    build_production_operation_executors, build_protocol_production_operation_executors,
-    AdapterKind, AdapterPolicy, AuthorityMode, ExecutionPermit, FailureClass, OperationError,
-    OperationExecutor, OperationRequest, OperationalAdapter, ProtocolAdapter, ProtocolEndpoint,
-    ProtocolFrame, ProtocolResponse, ProtocolSecret, ProtocolSecurity, ProtocolStatus,
+    build_production_operation_executors_with_recorder,
+    build_protocol_production_operation_executors, AdapterKind, AdapterPolicy, AuthorityMode,
+    ClockAuthority, ExecutionPermit, FailureClass, OperationError, OperationExecutor,
+    OperationRequest, OperationalAdapter, ProtocolAdapter, ProtocolEndpoint, ProtocolFrame,
+    ProtocolResponse, ProtocolSecret, ProtocolSecurity, ProtocolStatus, RuntimeRecorder,
     MAX_PROTOCOL_FRAME_FRESHNESS_MILLIS, MAX_PROTOCOL_RESPONSE_BYTES, OPERATION_REQUEST_SCHEMA,
 };
 use ed25519_dalek::SigningKey;
@@ -797,7 +798,16 @@ fn production_builder_returns_no_partial_executors_when_protocol_config_is_missi
     }
     let executors = build_protocol_production_operation_executors();
     let root = TempDir::new().unwrap();
-    let canonical = build_production_operation_executors(root.path().join("local-state")).unwrap();
+    let recorder = RuntimeRecorder::new(16);
+    recorder.set_clock_authority(ClockAuthority::Authoritative {
+        source: "protocol-adapter-test".to_owned(),
+        unix_millis: 1_720_000_000_000,
+    });
+    let canonical = build_production_operation_executors_with_recorder(
+        root.path().join("local-state"),
+        recorder,
+    )
+    .unwrap();
     for (key, value) in previous {
         if let Some(value) = value {
             env::set_var(key, value);

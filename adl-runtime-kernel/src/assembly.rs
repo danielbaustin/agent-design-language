@@ -755,12 +755,6 @@ fn writer_pid_active(pid: u32) -> bool {
     pid == std::process::id()
 }
 
-pub fn build_production_operation_executors(
-    state_dir: impl Into<PathBuf>,
-) -> io::Result<BTreeMap<AdapterKind, Arc<dyn OperationExecutor>>> {
-    build_production_operation_executors_with_recorder(state_dir, RuntimeRecorder::new(1_024))
-}
-
 pub fn build_production_operation_executors_with_recorder(
     state_dir: impl Into<PathBuf>,
     recorder: RuntimeRecorder,
