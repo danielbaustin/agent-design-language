@@ -19,17 +19,17 @@ use crate::{
     cognition_component_factories, cognition_service_contracts, governance_component_factories,
     governance_service_contracts, reasoning_component_factories, reasoning_service_contracts,
     representative_dependencies, AdaptationState, AdaptationStore, AdapterKind, AdapterPolicy,
-    AuthorityMode, CanonicalIngress, Capability, CapabilityRequirement, Component, ComponentConfig,
-    ComponentContext, ComponentError, ComponentFactory, ComponentId, ComponentSpec,
-    DeterminismClass, ExecutorError, FactoryRegistration, FactoryRegistry, FailureClass,
-    FailurePolicy, LifecycleGuarantees, LoopDefinition, MutationAuthority, MutationGate,
-    OperationError, OperationExecutor, OperationRequest, OperationalAdapter, OperationalFactory,
-    QualifiedTimeFactory, ReasoningGraphDefinition, ReasoningNode, ReasoningServices,
-    RecordedObservation, RecorderTrustedTime, RunningState, RuntimeConfig, RuntimeRecorder,
-    ServiceContract, SysinfoWeatherObserver, TimeQualificationBounds, TimeSampleSource,
-    TopologyError, ValidatedContracts, ValidatedReasoningGraph, ValidatedTopology, WeatherConfig,
-    WeatherObserver, OPERATION_REQUEST_SCHEMA, REASONING_GRAPH_SCHEMA, RUNTIME_CONFIG_SCHEMA,
-    SERVICE_CONTRACT_SCHEMA,
+    AuthorityMode, CanonicalIngress, Capability, CapabilityRequirement, ClockAuthority, Component,
+    ComponentConfig, ComponentContext, ComponentError, ComponentFactory, ComponentId,
+    ComponentSpec, DeterminismClass, ExecutorError, FactoryRegistration, FactoryRegistry,
+    FailureClass, FailurePolicy, LifecycleGuarantees, LoopDefinition, MutationAuthority,
+    MutationGate, OperationError, OperationExecutor, OperationRequest, OperationalAdapter,
+    OperationalFactory, QualifiedTimeFactory, ReasoningGraphDefinition, ReasoningNode,
+    ReasoningServices, RecordedObservation, RecorderTrustedTime, RunningState, RuntimeConfig,
+    RuntimeRecorder, ServiceContract, SysinfoWeatherObserver, TimeQualificationBounds,
+    TimeSampleSource, TopologyError, TrustedTime, ValidatedContracts, ValidatedReasoningGraph,
+    ValidatedTopology, WeatherConfig, WeatherObserver, OPERATION_REQUEST_SCHEMA,
+    REASONING_GRAPH_SCHEMA, RUNTIME_CONFIG_SCHEMA, SERVICE_CONTRACT_SCHEMA,
 };
 
 pub const REQUIRED_OPERATIONAL_ADAPTERS: [AdapterKind; 10] = [
@@ -139,18 +139,33 @@ pub fn build_live_assembly(bindings: LiveBindings) -> Result<LiveAssembly, Assem
             bindings.permit_keys.clone(),
         )?);
         let kinds = dependencies[&kind].clone();
-        let ids = kinds
+        let mut ids = kinds
             .iter()
             .map(|dependency| ComponentId::new(dependency.service_name()))
-            .collect();
-        let factory = OperationalFactory::new(adapter.clone(), ids);
+            .collect::<Vec<_>>();
+        if kind == AdapterKind::Chronosense {
+            ids.push(ComponentId::new("trusted_time"));
+        }
+        let factory = if kind == AdapterKind::Chronosense {
+            OperationalFactory::with_control_dependencies(adapter.clone(), ids)
+        } else {
+            OperationalFactory::new(adapter.clone(), ids)
+        };
         if domain_work_allowed {
             ingress_dispatchers.insert(kind.service_name().to_owned(), factory.clone());
             if kind == AdapterKind::Agent {
                 ingress_dispatchers.insert("parity-a".to_owned(), factory.clone());
             }
         }
-        registrations.push((Arc::new(factory), adapter.contract(kinds)));
+        let mut contract = adapter.contract(kinds);
+        if kind == AdapterKind::Chronosense {
+            contract.requires.push(CapabilityRequirement {
+                name: "runtime.trusted_time".to_owned(),
+                version: VersionReq::parse("^1").expect("static requirement"),
+                optional: false,
+            });
+        }
+        registrations.push((Arc::new(factory), contract));
     }
 
     append_factories(
@@ -203,6 +218,8 @@ pub fn build_live_assembly(bindings: LiveBindings) -> Result<LiveAssembly, Assem
         },
     ));
 
+    enforce_chronosense_foundation(&mut registrations);
+
     let mut registry = FactoryRegistry::new();
     let mut components = Vec::with_capacity(registrations.len());
     for (factory, contract) in registrations {
@@ -246,6 +263,51 @@ pub fn build_live_assembly(bindings: LiveBindings) -> Result<LiveAssembly, Assem
         config_hash,
         canonical_ingress,
     })
+}
+
+fn enforce_chronosense_foundation(
+    registrations: &mut Vec<(Arc<dyn ComponentFactory>, ServiceContract)>,
+) {
+    for (factory, contract) in registrations.iter_mut() {
+        let id = factory.spec().id;
+        if matches!(id.as_str(), "trusted_time" | "chronosense") {
+            continue;
+        }
+        *factory = Arc::new(ControlDependencyFactory {
+            inner: factory.clone(),
+            dependency: ComponentId::new("chronosense"),
+        });
+        if !contract
+            .requires
+            .iter()
+            .any(|requirement| requirement.name == "runtime.chronosense")
+        {
+            contract.requires.push(CapabilityRequirement {
+                name: "runtime.chronosense".to_owned(),
+                version: VersionReq::parse("^1").expect("static requirement"),
+                optional: false,
+            });
+        }
+    }
+}
+
+struct ControlDependencyFactory {
+    inner: Arc<dyn ComponentFactory>,
+    dependency: ComponentId,
+}
+
+impl ComponentFactory for ControlDependencyFactory {
+    fn spec(&self) -> ComponentSpec {
+        let mut spec = self.inner.spec();
+        if !spec.dependencies.iter().any(|id| id == &self.dependency) {
+            spec.dependencies.push(self.dependency.clone());
+        }
+        spec
+    }
+
+    fn build(&self) -> Box<dyn Component> {
+        self.inner.build()
+    }
 }
 
 fn append_factories<F: ComponentFactory>(
@@ -455,9 +517,23 @@ impl InProcessOperationExecutor {
         kind: AdapterKind,
         state_dir: impl Into<PathBuf>,
     ) -> std::io::Result<Self> {
+        let recorder = RuntimeRecorder::new(16);
+        let unix_millis = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map_err(io::Error::other)?
+            .as_millis()
+            .try_into()
+            .map_err(|_| io::Error::other("system clock exceeds supported range"))?;
+        recorder.set_clock_authority(ClockAuthority::Authoritative {
+            source: "explicit_local_test_clock".to_owned(),
+            unix_millis,
+        });
         Ok(Self {
             kind,
-            state: Arc::new(LocalRuntimeState::new_in(state_dir.into())?),
+            state: Arc::new(LocalRuntimeState::new_in(
+                state_dir.into(),
+                Arc::new(RecorderTrustedTime::new(recorder)),
+            )?),
         })
     }
 
@@ -474,6 +550,7 @@ struct LocalRuntimeState {
     writer_id: String,
     writer_pid: u32,
     writer_lock_path: PathBuf,
+    trusted_time: Arc<dyn TrustedTime>,
 }
 
 #[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -484,7 +561,7 @@ struct WriterLockOwner {
 }
 
 impl LocalRuntimeState {
-    fn new_in(state_dir: PathBuf) -> std::io::Result<Self> {
+    fn new_in(state_dir: PathBuf, trusted_time: Arc<dyn TrustedTime>) -> std::io::Result<Self> {
         if state_dir.as_os_str().is_empty() || !state_dir.is_absolute() {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidInput,
@@ -504,6 +581,7 @@ impl LocalRuntimeState {
             writer_id,
             writer_pid,
             writer_lock_path: lock_path,
+            trusted_time,
         })
     }
 
@@ -680,7 +758,17 @@ fn writer_pid_active(pid: u32) -> bool {
 pub fn build_production_operation_executors(
     state_dir: impl Into<PathBuf>,
 ) -> io::Result<BTreeMap<AdapterKind, Arc<dyn OperationExecutor>>> {
-    let state = Arc::new(LocalRuntimeState::new_in(state_dir.into())?);
+    build_production_operation_executors_with_recorder(state_dir, RuntimeRecorder::new(1_024))
+}
+
+pub fn build_production_operation_executors_with_recorder(
+    state_dir: impl Into<PathBuf>,
+    recorder: RuntimeRecorder,
+) -> io::Result<BTreeMap<AdapterKind, Arc<dyn OperationExecutor>>> {
+    let state = Arc::new(LocalRuntimeState::new_in(
+        state_dir.into(),
+        Arc::new(RecorderTrustedTime::new(recorder)),
+    )?);
     Ok(REQUIRED_OPERATIONAL_ADAPTERS
         .into_iter()
         .map(|kind| {
@@ -929,15 +1017,13 @@ impl InProcessOperationExecutor {
     }
 
     fn chronosense(&self, request: &OperationRequest) -> Result<serde_json::Value, ExecutorError> {
-        let millis = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .map_err(|error| {
-                adapter_error(
-                    FailureClass::Fatal,
-                    format!("chronosense clock failed: {error}"),
-                )
-            })?
-            .as_millis() as u64;
+        let millis = self.state.trusted_time.now_unix_millis();
+        if millis == 0 {
+            return Err(adapter_error(
+                FailureClass::Degraded,
+                "chronosense trusted time unavailable",
+            ));
+        }
         let mut value = self.result(request, "sampled");
         value["unix_millis"] = millis.into();
         Ok(value)

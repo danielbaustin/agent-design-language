@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5697,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][time] Make Chronosense consume trusted_time at startup",
+    "slug": "chronosense-trusted-time",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl-runtime-kernel/src/assembly.rs\nadl-runtime-kernel/src/bin/adl-runtime-kernel.rs\nadl-runtime-kernel/src/governed_operations.rs\nadl-runtime-kernel/src/operations.rs\nadl-runtime-kernel/tests/assembly.rs\n.csdlc/evidence/5697\n.csdlc/issues/5697",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does production Chronosense consume RecorderTrustedTime backed by the live RuntimeRecorder rather than SystemTime?",
+        "Does Chronosense fail closed before trusted_time qualification and return monotonic qualified time afterward?",
+        "Does the topology express trusted_time control/readiness dependency without a fabricated OperationResult input port?",
+        "Does startup evidence prove trusted_time immediately precedes Chronosense and Chronosense precedes Scheduler and other time-observing services?",
+        "Does the patch avoid #5663 lifecycle reuse and unrelated Runtime v3 scope?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

@@ -11,8 +11,9 @@ use std::{
 mod observability;
 
 use adl_runtime_kernel::{
-    bootstrap_reasoning_services, build_live_assembly, build_production_operation_executors,
-    execute_loop, generate_runtime_instance_id, load_control_tls, monitor_until_stop,
+    bootstrap_reasoning_services, build_live_assembly,
+    build_production_operation_executors_with_recorder, execute_loop, generate_runtime_instance_id,
+    load_control_tls, monitor_until_stop,
     proof::{load_capsule, run_proof},
     serve_control_listener_until_ready, validate_production_operation_executors,
     verifying_key_from_hex, AdaptationState, CheckpointShutdownRequest, CheckpointingControl,
@@ -114,14 +115,16 @@ async fn main() -> ExitCode {
                     return ExitCode::from(78);
                 }
             };
-            let operation_executors =
-                match build_production_operation_executors(operation_state_identity.clone()) {
-                    Ok(executors) => executors,
-                    Err(error) => {
-                        eprintln!("runtime local adapter state root is invalid: {error}");
-                        return ExitCode::from(78);
-                    }
-                };
+            let operation_executors = match build_production_operation_executors_with_recorder(
+                operation_state_identity.clone(),
+                recorder.clone(),
+            ) {
+                Ok(executors) => executors,
+                Err(error) => {
+                    eprintln!("runtime local adapter state root is invalid: {error}");
+                    return ExitCode::from(78);
+                }
+            };
             if let Err(error) = validate_production_operation_executors(&operation_executors) {
                 eprintln!("runtime live operation adapters unavailable: {error}");
                 return ExitCode::from(78);

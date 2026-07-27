@@ -5,31 +5,8 @@
   "initialization_digest": "5c4f0b80a55fc6a22577fde823f493baa9e2e6fd707b7a7966ab6a241f78a977",
   "phase": "reviewed",
   "generation": 4,
-  "digest": "b92e25c61c0091e22801145ae4a373bcf7a9430a0da44866ec214c71eb2093bf",
-  "claim": {
-    "id": "claim-5664-runtime-v3-protocol-adapters",
-    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 4,
-    "acquired_unix_seconds": 1784998013,
-    "expires_unix_seconds": 1785602813,
-    "heartbeat_unix_seconds": 1784998013,
-    "branch": "codex/5664-runtime-v3-protocol-adapters",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/evidence/5664",
-      ".csdlc/issues/5664",
-      ".csdlc/locks/5664.lock",
-      ".csdlc/prepared/issues/5664",
-      "adl-runtime-kernel/Cargo.toml",
-      "adl-runtime-kernel/src/assembly.rs",
-      "adl-runtime-kernel/src/lib.rs",
-      "adl-runtime-kernel/src/protocol_adapters.rs",
-      "adl-runtime-kernel/tests/assembly.rs",
-      "adl-runtime-kernel/tests/operations.rs",
-      "adl-runtime-kernel/tests/protocol_adapters.rs"
-    ],
-    "purpose": "Implement real Runtime v3 Provider, ACIP, A2A, and Cloud Bridge protocol adapters with bounded Tokio/Rustls-ready transport proof"
-  },
+  "digest": "653bd73d1ff8eacb59793fcb3e75b5fcaa9c2bafe1319a550d231b7095d0af27",
+  "claim": null,
   "review_assignment": null,
   "review": {
     "reviewer": "codex-exact-head-review:019fa105-57ba-7463-9fe5-c837cc5eeef5",
@@ -191,6 +168,13 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "atomically record exact review evidence and reviewed phase",
       "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 4,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "GitHub confirms PR #5680 is MERGED at 2026-07-27T01:19:54Z with merge commit a858b2a0ac353967c612d13e1d69f7f8b1e97500, and issue #5664 is CLOSED at 2026-07-27T01:38:29Z; release only #5664's stale active typed source claim so follow-up #5697 can bind without fabricating closeout, rewriting review/publication history, or creating a receipt.",
+      "operation": "{\"claim_id\":\"claim-5664-runtime-v3-protocol-adapters\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5697-follow-up-after-5664-merged-closed\",\"previous_owner\":\"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d\"}"
     }
   ]
 }

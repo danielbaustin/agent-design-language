@@ -5,33 +5,8 @@
   "initialization_digest": "93fb8bb9549834cea33762de65cc0a71e0bd13731185901887c0a135b00c7866",
   "phase": "merge_ready",
   "generation": 7,
-  "digest": "a9f4c4e353516fb956ad821d2da2aa34fb7528183142ac365fe3b63f57b99160",
-  "claim": {
-    "id": "claim-5691-runtime-v3-vector-otel",
-    "owner": "codex:5691-runtime-v3-vector-otel",
-    "generation": 7,
-    "acquired_unix_seconds": 1785120116,
-    "expires_unix_seconds": 1785724916,
-    "heartbeat_unix_seconds": 1785120116,
-    "branch": "codex/5691-runtime-v3-vector-otel",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/evidence/5691",
-      ".csdlc/issues/5691",
-      ".csdlc/locks/5691.lock",
-      ".csdlc/prepared/issues/5691",
-      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
-      "adl-runtime-kernel/src/control.rs",
-      "adl-runtime-kernel/src/observability.rs",
-      "adl-runtime-kernel/src/telemetry.rs",
-      "adl-runtime-kernel/tests/configuration.rs",
-      "adl-runtime-kernel/tests/observability.rs",
-      "adl-runtime-kernel/vector/runtime-v3.yaml",
-      "adl/tools/install_vector_component.ps1",
-      "adl/tools/install_vector_component.sh"
-    ],
-    "purpose": "Implement Runtime v3 tracing to pinned Vector OTEL/durable master logging parity"
-  },
+  "digest": "86fbb11c6b0c6b00a65d36839ff6d106432fa179d3222ef0526d234c457ec39f",
+  "claim": null,
   "review_assignment": {
     "reviewer": "external:claude-opus-5",
     "assigned_by": "codex:5691-runtime-v3-vector-otel",
@@ -376,6 +351,13 @@
       "actor": "codex:5691-runtime-v3-vector-otel",
       "reason": "record normalized remote readiness without replacing pre-publication review",
       "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 12,
+      "generation": 7,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "GitHub confirms PR #5694 is MERGED at 2026-07-27T16:27:57Z with head 639cbffe8dfada254031edf350049e33724447e1 and merge commit e7cab4ab61e9e2db56dea3d3a1d2cd0adba343d4, and issue #5691 is CLOSED; release only #5691's stale active typed source claim so follow-up #5697 can bind without fabricating closeout, rewriting lifecycle history, or creating a receipt.",
+      "operation": "{\"claim_id\":\"claim-5691-runtime-v3-vector-otel\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5697-follow-up-after-5691-merged-closed\",\"previous_owner\":\"codex:5691-runtime-v3-vector-otel\"}"
     }
   ]
 }

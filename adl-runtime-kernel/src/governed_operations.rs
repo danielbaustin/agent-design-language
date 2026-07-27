@@ -11,12 +11,13 @@ use std::{
 };
 
 use adl_runtime_kernel::{
-    bootstrap_reasoning_services, build_live_assembly, build_production_operation_executors,
-    ActuationShell, AdapterKind, AdapterPolicy, Aee, AuthorityGrant, AuthorityMode,
-    CanonicalIngress, Commitment, ExecutorError, FailureClass, FreedomGate, GovernanceKeys,
-    GovernedActionRequest, Kernel, LiveBindings, MediationDecision, OperationExecutor,
-    OperationRequest, OperationalAdapter, RefusalReason, RuntimeRecorder, TimeQualificationBounds,
-    TimeSample, TimeSampleError, TimeSampleSource, TrustedGovernanceTime, OPERATION_REQUEST_SCHEMA,
+    bootstrap_reasoning_services, build_live_assembly,
+    build_production_operation_executors_with_recorder, ActuationShell, AdapterKind, AdapterPolicy,
+    Aee, AuthorityGrant, AuthorityMode, CanonicalIngress, Commitment, ExecutorError, FailureClass,
+    FreedomGate, GovernanceKeys, GovernedActionRequest, Kernel, LiveBindings, MediationDecision,
+    OperationExecutor, OperationRequest, OperationalAdapter, RefusalReason, RuntimeRecorder,
+    TimeQualificationBounds, TimeSample, TimeSampleError, TimeSampleSource, TrustedGovernanceTime,
+    OPERATION_REQUEST_SCHEMA,
 };
 use ed25519_dalek::{SigningKey, VerifyingKey};
 use serde::{Deserialize, Serialize};
@@ -489,6 +490,7 @@ impl TimeSampleSource for FixedTime {
 }
 
 async fn start_services(config: &RuntimeConfig) -> Result<LiveServices, String> {
+    let recorder = RuntimeRecorder::new(64);
     let permit_key = SigningKey::from_bytes(&config.permit_key).verifying_key();
     let failure = Arc::new(Mutex::new(BTreeMap::new()));
     let scheduler_admission = Arc::new(tokio::sync::Semaphore::new(2));
@@ -527,9 +529,11 @@ async fn start_services(config: &RuntimeConfig) -> Result<LiveServices, String> 
         )
         .map_err(|_| "scheduler_configuration".to_owned())?,
     );
-    let mut executors =
-        build_production_operation_executors(config.state_dir.join("local-adapters"))
-            .map_err(|error| format!("local_adapter_state: {error}"))?;
+    let mut executors = build_production_operation_executors_with_recorder(
+        config.state_dir.join("local-adapters"),
+        recorder.clone(),
+    )
+    .map_err(|error| format!("local_adapter_state: {error}"))?;
     let agent_executor = Arc::new(GovernedExecutor {
         permit_key,
         scheduler,
@@ -544,7 +548,6 @@ async fn start_services(config: &RuntimeConfig) -> Result<LiveServices, String> 
         Arc::new(ShepherdPort(Mutex::new(BTreeSet::new()))),
     );
     executors.insert(AdapterKind::Scheduler, scheduler_executor);
-    let recorder = RuntimeRecorder::new(64);
     let assembly = build_live_assembly(LiveBindings {
         recorder: recorder.clone(),
         operation_executors: executors,

@@ -1,11 +1,12 @@
 use std::{collections::BTreeMap, path::Path, sync::Arc, time::Duration};
 
 use adl_runtime_kernel::{
-    bootstrap_reasoning_services, build_live_assembly, build_production_operation_executors,
-    AdapterKind, AdapterPolicy, AuthorityMode, ComponentRegistry, DomainWork, ExecutorError,
-    FailureClass, InProcessOperationExecutor, LiveBindings, OperationError, OperationExecutor,
-    OperationRequest, OperationalAdapter, OperationalFactory, RuntimeRecorder,
-    TimeQualificationBounds, TimeSample, TimeSampleError, TimeSampleSource, DOMAIN_WORK_SCHEMA,
+    bootstrap_reasoning_services, build_live_assembly,
+    build_production_operation_executors_with_recorder, AdapterKind, AdapterPolicy, AuthorityMode,
+    ClockAuthority, ComponentRegistry, DomainWork, ExecutorError, FailureClass,
+    InProcessOperationExecutor, LiveBindings, OperationError, OperationExecutor, OperationRequest,
+    OperationalAdapter, OperationalFactory, RuntimeRecorder, TimeQualificationBounds, TimeSample,
+    TimeSampleError, TimeSampleSource, DOMAIN_WORK_SCHEMA,
 };
 use async_trait::async_trait;
 use ed25519_dalek::SigningKey;
@@ -18,6 +19,15 @@ struct FixedTime;
 struct PendingExecutor;
 
 struct NonCooperativeExecutor;
+
+fn authoritative_recorder() -> RuntimeRecorder {
+    let recorder = RuntimeRecorder::new(16);
+    recorder.set_clock_authority(ClockAuthority::Authoritative {
+        source: "test-sntp".to_owned(),
+        unix_millis: 1_720_000_000_000,
+    });
+    recorder
+}
 
 #[async_trait]
 impl TimeSampleSource for FixedTime {
@@ -57,8 +67,11 @@ fn bindings(recorder: RuntimeRecorder, state_root: &Path) -> LiveBindings {
     let key = SigningKey::from_bytes(&[31; 32]);
     LiveBindings {
         recorder: recorder.clone(),
-        operation_executors: build_production_operation_executors(state_root.join("production"))
-            .unwrap(),
+        operation_executors: build_production_operation_executors_with_recorder(
+            state_root.join("production"),
+            recorder.clone(),
+        )
+        .unwrap(),
         permit_keys: BTreeMap::from([("operator".to_owned(), key.verifying_key())]),
         reasoning: bootstrap_reasoning_services(recorder).unwrap(),
         time_source: Arc::new(FixedTime),
@@ -209,7 +222,12 @@ fn write_foreign_lock_owner(lock: &Path, writer_id: &str, pid: u32) {
 #[tokio::test]
 async fn local_production_adapters_execute_real_bounded_behavior() {
     let root = TempDir::new().unwrap();
-    let executors = build_production_operation_executors(root.path().join("production")).unwrap();
+    let recorder = authoritative_recorder();
+    let executors = build_production_operation_executors_with_recorder(
+        root.path().join("production"),
+        recorder.clone(),
+    )
+    .unwrap();
     for kind in [
         AdapterKind::Agent,
         AdapterKind::Shepherd,
@@ -252,6 +270,53 @@ async fn local_production_adapters_execute_real_bounded_behavior() {
         assert_eq!(error.class, FailureClass::Fatal);
         assert!(error.message.contains("external transport"));
     }
+}
+
+#[tokio::test]
+async fn chronosense_uses_qualified_trusted_time_and_fails_closed_before_it_is_ready() {
+    let root = TempDir::new().unwrap();
+    let recorder = RuntimeRecorder::new(16);
+    let executors = build_production_operation_executors_with_recorder(
+        root.path().join("trusted-time"),
+        recorder.clone(),
+    )
+    .unwrap();
+    let request = adapter_request(AdapterKind::Chronosense, b"{}");
+    let unavailable = executors[&AdapterKind::Chronosense]
+        .execute(&request)
+        .await
+        .unwrap_err();
+    assert_eq!(unavailable.class, FailureClass::Degraded);
+    assert_eq!(unavailable.message, "chronosense trusted time unavailable");
+
+    recorder.set_clock_authority(ClockAuthority::Authoritative {
+        source: "test-sntp".to_owned(),
+        unix_millis: 1_720_000_000_000,
+    });
+    let first = value(
+        executors[&AdapterKind::Chronosense].as_ref(),
+        adapter_request_for(
+            AdapterKind::Chronosense,
+            b"{}",
+            "runtime-test",
+            "qualified-time-1",
+        ),
+    )
+    .await;
+    let second = value(
+        executors[&AdapterKind::Chronosense].as_ref(),
+        adapter_request_for(
+            AdapterKind::Chronosense,
+            b"{}",
+            "runtime-test",
+            "qualified-time-2",
+        ),
+    )
+    .await;
+    let first_millis = first["unix_millis"].as_u64().unwrap();
+    let second_millis = second["unix_millis"].as_u64().unwrap();
+    assert!(first_millis >= 1_720_000_000_000);
+    assert!(second_millis >= first_millis);
 }
 
 #[tokio::test]
@@ -403,17 +468,33 @@ async fn agent_scheduler_checkpoint_cancellation_and_storage_are_real() {
         "relative-state-root"
     )
     .is_err());
-    assert!(build_production_operation_executors("relative-state-root").is_err());
+    assert!(build_production_operation_executors_with_recorder(
+        "relative-state-root",
+        RuntimeRecorder::new(16)
+    )
+    .is_err());
     let locked_root = root.path().join("locked-writer");
     let writer = try_lifelog(&locked_root).unwrap();
     assert!(try_lifelog(&locked_root).is_err());
     drop(writer);
     assert!(try_lifelog(locked_root).is_ok());
     let production_locked_root = root.path().join("locked-production");
-    let production_writer = build_production_operation_executors(&production_locked_root).unwrap();
-    assert!(build_production_operation_executors(&production_locked_root).is_err());
+    let production_writer = build_production_operation_executors_with_recorder(
+        &production_locked_root,
+        RuntimeRecorder::new(16),
+    )
+    .unwrap();
+    assert!(build_production_operation_executors_with_recorder(
+        &production_locked_root,
+        RuntimeRecorder::new(16)
+    )
+    .is_err());
     drop(production_writer);
-    assert!(build_production_operation_executors(&production_locked_root).is_ok());
+    assert!(build_production_operation_executors_with_recorder(
+        &production_locked_root,
+        RuntimeRecorder::new(16)
+    )
+    .is_ok());
 
     let stale_root = root.path().join("stale-writer");
     let stale_lock = stale_root.join("writer.lock");
@@ -652,6 +733,42 @@ async fn canonical_ingress_dispatches_real_agent_work() {
     let recorder = RuntimeRecorder::new(128);
     let root = TempDir::new().unwrap();
     let assembly = build_live_assembly(bindings(recorder.clone(), root.path())).unwrap();
+    let startup_order = assembly.topology.startup_order();
+    let trusted_time = startup_order
+        .iter()
+        .position(|component| component.as_str() == "trusted_time")
+        .unwrap();
+    let chronosense = startup_order
+        .iter()
+        .position(|component| component.as_str() == "chronosense")
+        .unwrap();
+    let scheduler = startup_order
+        .iter()
+        .position(|component| component.as_str() == "scheduler")
+        .unwrap();
+    assert_eq!(
+        chronosense,
+        trusted_time + 1,
+        "startup_order={startup_order:?}"
+    );
+    for service in [
+        "scheduler",
+        "provider",
+        "acip",
+        "a2a",
+        "cloud_bridge",
+        "system_weather",
+    ] {
+        let service_position = startup_order
+            .iter()
+            .position(|component| component.as_str() == service)
+            .unwrap();
+        assert!(
+            chronosense < service_position,
+            "{service} started before chronosense: startup_order={startup_order:?}"
+        );
+    }
+    assert!(chronosense < scheduler);
     let ingress = assembly.canonical_ingress.clone();
     let handle = adl_runtime_kernel::Kernel::new(assembly.topology, recorder)
         .start()

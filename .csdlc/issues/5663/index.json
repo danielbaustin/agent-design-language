@@ -5,30 +5,8 @@
   "initialization_digest": "9ae48371048e17e2df859779e157e43a5d9e4ada902e49a33a66eddacd56daf5",
   "phase": "reviewed",
   "generation": 33,
-  "digest": "269df8eaf31829374861d679c23cfe4325ee50bfb977eacc7388da4bbd7128b2",
-  "claim": {
-    "id": "claim-5663-runtime-v3-durable-local-adapters",
-    "owner": "codex:issue-5663-runtime-adapters",
-    "generation": 33,
-    "acquired_unix_seconds": 1784998096,
-    "expires_unix_seconds": 1785602896,
-    "heartbeat_unix_seconds": 1784998096,
-    "branch": "codex/5663-runtime-v3-durable-local-adapters",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/evidence/5663",
-      ".csdlc/issues/5663",
-      ".csdlc/locks/5663.lock",
-      ".csdlc/prepared/issues/5663",
-      "adl-runtime-kernel/src/assembly.rs",
-      "adl-runtime-kernel/src/governed_operations.rs",
-      "adl-runtime-kernel/src/operations.rs",
-      "adl-runtime-kernel/tests/assembly.rs",
-      "adl-runtime-kernel/tests/governed_operations.rs",
-      "adl-runtime-kernel/tests/operations.rs"
-    ],
-    "purpose": "Implement durable local Runtime v3 adapter behavior for Agent, Shepherd, Scheduler, Chronosense, CheckpointStore, and Lifelog without external transport or WP-12 scope"
-  },
+  "digest": "a2c28390f662cecbc723cff59d10daa8b5da41baa350591bb68f579db86f679d",
+  "claim": null,
   "review_assignment": {
     "reviewer": "external:consolidated-opus-5",
     "assigned_by": "codex:issue-5663-runtime-adapters",
@@ -412,6 +390,13 @@
       "actor": "codex:issue-5663-runtime-adapters",
       "reason": "Consolidated external exact-head review passed with zero findings.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 38,
+      "generation": 33,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "GitHub confirms PR #5669 is MERGED at 2026-07-27T01:06:03Z with merge commit 735b2131004f7d299836ce98d226fe3c2ec8593c, and issue #5663 is CLOSED at 2026-07-27T01:38:27Z; release only #5663's stale active typed source claim so follow-up #5697 can bind without fabricating closeout, rewriting review/publication history, or creating a receipt.",
+      "operation": "{\"claim_id\":\"claim-5663-runtime-v3-durable-local-adapters\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5697-follow-up-after-5663-merged-closed\",\"previous_owner\":\"codex:issue-5663-runtime-adapters\"}"
     }
   ]
 }

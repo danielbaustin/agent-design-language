@@ -1,0 +1,9 @@
+flowchart TD
+  trusted_time["trusted_time Running"]
+  chronosense["Chronosense Running"]
+  scheduler["Scheduler Running"]
+  adapters["time-consuming or observing adapters"]
+
+  trusted_time --> chronosense
+  chronosense --> scheduler
+  chronosense --> adapters

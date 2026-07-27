@@ -1,0 +1,117 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5697,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "3136fba73cac6b4c3b5d21d27082421952f27694f45781bfa414a7b43e35a90b",
+  "phase": "bound",
+  "generation": 0,
+  "digest": "fc2a16cdd05f858e30588009d47489d5a385693858b7a48f144e9a8f5b5af9d3",
+  "claim": {
+    "id": "claim-5697-chronosense-trusted-time",
+    "owner": "codex:issue-5697-chronosense-trusted-time",
+    "generation": 0,
+    "acquired_unix_seconds": 1785172070,
+    "expires_unix_seconds": 1785776870,
+    "heartbeat_unix_seconds": 1785172070,
+    "branch": "codex/5697-chronosense-trusted-time",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5697",
+      ".csdlc/issues/5697",
+      ".csdlc/locks/5697.lock",
+      ".csdlc/prepared/issues/5697",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs"
+    ],
+    "purpose": "Land the Runtime v3 Chronosense trusted_time ordering correction in follow-up issue #5697 without mutating terminal #5663 lifecycle state"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5697/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5697/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5697",
+      "revision": "6798ab94db24ce72d708314bf7922548f26bdc12bbc63822d8d9cbdf1e3088bb"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "f3f885bfe0aa6125834493aa210eec1566ca98c0b1ca946c4b83f3f5b5709e84",
+      "rendered_digest": "32a3aac06fa98f3fd813d88e9b8535d1e0bb5763f4f5737adf1b93806dfd6fe2",
+      "ast_digest": "4099148b24fec409bc2d6a4d5567b3fe116594a6b65647e74b04eee37d1bbbe6"
+    },
+    "stp": {
+      "values_digest": "b6ad0a75db83e7817cd5222606fa8b824dd02157eedaa35bc29b8c2f2b7ef8fc",
+      "rendered_digest": "10afa87c2801f1a86017049829c540ae662906358ee171ce218e9353984abe7a",
+      "ast_digest": "8fe31204735501c97d2f1cffa83ab74b817b81670a18a37e089f5b6c176b04be"
+    },
+    "spp": {
+      "values_digest": "4d0079e88bed2e741455166d4b1c2e4b13bacf3fa8204ab6f43946059e3e3569",
+      "rendered_digest": "c9197f36add26fe96a1b79d542541f1d73d17b1018c4a616833ffcef147bfcaf",
+      "ast_digest": "20ffc017740d306ae66272adf5a0636730d6fca5b5534761f781ea834d65083d"
+    },
+    "vpp": {
+      "values_digest": "bdea1c16ee2a5b6a9ded000248400fb83cccf6f7abe90dfbbc5a45fbd7a352ee",
+      "rendered_digest": "00941d3ca49caa5363bf6c701e68a0df12de15ca848681653379e60d447596de",
+      "ast_digest": "1d691e7d3bb23b49561bf172d0e10c37cbf4546951ee7d32acb3821ee098b072"
+    },
+    "srp": {
+      "values_digest": "e89d46632de27a43ab3d13c36c286c3b3bab65ce4a0d1b20ae797ac84c19ea8a",
+      "rendered_digest": "cc59c05f8d8c9ee081f9001b3b1aff1dcb937362f7208025a32906c4d5078a88",
+      "ast_digest": "e34f95b7d2998e4d84543b02457655b6907c134263c683b85ec6b7f8aca03979"
+    },
+    "sor": {
+      "values_digest": "969d68f32334884533483d3d214c1805913f27a7d2bdddc00e8f73cf6f149044",
+      "rendered_digest": "f86dedb5939ddb1dd7576a7647947454ebe073fc0432608a095a03109c24cf57",
+      "ast_digest": "25f906c7042a42773062ad5c46e4e8fa4a3735d0e1ddc59cccf48d40fca4f2b0"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "verified Git worktree binding"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "Strict all-target Clippy for #5697 compiles parity_b_live_kernel, which includes adl-runtime/src/guardian.rs and requires the existing adl-resilience crate as an adl-runtime-kernel test dependency.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/Cargo.toml\"],\"operation\":\"amend_claim_scope\"}"
+    }
+  ]
+}
