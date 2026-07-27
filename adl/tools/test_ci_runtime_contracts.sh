@@ -520,9 +520,11 @@ for required_fragment in (
     if required_fragment not in workspace_fast_job:
         raise SystemExit(f"workspace fast producer artifact is missing {required_fragment}")
 for required_fragment in (
+    "matrix:\n        shard: [1, 2]",
     "adl-coverage-workspace-profraw-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }}",
     "adl/target/llvm-cov-target/${{ github.run_id }}-${{ github.run_attempt }}-workspace-shard-${{ matrix.shard }}/workspace/*.profraw",
     "coverage-provenance.workspace.json",
+    "COVERAGE_SHARD_COUNT: 2",
     "ci-step-logs/",
 ):
     if required_fragment not in workspace_job:
@@ -562,6 +564,8 @@ for required_fragment in (
     'document != expected',
     'coverage provenance mismatch',
     "expected 2 workspace shard provenance files",
+    '"shard_count": "2"',
+    'seen_shards != {"1", "2"}',
     "workspace shard profraw profiles missing",
     'expected_workspace=skipped',
     'expected_workspace_fast=skipped',
