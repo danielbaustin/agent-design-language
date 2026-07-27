@@ -479,11 +479,9 @@ impl ProtocolAdapter {
                 Ordering::SeqCst,
             );
             let payload = self.response_payload(&frame, response)?;
-            stream.shutdown().await.map_err(|error| {
-                fatal(format!(
-                    "transport shutdown failed after protocol response: {error}"
-                ))
-            })?;
+            if let Err(error) = stream.shutdown().await {
+                eprintln!("runtime protocol post-response shutdown failed: {error}");
+            }
             Ok(payload)
         };
         let result = tokio::select! {
