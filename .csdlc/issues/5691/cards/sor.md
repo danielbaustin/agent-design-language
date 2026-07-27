@@ -58,11 +58,11 @@ Implemented production Runtime v3 tracing through the existing tracing facade in
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 

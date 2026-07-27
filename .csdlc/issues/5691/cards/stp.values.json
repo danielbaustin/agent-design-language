@@ -7,7 +7,7 @@
     "title": "[v0.91.8][runtime-v3][observability] Integrate tracing with Vector durable master logging",
     "slug": "runtime-v3-vector-otel-master-log",
     "version": "v0.91.8",
-    "generation": 5
+    "generation": 6
   },
   "status": "ready",
   "content": {

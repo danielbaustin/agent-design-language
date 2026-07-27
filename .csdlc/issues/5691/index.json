@@ -3,13 +3,13 @@
   "issue": 5691,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "93fb8bb9549834cea33762de65cc0a71e0bd13731185901887c0a135b00c7866",
-  "phase": "reviewed",
-  "generation": 5,
-  "digest": "d0ab4f7a2eddce380af0e5025ad1a9283ab2f3722116d84a246d00e6eed19d62",
+  "phase": "published",
+  "generation": 6,
+  "digest": "d218568058aeb5cfc9eedbc3a57ddb43fb5c0d034b2dd1d0ed8fac8262746932",
   "claim": {
     "id": "claim-5691-runtime-v3-vector-otel",
     "owner": "codex:5691-runtime-v3-vector-otel",
-    "generation": 5,
+    "generation": 6,
     "acquired_unix_seconds": 1785120116,
     "expires_unix_seconds": 1785724916,
     "heartbeat_unix_seconds": 1785120116,
@@ -71,7 +71,17 @@
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5691,
+    "pull_request": 5694,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5694",
+    "base": "main",
+    "head": "codex/5691-runtime-v3-vector-otel",
+    "revision": "git-blake3:9f77f10ec75842a705b8719db9012019e06e515b:8eb024374d7271ac32de3a551e113672a26dc437dbb81f4472f8790c1a2a101b",
+    "draft": false,
+    "observed_state": "open"
+  },
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -85,34 +95,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "1081f2131bd75bc587d55ea06b2fceda13a4638e157bbb4afd7abe76aed3dfd4",
+      "values_digest": "8a57df71d40eb8a7f6e83d98b1324db15fa4c2d96dd0d4ea9421540f03e5c129",
       "rendered_digest": "cb4894b03fdb8c47ee365e92f8af8072c7559724a8743d0f285bc69ff33b62d8",
       "ast_digest": "060d409f6da985c7a45f86ff7d00791a6b2c1ccdbe1af6c4d30f78c1bdc0146b"
     },
     "stp": {
-      "values_digest": "920933f663cdebefc03fa00f1464a817c9eee81f6b260afe000d7a50b4b2230f",
+      "values_digest": "7cfb5bcbd42ef8b8efc9fe6bf0c8eb5073787e6deea46a776bc61d2e25f60371",
       "rendered_digest": "753b35fbc984d857b17d7ed116d50e25489343ebd4d1da05f2781624da1d7429",
       "ast_digest": "a88710b807d9cecd2a03f561f83fa91ee48a3410facb654b6d1ea2eacef1316a"
     },
     "spp": {
-      "values_digest": "4e3871f5eaeb5e6ac069e5a1b2205e9d72644a98a23c2ad0480437e59c80c9a4",
+      "values_digest": "a2454bc561b66b375f9f1c94477a15bf255fca2c526796aac658ba620c511925",
       "rendered_digest": "965a094199c3bba1eea9e9533803affeaba95d5357256ff85e3a5023e04db2da",
       "ast_digest": "2b793e8309173e6f1c998844616acb71b13a5636320004df8578d8306a0075b1"
     },
     "vpp": {
-      "values_digest": "470799893e56ba3bc1b6c0cd89872196b514e28501b2ce366e25e375740b667d",
+      "values_digest": "e782a0ef3b23311f9b8e71904aa4ac0e83880a975ce88937e93d0f26b6266027",
       "rendered_digest": "368dea366bfae5a82733d0b64f6179bdae320692c338d27794a6ef7250bf8295",
       "ast_digest": "8b17faed4ffec54106c01facfd2d68fc1ff5723d105499cd50fa41a35f3fe1cf"
     },
     "srp": {
-      "values_digest": "98e33a427e465f33f130f90f89c7a9c594098bc1fb98f4da7463851e22001bf8",
+      "values_digest": "3abcac14a51348197885ff5cda8b7aea19fecb3d9fc49ee667feaa9b2875a5ab",
       "rendered_digest": "f71a7d752f1818aed91ba34e18557397e150f3953d28ea886bf2123c4611ed78",
       "ast_digest": "3c05aaa4b233ca745a0f8b85d0b047dc2c5eb2efb1f6452e94d7349f956f4439"
     },
     "sor": {
-      "values_digest": "f0d26c7713e18ce672f936ce936a3ece463f180c96119d51b44b57f71d13dff7",
-      "rendered_digest": "153c6aeda8e992c937eeefbe156af41399e1957a48797bda29eb03f1e6014934",
-      "ast_digest": "01821df37f95b28ec39ca84bab227ab9549d1bd35bc8944dff47a4a6b9e7645b"
+      "values_digest": "e7d29db3bccb0b4d8e85ae3a3d08abb4874ecd76c30bc6c8cdffdad60c2e07ea",
+      "rendered_digest": "13e0b675703010759aecb8ebe8deefd5e40e1d082cdf5c102676597866f32dc3",
+      "ast_digest": "826540a257177e59c6063229965134f7a4db697af8e1e3fe6601f2229bfabaf8"
     }
   },
   "transitions": [
@@ -143,6 +153,13 @@
       "to": "reviewed",
       "actor": "codex:5691-runtime-v3-vector-otel",
       "reason": "Advance #5691 after clean exact-head Claude Opus 5 review with REVIEW_COMPLETE and no actionable P1/P2 findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "observed exact PR after current review"
     }
   ],
   "audit": [
@@ -208,6 +225,13 @@
       "actor": "codex:5691-runtime-v3-vector-otel",
       "reason": "Advance #5691 after clean exact-head Claude Opus 5 review with REVIEW_COMPLETE and no actionable P1/P2 findings.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
     }
   ]
 }
