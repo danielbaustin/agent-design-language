@@ -1013,7 +1013,7 @@ jobs:
         working-directory: .
 
   adl_coverage_workspace_hosted:
-    name: adl-coverage-workspace-hosted (${{ matrix.shard }}/4)
+    name: adl-coverage-workspace-hosted (${{ matrix.shard }}/2)
     needs: adl_path_policy
     if: needs.adl_path_policy.outputs.full_coverage_required == 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))
     runs-on: ubuntu-latest
@@ -1022,7 +1022,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2]
     defaults:
       run:
         working-directory: adl
@@ -1136,7 +1136,7 @@ jobs:
           ADL_AUTHORITATIVE_COVERAGE_LCOV_PATH: ${{ github.event_name != 'pull_request' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only' && 'lcov.info' || '' }}
           ADL_AUTHORITATIVE_COVERAGE_TEXT_SUMMARY_PATH: ${{ github.event_name != 'pull_request' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only' && 'coverage-summary.txt' || '' }}
           ADL_AUTHORITATIVE_COVERAGE_REPORT_MODE: collect
-          ADL_AUTHORITATIVE_COVERAGE_SHARD_COUNT: 4
+          ADL_AUTHORITATIVE_COVERAGE_SHARD_COUNT: 2
           ADL_AUTHORITATIVE_COVERAGE_SHARD_INDEX: ${{ matrix.shard }}
           ADL_COVERAGE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-workspace-shard-${{ matrix.shard }}
         run: bash adl/tools/run_ci_step_with_log.sh --name "coverage-workspace-profraw-shard-${{ matrix.shard }}" --log-root ci-step-logs -- bash adl/tools/run_authoritative_coverage_lane.sh --profile workspace --authority "${{ steps.path-policy.outputs.coverage_authority }}" --event-name "${{ github.event_name }}"
@@ -1149,7 +1149,7 @@ jobs:
           COVERAGE_RUN_ID: ${{ github.run_id }}
           COVERAGE_RUN_ATTEMPT: ${{ github.run_attempt }}
           COVERAGE_SHARD: ${{ matrix.shard }}
-          COVERAGE_SHARD_COUNT: 4
+          COVERAGE_SHARD_COUNT: 2
         run: |
           python3 -c 'import json, os, pathlib; pathlib.Path("adl/coverage-provenance.workspace.json").write_text(json.dumps({"head_sha": os.environ["COVERAGE_HEAD_SHA"], "profile": "workspace", "run_id": os.environ["COVERAGE_RUN_ID"], "run_attempt": os.environ["COVERAGE_RUN_ATTEMPT"], "shard": os.environ["COVERAGE_SHARD"], "shard_count": os.environ["COVERAGE_SHARD_COUNT"]}, sort_keys=True) + "\n")'
         working-directory: .
@@ -1343,8 +1343,8 @@ jobs:
           if os.environ["RUNTIME_REQUIRED"] == "true":
               workspace_root = Path("coverage-artifacts/workspace-profraw")
               provenances = sorted(workspace_root.rglob("coverage-provenance.workspace.json"))
-              if len(provenances) != 4:
-                  raise SystemExit(f"expected 4 workspace shard provenance files, found {len(provenances)}")
+              if len(provenances) != 2:
+                  raise SystemExit(f"expected 2 workspace shard provenance files, found {len(provenances)}")
               profraw_by_shard = {}
               seen_shards = set()
               for provenance in provenances:
@@ -1356,13 +1356,13 @@ jobs:
                       "run_id": os.environ["COVERAGE_RUN_ID"],
                       "run_attempt": os.environ["COVERAGE_RUN_ATTEMPT"],
                       "shard": shard,
-                      "shard_count": "4",
+                      "shard_count": "2",
                   }
                   if document != expected:
                       raise SystemExit(f"workspace shard provenance mismatch: {document!r} != {expected!r}")
                   seen_shards.add(shard)
                   profraw_by_shard[shard] = list(provenance.parent.rglob("*.profraw"))
-              if seen_shards != {"1", "2", "3", "4"}:
+              if seen_shards != {"1", "2"}:
                   raise SystemExit(f"workspace shard provenance set mismatch: {sorted(seen_shards)!r}")
               missing = sorted(shard for shard, profiles in profraw_by_shard.items() if not profiles)
               if missing:

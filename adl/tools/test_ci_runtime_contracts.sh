@@ -443,7 +443,7 @@ if step_if("Workspace coverage run and summary (json)") != "steps.path-policy.ou
 workspace_coverage_block = step_block("Workspace coverage run and summary (json)")
 for required_fragment in (
     "ADL_AUTHORITATIVE_COVERAGE_REPORT_MODE: collect",
-    "ADL_AUTHORITATIVE_COVERAGE_SHARD_COUNT: 4",
+    "ADL_AUTHORITATIVE_COVERAGE_SHARD_COUNT: 2",
     "ADL_AUTHORITATIVE_COVERAGE_SHARD_INDEX: ${{ matrix.shard }}",
     "ADL_COVERAGE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-workspace-shard-${{ matrix.shard }}",
 ):
@@ -561,7 +561,7 @@ for required_fragment in (
     "pattern: adl-coverage-workspace-profraw-${{ github.run_id }}-${{ github.run_attempt }}-*",
     'document != expected',
     'coverage provenance mismatch',
-    "expected 4 workspace shard provenance files",
+    "expected 2 workspace shard provenance files",
     "workspace shard profraw profiles missing",
     'expected_workspace=skipped',
     'expected_workspace_fast=skipped',
