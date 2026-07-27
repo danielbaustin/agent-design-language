@@ -89,8 +89,27 @@ async fn main() -> ExitCode {
                     return ExitCode::from(78);
                 }
             };
+            if !operation_state_dir.is_absolute() {
+                eprintln!("runtime local adapter state root must be absolute");
+                return ExitCode::from(78);
+            }
+            if let Err(error) = std::fs::create_dir_all(&operation_state_dir) {
+                eprintln!("runtime local adapter state root is invalid: {error}");
+                return ExitCode::from(78);
+            }
+            let operation_state_identity = match operation_state_dir.canonicalize() {
+                Ok(path) if path.is_dir() => path,
+                Ok(_) => {
+                    eprintln!("runtime local adapter state root is not a directory");
+                    return ExitCode::from(78);
+                }
+                Err(error) => {
+                    eprintln!("runtime local adapter state root is invalid: {error}");
+                    return ExitCode::from(78);
+                }
+            };
             let operation_executors =
-                match build_production_operation_executors(operation_state_dir.clone()) {
+                match build_production_operation_executors(operation_state_identity.clone()) {
                     Ok(executors) => executors,
                     Err(error) => {
                         eprintln!("runtime local adapter state root is invalid: {error}");
@@ -101,13 +120,6 @@ async fn main() -> ExitCode {
                 eprintln!("runtime live operation adapters unavailable: {error}");
                 return ExitCode::from(78);
             }
-            let operation_state_identity = match operation_state_dir.canonicalize() {
-                Ok(path) => path,
-                Err(error) => {
-                    eprintln!("runtime local adapter state root is invalid: {error}");
-                    return ExitCode::from(78);
-                }
-            };
             let operation_key = match std::env::var("ADL_RUNTIME_OPERATION_PUBLIC_KEY_HEX")
                 .map_err(|_| ())
                 .and_then(|value| verifying_key_from_hex(&value).map_err(|_| ()))
@@ -159,7 +171,7 @@ async fn main() -> ExitCode {
                     }
                 },
                 Err(_) => {
-                    eprintln!("runtime continuity minimum generation is invalid");
+                    eprintln!("runtime continuity minimum generation is missing");
                     return ExitCode::from(78);
                 }
             };
@@ -173,10 +185,24 @@ async fn main() -> ExitCode {
                     return ExitCode::from(78);
                 }
             };
+            let continuity_public_key =
+                ed25519_dalek::SigningKey::from_bytes(&continuity_secret).verifying_key();
+            if public_key == operation_key || public_key == continuity_public_key {
+                eprintln!("runtime control, operation, and continuity keys must be distinct");
+                return ExitCode::from(78);
+            }
             let key_id = std::env::var("ADL_RUNTIME_CONTROL_KEY_ID")
                 .unwrap_or_else(|_| "operator".to_owned());
             let principal = std::env::var("ADL_RUNTIME_CONTROL_PRINCIPAL")
                 .unwrap_or_else(|_| "operator".to_owned());
+            if key_id.trim().is_empty() || key_id != key_id.trim() {
+                eprintln!("runtime control key id is empty or has surrounding whitespace");
+                return ExitCode::from(78);
+            }
+            if principal.trim().is_empty() || principal != principal.trim() {
+                eprintln!("runtime control principal is empty or has surrounding whitespace");
+                return ExitCode::from(78);
+            }
             let service_schemas = assembly
                 .contracts
                 .contracts()
@@ -186,6 +212,13 @@ async fn main() -> ExitCode {
                 Ok(hash) => hash,
                 Err(error) => {
                     eprintln!("runtime TLS certificate identity could not be hashed: {error}");
+                    return ExitCode::from(78);
+                }
+            };
+            let tls_private_key_hash = match file_hash(&init.api.tls.private_key_path).await {
+                Ok(hash) => hash,
+                Err(error) => {
+                    eprintln!("runtime TLS private key identity could not be hashed: {error}");
                     return ExitCode::from(78);
                 }
             };
@@ -199,8 +232,11 @@ async fn main() -> ExitCode {
                 "control_principal": &principal,
                 "control_key": hex::encode(public_key.as_bytes()),
                 "continuity_key_id": &continuity_key_id,
+                "continuity_key": hex::encode(continuity_public_key.as_bytes()),
+                "continuity_minimum_generation": minimum_generation,
                 "operation_state_root": operation_state_identity,
                 "tls_certificate_hash": tls_certificate_hash,
+                "tls_private_key_hash": tls_private_key_hash,
             });
             let config_hash = blake3::hash(
                 &serde_json::to_vec(&binding_projection)
@@ -238,24 +274,6 @@ async fn main() -> ExitCode {
                     ]),
                 },
             )]));
-            let listener = match tokio::net::TcpListener::bind(socket_addrs.as_slice()).await {
-                Ok(listener) => listener,
-                Err(error) => {
-                    eprintln!("runtime control API bind failed: {error}");
-                    return ExitCode::from(70);
-                }
-            };
-            let mut handle = match Kernel::new(assembly.topology, recorder.clone())
-                .start()
-                .await
-            {
-                Ok(handle) => handle,
-                Err(error) => {
-                    eprintln!("runtime kernel failed to start: {error}");
-                    return ExitCode::from(70);
-                }
-            };
-            mark_unavailable_live_services(&recorder);
             let instance_id = generate_runtime_instance_id();
             let (lifecycle, mut shutdown_requests) = CheckpointingControl::channel(4);
             let service = Arc::new(
@@ -297,6 +315,24 @@ async fn main() -> ExitCode {
             let pressure_checkpoint_deadline =
                 std::time::Duration::from_millis(init.weather.checkpoint_deadline_millis);
             let api_shutdown = tokio_util::sync::CancellationToken::new();
+            let listener = match tokio::net::TcpListener::bind(socket_addrs.as_slice()).await {
+                Ok(listener) => listener,
+                Err(error) => {
+                    eprintln!("runtime control API bind failed: {error}");
+                    return ExitCode::from(70);
+                }
+            };
+            mark_unavailable_live_services(&recorder);
+            let mut handle = match Kernel::new(assembly.topology, recorder.clone())
+                .start()
+                .await
+            {
+                Ok(handle) => handle,
+                Err(error) => {
+                    eprintln!("runtime kernel failed to start: {error}");
+                    return ExitCode::from(70);
+                }
+            };
             let (ready_sender, ready_receiver) = tokio::sync::oneshot::channel();
             let mut api = tokio::spawn(serve_control_listener_until_ready(
                 service.clone(),
