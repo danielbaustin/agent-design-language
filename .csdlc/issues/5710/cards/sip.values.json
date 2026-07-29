@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5710,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Repair terminal closeout and safe-prune recovery for closed issues",
+    "slug": "csdlc-v2-closeout-safe-prune-recovery",
+    "version": "v0.91.8",
+    "generation": 2
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make typed C-SDLC v2 closeout and prune recovery complete, evidence-preserving, deterministic, and usable across already-closed v0.91.8 issues.",
+      "required_outcome": "The typed closeout surface reconciles causally valid terminal head drift, safely cleans only proved generated state, reports legal repair actions for earlier lifecycle phases, and enables every eligible closed worktree to prune.",
+      "declared_scope": [
+        "Typed terminal publication reconciliation",
+        "Typed dirty-worktree classification and safe cleanup before prune",
+        "Read-only closed-issue lifecycle repair classification",
+        "Focused closeout/prune tests",
+        "v0.91.8 closeout recovery evidence and sweep report"
+      ],
+      "authority_boundary": [
+        "Issue #5710 owns only its issue-local records, declared C-SDLC v2 closeout sources/tests, and closeout recovery proof packet",
+        "The existing validate-prune and receipt-backed prune operations remain final removal gates",
+        "No unrelated issue lifecycle record may be changed during implementation validation"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 lifecycle only",
+        "No tracked edits on main",
+        "No force prune or destructive manual cleanup",
+        "No manual card or .csdlc state editing",
+        "Use repo-local request files under .git/csdlc-v2/requests",
+        "Publish only after exact-head subagent review and focused validation"
+      ]
+    }
+  }
+}

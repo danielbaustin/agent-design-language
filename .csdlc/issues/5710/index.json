@@ -1,0 +1,139 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5710,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "7c3adf5e43576041be529f56740c9816a7a123b1ff42dc61cf48c6ef8846a57c",
+  "phase": "implemented",
+  "generation": 2,
+  "digest": "f6af65e9e06895e017d347a805a3f6fccb3a33e9de61a573fada03d98309b112",
+  "claim": {
+    "id": "claim-5710-closeout-safe-prune-recovery",
+    "owner": "codex:issue-5710-closeout-safe-prune-recovery",
+    "generation": 2,
+    "acquired_unix_seconds": 1785349671,
+    "expires_unix_seconds": 1785954471,
+    "heartbeat_unix_seconds": 1785349671,
+    "branch": "codex/5710-csdlc-v2-closeout-safe-prune-recovery",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5710",
+      ".csdlc/issues/5710",
+      ".csdlc/locks/5710.lock",
+      ".csdlc/prepared/issues/5710",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/git.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      "docs/milestones/v0.91.8/review/closeout_recovery"
+    ],
+    "purpose": "Implement typed terminal publication reconciliation, safe generated-state cleanup, lifecycle repair classification, and the v0.91.8 closed-issue sweep"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5710/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5710/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5710",
+      "revision": "7cd919400ee26a10b5302f714a2941a80aaac72913d39448284aab941057459c"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "e979aece6eb4d22354810ae2b36f7a56994b16d45d6b907f45a6358ff28de502",
+      "rendered_digest": "a3694e0480046bf550f0e9103978a8de58763e707adbe02ccb16bea7a382b887",
+      "ast_digest": "428af5d8fd85ab9eb6dad2bbd50af49ddbd4e80de24d8adc6c3e72db2466d572"
+    },
+    "stp": {
+      "values_digest": "9d345f6b64eec8afd2ae31c90dc27885e1c5ac93afb6fa4960bafbafd737ef42",
+      "rendered_digest": "496e32785332d807cba39eb36195866e109870b0d18c17491043cd08046814cd",
+      "ast_digest": "9e7b79a4ac292a8a198fb72175af2160dd5490a1b24df75eb50c38335d1a897e"
+    },
+    "spp": {
+      "values_digest": "baf84547d0da0cc8c4896018acddecddb27e25cfb6aee67f41b35737f8d1a31e",
+      "rendered_digest": "4299ed5ee177e09db6d28e57b84577dd189c2f7a21c0d2027c75dca87f8920a3",
+      "ast_digest": "e4e6acde291b5b9872c7e4beb5ea878df742be84459be21080872db3b9190942"
+    },
+    "vpp": {
+      "values_digest": "815293bbdc7c3bd8084425438de3ab12b309a095f1294c7ecf6d7b52ec9ef263",
+      "rendered_digest": "8d92af6ea20e0125a3a09e337ac0687efc6776b06ad4a8714203b21770f1c67f",
+      "ast_digest": "b49acbe8d6e3b24c772d0a28f8879b15e2a51d716fc1a52c3963b2937a3d0c4c"
+    },
+    "srp": {
+      "values_digest": "259aa281b8b0bee71213ee06843990495c6c25e97da09d0d41bf73f8d8142e48",
+      "rendered_digest": "79925879da6aac93e076dcc753aa9b10bad228e93fc28759864bbe89c34ab4f7",
+      "ast_digest": "db73903c29779411211ee85119a6597cf4d701ffe58c97fe49a7a11823ad137e"
+    },
+    "sor": {
+      "values_digest": "7ab42e479abbba7bb8c0c75e53d2a1330a3aeb785ea2b224f1f10b33952edee8",
+      "rendered_digest": "0273582307a2d6466898a4c42af7be2b03bdf882efe14990fb2ba2ab2bccf16f",
+      "ast_digest": "28970c159f0ddcf2605f2db320584103da87f4f30603a90b4737ff2246f1bc63"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5710-closeout-safe-prune-recovery",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5710-closeout-safe-prune-recovery",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "execution and passing validation finalized atomically"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5710-closeout-safe-prune-recovery",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5710-closeout-safe-prune-recovery",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:issue-5710-closeout-safe-prune-recovery",
+      "reason": "Add the public readiness contract and export surfaces required for typed terminal-head reconciliation",
+      "operation": "{\"add_protected_paths\":[\"csdlc-v2/src/lib.rs\",\"csdlc-v2/src/readiness.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:issue-5710-closeout-safe-prune-recovery",
+      "reason": "Keep VPP limited to executable implementation proof; exact review, publication, and the post-merge sweep remain lifecycle stages.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"csdlc-v2-closeout-recovery\",\"proof_role\":\"Prove metadata-only terminal head reconciliation, substantive-drift rejection, safe prune classification, unknown-path rejection, and existing closeout lifecycle behavior.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":8000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_lifecycle\"],\"parallel_group\":\"csdlc-v2-closeout\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    }
+  ]
+}

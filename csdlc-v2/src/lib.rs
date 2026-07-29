@@ -75,9 +75,10 @@ pub use pvf::{
     FinalizeRequest, PvfManifest, ScheduleInput, ShepherdInput,
 };
 pub use readiness::{
-    classify_readiness, closeout_issue, record_readiness, CheckConclusion, CheckObservation,
-    CheckRequirement, ConflictState, PostPublicationFinding, ReadinessReport, ReadinessRequest,
-    RemoteReviewState, TerminalDisposition, TerminalObservation,
+    classify_readiness, closeout_issue, reconcile_terminal_observation_head, record_readiness,
+    validate_terminal_observation, CheckConclusion, CheckObservation, CheckRequirement,
+    ConflictState, PostPublicationFinding, ReadinessReport, ReadinessRequest, RemoteReviewState,
+    TerminalDisposition, TerminalObservation,
 };
 pub use review::{
     assign_review, evaluate_publication_review, evaluate_publication_review_in_repo, record_review,

@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5710,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Repair terminal closeout and safe-prune recovery for closed issues",
+    "slug": "csdlc-v2-closeout-safe-prune-recovery",
+    "version": "v0.91.8",
+    "generation": 2
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2/src/bin/csdlc-closeout.rs\ncsdlc-v2/src/git.rs\ncsdlc-v2/src/lifecycle.rs\ncsdlc-v2/tests/gate7_lifecycle.rs\ndocs/milestones/v0.91.8/review/closeout_recovery\n.csdlc/evidence/5710\n.csdlc/issues/5710",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Can terminal reconciliation ever accept a different repository, PR, branch, or unrelated revision?",
+        "Can prune preparation remove tracked lifecycle drift, source files, unknown paths, or unretained evidence?",
+        "Are cleanup and reconciliation idempotent and audit-preserving?",
+        "Does the classifier report legal next actions without mutating lifecycle state?",
+        "Do focused tests cover the #5691 drift and representative dirty-worktree classes?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

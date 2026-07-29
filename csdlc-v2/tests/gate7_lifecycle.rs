@@ -4,11 +4,11 @@ use csdlc_v2::cards::{
 };
 use csdlc_v2::{
     assign_review, bind_issue, closeout_issue, edit_issue, prepare_publication,
-    prepare_ready_publication, prepare_ready_reconciliation, record_merged_publication,
-    record_publication, record_readiness, record_ready_publication, record_review,
-    validate_ready_reconciliation_state, validate_ready_remote, BindRequest, BootstrapRequest,
-    CardKind, Claim, ConflictState, EditRequest, ErrorCode, InitialCardInput, LifecyclePhase,
-    PlanningProfile, PublicationIntent, PublicationRequest, ReadinessRequest,
+    prepare_ready_publication, prepare_ready_reconciliation, reconcile_terminal_observation_head,
+    record_merged_publication, record_publication, record_readiness, record_ready_publication,
+    record_review, validate_ready_reconciliation_state, validate_ready_remote, BindRequest,
+    BootstrapRequest, CardKind, Claim, ConflictState, EditRequest, ErrorCode, InitialCardInput,
+    LifecyclePhase, PlanningProfile, PublicationIntent, PublicationRequest, ReadinessRequest,
     ReadyPublicationReconciliationRequest, ReadyPublicationRequest, ReconcileTerminalRequest,
     RemotePullRequest, RemoteReviewState, ReviewAssignmentRequest, ReviewEvidence,
     ReviewRecordRequest, SemanticOperation, Store, TerminalDesignRepairRequest,
@@ -1281,6 +1281,497 @@ fn prune_command_accepts_issue_local_terminal_without_rewriting_receipt() {
     assert_eq!(report["eligible"], true);
     assert_eq!(report["pruned"], false);
     assert_eq!(fs::read(receipt_path).unwrap(), receipt_before);
+}
+
+#[test]
+fn prune_preparation_classifies_retained_and_generated_state_without_deleting_it() {
+    let issue = 5625;
+    let (temp, store, record, sha) = fixture_with_validation_history_publication_and_worktree(
+        issue,
+        "Prune preparation fixture",
+        "prune-preparation",
+        vec![ValidationResult {
+            command: vec!["cargo".into(), "test".into()],
+            purpose: "prune preparation proof".into(),
+            outcome: EvidenceOutcome::Passed,
+            evidence_ref: "evidence.json".into(),
+        }],
+        true,
+        true,
+    );
+    let ready = record_readiness(
+        &store,
+        ReadinessRequest {
+            schema: "csdlc.readiness_request.v1".into(),
+            issue,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            claim_id: "claim".into(),
+            actor: "shepherd".into(),
+            pull_request: 70,
+            head_sha: sha.clone(),
+            required_checks: vec!["fast".into()],
+            require_review: true,
+            checks: vec![csdlc_v2::CheckObservation {
+                name: "fast".into(),
+                requirement: csdlc_v2::CheckRequirement::Required,
+                conclusion: csdlc_v2::CheckConclusion::Success,
+                details_url: None,
+            }],
+            review_state: RemoteReviewState::Approved,
+            conflict_state: ConflictState::Clean,
+            post_publication_findings: vec![],
+        },
+    )
+    .unwrap();
+    closeout_issue(
+        &store,
+        TerminalObservation {
+            schema: "csdlc.terminal_observation.v1".into(),
+            issue,
+            expected_generation: ready.generation,
+            expected_digest: ready.digest,
+            claim_id: "claim".into(),
+            actor: "closer".into(),
+            pull_request: Some(70),
+            disposition: TerminalDisposition::Merged,
+            observed_sha: Some(sha),
+            observed_state: "merged".into(),
+            approved_no_pr_reason: None,
+            receipt_path: format!("csdlc-v2/closeout/{issue}.json"),
+        },
+    )
+    .unwrap();
+    store.retain_terminal_receipt(issue).unwrap();
+    git(temp.path(), &["add", "."]);
+    git(temp.path(), &["commit", "-m", "terminal projection"]);
+    let index = store.issue_dir(issue).join("index.json");
+    fs::write(&index, format!("{}\n", fs::read_to_string(&index).unwrap())).unwrap();
+    fs::create_dir_all(temp.path().join(format!(".csdlc/evidence/{issue}"))).unwrap();
+    fs::write(
+        temp.path()
+            .join(format!(".csdlc/evidence/{issue}/review.json")),
+        b"{\"status\":\"passed\"}\n",
+    )
+    .unwrap();
+    fs::create_dir_all(temp.path().join(".csdlc/locks")).unwrap();
+    fs::write(temp.path().join(format!(".csdlc/locks/{issue}.lock")), b"").unwrap();
+    fs::create_dir_all(temp.path().join(format!(".csdlc/prepared/issues/{issue}"))).unwrap();
+    fs::write(
+        temp.path()
+            .join(format!(".csdlc/prepared/issues/{issue}/request.json")),
+        b"{}\n",
+    )
+    .unwrap();
+
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_csdlc-closeout"))
+        .current_dir(temp.path())
+        .args(["--root", ".", "prepare-prune", "--issue", "5625"])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stdout)
+    );
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(report["eligible"], true);
+    let categories: Vec<_> = report["paths"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| entry["category"].as_str().unwrap())
+        .collect();
+    assert!(categories.contains(&"retained_terminal_projection"));
+    assert!(categories.contains(&"retained_issue_evidence"));
+    assert!(categories.contains(&"retained_prepared_evidence"));
+    assert!(temp
+        .path()
+        .join(format!(".csdlc/locks/{issue}.lock"))
+        .exists());
+    assert!(temp
+        .path()
+        .join(format!(".csdlc/evidence/{issue}/review.json"))
+        .exists());
+    fs::write(temp.path().join(".csdlc/locks/other.lock"), b"").unwrap();
+    let scoped = std::process::Command::new(env!("CARGO_BIN_EXE_csdlc-closeout"))
+        .current_dir(temp.path())
+        .args(["--root", ".", "prepare-prune", "--issue", "5625"])
+        .output()
+        .unwrap();
+    assert!(scoped.status.success());
+    let scoped: serde_json::Value = serde_json::from_slice(&scoped.stdout).unwrap();
+    assert_eq!(scoped["eligible"], false);
+    assert!(scoped["blockers"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|blocker| blocker.as_str().unwrap().contains("other.lock")));
+
+    fs::create_dir_all(temp.path().join("operator")).unwrap();
+    fs::write(temp.path().join("operator/notes.txt"), b"preserve\n").unwrap();
+    let blocked = std::process::Command::new(env!("CARGO_BIN_EXE_csdlc-closeout"))
+        .current_dir(temp.path())
+        .args(["--root", ".", "prepare-prune", "--issue", "5625"])
+        .output()
+        .unwrap();
+    assert!(blocked.status.success());
+    let report: serde_json::Value = serde_json::from_slice(&blocked.stdout).unwrap();
+    assert_eq!(report["eligible"], false);
+    assert!(report["blockers"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|blocker| blocker.as_str().unwrap().contains("operator/notes.txt")));
+
+    fs::write(
+        &index,
+        format!("{}\n\n", fs::read_to_string(&index).unwrap()),
+    )
+    .unwrap();
+    git(
+        temp.path(),
+        &["add", &format!(".csdlc/issues/{issue}/index.json")],
+    );
+    let staged = std::process::Command::new(env!("CARGO_BIN_EXE_csdlc-closeout"))
+        .current_dir(temp.path())
+        .args(["--root", ".", "prepare-prune", "--issue", "5625"])
+        .output()
+        .unwrap();
+    assert!(staged.status.success());
+    let staged: serde_json::Value = serde_json::from_slice(&staged.stdout).unwrap();
+    assert_eq!(staged["eligible"], false);
+    assert!(staged["blockers"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|blocker| blocker.as_str().unwrap().contains("staged_path")));
+}
+
+#[test]
+fn destructive_prune_archives_evidence_restores_projection_and_removes_only_issue_worktree() {
+    let issue = 5629;
+    let (temp, store, record, sha) = fixture_with_validation_history_publication_and_worktree(
+        issue,
+        "Destructive prune fixture",
+        "destructive-prune",
+        vec![ValidationResult {
+            command: vec!["cargo".into(), "test".into()],
+            purpose: "destructive prune proof".into(),
+            outcome: EvidenceOutcome::Passed,
+            evidence_ref: "evidence.json".into(),
+        }],
+        true,
+        true,
+    );
+    let ready = record_readiness(
+        &store,
+        ReadinessRequest {
+            schema: "csdlc.readiness_request.v1".into(),
+            issue,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            claim_id: "claim".into(),
+            actor: "shepherd".into(),
+            pull_request: 70,
+            head_sha: sha.clone(),
+            required_checks: vec![],
+            require_review: false,
+            checks: vec![],
+            review_state: RemoteReviewState::NotRequired,
+            conflict_state: ConflictState::Clean,
+            post_publication_findings: vec![],
+        },
+    )
+    .unwrap();
+    closeout_issue(
+        &store,
+        TerminalObservation {
+            schema: "csdlc.terminal_observation.v1".into(),
+            issue,
+            expected_generation: ready.generation,
+            expected_digest: ready.digest,
+            claim_id: "claim".into(),
+            actor: "closer".into(),
+            pull_request: Some(70),
+            disposition: TerminalDisposition::Merged,
+            observed_sha: Some(sha),
+            observed_state: "merged".into(),
+            approved_no_pr_reason: None,
+            receipt_path: format!("csdlc-v2/closeout/{issue}.json"),
+        },
+    )
+    .unwrap();
+    store.retain_terminal_receipt(issue).unwrap();
+    git(temp.path(), &["add", "."]);
+    git(temp.path(), &["commit", "-m", "terminal projection"]);
+    git(temp.path(), &["switch", "-c", "keeper"]);
+    let linked = temp.path().join(".linked");
+    git(
+        temp.path(),
+        &["worktree", "add", linked.to_str().unwrap(), "issue-7"],
+    );
+
+    let linked_store = Store::new(&linked);
+    let index = linked_store.issue_dir(issue).join("index.json");
+    fs::write(&index, format!("{}\n", fs::read_to_string(&index).unwrap())).unwrap();
+    fs::create_dir_all(linked.join(format!(".csdlc/evidence/{issue}"))).unwrap();
+    fs::write(
+        linked.join(format!(".csdlc/evidence/{issue}/review.json")),
+        b"{\"status\":\"passed\"}\n",
+    )
+    .unwrap();
+    fs::create_dir_all(linked.join(format!(".csdlc/prepared/issues/{issue}"))).unwrap();
+    fs::write(
+        linked.join(format!(
+            ".csdlc/prepared/issues/{issue}/operator-input.json"
+        )),
+        b"{\"operator\":true}\n",
+    )
+    .unwrap();
+    fs::create_dir_all(linked.join(".csdlc/locks")).unwrap();
+    fs::write(linked.join(format!(".csdlc/locks/{issue}.lock")), b"").unwrap();
+
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_csdlc-closeout"))
+        .current_dir(&linked)
+        .args(["--root", ".", "prune", "--issue", "5629"])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stdout)
+    );
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(report["pruned"], true);
+    assert!(!linked.exists());
+    let archive = temp
+        .path()
+        .join(format!(".git/csdlc-v2/closeout/artifacts/{issue}"));
+    assert!(archive.join("manifest.json").exists());
+    assert_eq!(
+        fs::read(archive.join(format!(
+            "files/.csdlc/prepared/issues/{issue}/operator-input.json"
+        )))
+        .unwrap(),
+        b"{\"operator\":true}\n"
+    );
+    assert!(archive
+        .join(format!("files/.csdlc/evidence/{issue}/review.json"))
+        .exists());
+}
+
+#[test]
+fn terminal_closeout_reconciles_only_forward_metadata_head_drift() {
+    let issue = 5626;
+    let (temp, store, record, sha) = fixture_with_validation_history_and_publication(
+        issue,
+        "Terminal head reconciliation fixture",
+        "terminal-head-reconciliation",
+        vec![ValidationResult {
+            command: vec!["cargo".into(), "test".into()],
+            purpose: "terminal reconciliation proof".into(),
+            outcome: EvidenceOutcome::Passed,
+            evidence_ref: "evidence.json".into(),
+        }],
+        true,
+    );
+    let ready = record_readiness(
+        &store,
+        ReadinessRequest {
+            schema: "csdlc.readiness_request.v1".into(),
+            issue,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            claim_id: "claim".into(),
+            actor: "shepherd".into(),
+            pull_request: 70,
+            head_sha: sha,
+            required_checks: vec!["fast".into()],
+            require_review: true,
+            checks: vec![csdlc_v2::CheckObservation {
+                name: "fast".into(),
+                requirement: csdlc_v2::CheckRequirement::Required,
+                conclusion: csdlc_v2::CheckConclusion::Success,
+                details_url: None,
+            }],
+            review_state: RemoteReviewState::Approved,
+            conflict_state: ConflictState::Clean,
+            post_publication_findings: vec![],
+        },
+    )
+    .unwrap();
+    fs::create_dir_all(temp.path().join(format!(".csdlc/evidence/{issue}"))).unwrap();
+    fs::write(
+        temp.path()
+            .join(format!(".csdlc/evidence/{issue}/merge-ready.json")),
+        b"{}\n",
+    )
+    .unwrap();
+    git(
+        temp.path(),
+        &["add", &format!(".csdlc/evidence/{issue}/merge-ready.json")],
+    );
+    git(temp.path(), &["commit", "-m", "record merge readiness"]);
+    let merged_head = git_output(temp.path(), &["rev-parse", "HEAD"]);
+    let observation = TerminalObservation {
+        schema: "csdlc.terminal_observation.v1".into(),
+        issue,
+        expected_generation: ready.generation,
+        expected_digest: ready.digest,
+        claim_id: "claim".into(),
+        actor: "closer".into(),
+        pull_request: Some(70),
+        disposition: TerminalDisposition::Merged,
+        observed_sha: Some(merged_head.clone()),
+        observed_state: "merged".into(),
+        approved_no_pr_reason: None,
+        receipt_path: format!("csdlc-v2/closeout/{issue}.json"),
+    };
+    let reconciled = reconcile_terminal_observation_head(&store, observation).unwrap();
+    let current = store.load_record(issue).unwrap();
+    assert_eq!(reconciled.expected_generation, current.generation);
+    assert_eq!(
+        current.publication.unwrap().revision,
+        csdlc_v2::git::clean_commit_revision(&merged_head)
+    );
+    assert_eq!(current.readiness.unwrap().head_sha, merged_head);
+    assert_eq!(
+        closeout_issue(&store, reconciled).unwrap().phase,
+        LifecyclePhase::ClosedOut
+    );
+
+    let (temp, store, record, sha) = fixture_with_validation_history_and_publication(
+        5627,
+        "Substantive terminal drift fixture",
+        "substantive-terminal-drift",
+        vec![ValidationResult {
+            command: vec!["cargo".into(), "test".into()],
+            purpose: "terminal reconciliation proof".into(),
+            outcome: EvidenceOutcome::Passed,
+            evidence_ref: "evidence.json".into(),
+        }],
+        true,
+    );
+    let ready = record_readiness(
+        &store,
+        ReadinessRequest {
+            schema: "csdlc.readiness_request.v1".into(),
+            issue: 5627,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            claim_id: "claim".into(),
+            actor: "shepherd".into(),
+            pull_request: 70,
+            head_sha: sha,
+            required_checks: vec![],
+            require_review: false,
+            checks: vec![],
+            review_state: RemoteReviewState::NotRequired,
+            conflict_state: ConflictState::Clean,
+            post_publication_findings: vec![],
+        },
+    )
+    .unwrap();
+    fs::create_dir_all(temp.path().join("src")).unwrap();
+    fs::write(temp.path().join("src/drift.rs"), b"pub fn drift() {}\n").unwrap();
+    git(temp.path(), &["add", "src/drift.rs"]);
+    git(temp.path(), &["commit", "-m", "substantive drift"]);
+    let substantive = git_output(temp.path(), &["rev-parse", "HEAD"]);
+    let error = reconcile_terminal_observation_head(
+        &store,
+        TerminalObservation {
+            schema: "csdlc.terminal_observation.v1".into(),
+            issue: 5627,
+            expected_generation: ready.generation,
+            expected_digest: ready.digest,
+            claim_id: "claim".into(),
+            actor: "closer".into(),
+            pull_request: Some(70),
+            disposition: TerminalDisposition::Merged,
+            observed_sha: Some(substantive),
+            observed_state: "merged".into(),
+            approved_no_pr_reason: None,
+            receipt_path: "csdlc-v2/closeout/5627.json".into(),
+        },
+    )
+    .unwrap_err();
+    assert_eq!(error.code, ErrorCode::ReconciliationRequired);
+}
+
+#[test]
+fn invalid_terminal_observation_cannot_mutate_readiness_during_reconciliation() {
+    let issue = 5628;
+    let (temp, store, record, sha) = fixture_with_validation_history_and_publication(
+        issue,
+        "Invalid terminal observation fixture",
+        "invalid-terminal-observation",
+        vec![ValidationResult {
+            command: vec!["cargo".into(), "test".into()],
+            purpose: "invalid terminal observation proof".into(),
+            outcome: EvidenceOutcome::Passed,
+            evidence_ref: "evidence.json".into(),
+        }],
+        true,
+    );
+    let ready = record_readiness(
+        &store,
+        ReadinessRequest {
+            schema: "csdlc.readiness_request.v1".into(),
+            issue,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            claim_id: "claim".into(),
+            actor: "shepherd".into(),
+            pull_request: 70,
+            head_sha: sha,
+            required_checks: vec![],
+            require_review: false,
+            checks: vec![],
+            review_state: RemoteReviewState::NotRequired,
+            conflict_state: ConflictState::Clean,
+            post_publication_findings: vec![],
+        },
+    )
+    .unwrap();
+    fs::create_dir_all(temp.path().join(format!(".csdlc/evidence/{issue}"))).unwrap();
+    fs::write(
+        temp.path()
+            .join(format!(".csdlc/evidence/{issue}/merge-ready.json")),
+        b"{}\n",
+    )
+    .unwrap();
+    git(
+        temp.path(),
+        &["add", &format!(".csdlc/evidence/{issue}/merge-ready.json")],
+    );
+    git(temp.path(), &["commit", "-m", "record merge readiness"]);
+    let merged_head = git_output(temp.path(), &["rev-parse", "HEAD"]);
+    let before = fs::read(store.issue_dir(issue).join("index.json")).unwrap();
+    let observation = TerminalObservation {
+        schema: "csdlc.terminal_observation.v1".into(),
+        issue,
+        expected_generation: ready.generation,
+        expected_digest: ready.digest,
+        claim_id: "claim".into(),
+        actor: "closer".into(),
+        pull_request: Some(70),
+        disposition: TerminalDisposition::Merged,
+        observed_sha: Some(merged_head),
+        observed_state: "open".into(),
+        approved_no_pr_reason: None,
+        receipt_path: format!("csdlc-v2/closeout/{issue}.json"),
+    };
+    assert_eq!(
+        csdlc_v2::validate_terminal_observation(&observation)
+            .unwrap_err()
+            .code,
+        ErrorCode::InvalidInput
+    );
+    assert_eq!(
+        fs::read(store.issue_dir(issue).join("index.json")).unwrap(),
+        before
+    );
 }
 
 #[test]
