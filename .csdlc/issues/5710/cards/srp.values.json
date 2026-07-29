@@ -7,7 +7,7 @@
     "title": "[v0.91.8][csdlc-v2][closeout] Repair terminal closeout and safe-prune recovery for closed issues",
     "slug": "csdlc-v2-closeout-safe-prune-recovery",
     "version": "v0.91.8",
-    "generation": 3
+    "generation": 4
   },
   "status": "pre_phase",
   "content": {
