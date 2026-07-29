@@ -45,11 +45,11 @@ Implemented fail-closed terminal head reconciliation, safe prune preparation, ev
 
 ## Integration
 
-worktree_only
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 
