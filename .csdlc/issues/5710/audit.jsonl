@@ -5,3 +5,5 @@
 {"sequence":5,"generation":2,"actor":"codex","reason":"atomically record execution, validation, and implemented phase","operation":"finalize_implementation"}
 {"sequence":6,"generation":3,"actor":"codex","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
 {"sequence":7,"generation":4,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":8,"generation":5,"actor":"codex","reason":"Rebase onto current origin/main invalidated exact-head review and publication evidence; recover to implemented for required rereview.","operation":"recover_review"}
+{"sequence":9,"generation":6,"actor":"codex","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
