@@ -13,12 +13,9 @@ Status: pre_phase
 ## Scope
 
 csdlc-v2/src/bin/csdlc-closeout.rs
-csdlc-v2/src/git.rs
-csdlc-v2/src/lifecycle.rs
+csdlc-v2/src/lib.rs
+csdlc-v2/src/readiness.rs
 csdlc-v2/tests/gate7_lifecycle.rs
-docs/milestones/v0.91.8/review/closeout_recovery
-.csdlc/evidence/5710
-.csdlc/issues/5710
 
 ## Prompts
 
@@ -30,7 +27,68 @@ docs/milestones/v0.91.8/review/closeout_recovery
 
 ## Findings
 
-[]
+[
+  {
+    "id": "R-1",
+    "severity": "p1",
+    "summary": "Validate terminal disposition before metadata reconciliation can mutate canonical readiness.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+    "route": null
+  },
+  {
+    "id": "R-2",
+    "severity": "p1",
+    "summary": "Restrict stale lock cleanup to the target issue.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+    "route": null
+  },
+  {
+    "id": "R-3",
+    "severity": "p1",
+    "summary": "Retain unrecognized prepared JSON instead of deleting it as generated state.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+    "route": null
+  },
+  {
+    "id": "R-4",
+    "severity": "p2",
+    "summary": "Add destructive linked-worktree prune coverage.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+    "route": null
+  },
+  {
+    "id": "R-5",
+    "severity": "p2",
+    "summary": "Route merged records to remote terminal closeout rather than receipt-only reconciliation.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+    "route": null
+  },
+  {
+    "id": "R-6",
+    "severity": "p2",
+    "summary": "Fail closed on staged safe-path changes before prune mutation begins.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+    "route": null
+  }
+]
 
 ## Dispositions
 
@@ -38,12 +96,12 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- Post-merge live recovery remains a separate closeout-stage proof and is not claimed by pre-PR tests.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c")
 
-Reviewer: None
+Reviewer: Some("subagent:019faf31-2faf-7740-b22c-9bfd9714e9cf")
 
-Result: pre_review
+Result: pass

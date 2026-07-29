@@ -3,13 +3,13 @@
   "issue": 5710,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "7c3adf5e43576041be529f56740c9816a7a123b1ff42dc61cf48c6ef8846a57c",
-  "phase": "implemented",
-  "generation": 2,
-  "digest": "f6af65e9e06895e017d347a805a3f6fccb3a33e9de61a573fada03d98309b112",
+  "phase": "reviewed",
+  "generation": 3,
+  "digest": "17363239d1d2e371459e2d66b2428314634a45e92ac8d8a6824a2b256dd08adc",
   "claim": {
     "id": "claim-5710-closeout-safe-prune-recovery",
     "owner": "codex:issue-5710-closeout-safe-prune-recovery",
-    "generation": 2,
+    "generation": 3,
     "acquired_unix_seconds": 1785349671,
     "expires_unix_seconds": 1785954471,
     "heartbeat_unix_seconds": 1785349671,
@@ -31,7 +31,83 @@
     "purpose": "Implement typed terminal publication reconciliation, safe generated-state cleanup, lifecycle repair classification, and the v0.91.8 closed-issue sweep"
   },
   "review_assignment": null,
-  "review": null,
+  "review": {
+    "reviewer": "subagent:019faf31-2faf-7740-b22c-9bfd9714e9cf",
+    "scope": [
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "reviewed_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+    "findings": [
+      {
+        "id": "R-1",
+        "severity": "p1",
+        "summary": "Validate terminal disposition before metadata reconciliation can mutate canonical readiness.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+        "route": null
+      },
+      {
+        "id": "R-2",
+        "severity": "p1",
+        "summary": "Restrict stale lock cleanup to the target issue.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+        "route": null
+      },
+      {
+        "id": "R-3",
+        "severity": "p1",
+        "summary": "Retain unrecognized prepared JSON instead of deleting it as generated state.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+        "route": null
+      },
+      {
+        "id": "R-4",
+        "severity": "p2",
+        "summary": "Add destructive linked-worktree prune coverage.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+        "route": null
+      },
+      {
+        "id": "R-5",
+        "severity": "p2",
+        "summary": "Route merged records to remote terminal closeout rather than receipt-only reconciliation.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+        "route": null
+      },
+      {
+        "id": "R-6",
+        "severity": "p2",
+        "summary": "Fail closed on staged safe-path changes before prune mutation begins.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Post-merge live recovery remains a separate closeout-stage proof and is not claimed by pre-PR tests."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -46,32 +122,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "e979aece6eb4d22354810ae2b36f7a56994b16d45d6b907f45a6358ff28de502",
+      "values_digest": "8a09b37ffb303b1d7bfc9e9bccb22684322fd854b7606af09292bd256d3fb482",
       "rendered_digest": "a3694e0480046bf550f0e9103978a8de58763e707adbe02ccb16bea7a382b887",
       "ast_digest": "428af5d8fd85ab9eb6dad2bbd50af49ddbd4e80de24d8adc6c3e72db2466d572"
     },
     "stp": {
-      "values_digest": "9d345f6b64eec8afd2ae31c90dc27885e1c5ac93afb6fa4960bafbafd737ef42",
+      "values_digest": "e82e8cb00faf8c2206100743f6c7932cd2e4c174eb48adfbe18d635fac40c86f",
       "rendered_digest": "496e32785332d807cba39eb36195866e109870b0d18c17491043cd08046814cd",
       "ast_digest": "9e7b79a4ac292a8a198fb72175af2160dd5490a1b24df75eb50c38335d1a897e"
     },
     "spp": {
-      "values_digest": "baf84547d0da0cc8c4896018acddecddb27e25cfb6aee67f41b35737f8d1a31e",
+      "values_digest": "7fcbcd3fbfd9425b8ad85ffc916a26e5e405b0300e9af0f2b0a93ce6406f6647",
       "rendered_digest": "4299ed5ee177e09db6d28e57b84577dd189c2f7a21c0d2027c75dca87f8920a3",
       "ast_digest": "e4e6acde291b5b9872c7e4beb5ea878df742be84459be21080872db3b9190942"
     },
     "vpp": {
-      "values_digest": "815293bbdc7c3bd8084425438de3ab12b309a095f1294c7ecf6d7b52ec9ef263",
+      "values_digest": "0380fb06c0d6440916f48d24fd4eb54c3a81e4529468a7d4e43dc7fe6b2e97e1",
       "rendered_digest": "8d92af6ea20e0125a3a09e337ac0687efc6776b06ad4a8714203b21770f1c67f",
       "ast_digest": "b49acbe8d6e3b24c772d0a28f8879b15e2a51d716fc1a52c3963b2937a3d0c4c"
     },
     "srp": {
-      "values_digest": "259aa281b8b0bee71213ee06843990495c6c25e97da09d0d41bf73f8d8142e48",
-      "rendered_digest": "79925879da6aac93e076dcc753aa9b10bad228e93fc28759864bbe89c34ab4f7",
-      "ast_digest": "db73903c29779411211ee85119a6597cf4d701ffe58c97fe49a7a11823ad137e"
+      "values_digest": "532f1d8342db137af78da3a1e6f43c4caf8de94cf3891223fbc1cd9ff0964720",
+      "rendered_digest": "e1853acd2720a2eca80e759badccb030e2efbccbfca6df312feb5c7378025aeb",
+      "ast_digest": "944eac99d30dacfab60eaeb33b0973e65fce7d2df56da1865b3494a87da5f32a"
     },
     "sor": {
-      "values_digest": "7ab42e479abbba7bb8c0c75e53d2a1330a3aeb785ea2b224f1f10b33952edee8",
+      "values_digest": "daaf8fd7ad3e687eee63101173ae77e8448f95ca863704323b4f34f19735bd36",
       "rendered_digest": "0273582307a2d6466898a4c42af7be2b03bdf882efe14990fb2ba2ab2bccf16f",
       "ast_digest": "28970c159f0ddcf2605f2db320584103da87f4f30603a90b4737ff2246f1bc63"
     }
@@ -97,6 +173,13 @@
       "to": "implemented",
       "actor": "codex",
       "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "exact scoped review passed"
     }
   ],
   "audit": [
@@ -134,6 +217,13 @@
       "actor": "codex",
       "reason": "atomically record execution, validation, and implemented phase",
       "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
     }
   ]
 }

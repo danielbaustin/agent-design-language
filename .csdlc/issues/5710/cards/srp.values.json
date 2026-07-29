@@ -7,15 +7,15 @@
     "title": "[v0.91.8][csdlc-v2][closeout] Repair terminal closeout and safe-prune recovery for closed issues",
     "slug": "csdlc-v2-closeout-safe-prune-recovery",
     "version": "v0.91.8",
-    "generation": 2
+    "generation": 3
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "csdlc-v2/src/bin/csdlc-closeout.rs\ncsdlc-v2/src/git.rs\ncsdlc-v2/src/lifecycle.rs\ncsdlc-v2/tests/gate7_lifecycle.rs\ndocs/milestones/v0.91.8/review/closeout_recovery\n.csdlc/evidence/5710\n.csdlc/issues/5710",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "csdlc-v2/src/bin/csdlc-closeout.rs\ncsdlc-v2/src/lib.rs\ncsdlc-v2/src/readiness.rs\ncsdlc-v2/tests/gate7_lifecycle.rs",
+      "review_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+      "reviewer": "subagent:019faf31-2faf-7740-b22c-9bfd9714e9cf",
       "review_prompts": [
         "Can terminal reconciliation ever accept a different repository, PR, branch, or unrelated revision?",
         "Can prune preparation remove tracked lifecycle drift, source files, unknown paths, or unretained evidence?",
@@ -23,9 +23,72 @@
         "Does the classifier report legal next actions without mutating lifecycle state?",
         "Do focused tests cover the #5691 drift and representative dirty-worktree classes?"
       ],
-      "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "findings": [
+        {
+          "id": "R-1",
+          "severity": "p1",
+          "summary": "Validate terminal disposition before metadata reconciliation can mutate canonical readiness.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+          "route": null
+        },
+        {
+          "id": "R-2",
+          "severity": "p1",
+          "summary": "Restrict stale lock cleanup to the target issue.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+          "route": null
+        },
+        {
+          "id": "R-3",
+          "severity": "p1",
+          "summary": "Retain unrecognized prepared JSON instead of deleting it as generated state.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+          "route": null
+        },
+        {
+          "id": "R-4",
+          "severity": "p2",
+          "summary": "Add destructive linked-worktree prune coverage.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+          "route": null
+        },
+        {
+          "id": "R-5",
+          "severity": "p2",
+          "summary": "Route merged records to remote terminal closeout rather than receipt-only reconciliation.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+          "route": null
+        },
+        {
+          "id": "R-6",
+          "severity": "p2",
+          "summary": "Fail closed on staged safe-path changes before prune mutation begins.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:81aca043ca0e393517daa70fa329e00f72ae28d5:26e0769dcb88b2c3bf002b4f200e901d6829eec1b1754d3216da468cf2e3d84c",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "Post-merge live recovery remains a separate closeout-stage proof and is not claimed by pre-PR tests."
+      ],
+      "review_result": "pass"
     }
   }
 }
