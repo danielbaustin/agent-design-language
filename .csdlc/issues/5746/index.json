@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "eae528ea03f96b45cd6c882c001f86b97ba8c63c9b04a0a4c8ff049792ae0d4d",
   "phase": "implemented",
-  "generation": 4,
-  "digest": "e5272cb8b488fcd96df830349c8ae4b3dfa200ecb7a7692ddde691cc878e71d6",
+  "generation": 10,
+  "digest": "f1f1efad862583ad92bba02d8dd56b6ca66500c9151c1057c648eaca221be19c",
   "claim": {
     "id": "claim-5746-v0918-terminal-projection-wave",
     "owner": "codex:v0918-terminal-projection-wave",
-    "generation": 4,
+    "generation": 10,
     "acquired_unix_seconds": 1785538383,
     "expires_unix_seconds": 1786143183,
     "heartbeat_unix_seconds": 1785538383,
@@ -39,34 +39,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "afa496856622e87d0629a89ccadc5ea7228983f2e5f171c51732c32db76f05e2",
+      "values_digest": "ee02f227a828340a0e0d50c01a054133868f5b8fc026a00679a5ff97e7e78ca6",
       "rendered_digest": "3c4372d0075360d87ea67423bc21316c6c7042f431c0c1b4fd3a0d15aa50f886",
       "ast_digest": "e313d0336ff506eef911a41416b955c09684c3d25e1860620e60fdd5cd800655"
     },
     "stp": {
-      "values_digest": "ff7e4ec9a995aee92e47ea77f3bd9aee8b8ce5d3293dc07a97fd3be38d0f72cc",
+      "values_digest": "33a09429fb6977481c08c3e4f5c4dc3b62f1035413ded3f21dce3a089efea6f0",
       "rendered_digest": "45a3151a7904b28ddb4a2fab957d64794d1977eff14f1f1e4f96db4f46bccd88",
       "ast_digest": "6801c8f8877721131eb2258bee98c4bfde641439202ab787338b8a7f257c2784"
     },
     "spp": {
-      "values_digest": "d10933dc017fff450bdcdf15012646442af451e490b1956cf96ffb91d860878c",
+      "values_digest": "c6e6942eba6e8e4c3a2753c04351fc01e3621b7dea1a33af5869094cb9fc0818",
       "rendered_digest": "f318a1b0ef3a56f29c8d4bb847acf0d685ebd0bda877d1148859d90baf7a7d47",
       "ast_digest": "08ff0eabf0bc87e660f707c886f6670b907cbd478aa81a7e2ba9756ee25a5b1f"
     },
     "vpp": {
-      "values_digest": "eb8341d4f66f837c76f23b6a709d3cb39147a7553e9b4518f2ced7098e786f52",
-      "rendered_digest": "246fcaddde9b4f37ea12f1b935a25d0daa9808980e760ef6edb3d31d67345bc9",
-      "ast_digest": "e0439b895824cc65b92250523dafc76b7565bb5492bfb3b1e7a7eb7c23417af0"
+      "values_digest": "d8646abe23ec79848efb3e106ae8bca1f5e9df48de7b39d2ca609e893db94289",
+      "rendered_digest": "90d1ae77eb6cb1bf0c677aa6d92b40ecf957d610d77a02dda571047ed1d27aaa",
+      "ast_digest": "986884378f6ad79069f768afcbd57adcb57323b0395fc17a20b57a8915f5979b"
     },
     "srp": {
-      "values_digest": "aedbe5dd29ea0e4c71fd1f54dd70e114bacf95ea2c9bedf69d97b94de35e79c1",
-      "rendered_digest": "86bfe39d5929bbc65a47f3f40ff8fbe2364dc1ad15d5a2454fe1ac4a5b1650d3",
-      "ast_digest": "62c5a153de5fefe49f0f7d355297fde50695d00ee17873e94e6515bb6d6e4dcf"
+      "values_digest": "06ec3481850006c093042e1bc24fb188a17228e9d0d206cf617a5c5c68946d78",
+      "rendered_digest": "d4a907854b041b88f06e41ec5b22ca2dc7a6c56c766e9f1b2b8adc74d087ae91",
+      "ast_digest": "35cdfd3d40775fb8c015ebbd32d6f6058721e72073902d8693227f77832ca07b"
     },
     "sor": {
-      "values_digest": "7efdae571c8cc02eb0babb76d3e99e0f3d434c3e7cb75d52f1aebce91ff2aa2f",
-      "rendered_digest": "fdd859683cde473d891a1777f8cd9c9eb8fc968f70a9c25d322c96145d4b335c",
-      "ast_digest": "600448d9bb743e1913c6290d40857ae7c35eaf389be4bcf78a978214bf411cb0"
+      "values_digest": "a8c4c9aa0668e70bfabf9e5a7f0c5346b5c59db1903ebd3c8385d7ab9b8bfa62",
+      "rendered_digest": "1ecd49c642c105d0af447c3a881e3b1e7f92147edd032fe368011b11d1014a55",
+      "ast_digest": "b38e76bf3495c6c9d0eab2e31c480c09edfd6a718bc5b233a4fe0f7e03f193ba"
     }
   },
   "transitions": [
@@ -148,6 +148,48 @@
       "actor": "codex:v0918-terminal-projection-wave",
       "reason": "atomically record execution, validation, and implemented phase",
       "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "Replace bootstrap placeholders with the exact executable aggregate closeout proof lanes.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"terminal-doctor-sweep\",\"proof_role\":\"Run C-SDLC v2 doctor for every included terminal projection\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"/bin/bash\",\"-lc\",\"for i in 4739 4741 4758 4761 4762 5107 5338 5340 5341 5343 5344 5345 5349 5350 5361 5384 5497 5498 5500 5501 5502 5526 5563 5589 5590 5592 5594 5605 5613 5615 5624 5627 5648 5653 5658 5666 5671 5683 5686 5691 5695 5697 5698 5702 5710 5715 5717 5719 5727 5737; do .adl/bin/csdlc-v2/csdlc-doctor --repo . --issue $i >/dev/null || exit 1; done\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null},{\"lane\":\"terminal-receipt-equality\",\"proof_role\":\"Compare every included tracked index byte-for-byte with retained terminal authority\",\"acceptance_ids\":[\"AC-1\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"/bin/bash\",\"-lc\",\"for i in 4739 4741 4758 4761 4762 5107 5338 5340 5341 5343 5344 5345 5349 5350 5361 5384 5497 5498 5500 5501 5502 5526 5563 5589 5590 5592 5594 5605 5613 5615 5624 5627 5648 5653 5658 5666 5671 5683 5686 5691 5695 5697 5698 5702 5710 5715 5717 5719 5727 5737; do jq -e -s '.[0].record == .[1]' \\\"$(git rev-parse --git-common-dir)/csdlc-v2/closeout/$i.json\\\" .csdlc/issues/$i/index.json >/dev/null || exit 1; done\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null},{\"lane\":\"aggregate-scope-and-review-preflight\",\"proof_role\":\"Prove the aggregate commit contains only the declared fifty issue projections and freeze the bounded review scope\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"/bin/bash\",\"-lc\",\"git diff --name-only origin/main...c4ef77c46 | awk 'BEGIN{ok=1} !/^\\\\.csdlc\\\\/issues\\\\/(4739|4741|4758|4761|4762|5107|5338|5340|5341|5343|5344|5345|5349|5350|5361|5384|5497|5498|5500|5501|5502|5526|5563|5589|5590|5592|5594|5605|5613|5615|5624|5627|5648|5653|5658|5666|5671|5683|5686|5691|5695|5697|5698|5702|5710|5715|5717|5719|5727|5737)\\\\// {print; ok=0} END{exit !ok}'\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null},{\"lane\":\"aggregate-diff-hygiene\",\"proof_role\":\"Prove the aggregate terminal projection commit has no whitespace errors\",\"acceptance_ids\":[\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\",\"origin/main...c4ef77c46\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "Record passing exact-projection doctor revalidation after rebase.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\".adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"<declared-50@c4ef77c46>\"],\"purpose\":\"Revalidated C-SDLC doctor for all fifty receipt-authoritative projections at c4ef77c46.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5746/current-terminal-doctor-sweep.log\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "Record passing exact-projection receipt equality after rebase.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"jq\",\"-e\",\"-s\",\"<receipt.record == tracked index for declared-50@c4ef77c46>\"],\"purpose\":\"Revalidated all fifty tracked indexes against retained terminal receipt records at c4ef77c46.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5746/current-terminal-receipt-equality.log\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "Record passing exact aggregate path-scope revalidation after rebase.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--name-only\",\"origin/main...c4ef77c46\"],\"purpose\":\"Revalidated that c4ef77c46 contains only the declared fifty terminal projection directories.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5746/current-aggregate-scope.log\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "Record passing exact aggregate diff-hygiene revalidation after rebase.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\",\"origin/main...c4ef77c46\"],\"purpose\":\"Revalidated whitespace and patch hygiene for the rebased fifty-projection commit c4ef77c46.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5746/current-aggregate-diff-hygiene.log\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "Clarify the immutable historical receipt boundary and the portable current validation authority identified by review.",
+      "operation": "{\"operation\":\"append_reference\",\"value\":\"Historical receipt-authored fields are preserved verbatim, including machine-local paths that are immutable terminal evidence rather than reusable commands. The superseding #5746 current-* validation uses repo-relative commands at projection commit c4ef77c46; those non-empty logs are the current publication proof.\"}"
     }
   ]
 }

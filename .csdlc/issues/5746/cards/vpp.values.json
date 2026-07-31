@@ -7,7 +7,7 @@
     "title": "[v0.91.8][csdlc-v2][closeout] Materialize retained terminal projections",
     "slug": "v0918-retained-terminal-projections",
     "version": "v0.91.8",
-    "generation": 4
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -30,7 +30,7 @@
           "argv": [
             "/bin/bash",
             "-lc",
-            "for i in 4739 4741 4758 4761 4762 5107 5338 5340 5341 5343 5344 5345 5349 5350 5361 5384 5497 5498 5500 5501 5502 5526 5563 5589 5590 5592 5594 5605 5613 5615 5624 5627 5648 5653 5658 5666 5671 5683 5686 5691 5695 5697 5698 5702 5710 5715 5717 5719 5727 5737; do /Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor --repo . --issue $i >/dev/null || exit 1; done"
+            "for i in 4739 4741 4758 4761 4762 5107 5338 5340 5341 5343 5344 5345 5349 5350 5361 5384 5497 5498 5500 5501 5502 5526 5563 5589 5590 5592 5594 5605 5613 5615 5624 5627 5648 5653 5658 5666 5671 5683 5686 5691 5695 5697 5698 5702 5710 5715 5717 5719 5727 5737; do .adl/bin/csdlc-v2/csdlc-doctor --repo . --issue $i >/dev/null || exit 1; done"
           ],
           "parallel_group": "terminal-audit",
           "defer_reason": null
@@ -69,7 +69,7 @@
           "argv": [
             "/bin/bash",
             "-lc",
-            "git diff --name-only origin/main...a12e9212d | awk 'BEGIN{ok=1} !/^\\.csdlc\\/issues\\/(4739|4741|4758|4761|4762|5107|5338|5340|5341|5343|5344|5345|5349|5350|5361|5384|5497|5498|5500|5501|5502|5526|5563|5589|5590|5592|5594|5605|5613|5615|5624|5627|5648|5653|5658|5666|5671|5683|5686|5691|5695|5697|5698|5702|5710|5715|5717|5719|5727|5737)\\// {print; ok=0} END{exit !ok}'"
+            "git diff --name-only origin/main...c4ef77c46 | awk 'BEGIN{ok=1} !/^\\.csdlc\\/issues\\/(4739|4741|4758|4761|4762|5107|5338|5340|5341|5343|5344|5345|5349|5350|5361|5384|5497|5498|5500|5501|5502|5526|5563|5589|5590|5592|5594|5605|5613|5615|5624|5627|5648|5653|5658|5666|5671|5683|5686|5691|5695|5697|5698|5702|5710|5715|5717|5719|5727|5737)\\// {print; ok=0} END{exit !ok}'"
           ],
           "parallel_group": "terminal-audit",
           "defer_reason": null
@@ -88,7 +88,7 @@
             "git",
             "diff",
             "--check",
-            "origin/main...a12e9212d"
+            "origin/main...c4ef77c46"
           ],
           "parallel_group": "terminal-audit",
           "defer_reason": null

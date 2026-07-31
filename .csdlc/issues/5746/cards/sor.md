@@ -67,6 +67,51 @@ Materialized fifty receipt-authoritative v0.91.8 terminal projections through ty
     "purpose": "Compare every tracked index byte-for-byte with retained terminal authority",
     "outcome": "passed",
     "evidence_ref": "terminal-receipt-equality.log"
+  },
+  {
+    "command": [
+      ".adl/bin/csdlc-v2/csdlc-doctor",
+      "--repo",
+      ".",
+      "--issue",
+      "<declared-50@c4ef77c46>"
+    ],
+    "purpose": "Revalidated C-SDLC doctor for all fifty receipt-authoritative projections at c4ef77c46.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5746/current-terminal-doctor-sweep.log"
+  },
+  {
+    "command": [
+      "jq",
+      "-e",
+      "-s",
+      "<receipt.record == tracked index for declared-50@c4ef77c46>"
+    ],
+    "purpose": "Revalidated all fifty tracked indexes against retained terminal receipt records at c4ef77c46.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5746/current-terminal-receipt-equality.log"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--name-only",
+      "origin/main...c4ef77c46"
+    ],
+    "purpose": "Revalidated that c4ef77c46 contains only the declared fifty terminal projection directories.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5746/current-aggregate-scope.log"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "origin/main...c4ef77c46"
+    ],
+    "purpose": "Revalidated whitespace and patch hygiene for the rebased fifty-projection commit c4ef77c46.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5746/current-aggregate-diff-hygiene.log"
   }
 ]
 

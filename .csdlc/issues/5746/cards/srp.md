@@ -81,7 +81,7 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- Historical receipt-authored fields are preserved verbatim, including machine-local paths that are immutable terminal evidence rather than reusable commands. The superseding #5746 current-* validation uses repo-relative commands at projection commit c4ef77c46; those non-empty logs are the current publication proof.
 
 ## Review Result
 
