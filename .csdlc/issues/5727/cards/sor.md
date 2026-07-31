@@ -12,7 +12,7 @@ Status: pre_phase
 
 ## Summary
 
-Implemented typed safe claim replacement with one Git-common collision authority across reacquisition and expired recovery.
+Implemented typed safe claim replacement with actual-checkout and cross-worktree exclusivity.
 
 ## Artifacts
 
@@ -21,6 +21,7 @@ Implemented typed safe claim replacement with one Git-common collision authority
 - .csdlc/evidence/5727
 - .csdlc/evidence/5727/gate2.log
 - .csdlc/evidence/5727/gate7.log
+- .csdlc/evidence/5727/gate2.log
 - .csdlc/evidence/5727/gate2.log
 
 ## Execution
@@ -34,6 +35,9 @@ Implemented typed safe claim replacement with one Git-common collision authority
 - Routed legacy expired-claim recovery through the Git-common lock and cross-worktree live-claim inventory.
 - Required expired recovery to preserve its existing branch/worktree binding and validate complete replacement scope.
 - Added concurrent two-worktree recovery proof that only one overlapping writer can be established.
+- Unified actual branch/worktree validation for reacquisition and expired recovery.
+- Prevented recovery through stale same-issue records in main or unrelated worktrees.
+- Added a wrong-root fail-closed regression before positive expired recovery.
 
 ## Validation
 
@@ -174,6 +178,21 @@ Implemented typed safe claim replacement with one Git-common collision authority
       "gate2"
     ],
     "purpose": "Prove every typed claim replacement route shares cross-worktree exclusion, schema, CAS, collision, and CLI behavior.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5727/gate2.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate2"
+    ],
+    "purpose": "Prove every claim replacement route enforces active-checkout and cross-worktree exclusion, schema, CAS, collision, and CLI behavior.",
     "outcome": "passed",
     "evidence_ref": ".csdlc/evidence/5727/gate2.log"
   }

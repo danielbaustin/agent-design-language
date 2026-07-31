@@ -2,13 +2,13 @@
 running 37 tests
 test bind_rejects_existing_unregistered_target_directory ... ok
 test bind_rejects_symlinked_lifecycle_state_and_cleans_created_worktree ... ok
-test bind_rejects_stale_existing_target_side_state_without_mutating_it ... ok
-test bind_idempotent_reuse_rejects_target_with_different_lifecycle_identity ... ok
-test bind_rejects_stale_existing_target_record_before_materializing_side_state ... ok
 test bind_materializes_lifecycle_state_in_new_issue_worktree ... ok
-test bind_idempotent_reuse_rejects_target_with_different_initialization_digest ... ok
-test bind_copies_prebind_evidence_into_target_worktree ... ok
+test bind_rejects_stale_existing_target_record_before_materializing_side_state ... ok
 test bind_idempotent_reuse_rejects_target_with_different_issue_identity ... ok
+test bind_idempotent_reuse_rejects_target_with_different_initialization_digest ... ok
+test bind_idempotent_reuse_rejects_target_with_different_lifecycle_identity ... ok
+test bind_copies_prebind_evidence_into_target_worktree ... ok
+test bind_rejects_stale_existing_target_side_state_without_mutating_it ... ok
 test merged_publication_reconciliation_projects_truth_before_closeout ... ok
 test ambiguous_post_get_recovers_without_repeating_graphql ... ok
 test invalid_terminal_observation_cannot_mutate_readiness_during_reconciliation ... ok
@@ -38,9 +38,9 @@ test later_pass_supersedes_waiting_validation_through_terminal_closeout ... ok
 test readiness_regression_and_exact_terminal_closeout_are_atomic_and_idempotent ... ok
 test terminal_projection_and_receipt_recover_at_each_durable_boundary ... ok
 
-test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 66.41s
+test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 65.40s
 
     Blocking waiting for file lock on build directory
    Compiling csdlc-v2 v0.1.0 (/Volumes/FastWork/adl-wp-5727/csdlc-v2)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.58s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.59s
      Running tests/gate7_lifecycle.rs (csdlc-v2/target/debug/deps/gate7_lifecycle-bc0c91707540e904)
