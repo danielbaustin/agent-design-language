@@ -12,19 +12,24 @@ Status: pre_phase
 
 ## Summary
 
-Implemented typed safe reacquisition of deliberately released or expired C-SDLC v2 claims without lifecycle rewind.
+Implemented typed safe claim reacquisition with Git-common serialization and repository-wide worktree collision authority.
 
 ## Artifacts
 
 - .csdlc/prepared/issues/5727/design.md
 - .csdlc/prepared/issues/5727/diagram.mmd
 - .csdlc/evidence/5727
+- .csdlc/evidence/5727/gate2.log
+- .csdlc/evidence/5727/gate7.log
 
 ## Execution
 
 - Added a typed csdlc-bind reacquisition request and result contract with CAS, binding, lease, and live-overlap guards.
 - Made dormant nonterminal records readable and doctor-classifiable while preserving writer-claim enforcement for mutations.
 - Added command-level, released-claim, expired-claim, stale-state, binding, overlap, schema, and real #5354 acceptance proof.
+- Moved claim collision serialization to a Git-common lock shared by every worktree.
+- Made collision checks inspect canonical issue records across all registered worktrees.
+- Added a concurrent two-worktree regression proving only one overlapping writer can reacquire.
 
 ## Validation
 
@@ -90,6 +95,68 @@ Implemented typed safe reacquisition of deliberately released or expired C-SDLC 
     "purpose": "Prove lifecycle integration and worktree binding behavior remain intact.",
     "outcome": "passed",
     "evidence_ref": "gate7.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate2"
+    ],
+    "purpose": "Prove typed lifecycle, reacquisition, shared cross-worktree exclusion, schema, CAS, collision, and CLI behavior.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5727/gate2.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate7_lifecycle"
+    ],
+    "purpose": "Prove lifecycle integration and worktree binding behavior remain intact.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5727/gate7.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "clippy",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "purpose": "Prove changed Rust surfaces are warning-free across all targets.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5727/clippy.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "purpose": "Prove Rust formatting is canonical.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5727/fmt.log"
   }
 ]
 

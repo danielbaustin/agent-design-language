@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "509845bfe734b0de7a7c7042e53facd5b5621f2de91962a4cf7b974b83a3388b",
   "phase": "implemented",
-  "generation": 1,
-  "digest": "7f9334e24e6e2d3e8a7d49655791e771366ff8bde65a9006c9aca1851836f114",
+  "generation": 6,
+  "digest": "21d7739c05fee1507509fcf614ad84c6da3fcfda01f88ce4ef482de85f00fc4f",
   "claim": {
     "id": "claim-5727-csdlc-claim-reacquire",
     "owner": "codex:5727-owner",
-    "generation": 1,
+    "generation": 6,
     "acquired_unix_seconds": 1785465403,
     "expires_unix_seconds": 1786070203,
     "heartbeat_unix_seconds": 1785465403,
@@ -46,34 +46,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "b0038ca0473dee800ea6e8336289e72ca6a06192362ccbf8bbd60c7e1ca9d857",
+      "values_digest": "ad1951d3c43009f0b110b17254ab63da4760fe89ba600bebee5dff13e18ed897",
       "rendered_digest": "174f5e79b1b305dd7a6931b96915f11e767b72f561aa25ae3c22f9267e574213",
       "ast_digest": "0a1a13d1a514ba58f90267a6985edea018115f7a9bae65531219474693e55272"
     },
     "stp": {
-      "values_digest": "b5eb4e1399bfcbbde3e3169958501d0c5544f71b533f0401cecb52643aa30a31",
+      "values_digest": "d744b39105d3b61f5d0257574ee19761d7743ef88055efbee88c4bc5d8f68082",
       "rendered_digest": "3cdc7a6a2a6d33869b4669e3393d5ff6ff719e2eb59ba9a05e430ad50c330fc8",
       "ast_digest": "932c22e642456d4250c690c4dd0ea728658f7175a5de1a349150cd63292a4bdd"
     },
     "spp": {
-      "values_digest": "72f829413075b7af3749740e7f0d543dccc402f6e4ee860cd1bfb273a1addb9b",
+      "values_digest": "9357346fd88596831ad64253c8522fde964587d0222ca6343b1ba72e2afb5d0c",
       "rendered_digest": "9fdab33fb4a5cc1f3562a7ee8dfc941d6ddc7242b4e0b1748da22981504c6c31",
       "ast_digest": "a744c88ebf6466c7778d1ca38eab05e72edee42f501586da9b54857c53922441"
     },
     "vpp": {
-      "values_digest": "f47f7c68459fb56cc5f154af8631336e2d7b089881ab31d32662bab5d5484450",
+      "values_digest": "a99b4c508a63bbf87dcacbd2fb4a6f9c241e3f9d06ae0b086f642ed8ca6d0ea3",
       "rendered_digest": "a8990e159cbbd0d02665cb1791d886891f99c458229862bace4acee94f2ee1fd",
       "ast_digest": "10f1c93e18377daea8d2971c0d65b0dab4be88e9a7f8610fe52e0eb697f3747c"
     },
     "srp": {
-      "values_digest": "4196d28641b0ce41ec44ec3003ee0dc08b16aca9e12eada424bdfa3834120ae0",
+      "values_digest": "bf7d161456779d6cc11f29bf3818531952a0c2249dda4cf4362832b779392372",
       "rendered_digest": "a0b2233b21d58b7d0dae7d6f8eaad5961b389feddce9bdb563a60ba73cefba08",
       "ast_digest": "c540c68bd1839f8583bebf2803da6b41aeff7aa118206c80ffe8b9b46dfd455b"
     },
     "sor": {
-      "values_digest": "b726c515381b838ce6e6de14867817ea57f38e5be83534f05495310d0917d37b",
-      "rendered_digest": "b3e9a80c998df7034b1d91498935a253247d16a85ef57240ba22afe1c3d3878b",
-      "ast_digest": "89be8c4532605c0e9a5d00ce95f0cb4f56b09d3f307f69aa4ab649cf7321c015"
+      "values_digest": "b1c591ad24808187866e82d8c1a074915018ec6945005b78a9eaf4b5fb803940",
+      "rendered_digest": "5b9d6fb65e986400c7af242d3b9f4d4ea2bbecf11025c3291080e780f7a441a3",
+      "ast_digest": "c022810a52dfcd9b28ef97b9af5d2e7cf0d6c56746382f30e61abbbafdbdf248"
     }
   },
   "transitions": [
@@ -127,6 +127,41 @@
       "actor": "codex:5727-owner",
       "reason": "atomically record execution, validation, and implemented phase",
       "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5727-owner",
+      "reason": "Record the bounded fix for the independent P1 cross-worktree collision finding.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented typed safe claim reacquisition with Git-common serialization and repository-wide worktree collision authority.\",\"changes\":[\"Moved claim collision serialization to a Git-common lock shared by every worktree.\",\"Made collision checks inspect canonical issue records across all registered worktrees.\",\"Added a concurrent two-worktree regression proving only one overlapping writer can reacquire.\"],\"artifacts\":[\".csdlc/evidence/5727/gate2.log\",\".csdlc/evidence/5727/gate7.log\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5727-owner",
+      "reason": "Record current Gate 2 proof after the cross-worktree collision fix.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\"],\"purpose\":\"Prove typed lifecycle, reacquisition, shared cross-worktree exclusion, schema, CAS, collision, and CLI behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/gate2.log\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5727-owner",
+      "reason": "Record current Gate 7 lifecycle integration proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Prove lifecycle integration and worktree binding behavior remain intact.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/gate7.log\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5727-owner",
+      "reason": "Record current warning-free Rust proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Prove changed Rust surfaces are warning-free across all targets.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/clippy.log\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5727-owner",
+      "reason": "Record current canonical Rust formatting proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"fmt\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all\",\"--\",\"--check\"],\"purpose\":\"Prove Rust formatting is canonical.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/fmt.log\"}}"
     }
   ]
 }

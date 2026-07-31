@@ -1,45 +1,46 @@
 
-running 50 tests
-test bootstrap_rejects_missing_vpp_command_before_authoring_files ... ok
+running 51 tests
 test bootstrap_rejects_one_path_for_both_authored_artifact_roles ... ok
+test bootstrap_rejects_missing_vpp_command_before_authoring_files ... ok
 test bootstrap_constructs_all_six_cards_and_ready_doctor ... ok
 test bind_refuses_primary_checkout_and_worktree_mismatch ... ok
+test bind_refuses_branch_at_a_different_worktree ... ok
 test bind_refuses_overlapping_protected_path_reserved_by_another_issue ... ok
 test bind_rejects_standalone_repository_with_matching_worktree_suffix ... ok
-test bind_refuses_branch_at_a_different_worktree ... ok
 test bind_rejects_reserved_worktree_that_does_not_match_current_checkout ... ok
+test bind_creates_and_idempotently_reuses_typed_worktree ... ok
 test bind_supports_issue_local_state_without_touching_primary_checkout ... ok
 test claim_revoke_fails_closed_for_stale_digest_and_missing_authority ... ok
-test claim_revoke_requires_unexpired_claim ... ok
-test bind_creates_and_idempotently_reuses_typed_worktree ... ok
 test bind_activates_exact_reserved_claim_from_existing_worktree ... ok
+test claim_revoke_requires_unexpired_claim ... ok
 test active_claim_transition_rejects_stale_owner_without_any_write ... ok
 test claim_revoke_clears_unexpired_claim_with_operator_cas_audit ... ok
-test direct_markdown_drift_is_corruption ... ok
 test doctor_rejects_index_digest_tampering ... ok
-test field_ownership_violation_fails_without_generation_change ... ok
+test direct_markdown_drift_is_corruption ... ok
 test bound_claim_scope_amendment_is_collision_checked_and_audited ... ok
+test field_ownership_violation_fails_without_generation_change ... ok
+test active_claim_transition_atomically_updates_purpose_and_scope ... ok
 test invalid_issue_local_init_fails_before_creating_artifacts ... ok
 test active_claim_transition_guards_cas_expiry_collision_and_real_cli ... ok
-test active_claim_transition_atomically_updates_purpose_and_scope ... ok
-test lifecycle_binaries_share_stable_typed_exit_classes ... ok
 test heartbeat_is_compare_and_swap_and_missed_heartbeat_does_not_enable_recovery ... ok
-test native_registry_and_manifest_symlink_escapes_fail_before_authoring ... ok
-test native_registry_is_required_and_shape_checked_before_issue_authoring ... ok
-test expired_claim_reacquires_and_preserves_previous_owner_evidence ... ok
+test lifecycle_binaries_share_stable_typed_exit_classes ... ok
 test illegal_transition_fails_closed ... ok
+test native_registry_and_manifest_symlink_escapes_fail_before_authoring ... ok
+test expired_claim_reacquires_and_preserves_previous_owner_evidence ... ok
+test native_registry_is_required_and_shape_checked_before_issue_authoring ... ok
 test design_reapproval_rejects_unrelated_card_projection_drift ... ok
-test public_schema_bundle_covers_requests_state_and_doctor_output ... ok
 test issue_local_design_paths_do_not_look_like_existing_records ... ok
+test public_schema_bundle_covers_requests_state_and_doctor_output ... ok
+test bound_plan_progress_and_validation_lane_replacement_are_typed ... ok
 test missing_design_or_diagram_blocks_readiness ... ok
 test initialized_approved_stale_design_can_be_reapproved_before_readiness ... ok
 test retained_bootstrap_without_new_fields_loads_as_explicit_none ... ok
-test bound_plan_progress_and_validation_lane_replacement_are_typed ... ok
 test heartbeat_and_expired_recovery_record_positive_evidence ... ok
 test interrupted_commit_keeps_complete_backup_and_next_writer_recovers ... ok
+test semantic_edit_updates_one_owned_projection_atomically ... ok
+test concurrent_reacquisition_across_worktrees_allows_only_one_overlapping_writer ... ok
 test planning_replacements_reject_invalid_requests_without_mutation ... ok
 test stale_generation_and_digest_fail_closed ... ok
-test semantic_edit_updates_one_owned_projection_atomically ... ok
 test placeholder_design_is_pending_then_can_be_completed_approved_and_bound ... ok
 test closed_issue_claim_release_is_typed_and_compare_and_swap_guarded ... ok
 test reacquire_fails_closed_for_stale_binding_and_live_overlap ... ok
@@ -51,12 +52,8 @@ test bound_replan_is_typed_claimed_and_limited_to_planning_cards ... ok
 test bound_and_implemented_design_reapproval_refreshes_truth_and_reviewed_rejects ... ok
 test issue_5337_preparation_converts_to_complete_implementation_truth_with_typed_edits ... ok
 
-test result: ok. 50 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 36.53s
+test result: ok. 51 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 36.83s
 
-    Blocking waiting for file lock on package cache
-    Blocking waiting for file lock on package cache
-    Blocking waiting for file lock on package cache
     Blocking waiting for file lock on build directory
-   Compiling csdlc-v2 v0.1.0 (/Volumes/FastWork/adl-wp-5727/csdlc-v2)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.96s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.20s
      Running tests/gate2.rs (csdlc-v2/target/debug/deps/gate2-e5082ef5da7c7ba1)
