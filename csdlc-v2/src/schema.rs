@@ -3,9 +3,9 @@ use serde_json::{json, Value};
 use crate::doctor::DoctorReport;
 use crate::github::{GithubActionRequest, GithubActionResult, GithubIssuePacket, PrStatePacket};
 use crate::lifecycle::{
-    AmendClaimScopeRequest, BindRequest, BindResult, HeartbeatRequest, RecoverClaimRequest,
-    ReleaseClosedClaimRequest, RevokeActiveClaimRequest, RevokeActiveClaimResult,
-    TransitionActiveClaimRequest,
+    AmendClaimScopeRequest, BindRequest, BindResult, HeartbeatRequest, ReacquireClaimRequest,
+    ReacquireClaimResult, RecoverClaimRequest, ReleaseClosedClaimRequest, RevokeActiveClaimRequest,
+    RevokeActiveClaimResult, TransitionActiveClaimRequest,
 };
 use crate::merge::{MergeRequest, MergeResult};
 use crate::migration::{ImportReport, LegacyImportRequest, NormalizedOutcome, ShadowComparison};
@@ -38,6 +38,8 @@ pub fn public_schema_bundle() -> Value {
         "bind_request": schemars::schema_for!(BindRequest),
         "bind_result": schemars::schema_for!(BindResult),
         "recover_claim_request": schemars::schema_for!(RecoverClaimRequest),
+        "reacquire_claim_request": schemars::schema_for!(ReacquireClaimRequest),
+        "reacquire_claim_result": schemars::schema_for!(ReacquireClaimResult),
         "release_closed_claim_request": schemars::schema_for!(ReleaseClosedClaimRequest),
         "revoke_active_claim_request": schemars::schema_for!(RevokeActiveClaimRequest),
         "revoke_active_claim_result": schemars::schema_for!(RevokeActiveClaimResult),

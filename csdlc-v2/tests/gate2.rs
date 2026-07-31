@@ -3,7 +3,8 @@ use std::fs;
 use csdlc_v2::doctor::DoctorStatus;
 use csdlc_v2::{
     amend_claim_scope, diagnose, edit_issue, AmendClaimScopeRequest, BootstrapRequest, CardKind,
-    Claim, EditRequest, ErrorCode, PlanningCollectionField, SemanticOperation, Store,
+    Claim, EditRequest, ErrorCode, PlanningCollectionField, ReacquireClaimRequest,
+    SemanticOperation, Store,
 };
 use tempfile::TempDir;
 
@@ -1246,6 +1247,233 @@ fn heartbeat_and_expired_recovery_record_positive_evidence() {
     );
 }
 
+fn reacquired_claim(generation: u64) -> Claim {
+    Claim {
+        id: "claim-reacquired".into(),
+        owner: "next-owner".into(),
+        generation,
+        acquired_unix_seconds: 10,
+        expires_unix_seconds: u64::MAX,
+        heartbeat_unix_seconds: 10,
+        branch: "issue-42".into(),
+        worktree: ".".into(),
+        protected_paths: vec!["src".into()],
+        purpose: "resume dormant issue".into(),
+    }
+}
+
+#[test]
+fn released_claim_reacquires_without_phase_or_audit_rewind() {
+    let (temp, store, record) = fixture();
+    git(temp.path(), &["branch", "-m", "issue-42"]);
+    let released = csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: "claim-1".into(),
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5727".into(),
+            reason: "deliberately release dormant preparation".into(),
+        },
+    )
+    .expect("release");
+    let dormant = store.load_record(42).expect("dormant");
+    let dormant_audit_len = dormant.audit.len();
+    let doctor = diagnose(&store, 42);
+    assert_eq!(doctor.status, DoctorStatus::Block);
+    assert_eq!(doctor.next_operation.as_deref(), Some("reacquire_claim"));
+
+    let request_path = temp.path().join("reacquire.json");
+    fs::write(
+        &request_path,
+        serde_json::to_vec(&ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation,
+            expected_digest: released.digest,
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "resume accepted work".into(),
+            replacement: reacquired_claim(dormant.generation),
+        })
+        .expect("serialize request"),
+    )
+    .expect("write request");
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_csdlc-bind"))
+        .args([
+            "--root",
+            temp.path().to_str().expect("root"),
+            "--reacquire-request",
+            request_path.to_str().expect("request"),
+        ])
+        .output()
+        .expect("run csdlc-bind");
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let result: csdlc_v2::ReacquireClaimResult =
+        serde_json::from_slice(&output.stdout).expect("typed result");
+    let resumed = store.load_record(42).expect("resumed");
+    assert_eq!(resumed.phase, dormant.phase);
+    assert_eq!(resumed.audit.len(), dormant_audit_len + 1);
+    assert!(resumed.audit[dormant_audit_len - 1]
+        .operation
+        .contains("revoke_active_claim"));
+    assert!(resumed.audit[dormant_audit_len]
+        .operation
+        .contains("reacquire_claim"));
+    assert_eq!(result.previous_claim_id, None);
+    assert_eq!(diagnose(&store, 42).status, DoctorStatus::Pass);
+}
+
+#[test]
+fn expired_claim_reacquires_and_preserves_previous_owner_evidence() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    fs::create_dir_all(temp.path().join("docs")).expect("docs");
+    fs::write(temp.path().join("docs/design.md"), "# Reviewed design\n").expect("design");
+    fs::write(
+        temp.path().join("docs/diagram.mmd"),
+        "flowchart LR\n  A --> B\n",
+    )
+    .expect("diagram");
+    let store = Store::new(temp.path());
+    let mut bootstrap = request();
+    bootstrap.claim.expires_unix_seconds = u64::MAX - 2;
+    let record = initialize_issue(&store, bootstrap).expect("initialize");
+    git(temp.path(), &["branch", "-m", "issue-42"]);
+    let result = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            now_unix_seconds: u64::MAX - 1,
+            actor: "next-owner".into(),
+            reason: "replace expired lease".into(),
+            replacement: Claim {
+                acquired_unix_seconds: u64::MAX - 1,
+                heartbeat_unix_seconds: u64::MAX - 1,
+                ..reacquired_claim(record.generation)
+            },
+        },
+    )
+    .expect("expired reacquire");
+    assert_eq!(result.previous_claim_id.as_deref(), Some("claim-1"));
+    assert_eq!(result.previous_owner.as_deref(), Some("agent"));
+}
+
+#[test]
+fn reacquire_fails_closed_for_stale_binding_and_live_overlap() {
+    let (temp, store, record) = fixture();
+    git(temp.path(), &["branch", "-m", "issue-42"]);
+    csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: "claim-1".into(),
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5727".into(),
+            reason: "release".into(),
+        },
+    )
+    .expect("release");
+    let dormant = store.load_record(42).expect("dormant");
+    let stale = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation + 1,
+            expected_digest: dormant.digest.clone(),
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "stale".into(),
+            replacement: reacquired_claim(dormant.generation),
+        },
+    )
+    .expect_err("stale generation");
+    assert_eq!(stale.code, ErrorCode::StaleGeneration);
+
+    let stale_digest = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation,
+            expected_digest: "stale".into(),
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "stale digest".into(),
+            replacement: reacquired_claim(dormant.generation),
+        },
+    )
+    .expect_err("stale digest");
+    assert_eq!(stale_digest.code, ErrorCode::StaleDigest);
+
+    let mut invalid_binding = reacquired_claim(dormant.generation);
+    invalid_binding.branch = "other-branch".into();
+    let invalid = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation,
+            expected_digest: dormant.digest.clone(),
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "wrong branch".into(),
+            replacement: invalid_binding,
+        },
+    )
+    .expect_err("invalid binding");
+    assert_eq!(invalid.code, ErrorCode::UnsafeCheckout);
+
+    let mut invalid_worktree = reacquired_claim(dormant.generation);
+    invalid_worktree.worktree = ".worktrees/not-this-one".into();
+    let invalid = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation,
+            expected_digest: dormant.digest.clone(),
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "wrong worktree".into(),
+            replacement: invalid_worktree,
+        },
+    )
+    .expect_err("invalid worktree");
+    assert_eq!(invalid.code, ErrorCode::UnsafeCheckout);
+
+    let mut other_request = request();
+    other_request.issue = 43;
+    other_request.claim.id = "claim-43".into();
+    other_request.claim.branch = "issue-42".into();
+    other_request.claim.worktree = ".".into();
+    other_request.claim.protected_paths = vec!["src/nested".into()];
+    initialize_issue(&store, other_request).expect("other issue");
+    let collision = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation,
+            expected_digest: dormant.digest,
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "colliding resume".into(),
+            replacement: reacquired_claim(dormant.generation),
+        },
+    )
+    .expect_err("live overlap");
+    assert_eq!(collision.code, ErrorCode::ClaimCollision);
+}
+
 #[test]
 fn bound_claim_scope_amendment_is_collision_checked_and_audited() {
     let (temp, store, record) = fixture();
@@ -2263,6 +2491,8 @@ fn public_schema_bundle_covers_requests_state_and_doctor_output() {
         "bind_request",
         "bind_result",
         "recover_claim_request",
+        "reacquire_claim_request",
+        "reacquire_claim_result",
         "release_closed_claim_request",
         "revoke_active_claim_request",
         "revoke_active_claim_result",

@@ -104,10 +104,39 @@ pub fn diagnose(store: &Store, issue: u64) -> DoctorReport {
                 message: error.message,
             });
         }
+    } else if !matches!(
+        record.phase,
+        LifecyclePhase::Merged | LifecyclePhase::ClosedOut
+    ) && !record.audit.last().is_some_and(|event| {
+        serde_json::from_str::<serde_json::Value>(&event.operation)
+            .ok()
+            .and_then(|value| {
+                value
+                    .get("operation")
+                    .and_then(serde_json::Value::as_str)
+                    .map(str::to_owned)
+            })
+            .as_deref()
+            == Some("release_closed_claim")
+    }) {
+        report.findings.push(Finding {
+            code: "claim_dormant".into(),
+            message: "nonterminal issue has no active writer claim".into(),
+        });
     }
     if !report.findings.is_empty() {
         report.status = DoctorStatus::Block;
-        report.next_operation = Some("repair_design_readiness".into());
+        report.next_operation =
+            Some(
+                if report.findings.iter().any(|finding| {
+                    finding.code == "claim_dormant" || finding.code == "claim_not_live"
+                }) {
+                    "reacquire_claim"
+                } else {
+                    "repair_design_readiness"
+                }
+                .into(),
+            );
         return report;
     }
     let cards = match store.load_cards(issue) {

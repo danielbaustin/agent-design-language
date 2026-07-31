@@ -1,0 +1,4 @@
+{"sequence":1,"generation":0,"actor":"codex:5727-owner","reason":"initialize issue record and all six cards","operation":"bootstrap"}
+{"sequence":2,"generation":0,"actor":"codex:5727-owner","reason":"bind branch/worktree and activate claim","operation":"bind"}
+{"sequence":3,"generation":0,"actor":"codex:5727-owner","reason":"Include the public export, schema, and doctor surfaces required by the accepted typed reacquisition contract","operation":"{\"add_protected_paths\":[\"csdlc-v2/src/doctor.rs\",\"csdlc-v2/src/lib.rs\",\"csdlc-v2/src/schema.rs\"],\"operation\":\"amend_claim_scope\"}"}
+{"sequence":4,"generation":1,"actor":"codex:5727-owner","reason":"atomically record execution, validation, and implemented phase","operation":"finalize_implementation"}

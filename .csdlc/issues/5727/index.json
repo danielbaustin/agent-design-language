@@ -1,0 +1,132 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5727,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "509845bfe734b0de7a7c7042e53facd5b5621f2de91962a4cf7b974b83a3388b",
+  "phase": "implemented",
+  "generation": 1,
+  "digest": "7f9334e24e6e2d3e8a7d49655791e771366ff8bde65a9006c9aca1851836f114",
+  "claim": {
+    "id": "claim-5727-csdlc-claim-reacquire",
+    "owner": "codex:5727-owner",
+    "generation": 1,
+    "acquired_unix_seconds": 1785465403,
+    "expires_unix_seconds": 1786070203,
+    "heartbeat_unix_seconds": 1785465403,
+    "branch": "codex/5727-csdlc-claim-reacquire",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5727",
+      ".csdlc/locks/5727.lock",
+      ".csdlc/prepared/issues/5727",
+      "csdlc-v2/src/bin/csdlc-bind.rs",
+      "csdlc-v2/src/doctor.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "purpose": "Implement typed safe reacquisition of released or expired C-SDLC v2 claims without lifecycle rewind"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5727/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5727/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5727-owner",
+      "revision": "8ffd654085218d958d779afc8dcd90d6ea629e3fe67444e5d58bd231017b8b6b"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "b0038ca0473dee800ea6e8336289e72ca6a06192362ccbf8bbd60c7e1ca9d857",
+      "rendered_digest": "174f5e79b1b305dd7a6931b96915f11e767b72f561aa25ae3c22f9267e574213",
+      "ast_digest": "0a1a13d1a514ba58f90267a6985edea018115f7a9bae65531219474693e55272"
+    },
+    "stp": {
+      "values_digest": "b5eb4e1399bfcbbde3e3169958501d0c5544f71b533f0401cecb52643aa30a31",
+      "rendered_digest": "3cdc7a6a2a6d33869b4669e3393d5ff6ff719e2eb59ba9a05e430ad50c330fc8",
+      "ast_digest": "932c22e642456d4250c690c4dd0ea728658f7175a5de1a349150cd63292a4bdd"
+    },
+    "spp": {
+      "values_digest": "72f829413075b7af3749740e7f0d543dccc402f6e4ee860cd1bfb273a1addb9b",
+      "rendered_digest": "9fdab33fb4a5cc1f3562a7ee8dfc941d6ddc7242b4e0b1748da22981504c6c31",
+      "ast_digest": "a744c88ebf6466c7778d1ca38eab05e72edee42f501586da9b54857c53922441"
+    },
+    "vpp": {
+      "values_digest": "f47f7c68459fb56cc5f154af8631336e2d7b089881ab31d32662bab5d5484450",
+      "rendered_digest": "a8990e159cbbd0d02665cb1791d886891f99c458229862bace4acee94f2ee1fd",
+      "ast_digest": "10f1c93e18377daea8d2971c0d65b0dab4be88e9a7f8610fe52e0eb697f3747c"
+    },
+    "srp": {
+      "values_digest": "4196d28641b0ce41ec44ec3003ee0dc08b16aca9e12eada424bdfa3834120ae0",
+      "rendered_digest": "a0b2233b21d58b7d0dae7d6f8eaad5961b389feddce9bdb563a60ba73cefba08",
+      "ast_digest": "c540c68bd1839f8583bebf2803da6b41aeff7aa118206c80ffe8b9b46dfd455b"
+    },
+    "sor": {
+      "values_digest": "b726c515381b838ce6e6de14867817ea57f38e5be83534f05495310d0917d37b",
+      "rendered_digest": "b3e9a80c998df7034b1d91498935a253247d16a85ef57240ba22afe1c3d3878b",
+      "ast_digest": "89be8c4532605c0e9a5d00ce95f0cb4f56b09d3f307f69aa4ab649cf7321c015"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5727-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5727-owner",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5727-owner",
+      "reason": "execution and passing validation finalized atomically"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5727-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5727-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5727-owner",
+      "reason": "Include the public export, schema, and doctor surfaces required by the accepted typed reacquisition contract",
+      "operation": "{\"add_protected_paths\":[\"csdlc-v2/src/doctor.rs\",\"csdlc-v2/src/lib.rs\",\"csdlc-v2/src/schema.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5727-owner",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    }
+  ]
+}

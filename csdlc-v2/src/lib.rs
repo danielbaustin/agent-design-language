@@ -40,10 +40,11 @@ pub use github::{
     GithubActionResult, GithubIssuePacket, PrCheck, PrStatePacket, PrStateRequest,
 };
 pub use lifecycle::{
-    amend_claim_scope, bind_issue, heartbeat_claim, initialize_native_json, recover_claim,
-    release_closed_claim, revoke_active_claim, transition_active_claim, AmendClaimScopeRequest,
-    BindRequest, BindResult, HeartbeatRequest, RecoverClaimRequest, ReleaseClosedClaimRequest,
-    RevokeActiveClaimRequest, RevokeActiveClaimResult, TransitionActiveClaimRequest,
+    amend_claim_scope, bind_issue, heartbeat_claim, initialize_native_json, reacquire_claim,
+    recover_claim, release_closed_claim, revoke_active_claim, transition_active_claim,
+    AmendClaimScopeRequest, BindRequest, BindResult, HeartbeatRequest, ReacquireClaimRequest,
+    ReacquireClaimResult, RecoverClaimRequest, ReleaseClosedClaimRequest, RevokeActiveClaimRequest,
+    RevokeActiveClaimResult, TransitionActiveClaimRequest,
 };
 pub use merge::{MergeMethod, MergeRequest, MergeResult};
 pub use migration::{

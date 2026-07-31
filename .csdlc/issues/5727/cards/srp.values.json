@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5727,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][claims] Make released bound claims safely reacquirable",
+    "slug": "v0-91-8-csdlc-v2-claims-make-released-bound-claims-safely-reacquirable",
+    "version": "v0.91.8",
+    "generation": 1
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2 claim lifecycle, store doctor validation, csdlc-bind routing, focused claim tests, and issue-local lifecycle evidence",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Can any reacquisition path bypass compare-and-swap identity or protected-path collision checks?",
+        "Does dormant doctor classification remain read-only and keep mutations claim-gated?",
+        "Are phase preservation and append-only audit history proven for released and expired claims?",
+        "Does the #5354 reproduction use only the typed binary without direct record edits?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

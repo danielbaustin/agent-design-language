@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5727,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][claims] Make released bound claims safely reacquirable",
+    "slug": "v0-91-8-csdlc-v2-claims-make-released-bound-claims-safely-reacquirable",
+    "version": "v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Add only the typed reacquisition operation, dormant doctor classification, and focused proof required by #5727.",
+      "deliverables": [
+        "typed reacquire request and result",
+        "csdlc-bind reacquire command route",
+        "dormant-record doctor classification and next action",
+        "focused claim lifecycle tests",
+        "#5354 reproduction proof"
+      ],
+      "acceptance_criteria": [
+        "AC-1: A resumable nonterminal record with claim null is valid dormant state.",
+        "AC-2: Typed compare-and-swap reacquisition validates issue, generation, digest, actor, purpose, branch, worktree, lease timestamps, and protected paths.",
+        "AC-3: Reacquisition rejects overlap with other live protected-path claims.",
+        "AC-4: Released and expired claims are reacquired without lifecycle rewind or audit loss.",
+        "AC-5: Read-only inspection does not require an active claim while mutations still do.",
+        "AC-6: Focused tests cover release, expiry, overlap, stale identity, invalid binding, and append-only audit.",
+        "AC-7: Prepared issue #5354 returns to doctor PASS through the typed operation."
+      ],
+      "dependencies": [],
+      "repo_inputs": [
+        "csdlc-v2/src/lifecycle.rs",
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/bin/csdlc-bind.rs",
+        "csdlc-v2/tests/gate2.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs",
+        ".csdlc/issues/5354/index.json"
+      ],
+      "non_goals": [
+        "new lifecycle phases",
+        "compatibility wrappers",
+        "receipt or closeout gating for claims",
+        "direct mutation of #5354 state",
+        "WP-15 implementation"
+      ]
+    }
+  }
+}

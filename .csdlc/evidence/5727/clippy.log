@@ -1,0 +1,10 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+    Checking ring v0.17.14
+    Checking rustls-webpki v0.103.13
+    Checking rustls v0.23.41
+    Checking tokio-rustls v0.26.4
+    Checking hyper-rustls v0.27.9
+    Checking octocrab v0.53.1
+    Checking csdlc-v2 v0.1.0 (/Volumes/FastWork/adl-wp-5727/csdlc-v2)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 25.53s
