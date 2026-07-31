@@ -1475,6 +1475,161 @@ fn reacquire_fails_closed_for_stale_binding_and_live_overlap() {
 }
 
 #[test]
+fn concurrent_reacquisition_across_worktrees_allows_only_one_overlapping_writer() {
+    let (temp, store, record_42) = fixture();
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "test"]);
+    csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: "claim-1".into(),
+            expected_generation: record_42.generation,
+            expected_digest: record_42.digest,
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5727".into(),
+            reason: "prepare dormant issue 42".into(),
+        },
+    )
+    .expect("release issue 42");
+
+    let mut request_43 = request();
+    request_43.issue = 43;
+    request_43.design_path = "docs/design-43.md".into();
+    request_43.diagram_path = "docs/diagram-43.mmd".into();
+    request_43.claim.id = "claim-43".into();
+    request_43.claim.branch = "issue-43".into();
+    request_43.claim.protected_paths = vec!["src/nested".into()];
+    fs::write(temp.path().join("docs/design-43.md"), "# Reviewed design\n").expect("design");
+    fs::write(
+        temp.path().join("docs/diagram-43.mmd"),
+        "flowchart LR\n  A --> B\n",
+    )
+    .expect("diagram");
+    let record_43 = initialize_issue(&store, request_43).expect("initialize issue 43");
+    csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 43,
+            repository: "example/repo".into(),
+            expected_claim_id: "claim-43".into(),
+            expected_generation: record_43.generation,
+            expected_digest: record_43.digest,
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5727".into(),
+            reason: "prepare dormant issue 43".into(),
+        },
+    )
+    .expect("release issue 43");
+    git(temp.path(), &["add", "."]);
+    git(temp.path(), &["commit", "-m", "two dormant issues"]);
+
+    let worktree_42 = temp.path().join("worktree-42");
+    let worktree_43 = temp.path().join("worktree-43");
+    git(
+        temp.path(),
+        &[
+            "worktree",
+            "add",
+            "-b",
+            "issue-42",
+            worktree_42.to_str().expect("worktree 42"),
+        ],
+    );
+    git(
+        temp.path(),
+        &[
+            "worktree",
+            "add",
+            "-b",
+            "issue-43",
+            worktree_43.to_str().expect("worktree 43"),
+        ],
+    );
+    let dormant_42 = Store::new(&worktree_42).load_record(42).expect("issue 42");
+    let dormant_43 = Store::new(&worktree_43).load_record(43).expect("issue 43");
+    let barrier = std::sync::Arc::new(std::sync::Barrier::new(2));
+
+    let run = |issue: u64,
+               root: std::path::PathBuf,
+               dormant: csdlc_v2::IssueRecord,
+               branch: &str,
+               claim_id: &str,
+               path: &str,
+               barrier: std::sync::Arc<std::sync::Barrier>| {
+        let branch = branch.to_owned();
+        let claim_id = claim_id.to_owned();
+        let path = path.to_owned();
+        std::thread::spawn(move || {
+            barrier.wait();
+            csdlc_v2::reacquire_claim(
+                &Store::new(root),
+                ReacquireClaimRequest {
+                    issue,
+                    expected_generation: dormant.generation,
+                    expected_digest: dormant.digest,
+                    now_unix_seconds: 10,
+                    actor: format!("owner-{issue}"),
+                    reason: "concurrent cross-worktree reacquisition".into(),
+                    replacement: Claim {
+                        id: claim_id,
+                        owner: format!("owner-{issue}"),
+                        generation: dormant.generation,
+                        acquired_unix_seconds: 10,
+                        expires_unix_seconds: u64::MAX,
+                        heartbeat_unix_seconds: 10,
+                        branch,
+                        worktree: ".".into(),
+                        protected_paths: vec![path],
+                        purpose: "prove one overlapping writer".into(),
+                    },
+                },
+            )
+        })
+    };
+    let thread_42 = run(
+        42,
+        worktree_42,
+        dormant_42,
+        "issue-42",
+        "claim-reacquired-42",
+        "src",
+        barrier.clone(),
+    );
+    let thread_43 = run(
+        43,
+        worktree_43,
+        dormant_43,
+        "issue-43",
+        "claim-reacquired-43",
+        "src/nested",
+        barrier,
+    );
+    let result_42 = thread_42.join().expect("issue 42 thread");
+    let result_43 = thread_43.join().expect("issue 43 thread");
+    let outcomes = [result_42, result_43];
+    assert_eq!(outcomes.iter().filter(|result| result.is_ok()).count(), 1);
+    assert_eq!(
+        outcomes
+            .iter()
+            .filter(|result| {
+                result
+                    .as_ref()
+                    .is_err_and(|error| error.code == ErrorCode::ClaimCollision)
+            })
+            .count(),
+        1
+    );
+    assert!(temp.path().join(".git/csdlc-v2/bindings.lock").exists());
+}
+
+#[test]
 fn bound_claim_scope_amendment_is_collision_checked_and_audited() {
     let (temp, store, record) = fixture();
     git(temp.path(), &["init", "-b", "main"]);

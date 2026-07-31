@@ -168,6 +168,34 @@ fn terminally_released(store: &Store, local: &crate::IssueRecord) -> Result<bool
     Ok(true)
 }
 
+fn issue_records_across_worktrees(store: &Store) -> Result<Vec<(Store, crate::IssueRecord)>> {
+    let mut roots = std::collections::BTreeSet::new();
+    roots.insert(store.root().canonicalize()?);
+    for (_, root) in git::worktrees(store.root())? {
+        roots.insert(PathBuf::from(root).canonicalize()?);
+    }
+    let mut records = Vec::new();
+    for root in roots {
+        let scoped = Store::new(root);
+        let issues = scoped.root().join(".csdlc/issues");
+        if !issues.exists() {
+            continue;
+        }
+        for entry in fs::read_dir(issues)? {
+            let entry = entry?;
+            let Some(issue) = entry
+                .file_name()
+                .to_str()
+                .and_then(|name| name.parse().ok())
+            else {
+                continue;
+            };
+            records.push((scoped.clone(), scoped.load_record(issue)?));
+        }
+    }
+    Ok(records)
+}
+
 fn copy_dir_recursive(source: &Path, destination: &Path) -> Result<()> {
     let Ok(source_metadata) = fs::symlink_metadata(source) else {
         return Ok(());
@@ -376,37 +404,27 @@ pub(crate) fn initialize_issue(
         }
     }
     let _binding_lock = store.binding_lock()?;
-    let issues = store.root().join(".csdlc/issues");
-    if issues.exists() {
-        for entry in fs::read_dir(&issues)? {
-            let path = entry?.path().join("index.json");
-            if !path.exists() {
+    for (other_store, other) in issue_records_across_worktrees(store)? {
+        if other.issue != request.issue {
+            if terminally_released(&other_store, &other)? {
                 continue;
             }
-            let other: crate::IssueRecord = serde_json::from_slice(&fs::read(path)?)?;
-            if other.issue != request.issue {
-                if terminally_released(store, &other)? {
-                    continue;
-                }
-                if let Some(claim) = other.claim {
-                    if let Some((reserved, requested)) =
-                        claim.protected_paths.iter().find_map(|a| {
-                            request
-                                .claim
-                                .protected_paths
-                                .iter()
-                                .find(|b| overlaps(a, b))
-                                .map(|b| (a, b))
-                        })
-                    {
-                        return Err(V2Error::new(
-                            ErrorCode::ClaimCollision,
-                            format!(
-                                "protected path '{}' overlaps requested '{}' from issue {} in phase {:?}",
-                                reserved, requested, other.issue, other.phase
-                            ),
-                        ));
-                    }
+            if let Some(claim) = other.claim {
+                if let Some((reserved, requested)) = claim.protected_paths.iter().find_map(|a| {
+                    request
+                        .claim
+                        .protected_paths
+                        .iter()
+                        .find(|b| overlaps(a, b))
+                        .map(|b| (a, b))
+                }) {
+                    return Err(V2Error::new(
+                        ErrorCode::ClaimCollision,
+                        format!(
+                            "protected path '{}' overlaps requested '{}' from issue {} in phase {:?}",
+                            reserved, requested, other.issue, other.phase
+                        ),
+                    ));
                 }
             }
         }
@@ -582,37 +600,33 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
             ));
         }
     }
-    let issues = store.root().join(".csdlc/issues");
-    if issues.exists() {
-        for entry in fs::read_dir(issues)? {
-            let path = entry?.path().join("index.json");
-            if !path.exists() {
+    for (other_store, other) in issue_records_across_worktrees(store)? {
+        if !issue_local && other_store.root() == wanted_compare {
+            // Existing-target identity and side-state reconciliation below owns
+            // this worktree. Preserve its more specific fail-closed result
+            // before applying repository-wide claim collision checks.
+            continue;
+        }
+        if other.issue != request.issue {
+            if terminally_released(&other_store, &other)? {
                 continue;
             }
-            let other: crate::IssueRecord = serde_json::from_slice(&fs::read(path)?)?;
-            if other.issue != request.issue {
-                if terminally_released(store, &other)? {
-                    continue;
-                }
-                if let Some(claim) = other.claim {
-                    if let Some((reserved, requested)) =
-                        claim.protected_paths.iter().find_map(|a| {
-                            request
-                                .claim
-                                .protected_paths
-                                .iter()
-                                .find(|b| overlaps(a, b))
-                                .map(|b| (a, b))
-                        })
-                    {
-                        return Err(V2Error::new(
-                            ErrorCode::ClaimCollision,
-                            format!(
-                                "protected path '{}' overlaps requested '{}' from issue {} in phase {:?}",
-                                reserved, requested, other.issue, other.phase
-                            ),
-                        ));
-                    }
+            if let Some(claim) = other.claim {
+                if let Some((reserved, requested)) = claim.protected_paths.iter().find_map(|a| {
+                    request
+                        .claim
+                        .protected_paths
+                        .iter()
+                        .find(|b| overlaps(a, b))
+                        .map(|b| (a, b))
+                }) {
+                    return Err(V2Error::new(
+                        ErrorCode::ClaimCollision,
+                        format!(
+                            "protected path '{}' overlaps requested '{}' from issue {} in phase {:?}",
+                            reserved, requested, other.issue, other.phase
+                        ),
+                    ));
                 }
             }
         }
@@ -829,38 +843,28 @@ pub fn amend_claim_scope(store: &Store, request: AmendClaimScopeRequest) -> Resu
         .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "claim missing"))?
         .validate(&request.claim_id, request.now_unix_seconds)?;
 
-    let issues = store.root().join(".csdlc/issues");
-    if issues.exists() {
-        for entry in fs::read_dir(issues)? {
-            let path = entry?.path().join("index.json");
-            if !path.exists() {
-                continue;
-            }
-            let other: crate::IssueRecord = serde_json::from_slice(&fs::read(path)?)?;
-            if other.issue == request.issue {
-                continue;
-            }
-            if terminally_released(store, &other)? {
-                continue;
-            }
-            if let Some(claim) = other.claim {
-                if let Some((reserved, candidate)) =
-                    claim.protected_paths.iter().find_map(|reserved| {
-                        request
-                            .add_protected_paths
-                            .iter()
-                            .find(|candidate| overlaps(reserved, candidate))
-                            .map(|candidate| (reserved, candidate))
-                    })
-                {
-                    return Err(V2Error::new(
-                        ErrorCode::ClaimCollision,
-                        format!(
-                            "protected path '{}' overlaps requested '{}' from issue {} in phase {:?}",
-                            reserved, candidate, other.issue, other.phase
-                        ),
-                    ));
-                }
+    for (other_store, other) in issue_records_across_worktrees(store)? {
+        if other.issue == request.issue {
+            continue;
+        }
+        if terminally_released(&other_store, &other)? {
+            continue;
+        }
+        if let Some(claim) = other.claim {
+            if let Some((reserved, candidate)) = claim.protected_paths.iter().find_map(|reserved| {
+                request
+                    .add_protected_paths
+                    .iter()
+                    .find(|candidate| overlaps(reserved, candidate))
+                    .map(|candidate| (reserved, candidate))
+            }) {
+                return Err(V2Error::new(
+                    ErrorCode::ClaimCollision,
+                    format!(
+                        "protected path '{}' overlaps requested '{}' from issue {} in phase {:?}",
+                        reserved, candidate, other.issue, other.phase
+                    ),
+                ));
             }
         }
     }
@@ -947,35 +951,27 @@ pub fn transition_active_claim(
         ));
     }
 
-    let issues = store.root().join(".csdlc/issues");
-    if issues.exists() {
-        for entry in fs::read_dir(issues)? {
-            let path = entry?.path().join("index.json");
-            if !path.exists() {
-                continue;
-            }
-            let other: crate::IssueRecord = serde_json::from_slice(&fs::read(path)?)?;
-            if other.issue == request.issue || terminally_released(store, &other)? {
-                continue;
-            }
-            if let Some(other_claim) = other.claim {
-                if let Some((reserved, candidate)) =
-                    other_claim.protected_paths.iter().find_map(|reserved| {
-                        request
-                            .add_protected_paths
-                            .iter()
-                            .find(|candidate| overlaps(reserved, candidate))
-                            .map(|candidate| (reserved, candidate))
-                    })
-                {
-                    return Err(V2Error::new(
-                        ErrorCode::ClaimCollision,
-                        format!(
-                            "protected path '{}' overlaps requested '{}' from issue {} in phase {:?}",
-                            reserved, candidate, other.issue, other.phase
-                        ),
-                    ));
-                }
+    for (other_store, other) in issue_records_across_worktrees(store)? {
+        if other.issue == request.issue || terminally_released(&other_store, &other)? {
+            continue;
+        }
+        if let Some(other_claim) = other.claim {
+            if let Some((reserved, candidate)) =
+                other_claim.protected_paths.iter().find_map(|reserved| {
+                    request
+                        .add_protected_paths
+                        .iter()
+                        .find(|candidate| overlaps(reserved, candidate))
+                        .map(|candidate| (reserved, candidate))
+                })
+            {
+                return Err(V2Error::new(
+                    ErrorCode::ClaimCollision,
+                    format!(
+                        "protected path '{}' overlaps requested '{}' from issue {} in phase {:?}",
+                        reserved, candidate, other.issue, other.phase
+                    ),
+                ));
             }
         }
     }
@@ -1149,44 +1145,36 @@ pub fn reacquire_claim(
         ));
     }
 
-    let issues = store.root().join(".csdlc/issues");
-    if issues.exists() {
-        for entry in fs::read_dir(issues)? {
-            let path = entry?.path().join("index.json");
-            if !path.exists() {
-                continue;
-            }
-            let other: crate::IssueRecord = serde_json::from_slice(&fs::read(path)?)?;
-            if other.issue == request.issue || terminally_released(store, &other)? {
-                continue;
-            }
-            let Some(other_claim) = other.claim else {
-                continue;
-            };
-            if other_claim
-                .validate(&other_claim.id, request.now_unix_seconds)
-                .is_err()
-            {
-                continue;
-            }
-            if let Some((reserved, candidate)) =
-                other_claim.protected_paths.iter().find_map(|reserved| {
-                    request
-                        .replacement
-                        .protected_paths
-                        .iter()
-                        .find(|candidate| overlaps(reserved, candidate))
-                        .map(|candidate| (reserved, candidate))
-                })
-            {
-                return Err(V2Error::new(
-                    ErrorCode::ClaimCollision,
-                    format!(
-                        "protected path '{}' overlaps requested '{}' from live issue {}",
-                        reserved, candidate, other.issue
-                    ),
-                ));
-            }
+    for (other_store, other) in issue_records_across_worktrees(store)? {
+        if other.issue == request.issue || terminally_released(&other_store, &other)? {
+            continue;
+        }
+        let Some(other_claim) = other.claim else {
+            continue;
+        };
+        if other_claim
+            .validate(&other_claim.id, request.now_unix_seconds)
+            .is_err()
+        {
+            continue;
+        }
+        if let Some((reserved, candidate)) =
+            other_claim.protected_paths.iter().find_map(|reserved| {
+                request
+                    .replacement
+                    .protected_paths
+                    .iter()
+                    .find(|candidate| overlaps(reserved, candidate))
+                    .map(|candidate| (reserved, candidate))
+            })
+        {
+            return Err(V2Error::new(
+                ErrorCode::ClaimCollision,
+                format!(
+                    "protected path '{}' overlaps requested '{}' from live issue {}",
+                    reserved, candidate, other.issue
+                ),
+            ));
         }
     }
 

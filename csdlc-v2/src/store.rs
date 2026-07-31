@@ -145,7 +145,12 @@ impl Store {
     }
 
     pub(crate) fn binding_lock(&self) -> Result<File> {
-        let dir = self.root.join(".csdlc/locks");
+        let common = crate::git::run(
+            &self.root,
+            &["rev-parse", "--path-format=absolute", "--git-common-dir"],
+        )?
+        .stdout;
+        let dir = PathBuf::from(common).join("csdlc-v2");
         fs::create_dir_all(&dir)?;
         let file = OpenOptions::new()
             .create(true)
