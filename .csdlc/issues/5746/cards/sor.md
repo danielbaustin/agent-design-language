@@ -117,11 +117,11 @@ Materialized fifty receipt-authoritative v0.91.8 terminal projections through ty
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 

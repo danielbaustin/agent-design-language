@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5746,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5746-v0918-terminal-reconcile-wave",
+  "title": "[v0.91.8][csdlc-v2][closeout] Materialize 50 terminal projections",
+  "body": "## Summary\n\nMaterializes the retained C-SDLC v2 terminal authority for the clean 50-issue v0.91.8 batch. Every included projection is closed_out, claim-free, doctor-pass, and equal to its retained receipt record.\n\nThe remaining exception inventory is explicitly owned by #5748; this PR does not claim those issues complete and does not prune worktrees.\n\n## Validation\n\n- 50/50 C-SDLC v2 doctor sweep\n- 50/50 retained receipt equality\n- exact aggregate path-scope proof\n- git diff --check\n- independent exact-head review with no actionable findings\n\nCloses #5746",
+  "draft": false,
+  "revision": "git-blake3:87b811d3f5cf8654c2aee8b121b7a227352bb3e7:21ba60024636812c1d409743657c30c5bc570dfa07333c643464961ce829d0f1",
+  "commit_sha": "87b811d3f5cf8654c2aee8b121b7a227352bb3e7"
+}
