@@ -1207,7 +1207,7 @@ fn heartbeat_is_compare_and_swap_and_missed_heartbeat_does_not_enable_recovery()
 
 #[test]
 fn heartbeat_and_expired_recovery_record_positive_evidence() {
-    let (_temp, store, record) = fixture();
+    let (temp, store, record) = fixture();
     csdlc_v2::heartbeat_claim(&store, 42, "claim-1", 0, 2, 60).expect("heartbeat");
     let replacement = Claim {
         id: "replacement".into(),
@@ -1217,10 +1217,25 @@ fn heartbeat_and_expired_recovery_record_positive_evidence() {
         expires_unix_seconds: u64::MAX,
         heartbeat_unix_seconds: 62,
         branch: "issue-42".into(),
-        worktree: ".worktrees/issue-42".into(),
+        worktree: ".".into(),
         protected_paths: vec!["src".into()],
         purpose: "explicit recovery".into(),
     };
+    let wrong_checkout = csdlc_v2::recover_claim(
+        &store,
+        csdlc_v2::RecoverClaimRequest {
+            issue: 42,
+            expected_claim_id: record.claim.as_ref().expect("claim").id.clone(),
+            expected_generation: 0,
+            now_unix_seconds: 62,
+            replacement: replacement.clone(),
+            recovery_actor: "operator".into(),
+            reason: "lease expired".into(),
+        },
+    )
+    .expect_err("wrong checkout");
+    assert_eq!(wrong_checkout.code, ErrorCode::UnsafeCheckout);
+    git(temp.path(), &["branch", "-m", "issue-42"]);
     let evidence = csdlc_v2::recover_claim(
         &store,
         csdlc_v2::RecoverClaimRequest {
@@ -1737,7 +1752,7 @@ fn expired_recovery_cannot_bypass_cross_worktree_overlap_authority() {
         record_42,
         "replacement-42",
         "issue-42",
-        ".worktrees/issue-42",
+        ".",
         "src",
         barrier.clone(),
     );
@@ -1747,7 +1762,7 @@ fn expired_recovery_cannot_bypass_cross_worktree_overlap_authority() {
         record_43,
         "replacement-43",
         "issue-43",
-        ".worktrees/issue-43",
+        ".",
         "src/nested",
         barrier,
     );

@@ -196,6 +196,27 @@ fn issue_records_across_worktrees(store: &Store) -> Result<Vec<(Store, crate::Is
     Ok(records)
 }
 
+fn claim_matches_active_checkout(store: &Store, claim: &Claim) -> Result<bool> {
+    let worktree_matches = if claim.worktree == "." {
+        store.root().is_dir()
+    } else {
+        let common_dir = PathBuf::from(
+            git::run(
+                store.root(),
+                &["rev-parse", "--path-format=absolute", "--git-common-dir"],
+            )?
+            .stdout,
+        );
+        common_dir
+            .parent()
+            .map(|primary| primary.join(&claim.worktree))
+            .and_then(|expected| expected.canonicalize().ok())
+            .zip(store.root().canonicalize().ok())
+            .is_some_and(|(expected, current)| expected == current)
+    };
+    Ok(git::current_branch(store.root())? == claim.branch && worktree_matches)
+}
+
 fn copy_dir_recursive(source: &Path, destination: &Path) -> Result<()> {
     let Ok(source_metadata) = fs::symlink_metadata(source) else {
         return Ok(());
@@ -1045,12 +1066,10 @@ pub fn recover_claim(store: &Store, request: RecoverClaimRequest) -> Result<Clai
             "stale recovery compare-and-swap or expiry check failed",
         ));
     }
-    if request.replacement.branch != current.branch
-        || request.replacement.worktree != current.worktree
-    {
+    if !claim_matches_active_checkout(store, &request.replacement)? {
         return Err(V2Error::new(
             ErrorCode::UnsafeCheckout,
-            "replacement claim must preserve the expired claim branch/worktree binding",
+            "replacement claim does not match the active branch/worktree",
         ));
     }
     let evidence = ClaimRecovery {
@@ -1169,24 +1188,7 @@ pub fn reacquire_claim(
             "replacement claim generation is stale",
         ));
     }
-    let worktree_matches = if request.replacement.worktree == "." {
-        store.root().is_dir()
-    } else {
-        let common_dir = PathBuf::from(
-            git::run(
-                store.root(),
-                &["rev-parse", "--path-format=absolute", "--git-common-dir"],
-            )?
-            .stdout,
-        );
-        common_dir
-            .parent()
-            .map(|primary| primary.join(&request.replacement.worktree))
-            .and_then(|expected| expected.canonicalize().ok())
-            .zip(store.root().canonicalize().ok())
-            .is_some_and(|(expected, current)| expected == current)
-    };
-    if git::current_branch(store.root())? != request.replacement.branch || !worktree_matches {
+    if !claim_matches_active_checkout(store, &request.replacement)? {
         return Err(V2Error::new(
             ErrorCode::UnsafeCheckout,
             "replacement claim does not match the active branch/worktree",
