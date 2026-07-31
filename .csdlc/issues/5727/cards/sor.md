@@ -12,7 +12,7 @@ Status: pre_phase
 
 ## Summary
 
-Implemented typed safe claim reacquisition with Git-common serialization and repository-wide worktree collision authority.
+Implemented typed safe claim replacement with one Git-common collision authority across reacquisition and expired recovery.
 
 ## Artifacts
 
@@ -21,6 +21,7 @@ Implemented typed safe claim reacquisition with Git-common serialization and rep
 - .csdlc/evidence/5727
 - .csdlc/evidence/5727/gate2.log
 - .csdlc/evidence/5727/gate7.log
+- .csdlc/evidence/5727/gate2.log
 
 ## Execution
 
@@ -30,6 +31,9 @@ Implemented typed safe claim reacquisition with Git-common serialization and rep
 - Moved claim collision serialization to a Git-common lock shared by every worktree.
 - Made collision checks inspect canonical issue records across all registered worktrees.
 - Added a concurrent two-worktree regression proving only one overlapping writer can reacquire.
+- Routed legacy expired-claim recovery through the Git-common lock and cross-worktree live-claim inventory.
+- Required expired recovery to preserve its existing branch/worktree binding and validate complete replacement scope.
+- Added concurrent two-worktree recovery proof that only one overlapping writer can be established.
 
 ## Validation
 
@@ -157,6 +161,21 @@ Implemented typed safe claim reacquisition with Git-common serialization and rep
     "purpose": "Prove Rust formatting is canonical.",
     "outcome": "passed",
     "evidence_ref": ".csdlc/evidence/5727/fmt.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate2"
+    ],
+    "purpose": "Prove every typed claim replacement route shares cross-worktree exclusion, schema, CAS, collision, and CLI behavior.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5727/gate2.log"
   }
 ]
 

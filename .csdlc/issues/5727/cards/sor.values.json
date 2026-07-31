@@ -7,27 +7,31 @@
     "title": "[v0.91.8][csdlc-v2][claims] Make released bound claims safely reacquirable",
     "slug": "v0-91-8-csdlc-v2-claims-make-released-bound-claims-safely-reacquirable",
     "version": "v0.91.8",
-    "generation": 6
+    "generation": 8
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "sor",
     "values": {
-      "summary": "Implemented typed safe claim reacquisition with Git-common serialization and repository-wide worktree collision authority.",
+      "summary": "Implemented typed safe claim replacement with one Git-common collision authority across reacquisition and expired recovery.",
       "actual_changes": [
         "Added a typed csdlc-bind reacquisition request and result contract with CAS, binding, lease, and live-overlap guards.",
         "Made dormant nonterminal records readable and doctor-classifiable while preserving writer-claim enforcement for mutations.",
         "Added command-level, released-claim, expired-claim, stale-state, binding, overlap, schema, and real #5354 acceptance proof.",
         "Moved claim collision serialization to a Git-common lock shared by every worktree.",
         "Made collision checks inspect canonical issue records across all registered worktrees.",
-        "Added a concurrent two-worktree regression proving only one overlapping writer can reacquire."
+        "Added a concurrent two-worktree regression proving only one overlapping writer can reacquire.",
+        "Routed legacy expired-claim recovery through the Git-common lock and cross-worktree live-claim inventory.",
+        "Required expired recovery to preserve its existing branch/worktree binding and validate complete replacement scope.",
+        "Added concurrent two-worktree recovery proof that only one overlapping writer can be established."
       ],
       "artifacts": [
         ".csdlc/prepared/issues/5727/design.md",
         ".csdlc/prepared/issues/5727/diagram.mmd",
         ".csdlc/evidence/5727",
         ".csdlc/evidence/5727/gate2.log",
-        ".csdlc/evidence/5727/gate7.log"
+        ".csdlc/evidence/5727/gate7.log",
+        ".csdlc/evidence/5727/gate2.log"
       ],
       "actual_validation": [
         {
@@ -153,6 +157,21 @@
           "purpose": "Prove Rust formatting is canonical.",
           "outcome": "passed",
           "evidence_ref": ".csdlc/evidence/5727/fmt.log"
+        },
+        {
+          "command": [
+            "/usr/bin/env",
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate2"
+          ],
+          "purpose": "Prove every typed claim replacement route shares cross-worktree exclusion, schema, CAS, collision, and CLI behavior.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5727/gate2.log"
         }
       ],
       "integration_state": "not_started",

@@ -2,27 +2,27 @@
 running 37 tests
 test bind_rejects_existing_unregistered_target_directory ... ok
 test bind_rejects_symlinked_lifecycle_state_and_cleans_created_worktree ... ok
-test bind_materializes_lifecycle_state_in_new_issue_worktree ... ok
-test bind_idempotent_reuse_rejects_target_with_different_issue_identity ... ok
-test bind_idempotent_reuse_rejects_target_with_different_initialization_digest ... ok
-test bind_idempotent_reuse_rejects_target_with_different_lifecycle_identity ... ok
 test bind_rejects_stale_existing_target_side_state_without_mutating_it ... ok
-test bind_copies_prebind_evidence_into_target_worktree ... ok
+test bind_idempotent_reuse_rejects_target_with_different_lifecycle_identity ... ok
 test bind_rejects_stale_existing_target_record_before_materializing_side_state ... ok
+test bind_materializes_lifecycle_state_in_new_issue_worktree ... ok
+test bind_idempotent_reuse_rejects_target_with_different_initialization_digest ... ok
+test bind_copies_prebind_evidence_into_target_worktree ... ok
+test bind_idempotent_reuse_rejects_target_with_different_issue_identity ... ok
 test merged_publication_reconciliation_projects_truth_before_closeout ... ok
 test ambiguous_post_get_recovers_without_repeating_graphql ... ok
-test no_pr_closeout_produces_doctor_valid_terminal_state ... ok
 test invalid_terminal_observation_cannot_mutate_readiness_during_reconciliation ... ok
+test no_pr_closeout_produces_doctor_valid_terminal_state ... ok
 test ready_command_records_only_exact_open_remote_success ... ok
 test post_mutation_cas_failure_recovers_without_repeating_graphql ... ok
 test destructive_prune_archives_evidence_restores_projection_and_removes_only_issue_worktree ... ok
-test prune_preparation_classifies_retained_and_generated_state_without_deleting_it ... ok
 test prune_command_accepts_issue_local_terminal_without_rewriting_receipt ... ok
+test prune_preparation_classifies_retained_and_generated_state_without_deleting_it ... ok
 test routine_publication_prepares_and_records_ready_pr_directly ... ok
 test ready_command_graphql_and_post_get_failures_leave_zero_local_writes ... ok
 test squash_merge_metadata_revision_reconciles_but_substantive_delta_fails_closed ... ok
-test terminal_reconcile_rejects_missing_index_inside_existing_projection_dir ... ok
 test terminal_reconcile_rejects_misplaced_receipt_for_missing_projection ... ok
+test terminal_reconcile_rejects_missing_index_inside_existing_projection_dir ... ok
 test terminal_reconcile_rejects_partial_projection_loss ... ok
 test later_failure_blocks_merged_and_closed_unmerged_terminal_closeout ... ok
 test terminal_closeout_reconciles_only_forward_metadata_head_drift ... ok
@@ -38,7 +38,9 @@ test later_pass_supersedes_waiting_validation_through_terminal_closeout ... ok
 test readiness_regression_and_exact_terminal_closeout_are_atomic_and_idempotent ... ok
 test terminal_projection_and_receipt_recover_at_each_durable_boundary ... ok
 
-test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 66.70s
+test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 66.41s
 
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+    Blocking waiting for file lock on build directory
+   Compiling csdlc-v2 v0.1.0 (/Volumes/FastWork/adl-wp-5727/csdlc-v2)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.58s
      Running tests/gate7_lifecycle.rs (csdlc-v2/target/debug/deps/gate7_lifecycle-bc0c91707540e904)

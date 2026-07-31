@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "509845bfe734b0de7a7c7042e53facd5b5621f2de91962a4cf7b974b83a3388b",
   "phase": "implemented",
-  "generation": 6,
-  "digest": "21d7739c05fee1507509fcf614ad84c6da3fcfda01f88ce4ef482de85f00fc4f",
+  "generation": 8,
+  "digest": "95fa8184c6003058a07fbb9694f9ed0a221a19620c7f58afcdfec95037ce0f26",
   "claim": {
     "id": "claim-5727-csdlc-claim-reacquire",
     "owner": "codex:5727-owner",
-    "generation": 6,
+    "generation": 8,
     "acquired_unix_seconds": 1785465403,
     "expires_unix_seconds": 1786070203,
     "heartbeat_unix_seconds": 1785465403,
@@ -46,34 +46,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "ad1951d3c43009f0b110b17254ab63da4760fe89ba600bebee5dff13e18ed897",
+      "values_digest": "1683f628213b6d51e4fde4c3be2a4964f9e98f06bba472f7b26f64c3913f8f51",
       "rendered_digest": "174f5e79b1b305dd7a6931b96915f11e767b72f561aa25ae3c22f9267e574213",
       "ast_digest": "0a1a13d1a514ba58f90267a6985edea018115f7a9bae65531219474693e55272"
     },
     "stp": {
-      "values_digest": "d744b39105d3b61f5d0257574ee19761d7743ef88055efbee88c4bc5d8f68082",
+      "values_digest": "512786c3d36ca2032d25f4c24b0494e50dc830a48cb68d04ab7ff2efb7a27c9a",
       "rendered_digest": "3cdc7a6a2a6d33869b4669e3393d5ff6ff719e2eb59ba9a05e430ad50c330fc8",
       "ast_digest": "932c22e642456d4250c690c4dd0ea728658f7175a5de1a349150cd63292a4bdd"
     },
     "spp": {
-      "values_digest": "9357346fd88596831ad64253c8522fde964587d0222ca6343b1ba72e2afb5d0c",
+      "values_digest": "021ebc12f11c3776a3e885bb023750d8cddde694d6b9f87221660b5e4e81c803",
       "rendered_digest": "9fdab33fb4a5cc1f3562a7ee8dfc941d6ddc7242b4e0b1748da22981504c6c31",
       "ast_digest": "a744c88ebf6466c7778d1ca38eab05e72edee42f501586da9b54857c53922441"
     },
     "vpp": {
-      "values_digest": "a99b4c508a63bbf87dcacbd2fb4a6f9c241e3f9d06ae0b086f642ed8ca6d0ea3",
+      "values_digest": "6ee524ba14934ade6aa0e9d8cc115cd2e2b17520dbdd35f833964188a3a4c894",
       "rendered_digest": "a8990e159cbbd0d02665cb1791d886891f99c458229862bace4acee94f2ee1fd",
       "ast_digest": "10f1c93e18377daea8d2971c0d65b0dab4be88e9a7f8610fe52e0eb697f3747c"
     },
     "srp": {
-      "values_digest": "bf7d161456779d6cc11f29bf3818531952a0c2249dda4cf4362832b779392372",
+      "values_digest": "b929427155a09d50fd5a5c6e193eb4ecdd1bbd01dcab2e76019c74b0c43b224f",
       "rendered_digest": "a0b2233b21d58b7d0dae7d6f8eaad5961b389feddce9bdb563a60ba73cefba08",
       "ast_digest": "c540c68bd1839f8583bebf2803da6b41aeff7aa118206c80ffe8b9b46dfd455b"
     },
     "sor": {
-      "values_digest": "b1c591ad24808187866e82d8c1a074915018ec6945005b78a9eaf4b5fb803940",
-      "rendered_digest": "5b9d6fb65e986400c7af242d3b9f4d4ea2bbecf11025c3291080e780f7a441a3",
-      "ast_digest": "c022810a52dfcd9b28ef97b9af5d2e7cf0d6c56746382f30e61abbbafdbdf248"
+      "values_digest": "d9538203dc23be0920c2fd8e4dca3ed0a4dcf9d08917112c36364c6bc6d8b780",
+      "rendered_digest": "485a7213623503881f6d335fd0a0cce6a832ea0cc26dbca10100e5bb24f5f994",
+      "ast_digest": "7cd9b4c10f34f692d0abed26d1a37d63fa14ebf37bcc5449dd199bd7f06b31c0"
     }
   },
   "transitions": [
@@ -162,6 +162,20 @@
       "actor": "codex:5727-owner",
       "reason": "Record current canonical Rust formatting proof.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"fmt\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all\",\"--\",\"--check\"],\"purpose\":\"Prove Rust formatting is canonical.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/fmt.log\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5727-owner",
+      "reason": "Record the bounded fix for the remaining expired-recovery review finding.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented typed safe claim replacement with one Git-common collision authority across reacquisition and expired recovery.\",\"changes\":[\"Routed legacy expired-claim recovery through the Git-common lock and cross-worktree live-claim inventory.\",\"Required expired recovery to preserve its existing branch/worktree binding and validate complete replacement scope.\",\"Added concurrent two-worktree recovery proof that only one overlapping writer can be established.\"],\"artifacts\":[\".csdlc/evidence/5727/gate2.log\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5727-owner",
+      "reason": "Record final Gate 2 proof covering every claim replacement route.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\"],\"purpose\":\"Prove every typed claim replacement route shares cross-worktree exclusion, schema, CAS, collision, and CLI behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/gate2.log\"}}"
     }
   ]
 }
