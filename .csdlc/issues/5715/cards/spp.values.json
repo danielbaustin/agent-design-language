@@ -7,7 +7,7 @@
     "title": "[v0.91.8][podcast][ui] Update podcast studio from operator-provided page design",
     "slug": "v0-91-8-podcast-ui-update-podcast-studio-from-operator-provided-page-design",
     "version": "v0.91.8",
-    "generation": 4
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -89,9 +89,9 @@
         "Audio or RSS validation regresses without a clear bounded fix."
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5715/design.md",
+      "design_ref": ".csdlc/issues/5715/retained/design.md",
       "design_digest": "f7d926218fa94dee825b1c0d404fa763ff76238ee2ed4e5cb42dfd16c65aa834",
-      "diagram_ref": ".csdlc/prepared/issues/5715/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5715/retained/diagram.mmd",
       "diagram_digest": "60c34fe05b83fe4777a322caad6c5bd978d318b1e7e189c48a544387efc9b681"
     }
   }

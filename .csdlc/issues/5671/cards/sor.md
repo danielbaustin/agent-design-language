@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -58,17 +58,17 @@ Implemented Claude Opus 5 profile, setup template, and focused provider proof.
 
 ## Integration
 
-pr_open
+merged
 
 ## Publication
 
-Publication: draft
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

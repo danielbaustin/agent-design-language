@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-21][planning] Queue Adaptive Learning DAG work after loop runtime and platform deployment",
     "slug": "v0-91-8-wp21-adaptive-learning-dag-queue",
     "version": "v0.91.8",
-    "generation": 3
+    "generation": 6
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -34,10 +34,10 @@
           "evidence_ref": "preparation-doc-contract.log"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

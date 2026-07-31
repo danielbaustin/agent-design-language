@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-10A][multi-agent] Implement bounded Codex task and context-handoff adapter",
     "slug": "v0-91-8-wp-10a-bounded-codex-task-context-handoff-adapter",
     "version": "v0.91.8",
-    "generation": 15
+    "generation": 20
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -57,10 +57,10 @@
           "evidence_ref": "FastWork: 15/15 focused tests passed; strict all-target Clippy, cargo fmt --check, dependency gate, and git diff --check passed; implementation and tests remain below 2,500 LoC each."
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

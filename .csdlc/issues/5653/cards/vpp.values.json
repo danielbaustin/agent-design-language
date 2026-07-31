@@ -7,7 +7,7 @@
     "title": "[v0.91.8][docs] Refresh README status, release, CI, and homepage links",
     "slug": "readme-status-release-homepage-refresh",
     "version": "v0.91.8",
-    "generation": 12
+    "generation": 15
   },
   "status": "ready",
   "content": {
@@ -41,9 +41,9 @@
       "planned_validation_seconds": 1200,
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed and preserve truthful release boundaries.",
-      "design_ref": ".csdlc/prepared/issues/5653/design.md",
+      "design_ref": ".csdlc/issues/5653/retained/design.md",
       "design_digest": "841a852b8267d543686c4241d13eb74bbb2d0678cf6ba1d537bfeb80fa7af0f5",
-      "diagram_ref": ".csdlc/prepared/issues/5653/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5653/retained/diagram.mmd",
       "diagram_digest": "f72588af59f3216fbabd5f8e947778c5f5aad46390bec0f8d043795b8e408269"
     }
   }

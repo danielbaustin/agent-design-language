@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-09] Implement provider and governed-tool adapters",
     "slug": "v0-91-8-wp09-provider-governed-tool-adapters",
     "version": "v0.91.8",
-    "generation": 25
+    "generation": 32
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -35,12 +35,22 @@
           "purpose": "Prove dependency/source readiness, all adapter behavior, secret and authority boundaries, strict quality, and inventory at the implementation revision without consulting receipts",
           "outcome": "passed",
           "evidence_ref": "local FastWork matrix: 54 tests; source_lines=555; test_lines=761; largest_module=285; all required lanes passed"
+        },
+        {
+          "command": [
+            "ruby",
+            ".csdlc/prepared/issues/5349/run_validation_lane.rb",
+            "all"
+          ],
+          "purpose": "Post-merge validation at merge commit 79c7dccf12540863f6c038e1fd7ef45e2357a55e",
+          "outcome": "passed",
+          "evidence_ref": "detached FastWork worktree at merged origin/main; aggregate lane exit 0; 54 tests, strict quality, source gate, secret/authority, COTS and budget proof passed"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

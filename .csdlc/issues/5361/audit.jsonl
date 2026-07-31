@@ -20,3 +20,10 @@
 {"sequence":20,"generation":14,"actor":"codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e","reason":"The required exact-head GPT-5.5 pre-PR review completed with no findings and documented residual truth boundaries; advance #5361 to reviewed for typed publication.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":21,"generation":15,"actor":"codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":22,"generation":16,"actor":"codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e","reason":"record exact existing PR ready-for-review after remote success","operation":"record_ready_publication"}
+{"sequence":23,"generation":17,"actor":"codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":24,"generation":18,"actor":"codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":25,"generation":19,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":26,"generation":20,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":27,"generation":21,"actor":"codex:adl-post-merge-closeout","reason":"materialize retained terminal closeout receipt after post-merge sweep","operation":"reconcile_terminal"}
+{"sequence":28,"generation":22,"actor":"adl-post-merge-closeout","reason":"post-merge terminal reconciliation sweep","operation":"reconcile_terminal"}
+{"sequence":29,"generation":23,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-12][cutover] Execute reviewed reversible ADL default switch",
     "slug": "v0918-wp12-reversible-adl-default-switch",
     "version": "v0.91.8",
-    "generation": 20
+    "generation": 23
   },
   "status": "ready",
   "content": {
@@ -161,9 +161,9 @@
       "planned_validation_seconds": 21600,
       "planned_validation_tokens": 100000,
       "failure_policy": "Fail closed without selector mutation, publication, merge, closeout, rollback-window start, or WP-13 handoff on an incomplete #5344/#5345 gate, claim collision, unverified fresh install, non-atomic transaction, prior-state damage, explicit-v1 or rollback failure, ambiguous window, hidden network/credential/AWS use, Runtime v2 edit, legacy deletion, secret or host-path disclosure, overclaim, budget violation, deferred acceptance, stale review, red CI, or absent post-merge proof.",
-      "design_ref": ".csdlc/prepared/issues/5343/design.md",
+      "design_ref": ".csdlc/issues/5343/retained/design.md",
       "design_digest": "4be441ce171b50aad73aad5f6140fa5d0b9653ef83b10329870b13a818b7c91d",
-      "diagram_ref": ".csdlc/prepared/issues/5343/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5343/retained/diagram.mmd",
       "diagram_digest": "9c3173bf34cdfcdc240b257dab20ffe3b2646471586e28eaa5bfdb8b9b2e239e"
     }
   }

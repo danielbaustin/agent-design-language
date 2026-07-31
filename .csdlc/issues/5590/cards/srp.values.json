@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-14][runtime-v3][parity-d] Prove secure access, Observatory, guardian, and rollback",
     "slug": "v0-91-8-runtime-v3-parity-d-secure-operations",
     "version": "v0.91.8",
-    "generation": 16
+    "generation": 23
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

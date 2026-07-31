@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-15][unity][tooling] Align Unity-MCP live project and port proof for deployed observatory",
     "slug": "v0918-wp15-unity-mcp-live-project-endpoint-alignment",
     "version": "v0.91.8",
-    "generation": 26
+    "generation": 31
   },
   "status": "ready",
   "content": {
@@ -122,9 +122,9 @@
       "planned_validation_seconds": 3600,
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on project or endpoint ambiguity, fixed-port assumptions, cloud fallback, missing read-only proof, secret exposure, broad process scans, adjacent Unity scope, or unsupported readiness claims.",
-      "design_ref": ".csdlc/prepared/issues/4739/design.md",
+      "design_ref": ".csdlc/issues/4739/retained/design.md",
       "design_digest": "5511b37ed47d164d33691da1055f9b9cef543282aa8b71ad5fe1b6a0a6d5e53d",
-      "diagram_ref": ".csdlc/prepared/issues/4739/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/4739/retained/diagram.mmd",
       "diagram_digest": "373d365216f9d2ec61854af04d607cf6ef43a5cd3bad817090384490332b9346"
     }
   }

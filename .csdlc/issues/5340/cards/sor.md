@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -197,22 +197,31 @@ Implemented an independent portable adl-engine crate that consumes the landed in
     "purpose": "Prove exact dependency, COTS, source authority, sole-writer scope, all tests, LoC ceilings, and validation deadlines on the final substantive revision.",
     "outcome": "passed",
     "evidence_ref": ".csdlc/evidence/5340/engine-budgets/engine-budgets.log: implementation_lines=2928; test_fixture_lines=1946; unbudgeted_code=[]; substantive commit f89b321eac7433e9e3d9cc0cfdfc8aca6ce0ae75"
+  },
+  {
+    "command": [
+      "ruby",
+      ".csdlc/prepared/issues/5340/validate-post-merge.rb"
+    ],
+    "purpose": "Prove the governed PR head is ancestral to the captured origin/main merge commit and the exact detached integration tree passes the bounded engine post-merge lane.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5340/post-merge-exact/report.json: reviewed_head_sha=f38f662acb3988ef0704a54da055b14812c898d9; integration_sha=19601faec54a53e8bab90af484f745bc4972f116; disposition=local_pass"
   }
 ]
 
 ## Integration
 
-pr_open
+merged
 
 ## Publication
 
-Publication: draft
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

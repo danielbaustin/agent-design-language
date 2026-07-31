@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-12][cutover] Execute reviewed reversible ADL default switch",
     "slug": "v0918-wp12-reversible-adl-default-switch",
     "version": "v0.91.8",
-    "generation": 20
+    "generation": 23
   },
   "status": "ready",
   "content": {
@@ -113,9 +113,9 @@
         "Exact-revision review has an unresolved actionable finding"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5343/design.md",
+      "design_ref": ".csdlc/issues/5343/retained/design.md",
       "design_digest": "4be441ce171b50aad73aad5f6140fa5d0b9653ef83b10329870b13a818b7c91d",
-      "diagram_ref": ".csdlc/prepared/issues/5343/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5343/retained/diagram.mmd",
       "diagram_digest": "9c3173bf34cdfcdc240b257dab20ffe3b2646471586e28eaa5bfdb8b9b2e239e"
     }
   }

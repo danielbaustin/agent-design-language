@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-10A][multi-agent][proof] Run live distributed Codex workcell end to end",
     "slug": "v0918-wp10a-live-distributed-codex-workcell-proof",
     "version": "v0.91.8",
-    "generation": 15
+    "generation": 21
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

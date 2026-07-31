@@ -1,0 +1,21 @@
+flowchart TD
+    C["#5499 deterministic conductor plan"] --> G["#5502 convergence gate"]
+    T["#5498 bounded task outputs"] --> G
+    S["Typed C-SDLC v2 claim and lifecycle truth"] --> G
+
+    G --> I["Deterministic integration plan"]
+    G --> R["Typed replan record"]
+    G --> B["Typed blocked record"]
+
+    I --> D["#5500 read-only dashboard projection"]
+    R --> D
+    B --> D
+    D --> L["#5501 live distributed workcell proof"]
+    L --> U["#5497 umbrella convergence"]
+
+    D5499["#5499 live merged + ancestral"] --> Gate["Execution dependency gate"]
+    D5498["#5498 live merged + ancestral"] --> Gate
+    Audit["typed closeout + receipts audit-only"] -. observe .-> Gate
+    Gate --> G
+
+    G -. "never owns" .-> N["Task creation / GitHub mutation / review / merge / closeout"]

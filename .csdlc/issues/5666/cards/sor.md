@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -52,17 +52,17 @@ Implemented a proportional developer throughput fast-lane policy, linked it from
 
 ## Integration
 
-pr_open
+merged
 
 ## Publication
 
-Publication: ready
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

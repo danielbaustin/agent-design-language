@@ -7,9 +7,9 @@
     "title": "[v0.91.8][csdlc-v2][records] Publish #5662 terminal projection to main",
     "slug": "publish-5662-terminal-projection",
     "version": "v0.91.8",
-    "generation": 6
+    "generation": 11
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

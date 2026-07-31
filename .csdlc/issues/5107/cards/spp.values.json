@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-21][planning] Queue Adaptive Learning DAG work after loop runtime and platform deployment",
     "slug": "v0-91-8-wp21-adaptive-learning-dag-queue",
     "version": "v0.91.8",
-    "generation": 3
+    "generation": 6
   },
   "status": "ready",
   "content": {
@@ -92,9 +92,9 @@
         "The work requires runtime/product implementation or child issue creation."
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5107/design.md",
+      "design_ref": ".csdlc/issues/5107/retained/design.md",
       "design_digest": "50b2da2b406a51324c6d0479de9aabfb456ef5fbb19c222587bdbc9b7cbe6b90",
-      "diagram_ref": ".csdlc/prepared/issues/5107/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5107/retained/diagram.mmd",
       "diagram_digest": "76e16a4cafd587ed562c04f9e120849db10367e0aa74c28b28d46fb061cadea9"
     }
   }

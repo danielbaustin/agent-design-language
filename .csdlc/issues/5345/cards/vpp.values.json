@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-10] Implement thin ADL CLI and authoritative selector",
     "slug": "v0918-wp10-thin-adl-cli-authoritative-selector",
     "version": "v0.91.8",
-    "generation": 9
+    "generation": 22
   },
   "status": "ready",
   "content": {
@@ -147,9 +147,9 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed without implementation, publication, merge, or closeout on an incomplete dependency gate, duplicate command authority, implicit network or selector behavior, invalid installation identity, non-atomic selector mutation, prior-state damage, unverified rollback, host-path or secret disclosure, forbidden dependency, unsupported LoC/module/test/time variance, deferred acceptance, stale review, red CI, or absent post-merge proof.",
-      "design_ref": ".csdlc/prepared/issues/5345/design.md",
+      "design_ref": ".csdlc/issues/5345/retained/design.md",
       "design_digest": "44cb2d60e112dc5269dfd511762399121a61e66a8f6ccfca8868afdf65581d96",
-      "diagram_ref": ".csdlc/prepared/issues/5345/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5345/retained/diagram.mmd",
       "diagram_digest": "c851e114b6ff79258a1acb435981e8b1604e27926081797a9d6550f3571e2320"
     }
   }

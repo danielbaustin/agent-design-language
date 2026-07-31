@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -128,17 +128,17 @@ Completed the exact-revision WP-12 opt-in soak and rollback proof: accepted Runt
 
 ## Integration
 
-pr_open
+merged
 
 ## Publication
 
-Publication: ready
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

@@ -8,3 +8,6 @@
 {"sequence":8,"generation":5,"actor":"codex:5737-execution","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":9,"generation":6,"actor":"codex:5737-execution","reason":"The assigned exact-head review is complete with no safety blockers.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":10,"generation":7,"actor":"codex:5737-execution","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":11,"generation":8,"actor":"codex:5737-execution","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":12,"generation":9,"actor":"codex:5737-execution","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":13,"generation":10,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

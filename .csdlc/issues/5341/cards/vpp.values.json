@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-08] Implement Runtime v3 adapter",
     "slug": "v0-91-8-wp08-runtime-v3-adapter",
     "version": "v0.91.8",
-    "generation": 5
+    "generation": 11
   },
   "status": "ready",
   "content": {
@@ -187,9 +187,9 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on any non-terminal dependency, missing or malformed receipt, non-ancestral merged SHA, preview-contract assumption, claim collision, shared or owner-path write, authority escalation, nondeterministic mapping, error suppression, trust mutation, Runtime v2 or AWS dependency, listener or credential scope, undeclared COTS, LoC/test/module/time budget breach, skipped or degraded PVF lane, stale or actionable review, red or pending CI, exact-head mismatch, missing post-merge proof, incomplete typed closeout receipt, or unsafe prune.",
-      "design_ref": ".csdlc/prepared/issues/5341/design.md",
+      "design_ref": ".csdlc/issues/5341/retained/design.md",
       "design_digest": "a85968cdb8685e8d95e05db20b8347223693983fe1d137c09c953cfc2e4d3b83",
-      "diagram_ref": ".csdlc/prepared/issues/5341/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5341/retained/diagram.mmd",
       "diagram_digest": "66c62fc10f92513c0589e16b86a34b212c2f733cf08cf8a152faa3292c29da09"
     }
   }

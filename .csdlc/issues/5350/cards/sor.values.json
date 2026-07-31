@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-11] Run exact-revision normalized shadow parity",
     "slug": "v0918-wp11-exact-revision-normalized-shadow-parity",
     "version": "v0.91.8",
-    "generation": 13
+    "generation": 20
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -65,10 +65,10 @@
           "evidence_ref": ".csdlc/evidence/5350/shadow-report.json"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

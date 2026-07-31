@@ -7,9 +7,9 @@
     "title": "[v0.91.8][docs] Refresh README status, release, CI, and homepage links",
     "slug": "readme-status-release-homepage-refresh",
     "version": "v0.91.8",
-    "generation": 12
+    "generation": 15
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -42,10 +42,10 @@
           "evidence_ref": ".csdlc/evidence/5653/readme-focused.txt"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "draft",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

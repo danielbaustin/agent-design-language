@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-01][readiness] Reconcile plans, sprint umbrellas, and parallel execution",
     "slug": "v0-91-8-wp-01-execution-readiness",
     "version": "v0.91.8",
-    "generation": 36
+    "generation": 44
   },
-  "status": "ready",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

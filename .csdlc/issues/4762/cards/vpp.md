@@ -16,9 +16,9 @@ Validate the #4762 docs/artifact handoff package with deterministic package-shap
 
 ## Lane Inputs
 
-Design: .csdlc/prepared/issues/4762/design.md
+Design: .csdlc/issues/4762/retained/design.md
 
-Diagram: .csdlc/prepared/issues/4762/diagram.mmd
+Diagram: .csdlc/issues/4762/retained/diagram.mmd
 
 ## Selected Lanes
 

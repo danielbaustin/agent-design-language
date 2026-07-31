@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: ready
+Status: complete
 
 ## Summary
 
@@ -92,17 +92,17 @@ Implemented the #4762 auditable birth-witness register and receipt handoff packa
 
 ## Integration
 
-pr_open
+merged
 
 ## Publication
 
-Publication: ready
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

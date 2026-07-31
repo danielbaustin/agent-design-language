@@ -3,36 +3,10 @@
   "issue": 5683,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b8d92d7710c00944967def4c4d3e923aa274554cc31b48a8fa49da34b6a77d97",
-  "phase": "published",
-  "generation": 18,
-  "digest": "33d623e9d865d503906d2047ee86d4d88930c975585717e78715219410464131",
-  "claim": {
-    "id": "claim-5683-v0918-unity-observatory-visual-remediation",
-    "owner": "codex:issue-5683-unity-remediation",
-    "generation": 18,
-    "acquired_unix_seconds": 1785113461,
-    "expires_unix_seconds": 1785718261,
-    "heartbeat_unix_seconds": 1785113461,
-    "branch": "codex/5683-v0918-unity-observatory-visual-remediation",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/evidence/5683",
-      ".csdlc/issues/5683",
-      ".csdlc/locks/5683.lock",
-      ".csdlc/prepared/issues/5683",
-      "adl/tools/test_v0916_unity_observatory_contract.sh",
-      "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryBatchValidator.cs",
-      "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryFlagshipStageBuilder.cs",
-      "demos/v0.91.6/unity-observatory/Assets/Resources/ObservatoryShellRuntime.uss",
-      "demos/v0.91.6/unity-observatory/Assets/Scenes/FlagshipObservatoryStage.unity",
-      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs",
-      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs",
-      "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uss",
-      "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uxml",
-      "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
-    ],
-    "purpose": "Remediate the visible flagship Unity Observatory render artifacts and retain direct investor-facing proof"
-  },
+  "phase": "closed_out",
+  "generation": 22,
+  "digest": "fd65004c65608c3372cec7078a4a4410800079915085437612df0d94b9c3550b",
+  "claim": null,
   "review_assignment": {
     "reviewer": "Hooke",
     "assigned_by": "codex:issue-5683-unity-remediation",
@@ -128,15 +102,145 @@
     "url": "https://github.com/danielbaustin/agent-design-language/pull/5693",
     "base": "main",
     "head": "codex/5683-v0918-unity-observatory-visual-remediation",
-    "revision": "git-blake3:a8832158d65476586719d17c37bee6174b844b98:930b23fefa28b988f0cdfc4cbfe08ac2607cf5f0874ea3bb2a928c967fa9c850",
+    "revision": "git-blake3:cc19f5a187e73cf6110958b05bd347b6855bf92f:f95eeffd782b3b7920d4d8bf780550e77c859c91cc73c670ae062bd2579bd543",
     "draft": false,
-    "observed_state": "open"
+    "observed_state": "merged"
   },
-  "readiness": null,
-  "terminal": null,
+  "readiness": {
+    "pull_request": 5693,
+    "head_sha": "cc19f5a187e73cf6110958b05bd347b6855bf92f",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89889911406"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888545467"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888526269"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888526460"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888526320"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888526371"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888525894"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888507657"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888526409"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888526487"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888526305"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888526326"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888526414"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888525870"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888526395"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30237672658/job/89888526439"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5693,
+    "disposition": "merged",
+    "observed_sha": "cc19f5a187e73cf6110958b05bd347b6855bf92f",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5683.json",
+    "released_branch": "codex/5683-v0918-unity-observatory-visual-remediation",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5683",
+      ".csdlc/issues/5683",
+      ".csdlc/locks/5683.lock",
+      ".csdlc/prepared/issues/5683",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryBatchValidator.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryFlagshipStageBuilder.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Resources/ObservatoryShellRuntime.uss",
+      "demos/v0.91.6/unity-observatory/Assets/Scenes/FlagshipObservatoryStage.unity",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs",
+      "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uss",
+      "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uxml",
+      "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
+    ]
+  },
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5683/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5683/diagram.mmd",
+  "design_path": ".csdlc/issues/5683/retained/design.md",
+  "diagram_path": ".csdlc/issues/5683/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "operator:issue-5683",
@@ -145,34 +249,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "98f309f15e1917dbc148322175de0059e958127198a3521d7b315276b6406126",
+      "values_digest": "202ca9ff631a6509d54c914d0dc9f3cb820dc21d7b9d0dddd65e7ba07e4e46e9",
       "rendered_digest": "97eb54524cf0d293522d3a4495666eb42e739b1b42ba37900ca1f5aaa56c0a12",
       "ast_digest": "0c03f048e200173e885009fe047a19e43bd02a640170325798ed7a27bf605e10"
     },
     "stp": {
-      "values_digest": "d062791e688c92b713042cffae84ef5e959ec4766c4fb50e2919ae982dff317a",
+      "values_digest": "23664e74525d5033c42d88b0a0d932149ef52510d225a20f7373a1cd63e7908c",
       "rendered_digest": "f8dc2201d62c7e21dceadb61a7c10233389be658313c8f63ac25348e9e1edf00",
       "ast_digest": "d37d59892d1f7204cb729e440b219d6b55c81d4ed62ce975f471411b40a9afed"
     },
     "spp": {
-      "values_digest": "43038dcb01adfafc5408634fadf3a174cc1fffd5cd5bf30343c47708bb10426e",
-      "rendered_digest": "178bbbb1925bde42767d52c63fefc30ef90ad09474b6a1598f8211b4f427e2b4",
-      "ast_digest": "4470b796182f02708b62ec973df468d5db684af2193e31bb12acde87e5f4c247"
+      "values_digest": "f42feca459523e4d0e078f2700480f38c7e3dca2074d7bda59221a25196d8ffe",
+      "rendered_digest": "6f3eb8e174af9e802e2c92584b9f9defe5444fef216559a797d6d940eed8a033",
+      "ast_digest": "dea099e15559a4d3f8b42596f8cee7c64f8eba9aa42b43fe5f2e5dcba4292940"
     },
     "vpp": {
-      "values_digest": "75e7b385b9d77dc65c90e665b5aff0dffc34b14b0939d80b3993bd2bd7650aeb",
-      "rendered_digest": "ac2aa75bf11d40548a14b2e77c6fdc4393e9c210a6ab1ca081aa94b3c849b843",
-      "ast_digest": "978c22ad29a905bd2756f36b20e6fa5e4e396f74ae3452bbbe8142be75371478"
+      "values_digest": "c22f6083b235aaefbe5a903122714270e93773f56f65f6d8d542217e9fdead18",
+      "rendered_digest": "389ce03d2e08646613d3ff1afa7d3929c97d196052a810a2d8a5c25064e4759e",
+      "ast_digest": "331e5cfaf856d6cafc30d93cedaac30006d506aaefcccdb9f60415cb98db05bd"
     },
     "srp": {
-      "values_digest": "8c23e87dfe5cf0a8e6fde918555aafee4add2f6f0d4c04395d4d8bd27c47e306",
-      "rendered_digest": "0fffb3a731293199a7e847c3c31b9c347cbd03d4c4297a9e2896dbae95198157",
-      "ast_digest": "33b80f2676e354d9fe1ccf766888f5c3db1456a6116e7a1bbe7e56a3981da72f"
+      "values_digest": "90c87307ce7a6d173397518dd6faad4204b23efb8c759f35a7638b1801a99acc",
+      "rendered_digest": "5744a778aadb94093013f6a9a59497bff8f36d31c797fdde71c528c456006daa",
+      "ast_digest": "7ef29910e1029ea4e43115681456d2ff4b07f538f862440b07acf492fc61f616"
     },
     "sor": {
-      "values_digest": "cc7fb378cd4479d9b8f76ec1be667ad286cbfd84c232c1ccfccd865adfbb23d0",
-      "rendered_digest": "55e2fe0132497b7b31957d8af85f9d47bef1c0dfee956ebd20f1444bd62c5a5e",
-      "ast_digest": "c8eda1f2a0e4ec7d1e61d742023261b9d69e73b173b438862540c34c6211f275"
+      "values_digest": "739c3f298ef3dd95ce5538c5b0f588d70cedfadc27ec348c7f1191048e65c7b9",
+      "rendered_digest": "d3e66fab1903bfb3f165a9939274daf9100a67e29186077a7fa79bbf9981b735",
+      "ast_digest": "b86b2fb58056c59e8c3eb3b7519861e218e5ef3efbca1a03397f8915416c9f0e"
     }
   },
   "transitions": [
@@ -252,6 +356,27 @@
       "to": "published",
       "actor": "codex:issue-5683-unity-remediation",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 12,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 13,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 14,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -422,6 +547,34 @@
       "actor": "codex:issue-5683-unity-remediation",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

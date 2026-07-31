@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-11] Run exact-revision normalized shadow parity",
     "slug": "v0918-wp11-exact-revision-normalized-shadow-parity",
     "version": "v0.91.8",
-    "generation": 13
+    "generation": 20
   },
   "status": "ready",
   "content": {
@@ -107,9 +107,9 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed without parity credit, publication, acceptance, soak, cutover, or deletion on identity drift, invalid corpus/evidence, unknown command or normalization, missing case/group/overlay, unclassified mismatch, non-live Runtime credit, absent WP-10A proof, forbidden dependency, budget failure, or deferred acceptance proof.",
-      "design_ref": ".csdlc/prepared/issues/5350/design.md",
+      "design_ref": ".csdlc/issues/5350/retained/design.md",
       "design_digest": "83326635619c0b8db7970827b7387706717b62348b96a0f0590c8c6e1b442aeb",
-      "diagram_ref": ".csdlc/prepared/issues/5350/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5350/retained/diagram.mmd",
       "diagram_digest": "885caf3d60be700481e79942b618326f9efaf47071a781d2a2563b070e744b0d"
     }
   }

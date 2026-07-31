@@ -1,0 +1,31 @@
+flowchart LR
+  subgraph authority["Authority before actuation"]
+    ingress["#5591 reviewed typed ingress"] --> identity["Citizen and agent identity"]
+    identity --> delegation["Attenuating delegation and resources"]
+    delegation --> gate["Freedom Gate and AEE"]
+    gate --> precheckpoint["Signed pre-actuation checkpoint"]
+  end
+
+  subgraph operations["Parity-C production operations"]
+    precheckpoint --> scheduler["Bounded scheduler"]
+    scheduler --> provider["Production provider adapter"]
+    scheduler --> tool["Governed tool adapter"]
+    provider --> agent["Agent and Shepherd services"]
+    tool --> agent
+  end
+
+  subgraph state["Private continuity"]
+    identity --> private["Identity-scoped private state"]
+    chrono["Qualified Chronosense time"] --> precheckpoint
+    agent --> terminal["Terminal checkpoint"]
+    terminal --> lifelog["Redacted append-only lifelog"]
+    terminal --> recovery["Authenticated restart recovery"]
+    recovery --> identity
+  end
+
+  deny["Denied, revoked, widened, replayed, corrupt, expired"] -. "fail closed before actuation" .-> gate
+  cancel["Cancellation, pressure, shutdown"] --> scheduler
+  scheduler --> cleanup["Bounded cleanup and no duplicate side effect"]
+
+  degraded["DegradedOperationExecutor or fixture"] -. "zero parity credit" .-> operations
+  blocker["#5591 lacks clean reviewed contract or path disjointness"] -. "preparation only" .-> ingress

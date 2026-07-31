@@ -7,14 +7,14 @@
     "title": "[v0.91.8][WP-10] Implement thin ADL CLI and authoritative selector",
     "slug": "v0918-wp10-thin-adl-cli-authoritative-selector",
     "version": "v0.91.8",
-    "generation": 9
+    "generation": 22
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {
       "review_scope": "adl-v2/crates/adl-cli\nadl-v2/tools/install-adl-v2.sh\n.csdlc/prepared/issues/5345",
-      "review_revision": "git-blake3:2b17be0a22c99cbc32bcf91583c923ca04b5dd4a:0c7bc971f6ce4ef189431b1bc8551ba229edc5c0e0c331c9c4bedc9a63bff49f",
+      "review_revision": "git-blake3:4b4e36570f91483c4f263588f1f59970c2d125b4:2220348ab0d890eb58766f1757865a45e3bfb51a85c57569a4869e4ac13f21f1",
       "reviewer": "subagent:019f8611-2d02-7492-9c03-7af0fcf6662e",
       "review_prompts": [
         "Does every command remain a typed adapter over exactly one reviewed WP-04 through WP-09 boundary without duplicate domain logic?",
@@ -31,7 +31,7 @@
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:2b17be0a22c99cbc32bcf91583c923ca04b5dd4a:0c7bc971f6ce4ef189431b1bc8551ba229edc5c0e0c331c9c4bedc9a63bff49f",
+          "fix_revision": "git-blake3:4b4e36570f91483c4f263588f1f59970c2d125b4:2220348ab0d890eb58766f1757865a45e3bfb51a85c57569a4869e4ac13f21f1",
           "route": null
         },
         {
@@ -41,7 +41,7 @@
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:2b17be0a22c99cbc32bcf91583c923ca04b5dd4a:0c7bc971f6ce4ef189431b1bc8551ba229edc5c0e0c331c9c4bedc9a63bff49f",
+          "fix_revision": "git-blake3:4b4e36570f91483c4f263588f1f59970c2d125b4:2220348ab0d890eb58766f1757865a45e3bfb51a85c57569a4869e4ac13f21f1",
           "route": null
         },
         {

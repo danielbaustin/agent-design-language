@@ -3,36 +3,10 @@
   "issue": 5697,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "3136fba73cac6b4c3b5d21d27082421952f27694f45781bfa414a7b43e35a90b",
-  "phase": "reviewed",
-  "generation": 7,
-  "digest": "e77c63841903f8e1fdbbacc9664a72d3c2f8178e98591ad477f45329142fc46a",
-  "claim": {
-    "id": "claim-5697-chronosense-trusted-time",
-    "owner": "codex:issue-5697-chronosense-trusted-time",
-    "generation": 7,
-    "acquired_unix_seconds": 1785172070,
-    "expires_unix_seconds": 1785776870,
-    "heartbeat_unix_seconds": 1785172070,
-    "branch": "codex/5697-chronosense-trusted-time",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/evidence/5697",
-      ".csdlc/issues/5697",
-      ".csdlc/locks/5697.lock",
-      ".csdlc/prepared/issues/5697",
-      ".csdlc/publication/5697.intent.json",
-      ".github/workflows/ci.yaml",
-      "adl-runtime-kernel/Cargo.toml",
-      "adl-runtime-kernel/src/assembly.rs",
-      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
-      "adl-runtime-kernel/src/governed_operations.rs",
-      "adl-runtime-kernel/src/operations.rs",
-      "adl-runtime-kernel/tests/assembly.rs",
-      "adl-runtime-kernel/tests/parity_b_live_kernel.rs",
-      "adl-runtime-kernel/tests/protocol_adapters.rs"
-    ],
-    "purpose": "Land the Runtime v3 Chronosense trusted_time ordering correction in follow-up issue #5697 without mutating terminal #5663 lifecycle state"
-  },
+  "phase": "closed_out",
+  "generation": 11,
+  "digest": "becbb9dda4c6ba68a98fd7d78458986e9cbea664b56a639c343d5cb373511d03",
+  "claim": null,
   "review_assignment": {
     "reviewer": "subagent:019fa4c9-2198-79a0-87a8-4134f7ab8296",
     "assigned_by": "codex:wp12-conductor",
@@ -74,12 +48,152 @@
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5697,
+    "pull_request": 5699,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5699",
+    "base": "main",
+    "head": "codex/5697-chronosense-trusted-time",
+    "revision": "git-blake3:93dc2793cdca052abd58a7e5aaffd6a5f5b1dca1:4f6512cd621bfd7a52b350a4d78aadce7e11a977d39753b387b5bf258bb9fbb4",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5699,
+    "head_sha": "93dc2793cdca052abd58a7e5aaffd6a5f5b1dca1",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071658248"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071163405"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092512"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071093186"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092577"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092634"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092590"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071017741"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092562"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092985"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092687"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092737"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071093176"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071091733"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092714"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092797"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5699,
+    "disposition": "merged",
+    "observed_sha": "93dc2793cdca052abd58a7e5aaffd6a5f5b1dca1",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5697.json",
+    "released_branch": "codex/5697-chronosense-trusted-time",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5697",
+      ".csdlc/issues/5697",
+      ".csdlc/locks/5697.lock",
+      ".csdlc/prepared/issues/5697",
+      ".csdlc/publication/5697.intent.json",
+      ".github/workflows/ci.yaml",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ]
+  },
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5697/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5697/diagram.mmd",
+  "design_path": ".csdlc/issues/5697/retained/design.md",
+  "diagram_path": ".csdlc/issues/5697/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "operator:issue-5697",
@@ -88,34 +202,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "01b1a2dda75f138882572a0f4e7253920023ba0ec45104b3c57b21bcee10c142",
+      "values_digest": "a7b16712ddb25edcd084356b09e7745e1ef683756c1af0e88c2f2a736f4233dd",
       "rendered_digest": "32a3aac06fa98f3fd813d88e9b8535d1e0bb5763f4f5737adf1b93806dfd6fe2",
       "ast_digest": "4099148b24fec409bc2d6a4d5567b3fe116594a6b65647e74b04eee37d1bbbe6"
     },
     "stp": {
-      "values_digest": "eaee3b6a755656ec52da97d17a03fdf760a565a353fd24519e69f78a3e351c41",
+      "values_digest": "3725d98481b1f34c2258b6abba7d68be13232fda6ef9a356acb23fb51be38680",
       "rendered_digest": "10afa87c2801f1a86017049829c540ae662906358ee171ce218e9353984abe7a",
       "ast_digest": "8fe31204735501c97d2f1cffa83ab74b817b81670a18a37e089f5b6c176b04be"
     },
     "spp": {
-      "values_digest": "fd79e283ccf18f22607074e170c66063954d71a237de916bebff6a8689769c39",
-      "rendered_digest": "c9197f36add26fe96a1b79d542541f1d73d17b1018c4a616833ffcef147bfcaf",
-      "ast_digest": "20ffc017740d306ae66272adf5a0636730d6fca5b5534761f781ea834d65083d"
+      "values_digest": "eabe9bf213d31c60bc1603e04880511ea4351388fb07f7731ab8c7d04b7e80c9",
+      "rendered_digest": "2b54c4d4d1b057827f3588a7bfa363566564fd233b3a151168903b38ff91a1de",
+      "ast_digest": "b67228ba5c7b5cb3eabac7aa75a62562d1cba418fe3211ee3931dd2ba471604e"
     },
     "vpp": {
-      "values_digest": "76122be4c76998ffe06f90408e98c0e2540b5313c13c71dc4a21ab26a3644214",
-      "rendered_digest": "00941d3ca49caa5363bf6c701e68a0df12de15ca848681653379e60d447596de",
-      "ast_digest": "1d691e7d3bb23b49561bf172d0e10c37cbf4546951ee7d32acb3821ee098b072"
+      "values_digest": "10cdf2a44988c0015293738fafcd612f7efc22a4b1dade21f16479fad71aba46",
+      "rendered_digest": "009445cfd9b6de4cff08f869db30201e9c7371f757503d2d6c5fa17217aa5b01",
+      "ast_digest": "76b2a697c17affc6b5e72c3a1bfdd74350e4c19ac118b8a50144b53fd4441f19"
     },
     "srp": {
-      "values_digest": "3acf8c336dd783720530968da8de9fd4c7b8cd2bf24ed7fd6cd2f179bd72a04b",
-      "rendered_digest": "ce2efe1993e92bd2ea965e58c17b6e86e6aff859d6f0b54a244f7f165c7ae47d",
-      "ast_digest": "33663871e6d4477eb6a2860499029b4a778c6f0d608a463f669d7b6b43c08cd8"
+      "values_digest": "fec52fadeaee9baefe1a386c58db510b4a1392995facdbcc909eb791fa41c199",
+      "rendered_digest": "e2c4a6ef818fc836c40e9cd25aa4a32770b3a249d32dc3303221a752cefac92b",
+      "ast_digest": "7b5fb1db1cfa40ed193f9b622f61dcbd7d43a09946372aaec5dc9b4c4983cc4d"
     },
     "sor": {
-      "values_digest": "828b1898bbf06519965ea49f888a6546a22baa19a599550d26c000c97bf20f87",
-      "rendered_digest": "a287eb239a7b7fd48f16daf6df097f055c4719c00df2b7cf568b718d01c347e0",
-      "ast_digest": "5d6bee8aeb9a0b81df6f70bd9b29bd6c61339577551b577650763a6b4c97a25d"
+      "values_digest": "c57758c179d02743f6ac5ecefe1c75c8124b47a626fa840ab82f44429586fd50",
+      "rendered_digest": "0b6334688361ea34e928727550189b10fb53abf373ee264479baaafeddfb865b",
+      "ast_digest": "3ef865235956908fd9aca7b96fa7c9d9bfc85c6ae5bd094e5a68760c29ea0c49"
     }
   },
   "transitions": [
@@ -167,6 +281,34 @@
       "to": "reviewed",
       "actor": "codex:wp12-conductor",
       "reason": "Advance after the final exact-head review passed with no findings."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:issue-5697-closeout",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:issue-5697-closeout",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:issue-5697-closeout",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -267,6 +409,34 @@
       "actor": "codex:wp12-conductor",
       "reason": "Advance after the final exact-head review passed with no findings.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 8,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 9,
+      "actor": "codex:issue-5697-closeout",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 17,
+      "generation": 10,
+      "actor": "codex:issue-5697-closeout",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 18,
+      "generation": 11,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

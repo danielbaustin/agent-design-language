@@ -3,26 +3,10 @@
   "issue": 4758,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "de5ee30d1ad0d0178709db033b64c147dcf35243e84a3380c4537a42d1a72f87",
-  "phase": "published",
-  "generation": 4,
-  "digest": "4e4ee2992e86d99bd791b4b98acad1672a45ba56088e59b550e856768538e95e",
-  "claim": {
-    "id": "claim-4758-v092-launch-readiness-execution",
-    "owner": "codex:issue-4758-execution",
-    "generation": 4,
-    "acquired_unix_seconds": 1785530311,
-    "expires_unix_seconds": 1786135111,
-    "heartbeat_unix_seconds": 1785530311,
-    "branch": "codex/4758-v0918-preparation",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/evidence/4758",
-      ".csdlc/issues/4758",
-      ".csdlc/locks/4758.lock",
-      ".csdlc/prepared/issues/4758"
-    ],
-    "purpose": "Implement and validate #4758 launch-readiness handoff evidence for v0.92 release review consumption"
-  },
+  "phase": "closed_out",
+  "generation": 7,
+  "digest": "0d22f1024150576d241b28f418d9344fb6cf69207c033a35668dc88a018d7700",
+  "claim": null,
   "review_assignment": null,
   "review": {
     "reviewer": "codex:bounded-pre-pr-review",
@@ -55,15 +39,135 @@
     "url": "https://github.com/danielbaustin/agent-design-language/pull/5739",
     "base": "main",
     "head": "codex/4758-v0918-preparation",
-    "revision": "git-blake3:260df81974883f0fb71b25cd0b85b045b335c1e9:fbdb68e2e0fe89bf4a4f6d9948dfd74e5b29f22d921131ec6b0b077ce2b01a35",
+    "revision": "git-blake3:c9b5c625ccfb17b1a75fd3a1a93f4810baf4a3e2:c2f03c0f9c44247557db896c6275b80365cde876c997aa4234537ea7dfd0b09e",
     "draft": false,
-    "observed_state": "open"
+    "observed_state": "merged"
   },
-  "readiness": null,
-  "terminal": null,
+  "readiness": {
+    "pull_request": 5739,
+    "head_sha": "c9b5c625ccfb17b1a75fd3a1a93f4810baf4a3e2",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736422"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275769246"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736409"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736823"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736719"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736967"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736865"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275700308"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736824"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736436"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736366"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736639"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736687"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736416"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736691"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666804782/job/91275736764"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5739,
+    "disposition": "merged",
+    "observed_sha": "c9b5c625ccfb17b1a75fd3a1a93f4810baf4a3e2",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/4758.json",
+    "released_branch": "codex/4758-v0918-preparation",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/4758",
+      ".csdlc/issues/4758",
+      ".csdlc/locks/4758.lock",
+      ".csdlc/prepared/issues/4758"
+    ]
+  },
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/4758/design.md",
-  "diagram_path": ".csdlc/prepared/issues/4758/diagram.mmd",
+  "design_path": ".csdlc/issues/4758/retained/design.md",
+  "diagram_path": ".csdlc/issues/4758/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex:wp21-conductor",
@@ -72,34 +176,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "5b15290917e225a3f96cf5f8102694d79d3036f01f075b684614fe048d8c92fb",
+      "values_digest": "1e9385c43cb7afa3f292c4427da421052c98f05f0efb5bd7e028bd4173e34713",
       "rendered_digest": "2e60667359875253e0d4be86d4bc6c1ec70d6dee0d4f15ea462efd09b4302519",
       "ast_digest": "ae2ee20f4a0af370c4682e6467b6a014aa1bf5f98e929d537e3fd94a3887d047"
     },
     "stp": {
-      "values_digest": "bdff86ed2c3887be275b916e8e98b7b4e28424e7dabbfeaa38112ae42aef569b",
+      "values_digest": "bb027f0c333ff0db13e8ed32e74ba8caaafaa751b427b61686293af633c1792b",
       "rendered_digest": "7fae0a3d2942b8439a7e03ecc2e72e89f878b307b24c1568832758421349100e",
       "ast_digest": "c4c5c01d8db0a5211dddfe53fca126e8679e3832ee72b8d7a728ca418f978248"
     },
     "spp": {
-      "values_digest": "0110ab44dfa83fa4eb4bc5d29f804ba7cf1ed50cf48d81c9e9f8215b62b3bcb6",
-      "rendered_digest": "0324101e2bfebd62703fb3b77d4fe84cac18e369a618025ef8ec2440e2b8a434",
-      "ast_digest": "4e7723ce99582ecee426f46fe4327d9ecb035d654a00f947114b58cb51e4db8d"
+      "values_digest": "4856ac43c32c88abc4791d448289d48b13c61d6fc67e3c74f596cecd415a4c75",
+      "rendered_digest": "2ff9414bb3b1519149390973285ccc7327e9c4e55754725e21acccd13eacdc54",
+      "ast_digest": "779cc5002ccb5e918efcece63b5c911c9b49c7b91969bea0dcf110f68f22f624"
     },
     "vpp": {
-      "values_digest": "4172be12e150a7ceb1cb7f0f44113122b6ac4ff67ea152a27b72b42ddc14f260",
-      "rendered_digest": "2bf4c80f8931f0e7a84ec096a111fee6676fd86f78be673bd62b90ca3ae50621",
-      "ast_digest": "b2eebb998e38b8d8bda7d4d9780ba53b5bb12c283036b04a0f955790fce9f802"
+      "values_digest": "26027ebbd80dbec861cd83dc6c0ddd76b7e78e732a0e35d2755a5437ee9d41fd",
+      "rendered_digest": "9d442ac2592da1f933eb38559377bd83baeb7c66410940e29c1fe96a6672964f",
+      "ast_digest": "c87cfa5df37484380de288c7f9097110a3b6a551a740188cbc0485bcc28b91c5"
     },
     "srp": {
-      "values_digest": "47f2793180f810dad3937c35b207ddd9b012a6445b36b549b832694da3d62c85",
-      "rendered_digest": "8b44f6c6097806008d1661cfdfd6a9fb68077f9bfad23b8a52afd4c8247d0316",
-      "ast_digest": "4cccea57f4ae1099bbe4a46a34ae3759d5ed53f36e0c3ce5ea093db9dd4c9518"
+      "values_digest": "d34487df76cbb5a7d6ccc93bbbd40ade589552e7f188b2fb8a8e3f36e8b44a5c",
+      "rendered_digest": "be913b98d15d35165ee03ed59a0457806c1c999e6fa7f04d5a8be2e29d655248",
+      "ast_digest": "6d197ddac0faaf8d5ea46009d17173b2f99c4726d36b46b751901f19d82b5ba8"
     },
     "sor": {
-      "values_digest": "cea547acecab3e4c72acb16385126f6cabc7e634e2839410da20788f8350c3db",
-      "rendered_digest": "7865d9e13d72107e96024b3007465ae3f9f7836348298021968e69bcd89844bf",
-      "ast_digest": "62a3830540a6230601cf90b549fbac3bab3840e6f9cabf384444d609e05786bc"
+      "values_digest": "2bb000073d5df281c67fdfc54f098998d9fd4c9cb443224fbf42b8a66b65ab76",
+      "rendered_digest": "a491e2a7112a0464078c13fdc3b3b2130d045db038e8e17c4ddb5def09f5a9b7",
+      "ast_digest": "00d26601bfcec3b403a861bafe37886a8a249a7f1a4816c64c8eea804e89bf51"
     }
   },
   "transitions": [
@@ -137,6 +241,27 @@
       "to": "published",
       "actor": "codex:issue-4758-execution",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:v0918-closeout-audit",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:v0918-closeout-audit",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:v0918-closeout-audit",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -195,6 +320,27 @@
       "actor": "codex:issue-4758-execution",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:v0918-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:v0918-closeout-audit",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize newly retained terminal authority for the v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

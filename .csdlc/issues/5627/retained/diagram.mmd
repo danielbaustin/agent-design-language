@@ -1,0 +1,13 @@
+flowchart TD
+    A["Bound claim + implementation"] --> B["validate finalize"]
+    B -->|"validation passes atomically"| C["Implemented"]
+    B -->|"failure"| X["Zero state writes"]
+    C --> D["review record"]
+    D -->|"exact scoped review passes"| E["Reviewed"]
+    D -->|"stale or malformed"| X
+    E --> F["publish ready PR"]
+    F -->|"exact identity recorded"| G["Ready PR"]
+    F -->|"identity mismatch"| X
+    G --> H["closeout unchanged"]
+    H --> I["Released claim + retained receipt"]
+    J["Existing active draft"] --> K["Legacy ready reconciliation"]

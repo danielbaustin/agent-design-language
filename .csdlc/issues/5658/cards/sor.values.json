@@ -7,9 +7,9 @@
     "title": "[v0.91.8][csdlc-v2][tooling] Keep all issue lifecycle writes in the bound worktree",
     "slug": "csdlc-bound-worktree-lifecycle-writes",
     "version": "v0.91.8",
-    "generation": 12
+    "generation": 15
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -119,10 +119,10 @@
           "evidence_ref": "local PASS after adding repository, issue, and initialization_digest idempotent-bind identity negative cases with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; gate2 47 passed, gate7_lifecycle 33 passed"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

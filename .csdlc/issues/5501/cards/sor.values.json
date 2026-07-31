@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-10A][multi-agent][proof] Run live distributed Codex workcell end to end",
     "slug": "v0918-wp10a-live-distributed-codex-workcell-proof",
     "version": "v0.91.8",
-    "generation": 15
+    "generation": 21
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -60,10 +60,10 @@
           "evidence_ref": ".csdlc/evidence/5501/live-validation/"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -88,17 +88,17 @@ Prepared the #5702 Podcast Studio next-week launch plan with Gemini 3.1 Pro revi
 
 ## Integration
 
-pr_open
+merged
 
 ## Publication
 
-Publication: ready
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

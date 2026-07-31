@@ -7,7 +7,7 @@
     "title": "[v0.91.8][csdlc-v2][closeout] Reconcile stranded terminal projections atomically",
     "slug": "terminal-projection-repair",
     "version": "v0.91.8",
-    "generation": 13
+    "generation": 19
   },
   "status": "ready",
   "content": {
@@ -111,9 +111,9 @@
       "planned_validation_seconds": 3600,
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed without mutation on stale authority, target, or receipt CAS; missing or ambiguous old results; malformed or machine-local replacements; target identity drift; or interrupted receipt update.",
-      "design_ref": ".csdlc/prepared/issues/5613/design.md",
+      "design_ref": ".csdlc/issues/5613/retained/design.md",
       "design_digest": "b01c122e173be0d1192a373fb9c9052b07529e19950e86516cfb68f725b26362",
-      "diagram_ref": ".csdlc/prepared/issues/5613/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5613/retained/diagram.mmd",
       "diagram_digest": "e6ab2cf6c47f5315004a82f111182fecfe05e3ac99b76a55a3d64fbacd006b9b"
     }
   }

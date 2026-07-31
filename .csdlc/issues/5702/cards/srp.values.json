@@ -7,9 +7,9 @@
     "title": "[v0.91.8][podcast] Launch weekly AI Agent Podcast with flawless audio, RSS, guests, and site design",
     "slug": "podcast-launch-audio-rss-guests-site-plan",
     "version": "v0.91.8",
-    "generation": 14
+    "generation": 17
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

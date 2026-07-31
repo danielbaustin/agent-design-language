@@ -7,7 +7,7 @@
     "title": "Recover stale approved design in initialized records",
     "slug": "initialized-stale-design-recovery",
     "version": "v0.91.8",
-    "generation": 5
+    "generation": 11
   },
   "status": "ready",
   "content": {
@@ -48,9 +48,9 @@
         "Any readiness bypass"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5563/design.md",
+      "design_ref": ".csdlc/issues/5563/retained/design.md",
       "design_digest": "eeed304cf7c34edc67aa6b88bbecf20b2b656a593408eae8ce9b9281b768a62a",
-      "diagram_ref": ".csdlc/prepared/issues/5563/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5563/retained/diagram.mmd",
       "diagram_digest": "66c20481a67365c9df61647104a24804abb263f9efdceafe6712d371732ead62"
     }
   }

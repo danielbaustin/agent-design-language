@@ -7,7 +7,7 @@
     "title": "[v0.91.8][csdlc-v2][closeout] Repair terminal closeout and safe-prune recovery for closed issues",
     "slug": "csdlc-v2-closeout-safe-prune-recovery",
     "version": "v0.91.8",
-    "generation": 7
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -47,9 +47,9 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on stale claim/generation, ambiguous terminal identity, unclassified dirty paths, unretained evidence, failed focused proof, or stale/missing exact-head review.",
-      "design_ref": ".csdlc/prepared/issues/5710/design.md",
+      "design_ref": ".csdlc/issues/5710/retained/design.md",
       "design_digest": "7cd919400ee26a10b5302f714a2941a80aaac72913d39448284aab941057459c",
-      "diagram_ref": ".csdlc/prepared/issues/5710/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5710/retained/diagram.mmd",
       "diagram_digest": "d75cf48fc65627f3924847220cb87f40bbc0c0848c33ee0e2b85557b103f0122"
     }
   }

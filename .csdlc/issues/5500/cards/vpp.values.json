@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-10A][multi-agent][dashboard] Restore live workcell operator view",
     "slug": "v0-91-8-wp-10a-read-only-workcell-dashboard",
     "version": "v0.91.8",
-    "generation": 11
+    "generation": 17
   },
   "status": "ready",
   "content": {
@@ -97,9 +97,9 @@
       "planned_validation_seconds": 3600,
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on absent or stale terminal dependencies, overlapping paths, malformed or oversized input, unsupported schema, unsafe URL/origin, freshness ambiguity, credential exposure, mutation capability, authority confusion, nondeterministic output, or budget breach; blocked preparation never grants product authority.",
-      "design_ref": ".csdlc/prepared/issues/5500/design.md",
+      "design_ref": ".csdlc/issues/5500/retained/design.md",
       "design_digest": "1fd72ec7df400be275671013f2998d9b199913c3977b375737a5557c39a62333",
-      "diagram_ref": ".csdlc/prepared/issues/5500/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5500/retained/diagram.mmd",
       "diagram_digest": "2e9d128f5fc0f656a4971b46d7064e0a95ff82f5a21b5750f885ded47cb9e58e"
     }
   }

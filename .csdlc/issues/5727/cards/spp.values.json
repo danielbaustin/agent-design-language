@@ -7,7 +7,7 @@
     "title": "[v0.91.8][csdlc-v2][claims] Make released bound claims safely reacquirable",
     "slug": "v0-91-8-csdlc-v2-claims-make-released-bound-claims-safely-reacquirable",
     "version": "v0.91.8",
-    "generation": 12
+    "generation": 15
   },
   "status": "ready",
   "content": {
@@ -87,9 +87,9 @@
         "Focused lifecycle regression proof fails outside bounded #5727 scope."
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5727/design.md",
+      "design_ref": ".csdlc/issues/5727/retained/design.md",
       "design_digest": "8ffd654085218d958d779afc8dcd90d6ea629e3fe67444e5d58bd231017b8b6b",
-      "diagram_ref": ".csdlc/prepared/issues/5727/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5727/retained/diagram.mmd",
       "diagram_digest": "a9576bc71e055fe939e8e384efb4e5edd5f962015a11c79cea049c60fa40c5c8"
     }
   }

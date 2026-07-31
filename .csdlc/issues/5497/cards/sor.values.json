@@ -1,0 +1,43 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5497,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10A][multi-agent] Implement end-to-end distributed C-SDLC workcell",
+    "slug": "v0-91-8-wp-10a-distributed-workcell-umbrella",
+    "version": "v0.91.8",
+    "generation": 5
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Finalize the WP-10A umbrella coordination packet with its declared issue-local readiness proof.",
+      "actual_changes": [
+        ".csdlc/issues/5497",
+        ".csdlc/prepared/issues/5497"
+      ],
+      "artifacts": [
+        ".csdlc/evidence/5497"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+            "--issue",
+            "5497"
+          ],
+          "purpose": "Run the declared WP-10A umbrella issue-local readiness check.",
+          "outcome": "passed",
+          "evidence_ref": "umbrella-readiness.log"
+        }
+      ],
+      "integration_state": "closed_no_pr",
+      "publication_state": "closed",
+      "merge_state": "closed_unmerged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

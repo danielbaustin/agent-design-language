@@ -7,9 +7,9 @@
     "title": "[v0.91.8][runtime-v3][observability] Integrate tracing with Vector durable master logging",
     "slug": "runtime-v3-vector-otel-master-log",
     "version": "v0.91.8",
-    "generation": 7
+    "generation": 10
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -51,10 +51,10 @@
           "evidence_ref": "local proof bundle at f8db82cf: observability 9/9 passed with real pinned Vector; configuration 15/15 passed; strict all-target Clippy passed; guardian_soak 7/7 declared ignored passed; cargo fmt --check passed; git diff --check passed; Opus final confirmation result final_status=ok and REVIEW_COMPLETE with no actionable P1/P2."
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

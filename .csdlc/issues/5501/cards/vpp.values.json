@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-10A][multi-agent][proof] Run live distributed Codex workcell end to end",
     "slug": "v0918-wp10a-live-distributed-codex-workcell-proof",
     "version": "v0.91.8",
-    "generation": 15
+    "generation": 21
   },
   "status": "ready",
   "content": {
@@ -144,9 +144,9 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed without task execution, publication, merge, closeout, or consumer handoff on incomplete dependencies, claim collision, fewer than two real disjoint writable shards, stale or unbounded context, manual dashboard assertions, missing negative case, unreviewed output, ambiguous convergence, unserialized integration, incomparable baseline, secret/path leakage, red CI, stale review, deferred proof, or budget breach.",
-      "design_ref": ".csdlc/prepared/issues/5501/design.md",
+      "design_ref": ".csdlc/issues/5501/retained/design.md",
       "design_digest": "4909f3533378d71d43cac913e87bfa7047e8aa08e6c279087ea5273116f03e7f",
-      "diagram_ref": ".csdlc/prepared/issues/5501/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5501/retained/diagram.mmd",
       "diagram_digest": "38aa0234f183017794bea187c7d5664d236c9c2ee40094c89c74834549816031"
     }
   }

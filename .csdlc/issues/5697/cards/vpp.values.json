@@ -7,7 +7,7 @@
     "title": "[v0.91.8][runtime-v3][time] Make Chronosense consume trusted_time at startup",
     "slug": "chronosense-trusted-time",
     "version": "v0.91.8",
-    "generation": 7
+    "generation": 11
   },
   "status": "ready",
   "content": {
@@ -124,9 +124,9 @@
       "planned_validation_seconds": 3600,
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on claim collision, stale generation, #5663 lifecycle mutation, skipped proof, or stale/missing exact-head review.",
-      "design_ref": ".csdlc/prepared/issues/5697/design.md",
+      "design_ref": ".csdlc/issues/5697/retained/design.md",
       "design_digest": "6798ab94db24ce72d708314bf7922548f26bdc12bbc63822d8d9cbdf1e3088bb",
-      "diagram_ref": ".csdlc/prepared/issues/5697/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5697/retained/diagram.mmd",
       "diagram_digest": "43ef573630aa020d95c730f5c03b8337c97723c19239f8abcacac169fc6945b8"
     }
   }

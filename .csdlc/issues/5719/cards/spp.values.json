@@ -7,7 +7,7 @@
     "title": "[v0.91.8][ci][coverage] Avoid duplicate hosted coverage on podcast/demo page PRs",
     "slug": "v0-91-8-ci-coverage-avoid-duplicate-hosted-coverage-on-podcast-demo-page-prs",
     "version": "v0.91.8",
-    "generation": 4
+    "generation": 7
   },
   "status": "ready",
   "content": {
@@ -91,9 +91,9 @@
         "A Rust/runtime/provider fixture regresses to skipped coverage."
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5719/design.md",
+      "design_ref": ".csdlc/issues/5719/retained/design.md",
       "design_digest": "669865d6d9df6873d4b8b4f54a492499d00d3173912437883abddd0bebee5b35",
-      "diagram_ref": ".csdlc/prepared/issues/5719/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5719/retained/diagram.mmd",
       "diagram_digest": "1429f9a11d794b37f2a778dd3691f646b89873013d61a226235092ef77f5cb82"
     }
   }

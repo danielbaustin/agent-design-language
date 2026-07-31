@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-14][launch] Implement launch readiness package after platform deployment",
     "slug": "v0918-wp14-launch-readiness",
     "version": "v0.91.8",
-    "generation": 4
+    "generation": 7
   },
   "status": "ready",
   "content": {
@@ -39,9 +39,9 @@
       "planned_validation_seconds": 1200,
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on missing six-card packet, missing design or diagram, implementation-state advancement, ambiguous #5384 execution gate, or receipt-gated execution language.",
-      "design_ref": ".csdlc/prepared/issues/4758/design.md",
+      "design_ref": ".csdlc/issues/4758/retained/design.md",
       "design_digest": "2252ee719ad92b63a38a898f81bbcfa3975a17fd826af0ddcc2663a261b7752d",
-      "diagram_ref": ".csdlc/prepared/issues/4758/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/4758/retained/diagram.mmd",
       "diagram_digest": "ea4d3d088c6eda3d8e4d485275d35d450d55141529ea832fd57b7f1569adfb91"
     }
   }

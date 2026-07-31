@@ -15,3 +15,6 @@
 {"sequence":15,"generation":12,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":16,"generation":13,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":17,"generation":14,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":18,"generation":15,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":19,"generation":16,"actor":"codex:019f3d65-2216-7832-804a-26339473b27d","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":20,"generation":17,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

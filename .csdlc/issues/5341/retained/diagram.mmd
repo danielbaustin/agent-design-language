@@ -1,0 +1,37 @@
+flowchart LR
+    subgraph A["ADL v2 owners"]
+        L["Language and compiler\n#5339 and #5338"]
+        E["Bounded engine\n#5340"]
+        R["Records and trust\n#5342"]
+    end
+
+    subgraph X["#5341 owned boundary"]
+        G["Terminal dependency gate\nmerged + closed_out + receipt + ancestry"]
+        M["Thin deterministic adapter\nadl-v2/crates/adl-runtime-v3-adapter"]
+        N["Negative authority guard\nno retry, signing, supervision, or bypass"]
+    end
+
+    subgraph V["Runtime v3 authority"]
+        I["Canonical typed ingress\n#5591"]
+        K["Kernel admission and execution"]
+        O["Typed result or error"]
+    end
+
+    L -->|"validated ExecutionPlan"| E
+    E -->|"authorized dispatch and event"| M
+    R -->|"canonical bytes and verified trust"| M
+    G -->|"enables product claim only"| M
+    M -->|"one stable typed request"| I
+    I --> K
+    K --> O
+    O -->|"preserved outcome and provenance"| M
+    N -.->|"constrains"| M
+
+    M -. "must not call" .-> K
+    M -. "must not own" .-> S["Runtime supervision, state, provider/tool execution"]
+    M -. "must not own" .-> T["Record signing or verification policy"]
+    M -. "must not touch" .-> V2["Runtime v2"]
+    M -. "must not mutate" .-> C["C-SDLC v2 lifecycle"]
+
+    M --> P["Exact FastWork PVF + exact-revision review"]
+    P --> Q["Typed publish, green CI, merge, post-merge proof, closeout receipt"]

@@ -11,3 +11,6 @@
 {"sequence":11,"generation":9,"actor":"codex:issue-5695-pr-state-mergeability","reason":"Rebase changed the substantive revision; recover stale publication and review truth before recording the new exact-head review.","operation":"recover_review"}
 {"sequence":12,"generation":10,"actor":"codex:issue-5695-pr-state-mergeability","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
 {"sequence":13,"generation":11,"actor":"codex:issue-5695-pr-state-mergeability","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":14,"generation":12,"actor":"codex:issue-5695-pr-state-mergeability","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":15,"generation":13,"actor":"codex:issue-5695-pr-state-mergeability","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":16,"generation":14,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

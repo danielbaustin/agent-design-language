@@ -1,0 +1,14 @@
+flowchart TD
+  A["#5336 Runtime v3 architecture authority"] --> P1["#5591 Parity-A: kernel and ingress"]
+  P1 --> P2["#5592 Parity-B: reasoning and learning"]
+  P1 --> P3["#5589 Parity-C: operations adapters"]
+  P1 --> P4["#5590 Parity-D: access, Observatory, guardian, rollback"]
+  P1 --> G["#5361 Runtime v3 acceptance"]
+  R["#5341 ADL v2 Runtime adapter"] --> G
+  T["#5349 provider and tool adapters"] --> G
+  S["#5350 exact-revision shadow parity"] --> G
+  W["#5501 live multi-agent workcell proof"] --> G
+  P2 --> G
+  P3 --> G
+  P4 --> G
+  G --> I["#5384 integrated platform acceptance"]

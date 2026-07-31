@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-14][capability-envelope] Prepare #4761 v0.92 capability envelope",
     "slug": "v0918-wp14-capability-envelope-prep-4761",
     "version": "v0.91.8",
-    "generation": 16
+    "generation": 20
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

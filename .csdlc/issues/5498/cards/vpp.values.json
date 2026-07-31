@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-10A][multi-agent] Implement bounded Codex task and context-handoff adapter",
     "slug": "v0-91-8-wp-10a-bounded-codex-task-context-handoff-adapter",
     "version": "v0.91.8",
-    "generation": 15
+    "generation": 20
   },
   "status": "ready",
   "content": {
@@ -98,9 +98,9 @@
       "planned_validation_seconds": 3600,
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on missing or stale lifecycle input, unresolved dependencies, task or owner collision, ambiguous authority, transcript leakage, nondeterministic output, absent retained receipts, or budget breach; blocked preparation never becomes product authority.",
-      "design_ref": ".csdlc/prepared/issues/5498/design.md",
+      "design_ref": ".csdlc/issues/5498/retained/design.md",
       "design_digest": "a2a956ab9bd05655312a28393c2f4b49b37f3cc3801d66acb84ee7ff9ed6a46f",
-      "diagram_ref": ".csdlc/prepared/issues/5498/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5498/retained/diagram.mmd",
       "diagram_digest": "f4467640388701e91213a0208cb96f71e0580910601f43a09aedfbb71cd5d0e1"
     }
   }

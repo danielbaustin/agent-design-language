@@ -1,0 +1,38 @@
+flowchart LR
+  G["#5338 merged, typed receipt validated, and current-main ancestry"] --> P["Canonical inert ExecutionPlan"]
+  P --> V["Plan, EnginePolicy, and EngineLimits validation"]
+  Y["WP-06 EnginePolicy: joins, retry, failure, cancellation"] --> V
+  V --> R["Canonical ready-set and join evaluation"]
+  R --> SB["Typed state-edge output decode, cached once and charged per materialization"]
+  SB --> B["Bounded dispatch by stable node identity and resolved-input digest"]
+  B --> Q["Typed provider or tool request effect"]
+  Q --> H["Runtime v3 / #5349 host adapter outside WP-06"]
+  H --> C["Typed completion input"]
+  C --> D{"Deterministic completion classification"}
+  D --> F["Stable success, failure, or cancelled terminal"]
+  D --> A["Stable retry-wait"]
+  K["Canonical cancellation intent"] --> U{"Current node state"}
+  U -->|"pending, ready, or retry-wait"| F
+  U -->|"dispatched"| N["Non-quiescent cancelling"]
+  N --> Z["One typed cancel effect for the in-flight request"]
+  Z --> H
+  F --> R
+  A --> R
+  F --> J{"Whole engine has zero dispatched or cancelling requests"}
+  A --> J
+  J --> X["Quiescent canonical checkpoint plus typed completion journal"]
+  X --> TJ["Replay canonical bounded TurnInput journal from exact initial engine"]
+  TJ --> M["Exact snapshot, tick, event, intermediate outcome, contiguous attempt, digest, budget, and sequence match"]
+  M --> R
+  S["Node, edge, plan, policy, ready, in-flight, attempt, request, completion, turn, output, event, checkpoint bounds"] --> V
+  S --> B
+  CW["serde_json through capped in-memory writer"] --> V
+  FX["Canonical landed #5338 YAML fixtures, read in place by tests only"] --> LY["Test-only adl-language parse and validation"]
+  LY --> CP["Landed adl-compiler compile"]
+  CP --> EP["Engine fixture classification and execution proof"]
+  EP -. "validation evidence only" .-> O
+  O["Typed PVF: hard process-group deadlines and FastWork-only caches"] --> V
+  W["Controlled cache warm, then offline required lanes"] --> O
+  L["Typed merged publication and governed PR head"] --> I["Captured current-main integration SHA"]
+  I --> T["Detached FastWork integration-tree PVF before closeout"]
+  E["Runtime v2/v3 source, adapters, IO, supervision, wall clock, C-SDLC"] -. "excluded" .-> NA["No WP-06 authority"]

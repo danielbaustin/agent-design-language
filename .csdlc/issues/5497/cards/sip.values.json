@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5497,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10A][multi-agent] Implement end-to-end distributed C-SDLC workcell",
+    "slug": "v0-91-8-wp-10a-distributed-workcell-umbrella",
+    "version": "v0.91.8",
+    "generation": 5
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Coordinate the five bounded WP-10A child issues into one live distributed workcell proof without acquiring product or autonomous lifecycle authority.",
+      "required_outcome": "The conductor, task adapter, dashboard, convergence loop, and live proof complete in declared order with disjoint claims and truthful integration evidence.",
+      "declared_scope": [
+        "child dependency ordering and interface freezes",
+        "cross-child protected-path collision visibility",
+        "umbrella completion and residual-risk truth"
+      ],
+      "authority_boundary": [
+        "child issues own all product paths",
+        "typed C-SDLC v2 claims remain ownership authority",
+        "live merge plus ancestry releases downstream execution",
+        "closeout receipts are non-blocking audit evidence",
+        "no autonomous task creation, GitHub mutation, merge, or closeout"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "use typed C-SDLC v2 only",
+        "no tracked work on main",
+        "no raw gh or AWS",
+        "one bounded review immediately before each child PR",
+        "use /Volumes/FastWork for build output",
+        "do not make receipts an execution gate"
+      ]
+    }
+  }
+}

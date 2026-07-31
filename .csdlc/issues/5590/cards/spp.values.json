@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-14][runtime-v3][parity-d] Prove secure access, Observatory, guardian, and rollback",
     "slug": "v0-91-8-runtime-v3-parity-d-secure-operations",
     "version": "v0.91.8",
-    "generation": 16
+    "generation": 23
   },
   "status": "ready",
   "content": {
@@ -120,9 +120,9 @@
         "completion would require HTTP Runtime access, hard-coded IP, sidecar, AWS operation, or unsupported deployment claim"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5590/design.md",
+      "design_ref": ".csdlc/issues/5590/retained/design.md",
       "design_digest": "7a800211ce03930cd0fe590615cc611084bb346b2923539216dd325800dad005",
-      "diagram_ref": ".csdlc/prepared/issues/5590/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5590/retained/diagram.mmd",
       "diagram_digest": "ef1c6d3a06558528c0037c41274be3d93a43a3dd17e712d8198587b2367c1f6c"
     }
   }

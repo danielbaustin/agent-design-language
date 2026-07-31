@@ -7,7 +7,7 @@
     "title": "[v0.91.8][runtime-v3][observability] Integrate tracing with Vector durable master logging",
     "slug": "runtime-v3-vector-otel-master-log",
     "version": "v0.91.8",
-    "generation": 7
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -103,9 +103,9 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on missing Vector, invalid config, remote/export-health overclaim, unredacted secret, incomplete drain, malformed log, or exact-head review finding.",
-      "design_ref": ".csdlc/prepared/issues/5691/design.md",
+      "design_ref": ".csdlc/issues/5691/retained/design.md",
       "design_digest": "13f250b1e7c82f3bb0aa7d0dc41f77547639292508eb8c680e48813e8af58002",
-      "diagram_ref": ".csdlc/prepared/issues/5691/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5691/retained/diagram.mmd",
       "diagram_digest": "9b6e31fa7377a82d1c7ab8f6e2b0b2c6a8b2e4786ceec37bbcedcd7833068a9a"
     }
   }

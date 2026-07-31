@@ -7,9 +7,9 @@
     "title": "[v0.91.8][csdlc-v2][tooling] Keep all issue lifecycle writes in the bound worktree",
     "slug": "csdlc-bound-worktree-lifecycle-writes",
     "version": "v0.91.8",
-    "generation": 12
+    "generation": 15
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

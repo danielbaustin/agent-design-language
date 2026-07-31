@@ -1,0 +1,53 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5497,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10A][multi-agent] Implement end-to-end distributed C-SDLC workcell",
+    "slug": "v0-91-8-wp-10a-distributed-workcell-umbrella",
+    "version": "v0.91.8",
+    "generation": 5
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "umbrella-readiness",
+          "proof_role": "Validate child inventory, canonical order, issue-local scope, and non-blocking receipt policy",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 1000,
+          "argv": [
+            "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+            "--root",
+            ".",
+            "--issue",
+            "5497"
+          ],
+          "parallel_group": "coordination",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed without mutating child state when ordering, ancestry, interface, claim, or authority truth is missing or ambiguous.",
+      "design_ref": ".csdlc/issues/5497/retained/design.md",
+      "design_digest": "a666b74f27b2a9f9399adbae21e036a8155093cfa27e53cfea93312ee65c3946",
+      "diagram_ref": ".csdlc/issues/5497/retained/diagram.mmd",
+      "diagram_digest": "e33bff3622826aefeae52749fd0665fba8bf47024a2e9ce0cef157c32cb0461e"
+    }
+  }
+}

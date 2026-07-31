@@ -17,3 +17,6 @@
 {"sequence":17,"generation":14,"actor":"codex-exact-head-review-4762","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":18,"generation":15,"actor":"codex","reason":"Exact-head pre-PR review passed with no actionable findings, and #4762 remains bounded to the auditable birth-witness package without claiming that the v0.92 birthday occurred.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":19,"generation":16,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":20,"generation":17,"actor":"codex:v0918-closeout-audit","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":21,"generation":18,"actor":"codex:v0918-closeout-audit","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":22,"generation":19,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize newly retained terminal authority for the v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

@@ -21,3 +21,8 @@
 {"sequence":21,"generation":13,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"The single bounded pre-PR review cycle is complete with zero actionable findings at the exact final product and validation revision.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":22,"generation":14,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":23,"generation":15,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"record exact existing PR ready-for-review after remote success","operation":"record_ready_publication"}
+{"sequence":24,"generation":16,"actor":"codex:019f8c3b-eb51-7c93-985e-185f2b427977","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":25,"generation":17,"actor":"codex:019f8c3b-eb51-7c93-985e-185f2b427977","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":26,"generation":18,"actor":"codex:019f8c3b-eb51-7c93-985e-185f2b427977","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":27,"generation":19,"actor":"codex:019f8c3b-eb51-7c93-985e-185f2b427977","reason":"Materialize the retained terminal receipt after merged PR #5639 and closed issue #5498.","operation":"reconcile_terminal"}
+{"sequence":28,"generation":20,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

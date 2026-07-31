@@ -7,9 +7,9 @@
     "title": "[v0.91.8][csdlc-v2][tooling] Preserve blocked and unstable PR mergeability states",
     "slug": "pr-state-mergeability",
     "version": "v0.91.8",
-    "generation": 11
+    "generation": 14
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -67,10 +67,10 @@
           "evidence_ref": "local:cargo-clippy-csdlc-v2-lib:passed"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

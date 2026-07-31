@@ -7,7 +7,7 @@
     "title": "[v0.91.8][podcast] Launch weekly AI Agent Podcast with flawless audio, RSS, guests, and site design",
     "slug": "podcast-launch-audio-rss-guests-site-plan",
     "version": "v0.91.8",
-    "generation": 14
+    "generation": 17
   },
   "status": "ready",
   "content": {
@@ -75,9 +75,9 @@
       "planned_validation_seconds": 3600,
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed if the plan omits required audio/RSS launch blockers, overclaims deployment or guest confirmation, or Gemini review cannot be truthfully recorded.",
-      "design_ref": ".csdlc/prepared/issues/5702/design.md",
+      "design_ref": ".csdlc/issues/5702/retained/design.md",
       "design_digest": "d7d3096e844b656cf47fc8c34af24a60f1fa5d7ec27160a28d16d56492ba4fed",
-      "diagram_ref": ".csdlc/prepared/issues/5702/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5702/retained/diagram.mmd",
       "diagram_digest": "155686d447184504672b14379d2fbcf083694195a6093ca1c629e59d818460e8"
     }
   }

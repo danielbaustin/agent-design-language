@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-12] Run opt-in soak and prove rollback",
     "slug": "v0918-wp12-opt-in-soak-rollback",
     "version": "v0.91.8",
-    "generation": 42
+    "generation": 46
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -121,10 +121,10 @@
           "evidence_ref": "adl-runtime/src/guardian.rs"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

@@ -7,9 +7,9 @@
     "title": "[v0.91.8][runtime-v3][state] Unify durable kernel state on redb",
     "slug": "runtime-v3-redb-durable-state",
     "version": "v0.91.8",
-    "generation": 9
+    "generation": 12
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

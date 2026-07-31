@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-05] Implement pure deterministic ADL compiler",
     "slug": "v0918-wp05-pure-deterministic-adl-compiler",
     "version": "v0.91.8",
-    "generation": 26
+    "generation": 32
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -107,10 +107,10 @@
           "evidence_ref": "third post-review-remediation local FastWork proof: 18 tests passed including effective-semantic identity locality, clean subprocess replay payload comparison, and canonical diagnostic parity; clippy -D warnings passed; implementation 577 LoC; tests/fixtures 519 LoC; full budget lane 0s warm; all declared ceilings satisfied"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

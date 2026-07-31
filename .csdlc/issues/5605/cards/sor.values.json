@@ -7,9 +7,9 @@
     "title": "[v0.91.8][podcast][planning] Revive AI agent podcast weekly cadence",
     "slug": "v0-91-8-podcast-revive-ai-agent-podcast-weekly-cadence",
     "version": "v0.91.8",
-    "generation": 9
+    "generation": 17
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -68,10 +68,10 @@
           "evidence_ref": "local exit 0 before commit ffb08a03c after removing host-path references and using generic absolute-path scan pattern"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "draft",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

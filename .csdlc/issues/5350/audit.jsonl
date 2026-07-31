@@ -17,3 +17,10 @@
 {"sequence":17,"generation":11,"actor":"subagent:019f8dd9-24c7-7b50-96d2-29a7a1c2fdad","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":18,"generation":12,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"Advance WP-11 after its single final exact-revision review passed with every finding fixed.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":19,"generation":13,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":20,"generation":14,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":21,"generation":15,"actor":"codex:5350-preparation-owner","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":22,"generation":16,"actor":"codex:5350-preparation-owner","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":23,"generation":17,"actor":"codex:5350-preparation-owner","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":24,"generation":18,"actor":"codex:adl-post-merge-closeout","reason":"materialize retained terminal closeout receipt after post-merge sweep","operation":"reconcile_terminal"}
+{"sequence":25,"generation":19,"actor":"adl-post-merge-closeout","reason":"post-merge terminal reconciliation sweep","operation":"reconcile_terminal"}
+{"sequence":26,"generation":20,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

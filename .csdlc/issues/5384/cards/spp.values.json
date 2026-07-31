@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-14A] Integrated platform acceptance deployment and v0.92 birthday handoff",
     "slug": "v0918-wp14a-integrated-platform-acceptance-preparation",
     "version": "v0.91.8",
-    "generation": 13
+    "generation": 16
   },
   "status": "ready",
   "content": {
@@ -81,9 +81,9 @@
         "another claim, branch, or worktree collides with #5384"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5384/design.md",
+      "design_ref": ".csdlc/issues/5384/retained/design.md",
       "design_digest": "d8d4bdae34791af754e1c9ba389c5181b7063a8b53fbce53af792354854ff4d8",
-      "diagram_ref": ".csdlc/prepared/issues/5384/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5384/retained/diagram.mmd",
       "diagram_digest": "58a47f484f346d190bc63ac9956e572f524e10e7856c9615fb676767621676a1"
     }
   }

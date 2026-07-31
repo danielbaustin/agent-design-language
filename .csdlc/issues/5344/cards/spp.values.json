@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-12] Run opt-in soak and prove rollback",
     "slug": "v0918-wp12-opt-in-soak-rollback",
     "version": "v0.91.8",
-    "generation": 42
+    "generation": 46
   },
   "status": "ready",
   "content": {
@@ -111,9 +111,9 @@
         "A LoC, module, test, dependency, or duration budget exceeds its limit without exact reviewed variance"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5344/design.md",
+      "design_ref": ".csdlc/issues/5344/retained/design.md",
       "design_digest": "ba41275d1864a94d21f41ff3a4d28f1c4880a26c5d0b314ff92adbbf4ae890e8",
-      "diagram_ref": ".csdlc/prepared/issues/5344/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5344/retained/diagram.mmd",
       "diagram_digest": "ed3d918290bcfc86feb2a9b7e4cebb0fb7cc263796cf80d18dcc361025c9dc77"
     }
   }

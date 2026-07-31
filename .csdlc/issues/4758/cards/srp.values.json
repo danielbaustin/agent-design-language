@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-14][launch] Implement launch readiness package after platform deployment",
     "slug": "v0918-wp14-launch-readiness",
     "version": "v0.91.8",
-    "generation": 4
+    "generation": 7
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

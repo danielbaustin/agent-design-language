@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-14][runtime-v3][parity-c] Replace degraded governed operations adapters",
     "slug": "v0-91-8-runtime-v3-parity-c-governed-operations",
     "version": "v0.91.8",
-    "generation": 20
+    "generation": 25
   },
   "status": "ready",
   "content": {
@@ -270,9 +270,9 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on absent clean #5591 review truth, claim collision, unpinned contract drift, degraded or fixture-only credit, governance bypass, widened delegation, leaked resources, cancellation/revocation races, identity/private-state disclosure, unqualified time, ambiguous recovery, duplicate side effects, provider/tool misclassification, skipped proof, AWS or Runtime v2 use, budget breach, actionable review findings, or non-green exact-revision state.",
-      "design_ref": ".csdlc/prepared/issues/5589/design.md",
+      "design_ref": ".csdlc/issues/5589/retained/design.md",
       "design_digest": "6c6bae9d4a320b3f50953784a0309f60f293b8ad88da3f43c2fa96ca4a240a5e",
-      "diagram_ref": ".csdlc/prepared/issues/5589/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5589/retained/diagram.mmd",
       "diagram_digest": "e5be41e90e1c13f1219b5f928fdc06c27add29c0f0818e6c8c7b7ac031c84760"
     }
   }

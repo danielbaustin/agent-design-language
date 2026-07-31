@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-10A][multi-agent][proof] Run live distributed Codex workcell end to end",
     "slug": "v0918-wp10a-live-distributed-codex-workcell-proof",
     "version": "v0.91.8",
-    "generation": 15
+    "generation": 21
   },
   "status": "ready",
   "content": {
@@ -92,9 +92,9 @@
         "execution requires out-of-claim product writes, Runtime v2, AWS, credentials, paid services, hidden authority, or deferred acceptance proof"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5501/design.md",
+      "design_ref": ".csdlc/issues/5501/retained/design.md",
       "design_digest": "4909f3533378d71d43cac913e87bfa7047e8aa08e6c279087ea5273116f03e7f",
-      "diagram_ref": ".csdlc/prepared/issues/5501/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5501/retained/diagram.mmd",
       "diagram_digest": "38aa0234f183017794bea187c7d5664d236c9c2ee40094c89c74834549816031"
     }
   }

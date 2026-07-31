@@ -8,3 +8,9 @@
 {"sequence":8,"generation":3,"actor":"subagent:019f8b6b-26c2-7a12-800e-e93282e34d9b","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":9,"generation":4,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"Advance after the single GPT-5.5 review cycle verified both actionable fixes and reported zero remaining blockers.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":10,"generation":5,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":11,"generation":6,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":12,"generation":7,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":13,"generation":8,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":14,"generation":9,"actor":"codex:adl-post-merge-closeout","reason":"materialize retained terminal closeout receipt after post-merge sweep","operation":"reconcile_terminal"}
+{"sequence":15,"generation":10,"actor":"adl-post-merge-closeout","reason":"post-merge terminal reconciliation sweep","operation":"reconcile_terminal"}
+{"sequence":16,"generation":11,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

@@ -24,3 +24,6 @@
 {"sequence":24,"generation":18,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"Advance the clean exact remediation review with both P1 findings fixed.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":25,"generation":19,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":26,"generation":20,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"record exact existing PR ready-for-review after remote success","operation":"record_ready_publication"}
+{"sequence":27,"generation":21,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":28,"generation":22,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":29,"generation":23,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

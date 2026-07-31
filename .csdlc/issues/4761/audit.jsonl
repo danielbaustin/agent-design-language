@@ -18,3 +18,7 @@
 {"sequence":18,"generation":14,"actor":"codex:gpt-5.5-execution-4761","reason":"Mark focused validation step complete.","operation":"{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"completed\"}"}
 {"sequence":19,"generation":15,"actor":"codex:gpt-5.5-execution-4761","reason":"Mark review and ready PR publication step in progress before review phase transition.","operation":"{\"operation\":\"update_plan_step\",\"step_id\":\"S5\",\"status\":\"in_progress\"}"}
 {"sequence":20,"generation":16,"actor":"codex:gpt-5.5-execution-4761","reason":"Exact scoped pre-PR review passed with no actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":21,"generation":17,"actor":"codex:gpt-5.5-execution-4761","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":22,"generation":18,"actor":"codex:gpt-5.5-execution-4761","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":23,"generation":19,"actor":"codex:gpt-5.5-execution-4761","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":24,"generation":20,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize newly retained terminal authority for the v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

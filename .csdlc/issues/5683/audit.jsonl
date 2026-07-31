@@ -22,3 +22,7 @@
 {"sequence":22,"generation":16,"actor":"codex:issue-5683-unity-remediation","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":23,"generation":17,"actor":"codex:issue-5683-unity-remediation","reason":"Hooke completed exact-head review after current-main integration with no actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":24,"generation":18,"actor":"codex:issue-5683-unity-remediation","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":25,"generation":19,"actor":"codex:issue-5683-unity-remediation","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":26,"generation":20,"actor":"codex:issue-5683-unity-remediation","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":27,"generation":21,"actor":"codex:issue-5683-unity-remediation","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":28,"generation":22,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

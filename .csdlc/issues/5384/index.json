@@ -3,31 +3,10 @@
   "issue": 5384,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "4fecd6caf5933cf3222a602ae1033477f116376e15c34477ee930a42928b0422",
-  "phase": "published",
-  "generation": 13,
-  "digest": "513253cc28cbec829e301ea342e5a9fb1396e541c53bdec1f1b0321ac67fc696",
-  "claim": {
-    "id": "claim-5384-v0918-wp14a-preparation-refresh",
-    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 13,
-    "acquired_unix_seconds": 1785344832,
-    "expires_unix_seconds": 1785949632,
-    "heartbeat_unix_seconds": 1785344832,
-    "branch": "codex/5384-v0918-wp14a-preparation-bound",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/evidence/5384",
-      ".csdlc/issues/5384",
-      ".csdlc/locks/5384.lock",
-      ".csdlc/prepared/issues/5384",
-      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
-      "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
-      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
-      "docs/milestones/v0.91.8/features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md",
-      "docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md"
-    ],
-    "purpose": "Execute WP-14A as a thin exact-revision platform acceptance gate: verify the four merged inputs, run focused fresh-consumer checks, index retained rollback and operations evidence, obtain one Gemini review, and publish without absorbing deferred WP-13 or downstream work."
-  },
+  "phase": "closed_out",
+  "generation": 16,
+  "digest": "219b4379cdca3b5fe82b269cc726de19d2eeff48122c6d4f4721054ebfb39ccb",
+  "claim": null,
   "review_assignment": {
     "reviewer": "provider:gemini-3.1-pro-preview",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
@@ -64,15 +43,62 @@
     "url": "https://github.com/danielbaustin/agent-design-language/pull/5726",
     "base": "main",
     "head": "codex/5384-v0918-wp14a-preparation-bound",
-    "revision": "git-blake3:ce85651b0c0f24bdd6db0f86cc2220a5f270757c:054510618e67075bb9790d5ed4673cbcf1fbabe9e4a42e7942be57ea1c3034b2",
+    "revision": "git-blake3:c35c0a896d3a5ef5c9289886dbef232639dc9e98:32f549e0d8568e8b65652a3c8b114cd00b376186d573426c0a1f851bac6edb0e",
     "draft": false,
-    "observed_state": "open"
+    "observed_state": "merged"
   },
-  "readiness": null,
-  "terminal": null,
+  "readiness": {
+    "pull_request": 5726,
+    "head_sha": "c35c0a896d3a5ef5c9289886dbef232639dc9e98",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30586793697"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30586793697"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30586793697"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5726,
+    "disposition": "merged",
+    "observed_sha": "c35c0a896d3a5ef5c9289886dbef232639dc9e98",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5384.json",
+    "released_branch": "codex/5384-v0918-wp14a-preparation-bound",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5384",
+      ".csdlc/issues/5384",
+      ".csdlc/locks/5384.lock",
+      ".csdlc/prepared/issues/5384",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md"
+    ]
+  },
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5384/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5384/diagram.mmd",
+  "design_path": ".csdlc/issues/5384/retained/design.md",
+  "diagram_path": ".csdlc/issues/5384/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "operator:daniel-wp13-deferral",
@@ -81,34 +107,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "20c2416411bbf3a1e2918044a00b1bcf9e9093a6b8ed94d9369f4683d685e981",
+      "values_digest": "630c1edcd7033db646179c3fe91ab1a44591a13340e50ec66eceee03d7bf02cf",
       "rendered_digest": "286d3f757711730b1576727865b6094c4a9723237780972df4df82e2ce888ed1",
       "ast_digest": "0ab3807a6424fd84604e4ba65823be473599f8fda23d5d5bb4864e0ac11d74bf"
     },
     "stp": {
-      "values_digest": "c38e902ebc187bd9d4bfad8845812ccc5fb4a6ef5df6353b3fcd29ee9b565d10",
+      "values_digest": "ed6d1c317d70b39a2e5b7f1eb94427d2ea2ca04889344b91d76ca7a619efeee5",
       "rendered_digest": "8a07ade9800ae6179c5c8b7de90f9fee225025f78bfde617bfa891ba6831feba",
       "ast_digest": "6b4725d3cd8e3289ee8d21e4d89134235b8618668d4526ebd19228593380dedb"
     },
     "spp": {
-      "values_digest": "c7369759efb8518839708a867d6d44552f2a40bc7c7793c16b72720fb99cee9c",
-      "rendered_digest": "4d172881e2ac713777fe42c96ef4b142c49cdd94d3330d47b14a32b199312b65",
-      "ast_digest": "2c62695b2de072bce9c47be643b30b22c2fdac704a77d61c44e02ded1edce476"
+      "values_digest": "2923d210fc20b2e62d4ac17cdfb35b94ee6902e3c59a4a2ad8afabf294c5f904",
+      "rendered_digest": "2cd97ffa78baccdaa2d7ce09c7a7df022b2a9219cc67bf23e4eb82f49fc5b899",
+      "ast_digest": "c39364b0446703de7df9680652f66e52b9c6ef15f21aaaf10f59003434be1b3b"
     },
     "vpp": {
-      "values_digest": "0bfa5b0cc7a6c29f03425a0f22dcc5c1ce4210aceb74d308caffbb0286e51391",
-      "rendered_digest": "ad1345bf09a1e19c7ead577869ea96f137860cb516ddb10673ebee94d04e5f85",
-      "ast_digest": "58dfcd1f0086ba670094d8bdf622dee9a8992db9981e1c4940ccc4a42ffec723"
+      "values_digest": "b067e6792acb1435be1b60f8273c1d8eeaf5f24f86748519612f6ab02fda8b8a",
+      "rendered_digest": "2567cb05382e07c756b65f1f86afb9042279ac2bcf2ecad6218c7de633ca26dc",
+      "ast_digest": "8642f1cd751e38c81c3af3a23146343fa1e851232ab172056afff38f3d5f1598"
     },
     "srp": {
-      "values_digest": "1cba32cabc16c360637c80363ce516d11d1d4479d874be266c70fd8ba040e701",
-      "rendered_digest": "ddc3a4ee3a57c69e241ceddcc7e59794a6e67d396fdf117e93b76226300564a0",
-      "ast_digest": "7f1af67678cc01c1ca1f944a1afb2e590b7e0a983285ccf5352ac8aa19540b44"
+      "values_digest": "12979b125410db901605580d5ed59042ccf30785e99ef4240e5e9bccf734331c",
+      "rendered_digest": "3be18be97eeed824f3f4b930a3c65f6914a3ed8b3a79652a6d832affda60f252",
+      "ast_digest": "14bf95fbb03a406131cef9b57ec7b439d63ab0d777413dfcd92d9a76336b33c1"
     },
     "sor": {
-      "values_digest": "22ee6c663b351e228c4588d44bf1bf6dcf4b4c0bb87d8a461037aa97d8b5cc55",
-      "rendered_digest": "099ba4b3a283f21e312a5836a46628f923cc8ecceeb52aa284d5368368ecf8cb",
-      "ast_digest": "c902696a6d700cda6c5bb6432c4a4dcd075e5ad7d85822238eda2d16c7d4a84a"
+      "values_digest": "5f0d77344ccbb08cef7a127ab7d41bf778775c63a6dfe64f6b6d5ec48e2bbd1d",
+      "rendered_digest": "a053754f68e3d877c692f686b8dce3629122328e6e87f6c703ada6b49f9cb1bb",
+      "ast_digest": "1917f1c89f5665914ccebf879c039378b0ce775a46b02b28b017377c64dad9e4"
     }
   },
   "transitions": [
@@ -146,6 +172,27 @@
       "to": "published",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -281,6 +328,27 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

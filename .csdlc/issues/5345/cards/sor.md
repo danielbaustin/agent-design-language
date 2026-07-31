@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -38,17 +38,17 @@ Implement WP-10 thin CLI and authoritative selector with focused proof.
 
 ## Integration
 
-pr_open
+merged
 
 ## Publication
 
-Publication: draft
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: draft
+Status: complete
 
 ## Scope
 
@@ -34,7 +34,7 @@ adl-v2/tools/install-adl-v2.sh
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:2b17be0a22c99cbc32bcf91583c923ca04b5dd4a:0c7bc971f6ce4ef189431b1bc8551ba229edc5c0e0c331c9c4bedc9a63bff49f",
+    "fix_revision": "git-blake3:4b4e36570f91483c4f263588f1f59970c2d125b4:2220348ab0d890eb58766f1757865a45e3bfb51a85c57569a4869e4ac13f21f1",
     "route": null
   },
   {
@@ -44,7 +44,7 @@ adl-v2/tools/install-adl-v2.sh
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:2b17be0a22c99cbc32bcf91583c923ca04b5dd4a:0c7bc971f6ce4ef189431b1bc8551ba229edc5c0e0c331c9c4bedc9a63bff49f",
+    "fix_revision": "git-blake3:4b4e36570f91483c4f263588f1f59970c2d125b4:2220348ab0d890eb58766f1757865a45e3bfb51a85c57569a4869e4ac13f21f1",
     "route": null
   },
   {
@@ -69,7 +69,7 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:2b17be0a22c99cbc32bcf91583c923ca04b5dd4a:0c7bc971f6ce4ef189431b1bc8551ba229edc5c0e0c331c9c4bedc9a63bff49f")
+Revision: Some("git-blake3:4b4e36570f91483c4f263588f1f59970c2d125b4:2220348ab0d890eb58766f1757865a45e3bfb51a85c57569a4869e4ac13f21f1")
 
 Reviewer: Some("subagent:019f8611-2d02-7492-9c03-7af0fcf6662e")
 

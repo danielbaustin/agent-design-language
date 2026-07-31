@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-21][birth-witnesses] Prepare #4762 birth witnesses and receipt package",
     "slug": "v0918-wp21-birth-witnesses-receipt-prep-4762",
     "version": "v0.91.8",
-    "generation": 16
+    "generation": 19
   },
-  "status": "ready",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -85,10 +85,10 @@
           "evidence_ref": ".csdlc/evidence/4762/implementation-validation/csdlc-doctor-bound.json"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": [
         "After merge and GitHub issue closure, run normal typed closeout in a separate lane.",
         "Future v0.92 birth-event work must supply live identity, continuity, memory, capability, activation, validation, and reviewer evidence before claiming a birthday."

@@ -1,0 +1,15 @@
+flowchart LR
+  G["#5339 merged and typed closed_out"] --> L["Validated adl-language document"]
+  L --> R["Pure identity and reference resolution"]
+  R --> X["Deterministic composition and pattern expansion"]
+  X --> N["Typed plan-node lowering"]
+  N --> I["Domain-separated stable node identity"]
+  I --> O["Canonical ExecutionPlan bytes"]
+  F["#5339 canonical fixtures"] --> Q["Mapped replay and permutation proof"]
+  O --> Q
+  E["Ambiguity, cycle, collision, or bound violation"] --> D["Stable sorted diagnostics"]
+  R --> E
+  X --> E
+  N --> E
+  O --> C["WP-06 data input"]
+  B["Parsing, execution, Runtime v2/v3, IO, providers, records, CLI, C-SDLC"] -. "excluded from WP-05" .-> X0["No compiler authority"]

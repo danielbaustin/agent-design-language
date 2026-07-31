@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-14A] Integrated platform acceptance deployment and v0.92 birthday handoff",
     "slug": "v0918-wp14a-integrated-platform-acceptance-preparation",
     "version": "v0.91.8",
-    "generation": 13
+    "generation": 16
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

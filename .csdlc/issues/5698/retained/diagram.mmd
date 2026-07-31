@@ -1,0 +1,17 @@
+flowchart TD
+  init["Runtime init config"]
+  state_root["absolute state root"]
+  writer["single writer lock"]
+  redb["redb durable_state.redb"]
+  checkpoint["checkpoint adapter"]
+  lifelog["lifelog adapter"]
+  restart["restart and restore"]
+  corrupt["corrupt or unsupported schema"]
+
+  init --> state_root
+  state_root --> writer
+  writer --> redb
+  checkpoint --> redb
+  lifelog --> redb
+  redb --> restart
+  corrupt -->|"fail closed, no fallback"| restart

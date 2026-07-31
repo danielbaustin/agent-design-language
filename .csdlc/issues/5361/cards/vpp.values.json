@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-14] Fully accept and deploy Runtime v3",
     "slug": "v0-91-8-wp-14-runtime-v3-acceptance",
     "version": "v0.91.8",
-    "generation": 16
+    "generation": 23
   },
   "status": "ready",
   "content": {
@@ -199,9 +199,9 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on missing parity, consumer, guardian, secure-access, Observatory, rollback, exact-revision, independence, or retained-state proof; preserve unsupported remote and GPU outcomes as non-claims.",
-      "design_ref": ".csdlc/prepared/issues/5361/design.md",
+      "design_ref": ".csdlc/issues/5361/retained/design.md",
       "design_digest": "d08fa0bf8576b19c81e1c37ce5742681d1ba3de8ad4f576a0d79dd9669766ae9",
-      "diagram_ref": ".csdlc/prepared/issues/5361/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5361/retained/diagram.mmd",
       "diagram_digest": "fa237e363a2ed2c019739aa77614da75e76d29eca30d5dfe446d51c3710903e7"
     }
   }

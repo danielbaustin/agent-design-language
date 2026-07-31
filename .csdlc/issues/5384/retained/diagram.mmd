@@ -1,0 +1,11 @@
+flowchart TD
+    CSDLC["C-SDLC v2 #5358"] --> ACCEPT["WP-14A #5384"]
+    RUNTIME["Runtime v3 #5361"] --> ACCEPT
+    SOAK["ADL v2 soak and rollback #5344"] --> ACCEPT
+    CUTOVER["ADL v2 reversible switch #5343"] --> ACCEPT
+
+    ACCEPT --> DEMO["WP-15 demo convergence"]
+    DEMO --> QUALITY["WP-16 quality gate"]
+    QUALITY --> DOCS["WP-17 documentation alignment"]
+    DOCS --> DELETE["Deferred WP-13 deletion #5346 #5347"]
+    DELETE --> INTERNAL["WP-18 internal review #5356"]

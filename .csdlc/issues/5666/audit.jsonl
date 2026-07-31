@@ -6,3 +6,7 @@
 {"sequence":6,"generation":4,"actor":"codex:issue-5666-slot-1","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
 {"sequence":7,"generation":5,"actor":"codex:issue-5666-slot-1","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":8,"generation":6,"actor":"codex:issue-5666-slot-1","reason":"record exact existing PR ready-for-review after remote success","operation":"record_ready_publication"}
+{"sequence":9,"generation":7,"actor":"codex:issue-5666-slot-1","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":10,"generation":8,"actor":"codex:issue-5666-slot-1","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":11,"generation":9,"actor":"codex:adl-post-merge-closeout","reason":"post-merge closeout sweep materializes retained terminal receipt for PR #5668","operation":"reconcile_terminal"}
+{"sequence":12,"generation":10,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

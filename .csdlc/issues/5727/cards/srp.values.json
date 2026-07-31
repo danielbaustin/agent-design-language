@@ -7,9 +7,9 @@
     "title": "[v0.91.8][csdlc-v2][claims] Make released bound claims safely reacquirable",
     "slug": "v0-91-8-csdlc-v2-claims-make-released-bound-claims-safely-reacquirable",
     "version": "v0.91.8",
-    "generation": 12
+    "generation": 15
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

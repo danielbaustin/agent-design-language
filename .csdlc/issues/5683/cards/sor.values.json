@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-15][unity][demo] Remediate flagship Observatory render artifacts and presentation proof",
     "slug": "v0918-unity-observatory-visual-remediation",
     "version": "v0.91.8",
-    "generation": 18
+    "generation": 22
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -70,10 +70,10 @@
           "evidence_ref": ".csdlc/evidence/5683/LIVE_UNITY_PROOF.md"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

@@ -7,7 +7,7 @@
     "title": "[v0.91.8][runtime-v3][state] Unify durable kernel state on redb",
     "slug": "runtime-v3-redb-durable-state",
     "version": "v0.91.8",
-    "generation": 9
+    "generation": 12
   },
   "status": "ready",
   "content": {
@@ -82,9 +82,9 @@
         "focused persistence proof or exact review finds unresolved blockers"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5698/design.md",
+      "design_ref": ".csdlc/issues/5698/retained/design.md",
       "design_digest": "084aef585bb574dba031ec98f033395692dcab7fc080cbf8fb8c35bda32cee9e",
-      "diagram_ref": ".csdlc/prepared/issues/5698/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5698/retained/diagram.mmd",
       "diagram_digest": "4f69c21c6efaf9d1d23c4de644e419737cb2034a4dbc3291db0d6cc942796c8b"
     }
   }

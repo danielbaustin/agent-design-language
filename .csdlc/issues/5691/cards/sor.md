@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -58,17 +58,17 @@ Implemented production Runtime v3 tracing through the existing tracing facade in
 
 ## Integration
 
-pr_open
+merged
 
 ## Publication
 
-Publication: ready
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

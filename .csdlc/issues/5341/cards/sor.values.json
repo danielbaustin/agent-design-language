@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-08] Implement Runtime v3 adapter",
     "slug": "v0-91-8-wp08-runtime-v3-adapter",
     "version": "v0.91.8",
-    "generation": 5
+    "generation": 11
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -102,10 +102,10 @@
           "evidence_ref": "strict-quality.log"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

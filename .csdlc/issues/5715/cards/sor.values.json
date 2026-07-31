@@ -7,9 +7,9 @@
     "title": "[v0.91.8][podcast][ui] Update podcast studio from operator-provided page design",
     "slug": "v0-91-8-podcast-ui-update-podcast-studio-from-operator-provided-page-design",
     "version": "v0.91.8",
-    "generation": 4
+    "generation": 8
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -39,10 +39,10 @@
           "evidence_ref": "terminal: zip-discovered HTML entry, studio-reference/podcast-studio.html, and studio/podcast-studio.html all SHA-256 e78b8ebd781e0248583a24d1ffc2e5e35b6f2229baaf6d13ee2176ad35f9a61d with byte-identical source/copy; demo_v0918_podcast_launch PASS with audio proof surfaces; py_compile PASS; bash -n PASS; validate_podcast_launch_packet PASS; test_podcast_launch_packet PASS"
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

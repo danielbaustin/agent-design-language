@@ -15,3 +15,6 @@
 {"sequence":15,"generation":10,"actor":"bounded-subagent-review-5653","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":16,"generation":11,"actor":"codex:5653-execution","reason":"Exact release-truth review completed with no actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":17,"generation":12,"actor":"codex:5653-execution","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":18,"generation":13,"actor":"codex:adl-post-merge-closeout","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":19,"generation":14,"actor":"codex:adl-post-merge-closeout","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":20,"generation":15,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

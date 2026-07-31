@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-06] Implement portable bounded execution engine",
     "slug": "v0918-wp06-portable-bounded-execution-engine",
     "version": "v0.91.8",
-    "generation": 44
+    "generation": 60
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -193,12 +193,21 @@
           "purpose": "Prove exact dependency, COTS, source authority, sole-writer scope, all tests, LoC ceilings, and validation deadlines on the final substantive revision.",
           "outcome": "passed",
           "evidence_ref": ".csdlc/evidence/5340/engine-budgets/engine-budgets.log: implementation_lines=2928; test_fixture_lines=1946; unbudgeted_code=[]; substantive commit f89b321eac7433e9e3d9cc0cfdfc8aca6ce0ae75"
+        },
+        {
+          "command": [
+            "ruby",
+            ".csdlc/prepared/issues/5340/validate-post-merge.rb"
+          ],
+          "purpose": "Prove the governed PR head is ancestral to the captured origin/main merge commit and the exact detached integration tree passes the bounded engine post-merge lane.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5340/post-merge-exact/report.json: reviewed_head_sha=f38f662acb3988ef0704a54da055b14812c898d9; integration_sha=19601faec54a53e8bab90af484f745bc4972f116; disposition=local_pass"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "draft",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

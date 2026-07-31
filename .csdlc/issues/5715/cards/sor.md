@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -46,17 +46,17 @@ Integrated the operator-provided podcast studio page export as an immutable stat
 
 ## Integration
 
-not_started
+merged
 
 ## Publication
 
-Publication: not_published
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

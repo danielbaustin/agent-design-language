@@ -12,3 +12,7 @@
 {"sequence":12,"generation":5,"actor":"codex:wp12-conductor","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":13,"generation":6,"actor":"subagent:019fa4c9-2198-79a0-87a8-4134f7ab8296","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":14,"generation":7,"actor":"codex:wp12-conductor","reason":"Advance after the final exact-head review passed with no findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":15,"generation":8,"actor":"codex:issue-5697-chronosense-trusted-time","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":16,"generation":9,"actor":"codex:issue-5697-closeout","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":17,"generation":10,"actor":"codex:issue-5697-closeout","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":18,"generation":11,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

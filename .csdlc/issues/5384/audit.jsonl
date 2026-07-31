@@ -17,3 +17,6 @@
 {"sequence":17,"generation":11,"actor":"provider:gemini-3.1-pro-preview","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":18,"generation":12,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"Gemini 3.1 Pro reviewed the exact WP-14A acceptance revision and returned PASS with zero blockers.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":19,"generation":13,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":20,"generation":14,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":21,"generation":15,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":22,"generation":16,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

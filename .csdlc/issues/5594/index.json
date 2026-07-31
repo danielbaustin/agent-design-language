@@ -3,9 +3,9 @@
   "issue": 5594,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "2f246e5f1760776340161d5e4722c5a33c98c4dc5224601586d57c734b7d3d71",
-  "phase": "published",
-  "generation": 36,
-  "digest": "4171377d4341f93c5508563e65aaab5a4a4aefad48b8f0ff24b060b30afa4069",
+  "phase": "closed_out",
+  "generation": 44,
+  "digest": "db6e6598b73e160f9a8fb4b2c36908490bb2748274fa0fb86aab8585bb45f3e7",
   "claim": null,
   "review_assignment": {
     "reviewer": "subagent:Planck:019f8057-e16d-76f1-99c1-5ef2ea96f133",
@@ -42,15 +42,40 @@
     "url": "https://github.com/danielbaustin/agent-design-language/pull/5596",
     "base": "main",
     "head": "codex/5594-v0918-wp01-readiness",
-    "revision": "git-blake3:716fd6de82ffdc213cca56dc606896695e1bf15a:0ab6099ffc2f8a2544a6fe2e284d735ca6012814d7366a971e808a08870b16e6",
-    "draft": true,
-    "observed_state": "open"
+    "revision": "git-blake3:086eebf9811c96f073e21306741c652f05939ee0:5b409a5e1e74a5744aee6241e21796da4f2c71c0d03e3fe4186a437c8ad9c532",
+    "draft": false,
+    "observed_state": "merged"
   },
-  "readiness": null,
-  "terminal": null,
+  "readiness": {
+    "pull_request": 5596,
+    "head_sha": "086eebf9811c96f073e21306741c652f05939ee0",
+    "checks": [],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5596,
+    "disposition": "merged",
+    "observed_sha": "086eebf9811c96f073e21306741c652f05939ee0",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5594.json",
+    "released_branch": "codex/5594-v0918-wp01-readiness",
+    "released_worktree": ".worktrees/adl-wp-5594",
+    "released_protected_paths": [
+      ".csdlc/issues/5594",
+      ".csdlc/locks/5594.lock",
+      ".csdlc/prepared/issues/5594",
+      "README.md",
+      "docs/planning/ADL_FEATURE_LIST.md",
+      "docs/milestones/v0.91.8"
+    ]
+  },
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5594/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5594/diagram.mmd",
+  "design_path": ".csdlc/issues/5594/retained/design.md",
+  "diagram_path": ".csdlc/issues/5594/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
@@ -59,34 +84,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "28adb5e4d210b486602b18c4d8166f9310c83485f4b353e0c18cc3be23740474",
+      "values_digest": "7049085f8ace0e88b9d45da2305dbd23644c77b36acbb43b92c93f0a2faa1fa7",
       "rendered_digest": "81808e72a73d79ef29ac9f5863ee67f565eb9d01de4fb482d0ae0c287437123a",
       "ast_digest": "1a3c72bdadd86cebbf239ca170bd155a6c0eb74897cbbdd71375a842ca7db95d"
     },
     "stp": {
-      "values_digest": "4352c965886672184a6a5def9e4fc11ecfcf603cb3597ce96e3c71243968cd9f",
+      "values_digest": "cf3dfe1e51c8035bd0091696421ac72a5a4823a156e803b55c2250e7c3d95f10",
       "rendered_digest": "114f4e06a1e37d1772243c140e76de4a3ea82e9859983a66c041fd68f2f8daa7",
       "ast_digest": "200d9d8166af073b8377f48cf9e7d8787064934801d93e4fd47f40ed6922084e"
     },
     "spp": {
-      "values_digest": "9cce9a9664ba9d7e745e9fe0755d217ae0ce736ef63ef54c7c8ae9b4f2f09324",
-      "rendered_digest": "61ae8d96bfd05c4f7e2baf77e6b59d0b2cdc9078a9d0653026d0f59cb927b733",
-      "ast_digest": "ad92c14f0239341a290bf9802ae33dfd6898d80fca9d2abd49f12dbfa48bc432"
+      "values_digest": "4867711f6e6114613d3b2df402c02822dd50bb4a65b2001c4e2036d879e4a08a",
+      "rendered_digest": "0844ba80a36f6650bc08b0b9acffc370a4e9ce18c03d8f1330f63d147a938248",
+      "ast_digest": "0846a0bf0d676708c236f4dee7c925d4a49820f361659f4e827580c6dc98e35e"
     },
     "vpp": {
-      "values_digest": "6207fcba4197e382052f19f3c9d1fb1e956f50b777d33eb3475dc15a149b91b9",
-      "rendered_digest": "9309e25d5da66fb18b1e349619f6a53257f97e9d8fc5c26de211a38ced673146",
-      "ast_digest": "83e74d98846c90b2369aa57b60726c4e27e43ced11411b02fd6a9a8708d9d71b"
+      "values_digest": "73b28461526a550ff9b09a53c93ac53a1f02b0c20f35cda88730798bca2f5f39",
+      "rendered_digest": "e30e85f738b03b72ff339e6b4413846c1f4d79b4d4c65420324a53853299c9d0",
+      "ast_digest": "5207a890fa88c460afafed3fb4265bfba24124a8860576fa0956672556d45779"
     },
     "srp": {
-      "values_digest": "f25db17ed69f209266d694c09cb6cfbc770e2b67255e83a10c68668b98a2139e",
-      "rendered_digest": "5297ffa37285d7f657d2b120afd3d766acf0db3077a458cac9f9613f937a224d",
-      "ast_digest": "97700539305dfc98c1b70c305d2cea8202d70bd18af596179f4641369ec9fa63"
+      "values_digest": "e3f18d22ad83849c48d5c2b223cb789951ead97c0c13fb72402eba70690c5dd7",
+      "rendered_digest": "f6009cb4c5e12e556f1d06f64103ef1876bdf167f3b85de698b585a30b1312bf",
+      "ast_digest": "96f0aa7650284fa8edac675ae93817b7c47da398112d009b18214b75ccf31e86"
     },
     "sor": {
-      "values_digest": "a0bd8105b73fed6efc77920380e6c35018d72e865773e2cbc81e7f609019df80",
-      "rendered_digest": "f06d4937d0bb47fb1d5e015886cd332c58a837d8f9a2806f0d63dd48904fc762",
-      "ast_digest": "30cb70b243a8bfa45fd1d7df49c7f8f60ab37f6ce3c460790da611bfa1de6163"
+      "values_digest": "a8468bb78e4fa525dfa4f0550e57215688a9c5243f2a9bf63677a236376b6f65",
+      "rendered_digest": "9058f797e75f49460ff427f010340b7d0fbd69a8f90e2940a8dc15035099bb72",
+      "ast_digest": "82a5cb4149fa12e7990581cdb93703fb1d9d827328689a9e9c7af9ead7ba091e"
     }
   },
   "transitions": [
@@ -124,6 +149,27 @@
       "to": "published",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:closeout-batch",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:closeout-batch",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:closeout-batch",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -444,17 +490,59 @@
     },
     {
       "sequence": 46,
-      "generation": 36,
-      "actor": "codex:wp14a-preparation",
-      "reason": "GitHub issue #5594 is closed and must not reserve current milestone planning paths",
-      "operation": "{\"previous_owner\":\"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d\",\"observed_expiry_unix_seconds\":1785166933,\"recovery_actor\":\"codex:wp14a-preparation\",\"reason\":\"GitHub issue #5594 is closed and must not reserve current milestone planning paths\"}"
+      "generation": 37,
+      "actor": "codex:closeout-batch",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
     },
     {
       "sequence": 47,
-      "generation": 36,
-      "actor": "codex:wp14a-preparation",
-      "reason": "Release stale closed WP-01 planning ownership from the WP-14A projection",
-      "operation": "{\"claim_id\":\"claim-5594-wp14a-reconciliation-release-only\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:closed-issues-own-no-active-paths\",\"previous_owner\":\"codex:wp14a-preparation\"}"
+      "generation": 38,
+      "actor": "codex:closeout-batch",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 48,
+      "generation": 39,
+      "actor": "codex:closeout-batch",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 49,
+      "generation": 40,
+      "actor": "codex:closeout-batch",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 50,
+      "generation": 41,
+      "actor": "codex:closeout-batch",
+      "reason": "Restore the retained terminal authority for closed issue #5594 after reconciling a stale local projection",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 51,
+      "generation": 42,
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "materialize retained terminal closeout receipt after post-merge sweep",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 52,
+      "generation": 43,
+      "actor": "adl-post-merge-closeout",
+      "reason": "post-merge terminal reconciliation sweep",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 53,
+      "generation": 44,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

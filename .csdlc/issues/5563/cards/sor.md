@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -49,17 +49,17 @@ Permit typed reapproval of previously approved initialized records only when cur
 
 ## Integration
 
-not_started
+merged
 
 ## Publication
 
-Publication: not_published
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

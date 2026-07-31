@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-14][capability-envelope] Prepare #4761 v0.92 capability envelope",
     "slug": "v0918-wp14-capability-envelope-prep-4761",
     "version": "v0.91.8",
-    "generation": 16
+    "generation": 20
   },
   "status": "ready",
   "content": {
@@ -56,9 +56,9 @@
       "planned_validation_seconds": 1200,
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed and report the exact v2 doctor or init error; do not repair outside the prep boundary.",
-      "design_ref": ".csdlc/prepared/issues/4761/design.md",
+      "design_ref": ".csdlc/issues/4761/retained/design.md",
       "design_digest": "1fbbea0320750d00a24ac8c756417c15021596db4ba68651b071d8410dae86dc",
-      "diagram_ref": ".csdlc/prepared/issues/4761/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/4761/retained/diagram.mmd",
       "diagram_digest": "885a543a3007b04c2af3b0f3d119a2555dd1d51493553ecf690085ac7a85675b"
     }
   }

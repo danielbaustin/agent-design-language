@@ -7,9 +7,9 @@
     "title": "[v0.91.8][csdlc-v2][tooling] Preserve blocked and unstable PR mergeability states",
     "slug": "pr-state-mergeability",
     "version": "v0.91.8",
-    "generation": 11
+    "generation": 14
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

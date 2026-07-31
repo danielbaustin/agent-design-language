@@ -29,3 +29,8 @@
 {"sequence":29,"generation":24,"actor":"subagent:019f95ae-c03a-7e90-808f-803f476c9738","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":30,"generation":25,"actor":"codex:issue-4739-preparation","reason":"Advance the exact post-merge Unity-MCP alignment implementation after independent review passed with no actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":31,"generation":26,"actor":"codex:issue-4739-preparation","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":32,"generation":27,"actor":"codex:issue-4739-preparation","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":33,"generation":28,"actor":"codex:issue-4739-preparation","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":34,"generation":29,"actor":"codex:adl-post-merge-closeout","reason":"materialize retained terminal closeout receipt after post-merge sweep","operation":"reconcile_terminal"}
+{"sequence":35,"generation":30,"actor":"adl-post-merge-closeout","reason":"post-merge terminal reconciliation sweep","operation":"reconcile_terminal"}
+{"sequence":36,"generation":31,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

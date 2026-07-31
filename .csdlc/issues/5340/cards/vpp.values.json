@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-06] Implement portable bounded execution engine",
     "slug": "v0918-wp06-portable-bounded-execution-engine",
     "version": "v0.91.8",
-    "generation": 44
+    "generation": 60
   },
   "status": "ready",
   "content": {
@@ -158,9 +158,9 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed without implementation, publication, merge, closeout, or prune on a false or stale #5338 dependency signal; unreviewed landed API drift; nondeterministic ordering; unbounded work; impossible join wait; retry or resume budget reset; ambiguous, duplicate, or mismatched port completion; in-flight checkpoint; incompatible resume; silent #5338 fixture skip; Runtime/adaptor/IO authority leak; forbidden dependency or path; unsupported LoC/time variance; stale review; red CI; absent merge authorization; missing post-merge proof; conflicting terminal receipt; or unsafe prune.",
-      "design_ref": ".csdlc/prepared/issues/5340/design.md",
+      "design_ref": ".csdlc/issues/5340/retained/design.md",
       "design_digest": "11d1545c9eb05a81f550d896c310688c192206d312f391d922d64310c2d6723e",
-      "diagram_ref": ".csdlc/prepared/issues/5340/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5340/retained/diagram.mmd",
       "diagram_digest": "618c0b1aae37521feccebd83320800419b86b3ad9c419ca5fac96406f1bdd8e7"
     }
   }

@@ -18,3 +18,9 @@
 {"sequence":18,"generation":13,"actor":"gpt-5.5:required-pre-pr-review","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":19,"generation":14,"actor":"codex:019f8d39-12e9-7371-b306-79e06138da8a","reason":"The assigned GPT-5.5 pre-PR review passed at the exact repaired revision with zero blockers.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":20,"generation":15,"actor":"codex:019f8d39-12e9-7371-b306-79e06138da8a","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":21,"generation":16,"actor":"codex:5501-preparation-owner","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":22,"generation":17,"actor":"codex:5501-preparation-owner","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":23,"generation":18,"actor":"codex:5501-preparation-owner","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":24,"generation":19,"actor":"codex:adl-post-merge-closeout","reason":"materialize retained terminal closeout receipt after post-merge sweep","operation":"reconcile_terminal"}
+{"sequence":25,"generation":20,"actor":"adl-post-merge-closeout","reason":"post-merge terminal reconciliation sweep","operation":"reconcile_terminal"}
+{"sequence":26,"generation":21,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

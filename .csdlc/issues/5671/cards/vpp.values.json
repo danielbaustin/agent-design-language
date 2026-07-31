@@ -7,7 +7,7 @@
     "title": "[v0.91.8][provider] Add Anthropic Claude Opus 5 provider profile",
     "slug": "anthropic-claude-opus-5-provider",
     "version": "v0.91.8",
-    "generation": 6
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -62,9 +62,9 @@
       "planned_validation_seconds": 1200,
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on model, endpoint, credential, or proof drift; repair only the bounded provider surface.",
-      "design_ref": ".csdlc/prepared/issues/5671/design.md",
+      "design_ref": ".csdlc/issues/5671/retained/design.md",
       "design_digest": "ed8ebae320de231a3b843b0cd646af2480f4c53752eb062a4400713e30cc0afc",
-      "diagram_ref": ".csdlc/prepared/issues/5671/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5671/retained/diagram.mmd",
       "diagram_digest": "4b776521482a4c212c66cfc858a084fe41b55c607f07450c346b299dc53c75aa"
     }
   }

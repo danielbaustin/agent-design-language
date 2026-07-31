@@ -7,9 +7,9 @@
     "title": "[v0.91.8][docs] Refresh README status, release, CI, and homepage links",
     "slug": "readme-status-release-homepage-refresh",
     "version": "v0.91.8",
-    "generation": 12
+    "generation": 15
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

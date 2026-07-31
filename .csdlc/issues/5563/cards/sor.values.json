@@ -7,9 +7,9 @@
     "title": "Recover stale approved design in initialized records",
     "slug": "initialized-stale-design-recovery",
     "version": "v0.91.8",
-    "generation": 5
+    "generation": 11
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -42,10 +42,10 @@
           "evidence_ref": "Focused regression 1 passed, 0 failed; strict all-target all-feature Clippy passed. Existing non-Git Gate 2 fixture failure remains independently tracked in #5548."
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

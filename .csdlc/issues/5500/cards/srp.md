@@ -8,14 +8,10 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: pre_phase
+Status: complete
 
 ## Scope
 
-.csdlc/issues/5500
-.csdlc/locks/5500.lock
-.csdlc/prepared/issues/5500
-.csdlc/evidence/5500
 docs/tooling/milestone-dashboard
 adl/tools/test_milestone_dashboard.sh
 
@@ -30,7 +26,18 @@ adl/tools/test_milestone_dashboard.sh
 
 ## Findings
 
-[]
+[
+  {
+    "id": "R-1-runtime-origin-allowlist",
+    "severity": "p1",
+    "summary": "The Runtime v3 Observatory adapter must fail closed when the snapshot declares no allowed origins; an empty allowlist must not permit arbitrary HTTPS Runtime API bases.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:a24992cfaecfb6adaa2f82ea1b780dd7d1cc6803:e20c0116b8738017024b693a5d3136929d45f2910b53a07a1ada73a7ec3d2e02",
+    "route": null
+  }
+]
 
 ## Dispositions
 
@@ -38,12 +45,12 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- GPT-5.5-specific reviewer tooling was not callable in this environment after tool discovery; this record preserves the single available typed pre-PR review boundary.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:a24992cfaecfb6adaa2f82ea1b780dd7d1cc6803:e20c0116b8738017024b693a5d3136929d45f2910b53a07a1ada73a7ec3d2e02")
 
-Reviewer: None
+Reviewer: Some("codex:single-pre-pr-review")
 
-Result: pre_review
+Result: pass

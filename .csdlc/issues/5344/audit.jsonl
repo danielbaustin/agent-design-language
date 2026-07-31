@@ -67,3 +67,7 @@
 {"sequence":67,"generation":40,"actor":"subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":68,"generation":41,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"Advance after the exact qualification-harness coverage classification review passed with no findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":69,"generation":42,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":70,"generation":43,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":71,"generation":44,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":72,"generation":45,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":73,"generation":46,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

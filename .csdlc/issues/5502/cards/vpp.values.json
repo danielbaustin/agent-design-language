@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-10A][multi-agent] Implement output convergence and deterministic replanning",
     "slug": "v0918-wp10a-output-convergence-deterministic-replanning",
     "version": "v0.91.8",
-    "generation": 15
+    "generation": 21
   },
   "status": "ready",
   "content": {
@@ -100,9 +100,9 @@
       "planned_validation_seconds": 3600,
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed without implementation, publication, merge, closeout, or #5501 handoff on incomplete dependencies, claim collision, stale/forged/overlapping/out-of-scope output, changed assumptions without typed replan, hidden authority, nondeterminism, deferred proof, red CI, stale review, or budget breach.",
-      "design_ref": ".csdlc/prepared/issues/5502/design.md",
+      "design_ref": ".csdlc/issues/5502/retained/design.md",
       "design_digest": "ffbac550ad54511cc08e7ed520ad15ae3e9f96e607656a7621163e364698ae09",
-      "diagram_ref": ".csdlc/prepared/issues/5502/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5502/retained/diagram.mmd",
       "diagram_digest": "c325ba1c7d2cb4f6230cd3b3da135d46799189b3c2d6ca48021dea774d8cf985"
     }
   }

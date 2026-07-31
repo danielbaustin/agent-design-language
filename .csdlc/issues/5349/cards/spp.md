@@ -125,13 +125,13 @@ Revision 7
 
 ## Design
 
-.csdlc/prepared/issues/5349/design.md
+.csdlc/issues/5349/retained/design.md
 
 Digest: 7177d15645c5c229ec641ae9e25df5112a4badfd4febb9e8fbb95d6802763844
 
 ## Diagram
 
-.csdlc/prepared/issues/5349/diagram.mmd
+.csdlc/issues/5349/retained/diagram.mmd
 
 Digest: bb6c679095660863f74d37ff239cca90d2315a2b5132b867d988aee6f1b11f2c
 

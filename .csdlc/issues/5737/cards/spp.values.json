@@ -7,7 +7,7 @@
     "title": "[v0.91.8][csdlc-v2] Make claim recovery independent of unrelated terminal drift and stale design inputs",
     "slug": "csdlc-authority-recovery",
     "version": "v0.91.8",
-    "generation": 7
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -73,9 +73,9 @@
         "exact-head review has actionable in-scope findings"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5737/design.md",
+      "design_ref": ".csdlc/issues/5737/retained/design.md",
       "design_digest": "6e29a4e399b52ccf6d9ae550bcc31a1706b048447f35e8b0eb2515120ecbeb68",
-      "diagram_ref": ".csdlc/prepared/issues/5737/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5737/retained/diagram.mmd",
       "diagram_digest": "f55805d4cb383b29649477aebc069d70377d3aaebc98b2266c628ba747ffe904"
     }
   }

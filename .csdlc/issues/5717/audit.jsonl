@@ -27,3 +27,7 @@
 {"sequence":27,"generation":18,"actor":"codex:5717-execution","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":28,"generation":19,"actor":"codex:5717-execution","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":29,"generation":20,"actor":"codex:5717-execution","reason":"Exact codex subagent review passed with no P0-P3 findings for PR #5720 head b61738969 after checked-in podcast route validation and Windows deleted-path guard fixes.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":30,"generation":21,"actor":"codex:v0918-closeout-audit","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":31,"generation":22,"actor":"codex:v0918-closeout-audit","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":32,"generation":23,"actor":"codex:v0918-closeout-audit","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":33,"generation":24,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize newly retained terminal authority for the v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-09] Implement provider and governed-tool adapters",
     "slug": "v0-91-8-wp09-provider-governed-tool-adapters",
     "version": "v0.91.8",
-    "generation": 25
+    "generation": 32
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

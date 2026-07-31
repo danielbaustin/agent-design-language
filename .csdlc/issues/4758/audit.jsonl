@@ -6,3 +6,6 @@
 {"sequence":6,"generation":2,"actor":"codex:issue-4758-execution","reason":"atomically record execution, validation, and implemented phase","operation":"finalize_implementation"}
 {"sequence":7,"generation":3,"actor":"codex:issue-4758-execution","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
 {"sequence":8,"generation":4,"actor":"codex:issue-4758-execution","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":9,"generation":5,"actor":"codex:v0918-closeout-audit","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":10,"generation":6,"actor":"codex:v0918-closeout-audit","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":11,"generation":7,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize newly retained terminal authority for the v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

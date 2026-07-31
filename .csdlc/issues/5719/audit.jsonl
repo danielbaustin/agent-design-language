@@ -6,3 +6,6 @@
 {"sequence":6,"generation":2,"actor":"codex:5719-execution","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":7,"generation":3,"actor":"codex:5719-execution","reason":"Exact bounded review passed with no actionable findings for the podcast CI coverage path-policy fix.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":8,"generation":4,"actor":"codex:5719-execution","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":9,"generation":5,"actor":"codex:5719-execution","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":10,"generation":6,"actor":"codex:5719-execution","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":11,"generation":7,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

@@ -7,7 +7,7 @@
     "title": "[v0.91.8][csdlc-v2][records] Publish #5662 terminal projection to main",
     "slug": "publish-5662-terminal-projection",
     "version": "v0.91.8",
-    "generation": 6
+    "generation": 11
   },
   "status": "ready",
   "content": {
@@ -74,9 +74,9 @@
       "planned_validation_seconds": 1200,
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on receipt mismatch, implementation changes, canonical receipt mutation, protected-path collision, validation failure, or unresolved review findings.",
-      "design_ref": ".csdlc/prepared/issues/5686/design.md",
+      "design_ref": ".csdlc/issues/5686/retained/design.md",
       "design_digest": "079de390db78dcf9b2f9143fc3abf5328bb8795d32b17d4c368451f9756099f4",
-      "diagram_ref": ".csdlc/prepared/issues/5686/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5686/retained/diagram.mmd",
       "diagram_digest": "aa11d6057a4fcb0e6e48cacfa9cb6229517a84b3ba35f626cfb6c1ed20eef139"
     }
   }

@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: ready
+Status: complete
 
 ## Scope
 

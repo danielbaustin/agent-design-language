@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-14][runtime-v3][parity-c] Replace degraded governed operations adapters",
     "slug": "v0-91-8-runtime-v3-parity-c-governed-operations",
     "version": "v0.91.8",
-    "generation": 20
+    "generation": 25
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -99,10 +99,10 @@
           "evidence_ref": ".csdlc/evidence/5589/implementation"
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

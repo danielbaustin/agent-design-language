@@ -1,0 +1,16 @@
+flowchart TD
+  A["Closed GitHub issue"] --> B{"Local lifecycle phase"}
+  B -->|merge_ready| C["Terminal publication reconciliation"]
+  B -->|closed_out| D["Safe prune preparation"]
+  B -->|earlier phase| E["Report next legal typed action"]
+  C --> F{"Exact PR identity and ancestry proved?"}
+  F -->|no| G["Fail closed with durable blocker"]
+  F -->|yes| H["Retain terminal receipt and close out"]
+  H --> D
+  D --> I{"Dirty path classification"}
+  I -->|safe generated| J["Typed cleanup"]
+  I -->|retained equivalent evidence| J
+  I -->|tracked drift or source| G
+  J --> K["Existing validate-prune"]
+  K -->|pass| L["Existing receipt-backed prune"]
+  K -->|fail| G

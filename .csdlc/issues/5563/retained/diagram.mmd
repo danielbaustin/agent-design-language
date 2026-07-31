@@ -1,0 +1,6 @@
+flowchart LR
+  I[Initialized and previously approved] --> D{Authored digest stale?}
+  D -->|no| F[Reject redundant reapproval]
+  D -->|yes| C[Validate CAS and active claim]
+  C --> R[Record reviewer and refresh SPP/VPP digests]
+  R --> V[Doctor and ready gate]

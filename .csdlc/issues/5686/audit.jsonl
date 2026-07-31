@@ -7,3 +7,8 @@
 {"sequence":7,"generation":4,"actor":"codex:issue-5686-terminal-projection","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":8,"generation":5,"actor":"codex:issue-5686-terminal-projection","reason":"Enter reviewed phase after the compatibility review assignment and passing exact-head evidence were recorded.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":9,"generation":6,"actor":"codex:issue-5686-terminal-projection","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":10,"generation":7,"actor":"codex:issue-5686-terminal-projection","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":11,"generation":8,"actor":"codex:issue-5686-terminal-projection","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":12,"generation":9,"actor":"codex:issue-5686-terminal-projection","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":13,"generation":10,"actor":"codex:v0918-closeout-sweep","reason":"Materialize retained terminal receipt after operator fast-forwarded main; closeout receipt already exists and root projection still showed published.","operation":"reconcile_terminal"}
+{"sequence":14,"generation":11,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}

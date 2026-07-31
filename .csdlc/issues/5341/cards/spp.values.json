@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-08] Implement Runtime v3 adapter",
     "slug": "v0-91-8-wp08-runtime-v3-adapter",
     "version": "v0.91.8",
-    "generation": 5
+    "generation": 11
   },
   "status": "ready",
   "content": {
@@ -136,9 +136,9 @@
         "the active claim becomes stale or ownership cannot be recovered truthfully through typed v2"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5341/design.md",
+      "design_ref": ".csdlc/issues/5341/retained/design.md",
       "design_digest": "a85968cdb8685e8d95e05db20b8347223693983fe1d137c09c953cfc2e4d3b83",
-      "diagram_ref": ".csdlc/prepared/issues/5341/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5341/retained/diagram.mmd",
       "diagram_digest": "66c62fc10f92513c0589e16b86a34b212c2f733cf08cf8a152faa3292c29da09"
     }
   }

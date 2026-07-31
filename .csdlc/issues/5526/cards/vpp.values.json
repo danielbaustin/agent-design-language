@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-09][provider] Add Kimi and current agentic model providers",
     "slug": "v0918-provider-expansion",
     "version": "v0.91.8",
-    "generation": 15
+    "generation": 23
   },
   "status": "ready",
   "content": {
@@ -44,9 +44,9 @@
       "planned_validation_seconds": 1200,
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on missing live WP-09 merge ancestry, active claim collision, stale generation, secret leakage risk, provider-call requirement during preparation, skipped deterministic proof, or review/publication drift.",
-      "design_ref": ".csdlc/prepared/issues/5526/design.md",
+      "design_ref": ".csdlc/issues/5526/retained/design.md",
       "design_digest": "f45c0aac551edc5b0e065f9d923f3425bc74ef7368bb9b0015cc7c1bd765a30b",
-      "diagram_ref": ".csdlc/prepared/issues/5526/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5526/retained/diagram.mmd",
       "diagram_digest": "dabc037c0ce74efb2bd1ec39037e58c57881d964bd8055c4b90c7a84313374fc"
     }
   }

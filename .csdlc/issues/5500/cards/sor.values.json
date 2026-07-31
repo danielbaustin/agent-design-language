@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-10A][multi-agent][dashboard] Restore live workcell operator view",
     "slug": "v0-91-8-wp-10a-read-only-workcell-dashboard",
     "version": "v0.91.8",
-    "generation": 11
+    "generation": 17
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -51,10 +51,10 @@
           "evidence_ref": ".csdlc/evidence/5500/dashboard-contract.log"
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

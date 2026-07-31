@@ -7,14 +7,14 @@
     "title": "[v0.91.8][WP-09][provider] Add Kimi and current agentic model providers",
     "slug": "v0918-provider-expansion",
     "version": "v0.91.8",
-    "generation": 15
+    "generation": 23
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {
       "review_scope": ".csdlc/evidence/5526/implementation/provider-expansion.log\nadl/src/provider/http_family.rs\nadl/src/provider/mod.rs\nadl/src/provider/profiles.rs\nadl/src/provider_substrate.rs\nadl/tools/check_coverage_impact.sh\nadl/tests/provider_tests/http_family.rs\nadl/tests/provider_tests/profiles.rs",
-      "review_revision": "git-blake3:e7cf3f11a4b2de79a9738eb34489401f6803688e:e2918e90a536cd6d304757ab0cfccca10662e02575eebd02b4f9f483ad5d29cb",
+      "review_revision": "git-blake3:ad1466d02a1f0a00d9f15b51c730c3c5b451f994:c3eaac652ab0ba62457ff221d3120501802c7f558864ec4623eb0de343e8e9fc",
       "reviewer": "codex:review_5632",
       "review_prompts": [
         "Are vendor identities distinct even when wire protocol is shared?",

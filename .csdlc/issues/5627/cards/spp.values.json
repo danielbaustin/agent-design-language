@@ -7,7 +7,7 @@
     "title": "[v0.91.8][csdlc-v2][performance] Collapse routine lifecycle into four commands",
     "slug": "csdlc-four-command-lifecycle",
     "version": "v0.91.8",
-    "generation": 10
+    "generation": 15
   },
   "status": "ready",
   "content": {
@@ -93,9 +93,9 @@
         "Any proposal that weakens atomic failure, exact scope, PR identity, or receipts"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5627/design.md",
+      "design_ref": ".csdlc/issues/5627/retained/design.md",
       "design_digest": "2b73dd1a448490348950b976c921d865eb959bc4085375775920376af5faeae5",
-      "diagram_ref": ".csdlc/prepared/issues/5627/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5627/retained/diagram.mmd",
       "diagram_digest": "1a27ec1e31399527f10a806742a78e68feff01495275d220f202f4b523242ca8"
     }
   }

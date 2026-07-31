@@ -3,31 +3,10 @@
   "issue": 5592,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "a359b2c4b8f2f653ea82c1c5d29aa63c3ac298542bbe5f7c7339a327ad3e822d",
-  "phase": "reviewed",
-  "generation": 17,
-  "digest": "123091483a5175143a381da9fb9026aae877adb3b1bae431ca2c72b3304ca0a1",
-  "claim": {
-    "id": "claim-5592-runtime-v3-parity-b-preparation",
-    "owner": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
-    "generation": 17,
-    "acquired_unix_seconds": 1784601544,
-    "expires_unix_seconds": 1785206344,
-    "heartbeat_unix_seconds": 1784601544,
-    "branch": "codex/5592-runtime-v3-parity-b",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/evidence/5592",
-      ".csdlc/issues/5592",
-      ".csdlc/locks/5592.lock",
-      ".csdlc/prepared/issues/5592",
-      "adl-runtime-kernel/src/lib.rs",
-      "adl-runtime-kernel/src/operations.rs",
-      "adl-runtime-kernel/src/parity_b.rs",
-      "adl-runtime-kernel/src/reasoning.rs",
-      "adl-runtime-kernel/tests/parity_b_live_kernel.rs"
-    ],
-    "purpose": "Implement every #5592 Runtime v3 Parity-B reasoning graph, bounded loop, governed adaptation, affect, curiosity, cognition, feature-disposition, exact-proof, review, publication, and closeout outcome"
-  },
+  "phase": "closed_out",
+  "generation": 22,
+  "digest": "7662d9bc32228577295a7193d2040bfba1ff0a1c5057a583a3e00f9634ca7124",
+  "claim": null,
   "review_assignment": {
     "reviewer": "subagent:/root/review_5592_integrated_exact",
     "assigned_by": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
@@ -65,12 +44,81 @@
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5592,
+    "pull_request": 5618,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5618",
+    "base": "main",
+    "head": "codex/5592-runtime-v3-parity-b",
+    "revision": "git-blake3:dbd461697755c048f9b9bbb7eb1a3ca66b0c3e56:d8cfe35c4a6266301da6b8ef89504eef27f10a2d53f4e17da9528c11b03f6b09",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5618,
+    "head_sha": "dbd461697755c048f9b9bbb7eb1a3ca66b0c3e56",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29867563245/job/88759723335"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29867563245/job/88759563537"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29867563245/job/88759515411"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29867563245/job/88759478450"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29867563245/job/88759515982"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5618,
+    "disposition": "merged",
+    "observed_sha": "dbd461697755c048f9b9bbb7eb1a3ca66b0c3e56",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5592.json",
+    "released_branch": "codex/5592-runtime-v3-parity-b",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5592",
+      ".csdlc/issues/5592",
+      ".csdlc/locks/5592.lock",
+      ".csdlc/prepared/issues/5592",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/src/parity_b.rs",
+      "adl-runtime-kernel/src/reasoning.rs",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs"
+    ]
+  },
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5592/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5592/diagram.mmd",
+  "design_path": ".csdlc/issues/5592/retained/design.md",
+  "diagram_path": ".csdlc/issues/5592/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex:019f8288-14b3-7722-bf61-2b3e76c51124",
@@ -79,34 +127,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "44d50317f69a7451264a994369f4c04c9f00a4b2c6e10392cd15fd5eebed656d",
+      "values_digest": "6dd66e6eea7f659564e1f182a632869d639cdb4b47ef4ae9b14db0a4891e8cec",
       "rendered_digest": "a4369423ad1bb8d1afb5cfe47874314d77ab0c610cdaeee04a22be089876740f",
       "ast_digest": "e4bbee25a2f2ee6c9054c13f2b187d71bbd2a7ff6995e4350fa22249ce55304d"
     },
     "stp": {
-      "values_digest": "5e449c6758b4b14b95335ca57486bb7514e95a66b746917e0a53efad28338bdb",
+      "values_digest": "864cac2d7a6f8027b0084c104ebedba061dd51e5be55d6afb9f6db8e2b13388b",
       "rendered_digest": "2d44dbaacfdeb4e7b8317cd412cd1f1358fe50bd483ca9ec0724e439f2e2f026",
       "ast_digest": "5b87e6ca43305b7dd447de7722131a31ef75170a53dfac275ae737a3c38ac1a4"
     },
     "spp": {
-      "values_digest": "894dec72f2d8265aceb4447aba9ef5b308d8c80a9ef39e5b5b92ddbeed72b443",
-      "rendered_digest": "a31c29f58f4b9890ef74dbe01c2817f78c68b89846cbd26b80fdd40b0f568c53",
-      "ast_digest": "e6e2fc41cc44dd45836726815b8a6a431af1e266548d761fe8129934b4d6b101"
+      "values_digest": "c04c4757d63fe595ea16bc6bf5a2fff534ba2ddcd56e6856c9221052d511f23e",
+      "rendered_digest": "2bdd9a7363fb6504a974f8d7901a2bb2c72e5777aeda204ade6199b4faef0f1f",
+      "ast_digest": "21016a90778134918c4184011a00a13163d78cdd5d5f791c4f5b2070ced7e730"
     },
     "vpp": {
-      "values_digest": "9487807895d1051c57bfcb92b5aa25bfd040d08afcc9007f39b06b7d9acebe1d",
-      "rendered_digest": "2820cad061abc84765b2e7b4ae4c76659f3aad102c13629e1d12dd1837184b9b",
-      "ast_digest": "2e23a756badf61748cce137b53bab1efade6df4bd9b288adfc376c4f2c6ebbe6"
+      "values_digest": "249874bccc251d012ed8d7770201a60a86610eaf1dac3dd77ba4ad80884edbd1",
+      "rendered_digest": "0a1ad6ab6765ba5a3837983b7f176760d4f1c9c9f589f026e7d9d7803d9fafa2",
+      "ast_digest": "c1b789397c3ae9fb9a838b78687b102615a5eeb014be3e3e774f12ff1d339640"
     },
     "srp": {
-      "values_digest": "e0029b3a6aef03b6b4d013484ab4835b5ea39ce96810b6783fadaa7b5a7597da",
-      "rendered_digest": "fa7e61811f1d0bd34f2a5b08fd2b4fc8c8dede809fd358896f932e6510c44d6b",
-      "ast_digest": "d4eaf47b7784d306568269c459fac4e264a713f6d8cd92c62d5998d268079105"
+      "values_digest": "07f62261afdaab30d997ea68b8d3fefeaec9e66961de15de0e7a233622a6c724",
+      "rendered_digest": "af36ecc14b30c6098194a95af98c86eac3d20b932355fce8141804d97219a91e",
+      "ast_digest": "774799084a727b20ad562b304ccb7590cd91e48d7f735a8a8f70b5d6fbc02cc9"
     },
     "sor": {
-      "values_digest": "be04c8d8a4fa7a03d135c71138fc1640fa677afcbc0d58bc42ec6ce198c71f61",
-      "rendered_digest": "682cd2adf511a1214261f0d42dda3a9296f889fd3433e44f16a23a104ddab0f9",
-      "ast_digest": "ea8bd9f2453b3f9cd1252d79a44d7a3382e3187ad150fd6adc459350165b476f"
+      "values_digest": "cbcad503764fa6d5bfa50758a07064e85410ca43de7aa6141d9cb5ccbce9f253",
+      "rendered_digest": "29e4aea91f05ac7dde8c8bc4b53e198f542e0af5fd259f47c298ce5b6696c419",
+      "ast_digest": "096502785efba11c94e42c02da18863b2bb1d537cf0f5c2f0c23ec54e3449d85"
     }
   },
   "transitions": [
@@ -158,6 +206,34 @@
       "to": "reviewed",
       "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
       "reason": "Integrated exact-head review passed with zero findings; retain the accepted 13,547-line exception and clean current-main ancestry."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -349,6 +425,41 @@
       "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
       "reason": "Integrated exact-head review passed with zero findings; retain the accepted 13,547-line exception and clean current-main ancestry.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 28,
+      "generation": 18,
+      "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 29,
+      "generation": 19,
+      "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 30,
+      "generation": 20,
+      "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 31,
+      "generation": 21,
+      "actor": "codex:019f836b-dfdb-7b33-8e27-4c9478b75421",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 32,
+      "generation": 22,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }
