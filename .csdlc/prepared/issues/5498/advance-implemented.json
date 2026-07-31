@@ -1,0 +1,13 @@
+{
+  "issue": 5498,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "b50bf35afe2ccf5581b1abdd907a0d11cd5abaaef587ec9fa9e2abe726cf2834",
+  "claim_id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded task adapter is committed at 84712aedd, and its 11 focused tests, strict Clippy, formatting, dependency gate, and LoC budgets pass on FastWork.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

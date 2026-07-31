@@ -1,0 +1,13 @@
+{
+  "issue": 5501,
+  "expected_generation": 12,
+  "expected_digest": "d9280a59dd1eb3e27d8670dd872845de0ce2b5f890347dbbafc785082402546f",
+  "claim_id": "claim-5501-v0918-live-workcell-proof-preparation",
+  "reviewer": "gpt-5.5:required-pre-pr-review",
+  "assigned_by": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+  "scope": [
+    ".csdlc/evidence/5501",
+    ".csdlc/issues/5501",
+    ".csdlc/prepared/issues/5501"
+  ]
+}

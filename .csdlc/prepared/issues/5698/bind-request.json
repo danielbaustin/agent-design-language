@@ -1,0 +1,23 @@
+{
+  "issue": 5698,
+  "base_branch": "main",
+  "branch": "codex/5698-runtime-v3-redb-state",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5698-runtime-v3-redb-state",
+    "owner": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+    "generation": 0,
+    "acquired_unix_seconds": 1785260636,
+    "expires_unix_seconds": 1785865436,
+    "heartbeat_unix_seconds": 1785260636,
+    "branch": "codex/5698-runtime-v3-redb-state",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5698",
+      ".csdlc/locks/5698.lock",
+      ".csdlc/prepared/issues/5698",
+      ".csdlc/evidence/5698"
+    ],
+    "purpose": "Prepare and coordinate #5698 redb durable state work; product implementation is blocked until active WP-12 #5344 releases or transfers overlapping Runtime v3 paths"
+  }
+}

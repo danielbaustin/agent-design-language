@@ -1,0 +1,14 @@
+{
+  "issue": 5344,
+  "expected_generation": 17,
+  "expected_digest": "ece5c2f158e619ca2df0c56bcd85a72d1ee6d1f3f774ed30b5d130c2236e50d5",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "reviewer": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    ".csdlc/issues/5344",
+    ".csdlc/prepared/issues/5344",
+    "adl/tools/ci_path_policy.sh",
+    "adl/tools/test_ci_path_policy.sh"
+  ]
+}

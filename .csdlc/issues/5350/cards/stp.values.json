@@ -1,0 +1,69 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5350,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-11] Run exact-revision normalized shadow parity",
+    "slug": "v0918-wp11-exact-revision-normalized-shadow-parity",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare and later run exact-revision ADL v1/v2 shadow parity plus read-only Runtime/WP-10A evidence overlays; do not implement ADL, Runtime, C-SDLC, adapters, selector changes, cutover, deletion, or release work.",
+      "deliverables": [
+        "Exact subject/dependency identity manifest with source, binary, lock, corpus, selector, and receipt identities",
+        "Per-case and per-behavior parity matrix for all 25 cases, 75 v1 observations, and 23 behaviors",
+        "Equivalence/difference-group report and deterministic rerun proof",
+        "Mismatch register using only six declared dispositions with reviewed links for intentional differences",
+        "Runtime v3 ten-group evidence overlay and WP-10A live-proof binding",
+        "Unsupported-case and blocker register that fail-closes downstream gates",
+        "Dependency, COTS, scope, LoC, test-count, duration, exact-review, and no-network proof"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Both ADL subjects are pinned by exact source revision and executable SHA-256, and the v2 identity also binds selector generation, lock digest, and current-main ancestry",
+        "AC-2: The exact merged #5337 corpus bundle and all retained v1 evidence envelopes, portable stream hashes, repetitions, required fragments, and normalization derivations verify before comparison",
+        "AC-3: Every one of 25 cases, 23 behaviors, two equivalence groups, and one difference group has a deterministic v1/v2 result at the same accepted revision",
+        "AC-4: Normalization is limited to reviewed #5337 rules and cannot discard exits, arrays, diagnostics, identities, signature verdicts, sequential order, or a real semantic difference",
+        "AC-5: Every case has exactly one of exact_match, normalized_match, approved_intentional_difference, regression_blocker, unsupported_blocker, or evidence_invalid, with zero unknown or deferred rows",
+        "AC-6: Every approved intentional difference links a reviewed owner decision, rationale, replacement proof, risk, reviewer, and rollback impact; all other mismatches block",
+        "AC-7: Runtime v3 overlay binds exact terminal evidence for all ten proof groups from #5591/#5592/#5589/#5590/#5341/#5349 and grants no credit to fixture-, metadata-, library-, fixed-bootstrap-, degraded-, or Runtime-v2-reuse proof",
+        "AC-8: WP-10A overlay binds terminal #5497 convergence and live #5501 proof without inferring behavior from issue closure alone",
+        "AC-9: Required comparison, overlay, budget, strict-lint, dependency, test-count, deterministic rerun, no-network, and exact-review lanes all pass with no acceptance deferral",
+        "AC-10: WP-11 changes no product, Runtime v2, selector, default, cutover, deletion, AWS, credential, or publication state during preparation, and future completion authorizes only the #5361 acceptance input"
+      ],
+      "dependencies": [
+        "#5337 merged and typed closed_out with retained characterization corpus receipt and exact ancestry",
+        "WP-10 #5345 merged and typed closed_out after WP-04 through WP-09, with exact installed ADL v2 CLI and selector identity",
+        "WP-10A #5497 merged and typed closed_out with child #5501 live distributed-workcell proof merged and typed closed_out",
+        "Runtime parity #5591, #5592, #5589, and #5590 merged and typed closed_out with exact retained proof",
+        "Runtime adapters #5341 and #5349 merged and typed closed_out with exact retained proof",
+        "#5361 is downstream Runtime v3 acceptance that consumes WP-11 and grants no implementation authority to this preparation"
+      ],
+      "repo_inputs": [
+        "AGENTS.md",
+        "GitHub issue #5350 source prompt",
+        "docs/templates/prompts/current.json",
+        "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+        "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+        "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+        "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+        "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+        "docs/milestones/v0.91.8/RUNTIME_V3_FUNCTIONAL_PARITY_PLAN_v0.91.8.md",
+        "docs/milestones/v0.91.8/runtime_v3_functional_parity_plan_v0.91.8.json",
+        "future merged adl-characterization/corpus/v1/corpus.yaml and observations/v1 from #5337",
+        "future terminal typed receipts and exact evidence from #5345/#5497/#5501/#5591/#5592/#5589/#5590/#5341/#5349"
+      ],
+      "non_goals": [
+        "Writing or modifying ADL v1, ADL v2, Runtime v2, Runtime v3, C-SDLC, adapters, CLI, selector, or provider product code",
+        "Changing the #5337 corpus or inventing new normalization during comparison",
+        "Executing network, provider, cloud, AWS, credential, remote, GPU, or production work",
+        "Publishing a PR, switching defaults, authorizing acceptance, soak, cutover, deletion, release, or v0.92 activation during preparation",
+        "Treating Runtime v3 evidence as part of the ADL v1/v2 corpus or treating issue closure as proof"
+      ]
+    }
+  }
+}

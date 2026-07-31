@@ -1,0 +1,8 @@
+{
+  "issue": 5701,
+  "expected_generation": 17,
+  "expected_digest": "4ef906942da34a83321b3b9efa18759599b924f467e245821006e0b1430fcf02",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "reason": "Operator clarified that Runtime v3 read APIs and Observatory read streams are public; authentication is required only for mutations. Recover review and publication truth before correcting the runtime, OpenAPI contract, and client."
+}

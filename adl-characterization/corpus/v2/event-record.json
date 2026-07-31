@@ -1,0 +1,17 @@
+{
+  "kind": "event",
+  "record": {
+    "header": {
+      "contract_version": "adl.records.v1",
+      "record_id": "shadow-record-1",
+      "subject_id": "shadow-agent-1",
+      "sequence": 1,
+      "logical_timestamp": 10,
+      "metadata": {
+        "source": "wp-11"
+      }
+    },
+    "name": "shadow.completed",
+    "detail": "ok"
+  }
+}

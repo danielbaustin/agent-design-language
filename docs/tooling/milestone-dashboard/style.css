@@ -257,6 +257,52 @@ body::before {
   margin-bottom: 22px;
 }
 
+.workcell-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.workcell-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.runtime-strip {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.75fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.runtime-status {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.runtime-observatory-list {
+  display: grid;
+  gap: 10px;
+}
+
+.runtime-observation {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid var(--line);
+}
+
+.runtime-observation span:last-child {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .metric {
   padding: 14px;
   border-radius: var(--radius-md);
@@ -470,12 +516,14 @@ body::before {
 }
 
 .status-complete,
-.status-ready {
+.status-ready,
+.status-live {
   background: var(--good-soft);
   color: var(--good);
 }
 
-.status-active {
+.status-active,
+.status-retained {
   background: var(--cool-soft);
   color: var(--cool);
 }
@@ -496,7 +544,8 @@ body::before {
 }
 
 .status-unknown,
-.status-stale {
+.status-stale,
+.status-non-authoritative {
   background: var(--unknown-soft);
   color: var(--unknown);
 }
@@ -585,6 +634,19 @@ body::before {
   color: var(--accent);
 }
 
+.status-badge.status-live {
+  background: var(--good-soft);
+  color: var(--good);
+}
+
+.status-badge.status-retained,
+.status-badge.status-unknown,
+.status-badge.status-stale,
+.status-badge.status-non-authoritative {
+  background: var(--unknown-soft);
+  color: var(--unknown);
+}
+
 @keyframes rise {
   from {
     opacity: 0;
@@ -611,11 +673,14 @@ body::before {
   .detail-grid,
   .workspace-header,
   .signal-grid,
-  .sprint-grid {
+  .sprint-grid,
+  .workcell-grid,
+  .runtime-strip {
     grid-template-columns: 1fr;
   }
 
-  .metric-stack {
+  .metric-stack,
+  .workcell-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -645,7 +710,8 @@ body::before {
     border-radius: 22px;
   }
 
-  .metric-stack {
+  .metric-stack,
+  .workcell-summary {
     grid-template-columns: 1fr;
   }
 }

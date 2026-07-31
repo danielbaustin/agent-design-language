@@ -1,0 +1,13 @@
+{
+  "issue": 5670,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "64a0899dba44e91c5d638c8659e3eb5b575429543c17b68a8f1553b1290c75ba",
+  "claim_id": "claim-5670-coverage-shard-fanout",
+  "actor": "codex:issue-5670-slot-1",
+  "reason": "Advance after implementation and focused validation completed in the bound FastWork worktree.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

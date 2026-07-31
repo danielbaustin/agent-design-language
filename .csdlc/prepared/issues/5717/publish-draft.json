@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5717,
+  "expected_generation": 3,
+  "expected_digest": "3ae0ed34e20709a3add4c8b645d14d0a4c118c41ade69ec292104be77be8c1a7",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "actor": "codex:5717-execution",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "codex/5715-podcast-studio-design-integration",
+  "head": "codex/5717-podcast-studio-copy",
+  "title": "[v0.91.8][podcast][ui] Update Synthetic Minds podcast studio copy",
+  "body": "Closes #5717\n\nUpdates the integrated podcast studio page on top of #5715 with the operator-requested launch copy and link fixes: supplied Agent Logic SVG logo, Synthetic Minds Podcast naming, blue Minds treatment, proposed episodes 1-10, no-video FAQ truth, email contact button, RSS subscribe link, and no bare footer email address.\n\nValidation: podcast launch packet validator PASS, test_podcast_launch_packet PASS, deterministic studio copy/link contract PASS, git diff --check PASS, and typed C-SDLC doctor PASS. Gemini 3.1 Pro Preview reviewed exact implementation commit 64b747a9c and returned CLEAN with only the deployment-layout residual that ../feed.xml and ../audio/meet-the-ai-coworkers.wav must remain valid.",
+  "draft": true,
+  "token_file": "/Users/daniel/keys/github.token"
+}

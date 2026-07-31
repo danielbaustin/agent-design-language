@@ -1,0 +1,68 @@
+# Structured Task Prompt
+
+Template: 1.0.0
+
+Issue: 5341
+
+Repository: danielbaustin/agent-design-language
+
+Card: stp
+
+Status: ready
+
+## Task
+
+After the executable terminal dependency gate passes at current origin/main, bind once and implement, validate, review once, publish, merge, and close out the single owned adapter crate without widening scope.
+
+## Deliverables
+
+- all six issue-specific C-SDLC v2 cards generated from the active native registry and validated through typed v2
+- reviewed authority-boundary design and architecture diagram with exact preparation and future product protected paths
+- executable fail-closed dependency gate for #5340, #5342, and #5591 merged, closed_out, receipt, and ancestry truth
+- one thin deterministic ADL v2 Runtime v3 adapter crate after terminal gate clearance
+- no-deferral positive and negative authority proof covering plan, engine, records/trust, canonical ingress, Runtime v2, Runtime v3 internals, C-SDLC, AWS, transport, and deployment boundaries
+- exact COTS inventory, 500-source-line and 1000-test-line budgets, 250-line module ceiling, minimum 12 tests, and 2400-second FastWork validation budget
+- exact-revision review, typed publication, green CI, authorized merge, post-merge validation, retained closeout receipt, and guarded prune evidence
+
+## Acceptance
+
+1. AC-1: #5340, #5342, and #5591 are each merged and their merge commits are ancestors of current origin/main before any product edit; typed closeout is tracked in parallel and never blocks downstream execution
+2. AC-2: A terminal validated ADL v2 plan plus authorized engine dispatch maps deterministically to exactly one public #5591 canonical ingress request with stable work identity and canonical payload; malformed, unknown-version, non-canonical, oversized, and conflicting input fail closed
+3. AC-3: Accepted, saturated, closed, unsupported, conflicting, and execution-failed Runtime v3 outcomes map exactly into terminal #5340 engine semantics without adapter-owned retry, reordering, failure suppression, or manufactured success
+4. AC-4: Terminal #5342 identifiers, canonical bytes, correlations, provenance, digests, signatures, and verification outcomes are preserved end to end; unverified, tampered, re-signed, downgraded, or history-rewritten input fails closed
+5. AC-5: All work enters through #5591's public canonical ingress and all results leave through public typed contracts; direct access to Runtime components, operations, queues, checkpoints, admission control, providers, supervision, or live state is structurally and behaviorally rejected
+6. AC-6: The implementation is confined to adl-v2/crates/adl-runtime-v3-adapter and has no Runtime v2, C-SDLC, AWS, network listener, credential, hard-coded address, deployment, selector, shared-manifest, sibling-owner, adl-runtime, or adl-runtime-kernel write or dependency
+7. AC-7: Exact locked COTS and physical-line proof shows only pinned serde_json and sha2 production COTS plus the declared Tokio and Ed25519 test dependencies, no more than 500 source lines, no more than 1000 test lines, no production module over 250 lines, and at least 12 explicit tests
+8. AC-8: Every 2400-second FastWork PVF lane passes at one clean committed revision, bounded exact-revision review has no actionable finding, required CI is green, the exact head is merged, post-merge validation passes, and typed closed_out receipt plus guarded prune truth are retained
+
+## Dependencies
+
+- WP-06 #5340 merged and merge commit ancestral to current origin/main
+- WP-07 #5342 merged and merge commit ancestral to current origin/main
+- #5591 canonical Runtime v3 ingress merged and merge commit ancestral to current origin/main
+
+## Inputs
+
+- https://github.com/danielbaustin/agent-design-language/issues/5341
+- https://github.com/danielbaustin/agent-design-language/issues/5340
+- https://github.com/danielbaustin/agent-design-language/issues/5342
+- https://github.com/danielbaustin/agent-design-language/issues/5591
+- docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml
+- docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md
+- docs/milestones/v0.91.8/BASELINE_AND_OWNERSHIP_v0.91.8.md
+- docs/milestones/v0.91.8/DESIGN_v0.91.8.md
+- docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md
+- docs/milestones/v0.91.8/features/ADL_V2_CORE_v0.91.8.md
+- docs/milestones/v0.91.8/features/RUNTIME_V3_ADAPTER_v0.91.8.md
+- .csdlc/prepared/issues/5336/design.md
+- .git/csdlc-v2/closeout/5336.json
+- terminal merged #5340, #5342, and #5591 records, receipts, cards, public contracts, and exact revisions at execution start
+
+## Non Goals
+
+- product implementation before all three terminal dependency gates pass
+- Runtime v3 redesign, internal Runtime v3 component access, supervision, deployment, provider/tool execution, network policy, credential handling, or live-state ownership
+- language, compiler, engine scheduler, retry, signing, verification-policy, C-SDLC lifecycle, CLI, provider adapter, selector, cutover, deletion, release, or v0.92 birthday scope
+- Runtime v2 source reuse, import, modification, copying, defaulting, deletion, or parity credit
+- AWS use, hard-coded addresses, HTTP-only access, new listeners, undeclared direct production COTS, shared-manifest edits, or sibling-owner edits
+- skipped, ignored, degraded, fixture-only, prose-only, pending, CI-only, or operator-waived acceptance

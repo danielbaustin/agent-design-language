@@ -1,0 +1,15 @@
+{
+  "issue": 4761,
+  "card": "spp",
+  "expected_generation": 12,
+  "expected_digest": "8639d5290d49ae726703b8be9624223aed79a118d424be4fc33e7c4c21e96866",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Mark v0.91.8/v0.92 consumer wiring step complete.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S3",
+    "status": "completed"
+  },
+  "fail_after_backup": false
+}

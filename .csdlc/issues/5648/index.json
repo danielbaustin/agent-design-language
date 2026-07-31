@@ -1,0 +1,295 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5648,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "7825c6b94e04ddb0cac12bf61e8c50dc765cc55c3a09139c3158bfaeab569bd7",
+  "phase": "published",
+  "generation": 15,
+  "digest": "4e60faba06741b38d1030a71b2e0343a64c8f8f15b3cfc967bf65320b3e1412a",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "bounded-subagent-review-5648",
+    "assigned_by": "codex:5648-execution",
+    "revision": "git-blake3:da05119e80b0cb0b6f768cf935ec9e0e10d7055e:a6ca8d1765314aed2615d3b45135cd78a4fdb9006f2ee1b311bdea0dd2b09879",
+    "scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/bin/csdlc-bind.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/tests/gate2.rs",
+      ".csdlc/issues/5648"
+    ]
+  },
+  "review": {
+    "reviewer": "bounded-subagent-review-5648",
+    "scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/bin/csdlc-bind.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/tests/gate2.rs",
+      ".csdlc/issues/5648"
+    ],
+    "reviewed_revision": "git-blake3:da05119e80b0cb0b6f768cf935ec9e0e10d7055e:a6ca8d1765314aed2615d3b45135cd78a4fdb9006f2ee1b311bdea0dd2b09879",
+    "findings": [],
+    "residual_risks": [
+      "The operator authority marker is validated as explicit non-empty provenance; its external authorization remains an operator responsibility."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5648,
+    "pull_request": 5652,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5652",
+    "base": "main",
+    "head": "codex/5648-operator-active-claim-revoke",
+    "revision": "git-blake3:39970ecf82562d7022c90cb930d66142b9b6cf62:c4b2a6746fa998c5768c43d02844772f2bed7e652b4cebbc10138661c4c7f8e2",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5648/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5648/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5648-preparation-review",
+      "revision": "0e446588d03734935d2f8e1cc35060784bd7ff9cfe4e7debb60cdf30c76b3b2b"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "1ce4391f54e9c443125e25b0430efc2685e996718a7468b5ff9eccb44609093d",
+      "rendered_digest": "e72896d0b7253c68ce09691fd4d7f593f92482b54cba39a0a4dfaaaee8d20ba7",
+      "ast_digest": "5b0b577f8cb5f6796f0fd69b70c1785d14b7cd3b67f86ee38938d6db3aafe7f9"
+    },
+    "stp": {
+      "values_digest": "5418ea5d58c1b6d2e6046a67dfa57845eb2bdc156ef594bbf41fbdbe616181b9",
+      "rendered_digest": "66e9e6fcfc30f03ee1b717f1b3cbdc8c6369e654d9d147d51aa4c7ca1c40c553",
+      "ast_digest": "928017994783412b64e548d091926e3eb91230cefe901f1dc39d0ce5c44934b6"
+    },
+    "spp": {
+      "values_digest": "24011a8f3b20640569c7e060a19242195480f4fcf813e84f8748b4eb99b33ed5",
+      "rendered_digest": "295d15c686cda476728622cec28b10932433c3cc888741fa89da602cde5c1bca",
+      "ast_digest": "0df86d853f90fae839698ac61801d6994f1b14da36844a8763b27cce6b2774cc"
+    },
+    "vpp": {
+      "values_digest": "ba010352d94064df89be5c3edcb936295ee17fd3387e0f169083fa02dce07d15",
+      "rendered_digest": "ea0fc83f3b89425d2ed030143a09b0c7b3482e10877a1d348c4b6528d987db61",
+      "ast_digest": "1c7f26416ac828e71ddd64bce2d1fc163356c9e9d14d9b323a1af612fe9cfe45"
+    },
+    "srp": {
+      "values_digest": "1b6cbc053e20ddc1e8da611379f4496bf0ef0ad4555cb69ada6c988ba87f5c5d",
+      "rendered_digest": "1c98084887828d7f861da81982c9ed95dd2d5cf5fbfe769b45c242bd43053ff5",
+      "ast_digest": "cb1d60eac83dbaf986b8c72f506b03d5c82e3ebfa04e2fd0e77d7f739c2ded0d"
+    },
+    "sor": {
+      "values_digest": "9f817374be06e810f762a80ef818057180d5300731c92d4b91785decc79d2884",
+      "rendered_digest": "604689a306d7c2d4f568422fd74f8ea6dbfc7c0bffb3e4c4d39c5fb2dbf608f2",
+      "ast_digest": "34dd73132910504501b284ce6b2101d27c9e778798ea64d0197aee8a672b6c80"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5648-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5648-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5648-execution",
+      "reason": "Implementation is complete and focused validation is green"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5648-execution",
+      "reason": "Bounded exact-head review is complete with no findings"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5648-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5648-execution",
+      "reason": "Recover exact review identity after publication metadata commits; implementation scope is unchanged."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5648-execution",
+      "reason": "Final exact-head review is complete with no findings"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5648-execution",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5648-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:5648-preparation-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5648-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5648-execution",
+      "reason": "Record focused typed validation for operator active-claim revoke",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"csdlc-validate\",\"--request\",\".csdlc/prepared/issues/5648/validate-local.json\"],\"purpose\":\"Prove operator CAS revoke, stale guards, formatting, and strict targeted lint\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5648/local contains a local_pass three-lane proof: claim-revoke focused tests, cargo fmt --check, and strict targeted Clippy all passed.\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5648-preparation-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5648-execution",
+      "reason": "Record remediated focused typed validation for operator active-claim revoke",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"csdlc-validate\",\"--request\",\".csdlc/prepared/issues/5648/validate-local.json\"],\"purpose\":\"Prove operator CAS revoke, stale guards, formatting, and strict targeted lint\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5648/local contains a local_pass three-lane proof: claim-revoke focused tests, cargo fmt --check, and strict targeted Clippy all passed.\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:5648-preparation-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:5648-execution",
+      "reason": "Record remediated focused typed validation for operator active-claim revoke",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"csdlc-validate\",\"--request\",\".csdlc/prepared/issues/5648/validate-local.json\"],\"purpose\":\"Prove operator CAS revoke, stale guards, formatting, and strict targeted lint\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5648/local contains a local_pass three-lane proof: claim-revoke focused tests, cargo fmt --check, and strict targeted Clippy all passed.\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex:5648-execution",
+      "reason": "Record implementation of typed operator active-claim revoke",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Added typed operator-authorized active-claim revoke with CAS, expiry guard, audit, schema, CLI route, and focused tests.\",\"changes\":[\"csdlc-v2/src/lifecycle.rs\",\"csdlc-v2/src/bin/csdlc-bind.rs\",\"csdlc-v2/src/schema.rs\",\"csdlc-v2/src/lib.rs\",\"csdlc-v2/tests/gate2.rs\"],\"artifacts\":[\".csdlc/evidence/5648/local\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex:5648-execution",
+      "reason": "Implementation is complete and focused validation is green",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5648-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "bounded-subagent-review-5648",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:5648-execution",
+      "reason": "Bounded exact-head review is complete with no findings",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:5648-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:5648-execution",
+      "reason": "Recover exact review identity after publication metadata commits; implementation scope is unchanged.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5648-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "bounded-subagent-review-5648",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5648-execution",
+      "reason": "Final exact-head review is complete with no findings",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5648-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:issue-5655-slot-1",
+      "reason": "Release stale broad csdlc-v2 source/test claim from closed issue #5648 before implementing #5655.",
+      "operation": "{\"claim_id\":\"claim-5648-operator-active-claim-revoke\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"github://danielbaustin/agent-design-language/issues/5648 observed closed at 2026-07-24T18:04:54Z while retained published lifecycle claim blocks #5655 implementation scope\",\"previous_owner\":\"codex:5648-execution\"}"
+    }
+  ]
+}

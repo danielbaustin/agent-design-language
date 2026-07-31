@@ -1,0 +1,77 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5727,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][claims] Make released bound claims safely reacquirable",
+    "slug": "v0-91-8-csdlc-v2-claims-make-released-bound-claims-safely-reacquirable",
+    "version": "v0.91.8",
+    "generation": 12
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "claim_reacquisition",
+          "proof_role": "Focused Rust lifecycle proof for typed claim reacquisition and dormant doctor truth",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 300,
+          "budget_tokens": 5000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate2",
+            "claim"
+          ],
+          "parallel_group": "focused",
+          "defer_reason": null
+        },
+        {
+          "lane": "issue_5354_reproduction",
+          "proof_role": "Prove the prepared #5354 record can reacquire through the typed binary and return to doctor PASS",
+          "acceptance_ids": [
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 180,
+          "budget_tokens": 2500,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate7_lifecycle",
+            "reacquire"
+          ],
+          "parallel_group": "focused",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on stale generation or digest, invalid claim identity, non-resumable phase, live overlap, missing audit preservation, write authorization regression, or failed #5354 reproduction.",
+      "design_ref": ".csdlc/prepared/issues/5727/design.md",
+      "design_digest": "8ffd654085218d958d779afc8dcd90d6ea629e3fe67444e5d58bd231017b8b6b",
+      "diagram_ref": ".csdlc/prepared/issues/5727/diagram.mmd",
+      "diagram_digest": "a9576bc71e055fe939e8e384efb4e5edd5f962015a11c79cea049c60fa40c5c8"
+    }
+  }
+}

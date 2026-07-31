@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5653,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][docs] Refresh README status, release, CI, and homepage links",
+    "slug": "readme-status-release-homepage-refresh",
+    "version": "v0.91.8",
+    "generation": 12
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "readme-focused",
+          "proof_role": "Markdown structure, link targets, badge branch, and stale-version wording",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 800,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed and preserve truthful release boundaries.",
+      "design_ref": ".csdlc/prepared/issues/5653/design.md",
+      "design_digest": "841a852b8267d543686c4241d13eb74bbb2d0678cf6ba1d537bfeb80fa7af0f5",
+      "diagram_ref": ".csdlc/prepared/issues/5653/diagram.mmd",
+      "diagram_digest": "f72588af59f3216fbabd5f8e947778c5f5aad46390bec0f8d043795b8e408269"
+    }
+  }
+}

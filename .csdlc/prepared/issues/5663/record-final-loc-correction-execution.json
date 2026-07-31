@@ -1,0 +1,25 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "2b137e328b4399765b4a0f1fbf8129c4f47a24b709e3a08e260809a028ed89d0",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record final SOR correction for superseded pre-review, intermediate LoC/validation rows, and the external-adapter fail-closed review fix.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented durable bounded local Runtime v3 adapters with final review fixes. Current authoritative validation is the FastWork target-dir PVF local_pass in .csdlc/evidence/5663, and current physical LoC for claimed source/test paths is before 2481, after 2453, net -28. Earlier SOR rows with no target-dir commands, after 2461/net -20, after 2471/net -10, and after 2449/net -32 are retained only as superseded pre-final lifecycle history.",
+    "changes": [
+      "Integrated default fresh-executor CheckpointStore restore proof into the production adapter assembly test to avoid parallel default-state cleanup races.",
+      "Moved external transport refusal ahead of local timeout/cancel branches and covered timeout/cancel payloads for Provider, ACIP, A2A, and Cloud Bridge.",
+      "Updated final typed VPP and PVF evidence to before 2481, after 2453, net -28.",
+      "Marked earlier non-FastWork and intermediate LoC SOR rows as superseded pre-final lifecycle history."
+    ],
+    "artifacts": [
+      ".csdlc/prepared/issues/5663/replace-validation-lanes-after-review.json",
+      ".csdlc/prepared/issues/5663/validate-after-review.json",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log"
+    ]
+  },
+  "fail_after_backup": false
+}

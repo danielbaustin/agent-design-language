@@ -271,6 +271,45 @@ pub struct RemotePullRequest {
     pub head_sha: String,
 }
 
+pub fn body_has_github_closing_keyword(body: &str, issue: u64, repository: &str) -> bool {
+    let issue_ref = format!("#{issue}");
+    let qualified_issue_ref = format!("{repository}#{issue}").to_ascii_lowercase();
+    body.lines().any(|line| {
+        let mut closing_keyword = false;
+        for token in line.split_whitespace() {
+            let token = token
+                .trim_matches(|c: char| {
+                    matches!(
+                        c,
+                        ':' | ',' | ';' | '.' | '(' | ')' | '[' | ']' | '"' | '\''
+                    )
+                })
+                .to_ascii_lowercase();
+            if matches!(
+                token.as_str(),
+                "close"
+                    | "closes"
+                    | "closed"
+                    | "fix"
+                    | "fixes"
+                    | "fixed"
+                    | "resolve"
+                    | "resolves"
+                    | "resolved"
+            ) {
+                closing_keyword = true;
+                continue;
+            }
+            let references_issue = token == issue_ref || token == qualified_issue_ref;
+            if closing_keyword && references_issue {
+                return true;
+            }
+            closing_keyword = false;
+        }
+        false
+    })
+}
+
 #[derive(
     Debug,
     Clone,
@@ -316,7 +355,7 @@ pub fn prepare_publication(
         || request.base.trim().is_empty()
         || request.head.trim().is_empty()
         || request.title.trim().is_empty()
-        || !request.body.contains(&format!("#{}", request.issue))
+        || !body_has_github_closing_keyword(&request.body, request.issue, &request.repository)
         || !valid_remote_name(&request.remote)
         || !valid_ref_name(&request.base)
         || !valid_ref_name(&request.head)
@@ -453,7 +492,7 @@ fn validate_remote_identity(intent: &PublicationIntent, remote: &RemotePullReque
     if remote.repository != intent.repository
         || remote.base != intent.base
         || remote.head != intent.head
-        || !remote.body.contains(&format!("#{}", intent.issue))
+        || !body_has_github_closing_keyword(&remote.body, intent.issue, &intent.repository)
     {
         return Err(V2Error::new(
             ErrorCode::ReconciliationRequired,

@@ -1,0 +1,9 @@
+{
+  "schema": "csdlc.review_recovery_request.v1",
+  "issue": 5701,
+  "expected_generation": 30,
+  "expected_digest": "ed8c7ee017f1642d42c080fb9c2ca1cb8ed4f18fb9c9a3daabd92398772d67e1",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "reason": "Recover exact review and publication truth after moving the unchanged Observatory design to the version-neutral demos/html-observatory public path."
+}

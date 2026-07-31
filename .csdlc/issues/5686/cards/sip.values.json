@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5686,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][records] Publish #5662 terminal projection to main",
+    "slug": "publish-5662-terminal-projection",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Land the canonical receipt-matching #5662 terminal projection in main through a governed repair PR.",
+      "required_outcome": "Current main gains the exact #5662 closed-out projection without implementation changes, receipt mutation, or direct writes on main.",
+      "declared_scope": [
+        "Tracked .csdlc issue projection for #5662",
+        "Tracked publication intent for #5662",
+        "Issue-local lifecycle records for #5686"
+      ],
+      "authority_boundary": [
+        "#5686 may project immutable #5662 terminal truth but may not change #5662 implementation behavior",
+        "The canonical closeout receipt is read-only authority",
+        "Main is changed only by reviewed PR merge"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 lifecycle only",
+        "No tracked writes on main",
+        "FastWork issue-bound worktree only",
+        "No raw gh or browser mutation",
+        "No binary builds",
+        "Capture tooling anomalies in issues"
+      ]
+    }
+  }
+}

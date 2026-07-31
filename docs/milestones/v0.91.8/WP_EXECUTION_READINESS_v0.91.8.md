@@ -15,8 +15,8 @@
 | WP-10A | WP-09 provider/adapter freeze; #5499 -> #5498 -> (#5500 and #5502) -> #5501 -> #5497 | Waiting |
 | WP-11 | WP-03, WP-10, and completed WP-10A live proof | Waiting |
 | WP-12 | WP-11 | Waiting |
-| WP-13 | WP-12 plus current #5358/#5361 acceptance; deletion manifests proven disjoint | Waiting |
-| WP-14A | WP-13 plus #5358 and #5361 | Waiting |
+| WP-13 | WP-14A through WP-17 complete; deletion manifests proven disjoint; run immediately before #5356 | Deferred |
+| WP-14A | #5358, #5361, #5344, and #5343 accepted at exact revisions | Ready for focused acceptance preparation |
 | WP-15-WP-23 | Prior closeout gates | Waiting |
 
 ## Opening Card-Factory Wave

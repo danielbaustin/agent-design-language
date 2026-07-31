@@ -1,0 +1,11 @@
+{
+  "issue": 5678,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "605f31947d37501ef103789c73af7af0632fc7a746cbf1d4a158e682b7f85c52",
+  "claim_id": "claim-5678-opus-review-runbook",
+  "actor": "codex:issue-5678-opus-review-runbook",
+  "reason": "Exact scoped review passed with no actionable findings.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"},
+  "fail_after_backup": false
+}

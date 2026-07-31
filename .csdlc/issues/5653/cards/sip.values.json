@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5653,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][docs] Refresh README status, release, CI, and homepage links",
+    "slug": "readme-status-release-homepage-refresh",
+    "version": "v0.91.8",
+    "generation": 12
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Bring the root README up to date with current repository/release truth and link to the ADL homepage.",
+      "required_outcome": "A concise README refresh with truthful v0.91.8 release-tail status, a homepage link, and focused documentation proof.",
+      "declared_scope": [
+        "README.md"
+      ],
+      "authority_boundary": [
+        "README may describe only retained repository evidence; it does not approve a release, cutover, or external publication."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "never write main",
+        "use typed v2 binaries",
+        "no raw gh",
+        "no AWS",
+        "no direct card/state edits"
+      ]
+    }
+  }
+}

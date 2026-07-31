@@ -1,0 +1,69 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5648,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][tools] Add explicit operator active-claim revoke",
+    "slug": "operator-active-claim-revoke",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Add the typed request and atomic store operation, test fail-closed CAS/authority behavior, review the exact head, and publish the narrow tooling fix.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Implement typed revoke request/result and atomic store operation",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Run focused tests, Clippy, exact review, and publish",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "CAS mismatch never mutates state",
+        "phase is unchanged",
+        "audit records prior owner and authority",
+        "no automatic claim stealing"
+      ],
+      "risks": [
+        "operator misuse",
+        "stale request",
+        "claim collision"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "missing authority marker",
+        "stale generation or digest",
+        "claim id mismatch",
+        "test failure"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5648/design.md",
+      "design_digest": "0e446588d03734935d2f8e1cc35060784bd7ff9cfe4e7debb60cdf30c76b3b2b",
+      "diagram_ref": ".csdlc/prepared/issues/5648/diagram.mmd",
+      "diagram_digest": "8654a9fdc5a4985d4fccb3aac5db0a9ed52ca2f74c0e0af117030b49955b7df0"
+    }
+  }
+}

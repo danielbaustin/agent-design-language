@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5695,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][tooling] Preserve blocked and unstable PR mergeability states",
+    "slug": "pr-state-mergeability",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make csdlc-pr-state distinguish stale-base ancestry from pending GitHub merge-policy states.",
+      "required_outcome": "Explicit mergeability classification preserves behind as stale_base, blocked and unstable as waiting, dirty as conflicted, and unknown as waiting with focused proof.",
+      "declared_scope": [
+        "csdlc-v2/src/github.rs",
+        "csdlc-v2/src/github.rs tests",
+        "issue-local typed cards and evidence"
+      ],
+      "authority_boundary": [
+        "Issue 5695 owns mergeability classification and focused tests only",
+        "csdlc-merge remains fail-closed and GitHub remains merge authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 only",
+        "No main checkout edits",
+        "No AWS",
+        "No provider or runtime changes",
+        "Do not reopen issue 5683"
+      ]
+    }
+  }
+}

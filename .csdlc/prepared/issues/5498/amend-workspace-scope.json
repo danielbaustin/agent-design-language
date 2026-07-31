@@ -1,0 +1,13 @@
+{
+  "issue": 5498,
+  "claim_id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+  "expected_generation": 8,
+  "expected_digest": "77e11e9d906986d9c3ca4a9b0cc7f5b1d143eea6f0e7cd617cc35185e097878e",
+  "now_unix_seconds": 1784762031,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Register the bounded task adapter as a first-class ADL v2 workspace member and retain the workspace lock update.",
+  "add_protected_paths": [
+    "adl-v2/Cargo.toml",
+    "adl-v2/Cargo.lock"
+  ]
+}

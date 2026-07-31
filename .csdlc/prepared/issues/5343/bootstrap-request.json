@@ -1,0 +1,162 @@
+{
+  "issue": 5343,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5343/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5343/diagram.mmd",
+  "design_reviewer": "codex:5343-preparation-review",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5343-v0918-wp12-reversible-default-switch-preparation",
+    "owner": "codex:5343-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784661008,
+    "expires_unix_seconds": 1785265808,
+    "heartbeat_unix_seconds": 1784661008,
+    "branch": "codex/5343-v0918-wp12-reversible-default-switch",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5343",
+      ".csdlc/locks/5343.lock",
+      ".csdlc/prepared/issues/5343",
+      ".csdlc/evidence/5343",
+      "docs/milestones/v0.91.8/evidence/wp12/cutover-5343"
+    ],
+    "purpose": "Prepare and review #5343 reversible default-switch contracts only; no selector transaction or implementation until #5344 is merged, typed closed_out, receipt-backed, claim-free, ancestral, and accepted"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-12][cutover] Execute reviewed reversible ADL default switch",
+    "slug": "v0918-wp12-reversible-adl-default-switch",
+    "version": "v0.91.8",
+    "goal": "Execute one reviewed exact-revision default-generation transaction through the #5345 selector only after #5344 proves soak and exact rollback, while retaining explicit v1 override throughout a documented compatibility window.",
+    "required_outcome": "A deterministic cutover receipt binds the selected generation to a verified fresh-install executable and receipt, preserves exact prior selector identity, proves explicit v1 override and rollback, opens a bounded rollback window, and grants no deletion authority.",
+    "declared_scope": [
+      "issue-local typed lifecycle, preparation, review, validation, and evidence records",
+      "normalized exact-revision cutover evidence under docs/milestones/v0.91.8/evidence/wp12/cutover-5343",
+      "read-only use of the authoritative #5345 selector, installer, CLI, transaction, and rollback interfaces",
+      "exact #5344 merge, typed closeout, retained receipt, ancestry, soak, rollback, fresh-install, and handoff acceptance gates",
+      "transaction, failure-preservation, fresh-install, explicit-v1, rollback-window, budget, PVF, no-deferral, CI, and post-merge proof"
+    ],
+    "authority_boundary": [
+      "#5343 owns only issue-local records and its normalized cutover evidence path",
+      "#5345 owns selector, installer, CLI, locking, compare-and-swap, receipt, and rollback implementation and is a read-only dependency",
+      "#5344 owns soak, rollback, compatibility-window, and accepted cutover-handoff evidence and must be terminal before execution",
+      "Runtime v2 and incumbent ADL remain untouched rollback targets and may not be edited, copied, imported, linked, or deleted",
+      "WP-13 deletion, release acceptance, cloud work, and production-provider claims are outside #5343"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries and current-registry semantic card operations only",
+      "Keep root main untouched and clean; all tracked #5343 work stays in /Volumes/FastWork/adl-wp-5343",
+      "Preparation only: no selector transaction, installation, product implementation, publication, PR, merge, cutover, deletion, AWS, raw gh, or Runtime v2 edit",
+      "Do not execute until #5344 is GitHub merged, typed closed_out, claim-free, backed by a retained merged receipt, ancestral, and accompanied by an accepted exact-revision soak/rollback handoff",
+      "Do not execute until #5345 selector and installer authority is merged, typed closed_out, receipt-backed, ancestral, and exact-install verifiable",
+      "Use /Volumes/FastWork for generated validation output",
+      "Run bounded preparation review, fix every actionable finding, commit and push preparation only, and stop"
+    ],
+    "task_boundary": "Prepare durable reviewed #5343 cutover contracts and an executable fail-closed dependency gate; do not execute the selector switch, implement product code, install binaries, publish, open a PR, merge, delete legacy code, use AWS/raw gh, or edit Runtime v2.",
+    "deliverables": [
+      "All six issue-specific current-registry typed cards",
+      "Reversible default-switch design and Mermaid diagram",
+      "Exact #5344 merged, typed-closed-out, claim-release, retained-receipt, ancestry, and accepted soak/rollback handoff gate",
+      "Exact #5345 selector/installer identity and authority gate",
+      "Fresh-install, locked compare-and-swap, explicit-v1, failure-preservation, rollback-window, and no-deletion contract",
+      "Preparation-only protected paths and exact ownership boundary",
+      "COTS decision, LoC/module/test/time budgets, PVF classification, no-deferral matrix, CI, exact-review, and post-merge plan",
+      "Deterministic redacted exact-revision cutover evidence schema"
+    ],
+    "acceptance_criteria": [
+      "AC-1: No selector command or cutover work starts until #5344 is GitHub merged, typed closed_out with no active claim, backed by a retained merged terminal receipt whose observed merge SHA is ancestral, and accompanied by accepted exact-revision soak and rollback evidence",
+      "AC-2: The #5344 handoff binds reviewed revision, manifest digest, exact prior and restored selector digests, fresh-install receipt, zero unresolved rows, accepted residual risks, and an operator-approved rollback-window contract; prior and restored digests must match",
+      "AC-3: The exact intended generation and executable digest are verified from a fresh isolated installation and deterministic installation receipt before selection, with no implicit network, credential, fallback, or production-state discovery",
+      "AC-4: Default selection performs one locked atomic compare-and-swap through the #5345 interface from an expected prior digest, emits a deterministic receipt, and re-reads exact selected generation, executable digest, and installation identity before success",
+      "AC-5: Stale expectation, contention, malformed or missing receipt, executable mismatch, unsupported schema, interruption, re-read mismatch, and smoke failure preserve prior selector bytes or trigger explicit rollback through the same transaction; direct storage editing and silent fallback are forbidden",
+      "AC-6: Explicit v1 override is proven before and after selection and at required rollback-window checkpoints while the prior v1 executable and receipt remain intact; exact restoration failure blocks publication, closeout, WP-13, and WP-14A",
+      "AC-7: The retained cutover packet is deterministic, redacted, repo-relative, exact-revision and exact-tool-version bound, records selector and installation receipts, rollback-window start/end, checkpoint results, and claim boundaries, and contains no secret or absolute host path",
+      "AC-8: #5343 edits no Runtime v2 or incumbent ADL source, deletes no legacy surface, adds no crate or production dependency, and owns only issue-local records and its normalized cutover evidence",
+      "AC-9: Preparation, dependency, transaction, failure, fresh-install, explicit-v1, rollback-window, budget, CI, exact-review, and post-merge PVF lanes are executable with no deferred acceptance; orchestration stays within 500 nonblank lines, tests/fixtures within 800, modules below 400, and 120/300/600/1200-second budgets unless exact reviewed variance is recorded"
+    ],
+    "dependencies": [
+      "#5344 WP-12 soak/rollback live merged, typed closed_out, claim released, retained merged receipt present, merge SHA ancestral, and exact handoff accepted",
+      "#5345 authoritative selector and installer live merged, typed closed_out, retained merged receipt present, merge SHA ancestral, and exact installation contract available",
+      "WP-11 parity and Runtime v3 acceptance inherited through and truthfully bound by the terminal #5344 handoff",
+      "Operator-approved rollback-window duration and checkpoint cadence recorded before selector mutation"
+    ],
+    "repo_inputs": [
+      "AGENTS.md",
+      "GitHub issue #5343 source prompt",
+      "docs/templates/prompts/current.json",
+      "docs/milestones/v0.91.8/DESIGN_v0.91.8.md",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/DELETION_AND_CUTOVER_v0.91.8.md",
+      "future terminal #5344 receipt and accepted exact-revision soak/rollback handoff",
+      "future terminal #5345 selector/installer receipt and public command contract"
+    ],
+    "non_goals": [
+      "Selector, installer, CLI, lock, compare-and-swap, signing, language, compiler, engine, records, Runtime, provider, governed-tool, or lifecycle implementation",
+      "Soak or rollback execution owned by #5344",
+      "Runtime v2 or incumbent ADL source edit, import, copying, linking, deletion, or cleanup",
+      "WP-13 deletion, WP-14A acceptance, milestone closeout, v0.92 activation, cloud provisioning, AWS, live credentials, or production-provider claims",
+      "Any selector transaction, installation, product edit, publication, PR, merge, or closeout during this preparation task"
+    ],
+    "plan_summary": "Render and validate all six cards; freeze exact #5344/#5345 dependency gates, selector transaction, fresh-install identity, explicit-v1 rollback window, evidence schema, ownership, protected paths, COTS, budgets, PVF, and no-deferral invariants; obtain bounded preparation review and fix findings; commit and push preparation only; remain blocked until #5344 is merged and typed closed_out; then execute the full reviewed lifecycle without widening scope.",
+    "steps": [
+      {"id":"S1","action":"Complete all six typed cards, design, diagram, exact dependency and protected-path gates, COTS, budgets, PVF, no-deferral, transaction and rollback-window invariants, preparation validation, bounded review/fixes, durable commit, and push without execution","acceptance_ids":["AC-1","AC-8","AC-9"],"status":"in_progress"},
+      {"id":"S2","action":"Maintain a read-only dependency watch and begin execution only after #5344 and #5345 satisfy live merge, typed closed_out, retained receipt, claim release, ancestry, and exact handoff gates","acceptance_ids":["AC-1","AC-2"],"status":"pending"},
+      {"id":"S3","action":"Execute one reviewed fresh-install-bound locked compare-and-swap default switch through the #5345 interface and prove failure preservation without implementing selector behavior","acceptance_ids":["AC-3","AC-4","AC-5","AC-8"],"status":"pending"},
+      {"id":"S4","action":"Prove explicit v1 override, rollback-window checkpoints, exact restoration, evidence integrity, budgets, CI, and every negative case; fix all findings","acceptance_ids":["AC-5","AC-6","AC-7","AC-9"],"status":"pending"},
+      {"id":"S5","action":"Obtain exact-revision review, publish through typed v2, shepherd required checks, merge only under authorization, run post-merge proof, close out, retain the terminal receipt, release the claim, and hand accepted evidence to WP-13","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8","AC-9"],"status":"pending"}
+    ],
+    "invariants": [
+      "No selector mutation begins before #5344 and #5345 are terminal, receipt-backed, claim-free, ancestral, and exact-evidence accepted",
+      "#5343 uses the authoritative #5345 transaction and never edits selector storage or implements a second selector",
+      "The selected executable and installation receipt are exact and fresh-install verified before mutation",
+      "Prior selector bytes, digest, v1 executable, and v1 receipt remain intact throughout the rollback window",
+      "Every failure preserves prior bytes or uses explicit verified rollback through the same compare-and-swap interface",
+      "Rollback or explicit-v1 proof failure blocks publication, closeout, WP-13, and WP-14A",
+      "Evidence is deterministic, redacted, repo-relative, exact-revision bound, and non-secret",
+      "Runtime v2 and incumbent ADL remain untouched rollback targets and no legacy deletion occurs",
+      "All applicable acceptance and PVF lanes complete without deferral before publication"
+    ],
+    "risks": [
+      "A cutover wrapper can become a second selector or bypass the #5345 transaction",
+      "Fresh-install identity can drift from the executable actually selected",
+      "Stale writers, lock contention, interruption, or partial persistence can damage prior selector state",
+      "A green smoke can hide broken explicit-v1 override or rollback-window checkpoints",
+      "Metadata can be mistaken for accepted #5344 soak/rollback proof",
+      "A compatibility clock can start before all exact verification passes or remain ambiguous",
+      "Evidence can leak host paths, credentials, or unreviewed production claims",
+      "Cutover can be misread as WP-13 deletion authority"
+    ],
+    "planning_profile": "migration",
+    "stop_conditions": [
+      "Any #5344 or #5345 live merge, typed closed_out, retained receipt, claim release, ancestry, or exact evidence predicate is absent or contradictory",
+      "Any intended protected path collides with an active typed claim",
+      "The selector requires direct storage editing, implicit fallback, hidden network, credentials, AWS, Runtime v2 edits, or production-state mutation",
+      "Exact prior selector bytes, digest, v1 executable, or receipt cannot be retained and verified",
+      "The rollback window is missing, expired, ambiguous, or not operator approved",
+      "Evidence is non-deterministic, secret-bearing, host-bound, or incomplete",
+      "Any acceptance or validation item would be deferred, skipped, or replaced with metadata-only proof",
+      "A LoC, module, test, dependency, or duration budget exceeds its limit without exact reviewed variance"
+    ],
+    "validation_lanes": [
+      {"lane":"preparation-contract","proof_role":"Prove six typed cards, design/diagram, exact #5344/#5345 dependencies, protected paths, transaction and rollback-window invariants, COTS, budgets, PVF, no-deferral, and root safety","acceptance_ids":["AC-1","AC-8","AC-9"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":3000,"argv":["ruby",".csdlc/prepared/issues/5343/validate-preparation.rb"],"parallel_group":"preparation","defer_reason":null},
+      {"lane":"dependency-terminal-gate","proof_role":"Fail closed unless #5344 is merged, typed closed_out, receipt-backed, claim-free, ancestral, and accompanied by accepted exact soak/rollback handoff evidence","acceptance_ids":["AC-1","AC-2"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":2000,"argv":["ruby",".csdlc/prepared/issues/5343/check-dependencies.rb"],"parallel_group":"execution-gate","defer_reason":"Run only when execution is requested; it must fail closed until #5344 is terminal and accepted"},
+      {"lane":"transaction-fault-matrix","proof_role":"Prove fresh-install identity, locked compare-and-swap selection, prior-byte preservation, deterministic receipt, and all transaction failure classes","acceptance_ids":["AC-3","AC-4","AC-5"],"deterministic":true,"resource_profile":"medium","budget_seconds":300,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5343/run-validation-lane.rb","transaction-fault-matrix"],"parallel_group":"transaction","defer_reason":"Mandatory after terminal dependency gates and before publication"},
+      {"lane":"fresh-install-override","proof_role":"Prove the selected generation from a fresh install and explicit v1 override while retaining exact prior executable and receipt identity","acceptance_ids":["AC-3","AC-6"],"deterministic":true,"resource_profile":"medium","budget_seconds":600,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5343/run-validation-lane.rb","fresh-install-override"],"parallel_group":"cutover","defer_reason":"Mandatory after terminal dependency gates and before publication"},
+      {"lane":"rollback-window-evidence","proof_role":"Prove rollback-window start/end, checkpoint cadence, explicit-v1 checkpoints, exact rollback, and deterministic redacted evidence","acceptance_ids":["AC-5","AC-6","AC-7"],"deterministic":true,"resource_profile":"medium","budget_seconds":600,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5343/run-validation-lane.rb","rollback-window-evidence"],"parallel_group":"rollback-window","defer_reason":"Mandatory after the reviewed selector transaction and before publication"},
+      {"lane":"cutover-budgets","proof_role":"Enforce no new dependencies, no product or Runtime v2 edits, orchestration/test/module LoC, test count, complete no-deferral proof, and 1200-second ceiling","acceptance_ids":["AC-7","AC-8","AC-9"],"deterministic":true,"resource_profile":"medium","budget_seconds":1200,"budget_tokens":5000,"argv":["ruby",".csdlc/prepared/issues/5343/run-validation-lane.rb","cutover-budgets"],"parallel_group":"budgets","defer_reason":"Mandatory at the exact execution revision before publication"},
+      {"lane":"post-merge-exact","proof_role":"Re-run dependency ancestry, selector identity, explicit-v1, rollback-window, evidence integrity, budgets, exact revision identity, and WP-13 blocking gates after authorized merge","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8","AC-9"],"deterministic":true,"resource_profile":"large","budget_seconds":1200,"budget_tokens":10000,"argv":["ruby",".csdlc/prepared/issues/5343/run-validation-lane.rb","post-merge-exact"],"parallel_group":"post-merge","defer_reason":"Execute only after authorized merge and typed merged-state reconciliation; mandatory before closeout"}
+    ],
+    "failure_policy": "Fail closed without selector mutation, publication, merge, closeout, rollback-window start, or WP-13 handoff on an incomplete #5344/#5345 gate, claim collision, unverified fresh install, non-atomic transaction, prior-state damage, explicit-v1 or rollback failure, ambiguous window, hidden network/credential/AWS use, Runtime v2 edit, legacy deletion, secret or host-path disclosure, overclaim, budget violation, deferred acceptance, stale review, red CI, or absent post-merge proof.",
+    "review_prompts": [
+      "Can any missing, stale, malformed, contradictory, non-ancestral, or metadata-only #5344/#5345 fact bypass the execution gate?",
+      "Can any argument, environment value, path, symlink, stale writer, lock race, interruption, or malformed receipt bypass exact installation verification or alter prior selector bytes outside the #5345 transaction?",
+      "Are fresh-install selection, explicit v1 override, rollback-window checkpoints, exact restoration, and every failure class deterministic and fail-closed?",
+      "Does #5343 own only cutover evidence and avoid selector implementation, Runtime v2 edits, legacy deletion, AWS, credentials, hidden network, and production overclaim?",
+      "Are COTS, protected paths, LoC/test/module/time budgets, PVF classification, no-deferral, CI, exact review, and post-merge proof complete and executable?"
+    ],
+    "review_scope": ".csdlc/issues/5343\n.csdlc/locks/5343.lock\n.csdlc/prepared/issues/5343\n.csdlc/evidence/5343\ndocs/milestones/v0.91.8/evidence/wp12/cutover-5343"
+  }
+}

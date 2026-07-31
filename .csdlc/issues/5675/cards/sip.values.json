@@ -1,0 +1,35 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5675,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][provider] Route Kimi and MiniMax through adl-provider-adapter",
+    "slug": "provider-adapter-kimi-minimax-routes",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Add reliable Rust-native hosted adapter routes for Kimi/Moonshot and MiniMax.",
+      "required_outcome": "Typed Kimi and MiniMax dispatch, bounded request contracts, provider error classification, focused tests, and live credentialed probe evidence.",
+      "declared_scope": [
+        "adl/src/provider_adapter.rs",
+        "adl/src/provider/profiles.rs"
+      ],
+      "authority_boundary": [
+        "The adapter owns request routing, bounded payloads, response extraction, and typed provider failures; it does not provision credentials or alter lifecycle policy."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "never write main",
+        "use typed v2 binaries",
+        "no raw gh",
+        "no AWS",
+        "no shell/Python lifecycle wrappers"
+      ]
+    }
+  }
+}

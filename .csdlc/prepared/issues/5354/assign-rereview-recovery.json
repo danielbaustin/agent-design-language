@@ -1,0 +1,8 @@
+{
+  "issue": 5354,
+  "expected_generation": 10,
+  "expected_digest": "e87225bb62c1f32b4d177afa4abf71c132e499222f02b8388952dff919ba892b",
+  "claim_id": "claim-5354-v0918-wp15-reacquired",
+  "actor": "codex:5354-wp15-owner",
+  "reason": "The exact-head review repair introduced a WSS CA-bundle verification fix and refreshed live proof; recover to implemented so corrected review truth can be recorded."
+}

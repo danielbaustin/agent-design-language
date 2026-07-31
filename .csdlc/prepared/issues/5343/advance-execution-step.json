@@ -1,0 +1,15 @@
+{
+  "issue": 5343,
+  "card": "spp",
+  "expected_generation": 10,
+  "expected_digest": "90e5cd74fe5f8fd38834d915592c164f56b7947e1e2af9f3ef31c18203faadca",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "ADL v2 executed, exact prior selector bytes were restored, retained v1 executed after rollback, and v2 was reselected with a fourteen-day no-deletion window.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S4",
+    "status": "completed"
+  },
+  "fail_after_backup": false
+}

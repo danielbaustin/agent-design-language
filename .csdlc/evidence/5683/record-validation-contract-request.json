@@ -1,0 +1,21 @@
+{
+  "actor": "codex:issue-5683-unity-remediation",
+  "card": "sor",
+  "claim_id": "claim-5683-v0918-unity-observatory-visual-remediation",
+  "expected_digest": "02ecc856929d916308c185595bfc71e86fbebbc6c5a76306b5f4bcbae5c037be",
+  "expected_generation": 2,
+  "issue": 5683,
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_v0916_unity_observatory_contract.sh"
+      ],
+      "evidence_ref": ".csdlc/evidence/5683/LIVE_UNITY_PROOF.md",
+      "outcome": "passed",
+      "purpose": "Verify the runtime shell contract and the remediated flagship stage-builder proof surface."
+    }
+  },
+  "reason": "Record focused Unity Observatory contract validation"
+}

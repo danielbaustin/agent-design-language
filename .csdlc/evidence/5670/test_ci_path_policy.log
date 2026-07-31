@@ -1,0 +1,169 @@
+PASS test_warm_rust_dependency_cache
+Authoritative coverage mode: bounded_policy_surface_pr
+Features: default
+Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes.
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-a/adl-runtime","validation_proof":false}
+Authoritative coverage companion: adl-runtime
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-a/workspace","validation_proof":false}
+Authoritative coverage mode: bounded_policy_surface_pr
+Features: default
+Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes.
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-collect-shard/workspace","validation_proof":false}
+Authoritative coverage mode: bounded_policy_surface_pr
+Features: default
+Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes.
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-report-only/workspace","validation_proof":false}
+Imported coverage profraw profiles: 1
+Authoritative coverage mode: full_authoritative_default_features
+Features: default
+Authoritative coverage linker mode: default
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-isolated-workspace/workspace","validation_proof":false}
+Authoritative coverage mode: full_authoritative_default_features
+Features: default
+Authoritative coverage linker mode: default
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-isolated-adl-runtime/adl-runtime","validation_proof":false}
+Authoritative coverage companion: adl-runtime
+Authoritative coverage mode: full_authoritative_default_features
+Features: default
+Authoritative coverage linker mode: default
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-release-artifacts/workspace","validation_proof":false}
+workspace summary from current isolated profile
+Authoritative coverage mode: full_authoritative_default_features
+Features: default
+Authoritative coverage linker mode: default
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+Authoritative coverage mode: bounded_policy_surface_pr
+Features: default
+Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes.
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-prebuild-failure/adl-runtime","validation_proof":false}
+Authoritative coverage companion: adl-runtime
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-prebuild-failure/workspace","validation_proof":false}
+Authoritative coverage compile failed for workspace: 66; partitions and report command suppressed
+coverage summary merge failed: workspace summary is missing: /Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/coverage-output/run-prebuild-failure/coverage-summary.adl.json
+Authoritative coverage mode: bounded_policy_surface_pr
+Features: default
+Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes.
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-combined-failure/adl-runtime","validation_proof":false}
+Authoritative coverage companion: adl-runtime
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-combined-failure/workspace","validation_proof":false}
+Authoritative coverage profile cleanup failed for workspace: 55
+coverage summary merge failed: workspace summary is missing: /Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/coverage-output/run-combined-failure/coverage-summary.adl.json
+Authoritative coverage mode: bounded_policy_surface_pr
+Features: default
+Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes.
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-cleanup-failure/adl-runtime","validation_proof":false}
+Authoritative coverage companion: adl-runtime
+Authoritative coverage profile cleanup failed for adl-runtime: 55
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-cleanup-failure/workspace","validation_proof":false}
+Authoritative coverage profile cleanup failed for workspace: 55
+coverage summary merge failed: workspace summary is missing: /Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/coverage-output/run-cleanup-failure/coverage-summary.adl.json
+Authoritative coverage mode: bounded_policy_surface_pr
+Features: default
+Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes.
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-failing/adl-runtime","validation_proof":false}
+Authoritative coverage companion: adl-runtime
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-failing/workspace","validation_proof":false}
+Authoritative coverage mode: bounded_policy_surface_pr
+Features: default
+Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes.
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-runtime-only-failure/adl-runtime","validation_proof":false}
+Authoritative coverage companion: adl-runtime
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-runtime-only-failure/workspace","validation_proof":false}
+Authoritative coverage mode: bounded_policy_surface_pr
+Features: default
+Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes.
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-workspace-only-failure/adl-runtime","validation_proof":false}
+Authoritative coverage companion: adl-runtime
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-workspace-only-failure/workspace","validation_proof":false}
+Authoritative coverage mode: bounded_policy_surface_pr
+Features: default
+Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes.
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-distinct-failures/adl-runtime","validation_proof":false}
+Authoritative coverage companion: adl-runtime
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-distinct-failures/workspace","validation_proof":false}
+Authoritative coverage mode: bounded_policy_surface_pr
+Features: default
+Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes.
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+Authoritative coverage mode: bounded_policy_surface_pr
+Features: default
+Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes.
+Authoritative coverage test threads: 4
+Authoritative coverage skip patterns: real_pr_,runtime_v2_runtime_inhabitant_integration_proof_route_paths_exist,runtime_v2_runtime_inhabitant_integration_contract_is_stable,runtime_v2_runtime_inhabitant_integration_matches_golden_fixture_and_report,runtime_v2_runtime_inhabitant_integration_validation_rejects_metadata_drift,runtime_v2_runtime_inhabitant_integration_validation_rejects_stage_and_trace_gaps,runtime_v2_runtime_inhabitant_integration_validate_against_rejects_dependency_drift,runtime_v2_runtime_inhabitant_integration_contract_registry_smoke_covers_accessors,csmctl_authenticated_api_client_waits_for_slow_listener_startup
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-concurrent-b/adl-runtime","validation_proof":false}
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-concurrent-a/adl-runtime","validation_proof":false}
+Authoritative coverage companion: adl-runtime
+Authoritative coverage companion: adl-runtime
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-concurrent-a/workspace","validation_proof":false}
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-concurrent-b/workspace","validation_proof":false}
+Authoritative coverage mode: full_authoritative_default_features
+Features: default
+Authoritative coverage linker mode: lld
+Authoritative coverage test threads: 2
+Authoritative coverage skip patterns: live_pr_fixture_
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-lld/adl-runtime","validation_proof":false}
+Authoritative coverage companion: adl-runtime
+{"status":"skipped","reason":"source target cache missing","source_target":"/Volumes/FastWork/adl-wp-5670/adl/target","dest_target":"/Volumes/FastWork/adl-wp-5670/.adl/tmp/authoritative-coverage.a7SCCt/scratch/target/llvm-cov-target/run-lld/workspace","validation_proof":false}
+PASS test_run_authoritative_coverage_lane
+ADL CI step log start: Coverage run and summary (json)
+started_at=2026-07-26T03:08:24Z
+command_argc=3
+command_redaction=metadata_only
+success-err
+success-out
+finished_at=2026-07-26T03:08:24Z
+exit_code=0
+elapsed_seconds=0
+ADL CI step log start: failing step
+started_at=2026-07-26T03:08:24Z
+command_argc=3
+command_redaction=metadata_only
+fail-err
+fail-out
+finished_at=2026-07-26T03:08:24Z
+exit_code=37
+elapsed_seconds=0
+ADL CI step log start: secret step
+started_at=2026-07-26T03:08:24Z
+command_argc=6
+command_redaction=metadata_only
+no-secret-output
+finished_at=2026-07-26T03:08:24Z
+exit_code=0
+elapsed_seconds=0
+PASS test_run_ci_step_with_log
+PASS test_setup_required_coverage_toolchain
+==> docs_diff_check: git diff --check
+PASS test_select_validation_lanes
+==> docs_diff_check: git diff --check
+==> nessus_remote_validation: bash adl/tools/run_nessus_remote_validation.sh --command 'printf remote-manager-ok' --local-artifact-dir /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/tmp.yoCz9bmp59/remote-manager-artifacts-run
+PASS test_validation_manager
+PASS: ci_path_policy PR-fast/full-coverage contract

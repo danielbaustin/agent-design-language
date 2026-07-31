@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5107,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21][planning] Queue Adaptive Learning DAG work after loop runtime and platform deployment",
+    "slug": "v0-91-8-wp21-adaptive-learning-dag-queue",
+    "version": "v0.91.8",
+    "generation": 3
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Recorded the #5107 Adaptive Learning DAG planning queue and v0.92 handoff boundary without implementing adaptive learning, graph mutation, runtime behavior, child issues, merge, or closeout.",
+      "actual_changes": [
+        ".csdlc/issues/5107",
+        ".csdlc/prepared/issues/5107",
+        "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
+        "docs/milestones/v0.92/features/README.md"
+      ],
+      "artifacts": [
+        ".csdlc/evidence/5107"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "ruby",
+            ".csdlc/prepared/issues/5107/validate_preparation.rb"
+          ],
+          "purpose": "Prove the #5107 queue cites exact platform inputs, preserves the #5104 historical-input boundary, keeps graph-mutation non-claims, and does not request child implementation issues.",
+          "outcome": "passed",
+          "evidence_ref": "preparation-doc-contract.log"
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "ready",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

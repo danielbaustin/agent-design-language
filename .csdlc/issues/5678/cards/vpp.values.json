@@ -1,0 +1,67 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5678,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][provider][docs] Keep Opus review runbook aligned with adapter CLI",
+    "slug": "opus-review-runbook-cli-alignment",
+    "version": "v0.91.8",
+    "generation": 3
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "opus-runbook-contract",
+          "proof_role": "Verify documented adapter flags, JSON fields, credential handling, and review truth boundaries against source text",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "bash",
+            "adl/tools/test_opus_review_runbook.sh"
+          ],
+          "parallel_group": "docs",
+          "defer_reason": null
+        },
+        {
+          "lane": "opus-runbook-diff-hygiene",
+          "proof_role": "Verify the bounded documentation diff has no whitespace corruption",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 200,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "docs",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on stale interface claims, missing schema evidence, secret or absolute-path leakage, scope drift, or failed focused validation.",
+      "design_ref": ".csdlc/prepared/issues/5678/design.md",
+      "design_digest": "a495000977ebfb479c685463ea410aca58567690f653a268cc32b43281d91d48",
+      "diagram_ref": ".csdlc/prepared/issues/5678/diagram.mmd",
+      "diagram_digest": "ecdb19c370cdd57aa510e1430d85c09453a2eaac9b9895b57a36c56310fe6db8"
+    }
+  }
+}

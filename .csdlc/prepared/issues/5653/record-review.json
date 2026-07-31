@@ -1,0 +1,16 @@
+{
+  "issue": 5653,
+  "expected_generation": 4,
+  "expected_digest": "aac4a402a06c837174935caa088d9142b605eba27329bf7a1ce1e3ff8f30430e",
+  "claim_id": "claim-5653-readme-refresh",
+  "actor": "bounded-subagent-review-5653",
+  "evidence": {
+    "reviewer": "bounded-subagent-review-5653",
+    "scope": ["README.md", ".csdlc/issues/5653"],
+    "reviewed_revision": "git-blake3:1c99697c41823e5dd8a00cd71e76a5beb95bfca9:ab7b241f87931339871652ea4ec3bc16d8551ac89d6a95289c6d4715f0ddb213",
+    "findings": [],
+    "residual_risks": ["README reflects release-tail evidence and does not approve a public release or resolve the separate failing main CI run."],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

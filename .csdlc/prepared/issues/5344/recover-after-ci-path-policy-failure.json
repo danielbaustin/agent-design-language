@@ -1,0 +1,8 @@
+{
+  "issue": 5344,
+  "expected_generation": 15,
+  "expected_digest": "ac3718ec5e5e8695f26289559a930af33bb632413ffa1f153b83f19a1bfcef3e",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact-head CI failed because ci_path_policy parsed Git-quoted UTF-8 filenames already present on main as Windows-illegal paths; recover publication truth for the bounded parser correction and exact review."
+}

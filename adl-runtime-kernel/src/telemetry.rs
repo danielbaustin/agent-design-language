@@ -9,6 +9,9 @@ use serde::{Deserialize, Serialize};
 use crate::{channel::ChannelMetrics, ComponentId, RunningState};
 
 pub const RUNTIME_SNAPSHOT_SCHEMA: &str = "adl.runtime.control_snapshot.v1";
+pub const RUNTIME_MASTER_LOG_RECORD_SCHEMA: &str = "adl.runtime.master_log_record.v1";
+pub const RUNTIME_MASTER_LOG_AUDIT_SCHEMA: &str = "adl.runtime.master_log_audit.v1";
+pub const RUNTIME_OBSERVABILITY_PIPELINE_SCHEMA: &str = "adl.runtime_v3.observability.pipeline.v1";
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "status", rename_all = "snake_case")]
@@ -30,6 +33,22 @@ pub enum ObservabilityHealth {
     Pending,
     Ready,
     Degraded { reason: ObservabilityDegradation },
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct ObservabilityPipelineSnapshot {
+    pub schema: String,
+    pub health: ObservabilityHealth,
+    pub runtime_instance_id: String,
+    pub vector_pid: Option<u32>,
+    pub vector_version: String,
+    pub master_log_ref: String,
+    pub log_audit_ref: String,
+    pub otlp_endpoint: Option<String>,
+    pub otlp_timeout_millis: u64,
+    pub sequence_next: u64,
+    pub drain_complete: bool,
+    pub last_failure: Option<String>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -113,6 +132,7 @@ pub struct RuntimeSnapshot {
     pub event_count: usize,
     pub observability: ObservabilityHealth,
     pub observability_ready: bool,
+    pub observability_pipeline: Option<ObservabilityPipelineSnapshot>,
 }
 
 #[derive(Debug)]
@@ -128,6 +148,7 @@ struct RecorderState {
     clock: ClockAuthority,
     continuity_head: Option<ContinuityHead>,
     observability: ObservabilityHealth,
+    observability_pipeline: Option<ObservabilityPipelineSnapshot>,
     lifecycle: LifecycleState,
 }
 
@@ -161,6 +182,7 @@ impl RuntimeRecorder {
                 },
                 continuity_head: None,
                 observability: ObservabilityHealth::Pending,
+                observability_pipeline: None,
                 lifecycle: LifecycleState::Starting,
             })),
         }
@@ -237,6 +259,20 @@ impl RuntimeRecorder {
 
     pub fn promote_observability(&self) -> Vec<BootstrapEvent> {
         self.initialize_observability(ObservabilityHealth::Ready)
+    }
+
+    pub fn set_observability_pipeline(&self, pipeline: ObservabilityPipelineSnapshot) {
+        let mut state = self.state.lock().expect("recorder state mutex poisoned");
+        if matches!(state.observability, ObservabilityHealth::Pending) {
+            let buffered = state.startup.drain(..).collect::<Vec<_>>();
+            for event in &buffered {
+                trace_event(event, true);
+            }
+            state.retained.extend(buffered);
+        }
+        state.observability = pipeline.health.clone();
+        state.observability_pipeline = Some(pipeline);
+        state.revision += 1;
     }
 
     pub fn set_component_state(&self, id: ComponentId, running: RunningState) {
@@ -335,6 +371,7 @@ impl RuntimeRecorder {
             },
             observability_ready: !matches!(state.observability, ObservabilityHealth::Pending),
             observability: state.observability.clone(),
+            observability_pipeline: state.observability_pipeline.clone(),
         }
     }
 }

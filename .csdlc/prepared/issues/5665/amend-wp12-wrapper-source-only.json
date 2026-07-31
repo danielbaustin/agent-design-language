@@ -1,0 +1,12 @@
+{
+  "issue": 5665,
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "expected_generation": 6,
+  "expected_digest": "62b22e792580d6c334843b2b05b5c22c5b68f9ff813289d8550ade3ff1b4fa56",
+  "now_unix_seconds": 1784936021,
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "narrowly replace obsolete duplicate WP-12 websocket proof wrapper source with a compatibility tombstone while leaving the #5587-owned adl/Cargo.toml untouched",
+  "add_protected_paths": [
+    "adl/src/bin/run_wp12_acip_websocket_transport_proof.rs"
+  ]
+}

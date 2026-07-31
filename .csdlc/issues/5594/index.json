@@ -5,26 +5,8 @@
   "initialization_digest": "2f246e5f1760776340161d5e4722c5a33c98c4dc5224601586d57c734b7d3d71",
   "phase": "published",
   "generation": 36,
-  "digest": "37e35c3cdde8117efb066ad0befa98da1160d10486c0917d285e9f42e989dc7d",
-  "claim": {
-    "id": "claim-5594-v0918-wp01-readiness",
-    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 36,
-    "acquired_unix_seconds": 1784562133,
-    "expires_unix_seconds": 1785166933,
-    "heartbeat_unix_seconds": 1784562133,
-    "branch": "codex/5594-v0918-wp01-readiness",
-    "worktree": ".worktrees/adl-wp-5594",
-    "protected_paths": [
-      ".csdlc/issues/5594",
-      ".csdlc/locks/5594.lock",
-      ".csdlc/prepared/issues/5594",
-      "README.md",
-      "docs/planning/ADL_FEATURE_LIST.md",
-      "docs/milestones/v0.91.8"
-    ],
-    "purpose": "Reconcile v0.91.8 planning, sprint umbrellas, issue readiness, and parallel execution without starting downstream implementation"
-  },
+  "digest": "4171377d4341f93c5508563e65aaab5a4a4aefad48b8f0ff24b060b30afa4069",
+  "claim": null,
   "review_assignment": {
     "reviewer": "subagent:Planck:019f8057-e16d-76f1-99c1-5ef2ea96f133",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
@@ -459,6 +441,20 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 46,
+      "generation": 36,
+      "actor": "codex:wp14a-preparation",
+      "reason": "GitHub issue #5594 is closed and must not reserve current milestone planning paths",
+      "operation": "{\"previous_owner\":\"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d\",\"observed_expiry_unix_seconds\":1785166933,\"recovery_actor\":\"codex:wp14a-preparation\",\"reason\":\"GitHub issue #5594 is closed and must not reserve current milestone planning paths\"}"
+    },
+    {
+      "sequence": 47,
+      "generation": 36,
+      "actor": "codex:wp14a-preparation",
+      "reason": "Release stale closed WP-01 planning ownership from the WP-14A projection",
+      "operation": "{\"claim_id\":\"claim-5594-wp14a-reconciliation-release-only\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:closed-issues-own-no-active-paths\",\"previous_owner\":\"codex:wp14a-preparation\"}"
     }
   ]
 }

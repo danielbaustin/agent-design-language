@@ -1,0 +1,13 @@
+{
+  "issue": 5345,
+  "claim_id": "claim-5345-v0918-wp10-preparation",
+  "expected_generation": 1,
+  "expected_digest": "d59e32f5113873fd0e11cdb98e16e05ef640c6f25c03c5668a2e751efb86cdf5",
+  "now_unix_seconds": 1784661027,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Claim the shared adl-v2 workspace manifest and lockfile required to add and pin the WP-10 CLI crate.",
+  "add_protected_paths": [
+    "adl-v2/Cargo.toml",
+    "adl-v2/Cargo.lock"
+  ]
+}

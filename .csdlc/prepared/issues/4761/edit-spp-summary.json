@@ -1,0 +1,15 @@
+{
+  "issue": 4761,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "f99cc6ab8913e09a7cf06b0f63fdbce6c245f5999c4a4591c29c3173f59c6bba",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Update SPP summary from preparation handoff to active capability-envelope execution.",
+  "operation": {
+    "operation": "replan",
+    "field": "plan_summary",
+    "value": "Implement and publish the #4761 pre-v0.92 capability envelope as a retained evidence packet consumed by v0.91.8/v0.92 planning surfaces, with explicit non-claims and fail-closed validation."
+  },
+  "fail_after_backup": false
+}

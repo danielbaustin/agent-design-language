@@ -7,26 +7,23 @@
     "title": "[v0.91.8][google-workspace][automation] Make ADL Drive context mirror work end to end",
     "slug": "google-drive-context-mirror",
     "version": "v0.91.8",
-    "generation": 17
+    "generation": 18
   },
   "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "adl/Cargo.toml\nadl/src/adl_gws_context_mirror.rs\nadl/src/adl_gws_drive_sync.rs\nadl/src/adl_gws_native.rs\nadl/src/bin/demo_adl_gws_context_mirror.rs\nadl/tools/check_coverage_impact.sh\nadl/tools/run_pr_fast_test_lane.sh\nadl/tools/test_check_coverage_impact.sh\nadl/tools/test_run_pr_fast_test_lane.sh\ndocs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md",
-      "review_revision": "git-blake3:97a6fe6e10b8d7b89dc13d01cdaac7dc17170050:aef968c237c59533ef426d45107820448b91abfcd88c65f841d4a4e47b984854",
-      "reviewer": "codex-subagent:review_5587_exact_head",
+      "review_scope": "",
+      "review_revision": null,
+      "reviewer": null,
       "review_prompts": [
         "Can execute mode still select an in-memory transport?",
         "Can a successful report be emitted without exact readback?",
         "Can traversal escape docs or .adl/docs/TBD?"
       ],
       "findings": [],
-      "residual_risk": [
-        "Native unattended credentials remain operator-managed outside the repository; the accepted live proof used the approved authenticated Drive connector.",
-        "GitHub CI must rerun against the strict-Clippy-clean published head."
-      ],
-      "review_result": "pass"
+      "residual_risk": [],
+      "review_result": "pre_review"
     }
   }
 }

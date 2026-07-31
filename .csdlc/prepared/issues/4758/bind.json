@@ -1,0 +1,24 @@
+{
+  "issue": 4758,
+  "base_branch": "main",
+  "branch": "codex/4758-v0918-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-4758-v0918-preparation",
+    "owner": "codex:issue-4758-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1784755996,
+    "expires_unix_seconds": 1785360796,
+    "heartbeat_unix_seconds": 1784755996,
+    "branch": "codex/4758-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4758",
+      ".csdlc/locks/4758.lock",
+      ".csdlc/prepared/issues/4758",
+      ".csdlc/evidence/4758",
+      "docs/milestones/v0.91.8/handoff/issue-4758-launch-readiness.md"
+    ],
+    "purpose": "Prepare issue #4758 launch readiness for later execution without implementation"
+  }
+}

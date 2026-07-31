@@ -1,0 +1,1116 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ADL Runtime v3 Core API",
+    "version": "1.0.0",
+    "summary": "Control, status, telemetry, and agent communication",
+    "description": "Use this API to inspect runtime health, read telemetry, send authenticated control commands, and exchange ACIP messages."
+  },
+  "servers": [
+    {
+      "url": "{publicBaseUrl}",
+      "description": "Runtime HTTPS base URL.",
+      "variables": {
+        "publicBaseUrl": {
+          "default": "https://localhost:20997",
+          "description": "Base URL for the runtime instance."
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "status",
+      "description": "Public Runtime v3 health and telemetry reads."
+    },
+    {
+      "name": "acip",
+      "description": "Authenticated Runtime v3 ACIP bidirectional WebSocket carrier."
+    },
+    {
+      "name": "control",
+      "description": "Signed Runtime v3 control commands."
+    },
+    {
+      "name": "discovery",
+      "description": "API specifications and interactive documentation."
+    }
+  ],
+  "paths": {
+    "/v1/health": {
+      "get": {
+        "operationId": "readRuntimeHealth",
+        "tags": [
+          "status"
+        ],
+        "summary": "Read Runtime v3 capability health",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Runtime v3 health report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObservatoryHealthFeed"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/metrics": {
+      "get": {
+        "operationId": "readRuntimeMetrics",
+        "tags": [
+          "status"
+        ],
+        "summary": "Read Runtime v3 telemetry sink configuration",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Runtime v3 telemetry sink configuration.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObservabilityPipelineSnapshot"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/acip/ws": {
+      "get": {
+        "operationId": "openAcipWebSocket",
+        "tags": [
+          "acip"
+        ],
+        "summary": "Open the authenticated bidirectional ACIP WebSocket carrier",
+        "description": "Upgrades to WebSocket after bearer authentication. The server sends an authenticated session frame, accepts bounded ACIP Protobuf binary envelopes, dispatches each envelope through canonical ingress to the runtime service named by its route, and returns a structured completion or rejection frame.",
+        "security": [
+          {
+            "runtimeBearer": []
+          }
+        ],
+        "responses": {
+          "101": {
+            "description": "WebSocket upgrade accepted."
+          },
+          "401": {
+            "$ref": "#/components/responses/RuntimeAuthenticationFailed"
+          }
+        },
+        "x-adl-websocket": {
+          "scheme": "wss",
+          "maxFrameBytes": 65536,
+          "authentication": "http_bearer_upgrade_header",
+          "serverFirstFrame": {
+            "$ref": "#/components/schemas/AcipAuthenticatedFrame"
+          },
+          "clientFrames": [
+            {
+              "binarySchema": "adl.csm.acip_carrier.protobuf_envelope.v1",
+              "maxBytes": 65536
+            }
+          ],
+          "serverFrames": [
+            {
+              "$ref": "#/components/schemas/AcipDispatchResult"
+            }
+          ],
+          "policyCloseReasons": [
+            "credential_revoked",
+            "binary_acip_frame_required"
+          ],
+          "bidirectional": true
+        }
+      }
+    },
+    "/v1/control": {
+      "post": {
+        "operationId": "runtimeControlCommand",
+        "tags": [
+          "control"
+        ],
+        "summary": "Submit a signed Runtime v3 control command",
+        "description": "Executes a signed Ed25519 control command against the current runtime instance. The action may read a snapshot, submit canonical work through live ingress, or request shutdown according to the key capability set.",
+        "security": [
+          {
+            "runtimeSignedCommand": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignedControlCommand"
+              },
+              "examples": {
+                "snapshot": {
+                  "value": {
+                    "schema": "adl.runtime.control_command.v1",
+                    "runtime_instance_id": "runtime0001",
+                    "command_id": "cmd0001",
+                    "correlation_id": "corr-0001",
+                    "principal": "operator",
+                    "action": {
+                      "action": "snapshot"
+                    },
+                    "signing_algorithm": "ed25519",
+                    "signing_key_id": "operator-key",
+                    "signature": "00"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted and executed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/ControlAuthenticationFailed"
+          },
+          "403": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/IdempotencyConflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/StaleRuntimeInstance"
+          },
+          "503": {
+            "$ref": "#/components/responses/TemporarilyUnavailable"
+          }
+        }
+      }
+    },
+    "/v1/openapi.json": {
+      "get": {
+        "operationId": "readRuntimeCoreOpenApi",
+        "tags": [
+          "discovery"
+        ],
+        "summary": "Read the Runtime Core OpenAPI document",
+        "description": "Returns the Runtime Core OpenAPI 3.1 document for client generation.",
+        "responses": {
+          "200": {
+            "description": "Runtime Core OpenAPI document.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/observatory/openapi.json": {
+      "get": {
+        "operationId": "readObservatoryOpenApi",
+        "tags": [
+          "discovery"
+        ],
+        "summary": "Read the Observatory OpenAPI document",
+        "description": "Returns the Observatory OpenAPI 3.1 document for client generation.",
+        "responses": {
+          "200": {
+            "description": "Observatory OpenAPI document.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/docs/": {
+      "get": {
+        "operationId": "readRuntimeApiDocs",
+        "tags": [
+          "discovery"
+        ],
+        "summary": "Open the Runtime API documentation",
+        "description": "Provides interactive documentation for the Runtime Core and Observatory APIs.",
+        "responses": {
+          "200": {
+            "description": "Browsable API documentation.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/observatory/docs/": {
+      "get": {
+        "operationId": "readObservatoryApiDocs",
+        "tags": [
+          "discovery"
+        ],
+        "summary": "Open the Observatory API documentation",
+        "description": "Provides interactive documentation for the Observatory API.",
+        "responses": {
+          "200": {
+            "description": "Browsable Observatory API documentation.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "runtimeBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Bearer token configured outside code through Runtime v3 init/environment."
+      },
+      "runtimeSignedCommand": {
+        "type": "mutualTLS",
+        "description": "Runtime transport is TLS/Rustls. Command authorization is additionally enforced by the Ed25519 signature fields in SignedControlCommand."
+      }
+    },
+    "responses": {
+      "RuntimeAuthenticationFailed": {
+        "description": "Missing, malformed, incorrect, or unavailable Runtime API bearer credential.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ControlError"
+            }
+          }
+        }
+      },
+      "InvalidRequest": {
+        "description": "Invalid request encoding, identifier, bounds, schema, or signature shape.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ControlError"
+            }
+          }
+        }
+      },
+      "ControlAuthenticationFailed": {
+        "description": "Control command authentication failed.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ControlError"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Authenticated principal lacks the required control capability.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ControlError"
+            }
+          }
+        }
+      },
+      "IdempotencyConflict": {
+        "description": "Command id conflict, in-flight duplicate, or duplicate terminal lifecycle request.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ControlError"
+            }
+          }
+        }
+      },
+      "StaleRuntimeInstance": {
+        "description": "The command targets a stale runtime instance id.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ControlError"
+            }
+          }
+        }
+      },
+      "TemporarilyUnavailable": {
+        "description": "Runtime admission is closed, saturated, or temporarily unavailable.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ControlError"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "RuntimeHealthState": {
+        "enum": [
+          "unimplemented",
+          "unavailable",
+          "failed",
+          "healthy"
+        ]
+      },
+      "RuntimeCapabilityHealth": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capability",
+          "state",
+          "reason_code",
+          "evidence_ref"
+        ],
+        "properties": {
+          "capability": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/RuntimeHealthState"
+          },
+          "reason_code": {
+            "type": "string"
+          },
+          "evidence_ref": {
+            "type": "string"
+          }
+        }
+      },
+      "RuntimeHealthReport": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "runtime_owner",
+          "capabilities"
+        ],
+        "properties": {
+          "schema": {
+            "const": "adl.csm.runtime_api.health.v1"
+          },
+          "runtime_owner": {
+            "type": "string"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuntimeCapabilityHealth"
+            }
+          }
+        }
+      },
+      "RuntimeTelemetrySink": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sink",
+          "supported_fields"
+        ],
+        "properties": {
+          "sink": {
+            "type": "string"
+          },
+          "supported_fields": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RuntimeTelemetryConfig": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "sinks"
+        ],
+        "properties": {
+          "schema": {
+            "const": "adl.csm.runtime_api.metrics.v1"
+          },
+          "sinks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuntimeTelemetrySink"
+            }
+          }
+        }
+      },
+      "RuntimeFeatureMatrixRow": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "feature",
+          "adapter",
+          "claimed",
+          "health_state",
+          "proof"
+        ],
+        "properties": {
+          "feature": {
+            "type": "string"
+          },
+          "adapter": {
+            "type": "string"
+          },
+          "claimed": {
+            "type": "boolean"
+          },
+          "health_state": {
+            "$ref": "#/components/schemas/RuntimeHealthState"
+          },
+          "proof": {
+            "type": "string"
+          }
+        }
+      },
+      "RuntimeFeatureMatrix": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "unresolved_claimed_features",
+          "rows"
+        ],
+        "properties": {
+          "schema": {
+            "const": "adl.csm.runtime_api.feature_matrix.v1"
+          },
+          "unresolved_claimed_features": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "string"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "$ref": "#/components/schemas/RuntimeFeatureMatrixRow"
+            }
+          }
+        }
+      },
+      "AcipAuthenticatedFrame": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "event",
+          "path",
+          "bidirectional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "adl.csm.runtime_api.wss_session.v1"
+          },
+          "event": {
+            "const": "authenticated"
+          },
+          "path": {
+            "const": "/v1/acip/ws"
+          },
+          "bidirectional": {
+            "const": true
+          }
+        }
+      },
+      "AcipDispatchResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema", "status", "sequence_reserved"],
+        "properties": {
+          "schema": {
+            "const": "adl.csm.acip_carrier.websocket_frame.v1"
+          },
+          "status": {
+            "enum": ["completed", "rejected"]
+          },
+          "message_id": {
+            "type": "string"
+          },
+          "accepted_sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "result_hash": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "sequence_reserved": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AcipPingFrame": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "ping"
+          },
+          "body": true
+        }
+      },
+      "AcipPongFrame": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "type",
+          "body"
+        ],
+        "properties": {
+          "schema": {
+            "const": "adl.csm.runtime_api.wss_session.v1"
+          },
+          "type": {
+            "const": "pong"
+          },
+          "body": true
+        }
+      },
+      "AcipFeatureMatrixFrame": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "feature_matrix"
+          }
+        }
+      },
+      "AcipShutdownFrame": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "shutdown"
+          }
+        }
+      },
+      "AcipShutdownAckFrame": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "type",
+          "status",
+          "runtime_boundary"
+        ],
+        "properties": {
+          "schema": {
+            "const": "adl.csm.runtime_api.wss_session.v1"
+          },
+          "type": {
+            "const": "shutdown_ack"
+          },
+          "status": {
+            "const": "accepted"
+          },
+          "runtime_boundary": {
+            "const": "api_only"
+          }
+        }
+      },
+      "AcipGenericTextFrame": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Any other JSON text frame is echoed back in an acknowledgement frame."
+      },
+      "AcipAckFrame": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "type",
+          "body"
+        ],
+        "properties": {
+          "schema": {
+            "const": "adl.csm.runtime_api.wss_session.v1"
+          },
+          "type": {
+            "const": "ack"
+          },
+          "body": true
+        }
+      },
+      "SignedControlCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "runtime_instance_id",
+          "command_id",
+          "correlation_id",
+          "principal",
+          "action",
+          "signing_algorithm",
+          "signing_key_id",
+          "signature"
+        ],
+        "properties": {
+          "schema": {
+            "const": "adl.runtime.control_command.v1"
+          },
+          "runtime_instance_id": {
+            "type": "string"
+          },
+          "command_id": {
+            "type": "string"
+          },
+          "correlation_id": {
+            "type": "string"
+          },
+          "principal": {
+            "type": "string"
+          },
+          "action": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ControlActionSnapshot"
+              },
+              {
+                "$ref": "#/components/schemas/ControlActionSubmit"
+              },
+              {
+                "$ref": "#/components/schemas/ControlActionShutdown"
+              }
+            ]
+          },
+          "signing_algorithm": {
+            "const": "ed25519"
+          },
+          "signing_key_id": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Hex-encoded Ed25519 signature over the unsigned command JSON."
+          }
+        }
+      },
+      "ControlActionSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "const": "snapshot"
+          }
+        }
+      },
+      "ControlActionSubmit": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "work"
+        ],
+        "properties": {
+          "action": {
+            "const": "submit"
+          },
+          "work": {
+            "$ref": "#/components/schemas/DomainWork"
+          }
+        }
+      },
+      "ControlActionShutdown": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "grace_millis"
+        ],
+        "properties": {
+          "action": {
+            "const": "shutdown"
+          },
+          "grace_millis": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60000
+          }
+        }
+      },
+      "DomainWork": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "work_id",
+          "kind",
+          "payload"
+        ],
+        "properties": {
+          "schema": {
+            "const": "adl.runtime.domain_work.v1"
+          },
+          "work_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "description": "Runtime-supported canonical ingress work kind."
+          },
+          "payload": {
+            "type": "array",
+            "maxItems": 65536,
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            }
+          }
+        }
+      },
+      "ControlResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "command_id",
+          "correlation_id",
+          "outcome"
+        ],
+        "properties": {
+          "schema": {
+            "const": "adl.runtime.control_response.v1"
+          },
+          "command_id": {
+            "type": "string"
+          },
+          "correlation_id": {
+            "type": "string"
+          },
+          "outcome": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ControlOutcomeSnapshot"
+              },
+              {
+                "$ref": "#/components/schemas/ControlOutcomeSubmitted"
+              },
+              {
+                "$ref": "#/components/schemas/ControlOutcomeShutdown"
+              }
+            ]
+          }
+        }
+      },
+      "ControlOutcomeSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "result",
+          "snapshot"
+        ],
+        "properties": {
+          "result": {
+            "const": "snapshot"
+          },
+          "snapshot": {
+            "$ref": "#/components/schemas/RuntimeSnapshot"
+          }
+        }
+      },
+      "ControlOutcomeSubmitted": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "result",
+          "work_result"
+        ],
+        "properties": {
+          "result": {
+            "const": "submitted"
+          },
+          "work_result": {
+            "$ref": "#/components/schemas/DomainResult"
+          }
+        }
+      },
+      "ControlOutcomeShutdown": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "result",
+          "exit"
+        ],
+        "properties": {
+          "result": {
+            "const": "shutdown"
+          },
+          "exit": {
+            "enum": [
+              "clean",
+              "failed"
+            ]
+          }
+        }
+      },
+      "DomainResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema", "work_id", "accepted_sequence", "result_hash"],
+        "properties": {
+          "schema": {
+            "const": "adl.runtime.domain_result.v1"
+          },
+          "work_id": {
+            "type": "string"
+          },
+          "accepted_sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "result_hash": {
+            "type": "string"
+          }
+        }
+      },
+      "QueueHealth": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["generation", "capacity", "depth", "high_water", "sent", "rejected"],
+        "properties": {
+          "generation": { "type": "integer", "minimum": 0 },
+          "capacity": { "type": "integer", "minimum": 0 },
+          "depth": { "type": "integer", "minimum": 0 },
+          "high_water": { "type": "integer", "minimum": 0 },
+          "sent": { "type": "integer", "minimum": 0 },
+          "rejected": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "ContinuityHead": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["generation", "accepted_through", "topology_hash", "config_hash", "integrity"],
+        "properties": {
+          "generation": { "type": "integer", "minimum": 0 },
+          "accepted_through": { "type": "integer", "minimum": 0 },
+          "topology_hash": { "type": "string" },
+          "config_hash": { "type": "string" },
+          "integrity": { "type": "string" }
+        }
+      },
+      "ClockAuthority": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status", "reason"],
+            "properties": {
+              "status": { "const": "degraded" },
+              "reason": { "type": "string" }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status", "source", "unix_millis"],
+            "properties": {
+              "status": { "const": "authoritative" },
+              "source": { "type": "string" },
+              "unix_millis": { "type": "integer", "minimum": 0 }
+            }
+          }
+        ]
+      },
+      "ObservabilityHealth": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status"],
+            "properties": { "status": { "enum": ["pending", "ready"] } }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status", "reason"],
+            "properties": {
+              "status": { "const": "degraded" },
+              "reason": { "enum": ["exporter_unavailable", "exporter_rejected"] }
+            }
+          }
+        ]
+      },
+      "ObservabilityPipelineSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "health",
+          "runtime_instance_id",
+          "vector_pid",
+          "vector_version",
+          "master_log_ref",
+          "log_audit_ref",
+          "otlp_endpoint",
+          "otlp_timeout_millis",
+          "sequence_next",
+          "drain_complete",
+          "last_failure"
+        ],
+        "properties": {
+          "schema": { "type": "string" },
+          "health": { "$ref": "#/components/schemas/ObservabilityHealth" },
+          "runtime_instance_id": { "type": "string" },
+          "vector_pid": { "type": ["integer", "null"], "minimum": 0 },
+          "vector_version": { "type": "string" },
+          "master_log_ref": { "type": "string" },
+          "log_audit_ref": { "type": "string" },
+          "otlp_endpoint": { "type": ["string", "null"] },
+          "otlp_timeout_millis": { "type": "integer", "minimum": 1 },
+          "sequence_next": { "type": "integer", "minimum": 0 },
+          "drain_complete": { "type": "boolean" },
+          "last_failure": { "type": ["string", "null"] }
+        }
+      },
+      "RuntimeSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "revision",
+          "topology_generation",
+          "components",
+          "restart_counts",
+          "queues",
+          "clock",
+          "continuity_head",
+          "lifecycle",
+          "event_count",
+          "observability",
+          "observability_ready",
+          "observability_pipeline"
+        ],
+        "properties": {
+          "schema": { "const": "adl.runtime.control_snapshot.v1" },
+          "revision": { "type": "integer", "minimum": 0 },
+          "topology_generation": { "type": "integer", "minimum": 0 },
+          "components": {
+            "type": "object",
+            "additionalProperties": {
+              "enum": ["starting", "ready", "running", "restarting", "degraded", "stopping", "stopped", "failed"]
+            }
+          },
+          "restart_counts": {
+            "type": "object",
+            "additionalProperties": { "type": "integer", "minimum": 0 }
+          },
+          "queues": {
+            "type": "object",
+            "additionalProperties": { "$ref": "#/components/schemas/QueueHealth" }
+          },
+          "clock": { "$ref": "#/components/schemas/ClockAuthority" },
+          "continuity_head": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/ContinuityHead" },
+              { "type": "null" }
+            ]
+          },
+          "lifecycle": {
+            "enum": ["starting", "running", "stopping", "stopped", "failed"]
+          },
+          "event_count": { "type": "integer", "minimum": 0 },
+          "observability": { "$ref": "#/components/schemas/ObservabilityHealth" },
+          "observability_ready": { "type": "boolean" },
+          "observability_pipeline": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/ObservabilityPipelineSnapshot" },
+              { "type": "null" }
+            ]
+          }
+        }
+      },
+      "ObservatoryHealthFeed": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["snapshot", "observability_ready"],
+        "properties": {
+          "snapshot": { "$ref": "#/components/schemas/RuntimeSnapshot" },
+          "observability_ready": { "type": "boolean" }
+        }
+      },
+      "ControlError": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "code"
+        ],
+        "properties": {
+          "schema": {
+            "const": "adl.runtime.control_error.v1"
+          },
+          "code": {
+            "enum": [
+              "authentication_failed",
+              "unauthorized",
+              "idempotency_conflict",
+              "temporarily_unavailable",
+              "stale_runtime_instance",
+              "invalid_request"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "x-adl-api-identity": "runtime-core",
+  "x-adl-api-version": "v1",
+  "x-adl-non-claims": [
+    "No standalone HTTP provider, A2A, cloud bridge, checkpoint, scheduler, cancellation, continuity, trusted-time, or discovery path is documented as operational unless a real Axum route exists.",
+    "No fixture, degraded, simulated, or unavailable feature is documented as operational."
+  ]
+}

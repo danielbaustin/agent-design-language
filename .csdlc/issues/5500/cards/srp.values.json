@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5500,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10A][multi-agent][dashboard] Restore live workcell operator view",
+    "slug": "v0-91-8-wp-10a-read-only-workcell-dashboard",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5500\n.csdlc/locks/5500.lock\n.csdlc/prepared/issues/5500\n.csdlc/evidence/5500\ndocs/tooling/milestone-dashboard\nadl/tools/test_milestone_dashboard.sh",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does the design extend the existing dashboard and Observatory contracts without creating a second framework or authority?",
+        "Are retained, live, stale, unknown, blocked, and non-authoritative states complete and fail closed?",
+        "Can untrusted snapshot or Runtime values cause XSS, unsafe navigation, credential exposure, unbounded work, or authority confusion?",
+        "Are future paths disjoint from #5502 and every other WP-10A child?",
+        "Are COTS choices, zero-new-dependency posture, budgets, and deterministic fixtures small and executable?",
+        "Does preparation preserve exact #5498 and #5349 terminal gates?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{"sequence":1,"generation":0,"actor":"codex:issue-5666-slot-1","reason":"initialize issue record and all six cards","operation":"bootstrap"}
+{"sequence":2,"generation":1,"actor":"operator:5666","reason":"approve completed issue design","operation":"approve_design"}
+{"sequence":3,"generation":1,"actor":"codex:issue-5666-slot-1","reason":"bind branch/worktree and activate claim","operation":"bind"}
+{"sequence":4,"generation":2,"actor":"codex:issue-5666-slot-1","reason":"atomically record execution, validation, and implemented phase","operation":"finalize_implementation"}
+{"sequence":5,"generation":3,"actor":"operator:5666","reason":"reapprove changed issue design","operation":"approve_design"}
+{"sequence":6,"generation":4,"actor":"codex:issue-5666-slot-1","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
+{"sequence":7,"generation":5,"actor":"codex:issue-5666-slot-1","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":8,"generation":6,"actor":"codex:issue-5666-slot-1","reason":"record exact existing PR ready-for-review after remote success","operation":"record_ready_publication"}

@@ -1,0 +1,1 @@
+{"issue":5675,"expected_generation":3,"expected_digest":"bfa68f8858b86c995661b23d37dfaba044816d3f958524577e06a040c226455f","claim_id":"claim-5675-provider-adapter-routes","reviewer":"codex:5675-opus-review","assigned_by":"codex:5675-execution","scope":["adl/src/provider_adapter.rs","adl/src/provider/profiles.rs"]}

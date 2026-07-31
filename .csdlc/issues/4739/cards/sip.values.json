@@ -1,0 +1,42 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4739,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][tooling] Align Unity-MCP live project and port proof for deployed observatory",
+    "slug": "v0918-wp15-unity-mcp-live-project-endpoint-alignment",
+    "version": "v0.91.8",
+    "generation": 26
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make Unity-MCP project and endpoint alignment deterministic and reviewable before any live Observatory proof is claimed.",
+      "required_outcome": "A repository-safe probe proves that the intended Observatory Unity project, its active MCP endpoint, and a read-only MCP operation agree, or emits one precise fail-closed blocker without exposing secrets.",
+      "declared_scope": [
+        "Unity project path and MCP endpoint identity resolution",
+        "Repository-safe redacted alignment probe",
+        "Deterministic parser and failure-classification tests",
+        "Permission-safe endpoint liveness evidence",
+        "Bounded operator runbook and WP-15 routing note"
+      ],
+      "authority_boundary": [
+        "#4739 owns project/endpoint alignment and read-only MCP proof only",
+        "#4741 owns editor liveness, batch-mode selection, and watchdog behavior",
+        "#5332 owns Unity ILPP GetDomainName retry-loop diagnosis",
+        "No scene staging, runtime contract generation, asset publication, investor rendering, or walkthrough capture",
+        "No fixed MCP port assumption, cloud fallback, raw gh, broad process scan, or secret-bearing Unity user settings"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 lifecycle only",
+        "Work only in the issue-bound v0.91.8 worktree",
+        "Preserve the older dirty #4739 worktree unchanged",
+        "Use repository binaries and permission-safe process checks",
+        "No Unity mutation, raw gh fallback, cloud fallback, broad process scan, or secret exposure during preparation"
+      ]
+    }
+  }
+}

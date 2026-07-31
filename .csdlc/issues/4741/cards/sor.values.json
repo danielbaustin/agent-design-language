@@ -1,0 +1,164 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4741,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][tooling] Make Unity editor liveness and batch proof reliable for deployed observatory",
+    "slug": "v0918-wp15-unity-editor-liveness-batch-proof",
+    "version": "v0.91.8",
+    "generation": 19
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Implemented and independently reviewed a fail-closed Unity editor-liveness proof route with exact process evidence, bounded semantic idle detection, approved staging, and focused selector coverage.",
+      "actual_changes": [
+        "Select and print open_editor, fresh_batch, or skipped_fail_closed before Unity work.",
+        "Use repository-installed adl process status against exact PID metadata and fail closed on ambiguous project locks.",
+        "Stage only under /Volumes/FastWork or issue-local .adl storage and pass the owner binary a repository-relative packet reference.",
+        "Reset liveness only on import, compile, validation, or terminal markers; classify readonly text in temporal context.",
+        "Route generic external startup-classifier outcomes without embedding #5332 signatures or thresholds.",
+        "Register one focused Unity editor-liveness validation lane and add no-Unity regression coverage plus an operator runbook.",
+        "Select and print open_editor, fresh_batch, or skipped_fail_closed before Unity work.",
+        "Validate repository owner-binary provenance and permission-safe process-status JSON before trusting liveness.",
+        "Bound fresh-batch and editor-mediated execution by monotonic semantic progress without imposing an arbitrary total runtime ceiling.",
+        "Isolate staged projects, logs, and editor-result evidence under approved roots.",
+        "Register a focused Unity editor-liveness lane without downgrading full soak or smoke validation."
+      ],
+      "artifacts": [
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+        "adl/config/validation_lane_selector.v0.91.6.json",
+        "adl/tools/test_select_validation_lanes.sh",
+        "docs/tooling/unity_observatory_editor_batch_proof.md",
+        ".csdlc/evidence/4741/live-staged-proof.json",
+        ".csdlc/evidence/4741/LIVE_STAGED_PROOF.md",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+        "adl/config/validation_lane_selector.v0.91.6.json",
+        "adl/tools/test_select_validation_lanes.sh",
+        "docs/tooling/unity_observatory_editor_batch_proof.md",
+        ".csdlc/evidence/4741/live-staged-proof.json",
+        ".csdlc/evidence/4741/LIVE_STAGED_PROOF.md"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"
+          ],
+          "purpose": "Prove safe mode selection, exact process-status routing, relative packet invocation, semantic progress, contextual readonly handling, idle/crash/licensing/external outcomes, and cleanup without launching Unity; coupled contract, selector, shell syntax, JSON, and diff checks also passed.",
+          "outcome": "passed",
+          "evidence_ref": "Local focused proof passed: unit PASS, v0.91.6 contract guardrails PASS, validation selector PASS, four wrapper syntax checks PASS, JSON parsing PASS, and git diff --check PASS."
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
+          ],
+          "purpose": "Prove one real safe-mode Unity attempt records exact progress and terminal truth without an arbitrary total ceiling.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/4741/live-staged-proof.json records fresh_batch on Unity 6000.5.1f1, readonly followed by import and compilation progress, semantic fingerprint 1:1:1:0, and expected fail-closed exit 124 terminal_outcome=semantic_progress_idle after 300 idle seconds. Unity validation was not reached and is not claimed."
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
+          ],
+          "purpose": "Run one exact-head safe-mode Unity attempt after implementation review and retain precise prerequisite or runtime truth.",
+          "outcome": "blocked",
+          "evidence_ref": ".csdlc/evidence/4741/live-staged-proof.json supersedes the stale pre-commit attempt: reviewed revision 2fb6fa86fee8b96457e0c179646a0c5109861e4a selected skipped_fail_closed and returned owner_binary_provenance_invalid before Unity launch because the installed repository adl source hash does not match the current declared source root. No binary was built or replaced."
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "purpose": "Prove the issue diff has no whitespace errors.",
+          "outcome": "passed",
+          "evidence_ref": "diff-hygiene.log"
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"
+          ],
+          "purpose": "Prove safe mode selection, structured process evidence, semantic idle handling, bounded failures, and scratch cleanup without launching Unity.",
+          "outcome": "passed",
+          "evidence_ref": "unity-editor-liveness-unit.log"
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_select_validation_lanes.sh"
+          ],
+          "purpose": "Prove liveness wrapper changes select the focused lane while soak and smoke changes retain the full contract lane.",
+          "outcome": "passed",
+          "evidence_ref": "unity-editor-selector.log"
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_contract.sh"
+          ],
+          "purpose": "Prove the Observatory wrapper remains within the declared Unity liveness and non-goal boundary.",
+          "outcome": "passed",
+          "evidence_ref": "unity-observatory-contract.log"
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
+          ],
+          "purpose": "Prove one real safe-mode Unity attempt records exact progress and terminal truth without an arbitrary total ceiling.",
+          "outcome": "blocked",
+          "evidence_ref": ".csdlc/evidence/4741/live-staged-proof.json is the authoritative exact-head result and explicitly supersedes the earlier passed entry with this same command and purpose identity: revision 2fb6fa86fee8b96457e0c179646a0c5109861e4a returned skipped_fail_closed / owner_binary_provenance_invalid before Unity launch."
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
+          ],
+          "purpose": "Prove one real safe-mode Unity attempt records exact progress and terminal truth without an arbitrary total ceiling.",
+          "outcome": "blocked",
+          "evidence_ref": ".csdlc/evidence/4741/live-staged-proof.json records fresh_batch on Unity 6000.5.1f1, readonly followed by import and compilation progress, semantic fingerprint 1:1:1:0, and expected fail-closed exit 124 terminal_outcome=semantic_progress_idle after 300 idle seconds. Unity validation was not reached and is not claimed."
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
+          ],
+          "purpose": "Run one exact-head safe-mode Unity attempt after implementation review and retain precise prerequisite or runtime truth.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/4741/live-staged-proof.json supersedes the stale pre-commit attempt: reviewed revision 2fb6fa86fee8b96457e0c179646a0c5109861e4a selected skipped_fail_closed and returned owner_binary_provenance_invalid before Unity launch because the installed repository adl source hash does not match the current declared source root. No binary was built or replaced."
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
+          ],
+          "purpose": "Prove one real safe-mode Unity attempt records exact progress and terminal truth without an arbitrary total ceiling.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/4741/live-staged-proof.json is the authoritative exact-head result and explicitly supersedes the earlier passed entry with this same command and purpose identity: revision 2fb6fa86fee8b96457e0c179646a0c5109861e4a returned skipped_fail_closed / owner_binary_provenance_invalid before Unity launch."
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
+          ],
+          "purpose": "Prove one real safe-mode Unity attempt records exact progress and terminal truth without an arbitrary total ceiling.",
+          "outcome": "skipped_non_goal",
+          "evidence_ref": ".csdlc/evidence/4741/live-staged-proof.json records fresh_batch on Unity 6000.5.1f1, readonly followed by import and compilation progress, semantic fingerprint 1:1:1:0, and expected fail-closed exit 124 terminal_outcome=semantic_progress_idle after 300 idle seconds. Unity validation was not reached and is not claimed."
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "ready",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

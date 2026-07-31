@@ -1,0 +1,135 @@
+{
+  "issue": 4758,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/4758/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4758/diagram.mmd",
+  "design_reviewer": "operator:wp14-preparation",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-4758-v0918-preparation",
+    "owner": "codex:issue-4758-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1784755996,
+    "expires_unix_seconds": 1785360796,
+    "heartbeat_unix_seconds": 1784755996,
+    "branch": "codex/4758-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4758",
+      ".csdlc/locks/4758.lock",
+      ".csdlc/prepared/issues/4758",
+      ".csdlc/evidence/4758",
+      "docs/milestones/v0.91.8/handoff/issue-4758-launch-readiness.md"
+    ],
+    "purpose": "Prepare issue #4758 launch readiness for later execution without implementation"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-14][launch] Implement launch readiness package after platform deployment",
+    "slug": "v0918-wp14-launch-readiness",
+    "version": "v0.91.8",
+    "goal": "Prepare a later execution lane for the launch readiness artifact that v0.92 can consume after platform deployment evidence is accepted.",
+    "required_outcome": "An execution-ready preparation packet for the future integrated launch readiness artifact, with live dependency gates and non-claim boundaries recorded.",
+    "declared_scope": [
+      "six-card C-SDLC v2 preparation packet",
+      "concise launch readiness design and diagram",
+      "future integrated launch artifact plan",
+      "live #5384 merge and ancestry dependency gate"
+    ],
+    "authority_boundary": [
+      "preparation only in this session",
+      "no launch implementation, PR publication, review, broad tests, raw gh, AWS, or root-main writes",
+      "later execution requires live merge plus ancestry for #5384 on current origin/main",
+      "#5335 is routing audit context only",
+      "closeout receipts are audit-only and non-blocking"
+    ],
+    "operator_constraints": [
+      "use typed C-SDLC v2 only",
+      "work only in /Volumes/FastWork/adl-wp-4758 on codex/4758-v0918-preparation",
+      "commit and push only the clean preparation branch",
+      "do not publish a PR or mutate GitHub",
+      "do not advance to implementation during preparation"
+    ],
+    "task_boundary": "Prepare #4758 for later execution and stop before launch readiness implementation.",
+    "deliverables": [
+      "generated six-card C-SDLC v2 packet",
+      "concise issue-local design",
+      "concise dependency diagram",
+      "focused preparation validation evidence"
+    ],
+    "acceptance_criteria": [
+      "AC-1: #5384 is recorded as a live merge plus ancestry gate for later execution",
+      "AC-2: #5335 and closeout receipts are audit-only and cannot release execution",
+      "AC-3: the future launch readiness artifact must be integrated into the v0.91.8 pre-v0.92 path",
+      "AC-4: no v0.92 implementation, sibling WP-14 scope, PR, review, or closeout claim is made by preparation"
+    ],
+    "dependencies": [
+      "#5384 WP-14A live-merged and ancestral on current origin/main",
+      "#5335 routing context is closed but audit-only",
+      "closeout receipts audit-only and non-blocking"
+    ],
+    "repo_inputs": [
+      "GitHub issue #4758",
+      "GitHub issue #5384",
+      "GitHub issue #5335",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/README.md"
+    ],
+    "non_goals": [
+      "launch readiness implementation during preparation",
+      "v0.92 implementation",
+      "sibling WP-14 child issue work",
+      "PR publication or review",
+      "GitHub mutation",
+      "AWS or provider execution",
+      "broad test execution"
+    ],
+    "plan_summary": "Prepare the issue-local packet now; later execution re-checks #5384 live merge and ancestry, then implements and validates the integrated launch readiness artifact.",
+    "steps": [
+      {"id": "S1", "action": "Generate issue-local C-SDLC v2 cards, design, and diagram", "status": "pending", "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"]},
+      {"id": "S2", "action": "Re-check live #5384 merge plus ancestry before future implementation", "status": "pending", "acceptance_ids": ["AC-1", "AC-2"]},
+      {"id": "S3", "action": "Implement the integrated launch readiness artifact only after #5384 releases execution", "status": "pending", "acceptance_ids": ["AC-3", "AC-4"]},
+      {"id": "S4", "action": "Run focused validation and exact pre-PR review during later execution", "status": "pending", "acceptance_ids": ["AC-3", "AC-4"]}
+    ],
+    "invariants": [
+      "live #5384 merge plus ancestry is required before execution",
+      "#5335 and receipts are audit-only",
+      "preparation does not advance implementation state",
+      "launch readiness must be integrated rather than placeholder text"
+    ],
+    "risks": [
+      "open #5384 could block later execution",
+      "routing context could be mistaken for implementation evidence",
+      "launch text could accidentally imply v0.92 implementation readiness"
+    ],
+    "planning_profile": "small",
+    "stop_conditions": [
+      "#5384 remains open without an operator-approved evidence blocker",
+      "#5384 merge is absent from current origin/main ancestry",
+      "the launch artifact path cannot be tied to the v0.91.8 pre-v0.92 consumption path",
+      "scope pressure asks preparation to implement launch readiness now"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "wp14-launch-prep",
+        "proof_role": "Validate issue-local preparation packet shape and dependency-gate language without implementation",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 30,
+        "budget_tokens": 1000,
+        "argv": ["ruby", ".csdlc/prepared/issues/4758/validate_preparation.rb"],
+        "parallel_group": "wp14-preparation",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on missing six-card packet, missing design or diagram, implementation-state advancement, ambiguous #5384 execution gate, or receipt-gated execution language.",
+    "review_prompts": [
+      "Does the launch lane require live #5384 merge plus ancestry before execution?",
+      "Could any wording treat #5335 or receipts as execution authority?",
+      "Does the packet avoid v0.92 implementation and sibling WP-14 scope?",
+      "Is later proof tied to an integrated pre-v0.92 consumption path?"
+    ],
+    "review_scope": "Future review covers only the #4758 launch readiness artifact and issue-local lifecycle records; exclude v0.92 implementation, sibling WP-14 children, GitHub mutation, AWS, and closeout authority."
+  }
+}

@@ -65,13 +65,16 @@ fail closed.
 - Identity/stable-name feature.
 - Memory/capability/witness feature.
 - ACP profile feature.
+- First-birthday external launch surface:
+  `docs/milestones/v0.92/external_launch/`.
 - v0.91 moral-governance evidence.
 - v0.93 governance handoff.
 
 ## Validation
 
 Validation should include valid birthday fixtures, negative fixtures, review
-packet checks, and claim-boundary scans.
+packet checks, claim-boundary scans, and a publication-gate check that rejects
+final launch copy until #4762 accepted witness/receipt proof is cited.
 
 ## Source Inputs
 
@@ -101,6 +104,8 @@ This feature should establish:
 - Valid birthday packet requires all named evidence surfaces.
 - Startup, wake, snapshot, admission, and copied state are rejected as birth.
 - Review packet and receipt are inspectable.
+- External launch copy has pending and ready variants, and the ready variant is
+  blocked unless it cites accepted #4762 witness/receipt evidence.
 
 ## Risks
 
@@ -108,6 +113,9 @@ This feature should establish:
   negative tests.
 - Birth could overclaim personhood. Mitigation: keep legal and constitutional
   claims out of v0.92.
+- Launch copy could outrun proof. Mitigation: consume the external-launch
+  directory as a claim-boundary surface and fail closed while #4762 proof is
+  pending.
 
 ## Future Work
 

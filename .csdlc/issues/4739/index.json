@@ -1,0 +1,399 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4739,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "dd98199cf21b7a3ece23619ecfd7fd926dd8e153555179e8af5f50d245522f73",
+  "phase": "published",
+  "generation": 26,
+  "digest": "72ed4bd86133232d49da1c7086e3d03c8b6e7d747803fcabea3f9429b15befbf",
+  "claim": {
+    "id": "claim-4739-v0918-wp15-unity-mcp-alignment-prep",
+    "owner": "codex:issue-4739-preparation",
+    "generation": 26,
+    "acquired_unix_seconds": 1784834939,
+    "expires_unix_seconds": 1785439739,
+    "heartbeat_unix_seconds": 1784834939,
+    "branch": "codex/4739-v0918-wp15-unity-mcp-alignment-prep",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4739",
+      ".csdlc/locks/4739.lock",
+      ".csdlc/prepared/issues/4739",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/probe_unity_mcp_observatory_alignment.sh",
+      "adl/tools/test_select_validation_lanes.sh",
+      "adl/tools/test_v0916_unity_mcp_alignment_unit.sh",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      "docs/tooling/unity_mcp_observatory_alignment.md"
+    ],
+    "purpose": "Prepare #4739 for bounded v0.91.8 WP-15 Unity-MCP project and endpoint alignment execution"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:019f95ae-c03a-7e90-808f-803f476c9738",
+    "assigned_by": "codex:issue-4739-preparation",
+    "revision": "git-blake3:2934df9a89a307ce245bf7dbdfed6d0e8ad87a07:898bfbd0900756209ed3125799503ce5b05870e89e443ee9f4453704a80ffded",
+    "scope": [
+      "adl/tools/probe_unity_mcp_observatory_alignment.sh",
+      "adl/tools/test_v0916_unity_mcp_alignment_unit.sh",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/test_select_validation_lanes.sh",
+      "docs/tooling/unity_mcp_observatory_alignment.md",
+      ".csdlc/issues/4739",
+      ".csdlc/prepared/issues/4739"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f95ae-c03a-7e90-808f-803f476c9738",
+    "scope": [
+      "adl/tools/probe_unity_mcp_observatory_alignment.sh",
+      "adl/tools/test_v0916_unity_mcp_alignment_unit.sh",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/test_select_validation_lanes.sh",
+      "docs/tooling/unity_mcp_observatory_alignment.md",
+      ".csdlc/issues/4739",
+      ".csdlc/prepared/issues/4739"
+    ],
+    "reviewed_revision": "git-blake3:2934df9a89a307ce245bf7dbdfed6d0e8ad87a07:898bfbd0900756209ed3125799503ce5b05870e89e443ee9f4453704a80ffded",
+    "findings": [],
+    "residual_risks": [
+      "Unity-MCP CLI 0.82.2 can report zero Unity processes for the live intended editor, so the bounded PID plus project-local Editor.log fallback remains necessary.",
+      "The observed 0.82.3 to 0.86.1 plugin update-order defect remains external; this proof uses the compatible pinned package and records the defect under #4739.",
+      "This review proves local MCP project and scene alignment only; it does not establish runtime integration, visual quality, or investor readiness."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 4739,
+    "pull_request": 5661,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5661",
+    "base": "main",
+    "head": "codex/4739-v0918-wp15-unity-mcp-alignment-prep",
+    "revision": "git-blake3:cbddd7c8c01c9b9b3b4a9d84e654c44c424fc2cf:587eddbafcd06439f8bf57d3fbd1e61398abc3f4ed4a9ec6325cd77c70d5eb50",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/4739/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4739/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:v0918-wp15-unity-specialist-recheck",
+      "revision": "5511b37ed47d164d33691da1055f9b9cef543282aa8b71ad5fe1b6a0a6d5e53d"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "a39414ba58eb988b8f4023dd6c15ac937e7bf1ab5d0c06052064465bd09c4af5",
+      "rendered_digest": "852d256aa4e58fd08de6627b3fd6e0acf93774015e66867c5f741def394dc82d",
+      "ast_digest": "b99c684fea927a93bbd78fb09740bd17af70365951f28d8d3b1a8d757eb23a11"
+    },
+    "stp": {
+      "values_digest": "6ac9e85f74040ef39ce13c77d2be3b5bef27918cc0998b6f82a1dcde61c4719e",
+      "rendered_digest": "808f385eec200495109d2d1b18f22baf8ddfde289f75bd0667bbd02d02398873",
+      "ast_digest": "c9c8bb5e5a80486621d3de2f791c7811fa732c17e84dc6612aa100050400e163"
+    },
+    "spp": {
+      "values_digest": "fba18182d804b3767b7c360dd07207520f9d0f4a92ed37da7d0184839b5b149e",
+      "rendered_digest": "27760ee56794bdccca077809f711289289cc046705c50a42e808f9be153424bc",
+      "ast_digest": "2703ff108d755b83452c403ea19e953ac1f98ceabd3f3df72dd1b45f9c5bfb6b"
+    },
+    "vpp": {
+      "values_digest": "f0c8ca2ba6bb69ad39601708715cc42a65c8fb248fd84b561351fd817c6c28d9",
+      "rendered_digest": "f2daeb59f868fe1d40ebf9bcfd2550b82d82043c2b81bded4fccc900490205c2",
+      "ast_digest": "3b51b461e9ae08b0f8e9bbe74d5057a256fd7a0adc97eafa4e550f0c29d16c1e"
+    },
+    "srp": {
+      "values_digest": "94d3d5663dcf19699c8a87f2437dd7d1a40ca2eafab00c4db0c8d5880cf33636",
+      "rendered_digest": "ccd4a3a3799b6e4ed860673a6b32ed94021978516ba7083e964a49445a09bc8e",
+      "ast_digest": "44f11ab09bede69bdef6dfd527388fae5c60eb24850c09220b1e13e75c8e7bf0"
+    },
+    "sor": {
+      "values_digest": "3a9929776085d079c2fd35014a38f8337dd556c71e453960ccc1cfbd49c120d1",
+      "rendered_digest": "7a91ba23ac0c14553024dd02cba02a5cb429d8aca0d78d73bad030cb9c2f32d2",
+      "ast_digest": "a907a1934f420794c0bc2c8564fc118a5877ee535c24b96b6054ff90565c6c82"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-4739-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-4739-preparation",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-4739-preparation",
+      "reason": "The bounded implementation, all six SPP steps, focused validation, and live Unity-MCP alignment proof are recorded."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-4739-preparation",
+      "reason": "The assigned exact-revision review is complete, all actionable findings are fixed at the reviewed revision, and SRP retains the proof boundaries."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-4739-preparation",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Origin main advanced after ready publication; recover stale review and publication truth for an exact-head review after the clean base merge."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Advance the exact post-merge Unity-MCP alignment implementation after independent review passed with no actionable findings."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-4739-preparation",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "operator:v0918-wp15-unity-specialist-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Reserve focused validation selector registration required by specialist readiness review",
+      "operation": "{\"add_protected_paths\":[\"adl/config/validation_lane_selector.v0.91.6.json\",\"adl/tools/test_select_validation_lanes.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Apply specialist review findings for dedicated unit, selector, and live-probe validation contracts",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: the probe canonicalizes and reports the intended Unity project path and derives the active MCP endpoint without assuming a fixed port\",\"AC-2: a read-only MCP scene or tool call is attempted only after project and endpoint identity agree\",\"AC-3: project mismatch, missing editor, cloud or external fallback, malformed status, ambiguous endpoint, and read-only tool failure each produce deterministic FAIL_CLOSED output\",\"AC-4: retained output redacts URL userinfo, tokens, authorization values, credentials, and secret-bearing Unity settings\",\"AC-5: local liveness uses adl process status and no broad ps, pgrep, or lsof scan\",\"AC-6: a dedicated no-Unity unit script exercises matching status, project mismatch, missing editor, cloud fallback, malformed status, endpoint ambiguity, redaction, and read-only tool failure\",\"AC-7: live proof succeeds against the intended Observatory project or records the exact current blocker and owner without claiming runtime, visual, or investor readiness\",\"AC-8: the final diff excludes #4741 batch-liveness, #5332 ILPP, scene-fallback, runtime-contract, asset, and walkthrough implementation\",\"AC-9: validation selector registration maps the probe, dedicated unit test, and runbook to one focused non-Unity alignment lane and its selector test passes\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Review the current Unity-MCP CLI contract and selectively port only the repository-safe alignment probe from preserved predecessor work\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-4\",\"AC-5\",\"AC-8\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Add the dedicated no-Unity unit script and deterministic fixtures for successful alignment and every declared fail-closed classifier\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Register the probe, dedicated unit test, and runbook in the validation selector and prove focused lane selection\",\"acceptance_ids\":[\"AC-8\",\"AC-9\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Update the bounded operator runbook and WP-15 routing note without widening into adjacent Unity owners\",\"acceptance_ids\":[\"AC-7\",\"AC-8\",\"AC-9\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Run focused unit, contract, selector, and diff proof, then perform one live read-only probe only when the intended project is available\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-9\"],\"status\":\"pending\"},{\"id\":\"S6\",\"action\":\"Record bounded review findings and exact proof or blocker truth for WP-15 consumption\",\"acceptance_ids\":[\"AC-7\",\"AC-8\",\"AC-9\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"unity-mcp-alignment-unit\",\"proof_role\":\"Execute the dedicated no-Unity parser, mismatch, redaction, and read-only failure fixtures\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-6\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":4000,\"argv\":[\"bash\",\"-c\",\"test -n \\\"${ADL_UNITY_MCP_UNIT_TEST:-}\\\" && test -x \\\"$ADL_UNITY_MCP_UNIT_TEST\\\" && \\\"$ADL_UNITY_MCP_UNIT_TEST\\\"\"],\"parallel_group\":\"unity-mcp-static\",\"defer_reason\":\"Set ADL_UNITY_MCP_UNIT_TEST to the repository-owned dedicated unit script created in S2; the lane fails closed if the executable is absent.\"},{\"lane\":\"unity-mcp-alignment-contract\",\"proof_role\":\"Prove repository shell contract and focused static integration for the alignment surface\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_contract.sh\"],\"parallel_group\":\"unity-mcp-static\",\"defer_reason\":null},{\"lane\":\"unity-mcp-selector-registration\",\"proof_role\":\"Prove issue-owned paths select the focused non-Unity MCP alignment lane\",\"acceptance_ids\":[\"AC-8\",\"AC-9\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_select_validation_lanes.sh\"],\"parallel_group\":\"unity-mcp-static\",\"defer_reason\":null},{\"lane\":\"unity-mcp-diff-hygiene\",\"proof_role\":\"Prove bounded text and script hygiene for the issue-owned diff\",\"acceptance_ids\":[\"AC-4\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"unity-mcp-static\",\"defer_reason\":null},{\"lane\":\"unity-mcp-live-read-only\",\"proof_role\":\"Execute the repository-owned probe against the intended project and retain exact read-only alignment or blocker truth\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":3000,\"argv\":[\"bash\",\"-c\",\"test -n \\\"${ADL_UNITY_MCP_PROBE:-}\\\" && test -x \\\"$ADL_UNITY_MCP_PROBE\\\" && test -n \\\"${ADL_UNITY_PROJECT_PATH:-}\\\" && \\\"$ADL_UNITY_MCP_PROBE\\\" --project \\\"$ADL_UNITY_PROJECT_PATH\\\"\"],\"parallel_group\":\"unity-mcp-live\",\"defer_reason\":\"Set ADL_UNITY_MCP_PROBE and ADL_UNITY_PROJECT_PATH after S1 creates the repository-owned probe; run only when the intended Unity project is available.\"}]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Use exact repository-relative unit and probe commands required by specialist recheck",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"unity-mcp-alignment-unit\",\"proof_role\":\"Execute the dedicated no-Unity parser, mismatch, redaction, and read-only failure fixtures\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-6\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_v0916_unity_mcp_alignment_unit.sh\"],\"parallel_group\":\"unity-mcp-static\",\"defer_reason\":null},{\"lane\":\"unity-mcp-alignment-contract\",\"proof_role\":\"Prove repository shell contract and focused static integration for the alignment surface\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_contract.sh\"],\"parallel_group\":\"unity-mcp-static\",\"defer_reason\":null},{\"lane\":\"unity-mcp-selector-registration\",\"proof_role\":\"Prove issue-owned paths select the focused non-Unity MCP alignment lane\",\"acceptance_ids\":[\"AC-8\",\"AC-9\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_select_validation_lanes.sh\"],\"parallel_group\":\"unity-mcp-static\",\"defer_reason\":null},{\"lane\":\"unity-mcp-diff-hygiene\",\"proof_role\":\"Prove bounded text and script hygiene for the issue-owned diff\",\"acceptance_ids\":[\"AC-4\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"unity-mcp-static\",\"defer_reason\":null},{\"lane\":\"unity-mcp-live-read-only\",\"proof_role\":\"Execute the repository-owned probe against the intended project and retain exact read-only alignment or blocker truth\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":3000,\"argv\":[\"bash\",\"-c\",\"test -n \\\"${ADL_UNITY_PROJECT_PATH:-}\\\" && bash adl/tools/probe_unity_mcp_observatory_alignment.sh --project \\\"$ADL_UNITY_PROJECT_PATH\\\"\"],\"parallel_group\":\"unity-mcp-live\",\"defer_reason\":\"Set ADL_UNITY_PROJECT_PATH to the intended canonical project and run only when that Unity project is available; the repository-relative probe path remains fixed and reviewable.\"}]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "operator:v0918-wp15-unity-specialist-recheck",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "The repository-safe probe was implemented from the current Unity-MCP CLI contract without adjacent issue scope.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "The dedicated no-Unity classifier fixtures cover aligned, mismatch, liveness, Cloud, random-port, identity, failure, and redaction states.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "The probe, unit test, and runbook are registered in the focused selector lane and the selector fixture passes.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "The runbook records the exact proof boundary, tooling defects, WP-15 routing, and exclusions from visual and runtime claims.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Focused unit, contract, selector, diff, and live read-only project-identity proof all passed at revision 3eb503273.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S5\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "The mandatory bounded subagent review passed after all four initial finding classes and three re-review gaps were fixed.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S6\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Record the bounded Unity-MCP alignment implementation and tooling findings without claiming runtime or visual readiness.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Added a fail-closed Unity-MCP Observatory alignment lane that binds the live endpoint to the canonical Unity project before accepting read-only scene evidence.\",\"changes\":[\"Added the repository-owned alignment probe with persisted Custom-mode, loopback, editor, MCP Application.dataPath, port, and scene checks.\",\"Added deterministic no-Unity fixtures for success, project and identity mismatch, editor liveness, string and numeric Cloud mode, external fallback, random-port selection, ambiguity, malformed status, tool failure, redaction, and tool-call ordering.\",\"Registered one focused validation-selector lane and its selector fixture.\",\"Documented the bounded operator route and the observed Unity-MCP CLI process-discovery and plugin update-order defects under #4739.\"],\"artifacts\":[\"adl/tools/probe_unity_mcp_observatory_alignment.sh\",\"adl/tools/test_v0916_unity_mcp_alignment_unit.sh\",\"adl/config/validation_lane_selector.v0.91.6.json\",\"adl/tools/test_select_validation_lanes.sh\",\"docs/tooling/unity_mcp_observatory_alignment.md\",\"revision 3eb503273\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Record the deterministic no-Unity classifier proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_mcp_alignment_unit.sh\"],\"purpose\":\"Prove aligned and fail-closed project, endpoint, Cloud, liveness, ordering, and redaction classifiers.\",\"outcome\":\"passed\",\"evidence_ref\":\"Local exit 0 at revision 3eb503273: Unity-MCP alignment classifier fixtures passed.\"}}"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Record the focused Unity Observatory shell-contract proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_contract.sh\"],\"purpose\":\"Prove the bounded Unity Observatory repository contract remains valid.\",\"outcome\":\"passed\",\"evidence_ref\":\"Local exit 0 at revision 3eb503273: v0.91.6 Unity Observatory contract guardrails passed.\"}}"
+    },
+    {
+      "sequence": 17,
+      "generation": 14,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Record the focused validation-selector registration proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_select_validation_lanes.sh\"],\"purpose\":\"Prove issue-owned paths select the dedicated Unity-MCP alignment lane.\",\"outcome\":\"passed\",\"evidence_ref\":\"Local exit 0 at revision 3eb503273: PASS test_select_validation_lanes.\"}}"
+    },
+    {
+      "sequence": 18,
+      "generation": 15,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Record bounded diff-hygiene proof for the implementation revision.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\",\"74fb9904b..3eb503273\"],\"purpose\":\"Prove the committed implementation range has no whitespace errors.\",\"outcome\":\"passed\",\"evidence_ref\":\"Local exit 0 with no output for exact committed range 74fb9904b..3eb503273.\"}}"
+    },
+    {
+      "sequence": 19,
+      "generation": 16,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Record the successful live read-only Unity-MCP project and scene alignment proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"env\",\"UNITY_MCP_CLI=/Users/daniel/git/Unity-MCP/cli/dist/cli.js\",\"ADL_PROCESS_BIN=/Users/daniel/git/agent-design-language/.adl/bin/adl\",\"bash\",\"adl/tools/probe_unity_mcp_observatory_alignment.sh\",\"--project\",\"/Volumes/FastWork/adl-unity-observatory/operator-provisioned-5332/unity-observatory\",\"--url\",\"http://localhost:23011\",\"--editor-pid\",\"9344\"],\"purpose\":\"Prove the loopback MCP endpoint is attached to the intended live Observatory editor and loaded scene.\",\"outcome\":\"passed\",\"evidence_ref\":\"Local PASS: persisted Custom mode; PID 9344 bound by project-local log; MCP Application.dataPath matched canonical project; port 23011 bound without broad scan; FlagshipObservatoryStage loaded, clean, valid, RootCount 12.\"}}"
+    },
+    {
+      "sequence": 20,
+      "generation": 17,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "The bounded implementation, all six SPP steps, focused validation, and live Unity-MCP alignment proof are recorded.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 18,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Anchor the live Unity-MCP claim to retained sanitized exact output after mandatory review identified the missing evidence artifact.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"-c\",\"UNITY_MCP_CLI=/Users/daniel/git/Unity-MCP/cli/dist/cli.js ADL_PROCESS_BIN=/Users/daniel/git/agent-design-language/.adl/bin/adl bash adl/tools/probe_unity_mcp_observatory_alignment.sh --project /Volumes/FastWork/adl-unity-observatory/operator-provisioned-5332/unity-observatory --url http://localhost:23011 --editor-pid 9344 > .csdlc/issues/4739/evidence/unity-mcp-alignment-live.txt\"],\"purpose\":\"Retain sanitized, reviewable live endpoint, project identity, permission-safe port, and read-only scene output.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/4739/evidence/unity-mcp-alignment-live.txt sha256:2ec84c325ec8864e531fd1e6b0a881c439418daf6e246c302927de8d09452a95; focused PCRE2 secret-pattern scan returned no matches.\"}}"
+    },
+    {
+      "sequence": 22,
+      "generation": 19,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Correct the retained proof location after exact review established that issue-card transactions replace undeclared files inside the issue projection.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"-c\",\"UNITY_MCP_CLI=/Users/daniel/git/Unity-MCP/cli/dist/cli.js ADL_PROCESS_BIN=/Users/daniel/git/agent-design-language/.adl/bin/adl bash adl/tools/probe_unity_mcp_observatory_alignment.sh --project /Volumes/FastWork/adl-unity-observatory/operator-provisioned-5332/unity-observatory --url http://localhost:23011 --editor-pid 9344 > .csdlc/prepared/issues/4739/unity-mcp-alignment-live.txt\"],\"purpose\":\"Retain sanitized live proof at the protected prepared-artifact path that survives typed card projections.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/prepared/issues/4739/unity-mcp-alignment-live.txt sha256:2ec84c325ec8864e531fd1e6b0a881c439418daf6e246c302927de8d09452a95; supersedes the non-retained issue-local path from the prior validation entry; focused PCRE2 secret-pattern scan returned no matches.\"}}"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 20,
+      "actor": "subagent:019f95ae-c03a-7e90-808f-803f476c9738",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 21,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "The assigned exact-revision review is complete, all actionable findings are fixed at the reviewed revision, and SRP retains the proof boundaries.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 22,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 27,
+      "generation": 23,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Origin main advanced after ready publication; recover stale review and publication truth for an exact-head review after the clean base merge.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 23,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 29,
+      "generation": 24,
+      "actor": "subagent:019f95ae-c03a-7e90-808f-803f476c9738",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 30,
+      "generation": 25,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "Advance the exact post-merge Unity-MCP alignment implementation after independent review passed with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 31,
+      "generation": 26,
+      "actor": "codex:issue-4739-preparation",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

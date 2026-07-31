@@ -1,0 +1,7 @@
+flowchart LR
+  A["provider setup claude-opus-5"] --> B["claude:claude-opus-5 profile"]
+  B --> C["profile expansion"]
+  C --> D["Rust Anthropic Messages adapter"]
+  E["ANTHROPIC_API_KEY"] -. credential boundary .-> D
+  D --> F["mock HTTP proof"]
+  F --> G["model claude-opus-5 + version header"]

@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5717,
+  "expected_generation": 15,
+  "expected_digest": "cdff65c4ca0e12a12b5b68218c4014874ac08813490e92f8c403d32bb6516b15",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "actor": "codex:5717-execution",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5717-podcast-studio-copy",
+  "title": "[v0.91.8][podcast][ui] Prepare Synthetic Minds podcast launch routes",
+  "body": "Closes #5717\n\nPrepares the Synthetic Minds Podcast launch surface for review: serves the studio at `/podcast/`, adds an unlinked `/_preview/podcast/` route with `noindex,nofollow`, updates RSS/feed metadata, keeps the WAV as an explicitly labeled smoke sample, and aligns the linked sample page with that truth.\n\nAlso preserves the operator copy fixes: correct Agent Logic SVG logo, blue Minds treatment, Friday planned cadence, contact button to `podcast@agent-logic.ai`, no footer email, no video claim, human and model guest support, and ten proposed launch topics without fake playable episode rows.\n\nValidation: typed C-SDLC doctor PASS; structural podcast launch validation PASS; local deploy-shape HTTP smoke PASS for `/podcast/`, `/_preview/podcast/`, `/podcast/feed.xml`, and `/podcast/audio/meet-the-ai-coworkers.wav`; `git diff --check` PASS. Exact-head codex subagent review of `b2c7271a8` returned CLEAN; current head contains metadata-only review/publication lifecycle updates. Residual launch prerequisites remain public HTTPS deploy, mailbox verification, final show artwork, final approved audio/title/description/date/content-rights truth, directory submissions, and human approval.",
+  "draft": true,
+  "token_file": "/Users/daniel/keys/github.token"
+}

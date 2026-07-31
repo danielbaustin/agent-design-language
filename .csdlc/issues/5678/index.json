@@ -1,0 +1,169 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5678,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "a8929912340773ff014f08e9b4e54d53b2c977b1ed4edf0a117ef744c9f37f9b",
+  "phase": "reviewed",
+  "generation": 3,
+  "digest": "35773a615651999d6466c03d5b309db9ad57cac2e018d10ef7c86a40572a903c",
+  "claim": {
+    "id": "claim-5678-opus-review-runbook",
+    "owner": "codex:issue-5678-opus-review-runbook",
+    "generation": 3,
+    "acquired_unix_seconds": 1785113059,
+    "expires_unix_seconds": 1785717859,
+    "heartbeat_unix_seconds": 1785113059,
+    "branch": "codex/5678-opus-review-runbook",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5678",
+      ".csdlc/issues/5678",
+      ".csdlc/locks/5678.lock",
+      ".csdlc/prepared/issues/5678",
+      "docs/tooling/OPUS_REVIEW_RUNBOOK.md",
+      "adl/tools/test_opus_review_runbook.sh"
+    ],
+    "purpose": "Repair the Opus review runbook and add a focused interface drift check"
+  },
+  "review_assignment": {
+    "reviewer": "codex-subagent:review-5678-runbook",
+    "assigned_by": "codex:issue-5678-opus-review-runbook",
+    "revision": "git-blake3:df6c1ba075d262917aa71cea2f40ecfe71abced1:150c1020942ff8c3fe690eebbcf51f95dc7e6a65db7dcdc19f86fef79ddcd3b1",
+    "scope": [
+      "docs/tooling/OPUS_REVIEW_RUNBOOK.md",
+      "adl/tools/test_opus_review_runbook.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-subagent:review-5678-runbook",
+    "scope": [
+      "docs/tooling/OPUS_REVIEW_RUNBOOK.md",
+      "adl/tools/test_opus_review_runbook.sh"
+    ],
+    "reviewed_revision": "git-blake3:df6c1ba075d262917aa71cea2f40ecfe71abced1:150c1020942ff8c3fe690eebbcf51f95dc7e6a65db7dcdc19f86fef79ddcd3b1",
+    "findings": [],
+    "residual_risks": [
+      "The ignored operator-local .adl/docs/TBD mirror remains outside the tracked canonical runbook and must be refreshed separately when an operator needs that local convenience path."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5678/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5678/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5678",
+      "revision": "a495000977ebfb479c685463ea410aca58567690f653a268cc32b43281d91d48"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "2a0f067a2636c775251a897de67d28cfd5267ca32111298005dbc0aa8bd7d6ea",
+      "rendered_digest": "faa47f2d0ae17873882a598895a45032c0ea7c7db76c1b9e3411fd64dedb9322",
+      "ast_digest": "915281c92a70e03260aba7d012faf3a263dbba6668d6e2781b4ef1ade5b57141"
+    },
+    "stp": {
+      "values_digest": "302df2ac8a824df205d4b5d977a19f55ed828a86ca622cbaec0c5075ff58be32",
+      "rendered_digest": "b0ac5e917693b4b9262b66c912e5a93edea8edc6863045d8e0d8df3d7f167b23",
+      "ast_digest": "ca444edc344be37a3af5e319f4d19d132b4aee5de753b993902803f2858a9285"
+    },
+    "spp": {
+      "values_digest": "348f53eafeb23d3d281c6f0fda91dfd35a761a5deb9631dc5bc86fb832c0e473",
+      "rendered_digest": "8706fe6804687023b38e877b914b7b699e6f8a98a7ea0d0dc138a61fca5c989d",
+      "ast_digest": "83d50d7c07b7a72eb69590155a10f59fdb7b3bd671a962b2e08b427e798386dc"
+    },
+    "vpp": {
+      "values_digest": "8ac838cd17d17005cf5ec58d1d8cc0bfea7990caf9aba54aa0a7ed7d89aaa073",
+      "rendered_digest": "91bbf26318a639cd38f88ae52d6638883d32a2cc8bdbcb0649c3f319db668548",
+      "ast_digest": "0ded64ad3154fa1c8263e6648e6eed6fb379b134ad702194661b6dbe8554556a"
+    },
+    "srp": {
+      "values_digest": "f6d1cbabcc990ba3521b53108d5f7c1b56812b19ef760c5b2f5d77033184862f",
+      "rendered_digest": "ab1dcc4ec34949fba2e303f46e7560855019c5747a0a5d78f0844bb9b45fff47",
+      "ast_digest": "a5e61b6b039221b15f80f1ff6d098d657f299c6b68c78f517cbe14dab8c9f72e"
+    },
+    "sor": {
+      "values_digest": "53f0878fbb7ca5e95828c57126dc23d8a65dfbca803b51fc1c76597323b0b88a",
+      "rendered_digest": "9c6257dde90cc5ab445ed98cd356ab2decad322b476eb9d886afc1c5a52e2ce0",
+      "ast_digest": "b55d4256f331ce9f70c28f75d355bb594824ad3a9e8973b906a9042445faa8e4"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "Exact scoped review passed with no actionable findings."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "Exact scoped review passed with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    }
+  ]
+}

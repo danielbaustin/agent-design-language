@@ -1,0 +1,57 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5657,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][launch] Simplify and harden local Runtime v3 launch path",
+    "slug": "v0-91-8-runtime-v3-launch-recovery",
+    "version": "v0.91.8",
+    "generation": 2
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement and validate the bounded Runtime v3 launch recovery slice, then review, publish, merge, and close it.",
+      "deliverables": [
+        "single Guardian-owned serve/readiness path",
+        "coherent configured endpoint and Observatory routes",
+        "real adapter readiness gate",
+        "continuity identity correction",
+        "authenticated WebSocket regression",
+        "focused launch proof and operator documentation"
+      ],
+      "acceptance_criteria": [
+        "AC-1: clean checkout launch resolves one endpoint and reports actual readiness",
+        "AC-2: required production adapters are real or startup fails before readiness",
+        "AC-3: health, root Observatory, feed, and WebSocket routes are coherent and authenticated",
+        "AC-4: continuity identity excludes TLS private-key material and launch artifacts contain no plaintext secrets",
+        "AC-5: Guardian shutdown reaps the child and the second launch succeeds without manual cleanup",
+        "AC-6: focused Rust launch proof is fast and unrelated slow suites are not part of its gate"
+      ],
+      "dependencies": [
+        "existing Runtime v3 kernel and Guardian proof surfaces",
+        "GitHub issue #5657"
+      ],
+      "repo_inputs": [
+        "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+        "adl-runtime-kernel/src/config.rs",
+        "adl-runtime-kernel/src/control.rs",
+        "adl-runtime-kernel/tests/configuration.rs",
+        "adl-runtime-kernel/tests/observatory.rs",
+        "adl-runtime-kernel/tests/guardian_soak.rs",
+        "infra/runtime-v3/runtime-init.toml",
+        "docs/architecture/RUNTIME_V3_CONTROL_OBSERVABILITY_ARCHITECTURE.md",
+        "docs/architecture/RUNTIME_V3_FINAL_REVIEW_5175.md"
+      ],
+      "non_goals": [
+        "Runtime v2 deletion or cutover",
+        "distributed Guardian mesh or PKI issuance",
+        "AWS/EC2/Spot/Windows qualification",
+        "new custom HTTP/WebSocket/TLS/supervisor implementation",
+        "placeholder or fixture-only production credit"
+      ]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "issue": 5632,
+  "base_branch": "main",
+  "branch": "codex/5632-adl-pr-cycle-v2",
+  "worktree": ".worktrees/adl-wp-5632",
+  "claim": {
+    "id": "claim-5632-adl-pr-cycle-v2",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1,
+    "expires_unix_seconds": 4102444800,
+    "heartbeat_unix_seconds": 1,
+    "protected_paths": ["docs/tooling/adl_pr_cycle_skill.md", "docs/architecture/"],
+    "purpose": "Update the installed authoring skill to route through C-SDLC v2.",
+    "branch": "codex/5632-adl-pr-cycle-v2",
+    "worktree": ".worktrees/adl-wp-5632"
+  }
+}

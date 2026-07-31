@@ -1,0 +1,25 @@
+{
+  "issue": 5107,
+  "base_branch": "main",
+  "branch": "codex/5107-v092-adaptive-learning-dag-queue",
+  "worktree": ".worktrees/adl-wp-5107",
+  "claim": {
+    "id": "claim-5107-adaptive-learning-dag-queue",
+    "owner": "codex:5107-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1785531133,
+    "expires_unix_seconds": 1786135933,
+    "heartbeat_unix_seconds": 1785531133,
+    "branch": "codex/5107-v092-adaptive-learning-dag-queue",
+    "worktree": ".worktrees/adl-wp-5107",
+    "protected_paths": [
+      ".csdlc/issues/5107",
+      ".csdlc/locks/5107.lock",
+      ".csdlc/prepared/issues/5107",
+      ".csdlc/evidence/5107",
+      "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
+      "docs/milestones/v0.92/features/README.md"
+    ],
+    "purpose": "Implement the reviewed #5107 Adaptive Learning DAG planning queue and v0.92 handoff without opening downstream implementation early"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "wp14-activation-prep",
+        "proof_role": "preparation-packet-shape",
+        "purpose": "Validate #4759 preparation packet shape and dependency-gate language without implementation",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 1000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "wp14-preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 30,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/4759/validate_preparation.rb"],
+        "evidence": {"max_log_bytes": 4096, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {"requested_lanes": ["wp14-activation-prep"], "allow_network": false, "available_credentials": []},
+  "budget": {"max_parallel": 1, "cpu_units": 1, "memory_mib": 128, "tokens": 1000},
+  "root": "/Volumes/FastWork/adl-wp-4759",
+  "evidence_dir": "/Volumes/FastWork/adl-wp-4759/.csdlc/evidence/4759/preparation",
+  "cancellation_file": null
+}

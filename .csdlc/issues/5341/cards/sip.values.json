@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5341,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-08] Implement Runtime v3 adapter",
+    "slug": "v0-91-8-wp08-runtime-v3-adapter",
+    "version": "v0.91.8",
+    "generation": 5
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Connect terminally accepted ADL v2 plans and engine events to the canonical Runtime v3 ingress through one thin deterministic adapter while preserving separate language, engine, records, runtime, and C-SDLC authority.",
+      "required_outcome": "At one exact integrated revision, an ADL v2 ExecutionPlan and verified engine event are mapped deterministically into the terminal #5591 canonical typed ingress, Runtime v3 outcomes are preserved in #5342 record contracts, every authority-escalation path fails closed, the owned adapter crate stays within its exact COTS and LoC budgets, and all local, CI, merge, post-merge, and typed closeout evidence agrees.",
+      "declared_scope": [
+        "one additive ADL-owned adapter crate at adl-v2/crates/adl-runtime-v3-adapter after terminal dependency clearance",
+        "deterministic mapping from #5340 plan dispatch and engine event contracts into #5591 public canonical ingress request types",
+        "typed mapping from Runtime v3 result and error contracts into #5342-owned result, trace, provenance, digest, and trust contracts",
+        "positive mapping, canonical ingress integration, negative authority, COTS, LoC, exact-revision, rollback, and closeout proof",
+        "preparation-only typed cards, design, diagram, dependency gate, validation plan, and durable watch while dependencies remain non-terminal"
+      ],
+      "authority_boundary": [
+        "#5339 and #5338 own language and compilation; #5341 only consumes a terminal validated ExecutionPlan contract",
+        "#5340 owns bounded scheduling, retry, failure, joins, resume, and provider/tool ports; #5341 cannot schedule or retry",
+        "#5342 owns canonical records, signing, and verification; #5341 preserves trust fields and cannot sign, re-sign, downgrade, or rewrite history",
+        "#5591 and Runtime v3 own canonical ingress validation, admission, execution, continuity, pressure behavior, supervision, and live state; #5341 can use only the public typed ingress contract",
+        "C-SDLC v2 owns issue, card, claim, review, publication, and closeout truth; product code cannot acquire lifecycle or merge authority",
+        "Runtime v2 is behavioral evidence only and no Runtime v2 implementation path may be imported, modified, copied, defaulted, or claimed"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use only typed C-SDLC v2 lifecycle binaries; no v1 wrappers, raw gh, AWS, product edits on main, or primary-main mutation",
+        "Create one claim after every dependency gate is terminal, protecting the four issue-local paths and exactly adl-v2/crates/adl-runtime-v3-adapter",
+        "Do not implement product code until #5340, #5342, and #5591 are each merged and their merge commits are ancestral to current origin/main; closeout proceeds in parallel and is non-blocking",
+        "After the gate clears, refresh origin/main, verify sole-writer authority, integrate current origin/main, and bind once with only adl-v2/crates/adl-runtime-v3-adapter as product scope",
+        "Never edit Runtime v2, adl-runtime, adl-runtime-kernel, sibling ADL v2 owner crates, shared manifests, Runtime deployment, selectors, or C-SDLC product code",
+        "Use /Volumes/FastWork/adl-5341 for every Rust build artifact and complete every PVF lane locally with no skipped, ignored, degraded, fixture-only, prose-only, pending, or CI-deferred acceptance",
+        "Run one bounded exact-revision GPT-5.5 subagent review immediately before PR, fix every actionable finding, use typed publication, require green CI, self-merge only at the exact authorized head, then perform post-merge validation and typed closeout/receipt",
+        "Report every changed dependency, readiness, publication, merge, terminal, or blocker state to source task 019f4b3e-6c61-7653-957b-7a2a6042a80d"
+      ]
+    }
+  }
+}

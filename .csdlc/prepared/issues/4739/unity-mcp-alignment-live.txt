@@ -1,0 +1,65 @@
+# Unity-MCP Observatory Alignment Probe
+
+- Canonical project: `/Volumes/FastWork/adl-unity-observatory/operator-provisioned-5332/unity-observatory`
+- Endpoint input: `explicit-discovered`
+- Read-only tool: `scene-list-opened`
+
+## Sanitized CLI Status
+```text
+[verbose] Config loaded: connectionMode=Custom, configUrl=http://localhost:23011, hasToken=<redacted>
+[verbose] Using explicit --url: http://localhost:23011
+
+Unity-MCP Status
+  Project: /Volumes/FastWork/adl-unity-observatory/operator-provisioned-5332/unity-observatory
+──────────────────────────────────────────────────
+
+Unity Editor Process
+[verbose] Found 0 Unity process(es)
+[verbose] No Unity process found for project: /Volumes/FastWork/adl-unity-observatory/operator-provisioned-5332/unity-observatory
+WARN: Unity is not running with this project
+
+Local MCP Server
+  URL: http://localhost:23011
+Probing http://localhost:23011...
+SUCCESS: Connected
+[verbose] Local server response: {"status":"success","structured":{"result":"pong"}}
+──────────────────────────────────────────────────
+SUCCESS: MCP server is reachable — ready for tool calls
+```
+
+## Editor Corroboration
+- Unity-MCP process discovery reported a false negative.
+- Known PID `9344` is live and the project-local editor log binds it to the canonical project.
+
+## MCP Project Identity
+```json
+{"status":"success","structured":{"result":{"typeName":"System.String","value":"/Volumes/FastWork/adl-unity-observatory/operator-provisioned-5332/unity-observatory/Assets"}}}
+  Update available: 0.82.2 → 0.86.1
+  Run npm i -g unity-mcp-cli to update
+```
+
+## Permission-Safe Endpoint Liveness
+```json
+{
+  "schema": "adl.process_status.v1",
+  "check": "port",
+  "status": "bound_port",
+  "pid": null,
+  "host": "127.0.0.1",
+  "port": 23011,
+  "safe_order": "metadata_or_exact_target_first",
+  "broad_process_scan": false,
+  "uses_ps": false,
+  "note": "exact TCP connect probe reached a loopback service"
+}
+```
+
+## Read-Only Scene Proof
+```json
+{"status":"success","structured":{"result":[{"Name":"FlagshipObservatoryStage","IsLoaded":true,"IsDirty":false,"IsSubScene":false,"IsValidScene":true,"RootCount":12,"path":"Assets/Scenes/FlagshipObservatoryStage.unity","buildIndex":-1,"instanceID":"0"}]}}
+  Update available: 0.82.2 → 0.86.1
+  Run npm i -g unity-mcp-cli to update
+```
+
+## Result
+PASS: canonical project, persisted local mode, endpoint, editor liveness, MCP project identity, and read-only scene proof agree.

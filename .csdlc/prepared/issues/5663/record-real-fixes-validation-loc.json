@@ -1,0 +1,19 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 23,
+  "expected_digest": "465acec1d8aae5ede9993dd7e0cffa352fc13929ead2d1c77d11bb9f99df23fa",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record final net-negative physical LoC proof after five PR #5669 fixes.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["git", "diff", "--numstat", "origin/main", "--", "adl-runtime-kernel/src/assembly.rs", "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs", "adl-runtime-kernel/src/governed_operations.rs", "adl-runtime-kernel/src/operations.rs", "adl-runtime-kernel/tests/assembly.rs", "adl-runtime-kernel/tests/operations.rs"],
+      "purpose": "Record touched source/test physical LoC delta: before 3796, after 3728, net -68.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log"
+    }
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,13 @@
+{
+  "issue": 5344,
+  "card": "srp",
+  "expected_generation": 19,
+  "expected_digest": "e5e13df7c5ddab0d850d50aaf21b9f035cd2c2b57a71586dbcb09d871665f8d6",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Advance the bounded follow-up review solely to enter typed recovery and correct the accepted intermediate SRP prompt defect before final review.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "issue": 5343,
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-preparation",
+  "expected_owner": "codex:5343-preparation-owner",
+  "expected_generation": 1,
+  "expected_digest": "127a38733444c4011c10f8fa65c3e68206f3321214fa979b021718b733e184e8",
+  "now_unix_seconds": 1784755000,
+  "actor": "codex:5343-preparation-owner",
+  "reason": "Refresh execution dependency gate wording so live merge plus ancestry is blocking and receipts/typed closeout are audit observations.",
+  "expected_purpose": "Prepare and review #5343 reversible default-switch contracts only; no selector transaction or implementation until #5344 is merged, typed closed_out, receipt-backed, claim-free, ancestral, and accepted",
+  "purpose": "Prepare and review #5343 reversible default-switch contracts only; no selector transaction or implementation until #5344 and #5345 each have a live merged landing commit ancestral to the exact execution revision; receipts and typed closeout are audit observations only",
+  "add_protected_paths": [
+    ".csdlc/issues/5343"
+  ]
+}

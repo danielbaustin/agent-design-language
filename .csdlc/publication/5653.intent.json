@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5653,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5653-readme-refresh",
+  "title": "[v0.91.8][docs] Refresh README status, release, CI, and homepage links (#5653)",
+  "body": "Closes #5653\n\nSummary:\n- publish the correct v0.91.7 GitHub release and tag\n- refresh README and release-note truth\n- add the ADL homepage link and retain canonical main CI/coverage badges\n\nValidation:\n- focused documentation assertions and git diff --check passed\n- https://agent-logic.ai returned HTTP 200\n- exact-head bounded review completed with no actionable findings\n\nThe badge reflects the independent latest main CI workflow; this documentation change does not alter CI behavior.",
+  "draft": true,
+  "revision": "git-blake3:462b4c94c0586a1eb12bf70967a122334236d1e7:969c6c53b4896ed2135abf99ac671052dd21844c1607fabb51fb9bce9d9c832f",
+  "commit_sha": "462b4c94c0586a1eb12bf70967a122334236d1e7"
+}

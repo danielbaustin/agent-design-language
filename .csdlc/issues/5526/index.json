@@ -1,0 +1,338 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5526,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "aa79cce1287aca59dd56189550419dcb23f760e748a577a219b017f0e3012566",
+  "phase": "reviewed",
+  "generation": 15,
+  "digest": "422f5c3de95b66cc2fb9ce3a819885849ecf9ce705524c327573ca3637fc18c3",
+  "claim": {
+    "id": "claim-5526-v0918-provider-expansion-preparation",
+    "owner": "codex:issue-5526-preparation",
+    "generation": 15,
+    "acquired_unix_seconds": 1784755008,
+    "expires_unix_seconds": 1785359808,
+    "heartbeat_unix_seconds": 1784755008,
+    "branch": "codex/5526-v0918-provider-expansion",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5526/implementation",
+      ".csdlc/issues/5526",
+      ".csdlc/locks/5526.lock",
+      ".csdlc/prepared/issues/5526",
+      "adl/src/cli/provider_cmd.rs",
+      "adl/src/model_identity.rs",
+      "adl/src/provider",
+      "adl/src/provider_adapter.rs",
+      "adl/src/provider_adapter_cli.rs",
+      "adl/src/provider_communication.rs",
+      "adl/src/provider_substrate.rs",
+      "adl/tests/local_ollama_provider_tests.rs",
+      "adl/tests/mock_provider_tests.rs",
+      "adl/tests/provider_tests",
+      "adl/tests/provider_tests.rs",
+      "adl/tests/remote_ollama_provider_tests.rs"
+    ],
+    "purpose": "Prepare issue #5526 provider/model expansion for later execution without product implementation"
+  },
+  "review_assignment": {
+    "reviewer": "codex:review_5632",
+    "assigned_by": "codex:5526-execution",
+    "revision": "git-blake3:e7cf3f11a4b2de79a9738eb34489401f6803688e:e2918e90a536cd6d304757ab0cfccca10662e02575eebd02b4f9f483ad5d29cb",
+    "scope": [
+      ".csdlc/evidence/5526/implementation/provider-expansion.log",
+      "adl/src/provider/http_family.rs",
+      "adl/src/provider/mod.rs",
+      "adl/src/provider/profiles.rs",
+      "adl/src/provider_substrate.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tests/provider_tests/http_family.rs",
+      "adl/tests/provider_tests/profiles.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "codex:review_5632",
+    "scope": [
+      ".csdlc/evidence/5526/implementation/provider-expansion.log",
+      "adl/src/provider/http_family.rs",
+      "adl/src/provider/mod.rs",
+      "adl/src/provider/profiles.rs",
+      "adl/src/provider_substrate.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tests/provider_tests/http_family.rs",
+      "adl/tests/provider_tests/profiles.rs"
+    ],
+    "reviewed_revision": "git-blake3:e7cf3f11a4b2de79a9738eb34489401f6803688e:e2918e90a536cd6d304757ab0cfccca10662e02575eebd02b4f9f483ad5d29cb",
+    "findings": [],
+    "residual_risks": [
+      "No live provider calls or credentials were used; hosted endpoint behavior remains deferred to credentialed integration proof."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5526/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5526/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5526",
+      "revision": "f45c0aac551edc5b0e065f9d923f3425bc74ef7368bb9b0015cc7c1bd765a30b"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "f9b9d090fed277ddd38a123db065ba0d9eb087f1988c16f53ec7001ec4b0b3e1",
+      "rendered_digest": "1213092da816153169db6e4d2aff6b6d46221fe900ff59a7574a063ad482ce4b",
+      "ast_digest": "7519a32389dc5c87c915d7d0ff85ce7bd1d486bfa9219391081934a11a831971"
+    },
+    "stp": {
+      "values_digest": "b339aa1744ab750a5949f96ba869030b37b67b3d88412ed20cf0409b4134bfb6",
+      "rendered_digest": "86472053f63307ddac09bdac4bdaaa4d2f4feee9f5d8eabad2e39bd4124c10a7",
+      "ast_digest": "a2bf0fbb42c293aac03e58ac1c66e4c2aa869f904bb955447f9aaf884fd87cfb"
+    },
+    "spp": {
+      "values_digest": "99b85144d90f1aebc8e00e2895feb4d02134fd36c00685447cefd078e28fe243",
+      "rendered_digest": "176f8e29bf09fe3f53485305e07b8004e034410a43dbf9478889e975c4c8a873",
+      "ast_digest": "c0b763057f0f79ef17f86469bd795047ebe8f7e385c2d8e7d95c23cccbe4227b"
+    },
+    "vpp": {
+      "values_digest": "a7420fa5eecd26f0183f33174ae74bee85b0a6ef62aa156f1e119571dee68758",
+      "rendered_digest": "c75a2a3735faf3a04baa93afab9540a742db00055e57b62ff08e38c6038b3667",
+      "ast_digest": "4237a1ccf4f678cf64705be40b5b98bad86b7da1517a9a089a96793456e4d759"
+    },
+    "srp": {
+      "values_digest": "53a89c42978dc7a7ea0523ed617419b9b94c89e0a62a50f20d1f5a77742a3d47",
+      "rendered_digest": "7d34891899c6cdd3f2ff1c117eb07bfa8f307c3f7b70e0b324bbbb1c8dc42e46",
+      "ast_digest": "90e14db910faf417309b364f1ee2e4a6cb926405e98e104b9382e5f3af08693a"
+    },
+    "sor": {
+      "values_digest": "df5c27d5d2b24e77e19ad361ae8d59a8dd8ea6d676559f0dbf12817435e35a12",
+      "rendered_digest": "f86c92c0607faecb6b890374c15d725b35dc574bdd6d10a277170537b1ffe9e6",
+      "ast_digest": "15478783a7c26d936c5ce06a6d2218da0299762ddd202c52bcde882735356dc7"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5526-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5526-preparation",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5526-execution",
+      "reason": "WP-09 adapter foundation is merged and current-main ancestry is verified; begin bounded provider/model implementation."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5526-execution",
+      "reason": "Exact-head assigned review passed with no actionable findings; advance to Reviewed for typed publication."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5526-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5526-execution",
+      "reason": "Current PR head advanced with the required provider coverage mapping and current-main ancestry; recover stale publication review for exact-head re-review."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5526-execution",
+      "reason": "Exact current-main head review passed with no actionable findings; advance to Reviewed for publication update."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5526-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5526-execution",
+      "reason": "Publication metadata advanced the branch after exact review; recover for a narrowed exact-head re-review that excludes lifecycle projection files."
+    },
+    {
+      "sequence": 10,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5526-execution",
+      "reason": "Narrowed exact-head review passed with no actionable findings; advance to Reviewed for publication update."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5526-preparation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5526-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "operator:issue-5526",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5526-execution",
+      "reason": "WP-09 provider adapter foundation is merged into origin/main; promote this bound issue into implementation while preserving its explicit provider path boundary.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/evidence/5526/implementation\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5526-execution",
+      "reason": "Focused provider/model expansion lane passed without credentials or live provider calls.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_\"],\"purpose\":\"Prove expanded provider identities, deterministic model identifiers, vendor inference, adapter redaction, and provider regression behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5526/implementation/provider-expansion.log\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5526-execution",
+      "reason": "Record the bounded provider/model expansion implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Added deterministic first-class provider profiles and preserved vendor identity across the shared HTTP transport for current Kimi, MiniMax, hosted Qwen, xAI/Grok, Mistral, Cohere, DeepSeek v4, Z.ai GLM-5, and Gemini 3.1 model lanes.\",\"changes\":[\"Added stable provider profile names, endpoints, and provider model identifiers for each expanded vendor lane.\",\"Extended provider substrate vendor inference so shared transport does not collapse distinct vendor identities.\",\"Added focused registry and substrate tests for deterministic identity and model selection.\",\"Kept credentials, live calls, AWS/Bedrock, and OpenRouter routing out of the deterministic implementation lane.\"],\"artifacts\":[\"adl/src/provider/profiles.rs\",\"adl/src/provider_substrate.rs\",\"adl/src/provider/mod.rs\",\".csdlc/evidence/5526/implementation/provider-expansion.log\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5526-execution",
+      "reason": "WP-09 adapter foundation is merged and current-main ancestry is verified; begin bounded provider/model implementation.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5526-execution",
+      "reason": "Final focused provider validation passed after adapter contract repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"--test\",\"provider_tests\",\"provider_\"],\"purpose\":\"Prove expanded provider identities, deterministic model identifiers, vendor inference, chat adapter request/response shapes, and legacy generic HTTP compatibility.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5526/implementation/provider-expansion.log\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5526-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5526-execution",
+      "reason": "Exact-head assigned review passed with no actionable findings; advance to Reviewed for typed publication.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5526-execution",
+      "reason": "Current PR head advanced with the required provider coverage mapping and current-main ancestry; recover stale publication review for exact-head re-review.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:5526-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:5526-execution",
+      "reason": "Exact current-main head review passed with no actionable findings; advance to Reviewed for publication update.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:5526-execution",
+      "reason": "Publication metadata advanced the branch after exact review; recover for a narrowed exact-head re-review that excludes lifecycle projection files.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex:5526-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:5526-execution",
+      "reason": "Narrowed exact-head review passed with no actionable findings; advance to Reviewed for publication update.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    }
+  ]
+}

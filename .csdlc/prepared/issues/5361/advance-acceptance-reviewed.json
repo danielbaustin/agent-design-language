@@ -1,0 +1,13 @@
+{
+  "issue": 5361,
+  "card": "srp",
+  "expected_generation": 13,
+  "expected_digest": "2a209d8d2c764c9517cd3b93be587e10b157928ab8c73c975fe45e849862f562",
+  "claim_id": "claim-5361-v0918-runtime-v3-acceptance-readiness",
+  "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+  "reason": "The required exact-head GPT-5.5 pre-PR review completed with no findings and documented residual truth boundaries; advance #5361 to reviewed for typed publication.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

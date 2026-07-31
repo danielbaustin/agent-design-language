@@ -1,0 +1,284 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5653,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "f93988ed395e1db7da2af464587de5654c71f80272e6421ecc4db7ea96396b24",
+  "phase": "published",
+  "generation": 12,
+  "digest": "bb3a89e3f7069c2f498886e0bc03a46e184b83c9f563971d6e5e27f43d748dc4",
+  "claim": {
+    "id": "claim-5653-readme-refresh",
+    "owner": "codex:5653-execution",
+    "generation": 12,
+    "acquired_unix_seconds": 1784850000,
+    "expires_unix_seconds": 1785454800,
+    "heartbeat_unix_seconds": 1784850000,
+    "branch": "codex/5653-readme-refresh",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5653",
+      ".csdlc/locks/5653.lock",
+      ".csdlc/prepared/issues/5653",
+      "README.md"
+    ],
+    "purpose": "Refresh root README status, CI, release posture, and homepage link"
+  },
+  "review_assignment": {
+    "reviewer": "bounded-subagent-review-5653",
+    "assigned_by": "codex:5653-execution",
+    "revision": "git-blake3:5e7edfb35d16c2c6da9201654a911c5157430ca6:29e1ef67c402c766516a2ed0fae5adfad89f8e02a13b9504b4bcfd6963c84ce7",
+    "scope": [
+      "README.md",
+      "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
+      ".csdlc/issues/5653"
+    ]
+  },
+  "review": {
+    "reviewer": "bounded-subagent-review-5653",
+    "scope": [
+      "README.md",
+      "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
+      ".csdlc/issues/5653"
+    ],
+    "reviewed_revision": "git-blake3:5e7edfb35d16c2c6da9201654a911c5157430ca6:29e1ef67c402c766516a2ed0fae5adfad89f8e02a13b9504b4bcfd6963c84ce7",
+    "findings": [],
+    "residual_risks": [
+      "The main ci badge reflects the independent latest main workflow; this documentation change does not alter CI behavior."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5653,
+    "pull_request": 5654,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5654",
+    "base": "main",
+    "head": "codex/5653-readme-refresh",
+    "revision": "git-blake3:462b4c94c0586a1eb12bf70967a122334236d1e7:969c6c53b4896ed2135abf99ac671052dd21844c1607fabb51fb9bce9d9c832f",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5653/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5653/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5653-preparation-review",
+      "revision": "841a852b8267d543686c4241d13eb74bbb2d0678cf6ba1d537bfeb80fa7af0f5"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "c1e445b919a74f123c0a40808ef636fd95e10ce913dcd34983cd957f6789ef94",
+      "rendered_digest": "08c5cc81d85386e4830f55879804707ac47a4a4a3aed9f8a50712bb06df1d431",
+      "ast_digest": "d5b072e2ec5bd5ccfefa6d229adc847d756093c0b2943cfd00b89e6086fede45"
+    },
+    "stp": {
+      "values_digest": "917cc55ef555e478e33570d66a52f1e584d690f240fdc378b45f056ff3a6269b",
+      "rendered_digest": "c5478426342378c63ea804905ce0fc88cd59607a062ebba7061dd009cae92249",
+      "ast_digest": "8164e8ea8fdcd7dab7c10bbe503b78abe50915f0412b91d7ffe740cb54471207"
+    },
+    "spp": {
+      "values_digest": "6befee1682e158269aceebdc63573833c99cd379a82e03faf30d4876c8a6a8b8",
+      "rendered_digest": "f82573d0e66df1d20c1de70adbc5a1c4d9acfcc45fbfeed32687e4d1b1914a34",
+      "ast_digest": "ffbfe684bc741900f734c846e596640acca9d6e93edc3b1d8b700a4ca932bcda"
+    },
+    "vpp": {
+      "values_digest": "233a42b163665db7d07d127b250c1ec474c3c5f1da040a6fa25cc5a8a7da76fa",
+      "rendered_digest": "7432a95506b37c19720ce8359973d32d10e1c832390402655a2df360c77f14ac",
+      "ast_digest": "7133c3b49fbea776903d755a7d0fccc787f648f590a946f2f1cbd9ef3825031e"
+    },
+    "srp": {
+      "values_digest": "0f5d55852e6624786c487ae9fc5b4de44f51dd1a3058362864e7d3e7d056a3a5",
+      "rendered_digest": "3e1b0edaa364b36d2fce655482c9feaba220a86c0498310d523c78bc9e98c3af",
+      "ast_digest": "e292a5fe1cfda6de60c5f0eff47d5baceb019746527490d4cf7fc885298a4b30"
+    },
+    "sor": {
+      "values_digest": "2f7825e1d8ed70020201c0cc2fb5654fdd995d654a101d7c7f5123e4d5a4213a",
+      "rendered_digest": "9eabfd7c00740dae7d7911656567e66a45bb79300b4d2a232e7db3ab9c458948",
+      "ast_digest": "9c1f7ee62211a32b833d03348844399a3debbcd0ae458094dea486589c643c6a"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5653-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5653-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5653-execution",
+      "reason": "README implementation is complete and focused proof is green"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5653-execution",
+      "reason": "Exact-head bounded review completed with no actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5653-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5653-execution",
+      "reason": "Release-truth documentation changed after draft publication; recover stale review and publication truth for exact-head re-review."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5653-execution",
+      "reason": "Exact release-truth review completed with no actionable findings."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5653-execution",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5653-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:5653-preparation-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5653-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5653-execution",
+      "reason": "Record focused README and homepage validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove README wording, homepage link, badge branch, and documentation whitespace/link boundary\",\"outcome\":\"passed\",\"evidence_ref\":\"Focused README assertions and git diff check passed; https://agent-logic.ai returned HTTP 200.\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5653-execution",
+      "reason": "Record README status and homepage implementation",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Updated the root README milestone badge and status to v0.91.8 release-tail truth, added the ADL homepage link, and documented that later milestones are not hosted releases.\",\"changes\":[\"README.md\"],\"artifacts\":[\".csdlc/evidence/5653/readme-focused.txt\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5653-execution",
+      "reason": "README implementation is complete and focused proof is green",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5653-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5653-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "bounded-subagent-review-5653",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5653-execution",
+      "reason": "Exact-head bounded review completed with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5653-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5653-execution",
+      "reason": "Release-truth documentation changed after draft publication; recover stale review and publication truth for exact-head re-review.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5653-execution",
+      "reason": "Revalidate README and release-note truth after publishing v0.91.7.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Verify published-release links, homepage link, canonical main badges, and documentation whitespace\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5653/readme-focused.txt\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:5653-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "bounded-subagent-review-5653",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:5653-execution",
+      "reason": "Exact release-truth review completed with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:5653-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

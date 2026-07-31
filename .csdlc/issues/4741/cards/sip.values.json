@@ -1,0 +1,43 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4741,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][tooling] Make Unity editor liveness and batch proof reliable for deployed observatory",
+    "slug": "v0918-wp15-unity-editor-liveness-batch-proof",
+    "version": "v0.91.8",
+    "generation": 19
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make Unity Observatory editor and batch proof select a safe execution mode, show real progress, and fail quickly with precise evidence when the selected mode cannot complete.",
+      "required_outcome": "Repository-owned Unity proof wrappers deterministically select open-editor, fresh-batch, or skipped-fail-closed mode; isolate staged execution; monitor semantic progress; and retain exact proof or blocker truth.",
+      "declared_scope": [
+        "Exact-project editor liveness classification",
+        "Open-editor versus fresh-batch versus skipped mode selection",
+        "Approved staging and mutable Unity/.NET scratch isolation",
+        "Semantic log-progress watchdog and bounded blocker classification",
+        "Focused wrapper unit and contract tests",
+        "Concise operator proof-mode runbook"
+      ],
+      "authority_boundary": [
+        "#4741 owns editor liveness, proof-mode selection, staging, watchdog, cleanup, and wrapper tests",
+        "#4739 owns Unity-MCP project and endpoint identity",
+        "#5332 owns ILPP GetDomainName root cause and detailed retry classifier",
+        "No scene generation, fallback geometry, asset publication, runtime contract semantics, investor rendering, or walkthrough capture",
+        "No raw process scan, /private/tmp staging, scratch Unity copies, locally built owner binaries, or arbitrary total runtime ceiling"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 lifecycle only",
+        "Work only in the issue-bound v0.91.8 worktree",
+        "Preserve the older dirty #4741 worktree unchanged",
+        "Use /Volumes/FastWork or issue-local .adl for staging and repository-installed binaries only",
+        "No /private/tmp, raw process scans, arbitrary total runtime ceiling, raw gh fallback, or secret exposure"
+      ]
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4763,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21][birthday-docs] Prepare first-birthday docs and external launch surfaces",
+    "slug": "v0918-wp21-birthday-docs-launch-surfaces-prep-4763",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md\ndocs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md\ndocs/milestones/v0.92/README.md\ndocs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\ndocs/milestones/v0.92/external_launch\ndocs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md\ndocs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md\ndocs/milestones/v0.92/features/README.md",
+      "review_revision": "git-blake3:073c79736380b4cb676c4b6c4af749b0aff99a50:e32a336dbd73e9078e72a1a52dc80625f720aede67a14880cdb4dfe92bff5497",
+      "reviewer": "codex:repo-code-review-4763-post-integration",
+      "review_prompts": [
+        "Check whether #4763 is prepared only and contains no implementation, PR, publication, merge, or closeout claim.",
+        "Check whether #4762 actual retained implementation proof is required for later execution while #4762 claim/receipt/closeout is not a preparation blocker.",
+        "Check whether exact paths, COTS posture, LoC/time budgets, PVF lanes, rollback, and no-deferral criteria are explicit.",
+        "Check whether typed lifecycle blockers are recorded truthfully without widening this branch into unrelated repair."
+      ],
+      "findings": [
+        {
+          "id": "POSTINT-1",
+          "severity": "p3",
+          "summary": "Ready-variant wording retained an overlong sentence and pre-merge acceptance language after #4762 merged.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:073c79736380b4cb676c4b6c4af749b0aff99a50:e32a336dbd73e9078e72a1a52dc80625f720aede67a14880cdb4dfe92bff5497",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "Merged #4762 proof is a retained witness and receipt input with birth_event_status not_claimed; it does not prove that the v0.92 birthday event occurred.",
+        "Final external publication still requires v0.92 packet validation, exact evidence citation, and explicit operator authorization for the target channel.",
+        "This docs-focused review did not execute a birthday runtime or publish external content."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

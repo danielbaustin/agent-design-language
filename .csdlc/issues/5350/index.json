@@ -1,0 +1,322 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5350,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "b074920ed80645449927fbe79ead7b0121e5a676d7cb37acfe270a3419c11f44",
+  "phase": "published",
+  "generation": 13,
+  "digest": "c56b441e571bdfc8db351e9fe8dbd121bb4f1439d502756a8dc12f35075f3af7",
+  "claim": {
+    "id": "claim-5350-v0918-wp11-shadow-parity-preparation",
+    "owner": "codex:5350-preparation-owner",
+    "generation": 13,
+    "acquired_unix_seconds": 1784659713,
+    "expires_unix_seconds": 1785264513,
+    "heartbeat_unix_seconds": 1784659713,
+    "branch": "codex/5350-v0918-wp11-shadow-parity",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5350",
+      ".csdlc/issues/5350",
+      ".csdlc/locks/5350.lock",
+      ".csdlc/prepared/issues/5350",
+      "adl-characterization"
+    ],
+    "purpose": "Implement, validate, review once, publish, merge, and close WP-11 exact-revision ADL v1/v2 shadow parity plus read-only Runtime v3 and WP-10A evidence overlays."
+  },
+  "review_assignment": {
+    "reviewer": "subagent:019f8dd9-24c7-7b50-96d2-29a7a1c2fdad",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:46ec62f20a70f163ba0a632bde60877cc3514197:4c3351e7565cc9faed2c2bca1d2b1c7fd139513afee7bcf2d6c8068bf58a4279",
+    "scope": [
+      "adl-characterization",
+      ".csdlc/evidence/5350",
+      ".csdlc/prepared/issues/5350/validate-parity.sh",
+      ".csdlc/prepared/issues/5350/source-inventory.json"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f8dd9-24c7-7b50-96d2-29a7a1c2fdad",
+    "scope": [
+      "adl-characterization",
+      ".csdlc/evidence/5350",
+      ".csdlc/prepared/issues/5350/validate-parity.sh",
+      ".csdlc/prepared/issues/5350/source-inventory.json"
+    ],
+    "reviewed_revision": "git-blake3:46ec62f20a70f163ba0a632bde60877cc3514197:4c3351e7565cc9faed2c2bca1d2b1c7fd139513afee7bcf2d6c8068bf58a4279",
+    "findings": [
+      {
+        "id": "F-5350-1",
+        "severity": "p1",
+        "summary": "Approved-difference rows bypassed comparison-group invariants.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:46ec62f20a70f163ba0a632bde60877cc3514197:4c3351e7565cc9faed2c2bca1d2b1c7fd139513afee7bcf2d6c8068bf58a4279",
+        "route": null
+      },
+      {
+        "id": "F-5350-2",
+        "severity": "p2",
+        "summary": "Retained shadow report leaked host-path-shaped reviewer identifiers.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:46ec62f20a70f163ba0a632bde60877cc3514197:4c3351e7565cc9faed2c2bca1d2b1c7fd139513afee7bcf2d6c8068bf58a4279",
+        "route": null
+      },
+      {
+        "id": "F-5350-3",
+        "severity": "p2",
+        "summary": "Shadow manifest command policy did not fail closed to reviewed local-only command shapes.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:46ec62f20a70f163ba0a632bde60877cc3514197:4c3351e7565cc9faed2c2bca1d2b1c7fd139513afee7bcf2d6c8068bf58a4279",
+        "route": null
+      },
+      {
+        "id": "F-5350-4",
+        "severity": "p3",
+        "summary": "Shadow work directories followed ambient TMPDIR instead of the declared FastWork root.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:46ec62f20a70f163ba0a632bde60877cc3514197:4c3351e7565cc9faed2c2bca1d2b1c7fd139513afee7bcf2d6c8068bf58a4279",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "The 25 candidate rows remain approved intentional differences because v2 deliberately replaces the v1 CLI and output contracts; each row retains explicit authority, replacement proof, risk, and rollback.",
+      "Runtime and WP-10A overlays are read-only evidence bindings and do not authorize cutover, default-selector changes, or product execution."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5350,
+    "pull_request": 5649,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5649",
+    "base": "main",
+    "head": "codex/5350-v0918-wp11-shadow-parity",
+    "revision": "git-blake3:5aefde7aae2d293f6a048ba5848f060a627d874a:09174ef2199ba32bcf934c8e704ecbe857a3d60d34d6fc36884748b01bf9c00f",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5350/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5350/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "subagent:codex-read-only-5350-final-review",
+      "revision": "83326635619c0b8db7970827b7387706717b62348b96a0f0590c8c6e1b442aeb"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "3b5e0ceb26040f5b91a6aa6e7206c9ccd0bc0d36991018f69c7db064f9748633",
+      "rendered_digest": "dc689541ec2955089b025d909e7606401c3b2b0bf68671e3190fd0f1751ff9f6",
+      "ast_digest": "035e8a6ece992b3bc6d4dd247f4d325ef4ada0f0c0ddd4722fe4fe3377245dad"
+    },
+    "stp": {
+      "values_digest": "a8ba28b48821f71010c35e3e4f3e1f1400c01da5497dd28a939050b477cdc676",
+      "rendered_digest": "1858886d9b3223f98259beff738cdcb64122b0aa3bea60b408c143cde4e44c38",
+      "ast_digest": "35bb3095fb4b1e7b96f94693c6727f993b48ab1491b25614e2ba69750a315274"
+    },
+    "spp": {
+      "values_digest": "782311711b12e3bbcfaf9efce3303f959ecf1552775e8322b95583673eb5d81f",
+      "rendered_digest": "e217d5bf7e0a34e6bda38b75ceca367b552089336faf7f66afe8a3a3060cc003",
+      "ast_digest": "39f237408f9951efe1851f6ff4df430047d3efda00e00a41badff7a46ea47316"
+    },
+    "vpp": {
+      "values_digest": "974baecda2d2fe1be8e9b0265fcd74b611828493f1751a7fa17fe5eeda8712b3",
+      "rendered_digest": "9fdce009ce227bced894fa36e25cadbe8f630e7d842475610cffc12a573dbc7e",
+      "ast_digest": "9a42f55fab8cc3bfdca616b379be2d18dd9b9514f2d41c9fd0850cbb513a3521"
+    },
+    "srp": {
+      "values_digest": "59438f37f1719def86a1343c25bcd025d442da88ee19f7033152e0c29cfae37c",
+      "rendered_digest": "ab709f8f904cc827219fc467d5dfdb952499564da3e928ec887b86b7e05b598b",
+      "ast_digest": "bdea80d76fb91e5eefcf53380de8392a3c0bf7e9e699524349640ed3bcb6991c"
+    },
+    "sor": {
+      "values_digest": "cb07655e0cf880c5b3465bf56b3f0de920422db26004c31f0cc0ef52d709cb02",
+      "rendered_digest": "0d1f39971f0df2b3607808c3e52f67475e65ea002896b8d5b2bf4015ddbd8428",
+      "ast_digest": "ae38fa1f7b200fe64cb7a27f00d7ab21d933feb8c60a89ad2ae0ad546cf1e369"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5350-preparation-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5350-preparation-owner",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Advance WP-11 after the bounded implementation was committed."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Advance WP-11 after its single final exact-revision review passed with every finding fixed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5350-preparation-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "subagent:codex-read-only-5350-final-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5350-preparation-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5350-preparation-owner",
+      "reason": "Make future parity lanes truthfully planned and unimplemented during preparation",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"preparation-contract\",\"proof_role\":\"Validate six cards, design, inventory, exact dependency direction, preparation-only claim, budgets, PVF, no-deferral contract, and root/product safety\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-7\",\"AC-8\",\"AC-9\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5350/validate-preparation.rb\"],\"parallel_group\":\"preparation\",\"defer_reason\":null},{\"lane\":\"subject-and-corpus-verification\",\"proof_role\":\"PLANNED-UNIMPLEMENTED: after typed implementation, verify both exact subjects, terminal dependency receipts/ancestry, corpus bundle, evidence envelopes, portable stream hashes, and command policy\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3500,\"argv\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"subjects\"],\"parallel_group\":\"parity-local\",\"defer_reason\":\"Execute only after every named dependency is merged and typed terminal; the fail-closed runner stub must first be replaced through typed implementation\"},{\"lane\":\"exact-shadow-comparison\",\"proof_role\":\"PLANNED-UNIMPLEMENTED: after typed implementation, run and compare every corpus case, behavior, repetition, equivalence group, and difference group with only reviewed normalization\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":8000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"compare\"],\"parallel_group\":\"parity-local\",\"defer_reason\":\"Execute only after every named dependency is merged and typed terminal; the fail-closed runner stub must first be replaced through typed implementation\"},{\"lane\":\"runtime-workcell-overlay\",\"proof_role\":\"PLANNED-UNIMPLEMENTED: after typed implementation, verify exact terminal Runtime ten-group and WP-10A live evidence, reject non-live credit, and preserve #5361 downstream direction\",\"acceptance_ids\":[\"AC-7\",\"AC-8\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":4000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"overlays\"],\"parallel_group\":\"parity-overlay\",\"defer_reason\":\"Execute only after every named dependency is merged and typed terminal; the fail-closed runner stub must first be replaced through typed implementation\"},{\"lane\":\"parity-complete\",\"proof_role\":\"PLANNED-UNIMPLEMENTED: after typed implementation, enforce zero blockers/unclassified rows, strict lint, exact COTS and scope, 1500/2000 LoC budgets, 120-test ceiling, deterministic rerun, no network, and two exact-revision reviews\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":12000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"complete\"],\"parallel_group\":\"parity-final\",\"defer_reason\":\"Execute only after every named dependency is merged and typed terminal; the fail-closed runner stub must first be replaced through typed implementation\"}]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "subagent:codex-read-only-5350-final-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5350-preparation-owner",
+      "reason": "Refresh execution dependency gate wording so live merge plus ancestry is blocking and receipts/typed closeout are audit observations.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/issues/5350\"],\"expected_owner\":\"codex:5350-preparation-owner\",\"expected_purpose\":\"Prepare complete #5350 exact-revision shadow-parity cards and design; execution remains prohibited until WP-10, WP-10A live proof, and all Runtime parity inputs are terminal\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Prepare complete #5350 exact-revision shadow-parity cards and design; execution remains prohibited until WP-10, WP-10A live proof, and all Runtime parity inputs are terminal\",\"purpose\":\"Prepare complete #5350 exact-revision shadow-parity cards and design; execution remains prohibited until every direct predecessor has a live merged landing commit ancestral to the comparison revision; receipts and typed closeout are audit observations only\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Activate WP-11 after every direct predecessor implementation landed on current main; closeout receipts remain audit observations and do not block execution.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/evidence/5350\",\"adl-characterization\"],\"expected_owner\":\"codex:5350-preparation-owner\",\"expected_purpose\":\"Prepare complete #5350 exact-revision shadow-parity cards and design; execution remains prohibited until every direct predecessor has a live merged landing commit ancestral to the comparison revision; receipts and typed closeout are audit observations only\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Prepare complete #5350 exact-revision shadow-parity cards and design; execution remains prohibited until every direct predecessor has a live merged landing commit ancestral to the comparison revision; receipts and typed closeout are audit observations only\",\"purpose\":\"Implement, validate, review once, publish, merge, and close WP-11 exact-revision ADL v1/v2 shadow parity plus read-only Runtime v3 and WP-10A evidence overlays.\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5350-preparation-owner",
+      "reason": "Record the implemented, executable, non-deferred WP-11 validation lanes",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"preparation-contract\",\"proof_role\":\"Validate six cards, reviewed design, exact dependency direction, budgets, PVF, no-deferral contract, and root safety\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-7\",\"AC-8\",\"AC-9\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5350/validate-preparation.rb\"],\"parallel_group\":\"preparation\",\"defer_reason\":null},{\"lane\":\"subject-and-corpus-verification\",\"proof_role\":\"Verify both exact subjects, dependency receipts or truthful squash integration, corpus bundle, evidence envelopes, portable stream hashes, and command policy\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3500,\"argv\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"subjects\"],\"parallel_group\":\"parity-local\",\"defer_reason\":null},{\"lane\":\"exact-shadow-comparison\",\"proof_role\":\"Run and compare every corpus case, behavior, repetition, equivalence group, and difference group with only explicit reviewed normalization\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":8000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"compare\"],\"parallel_group\":\"parity-local\",\"defer_reason\":null},{\"lane\":\"runtime-workcell-overlay\",\"proof_role\":\"Verify exact Runtime ten-group and WP-10A live evidence, reject non-live credit, and preserve #5361 downstream direction\",\"acceptance_ids\":[\"AC-7\",\"AC-8\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":4000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"overlays\"],\"parallel_group\":\"parity-overlay\",\"defer_reason\":null},{\"lane\":\"parity-complete\",\"proof_role\":\"Enforce zero blockers or unclassified rows, strict lint, exact COTS and scope, 1500/2000 LoC budgets, 120-test ceiling, deterministic rerun, no network, and one final exact-revision review\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":12000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"complete\"],\"parallel_group\":\"parity-final\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5350-preparation-owner",
+      "reason": "Record the implemented, executable, non-deferred WP-11 validation lanes",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"subject-and-corpus-verification\",\"proof_role\":\"Verify both exact subjects, dependency receipts or truthful squash integration, corpus bundle, evidence envelopes, portable stream hashes, and command policy\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3500,\"argv\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"subjects\"],\"parallel_group\":\"parity-local\",\"defer_reason\":null},{\"lane\":\"exact-shadow-comparison\",\"proof_role\":\"Run and compare every corpus case, behavior, repetition, equivalence group, and difference group with only explicit reviewed normalization\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":8000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"compare\"],\"parallel_group\":\"parity-local\",\"defer_reason\":null},{\"lane\":\"runtime-workcell-overlay\",\"proof_role\":\"Verify exact Runtime ten-group and WP-10A live evidence, reject non-live credit, and preserve #5361 downstream direction\",\"acceptance_ids\":[\"AC-7\",\"AC-8\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":4000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"overlays\"],\"parallel_group\":\"parity-overlay\",\"defer_reason\":null},{\"lane\":\"parity-complete\",\"proof_role\":\"Enforce zero blockers or unclassified rows, strict lint, exact COTS and scope, 1500/2000 LoC budgets, 120-test ceiling, deterministic rerun, no network, and one final exact-revision review\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":12000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"complete\"],\"parallel_group\":\"parity-final\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the bounded WP-11 shadow parity implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented exact-revision ADL v1/v2 shadow execution, deterministic mismatch classification, and read-only Runtime v3 and WP-10A evidence overlays.\",\"changes\":[\"Added the v2 shadow corpus and explicit reviewed command mappings.\",\"Added bounded deterministic execution and fail-closed comparison logic.\",\"Added Runtime ten-group, adapter, and WP-10A live evidence verification.\",\"Replaced the validation stub with four executable no-build lanes.\"],\"artifacts\":[\"adl-characterization/src/shadow.rs\",\"adl-characterization/corpus/v2/shadow.yaml\",\".csdlc/evidence/5350/shadow-report.json\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Advance WP-11 after the bounded implementation was committed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the focused adl-characterization test suite.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-characterization/Cargo.toml\"],\"purpose\":\"Prove the retained v1 evidence, v2 shadow comparison, fail-closed execution, and manifest contracts.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5350/shadow-report.json\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record strict all-target Clippy proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-characterization/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Prove strict lint cleanliness for every adl-characterization target.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5350/shadow-report.json\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the complete deterministic shadow parity and overlay proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\".csdlc/prepared/issues/5350/validate-parity.sh\",\"complete\"],\"purpose\":\"Prove 25 mapped cases, 150 observations, 23 behaviors, ten Runtime groups, adapters, WP-10A live evidence, and deterministic byte-stable rerun.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5350/shadow-report.json\"}}"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 11,
+      "actor": "subagent:019f8dd9-24c7-7b50-96d2-29a7a1c2fdad",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Advance WP-11 after its single final exact-revision review passed with every finding fixed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

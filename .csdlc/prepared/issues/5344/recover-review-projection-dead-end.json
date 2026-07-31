@@ -1,0 +1,8 @@
+{
+  "issue": 5344,
+  "expected_generation": 11,
+  "expected_digest": "c1bce4fb250adfe1b9b8a535f061a79fc99c6117b25612e046e6c21707e22012",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The committed typed review projection advanced Git HEAD; recover in place for the intended exact current-head metadata review before publication."
+}

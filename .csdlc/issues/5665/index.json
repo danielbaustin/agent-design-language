@@ -1,0 +1,395 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5665,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "de3b5856d4e47ed1ebb369e7783dc3b928af156f44ee05ce3494807c656c9e30",
+  "phase": "reviewed",
+  "generation": 16,
+  "digest": "f09b56060655408eeac3daf7a3e966e66dd5314e9b073851d2f24a2e777fd7be",
+  "claim": {
+    "id": "claim-5665-runtime-v3-wss-feature-proofs",
+    "owner": "codex:issue-5665-slot-1",
+    "generation": 16,
+    "acquired_unix_seconds": 1784935430,
+    "expires_unix_seconds": 1785540230,
+    "heartbeat_unix_seconds": 1784935430,
+    "branch": "codex/5665-runtime-v3-wss-feature-proofs",
+    "worktree": ".worktrees/adl-wp-5665",
+    "protected_paths": [
+      ".csdlc/evidence/5665",
+      ".csdlc/issues/5665",
+      ".csdlc/locks/5665.lock",
+      ".csdlc/prepared/issues/5665",
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/src/observability.rs",
+      "adl-runtime/src/runtime_api.rs",
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/shutdown.rs",
+      "adl-runtime/tests/runtime_api_wss.rs",
+      "adl/Cargo.lock",
+      "adl/src/bin/run_v0916_acip_aee_memory_integration.rs",
+      "adl/src/bin/run_v0916_integrated_runtime_soak.rs",
+      "adl/src/bin/run_v0916_runtime_failure_injection.rs",
+      "adl/src/bin/run_v0917_integrated_resilience_failure_injection.rs",
+      "adl/src/bin/run_wp12_acip_websocket_transport_proof.rs",
+      "docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json",
+      "infra/runtime-v3/runtime-api-5665.toml"
+    ],
+    "purpose": "Complete authenticated Runtime v3 WSS and feature proof matrix without HTML Observatory redesign"
+  },
+  "review_assignment": {
+    "reviewer": "Noether",
+    "assigned_by": "codex:issue-5665-slot-1",
+    "revision": "git-blake3:3fc16746788801da641552c2a862da8997305828:047a47b0a339af9db73aeaa074962e3e98d84a4aa31a7e84971d8cbc4e9e5abd",
+    "scope": [
+      "adl-runtime/src/runtime_api.rs",
+      "adl-runtime/tests/runtime_api_wss.rs",
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/Cargo.lock",
+      "adl/Cargo.lock",
+      "adl/src/bin/run_wp12_acip_websocket_transport_proof.rs",
+      "adl/src/bin/run_v0916_acip_aee_memory_integration.rs",
+      "adl/src/bin/run_v0916_integrated_runtime_soak.rs",
+      "adl/src/bin/run_v0916_runtime_failure_injection.rs",
+      "adl/src/bin/run_v0917_integrated_resilience_failure_injection.rs",
+      "infra/runtime-v3/runtime-api-5665.toml",
+      "docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json",
+      ".csdlc/evidence/5665/runtime-v3-wss-focused.log",
+      ".csdlc/evidence/5665/runtime-v3-strict-clippy.log",
+      ".csdlc/evidence/5665/wp12-wrapper-tombstone-check.log",
+      ".csdlc/evidence/5665/runtime-v2-wrapper-tombstone-checks.log",
+      ".csdlc/evidence/5665/runtime-v3-loc-measurement.md",
+      ".csdlc/issues/5665/index.json"
+    ]
+  },
+  "review": {
+    "reviewer": "Noether",
+    "scope": [
+      "adl-runtime/src/runtime_api.rs",
+      "adl-runtime/tests/runtime_api_wss.rs",
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/Cargo.lock",
+      "adl/Cargo.lock",
+      "adl/src/bin/run_wp12_acip_websocket_transport_proof.rs",
+      "adl/src/bin/run_v0916_acip_aee_memory_integration.rs",
+      "adl/src/bin/run_v0916_integrated_runtime_soak.rs",
+      "adl/src/bin/run_v0916_runtime_failure_injection.rs",
+      "adl/src/bin/run_v0917_integrated_resilience_failure_injection.rs",
+      "infra/runtime-v3/runtime-api-5665.toml",
+      "docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json",
+      ".csdlc/evidence/5665/runtime-v3-wss-focused.log",
+      ".csdlc/evidence/5665/runtime-v3-strict-clippy.log",
+      ".csdlc/evidence/5665/wp12-wrapper-tombstone-check.log",
+      ".csdlc/evidence/5665/runtime-v2-wrapper-tombstone-checks.log",
+      ".csdlc/evidence/5665/runtime-v3-loc-measurement.md",
+      ".csdlc/issues/5665/index.json"
+    ],
+    "reviewed_revision": "git-blake3:3fc16746788801da641552c2a862da8997305828:047a47b0a339af9db73aeaa074962e3e98d84a4aa31a7e84971d8cbc4e9e5abd",
+    "findings": [
+      {
+        "id": "P2-feature-matrix-proof-uses-test-local-subset",
+        "severity": "p2",
+        "summary": "Fixed: runtime_api_wss.rs loads the committed matrix artifact, injects it into RuntimeApiService, compares the WSS feature_matrix response to the parsed artifact, and asserts health/telemetry rows are present.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:3fc16746788801da641552c2a862da8997305828:047a47b0a339af9db73aeaa074962e3e98d84a4aa31a7e84971d8cbc4e9e5abd",
+        "route": null
+      },
+      {
+        "id": "P3-validation-record-command-mismatch",
+        "severity": "p3",
+        "summary": "Fixed: index.json and SOR now carry a superseding validation record whose argv is the full adl-runtime test command and whose evidence_ref matches the retained full-test log.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:3fc16746788801da641552c2a862da8997305828:047a47b0a339af9db73aeaa074962e3e98d84a4aa31a7e84971d8cbc4e9e5abd",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Noether did not run tests during read-only review. Strict Clippy evidence remains terse, and #5663/#5664 records remain absent from visible repo evidence, so that disjointness check remains limited to visible paths."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5665/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5665/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:5665",
+      "revision": "a38343406caefa6490aada3028618c6aafb1fd78cf71547091f631fb2488c819"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "0e536b85c416632a541180a650e2db8e94bec2972c4e1038271804d9ab5d9704",
+      "rendered_digest": "dcda6e18ce8d3f336740dcdf7ae9ef6df97c63ab57c0027a9cda03bde9a7e61c",
+      "ast_digest": "552dc5d250d0b5e354c06cd8c0708bebc52b5bb9be16a24f8cddff1333eddd88"
+    },
+    "stp": {
+      "values_digest": "bf5f511562caae041067bba8970094f5e6c46db9b8e9c2a09de2b4ec7045bde5",
+      "rendered_digest": "180c0fdd339b9336b9756ca1699baad2ab4d92b2f31d4d053579527bfa508052",
+      "ast_digest": "5b1833288c45238cc2daf644dfa04fc8cdc4d58959c70bcfac24aa55168cf306"
+    },
+    "spp": {
+      "values_digest": "76494b99424a5cf0a2916e8993b2f4f3cb13b52a45c7f2895b923aa660fcea30",
+      "rendered_digest": "0393b9f7a00cb350b2af7a8a05e563ecacb96d3dcdfeb60d719936cec55c83f8",
+      "ast_digest": "e75f7acd2ff2c1cabfd381de260d797cfbd5c84f99e8658d762e62c36a928c1b"
+    },
+    "vpp": {
+      "values_digest": "e000bc61da562640f45fc38c9d643e6acbd59957426f402ffa9d56576836d969",
+      "rendered_digest": "cd536331740ee0cf5d5e398d8df5a638163c27e42f3ab4a73c779e1a07cdbada",
+      "ast_digest": "fcfeba3e3e8d15e35ea5c655fb03885d647827dd20e9c67bb04f5f7c652b89c3"
+    },
+    "srp": {
+      "values_digest": "27d8fc128fff9793cc7bed8d28f9f35627c181b58ec51371833cc92ded3ce046",
+      "rendered_digest": "fb7adcd9fd9aa4446268ea201f008724f2a058092bdacde12c3752b40b07e3d6",
+      "ast_digest": "52743f50096ebb112931fb378962f8e60d142f355a9c17f3f119083e7f129d17"
+    },
+    "sor": {
+      "values_digest": "e50e0a362cbd71c742d8c7aeda33a91dcf9974c97f0534c05bd1c0fcf38f5e0d",
+      "rendered_digest": "f8beb9261360fdd2fb0218d00e84cc4fb07c408065b0c3bd0f0ec61540b28968",
+      "ast_digest": "4e4ff0a9bfb1a80611b2fc2a3f63055d5bb164b00666a052e071b444657f1526"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Recover reviewed state after proof-strengthening commit f9717b162541eafed276cc7ab1d59a43663cd6ec added direct WSS feature_matrix frame coverage and parsed init TOML proof."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Advance to reviewed after Pauli exact-head review evidence was recorded for f9717b162541eafed276cc7ab1d59a43663cd6ec."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Recover reviewed state to perform a lifecycle-approved source-only removal of obsolete duplicate WP-12 WSS proof wrapper logic without touching the #5587-owned adl/Cargo.toml."
+    },
+    {
+      "sequence": 8,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Advance to reviewed after Noether final exact-head review passed with P2/P3 fixed."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Recover reviewed state after proof-strengthening commit f9717b162541eafed276cc7ab1d59a43663cd6ec added direct WSS feature_matrix frame coverage and parsed init TOML proof.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Advance to reviewed after Pauli exact-head review evidence was recorded for f9717b162541eafed276cc7ab1d59a43663cd6ec.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Recover reviewed state to perform a lifecycle-approved source-only removal of obsolete duplicate WP-12 WSS proof wrapper logic without touching the #5587-owned adl/Cargo.toml.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "narrowly replace obsolete duplicate WP-12 websocket proof wrapper source with a compatibility tombstone while leaving the #5587-owned adl/Cargo.toml untouched",
+      "operation": "{\"add_protected_paths\":[\"adl/src/bin/run_wp12_acip_websocket_transport_proof.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 6,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "allow focused wrapper bin compile check to refresh adl/Cargo.lock after adl-runtime dependency graph changed",
+      "operation": "{\"add_protected_paths\":[\"adl/Cargo.lock\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 7,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Record focused compile proof for the retired WP-12 wrapper tombstone.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"check\",\"--locked\",\"--manifest-path\",\"adl/Cargo.toml\",\"--bin\",\"run_wp12_acip_websocket_transport_proof\"],\"purpose\":\"Prove the retired WP-12 wrapper source still compiles as a fail-closed tombstone while removing the duplicate proof generator path.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5665/wp12-wrapper-tombstone-check.log\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 8,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "retire obsolete Runtime v2 retained-proof generator wrappers after #5665 replaces URL/fixture/degraded WSS evidence with real Runtime v3 API WSS proof",
+      "operation": "{\"add_protected_paths\":[\"adl/src/bin/run_v0916_acip_aee_memory_integration.rs\",\"adl/src/bin/run_v0916_integrated_runtime_soak.rs\",\"adl/src/bin/run_v0916_runtime_failure_injection.rs\",\"adl/src/bin/run_v0917_integrated_resilience_failure_injection.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 9,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Record focused compile proof for the retired Runtime v2 retained-proof wrapper tombstones.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"-lc\",\"for bin in run_wp12_acip_websocket_transport_proof run_v0916_acip_aee_memory_integration run_v0916_integrated_runtime_soak run_v0916_runtime_failure_injection run_v0917_integrated_resilience_failure_injection; do cargo check --locked --manifest-path adl/Cargo.toml --bin \\\"$bin\\\"; done\"],\"purpose\":\"Prove each retired executable Runtime v2 or duplicate WSS proof wrapper compiles as a fail-closed tombstone while #5665 owns the real Runtime v3 API WSS proof.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5665/runtime-v2-wrapper-tombstone-checks.log\"}}"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Record physical LoC measurement proving the #5665 implementation is net-negative after retiring obsolete proof wrappers.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--numstat\",\"main\"],\"purpose\":\"Measure physical added and deleted lines against main and preserve the net-negative #5665 proof after replacing obsolete wrappers with fail-closed tombstones.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5665/runtime-v3-loc-measurement.md\"}}"
+    },
+    {
+      "sequence": 17,
+      "generation": 10,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 11,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 12,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Record proof that the WSS feature_matrix frame is backed by the committed #5665 feature/adapter matrix artifact rather than a test-local subset.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--test\",\"runtime_api_wss\"],\"purpose\":\"Prove the authenticated Runtime API WSS feature_matrix frame serves the committed feature/adapter matrix artifact, including health-state and telemetry rows.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5665/runtime-v3-wss-focused.log\"}}"
+    },
+    {
+      "sequence": 20,
+      "generation": 12,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 13,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 14,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Record superseding matrix-artifact proof with argv matching the retained full adl-runtime test log.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime/Cargo.toml\"],\"purpose\":\"Prove the committed matrix-artifact WSS feature_matrix path as part of the full adl-runtime test suite retained in the evidence log.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5665/runtime-v3-wss-focused.log\"}}"
+    },
+    {
+      "sequence": 23,
+      "generation": 14,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 15,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 16,
+      "actor": "codex:issue-5665-slot-1",
+      "reason": "Advance to reviewed after Noether final exact-head review passed with P2/P3 fixed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    }
+  ]
+}

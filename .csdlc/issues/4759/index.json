@@ -1,0 +1,213 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4759,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "e14ee014a589057a3380656a449efc0a5ced9da2586edaf061a224c68f935c76",
+  "phase": "implemented",
+  "generation": 12,
+  "digest": "d07fb19ebeed0587671656662f7719f2d33707abfa1264db553a54f0d6a3de7b",
+  "claim": {
+    "id": "claim-4759-v0918-activation-execution-20260731",
+    "owner": "codex:issue-4759-execution",
+    "generation": 12,
+    "acquired_unix_seconds": 1785531172,
+    "expires_unix_seconds": 1786135972,
+    "heartbeat_unix_seconds": 1785531172,
+    "branch": "codex/4759-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4759",
+      ".csdlc/locks/4759.lock",
+      ".csdlc/prepared/issues/4759",
+      ".csdlc/evidence/4759",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+    ],
+    "purpose": "Implement and publish #4759 by converting the v0.92 activation map into an exact v0.91.8 consumption/handoff artifact backed by accepted product evidence; do not start v0.92 implementation or sibling WP-21 work."
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/4759/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4759/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:wp14-preparation",
+      "revision": "0301800d9f120cd84ac46ae920c0e1102779abf79d4869117b0ab0daaad8ffca"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "5f0a0147661edb054b687ebe7264a8fff2ac711cc4643dec3710f0ea0cfce926",
+      "rendered_digest": "e413a5c315879ec3387bfb95e73d33f0a637e5f61174b429416f566859ae6009",
+      "ast_digest": "3b6f2a53ea74a49c1c99ce286cab1c603ce3b48d754d7c7d7f7cbd4579755df7"
+    },
+    "stp": {
+      "values_digest": "4650a7c5b17d0f0f516c51afed376010db82d7c9d1a05bd7ee1a921467150276",
+      "rendered_digest": "da5e3807a6a4cc215750809d515d84c221dc0ed92b4ea66c83295f7144d6db0d",
+      "ast_digest": "2612d343752df16705146f16b96a5320ea18b97c055cf9e6c6a4e6c8fea6c1f3"
+    },
+    "spp": {
+      "values_digest": "778b8ace7174397a317ea3d85d7c7666f5f78758e95578b18afd6f46ce0c5628",
+      "rendered_digest": "a2342ebbf76a4789f3a25bf330ede453d2d92d33a7c121b1d342165480373d5e",
+      "ast_digest": "dc1ca6999e7767af01bfe90d33f49b8ae0619745ae8ee2a819e5d0249fcf0ab1"
+    },
+    "vpp": {
+      "values_digest": "9e13ac944b3d294006c98628c7ddd013c14b8e3fb4e3ab283012cafb8b7b1cc2",
+      "rendered_digest": "a0b8e23cc80e00272df8d33e386d9c5d44aab382c5fac2e888bd956ceace4517",
+      "ast_digest": "e793a3597ceda08b341245921fe025da6561ef380feba785a40844eb6446116b"
+    },
+    "srp": {
+      "values_digest": "98a78d66d164dfc0f11419c298c8d7a2895c0adee1d4ab3154fa5326e6948fea",
+      "rendered_digest": "9325801b2531163b31e44f27f7b5ede235b4760d49a526a3ced4d30b1c8107a5",
+      "ast_digest": "227d268461ecf86ead05f29186c1644d43510ef0492b16d318ba47dce92a66de"
+    },
+    "sor": {
+      "values_digest": "8d5905a9dcb9be1b9c547455f58fc2530f4f43aa0f96175830e6f8b7ca4339d3",
+      "rendered_digest": "834195616e41ba534f1d799dfb418d87ed2cd60d8ec98105fb28f1b678f87d1c",
+      "ast_digest": "20389e15e32554ef38e5eef0dc9f2d5c46f701eea16f74b934be5898e7067797"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-4759-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-4759-preparation",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-4759-execution",
+      "reason": "execution and passing validation finalized atomically"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-4759-preparation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-4759-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:claim-hygiene",
+      "reason": "Release preparation-only ownership until issue execution actually starts",
+      "operation": "{\"claim_id\":\"claim-4759-v0918-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:preparation-does-not-own-execution-paths\",\"previous_owner\":\"codex:issue-4759-preparation\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 0,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Reacquire the released preparation issue for the operator-authorized #4759 activation-map implementation run.",
+      "operation": "{\"branch\":\"codex/4759-v0918-preparation\",\"claim_id\":\"claim-4759-v0918-activation-execution-20260731\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:issue-4759-execution\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/4759\",\".csdlc/locks/4759.lock\",\".csdlc/prepared/issues/4759\",\".csdlc/evidence/4759\",\"docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md\",\"docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\"],\"purpose\":\"Implement and publish #4759 by converting the v0.92 activation map into an exact v0.91.8 consumption/handoff artifact backed by accepted product evidence; do not start v0.92 implementation or sibling WP-21 work.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Record #4759 WP-21 activation bridge implementation artifacts before focused validation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented the #4759 v0.91.8 WP-21 activation bridge as a concrete v0.92 consumption/handoff artifact backed by the accepted WP-14A platform ledger.\",\"changes\":[\"Converted docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md from issue-routing text into the activation bridge with exact WP-14A baseline and accepted merge evidence.\",\"Updated docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md to consume the #4759 bridge and name the downstream #4762 birth-witness handoff.\",\"Updated docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md to identify the activation bridge boundary and non-claims.\",\"Updated docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md to consume the v0.91.8 bridge without claiming v0.92 readiness.\"],\"artifacts\":[\"docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md\",\"docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\",\"docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Update SIP from preparation-only intent to the operator-authorized #4759 execution intent.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Implement the v0.91.8 WP-21 activation bridge that maps v0.92 activation inputs to accepted platform evidence, named WP-21 owners, explicit blockers, or non-claims.\",\"operation\":\"replan\",\"previous_value\":\"Prepare a later execution lane for the v0.92 activation map that consumes accepted deployed-product evidence.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Update SIP required outcome to the implemented activation bridge handoff surface.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"A reviewed, validated activation bridge in the v0.91.8 pre-v0.92 path, consumed by the v0.92 bridge ledger and handed to #4762 without claiming v0.92 implementation or birthday readiness.\",\"operation\":\"replan\",\"previous_value\":\"An execution-ready preparation packet for the future integrated activation map, with live dependency gates and non-claim boundaries recorded.\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Replace stale preparation-only operator constraints with the current execution/publication constraints.",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"use typed C-SDLC v2 only\",\"work only in /Volumes/FastWork/adl-wp-4759 on codex/4759-v0918-preparation\",\"stay within the #4759 protected activation bridge and lifecycle paths\",\"do not start v0.92 implementation or sibling WP-21 work\",\"publish a ready PR with Closes #4759 after focused validation and exact-head review\",\"do not merge or close out\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Update SPP summary from preparation-only future work to current #4759 execution truth.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Implement and publish the #4759 WP-21 activation bridge after live #5384 closure, using the accepted WP-14A platform ledger as exact evidence and preserving v0.92 non-claims.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the issue-local packet now; later execution re-checks #5384 live merge and ancestry, then implements and validates the integrated activation map.\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Replace stale future preparation steps with the current activation bridge execution plan.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Confirm live #5384 closure and consume the accepted WP-14A platform ledger as the execution evidence basis\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the v0.91.8 activation bridge inside the protected activation map and handoff docs\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Update lifecycle cards with execution truth through typed C-SDLC v2 requests\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Run focused docs/card validation, obtain exact-head pre-PR review, publish a ready PR, and stop before merge or closeout\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Mark #5384 closure and accepted WP-14A ledger confirmation complete.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Mark protected activation bridge document implementation complete.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Replace stale preparation stop conditions with current validation, review, and publication gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"focused docs/card validation fails\",\"exact-head pre-PR review finds actionable issues that are not fixed\",\"publication would use stale review or ambiguous PR metadata\",\"scope pressure asks #4759 to implement v0.92 runtime, birthday, Memory Palace, Unity, or sibling WP-21 work\",\"operator asks to merge or close out before this no-merge handoff is complete\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:issue-4759-execution",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Mark typed lifecycle execution and validation recording complete after csdlc-validate finalize passed.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Mark review and publication handoff step in progress.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"in_progress\"}"
+    }
+  ]
+}

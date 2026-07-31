@@ -1,0 +1,119 @@
+{
+  "schema": "adl.v0918.shadow_parity.preparation_inventory.v1",
+  "issue": 5350,
+  "status": "implemented_and_validated",
+  "adl_v1": {
+    "source_issue": 5337,
+    "corpus_path": "adl-characterization/corpus/v1/corpus.yaml",
+    "source_revision": "19c2b6e2ad18bddc75db9231643a54b2a446ce72",
+    "binary_sha256": "f558fa2111474e2fab540f8d0244be82cdb727ebbaa15aee758d8a7d57d0969c",
+    "cases": 25,
+    "observations": 75,
+    "behaviors": 23,
+    "equivalence_groups": 2,
+    "difference_groups": 1
+    ,"case_ids": [
+      "cli-help", "cli-version", "six-primitives-plan", "graph-json",
+      "prompt-projection", "fork-join-ordering", "map-order-a", "map-order-b",
+      "branch-order-a", "branch-order-b", "sequential-order-a", "sequential-order-b",
+      "invalid-argument", "malformed-yaml", "schema-error", "unknown-provider",
+      "unknown-agent", "unknown-task", "unknown-tool", "unknown-workflow",
+      "unsupported-run-field", "missing-state", "dependency-cycle", "local-mock-run",
+      "ed25519-sign-verify-tamper"
+    ],
+    "behavior_ids": [
+      "cli-help", "cli-version", "six-primitives-plan", "graph-json",
+      "prompt-projection", "fork-join-ordering", "map-reorder-equivalence",
+      "branch-reorder-equivalence", "sequential-reorder-difference", "invalid-argument",
+      "malformed-yaml", "schema-error", "unknown-provider-reference",
+      "unknown-agent-reference", "unknown-task-reference", "unknown-tool-reference",
+      "unknown-workflow-reference", "unsupported-run-field", "missing-state-reference",
+      "dependency-cycle", "repeated-byte-stability", "local-mock-run",
+      "ed25519-sign-verify-tamper"
+    ],
+    "equivalence_group_ids": ["map-declaration-order", "branch-declaration-order"],
+    "difference_group_ids": ["sequential-step-order"],
+    "raw_observation_count": 75,
+    "normalized_observation_count": 75,
+    "corpus_bundle_sha256": "5c42a61fab6cbfaebf8a77ebeb3fcc6ab7ae71beb086ee011a2fb525ad4cb63b",
+    "command_contract_sha256": "010eecaf70d908027230347f4f5999b228499af50d1d9aaa8915b687de581448"
+  },
+  "adl_v2": {
+    "source_issue": 5345,
+    "revision": "a1436b7a24773e7cafb3b530245a16a77b99a54d",
+    "binary_sha256": "a684063f99b178738364fe13412ab7c9d5ee6252062d9b3d6a47f2d8664cb6fd",
+    "selector_identity": "adl-v2",
+    "selector_generation": "adl-v2",
+    "selector_sha256": "236e9873d0be4c578bbb7761b9df7228c4f3bb06cef28bcdf5bad98e4d3cec73",
+    "install_receipt_sha256": "826ca833b8a6cdd1cacf2398d36d0b6d6ace3f9f54b71802beb91c1869132bbd",
+    "cargo_lock_sha256": "568424eaf1a00698d981aee1cd7bb4fb15fa1bc84957dc78613513f95de87951",
+    "command_contract_sha256": "87906ec22ef4ac6b106f95d135d3fad2571adec217eeebebeb09ba6e7198bc96",
+    "corpus_bundle_sha256": "5c42a61fab6cbfaebf8a77ebeb3fcc6ab7ae71beb086ee011a2fb525ad4cb63b",
+    "current_main_revision": "e501737c1fd3dac176922a937dbd27fa80330a51",
+    "current_main_ancestry_verified": true,
+    "dependency_receipts": [
+      5337,
+      5345,
+      5497,
+      5501,
+      5591,
+      5592,
+      5589,
+      5590,
+      5341,
+      5349
+    ],
+    "required_terminal_before_execution": false
+  },
+  "wp10a": {
+    "umbrella_issue": 5497,
+    "live_proof_issue": 5501,
+    "required_terminal_before_execution": false,
+    "live_evidence_sha256": "33b04aaf652782b7ffc72d5c5232b915376fc74eece0bcd195fa5b31c48005c6"
+  },
+  "runtime_v3": {
+    "parity_issues": [5591, 5592, 5589, 5590],
+    "adapter_issues": [5341, 5349],
+    "proof_group_count": 10,
+    "acceptance_issue": 5361,
+    "acceptance_is_downstream": true
+  },
+  "runtime_proof_group_owners": {
+    "1": 5591, "2": 5591, "3": 5591, "4": 5591,
+    "5": 5592, "6": 5589, "7": 5589, "8": 5589,
+    "9": 5590, "10": 5590
+  },
+  "dependency_receipt_issues": [5337, 5345, 5497, 5501, 5591, 5592, 5589, 5590, 5341, 5349],
+  "cots_reuse": [
+    "serde", "serde_json", "serde_yaml", "jsonschema", "sha2", "wait-timeout",
+    "walkdir", "clap", "ed25519-dalek", "tempfile", "assert_cmd", "predicates"
+  ],
+  "budgets": {
+    "preparation_seconds": 120,
+    "subject_verification_seconds": 120,
+    "comparison_seconds": 300,
+    "overlay_seconds": 120,
+    "complete_seconds": 600,
+    "lane_total_seconds": 1260,
+    "lifecycle_ceiling_seconds": 7200,
+    "implementation_loc_ceiling": 1500,
+    "test_fixture_loc_ceiling": 2000,
+    "test_count_ceiling": 120
+  },
+  "future_runner": {
+    "implemented": true,
+    "execution_credit_authorized": true,
+    "replacement_requires_typed_implementation": false
+  },
+  "mismatch_dispositions": [
+    "exact_match",
+    "normalized_match",
+    "approved_intentional_difference",
+    "regression_blocker",
+    "unsupported_blocker",
+    "evidence_invalid"
+  ],
+  "cutover_authorized": false,
+  "publication_authorized": false,
+  "product_execution_authorized": true
+}

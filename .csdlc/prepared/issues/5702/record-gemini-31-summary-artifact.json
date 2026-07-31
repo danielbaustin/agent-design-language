@@ -1,0 +1,20 @@
+{
+  "issue": 5702,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "1902f8c08f0021f47229de8f36e90fee3d58d8ff82742ad45b96d2f3f85b8715",
+  "claim_id": "claim-5702-podcast-launch-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "record tracked Gemini 3.1 Pro review summary artifact",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Prepared the #5702 Podcast Studio next-week launch plan with Gemini 3.1 Pro review incorporated and tracked publication-safe evidence retained.",
+    "changes": [
+      "Mapped the operator-required Gemini 3.1 Pro review to live API id gemini-3.1-pro-preview after plain gemini-3.1-pro returned 404.",
+      "Incorporated Gemini 3.1 Pro launch-risk suggestions for byte-range audio hosting, ID3 tags, artwork, encoding, CORS, cache behavior, Apple validation, and Episode 001 content locking."
+    ],
+    "artifacts": [
+      ".csdlc/evidence/5702/gemini-3.1-pro-review-summary.json"
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "schema": "adl.v092.capability_envelope.inputs.v1",
+  "issue": 4761,
+  "concern": "capability-envelope",
+  "inventory_head": "8c25d1caba62f8af24e25b67a78c8e2239c3dc9a",
+  "source_policy": {
+    "path_policy": "repo_relative_only",
+    "digest_algorithm": "sha256",
+    "failure_semantics": "fail_closed",
+    "notes": [
+      "Modified consumer documents are recorded with working-tree digests and the pre-edit tracked revision.",
+      "Planning documents are consumption contracts, not completion evidence.",
+      "Accepted-product inputs come from WP-14A platform acceptance."
+    ]
+  },
+  "sources": [
+    {
+      "id": "wp_issue_wave_v0918",
+      "path": "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "tracked_revision": "72fbf30c74a5193ea41f042c76c5986a48e59d6c",
+      "sha256": "c7b3a8d8ffd081c8a8ee0427fec2f5444b12e8e8048924e7a84a050a2d29bc35",
+      "claim_class": "routing",
+      "proof_status": "retained_input",
+      "consumption": "#4761 is listed under WP-21 as v0.92 capability envelope routing."
+    },
+    {
+      "id": "wbs_v0918",
+      "path": "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "tracked_revision": "72fbf30c74a5193ea41f042c76c5986a48e59d6c",
+      "sha256": "1ef4c1341ccf72df702adae3226c3a7db3e9a45d705b845875a39191b3c08148",
+      "claim_class": "routing",
+      "proof_status": "retained_input",
+      "consumption": "v0.91.8 milestone work-package context for WP-21 handoff truth."
+    },
+    {
+      "id": "readme_v0918",
+      "path": "docs/milestones/v0.91.8/README.md",
+      "tracked_revision": "72fbf30c74a5193ea41f042c76c5986a48e59d6c",
+      "sha256": "a4c835dedc6cec6ddb7f1734ac8e0ff525af99a07691136f5bbc1d5edd2b925c",
+      "claim_class": "routing",
+      "proof_status": "retained_input",
+      "consumption": "v0.91.8 milestone handoff boundary."
+    },
+    {
+      "id": "feature_proof_coverage_v0918",
+      "path": "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "tracked_revision": "72fbf30c74a5193ea41f042c76c5986a48e59d6c",
+      "sha256": "8e934b94b41c9453c4010ff7bd564cced01506eaddf1c9989b13c9a74fca530e",
+      "claim_class": "consumer_pointer",
+      "proof_status": "working_tree_updated",
+      "consumption": "Records #4761 as the accepted capability-envelope input with fail-closed validation."
+    },
+    {
+      "id": "platform_acceptance_5384",
+      "path": "docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md",
+      "tracked_revision": "72fbf30c74a5193ea41f042c76c5986a48e59d6c",
+      "sha256": "7d509cc88752aea041dd4d6e28840287f3e0b0d09ca05daccc224894b617f0e0",
+      "claim_class": "accepted_product_table",
+      "proof_status": "retained_input",
+      "consumption": "Names exact accepted-product inputs, PR heads, accepted merges, and WP-14A non-claims."
+    },
+    {
+      "id": "runtime_v3_acceptance_5361",
+      "path": "docs/milestones/v0.91.8/review/runtime_v3_acceptance_5361.v1.json",
+      "tracked_revision": "72fbf30c74a5193ea41f042c76c5986a48e59d6c",
+      "sha256": "f6a1373b2900933a25564a838bd6cb1a2a60214dfb895893cebf6dd8825cff7f",
+      "claim_class": "runtime_acceptance",
+      "proof_status": "retained_input",
+      "consumption": "Bounds Runtime v3 supported surfaces and non-claims for AWS, GPU, and remote-provider deployment."
+    },
+    {
+      "id": "runtime_adapter_matrix_5665",
+      "path": "docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json",
+      "tracked_revision": "72fbf30c74a5193ea41f042c76c5986a48e59d6c",
+      "sha256": "48cb1fac73bdd194afb1bf3da4ce0cbae3288312106a715b4b1c50261fcfb87c",
+      "claim_class": "adapter_matrix",
+      "proof_status": "retained_input",
+      "consumption": "Names runtime API WSS, health, telemetry, and separate-client limits."
+    },
+    {
+      "id": "wp12_manifest",
+      "path": "docs/milestones/v0.91.8/evidence/wp12/manifest.json",
+      "tracked_revision": "72fbf30c74a5193ea41f042c76c5986a48e59d6c",
+      "sha256": "26ca19ad7562ab81ae47ba41fa8e3ced8c219665e82f764d5f7017831a17ba83",
+      "claim_class": "platform_manifest",
+      "proof_status": "retained_input",
+      "consumption": "Lists retained WP-12 rollback, runtime acceptance, and platform artifact scenarios."
+    },
+    {
+      "id": "wp12_platform_linux",
+      "path": "docs/milestones/v0.91.8/evidence/wp12/platform-linux.json",
+      "tracked_revision": "72fbf30c74a5193ea41f042c76c5986a48e59d6c",
+      "sha256": "f32c8594229e58b2eb39952fb7999084eab52a3c3cf04c9a4734552a4609196a",
+      "claim_class": "platform_proof",
+      "proof_status": "retained_input",
+      "consumption": "Linux runtime platform proof with pass status."
+    },
+    {
+      "id": "wp12_platform_macos",
+      "path": "docs/milestones/v0.91.8/evidence/wp12/platform-macos.json",
+      "tracked_revision": "72fbf30c74a5193ea41f042c76c5986a48e59d6c",
+      "sha256": "a95284a5d9262bbb34c070ee161d037116e557522f3055ccad7e3b1bc206f654",
+      "claim_class": "platform_proof",
+      "proof_status": "retained_input",
+      "consumption": "macOS runtime platform proof with pass status."
+    },
+    {
+      "id": "wp12_platform_windows",
+      "path": "docs/milestones/v0.91.8/evidence/wp12/platform-windows.json",
+      "tracked_revision": "72fbf30c74a5193ea41f042c76c5986a48e59d6c",
+      "sha256": "63a063d5332a29973b2cc4d2dbfbd6ec824d79fd2d00f4ab57752ba37ac5ad5a",
+      "claim_class": "platform_proof",
+      "proof_status": "retained_input",
+      "consumption": "Windows runtime platform proof with pass status."
+    },
+    {
+      "id": "wp_issue_wave_v092",
+      "path": "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+      "tracked_revision": "1cec80cbe30b3c9fec046afd050239ba5771d9a6",
+      "sha256": "a26a987b709d7aa0910f01264caed8aeb0d64e1f421de8f6d3005c3de8b03d96",
+      "claim_class": "future_consumption_plan",
+      "proof_status": "planning_only",
+      "consumption": "Future v0.92 work-package queue, not completion evidence."
+    },
+    {
+      "id": "wbs_v092",
+      "path": "docs/milestones/v0.92/WBS_v0.92.md",
+      "tracked_revision": "1cec80cbe30b3c9fec046afd050239ba5771d9a6",
+      "sha256": "3fa796539217048accfb4641151f7e094b18b74fe9c72d49ddd9f1bacf92dba8",
+      "claim_class": "future_consumption_plan",
+      "proof_status": "planning_only",
+      "consumption": "Future v0.92 work-breakdown context, not completion evidence."
+    },
+    {
+      "id": "sprint_v092",
+      "path": "docs/milestones/v0.92/SPRINT_v0.92.md",
+      "tracked_revision": "1cec80cbe30b3c9fec046afd050239ba5771d9a6",
+      "sha256": "2585892c352e4f8800319f23ece0dcc29106bb2d4017b744cfb75e5b99c03fd7",
+      "claim_class": "future_consumption_plan",
+      "proof_status": "planning_only",
+      "consumption": "Future v0.92 sprint plan, not completion evidence."
+    },
+    {
+      "id": "activation_bridge_ledger_v092",
+      "path": "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md",
+      "tracked_revision": "1cec80cbe30b3c9fec046afd050239ba5771d9a6",
+      "sha256": "67d59fdf2dd24b442f9626a80fc6a2e71165f061b248266f8b2d9cb121475900",
+      "claim_class": "activation_consumption_rule",
+      "proof_status": "planning_only",
+      "consumption": "Defines capability evidence and selector consumption rules and activation non-claims."
+    },
+    {
+      "id": "memory_grounding_capability_witnesses_v092",
+      "path": "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
+      "tracked_revision": "1cec80cbe30b3c9fec046afd050239ba5771d9a6",
+      "sha256": "e3410468dff57c75d807a56d3bfa43aa61a0c6593fa17b080d85674bcf72d3fc",
+      "claim_class": "consumer_pointer",
+      "proof_status": "working_tree_updated",
+      "consumption": "Consumes #4761 as the provider, model, tool, skill, authority, and limit context input."
+    },
+    {
+      "id": "demo_matrix_v092",
+      "path": "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+      "tracked_revision": "1cec80cbe30b3c9fec046afd050239ba5771d9a6",
+      "sha256": "e91cce3d4f971903d5bcb1a60827128591d58dd1a647382ab4eed154e8695e5d",
+      "claim_class": "consumer_pointer",
+      "proof_status": "working_tree_updated",
+      "consumption": "Routes D5 capability-envelope proof to #4761 while preserving planned-demo status."
+    },
+    {
+      "id": "non_claims_v1",
+      "path": ".csdlc/evidence/4761/capability-envelope/non-claims.v1.md",
+      "tracked_revision": "working_tree_new",
+      "sha256": "af8b7c811d1ce135eec288365dd3ea12cfe3140014a62439df576c030e6d4a16",
+      "claim_class": "unsupported_claims",
+      "proof_status": "working_tree_new",
+      "consumption": "Issue-local unsupported-claim register for capability-envelope validation."
+    }
+  ]
+}

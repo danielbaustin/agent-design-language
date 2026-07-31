@@ -1,10 +1,11 @@
-{"schema":"csdlc.operator_skills.v1","generation":"v2","generation_selector":"csdlc-v2/operator/generation-selector.json","skills":[
+{"schema":"csdlc.operator_skills.v1","generation":"v2","generation_selector":"csdlc-v2/operator/generation-selector.json","operational_binaries":["csdlc-github-issue","csdlc-github-pr","csdlc-merge","csdlc-pr-state","csdlc-shadow","csdlc-soak","csdlc-proof","csdlc-cutover"],"skills":[
 {"name":"csdlc-v2-init","binary":"csdlc-init","subcommand":null,"mutates_state":true,"auxiliary_binaries":[]},
 {"name":"csdlc-v2-bind","binary":"csdlc-bind","subcommand":null,"mutates_state":true,"auxiliary_binaries":[]},
 {"name":"csdlc-v2-card-editor","binary":"csdlc-edit","subcommand":"apply","mutates_state":true,"auxiliary_binaries":[]},
 {"name":"csdlc-v2-validate","binary":"csdlc-validate","subcommand":null,"mutates_state":true,"auxiliary_binaries":["csdlc-schedule"]},
 {"name":"csdlc-v2-review","binary":"csdlc-review","subcommand":null,"mutates_state":true,"auxiliary_binaries":[]},
 {"name":"csdlc-v2-publish","binary":"csdlc-publish","subcommand":null,"mutates_state":true,"auxiliary_binaries":[]},
+{"name":"csdlc-v2-github","binary":"csdlc-github","subcommand":"run","mutates_state":true,"auxiliary_binaries":[]},
 {"name":"csdlc-v2-shepherd","binary":"csdlc-shepherd","subcommand":null,"mutates_state":false,"auxiliary_binaries":[]},
 {"name":"csdlc-v2-closeout","binary":"csdlc-closeout","subcommand":null,"mutates_state":true,"auxiliary_binaries":[]},
 {"name":"csdlc-v2-doctor","binary":"csdlc-doctor","subcommand":null,"mutates_state":false,"auxiliary_binaries":["csdlc-eligibility","csdlc-install"]}]}

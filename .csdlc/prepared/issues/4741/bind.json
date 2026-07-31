@@ -1,0 +1,27 @@
+{
+  "issue": 4741,
+  "base_branch": "main",
+  "branch": "codex/4741-v0918-wp15-unity-editor-liveness-prep",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+    "owner": "codex:issue-4741-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1784835199,
+    "expires_unix_seconds": 1785439999,
+    "heartbeat_unix_seconds": 1784835199,
+    "branch": "codex/4741-v0918-wp15-unity-editor-liveness-prep",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4741",
+      ".csdlc/locks/4741.lock",
+      ".csdlc/prepared/issues/4741",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+      "adl/tools/test_v0916_unity_observatory_soak_integration.sh",
+      "adl/tools/test_v0916_unity_observatory_unity65_smoke.sh",
+      "docs/tooling/unity_observatory_editor_batch_proof.md"
+    ],
+    "purpose": "Prepare #4741 for bounded v0.91.8 WP-15 Unity editor liveness and batch-proof reliability execution"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "issue": 5695,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "2a5c2f9f41714ca6f538737b4dce5b69b0c43250fdc17d120ce4c11c4174118c",
+  "claim_id": "claim-5695-pr-state-mergeability",
+  "actor": "codex:issue-5695-pr-state-mergeability",
+  "reason": "Record focused formatting validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "fmt", "--check"],
+      "purpose": "Verify formatting for the bounded Rust change.",
+      "outcome": "passed",
+      "evidence_ref": "local:cargo-fmt-check:passed"
+    }
+  }
+}

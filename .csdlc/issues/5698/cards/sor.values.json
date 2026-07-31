@@ -1,0 +1,140 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5698,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][state] Unify durable kernel state on redb",
+    "slug": "runtime-v3-redb-durable-state",
+    "version": "v0.91.8",
+    "generation": 9
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Replace Runtime v3 kernel flat-file checkpoint and lifelog persistence with one redb-backed durable state boundary for local adapters and governed operations.",
+      "actual_changes": [
+        "Added a narrow Runtime v3 redb durable-state module with local checkpoint, local lifelog, governed state, and governed lifelog tables.",
+        "Moved local CheckpointStore and Lifelog adapters from checkpoint.json/lifelog.jsonl to immediate redb transactions with identity and integrity validation.",
+        "Moved governed Runtime v3 checkpoint and lifelog persistence from flat files to the shared redb store while preserving gate, replay, shutdown, and redaction behavior.",
+        "Fail closed when legacy flat checkpoint/lifelog persistence files are present in a configured state root.",
+        "Updated focused tests to prove restart, corruption rejection, identity partitioning, durable lifelog, and absence of legacy flat persistence."
+      ],
+      "artifacts": [
+        "adl-runtime-kernel/src/durable_state.rs",
+        "adl-runtime-kernel/src/assembly.rs",
+        "adl-runtime-kernel/src/governed_operations.rs",
+        "adl-runtime-kernel/tests/durable_state.rs",
+        "adl-runtime-kernel/tests/assembly.rs",
+        "adl-runtime-kernel/tests/governed_operations.rs",
+        ".csdlc/evidence/5698"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--target-dir",
+            "/Volumes/FastWork/adl-wp-5698/target",
+            "--test",
+            "assembly"
+          ],
+          "purpose": "Run focused assembly tests after redb durable-state migration.",
+          "outcome": "passed",
+          "evidence_ref": "runtime-v3-redb-assembly.log"
+        },
+        {
+          "command": [
+            "cargo",
+            "clippy",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--target-dir",
+            "/Volumes/FastWork/adl-wp-5698/target",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "purpose": "Run strict all-target clippy for Runtime v3 kernel.",
+          "outcome": "passed",
+          "evidence_ref": "runtime-v3-redb-clippy.log"
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "purpose": "Run git diff whitespace hygiene after redb durable-state migration.",
+          "outcome": "passed",
+          "evidence_ref": "runtime-v3-redb-diff-check.log"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--target-dir",
+            "/Volumes/FastWork/adl-wp-5698/target",
+            "--test",
+            "durable_state"
+          ],
+          "purpose": "Run focused redb durable-state tests.",
+          "outcome": "passed",
+          "evidence_ref": "runtime-v3-redb-durable-state.log"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--target-dir",
+            "/Volumes/FastWork/adl-wp-5698/target",
+            "--test",
+            "governed_operations"
+          ],
+          "purpose": "Run governed operations regression tests after redb durable-state migration.",
+          "outcome": "passed",
+          "evidence_ref": "runtime-v3-redb-governed-operations.log"
+        },
+        {
+          "command": [
+            "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate --root /Volumes/FastWork/adl-wp-5698 --request /Users/daniel/git/agent-design-language/.git/csdlc-v2/requests/5698.json"
+          ],
+          "purpose": "Prove the real redb durable kernel-state migration after review remediation: durable_state 4/4 including concurrent sequence/head regression, assembly 9/9, governed_operations 28/28, strict all-target Clippy, and diff hygiene.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5698"
+        },
+        {
+          "command": [
+            "bash adl/tools/run_adl_v2_standalone.sh",
+            "cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target --test assembly",
+            "cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target --test durable_state",
+            "cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target --test governed_operations",
+            "cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target --all-targets -- -D warnings",
+            "cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target",
+            "git diff --check"
+          ],
+          "purpose": "Prove the current #5698 PR repair: the adl-v2 standalone lane no longer fails on a stale Cargo.lock, the redb/state focused tests remain green, strict Runtime v3 Clippy is green, and the Runtime v3 fast lane including guardian_soak passes with Vector installed as CI does.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5698"
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "ready",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

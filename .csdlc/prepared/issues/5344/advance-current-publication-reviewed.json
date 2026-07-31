@@ -1,0 +1,13 @@
+{
+  "issue": 5344,
+  "card": "srp",
+  "expected_generation": 13,
+  "expected_digest": "3ee0e14f60d880932f452096bcefd75b9ac5fb6f957b2a5b4701f5033f4adbbf",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Advance the exact current publication head after its bounded review passed with no findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

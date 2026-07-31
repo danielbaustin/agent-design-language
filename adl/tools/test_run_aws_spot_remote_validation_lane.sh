@@ -6,6 +6,9 @@ SCRIPT="$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh"
 SETUP_SCRIPT="$ROOT/adl/tools/setup_aws_spot_remote_validation_github_resources.sh"
 WORKFLOW="$ROOT/.github/workflows/aws-spot-remote-validation.yaml"
 TMP_PARENT="$ROOT/.adl/tmp/aws-spot-remote-validation-tests"
+
+grep -F 'LANE_BIN="$ROOT/tools/aws_remote_validation/target/debug/adl-aws-remote-validation"' "$SCRIPT" >/dev/null
+grep -F 'selected binary does not implement the required Spot contract' "$SCRIPT" >/dev/null
 mkdir -p "$TMP_PARENT"
 TMP="$(mktemp -d "$TMP_PARENT/test.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
@@ -85,6 +88,10 @@ EOF
 cat >"$fake_bin/adl-aws-remote-validation" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
+if [[ "${1:-}" == "--help" ]]; then
+  echo "adl-aws-remote-validation run [--spot-only]"
+  exit 0
+fi
 printf '%s\n' "$@" >"${ADL_FAKE_AWS_REMOTE_ARGS:?}"
 out=""
 artifact_dir=""

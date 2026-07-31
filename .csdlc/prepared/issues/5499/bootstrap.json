@@ -1,0 +1,206 @@
+{
+  "issue": 5499,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5499/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5499/diagram.mmd",
+  "design_reviewer": "subagent:019f8612-1b9a-7cf0-9ac1-016f112ea7f6",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5499-v0918-wp10a-conductor-preparation",
+    "owner": "codex:issue-5499-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1784660260,
+    "expires_unix_seconds": 1785265060,
+    "heartbeat_unix_seconds": 1784660260,
+    "branch": "codex/5499-v0918-wp10a-conductor",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5499",
+      ".csdlc/locks/5499.lock",
+      ".csdlc/prepared/issues/5499"
+    ],
+    "purpose": "Prepare and review WP-10A conductor contracts only; product implementation remains blocked on merged typed closeout for #5349 and direct dependencies"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-10A][multi-agent] Implement issue-graph-to-live-task conductor",
+    "slug": "v0-91-8-wp-10a-issue-graph-live-task-conductor",
+    "version": "v0.91.8",
+    "goal": "Prepare a small deterministic conductor that converts typed C-SDLC v2 issue graphs and ADL v2 plans into safe live-task assignments without acquiring task, GitHub, integration, or closeout authority.",
+    "required_outcome": "After WP-09 and direct dependencies are terminal, the conductor admits only ready disjoint shards, selects serial or parallel lanes, and emits typed deterministic assignments or fail-closed refusals for the #5498 task adapter.",
+    "declared_scope": [
+      "typed issue graph and ADL v2 execution-plan ingestion",
+      "dependency, cycle, claim freshness, validation-lane, WIP, and path-overlap checks",
+      "deterministic assignment and refusal records",
+      "serialized review, publication, integration, and closeout gate preservation"
+    ],
+    "authority_boundary": [
+      "C-SDLC v2 remains lifecycle and claim authority",
+      "ADL v2 remains execution-plan authority",
+      "#5499 plans assignments but never creates tasks or mutates GitHub",
+      "#5498 owns explicit task and context transport operations",
+      "#5502 owns output convergence and deterministic replanning",
+      "review, merge, post-merge validation, and closeout remain serialized"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries and semantic card operations only",
+      "Keep the primary checkout clean on main; all tracked #5499 work stays in the dedicated issue worktree",
+      "Do not use raw gh, AWS, credentials, network providers, Runtime v2, or product implementation during preparation",
+      "Do not implement until #5340, #5341, #5342, and final WP-09 gate #5349 are GitHub merged, typed closed_out, receipt-backed, and ancestral",
+      "Use /Volumes/FastWork for every Cargo artifact, cache, and temporary build surface",
+      "Run bounded preparation review now and mandatory exact-revision code review before publication",
+      "Preparation may be committed and pushed, but no PR may be opened and no publication may occur in this preparation-only task"
+    ],
+    "task_boundary": "Prepare all issue contracts now; do not implement or claim product paths until #5340, #5341, #5342, and final WP-09 gate #5349 are merged and typed closed_out with retained ancestral receipts.",
+    "deliverables": [
+      "six issue-specific typed C-SDLC v2 cards",
+      "reviewed conductor design and dependency diagram",
+      "exact preparation-only protected-path claim",
+      "executable dependency and preparation validation",
+      "COTS, line/test/time budgets, PVF lanes, and negative-case contract",
+      "bounded independent preparation review with findings fixed"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Consume versioned typed C-SDLC v2 issue/claim/card state and ADL v2 plan records without creating a second lifecycle store",
+      "AC-2: Fail closed on missing cards, stale or absent claims, dependency cycles, unresolved dependencies, unknown validation lanes, WIP overflow, or ambiguous authority",
+      "AC-3: Detect exact and prefix-overlapping normalized protected/write paths and admit only disjoint writable shards",
+      "AC-4: Preserve serialized review, publication, merge, post-merge validation, and closeout gates",
+      "AC-5: Emit canonically ordered typed assignment or refusal records with content-derived correlation identifiers",
+      "AC-6: Remain a pure planning component with no task creation, network, GitHub, filesystem mutation, scheduler, or Runtime v2 dependency",
+      "AC-7: Stay within 3,000 implementation LoC, 3,000 test/fixture LoC, fewer than 120 focused tests, 180-second focused validation, and 600-second full validation"
+    ],
+    "dependencies": [
+      "parent WP-10A umbrella #5497",
+      "portable engine WP-06 #5340 merged and typed closed_out",
+      "Runtime v3 adapter WP-08 #5341 merged and typed closed_out",
+      "remaining substrate WP-07 #5342 merged and typed closed_out",
+      "final provider and governed-tool interface freeze WP-09 #5349 merged and typed closed_out"
+    ],
+    "repo_inputs": [
+      "AGENTS.md",
+      "docs/templates/prompts/current.json",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/SPRINT_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+      "issue #5499 and parent #5497"
+    ],
+    "non_goals": [
+      "product implementation during preparation",
+      "task creation, messaging, handoff, cancellation, or transcript retention",
+      "autonomous issue creation, GitHub mutation, merge, publication, or closeout",
+      "a second scheduler or lifecycle database",
+      "Runtime v2 edits or imports",
+      "AWS, provider, network, dashboard, convergence, or live-workcell execution"
+    ],
+    "plan_summary": "Prepare and review the pure conductor contract, hold product scope behind exact retained closeout and ancestry gates, then later implement a small COTS-backed deterministic planner for #5498 consumption.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Render, validate, and independently review all six cards, design, diagram, dependencies, protected paths, COTS, budgets, and PVF lanes",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-4", "AC-6", "AC-7"]
+      },
+      {
+        "id": "S2",
+        "action": "Wait fail-closed for #5340, #5341, #5342, and final gate #5349 merged typed closeout and ancestry before amending product scope",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-6"]
+      },
+      {
+        "id": "S3",
+        "action": "Implement the pure conductor component with COTS graph traversal, typed records, canonical ordering, and refusal contracts",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"]
+      },
+      {
+        "id": "S4",
+        "action": "Run focused and full proof, exact-revision review, typed publication, serialized merge, post-merge validation, and closeout",
+        "status": "pending",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-5", "AC-7"]
+      }
+    ],
+    "risks": [
+      "planning logic could accidentally become a second scheduler",
+      "naive path-prefix comparison could admit overlapping writes",
+      "unordered maps or wall-clock ids could break deterministic replay",
+      "stale claim or card snapshots could produce unsafe assignments",
+      "parallel work could bypass serialized review and integration gates",
+      "the new component could regrow before its interface stabilizes"
+    ],
+    "invariants": [
+      "no tracked work on main",
+      "no product implementation before #5349 and direct dependencies are merged typed closed_out",
+      "preparation claim protects only issue-local lifecycle paths",
+      "no Runtime v2 edits or dependencies",
+      "no AWS, network, provider, or GitHub mutation",
+      "no autonomous merge or closeout authority",
+      "canonical deterministic output ordering"
+    ],
+    "stop_conditions": [
+      "a required retained closeout receipt is absent, non-merged, or not ancestral",
+      "a planned product path overlaps another active typed claim",
+      "input state is stale, incomplete, cyclic, ambiguous, or contains an unknown validation lane",
+      "implementation requires task operations or lifecycle mutation",
+      "the LoC, test, time, or direct-dependency budget is exceeded without reviewed typed exception"
+    ],
+    "review_prompts": [
+      "Does the component remain a pure deterministic planner rather than a scheduler or lifecycle store?",
+      "Do dependency, claim, path-overlap, validation-lane, WIP, and serialized-gate checks fail closed?",
+      "Are assignment and refusal records complete enough for #5498 without hidden authority?",
+      "Are path normalization and correlation ids deterministic and resistant to traversal or alias collisions?",
+      "Are COTS choices and growth budgets small, sufficient, and executable?",
+      "Does preparation preserve #5349 as the final WP-09 implementation gate?"
+    ],
+    "planning_profile": "medium",
+    "validation_lanes": [
+      {
+        "lane": "preparation-contract",
+        "proof_role": "Prove six-card, design, diagram, dependency, scope, COTS, budget, and no-product-change preparation truth",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "local-control",
+        "budget_seconds": 120,
+        "budget_tokens": 2000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5499/validate-preparation.rb"],
+        "acceptance_ids": ["AC-1", "AC-4", "AC-6", "AC-7"]
+      },
+      {
+        "lane": "dependency-gate",
+        "proof_role": "Fail closed until #5340, #5341, #5342, and final WP-09 gate #5349 have merged typed closeout receipts ancestral to HEAD",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "local-control",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5499/check-dependencies.rb"],
+        "acceptance_ids": ["AC-1", "AC-6"]
+      },
+      {
+        "lane": "conductor-contract",
+        "proof_role": "Run focused all-target conductor tests and strict Clippy from FastWork after the dependency gate opens",
+        "deterministic": true,
+        "resource_profile": "medium",
+        "parallel_group": "conductor-local",
+        "budget_seconds": 180,
+        "budget_tokens": 4000,
+        "argv": ["bash", ".csdlc/prepared/issues/5499/validate-conductor.sh"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"],
+        "defer_reason": "Preparation only: do not select until #5340, #5341, #5342, and final WP-09 gate #5349 are merged, typed closed_out, receipt-backed, and ancestral, and the product manifest exists"
+      },
+      {
+        "lane": "diff-hygiene",
+        "proof_role": "Verify exact issue-branch patch hygiene",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "local-control",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["bash", ".csdlc/prepared/issues/5499/check-preparation-diff.sh"],
+        "acceptance_ids": ["AC-7"]
+      }
+    ],
+    "failure_policy": "Fail closed on missing or stale lifecycle input, unresolved or cyclic dependencies, unknown lanes, WIP overflow, path overlap, ambiguous authority, nondeterministic output, absent retained receipts, or budget breach; never convert blocked preparation into product authority.",
+    "review_scope": ".csdlc/issues/5499\n.csdlc/locks/5499.lock\n.csdlc/prepared/issues/5499\n.csdlc/evidence/5499\nadl-v2/crates/adl-workcell-conductor"
+  }
+}

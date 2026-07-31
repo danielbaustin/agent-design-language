@@ -1,0 +1,65 @@
+# Structured Task Prompt
+
+Template: 1.0.0
+
+Issue: 5107
+
+Repository: danielbaustin/agent-design-language
+
+Card: stp
+
+Status: ready
+
+## Task
+
+Implement the planning-doc queue and typed issue state for #5107 only; stop after a validated, reviewed, pushed, ready PR exists.
+
+## Deliverables
+
+- C-SDLC v2 issue state and six card projections for #5107.
+- Issue-local design, diagram, bootstrap request, and deterministic preparation validator.
+- v0.92 Adaptive Learning DAG feature record aligned to Runtime v3/current-platform authority.
+- v0.92 handoff entries distinguishing inherited evidence, unimplemented work, blockers, and the future sequence.
+- Exact-head validation, one GPT-5.5 review record, pushed branch, and ready PR with Closes #5107.
+
+## Acceptance
+
+1. AC-1: WP-14A platform acceptance evidence for ADL v2, Runtime v3, and C-SDLC v2 is cited at exact revisions.
+2. AC-2: #5104 is treated as historical input and must be requalified against current Runtime v3 contracts before reuse.
+3. AC-3: Prompt, Loop, Adaptive Loop, Reasoning Graph, and Adaptive Learning DAG remain distinct.
+4. AC-4: Learning-driven graph mutation is not inferred from bounded loop runtime.
+5. AC-5: No child implementation issues are opened or requested by #5107.
+6. AC-6: The queue names evaluation bindings, stateful adaptation, policy-governed graph modification, replay proof, and negative tests as later work.
+7. AC-7: The issue reaches a reviewed PR handoff without merge.
+
+## Dependencies
+
+- WP-21 umbrella #5362
+- WP-14A #5384 platform acceptance
+- Runtime v3 acceptance/deployment #5361
+- Accepted ADL v2 plan and engine revision
+- C-SDLC v2 acceptance/deployment #5358
+- Retained #5104 loop-runtime evidence as historical input only
+- #5332 terminal projection commit fa39a8856dd5a23544831f8d2cdced1ffad492d8 on this branch
+
+## Inputs
+
+- https://github.com/danielbaustin/agent-design-language/issues/5107
+- .csdlc/prepared/issues/5107/PREPARATION_PACKET.md
+- .csdlc/prepared/issues/5107/design.md
+- .csdlc/prepared/issues/5107/diagram.mmd
+- docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md
+- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
+- docs/milestones/v0.92/WBS_v0.92.md
+- docs/milestones/v0.92/SPRINT_v0.92.md
+- docs/milestones/v0.92/DEMO_MATRIX_v0.92.md
+- docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md
+
+## Non Goals
+
+- Adaptive learning implementation.
+- Autonomous graph mutation or production learning behavior.
+- Consciousness, personhood, or production citizenship claims.
+- Runtime code, ADL product code, C-SDLC source, infrastructure, provider, AWS, deployment, or selector changes.
+- Child issue creation for later v0.92 work.
+- Merge, closeout, or unrelated #5713/#5733 execution.

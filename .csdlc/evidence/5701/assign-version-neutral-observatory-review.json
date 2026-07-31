@@ -1,0 +1,24 @@
+{
+  "issue": 5701,
+  "expected_generation": 31,
+  "expected_digest": "331a806a2ca83ce1d64f54c908ac3da17c1385f03098a71181b1645523fc9182",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "reviewer": "subagent:019fafe9-2cac-77d2-8aa9-fcbd0157746d",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    "demos/html-observatory",
+    "adl-runtime-kernel/tests/parity.rs",
+    "adl-runtime/tests/runtime_api_wss.rs",
+    "adl/config/validation_lane_selector.v0.91.6.json",
+    "adl/tools/test_select_validation_lanes.sh",
+    "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+    "docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
+    "docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md",
+    "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
+    "docs/milestones/v0.91.7/review/V0917_WP15_DEMO_CONVERGENCE_4642.md",
+    "docs/milestones/v0.91.7/review/demo_matrix_4691/4691-birthday-visible-demo-matrix-proof.md",
+    "docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json",
+    "docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.py",
+    "docs/reviews/v0.91.7/remaining-sprints-5403/RUNTIME_V3_LIVE_PARITY_REVIEW_5276.md"
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "issue": 4739,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "a1c48cb8df3d8e3bb7f4197f05972aee58ce93739bffe5f2ec008904fbce8aa6",
+  "claim_id": "claim-4739-v0918-wp15-unity-mcp-alignment-prep",
+  "actor": "codex:issue-4739-preparation",
+  "reason": "Apply specialist review findings for dedicated unit, selector, and live-probe validation contracts",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "AC-1: the probe canonicalizes and reports the intended Unity project path and derives the active MCP endpoint without assuming a fixed port",
+      "AC-2: a read-only MCP scene or tool call is attempted only after project and endpoint identity agree",
+      "AC-3: project mismatch, missing editor, cloud or external fallback, malformed status, ambiguous endpoint, and read-only tool failure each produce deterministic FAIL_CLOSED output",
+      "AC-4: retained output redacts URL userinfo, tokens, authorization values, credentials, and secret-bearing Unity settings",
+      "AC-5: local liveness uses adl process status and no broad ps, pgrep, or lsof scan",
+      "AC-6: a dedicated no-Unity unit script exercises matching status, project mismatch, missing editor, cloud fallback, malformed status, endpoint ambiguity, redaction, and read-only tool failure",
+      "AC-7: live proof succeeds against the intended Observatory project or records the exact current blocker and owner without claiming runtime, visual, or investor readiness",
+      "AC-8: the final diff excludes #4741 batch-liveness, #5332 ILPP, scene-fallback, runtime-contract, asset, and walkthrough implementation",
+      "AC-9: validation selector registration maps the probe, dedicated unit test, and runbook to one focused non-Unity alignment lane and its selector test passes"
+    ],
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Review the current Unity-MCP CLI contract and selectively port only the repository-safe alignment probe from preserved predecessor work",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-4", "AC-5", "AC-8"]
+      },
+      {
+        "id": "S2",
+        "action": "Add the dedicated no-Unity unit script and deterministic fixtures for successful alignment and every declared fail-closed classifier",
+        "status": "pending",
+        "acceptance_ids": ["AC-3", "AC-4", "AC-6"]
+      },
+      {
+        "id": "S3",
+        "action": "Register the probe, dedicated unit test, and runbook in the validation selector and prove focused lane selection",
+        "status": "pending",
+        "acceptance_ids": ["AC-8", "AC-9"]
+      },
+      {
+        "id": "S4",
+        "action": "Update the bounded operator runbook and WP-15 routing note without widening into adjacent Unity owners",
+        "status": "pending",
+        "acceptance_ids": ["AC-7", "AC-8", "AC-9"]
+      },
+      {
+        "id": "S5",
+        "action": "Run focused unit, contract, selector, and diff proof, then perform one live read-only probe only when the intended project is available",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7", "AC-9"]
+      },
+      {
+        "id": "S6",
+        "action": "Record bounded review findings and exact proof or blocker truth for WP-15 consumption",
+        "status": "pending",
+        "acceptance_ids": ["AC-7", "AC-8", "AC-9"]
+      }
+    ],
+    "validation_lanes": [
+      {
+        "lane": "unity-mcp-alignment-unit",
+        "proof_role": "Execute the dedicated no-Unity parser, mismatch, redaction, and read-only failure fixtures",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-mcp-static",
+        "budget_seconds": 180,
+        "budget_tokens": 4000,
+        "argv": ["bash", "-c", "test -n \"${ADL_UNITY_MCP_UNIT_TEST:-}\" && test -x \"$ADL_UNITY_MCP_UNIT_TEST\" && \"$ADL_UNITY_MCP_UNIT_TEST\""],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-6", "AC-8"],
+        "defer_reason": "Set ADL_UNITY_MCP_UNIT_TEST to the repository-owned dedicated unit script created in S2; the lane fails closed if the executable is absent."
+      },
+      {
+        "lane": "unity-mcp-alignment-contract",
+        "proof_role": "Prove repository shell contract and focused static integration for the alignment surface",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-mcp-static",
+        "budget_seconds": 120,
+        "budget_tokens": 3000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_contract.sh"],
+        "acceptance_ids": ["AC-1", "AC-3", "AC-4", "AC-5", "AC-6", "AC-8"]
+      },
+      {
+        "lane": "unity-mcp-selector-registration",
+        "proof_role": "Prove issue-owned paths select the focused non-Unity MCP alignment lane",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-mcp-static",
+        "budget_seconds": 180,
+        "budget_tokens": 3000,
+        "argv": ["bash", "adl/tools/test_select_validation_lanes.sh"],
+        "acceptance_ids": ["AC-8", "AC-9"]
+      },
+      {
+        "lane": "unity-mcp-diff-hygiene",
+        "proof_role": "Prove bounded text and script hygiene for the issue-owned diff",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-mcp-static",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-4", "AC-8"]
+      },
+      {
+        "lane": "unity-mcp-live-read-only",
+        "proof_role": "Execute the repository-owned probe against the intended project and retain exact read-only alignment or blocker truth",
+        "deterministic": false,
+        "resource_profile": "small",
+        "parallel_group": "unity-mcp-live",
+        "budget_seconds": 180,
+        "budget_tokens": 3000,
+        "argv": ["bash", "-c", "test -n \"${ADL_UNITY_MCP_PROBE:-}\" && test -x \"$ADL_UNITY_MCP_PROBE\" && test -n \"${ADL_UNITY_PROJECT_PATH:-}\" && \"$ADL_UNITY_MCP_PROBE\" --project \"$ADL_UNITY_PROJECT_PATH\""],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-4", "AC-5", "AC-7"],
+        "defer_reason": "Set ADL_UNITY_MCP_PROBE and ADL_UNITY_PROJECT_PATH after S1 creates the repository-owned probe; run only when the intended Unity project is available."
+      }
+    ]
+  }
+}

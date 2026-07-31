@@ -1,0 +1,46 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "provider-profile-focused",
+        "proof_role": "registry expansion setup and mocked Anthropic request proof",
+        "purpose": "Run the focused provider test suite for Opus 5",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 2, "memory_mib": 2048, "tokens": 4000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 600,
+        "executable": "cargo",
+        "argv": ["test", "--manifest-path", "adl/Cargo.toml", "provider_"],
+        "evidence": {"max_log_bytes": 200000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "provider-build-focused",
+        "proof_role": "compile the touched Rust provider surface",
+        "purpose": "Compile the ADL crate after the provider change",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 2, "memory_mib": 2048, "tokens": 2000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": ["provider-profile-focused"],
+        "parallel_group": "local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 300,
+        "executable": "cargo",
+        "argv": ["check", "--manifest-path", "adl/Cargo.toml"],
+        "evidence": {"max_log_bytes": 200000, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {"requested_lanes": ["provider-profile-focused", "provider-build-focused"], "allow_network": false, "available_credentials": []},
+  "budget": {"max_parallel": 1, "cpu_units": 2, "memory_mib": 2048, "tokens": 6000},
+  "root": "/Volumes/FastWork/adl-5671-opus-5",
+  "evidence_dir": ".csdlc/prepared/issues/5671/validation-evidence",
+  "cancellation_file": null
+}

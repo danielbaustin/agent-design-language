@@ -1,0 +1,21 @@
+{
+  "actor": "codex:issue-5683-unity-remediation",
+  "card": "sor",
+  "claim_id": "claim-5683-v0918-unity-observatory-visual-remediation",
+  "expected_digest": "0a65f5df7814822f21e8413e6a1e9ddca7b41b5a4d6f371892a1227ee92ae487",
+  "expected_generation": 3,
+  "issue": 5683,
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/probe_unity_mcp_observatory_alignment.sh"
+      ],
+      "evidence_ref": ".csdlc/evidence/5683/LIVE_UNITY_PROOF.md",
+      "outcome": "passed",
+      "purpose": "Prove exact agreement among the operator-provisioned project, local MCP endpoint, live editor, and opened flagship scene."
+    }
+  },
+  "reason": "Record live Unity-MCP alignment proof"
+}

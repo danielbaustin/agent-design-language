@@ -1,0 +1,90 @@
+{
+  "schema": "adl.runtime_v3.acceptance.dependency_ancestry.v1",
+  "issue": 5361,
+  "origin_main": "32fb2be4e111483a46d69ad2b5b60dd91e75ef0c",
+  "rows": [
+    {
+      "issue": 5336,
+      "pull_request": 5599,
+      "phase": "closed_out",
+      "observed_state": "merged",
+      "receipt_observed_sha": "cf506e3f0ce8e9d6eb3deabf66c586fb9d0b4bdc",
+      "ancestry_sha": "cf506e3f0ce8e9d6eb3deabf66c586fb9d0b4bdc",
+      "ancestral_to_origin_main": true
+    },
+    {
+      "issue": 5591,
+      "pull_request": 5608,
+      "phase": "closed_out",
+      "observed_state": "merged",
+      "receipt_observed_sha": "59b61985c9964e56d83272efa7035f12be462fd7",
+      "ancestry_sha": "59b61985c9964e56d83272efa7035f12be462fd7",
+      "ancestral_to_origin_main": true
+    },
+    {
+      "issue": 5592,
+      "pull_request": 5618,
+      "phase": "closed_out",
+      "observed_state": "merged",
+      "receipt_observed_sha": "dbd461697755c048f9b9bbb7eb1a3ca66b0c3e56",
+      "ancestry_sha": "dbd461697755c048f9b9bbb7eb1a3ca66b0c3e56",
+      "ancestral_to_origin_main": true
+    },
+    {
+      "issue": 5589,
+      "pull_request": 5620,
+      "phase": "closed_out",
+      "observed_state": "merged",
+      "receipt_observed_sha": "0f22baf5d4b2fdef485164aa4c83002fdb520a3e",
+      "ancestry_sha": "0f22baf5d4b2fdef485164aa4c83002fdb520a3e",
+      "ancestral_to_origin_main": true
+    },
+    {
+      "issue": 5590,
+      "pull_request": 5621,
+      "phase": "closed_out",
+      "observed_state": "merged",
+      "receipt_observed_sha": "a79ab1b395b7331e4b6288d19effdb5fc392e39a",
+      "ancestry_sha": "a79ab1b395b7331e4b6288d19effdb5fc392e39a",
+      "ancestral_to_origin_main": true
+    },
+    {
+      "issue": 5341,
+      "pull_request": 5635,
+      "phase": "closed_out",
+      "observed_state": "merged",
+      "receipt_observed_sha": "c2c381cdd1393d1074e06f786320e81ac66a305f",
+      "ancestry_sha": "713f9cb6e5b7f7b7674e601ce4f088134aa3c0a0",
+      "ancestral_to_origin_main": true,
+      "note": "receipt observed sha is pre-squash audit evidence; live PR landing commit is ancestral"
+    },
+    {
+      "issue": 5349,
+      "pull_request": 5636,
+      "phase": "closed_out",
+      "observed_state": "merged",
+      "receipt_observed_sha": "a9c974a84093cf13990d9cbe0b5827d7445bc3ce",
+      "ancestry_sha": "a9c974a84093cf13990d9cbe0b5827d7445bc3ce",
+      "ancestral_to_origin_main": true
+    },
+    {
+      "issue": 5350,
+      "pull_request": 5649,
+      "phase": "closed_out",
+      "observed_state": "merged",
+      "receipt_observed_sha": "e392ddb66f01722fb2b40ac0bc9eeae3d56c67b5",
+      "ancestry_sha": "32fb2be4e111483a46d69ad2b5b60dd91e75ef0c",
+      "ancestral_to_origin_main": true,
+      "note": "receipt observed sha is pre-squash audit evidence; live PR landing commit is ancestral"
+    },
+    {
+      "issue": 5501,
+      "pull_request": 5643,
+      "phase": "closed_out",
+      "observed_state": "merged",
+      "receipt_observed_sha": "9ff6a0a2f808a2f6207ad8de245c60f646706912",
+      "ancestry_sha": "9ff6a0a2f808a2f6207ad8de245c60f646706912",
+      "ancestral_to_origin_main": true
+    }
+  ]
+}

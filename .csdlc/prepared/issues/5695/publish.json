@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5695,
+  "expected_generation": 7,
+  "expected_digest": "1ef055beb239b1a34a461854caaf4a7a7c1dbf6fa7e7ac3d505ad563067d5ca3",
+  "claim_id": "claim-5695-pr-state-mergeability",
+  "actor": "codex:issue-5695-pr-state-mergeability",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5695-pr-state-mergeability",
+  "title": "[v0.91.8][csdlc-v2][tooling] Preserve blocked and unstable PR mergeability states (#5695)",
+  "body": "Closes #5695\n\nPreserves GitHub mergeability distinctions in csdlc-pr-state: only behind is stale_base, dirty is conflicted, blocked/unstable/draft/unknown remain waiting, and HasHooks normalizes to the clean merge target accepted by csdlc-merge. Adds focused classification and merge-gate regression tests.\n\nValidation: cargo fmt --check; cargo test -p csdlc-v2 github::tests; cargo test -p csdlc-v2 merge::tests; cargo clippy -p csdlc-v2 --lib -- -D warnings; git diff --check. Exact-head subagent review completed with no actionable findings.",
+  "draft": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}

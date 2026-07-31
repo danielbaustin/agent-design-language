@@ -1,0 +1,217 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5727
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: pre_phase
+
+## Summary
+
+Implemented typed safe claim replacement with actual-checkout and cross-worktree exclusivity.
+
+## Artifacts
+
+- .csdlc/prepared/issues/5727/design.md
+- .csdlc/prepared/issues/5727/diagram.mmd
+- .csdlc/evidence/5727
+- .csdlc/evidence/5727/gate2.log
+- .csdlc/evidence/5727/gate7.log
+- .csdlc/evidence/5727/gate2.log
+- .csdlc/evidence/5727/gate2.log
+
+## Execution
+
+- Added a typed csdlc-bind reacquisition request and result contract with CAS, binding, lease, and live-overlap guards.
+- Made dormant nonterminal records readable and doctor-classifiable while preserving writer-claim enforcement for mutations.
+- Added command-level, released-claim, expired-claim, stale-state, binding, overlap, schema, and real #5354 acceptance proof.
+- Moved claim collision serialization to a Git-common lock shared by every worktree.
+- Made collision checks inspect canonical issue records across all registered worktrees.
+- Added a concurrent two-worktree regression proving only one overlapping writer can reacquire.
+- Routed legacy expired-claim recovery through the Git-common lock and cross-worktree live-claim inventory.
+- Required expired recovery to preserve its existing branch/worktree binding and validate complete replacement scope.
+- Added concurrent two-worktree recovery proof that only one overlapping writer can be established.
+- Unified actual branch/worktree validation for reacquisition and expired recovery.
+- Prevented recovery through stale same-issue records in main or unrelated worktrees.
+- Added a wrong-root fail-closed regression before positive expired recovery.
+
+## Validation
+
+[
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "clippy",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "purpose": "Prove the changed Rust surfaces are warning-free across all targets.",
+    "outcome": "passed",
+    "evidence_ref": "clippy.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "purpose": "Prove Rust formatting is canonical.",
+    "outcome": "passed",
+    "evidence_ref": "fmt.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate2"
+    ],
+    "purpose": "Prove typed lifecycle, reacquisition, schema, CAS, collision, and CLI behavior.",
+    "outcome": "passed",
+    "evidence_ref": "gate2.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate7_lifecycle"
+    ],
+    "purpose": "Prove lifecycle integration and worktree binding behavior remain intact.",
+    "outcome": "passed",
+    "evidence_ref": "gate7.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate2"
+    ],
+    "purpose": "Prove typed lifecycle, reacquisition, shared cross-worktree exclusion, schema, CAS, collision, and CLI behavior.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5727/gate2.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate7_lifecycle"
+    ],
+    "purpose": "Prove lifecycle integration and worktree binding behavior remain intact.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5727/gate7.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "clippy",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "purpose": "Prove changed Rust surfaces are warning-free across all targets.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5727/clippy.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "purpose": "Prove Rust formatting is canonical.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5727/fmt.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate2"
+    ],
+    "purpose": "Prove every typed claim replacement route shares cross-worktree exclusion, schema, CAS, collision, and CLI behavior.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5727/gate2.log"
+  },
+  {
+    "command": [
+      "/usr/bin/env",
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate2"
+    ],
+    "purpose": "Prove every claim replacement route enforces active-checkout and cross-worktree exclusion, schema, CAS, collision, and CLI behavior.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5727/gate2.log"
+  }
+]
+
+## Integration
+
+pr_open
+
+## Publication
+
+Publication: ready
+
+Merge: not_merged
+
+## Closeout
+
+not_started
+
+## Follow Ups
+
+- none

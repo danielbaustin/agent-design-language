@@ -1,0 +1,63 @@
+{
+  "schema": "adl.wp12.cutover_handoff.v1",
+  "issue": 5344,
+  "child_issue": 5343,
+  "status": "accepted",
+  "qualification_revision": "f9bb6cc736df1a68d539073f9214b663ae6c1ab2",
+  "evidence_revision": "0e2bc61a0abec79fcc5b567c6030e10100606fba",
+  "reviewed_revision": "git-blake3:8831d7bd2844f81457a50d5780e73eb0c0776764:b0303764ad1a0f1fd7f7ecbb6f16bb3bd1b745c6a02330664d291d1a6d463e79",
+  "manifest": {
+    "ref": "docs/milestones/v0.91.8/evidence/wp12/manifest.json",
+    "sha256": "26ca19ad7562ab81ae47ba41fa8e3ced8c219665e82f764d5f7017831a17ba83"
+  },
+  "manifest_digest": "26ca19ad7562ab81ae47ba41fa8e3ced8c219665e82f764d5f7017831a17ba83",
+  "report": {
+    "ref": "docs/milestones/v0.91.8/evidence/wp12/report.json",
+    "sha256": "1812cc4964b01002910e3a28864d9e4360e994b1735246aae70ac2c4e6985845",
+    "status": "pass"
+  },
+  "runtime_v3_acceptance": {
+    "ref": "docs/milestones/v0.91.8/review/runtime_v3_acceptance_5361.v1.json",
+    "sha256": "f6a1373b2900933a25564a838bd6cb1a2a60214dfb895893cebf6dd8825cff7f",
+    "landing_revision": "f7258b07e9da414bfee518f0c89a76071bc03ee8"
+  },
+  "provider_disposition": {
+    "ref": "docs/milestones/v0.91.8/evidence/wp12/platform-provider.json",
+    "sha256": "31167ef5007b73d7028ce5781ad9776a60087b1f8a4242945e14f44cd6032c5a",
+    "claim_class": "credential_free_disposition",
+    "live_provider_claim": false
+  },
+  "demo_disposition": {
+    "status": "removed_by_operator",
+    "replacement": "real native lifecycle qualification on Linux, macOS, and Windows",
+    "fixture_or_demo_credit_claimed": false
+  },
+  "platforms": {
+    "linux": {
+      "ref": "docs/milestones/v0.91.8/evidence/wp12/platform-linux.json",
+      "sha256": "f32c8594229e58b2eb39952fb7999084eab52a3c3cf04c9a4734552a4609196a"
+    },
+    "macos": {
+      "ref": "docs/milestones/v0.91.8/evidence/wp12/platform-macos.json",
+      "sha256": "a95284a5d9262bbb34c070ee161d037116e557522f3055ccad7e3b1bc206f654"
+    },
+    "windows": {
+      "ref": "docs/milestones/v0.91.8/evidence/wp12/platform-windows.json",
+      "sha256": "63a063d5332a29973b2cc4d2dbfbd6ec824d79fd2d00f4ab57752ba37ac5ad5a"
+    }
+  },
+  "prior_selector_digest": "feff5680c1fe681b95140ce13d4b5352b261dd08d5219fd27bd6928e5d556970",
+  "selected_selector_digest": "a3653d349f6a5fe9f254dbb9297c7cfe79d8abcdea1df7b4e584e3bdd8456078",
+  "restored_selector_digest": "feff5680c1fe681b95140ce13d4b5352b261dd08d5219fd27bd6928e5d556970",
+  "fresh_install_receipt": {
+    "ref": ".csdlc/evidence/5344/rollback/fresh-install-receipt.json",
+    "sha256": "3d45aa497ae2644ac7891acd9631efdc1d8c338d85d642fe259ff733cdfa0561"
+  },
+  "rollback_window": {
+    "duration_days": 14,
+    "starts_at": "successful_5343_cutover",
+    "deletion_authorized": false
+  },
+  "legacy_deletion_authorized": false,
+  "unresolved_rows": []
+}

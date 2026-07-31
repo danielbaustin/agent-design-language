@@ -1,0 +1,15 @@
+{
+  "issue": 5384,
+  "claim_id": "claim-5384-v0918-wp14a-preparation-refresh",
+  "expected_generation": 7,
+  "expected_digest": "4bcc3eee5a7848df37ffa78242d303abfa5b0c2b208f6747bf68668720e68997",
+  "now_unix_seconds": 1785345331,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the operator-authorized WP-13 deferral and WP-14A activation consistently in the bounded canonical v0.91.8 planning surfaces.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+    "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+    "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md"
+  ]
+}

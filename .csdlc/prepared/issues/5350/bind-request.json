@@ -1,0 +1,22 @@
+{
+  "issue": 5350,
+  "base_branch": "main",
+  "branch": "codex/5350-v0918-wp11-shadow-parity",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5350-v0918-wp11-shadow-parity-preparation",
+    "owner": "codex:5350-preparation-owner",
+    "generation": 1,
+    "acquired_unix_seconds": 1784659713,
+    "expires_unix_seconds": 1785264513,
+    "heartbeat_unix_seconds": 1784659713,
+    "branch": "codex/5350-v0918-wp11-shadow-parity",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5350",
+      ".csdlc/locks/5350.lock",
+      ".csdlc/prepared/issues/5350"
+    ],
+    "purpose": "Prepare complete #5350 exact-revision shadow-parity cards and design; execution remains prohibited until WP-10, WP-10A live proof, and all Runtime parity inputs are terminal"
+  }
+}

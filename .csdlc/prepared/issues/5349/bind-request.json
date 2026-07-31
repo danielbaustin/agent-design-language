@@ -1,0 +1,23 @@
+{
+  "issue": 5349,
+  "base_branch": "main",
+  "branch": "codex/5349-v0918-wp09-provider-tool-adapters",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5349-v0918-wp09-preparation",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 1,
+    "acquired_unix_seconds": 1784659955,
+    "expires_unix_seconds": 1785264755,
+    "heartbeat_unix_seconds": 1784659955,
+    "branch": "codex/5349-v0918-wp09-provider-tool-adapters",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5349",
+      ".csdlc/locks/5349.lock",
+      ".csdlc/prepared/issues/5349",
+      ".csdlc/evidence/5349"
+    ],
+    "purpose": "Prepare, review, bind, commit, and push #5349 without product implementation; product authority remains prohibited until #5340 and #5341 are merged, typed closed_out, receipt-retained, and ancestral to current origin/main"
+  }
+}

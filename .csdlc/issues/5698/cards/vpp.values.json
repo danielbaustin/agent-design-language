@@ -1,0 +1,112 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5698,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][state] Unify durable kernel state on redb",
+    "slug": "runtime-v3-redb-durable-state",
+    "version": "v0.91.8",
+    "generation": 9
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "runtime-v3-redb-state-focused",
+          "proof_role": "real checkpoint/lifelog redb restart, transaction, identity, corruption, and writer-lock proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8",
+            "AC-9"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 10000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--target-dir",
+            "target",
+            "--test",
+            "durable_state"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-assembly-focused",
+          "proof_role": "adapter-level proof that checkpoint/lifelog production calls use redb state",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 8000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--target-dir",
+            "target",
+            "--test",
+            "assembly"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-clippy",
+          "proof_role": "strict lint proof for touched Runtime v3 crate",
+          "acceptance_ids": [
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 6000,
+          "argv": [
+            "cargo",
+            "clippy",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--target-dir",
+            "target",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on claim collision, partial transaction, corrupt state, unsupported schema, identity mismatch, hidden flat-file fallback, /private/tmp use, or exact review finding.",
+      "design_ref": ".csdlc/prepared/issues/5698/design.md",
+      "design_digest": "084aef585bb574dba031ec98f033395692dcab7fc080cbf8fb8c35bda32cee9e",
+      "diagram_ref": ".csdlc/prepared/issues/5698/diagram.mmd",
+      "diagram_digest": "4f69c21c6efaf9d1d23c4de644e419737cb2034a4dbc3291db0d6cc942796c8b"
+    }
+  }
+}

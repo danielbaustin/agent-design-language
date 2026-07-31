@@ -1,0 +1,37 @@
+{
+  "schema": "adl.csm.runtime_api.feature_matrix.v1",
+  "issue": 5665,
+  "runtime_boundary": "api_only",
+  "html_observatory": "separate_client",
+  "unresolved_claimed_features": [],
+  "rows": [
+    {
+      "feature": "wss_authenticated_bidirectional_exchange",
+      "adapter": "runtime_api_wss",
+      "claimed": true,
+      "health_state": "healthy",
+      "proof": "adl-runtime/tests/runtime_api_wss.rs::wss_auth_rotation_revocation_and_shutdown_are_real_tls_frames"
+    },
+    {
+      "feature": "observatory_health_distinctions",
+      "adapter": "runtime_api_health",
+      "claimed": true,
+      "health_state": "healthy",
+      "proof": "adl-runtime/tests/runtime_api_wss.rs::health_telemetry_matrix_and_init_file_are_truthful"
+    },
+    {
+      "feature": "sink_bounded_telemetry",
+      "adapter": "runtime_api_telemetry",
+      "claimed": true,
+      "health_state": "healthy",
+      "proof": "adl-runtime/tests/runtime_api_wss.rs::health_telemetry_matrix_and_init_file_are_truthful"
+    },
+    {
+      "feature": "html_observatory_ui_redesign",
+      "adapter": "separate_client",
+      "claimed": false,
+      "health_state": "unimplemented",
+      "proof": "non_goal"
+    }
+  ]
+}

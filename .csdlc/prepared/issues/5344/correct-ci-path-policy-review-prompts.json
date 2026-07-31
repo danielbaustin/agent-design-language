@@ -1,0 +1,19 @@
+{
+  "issue": 5344,
+  "card": "srp",
+  "expected_generation": 21,
+  "expected_digest": "a5572b8bf65976eade924b9efe765940318b6f2f42e1022e30766b9833bfb451",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Correct the bounded recovery review prompts after the exact-head CI path-policy failure.",
+  "operation": {
+    "operation": "correct_review_prompts_after_recovery",
+    "values": [
+      "Does the tracked-path scan consume Git's NUL-delimited literal filenames without reintroducing line-oriented parsing?",
+      "Do UTF-8 paths, spaces, and embedded newlines preserve complete path components during Windows portability validation?",
+      "Do genuine Windows-illegal characters, trailing spaces or dots, backslashes, and reserved device names still fail closed?",
+      "Does the focused regression mirror the PR failure by retaining a portable UTF-8 baseline path while proving ordinary and newline-hidden illegal components are rejected?",
+      "Are the recovery, focused validation, and exact-head review records scoped truthfully to the two CI path-policy files?"
+    ]
+  }
+}

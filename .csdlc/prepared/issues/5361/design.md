@@ -20,8 +20,8 @@ Architecture authority #5336 must integrate before Parity-A starts. Parity-A
 #5591 then precedes Parity-B, Parity-C, and Parity-D. Those three children may
 execute concurrently only after their protected-path manifests prove they are
 disjoint. Acceptance synthesis waits for all four parity children, #5341
-consumer integration, #5349 provider/tool adapters, and #5501 live workcell
-proof.
+consumer integration, #5349 provider/tool adapters, #5350 exact-revision
+shadow parity, and #5501 live workcell proof.
 
 ## Acceptance Boundary
 
@@ -33,8 +33,10 @@ Runtime v3 is accepted only at an exact revision with:
 - secure local and remote HTTPS access with no hard-coded address;
 - Observatory consumption, health telemetry, and graceful pressure shutdown;
 - provider, tool, governed-operation, and multi-agent consumer proof;
+- exact-revision #5350 shadow-parity proof with every mismatch dispositioned;
 - rollback and recovery evidence;
-- current line-count, module-growth, test-count, and CI evidence.
+- current line-count, module-growth, dependency-audit, test-count, CI, and
+  exact-revision review evidence.
 
 Unsupported GPU or remote-provider claims remain explicit non-claims unless a
 later child issue supplies reviewed evidence. AWS is outside this packet and is

@@ -1,0 +1,71 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 4759,
+  "expected_generation": 9,
+  "expected_digest": "f08adfeae482c9ac081bbf13b8e86cfe41c1847641aadc12bbe465d5dcbce4c8",
+  "claim_id": "claim-4759-v0918-activation-execution-20260731",
+  "actor": "codex:issue-4759-execution",
+  "summary": "Implemented and validated the #4759 v0.91.8 WP-21 activation bridge/handoff artifact.",
+  "changes": [
+    "Implemented the v0.91.8 activation map as a v0.92 consumption bridge backed by the accepted WP-14A platform ledger.",
+    "Updated v0.91.8 handoff docs and the v0.92 activation bridge ledger to consume the bridge without v0.92 readiness overclaims.",
+    "Normalized SIP/SPP/SOR execution truth through typed C-SDLC v2 card requests."
+  ],
+  "artifacts": [
+    "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+    "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md",
+    ".csdlc/prepared/issues/4759/validate-activation-bridge.sh"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "activation-bridge-docs",
+          "proof_role": "Prove the #4759 docs/card activation bridge has exact evidence pointers, downstream #4762 consumption, no local/secret markers, no readiness overclaim, and clean diffs.",
+          "purpose": "focused docs/card activation bridge validation",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 1,
+            "memory_mib": 256,
+            "tokens": 1000
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "docs",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 30,
+          "executable": "bash",
+          "argv": [
+            ".csdlc/prepared/issues/4759/validate-activation-bridge.sh"
+          ],
+          "evidence": {
+            "max_log_bytes": 20000,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": [
+        "activation-bridge-docs"
+      ],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {
+      "max_parallel": 1,
+      "cpu_units": 1,
+      "memory_mib": 256,
+      "tokens": 1000
+    },
+    "root": "/Volumes/FastWork/adl-wp-4759",
+    "evidence_dir": "/Volumes/FastWork/adl-wp-4759/.csdlc/evidence/4759",
+    "cancellation_file": null
+  }
+}

@@ -4,6 +4,11 @@
 the validation platform scheduler. The routing contract explains which platform
 should run a selected validation profile and why other platforms are rejected.
 
+For small, low-risk fixes, pair this routing contract with
+[`DEVELOPER_THROUGHPUT_FAST_LANE.md`](DEVELOPER_THROUGHPUT_FAST_LANE.md) so the
+selected platform, focused proof, FastWork posture, and PR-watching behavior
+stay proportional to the changed surface.
+
 The manager does not launch paid cloud resources. It only emits dry-run routing
 truth and wrapper commands. Live AWS Spot or CodeBuild runs still require the
 platform wrapper's explicit live-run flag or workflow trigger.

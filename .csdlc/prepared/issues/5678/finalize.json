@@ -1,0 +1,25 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5678,
+  "expected_generation": 0,
+  "expected_digest": "c05e6911cb12a2dd23ff3541a657c7e38817c37898cf1be25ff0da05d00b6033",
+  "claim_id": "claim-5678-opus-review-runbook",
+  "actor": "codex:issue-5678-opus-review-runbook",
+  "summary": "Repair the tracked Opus review runbook and add a source-backed structured CLI drift check.",
+  "changes": ["Replace stale flag-form invocation with --request/--out/--log JSON invocation", "Document exact-head review evidence and provider identity truth boundaries", "Add jq-backed runbook contract test and current adapter help verification"],
+  "artifacts": ["docs/tooling/OPUS_REVIEW_RUNBOOK.md", "adl/tools/test_opus_review_runbook.sh"],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {"id":"opus-runbook-contract","proof_role":"Verify the runbook JSON shape, adapter flags, secret/path hygiene, and stale-flag rejection","purpose":"Run the focused runbook contract suite","determinism":"deterministic","resources":{"cpu_units":1,"memory_mib":256,"tokens":1000},"credentials":[],"network":"denied","dependencies":[],"parallel_group":"docs","release_gate":"required","execution":"local","timeout_seconds":120,"executable":"bash","argv":["adl/tools/test_opus_review_runbook.sh"],"evidence":{"max_log_bytes":65536,"redact_values":[],"require_relative_paths":true}},
+        {"id":"opus-runbook-diff-hygiene","proof_role":"Verify bounded documentation diff hygiene","purpose":"Run whitespace validation","determinism":"deterministic","resources":{"cpu_units":1,"memory_mib":64,"tokens":200},"credentials":[],"network":"denied","dependencies":[],"parallel_group":"docs","release_gate":"required","execution":"local","timeout_seconds":30,"executable":"git","argv":["diff","--check"],"evidence":{"max_log_bytes":4096,"redact_values":[],"require_relative_paths":true}}
+      ]
+    },
+    "selection":{"requested_lanes":["opus-runbook-contract","opus-runbook-diff-hygiene"],"allow_network":false,"available_credentials":[]},
+    "budget":{"max_parallel":2,"cpu_units":2,"memory_mib":320,"tokens":1200},
+    "root":"/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5678",
+    "evidence_dir":"/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5678/.csdlc/evidence/5678",
+    "cancellation_file":null
+  }
+}

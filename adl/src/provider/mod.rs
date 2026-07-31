@@ -479,6 +479,7 @@ mod tests {
         let names = provider_profile_names();
         assert!(names.contains(&"claude:claude-3-7-sonnet".to_string()));
         assert!(names.contains(&"claude:claude-3-5-haiku".to_string()));
+        assert!(names.contains(&"claude:claude-opus-5".to_string()));
 
         let preset = provider_profile_registry()
             .get("claude:claude-3-7-sonnet")
@@ -486,6 +487,36 @@ mod tests {
             .expect("claude sonnet preset");
         assert_eq!(preset.kind, "http");
         assert_eq!(preset.default_model, Some("claude-3-7-sonnet-latest"));
+
+        let opus = provider_profile_registry()
+            .get("claude:claude-opus-5")
+            .copied()
+            .expect("claude opus 5 preset");
+        assert_eq!(opus.kind, "anthropic");
+        assert_eq!(opus.default_model, Some("claude-opus-5"));
+        assert_eq!(opus.provider_model_id, Some("claude-opus-5"));
+        assert_eq!(opus.endpoint, Some(ANTHROPIC_MESSAGES_ENDPOINT));
+    }
+
+    #[test]
+    fn provider_mod_registry_keeps_expanded_vendor_identities_distinct() {
+        let names = provider_profile_names();
+        for name in [
+            "kimi:k2.5",
+            "minimax:m2.5",
+            "qwen:qwen3-max",
+            "xai:grok-4.5",
+            "mistral:medium-3.5",
+            "cohere:command-a-plus",
+            "deepseek:v4",
+            "gemini:3.1-pro-preview",
+        ] {
+            assert!(names.contains(&name.to_string()), "missing profile {name}");
+        }
+        assert_ne!(
+            provider_profile_registry()["kimi:k2.5"].provider_model_id,
+            provider_profile_registry()["xai:grok-4.5"].provider_model_id
+        );
     }
 
     #[test]

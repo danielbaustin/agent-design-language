@@ -1,0 +1,18 @@
+{
+  "issue": 5344,
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-preparation",
+  "expected_owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "expected_generation": 2,
+  "expected_digest": "58319f575ad388fa481046c195d54f5807f1b743e72bc16e83a593b6d5f382c8",
+  "expected_purpose": "Prepare and review WP-12 soak and rollback contracts only; execution remains prohibited until #5350 and #5361 each have a live merged landing commit ancestral to the exact execution revision; receipts and typed closeout are audit observations only",
+  "now_unix_seconds": 1784835059,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Begin WP-12 execution after #5350 and #5361 merged and became ancestral, including the operator-required cross-platform process-0 stability proof",
+  "purpose": "Execute #5344 Runtime v3 opt-in soak and rollback proof, repair Guardian process-0 child ownership so a dead Guardian cannot leave an orphan Runtime, validate on macOS, Linux, and native Windows, and retain truthful evidence without weakening TLS or deleting Runtime v1",
+  "add_protected_paths": [
+    "adl-runtime/src/guardian.rs",
+    "adl-runtime/tests/guardian_cli.rs",
+    "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+    "adl-runtime-kernel/tests/guardian_soak.rs"
+  ]
+}

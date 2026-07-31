@@ -1,0 +1,60 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5684,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Split GitHub tool surface into smaller owner binaries",
+    "slug": "csdlc-github-tool-split",
+    "version": "v0.91.8",
+    "generation": 38
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Execute #5684 only; do not expand into unrelated GitHub lifecycle redesign.",
+      "deliverables": [
+        "adl-resilience shared crate",
+        "csdlc-github-issue binary",
+        "csdlc-github-pr binary",
+        "operator manifest and coexistence inventory updates",
+        "focused GitHub and install tests",
+        "stable install/coexistence proof",
+        "current operator docs and skill guidance updates",
+        "bootstrap validation guidance repair"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Issue lifecycle operations are isolated behind a small ADL binary.",
+        "AC-2: PR operations/observation are isolated behind a small ADL binary or explicit retained observer binary.",
+        "AC-3: csdlc-merge remains exact-head merge authority and is always installed.",
+        "AC-4: Shared retry/reconciliation resiliency is available outside adl and used by runtime.",
+        "AC-5: Stable csdlc-install installs and verifies all required GitHub owner binaries.",
+        "AC-6: Gate 10A/install tests fail if required binaries are absent.",
+        "AC-7: Focused GitHub tests prove exact-marker readback and idempotent mutation behavior.",
+        "AC-8: Current operator docs and skill guidance route GitHub issue/PR work through the split binaries.",
+        "AC-9: Current bootstrap guidance does not call the deleted structured-prompt shell wrapper."
+      ],
+      "dependencies": [
+        "PR #5682 stable owner-binary manifest repair is merged"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5684 body",
+        ".adl/docs/TBD/CSDLC_GITHUB_BINARY_REFACTOR_PLAN.md",
+        "csdlc-v2/operator/skills.json",
+        "csdlc-v2/operator/coexistence.json",
+        "csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md",
+        "docs/tooling/ADL_CSDLC_GITHUB_CLIENT_BOUNDARY.md",
+        "docs/tooling/OWNER_BINARY_INSTALLATION.md",
+        "docs/tooling/README.md",
+        "docs/tooling/structured-prompt-validator-binary-resolution.md",
+        "csdlc-v2/src/github.rs"
+      ],
+      "non_goals": [
+        "No public release of private TBD plan",
+        "No app connector write path",
+        "No AWS operations"
+      ]
+    }
+  }
+}

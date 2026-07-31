@@ -1,0 +1,19 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 30,
+  "expected_digest": "c403a676d8192c77045aff58329713a345aad7db5a6ccda7febee3b6f2bb279a",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record typed PVF local_pass after remaining exact-review fixes.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate", "--root", ".", "--request", ".csdlc/prepared/issues/5663/validate-real-fixes.json"],
+      "purpose": "Run the typed PVF manifest covering real Agent owner/duplicate cancellation, scheduler reuse, checkpoint byte restore identity/integrity, safe durable storage locking including partial-lock recovery, governed regression, strict Clippy, net-negative LoC, and diff hygiene after the remaining exact-review fixes.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5663"
+    }
+  },
+  "fail_after_backup": false
+}

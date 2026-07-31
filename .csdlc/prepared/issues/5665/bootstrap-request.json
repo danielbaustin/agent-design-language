@@ -1,0 +1,222 @@
+{
+  "issue": 5665,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5665/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5665/diagram.mmd",
+  "design_reviewer": "operator:5665",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5665-runtime-v3-wss-feature-proofs",
+    "owner": "codex:issue-5665-slot-1",
+    "generation": 0,
+    "acquired_unix_seconds": 1784935430,
+    "expires_unix_seconds": 1785540230,
+    "heartbeat_unix_seconds": 1784935430,
+    "branch": "codex/5665-runtime-v3-wss-feature-proofs",
+    "worktree": ".worktrees/adl-wp-5665",
+    "protected_paths": [
+      ".csdlc/evidence/5665",
+      ".csdlc/issues/5665",
+      ".csdlc/locks/5665.lock",
+      ".csdlc/prepared/issues/5665",
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/src/runtime_api.rs",
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/observability.rs",
+      "adl-runtime/src/shutdown.rs",
+      "adl-runtime/tests/runtime_api_wss.rs",
+      "infra/runtime-v3/runtime-api-5665.toml",
+      "docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json"
+    ],
+    "purpose": "Complete authenticated Runtime v3 WSS and feature proof matrix without HTML Observatory redesign"
+  },
+  "initial": {
+    "title": "[v0.91.8][runtime-v3][observatory] Complete authenticated WSS and feature proofs",
+    "slug": "v0-91-8-runtime-v3-wss-feature-proofs",
+    "version": "v0.91.8",
+    "goal": "Make the API-only Runtime v3 launch and separate HTML Observatory demonstrate the complete supported feature surface truthfully.",
+    "required_outcome": "Authenticated bidirectional WSS through the existing Axum/Tokio/Rustls Runtime v3 API, Observatory health-state distinctions, sink-bounded telemetry, clean-checkout port 20997 init, and an end-to-end feature/adapter proof matrix with no unresolved claimed feature.",
+    "declared_scope": [
+      "adl-runtime Runtime v3 API/auth/observability/shutdown surfaces",
+      "real WSS handshake, authentication, bidirectional frames, rotation, revocation, and shutdown tests",
+      "health distinction between unimplemented, unavailable, failed, and healthy",
+      "telemetry fields limited to configured sink capabilities",
+      "one issue-local init/config file on port 20997",
+      "feature and adapter proof matrix"
+    ],
+    "authority_boundary": [
+      "Runtime remains API-only",
+      "HTML Observatory remains a separate client",
+      "C-SDLC v2 Rust lifecycle is the only issue lifecycle authority",
+      "#5657/#5663/#5664 protected paths remain disjoint",
+      "No AWS"
+    ],
+    "operator_constraints": [
+      "Use only typed C-SDLC v2 lifecycle and an issue-bound worktree",
+      "Do not write implementation changes on main",
+      "No URL-only, fixture-only, metadata-only, Python, or degraded proof",
+      "Reuse COTS",
+      "Remove obsolete wrappers or duplicate paths when found in scope",
+      "Measure before/after physical LoC with net reduction",
+      "Run focused tests, strict Clippy, and one exact pre-PR review"
+    ],
+    "task_boundary": "Implement, validate, review, and prepare publication for the bounded Runtime v3 WSS/API proof surface only.",
+    "deliverables": [
+      "authenticated WSS Runtime v3 API implementation",
+      "health-state distinction model",
+      "sink-bounded telemetry model",
+      "clean-checkout init file using port 20997",
+      "feature/adapter matrix",
+      "focused Rust tests and strict Clippy evidence",
+      "LoC measurement evidence"
+    ],
+    "acceptance_criteria": [
+      "AC-1: WSS handshake, authentication, bidirectional frames, rotation, revocation, and shutdown are tested through the real API path",
+      "AC-2: Observatory health distinguishes unimplemented, unavailable, failed, and healthy",
+      "AC-3: telemetry emits only fields supported by configured sinks",
+      "AC-4: clean-checkout init uses one configured file and port 20997",
+      "AC-5: feature/adapter matrix has no unresolved claimed feature",
+      "AC-6: focused tests, strict Clippy, LoC net reduction, and exact pre-PR review complete"
+    ],
+    "dependencies": [
+      "GitHub issue #5665",
+      "existing adl-runtime Runtime v3 API/auth/observability code",
+      "existing Axum/Tokio/Rustls runtime dependency stack"
+    ],
+    "repo_inputs": [
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/src/runtime_api.rs",
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/observability.rs",
+      "adl-runtime/src/shutdown.rs",
+      "demos/v0.91.7/html-observatory/README.md"
+    ],
+    "non_goals": [
+      "HTML Observatory UI redesign",
+      "AWS validation or deployment",
+      "Unity Observatory implementation",
+      "Runtime kernel launch/config changes owned by #5657"
+    ],
+    "plan_summary": "Complete the real `adl-runtime` WSS API proof path, record truth in health/telemetry/matrix artifacts, validate locally, and publish only after exact review.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Inspect and simplify existing API/auth/observability surfaces, measuring physical LoC before edits",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-6"
+        ]
+      },
+      {
+        "id": "S2",
+        "action": "Implement authenticated bidirectional WSS, auth rotation/revocation, shutdown, health, and telemetry truth",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ]
+      },
+      {
+        "id": "S3",
+        "action": "Add end-to-end feature/adapter matrix and focused tests without fixture-only or metadata-only proof",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-5",
+          "AC-6"
+        ]
+      },
+      {
+        "id": "S4",
+        "action": "Run focused validation, strict Clippy, exact review, and prepare publication",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-6"
+        ]
+      }
+    ],
+    "invariants": [
+      "API-only runtime boundary is preserved",
+      "HTML Observatory remains a separate client",
+      "proof exercises real Rust API/WSS behavior",
+      "telemetry never claims unsupported sink fields",
+      "protected paths for #5657/#5663/#5664 are not touched"
+    ],
+    "risks": [
+      "Existing runtime API may lack a complete TLS/WSS listener",
+      "Cross-platform live socket validation may expose OS-specific port or certificate behavior",
+      "LoC reduction may require removing obsolete duplicate paths after implementation scope is understood",
+      "FastWork validation may be unavailable locally"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "Protected-path collision with #5657/#5663/#5664",
+      "AWS is required",
+      "Only URL, fixture, metadata, Python, or degraded proof is possible",
+      "feature matrix retains an unresolved claimed feature",
+      "strict Clippy or focused tests fail",
+      "actionable exact-review finding remains unresolved"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "runtime-v3-wss-focused",
+        "proof_role": "Run focused Rust tests for real WSS auth, bidirectional frames, rotation, revocation, shutdown, health states, telemetry limits, and matrix truth",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 600,
+        "budget_tokens": 3500,
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "adl-runtime/Cargo.toml"
+        ],
+        "parallel_group": "runtime-v3-wss",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-strict-clippy",
+        "proof_role": "Run strict Clippy on the touched adl-runtime crate",
+        "acceptance_ids": [
+          "AC-6"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 600,
+        "budget_tokens": 2500,
+        "argv": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "adl-runtime/Cargo.toml",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "parallel_group": "runtime-v3-wss",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on protected-path overlap, missing real WSS proof, unsupported telemetry claim, unresolved feature matrix row, failed validation, failed strict Clippy, missing LoC reduction, or unresolved exact-review finding.",
+    "review_prompts": [
+      "Does the WSS proof exercise a real Axum/Tokio/Rustls API path rather than URL, fixture, or metadata proof?",
+      "Are authentication, bidirectional frames, token rotation, token revocation, and shutdown covered?",
+      "Are Observatory health states and telemetry fields truthful and sink-bounded?",
+      "Does the feature/adapter matrix avoid unresolved claimed features?",
+      "Did the change stay disjoint from #5657/#5663/#5664 protected paths and preserve the API-only runtime boundary?"
+    ],
+    "review_scope": "Review the exact #5665 adl-runtime API/auth/observability/shutdown implementation, clean-checkout init file, feature/adapter matrix, tests, LoC measurement, and validation evidence."
+  }
+}

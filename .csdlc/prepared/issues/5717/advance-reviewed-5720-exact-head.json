@@ -1,0 +1,14 @@
+{
+  "issue": 5717,
+  "card": "sor",
+  "expected_generation": 19,
+  "expected_digest": "2b54d6d58a1bd5011939c7e9be09c8290fe5a2eea1abd240b0e6da991f382058",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "actor": "codex:5717-execution",
+  "reason": "Exact codex subagent review passed with no P0-P3 findings for PR #5720 head b61738969 after checked-in podcast route validation and Windows deleted-path guard fixes.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

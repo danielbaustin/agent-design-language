@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5657,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][launch] Simplify and harden local Runtime v3 launch path",
+    "slug": "v0-91-8-runtime-v3-launch-recovery",
+    "version": "v0.91.8",
+    "generation": 2
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Review the exact Runtime v3 serve path, configuration, adapter readiness, continuity identity, Axum Observatory routes, WebSocket exchange, Guardian lifecycle, and focused proof.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Are all required production adapters real rather than degraded placeholders?",
+        "Is Guardian the only launch owner?",
+        "Does one init file control the actual endpoint and reported readiness?",
+        "Does continuity identity exclude private-key material?",
+        "Does the WebSocket test authenticate and exchange a real feed?",
+        "Are slow or fixture lanes excluded from launch credit?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

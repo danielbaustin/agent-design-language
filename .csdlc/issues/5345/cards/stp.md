@@ -1,0 +1,70 @@
+# Structured Task Prompt
+
+Template: 1.0.0
+
+Issue: 5345
+
+Repository: danielbaustin/agent-design-language
+
+Card: stp
+
+Status: ready
+
+## Task
+
+Complete durable preparation and dependency watch for WP-10; do not implement product code, publish, open a PR, perform cutover/soak/deletion, or absorb Runtime, provider, governed-tool, C-SDLC, or release work.
+
+## Deliverables
+
+- Thin typed CLI for validate, schema, plan, run, inspect, sign, and verify
+- Authoritative generation selector library with inspect, exact verification, compare-and-swap selection, and explicit rollback
+- Stable installer with exact executable digest, receipt, executable permissions, and idempotence proof
+- JSON stdout, stderr diagnostic, stable exit-code, and no-implicit-network command contract
+- Selector failure-preservation, concurrency, interruption, stale-writer, and rollback matrix
+- Pinned COTS decision and forbidden-dependency proof
+- Implementation/test LoC, module-growth, dependency, test-count, validation-time, CI, and exact-revision review evidence
+
+## Acceptance
+
+1. AC-1: validate, schema, plan, run, inspect, sign, and verify use one typed clap command tree and delegate to the reviewed WP-04 through WP-09 interfaces without duplicate domain semantics
+2. AC-2: Every command emits a stable JSON success or failure envelope on stdout, diagnostics and observability on stderr, and a documented stable exit code without implicit network, credential, generation, or selector mutation
+3. AC-3: The installer places an exact verified executable outside Cargo output, records a deterministic non-secret installation receipt, preserves executable permissions, and is idempotent in an isolated root
+4. AC-4: The selector verifies generation, executable digest, and installation receipt, then performs one locked atomic compare-and-swap write and re-read verification with a deterministic receipt
+5. AC-5: Initial selection, stale expectation, concurrent contention, invalid digest, missing receipt, unsupported schema, interrupted write, lock failure, and re-read mismatch are deterministic; every failure preserves prior selector bytes
+6. AC-6: Rollback is explicit and verifies the recorded previous generation and receipt through the same transaction; no implicit fallback, default cutover, soak, or release authority is introduced
+7. AC-7: Product implementation starts only after #5339, #5338, #5340, #5342, #5341, and #5349 are each merged, typed closed_out, receipt-backed, and ancestral to the exact implementation revision
+8. AC-8: The default dependency graph is limited to reviewed upstream ADL v2 crates plus clap 4.6.1, serde 1.0.228, serde_json 1.0.150, tempfile 3.27.0, fs2 0.4.3, and sha2 0.10.9; no HTTP, cloud, database, async-runtime, terminal-UI, plugin, incumbent ADL, Runtime, or C-SDLC dependency enters the CLI/selector graph
+9. AC-9: WP-10 stays at or below 2500 Rust implementation lines and 2500 test/fixture lines, selector transaction code stays below 800 implementation lines absent reviewed variance, modules stay below 1000 lines, and focused/quality/full proof stays within 120/120/600 seconds
+10. AC-10: Every applicable acceptance criterion has focused deterministic offline proof, strict Clippy, dependency and module-growth audit, test-count and CI evidence, exact-revision review, and no deferred implementation or validation claim
+
+## Dependencies
+
+- #5339 WP-04 merged, typed closed_out, retained merged receipt, and ancestral
+- #5338 WP-05 merged, typed closed_out, retained merged receipt, and ancestral
+- #5340 WP-06 merged, typed closed_out, retained merged receipt, and ancestral
+- #5342 WP-07 merged, typed closed_out, retained merged receipt, and ancestral
+- #5341 WP-08 merged, typed closed_out, retained merged receipt, and ancestral
+- #5349 WP-09 merged, typed closed_out, retained merged receipt, and ancestral
+- Reviewed public APIs and exact lock closure for WP-04 through WP-09 available on current origin/main
+
+## Inputs
+
+- AGENTS.md
+- GitHub issue #5345 source prompt
+- docs/templates/prompts/current.json
+- csdlc-v2/operator/generation-selector.json
+- docs/milestones/v0.91.8/DESIGN_v0.91.8.md
+- docs/milestones/v0.91.8/WBS_v0.91.8.md
+- docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml
+- docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md
+- docs/milestones/v0.91.8/features/ADL_V2_CORE_v0.91.8.md
+- future landed public APIs, fixtures, manifests, and lock closure from #5339, #5338, #5340, #5342, #5341, and #5349
+
+## Non Goals
+
+- Language parsing, schema, semantic validation, or canonicalization
+- Compiler graph expansion or ExecutionPlan construction
+- Engine scheduling, retry, joins, checkpoint/resume, provider/tool effect semantics, or operational supervision
+- Portable record or signing implementation beyond invoking the WP-07 API
+- Runtime v3, provider transport, governed-tool implementation, C-SDLC commands, observatory, cloud, database, or AWS work
+- Default cutover, soak, rollback acceptance, parity, deletion, release, or Runtime v2 changes

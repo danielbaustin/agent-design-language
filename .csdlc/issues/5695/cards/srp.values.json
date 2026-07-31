@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5695,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][tooling] Preserve blocked and unstable PR mergeability states",
+    "slug": "pr-state-mergeability",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2/src/github.rs\ncsdlc-v2/src/merge.rs",
+      "review_revision": "git-blake3:ac0df9138d3b80d48d8480bf7761bd581da787bb:91b31c0fb64a9065135b6e8b340b714e18a66bea661a18a31bbcb8cdc956406c",
+      "reviewer": "codex-subagent:review-5695",
+      "review_prompts": [
+        "Does every supported octocrab MergeableState map explicitly?",
+        "Can blocked or unstable ever become stale_base?",
+        "Does csdlc-merge remain fail-closed while checks or ancestry are pending?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pass"
+    }
+  }
+}

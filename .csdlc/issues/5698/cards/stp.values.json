@@ -1,0 +1,58 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5698,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][state] Unify durable kernel state on redb",
+    "slug": "runtime-v3-redb-durable-state",
+    "version": "v0.91.8",
+    "generation": 9
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Runtime v3 durable local state only; no Provider/ACIP/A2A/Cloud Bridge transport behavior, no Runtime v2 deletion, and no WP-12 launch harness changes beyond preserving compatibility.",
+      "deliverables": [
+        "redb durable state module",
+        "checkpoint/lifelog adapter wiring",
+        "restart, corruption, identity, and writer-lock tests",
+        "strict Clippy and diff hygiene proof",
+        "ready PR with Closes #5698"
+      ],
+      "acceptance_criteria": [
+        "AC-1: A real Runtime v3 process stores checkpoint state through redb, restarts, and restores the exact persisted bytes and generation.",
+        "AC-2: Lifelog append uses the same redb database and a documented atomic transaction boundary.",
+        "AC-3: Principal, runtime identity, schema, generation, and hash mismatches fail closed.",
+        "AC-4: A second live writer for the same state root is rejected without corrupting the first writer.",
+        "AC-5: Crash/restart and interrupted-write tests recover from the last committed transaction only.",
+        "AC-6: Corrupt or unsupported database/schema state returns an explicit fatal error and never falls back to JSON/JSONL files.",
+        "AC-7: The old production checkpoint.json and lifelog.jsonl paths are deleted or restricted to non-production migration tests after parity proof.",
+        "AC-8: Focused macOS/Linux/native-Windows-capable tests use real filesystem state and do not use fixtures, wrappers, nested builds, or /private/tmp.",
+        "AC-9: One exact pre-PR review confirms one durable state authority and no hidden flat-file fallback."
+      ],
+      "dependencies": [
+        "WP-12 #5344 exact head ca242a5a for current Runtime v3 launch simplification",
+        "redb COTS crate already used by adl-runtime backpressure",
+        "Runtime v3 local adapter execution surface"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5698 body",
+        "adl-runtime-kernel/src/assembly.rs",
+        "adl-runtime-kernel/src/lib.rs",
+        "adl-runtime-kernel/Cargo.toml",
+        "adl-runtime/src/backpressure.rs"
+      ],
+      "non_goals": [
+        "scheduler redesign",
+        "Runtime v2 deletion",
+        "remote database",
+        "SQL service",
+        "fixture-only durability",
+        "receipt-only storage",
+        "degraded fallback"
+      ]
+    }
+  }
+}

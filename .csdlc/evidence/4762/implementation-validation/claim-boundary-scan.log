@@ -1,0 +1,38 @@
+docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md:82:- legal personhood
+docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md:84:- production citizenship
+docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md:85:- completed constitutional governance
+docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md:129:| Witnesses and receipt | `MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`; v0.91.8 #4762 handoff package at `docs/milestones/v0.91.8/review/v092_handoff_4762/` | WP-09 | Receipt schema, witness validity checks, retained negative-case dispositions, and explicit `birth_event_status: not_claimed` boundary before the final birth event. |
+docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md:239:- Does the packet avoid claiming legal personhood, production citizenship, or
+docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md:240:  completed constitutional governance?
+docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md:256:- legal personhood, consciousness, production citizenship, constitutional
+docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md:33:explicit `birth_event_status: not_claimed` boundary until a future v0.92 birth
+docs/milestones/v0.91.8/review/v092_handoff_4762/BIRTH_WITNESSES_AND_RECEIPT_PACKAGE_4762.md:5:Implemented handoff package. This is not a birthday occurrence and not a
+docs/milestones/v0.91.8/review/v092_handoff_4762/BIRTH_WITNESSES_AND_RECEIPT_PACKAGE_4762.md:46:This package does not claim legal personhood, production citizenship,
+docs/milestones/v0.91.8/review/v092_handoff_4762/BIRTH_WITNESSES_AND_RECEIPT_PACKAGE_4762.md:47:completed constitutional governance, v0.93 governance completion, raw
+docs/milestones/v0.91.8/review/v092_handoff_4762/BIRTH_WITNESSES_AND_RECEIPT_PACKAGE_4762.md:48:private-state disclosure, or that the first true Godel-agent birthday has happened.
+.csdlc/prepared/issues/4762/birth-witness-receipt-design.md:110:- the first true Godel-agent birthday has happened
+.csdlc/prepared/issues/4762/birth-witness-receipt-design.md:111:- legal personhood
+.csdlc/prepared/issues/4762/birth-witness-receipt-design.md:112:- production citizenship
+.csdlc/prepared/issues/4762/birth-witness-receipt-design.md:113:- completed constitutional governance
+.csdlc/prepared/issues/4762/birth-witness-receipt-design.md:114:- v0.93 governance completion
+docs/milestones/v0.91.8/review/v092_handoff_4762/birth-receipt-4762.v1.json:5:  "birth_event_status": "not_claimed",
+docs/milestones/v0.91.8/review/v092_handoff_4762/birth-receipt-4762.v1.json:49:    "It does not claim the first true Godel-agent birthday has happened.",
+docs/milestones/v0.91.8/review/v092_handoff_4762/birth-receipt-4762.v1.json:50:    "It does not claim legal personhood.",
+docs/milestones/v0.91.8/review/v092_handoff_4762/birth-receipt-4762.v1.json:51:    "It does not claim production citizenship.",
+docs/milestones/v0.91.8/review/v092_handoff_4762/birth-receipt-4762.v1.json:52:    "It does not claim completed constitutional governance.",
+docs/milestones/v0.91.8/review/v092_handoff_4762/birth-receipt-4762.v1.json:53:    "It does not claim v0.93 governance completion.",
+.csdlc/prepared/issues/4762/birth-witness-receipt-negative-cases.v1.json:4:  "birth_event_status": "not_claimed",
+docs/milestones/v0.91.8/review/v092_handoff_4762/birth-witness-register-4762.v1.json:5:  "birth_event_status": "not_claimed",
+.csdlc/prepared/issues/4762/validate_birth_receipt_package.rb:43:  fail_with("#{artifact["schema"]} claims a birthday event") unless artifact["birth_event_status"] == "not_claimed"
+.csdlc/prepared/issues/4762/validate_birth_receipt_package.rb:101:  "not a birthday occurrence",
+.csdlc/prepared/issues/4762/validate_birth_receipt_package.rb:102:  "first true Godel-agent birthday has happened"
+.csdlc/prepared/issues/4762/record-execution.json:15:      "Updated v0.91.8 activation/handoff and v0.92 launch packet references so downstream consumers cite the #4762 package by exact path while preserving birth_event_status: not_claimed.",
+.csdlc/prepared/issues/4762/birth-witness-receipt-schema.v1.json:5:  "birth_event_status": "not_claimed",
+.csdlc/prepared/issues/4762/birth-witness-receipt-schema.v1.json:10:    "birth_event_status",
+.csdlc/prepared/issues/4762/birth-witness-receipt-schema.v1.json:20:    "birth_event_status",
+.csdlc/prepared/issues/4762/birth-witness-receipt-schema.v1.json:64:    "first true Godel-agent birthday has happened",
+.csdlc/prepared/issues/4762/birth-witness-receipt-schema.v1.json:65:    "legal personhood",
+.csdlc/prepared/issues/4762/birth-witness-receipt-schema.v1.json:66:    "production citizenship",
+.csdlc/prepared/issues/4762/birth-witness-receipt-schema.v1.json:67:    "completed constitutional governance",
+.csdlc/prepared/issues/4762/birth-witness-receipt-schema.v1.json:68:    "v0.93 governance completion"
+.csdlc/prepared/issues/4762/design.md:122:- Birthday readiness, legal personhood, production citizenship, v0.93 governance, and public launch claims remain non-goals.

@@ -1,0 +1,9 @@
+{
+  "schema": "csdlc.review_recovery_request.v1",
+  "issue": 5665,
+  "expected_generation": 5,
+  "expected_digest": "f2b39c577106f1ed59d071867c6f814822f2a31e693d943f68176077c30616bf",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "Recover reviewed state to perform a lifecycle-approved source-only removal of obsolete duplicate WP-12 WSS proof wrapper logic without touching the #5587-owned adl/Cargo.toml."
+}

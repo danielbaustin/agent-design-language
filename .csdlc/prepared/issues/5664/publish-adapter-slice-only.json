@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5664,
+  "expected_generation": 0,
+  "expected_digest": "88e55d59ad655566078d42fab71c4b3e2d20ad12ab049cf5c681f33414a2931e",
+  "claim_id": "claim-5664-runtime-v3-protocol-adapters",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5664-runtime-v3-protocol-adapters",
+  "title": "[v0.91.8][runtime-v3][protocols] Provider/ACIP/A2A/Cloud Bridge adapter slice (#5664)",
+  "body": "Adapter-slice-only publication attempt for #5664. This current diff preserves the tested Provider, ACIP, A2A, and Cloud Bridge protocol adapter implementation and tests. It does not claim full runtime completion: production serve wiring remains limited by current typed ownership of adl-runtime-kernel/src/bin/adl-runtime-kernel.rs, and stale shared-path ownership remains in the #5664 claim. Validation already run for the disjoint adapter slice: protocol_adapters test and strict Clippy passed.",
+  "draft": false,
+  "remote": "origin",
+  "token_file": null
+}

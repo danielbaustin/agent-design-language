@@ -1,0 +1,13 @@
+{
+  "issue": 4762,
+  "card": "sip",
+  "expected_generation": 4,
+  "expected_digest": "04e944f82f92be8f35f9eee863b009f142be5fc770ddd11a273bdee705e3bbcd",
+  "claim_id": "claim-4762-birth-witness-receipt-execution",
+  "actor": "codex",
+  "reason": "Execution claim is live in the requested FastWork worktree; advance #4762 from initialized to ready before bound execution recording.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "ready"
+  }
+}

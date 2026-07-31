@@ -1,0 +1,14 @@
+{
+  "issue": 5343,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "39ac2523298b31ca53aef6156f5546309932a96d49585d941349d9be7ba2d81c",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The complete reversible cutover implementation and exact-substantive-head validation are retained and passing.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

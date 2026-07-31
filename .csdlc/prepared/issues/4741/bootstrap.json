@@ -1,0 +1,214 @@
+{
+  "issue": 4741,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/4741/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4741/diagram.mmd",
+  "design_reviewer": "operator:v0918-wp15-unity-preparation",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+    "owner": "codex:issue-4741-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1784835199,
+    "expires_unix_seconds": 1785439999,
+    "heartbeat_unix_seconds": 1784835199,
+    "branch": "codex/4741-v0918-wp15-unity-editor-liveness-prep",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4741",
+      ".csdlc/locks/4741.lock",
+      ".csdlc/prepared/issues/4741",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+      "adl/tools/test_v0916_unity_observatory_soak_integration.sh",
+      "adl/tools/test_v0916_unity_observatory_unity65_smoke.sh",
+      "docs/tooling/unity_observatory_editor_batch_proof.md"
+    ],
+    "purpose": "Prepare #4741 for bounded v0.91.8 WP-15 Unity editor liveness and batch-proof reliability execution"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-15][unity][tooling] Make Unity editor liveness and batch proof reliable for deployed observatory",
+    "slug": "v0918-wp15-unity-editor-liveness-batch-proof",
+    "version": "v0.91.8",
+    "goal": "Make Unity Observatory editor and batch proof select a safe execution mode, show real progress, and fail quickly with precise evidence when the selected mode cannot complete.",
+    "required_outcome": "Repository-owned Unity proof wrappers deterministically select open-editor, fresh-batch, or skipped-fail-closed mode; isolate staged execution; monitor semantic progress; and retain exact proof or blocker truth.",
+    "declared_scope": [
+      "Exact-project editor liveness classification",
+      "Open-editor versus fresh-batch versus skipped mode selection",
+      "Approved staging and mutable Unity/.NET scratch isolation",
+      "Semantic log-progress watchdog and bounded blocker classification",
+      "Focused wrapper unit and contract tests",
+      "Concise operator proof-mode runbook"
+    ],
+    "authority_boundary": [
+      "#4741 owns editor liveness, proof-mode selection, staging, watchdog, cleanup, and wrapper tests",
+      "#4739 owns Unity-MCP project and endpoint identity",
+      "#5332 owns ILPP GetDomainName root cause and detailed retry classifier",
+      "No scene generation, fallback geometry, asset publication, runtime contract semantics, investor rendering, or walkthrough capture",
+      "No raw process scan, /private/tmp staging, scratch Unity copies, locally built owner binaries, or arbitrary total runtime ceiling"
+    ],
+    "task_boundary": "Selectively port and finish only the editor/batch liveness and proof-wrapper surface from preserved predecessor work onto the current v0.91.8 base.",
+    "deliverables": [
+      "Deterministic Unity proof-mode selector",
+      "Approved writable staged-project and scratch isolation",
+      "Semantic progress and blocker classifier",
+      "Focused wrapper unit and contract tests",
+      "Retained proof packet with mode and exact terminal outcome",
+      "Operator editor/batch proof runbook"
+    ],
+    "acceptance_criteria": [
+      "AC-1: every proof attempt prints open_editor, fresh_batch, or skipped_fail_closed before Unity work begins",
+      "AC-2: exact-project liveness uses permission-safe adl process status evidence and never broad ps, pgrep, or lsof output",
+      "AC-3: fresh_batch never opens the same project directory already owned by an editor and stages only under /Volumes/FastWork or issue-local .adl storage",
+      "AC-4: wrappers use repository-installed owner binaries and the configured Unity editor path without building replacement binaries",
+      "AC-5: progress monitoring keys off meaningful import, compile, validation, or terminal markers and does not impose an arbitrary total runtime ceiling",
+      "AC-6: crash, licensing, missing project, readonly database without subsequent import progress, idle progress, and routed ILPP signatures each produce a precise bounded outcome",
+      "AC-7: readonly-database text is not fatal after verified asset-import progress",
+      "AC-8: focused unit tests prove mode selection, progress reset, idle failure, readonly progression, cleanup, and #5332 routing without launching Unity",
+      "AC-9: one live or staged proof records editor version, canonical project, mode, progress classifier, log reference, and exact success or blocker truth",
+      "AC-10: the final diff excludes #4739 MCP alignment internals, #5332 ILPP diagnosis, Unity scene code, runtime semantics, asset work, and rendering polish"
+    ],
+    "dependencies": [
+      "Repository-installed adl process status binary",
+      "Configured Unity 6000.5 editor path or later issue-approved baseline",
+      "#4739 only when open-editor proof requires MCP project/endpoint identity",
+      "#5332 owns any reproduced ILPP retry-loop diagnosis",
+      "WP-15 #5354 consumes final proof or explicit blocker"
+    ],
+    "repo_inputs": [
+      "GitHub issue #4741",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+      "adl/tools/test_v0916_unity_observatory_soak_integration.sh",
+      "adl/tools/test_v0916_unity_observatory_unity65_smoke.sh",
+      "docs/tooling/PERMISSION_SAFE_PROCESS_STATUS.md",
+      "preserved predecessor #4741 candidate diff"
+    ],
+    "non_goals": [
+      "Do not repair Unity-MCP project or port alignment",
+      "Do not diagnose ILPP GetDomainName root cause",
+      "Do not modify Unity scene builder or validator semantics",
+      "Do not add asset fallback or investor-facing polish",
+      "Do not build owner binaries or use scratch Unity processes outside the declared mode",
+      "Do not use /private/tmp or broad process scans"
+    ],
+    "plan_summary": "Port only the current-base proof wrappers, formalize three execution modes, add deterministic progress/classifier tests, then run one focused live or staged proof and retain exact outcome truth.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Review current wrapper contracts and selectively port mode selection, approved staging, scratch isolation, and progress-watchdog behavior from preserved predecessor work",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-10"]
+      },
+      {
+        "id": "S2",
+        "action": "Implement precise crash, licensing, readonly-progress, idle, and routed ILPP classifications without taking ownership of #5332 diagnosis",
+        "status": "pending",
+        "acceptance_ids": ["AC-5", "AC-6", "AC-7", "AC-10"]
+      },
+      {
+        "id": "S3",
+        "action": "Expand focused no-Unity unit fixtures for mode selection, semantic progress, blocker routing, and cleanup",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-6", "AC-7", "AC-8"]
+      },
+      {
+        "id": "S4",
+        "action": "Update the bounded operator runbook and run one live or staged proof using the selected safe mode",
+        "status": "pending",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-5", "AC-9"]
+      },
+      {
+        "id": "S5",
+        "action": "Record bounded review findings and exact proof or blocker truth for WP-15 consumption",
+        "status": "pending",
+        "acceptance_ids": ["AC-9", "AC-10"]
+      }
+    ],
+    "risks": [
+      "Unity can keep logs active while repeating a non-progress startup loop",
+      "A live editor can own the same project directory targeted by batch mode",
+      "Readonly-database text can precede successful import and must be classified in context",
+      "The older candidate diff contains Unity scene changes outside #4741",
+      "Unity editor paths and installed versions can drift"
+    ],
+    "invariants": [
+      "Only one declared proof mode owns a project directory at a time",
+      "Semantic progress, not elapsed wall-clock alone, governs liveness",
+      "Staging and scratch state remain outside /private/tmp",
+      "Repository binaries remain the operational source of truth",
+      "Preserved predecessor work is not reset, overwritten, or silently absorbed"
+    ],
+    "stop_conditions": [
+      "The intended project is already owned and no approved editor-mediated proof exists",
+      "The configured Unity editor is absent or has an unapproved baseline",
+      "Execution requires #4739 MCP internals or #5332 ILPP repair",
+      "The proof requires Unity scene or runtime semantic changes",
+      "Staging cannot be isolated under /Volumes/FastWork or issue-local .adl storage"
+    ],
+    "review_prompts": [
+      "Does mode selection prevent concurrent ownership of one Unity project directory?",
+      "Does progress monitoring distinguish semantic progress from repeating log noise without an arbitrary total ceiling?",
+      "Are readonly database and ILPP signatures classified in the correct ownership boundary?",
+      "Can focused tests prove every wrapper branch without launching Unity?",
+      "Is the final diff free of MCP, ILPP root-cause, scene, runtime, asset, and rendering scope?"
+    ],
+    "operator_constraints": [
+      "Typed C-SDLC v2 lifecycle only",
+      "Work only in the issue-bound v0.91.8 worktree",
+      "Preserve the older dirty #4741 worktree unchanged",
+      "Use /Volumes/FastWork or issue-local .adl for staging and repository-installed binaries only",
+      "No /private/tmp, raw process scans, arbitrary total runtime ceiling, raw gh fallback, or secret exposure"
+    ],
+    "review_scope": "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh\nadl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh\nadl/tools/test_v0916_unity_observatory_soak_integration.sh\nadl/tools/test_v0916_unity_observatory_unity65_smoke.sh\ndocs/tooling/unity_observatory_editor_batch_proof.md\n.csdlc/issues/4741\n.csdlc/prepared/issues/4741",
+    "planning_profile": "medium",
+    "validation_lanes": [
+      {
+        "lane": "unity-editor-liveness-unit",
+        "proof_role": "Prove mode selection, semantic progress, blocker routing, and cleanup without launching Unity",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-liveness-static",
+        "budget_seconds": 180,
+        "budget_tokens": 4000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"],
+        "acceptance_ids": ["AC-1", "AC-5", "AC-6", "AC-7", "AC-8", "AC-10"]
+      },
+      {
+        "lane": "unity-editor-liveness-contract",
+        "proof_role": "Prove Observatory wrapper contract and issue-owned path integration",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-liveness-static",
+        "budget_seconds": 120,
+        "budget_tokens": 3000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_contract.sh"],
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-6", "AC-10"]
+      },
+      {
+        "lane": "unity-editor-live-or-staged-proof",
+        "proof_role": "Retain one exact editor-mode or staged-batch outcome with semantic progress evidence",
+        "deterministic": false,
+        "resource_profile": "large",
+        "parallel_group": "unity-liveness-live",
+        "budget_seconds": 900,
+        "budget_tokens": 5000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7", "AC-9"],
+        "defer_reason": "Run only after the deterministic wrapper lanes pass and the operator-selected project is available; retain an exact fail-closed result when no safe mode exists."
+      },
+      {
+        "lane": "unity-editor-diff-hygiene",
+        "proof_role": "Prove bounded text and shell hygiene",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-liveness-static",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-10"]
+      }
+    ],
+    "failure_policy": "Fail closed on ambiguous project ownership, undeclared proof mode, arbitrary total-runtime ceilings, non-semantic log activity, unsafe staging, locally built owner binaries, adjacent Unity scope, or unsupported readiness claims."
+  }
+}

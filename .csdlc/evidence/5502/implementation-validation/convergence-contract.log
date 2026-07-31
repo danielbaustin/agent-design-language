@@ -1,0 +1,32 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (adl-v2/target/debug/deps/adl_workcell_convergence-e6b37edd25dff2e5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/convergence.rs (adl-v2/target/debug/deps/convergence-d5eb72968c2514a3)
+
+running 9 tests
+test rejects_path_traversal_before_decision ... ok
+test blocks_out_of_scope_artifacts ... ok
+test blocks_overlapping_active_claims ... ok
+test blocks_hidden_mutation_authority ... ok
+test rejects_conflicting_duplicate_output_identity ... ok
+test blocks_missing_and_unreviewed_outputs_but_keeps_partial_success_projection ... ok
+test emits_replan_for_changed_assumptions_without_silent_scope_expansion ... ok
+test keeps_declared_partial_outputs_visible_with_residual_blockers ... ok
+test integrates_successful_outputs_in_conductor_order_with_stable_identity ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests adl_workcell_convergence
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+{
+  "status": "passed",
+  "lane": "convergence-contract"
+}

@@ -46,6 +46,7 @@ namespace ADL.Demos.UnityObservatory
             }
 
             bootstrapped = true;
+            Application.runInBackground = true;
             EnsureCamera();
             StartCoroutine(CreateObservatoryShell());
         }
@@ -116,9 +117,19 @@ namespace ADL.Demos.UnityObservatory
             UIDocument document = shellObject.AddComponent<UIDocument>();
             document.panelSettings = panelSettings;
             document.sortingOrder = 10;
-            yield return null;
 
             VisualElement root = document.rootVisualElement;
+            if (root != null)
+            {
+                controller.Build(root);
+                Debug.Log(
+                    "ADL Observatory shell built synchronously before the first bootstrap yield."
+                );
+                yield break;
+            }
+
+            yield return null;
+            root = document.rootVisualElement;
             if (root == null)
             {
                 Debug.LogError(

@@ -1,0 +1,59 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4739,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][tooling] Align Unity-MCP live project and port proof for deployed observatory",
+    "slug": "v0918-wp15-unity-mcp-live-project-endpoint-alignment",
+    "version": "v0.91.8",
+    "generation": 26
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Selectively port and finish only the MCP alignment surface from preserved predecessor work onto the current v0.91.8 base.",
+      "deliverables": [
+        "Repository-owned Unity-MCP Observatory alignment probe",
+        "Focused deterministic alignment classifier tests",
+        "Permission-safe live endpoint and read-only MCP proof or exact fail-closed blocker",
+        "Operator alignment runbook",
+        "Truthful downstream WP-15 routing note"
+      ],
+      "acceptance_criteria": [
+        "AC-1: the probe canonicalizes and reports the intended Unity project path and derives the active MCP endpoint without assuming a fixed port",
+        "AC-2: a read-only MCP scene or tool call is attempted only after project and endpoint identity agree",
+        "AC-3: project mismatch, missing editor, cloud or external fallback, malformed status, ambiguous endpoint, and read-only tool failure each produce deterministic FAIL_CLOSED output",
+        "AC-4: retained output redacts URL userinfo, tokens, authorization values, credentials, and secret-bearing Unity settings",
+        "AC-5: local liveness uses adl process status and no broad ps, pgrep, or lsof scan",
+        "AC-6: a dedicated no-Unity unit script exercises matching status, project mismatch, missing editor, cloud fallback, malformed status, endpoint ambiguity, redaction, and read-only tool failure",
+        "AC-7: live proof succeeds against the intended Observatory project or records the exact current blocker and owner without claiming runtime, visual, or investor readiness",
+        "AC-8: the final diff excludes #4741 batch-liveness, #5332 ILPP, scene-fallback, runtime-contract, asset, and walkthrough implementation",
+        "AC-9: validation selector registration maps the probe, dedicated unit test, and runbook to one focused non-Unity alignment lane and its selector test passes"
+      ],
+      "dependencies": [
+        "Current repository-approved Unity-MCP CLI contract",
+        "Permission-safe adl process status binary",
+        "#4741 only when editor liveness prevents the optional live alignment proof",
+        "WP-15 #5354 consumes the final proof or explicit blocker"
+      ],
+      "repo_inputs": [
+        "GitHub issue #4739",
+        "adl/tools/test_v0916_unity_observatory_contract.sh",
+        "demos/v0.91.6/unity-observatory/README.md",
+        "demos/v0.91.6/unity-observatory/PROOF_PACKET.md",
+        "docs/tooling/PERMISSION_SAFE_PROCESS_STATUS.md",
+        "preserved predecessor #4739 candidate diff"
+      ],
+      "non_goals": [
+        "Do not rebuild or polish the Unity scene",
+        "Do not change batch-editor launch or watchdog behavior",
+        "Do not diagnose or fix ILPP startup",
+        "Do not implement runtime shell integration or walkthrough capture",
+        "Do not require one hard-coded MCP port",
+        "Do not expose credentials or use cloud fallback"
+      ]
+    }
+  }
+}

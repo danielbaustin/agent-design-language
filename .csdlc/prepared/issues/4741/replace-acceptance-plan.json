@@ -1,0 +1,121 @@
+{
+  "issue": 4741,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "53b72f766ab536a2af2ed83f1145ecc82ed4a7cca3b8bea65f42c69089d36a68",
+  "claim_id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+  "actor": "codex:issue-4741-preparation",
+  "reason": "Apply specialist review findings for generic classifier handoff and focused selector registration",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "AC-1: every proof attempt prints open_editor, fresh_batch, or skipped_fail_closed before Unity work begins",
+      "AC-2: exact-project liveness uses permission-safe adl process status evidence and never broad ps, pgrep, or lsof output",
+      "AC-3: fresh_batch never opens the same project directory already owned by an editor and stages only under /Volumes/FastWork or issue-local .adl storage",
+      "AC-4: wrappers use repository-installed owner binaries and the configured Unity editor path without building replacement binaries",
+      "AC-5: progress monitoring keys off meaningful import, compile, validation, or terminal markers and does not impose an arbitrary total runtime ceiling",
+      "AC-6: crash, licensing, missing project, readonly database without subsequent import progress, idle progress, and a generic external startup-classifier failure each produce a precise bounded outcome",
+      "AC-7: readonly-database text is not fatal after verified asset-import progress",
+      "AC-8: focused unit tests prove mode selection, progress reset, idle failure, readonly progression, cleanup, and generic external-classifier routing without launching Unity",
+      "AC-9: one live or staged proof records editor version, canonical project, mode, progress classifier, log reference, and exact success or blocker truth",
+      "AC-10: the final diff excludes #4739 MCP alignment internals, #5332 ILPP signature and threshold logic, Unity scene code, runtime semantics, asset work, and rendering polish",
+      "AC-11: validation selector registration maps the issue-owned wrapper paths to one focused Unity liveness lane and its selector test passes"
+    ],
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Review current wrapper contracts and selectively port mode selection, approved staging, scratch isolation, and progress-watchdog behavior from preserved predecessor work",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-10"]
+      },
+      {
+        "id": "S2",
+        "action": "Implement precise crash, licensing, readonly-progress, idle, and generic external-classifier handoff outcomes without encoding #5332 ILPP signatures or thresholds",
+        "status": "pending",
+        "acceptance_ids": ["AC-5", "AC-6", "AC-7", "AC-10"]
+      },
+      {
+        "id": "S3",
+        "action": "Expand focused no-Unity unit fixtures for mode selection, semantic progress, generic classifier routing, and cleanup",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-6", "AC-7", "AC-8"]
+      },
+      {
+        "id": "S4",
+        "action": "Register the issue-owned paths in the validation selector and prove focused lane selection",
+        "status": "pending",
+        "acceptance_ids": ["AC-10", "AC-11"]
+      },
+      {
+        "id": "S5",
+        "action": "Update the bounded operator runbook and run one live or staged proof using the selected safe mode",
+        "status": "pending",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-5", "AC-9"]
+      },
+      {
+        "id": "S6",
+        "action": "Record bounded review findings and exact proof or blocker truth for WP-15 consumption",
+        "status": "pending",
+        "acceptance_ids": ["AC-9", "AC-10", "AC-11"]
+      }
+    ],
+    "validation_lanes": [
+      {
+        "lane": "unity-editor-liveness-unit",
+        "proof_role": "Prove mode selection, semantic progress, generic classifier routing, and cleanup without launching Unity",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-liveness-static",
+        "budget_seconds": 180,
+        "budget_tokens": 4000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"],
+        "acceptance_ids": ["AC-1", "AC-5", "AC-6", "AC-7", "AC-8", "AC-10"]
+      },
+      {
+        "lane": "unity-editor-liveness-contract",
+        "proof_role": "Prove Observatory wrapper contract and issue-owned path integration",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-liveness-static",
+        "budget_seconds": 120,
+        "budget_tokens": 3000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_contract.sh"],
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-6", "AC-10"]
+      },
+      {
+        "lane": "unity-editor-selector-registration",
+        "proof_role": "Prove the validation selector chooses the focused Unity liveness lane for issue-owned wrapper paths",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-liveness-static",
+        "budget_seconds": 180,
+        "budget_tokens": 3000,
+        "argv": ["bash", "adl/tools/test_select_validation_lanes.sh"],
+        "acceptance_ids": ["AC-10", "AC-11"]
+      },
+      {
+        "lane": "unity-editor-live-or-staged-proof",
+        "proof_role": "Retain one exact editor-mode or staged-batch outcome with semantic progress evidence",
+        "deterministic": false,
+        "resource_profile": "large",
+        "parallel_group": "unity-liveness-live",
+        "budget_seconds": 900,
+        "budget_tokens": 5000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7", "AC-9"],
+        "defer_reason": "Run only after deterministic wrapper and selector lanes pass and the operator-selected project is available; retain an exact fail-closed result when no safe mode exists."
+      },
+      {
+        "lane": "unity-editor-diff-hygiene",
+        "proof_role": "Prove bounded text and shell hygiene",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-liveness-static",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-10"]
+      }
+    ]
+  }
+}

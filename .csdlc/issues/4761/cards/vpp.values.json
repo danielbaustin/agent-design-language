@@ -1,0 +1,65 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4761,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][capability-envelope] Prepare #4761 v0.92 capability envelope",
+    "slug": "v0918-wp14-capability-envelope-prep-4761",
+    "version": "v0.91.8",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "capability-envelope-validator",
+          "proof_role": "Fail-closed validation of the #4761 capability envelope, retained source inventory, consumer surfaces, digest integrity, and explicit non-claims.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 3000,
+          "argv": [
+            "ruby",
+            ".csdlc/evidence/4761/capability-envelope/validate_capability_envelope.rb"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "diff-hygiene",
+          "proof_role": "Reject whitespace and patch hygiene errors in the capability-envelope artifacts, lifecycle records, and consumer docs.",
+          "acceptance_ids": [
+            "AC-3"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 500,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed and report the exact v2 doctor or init error; do not repair outside the prep boundary.",
+      "design_ref": ".csdlc/prepared/issues/4761/design.md",
+      "design_digest": "1fbbea0320750d00a24ac8c756417c15021596db4ba68651b071d8410dae86dc",
+      "diagram_ref": ".csdlc/prepared/issues/4761/diagram.mmd",
+      "diagram_digest": "885a543a3007b04c2af3b0f3d119a2555dd1d51493553ecf690085ac7a85675b"
+    }
+  }
+}

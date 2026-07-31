@@ -1,0 +1,21 @@
+{
+  "issue": 5361,
+  "card": "stp",
+  "expected_generation": 7,
+  "expected_digest": "f834eac28d7d6830f8ec1b50d17620152c3859a31c2d232d87b20fe594ccc284",
+  "claim_id": "claim-5361-v0918-runtime-v3-acceptance-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Align typed acceptance deliverables with the complete AC-6 proof contract",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "deliverables",
+    "values": [
+      "reviewed Runtime v3 acceptance contract and dependency graph",
+      "exact-revision parity and consumer proof register including #5350 shadow parity",
+      "guardian, access, Observatory, operations, and rollback evidence",
+      "line-count, module-growth, dependency-audit, test-count, CI, and exact-revision review report",
+      "truthful acceptance or blocker disposition for #5384 consumption"
+    ]
+  },
+  "fail_after_backup": false
+}

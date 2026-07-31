@@ -1,0 +1,8 @@
+{
+  "issue": 5701,
+  "expected_generation": 21,
+  "expected_digest": "c0a1d8d411a7a45cecf5d0156c3a70fac196ff93714fd6169cbb21bf21582a90",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "reason": "Recover exact review and publication truth after the fresh CI run exposed one stale guardian soak expectation: the test had not consumed the new successful Observatory login acknowledgement before asserting the subsequent forged-command rejection."
+}

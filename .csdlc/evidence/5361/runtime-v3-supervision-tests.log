@@ -1,0 +1,164 @@
+   Compiling adl-runtime v0.91.7 (/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5361/adl-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running unittests src/lib.rs (/Volumes/FastWork/adl-5361/runtime-test-target/debug/deps/adl_runtime-cd755a474c00196e)
+
+running 127 tests
+test backpressure::tests::backpressure_contract_keeps_required_state_fail_closed ... ok
+test acip::tests::acip_status_requires_embedded_governed_runtime_component ... ok
+test acip::tests::acip_status_rejects_missing_cav_gate ... ok
+test backpressure::tests::observability_sheds_only_low_priority_metrics_with_accounting ... ok
+test backpressure::tests::checkpoint_and_lifelog_use_durable_spool_under_pressure ... ok
+test backpressure::tests::cloud_bridge_cursor_waits_for_publishable_ack ... ok
+test backpressure::tests::critical_channels_do_not_silently_drop_when_full ... ok
+test acip::tests::malformed_or_unauthorized_websocket_frames_fail_closed ... ok
+test backpressure::tests::runtime_api_projects_overload_readiness_for_control_plane ... ok
+test backpressure::tests::full_queue_projection_reports_overload_and_accounted_degrade ... ok
+test backpressure::tests::scheduler_to_reasoning_runtime_blocks_full_queue ... ok
+test cav::tests::cav_component_contract_rejects_non_fail_closed_status ... ok
+test cav::tests::cav_component_contract_rejects_sidecar_model ... ok
+test cav::tests::default_cav_component_status_is_valid_and_embedded ... ok
+test constructability::tests::channels_never_silently_drop_constructability_decisions ... ok
+test constructability::tests::request_rejects_host_paths_and_missing_required_evidence_kinds ... ok
+test backpressure::tests::typed_matrix_covers_required_runtime_channels ... ok
+test acip::tests::protobuf_decode_rejects_noncanonical_payload_json ... ok
+test acip::tests::protobuf_projection_round_trips_with_deterministic_json ... ok
+test continuity_history::tests::checkpoint_hash_tampering_fails_closed ... ok
+test backpressure::tests::concurrent_receive_cannot_underflow_queue_depth ... ok
+test backpressure::tests::cloud_publish_ack_rejects_unknown_spool_sequence ... ok
+test continuity_history::tests::checkpoint_chain_cannot_switch_agent_identity ... ok
+test backpressure::tests::cloud_cursor_waits_for_explicit_publishable_ack ... ok
+test backpressure::tests::observability_spools_audit_and_accounts_low_priority_shed ... ok
+test continuity_history::tests::schemas_reject_secret_like_and_unknown_state ... ok
+test curiosity::tests::curiosity_proposals_reject_missing_governance_gate ... ok
+test curiosity::tests::curiosity_status_requires_embedded_fail_closed_component ... ok
+test determinism::tests::chronosense_payload_fingerprint_survives_json_roundtrip ... ok
+test determinism::tests::contract_uses_typed_core_and_shell_classifications ... ok
+test determinism::tests::event_class_relabeling_is_quarantined ... ok
+test determinism::tests::event_fingerprint_mutation_is_quarantined ... ok
+test determinism::tests::retained_payload_is_replayable_and_tamper_evident ... ok
+test determinism::tests::scheduler_decision_replays_from_retained_typed_inputs ... ok
+test freedom_gate::tests::default_freedom_gate_status_is_csm_owned_and_fail_closed ... ok
+test freedom_gate::tests::freedom_gate_rejects_unmediated_executor_access ... ok
+test backpressure::tests::real_bounded_channel_blocks_until_receiver_releases_capacity ... ok
+test continuity_history::tests::checkpoint_ids_are_immutable ... ok
+test backpressure::tests::blocked_send_cancellation_durably_spools_required_message ... ok
+test continuity_history::tests::checkpoint_health_fails_when_restore_metadata_is_missing ... ok
+test continuity_history::tests::checkpoint_chain_rejects_regression_and_wrong_predecessor ... ok
+test guardian::tests::invalid_configuration_and_spawn_failure_fail_closed ... ok
+test guardian::tests::missing_child_program_is_reported_without_restart ... ok
+test guardian::tests::captured_output_is_bounded ... ok
+test guardian::tests::injects_configured_environment ... ok
+test guardian::tests::runtime_kernel_config_preserves_init_and_capsule_paths ... ok
+test guardian::tests::configuration_exit_does_not_restart ... ok
+test networking::tests::canonical_csm_port_is_inside_reserved_range ... ok
+test backpressure::tests::required_message_is_committed_and_replayed_from_redb_spool ... ok
+test guardian::tests::restart_budget_exhaustion_is_terminal ... ok
+test backpressure::tests::cloud_cursor_rejects_gaps_and_sequence_survives_restart ... ok
+test guardian::tests::child_exit_terminates_descendants_that_close_inherited_pipes ... ok
+test observability::tests::config_routes_all_signals_through_redaction_to_bounded_local_sinks ... ok
+test observability::tests::remote_otlp_requires_https_except_for_loopback_proof_receivers ... ok
+test observability::tests::configured_remote_routes_use_native_vector_cloudwatch_and_otlp_components ... ok
+test reasoning_runtime::tests::adaptive_dag_replays_without_provider_access ... ok
+test reasoning_runtime::tests::bounded_loop_and_checkpoint_restore_advance_continuity ... ok
+test reasoning_runtime::tests::cancelled_saturated_admission_releases_waiter_accounting ... ok
+test reasoning_runtime::tests::channel_closure_preserves_stopped_health_while_releasing_waiter ... ok
+test reasoning_runtime::tests::cold_restore_requires_authentication_and_preserves_cursor ... ok
+test reasoning_runtime::tests::component_exposes_lifecycle_health_and_typed_admission ... ok
+test reasoning_runtime::tests::concurrent_saturation_stays_overloaded_until_every_waiter_unblocks ... ok
+test reasoning_runtime::tests::graph_order_is_canonical_and_governed_before_aee ... ok
+test reasoning_runtime::tests::malformed_cycle_runaway_and_gate_fail_closed_are_quarantined ... ok
+test reasoning_runtime::tests::provider_capture_rejects_mutated_or_unretained_evidence ... ok
+test reasoning_runtime::tests::reasoning_core_debug_never_discloses_continuity_authority ... ok
+test resident_agent::tests::resident_agent_requires_affect_model_boundary ... ok
+test resident_agent::tests::resident_agent_set_requires_one_shepherd_and_provider_bindings ... ok
+test resident_agent::tests::shepherd_cannot_bypass_runtime_policy_gates ... ok
+test runtime_api::tests::runtime_api_contract_keeps_canonical_routes ... ok
+test continuity_history::tests::cross_references_are_validated_but_not_transactionally_coupled ... ok
+test guardian::tests::restarts_until_child_exits_successfully_and_captures_output ... ok
+test runtime_api_auth::tests::credential_metadata_is_read_only_when_store_is_missing ... ok
+test guardian::tests::shutdown_forwards_sigterm_and_reaps_child ... ok
+test continuity_history::tests::domains_use_independent_files_and_restore_only_checkpoint_state ... ok
+test continuity_history::tests::lifelog_failure_does_not_invalidate_checkpoint_recovery ... ok
+test runtime_api_auth::tests::credential_store_rejects_group_or_world_readable_file ... ok
+test continuity_history::tests::lifelog_retention_never_deletes_checkpoints ... ok
+test runtime_api_auth::tests::credential_store_recovers_expired_non_revoked_material_without_overlap ... ok
+test runtime_api_auth::tests::authorization_renews_a_long_lived_server_before_expiry ... ok
+test guardian::tests::child_exit_terminates_descendants_and_bounds_inherited_pipe_capture ... ok
+test runtime_api_auth::tests::expired_overlap_rejects_previous_generation ... ok
+test shutdown::tests::incomplete_shutdown_cannot_claim_final_disposition ... ok
+test shutdown::tests::partial_or_degraded_shutdown_is_never_publishable ... ok
+test shutdown::tests::shutdown_disposition_counts_degraded_and_partial_outcomes ... ok
+test shutdown::tests::shutdown_state_enforces_order_and_evidence ... ok
+test runtime_api_auth::tests::authorization_decision_serializes_with_terminal_revoke ... ok
+test supervision::tests::backoff_is_exponential_and_capped_without_a_stop_budget ... ok
+test runtime_api_auth::tests::ordinary_authorization_uses_the_shared_credential_lock ... ok
+test supervision::tests::cav_policy_is_security_critical_and_not_telemetry_only ... ok
+test supervision::tests::cancellation_aborts_uncooperative_child_and_records_stop ... ok
+test supervision::tests::acknowledgement_timeout_reports_unknown_instead_of_false_retention ... ok
+test runtime_api_auth::tests::credential_store_renews_before_expiry ... ok
+test supervision::tests::checkpoint_failure_is_fail_closed_without_panicking_or_false_health ... ok
+test supervision::tests::freedom_gate_policy_is_runtime_critical_and_fail_closed ... ok
+test supervision::tests::in_memory_lifecycle_window_is_bounded_while_durable_history_remains_external ... ok
+test supervision::tests::matrix_covers_every_runtime_component_with_explicit_policy ... ok
+test supervision::tests::chronosense_failure_degrades_truthfully ... ok
+test runtime_api_auth::tests::credential_store_fails_closed_and_rotates_without_exposing_token ... ok
+test supervision::tests::corrupt_prior_jsonl_does_not_stop_component_supervision ... ok
+test supervision::tests::replay_waits_for_data_lock_and_never_reads_partial_record ... ok
+test runtime_api_auth::tests::one_second_rotation_overlap_uses_the_replacement_timestamp ... ok
+test backpressure::tests::runtime_channel_fabric_owns_all_channels_and_transits_messages ... ok
+test supervision::tests::shared_lifecycle_sink_serializes_concurrent_component_events ... ok
+test topology::tests::production_assembly_covers_every_component_and_channel ... ok
+test supervision::tests::torn_final_jsonl_record_is_preserved_and_separated_from_new_events ... ok
+test runtime_api_auth::tests::gateway_identity_is_signed_verified_and_credential_free ... ok
+test topology::tests::production_topology_does_not_claim_static_readiness_or_independent_tasks ... ok
+test topology::tests::runtime_stack_projects_freedom_gate_contract ... ok
+test topology::tests::topology_contains_core_runtime_components ... ok
+test topology::tests::topology_keeps_cav_in_security_plane ... ok
+test weather::tests::cloudwatch_event_is_vector_deliverable_without_credentials ... ok
+test weather::tests::disk_pressure_requests_serialize_then_stop ... ok
+test weather::tests::weather_report_stays_nominal_below_stop_thresholds ... ok
+test supervision::tests::unwritable_lifecycle_target_degrades_retention_without_crashing_component ... ok
+test supervision::tests::synchronous_future_construction_panic_is_governed_and_restarted ... ok
+test supervision::tests::component_panic_is_governed_and_then_restarted ... ok
+test weather::tests::collect_weather_reports_local_host_shape ... ok
+test supervision::tests::restartable_component_recovers_and_replays_durable_lifecycle ... ok
+test backpressure::tests::runtime_channel_fabric_replays_and_acknowledges_oldest_durable_record ... ok
+test runtime_api_auth::tests::terminal_revoke_cannot_be_resurrected_by_concurrent_rotation ... ok
+test observability::tests::missing_vector_degrades_without_claiming_external_health ... ok
+test observability::tests::ingress_redacts_before_durable_handoff_and_fails_closed_on_key_material ... ok
+test supervision::tests::repeated_failure_escalates_but_never_exhausts_into_runtime_stop ... ok
+test observability::tests::csm_owns_child_and_applies_bounded_shutdown ... ok
+test topology::tests::production_primitives_soak_real_tasks_channels_failure_and_recovery ... ok
+test observability::tests::supervisor_restarts_exited_vector_child_without_a_restart_budget ... ok
+
+test result: ok. 127 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.58s
+
+     Running unittests src/bin/adl-runtime-guardian.rs (/Volumes/FastWork/adl-5361/runtime-test-target/debug/deps/adl_runtime_guardian-ad990000a4f84db5)
+
+running 1 test
+test tests::guardian_cli_requires_complete_bounded_configuration ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/guardian_cli.rs (/Volumes/FastWork/adl-5361/runtime-test-target/debug/deps/guardian_cli-5074dcfbc981502d)
+
+running 3 tests
+test guardian_cli_reports_spawn_failure_without_restart ... ok
+test guardian_cli_rejects_incomplete_unknown_and_invalid_numeric_arguments ... ok
+test guardian_cli_reports_successful_portable_child_as_json ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/independence.rs (/Volumes/FastWork/adl-5361/runtime-test-target/debug/deps/independence-778b5a61df243aaa)
+
+running 1 test
+test runtime_crate_has_no_compiler_or_csdlc_dependency_edges ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests adl_runtime
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

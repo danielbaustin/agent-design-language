@@ -1,0 +1,40 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5670,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][ci][coverage] Parallelize hosted coverage with shard producers and aggregation gate",
+    "slug": "v0-91-8-ci-coverage-hosted-shards",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Reduce PR latency by fanning hosted coverage work into parallel shard producers while preserving one authoritative final coverage gate.",
+      "required_outcome": "Hosted coverage uses deterministic parallel shard producers and a fail-closed aggregation gate without weakening coverage thresholds, ownership filtering, path policy, or evidence truth.",
+      "declared_scope": [
+        "GitHub Actions hosted coverage topology",
+        "authoritative coverage runner shard controls",
+        "focused CI/runtime/path-policy contract tests",
+        "issue-local C-SDLC v2 lifecycle records"
+      ],
+      "authority_boundary": [
+        "typed C-SDLC v2 remains lifecycle authority",
+        "adl-coverage-hosted remains the final required coverage gate",
+        "coverage shards produce evidence; aggregation owns final authority",
+        "FastWork is required for local build and temp output"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use FastWork only for worktree, temp, and build output",
+        "Do not write implementation changes on root main",
+        "No AWS execution",
+        "No threshold reduction or hidden test-scope reduction",
+        "Move quickly and avoid broad rewrites"
+      ]
+    }
+  }
+}

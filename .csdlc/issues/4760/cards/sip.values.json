@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4760,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][memory-palace] Prepare #4760 Memory Palace context-problem handoff",
+    "slug": "v0918-wp14-memory-palace-context-handoff-prep-4760",
+    "version": "v0.91.8",
+    "generation": 4
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Prepare typed C-SDLC v2 state for later execution of the Memory Palace context-problem handoff needed by v0.92.",
+      "required_outcome": "A later execution session can bind this issue from the issue worktree and either produce retained evidence-backed completion or an operator-approved blocker without reconstructing context from chat.",
+      "declared_scope": [
+        "Create minimal typed v2 issue state for #4760.",
+        "Preserve the Memory Palace/context-problem handoff concern from the existing task bundle.",
+        "Keep this session preparation-only."
+      ],
+      "authority_boundary": [
+        "Typed C-SDLC v2 artifacts are the preparation authority.",
+        "Legacy .adl task bundle is source context only.",
+        "Receipts are audit-only and non-blocking for this preparation pass."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "No implementation.",
+        "No PR, prep review, broad tests, raw gh, AWS, or root-main writes.",
+        "Use one issue-bound worktree under /Volumes/FastWork from origin/main."
+      ]
+    }
+  }
+}

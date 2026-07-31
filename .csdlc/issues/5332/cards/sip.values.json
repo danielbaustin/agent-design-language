@@ -1,0 +1,43 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5332,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][tooling] Classify and fix Unity ILPP GetDomainName loop in observatory batch proof",
+    "slug": "v0918-wp15-unity-ilpp-getdomainname-loop",
+    "version": "v0.91.8",
+    "generation": 20
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Reproduce, isolate, and fix the Unity ILPP GetDomainName retry loop while preserving normal Observatory batch proof behavior.",
+      "required_outcome": "A focused classifier detects the complete ILPP non-progress loop quickly, a controlled matrix identifies the root cause or exact irreducible blocker, and regression proof preserves successful Unity batch validation.",
+      "declared_scope": [
+        "Complete ILPP retry-loop signature classifier",
+        "Progress-aware repetition threshold and reset behavior",
+        "Controlled Unity, host/domain, HOME/TMP/XDG, and wrapper-staging diagnostic matrix",
+        "Focused no-Unity fixtures and one safe staged reproduction",
+        "Root-cause fix limited to the proven owner surface",
+        "Retained diagnosis and regression evidence"
+      ],
+      "authority_boundary": [
+        "#5332 owns ILPP GetDomainName loop classification, diagnosis, and proven root-cause fix",
+        "#4741 owns editor liveness, execution-mode selection, general staging, and watchdog behavior",
+        "#4739 owns Unity-MCP project and endpoint alignment",
+        "No scene generation, fallback geometry, runtime contract semantics, asset publication, investor rendering, or walkthrough capture",
+        "No arbitrary total runtime ceiling, broad process scan, /private/tmp staging, scratch owner binaries, or secret-bearing environment dump"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 lifecycle only",
+        "Work only in the issue-bound v0.91.8 execution-preparation worktree",
+        "Preserve the earlier #5332 preparation branch and dirty #4739/#4741 predecessor worktrees",
+        "Use /Volumes/FastWork or issue-local .adl for staging and repository-installed binaries only",
+        "No arbitrary total runtime ceiling, /private/tmp, broad process scans, raw gh fallback, or secret exposure"
+      ]
+    }
+  }
+}

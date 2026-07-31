@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5702,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast] Launch weekly AI Agent Podcast with flawless audio, RSS, guests, and site design",
+    "slug": "podcast-launch-audio-rss-guests-site-plan",
+    "version": "v0.91.8",
+    "generation": 14
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Create a reviewable same-day execution plan for launching the revived AI Agent Podcast next week with audio, RSS, ten prepared episodes, guest support, Deepgram investigation, and Agent Logic website design alignment.",
+      "required_outcome": "A bounded plan under `.adl/docs/TBD/` that can be reviewed before implementation and that treats audio and RSS as required launch blockers.",
+      "declared_scope": [
+        "Podcast Studio launch plan document",
+        "Existing podcast studio docs and artifacts as source evidence",
+        "Gemini review request and captured recommendation lane"
+      ],
+      "authority_boundary": [
+        "Plan-only issue until operator approves implementation",
+        "Do not deploy the Agent Logic site from this issue",
+        "Do not claim Deepgram selection, guest confirmation, RSS validity, or launch readiness without proof"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Never edit main",
+        "Use FastWork",
+        "Audio and RSS are required for launch",
+        "Create ten episodes in advance",
+        "Support DeepSeek and human guest invitations",
+        "Call Gemini for review suggestions"
+      ]
+    }
+  }
+}

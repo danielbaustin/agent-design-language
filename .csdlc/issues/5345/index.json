@@ -1,0 +1,276 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5345,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "157c42fee68c23e91d25009889f22dbb4d9dc9ca1f51c0b97d05f2855352d57d",
+  "phase": "published",
+  "generation": 9,
+  "digest": "66487771c59ed9096b58d57912b9ec9bda10faad12436aedec2e1a91a86640bc",
+  "claim": {
+    "id": "claim-5345-v0918-wp10-preparation",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 9,
+    "acquired_unix_seconds": 1784659701,
+    "expires_unix_seconds": 1785264501,
+    "heartbeat_unix_seconds": 1784659701,
+    "branch": "codex/5345-v0918-wp10-thin-cli-selector",
+    "worktree": ".worktrees/adl-wp-5345",
+    "protected_paths": [
+      ".csdlc/evidence/5345",
+      ".csdlc/issues/5345",
+      ".csdlc/locks/5345.lock",
+      ".csdlc/prepared/issues/5345",
+      "adl-v2/Cargo.lock",
+      "adl-v2/Cargo.toml",
+      "adl-v2/crates/adl-cli",
+      "adl-v2/crates/adl-cli/src",
+      "adl-v2/crates/adl-cli/tests",
+      "adl-v2/tools",
+      "adl-v2/tools/install-adl-v2.sh"
+    ],
+    "purpose": "Implement WP-10 thin CLI and authoritative selector in the dedicated worktree; retain dependency state as observational evidence only."
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "subagent:019f8611-2d02-7492-9c03-7af0fcf6662e",
+    "scope": [
+      "adl-v2/crates/adl-cli",
+      "adl-v2/tools/install-adl-v2.sh",
+      ".csdlc/prepared/issues/5345"
+    ],
+    "reviewed_revision": "git-blake3:2b17be0a22c99cbc32bcf91583c923ca04b5dd4a:0c7bc971f6ce4ef189431b1bc8551ba229edc5c0e0c331c9c4bedc9a63bff49f",
+    "findings": [
+      {
+        "id": "WP10-REVIEW-001",
+        "severity": "p1",
+        "summary": "Sign and verify remain digest placeholders instead of WP-07 adapters.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:2b17be0a22c99cbc32bcf91583c923ca04b5dd4a:0c7bc971f6ce4ef189431b1bc8551ba229edc5c0e0c331c9c4bedc9a63bff49f",
+        "route": null
+      },
+      {
+        "id": "WP10-REVIEW-002",
+        "severity": "p2",
+        "summary": "Installer and selector integration/concurrency proof remains limited.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:2b17be0a22c99cbc32bcf91583c923ca04b5dd4a:0c7bc971f6ce4ef189431b1bc8551ba229edc5c0e0c331c9c4bedc9a63bff49f",
+        "route": null
+      },
+      {
+        "id": "WP10-REVIEW-003",
+        "severity": "p1",
+        "summary": "Dependency receipt and ancestry evidence is observational by explicit operator direction and does not block WP-10.",
+        "actionable": false,
+        "in_scope": false,
+        "disposition": "out_of_scope",
+        "fix_revision": null,
+        "route": "operator-directed policy"
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5345,
+    "pull_request": 5637,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5637",
+    "base": "main",
+    "head": "codex/5345-v0918-wp10-thin-cli-selector",
+    "revision": "git-blake3:2b17be0a22c99cbc32bcf91583c923ca04b5dd4a:0c7bc971f6ce4ef189431b1bc8551ba229edc5c0e0c331c9c4bedc9a63bff49f",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5345/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5345/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "subagent:019f8611-2d02-7492-9c03-7af0fcf6662e",
+      "revision": "44cb2d60e112dc5269dfd511762399121a61e66a8f6ccfca8868afdf65581d96"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "f2948a798720390c369279ad0b2a6497aba2d817238121e1cf8e1a2e0b330cb1",
+      "rendered_digest": "0358dd03c710b673215b768bfda84689ab44cdbd02e8f32e1030b932df6d469d",
+      "ast_digest": "2c68175ea773e967f6dabcbcaa117d012924e3ae5e44071b1b359f3287da6254"
+    },
+    "stp": {
+      "values_digest": "d9c2a33069d2fb48386b3e95203e741177305df2421f53d05dfbc6d49af792bf",
+      "rendered_digest": "39d4e296ce5b406a9c57e1f3e80bd6652e9050833cba58e2e54aeade188a59bb",
+      "ast_digest": "e0e07dc7bd193ea2813a2801025459326b0e06dad9d2ea08ad5ff2fca3bc1620"
+    },
+    "spp": {
+      "values_digest": "16e3effd8e7dca52d1b60773ca69bac223fabe915fc6d9f7932845bb8cdf3100",
+      "rendered_digest": "b45c1805ef8ca736ad5d888c122b0597d4c0a619ebdbf2d3659501f217bc3422",
+      "ast_digest": "edb68c2ea932f4f25d24547b1b18019b7d62318f4be63dcfe032e46c64f19b65"
+    },
+    "vpp": {
+      "values_digest": "951c684eefc3b32e36e665d24c19eb75ac7ad448b7845918ceb9dfc3985a9262",
+      "rendered_digest": "e5a445045ff6ad0c92193dd056d9fccfd381b4f5ac07d931d9d9faedbae67341",
+      "ast_digest": "a99d0d344c0707702241776d419b342c34a5b7221ff90abcd2b509e54f2cfc1e"
+    },
+    "srp": {
+      "values_digest": "2808238b158c8aa17f8e35acbb5d70c5117da36ad034539e093c341ca1f14128",
+      "rendered_digest": "9cf5e7b3f687b3bcab5cc8c1cdf845f4e9e81d0cde1f864d9b2a6d336682c4ce",
+      "ast_digest": "ea963a45cfd4a3fbd763fb1699771d1dbfd9957235a0b02682ce4b44af15a6b7"
+    },
+    "sor": {
+      "values_digest": "d608e6c3a4329a8b78a24aba55cc8cf3e6a24bff847ad6ba2f1fe98540b89a2a",
+      "rendered_digest": "48554a4e47e6e3cc896c36b7fbd2a1f7efd8802ee68a929af35b384170cc202d",
+      "ast_digest": "489257034a0157def41df9de3540a7670bc27b0d816fc2dad8d4e7f109f89226"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Reconcile review evidence to the final clean commit after recording the state projection."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "subagent:019f8611-2d02-7492-9c03-7af0fcf6662e",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Claim the shared adl-v2 workspace manifest and lockfile required to add and pin the WP-10 CLI crate.",
+      "operation": "{\"add_protected_paths\":[\"adl-v2/Cargo.toml\",\"adl-v2/Cargo.lock\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Separate exact local implementation budgets from mandatory post-merge exact-head CI evidence.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"preparation-contract\",\"proof_role\":\"Prove six typed cards, reviewed design/diagram, exact dependency and protected-path gates, selector/rollback invariants, COTS, budgets, PVF, no-deferral, and root safety\",\"acceptance_ids\":[\"AC-7\",\"AC-8\",\"AC-9\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5345/validate-preparation.rb\"],\"parallel_group\":\"preparation\",\"defer_reason\":null},{\"lane\":\"cli-focused\",\"proof_role\":\"Prove all command success, malformed input, upstream error, stable JSON stdout/stderr separation, exit codes, and delegation boundaries\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":5000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5345/validate-cli.sh\",\"focused\"],\"parallel_group\":\"cli-local\",\"defer_reason\":\"Execute only after every upstream dependency gate is terminal and product implementation exists\"},{\"lane\":\"cli-quality\",\"proof_role\":\"Prove formatting, strict Clippy, forbidden source/dependency absence, and thin module boundaries\",\"acceptance_ids\":[\"AC-1\",\"AC-8\",\"AC-9\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5345/validate-cli.sh\",\"quality\"],\"parallel_group\":\"cli-local\",\"defer_reason\":\"Execute only after every upstream dependency gate is terminal and product implementation exists\"},{\"lane\":\"selector-installer\",\"proof_role\":\"Prove exact install identity, idempotence, atomic selection, stale/concurrent/interrupted failure preservation, explicit verified rollback, and deterministic receipts\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":7000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5345/validate-cli.sh\",\"install-selector\"],\"parallel_group\":\"selector\",\"defer_reason\":\"Execute only after every upstream dependency gate is terminal and product implementation exists\"},{\"lane\":\"cli-budgets\",\"proof_role\":\"Enforce receipt/ancestry gate, exact COTS and forbidden dependencies, implementation/test/module LoC, test count, complete offline proof, clean exact revision, and 600-second ceiling\",\"acceptance_ids\":[\"AC-7\",\"AC-8\",\"AC-9\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":5000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5345/validate-cli.sh\",\"budgets\"],\"parallel_group\":\"cli-budget\",\"defer_reason\":\"Execute at the exact clean implementation revision with ADL_WP10_EXPECTED_HEAD and measured dependency, LoC, test-count, module-growth, and duration evidence\"},{\"lane\":\"post-merge-exact\",\"proof_role\":\"Validate the exact integrated tree, stable installer, selector and rollback transaction, dependency/LoC/test/time budgets, exact revision identity, and retained green required CI checks before typed closeout\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":10000,\"argv\":[\"bash\",\".csdlc/prepared/issues/5345/validate-cli.sh\",\"post-merge\"],\"parallel_group\":\"post-merge\",\"defer_reason\":\"Execute only after authorized merge with ADL_WP10_EXPECTED_HEAD and retained ADL_WP10_CI_EVIDENCE; mandatory before closeout\"}]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Mark durable preparation complete after design approval, bind, scope amendment, executable validation repair, and clean bounded re-review.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Operator authorized implementation after removing closeout receipts and merged-SHA ancestry from the WP-10 execution blocker.",
+      "operation": "{\"add_protected_paths\":[\"adl-v2/crates/adl-cli/src\",\"adl-v2/crates/adl-cli/tests\",\"adl-v2/tools\"],\"expected_owner\":\"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d\",\"expected_purpose\":\"Prepare #5345 WP-10 completely in its dedicated worktree; product implementation remains prohibited until WP-04 through WP-09 are merged, typed closed_out, receipt-backed, and ancestral\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Prepare #5345 WP-10 completely in its dedicated worktree; product implementation remains prohibited until WP-04 through WP-09 are merged, typed closed_out, receipt-backed, and ancestral\",\"purpose\":\"Implement WP-10 thin CLI and authoritative selector in the dedicated worktree; retain dependency state as observational evidence only.\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Reconcile review evidence to the final clean commit after recording the state projection.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

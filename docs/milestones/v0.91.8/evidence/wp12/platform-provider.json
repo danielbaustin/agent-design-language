@@ -1,0 +1,14 @@
+{
+  "schema": "adl.wp12.platform_proof.v1",
+  "issue": 5344,
+  "platform": "provider-disposition",
+  "status": "pass",
+  "claim_class": "credential_free_disposition",
+  "live_provider_claim": false,
+  "source_issue": 5350,
+  "assertions": {
+    "mock_is_not_live": true,
+    "credential_blocked_is_not_live": true,
+    "runtime_v3_acceptance_is_not_provider_acceptance": true
+  }
+}

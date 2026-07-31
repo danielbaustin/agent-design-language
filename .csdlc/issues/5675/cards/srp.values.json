@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5675,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][provider] Route Kimi and MiniMax through adl-provider-adapter",
+    "slug": "provider-adapter-kimi-minimax-routes",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl/src/provider_adapter.rs\nadl/src/provider/profiles.rs",
+      "review_revision": "git-blake3:6ac376f0d72d60d8ae2fc7de0cea21bc3c1d0eb6:d2274443f705299f244e1ef85031f52b6a96a872e0815e0777b430f729204d02",
+      "reviewer": "codex:5675-opus-review",
+      "review_prompts": [
+        "Check Kimi and MiniMax endpoint and auth contracts",
+        "Check bounded token and retry behavior",
+        "Check MiniMax success-status error envelopes and credential redaction"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Live Kimi and MiniMax completion success remains unproven because both approved accounts reported insufficient balance; adapter reachability and typed billing failure paths are proven.",
+        "Only lifecycle metadata, evidence, generated cards, design/diagram artifacts, and the Opus runbook changed after the source review."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

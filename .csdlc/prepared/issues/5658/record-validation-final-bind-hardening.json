@@ -1,0 +1,26 @@
+{
+  "issue": 5658,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "3b4c2ced4ef2d495975b0229160b7982a3c0e74d4c1f31797c43d40a786bf0e4",
+  "claim_id": "claim-5658-bound-worktree-lifecycle",
+  "actor": "codex:5658-execution",
+  "reason": "Record final focused validation after stale target CAS-ordering repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml",
+        "--test",
+        "gate7_lifecycle"
+      ],
+      "purpose": "Verify final bound-worktree lifecycle hardening, including stale registered target record rejection before prepared/evidence side-state materialization.",
+      "outcome": "passed",
+      "evidence_ref": "local PASS on aa3dce8c8 with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; 30 passed"
+    }
+  },
+  "fail_after_backup": false
+}

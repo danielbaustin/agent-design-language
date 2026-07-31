@@ -128,6 +128,13 @@ fn infer_vendor(spec: &adl::ProviderSpec) -> String {
                 "bedrock" => return "aws_bedrock".to_string(),
                 "openrouter" => return "openrouter".to_string(),
                 "z_ai" | "zai" | "zhipu" => return "z_ai".to_string(),
+                "kimi" => return "kimi".to_string(),
+                "minimax" => return "minimax".to_string(),
+                "qwen" => return "qwen".to_string(),
+                "xai" => return "xai".to_string(),
+                "mistral" => return "mistral".to_string(),
+                "cohere" => return "cohere".to_string(),
+                "gemini" => return "google".to_string(),
                 "http" => return "generic_http".to_string(),
                 _ => {}
             }
@@ -555,6 +562,27 @@ mod tests {
             substrate.default_model_ref.as_deref(),
             Some("claude-3-7-sonnet-latest")
         );
+    }
+
+    #[test]
+    fn provider_substrate_preserves_expanded_vendor_and_model_identity() {
+        for (profile, vendor, model) in [
+            ("kimi:k2.5", "kimi", "kimi-k2.5"),
+            ("minimax:m2.5", "minimax", "MiniMax-M2.5"),
+            ("qwen:qwen3-max", "qwen", "qwen3-max"),
+            ("xai:grok-4.5", "xai", "grok-4.5"),
+            ("mistral:small-4", "mistral", "mistral-small-4"),
+            ("cohere:command-a-plus", "cohere", "command-a-plus"),
+        ] {
+            let mut spec = provider_spec("http");
+            spec.profile = Some(profile.to_string());
+            spec.config
+                .insert("provider_model_id".to_string(), json!(model));
+            let substrate = provider_substrate_v1(profile, &spec).expect("substrate");
+            assert_eq!(substrate.vendor, vendor);
+            assert_eq!(substrate.provider_default_model_id.as_deref(), Some(model));
+            assert_eq!(substrate.transport, ProviderTransportV1::Http);
+        }
     }
 
     #[test]

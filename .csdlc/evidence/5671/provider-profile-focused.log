@@ -1,0 +1,583 @@
+
+running 179 tests
+test adl::tests::validate_provider_http_requires_endpoint ... ok
+test adl::tests::validate_provider_profile_rejects_empty_value ... ok
+test adl::tests::validate_provider_http_allows_loopback_plaintext_for_local_harnesses ... ok
+test adl::tests::validate_provider_http_rejects_plaintext_remote_endpoint ... ok
+test godel::ghb_loop::tests::ghb_loop_rejects_remote_provider_mismatch ... ok
+test instrumentation::action_log::tests::runtime_action_log_projects_policy_and_provider_events_without_raw_messages ... ok
+test long_lived_agent::tests::provider_result_summary_does_not_retain_sensitive_fields ... ok
+test model_identity::tests::hosted_provider_asserted_identity_does_not_require_digest ... ok
+test model_identity::tests::model_ref_and_provider_model_id_can_differ ... ok
+test execute::tests::execute_step_with_retry_does_not_retry_unknown_provider_setup_failure ... ok
+test agent_comms::tests::acip_coding_provider_boundary_adapter_rejects_worktree_lane_and_ref_drift ... ok
+test agent_comms::tests::acip_coding_provider_boundary_adapter_adapts_ok_provider_result_without_leaking_runtime_artifact ... ok
+test agent_comms::tests::acip_coding_provider_boundary_adapter_rejects_unsafe_provider_result_refs ... ok
+test agent_comms::tests::acip_coding_sample_contracts_cover_all_provider_lanes_and_output_modes ... ok
+test provider::http_family::tests::bedrock_provider_requires_agent_logic_profile_before_live_call ... ok
+test agent_comms::tests::acip_coding_provider_boundary_adapter_preserves_governed_refs_and_lower_route ... ok
+test model_proposal_benchmark::tests::model_proposal_benchmark_records_provider_model_conditions_truthfully ... ok
+test csm_resident_agents::tests::csm_shepherd_is_privileged_by_role_not_by_provider_bypass ... ok
+test provider::http_family::tests::anthropic_provider_complete_normalizes_empty_refusal_response ... ok
+test long_lived_agent::tests::pre_execution_admission_blocks_unsupported_workflow_before_provider_work ... ok
+test provider::http_family::tests::deepseek_provider_complete_records_chat_completion_request ... ok
+test csm_resident_agents::tests::csm_resident_agent_set_admits_shepherd_codex_and_ollama_through_provider_substrate ... ok
+test provider::http_family::tests::anthropic_provider_complete_records_output_and_version_header ... ok
+test provider::http_family::tests::deepseek_provider_rejects_missing_credentials_and_bad_response_shape ... ok
+test provider::tests::provider_mod_build_provider_dispatches_supported_native_and_compatibility_kinds ... ok
+test provider::tests::provider_mod_build_provider_rejects_unknown_kind_and_invalid_native_endpoint ... ok
+test provider::tests::provider_mod_cfg_numeric_helpers_cover_all_supported_and_rejected_types ... ok
+test provider::tests::provider_mod_complete_stream_default_buffers_mock_output ... ok
+test provider::tests::provider_mod_error_helpers_and_classification_are_stable ... ok
+test provider::tests::provider_mod_profile_endpoint_validation_allows_loopback_http_for_local_harnesses ... ok
+test provider::tests::provider_mod_profile_endpoint_validation_rejects_hostless_https ... ok
+test provider::tests::provider_mod_profile_endpoint_validation_rejects_loopback_prefix_confusion ... ok
+test provider::tests::provider_mod_profile_endpoint_validation_rejects_placeholder_and_invalid_hosts ... ok
+test provider::tests::provider_mod_profile_endpoint_validation_rejects_plain_http ... ok
+test provider::tests::provider_mod_provider_profile_registry_includes_first_class_claude_profiles ... ok
+test provider::tests::provider_mod_registry_keeps_expanded_vendor_identities_distinct ... ok
+test provider::tests::provider_mod_remote_retry_classification_distinguishes_deterministic_failures ... ok
+test provider::tests::provider_mod_timeout_secs_rejects_zero_and_uses_default_without_env ... ok
+test provider_adapter::tests::bedrock_error_sanitizer_removes_signed_aws_values ... ok
+test provider_adapter::tests::bedrock_profile_guard_rejects_default_profile ... ok
+test provider_adapter::tests::bedrock_request_body_uses_nova_messages_shape ... ok
+test provider_adapter::tests::claude_hosted_adapter_normalizes_empty_refusal_response ... ok
+test provider_adapter::tests::claude_hosted_adapter_returns_output_and_redacts_log ... ok
+test provider_adapter::tests::deepseek_hosted_adapter_returns_output_and_redacts_log ... ok
+test provider_adapter::tests::gemini_generate_url_does_not_embed_api_key ... ok
+test provider_adapter::tests::gemini_generate_url_rejects_invalid_endpoint_ref ... ok
+test provider::http_family::tests::http_provider_complete_and_helper_errors_cover_status_and_validation ... ok
+test provider_adapter::tests::gemini_hosted_adapter_returns_output_and_redacts_log ... ok
+test provider::http_family::tests::ollama_http_provider_complete_posts_to_generate_endpoint ... ok
+test provider::http_family::tests::ollama_http_provider_prefers_explicit_config_timeout_over_env ... ok
+test provider::http_family::tests::ollama_http_provider_rejects_invalid_explicit_timeout ... ok
+test provider_adapter::tests::hosted_gemini_adapter_sends_api_key_header_without_url_key ... ok
+test provider_adapter::tests::hosted_openai_adapter_returns_output_and_redacts_log ... ok
+test provider::http_family::tests::ollama_http_provider_rejects_missing_response_text ... ok
+test provider::http_family::tests::ollama_http_provider_rejects_zero_explicit_timeout ... ok
+test provider::http_family::tests::ollama_http_provider_uses_adl_timeout_secs_when_config_missing ... ok
+test provider::http_family::tests::ollama_http_provider_uses_default_timeout_when_env_missing ... ok
+test provider_adapter::tests::missing_hosted_key_is_normalized_without_network_call ... ok
+test provider_adapter::tests::ollama_bulkhead_is_scoped_per_endpoint_and_model ... ok
+test provider_adapter::tests::ollama_bulkhead_saturation_is_reported_as_local_runtime_busy ... ok
+test provider_adapter::tests::ollama_generate_url_rejects_invalid_endpoint_ref ... ok
+test provider_adapter::tests::ollama_invalid_endpoint_is_not_masked_by_busy_default_bulkhead ... ok
+test provider::http_family::tests::openai_provider_complete_records_output_and_invocation_artifact ... ok
+test provider_adapter::tests::ollama_url_helpers_normalize_base_and_api_endpoint_refs ... ok
+test provider_adapter::tests::omitted_output_token_budget_preserves_adapter_defaults ... ok
+test provider_adapter::tests::hosted_openai_timeout_is_reported_through_shared_timeout_layer ... ok
+test provider_adapter::tests::hosted_openai_stops_after_non_retryable_failure ... ok
+test provider_adapter::tests::hosted_openai_repeated_failures_open_provider_circuit ... ok
+test provider_adapter::tests::hosted_openai_reports_retry_budget_exhaustion_after_last_retryable_failure ... ok
+test provider_adapter::tests::hosted_openai_retries_retryable_failure_then_succeeds ... ok
+test provider_adapter::tests::hosted_openai_retry_flow_emits_reviewable_log_sequence ... ok
+test provider_adapter::tests::optional_output_token_budget_maps_to_provider_native_fields ... ok
+test provider_adapter::tests::preflight_failures_do_not_claim_circuit_trace ... ok
+test provider_adapter::tests::preflight_request_validation_failure_emits_valid_failed_result_shape ... ok
+test provider_adapter::tests::provider_credential_debug_redacts_secret_value ... ok
+test provider_adapter::tests::provider_endpoint_url_rejects_non_http_endpoint_refs ... ok
+test provider_adapter::tests::unsupported_hosted_provider_is_rejected_not_misrouted ... ok
+test provider_adapter::tests::zai_hosted_adapter_rejects_missing_key_without_network_call ... ok
+test provider::http_family::tests::openrouter_provider_complete_records_chat_completion_request ... ok
+test provider_adapter::tests::openai_output_array_shape_is_supported ... ok
+test provider_adapter::tests::openrouter_hosted_adapter_classifies_reasoning_only_output ... ok
+test provider_adapter_cli::tests::cli_run_writes_result_and_tail_log_for_normalized_failure ... ok
+test provider_adapter_cli::tests::normalize_observability_ref_prefers_repo_relative_and_redacts_absolute_paths ... ok
+test provider_adapter_cli::tests::normalize_observability_ref_preserves_bounded_uniqueness_for_same_basename ... ok
+test provider_communication::tests::failure_classifier_covers_hosted_and_local_operational_failures ... ok
+test provider_communication::tests::hosted_and_ollama_results_share_normalized_shape ... ok
+test provider_communication::tests::hosted_identity_is_provider_asserted_without_digest ... ok
+test provider_communication::tests::invalid_api_key_is_auth_error_not_missing_auth ... ok
+test provider_communication::tests::ollama_identity_is_pinned_only_with_digest ... ok
+test provider_communication::tests::provider_attempt_policy_maps_to_resilience_policy ... ok
+test provider_communication::tests::provider_failure_round_trips_through_shared_resilience_vocab ... ok
+test provider_communication::tests::provider_fault_classification_is_total_for_generic_provider_failures ... ok
+test provider_communication::tests::provider_fault_classification_redacts_sensitive_summary ... ok
+test provider_communication::tests::provider_fault_classification_uses_shared_resilience_vocab ... ok
+test provider_communication::tests::provider_run_logger_injects_request_and_artifact_refs_from_context ... ok
+test provider_communication::tests::provider_run_logger_writes_flushed_jsonl_without_prompt_or_secret_fields ... ok
+test provider_communication::tests::request_validation_rejects_empty_and_zero_policy_fields ... ok
+test provider_communication::tests::review_provider_request_fails_closed_without_scope_or_authority ... ok
+test provider_communication::tests::review_provider_request_validates_scope_authority_and_provider_request ... ok
+test provider_communication::tests::review_provider_result_preserves_findings_and_provider_failure_boundaries ... ok
+test provider_communication::tests::review_provider_result_rejects_findings_on_failed_or_passed_status ... ok
+test provider_communication::tests::review_provider_result_rejects_passed_status_when_provider_failed ... ok
+test provider_communication::tests::review_provider_result_transitively_rejects_malformed_provider_result ... ok
+test provider_communication::tests::url_query_api_keys_are_redacted_from_provider_failures ... ok
+test provider_communication::tests::utf8_diagnostics_truncate_without_panic ... ok
+test provider_extension_packaging::tests::provider_extension_packaging_binds_existing_provider_substrate ... ok
+test provider_extension_packaging::tests::provider_extension_packaging_exposes_reviewer_proof_hook ... ok
+test provider_extension_packaging::tests::provider_extension_packaging_keeps_security_extension_deferred ... ok
+test provider_native_tool_call_comparison::tests::provider_native_tool_call_comparison_artifact_path_is_repo_relative_and_bounded ... ok
+test provider_native_tool_call_comparison::tests::provider_native_tool_call_comparison_compatibility_profiles_do_not_report_native_tool_support ... ok
+test provider_native_tool_call_comparison::tests::provider_native_tool_call_comparison_covers_expected_provider_panel ... ok
+test provider_native_tool_call_comparison::tests::provider_native_tool_call_comparison_preserves_native_vs_unsupported_truth ... ok
+test provider_native_tool_call_comparison::tests::provider_native_tool_call_comparison_records_json_baseline_reference ... ok
+test provider_native_tool_call_comparison::tests::provider_native_tool_call_comparison_report_writer_emits_portable_json ... ok
+test provider_native_tool_call_comparison::tests::provider_native_tool_call_comparison_serializes_deterministically_without_host_paths ... ok
+test provider_native_tool_call_comparison::tests::provider_native_tool_call_comparison_splits_direct_native_from_compatibility_counts ... ok
+test provider_native_tool_call_comparison::tests::provider_native_tool_call_comparison_tracked_report_matches_generated_report ... ok
+test provider_substrate::tests::invocation_target_keeps_model_ref_distinct_from_provider_model_id ... ok
+test provider_substrate::tests::invocation_target_uses_model_override_as_stable_model_ref ... ok
+test provider_substrate::tests::provider_substrate_accepts_native_openai_anthropic_deepseek_openrouter_and_zai_kinds ... ok
+test provider_substrate::tests::provider_substrate_accepts_zai_profile_and_distinct_provider_model_id ... ok
+test provider_substrate::tests::provider_substrate_allows_explicit_native_override_for_generic_http_profiles ... ok
+test provider_substrate::tests::provider_substrate_honors_explicit_capability_overrides ... ok
+test provider_substrate::tests::provider_substrate_infers_first_class_claude_profile_vendor ... ok
+test provider_substrate::tests::provider_substrate_infers_openrouter_endpoint_vendor_and_preserves_model_id ... ok
+test provider_substrate::tests::provider_substrate_keeps_http_deepseek_profile_as_compatibility_lane ... ok
+test provider_substrate::tests::provider_substrate_keeps_local_ollama_cli_transport ... ok
+test provider_substrate::tests::provider_substrate_manifest_is_sorted_and_stable ... ok
+test provider_substrate::tests::provider_substrate_marks_deepseek_ollama_for_semantic_fallback ... ok
+test provider_substrate::tests::provider_substrate_marks_generic_http_profiles_as_compatibility_by_default ... ok
+test provider_substrate::tests::provider_substrate_marks_gpt_oss_ollama_as_tool_capable ... ok
+test provider_substrate::tests::provider_substrate_preserves_expanded_vendor_and_model_identity ... ok
+test provider_substrate::tests::provider_substrate_separates_http_vendor_and_transport ... ok
+test provider_substrate::tests::provider_substrate_uses_http_transport_for_ollama_with_endpoint ... ok
+test provider_adapter::tests::openrouter_hosted_adapter_prefers_observed_provider_model_identity ... ok
+test remote_exec::tests::execute_request_rejects_invalid_provider_spec ... ok
+test resilience::tests::provider_fault_classifier_covers_remaining_provider_fault_branches ... ok
+test resilience::tests::provider_fault_classifier_emits_operator_gated_auth_missing ... ok
+test resilience::tests::provider_fault_classifier_emits_retryable_timeout ... ok
+test resilience::tests::provider_fault_summary_normalizes_whitespace_and_truncates_long_messages ... ok
+test resilience::tests::provider_fault_summary_redacts_secret_like_content ... ok
+test resilience::tests::representative_provider_flow_composes_retry_rate_limit_timeout_breaker_and_fallback ... ok
+test resolve::tests::resolve_provider_falls_back_to_single_provider ... ok
+test resolve::tests::resolve_provider_prefers_agent_provider ... ok
+test resolve::wp02_followup_tests::resolve_provider_does_not_choose_when_multiple_providers_exist ... ok
+test provider_adapter::tests::hosted_openai_half_open_success_closes_provider_circuit ... ok
+test provider_adapter::tests::openrouter_hosted_adapter_returns_output_and_redacts_log ... ok
+test provider_adapter::tests::openrouter_hosted_adapter_supports_array_content_shape ... ok
+test provider_adapter::tests::openrouter_hosted_adapter_surfaces_error_envelope_on_success_status ... ok
+test runtime_aws_signal::tests::live_provider_helpers_fail_closed_before_unconfigured_provider_calls ... ok
+test runtime_v2::tests::godel_agent_runtime::runtime_v2_godel_agent_runtime_rejects_launch_plan_provider_rebinding ... ok
+test runtime_v2::tests::godel_agent_runtime::runtime_v2_godel_agent_runtime_rejects_provider_and_replay_mismatch ... ok
+test scheduler::tests::combined_provider_route_accepts_known_provider_family_aliases_for_same_model ... ok
+test scheduler::tests::combined_provider_route_rejects_model_suitability_identity_mismatch ... ok
+test scheduler::tests::role_provider_context_rejects_assignment_without_policy ... ok
+test scheduler::tests::role_provider_context_rejects_duplicate_task_assignment ... ok
+test scheduler::tests::role_provider_context_rejects_policy_without_eligible_route ... ok
+test scheduler::tests::role_provider_context_rejects_untracked_provider_profile_ref ... ok
+test scheduler::tests::role_provider_context_requires_provider_route_bundle_schema ... ok
+test scheduler::tests::role_provider_context_selects_first_eligible_tracked_profile_for_scheduler_decision ... ok
+test trace_schema_v1::tests::validate_trace_event_envelope_v1_rejects_missing_provider_on_model_invocation ... ok
+test uts_acc_multi_model_benchmark::tests::is_retryable_provider_error_matches_expected_patterns ... ok
+test uts_acc_multi_model_benchmark::tests::provider_complete_with_retries_fails_fast_for_non_retryable_error ... ok
+test uts_acc_multi_model_benchmark::tests::provider_complete_with_retries_stops_on_retryable_error_and_succeeds ... ok
+test uts_acc_multi_model_benchmark::tests::provider_completion_error_is_recorded_as_unusable_case ... ok
+test provider_adapter::tests::zai_hosted_adapter_returns_output_observed_model_and_redacts_log ... ok
+test provider::http_family::tests::openrouter_provider_rejects_missing_credentials_and_bad_response_shape ... ok
+test remote_exec::tests::execute_request_maps_provider_runtime_error ... ok
+test provider_adapter_cli::tests::cli_run_emits_heartbeat_and_timeout_diagnostics_for_slow_provider_calls ... ok
+test provider_adapter_cli::tests::cli_run_records_failed_terminal_event_when_result_write_fails ... ok
+test provider_adapter::tests::ollama_adapter_returns_output_and_redacts_log ... ok
+test provider_adapter::tests::ollama_missing_model_is_not_reported_as_busy ... ok
+test provider::http_family::tests::zai_provider_rejects_missing_credentials_and_bad_response_shape ... ok
+test runtime_aws_signal::tests::csm_governed_notice_signal_blocks_live_channels_before_provider_calls ... ok
+test runtime_aws_signal::tests::csm_notice_control_plane_live_block_matrix_avoids_provider_calls ... ok
+test runtime_aws_signal::tests::csm_notice_cloudwatch_live_block_matrix_avoids_provider_calls ... ok
+test runtime_aws_signal::tests::csm_notice_sns_live_block_matrix_avoids_provider_calls ... ok
+test provider::http_family::tests::zai_provider_sends_chat_completion_request_and_records_sanitized_artifact ... ok
+test uts_acc_multi_model_benchmark::tests::run_benchmark_with_stubbed_provider_executes_evaluated_model ... ok
+
+test result: ok. 179 passed; 0 failed; 0 ignored; 0 measured; 1744 filtered out; finished in 4.63s
+
+
+running 14 tests
+test cli::provider_cmd::tests::provider_setup_supports_all_declared_families ... ok
+test cli::provider_cmd::tests::real_provider_uses_repo_root_for_default_output ... ok
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/adl-provider-subcommands-1785035491101812000/.git/
+test cli::provider_cmd::tests::provider_requires_subcommand_and_rejects_unknown_subcommand ... ok
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/adl-identity-provider-extension-packaging-1785035491101818000/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/adl-provider-help-1785035491101806000/.git/
+test cli::provider_cmd::tests::provider_help_paths_succeed ... ok
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/adl-provider-claude-1785035491101942000/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/adl-provider-claude-opus-5-1785035491101947000/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/adl-provider-bad-args-1785035491101923000/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/adl-provider-bedrock-1785035491101938000/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/adl-provider-unknown-family-1785035491101865000/.git/
+test cli::provider_cmd::tests::provider_setup_validates_setup_args ... ok
+test cli::provider_cmd::tests::provider_setup_rejects_unknown_family ... ok
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/adl-provider-openrouter-model-override-1785035491101924000/.git/
+test cli::identity_cmd::tests::skill_contracts::identity_provider_extension_packaging_writes_contract_json ... ok
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/adl-identity-provider-extension-packaging-errors-1785035491101792000/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/adl-provider-out-force-1785035491101886000/.git/
+test cli::identity_cmd::tests::skill_contracts::identity_provider_extension_packaging_validates_unknown_args_and_missing_out_value ... ok
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/adl-provider-chatgpt-1785035491101929000/.git/
+test cli::provider_cmd::tests::provider_setup_writes_expected_bundle_for_claude ... ok
+test cli::provider_cmd::tests::provider_setup_writes_expected_bundle_for_claude_opus_5 ... ok
+test cli::provider_cmd::tests::provider_setup_writes_bedrock_account_pin_material ... ok
+test cli::provider_cmd::tests::provider_setup_supports_model_override_for_openrouter ... ok
+test cli::provider_cmd::tests::provider_setup_writes_expected_bundle_for_chatgpt ... ok
+test cli::provider_cmd::tests::provider_setup_supports_explicit_out_and_force ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 208 filtered out; finished in 0.08s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 51 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 4 tests
+test tests::demo_v0912_provider_native_tool_call_comparison_resolve_out_path_defaults_to_tracked_artifact_path ... ok
+test tests::demo_v0912_provider_native_tool_call_comparison_resolve_out_path_uses_explicit_argument ... ok
+test tests::demo_v0912_provider_native_tool_call_comparison_write_report_adds_context_on_failure ... ok
+test tests::demo_v0912_provider_native_tool_call_comparison_write_report_creates_expected_json_artifact ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 4 tests
+test validate_rejects_unsupported_provider_kind ... ok
+test validate_rejects_profile_with_explicit_provider_fields ... ok
+test validate_accepts_provider_profile_without_explicit_provider_fields ... ok
+test validate_accepts_native_openai_and_anthropic_provider_kinds ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 26 filtered out; finished in 0.00s
+
+
+running 3 tests
+test godel::godel_ghb_proof_validates_required_and_provider_args ... ok
+test basics::print_plan_v0_3_remote_provider_demo_works ... ok
+test instrument_and_cli::run_flag_executes_fixture_with_mock_provider_and_writes_outputs ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 105 filtered out; finished in 0.14s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 25 filtered out; finished in 0.00s
+
+
+running 3 tests
+test run_flows::run_honors_agent_model_over_provider_model ... ok
+test runtime_artifacts::artifact_failures::run_surfaces_provider_failure_stderr ... ok
+test runtime_artifacts::run_state::run_status_failure_kind_maps_timeout_without_raw_provider_error_text ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 74 filtered out; finished in 1.16s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 3 tests
+test instrument_provider_substrate_schema_rejects_extra_args ... ok
+test instrument_provider_substrate_requires_path ... ok
+test instrument_provider_substrate_rejects_extra_args ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.01s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+test build_provider_accepts_local_ollama_kind ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 1 test
+test build_provider_builds_mock_provider_and_echoes_prompt ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 40 tests
+test construction::build_provider_rejects_unknown_kind ... ok
+test construction::build_provider_builds_mock_provider_and_echoes_prompt ... ok
+test construction::build_provider_builds_ollama_provider ... ok
+test http_family::bedrock_provider_builds_without_network_and_preserves_model_id ... ok
+test http_family::http_provider_rejects_missing_endpoint ... ok
+test http_family::http_provider_accepts_https_endpoint ... ok
+test http_family::http_provider_rejects_non_bearer_auth_type ... ok
+test http_family::http_provider_supports_timeout_secs_string_and_rejects_negative_number ... ok
+test http_family::http_provider_rejects_non_object_headers_and_non_string_values ... ok
+test http_family::http_provider_rejects_plaintext_remote_endpoint ... ok
+test http_family::http_provider_4xx_is_non_retryable ... ok
+test http_family::http_provider_missing_auth_env_var ... ok
+test profiles::expand_provider_profiles_accepts_bedrock_nova_lite_profile ... ok
+test profiles::expand_provider_profiles_accepts_bedrock_nova_pro_inference_profile ... ok
+test profiles::expand_provider_profiles_accepts_chatgpt_profile_with_endpoint_override ... ok
+test profiles::expand_provider_profiles_accepts_claude_profile_with_endpoint_override ... ok
+test profiles::expand_provider_profiles_accepts_http_profile_with_endpoint_override ... ok
+test profiles::expand_provider_profiles_accepts_zai_glm5_profile ... ok
+test profiles::expand_provider_profiles_builds_claude_opus_5_anthropic_provider ... ok
+test profiles::expand_provider_profiles_is_byte_stable_across_runs ... ok
+test profiles::expand_provider_profiles_rejects_http_profile_without_endpoint_override ... ok
+test profiles::expand_provider_profiles_rejects_profile_with_explicit_fields ... ok
+test profiles::expand_provider_profiles_rejects_unknown_profile ... ok
+test profiles::expand_provider_profiles_rejects_vendor_identity_override ... ok
+test profiles::provider_profile_names_include_chatgpt_family ... ok
+test profiles::provider_profile_names_include_claude_family ... ok
+test profiles::provider_profiles_registry_is_deterministic_and_has_at_least_twelve_profiles ... ok
+test http_family::http_provider_happy_path ... ok
+test http_family::anthropic_provider_translates_native_response ... ok
+test http_family::http_provider_long_error_body_is_truncated_deterministically ... ok
+test http_family::http_provider_non_200_response ... ok
+test http_family::http_provider_rejects_json_without_output_field ... ok
+test http_family::http_provider_timeout ... ok
+test http_family::openai_provider_translates_native_response ... ok
+test http_family::native_provider_missing_auth_env_is_sanitized ... ok
+test http_family::zai_provider_translates_native_response_through_build_provider ... ok
+test process::provider_complete_times_out_with_env_override ... ok
+test process::provider_complete_surfaces_stderr_on_failure ... ok
+test process::provider_complete_rejects_invalid_timeout_env ... ok
+test process::provider_complete_uses_mock_binary_success ... ok
+
+test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 3.14s
+
+
+running 1 test
+test build_provider_accepts_remote_ollama_http_transport ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.13s
+
+
+running 4 tests
+test resolve_run_rejects_unknown_provider_profile ... ok
+test resolve_sets_provider_none_when_agent_provider_is_empty_string ... ok
+test resolve_provider_selection_uses_agent_provider ... ok
+test resolve_run_expands_provider_profile_deterministically ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+
+running 1 test
+test strict_rejects_unknown_provider_field ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.01s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.22s
+     Running unittests src/lib.rs (adl/target/debug/deps/adl-a34f9e047593d439)
+     Running unittests src/main.rs (adl/target/debug/deps/adl-47d9eadb07f18786)
+     Running unittests src/bin/adl_aws_remote_validation.rs (adl/target/debug/deps/adl_aws_remote_validation-5430f4eb5460f7b9)
+     Running unittests src/bin/demo_adl_gws_context_mirror.rs (adl/target/debug/deps/adl_gws_context_mirror-aec95401e282dd2e)
+     Running unittests src/bin/adl_process.rs (adl/target/debug/deps/adl_process-e6d156f1c370e078)
+     Running unittests tools/adl_provider_adapter.rs (adl/target/debug/deps/adl_provider_adapter-7f63c77414ef5bc8)
+     Running unittests src/bin/adl_remote.rs (adl/target/debug/deps/adl_remote-c6e443c0dc6818e4)
+     Running unittests src/bin/adl_review.rs (adl/target/debug/deps/adl_review-83fb1cb4567ed411)
+     Running unittests src/bin/adl_runtime.rs (adl/target/debug/deps/adl_runtime-de34a7fdab3bd9cc)
+     Running unittests src/bin/csm.rs (adl/target/debug/deps/csm-17cf2752c95c5305)
+     Running unittests src/bin/csmctl.rs (adl/target/debug/deps/csmctl-1f9b86effc13df6c)
+     Running unittests src/bin/demo_adl_gws_native_drive_sync.rs (adl/target/debug/deps/demo_adl_gws_native_drive_sync-42e58578da226015)
+     Running unittests src/bin/demo_v086_candidate_selection.rs (adl/target/debug/deps/demo_v086_candidate_selection-0e942c728e5fab89)
+     Running unittests src/bin/demo_v086_fast_slow.rs (adl/target/debug/deps/demo_v086_fast_slow-4fcd055e298145f6)
+     Running unittests src/bin/demo_v086_freedom_gate.rs (adl/target/debug/deps/demo_v086_freedom_gate-ff1d20a0b0740853)
+     Running unittests src/bin/demo_v086_review_surface.rs (adl/target/debug/deps/demo_v086_review_surface-1cb2f170f0728ecf)
+     Running unittests src/bin/demo_v0905_local_gemma_model_evaluation.rs (adl/target/debug/deps/demo_v0905_local_gemma_model_evaluation-6bb60af7283732de)
+     Running unittests src/bin/demo_v0905_model_proposal_benchmark.rs (adl/target/debug/deps/demo_v0905_model_proposal_benchmark-d358a2c180267732)
+     Running unittests src/bin/demo_v0911_capability_aptitude_testing.rs (adl/target/debug/deps/demo_v0911_capability_aptitude_testing-2b705b4232815572)
+     Running unittests src/bin/demo_v0912_gws_live_capability_execution_surface.rs (adl/target/debug/deps/demo_v0912_gws_live_capability_execution_surface-f621c3762583c116)
+     Running unittests src/bin/demo_v0912_gws_live_content_card_roundtrip.rs (adl/target/debug/deps/demo_v0912_gws_live_content_card_roundtrip-c5b3f6eceb319f1c)
+     Running unittests src/bin/demo_v0912_gws_live_safety_package.rs (adl/target/debug/deps/demo_v0912_gws_live_safety_package-44eba7608ba2cea4)
+     Running unittests src/bin/demo_v0912_provider_native_tool_call_comparison.rs (adl/target/debug/deps/demo_v0912_provider_native_tool_call_comparison-dc30fd474931db92)
+     Running unittests src/bin/demo_v0912_rust_native_gws_adapter_boundary.rs (adl/target/debug/deps/demo_v0912_rust_native_gws_adapter_boundary-6922e092478c0298)
+     Running unittests src/bin/demo_v0912_speculative_decoding_prototype.rs (adl/target/debug/deps/demo_v0912_speculative_decoding_prototype-423a3f01a41dc8c5)
+     Running unittests src/bin/demo_v0912_uts_acc_multi_model_benchmark.rs (adl/target/debug/deps/demo_v0912_uts_acc_multi_model_benchmark-e83ec69069fee067)
+     Running unittests src/bin/demo_v0917_dspark_speculative_decoding_evaluation.rs (adl/target/debug/deps/demo_v0917_dspark_speculative_decoding_evaluation-5036ff7d4b2417f0)
+     Running unittests src/bin/run_v0916_acip_aee_memory_integration.rs (adl/target/debug/deps/run_v0916_acip_aee_memory_integration-fd5dc359e9da5b62)
+     Running unittests src/bin/run_v0916_integrated_runtime_soak.rs (adl/target/debug/deps/run_v0916_integrated_runtime_soak-6dcf27c5b9fb88fb)
+     Running unittests src/bin/run_v0916_runtime_failure_injection.rs (adl/target/debug/deps/run_v0916_runtime_failure_injection-5ae7edd8cc3736e3)
+     Running unittests src/bin/run_v0917_integrated_resilience_failure_injection.rs (adl/target/debug/deps/run_v0917_integrated_resilience_failure_injection-762eea8c6a31a70e)
+     Running unittests src/bin/run_wp08_acip_sns_live_proof.rs (adl/target/debug/deps/run_wp08_acip_sns_live_proof-27cca7777aa9ef0e)
+     Running unittests src/bin/run_wp12_acip_websocket_transport_proof.rs (adl/target/debug/deps/run_wp12_acip_websocket_transport_proof-6a2d2d2de6a2e724)
+     Running tests/adl_tests.rs (adl/target/debug/deps/adl_tests-cb1ae62a8ab96003)
+     Running tests/cli_smoke.rs (adl/target/debug/deps/cli_smoke-b42b247a603b6789)
+     Running tests/demo_tests.rs (adl/target/debug/deps/demo_tests-07345dcd8684a2d6)
+     Running tests/execute_tests.rs (adl/target/debug/deps/execute_tests-78be7770e5763d00)
+     Running tests/file_inputs.rs (adl/target/debug/deps/file_inputs-07837176deefe233)
+     Running tests/helpers.rs (adl/target/debug/deps/helpers-ea041bfc601f782b)
+     Running tests/instrument_tests.rs (adl/target/debug/deps/instrument_tests-02a621649255cb8b)
+     Running tests/local_gemma_model_evaluation_demo_tests.rs (adl/target/debug/deps/local_gemma_model_evaluation_demo_tests-78fca27000aa6444)
+     Running tests/local_ollama_provider_tests.rs (adl/target/debug/deps/local_ollama_provider_tests-8598746831efe704)
+     Running tests/mock_provider_tests.rs (adl/target/debug/deps/mock_provider_tests-a1918438396abf04)
+     Running tests/model_proposal_benchmark_demo_tests.rs (adl/target/debug/deps/model_proposal_benchmark_demo_tests-4e9ef2ae56e3b27a)
+     Running tests/obsmem_validation_tests.rs (adl/target/debug/deps/obsmem_validation_tests-8e4f5488980f6c90)
+     Running tests/provider_tests.rs (adl/target/debug/deps/provider_tests-5d89ff56561acd3e)
+     Running tests/remote_ollama_provider_tests.rs (adl/target/debug/deps/remote_ollama_provider_tests-dce76ef2f55aac42)
+     Running tests/resolve_tests.rs (adl/target/debug/deps/resolve_tests-7a8cf5dceb221ff8)
+     Running tests/schema_tests.rs (adl/target/debug/deps/schema_tests-09385c40bb2c491d)
+     Running tests/signing_tests.rs (adl/target/debug/deps/signing_tests-368ba90e783e5d7c)
+     Running tests/trace_tests.rs (adl/target/debug/deps/trace_tests-e4120683079051c1)
+     Running tests/uts_acc_multi_model_benchmark_demo_tests.rs (adl/target/debug/deps/uts_acc_multi_model_benchmark_demo_tests-48829b42fb78e4c9)

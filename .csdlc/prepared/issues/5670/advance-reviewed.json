@@ -1,0 +1,14 @@
+{
+  "issue": 5670,
+  "card": "srp",
+  "expected_generation": 10,
+  "expected_digest": "1047f07a987ec70863bc3de04d11c280e8c9dfb191558796a34944b24b9c1d8a",
+  "claim_id": "claim-5670-coverage-shard-fanout",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Exact-head bounded review completed for faa3dfdee with both review findings fixed and residual hosted CI proof truth retained.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

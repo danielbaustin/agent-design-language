@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5719,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][ci][coverage] Avoid duplicate hosted coverage on podcast/demo page PRs",
+    "slug": "v0-91-8-ci-coverage-avoid-duplicate-hosted-coverage-on-podcast-demo-page-prs",
+    "version": "v0.91.8",
+    "generation": 4
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Fix CI selector policy and focused contract tests only; do not change podcast page content or unrelated CI behavior.",
+      "deliverables": [
+        "path-policy classifier update",
+        "focused tests for podcast/demo static path selection",
+        "regression tests proving Rust/tooling changes still select full or required lanes",
+        "truthful lifecycle and publication evidence"
+      ],
+      "acceptance_criteria": [
+        "AC-1: A #5716-like podcast studio/static demo path set reports full_coverage_required=false.",
+        "AC-2: The same path set does not schedule both hosted runtime and hosted workspace producer coverage.",
+        "AC-3: The stable adl-coverage-hosted aggregator/check remains present and truthful.",
+        "AC-4: Rust/runtime/provider/tooling policy path changes retain their existing full/focused coverage requirements.",
+        "AC-5: Focused CI path-policy and workflow contract tests pass locally."
+      ],
+      "dependencies": [
+        "#5716 observed duplicate hosted producer coverage",
+        "Existing ci_path_policy contract suite"
+      ],
+      "repo_inputs": [
+        "adl/tools/ci_path_policy.sh",
+        "adl/tools/test_ci_path_policy.sh",
+        ".github/workflows/ci.yaml",
+        "adl/tools/test_ci_runtime_contracts.sh",
+        "adl/tools/test_validation_manager.sh"
+      ],
+      "non_goals": [
+        "removing required stable check aggregation",
+        "rewriting the hosted coverage workflow",
+        "changing podcast page content",
+        "weakening Rust/runtime/provider/tooling coverage"
+      ]
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "runtime-v3-local-adapters-assembly",
+        "proof_role": "Prove production assembly uses real bounded local adapters, restart-stable checkpoints, failure boundaries, and fail-closed external transports",
+        "purpose": "Run the focused assembly test surface for local Runtime v3 adapter behavior after review fixes.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 1024, "tokens": 4000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "runtime-v3-local-adapters",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 840,
+        "executable": "cargo",
+        "argv": ["test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5663/target", "--test", "assembly"],
+        "evidence": {"max_log_bytes": 120000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "runtime-v3-local-adapters-operations",
+        "proof_role": "Prove operation executor retry, idempotency, timeout, and failure classes remain intact after deleting duplicate fixture topology paths",
+        "purpose": "Run the focused operation executor tests after review fixes.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 1024, "tokens": 4000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "runtime-v3-local-adapters",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 900,
+        "executable": "cargo",
+        "argv": ["test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5663/target", "--test", "operations"],
+        "evidence": {"max_log_bytes": 120000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "runtime-v3-local-adapters-governed",
+        "proof_role": "Prove governed local Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, and shutdown behavior remains green after production executor consolidation",
+        "purpose": "Run the focused governed operations test surface after review fixes.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 1024, "tokens": 4000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "runtime-v3-local-adapters",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 900,
+        "executable": "cargo",
+        "argv": ["test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5663/target", "--test", "governed_operations"],
+        "evidence": {"max_log_bytes": 120000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "runtime-v3-local-adapters-clippy",
+        "proof_role": "Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate on FastWork target storage",
+        "purpose": "Run strict all-target Clippy for the Runtime v3 kernel crate after review fixes.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 1024, "tokens": 4000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "runtime-v3-local-adapters",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 900,
+        "executable": "cargo",
+        "argv": ["clippy", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5663/target", "--all-targets", "--", "-D", "warnings"],
+        "evidence": {"max_log_bytes": 120000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "runtime-v3-local-adapters-loc",
+        "proof_role": "Retain physical LoC measurement for the claimed source and test paths; before 2481, after 2453, net -28",
+        "purpose": "Record the exact numstat delta for the claimed source and test paths after final review fixes.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 1000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "runtime-v3-local-adapters",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "git",
+        "argv": ["diff", "--numstat", "--", "adl-runtime-kernel/src/assembly.rs", "adl-runtime-kernel/src/governed_operations.rs", "adl-runtime-kernel/tests/assembly.rs", "adl-runtime-kernel/tests/operations.rs"],
+        "evidence": {"max_log_bytes": 20000, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": [
+      "runtime-v3-local-adapters-assembly",
+      "runtime-v3-local-adapters-operations",
+      "runtime-v3-local-adapters-governed",
+      "runtime-v3-local-adapters-clippy",
+      "runtime-v3-local-adapters-loc"
+    ],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {"max_parallel": 1, "cpu_units": 1, "memory_mib": 2048, "tokens": 20000},
+  "root": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5663",
+  "evidence_dir": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5663/.csdlc/evidence/5663",
+  "cancellation_file": null
+}

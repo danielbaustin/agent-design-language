@@ -1,0 +1,850 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ADL Observatory API",
+    "version": "1.0.0",
+    "summary": "Live runtime state for Observatory clients",
+    "description": "Read current runtime state without login. Login is required only to send signed control commands or ACIP work over the full-duplex WebSocket."
+  },
+  "servers": [
+    {
+      "url": "{publicBaseUrl}",
+      "description": "Runtime HTTPS base URL.",
+      "variables": {
+        "publicBaseUrl": {
+          "default": "https://localhost:20997",
+          "description": "Base URL for the runtime instance."
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "observatory",
+      "description": "Public Observatory snapshots and live updates with authenticated writes."
+    }
+  ],
+  "paths": {
+    "/v1/observatory": {
+      "get": {
+        "operationId": "readObservatorySnapshot",
+        "tags": ["observatory"],
+        "summary": "Read the current Runtime v3 Observatory snapshot",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Current Runtime v3 Observatory snapshot.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObservatoryFeed"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/OriginForbidden"
+          }
+        }
+      },
+      "options": {
+        "operationId": "observatoryCorsPreflight",
+        "tags": ["observatory"],
+        "summary": "Validate an allowed Observatory origin",
+        "responses": {
+          "204": {
+            "description": "Allowed origin preflight."
+          },
+          "403": {
+            "$ref": "#/components/responses/OriginForbidden"
+          }
+        }
+      }
+    },
+    "/v1/observatory/ws": {
+      "get": {
+        "operationId": "openObservatoryWebSocket",
+        "tags": ["observatory"],
+        "summary": "Open a public-read, authenticated-write Observatory WSS session",
+        "description": "Upgrades to WebSocket after origin validation and immediately emits public ObservatoryFeed frames. A client may log in at any time with an ObservatoryWsAuth text frame. Only an authenticated session may submit signed text commands or bounded ACIP Protobuf binary envelopes.",
+        "security": [],
+        "responses": {
+          "101": {
+            "description": "WebSocket upgrade accepted after origin validation. Public feed frames begin immediately; frame-level login is required only for writes."
+          },
+          "403": {
+            "$ref": "#/components/responses/OriginForbidden"
+          }
+        },
+        "x-adl-websocket": {
+          "scheme": "wss",
+          "maxFrameBytes": 65536,
+          "refreshSeconds": 1,
+          "clientFrames": [
+            {
+              "$ref": "#/components/schemas/ObservatoryWsAuth",
+              "purpose": "optional_write_login"
+            },
+            {
+              "type": "ping",
+              "serverReply": "pong"
+            },
+            {
+              "type": "close",
+              "serverReply": "close"
+            },
+            {
+              "$ref": "#/components/schemas/SignedControlCommand"
+            },
+            {
+              "binarySchema": "adl.csm.acip_carrier.protobuf_envelope.v1",
+              "serverReply": "adl.csm.acip_carrier.websocket_frame.v1"
+            }
+          ],
+          "serverFrames": [
+            {
+              "$ref": "#/components/schemas/ObservatoryFeed"
+            },
+            {
+              "$ref": "#/components/schemas/ObservatoryWsControlResult"
+            }
+          ],
+          "publicReadFrames": true,
+          "writeAuthentication": "observatory_bearer_frame",
+          "credentialRevocation": "write_authority_removed_read_stream_continues",
+          "signedTextControlAuthority": "signed_control_command_only",
+          "binaryAcipAuthority": "authenticated_session_and_canonical_ingress_policy"
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "OriginForbidden": {
+        "description": "Origin is absent for WSS or not present in configured observatory.allowed_origins."
+      }
+    },
+    "schemas": {
+      "ObservatoryWsAuth": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema", "bearer_token"],
+        "properties": {
+          "schema": {
+            "const": "adl.runtime_v3.observatory_ws_auth.v1"
+          },
+          "bearer_token": {
+            "type": "string",
+            "minLength": 32,
+            "maxLength": 256
+          }
+        }
+      },
+      "DomainWork": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema", "work_id", "kind", "payload"],
+        "properties": {
+          "schema": { "const": "adl.runtime.domain_work.v1" },
+          "work_id": { "type": "string", "minLength": 1 },
+          "kind": { "type": "string", "minLength": 1 },
+          "payload": {
+            "type": "array",
+            "maxItems": 65536,
+            "items": { "type": "integer", "minimum": 0, "maximum": 255 }
+          }
+        }
+      },
+      "SignedControlCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "runtime_instance_id",
+          "command_id",
+          "correlation_id",
+          "principal",
+          "action",
+          "signing_algorithm",
+          "signing_key_id",
+          "signature"
+        ],
+        "properties": {
+          "schema": { "const": "adl.runtime.control_command.v1" },
+          "runtime_instance_id": { "type": "string" },
+          "command_id": { "type": "string" },
+          "correlation_id": { "type": "string" },
+          "principal": { "type": "string" },
+          "action": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["action"],
+                "properties": { "action": { "const": "snapshot" } }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["action", "work"],
+                "properties": {
+                  "action": { "const": "submit" },
+                  "work": { "$ref": "#/components/schemas/DomainWork" }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["action", "grace_millis"],
+                "properties": {
+                  "action": { "const": "shutdown" },
+                  "grace_millis": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 60000
+                  }
+                }
+              }
+            ]
+          },
+          "signing_algorithm": { "const": "ed25519" },
+          "signing_key_id": { "type": "string" },
+          "signature": { "type": "string" }
+        }
+      },
+      "ObservatoryWsControlResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema", "status"],
+        "properties": {
+          "schema": { "const": "adl.runtime_v3.observatory_ws_control_result.v1" },
+          "status": { "enum": ["authenticated", "accepted", "rejected"] },
+          "command_id": { "type": ["string", "null"] },
+          "correlation_id": { "type": ["string", "null"] },
+          "response": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/ControlResponse" },
+              { "type": "null" }
+            ]
+          },
+          "error": { "type": ["string", "null"] }
+        }
+      },
+      "ControlResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema", "command_id", "correlation_id", "outcome"],
+        "properties": {
+          "schema": { "const": "adl.runtime.control_response.v1" },
+          "command_id": { "type": "string" },
+          "correlation_id": { "type": "string" },
+          "outcome": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/ControlOutcomeSnapshot" },
+              { "$ref": "#/components/schemas/ControlOutcomeSubmitted" },
+              { "$ref": "#/components/schemas/ControlOutcomeShutdown" }
+            ]
+          }
+        }
+      },
+      "ControlOutcomeSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["result", "snapshot"],
+        "properties": {
+          "result": { "const": "snapshot" },
+          "snapshot": { "$ref": "#/components/schemas/RuntimeSnapshot" }
+        }
+      },
+      "ControlOutcomeSubmitted": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["result", "work_result"],
+        "properties": {
+          "result": { "const": "submitted" },
+          "work_result": { "$ref": "#/components/schemas/DomainResult" }
+        }
+      },
+      "ControlOutcomeShutdown": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["result", "exit"],
+        "properties": {
+          "result": { "const": "shutdown" },
+          "exit": { "enum": ["clean", "failed"] }
+        }
+      },
+      "ObservatoryFeed": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "runtime_instance_id",
+          "default_runtime_changed",
+          "runtime_selection",
+          "control",
+          "health",
+          "continuity",
+          "ingress",
+          "agents",
+          "proof",
+          "events"
+        ],
+        "properties": {
+          "schema": {
+            "const": "adl.runtime_v3.observatory_feed.v2"
+          },
+          "runtime_instance_id": {
+            "type": "string"
+          },
+          "default_runtime_changed": {
+            "type": "boolean"
+          },
+          "runtime_selection": {
+            "const": "runtime_v3_explicit_opt_in"
+          },
+          "control": {
+            "$ref": "#/components/schemas/ObservatoryControlFeed"
+          },
+          "health": {
+            "$ref": "#/components/schemas/ObservatoryHealthFeed"
+          },
+          "weather": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/WeatherHealthReport" },
+              { "type": "null" }
+            ]
+          },
+          "weather_freshness": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/ObservatoryWeatherFreshness" },
+              { "type": "null" }
+            ]
+          },
+          "continuity": {
+            "$ref": "#/components/schemas/ObservatoryContinuityFeed"
+          },
+          "ingress": {
+            "$ref": "#/components/schemas/IngressSnapshot"
+          },
+          "agents": {
+            "$ref": "#/components/schemas/AgentPopulationFeed"
+          },
+          "proof": {
+            "$ref": "#/components/schemas/ObservatoryProofFeed"
+          },
+          "events": {
+            "type": "array",
+            "maxItems": 4096,
+            "items": {
+              "$ref": "#/components/schemas/BootstrapEvent"
+            }
+          }
+        }
+      },
+      "ObservatoryControlFeed": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "port",
+          "public_base_url",
+          "read_endpoint",
+          "websocket_endpoint",
+          "signed_command_endpoint",
+          "signed_commands_required_for_mutation",
+          "bearer_token_required_for_read",
+          "login_required_for_mutation",
+          "browser_mutation_authority"
+        ],
+        "properties": {
+          "port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "public_base_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "read_endpoint": {
+            "const": "/v1/observatory"
+          },
+          "websocket_endpoint": {
+            "const": "/v1/observatory/ws"
+          },
+          "signed_command_endpoint": {
+            "const": "/v1/control"
+          },
+          "signed_commands_required_for_mutation": {
+            "const": true
+          },
+          "bearer_token_required_for_read": {
+            "const": false
+          },
+          "login_required_for_mutation": {
+            "const": true
+          },
+          "browser_mutation_authority": {
+            "const": true
+          }
+        }
+      },
+      "ObservatoryHealthFeed": {
+        "type": "object",
+        "required": ["snapshot", "observability_ready"],
+        "properties": {
+          "snapshot": {
+            "$ref": "#/components/schemas/RuntimeSnapshot"
+          },
+          "observability_ready": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AgentPopulationFeed": {
+        "type": "object",
+        "required": ["total_count", "rendered_sample_count", "sample"],
+        "properties": {
+          "total_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "rendered_sample_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sample": {
+            "type": "array",
+            "maxItems": 1024,
+            "items": {
+              "$ref": "#/components/schemas/AgentSample"
+            }
+          }
+        }
+      },
+      "AgentSample": {
+        "type": "object",
+        "required": ["id", "label", "role", "state", "detail"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      },
+      "ObservatoryProofFeed": {
+        "type": "object",
+        "required": [
+          "default_runtime_switch_authorized",
+          "runtime_v2_decommission_authorized",
+          "sidecar_required",
+          "vector_cloudwatch_route"
+        ],
+        "properties": {
+          "default_runtime_switch_authorized": {
+            "const": false
+          },
+          "runtime_v2_decommission_authorized": {
+            "const": false
+          },
+          "sidecar_required": {
+            "const": false
+          },
+          "vector_cloudwatch_route": {
+            "type": "string"
+          }
+        }
+      },
+      "QueueHealth": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["generation", "capacity", "depth", "high_water", "sent", "rejected"],
+        "properties": {
+          "generation": { "type": "integer", "minimum": 0 },
+          "capacity": { "type": "integer", "minimum": 0 },
+          "depth": { "type": "integer", "minimum": 0 },
+          "high_water": { "type": "integer", "minimum": 0 },
+          "sent": { "type": "integer", "minimum": 0 },
+          "rejected": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "ContinuityHead": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["generation", "accepted_through", "topology_hash", "config_hash", "integrity"],
+        "properties": {
+          "generation": { "type": "integer", "minimum": 0 },
+          "accepted_through": { "type": "integer", "minimum": 0 },
+          "topology_hash": { "type": "string" },
+          "config_hash": { "type": "string" },
+          "integrity": { "type": "string" }
+        }
+      },
+      "ClockAuthority": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status", "reason"],
+            "properties": {
+              "status": { "const": "degraded" },
+              "reason": { "type": "string" }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status", "source", "unix_millis"],
+            "properties": {
+              "status": { "const": "authoritative" },
+              "source": { "type": "string" },
+              "unix_millis": { "type": "integer", "minimum": 0 }
+            }
+          }
+        ]
+      },
+      "ObservabilityHealth": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status"],
+            "properties": { "status": { "enum": ["pending", "ready"] } }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status", "reason"],
+            "properties": {
+              "status": { "const": "degraded" },
+              "reason": { "enum": ["exporter_unavailable", "exporter_rejected"] }
+            }
+          }
+        ]
+      },
+      "RuntimeSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "revision",
+          "topology_generation",
+          "components",
+          "restart_counts",
+          "queues",
+          "clock",
+          "continuity_head",
+          "lifecycle",
+          "event_count",
+          "observability",
+          "observability_ready",
+          "observability_pipeline"
+        ],
+        "properties": {
+          "schema": { "const": "adl.runtime.control_snapshot.v1" },
+          "revision": { "type": "integer", "minimum": 0 },
+          "topology_generation": { "type": "integer", "minimum": 0 },
+          "components": {
+            "type": "object",
+            "additionalProperties": {
+              "enum": ["starting", "ready", "running", "restarting", "degraded", "stopping", "stopped", "failed"]
+            }
+          },
+          "restart_counts": {
+            "type": "object",
+            "additionalProperties": { "type": "integer", "minimum": 0 }
+          },
+          "queues": {
+            "type": "object",
+            "additionalProperties": { "$ref": "#/components/schemas/QueueHealth" }
+          },
+          "clock": { "$ref": "#/components/schemas/ClockAuthority" },
+          "continuity_head": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/ContinuityHead" },
+              { "type": "null" }
+            ]
+          },
+          "lifecycle": {
+            "enum": ["starting", "running", "stopping", "stopped", "failed"]
+          },
+          "event_count": { "type": "integer", "minimum": 0 },
+          "observability": { "$ref": "#/components/schemas/ObservabilityHealth" },
+          "observability_ready": { "type": "boolean" },
+          "observability_pipeline": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/ObservabilityPipelineSnapshot" },
+              { "type": "null" }
+            ]
+          }
+        }
+      },
+      "ObservabilityPipelineSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "health",
+          "runtime_instance_id",
+          "vector_pid",
+          "vector_version",
+          "master_log_ref",
+          "log_audit_ref",
+          "otlp_endpoint",
+          "otlp_timeout_millis",
+          "sequence_next",
+          "drain_complete",
+          "last_failure"
+        ],
+        "properties": {
+          "schema": { "type": "string" },
+          "health": { "$ref": "#/components/schemas/ObservabilityHealth" },
+          "runtime_instance_id": { "type": "string" },
+          "vector_pid": { "type": ["integer", "null"], "minimum": 0 },
+          "vector_version": { "type": "string" },
+          "master_log_ref": { "type": "string" },
+          "log_audit_ref": { "type": "string" },
+          "otlp_endpoint": { "type": ["string", "null"] },
+          "otlp_timeout_millis": { "type": "integer", "minimum": 1 },
+          "sequence_next": { "type": "integer", "minimum": 0 },
+          "drain_complete": { "type": "boolean" },
+          "last_failure": { "type": ["string", "null"] }
+        }
+      },
+      "ObservatoryWeatherFreshness": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["observed_at_unix_millis", "age_millis", "stale_after_millis", "stale"],
+        "properties": {
+          "observed_at_unix_millis": { "type": "integer", "minimum": 0 },
+          "age_millis": { "type": "integer", "minimum": 0 },
+          "stale_after_millis": { "type": "integer", "minimum": 1 },
+          "stale": { "type": "boolean" }
+        }
+      },
+      "WeatherHealthReport": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema", "resource_state", "shutdown_decision", "gpu_proof_state", "cloudwatch_route", "sample"],
+        "properties": {
+          "schema": { "const": "adl.runtime.weather_health.v1" },
+          "resource_state": { "enum": ["healthy", "warning", "stop_required"] },
+          "shutdown_decision": { "enum": ["continue", "serialize_state_then_stop"] },
+          "gpu_proof_state": { "enum": ["observed", "unavailable_not_pass"] },
+          "cloudwatch_route": { "type": "string" },
+          "sample": {
+            "type": "object",
+            "required": [
+              "platform",
+              "cpu_basis_points",
+              "per_core_basis_points",
+              "memory_total_bytes",
+              "memory_available_bytes",
+              "disks",
+              "network_received_bytes",
+              "network_transmitted_bytes",
+              "max_temperature_millicelsius",
+              "gpus"
+            ],
+            "properties": {
+              "platform": { "type": "string" },
+              "cpu_basis_points": { "$ref": "#/components/schemas/UnsignedObservation" },
+              "per_core_basis_points": { "$ref": "#/components/schemas/UnsignedArrayObservation" },
+              "memory_total_bytes": { "$ref": "#/components/schemas/UnsignedObservation" },
+              "memory_available_bytes": { "$ref": "#/components/schemas/UnsignedObservation" },
+              "disks": { "$ref": "#/components/schemas/DiskArrayObservation" },
+              "network_received_bytes": { "$ref": "#/components/schemas/UnsignedObservation" },
+              "network_transmitted_bytes": { "$ref": "#/components/schemas/UnsignedObservation" },
+              "max_temperature_millicelsius": { "$ref": "#/components/schemas/SignedObservation" },
+              "gpus": { "$ref": "#/components/schemas/GpuArrayObservation" }
+            }
+          }
+        }
+      },
+      "UnsignedObservation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["value", "source"],
+        "properties": {
+          "value": { "type": ["integer", "null"], "minimum": 0 },
+          "source": { "type": "string" }
+        }
+      },
+      "SignedObservation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["value", "source"],
+        "properties": {
+          "value": { "type": ["integer", "null"] },
+          "source": { "type": "string" }
+        }
+      },
+      "UnsignedArrayObservation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["value", "source"],
+        "properties": {
+          "value": {
+            "oneOf": [
+              {
+                "type": "array",
+                "maxItems": 1024,
+                "items": { "type": "integer", "minimum": 0 }
+              },
+              { "type": "null" }
+            ]
+          },
+          "source": { "type": "string" }
+        }
+      },
+      "DiskWeather": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["mount", "total_bytes", "available_bytes"],
+        "properties": {
+          "mount": { "type": "string" },
+          "total_bytes": { "type": "integer", "minimum": 0 },
+          "available_bytes": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "DiskArrayObservation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["value", "source"],
+        "properties": {
+          "value": {
+            "oneOf": [
+              {
+                "type": "array",
+                "maxItems": 1024,
+                "items": { "$ref": "#/components/schemas/DiskWeather" }
+              },
+              { "type": "null" }
+            ]
+          },
+          "source": { "type": "string" }
+        }
+      },
+      "GpuWeather": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "utilization_basis_points", "temperature_millicelsius"],
+        "properties": {
+          "name": { "type": "string" },
+          "utilization_basis_points": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "temperature_millicelsius": { "type": ["integer", "null"] }
+        }
+      },
+      "GpuArrayObservation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["value", "source"],
+        "properties": {
+          "value": {
+            "oneOf": [
+              {
+                "type": "array",
+                "maxItems": 1024,
+                "items": { "$ref": "#/components/schemas/GpuWeather" }
+              },
+              { "type": "null" }
+            ]
+          },
+          "source": { "type": "string" }
+        }
+      },
+      "ObservatoryContinuityFeed": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["checkpoint"],
+        "properties": {
+          "checkpoint": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/ContinuityHead" },
+              { "type": "null" }
+            ]
+          }
+        }
+      },
+      "DomainResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema", "work_id", "accepted_sequence", "result_hash"],
+        "properties": {
+          "schema": { "const": "adl.runtime.domain_result.v1" },
+          "work_id": { "type": "string" },
+          "accepted_sequence": { "type": "integer", "minimum": 0 },
+          "result_hash": { "type": "string" }
+        }
+      },
+      "IngressSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["accepted_through", "completed"],
+        "properties": {
+          "accepted_through": { "type": "integer", "minimum": 0 },
+          "completed": {
+            "type": "object",
+            "maxProperties": 4096,
+            "additionalProperties": { "$ref": "#/components/schemas/DomainResult" }
+          }
+        }
+      },
+      "BootstrapEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sequence", "monotonic_millis", "component", "event", "correlation_id"],
+        "properties": {
+          "sequence": { "type": "integer", "minimum": 0 },
+          "monotonic_millis": { "type": "integer", "minimum": 0 },
+          "component": { "type": ["string", "null"] },
+          "event": { "type": "string" },
+          "correlation_id": { "type": ["string", "null"] }
+        }
+      },
+      "ControlError": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema", "code"],
+        "properties": {
+          "schema": {
+            "const": "adl.runtime.control_error.v1"
+          },
+          "code": {
+            "enum": ["authentication_failed", "unauthorized", "invalid_request"]
+          }
+        }
+      }
+    }
+  },
+  "x-adl-api-identity": "observatory",
+  "x-adl-api-version": "v1",
+  "x-adl-html-application": "separate",
+  "x-adl-non-claims": [
+    "The HTML Observatory app is not embedded in the runtime.",
+    "Observatory WSS mutations require the same signed control-command envelope as /v1/control.",
+    "No unavailable feature is presented as operational."
+  ]
+}

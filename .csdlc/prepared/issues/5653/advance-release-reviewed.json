@@ -1,0 +1,10 @@
+{
+  "issue":5653,
+  "card":"sor",
+  "expected_generation":10,
+  "expected_digest":"6e4e6f32a7eedcdecd3a1b553461c3a75080408244a4621f4428ed7b44789819",
+  "claim_id":"claim-5653-readme-refresh",
+  "actor":"codex:5653-execution",
+  "reason":"Exact release-truth review completed with no actionable findings.",
+  "operation":{"operation":"advance_phase","phase":"reviewed"}
+}

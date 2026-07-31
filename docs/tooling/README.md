@@ -120,7 +120,7 @@ Important repo-local tooling surfaces include:
 - `bash adl/tools/run_aws_codefriend_build_lane.sh` — manual GitHub Actions plus AWS CodeBuild lane wrapper for CodeFriend build orchestration; see [AWS CodeFriend Build Lane](AWS_CODEFRIEND_BUILD_LANE.md)
 - `adl tooling ci-log-archive summarize` — summarize extracted CI logs and optionally upload raw logs plus the generated manifest to private S3 evidence storage; see [CI Log Archive To S3](CI_LOG_ARCHIVE_S3.md)
 - `adl/tools/validation_manager.py --run` — emit durable `adl.build_action_log.v1` packets for local validation actions; see [Build Action Logs](BUILD_ACTION_LOGS.md)
-- `bash adl/tools/validate_structured_prompt.sh` — compatibility wrapper for the dedicated structured-prompt validator binary; see [binary resolution](structured-prompt-validator-binary-resolution.md)
+- `csdlc-validate` — current typed C-SDLC v2 lifecycle/card validation; see [structured prompt validation boundary](structured-prompt-validator-binary-resolution.md)
 - `adl tooling generate-wp-issue-wave` — deterministic WBS/sprint-to-issue-wave planning generator
 - `adl tooling verify-review-output-provenance` — provenance verification for review-output artifacts
 - `adl tooling review-card-surface` — bounded deterministic review helper

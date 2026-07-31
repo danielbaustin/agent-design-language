@@ -1,0 +1,145 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5344
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: pre_phase
+
+## Summary
+
+Completed the exact-revision WP-12 opt-in soak and rollback proof: accepted Runtime v3 integration, real native Linux/macOS/Windows Guardian lifecycle qualification, deterministic isolated selector rollback, credential-free provider disposition without live-provider overclaim, and an explicitly non-deleting handoff candidate for #5343. Demo or fixture execution is not credited.
+
+## Artifacts
+
+- commit 2f3cd919b
+- .csdlc/evidence/5344/wp12-guardian-observatory-tls-2026-07-23.md
+- adl-runtime/src/guardian.rs
+- adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
+- adl-runtime-kernel/src/continuity.rs
+- adl-runtime-kernel/src/governed_operations.rs
+- adl-runtime-kernel/tests/guardian_soak.rs
+- commit 2f3cd919b
+- adl-runtime/src/guardian.rs
+- adl-runtime/Cargo.toml
+- adl-runtime/Cargo.lock
+- adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
+- adl-runtime-kernel/src/continuity.rs
+- adl-runtime-kernel/src/governed_operations.rs
+- adl-runtime-kernel/tests/guardian_soak.rs
+- .csdlc/evidence/5344/wp12-guardian-observatory-tls-2026-07-23.md
+- .csdlc/prepared/issues/5344/finalize-guardian-windows-proof.sh
+- docs/milestones/v0.91.8/evidence/wp12/manifest.json
+- docs/milestones/v0.91.8/evidence/wp12/report.json
+- docs/milestones/v0.91.8/evidence/wp12/platform-linux.json
+- docs/milestones/v0.91.8/evidence/wp12/platform-macos.json
+- docs/milestones/v0.91.8/evidence/wp12/platform-windows.json
+- docs/milestones/v0.91.8/evidence/wp12/platform-provider.json
+- docs/milestones/v0.91.8/evidence/wp12/cutover-handoff-5344.v1.json
+- .csdlc/evidence/5344/rollback/fresh-install-receipt.json
+- commit b46e405cd2f341e5644b463a757c03bdc924af74
+- commit 0e2bc61a0
+
+## Execution
+
+- Added authenticated loopback Guardian lease injection so the kernel checkpoints and exits when its Guardian process disappears
+- Added native Windows Job Object ownership with kill-on-close cleanup for Guardian child trees
+- Made governed_operations compile on Windows by gating Unix process-group behavior
+- Made Runtime v3 continuity checkpoint writes portable by syncing through write-capable file handles and tolerating Windows directory flush denial after file fsync
+- Made guardian_soak proof portable with a private test CA, explicit CA/leaf validity, SAN-correct leaf, Rustls HTTPS/WSS client trust, and wrong-host rejection
+- Retained native Nessus MSVC build/test evidence without WSL, Docker, AWS, plaintext, disabled verification, or insecure curl flags
+- Added authenticated Guardian lease shutdown so a kernel checkpoints and exits when its Guardian disappears.
+- Added native Windows Job Object ownership for bounded child-tree cleanup.
+- Made governed operations and continuity checkpointing portable across Windows and Unix.
+- Added strict CA-backed HTTPS/WSS Guardian soak proofs with SAN validation and wrong-host rejection.
+- Retained native Nessus MSVC build and test evidence without WSL, Docker, AWS, plaintext, disabled verification, or insecure curl flags.
+- Ran native Guardian process-0 lifecycle qualification on Linux, macOS, and Windows at exact Runtime revision f9bb6cc736df1a68d539073f9214b663ae6c1ab2
+- Completed 10,000-cycle, 100-by-10-second stress, and 10-by-600-second endurance suites on every platform with zero failed or degraded cycles
+- Retained compact redacted platform reports, clean master logs, and audit hashes using repo-relative references
+- Proved isolated adl-v2 fresh installation, locked selector mutation, failure recovery, and exact prior selector byte restoration
+- Aligned platform verification with the Rust collector by accepting only identical duplicate sequence records and rejecting conflicting sequence reuse
+- Recorded provider evidence as a credential-free non-live disposition and removed demo-mode credit in favor of real native qualification
+- Preserved Runtime v1 and Runtime v2; changed no production default and authorized no legacy deletion
+
+## Validation
+
+[
+  {
+    "command": [
+      "bash",
+      ".csdlc/prepared/issues/5344/finalize-guardian-windows-proof.sh"
+    ],
+    "purpose": "Verify the retained Nessus native Windows proof, confirm the committed Guardian/TLS source surface has not drifted, and rerun the focused local Guardian lease and HTTPS/WSS soak tests.",
+    "outcome": "passed",
+    "evidence_ref": "guardian-windows-tls-finalize.log"
+  },
+  {
+    "command": [
+      "env",
+      "ADL_WP12_TARGET_DIR=wp12-target",
+      "bash",
+      "adl-v2/tools/run-soak.sh",
+      "--manifest",
+      "docs/milestones/v0.91.8/evidence/wp12/manifest.json"
+    ],
+    "purpose": "Verify the accepted Runtime v3 artifact, native Linux/macOS/Windows lifecycle proofs, isolated fresh adl-v2 installation, rollback fault matrix, and exact prior selector-byte restoration.",
+    "outcome": "passed",
+    "evidence_ref": "docs/milestones/v0.91.8/evidence/wp12/report.json"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_ci_path_policy.sh"
+    ],
+    "purpose": "Prove literal UTF-8 tracked paths remain Windows-portable while genuinely illegal Windows path components still fail closed.",
+    "outcome": "passed",
+    "evidence_ref": "adl/tools/test_ci_path_policy.sh"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_check_coverage_impact.sh"
+    ],
+    "purpose": "Prove the Runtime v3 coverage mapper selects the live guardian and guardian_cli inventory and the complete tooling contract reaches its explicit PASS marker.",
+    "outcome": "passed",
+    "evidence_ref": "adl/tools/test_check_coverage_impact.sh"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml",
+      "guardian::tests::restart_budget_resets_after_healthy_window",
+      "--",
+      "--exact",
+      "(repeated 20 times)"
+    ],
+    "purpose": "Prove the Guardian restart-budget test is deterministic and no longer spends a runtime attempt on a local listener startup race.",
+    "outcome": "passed",
+    "evidence_ref": "adl-runtime/src/guardian.rs"
+  }
+]
+
+## Integration
+
+pr_open
+
+## Publication
+
+Publication: ready
+
+Merge: not_merged
+
+## Closeout
+
+not_started
+
+## Follow Ups
+
+- none

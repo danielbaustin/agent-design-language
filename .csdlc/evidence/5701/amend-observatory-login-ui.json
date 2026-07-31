@@ -1,0 +1,12 @@
+{
+  "issue": 5701,
+  "expected_generation": 19,
+  "expected_digest": "3f452b4a90b1bed01fb4d7f9405fd3ff02fc8f63f148a548ac3b06d6deef80b6",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "now_unix_seconds": 1785359500,
+  "add_protected_paths": [
+    "demos/v0.91.7/html-observatory/index.html"
+  ],
+  "reason": "The exact review correctly found that the public-read client lacked a usable operator login and authenticated write surface. The HTML entry point is required to add explicit login, logout, signed-command submission, and status controls."
+}

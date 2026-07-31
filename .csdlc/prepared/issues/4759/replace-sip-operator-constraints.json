@@ -1,0 +1,20 @@
+{
+  "issue": 4759,
+  "card": "sip",
+  "expected_generation": 3,
+  "expected_digest": "bf523124daa969b492ef11ced1a5bbac2fd133237de7703a0a0349637a091c15",
+  "claim_id": "claim-4759-v0918-activation-execution-20260731",
+  "actor": "codex:issue-4759-execution",
+  "reason": "Replace stale preparation-only operator constraints with the current execution/publication constraints.",
+  "operation": {
+    "operation": "replace_operator_constraints",
+    "values": [
+      "use typed C-SDLC v2 only",
+      "work only in /Volumes/FastWork/adl-wp-4759 on codex/4759-v0918-preparation",
+      "stay within the #4759 protected activation bridge and lifecycle paths",
+      "do not start v0.92 implementation or sibling WP-21 work",
+      "publish a ready PR with Closes #4759 after focused validation and exact-head review",
+      "do not merge or close out"
+    ]
+  }
+}

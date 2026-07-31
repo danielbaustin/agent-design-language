@@ -1,1 +1,1 @@
-cards=6 generation=4 acceptance=7 spp_coverage=complete vpp_coverage=complete
+cards=6 generation=9 acceptance=7 spp_coverage=complete vpp_coverage=complete shadow_parity=required ac6=complete

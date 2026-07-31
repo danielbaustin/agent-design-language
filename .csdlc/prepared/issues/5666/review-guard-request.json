@@ -1,0 +1,11 @@
+{
+  "scope": [
+    ".csdlc/evidence/5666",
+    ".csdlc/issues/5666",
+    ".csdlc/prepared/issues/5666",
+    "adl/tools/test_developer_throughput_fast_lane.sh",
+    "docs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md",
+    "docs/tooling/VALIDATION_PLATFORM_ROUTING.md"
+  ],
+  "evidence": null
+}

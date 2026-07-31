@@ -1,0 +1,264 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5502,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "934f17887e0891330b3a364da07a049b3a1cdb0d4855d4ab65eb1a06d32d2630",
+  "phase": "published",
+  "generation": 15,
+  "digest": "ba356d89dc7a223d4419e85e144ec1de59c8f1423a74839bec045210b6b90c71",
+  "claim": {
+    "id": "claim-5502-v0918-output-convergence-preparation",
+    "owner": "codex:5502-preparation-owner",
+    "generation": 15,
+    "acquired_unix_seconds": 1784662362,
+    "expires_unix_seconds": 1785267162,
+    "heartbeat_unix_seconds": 1784662362,
+    "branch": "codex/5502-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5502",
+      ".csdlc/issues/5502",
+      ".csdlc/locks/5502.lock",
+      ".csdlc/prepared/issues/5502",
+      ".csdlc/prepared/issues/5502/run-validation-lane.rb",
+      "adl-v2/Cargo.lock",
+      "adl-v2/Cargo.toml",
+      "adl-v2/crates/adl-workcell-convergence"
+    ],
+    "purpose": "Prepare and review #5502 output convergence and deterministic replanning contracts only; no product implementation until #5499 and #5498 are merged, typed closed_out, receipt-backed, claim-free, and ancestral"
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "gpt-5.5:codex-exec-review:019f8c5a-2717-7bc0-b649-33f7843dcd72",
+    "scope": [
+      "adl-v2/Cargo.toml",
+      "adl-v2/Cargo.lock",
+      "adl-v2/crates/adl-workcell-convergence",
+      ".csdlc/prepared/issues/5502/run-validation-lane.rb"
+    ],
+    "reviewed_revision": "git-blake3:9f89413d33327b8a523af20057c0fa0a5f0f4f60:e0442c8b5a955e39ceffb266340b623d8f33393e4377557137bf34e4a7463afc",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5502,
+    "pull_request": 5641,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5641",
+    "base": "main",
+    "head": "codex/5502-v0918-preparation",
+    "revision": "git-blake3:fc9cfa5040eb819bfb0dc6248c6b7a6ac3dcc97c:a40147c772c2218c305bdae8b569cd9b11e0507f296b9bf6989dd68d89452a42",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5502/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5502/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5502-preparation-owner",
+      "revision": "ffbac550ad54511cc08e7ed520ad15ae3e9f96e607656a7621163e364698ae09"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "1b92773c1f5f120a4642183d33583d721db88824a05715132161642304cdf278",
+      "rendered_digest": "c688b0b636c2a737baaaab17d4468f4bddad0e84238599ed939493cff1a1f42c",
+      "ast_digest": "0063913266be673762df419abab1a5e3d7fcee2680530657645d268539080489"
+    },
+    "stp": {
+      "values_digest": "5d8b802992b184038e5445ba89d944ea4af5b258626086316cbf4ea931fe8912",
+      "rendered_digest": "ca1e05b8c739d2af0169aec05adc48e0aff775d4be3fc362babcae9615f2f968",
+      "ast_digest": "fe8d6cc236ac9880a52a1a547255924b6e05b94f43351c243b39450e6abbd9ba"
+    },
+    "spp": {
+      "values_digest": "985f9ec3073c5dcc092d62728f192eb5d9e1f72e123fb3d3ee87caef6a843cbf",
+      "rendered_digest": "31a0096ecf934d0702ef0fda9711aab020f4f3b4a8c22f009a29fec14790fe4b",
+      "ast_digest": "dc57f81c1079cc14d2b5a3547fd00371cb633300660d27d4de0a96a57518575d"
+    },
+    "vpp": {
+      "values_digest": "0a769fca893e5bd98d8ba657f79feb53a13612964affeb9acabaf477dc73c3f1",
+      "rendered_digest": "f15fcc8661d7640603fa36c6e930197532af9c70e8068b6128ecc47893626e26",
+      "ast_digest": "e4294e3c88b48a9aab0dc276e717a9d83b91d365f0f6ed346a3513cf28107445"
+    },
+    "srp": {
+      "values_digest": "82d25980bab3b169c97cc25c39d7ee2cde7f21c2f82b4da2b8beb6688843a9ee",
+      "rendered_digest": "18e4c0408320380033d2ff62de5410b6acd1e41012473db167ff7ed37108ec62",
+      "ast_digest": "996139c5b142c1c3c3e02c0dd91a5e2f4fa402029dfe7ded02770e4abd6d4b90"
+    },
+    "sor": {
+      "values_digest": "1016b840bbbad5fc4bf46239a81f158bb11bfdb7c99ddd4d94ee2202afc8bd69",
+      "rendered_digest": "b5bded7fa00e28b6ea53d76cf2d393de73b888d0e6a3a95ab229dc4a9e466670",
+      "ast_digest": "d8f5b94c0ec10745b29e7f453cb8fb6835c92ffe19a5cbe5ece7162f172aefc3"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5502-preparation-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5502-preparation-owner",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+      "reason": "Bounded #5502 implementation and local validation are complete for exact-head review."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5502-preparation-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex-subagent:gpt-5.4-mini:019f862d-8b86-78d2-8911-59f626471d49",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5502-preparation-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5502-preparation-owner",
+      "reason": "align operator constraints with live merge plus ancestry readiness",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"Use installed typed C-SDLC v2 binaries and current-registry semantic card operations only\",\"Keep root main untouched; all tracked #5502 work stays in /Volumes/FastWork/adl-wp-5502\",\"Preparation only: no product implementation, PR, publication, merge, Runtime v2, AWS, raw gh, credentials, provider calls, or network execution\",\"Do not implement until #5499 and #5498 are live GitHub merged and their merge revisions are ancestors of the #5502 execution base; typed closeout, receipts, and claim release are audit-only signals and MUST NOT block execution readiness\",\"Use /Volumes/FastWork for generated validation output\",\"Do not add preparation review churn; the required review gate is immediately before PR publication\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5502-preparation-owner",
+      "reason": "align task dependencies with live merge plus ancestry readiness",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"parent WP-10A umbrella #5497\",\"issue-graph-to-live-task conductor #5499 live GitHub merged and merge revision ancestral to #5502 execution base\",\"bounded Codex task/context adapter #5498 live GitHub merged and merge revision ancestral to #5502 execution base\",\"typed closeout receipts and claim release for #5499 and #5498 remain audit-only signals and MUST NOT block execution readiness\",\"live proof #5501 consumes the completed #5502 decision contract\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5502-preparation-owner",
+      "reason": "remove preparation review churn from deliverables",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"all six issue-specific current-registry typed cards\",\"convergence/replanning design and Mermaid diagram\",\"exact preparation-only protected paths\",\"executable live merge/ancestry dependency, preparation, and future validation contracts\",\"COTS, LoC/module/test/time budgets and PVF classification\",\"preparation evidence without adding a second review before the required pre-PR review gate\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:5502-preparation-owner",
+      "reason": "align plan summary with live merge plus ancestry readiness",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Render and validate six cards; freeze the pure convergence boundary, exact #5499/#5498 live merge plus ancestry gates, preparation-only ownership, COTS, budgets, PVF, deterministic security invariants, and future validation; commit and push preparation only without adding preparation review churn.\",\"operation\":\"replan\",\"previous_value\":\"Render and validate six cards; freeze the pure convergence boundary, exact #5499/#5498 terminal gates, preparation-only ownership, COTS, budgets, PVF, deterministic security invariants, and future validation; obtain bounded review and fix findings; commit and push preparation only.\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:5502-preparation-owner",
+      "reason": "align plan steps with live merge plus ancestry readiness",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Complete six cards, design, diagram, dependency and preparation validators, exact protected paths, COTS, budgets, PVF, focused preparation validation, commit, and push without product work or preparation review churn\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Wait fail-closed for #5499 and #5498 live GitHub merged revisions to become ancestors of the #5502 execution base; keep typed closeout, receipts, and claim release audit-only\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Implement the pure convergence component and complete deterministic identity, overlap, partial-success, replan, blocked, and authority tests\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Run full proof, exact-revision pre-PR review, typed publication, serialized merge, post-merge validation, closeout, and #5501 handoff\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex:5502-preparation-owner",
+      "reason": "align stop conditions with live merge plus ancestry readiness",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"#5499 or #5498 lacks a live GitHub merged revision ancestral to the #5502 execution base\",\"an intended product path overlaps an active typed claim\",\"output identity, authority, or ordering cannot be proven deterministically\",\"implementation requires hidden mutation, a state store, scheduler, network, credentials, AWS, or Runtime v2\",\"a budget or required acceptance/PVF proof would be deferred\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex:5502-preparation-owner",
+      "reason": "align validation lanes with live merge plus ancestry readiness",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"preparation-contract\",\"proof_role\":\"Prove six-card, design, diagram, live dependency rule, scope, COTS, budget, PVF, and no-product-change preparation truth\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2500,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5502/validate-preparation.rb\"],\"parallel_group\":\"preparation\",\"defer_reason\":null},{\"lane\":\"dependency-live-merge-ancestry\",\"proof_role\":\"Fail closed until #5499 and #5498 have live GitHub merged revisions that are ancestors of the #5502 execution base; typed closeout, receipts, and claim release are audit-only\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5502/check-dependencies.rb\"],\"parallel_group\":\"execution-gate\",\"defer_reason\":\"Run when implementation is requested; it must fail closed until both dependencies are live merged and ancestral\"},{\"lane\":\"convergence-contract\",\"proof_role\":\"Run offline deterministic identity, overlap, ordering, partial-success, replan, blocked, and non-authority tests\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":120,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5502/run-validation-lane.rb\",\"convergence-contract\"],\"parallel_group\":\"implementation\",\"defer_reason\":\"Mandatory after live merged ancestral dependencies and implementation; not selected during preparation\"},{\"lane\":\"post-merge-exact\",\"proof_role\":\"Re-run dependency ancestry, deterministic contracts, budgets, exact revision identity, CI, and #5501 handoff after authorized merge\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5502/run-validation-lane.rb\",\"post-merge-exact\"],\"parallel_group\":\"post-merge\",\"defer_reason\":\"Mandatory after authorized merge and before closeout\"}]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 9,
+      "actor": "codex:5502-preparation-owner",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 12,
+      "generation": 10,
+      "actor": "codex:5502-preparation-owner",
+      "reason": "align repo inputs with audit-only closeout receipts",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"AGENTS.md\",\"GitHub issue #5502 and its dependency comment\",\"docs/templates/prompts/current.json\",\"docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml\",\"docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md\",\"docs/milestones/v0.91.8/WBS_v0.91.8.md\",\"docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md\",\"future #5499 and #5498 public contracts plus audit-only closeout receipts when present\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+      "reason": "Dependencies #5499 and #5498 are live merged and ancestral; add the isolated #5502 convergence implementation paths to the active claim.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/prepared/issues/5502/run-validation-lane.rb\",\"adl-v2/Cargo.lock\",\"adl-v2/Cargo.toml\",\"adl-v2/crates/adl-workcell-convergence\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+      "reason": "Record the bounded output convergence and deterministic replanning implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented the isolated ADL v2 workcell convergence crate after live dependency ancestry was proven.\",\"changes\":[\"Added adl-workcell-convergence as a pure Rust workspace crate with no runtime, network, filesystem, GitHub, task, merge, or lifecycle mutation client\",\"Implemented converge(ConvergenceInput) -> Result<ConvergenceEnvelope, ConvergenceError> with content-derived BLAKE3 decision identity\",\"Emits deterministic Integrate, Replan, or Blocked decisions plus a read-only projection of partial successes, residual blockers, and remaining work\",\"Validates exact conductor assignment binding, output identity, source revision, claim, branch, worktree, path scope, declared artifacts, validation refs, and review refs\",\"Rejects malformed revisions, traversal or absolute paths, secret-bearing fields, overlapping active claims, duplicate conflicting outputs, hidden mutation authority, missing artifacts, and out-of-scope artifacts\",\"Updated the #5502 validation lane to run the implemented offline convergence contract and line-budget proof\"],\"artifacts\":[\"adl-v2/Cargo.toml\",\"adl-v2/Cargo.lock\",\"adl-v2/crates/adl-workcell-convergence/Cargo.toml\",\"adl-v2/crates/adl-workcell-convergence/src/hygiene.rs\",\"adl-v2/crates/adl-workcell-convergence/src/lib.rs\",\"adl-v2/crates/adl-workcell-convergence/src/model.rs\",\"adl-v2/crates/adl-workcell-convergence/tests/convergence.rs\",\".csdlc/prepared/issues/5502/run-validation-lane.rb\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+      "reason": "Record the local #5502 implementation validation bundle.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby\",\".csdlc/prepared/issues/5502/run-validation-lane.rb\",\"convergence-contract\"],\"purpose\":\"Prove live dependency ancestry, deterministic convergence/replan/blocked contracts, line budgets, formatting, strict Clippy, and diff hygiene for the isolated #5502 crate.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5502/implementation-validation/\"}}"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+      "reason": "Bounded #5502 implementation and local validation are complete for exact-head review.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 14,
+      "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 15,
+      "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

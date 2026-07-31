@@ -1,0 +1,21 @@
+{
+  "actor": "codex:5717-execution",
+  "card": "sor",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "expected_digest": "dcb1ba8f41277cd7fe3888e382aa9a911567add89df9b51f30909c791447d66d",
+  "expected_generation": 12,
+  "issue": 5717,
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "python3",
+        "- <<'PY' ... podcast launch structural validation with review-fix assertions ... PY"
+      ],
+      "purpose": "Revalidate the podcast launch-prep packet after pre-PR review fixes: Friday planned cadence, human guest invitation, directory availability as after-approval truth, smoke sample separated from proposed episodes, RSS trailer metadata, route files, feed enclosure length, contact button, and local asset references.",
+      "outcome": "passed",
+      "evidence_ref": "commentary: podcast launch structural validation PASS; HTTP deploy-shape smoke returned 200 for /podcast/, /_preview/podcast/, feed.xml, and WAV audio; git diff --check PASS"
+    }
+  },
+  "reason": "Record focused validation after fixing bounded pre-PR review findings."
+}

@@ -1,0 +1,143 @@
+{
+  "issue": 5500,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5500/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5500/diagram.mmd",
+  "design_reviewer": "",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5500-v0918-wp10a-dashboard-preparation",
+    "owner": "codex:issue-5500-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1784670000,
+    "expires_unix_seconds": 1785274800,
+    "heartbeat_unix_seconds": 1784670000,
+    "branch": "codex/5500-v0918-wp10a-dashboard",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5500",
+      ".csdlc/locks/5500.lock",
+      ".csdlc/prepared/issues/5500"
+    ],
+    "purpose": "Prepare and review the read-only WP-10A operator dashboard only; product implementation remains blocked on #5498 and final WP-09 gate #5349"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-10A][multi-agent][dashboard] Restore live workcell operator view",
+    "slug": "v0-91-8-wp-10a-read-only-workcell-dashboard",
+    "version": "v0.91.8",
+    "goal": "Prepare the existing milestone dashboard to become a secure read-only operator projection for distributed C-SDLC workcell and Runtime v3 Observatory state without acquiring mutation or lifecycle authority.",
+    "required_outcome": "After #5498 and final WP-09 gate #5349 are live-merged on origin/main and ancestral to the #5500 execution base, one mobile-capable dashboard deterministically presents typed retained workcell state plus bounded live Runtime v3 observations with explicit provenance, freshness, and authority labels.",
+    "declared_scope": [
+      "extend docs/tooling/milestone-dashboard instead of creating a new framework",
+      "typed generated workcell snapshot normalization and rendering",
+      "bounded authenticated Runtime v3 Observatory composition",
+      "mobile layout, deterministic fixtures, security, freshness, and non-authority proof"
+    ],
+    "authority_boundary": [
+      "C-SDLC v2 records and owner binaries remain lifecycle and claim authority",
+      "GitHub remains PR, check, and review authority",
+      "Runtime v3 remains runtime observation authority",
+      "#5500 is a read-only projection and never mutates tasks, issues, claims, branches, PRs, reviews, merges, or closeout",
+      "#5502 exclusively owns output convergence and deterministic replanning"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries and semantic card operations only",
+      "Keep root main clean; all tracked #5500 work stays in its dedicated issue worktree",
+      "Do not use raw gh, AWS, credentials, provider calls, Runtime v2, product implementation, publication, or PR creation during preparation",
+      "Do not implement until #5498 and #5349 are live-merged on origin/main and ancestral to the execution base; typed closeout receipts are audit evidence only",
+      "Use /Volumes/FastWork for build and validation output",
+      "Run bounded preparation review, fix every actionable finding, then commit and push preparation only"
+    ],
+    "task_boundary": "Prepare all dashboard contracts now; do not claim or edit product paths until #5498 and final WP-09 gate #5349 satisfy the exact terminal dependency predicate.",
+    "deliverables": [
+      "six issue-specific typed C-SDLC v2 cards",
+      "reviewed dashboard design and architecture diagram",
+      "preparation-only protected-path claim disjoint from #5502 and other workcell children",
+      "executable dependency, preparation, and future dashboard validation contracts",
+      "COTS, LoC/test/time budgets, PVF lanes, security and non-authority boundaries",
+      "one bounded implementation review immediately before PR; no preparation review churn"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Extend docs/tooling/milestone-dashboard and compose with the existing Runtime v3 Observatory rather than creating another dashboard framework or backend",
+      "AC-2: Render issue/task ownership, claim heartbeat, branch/worktree, lifecycle phase, dependencies, protected paths, PR/check/review state, outputs, blockers, and agent topology from typed bounded inputs",
+      "AC-3: Mark every value live, retained, stale, unknown, blocked, or non-authoritative with source, revision or timestamp, and freshness; missing evidence never becomes green",
+      "AC-4: Remain strictly read-only with zero mutation requests, no hidden authority, no private transcript or secret retention, and authenticated HTTPS-only live Runtime access",
+      "AC-5: Treat all input as untrusted and prove schema/version checks, text-safe rendering, URL/origin restrictions, payload/count limits, timeouts/backoff, and stale downgrade",
+      "AC-6: Work at mobile-sized layouts and pass deterministic retained/live/partial/stale/security fixtures without network access",
+      "AC-7: Stay within 2,000 implementation LoC, 2,000 test/fixture LoC, fewer than 100 focused cases, a 120-second focused dashboard validation cap, a 3,600-second complete typed orchestration envelope, and zero new direct dependencies by default"
+    ],
+    "dependencies": [
+      "parent WP-10A umbrella #5497",
+      "bounded Codex task and context-handoff adapter #5498 live-merged on origin/main and ancestral to the #5500 execution base",
+      "final provider and governed-tool interface freeze WP-09 #5349 live-merged on origin/main and ancestral to the #5500 execution base",
+      "typed closeout receipts and retained lifecycle records for dependencies are audit evidence only, not readiness blockers",
+      "existing Runtime v3 Observatory feed as a read-only observation input"
+    ],
+    "repo_inputs": [
+      "AGENTS.md",
+      "docs/templates/prompts/current.json",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+      "docs/tooling/milestone-dashboard/README.md",
+      "demos/v0.91.7/html-observatory/README.md",
+      "issue #5500 and parent #5497"
+    ],
+    "non_goals": [
+      "dashboard implementation during preparation",
+      "task control, output convergence, replanning, issue or GitHub mutation, merge, publication, or closeout",
+      "a new dashboard framework, backend service, sidecar, or source of truth",
+      "Runtime v2 edits, AWS use, provider calls, unauthenticated HTTP, hard-coded IPs, or credential retention",
+      "owning #5502 or another workcell child's product paths"
+    ],
+    "plan_summary": "Prepare and independently review a small read-only extension of the existing milestone dashboard, hold product scope behind exact #5498/#5349 terminal gates, then later implement deterministic secure fixture-backed projection and Runtime Observatory composition.",
+    "steps": [
+      {"id":"S1","action":"Render and validate all six cards, design, diagram, dependencies, protected paths, COTS, budgets, security boundaries, and PVF lanes without adding preparation review churn","status":"pending","acceptance_ids":["AC-1","AC-3","AC-4","AC-7"]},
+      {"id":"S2","action":"Wait fail-closed for #5498 and final gate #5349 to be live-merged on origin/main and ancestral to the #5500 execution base; retain typed closeout receipts as audit evidence only","status":"pending","acceptance_ids":["AC-1","AC-4"]},
+      {"id":"S3","action":"Extend the existing dashboard with typed snapshot and bounded live observation adapters, safe deterministic rendering, mobile layout, and zero mutation capability","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7"]},
+      {"id":"S4","action":"Run focused and full proof, exact-revision implementation review immediately before PR, typed publication, serialized merge, post-merge validation, and closeout","status":"pending","acceptance_ids":["AC-3","AC-4","AC-5","AC-6","AC-7"]}
+    ],
+    "risks": [
+      "the view could accidentally become a second source of truth or mutation surface",
+      "stale retained or partial live observations could be displayed as current",
+      "untrusted text or URLs could create XSS, credential, or origin-boundary defects",
+      "runtime observations could overwrite lifecycle or GitHub authority",
+      "dashboard scope could overlap #5502 convergence or another child",
+      "a small static surface could regrow into a backend framework"
+    ],
+    "invariants": [
+      "no tracked work on main",
+      "no product implementation before #5498 and #5349 terminal gates",
+      "preparation claim protects only issue-local lifecycle paths",
+      "future product paths are docs/tooling/milestone-dashboard and adl/tools/test_milestone_dashboard.sh only until reviewed amendment",
+      "no Runtime v2, AWS, raw gh, provider, unauthenticated HTTP, hard-coded IP, or secret retention",
+      "zero mutation or autonomous merge/closeout authority",
+      "deterministic safe rendering with explicit provenance and freshness"
+    ],
+    "stop_conditions": [
+      "#5498 or #5349 is not live-merged on origin/main or its merged revision is not ancestral to the #5500 execution base",
+      "a future dashboard path overlaps an active typed claim including #5502 or another workcell child",
+      "implementation requires mutation, a second state store, a backend, or lifecycle authority",
+      "live access cannot remain authenticated HTTPS and configuration-driven",
+      "the declared LoC, test, time, dependency, or security budget is exceeded without reviewed typed exception"
+    ],
+    "review_prompts": [
+      "Does the design extend the existing dashboard and Observatory contracts without creating a second framework or authority?",
+      "Are retained, live, stale, unknown, blocked, and non-authoritative states complete and fail closed?",
+      "Can untrusted snapshot or Runtime values cause XSS, unsafe navigation, credential exposure, unbounded work, or authority confusion?",
+      "Are future paths disjoint from #5502 and every other WP-10A child?",
+      "Are COTS choices, zero-new-dependency posture, budgets, and deterministic fixtures small and executable?",
+      "Does preparation preserve exact #5498 and #5349 terminal gates?"
+    ],
+    "planning_profile": "medium",
+    "validation_lanes": [
+      {"lane":"preparation-contract","proof_role":"Prove six-card, design, diagram, dependency, scope, COTS, budget, security, and no-product-change preparation truth","deterministic":true,"resource_profile":"small","parallel_group":"preparation-local","budget_seconds":120,"budget_tokens":2000,"argv":["ruby",".csdlc/prepared/issues/5500/validate-preparation.rb"],"acceptance_ids":["AC-1","AC-3","AC-4","AC-7"]},
+      {"lane":"dependency-gate","proof_role":"Fail closed until #5498 and final WP-09 gate #5349 are live-merged on origin/main and ancestral to the #5500 execution base; typed closeout receipts are audit evidence only","deterministic":true,"resource_profile":"small","parallel_group":"preparation-local","budget_seconds":60,"budget_tokens":1000,"argv":["ruby",".csdlc/prepared/issues/5500/check-dependencies.rb"],"acceptance_ids":["AC-1","AC-4"]},
+      {"lane":"dashboard-contract","proof_role":"Run offline deterministic dashboard fixture, security, mobile-layout, syntax, and non-authority tests after dependency admission","deterministic":true,"resource_profile":"small","parallel_group":"dashboard-local","budget_seconds":120,"budget_tokens":3000,"argv":["bash",".csdlc/prepared/issues/5500/validate-dashboard.sh"],"acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7"],"defer_reason":"Preparation only: do not select until #5498 and #5349 are live-merged on origin/main and ancestral to the #5500 execution base"},
+      {"lane":"diff-hygiene","proof_role":"Verify exact issue-branch preparation patch hygiene","deterministic":true,"resource_profile":"small","parallel_group":"preparation-local","budget_seconds":60,"budget_tokens":1000,"argv":["bash",".csdlc/prepared/issues/5500/check-preparation-diff.sh"],"acceptance_ids":["AC-7"]}
+    ],
+    "failure_policy": "Fail closed on absent or stale terminal dependencies, overlapping paths, malformed or oversized input, unsupported schema, unsafe URL/origin, freshness ambiguity, credential exposure, mutation capability, authority confusion, nondeterministic output, or budget breach; blocked preparation never grants product authority.",
+    "review_scope": ".csdlc/issues/5500\n.csdlc/locks/5500.lock\n.csdlc/prepared/issues/5500\n.csdlc/evidence/5500\ndocs/tooling/milestone-dashboard\nadl/tools/test_milestone_dashboard.sh"
+  }
+}

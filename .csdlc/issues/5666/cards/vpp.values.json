@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5666,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][tools][ci] Add proportional fast lane for small fixes",
+    "slug": "v0-91-8-tools-ci-throughput-fast-lane",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "throughput-fast-lane-contract",
+          "proof_role": "Run focused shell contract test and diff hygiene for policy links and required invariants.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 500,
+          "argv": [
+            "bash",
+            "adl/tools/test_developer_throughput_fast_lane.sh"
+          ],
+          "parallel_group": "docs-policy",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on missing policy, broken links, absent FastWork/no-local-fallback language, broad CI/runtime scope, or unresolved review findings.",
+      "design_ref": ".csdlc/prepared/issues/5666/design.md",
+      "design_digest": "8e91e0e05de23a42793864d2157b414bb57513677bdde465f6d3cb85a375a9c4",
+      "diagram_ref": ".csdlc/prepared/issues/5666/diagram.mmd",
+      "diagram_digest": "452333c61b11f5e59c24daf708d4637f640cd7f5e8204ffa1d4e2d1447fefc4e"
+    }
+  }
+}

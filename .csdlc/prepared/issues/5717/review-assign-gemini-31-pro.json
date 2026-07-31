@@ -1,0 +1,21 @@
+{
+  "issue": 5717,
+  "expected_generation": 1,
+  "expected_digest": "04e89b0efdcbe1bf2fbb2055f8fa5e272df1653e709c5050cec12069acb5954c",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "reviewer": "gemini-3.1-pro-preview",
+  "assigned_by": "codex:5717-execution",
+  "scope": [
+    ".csdlc/issues/5715",
+    ".csdlc/issues/5717",
+    ".csdlc/prepared/issues/5717",
+    ".csdlc/evidence/5717",
+    "demos/podcast/studio-reference/REFERENCE_DIGESTS.txt",
+    "demos/podcast/studio-reference/podcast-studio.html",
+    "demos/podcast/studio-reference/uploads/agent-logic-logo.svg",
+    "demos/podcast/studio/REFERENCE_DIGESTS.txt",
+    "demos/podcast/studio/podcast-studio.html",
+    "demos/podcast/studio/reference.sha256",
+    "demos/podcast/studio/uploads/agent-logic-logo.svg"
+  ]
+}

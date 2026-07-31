@@ -1,0 +1,16 @@
+{
+  "issue": 5653,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "8ba159b692004027e8ba90c32198f5b826c5b2fbb4cec30a96b473df3e912ee2",
+  "claim_id": "claim-5653-readme-refresh",
+  "actor": "codex:5653-execution",
+  "reason": "Record README status and homepage implementation",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Updated the root README milestone badge and status to v0.91.8 release-tail truth, added the ADL homepage link, and documented that later milestones are not hosted releases.",
+    "changes": ["README.md"],
+    "artifacts": [".csdlc/evidence/5653/readme-focused.txt"]
+  },
+  "fail_after_backup": false
+}

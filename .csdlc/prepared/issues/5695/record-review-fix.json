@@ -1,0 +1,15 @@
+{
+  "issue": 5695,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "c44fa5eb6b5fb03460f84380fe07054aa7f1132f4f22504eb706fcaae345e203",
+  "claim_id": "claim-5695-pr-state-mergeability",
+  "actor": "codex:issue-5695-pr-state-mergeability",
+  "reason": "Record the exact-head review repair before re-review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Preserve HasHooks as the clean merge target accepted by csdlc-merge.",
+    "changes": ["Normalize HasHooks to clean to preserve merge-gate compatibility", "Add a regression test proving the normalized HasHooks packet is accepted by validate_remote"],
+    "artifacts": ["csdlc-v2/src/github.rs", "csdlc-v2/src/merge.rs", ".csdlc/issues/5695/cards/sor.md"]
+  }
+}

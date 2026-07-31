@@ -1,0 +1,29 @@
+{
+  "issue": 4759,
+  "expected_generation": 0,
+  "expected_digest": "dd74bf2911930d7ec7186061ecec6ed2c91beedbcb4e272754386d93cb650e5b",
+  "now_unix_seconds": 1785531172,
+  "actor": "codex:issue-4759-execution",
+  "reason": "Reacquire the released preparation issue for the operator-authorized #4759 activation-map implementation run.",
+  "replacement": {
+    "id": "claim-4759-v0918-activation-execution-20260731",
+    "owner": "codex:issue-4759-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1785531172,
+    "expires_unix_seconds": 1786135972,
+    "heartbeat_unix_seconds": 1785531172,
+    "branch": "codex/4759-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4759",
+      ".csdlc/locks/4759.lock",
+      ".csdlc/prepared/issues/4759",
+      ".csdlc/evidence/4759",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+    ],
+    "purpose": "Implement and publish #4759 by converting the v0.92 activation map into an exact v0.91.8 consumption/handoff artifact backed by accepted product evidence; do not start v0.92 implementation or sibling WP-21 work."
+  }
+}

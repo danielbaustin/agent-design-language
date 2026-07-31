@@ -1,0 +1,106 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5500,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10A][multi-agent][dashboard] Restore live workcell operator view",
+    "slug": "v0-91-8-wp-10a-read-only-workcell-dashboard",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "preparation-contract",
+          "proof_role": "Prove six-card, design, diagram, dependency, scope, COTS, budget, security, and no-product-change preparation truth",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-4",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 2000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5500/validate-preparation.rb"
+          ],
+          "parallel_group": "preparation-local",
+          "defer_reason": null
+        },
+        {
+          "lane": "dependency-gate",
+          "proof_role": "Fail closed until #5498 and final WP-09 gate #5349 are live-merged on origin/main and ancestral to the #5500 execution base; typed closeout receipts are audit evidence only",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5500/check-dependencies.rb"
+          ],
+          "parallel_group": "preparation-local",
+          "defer_reason": null
+        },
+        {
+          "lane": "dashboard-contract",
+          "proof_role": "Run offline deterministic dashboard fixture, security, mobile-layout, syntax, and non-authority tests after dependency admission",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 3000,
+          "argv": [
+            "bash",
+            ".csdlc/prepared/issues/5500/validate-dashboard.sh"
+          ],
+          "parallel_group": "dashboard-local",
+          "defer_reason": "Preparation only: do not select until #5498 and #5349 are live-merged on origin/main and ancestral to the #5500 execution base"
+        },
+        {
+          "lane": "diff-hygiene",
+          "proof_role": "Verify exact issue-branch preparation patch hygiene",
+          "acceptance_ids": [
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1000,
+          "argv": [
+            "bash",
+            ".csdlc/prepared/issues/5500/check-preparation-diff.sh"
+          ],
+          "parallel_group": "preparation-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on absent or stale terminal dependencies, overlapping paths, malformed or oversized input, unsupported schema, unsafe URL/origin, freshness ambiguity, credential exposure, mutation capability, authority confusion, nondeterministic output, or budget breach; blocked preparation never grants product authority.",
+      "design_ref": ".csdlc/prepared/issues/5500/design.md",
+      "design_digest": "1fd72ec7df400be275671013f2998d9b199913c3977b375737a5557c39a62333",
+      "diagram_ref": ".csdlc/prepared/issues/5500/diagram.mmd",
+      "diagram_digest": "2e9d128f5fc0f656a4971b46d7064e0a95ff82f5a21b5750f885ded47cb9e58e"
+    }
+  }
+}

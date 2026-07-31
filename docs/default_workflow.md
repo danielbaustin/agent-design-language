@@ -9,7 +9,10 @@ binaries and operator skills under `csdlc-v2/`:
 3. `csdlc-bind` claims the issue and creates the bound worktree.
 4. Implement in that worktree, then run the focused Rust/PVF validation lane.
 5. `csdlc-review` records current review truth before `csdlc-publish`.
-6. `csdlc-closeout` records integration and terminal evidence.
+6. GitHub issue operations use `csdlc-github-issue`; PR observation uses
+   `csdlc-github-pr` or `csdlc-pr-state`; exact-head merge remains
+   `csdlc-merge`.
+7. `csdlc-closeout` records integration and terminal evidence.
 
 The former workflow is preserved only as historical evidence in
 `docs/legacy/DEFAULT_WORKFLOW_V1.md`. It is not an operational route.

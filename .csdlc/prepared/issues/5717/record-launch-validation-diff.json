@@ -1,0 +1,22 @@
+{
+  "actor": "codex:5717-execution",
+  "card": "sor",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "expected_digest": "4397dd1e018621cb8a7a3ad79cff65b53e18fc9c306b9819d1531a0afd4b7d29",
+  "expected_generation": 8,
+  "issue": 5717,
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "purpose": "Verify launch-prep edits and typed lifecycle projections have no whitespace errors.",
+      "outcome": "passed",
+      "evidence_ref": "command output: no output, exit 0"
+    }
+  },
+  "reason": "Record diff hygiene validation before exact-head review."
+}

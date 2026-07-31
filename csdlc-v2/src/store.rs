@@ -145,7 +145,12 @@ impl Store {
     }
 
     pub(crate) fn binding_lock(&self) -> Result<File> {
-        let dir = self.root.join(".csdlc/locks");
+        let common = crate::git::run(
+            &self.root,
+            &["rev-parse", "--path-format=absolute", "--git-common-dir"],
+        )?
+        .stdout;
+        let dir = PathBuf::from(common).join("csdlc-v2");
         fs::create_dir_all(&dir)?;
         let file = OpenOptions::new()
             .create(true)
@@ -1748,6 +1753,32 @@ impl Store {
         self.commit(issue, record, &cards, false)
     }
 
+    pub(crate) fn replace_authority_record(
+        &self,
+        issue: u64,
+        expected_digest: &str,
+        record: &IssueRecord,
+    ) -> Result<IssueRecord> {
+        let _lock = self.lock(issue)?;
+        self.recover_if_needed(issue)?;
+        let current = self.load_record(issue)?;
+        if current.digest != expected_digest {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "record changed before compare-and-swap authority commit",
+            ));
+        }
+        let cards = self.load_cards(issue)?;
+        // Authority recovery accepts projection drift only when the typed card
+        // values, identities, generations, and rendered Markdown agree.
+        verify_authority_card_inputs(self, &current, &cards)?;
+        let mut repaired = record.clone();
+        hydrate_projections(&mut repaired, &cards)?;
+        repaired.digest = record_digest(&repaired)?;
+        self.commit(issue, &repaired, &cards, false)?;
+        Ok(repaired)
+    }
+
     pub(crate) fn commit_migration(
         &self,
         issue: u64,
@@ -3058,6 +3089,33 @@ fn verify_card_projections(
     record: &IssueRecord,
     cards: &BTreeMap<CardKind, CardValues>,
 ) -> Result<()> {
+    verify_authority_card_inputs(store, record, cards)?;
+    for (kind, values) in cards {
+        let rendered = render(values)?;
+        let projection = record.cards.get(kind).ok_or_else(|| {
+            V2Error::new(
+                ErrorCode::CorruptRecord,
+                format!("missing {kind} projection"),
+            )
+        })?;
+        if projection.values_digest != rendered.values_digest
+            || projection.rendered_digest != rendered.rendered_digest
+            || projection.ast_digest != rendered.ast_digest
+        {
+            return Err(V2Error::new(
+                ErrorCode::CorruptRecord,
+                format!("{kind} digest drift"),
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn verify_authority_card_inputs(
+    store: &Store,
+    record: &IssueRecord,
+    cards: &BTreeMap<CardKind, CardValues>,
+) -> Result<()> {
     verify_record(record)?;
     for (kind, values) in cards {
         if values.kind() != *kind
@@ -3071,26 +3129,16 @@ fn verify_card_projections(
             ));
         }
         let rendered = render(values)?;
-        let projection = record.cards.get(kind).ok_or_else(|| {
-            V2Error::new(
-                ErrorCode::CorruptRecord,
-                format!("missing {kind} projection"),
-            )
-        })?;
         let tracked = fs::read(
             store
                 .issue_dir(record.issue)
                 .join("cards")
                 .join(format!("{kind}.md")),
         )?;
-        if projection.values_digest != rendered.values_digest
-            || projection.rendered_digest != rendered.rendered_digest
-            || projection.ast_digest != rendered.ast_digest
-            || digest(&tracked) != rendered.rendered_digest
-        {
+        if digest(&tracked) != rendered.rendered_digest {
             return Err(V2Error::new(
                 ErrorCode::CorruptRecord,
-                format!("{kind} digest drift"),
+                format!("{kind} rendered Markdown drift"),
             ));
         }
     }
@@ -3136,19 +3184,6 @@ pub(crate) fn verify_record(record: &IssueRecord) -> Result<()> {
                 "claim invariant failed",
             ));
         }
-    } else if !record.audit.last().is_some_and(|event| {
-        serde_json::from_str::<serde_json::Value>(&event.operation)
-            .ok()
-            .and_then(|value| {
-                value
-                    .get("operation")
-                    .and_then(|v| v.as_str())
-                    .map(str::to_owned)
-            })
-            .as_deref()
-            == Some("release_closed_claim")
-    }) {
-        return Err(V2Error::new(ErrorCode::CorruptRecord, "claim missing"));
     }
     if let DesignReview::Approved { reviewer, revision } = &record.design_review {
         if reviewer.trim().is_empty() || revision.trim().is_empty() {

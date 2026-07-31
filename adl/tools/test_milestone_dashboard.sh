@@ -30,6 +30,9 @@ required_terms=(
   "unknown/stale"
   "snapshot freshness"
   "PR and check state"
+  "Workcell operator view"
+  "Runtime Observatory"
+  "retained/live/unknown/blocked"
 )
 
 for term in "${required_terms[@]}"; do
@@ -75,6 +78,13 @@ required_ids=(
   "validation-list"
   "release-blockers"
   "deferred-findings"
+  "workcell-status"
+  "workcell-summary"
+  "workcell-dependencies"
+  "workcell-agents"
+  "workcell-authority"
+  "runtime-live-status"
+  "runtime-observatory-list"
 )
 
 for id in "${required_ids[@]}"; do
@@ -82,7 +92,7 @@ for id in "${required_ids[@]}"; do
     echo "dashboard HTML is missing required id: $id" >&2
     exit 1
   fi
-  if ! grep -Fq "byId(\"$id\")" "$JS"; then
+  if ! grep -Fq "byId(\"$id\")" "$JS" && ! grep -Fq "\"$id\"" "$JS"; then
     echo "dashboard JS does not render required id: $id" >&2
     exit 1
   fi
@@ -128,6 +138,11 @@ function elementFor(id) {
 
 const context = {
   window: {},
+  URL,
+  URLSearchParams,
+  fetch() {
+    throw new Error("dashboard should not fetch Runtime Observatory unless live mode is explicitly requested");
+  },
   document: {
     getElementById: elementFor
   },
@@ -139,10 +154,59 @@ const context = {
 vm.runInNewContext(fs.readFileSync(dataPath, "utf8"), context, { filename: dataPath });
 vm.runInNewContext(fs.readFileSync(jsPath, "utf8"), context, { filename: jsPath });
 
-for (const id of ["signal-grid", "freshness-list", "pr-check-list", "wp-list", "review-tail-list", "authority-list", "validation-list", "release-blockers", "deferred-findings"]) {
+for (const id of ["signal-grid", "freshness-list", "pr-check-list", "wp-list", "review-tail-list", "authority-list", "validation-list", "release-blockers", "deferred-findings", "workcell-summary", "workcell-dependencies", "workcell-agents", "workcell-authority", "runtime-live-status", "runtime-observatory-list"]) {
   const element = elements.get(id);
-  if (!element || !element.innerHTML.trim()) {
+  if (!element || !(String(element.innerHTML) || String(element.textContent)).trim()) {
     throw new Error(`dashboard renderer did not populate ${id}`);
+  }
+}
+
+const workcell = context.window.milestoneData.workcellOperator;
+if (!workcell || workcell.schema !== "adl.workcell.operator.snapshot.v1") {
+  throw new Error("workcell operator snapshot schema is missing or unsupported");
+}
+for (const dependency of workcell.dependencies) {
+  if (!["live", "retained", "stale", "unknown", "blocked", "non-authoritative"].includes(dependency.state)) {
+    throw new Error(`unsupported workcell dependency state: ${dependency.state}`);
+  }
+}
+const httpConfig = context.window.dashboardInternals.runtimeConfigFromSearch("?runtime=v3&runtimeApiBase=http://runtime.example.test&live=1", workcell);
+if (httpConfig.state !== "blocked") {
+  throw new Error("Runtime Observatory adapter did not reject non-HTTPS origins");
+}
+const noOriginConfig = context.window.dashboardInternals.runtimeConfigFromSearch("?runtime=v3&runtimeApiBase=https://runtime.example.test&live=1", workcell);
+if (noOriginConfig.state !== "blocked") {
+  throw new Error("Runtime Observatory adapter did not reject an empty origin allowlist");
+}
+const allowlistedWorkcell = {
+  ...workcell,
+  runtime: {
+    ...workcell.runtime,
+    allowedOrigins: ["https://runtime.example.test"]
+  }
+};
+const httpsConfig = context.window.dashboardInternals.runtimeConfigFromSearch("?runtime=v3&runtimeApiBase=https://runtime.example.test&live=1", allowlistedWorkcell);
+if (httpsConfig.state !== "live" || !httpsConfig.feedUrl.endsWith("/v1/observatory")) {
+  throw new Error("Runtime Observatory adapter did not produce the read-only feed URL");
+}
+
+workcell.agents = [
+  {
+    label: "<img src=x onerror=alert(1)>",
+    role: "<script>alert(1)</script>",
+    state: "live",
+    source: "fixture",
+    freshness: "fixture"
+  }
+];
+context.window.dashboardInternals.renderWorkcellOperator();
+const renderedAgents = elements.get("workcell-agents").innerHTML;
+if (renderedAgents.includes("<img") || renderedAgents.includes("<script")) {
+  throw new Error("workcell renderer inserted untrusted HTML");
+}
+for (const element of elements.values()) {
+  if (String(element.innerHTML).includes("operator-local-token") || String(element.textContent).includes("operator-local-token")) {
+    throw new Error("dashboard rendered a Runtime Observatory token");
   }
 }
 NODE

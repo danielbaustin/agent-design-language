@@ -1,0 +1,19 @@
+{
+  "issue": 4761,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "50d4da9f9e41fa882e40618b58c8dfbbf6ad901a13b1deb368ead7b17a83954e",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Record passing diff hygiene proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["git", "diff", "--check"],
+      "purpose": "Reject whitespace errors in the #4761 capability-envelope artifacts, lifecycle records, and consumer documents.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/4761/capability-envelope/proof-logs/diff-hygiene.log"
+    }
+  },
+  "fail_after_backup": false
+}

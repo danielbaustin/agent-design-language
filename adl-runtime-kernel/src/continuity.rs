@@ -10,6 +10,7 @@ use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};
 use futures::{stream, StreamExt, TryStreamExt};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
+use tokio::io::AsyncWriteExt;
 use tracing::Instrument;
 
 use crate::{KernelError, KernelExit, KernelHandle};
@@ -425,18 +426,52 @@ fn validate_snapshot_file(file: &str) -> Result<(), ContinuityError> {
 }
 
 async fn write_synced(path: &Path, bytes: &[u8]) -> Result<(), ContinuityError> {
-    tokio::fs::write(path, bytes).await?;
-    let file = tokio::fs::File::open(path).await?;
+    let mut file = tokio::fs::OpenOptions::new()
+        .create(true)
+        .truncate(true)
+        .write(true)
+        .open(path)
+        .await?;
+    file.write_all(bytes).await?;
     file.sync_all().await?;
     Ok(())
 }
 
 async fn sync_directory(path: &Path) -> Result<(), ContinuityError> {
     let path = path.to_owned();
-    tokio::task::spawn_blocking(move || std::fs::File::open(path)?.sync_all())
+    tokio::task::spawn_blocking(move || sync_directory_blocking(&path))
         .await
         .map_err(|error| ContinuityError::Io(error.to_string()))??;
     Ok(())
+}
+
+#[cfg(not(windows))]
+fn sync_directory_blocking(path: &Path) -> std::io::Result<()> {
+    std::fs::File::open(path)?.sync_all()
+}
+
+#[cfg(windows)]
+fn sync_directory_blocking(path: &Path) -> std::io::Result<()> {
+    use std::os::windows::fs::OpenOptionsExt;
+
+    const FILE_FLAG_BACKUP_SEMANTICS: u32 = 0x0200_0000;
+    let directory = std::fs::OpenOptions::new()
+        .read(true)
+        .custom_flags(FILE_FLAG_BACKUP_SEMANTICS)
+        .open(path)?;
+    match directory.sync_all() {
+        Ok(()) => Ok(()),
+        Err(error)
+            if error.kind() == std::io::ErrorKind::PermissionDenied
+                || error.raw_os_error() == Some(5) =>
+        {
+            // Some native Windows policies permit opening a directory handle but
+            // deny FlushFileBuffers on it. Snapshot and manifest files are still
+            // fsynced individually before the atomic generation rename.
+            Ok(())
+        }
+        Err(error) => Err(error),
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]

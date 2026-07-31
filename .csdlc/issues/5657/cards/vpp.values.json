@@ -1,0 +1,53 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5657,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][launch] Simplify and harden local Runtime v3 launch path",
+    "slug": "v0-91-8-runtime-v3-launch-recovery",
+    "version": "v0.91.8",
+    "generation": 2
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "runtime-v3-launch",
+          "proof_role": "Run focused configuration, readiness, Observatory, authenticated WebSocket, and Guardian lifecycle tests against the actual Rust kernel",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml"
+          ],
+          "parallel_group": "runtime-v3-launch",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed before readiness on missing real adapters, invalid config, TLS failure, secret leakage, route mismatch, unauthenticated WebSocket, lifecycle leak, test failure, or stale evidence.",
+      "design_ref": ".csdlc/prepared/issues/5657/design.md",
+      "design_digest": "9822d093a85df8714dbf1f074a01275dbcaf6382c09ac427561e02b4b5161d52",
+      "diagram_ref": ".csdlc/prepared/issues/5657/diagram.mmd",
+      "diagram_digest": "8acb6d2ea2e0cb00a3bdd58514f1dd3be99215325c2b90a4a4d991437b41c59c"
+    }
+  }
+}

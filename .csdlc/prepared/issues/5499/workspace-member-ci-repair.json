@@ -1,0 +1,40 @@
+{
+  "issue": 5499,
+  "kind": "same_review_continuation",
+  "pr": 5638,
+  "failed_head": "0de84e1ee4d40130c009e0360dd4188ca8ea5f82",
+  "causal_failure": {
+    "workflow_run": 29963576774,
+    "job": 89070081439,
+    "step": 5,
+    "summary": "adl-v2 standalone CI found adl-v2/crates/adl-workcell-conductor was under an adl-v2 workspace root but was not listed in workspace.members"
+  },
+  "repair": {
+    "files": [
+      "adl-v2/Cargo.toml",
+      "adl-v2/Cargo.lock"
+    ],
+    "summary": "Resolved current-main add/add workspace manifest and lock conflicts by preserving all origin/main adl-v2 workspace members/content and adding crates/adl-workcell-conductor; refreshed the merged workspace lock offline.",
+    "scope_amendment": "Typed csdlc-bind claim amendment was attempted but rejected because the issue is already published; operator-authorized scope remains limited to the two workspace files and issue-local lifecycle records."
+  },
+  "validation": [
+    {
+      "command": "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5499/adl-v2-target cargo test --locked --manifest-path adl-v2/Cargo.toml --workspace --offline",
+      "result": "pass"
+    },
+    {
+      "command": "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5499/adl-v2-target cargo clippy --locked --manifest-path adl-v2/Cargo.toml --workspace --offline --all-targets -- -D warnings",
+      "result": "pass"
+    },
+    {
+      "command": "git diff --name-only origin/main...HEAD",
+      "result": "pass: #5345/current-main files are ancestry only and do not remain in the PR diff"
+    }
+  ],
+  "review": {
+    "mode": "same-review-continuation",
+    "prior_reviewer": "subagent:019f8bf0-a08b-7c92-ac2f-ca70c074bde7",
+    "finding_count": 0,
+    "reason": "The change is a bounded manifest topology repair for the reviewed conductor package and does not alter conductor source behavior."
+  }
+}

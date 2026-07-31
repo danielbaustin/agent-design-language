@@ -1,0 +1,28 @@
+{
+  "issue": 4760,
+  "base_branch": "main",
+  "branch": "codex/4760-v0918-wp14-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-4760-memory-palace-20260731",
+    "owner": "codex:019fb9d5-3cc6-7a91-8c08-2d1454a91198",
+    "generation": 1,
+    "acquired_unix_seconds": 1785529687,
+    "expires_unix_seconds": 1785616087,
+    "heartbeat_unix_seconds": 1785529687,
+    "branch": "codex/4760-v0918-wp14-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4760",
+      ".csdlc/locks/4760.lock",
+      ".csdlc/prepared/issues/4760",
+      ".csdlc/evidence/4760",
+      "adl/src/memory_palace.rs",
+      "adl/src/lib.rs",
+      "adl/src/long_lived_agent.rs",
+      "adl/tests/memory_palace_tests.rs",
+      "adl/tests/fixtures/memory_palace/long_running_context.json"
+    ],
+    "purpose": "Implement and prove the real Memory Palace context handoff for issue #4760, including long-lived-agent runtime consumption and retained exact-head evidence."
+  }
+}

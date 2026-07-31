@@ -1,0 +1,22 @@
+{
+  "issue": 4741,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "5c1a42db569c66df31bf88e405234c801c3124804ff77cbaede8777d20c03aa3",
+  "claim_id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+  "actor": "codex:issue-4741-execution",
+  "reason": "Correct stale pre-commit live proof with the exact-head fail-closed owner-binary provenance outcome",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
+      ],
+      "purpose": "Run one exact-head safe-mode Unity attempt after implementation review and retain precise prerequisite or runtime truth.",
+      "outcome": "blocked",
+      "evidence_ref": ".csdlc/evidence/4741/live-staged-proof.json supersedes the stale pre-commit attempt: reviewed revision 2fb6fa86fee8b96457e0c179646a0c5109861e4a selected skipped_fail_closed and returned owner_binary_provenance_invalid before Unity launch because the installed repository adl source hash does not match the current declared source root. No binary was built or replaced."
+    }
+  },
+  "fail_after_backup": false
+}

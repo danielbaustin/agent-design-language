@@ -1,0 +1,14 @@
+{
+  "issue": 5384,
+  "card": "srp",
+  "expected_generation": 6,
+  "expected_digest": "7e40152fac366a274e84ec935316d341f3f0743b78daccedc3b9ce29bd57de09",
+  "claim_id": "claim-5384-v0918-wp14a-preparation-refresh",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Set the single future review boundary to exact platform acceptance evidence.",
+  "operation": {
+    "operation": "replan",
+    "field": "review_scope",
+    "value": "One bounded Gemini review of the exact WP-14A acceptance revision: direct-input revision identity, focused fresh-consumer proof, retained rollback/recovery evidence, residual-risk truth, deferred WP-13 scheduling, and non-absorption of downstream tracks."
+  }
+}

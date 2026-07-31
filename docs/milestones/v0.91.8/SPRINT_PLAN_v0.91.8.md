@@ -14,9 +14,9 @@ subgraphs under #5595.
 2. Core implementation: WP-04 through WP-09, then fan out WP-10 and WP-10A
    conductor work on disjoint paths before WP-11.
 3. Parity, soak, cutover, acceptance-gated deletion: WP-11 through WP-13.
-4. Platform acceptance and v0.92 handoff: WP-14A.
+4. Platform acceptance and deployment: WP-14A.
 5. Demo, quality, documentation, review, remediation, and closeout:
-   WP-15 through WP-23.
+   WP-15 through WP-23. WP-21 owns the v0.92 handoff family.
 
 ## Sprint Rules
 

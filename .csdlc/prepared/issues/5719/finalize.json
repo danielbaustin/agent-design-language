@@ -1,0 +1,71 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5719,
+  "expected_generation": 0,
+  "expected_digest": "6ff3d9dc7225340bc39b65a35e52d097390ebecacdddd60e662a29bf7ae2e914",
+  "claim_id": "claim-5719-ci-coverage-page-policy",
+  "actor": "codex:5719-execution",
+  "summary": "Mapped podcast launch/studio demo surfaces into a focused podcast_launch_packet validation lane and taught ci_path_policy to consume that lane without selecting full hosted coverage. Added a #5716-like regression fixture proving podcast static/demo page paths skip full coverage while preserving the coverage aggregator and existing Rust/tooling behavior.",
+  "changes": [
+    ".csdlc/issues/5719",
+    ".csdlc/locks/5719.lock",
+    ".csdlc/prepared/issues/5719",
+    "adl/config/validation_lane_selector.v0.91.6.json",
+    "adl/tools/ci_path_policy.sh",
+    "adl/tools/test_ci_path_policy.sh"
+  ],
+  "artifacts": [
+    "adl/tools/test_ci_path_policy.sh",
+    "adl/tools/test_ci_runtime_contracts.sh"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "ci-path-policy-podcast-launch-contract",
+          "proof_role": "selector_regression",
+          "purpose": "Prove podcast launch/studio page changes select focused podcast validation and do not require full hosted runtime plus workspace coverage.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 1,
+            "memory_mib": 1024,
+            "tokens": 1000
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "ci-path-policy",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 240,
+          "executable": "bash",
+          "argv": [
+            "adl/tools/test_ci_path_policy.sh"
+          ],
+          "evidence": {
+            "max_log_bytes": 1048576,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": [
+        "ci-path-policy-podcast-launch-contract"
+      ],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {
+      "max_parallel": 1,
+      "cpu_units": 1,
+      "memory_mib": 1024,
+      "tokens": 1000
+    },
+    "root": ".",
+    "evidence_dir": "./.csdlc/evidence/5719",
+    "cancellation_file": null
+  }
+}

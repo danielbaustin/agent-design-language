@@ -1,0 +1,66 @@
+{
+  "schema": "adl.wp12.soak_manifest.v1",
+  "issue": 5344,
+  "selector": {
+    "generations": [
+      "adl-v1-fixture",
+      "adl-v2"
+    ],
+    "timeout_seconds": 120
+  },
+  "scenarios": [
+    {
+      "id": "rollback-matrix",
+      "kind": "rollback",
+      "claim_class": "rollback",
+      "argv": [
+        "bash",
+        "adl-v2/tools/prove-rollback.sh",
+        "--manifest",
+        "docs/milestones/v0.91.8/evidence/wp12/manifest.json"
+      ],
+      "expected_exit": 0,
+      "timeout_seconds": 300
+    },
+    {
+      "id": "runtime-acceptance",
+      "kind": "runtime_acceptance",
+      "claim_class": "runtime_v3_acceptance",
+      "path": "docs/milestones/v0.91.8/review/runtime_v3_acceptance_5361.v1.json",
+      "landing_revision": "f7258b07e9da414bfee518f0c89a76071bc03ee8",
+      "artifact_sha256": "f6a1373b2900933a25564a838bd6cb1a2a60214dfb895893cebf6dd8825cff7f",
+      "expected_exit": 0,
+      "timeout_seconds": 30
+    },
+    {
+      "id": "runtime-linux",
+      "kind": "artifact",
+      "claim_class": "runtime_v3_live",
+      "path": "docs/milestones/v0.91.8/evidence/wp12/platform-linux.json",
+      "required_schema": "adl.wp12.platform_proof.v1",
+      "required_status": "pass",
+      "expected_exit": 0,
+      "timeout_seconds": 30
+    },
+    {
+      "id": "runtime-macos",
+      "kind": "artifact",
+      "claim_class": "runtime_v3_live",
+      "path": "docs/milestones/v0.91.8/evidence/wp12/platform-macos.json",
+      "required_schema": "adl.wp12.platform_proof.v1",
+      "required_status": "pass",
+      "expected_exit": 0,
+      "timeout_seconds": 30
+    },
+    {
+      "id": "runtime-windows",
+      "kind": "artifact",
+      "claim_class": "runtime_v3_live",
+      "path": "docs/milestones/v0.91.8/evidence/wp12/platform-windows.json",
+      "required_schema": "adl.wp12.platform_proof.v1",
+      "required_status": "pass",
+      "expected_exit": 0,
+      "timeout_seconds": 30
+    }
+  ]
+}

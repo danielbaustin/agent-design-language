@@ -1,0 +1,19 @@
+{
+  "issue": 4761,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "c87f00c166e81feba24175a17496b1256417b58e1e1ce92c88a8c497d1284e24",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Record passing capability-envelope validator proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["ruby", ".csdlc/evidence/4761/capability-envelope/validate_capability_envelope.rb"],
+      "purpose": "Validate the #4761 capability envelope, retained source inventory, v0.91.8/v0.92 consumer surfaces, digest integrity, and explicit unsupported-claim register.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/4761/capability-envelope/proof-logs/capability-envelope-validator.log"
+    }
+  },
+  "fail_after_backup": false
+}

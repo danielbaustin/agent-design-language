@@ -1,0 +1,17 @@
+{
+  "issue": 4762,
+  "expected_generation": 13,
+  "expected_digest": "dcd8f2216697d44c3cccf00ea62cd539a23525e79496698196130bea78cea534",
+  "claim_id": "claim-4762-birth-witness-receipt-execution",
+  "reviewer": "codex-exact-head-review-4762",
+  "assigned_by": "codex",
+  "scope": [
+    ".csdlc/prepared/issues/4762",
+    ".csdlc/issues/4762",
+    ".csdlc/evidence/4762/implementation-validation",
+    "docs/milestones/v0.91.8/review/v092_handoff_4762",
+    "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "issue": 5344,
+  "expected_generation": 8,
+  "expected_digest": "cdfd0d2cc85ffeab50f8bdb5bf9e8d1050cb78c05ac52ccfc6db50b35cd3de49",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The accepted #5343 cutover handoff fields and typed review projection were committed after the substantive clean #5344 review; recover for one bounded metadata-only exact-head follow-up before publication."
+}

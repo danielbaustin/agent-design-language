@@ -1,0 +1,31 @@
+{
+  "actor": "codex:5717-execution",
+  "card": "sor",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "expected_digest": "aed4e94491f08c9fdd045a2b3841dfc632feb97d1f63a8e8efc4d323001c8965",
+  "expected_generation": 5,
+  "issue": 5717,
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Prepared the Synthetic Minds Podcast surface for launch testing: promoted the polished studio design to the production `/podcast/` entrypoint, added an unlisted `/_preview/podcast/` route with noindex/nofollow, updated RSS metadata and owner/contact truth, aligned the first episode page naming, and added a launch-readiness packet covering gates 1-8 while preserving human review as post-PR.",
+    "changes": [
+      ".csdlc/issues/5717",
+      ".csdlc/prepared/issues/5717",
+      "demos/_preview/podcast/index.html",
+      "demos/podcast/LAUNCH_READINESS.md",
+      "demos/podcast/episodes/meet-the-ai-coworkers/index.html",
+      "demos/podcast/feed.xml",
+      "demos/podcast/index.html",
+      "demos/podcast/studio/podcast-studio.html",
+      "demos/podcast/studio/uploads/agent-logic-logo.svg"
+    ],
+    "artifacts": [
+      "demos/podcast/LAUNCH_READINESS.md",
+      "http://127.0.0.1:8916/podcast/",
+      "http://127.0.0.1:8916/_preview/podcast/",
+      "http://127.0.0.1:8916/podcast/feed.xml",
+      "http://127.0.0.1:8916/podcast/audio/meet-the-ai-coworkers.wav"
+    ]
+  },
+  "reason": "Record the operator-approved launch-prep execution truth before exact-head review and PR refresh."
+}

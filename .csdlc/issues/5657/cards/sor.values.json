@@ -1,0 +1,59 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5657,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][launch] Simplify and harden local Runtime v3 launch path",
+    "slug": "v0-91-8-runtime-v3-launch-recovery",
+    "version": "v0.91.8",
+    "generation": 2
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Reject degraded production adapters before readiness, remove TLS private-key material from continuity identity, and keep the runtime as an Axum JSON API for the separate Observatory app.",
+      "actual_changes": [
+        "Added typed production adapter readiness validation.",
+        "Made the serve binary fail closed before listener readiness when required adapters are degraded or missing.",
+        "Removed TLS private-key hash from continuity identity projection.",
+        "Kept the runtime API-only; the separate Observatory app consumes the authenticated feed.",
+        "Added focused production-readiness regression proof."
+      ],
+      "artifacts": [
+        "adl-runtime-kernel/src/assembly.rs",
+        "adl-runtime-kernel/src/operations.rs",
+        "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+        "adl-runtime-kernel/src/control.rs",
+        "adl-runtime-kernel/tests/assembly.rs"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "/usr/bin/env",
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--target-dir",
+            "/Volumes/FastWork/adl-wp-5657/target",
+            "--test",
+            "assembly",
+            "--test",
+            "observatory"
+          ],
+          "purpose": "Run assembly, Observatory WebSocket, and formatting-compatible Rust tests against the exact implementation.",
+          "outcome": "passed",
+          "evidence_ref": "runtime-v3-launch-focused.log"
+        }
+      ],
+      "integration_state": "not_started",
+      "publication_state": "not_published",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

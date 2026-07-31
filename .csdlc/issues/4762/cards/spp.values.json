@@ -1,0 +1,105 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4762,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21][birth-witnesses] Prepare #4762 birth witnesses and receipt package",
+    "slug": "v0918-wp21-birth-witnesses-receipt-prep-4762",
+    "version": "v0.91.8",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 3,
+      "summary": "Execute #4762 by delivering the retained auditable birth-witness register, receipt, negative-case dispositions, validation evidence, exact-head review evidence, and handoff consumption links without claiming the v0.92 birthday occurred.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Create retained schema, negative-case, execution-design, and validator artifacts for the #4762 birth-witness/receipt package.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Create reviewer-facing witness register, receipt, README, and summary package under the v0.91.8 handoff review path.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Wire exact handoff consumption references into v0.91.8 activation/handoff and v0.92 launch packet surfaces.",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S4",
+          "action": "Run focused validation and retain issue-local evidence.",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S5",
+          "action": "Obtain exact-head review, fix findings, record review truth, commit, push, and publish a ready PR with Closes #4762.",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [
+        ".csdlc/issues/4762/",
+        ".csdlc/prepared/issues/4762/",
+        ".csdlc/evidence/4762/",
+        "docs/milestones/v0.91.8/review/v092_handoff_4762/",
+        "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+        "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+        "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md"
+      ],
+      "invariants": [
+        "The package is handoff evidence, not a birthday occurrence.",
+        "Missing identity, continuity, memory, capability, witness, receipt, activation, validation, or reviewer evidence fails closed for any future birth claim.",
+        "Lifecycle truth must distinguish local validation, exact-head review, PR publication, merge, and closeout."
+      ],
+      "risks": [
+        "The historical branch slug says WP14 while current issue routing is WP-21; artifacts keep #4762 and WP-21 handoff truth explicit.",
+        "Future v0.92 consumers may overread the package as birthday completion; artifacts preserve birth_event_status: not_claimed."
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 14400,
+        "total_tokens": 80000,
+        "validation_seconds": 1800
+      },
+      "stop_conditions": [
+        "Stop if any artifact claims the v0.92 birthday occurred.",
+        "Stop if focused validation fails.",
+        "Stop if exact-head review reports unresolved actionable findings.",
+        "Stop before merge or post-merge closeout."
+      ],
+      "replan_triggers": [
+        "Runtime birthday activation, provider calls, cloud services, or production code become necessary.",
+        "Downstream v0.92 inputs require live identity, continuity, memory, or capability evidence instead of handoff contract artifacts."
+      ],
+      "design_ref": ".csdlc/prepared/issues/4762/design.md",
+      "design_digest": "44ad81e9b236bbe02d0e44176741ebb41e51d59287aebafd177d8ea474b8b15d",
+      "diagram_ref": ".csdlc/prepared/issues/4762/diagram.mmd",
+      "diagram_digest": "86d6ec17a88e161d272c9d7580af9c207ee974d652e335b23941b6605a31ac85"
+    }
+  }
+}

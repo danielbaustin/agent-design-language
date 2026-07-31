@@ -1,0 +1,45 @@
+{
+  "issue": 4761,
+  "card": "spp",
+  "expected_generation": 0,
+  "expected_digest": "1851b5347c972b0468d5d08e3fed83d6ca974ec129000dd96436f40dc076820a",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Replace prep-only SPP with the operator-authorized capability-envelope execution plan.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Bind the live #4761 claim in-place on codex/4761-v0918-wp14-preparation and preserve protected paths.",
+        "acceptance_ids": ["AC-1"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Publish the capability-envelope artifact packet naming provider, model, tool, skill, authority, and limit context plus explicit non-claims.",
+        "acceptance_ids": ["AC-1", "AC-2"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Wire the envelope into the v0.91.8 pre-v0.92 and v0.92 consumer surfaces without claiming birthday/runtime completion.",
+        "acceptance_ids": ["AC-2"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Run the fail-closed capability-envelope validator and repository diff hygiene checks.",
+        "acceptance_ids": ["AC-3"],
+        "status": "pending"
+      },
+      {
+        "id": "S5",
+        "action": "Record exact-head review and publish a ready PR with Closes #4761, without merge or closeout.",
+        "acceptance_ids": ["AC-3"],
+        "status": "pending"
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

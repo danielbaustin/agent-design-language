@@ -1,0 +1,6 @@
+{"sequence":1,"generation":0,"actor":"codex:issue-5678-opus-review-runbook","reason":"initialize issue record and all six cards","operation":"bootstrap"}
+{"sequence":2,"generation":0,"actor":"codex:issue-5678-opus-review-runbook","reason":"bind branch/worktree and activate claim","operation":"bind"}
+{"sequence":3,"generation":1,"actor":"codex:issue-5678-opus-review-runbook","reason":"atomically record execution, validation, and implemented phase","operation":"finalize_implementation"}
+{"sequence":4,"generation":1,"actor":"codex:issue-5678-opus-review-runbook","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":5,"generation":2,"actor":"codex:issue-5678-opus-review-runbook","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
+{"sequence":6,"generation":3,"actor":"codex:issue-5678-opus-review-runbook","reason":"Exact scoped review passed with no actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}

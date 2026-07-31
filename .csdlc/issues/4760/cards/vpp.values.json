@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4760,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][memory-palace] Prepare #4760 Memory Palace context-problem handoff",
+    "slug": "v0918-wp14-memory-palace-context-handoff-prep-4760",
+    "version": "v0.91.8",
+    "generation": 4
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "prep-doctor",
+          "proof_role": "Focused v2 state integrity check only.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "csdlc-doctor",
+            "--issue",
+            "4760"
+          ],
+          "parallel_group": "prep",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed and report the exact v2 doctor or init error; do not repair outside the prep boundary.",
+      "design_ref": ".csdlc/prepared/issues/4760/design.md",
+      "design_digest": "1c0974d04443fd8c73d72e6faf75bc9a3869ef45024f807cd7e8db982f42924a",
+      "diagram_ref": ".csdlc/prepared/issues/4760/diagram.mmd",
+      "diagram_digest": "6824392dbb71e4ec147551d199e821bbebfaf8f84602d9590b666e1856e0b907"
+    }
+  }
+}

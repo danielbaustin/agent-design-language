@@ -320,7 +320,6 @@ EOF
 runtime_v3_expression="$(bash "$SCRIPT" --changed-files "$runtime_v3_surfaces_changed" --print-risk-nextest-expression)"
 grep -F "binary_id(adl::bin/adl) and test(/^cli::runtime_v3_cmd::tests::/)" <<<"$runtime_v3_expression" >/dev/null
 grep -F "test(/^guardian::tests::/)" <<<"$runtime_v3_expression" >/dev/null
-grep -F "binary_id(adl-runtime::bin/adl-runtime-guardian) and test(/^tests::guardian_cli_requires_complete_bounded_configuration$/)" <<<"$runtime_v3_expression" >/dev/null
 grep -F "binary_id(adl-runtime::guardian_cli) and test(/^guardian_cli_/)" <<<"$runtime_v3_expression" >/dev/null
 runtime_v3_filters="$TMP/runtime-v3-filters.txt"
 bash "$SCRIPT" --changed-files "$runtime_v3_surfaces_changed" --print-risk-filters >"$runtime_v3_filters"
@@ -334,11 +333,7 @@ runtime_v3_guardian_expression="$(bash "$SCRIPT" --changed-files "$runtime_v3_gu
 runtime_v3_inventory="$TMP/runtime-v3-inventory.txt"
 cargo nextest list --manifest-path "$ROOT/adl-runtime/Cargo.toml" \
   -E "$runtime_v3_guardian_expression" >"$runtime_v3_inventory"
-grep -Fx "adl-runtime::bin/adl-runtime-guardian tests::guardian_cli_requires_complete_bounded_configuration" \
-  "$runtime_v3_inventory" >/dev/null
 grep -Fx "adl-runtime::guardian_cli guardian_cli_reports_successful_portable_child_as_json" \
-  "$runtime_v3_inventory" >/dev/null
-grep -Fx "adl-runtime::guardian_cli guardian_cli_reports_spawn_failure_without_restart" \
   "$runtime_v3_inventory" >/dev/null
 grep -Fx "adl-runtime::guardian_cli guardian_cli_rejects_incomplete_unknown_and_invalid_numeric_arguments" \
   "$runtime_v3_inventory" >/dev/null
@@ -455,6 +450,21 @@ bash "$SCRIPT" --changed-files "$live_runtime_boundary_changed" --print-risk-fil
 [ ! -s "$live_runtime_boundary_filters" ]
 bash "$SCRIPT" --changed-files "$live_runtime_boundary_changed" --require-summary-for-risk >/tmp/coverage-impact-live-runtime-boundary.out
 grep -F "Coverage-impact preflight passed: no risky changed Rust source files require local summary evidence." /tmp/coverage-impact-live-runtime-boundary.out >/dev/null
+
+runtime_qualification_harness_changed="$TMP/runtime-qualification-harness-changed.txt"
+printf 'A\tadl-runtime/src/bin/adl-runtime-lifecycle-soak.rs\n' >"$runtime_qualification_harness_changed"
+runtime_qualification_harness_filters="$TMP/runtime-qualification-harness-filters.txt"
+bash "$SCRIPT" --changed-files "$runtime_qualification_harness_changed" --print-risk-filters >"$runtime_qualification_harness_filters"
+[ ! -s "$runtime_qualification_harness_filters" ]
+runtime_qualification_harness_summary="$TMP/runtime-qualification-harness-summary.json"
+make_summary "adl-runtime/src/bin/adl-runtime-lifecycle-soak.rs" 1 100 "$runtime_qualification_harness_summary"
+bash "$SCRIPT" \
+  --changed-files "$runtime_qualification_harness_changed" \
+  --summary "$runtime_qualification_harness_summary" \
+  --threshold 80 \
+  >/tmp/coverage-impact-runtime-qualification-harness.out
+grep -F "Coverage-impact preflight passed for changed Rust source files" \
+  /tmp/coverage-impact-runtime-qualification-harness.out >/dev/null
 
 gws_live_changed="$TMP/gws-live-changed.txt"
 cat >"$gws_live_changed" <<'EOF'

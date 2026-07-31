@@ -1,0 +1,29 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 16 tests
+test mapping_rejects_cancel_for_unknown_node ... ok
+test mapping_rejects_plan_digest_mismatch ... ok
+test mapping_accepts_allowlisted_tool ... ok
+test mapping_rejects_effect_digest_mismatch ... ok
+test mapping_rejects_invalid_request_identity ... ok
+test mapping_rejects_provider_drift ... ok
+test mapping_rejects_subject_mismatch ... ok
+test canonical_ingress_preserves_closed_failure ... ok
+test mapping_accepts_verified_provider_dispatch ... ok
+test mapping_rejects_replay ... ok
+test mapping_rejects_tampered_signature ... ok
+test mapping_rejects_unknown_plan_contract ... ok
+test mapping_rejects_unallowlisted_tool ... ok
+test mapping_is_byte_deterministic ... ok
+test canonical_ingress_preserves_unsupported_failure ... ok
+test canonical_ingress_maps_success_and_result_record ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running unittests src/lib.rs (/Volumes/FastWork/adl-5341/target/debug/deps/adl_runtime_v3_adapter-b47bb5840dc006a2)
+     Running tests/adapter.rs (/Volumes/FastWork/adl-5341/target/debug/deps/adapter-6b8e184b4d5aff9d)

@@ -1,0 +1,14 @@
+{
+  "actor": "codex:5717-execution",
+  "card": "spp",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "expected_digest": "1fcb1b8e0cfe2ac51f90307cf8260f373667c4a696ec41cbde4e48db5792f1bd",
+  "expected_generation": 9,
+  "issue": 5717,
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S2",
+    "status": "completed"
+  },
+  "reason": "Mark launch-prep page/feed/copy edits complete after implementing the widened operator-approved scope."
+}

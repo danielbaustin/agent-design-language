@@ -1,0 +1,116 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5657,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "ef36cef510717d019edeb96f12e5187579cb8c39402fb4270b3a9344a7974e49",
+  "phase": "implemented",
+  "generation": 2,
+  "digest": "84d1ee502e3122b21be2d31b5a6a04cc80c6976baa2a4055d27f8bd7a76fccc5",
+  "claim": null,
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5657/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5657/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:5657",
+      "revision": "9822d093a85df8714dbf1f074a01275dbcaf6382c09ac427561e02b4b5161d52"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "b281adae6e404e53de4207c25c8effbce0366a02d89c29fb746ff9c7a77b9426",
+      "rendered_digest": "7155161af9aac13352c570411ab685f9443eba366df181c6a2515e987b8410f2",
+      "ast_digest": "c67fbd863a01c63f01a280da09b0cb13b85f944ca115079d264659574bfcc0f2"
+    },
+    "stp": {
+      "values_digest": "214b5a3dce4b6d8d5409517e8e3734fc60ca37736ccc5db9a47888f34ffd2222",
+      "rendered_digest": "7a02c3adacfbeb7564ced3b0b4e71db9918ebde967d98d1eff817a109752c567",
+      "ast_digest": "fc1278085846833560b47c169d400e48700f62b40103d0f7fc6cd09dac2d01d0"
+    },
+    "spp": {
+      "values_digest": "4c74c5e7afe83006b471442124f8784c0ace25d6c02b50df961f6b3bec577272",
+      "rendered_digest": "d17afb16e83fc3c02b2f73bdccedf43eaba9c3a77848523bbd63d7e05576c809",
+      "ast_digest": "1e99ded744339b5003c8d7a231e1aa62784dbc95e860f1a05e258c6c34f1d2f8"
+    },
+    "vpp": {
+      "values_digest": "1b4a22da28ae8e1f1b044196c504ec735b14bda46621fe2cfadb59d64a2859df",
+      "rendered_digest": "1058148e8c777a710b05d2d873e52a8a7bfb46b5ae616a33c320ab00e7e03cc6",
+      "ast_digest": "be391e120cfa0d83ce479f2b74bb6fc0706986c9455f9693f70f3268499b2591"
+    },
+    "srp": {
+      "values_digest": "c7d3d874e63ef8e41c9742622e066361e7da8d40ffaec17df7b27e50bbc4adcc",
+      "rendered_digest": "5477479aac4129ba99af75b3d6700a4ce26b5a23707eb3f3acaec79b18f59aec",
+      "ast_digest": "777d4f46a3eb07845c428391dc493532bbb51fbeae9e421e556d69d67a523350"
+    },
+    "sor": {
+      "values_digest": "329ab921d8e12523c4467b55fe6810dd511a9b57fcd869c3b616987c372e84d3",
+      "rendered_digest": "2799376b6406cd0bf992c1d022db9d10262805fd79eab3adf829f7dffa019a50",
+      "ast_digest": "08b6fea47322381e5fa4a80d15817d311c078d48498e75732b6fe68f7d1306a1"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5657-slot-1",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5657-slot-1",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5657-runtime-launch",
+      "reason": "execution and passing validation finalized atomically"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5657-slot-1",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "operator:5657",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:issue-5657-slot-1",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:issue-5657-runtime-launch",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "Release stale active claim for GitHub-closed #5657 so #5691 can claim production Runtime v3 observability startup/status paths without manual record edits.",
+      "operation": "{\"observation_source\":\"github://danielbaustin/agent-design-language/issues/5657\",\"observed_issue_state\":\"closed\",\"operation\":\"release_closed_claim\"}"
+    }
+  ]
+}

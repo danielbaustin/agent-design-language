@@ -41,6 +41,7 @@ use crate::csm_godel_snapshot::{validate_recovery_read, write_checkpoint_snapsho
 use crate::csm_resident_agents;
 use crate::csm_runtime_api::{serve_runtime_api, CsmRuntimeApiOptions};
 use crate::csm_shepherd_agent;
+use crate::memory_palace::{build_context_from_agent_memory, MEMORY_PALACE_CONTEXT_REF};
 use crate::runtime_aws_signal::{
     preflight_csm_governed_notice_signal, publish_csm_governed_notice_signal_for_channel,
 };
@@ -2377,25 +2378,47 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     });
     write_json_pretty(&cycle_dir.join("observations.json"), &observations)?;
 
+    let observed_epoch_ms = started_at.timestamp_millis() as u128;
+    let memory_palace_context = build_context_from_agent_memory(
+        &loaded.spec.memory,
+        loaded.spec_path.parent().unwrap_or_else(|| Path::new(".")),
+        cycle_id,
+        observed_epoch_ms,
+    )?;
+    let memory_refs = if let Some(packet) = memory_palace_context.as_ref() {
+        write_json_pretty(&cycle_dir.join(MEMORY_PALACE_CONTEXT_REF), packet)?;
+        vec![MEMORY_PALACE_CONTEXT_REF.to_string()]
+    } else {
+        Vec::new()
+    };
+    let memory_palace_context_value = memory_palace_context
+        .as_ref()
+        .map(serde_json::to_value)
+        .transpose()?;
+
     let decision_request = json!({
         "schema": DECISION_REQUEST_SCHEMA,
         "agent_instance_id": loaded.spec.agent_instance_id.clone(),
         "cycle_id": cycle_id,
         "agent_context_ref": "../../agent_spec.locked.json",
         "observations_ref": "observations.json",
-        "memory_refs": [],
+        "memory_refs": memory_refs,
         "allowed_actions": ["record_cycle", "explain"],
         "forbidden_actions": ["execute_order", "connect_broker", "personalized_advice"],
         "not_financial_advice": true
     });
     write_json_pretty(&cycle_dir.join("decision_request.json"), &decision_request)?;
 
+    let mut sanitization_artifacts = vec![
+        ("observations.json", &observations),
+        ("decision_request.json", &decision_request),
+        ("provider_binding", &provider_binding),
+    ];
+    if let Some(value) = memory_palace_context_value.as_ref() {
+        sanitization_artifacts.push((MEMORY_PALACE_CONTEXT_REF, value));
+    }
     let sanitization = if require_sanitization {
-        sanitize_public_artifacts(&[
-            ("observations.json", &observations),
-            ("decision_request.json", &decision_request),
-            ("provider_binding", &provider_binding),
-        ])?
+        sanitize_public_artifacts(&sanitization_artifacts)?
     } else {
         SanitizationResult::skipped()
     };
@@ -2781,6 +2804,7 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     let manifest_input = json!({
         "observations_ref": "observations.json",
         "decision_request_ref": "decision_request.json",
+        "memory_palace_context_ref": memory_palace_context.as_ref().map(|_| MEMORY_PALACE_CONTEXT_REF),
         "determinism_boundary_ref": "determinism_boundary.json",
         "shell_event_fingerprints": shell_event_fingerprints,
         "previous_cycle_id": previous_cycle_id,
@@ -2824,6 +2848,7 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
             "decision_result": "decision_result.json",
             "run_ref": "run_ref.json",
             "memory_writes": "memory_writes.jsonl",
+            "memory_palace_context": memory_palace_context.as_ref().map(|_| MEMORY_PALACE_CONTEXT_REF),
             "guardrail_report": "guardrail_report.json",
             "determinism_boundary": "determinism_boundary.json",
             "cycle_summary": "cycle_summary.md",

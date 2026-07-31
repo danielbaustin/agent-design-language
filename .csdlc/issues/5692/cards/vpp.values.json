@@ -1,0 +1,69 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5692,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][publication] Require implementation PR closing keyword",
+    "slug": "pr-closing-linkage-policy",
+    "version": "v0.91.8",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-publication-tests",
+          "proof_role": "focused policy/verifier regression proof",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--test",
+            "gate6"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "format-and-diff",
+          "proof_role": "diff hygiene",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 250,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on missing closing keyword, stale typed state, failed focused proof, or review findings.",
+      "design_ref": ".csdlc/prepared/issues/5692/design.md",
+      "design_digest": "3cca33ade693a39c39e24c7316370f9c2350a844aebd089abd7e1f481a746260",
+      "diagram_ref": ".csdlc/prepared/issues/5692/diagram.mmd",
+      "diagram_digest": "4b70df8eeefd31cfd5c704217c1b1e81ee5d4297bda32805a7f81903f77e6a50"
+    }
+  }
+}

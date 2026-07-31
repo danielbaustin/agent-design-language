@@ -1,0 +1,98 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5666,
+  "expected_generation": 1,
+  "expected_digest": "ca07f225b082d3909994e16d7cf8fabfd942a0759b1287c36872216310eb9c73",
+  "claim_id": "claim-5666-throughput-fast-lane",
+  "actor": "codex:issue-5666-slot-1",
+  "summary": "Implemented a proportional developer throughput fast-lane policy, linked it from validation platform routing, and added focused contract proof for the required invariants.",
+  "changes": [
+    "Added docs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md with proportional issue classes, FastWork-required behavior, changed-state-only PR watching, escalation rules, and non-claims.",
+    "Linked the fast-lane policy from docs/tooling/VALIDATION_PLATFORM_ROUTING.md.",
+    "Added adl/tools/test_developer_throughput_fast_lane.sh to prove required policy language and routing linkage."
+  ],
+  "artifacts": [
+    "docs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md",
+    "docs/tooling/VALIDATION_PLATFORM_ROUTING.md",
+    "adl/tools/test_developer_throughput_fast_lane.sh"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "throughput-fast-lane-contract",
+          "proof_role": "focused policy contract",
+          "purpose": "Prove the throughput fast-lane policy, selector reference, no-local-fallback rule, changed-state watching rule, and routing link exist.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 1,
+            "memory_mib": 128,
+            "tokens": 50
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "docs-policy",
+          "release_gate": "optional",
+          "execution": "local",
+          "timeout_seconds": 30,
+          "executable": "bash",
+          "argv": [
+            "adl/tools/test_developer_throughput_fast_lane.sh"
+          ],
+          "evidence": {
+            "max_log_bytes": 20000,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        },
+        {
+          "id": "diff-hygiene",
+          "proof_role": "diff hygiene",
+          "purpose": "Verify changed files have no whitespace or patch hygiene errors.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 1,
+            "memory_mib": 128,
+            "tokens": 10
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "docs-policy",
+          "release_gate": "optional",
+          "execution": "local",
+          "timeout_seconds": 30,
+          "executable": "git",
+          "argv": [
+            "diff",
+            "--check"
+          ],
+          "evidence": {
+            "max_log_bytes": 20000,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": [
+        "throughput-fast-lane-contract",
+        "diff-hygiene"
+      ],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {
+      "max_parallel": 2,
+      "cpu_units": 2,
+      "memory_mib": 256,
+      "tokens": 100
+    },
+    "root": "/Volumes/FastWork/adl-wp-5666",
+    "evidence_dir": "/Volumes/FastWork/adl-wp-5666/.csdlc/evidence/5666",
+    "cancellation_file": null
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "issue": 5344,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "3c7b0ebb49dea3291579bdaba37b0fdcfd3bd0206874a4d3acb9d84635852dc7",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the final manifest-driven soak, platform verification, and exact selector restoration result.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "env",
+        "ADL_WP12_TARGET_DIR=wp12-target",
+        "bash",
+        "adl-v2/tools/run-soak.sh",
+        "--manifest",
+        "docs/milestones/v0.91.8/evidence/wp12/manifest.json"
+      ],
+      "purpose": "Verify the accepted Runtime v3 artifact, native Linux/macOS/Windows lifecycle proofs, isolated fresh adl-v2 installation, rollback fault matrix, and exact prior selector-byte restoration.",
+      "outcome": "passed",
+      "evidence_ref": "docs/milestones/v0.91.8/evidence/wp12/report.json"
+    }
+  }
+}

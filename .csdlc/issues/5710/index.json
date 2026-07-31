@@ -1,0 +1,295 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5710,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "7c3adf5e43576041be529f56740c9816a7a123b1ff42dc61cf48c6ef8846a57c",
+  "phase": "published",
+  "generation": 7,
+  "digest": "567b5fc0344022c855663fc9716798a83d53d519155e183456421cdf96959af7",
+  "claim": {
+    "id": "claim-5710-closeout-safe-prune-recovery",
+    "owner": "codex:issue-5710-closeout-safe-prune-recovery",
+    "generation": 7,
+    "acquired_unix_seconds": 1785349671,
+    "expires_unix_seconds": 1785954471,
+    "heartbeat_unix_seconds": 1785349671,
+    "branch": "codex/5710-csdlc-v2-closeout-safe-prune-recovery",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5710",
+      ".csdlc/issues/5710",
+      ".csdlc/locks/5710.lock",
+      ".csdlc/prepared/issues/5710",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/git.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      "docs/milestones/v0.91.8/review/closeout_recovery"
+    ],
+    "purpose": "Implement typed terminal publication reconciliation, safe generated-state cleanup, lifecycle repair classification, and the v0.91.8 closed-issue sweep"
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "subagent:019faf31-2faf-7740-b22c-9bfd9714e9cf",
+    "scope": [
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "reviewed_revision": "git-blake3:e74f9d1b8e30845bb9e62c623812d4f29b7f03b3:22a1a5c717d4e25a7452ec1976585e2b5ea08c2f269c702ea1cc631987b6b085",
+    "findings": [
+      {
+        "id": "R-1",
+        "severity": "p1",
+        "summary": "Validate terminal disposition before metadata reconciliation can mutate canonical readiness.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:e74f9d1b8e30845bb9e62c623812d4f29b7f03b3:22a1a5c717d4e25a7452ec1976585e2b5ea08c2f269c702ea1cc631987b6b085",
+        "route": null
+      },
+      {
+        "id": "R-2",
+        "severity": "p1",
+        "summary": "Restrict stale lock cleanup to the target issue.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:e74f9d1b8e30845bb9e62c623812d4f29b7f03b3:22a1a5c717d4e25a7452ec1976585e2b5ea08c2f269c702ea1cc631987b6b085",
+        "route": null
+      },
+      {
+        "id": "R-3",
+        "severity": "p1",
+        "summary": "Retain unrecognized prepared JSON instead of deleting it as generated state.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:e74f9d1b8e30845bb9e62c623812d4f29b7f03b3:22a1a5c717d4e25a7452ec1976585e2b5ea08c2f269c702ea1cc631987b6b085",
+        "route": null
+      },
+      {
+        "id": "R-4",
+        "severity": "p2",
+        "summary": "Add destructive linked-worktree prune coverage.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:e74f9d1b8e30845bb9e62c623812d4f29b7f03b3:22a1a5c717d4e25a7452ec1976585e2b5ea08c2f269c702ea1cc631987b6b085",
+        "route": null
+      },
+      {
+        "id": "R-5",
+        "severity": "p2",
+        "summary": "Route merged records to remote terminal closeout rather than receipt-only reconciliation.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:e74f9d1b8e30845bb9e62c623812d4f29b7f03b3:22a1a5c717d4e25a7452ec1976585e2b5ea08c2f269c702ea1cc631987b6b085",
+        "route": null
+      },
+      {
+        "id": "R-6",
+        "severity": "p2",
+        "summary": "Fail closed on staged safe-path changes before prune mutation begins.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:e74f9d1b8e30845bb9e62c623812d4f29b7f03b3:22a1a5c717d4e25a7452ec1976585e2b5ea08c2f269c702ea1cc631987b6b085",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Post-merge live recovery remains a separate closeout-stage proof and is not claimed by pre-PR tests."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5710,
+    "pull_request": 5712,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5712",
+    "base": "main",
+    "head": "codex/5710-csdlc-v2-closeout-safe-prune-recovery",
+    "revision": "git-blake3:7165a067a4f5f4e55231860481dfaa8b9c7ba2aa:e61e744ed75c2904f366c81d1140d0c4120444393cdc4c27b72d37ef45f0a659",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5710/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5710/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5710",
+      "revision": "7cd919400ee26a10b5302f714a2941a80aaac72913d39448284aab941057459c"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "9e5b803421a4d954f8ebd8c05cf5f555c7bf30a28cabc4a15adfc1d7b19452a8",
+      "rendered_digest": "a3694e0480046bf550f0e9103978a8de58763e707adbe02ccb16bea7a382b887",
+      "ast_digest": "428af5d8fd85ab9eb6dad2bbd50af49ddbd4e80de24d8adc6c3e72db2466d572"
+    },
+    "stp": {
+      "values_digest": "887d1d540829c90e5741a35ef3ae8716b5e553febc81f7fb19ef39338bc9e562",
+      "rendered_digest": "496e32785332d807cba39eb36195866e109870b0d18c17491043cd08046814cd",
+      "ast_digest": "9e7b79a4ac292a8a198fb72175af2160dd5490a1b24df75eb50c38335d1a897e"
+    },
+    "spp": {
+      "values_digest": "c9bcccdbf65a2da51ef2e581941ff111b0d38476fa60f2b8e49588494bc96a58",
+      "rendered_digest": "4299ed5ee177e09db6d28e57b84577dd189c2f7a21c0d2027c75dca87f8920a3",
+      "ast_digest": "e4e6acde291b5b9872c7e4beb5ea878df742be84459be21080872db3b9190942"
+    },
+    "vpp": {
+      "values_digest": "8f94e24dc6083ab5cf460717d23912c0f82e0f2964222c4fb40bc76baa98952e",
+      "rendered_digest": "8d92af6ea20e0125a3a09e337ac0687efc6776b06ad4a8714203b21770f1c67f",
+      "ast_digest": "b49acbe8d6e3b24c772d0a28f8879b15e2a51d716fc1a52c3963b2937a3d0c4c"
+    },
+    "srp": {
+      "values_digest": "bb1d93b48ef10f43423db40f2b245afcd349382f93731acdc23d1a845ba42a70",
+      "rendered_digest": "7fac135f6a7e7b3d1e22d16a091c14f6fbe0896e2129b3b42072eda2e53a4617",
+      "ast_digest": "a9337002067f4aa1767946a53a0a7bc9b81d3e3069b3009e1a83a7e0bfb9d9e8"
+    },
+    "sor": {
+      "values_digest": "4e8ad64a26fae4dbf174d9459a264478a47fa219a08a435977a3d1685134dccd",
+      "rendered_digest": "e06ec7b80b337d341a44cae66af1e527daaa9c76898c3f6d6d6767ac6c720093",
+      "ast_digest": "eec27f1954f5eb899eedf169c304210c0afc0a85b64b58f5e6b12030bd2abaa6"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5710-closeout-safe-prune-recovery",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5710-closeout-safe-prune-recovery",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Rebase onto current origin/main invalidated exact-head review and publication evidence; recover to implemented for required rereview."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5710-closeout-safe-prune-recovery",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5710-closeout-safe-prune-recovery",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:issue-5710-closeout-safe-prune-recovery",
+      "reason": "Add the public readiness contract and export surfaces required for typed terminal-head reconciliation",
+      "operation": "{\"add_protected_paths\":[\"csdlc-v2/src/lib.rs\",\"csdlc-v2/src/readiness.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:issue-5710-closeout-safe-prune-recovery",
+      "reason": "Keep VPP limited to executable implementation proof; exact review, publication, and the post-merge sweep remain lifecycle stages.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"csdlc-v2-closeout-recovery\",\"proof_role\":\"Prove metadata-only terminal head reconciliation, substantive-drift rejection, safe prune classification, unknown-path rejection, and existing closeout lifecycle behavior.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":8000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_lifecycle\"],\"parallel_group\":\"csdlc-v2-closeout\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex",
+      "reason": "Rebase onto current origin/main invalidated exact-head review and publication evidence; recover to implemented for required rereview.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

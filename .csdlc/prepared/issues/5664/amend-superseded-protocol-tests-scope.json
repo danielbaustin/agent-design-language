@@ -1,0 +1,13 @@
+{
+  "issue": 5664,
+  "claim_id": "claim-5664-runtime-v3-protocol-adapters",
+  "expected_generation": 0,
+  "expected_digest": "7cc94fe0e57e965bb6e566c3b0f68111cd04f7ce5376958dd3ee4914fb04795d",
+  "now_unix_seconds": 1784998601,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Reserve superseded Runtime v3 receipt-only protocol test surfaces so #5664 can delete obsolete in-process external-adapter proof and satisfy net LoC reduction.",
+  "add_protected_paths": [
+    "adl-runtime-kernel/tests/assembly.rs",
+    "adl-runtime-kernel/tests/operations.rs"
+  ]
+}

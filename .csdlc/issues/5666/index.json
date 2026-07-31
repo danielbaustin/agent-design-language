@@ -1,0 +1,197 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5666,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "8a868f7f1c699671b7c60dd6bcfe05caaacf4325c016d16985f480282293ebac",
+  "phase": "published",
+  "generation": 6,
+  "digest": "59e792a5a95670a68207b37ce8f9f4f6b0170a6eb93abd85b2ff29167ddd653e",
+  "claim": {
+    "id": "claim-5666-throughput-fast-lane",
+    "owner": "codex:issue-5666-slot-1",
+    "generation": 6,
+    "acquired_unix_seconds": 1785024000,
+    "expires_unix_seconds": 1785628800,
+    "heartbeat_unix_seconds": 1785024000,
+    "branch": "codex/5666-throughput-fast-lane",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5666",
+      ".csdlc/issues/5666",
+      ".csdlc/locks/5666.lock",
+      ".csdlc/prepared/issues/5666",
+      "docs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md",
+      "docs/tooling/VALIDATION_PLATFORM_ROUTING.md",
+      "adl/tools/test_developer_throughput_fast_lane.sh"
+    ],
+    "purpose": "Add a proportional fast-lane policy and focused contract proof for small ADL fixes"
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "subagent:sagan",
+    "scope": [
+      ".csdlc/evidence/5666",
+      ".csdlc/issues/5666",
+      ".csdlc/prepared/issues/5666",
+      "adl/tools/test_developer_throughput_fast_lane.sh",
+      "docs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md",
+      "docs/tooling/VALIDATION_PLATFORM_ROUTING.md"
+    ],
+    "reviewed_revision": "git-blake3:30e495fda450d10a4e29b0c57195f759224a7214:bf3cbab163693daa1084c8119b458a550c59032eea66798f753f22166e22d3e6",
+    "findings": [],
+    "residual_risks": [
+      "Review confirmed the initial placeholder design finding was fixed before this exact scoped revision; remaining lock file is untracked and outside HEAD."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5666,
+    "pull_request": 5668,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5668",
+    "base": "main",
+    "head": "codex/5666-throughput-fast-lane",
+    "revision": "git-blake3:d5e1e48a5207481d4bd1b4a35b4c8e0d44281452:c03d4af05f94b148ba36e76abc1e31138572d8b883152bb9b728d2d24984dc16",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5666/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5666/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:5666",
+      "revision": "8e91e0e05de23a42793864d2157b414bb57513677bdde465f6d3cb85a375a9c4"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "a45a05299c1e2ab970b93c35d314c2a143dbad6a41a6222685729283d4e75303",
+      "rendered_digest": "2d53e4b1a319307fcce4afc1632f5afadeec20050c235d3e6da8a71ad40d896e",
+      "ast_digest": "85f6117b94d62a7fd03bad16aa1c0c84fdcec16850e17fbdaa6f84481da00b76"
+    },
+    "stp": {
+      "values_digest": "55a883231c015f3c0e833bbd061e6eef0277b379bb8e6a771c1ae2a1d4ccb27f",
+      "rendered_digest": "a4c0abe508c7bb29e28f63b0c2fdc92486301073de7e33060318a772bbfd9f92",
+      "ast_digest": "02700ec02f2df43fc142b1e043e4e26227582ed0dc542d2b8637b5ac30078348"
+    },
+    "spp": {
+      "values_digest": "b7bc502c5aa81c007bc523198b112abcf2b87218da4b5105e05c93c3d33d33f7",
+      "rendered_digest": "cd4648f2df73491bc7b633be48d68db3c4ddbd010cea03fb5eb165f9eb56fbd6",
+      "ast_digest": "622f57b394e1c0aaddf781eb1b01b4cd68f00d508f58d163a73b0ed440c60449"
+    },
+    "vpp": {
+      "values_digest": "e5a1eb15c4ea77ca90de2fd1b98d58d8d251c5901d228f886b5af21afe563da8",
+      "rendered_digest": "969cb2176f0a1f54315d31479c4d7c14fbada32e603264652f1106a88fc5103e",
+      "ast_digest": "72ac249f6b8d31d5714634abb4777ad71fbbbd222c476b5abbf7ced5b29acc09"
+    },
+    "srp": {
+      "values_digest": "c0b080e5ce8d4242d508e2386108be055e1c932682c22eacef31992bb05fc063",
+      "rendered_digest": "df7b07152a8de8fec15e52f4168cb93d6c641f0e3d2a6150ff1f4ed150659d90",
+      "ast_digest": "90cb3f6e0b5863227f3f41a5a5dac0afe778aa8a1acb94aae5771ace2951842a"
+    },
+    "sor": {
+      "values_digest": "9cb8475b5ad82f145508b8d836e2fec2c468daf606f5052c3a37d3788b82c641",
+      "rendered_digest": "94a199105206278bb69f74d5272026b72a9eabf7274892e1a5baca5a65a85612",
+      "ast_digest": "d38c2f2308fc8a8c624e34f07eef9789f9879f9f5571fc3e3dcf3b8ee072c02d"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5666-slot-1",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5666-slot-1",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5666-slot-1",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5666-slot-1",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5666-slot-1",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5666-slot-1",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "operator:5666",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:issue-5666-slot-1",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:issue-5666-slot-1",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "operator:5666",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:issue-5666-slot-1",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:issue-5666-slot-1",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:issue-5666-slot-1",
+      "reason": "record exact existing PR ready-for-review after remote success",
+      "operation": "record_ready_publication"
+    }
+  ]
+}

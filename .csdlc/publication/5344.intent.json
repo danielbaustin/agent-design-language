@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5344,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5344-v0918-wp12-soak-rollback",
+  "title": "[v0.91.8][WP-12] Run opt-in soak and prove rollback (#5344)",
+  "body": "Closes #5344\n\n## Summary\n- retain real native Linux, macOS, and Windows Guardian process-0 qualification for Runtime v3\n- prove 10,000 lifecycle cycles, 100 ten-second stress runs, and 10 ten-minute endurance runs per platform with no failed or degraded cycles\n- prove isolated ADL v2 installation, locked selector mutation, rollback failure recovery, and exact prior selector-byte restoration\n- preserve Runtime v1 and Runtime v2, leave the production default unchanged, and authorize no legacy deletion\n- provide the accepted non-deleting cutover handoff for child issue #5343\n- parse Git tracked paths as literal NUL-delimited filenames so portable UTF-8 paths do not fail Windows policy checks\n- classify the external lifecycle qualification harness outside the in-process changed-source line gate while retaining full CI and native process proof\n\n## Validation\n- manifest-driven WP-12 report verification passed for all three native platform reports\n- deterministic rollback replay passed with exact selector restoration\n- lifecycle soak tests passed 8/8\n- Guardian CLI tests passed 3/3\n- Runtime kernel configuration tests passed 20/20\n- focused CI path-policy contract passed, including UTF-8, spaces, embedded-newline, and illegal-colon regressions\n- complete coverage-impact tooling contract passed against the live Guardian inventory\n- ordinary production Rust and unmapped source remain fail-closed under the unchanged 80 percent changed-source threshold\n- authenticated Guardian healthy-window test passed 20 consecutive exact runs\n- final exact-head subagent review passed with zero findings\n- typed C-SDLC v2 doctor passed at reviewed generation 41\n\nProvider evidence is a credential-free non-live disposition; no live-provider or demo credit is claimed.",
+  "draft": false,
+  "revision": "git-blake3:49633dc9e97c1d606eb8f8347356e2a501d99eea:63076d45c4cc38d8082dd2f6686189792734cb8dd4b752aaf534ba6e6a65b186",
+  "commit_sha": "49633dc9e97c1d606eb8f8347356e2a501d99eea"
+}

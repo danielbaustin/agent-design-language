@@ -1,0 +1,13 @@
+
+running 6 tests
+test production_builder_returns_no_partial_executors_when_protocol_config_is_missing ... ok
+test provider_dispatch_uses_real_authenticated_transport_and_rejects_replay ... ok
+test acip_and_a2a_exchange_authenticated_frames ... ok
+test cloud_bridge_capability_and_rustls_boundary_are_explicit ... ok
+test response_tamper_and_concurrent_replay_are_rejected ... ok
+test unauthorized_malformed_timeout_retry_and_shutdown_fail_closed ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/protocol_adapters.rs (/Volumes/FastWork/adl-5664-protocol-target/debug/deps/protocol_adapters-106a0a08cf8a200d)

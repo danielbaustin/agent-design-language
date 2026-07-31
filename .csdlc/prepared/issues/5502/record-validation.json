@@ -1,0 +1,22 @@
+{
+  "issue": 5502,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "114f7112959b4388728685bdbbc654b3293c87f4cd63592cb1f3809ad507e570",
+  "claim_id": "claim-5502-v0918-output-convergence-preparation",
+  "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+  "reason": "Record the local #5502 implementation validation bundle.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5502/run-validation-lane.rb",
+        "convergence-contract"
+      ],
+      "purpose": "Prove live dependency ancestry, deterministic convergence/replan/blocked contracts, line budgets, formatting, strict Clippy, and diff hygiene for the isolated #5502 crate.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5502/implementation-validation/"
+    }
+  }
+}

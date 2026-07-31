@@ -1,0 +1,55 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5664,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][protocols] Implement real Provider, ACIP, A2A, and Cloud Bridge adapters",
+    "slug": "v0-91-8-runtime-v3-protocol-adapters",
+    "version": "v0.91.8",
+    "generation": 4
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement only the bounded protocol adapter surface and focused tests for #5664.",
+      "deliverables": [
+        "Runtime v3 protocol adapter module",
+        "Provider, ACIP, A2A, and Cloud Bridge executor builders",
+        "Local deterministic Tokio black-box tests",
+        "LoC before/after measurement",
+        "Focused test and strict Clippy evidence",
+        "Exact pre-PR review evidence"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Provider dispatch performs real authenticated exchange with bounded timeout, cancellation, retry, idempotency, and replay rejection",
+        "AC-2: ACIP performs real bidirectional exchange and fails closed for malformed, unauthorized, replay, timeout, and shutdown cases",
+        "AC-3: A2A performs real authenticated message exchange and rejects replay and unauthorized messages",
+        "AC-4: Cloud Bridge forwards only declared capabilities and classifies unsupported, unavailable, unauthorized, malformed, timeout, retry exhaustion, and shutdown outcomes explicitly",
+        "AC-5: Networked transport exposes Rustls configuration and avoids plaintext credential material in tracked artifacts",
+        "AC-6: Deterministic local black-box tests, focused Rust tests, strict Clippy, LoC measurement, and exact pre-PR review pass"
+      ],
+      "dependencies": [
+        "PR #5659 merged into current main from #5657",
+        "#5663 disjoint durable local adapter scope",
+        "#5665 disjoint Runtime API/WSS/Observatory scope"
+      ],
+      "repo_inputs": [
+        "adl-runtime-kernel/src/operations.rs",
+        "adl-runtime-kernel/src/assembly.rs",
+        "adl-runtime-kernel/Cargo.toml",
+        "adl-runtime-kernel/tests/operations.rs",
+        "adl-runtime-kernel/tests/assembly.rs"
+      ],
+      "non_goals": [
+        "AWS provisioning or cloud account experiments",
+        "Runtime API/WSS/Observatory feature proof implementation",
+        "Guardian launch, runtime config, or runtime-init edits",
+        "Durable local checkpoint/lifelog/scheduler/Chronosense adapter work",
+        "Runtime v2 edits",
+        "Cutover or default switch"
+      ]
+    }
+  }
+}

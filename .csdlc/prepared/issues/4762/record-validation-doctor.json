@@ -1,0 +1,24 @@
+{
+  "issue": 4762,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "36fb34a18a96d9381e700f6d82eb74366aa8bd0155521651769d34a1b03a98c8",
+  "claim_id": "claim-4762-birth-witness-receipt-execution",
+  "actor": "codex",
+  "reason": "Record post-merge #4762 typed doctor pass.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "/Volumes/FastWork/adl-wp-5737/csdlc-v2/target/debug/csdlc-doctor",
+        "--repo",
+        ".",
+        "--issue",
+        "4762"
+      ],
+      "purpose": "Confirm repaired typed C-SDLC v2 lifecycle surface is coherent after current origin/main integration.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/4762/implementation-validation/csdlc-doctor-bound.json"
+    }
+  }
+}

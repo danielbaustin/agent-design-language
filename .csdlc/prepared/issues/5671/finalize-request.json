@@ -1,0 +1,25 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5671,
+  "expected_generation": 1,
+  "expected_digest": "8e75fa77b6813b3cd85694f6a2de9695fb0993e36c1e6271166994b47eac6804",
+  "claim_id": "claim-5671-anthropic-opus-5",
+  "actor": "codex:5671-execution",
+  "summary": "Implemented Claude Opus 5 profile, setup template, and focused provider proof.",
+  "changes": ["adl/src/provider/profiles.rs", "adl/src/provider/mod.rs", "adl/src/provider/http_family/tests.rs", "adl/src/cli/provider_cmd.rs", "adl/src/cli/usage.rs", "adl/tests/provider_tests/profiles.rs"],
+  "artifacts": [".csdlc/prepared/issues/5671/validation-evidence/provider-profile-focused.log", ".csdlc/prepared/issues/5671/validation-evidence/provider-build-focused.log"],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {"id":"provider-profile-focused","proof_role":"registry expansion setup and mocked Anthropic request proof","purpose":"Run the focused provider test suite for Opus 5","determinism":"deterministic","resources":{"cpu_units":2,"memory_mib":2048,"tokens":4000},"credentials":[],"network":"denied","dependencies":[],"parallel_group":"local","release_gate":"required","execution":"local","timeout_seconds":600,"executable":"cargo","argv":["test","--manifest-path","adl/Cargo.toml","provider_"],"evidence":{"max_log_bytes":200000,"redact_values":[],"require_relative_paths":true}},
+        {"id":"provider-build-focused","proof_role":"compile the touched Rust provider surface","purpose":"Compile the ADL crate after the provider change","determinism":"deterministic","resources":{"cpu_units":2,"memory_mib":2048,"tokens":2000},"credentials":[],"network":"denied","dependencies":["provider-profile-focused"],"parallel_group":"local","release_gate":"required","execution":"local","timeout_seconds":300,"executable":"cargo","argv":["check","--manifest-path","adl/Cargo.toml"],"evidence":{"max_log_bytes":200000,"redact_values":[],"require_relative_paths":true}}
+      ]
+    },
+    "selection":{"requested_lanes":["provider-profile-focused","provider-build-focused"],"allow_network":false,"available_credentials":[]},
+    "budget":{"max_parallel":1,"cpu_units":2,"memory_mib":2048,"tokens":6000},
+    "root":"/Volumes/FastWork/adl-5671-opus-5",
+    "evidence_dir":"/Volumes/FastWork/adl-5671-opus-5/.csdlc/evidence/5671",
+    "cancellation_file":null
+  }
+}

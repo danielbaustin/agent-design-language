@@ -1,0 +1,13 @@
+{
+  "issue": 5344,
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "expected_generation": 16,
+  "expected_digest": "26bb6c75425f001f8c0e67655cea092d4096ea7597ac7a4006deba1b6f9602dc",
+  "now_unix_seconds": 1785303909,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Repair the exact CI path-policy defect exposed by #5703: Git-quoted UTF-8 filenames already present on main were misclassified as Windows-illegal paths.",
+  "add_protected_paths": [
+    "adl/tools/ci_path_policy.sh",
+    "adl/tools/test_ci_path_policy.sh"
+  ]
+}

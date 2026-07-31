@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5107,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5107-v092-adaptive-learning-dag-queue",
+  "title": "[v0.91.8][WP-21] Queue Adaptive Learning DAG work",
+  "body": "## Summary\n\n- Adds the v0.92 Adaptive Learning DAG queue and wires it into the v0.92 planning surfaces.\n- Records #5107 C-SDLC v2 lifecycle state, deterministic preparation validation, and exact-head review evidence.\n- Keeps #5104 as historical loop-runtime input only until requalified against current Runtime v3 contracts; this PR does not implement adaptive learning or learning-driven graph mutation.\n\n## Validation\n\n- `ruby .csdlc/prepared/issues/5107/validate_preparation.rb`\n- `csdlc-validate finalize` with evidence in `.csdlc/evidence/5107/preparation-doc-contract.log`\n- `csdlc-review guard` ready at current metadata-only head\n\n## Review\n\n- Exact-head review: `codex:bounded-exact-head-review`\n- Reviewed revision: `git-blake3:41b33d89f52383a1da075668010e327e6650a098:e38eaff4beb1b501723fafa0d68308630eb24a993a587a13607b1de684267878`\n- Finding fixed: Runtime v3 authority wording for the #5104 loop-runtime input.\n\n## Residual Risks / Blockers\n\n- Shared v0.92 planning files remain stack-sensitive; #4761 currently owns `docs/milestones/v0.92/DEMO_MATRIX_v0.92.md`, so the #5107 typed claim was narrowed to lifecycle artifacts and adaptive-learning feature paths.\n- Adaptive-learning implementation, graph mutation, child issue creation, merge, and closeout remain out of scope.\n\nCloses #5107\n",
+  "draft": false,
+  "revision": "git-blake3:43047ef4935095cd589bbd7917d302c92d266097:68677a0172f6f1e38c3d6fb0f50f3fdab04607be18d738e82ad1c3268606c704",
+  "commit_sha": "43047ef4935095cd589bbd7917d302c92d266097"
+}

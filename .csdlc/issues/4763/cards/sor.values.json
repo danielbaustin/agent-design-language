@@ -1,0 +1,188 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4763,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21][birthday-docs] Prepare first-birthday docs and external launch surfaces",
+    "slug": "v0918-wp21-birthday-docs-launch-surfaces-prep-4763",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Implemented #4763 first-birthday docs and external launch surfaces as claim-bounded repository documentation, with exact validation evidence retained; final birthday/public-launch proof remains gated on #4762 accepted witness and receipt evidence.",
+      "actual_changes": [
+        "Integrated current origin/main into the requested worktree and branch before preparation refresh.",
+        "Completed #4763 SIP, STP, SPP, VPP, SRP, and SOR cards with issue-specific preparation scope.",
+        "Completed #4763 preparation design, Mermaid diagram, reacquire request, and bounded preparation-review artifact.",
+        "Recorded typed reacquire obstruction from unrelated #5332 terminal-authority reconciliation as a blocker for lifecycle-clean future execution.",
+        "Added docs/milestones/v0.92/external_launch as the concrete launch-document surface with public-copy drafts, reviewer FAQ, publication gates, forbidden-claim rules, and #4762 dependency status.",
+        "Wired the launch surface into the v0.92 launch packet, milestone README, feature index, birthday feature docs, and activation bridge ledger.",
+        "Preserved a pending-proof posture because GitHub issue #4762 remains open and no accepted witness/receipt artifact is available.",
+        "Bounded implementation review found preparation-era lifecycle wording still present in historical planning cards after the typed phase advanced to implemented.",
+        "The current phase permits SOR/SRP truth updates, so this SOR entry records the implementation-era correction without hand-editing locked planning cards.",
+        "Typed claim-purpose transition was attempted and failed closed on unrelated #5332 terminal-authority reconciliation; #4763 finalize, doctor, and docs validation still passed under the existing live claim."
+      ],
+      "artifacts": [
+        ".csdlc/issues/4763/cards/sip.md",
+        ".csdlc/issues/4763/cards/stp.md",
+        ".csdlc/issues/4763/cards/spp.md",
+        ".csdlc/issues/4763/cards/vpp.md",
+        ".csdlc/issues/4763/cards/srp.md",
+        ".csdlc/issues/4763/cards/sor.md",
+        ".csdlc/prepared/issues/4763/design.md",
+        ".csdlc/prepared/issues/4763/diagram.mmd",
+        ".csdlc/prepared/issues/4763/preparation-review.md",
+        ".csdlc/prepared/issues/4763/reacquire-claim-20260731.json",
+        "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md",
+        "docs/milestones/v0.92/README.md",
+        "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md",
+        "docs/milestones/v0.92/external_launch/README.md",
+        "docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md",
+        "docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md",
+        "docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md",
+        "docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md",
+        "docs/milestones/v0.92/features/README.md",
+        "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "git",
+            "fetch",
+            "origin",
+            "main",
+            "codex/4763-v0918-wp14-preparation"
+          ],
+          "purpose": "Refresh origin/main and remote branch before integration.",
+          "outcome": "passed",
+          "evidence_ref": "origin/main 51bc5ae51b57c19dbab693af1c5a45142995f4e5 observed before merge."
+        },
+        {
+          "command": [
+            "git",
+            "merge",
+            "origin/main",
+            "--no-edit"
+          ],
+          "purpose": "Integrate current origin/main in the requested worktree.",
+          "outcome": "passed",
+          "evidence_ref": "Merge commit 90d1e00a2731ca7c70520a608438da15b4ab5aa0."
+        },
+        {
+          "command": [
+            "cargo",
+            "run",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--bin",
+            "csdlc-bind",
+            "--",
+            "--root",
+            ".",
+            "--reacquire-request",
+            ".csdlc/prepared/issues/4763/reacquire-claim-20260731.json"
+          ],
+          "purpose": "Typed #4763 claim reacquisition before card editing.",
+          "outcome": "blocked",
+          "evidence_ref": "Blocked by unrelated #5332 terminal-authority reconciliation: terminal authority for issue 5332 has different identity."
+        },
+        {
+          "command": [
+            "cargo",
+            "run",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--bin",
+            "csdlc-doctor",
+            "--",
+            "--repo",
+            ".",
+            "--issue",
+            "4763"
+          ],
+          "purpose": "Preparation packet C-SDLC v2 doctor consistency after issue-local refresh.",
+          "outcome": "passed",
+          "evidence_ref": "Run after temporary helper removal; final command output retained in session transcript."
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "purpose": "Preparation diff whitespace/path hygiene.",
+          "outcome": "passed",
+          "evidence_ref": "Run after temporary helper removal; final command output retained in session transcript."
+        },
+        {
+          "command": [
+            "/opt/homebrew/bin/git",
+            "diff",
+            "--check"
+          ],
+          "purpose": "Run the issue-required docs/card artifact hygiene check.",
+          "outcome": "passed",
+          "evidence_ref": "docs-diff-check.log"
+        },
+        {
+          "command": [
+            "/opt/homebrew/bin/git",
+            "ls-files",
+            "--error-unmatch",
+            "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md",
+            "docs/milestones/v0.92/README.md",
+            "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md",
+            "docs/milestones/v0.92/external_launch/README.md",
+            "docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md",
+            "docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md",
+            "docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md",
+            "docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md",
+            "docs/milestones/v0.92/features/README.md",
+            "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md"
+          ],
+          "purpose": "Check that every #4763 external-launch artifact named in SOR is tracked by git.",
+          "outcome": "passed",
+          "evidence_ref": "launch-surface-tracked-paths.log"
+        },
+        {
+          "command": [
+            "./csdlc-v2/target/debug/csdlc-doctor",
+            "--repo",
+            ".",
+            "--issue",
+            "4763"
+          ],
+          "purpose": "Run csdlc-doctor for issue #4763 from the issue worktree.",
+          "outcome": "passed",
+          "evidence_ref": "typed-doctor.log"
+        },
+        {
+          "command": [
+            "./csdlc-v2/target/debug/csdlc-bind",
+            "--root",
+            ".",
+            "--transition-request",
+            "/Users/daniel/git/agent-design-language/.git/csdlc-v2/requests/4763.json"
+          ],
+          "purpose": "Transition the active #4763 claim purpose/scope from preparation-only to implementation/publication after binding.",
+          "outcome": "blocked",
+          "evidence_ref": "Typed transition failed closed with reconciliation_required: terminal authority for issue 5332 has different identity."
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "ready",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": [
+        "Before #4763 execution, resolve unrelated #5332 lifecycle reconciliation enough for typed #4763 reacquire/doctor to pass.",
+        "Before #4763 execution, verify #4762 retained implementation proof for birth witnesses and receipt package; do not accept #4762 claim, receipt bookkeeping, merge, or closeout as a proof substitute.",
+        "During later implementation, constrain changes to intended docs paths unless the SPP is re-opened and re-approved.",
+        "Before any public launch surface, run redaction/no-overclaim review for legal status, personhood, consciousness, autonomy, and public readiness claims."
+      ]
+    }
+  }
+}

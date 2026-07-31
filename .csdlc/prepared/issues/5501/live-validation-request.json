@@ -1,0 +1,107 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "dependency-terminal-gate",
+        "proof_role": "live_merge_plus_ancestry_dependency_gate",
+        "purpose": "Prove #5349, #5499, #5498, #5500, and #5502 are live merged and ancestral to the #5501 execution revision while treating closeout receipts as audit-only.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 1500},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "live-proof",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5501/check-dependencies.rb"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "live-manifest",
+        "proof_role": "retained_live_manifest_identity",
+        "purpose": "Validate the retained two-shard live-run manifest, digests, disjoint path sets, negative refusal, dashboard observation, convergence decision, and manifest admission review.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 2500},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": ["dependency-terminal-gate"],
+        "parallel_group": "live-proof",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5501/run-validation-lane.rb", "live-manifest"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "live-two-shard",
+        "proof_role": "retained_two_shard_live_proof",
+        "purpose": "Validate retained live proof for the real #5500 and #5502 parallel shards, including distinct tasks, branches, worktrees, claims, protected paths, write paths, revisions, merged outcomes, and fail-closed negative case.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 2500},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": ["live-manifest"],
+        "parallel_group": "live-proof",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5501/run-validation-lane.rb", "live-two-shard"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "baseline-comparison",
+        "proof_role": "truthful_single_agent_comparison",
+        "purpose": "Validate the bounded single-agent comparison and fail if it claims an unobserved substitute run or numeric speedup.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 1500},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": ["live-two-shard"],
+        "parallel_group": "live-proof",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5501/run-validation-lane.rb", "baseline-comparison"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "diff-hygiene",
+        "proof_role": "retained_packet_diff_hygiene",
+        "purpose": "Reject whitespace errors in the retained #5501 packet.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 64, "tokens": 500},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "hygiene",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "git",
+        "argv": ["diff", "--check"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": [
+      "dependency-terminal-gate",
+      "live-manifest",
+      "live-two-shard",
+      "baseline-comparison",
+      "diff-hygiene"
+    ],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {"max_parallel": 2, "cpu_units": 2, "memory_mib": 256, "tokens": 8500},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5501/live-validation",
+  "cancellation_file": null
+}

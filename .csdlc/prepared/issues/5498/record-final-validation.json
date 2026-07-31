@@ -1,0 +1,22 @@
+{
+  "issue": 5498,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "92c3d86264410a91000f6870086bc39a5124aaae3112618baebc385d626cb3ba",
+  "claim_id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the final exact local validation proof requested by the single pre-PR review.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        ".csdlc/prepared/issues/5498/validate-task-adapter.sh"
+      ],
+      "purpose": "Prove authority confinement, idempotency, task-level cancellation serialization, terminal replay and caching, bounded secret-safe evidence, timeout ambiguity, dependency readiness, formatting, and budget compliance.",
+      "outcome": "passed",
+      "evidence_ref": "FastWork: 15/15 focused tests passed; strict all-target Clippy, cargo fmt --check, dependency gate, and git diff --check passed; implementation and tests remain below 2,500 LoC each."
+    }
+  },
+  "fail_after_backup": false
+}

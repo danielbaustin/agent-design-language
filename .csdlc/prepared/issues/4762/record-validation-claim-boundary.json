@@ -1,0 +1,26 @@
+{
+  "issue": 4762,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "cea89fb0a26e47e29c53ba113e7784fa8f9b5fd5d2d74fb3eab4e691864ba0db",
+  "claim_id": "claim-4762-birth-witness-receipt-execution",
+  "actor": "codex",
+  "reason": "Record post-merge #4762 claim-boundary scan.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "rg",
+        "birth_event_status|first true Godel-agent birthday has happened|not a birthday occurrence|not_claimed|legal personhood|production citizenship|completed constitutional governance|v0.93 governance completion",
+        ".csdlc/prepared/issues/4762",
+        "docs/milestones/v0.91.8/review/v092_handoff_4762",
+        "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+        "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+        "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md"
+      ],
+      "purpose": "Retain searchable evidence that #4762 preserves not_claimed and forbidden-claim boundaries after integrating current origin/main.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/4762/implementation-validation/claim-boundary-scan.log"
+    }
+  }
+}

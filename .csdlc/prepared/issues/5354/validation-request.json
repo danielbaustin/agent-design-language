@@ -1,0 +1,50 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "current-registry-six-card-integrity",
+        "proof_role": "typed_current_registry_six_card_integrity",
+        "purpose": "Resolve the active prompt registry, native v2 projection, six card/value pairs, and authenticated typed doctor state.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 2000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5354/validate-cards.rb"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "preparation-diff-hygiene",
+        "proof_role": "issue_local_preparation_diff_hygiene",
+        "purpose": "Reject whitespace errors in the issue-local preparation packet.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 1000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "git",
+        "argv": ["diff", "--check"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["current-registry-six-card-integrity", "preparation-diff-hygiene"],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {"max_parallel": 2, "cpu_units": 2, "memory_mib": 512, "tokens": 3000},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5354/preparation-validation",
+  "cancellation_file": null
+}

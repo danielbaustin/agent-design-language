@@ -1,0 +1,13 @@
+flowchart LR
+  P["#4741 safe staged proof mode"] --> W["Semantic log watcher"]
+  W --> S{"Complete ILPP signature repeats?"}
+  S -- "no, progress" --> C["Continue normal batch proof"]
+  S -- "yes, no progress" --> F["ILPP_RETRY_LOOP"]
+  F --> M["Controlled environment matrix"]
+  M --> H["Host and domain identity"]
+  M --> E["HOME TMP XDG isolation"]
+  M --> U["Approved Unity version comparison"]
+  H --> R["Root cause or exact blocker"]
+  E --> R
+  U --> R
+  R --> T["Focused regression fixtures and retained evidence"]

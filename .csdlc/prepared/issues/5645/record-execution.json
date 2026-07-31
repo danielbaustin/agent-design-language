@@ -1,0 +1,10 @@
+{
+  "issue": 5645,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "e3a9543e78d6b95e1580f38f6c1ccf716c9c738487bbaa83ac4a87448d22adaf",
+  "claim_id": "claim-5645-csdlc-merge-command",
+  "actor": "codex:5645-execution",
+  "reason": "Record the typed merge command implementation and focused safety tests.",
+  "operation": {"operation":"record_execution","summary":"Added typed csdlc-merge request/result contracts, canonical merge_ready and exact-head validation, Octocrab merge invocation, merge-SHA output, and focused fail-closed tests.","changes":["Added csdlc-v2 merge module and public schemas.","Added csdlc-merge binary using the shared token resolver and Octocrab.","Kept csdlc-publish non-merging."],"artifacts":["csdlc-v2/src/merge.rs","csdlc-v2/src/bin/csdlc-merge.rs","csdlc-v2/src/schema.rs","csdlc-v2/Cargo.toml"]}
+}

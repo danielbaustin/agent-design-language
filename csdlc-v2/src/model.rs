@@ -45,6 +45,7 @@ impl LifecyclePhase {
                 | (Self::Implemented, Self::Reviewed)
                 | (Self::Reviewed, Self::Implemented)
                 | (Self::Reviewed, Self::Published)
+                | (Self::Reviewed, Self::ClosedOut)
                 | (Self::Published, Self::Implemented)
                 | (Self::MergeReady, Self::Implemented)
                 | (Self::Published, Self::MergeReady)

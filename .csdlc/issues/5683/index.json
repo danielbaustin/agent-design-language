@@ -1,0 +1,427 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5683,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "b8d92d7710c00944967def4c4d3e923aa274554cc31b48a8fa49da34b6a77d97",
+  "phase": "published",
+  "generation": 18,
+  "digest": "33d623e9d865d503906d2047ee86d4d88930c975585717e78715219410464131",
+  "claim": {
+    "id": "claim-5683-v0918-unity-observatory-visual-remediation",
+    "owner": "codex:issue-5683-unity-remediation",
+    "generation": 18,
+    "acquired_unix_seconds": 1785113461,
+    "expires_unix_seconds": 1785718261,
+    "heartbeat_unix_seconds": 1785113461,
+    "branch": "codex/5683-v0918-unity-observatory-visual-remediation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5683",
+      ".csdlc/issues/5683",
+      ".csdlc/locks/5683.lock",
+      ".csdlc/prepared/issues/5683",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryBatchValidator.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryFlagshipStageBuilder.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Resources/ObservatoryShellRuntime.uss",
+      "demos/v0.91.6/unity-observatory/Assets/Scenes/FlagshipObservatoryStage.unity",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs",
+      "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uss",
+      "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uxml",
+      "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
+    ],
+    "purpose": "Remediate the visible flagship Unity Observatory render artifacts and retain direct investor-facing proof"
+  },
+  "review_assignment": {
+    "reviewer": "Hooke",
+    "assigned_by": "codex:issue-5683-unity-remediation",
+    "revision": "git-blake3:6a8b2175311f45642e255f4d41af8afd6b1ca630:eb2303a210af1579d18b45a03a6aa232e4050f09678259c6835b24ecddde3e05",
+    "scope": [
+      ".csdlc/evidence/5683/LIVE_UNITY_PROOF.md",
+      ".csdlc/evidence/5683/TOOLING_ANOMALIES.md",
+      ".csdlc/evidence/5683/capture_unity_mcp_image.mjs",
+      ".csdlc/evidence/5683/final-full-hd-game-view.png",
+      ".csdlc/evidence/5683/final-qhd-game-view.png",
+      ".csdlc/evidence/5683/raw-environment-full-hd-pass-3.png",
+      ".csdlc/evidence/5683/raw-environment-qhd-pass-3.png",
+      ".csdlc/evidence/5683/record-execution-request.json",
+      ".csdlc/evidence/5683/record-validation-alignment-request.json",
+      ".csdlc/evidence/5683/record-validation-contract-request.json",
+      ".csdlc/evidence/5683/record-validation-diff-request.json",
+      ".csdlc/evidence/5683/record-validation-live-unity-request.json",
+      ".csdlc/issues/5683/audit.jsonl",
+      ".csdlc/issues/5683/cards/sip.md",
+      ".csdlc/issues/5683/cards/sip.values.json",
+      ".csdlc/issues/5683/cards/sor.md",
+      ".csdlc/issues/5683/cards/sor.values.json",
+      ".csdlc/issues/5683/cards/spp.md",
+      ".csdlc/issues/5683/cards/spp.values.json",
+      ".csdlc/issues/5683/cards/srp.md",
+      ".csdlc/issues/5683/cards/srp.values.json",
+      ".csdlc/issues/5683/cards/stp.md",
+      ".csdlc/issues/5683/cards/stp.values.json",
+      ".csdlc/issues/5683/cards/vpp.md",
+      ".csdlc/issues/5683/cards/vpp.values.json",
+      ".csdlc/issues/5683/index.json",
+      ".csdlc/locks/5683.lock",
+      ".csdlc/prepared/issues/5683/advance-implemented.json",
+      ".csdlc/prepared/issues/5683/design.md",
+      ".csdlc/prepared/issues/5683/diagram.mmd",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryFlagshipStageBuilder.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs"
+    ]
+  },
+  "review": {
+    "reviewer": "Hooke",
+    "scope": [
+      ".csdlc/evidence/5683/LIVE_UNITY_PROOF.md",
+      ".csdlc/evidence/5683/TOOLING_ANOMALIES.md",
+      ".csdlc/evidence/5683/capture_unity_mcp_image.mjs",
+      ".csdlc/evidence/5683/final-full-hd-game-view.png",
+      ".csdlc/evidence/5683/final-qhd-game-view.png",
+      ".csdlc/evidence/5683/raw-environment-full-hd-pass-3.png",
+      ".csdlc/evidence/5683/raw-environment-qhd-pass-3.png",
+      ".csdlc/evidence/5683/record-execution-request.json",
+      ".csdlc/evidence/5683/record-validation-alignment-request.json",
+      ".csdlc/evidence/5683/record-validation-contract-request.json",
+      ".csdlc/evidence/5683/record-validation-diff-request.json",
+      ".csdlc/evidence/5683/record-validation-live-unity-request.json",
+      ".csdlc/issues/5683/audit.jsonl",
+      ".csdlc/issues/5683/cards/sip.md",
+      ".csdlc/issues/5683/cards/sip.values.json",
+      ".csdlc/issues/5683/cards/sor.md",
+      ".csdlc/issues/5683/cards/sor.values.json",
+      ".csdlc/issues/5683/cards/spp.md",
+      ".csdlc/issues/5683/cards/spp.values.json",
+      ".csdlc/issues/5683/cards/srp.md",
+      ".csdlc/issues/5683/cards/srp.values.json",
+      ".csdlc/issues/5683/cards/stp.md",
+      ".csdlc/issues/5683/cards/stp.values.json",
+      ".csdlc/issues/5683/cards/vpp.md",
+      ".csdlc/issues/5683/cards/vpp.values.json",
+      ".csdlc/issues/5683/index.json",
+      ".csdlc/locks/5683.lock",
+      ".csdlc/prepared/issues/5683/advance-implemented.json",
+      ".csdlc/prepared/issues/5683/design.md",
+      ".csdlc/prepared/issues/5683/diagram.mmd",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryFlagshipStageBuilder.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs"
+    ],
+    "reviewed_revision": "git-blake3:6a8b2175311f45642e255f4d41af8afd6b1ca630:eb2303a210af1579d18b45a03a6aa232e4050f09678259c6835b24ecddde3e05",
+    "findings": [],
+    "residual_risks": [
+      "Game View sizing relies on undocumented UnityEditor reflection and may require maintenance after Unity upgrades.",
+      "The static contract test is source-oriented; behavioral confidence depends on the retained live Unity proof.",
+      "The scene remains intentionally sparse because problematic imported geometry was deactivated.",
+      "Runtime presentation remains fixture/contract-based, not proof of live CSM integration."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5683,
+    "pull_request": 5693,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5693",
+    "base": "main",
+    "head": "codex/5683-v0918-unity-observatory-visual-remediation",
+    "revision": "git-blake3:a8832158d65476586719d17c37bee6174b844b98:930b23fefa28b988f0cdfc4cbfe08ac2607cf5f0874ea3bb2a928c967fa9c850",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5683/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5683/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5683",
+      "revision": "bbeff4ac48bda1380f3fa3262e92c99b9caede7d047641a22b410de5c0e21652"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "98f309f15e1917dbc148322175de0059e958127198a3521d7b315276b6406126",
+      "rendered_digest": "97eb54524cf0d293522d3a4495666eb42e739b1b42ba37900ca1f5aaa56c0a12",
+      "ast_digest": "0c03f048e200173e885009fe047a19e43bd02a640170325798ed7a27bf605e10"
+    },
+    "stp": {
+      "values_digest": "d062791e688c92b713042cffae84ef5e959ec4766c4fb50e2919ae982dff317a",
+      "rendered_digest": "f8dc2201d62c7e21dceadb61a7c10233389be658313c8f63ac25348e9e1edf00",
+      "ast_digest": "d37d59892d1f7204cb729e440b219d6b55c81d4ed62ce975f471411b40a9afed"
+    },
+    "spp": {
+      "values_digest": "43038dcb01adfafc5408634fadf3a174cc1fffd5cd5bf30343c47708bb10426e",
+      "rendered_digest": "178bbbb1925bde42767d52c63fefc30ef90ad09474b6a1598f8211b4f427e2b4",
+      "ast_digest": "4470b796182f02708b62ec973df468d5db684af2193e31bb12acde87e5f4c247"
+    },
+    "vpp": {
+      "values_digest": "75e7b385b9d77dc65c90e665b5aff0dffc34b14b0939d80b3993bd2bd7650aeb",
+      "rendered_digest": "ac2aa75bf11d40548a14b2e77c6fdc4393e9c210a6ab1ca081aa94b3c849b843",
+      "ast_digest": "978c22ad29a905bd2756f36b20e6fa5e4e396f74ae3452bbbe8142be75371478"
+    },
+    "srp": {
+      "values_digest": "8c23e87dfe5cf0a8e6fde918555aafee4add2f6f0d4c04395d4d8bd27c47e306",
+      "rendered_digest": "0fffb3a731293199a7e847c3c31b9c347cbd03d4c4297a9e2896dbae95198157",
+      "ast_digest": "33b80f2676e354d9fe1ccf766888f5c3db1456a6116e7a1bbe7e56a3981da72f"
+    },
+    "sor": {
+      "values_digest": "cc7fb378cd4479d9b8f76ec1be667ad286cbfd84c232c1ccfccd865adfbb23d0",
+      "rendered_digest": "55e2fe0132497b7b31957d8af85f9d47bef1c0dfee956ebd20f1444bd62c5a5e",
+      "ast_digest": "c8eda1f2a0e4ec7d1e61d742023261b9d69e73b173b438862540c34c6211f275"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "The bounded Unity remediation is committed and its focused contract, alignment, live-editor, visual, and diff validations passed."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "Hooke completed the assigned exact-revision review with no actionable findings; all prior findings are resolved."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "The published branch was behind current main after PR #5690 merged; recover review truth for exact-head re-review and same-PR republication."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "Hooke completed exact-head review after current-main integration with no actionable findings."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "The ready PR became behind after #5688 merged; recover for one current-main exact-head review and same-PR republication."
+    },
+    {
+      "sequence": 10,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "Hooke completed exact-head review after current-main integration with no actionable findings."
+    },
+    {
+      "sequence": 11,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "operator:issue-5683",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "Record observed issue-bound Unity execution before review",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Remediated the flagship Unity Observatory hero view in the bound worktree and retained direct dual-resolution Unity proof.\",\"changes\":[\"Suppressed incompatible imported particle systems and particle-heavy prefab roots that produced square render corruption.\",\"Reframed and relit the investor hero camera, added a bounded observatory room shell, and normalized presentation geometry.\",\"Added deterministic Full HD and QHD camera and Game View proof helpers.\",\"Increased command-shell legibility while preserving explicit fixture and contract-only truth labels.\",\"Extended the focused Unity Observatory contract guardrail for the remediated stage-builder proof surface.\"],\"artifacts\":[\".csdlc/evidence/5683/final-full-hd-game-view.png\",\".csdlc/evidence/5683/final-qhd-game-view.png\",\".csdlc/evidence/5683/raw-environment-full-hd-pass-3.png\",\".csdlc/evidence/5683/raw-environment-qhd-pass-3.png\",\".csdlc/evidence/5683/LIVE_UNITY_PROOF.md\",\".csdlc/evidence/5683/TOOLING_ANOMALIES.md\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "Record focused Unity Observatory contract validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_contract.sh\"],\"purpose\":\"Verify the runtime shell contract and the remediated flagship stage-builder proof surface.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5683/LIVE_UNITY_PROOF.md\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "Record live Unity-MCP alignment proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/probe_unity_mcp_observatory_alignment.sh\"],\"purpose\":\"Prove exact agreement among the operator-provisioned project, local MCP endpoint, live editor, and opened flagship scene.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5683/LIVE_UNITY_PROOF.md\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "Record direct live Unity validation and dual-resolution visual proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"unity-mcp-cli\",\"run-tool\",\"reflection-method-call\",\"ValidateFlagshipStageMenu\"],\"purpose\":\"Validate the live flagship scene and visually inspect direct Full HD and QHD Play Mode captures.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5683/LIVE_UNITY_PROOF.md\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "Record focused diff hygiene validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Verify whitespace and patch hygiene for the bounded issue diff.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5683/LIVE_UNITY_PROOF.md\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "The bounded Unity remediation is committed and its focused contract, alignment, live-editor, visual, and diff validations passed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "Hooke",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "Hooke completed the assigned exact-revision review with no actionable findings; all prior findings are resolved.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "The published branch was behind current main after PR #5690 merged; recover review truth for exact-head re-review and same-PR republication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "Hooke",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "Hooke completed exact-head review after current-main integration with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "The ready PR became behind after #5688 merged; recover for one current-main exact-head review and same-PR republication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "Hooke completed exact-head review after current-main integration with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex:issue-5683-unity-remediation",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

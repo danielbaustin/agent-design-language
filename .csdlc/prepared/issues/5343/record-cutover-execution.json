@@ -1,0 +1,28 @@
+{
+  "issue": 5343,
+  "card": "sor",
+  "expected_generation": 12,
+  "expected_digest": "50e3ba58c97bacdcd9a1f5ef0fe25f43ee29c4e82cea4ad989f0ee281c60c715",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the exact substantive reversible default-switch implementation and proof.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Executed the reviewed ADL v2 selector from a fresh isolated installation, proved failure preservation, restored and executed incumbent v1 exactly, then selected v2 as final while retaining v1 for a fourteen-day no-deletion rollback window.",
+    "changes": [
+      "Replaced receipt-blocking dependency checks with live merged landing ancestry and accepted handoff verification",
+      "Added one bounded cutover proof using the authoritative ADL v2 selector implementation",
+      "Proved malformed generation, missing receipt, wrong digest, stale compare-and-swap, malformed selector, lock interruption, and persistence failure preserve prior bytes",
+      "Executed v2, restored exact prior selector bytes, executed byte-identical v1 0.91.7, and reselected v2 as final default",
+      "Retained a fourteen-day rollback window without Runtime v2 edits or legacy deletion"
+    ],
+    "artifacts": [
+      "commit 05ac125bc377a09bce4bdbbd571c5572b231805a",
+      ".csdlc/prepared/issues/5343/run-cutover-proof.sh",
+      ".csdlc/prepared/issues/5343/run-validation-lane.rb",
+      ".csdlc/prepared/issues/5343/check-dependencies.rb",
+      "docs/milestones/v0.91.8/evidence/wp12/cutover-5343/report.json"
+    ]
+  },
+  "fail_after_backup": false
+}

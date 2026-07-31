@@ -1,0 +1,23 @@
+{
+  "issue": 5354,
+  "base_branch": "main",
+  "branch": "codex/5354-v0918-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5354-v0918-wp15-demo-preparation",
+    "owner": "codex:5354-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784664208,
+    "expires_unix_seconds": 1785269008,
+    "heartbeat_unix_seconds": 1784664208,
+    "branch": "codex/5354-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5354",
+      ".csdlc/locks/5354.lock",
+      ".csdlc/prepared/issues/5354",
+      ".csdlc/evidence/5354"
+    ],
+    "purpose": "Prepare and review #5354 only; claim no product or demo path and perform no implementation until WP-14A #5384 is merged, typed closed_out, claim-free, retained-receipt-backed, and ancestral"
+  }
+}

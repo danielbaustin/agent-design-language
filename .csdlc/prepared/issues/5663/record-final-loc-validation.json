@@ -1,0 +1,19 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "59d0b786a6f52e4f5fcd65f45f34844e11267e329631c237231ca3cf5663b944",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record final authoritative net physical LoC validation after all exact-review fixes including external-adapter fail-closed coverage.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["git", "diff", "--numstat", "--", "adl-runtime-kernel/src/assembly.rs", "adl-runtime-kernel/src/governed_operations.rs", "adl-runtime-kernel/tests/assembly.rs", "adl-runtime-kernel/tests/operations.rs"],
+      "purpose": "Record final physical LoC delta for claimed source and test paths: before 2481, after 2453, net -28.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log"
+    }
+  },
+  "fail_after_backup": false
+}

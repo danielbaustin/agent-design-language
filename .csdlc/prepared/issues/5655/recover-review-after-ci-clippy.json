@@ -1,0 +1,8 @@
+{
+  "issue": 5655,
+  "expected_generation": 16,
+  "expected_digest": "83c0f7c566f6c46af5aaed567bb8b04f96183da3a7be5a15791c95b355332a68",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "reason": "Recover stale #5655 review and publication after the CI strict Clippy lint repair changed csdlc-v2/src/github.rs."
+}

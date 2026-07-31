@@ -1,0 +1,23 @@
+{
+  "issue": 5526,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "e6d016b6fa18669fc01f658bd7a9ee812cfcfc11d08341098765c943f9809a52",
+  "claim_id": "claim-5526-v0918-provider-expansion-preparation",
+  "actor": "codex:5526-execution",
+  "reason": "Final focused provider validation passed after adapter contract repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl/Cargo.toml", "--test", "provider_tests", "provider_"],
+      "purpose": "Prove expanded provider identities, deterministic model identifiers, vendor inference, chat adapter request/response shapes, and legacy generic HTTP compatibility.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5526/implementation/provider-expansion.log",
+      "additional_checks": [
+        {"command": ["cargo", "clippy", "--manifest-path", "adl/Cargo.toml", "--lib", "--tests", "--", "-D", "warnings"], "outcome": "passed"},
+        {"command": ["cargo", "fmt", "--manifest-path", "adl/Cargo.toml", "--", "--check"], "outcome": "passed"},
+        {"command": ["git", "diff", "--check"], "outcome": "passed"}
+      ]
+    }
+  }
+}

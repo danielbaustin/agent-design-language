@@ -1,0 +1,200 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4758,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "de5ee30d1ad0d0178709db033b64c147dcf35243e84a3380c4537a42d1a72f87",
+  "phase": "published",
+  "generation": 4,
+  "digest": "4e4ee2992e86d99bd791b4b98acad1672a45ba56088e59b550e856768538e95e",
+  "claim": {
+    "id": "claim-4758-v092-launch-readiness-execution",
+    "owner": "codex:issue-4758-execution",
+    "generation": 4,
+    "acquired_unix_seconds": 1785530311,
+    "expires_unix_seconds": 1786135111,
+    "heartbeat_unix_seconds": 1785530311,
+    "branch": "codex/4758-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/4758",
+      ".csdlc/issues/4758",
+      ".csdlc/locks/4758.lock",
+      ".csdlc/prepared/issues/4758"
+    ],
+    "purpose": "Implement and validate #4758 launch-readiness handoff evidence for v0.92 release review consumption"
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "codex:bounded-pre-pr-review",
+    "scope": [
+      "."
+    ],
+    "reviewed_revision": "git-blake3:91dc19bbd5c2095ac4940ed9b7d7097e92fa04bd:33aa546fea52ef65c283c1f445903fb4dcd8a92f09cdf2d1840322360c16f409",
+    "findings": [
+      {
+        "id": "R1",
+        "severity": "p2",
+        "summary": "consumption.v1.json originally recorded the pre-finalize parent as review_revision rather than the implementation evidence revision; fixed before typed review by recording the implementation commit and preventing future generator reruns from emitting a false SHA.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:91dc19bbd5c2095ac4940ed9b7d7097e92fa04bd:33aa546fea52ef65c283c1f445903fb4dcd8a92f09cdf2d1840322360c16f409",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Open dependencies #5363, #5362, #5352, and #4763 remain recorded blockers/non-claims; the package is consumable but does not claim v0.92 launch readiness."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 4758,
+    "pull_request": 5739,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5739",
+    "base": "main",
+    "head": "codex/4758-v0918-preparation",
+    "revision": "git-blake3:260df81974883f0fb71b25cd0b85b045b335c1e9:fbdb68e2e0fe89bf4a4f6d9948dfd74e5b29f22d921131ec6b0b077ce2b01a35",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/4758/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4758/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:wp21-conductor",
+      "revision": "2252ee719ad92b63a38a898f81bbcfa3975a17fd826af0ddcc2663a261b7752d"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "5b15290917e225a3f96cf5f8102694d79d3036f01f075b684614fe048d8c92fb",
+      "rendered_digest": "2e60667359875253e0d4be86d4bc6c1ec70d6dee0d4f15ea462efd09b4302519",
+      "ast_digest": "ae2ee20f4a0af370c4682e6467b6a014aa1bf5f98e929d537e3fd94a3887d047"
+    },
+    "stp": {
+      "values_digest": "bdff86ed2c3887be275b916e8e98b7b4e28424e7dabbfeaa38112ae42aef569b",
+      "rendered_digest": "7fae0a3d2942b8439a7e03ecc2e72e89f878b307b24c1568832758421349100e",
+      "ast_digest": "c4c5c01d8db0a5211dddfe53fca126e8679e3832ee72b8d7a728ca418f978248"
+    },
+    "spp": {
+      "values_digest": "0110ab44dfa83fa4eb4bc5d29f804ba7cf1ed50cf48d81c9e9f8215b62b3bcb6",
+      "rendered_digest": "0324101e2bfebd62703fb3b77d4fe84cac18e369a618025ef8ec2440e2b8a434",
+      "ast_digest": "4e7723ce99582ecee426f46fe4327d9ecb035d654a00f947114b58cb51e4db8d"
+    },
+    "vpp": {
+      "values_digest": "4172be12e150a7ceb1cb7f0f44113122b6ac4ff67ea152a27b72b42ddc14f260",
+      "rendered_digest": "2bf4c80f8931f0e7a84ec096a111fee6676fd86f78be673bd62b90ca3ae50621",
+      "ast_digest": "b2eebb998e38b8d8bda7d4d9780ba53b5bb12c283036b04a0f955790fce9f802"
+    },
+    "srp": {
+      "values_digest": "47f2793180f810dad3937c35b207ddd9b012a6445b36b549b832694da3d62c85",
+      "rendered_digest": "8b44f6c6097806008d1661cfdfd6a9fb68077f9bfad23b8a52afd4c8247d0316",
+      "ast_digest": "4cccea57f4ae1099bbe4a46a34ae3759d5ed53f36e0c3ce5ea093db9dd4c9518"
+    },
+    "sor": {
+      "values_digest": "cea547acecab3e4c72acb16385126f6cabc7e634e2839410da20788f8350c3db",
+      "rendered_digest": "7865d9e13d72107e96024b3007465ae3f9f7836348298021968e69bcd89844bf",
+      "ast_digest": "62a3830540a6230601cf90b549fbac3bab3840e6f9cabf384444d609e05786bc"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-4758-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-4758-preparation",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-4758-execution",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-4758-execution",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-4758-execution",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-4758-preparation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-4758-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:claim-hygiene",
+      "reason": "Release preparation-only ownership until issue execution actually starts",
+      "operation": "{\"claim_id\":\"claim-4758-v0918-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:preparation-does-not-own-execution-paths\",\"previous_owner\":\"codex:issue-4758-preparation\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 0,
+      "actor": "codex:issue-4758-execution",
+      "reason": "Acquire live typed issue-local claim for #4758 launch-readiness execution",
+      "operation": "{\"branch\":\"codex/4758-v0918-preparation\",\"claim_id\":\"claim-4758-v092-launch-readiness-execution\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:issue-4758-execution\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/4758\",\".csdlc/issues/4758\",\".csdlc/locks/4758.lock\",\".csdlc/prepared/issues/4758\"],\"purpose\":\"Implement and validate #4758 launch-readiness handoff evidence for v0.92 release review consumption\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:wp21-conductor",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:issue-4758-execution",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:issue-4758-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:issue-4758-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

@@ -9,7 +9,9 @@ packets, demos, and milestone evidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.91.7%20closeout-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.91.8%20active%20bridge-blue)
+
+Homepage: [agent-logic.ai](https://agent-logic.ai)
 
 ![ADL deterministic cognitive architecture overview](docs/assets/ADL-overview.png)
 
@@ -151,8 +153,10 @@ from issue
 
 ### v0.91.8 - Active Bridge Milestone
 
-v0.91.7 completed its closeout sequence and is retained evidence for the active
-v0.91.8 bridge. v0.91.8 WP-01 `#5594` is reconciling execution readiness under
+v0.91.7 is now published as the [ADL v0.91.7 GitHub release](https://github.com/danielbaustin/agent-design-language/releases/tag/v0.91.7)
+and remains the implementation/readiness tranche feeding the active v0.91.8
+bridge.
+v0.91.8 WP-01 `#5594` is reconciling execution readiness under
 milestone sprint umbrella `#5595`; no downstream implementation is ready from
 planning prose alone. The bridge must accept ADL v2, Runtime v3, and C-SDLC v2
 at exact revisions before v0.92 consumes the platform. Closed issue state does
@@ -319,7 +323,9 @@ production markets.
 - Current ADL and Runtime v2 crate version: 0.91.7
 - Independent Runtime v3 kernel package version: 0.92.0; it remains separately
   versioned and does not by itself claim v0.92 activation readiness
-- Most recently completed milestone: v0.91.7
+- Most recently completed implementation/readiness tranche and public release:
+  v0.91.7 ([GitHub release](https://github.com/danielbaustin/agent-design-language/releases/tag/v0.91.7))
+- The active v0.91.8 bridge remains unreleased pending its documented gates.
 - Current milestone state: WP-01 readiness is in progress; later v0.91.8 work
   remains planned or dependency-blocked
 - Primary implementation language: Rust

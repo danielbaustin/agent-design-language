@@ -1,0 +1,5 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running tests/control.rs (adl-runtime-kernel/target/debug/deps/control-8ec4335d078fb2a7)
+adl_event schema=adl.runtime.event.v1 sequence=0 component=runtime_api event=state:Running correlation_id=none
+adl_event schema=adl.runtime.event.v1 sequence=1 component=none event=clock_authority_updated correlation_id=none
+v0.91.7 HTML Observatory integrated proof passed

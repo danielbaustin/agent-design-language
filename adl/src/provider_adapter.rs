@@ -34,6 +34,8 @@ const DEFAULT_OPENROUTER_CHAT_COMPLETIONS_URL: &str =
     "https://openrouter.ai/api/v1/chat/completions";
 const DEFAULT_ZAI_CHAT_COMPLETIONS_URL: &str =
     "https://open.bigmodel.cn/api/paas/v4/chat/completions";
+const DEFAULT_KIMI_CHAT_COMPLETIONS_URL: &str = "https://api.moonshot.ai/v1/chat/completions";
+const DEFAULT_MINIMAX_CHAT_COMPLETIONS_URL: &str = "https://api.minimax.io/v1/chat/completions";
 const DEFAULT_OPENROUTER_MAX_TOKENS: u64 = 2048;
 const DEFAULT_BEDROCK_PROFILE: &str = "agent-logic-admin";
 const DEFAULT_BEDROCK_REGION: &str = "us-west-2";
@@ -616,6 +618,8 @@ fn execute_hosted(
         "openai" | "chatgpt" => execute_hosted_openai(request, policy),
         "anthropic" | "claude" => execute_hosted_anthropic(request, policy),
         "deepseek" => execute_hosted_deepseek(request, policy),
+        "kimi" | "moonshot" => execute_hosted_kimi(request, policy),
+        "minimax" => execute_hosted_minimax(request, policy),
         "openrouter" => execute_hosted_openrouter(request, policy),
         "bedrock" | "aws_bedrock" => execute_hosted_bedrock(request, policy),
         "z_ai" | "zai" | "zhipu" => execute_hosted_zai(request, policy),
@@ -722,6 +726,65 @@ fn execute_hosted_deepseek(
         |_| None,
         RuntimeSurfaceV1::HostedApi,
     )
+}
+
+fn execute_hosted_kimi(
+    request: &ProviderInvocationRequestV1,
+    policy: &ProviderAttemptPolicyV1,
+) -> std::result::Result<ProviderTextResponse, ProviderFailureV1> {
+    let key = resolve_credential(request.route.credential_ref.as_deref(), "MOONSHOT_API_KEY")?;
+    let url = provider_endpoint_url(
+        request.route.endpoint_ref.as_deref(),
+        DEFAULT_KIMI_CHAT_COMPLETIONS_URL,
+    )?;
+    let response = client(policy)?
+        .post(url)
+        .bearer_auth(key.as_str())
+        .json(&chat_completion_request_body(request))
+        .send()
+        .map_err(map_reqwest_error)?;
+    decode_text_response(
+        response,
+        extract_chat_completion_output_text,
+        extract_chat_completion_model_id,
+        RuntimeSurfaceV1::HostedApi,
+    )
+}
+
+fn minimax_request_body(request: &ProviderInvocationRequestV1) -> Value {
+    json!({
+        "model": request.route.provider_model_id,
+        "messages": [{"role": "user", "content": request.input_text.as_deref().unwrap_or_default()}],
+        "max_completion_tokens": output_token_budget_or_default(request, 2_048).min(2_048),
+        "stream": false,
+    })
+}
+
+fn execute_hosted_minimax(
+    request: &ProviderInvocationRequestV1,
+    policy: &ProviderAttemptPolicyV1,
+) -> std::result::Result<ProviderTextResponse, ProviderFailureV1> {
+    let key = resolve_credential(request.route.credential_ref.as_deref(), "MINIMAX_API_KEY")?;
+    let url = provider_endpoint_url(
+        request.route.endpoint_ref.as_deref(),
+        DEFAULT_MINIMAX_CHAT_COMPLETIONS_URL,
+    )?;
+    let response = client(policy)?
+        .post(url)
+        .bearer_auth(key.as_str())
+        .json(&minimax_request_body(request))
+        .send()
+        .map_err(map_reqwest_error)?;
+    decode_minimax_response(response)
+}
+
+fn chat_completion_request_body(request: &ProviderInvocationRequestV1) -> Value {
+    json!({
+        "model": request.route.provider_model_id,
+        "messages": [{"role": "user", "content": request.input_text.as_deref().unwrap_or_default()}],
+        "max_tokens": output_token_budget_or_default(request, 2_048).min(4_096),
+        "stream": false,
+    })
 }
 
 fn deepseek_request_body(request: &ProviderInvocationRequestV1) -> Value {
@@ -1123,6 +1186,60 @@ fn decode_text_response(
     })
 }
 
+fn decode_minimax_response(
+    response: reqwest::blocking::Response,
+) -> std::result::Result<ProviderTextResponse, ProviderFailureV1> {
+    let status = response.status();
+    let body = response.text().map_err(map_reqwest_error)?;
+    if !status.is_success() {
+        return Err(map_http_failure(
+            status.as_u16(),
+            &body,
+            RuntimeSurfaceV1::HostedApi,
+        ));
+    }
+    let json: Value = serde_json::from_str(&body).map_err(|error| {
+        provider_failure_from_note(
+            &format!("provider invalid_json: {error}"),
+            Some(status.as_u16()),
+        )
+    })?;
+    if let Some(base_resp) = json.get("base_resp") {
+        let code = base_resp
+            .get("status_code")
+            .and_then(Value::as_i64)
+            .unwrap_or_default();
+        if code != 0 {
+            let message = base_resp
+                .get("status_msg")
+                .and_then(Value::as_str)
+                .unwrap_or("MiniMax request failed");
+            let kind = match code {
+                1004 => ProviderFailureKindV1::ProviderAuthError,
+                1008 => ProviderFailureKindV1::ProviderBillingBlocked,
+                1002 => ProviderFailureKindV1::ProviderRateLimited,
+                _ => ProviderFailureKindV1::ProviderError,
+            };
+            let retryable = matches!(kind, ProviderFailureKindV1::ProviderRateLimited);
+            return Err(ProviderFailureV1 {
+                kind,
+                retryable,
+                message: format!("MiniMax error {code}: {message}"),
+                provider_error_excerpt: Some(format!("MiniMax error {code}: {message}")),
+                http_status: Some(status.as_u16()),
+            });
+        }
+    }
+    let output_text = extract_chat_completion_output_text(&json)
+        .filter(|text| !text.trim().is_empty())
+        .ok_or_else(|| provider_output_failure_from_json(&json, status.as_u16()))?;
+    Ok(ProviderTextResponse {
+        output_text,
+        http_status: status.as_u16(),
+        observed_provider_model_id: extract_chat_completion_model_id(&json),
+    })
+}
+
 fn provider_error_from_json_envelope(json: &Value, http_status: u16) -> Option<ProviderFailureV1> {
     let error = json.get("error")?;
     let message = if let Some(message) = error.get("message").and_then(Value::as_str) {
@@ -1316,6 +1433,23 @@ fn map_http_failure(
     body: &str,
     runtime_surface: RuntimeSurfaceV1,
 ) -> ProviderFailureV1 {
+    {
+        let lower = body.to_ascii_lowercase();
+        if lower.contains("insufficient balance")
+            || lower.contains("insufficient_balance")
+            || lower.contains("quota exhausted")
+            || lower.contains("1008")
+        {
+            let message = format!("provider billing blocked http {status}: {body}");
+            return ProviderFailureV1 {
+                kind: ProviderFailureKindV1::ProviderBillingBlocked,
+                retryable: false,
+                provider_error_excerpt: Some(message.chars().take(200).collect()),
+                message,
+                http_status: Some(status),
+            };
+        }
+    }
     let note = if runtime_surface == RuntimeSurfaceV1::OllamaHttp {
         let lower = body.to_ascii_lowercase();
         if lower.contains("not found") || lower.contains("does not exist") {
@@ -2847,6 +2981,94 @@ mod tests {
 
         let _ = fs::remove_file(path);
         env::remove_var("ADL_PROVIDER_ADAPTER_OPENROUTER_OBSERVED_KEY");
+    }
+
+    #[test]
+    fn kimi_and_minimax_hosted_adapters_use_bearer_chat_contract() {
+        for (provider, model, env_name, env_value) in [
+            (
+                "kimi",
+                "kimi-k2.5",
+                "ADL_PROVIDER_ADAPTER_KIMI_KEY",
+                "kimi-test-key",
+            ),
+            (
+                "minimax",
+                "MiniMax-M2.5",
+                "ADL_PROVIDER_ADAPTER_MINIMAX_KEY",
+                "minimax-test-key",
+            ),
+        ] {
+            env::set_var(env_name, env_value);
+            let (endpoint, rx) = capture_one_request_server(
+                r#"{"model":"observed-model","choices":[{"message":{"content":"provider success"}}]}"#,
+                "200 OK",
+            );
+            let path = temp_log(provider);
+            let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+            let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+            req.route.provider = provider.to_string();
+            req.route.provider_model_id = model.to_string();
+            req.route.credential_ref = Some(format!("env:{env_name}"));
+            req.max_output_tokens = (provider != "minimax").then_some(1_024);
+
+            let result = execute_provider_invocation(req, &mut logger);
+            drop(logger);
+            let received = rx
+                .recv_timeout(Duration::from_secs(2))
+                .expect("request captured");
+
+            assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Ok);
+            assert_eq!(result.output_text.as_deref(), Some("provider success"));
+            assert!(received.contains(&format!("authorization: Bearer {env_value}")));
+            assert!(received.contains(&format!("\"model\":\"{model}\"")));
+            let budget_field = if provider == "minimax" {
+                "\"max_completion_tokens\":2048"
+            } else {
+                "\"max_tokens\":1024"
+            };
+            assert!(received.contains(budget_field));
+            let log = fs::read_to_string(&path).expect("read log");
+            assert!(!log.contains(env_value));
+            assert!(!log.contains("provider success"));
+            let _ = fs::remove_file(path);
+            env::remove_var(env_name);
+        }
+    }
+
+    #[test]
+    fn minimax_success_status_error_envelope_is_billing_blocked() {
+        env::set_var(
+            "ADL_PROVIDER_ADAPTER_MINIMAX_BILLING_KEY",
+            "minimax-test-key",
+        );
+        let endpoint = one_shot_server(
+            r#"{"base_resp":{"status_code":1008,"status_msg":"insufficient balance"}}"#,
+            "200 OK",
+        );
+        let path = temp_log("minimax-billing");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.provider = "minimax".to_string();
+        req.route.provider_model_id = "MiniMax-M2.5".to_string();
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_MINIMAX_BILLING_KEY".to_string());
+
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Failed);
+        assert_eq!(
+            result.failure.as_ref().map(|failure| failure.kind.clone()),
+            Some(ProviderFailureKindV1::ProviderBillingBlocked)
+        );
+        assert!(!result.failure.as_ref().expect("failure").retryable);
+        assert!(result
+            .failure
+            .as_ref()
+            .expect("failure")
+            .message
+            .contains("1008"));
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_MINIMAX_BILLING_KEY");
     }
 
     #[test]

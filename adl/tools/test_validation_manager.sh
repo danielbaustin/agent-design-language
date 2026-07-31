@@ -65,6 +65,43 @@ assert recorded["status"] == "ready_to_run"
 assert recorded == stdout_profile
 PY
 
+podcast_static_demo="$TMP/podcast-static-demo.txt"
+cat >"$podcast_static_demo" <<'EOF'
+A	demos/podcast/index.html
+A	demos/podcast/feed.xml
+A	demos/podcast/studio/podcast-studio.html
+A	demos/_preview/podcast/index.html
+EOF
+bash "$SCRIPT" --changed-files "$podcast_static_demo" --json >"$TMP/podcast-static-demo.json"
+python3 - <<'PY' "$TMP/podcast-static-demo.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1", json.dumps(profile, indent=2, sort_keys=True)
+assert profile["selected_profile"] == "selected_2_lane_profile", json.dumps(profile, indent=2, sort_keys=True)
+assert profile["status"] == "ready_to_run", json.dumps(profile, indent=2, sort_keys=True)
+assert profile["pr_publication_sufficient"] is True, json.dumps(profile, indent=2, sort_keys=True)
+assert [item["lane_id"] for item in profile["run"]] == [
+    "podcast_launch_packet",
+    "podcast_static_demo_surface",
+], json.dumps(profile, indent=2, sort_keys=True)
+surfaces = {surface["lane_id"]: surface for surface in profile["behavior_surfaces"]}
+launch_surface = surfaces["podcast_launch_packet"]
+assert launch_surface["id"] == "demo_contract_podcast_launch_packet"
+assert launch_surface["owner"] == "review"
+assert launch_surface["proof_role"] == "demo_contract"
+assert launch_surface["resource_class"] == "small"
+static_surface = surfaces["podcast_static_demo_surface"]
+assert static_surface["id"] == "demo_contract_podcast_static_demo_surface"
+assert static_surface["owner"] == "site"
+assert static_surface["proof_role"] == "demo_contract"
+assert static_surface["resource_class"] == "tiny"
+assert profile["escalation"]["required"] is False
+assert profile["escalation"]["reasons"] == []
+assert profile["diagnostics"] == []
+PY
+
 docs_run_log_dir="$TMP/build-action-logs"
 bash "$SCRIPT" \
   --changed-files "$docs_only" \
@@ -79,10 +116,12 @@ from pathlib import Path
 
 profile = json.load(open(sys.argv[1]))
 log_dir = Path(sys.argv[2])
-assert profile["run_status"] == "passed"
-assert profile["build_action_logs"]["schema_version"] == "adl.build_action_log_manifest.v1"
-assert profile["build_action_logs"]["packet_count"] == 1
-packet_ref = profile["run"][0]["build_action_log"]
+assert profile["run_status"] == "passed", json.dumps(profile, indent=2, sort_keys=True)
+assert profile["build_action_logs"]["schema_version"] == "adl.build_action_log_manifest.v1", json.dumps(profile, indent=2, sort_keys=True)
+assert profile["build_action_logs"]["packet_count"] >= 1, json.dumps(profile, indent=2, sort_keys=True)
+docs_items = [item for item in profile["run"] if item["lane_id"] == "docs_diff_check"]
+assert len(docs_items) == 1, json.dumps(profile, indent=2, sort_keys=True)
+packet_ref = docs_items[0]["build_action_log"]
 packet_path = Path(packet_ref)
 if not packet_path.is_absolute():
     packet_path = Path.cwd() / packet_path

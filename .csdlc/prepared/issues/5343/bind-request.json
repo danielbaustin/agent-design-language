@@ -1,0 +1,24 @@
+{
+  "issue": 5343,
+  "base_branch": "main",
+  "branch": "codex/5343-v0918-wp12-reversible-default-switch",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5343-v0918-wp12-reversible-default-switch-preparation",
+    "owner": "codex:5343-preparation-owner",
+    "generation": 1,
+    "acquired_unix_seconds": 1784661008,
+    "expires_unix_seconds": 1785265808,
+    "heartbeat_unix_seconds": 1784661008,
+    "branch": "codex/5343-v0918-wp12-reversible-default-switch",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5343",
+      ".csdlc/locks/5343.lock",
+      ".csdlc/prepared/issues/5343",
+      ".csdlc/evidence/5343",
+      "docs/milestones/v0.91.8/evidence/wp12/cutover-5343"
+    ],
+    "purpose": "Prepare and review #5343 reversible default-switch contracts only; no selector transaction or implementation until #5344 is merged, typed closed_out, receipt-backed, claim-free, ancestral, and accepted"
+  }
+}

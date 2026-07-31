@@ -12,7 +12,11 @@ Status: pre_phase
 
 ## Scope
 
-Review the exact #5361 preparation revision across all six typed cards, the acceptance design, dependency diagram, protected paths, acceptance-register validator, and typed preparation requests. Verify complete bidirectional AC-1 through AC-7 SPP/VPP coverage; correct dependency ordering; explicit Runtime v2 independence, HTTPS-only and address-configuration boundaries, no-AWS boundary, and unsupported-claim boundaries; and confirm that no required parity, consumer, operational, rollback, review, or quality obligation is deferred, weakened, omitted, or treated as fixture-only proof. Confirm this revision remains preparation-only and makes no implementation, acceptance, deployment, publication, or closeout claim.
+adl-runtime/src/cav.rs
+.csdlc/evidence/5361
+.csdlc/prepared/issues/5361/validate-acceptance.json
+docs/milestones/v0.91.8/review/runtime_v3_acceptance_5361.v1.json
+.csdlc/issues/5361
 
 ## Prompts
 
@@ -32,12 +36,15 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- The operator-provided background guardian at https://localhost:20997 remained stale/unavailable during acceptance; #5361 records that truth and relies on bounded FastWork Runtime v3 operational proof plus retained dependency evidence instead of promoting the stale process as healthy.
+- GitHub PR CI is intentionally not claimed by the pre-publication acceptance register; it remains required for publish, shepherding, merge, and terminal closeout.
+- Runtime v3 inventory is a reviewed exception over the 12000-line target while still below the 20000 hard safety ceiling.
+- AWS, GPU, and remote-provider execution remain explicit non-claims.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:b9d1e48dea1c25470449effc4e715552a853390c:b94627cc54a90b54511bd20e3f52250e7560d02d473aae78bb5257fa31ec5f44")
 
-Reviewer: None
+Reviewer: Some("gpt-5.5:required-pre-pr-review")
 
-Result: pre_review
+Result: pass

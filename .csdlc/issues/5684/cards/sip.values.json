@@ -1,0 +1,40 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5684,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Split GitHub tool surface into smaller owner binaries",
+    "slug": "csdlc-github-tool-split",
+    "version": "v0.91.8",
+    "generation": 38
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Refactor the C-SDLC GitHub command surface into smaller owner binaries and enforce the stable installed binary set.",
+      "required_outcome": "Issue and PR GitHub responsibilities are isolated behind smaller binaries; stable install/coexistence builds and verifies all required binaries.",
+      "declared_scope": [
+        "C-SDLC v2 GitHub command binaries",
+        "owner-binary install/coexistence manifests",
+        "shared retry/backoff resilience primitive",
+        "focused tests for split routing and install proof",
+        "current operator docs and skill guidance for split GitHub surfaces",
+        "current bootstrap validation guidance for deleted structured-prompt wrapper"
+      ],
+      "authority_boundary": [
+        "No app connector write fallback",
+        "No AWS",
+        "Private plan remains under ignored .adl/docs/TBD"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use FastWork for build output",
+        "Use repo binaries and make them present",
+        "Keep csdlc-merge installed",
+        "Do not publish the private refactor plan"
+      ]
+    }
+  }
+}

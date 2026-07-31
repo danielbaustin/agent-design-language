@@ -1,0 +1,28 @@
+{
+  "issue": 5501,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "d99e09bdfb4618cfb79c00879f7190c9dffe264ad23ed73cd38305ae4914ff23",
+  "claim_id": "claim-5501-v0918-live-workcell-proof-preparation",
+  "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+  "reason": "Record the local retained live-proof validation bundle.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby .csdlc/prepared/issues/5501/check-dependencies.rb",
+        "ruby .csdlc/prepared/issues/5501/run-validation-lane.rb live-manifest",
+        "ruby .csdlc/prepared/issues/5501/run-validation-lane.rb live-two-shard",
+        "ruby .csdlc/prepared/issues/5501/run-validation-lane.rb baseline-comparison",
+        "ruby .csdlc/prepared/issues/5501/run-validation-lane.rb post-merge-exact"
+      ],
+      "purpose": "Prove dependency ancestry, retained two-shard live proof identity, fail-closed negative case, dashboard and convergence evidence refs, and a truthful single-agent comparison for #5501.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5501/",
+      "notes": [
+        "The preparation-only guard .csdlc/prepared/issues/5501/validate-preparation.rb was not selected as final proof after the required origin/main integration because it intentionally fails on merged dependency changes outside the original preparation base.",
+        "No GPT-5.5 pre-PR review is recorded by this validation request."
+      ]
+    }
+  }
+}

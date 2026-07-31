@@ -1,0 +1,14 @@
+{
+  "issue": 4759,
+  "card": "spp",
+  "expected_generation": 6,
+  "expected_digest": "f952d2ab1c9f25cd2000ba0712f3ae88bf527ee8799f7dc7684721489fea32da",
+  "claim_id": "claim-4759-v0918-activation-execution-20260731",
+  "actor": "codex:issue-4759-execution",
+  "reason": "Mark #5384 closure and accepted WP-14A ledger confirmation complete.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S1",
+    "status": "completed"
+  }
+}

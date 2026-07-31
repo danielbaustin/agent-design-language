@@ -1,0 +1,47 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5719,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][ci][coverage] Avoid duplicate hosted coverage on podcast/demo page PRs",
+    "slug": "v0-91-8-ci-coverage-avoid-duplicate-hosted-coverage-on-podcast-demo-page-prs",
+    "version": "v0.91.8",
+    "generation": 4
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Mapped podcast launch/studio demo surfaces into a focused podcast_launch_packet validation lane and taught ci_path_policy to consume that lane without selecting full hosted coverage. Added a #5716-like regression fixture proving podcast static/demo page paths skip full coverage while preserving the coverage aggregator and existing Rust/tooling behavior.",
+      "actual_changes": [
+        ".csdlc/issues/5719",
+        ".csdlc/locks/5719.lock",
+        ".csdlc/prepared/issues/5719",
+        "adl/config/validation_lane_selector.v0.91.6.json",
+        "adl/tools/ci_path_policy.sh",
+        "adl/tools/test_ci_path_policy.sh"
+      ],
+      "artifacts": [
+        "adl/tools/test_ci_path_policy.sh",
+        "adl/tools/test_ci_runtime_contracts.sh"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_ci_path_policy.sh"
+          ],
+          "purpose": "Prove podcast launch/studio page changes select focused podcast validation and do not require full hosted runtime plus workspace coverage.",
+          "outcome": "passed",
+          "evidence_ref": "ci-path-policy-podcast-launch-contract.log"
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "draft",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

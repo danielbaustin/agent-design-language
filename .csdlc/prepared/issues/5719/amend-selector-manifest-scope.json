@@ -1,0 +1,12 @@
+{
+  "issue": 5719,
+  "claim_id": "claim-5719-ci-coverage-page-policy",
+  "expected_generation": 0,
+  "expected_digest": "f43d07c74c3540a7ba9145cd27457925007b707ad972bceb3cf61d45f562d43b",
+  "now_unix_seconds": 1785363942,
+  "actor": "codex:5719-execution",
+  "reason": "The reproduced #5716-like failure is an unmapped validation-manager surface, so #5719 must update the validation lane selector manifest as part of the CI coverage selection fix.",
+  "add_protected_paths": [
+    "adl/config/validation_lane_selector.v0.91.6.json"
+  ]
+}

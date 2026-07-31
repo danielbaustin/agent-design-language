@@ -1,0 +1,49 @@
+# Structured Intent Prompt
+
+Template: 1.0.0
+
+Issue: 5498
+
+Repository: danielbaustin/agent-design-language
+
+Card: sip
+
+Status: ready
+
+## Goal
+
+Prepare a small typed adapter that executes conductor-approved Codex task operations and exchanges bounded context without acquiring lifecycle, integration, or transcript-retention authority.
+
+## Required Outcome
+
+After #5499 and the WP-09 interface gate are terminal, conductor assignments can explicitly create or attach to tasks, send bounded messages and handoffs, inspect status, cancel, or escalate while preserving issue ownership, idempotency, privacy, and fail-closed collision handling.
+
+## Scope
+
+- typed create, attach, message, handoff, inspect, cancel, and escalate operations
+- bounded provenance-bearing context packets and sanitized observation records
+- issue claim, branch, worktree, protected-path, dependency, freshness, and expected-output binding
+- idempotency, stale-owner collision, timeout, cancellation, and transport-error classification
+
+## Authority
+
+- C-SDLC v2 remains issue, claim, lifecycle, review, publication, merge, and closeout authority
+- #5499 remains assignment-plan authority and supplies admitted typed assignments
+- #5498 transports only explicit approved task operations and cannot invent assignments or widen scope
+- #4760 owns durable Memory Palace context handoff at WP-14; #5498 carries bounded task transport only
+- #5500 consumes sanitized read-only observations and #5502 owns output convergence and replanning
+
+## Assumptions
+
+- none
+
+## Operator Constraints
+
+- Use installed typed C-SDLC v2 binaries and semantic card operations only
+- Keep root main clean; all tracked #5498 preparation stays in the existing issue worktree
+- Do not use raw gh, AWS, credentials, provider calls, Runtime v2, or product implementation during preparation
+- Do not implement until #5499 and final WP-09 interface gate #5349 are live-merged into origin/main with the dependency revisions ancestral to the execution base and adjacent paths confirmed disjoint
+- Treat retained receipts and typed closeout records as audit evidence only; they must not block execution readiness when live merge and ancestry truth is satisfied
+- Use /Volumes/FastWork for Cargo artifacts and temporary build surfaces
+- Run one mandatory exact-revision review immediately before PR publication; do not add extra preparation review churn
+- Preparation may be committed and pushed, but no PR, publication, merge, or closeout may occur

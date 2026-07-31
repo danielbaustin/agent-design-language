@@ -1,0 +1,14 @@
+{
+  "issue": 5343,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "f2ca577d2376266de1721fe2622cba6a6581b4cbc8a11c20c9f2c9d7f014c3d6",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-preparation",
+  "actor": "codex:5343-preparation-owner",
+  "reason": "Refresh preparation plan wording so execution is gated by live merge plus ancestry and review is deferred until pre-PR.",
+  "operation": {
+    "operation": "replan",
+    "field": "plan_summary",
+    "value": "Render and validate all six cards; freeze exact #5344/#5345 dependency gates, selector transaction, fresh-install identity, explicit-v1 rollback window, evidence schema, ownership, protected paths, COTS, budgets, PVF, and no-deferral invariants; commit and push preparation only without preparation-review churn; remain blocked until #5344 and #5345 each have live merged landing commits ancestral to the exact execution revision; treat receipts and typed closeout as audit-only observations; then execute the full reviewed lifecycle and run the single bounded review just before PR without widening scope."
+  }
+}

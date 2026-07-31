@@ -1,10 +1,13 @@
 use serde_json::{json, Value};
 
 use crate::doctor::DoctorReport;
+use crate::github::{GithubActionRequest, GithubActionResult, GithubIssuePacket, PrStatePacket};
 use crate::lifecycle::{
-    AmendClaimScopeRequest, BindRequest, BindResult, HeartbeatRequest, RecoverClaimRequest,
-    ReleaseClosedClaimRequest, TransitionActiveClaimRequest,
+    AmendClaimScopeRequest, BindRequest, BindResult, HeartbeatRequest, ReacquireClaimRequest,
+    ReacquireClaimResult, RecoverClaimRequest, ReleaseClosedClaimRequest, RevokeActiveClaimRequest,
+    RevokeActiveClaimResult, TransitionActiveClaimRequest,
 };
+use crate::merge::{MergeRequest, MergeResult};
 use crate::migration::{ImportReport, LegacyImportRequest, NormalizedOutcome, ShadowComparison};
 use crate::model::IssueRecord;
 use crate::model::{
@@ -35,7 +38,11 @@ pub fn public_schema_bundle() -> Value {
         "bind_request": schemars::schema_for!(BindRequest),
         "bind_result": schemars::schema_for!(BindResult),
         "recover_claim_request": schemars::schema_for!(RecoverClaimRequest),
+        "reacquire_claim_request": schemars::schema_for!(ReacquireClaimRequest),
+        "reacquire_claim_result": schemars::schema_for!(ReacquireClaimResult),
         "release_closed_claim_request": schemars::schema_for!(ReleaseClosedClaimRequest),
+        "revoke_active_claim_request": schemars::schema_for!(RevokeActiveClaimRequest),
+        "revoke_active_claim_result": schemars::schema_for!(RevokeActiveClaimResult),
         "amend_claim_scope_request": schemars::schema_for!(AmendClaimScopeRequest),
         "transition_active_claim_request": schemars::schema_for!(TransitionActiveClaimRequest),
         "heartbeat_request": schemars::schema_for!(HeartbeatRequest),
@@ -47,6 +54,10 @@ pub fn public_schema_bundle() -> Value {
         "terminal_sor_artifact_repair_request": schemars::schema_for!(TerminalSorArtifactRepairRequest),
         "terminal_sor_validation_repair_request": schemars::schema_for!(TerminalSorValidationRepairRequest),
         "doctor_report": schemars::schema_for!(DoctorReport),
+        "github_action_request": schemars::schema_for!(GithubActionRequest),
+        "github_action_result": schemars::schema_for!(GithubActionResult),
+        "github_issue_packet": schemars::schema_for!(GithubIssuePacket),
+        "github_pr_state_packet": schemars::schema_for!(PrStatePacket),
         "pvf_manifest": schemars::schema_for!(PvfManifest),
         "pvf_execution_request": schemars::schema_for!(ExecutionRequest),
         "finalize_request": schemars::schema_for!(FinalizeRequest),
@@ -66,6 +77,8 @@ pub fn public_schema_bundle() -> Value {
         "readiness_request": schemars::schema_for!(ReadinessRequest),
         "readiness_report": schemars::schema_for!(ReadinessReport),
         "terminal_observation": schemars::schema_for!(TerminalObservation),
+        "merge_request": schemars::schema_for!(MergeRequest),
+        "merge_result": schemars::schema_for!(MergeResult),
         "legacy_import_request": schemars::schema_for!(LegacyImportRequest),
         "legacy_import_report": schemars::schema_for!(ImportReport),
         "normalized_outcome": schemars::schema_for!(NormalizedOutcome),

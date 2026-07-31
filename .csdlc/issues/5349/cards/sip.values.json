@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5349,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-09] Implement provider and governed-tool adapters",
+    "slug": "v0-91-8-wp09-provider-governed-tool-adapters",
+    "version": "v0.91.8",
+    "generation": 25
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Implement small, contract-driven mock, bounded HTTPS, governed-tool, and compatibility adapters behind terminal ADL engine and Runtime v3 ports without acquiring scheduling, policy, provider-selection, credential, or lifecycle authority.",
+      "required_outcome": "At one exact integrated revision, the independent adl-adapters crate proves deterministic mock behavior, bounded HTTPS transport, verified governed-tool authorization binding, lossless compatibility classification, stable typed errors, denial preservation, secret hygiene, exact COTS and size budgets, and truthful no-credential live-claim boundaries while Runtime v3 remains execution authority.",
+      "declared_scope": [
+        "preparation-only issue-local cards, design, diagram, dependency gate, COTS and budget policy, PVF plan, review, and evidence",
+        "one product crate at adl-v2/crates/adl-adapters after required source-interface clearance and typed claim amendment",
+        "deterministic mock provider and governed-tool adapters behind terminal #5340 ports",
+        "bounded HTTPS client adapter using a runtime-issued endpoint permit, Rustls, explicit limits, cancellation, and stable normalized outcomes",
+        "governed-tool adapter requiring a verified authorization envelope and preserving denial, appeal, provenance, and typed error evidence",
+        "versioned compatibility adapter with explicit allowlisted mappings and no incumbent source reuse",
+        "negative authority, secret-canary, error-fidelity, rollback, COTS, LoC, test, exact-revision, and no-live-claim proof"
+      ],
+      "authority_boundary": [
+        "#5340 owns typed provider/tool ports plus scheduling, retry, cancellation, and engine outcome semantics; adapters perform one admitted bounded call and preserve outcomes",
+        "#5341 and Runtime v3 own canonical admission, execution context, supervision, continuity, and provider/tool execution authority; #5349 cannot bypass ingress or mutate runtime state",
+        "#5342 owns records, signing, provenance, and verification; #5349 preserves verified evidence and cannot sign, re-sign, downgrade, or rewrite history",
+        "Freedom Gate and governance owners decide capabilities, commitments, lawful execution, refusal, and appeal; #5349 only verifies envelope binding and preserves denial",
+        "#5526 owns vendor/model identities, capability matrices, provider-specific normalization, and bounded credentialed smoke after the parent adapter interfaces freeze",
+        "C-SDLC v2 owns issue, card, claim, review, publication, shepherding, and closeout truth",
+        "Runtime v2 and incumbent ADL source are behavioral evidence only and cannot be imported, copied, modified, linked, or used as fallback"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use installed typed C-SDLC v2 binaries and semantic card operations only; no v1 wrappers or hand-edited rendered cards",
+        "Keep root main clean and read-only; all #5349 mutations stay in /Volumes/FastWork/adl-wp-5349",
+        "This task stops after preparation review, fixes, commit, and push; no product implementation, publication, PR, merge, or closeout",
+        "Do not use raw gh, AWS, Runtime v2, provider credentials, credential-file scans, or live provider calls",
+        "Add product protected paths only after required source interfaces are present and typed claim scope is amended; receipt absence never blocks execution",
+        "After the dependency gate passes, verify sole-writer authority and use typed csdlc-bind amendment to add only adl-v2/crates/adl-adapters",
+        "Use /Volumes/FastWork/adl-5349 for every future Rust artifact and run every required PVF lane locally with no skipped, ignored, degraded, fixture-only, prose-only, pending, waived, or CI-only acceptance",
+        "Run bounded exact-revision subagent review, fix every actionable finding, and preserve the no-credential/no-live-claim boundary"
+      ]
+    }
+  }
+}

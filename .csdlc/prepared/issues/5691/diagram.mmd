@@ -1,0 +1,17 @@
+flowchart TD
+  Runtime["Runtime v3 Axum/Tokio kernel"]
+  Tracing["Rust tracing facade"]
+  Subscriber["single production JSON subscriber"]
+  Vector["pinned Vector process"]
+  Master["canonical durable master log"]
+  OTLP["OTLP HTTP logs/traces/metrics"]
+  API["Runtime status/API exposure"]
+  Auditor["clean-log auditor"]
+
+  Runtime --> Tracing
+  Tracing --> Subscriber
+  Subscriber --> Vector
+  Vector --> Master
+  Vector --> OTLP
+  Vector --> API
+  Master --> Auditor

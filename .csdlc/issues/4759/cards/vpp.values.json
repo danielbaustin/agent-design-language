@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4759,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][activation] Implement v0.92 activation map from accepted deployed products",
+    "slug": "v0918-wp14-activation-map",
+    "version": "v0.91.8",
+    "generation": 12
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "wp14-activation-prep",
+          "proof_role": "Validate issue-local preparation packet shape and dependency-gate language without implementation",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 1000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/4759/validate_preparation.rb"
+          ],
+          "parallel_group": "wp14-preparation",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on missing six-card packet, missing design or diagram, implementation-state advancement, ambiguous #5384 execution gate, or receipt-gated execution language.",
+      "design_ref": ".csdlc/prepared/issues/4759/design.md",
+      "design_digest": "0301800d9f120cd84ac46ae920c0e1102779abf79d4869117b0ab0daaad8ffca",
+      "diagram_ref": ".csdlc/prepared/issues/4759/diagram.mmd",
+      "diagram_digest": "24b8889f9279611c5cd348227adf8345db93f9cb8138ee4e016b194d99a4d5c7"
+    }
+  }
+}

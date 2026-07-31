@@ -1,0 +1,29 @@
+   Compiling adl-runtime v0.91.7 (/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5361/adl-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.91s
+     Running unittests src/lib.rs (/Volumes/FastWork/adl-5361/runtime-test-target/debug/deps/adl_runtime-cd755a474c00196e)
+
+running 3 tests
+test cav::tests::default_cav_component_status_is_valid_and_embedded ... ok
+test cav::tests::cav_component_contract_rejects_non_fail_closed_status ... ok
+test cav::tests::cav_component_contract_rejects_sidecar_model ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 124 filtered out; finished in 0.00s
+
+     Running unittests src/bin/adl-runtime-guardian.rs (/Volumes/FastWork/adl-5361/runtime-test-target/debug/deps/adl_runtime_guardian-ad990000a4f84db5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/guardian_cli.rs (/Volumes/FastWork/adl-5361/runtime-test-target/debug/deps/guardian_cli-5074dcfbc981502d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/independence.rs (/Volumes/FastWork/adl-5361/runtime-test-target/debug/deps/independence-778b5a61df243aaa)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+

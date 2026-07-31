@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5354,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_generation": 8,
+  "expected_digest": "4ae78fb1e8e935eec6401b0aa5cf95a4d055ccd53a30fc76e62eedd5756e705d",
+  "claim_id": "claim-5354-v0918-wp15-reacquired",
+  "actor": "codex:5354-wp15-owner",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5354-v0918-wp15-ready",
+  "title": "[v0.91.8][WP-15] Prove integrated product convergence",
+  "body": "Closes #5354\n\n## Summary\n- prove ADL v2 compilation and engine initialization at accepted revisions\n- prove Runtime v3 canonical ingress, live TLS public reads, and a real bidirectional WSS exchange\n- prove installed C-SDLC v2 selection and issue governance without making closeout a downstream gate\n- retain a redaction-safe convergence packet and update the demo and feature-proof matrices with explicit non-claims\n\n## Validation\n- `ruby .csdlc/prepared/issues/5354/run-validation-lane.rb complete`\n- `ruby .csdlc/prepared/issues/5354/run-validation-lane.rb claim-boundary-matrix`\n- `ruby .csdlc/prepared/issues/5354/check-dependencies.rb`\n- `csdlc-doctor --repo . --issue 5354`\n- exact assigned review: PASS, zero blockers\n- `git diff --check`\n\nNo Runtime v2 or AWS operation was used.",
+  "draft": true,
+  "token_file": "/Users/daniel/keys/github.token"
+}

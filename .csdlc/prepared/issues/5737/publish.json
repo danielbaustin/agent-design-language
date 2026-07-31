@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5737,
+  "expected_generation": 6,
+  "expected_digest": "c91bcf59bb24e2ebbb732bf11910cc4fef931f7159067030e6d48a7ddb25a8f1",
+  "claim_id": "claim-5737-csdlc-authority-recovery",
+  "actor": "codex:5737-execution",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5737-csdlc-authority-recovery",
+  "title": "[v0.91.8][csdlc-v2] Simplify active claim authority",
+  "body": "Closes #5737\n\nSimplifies claim collision authority so only claims matching registered active checkouts reserve paths. Unrelated terminal receipts are consulted only after a real protected-path overlap. Dormant claim reacquisition can repair stale derived projections while direct rendered-card edits, live overlaps, stale CAS, lease, and checkout violations still fail closed.\n\nValidation:\n- Gate 2: 55/55 passed\n- strict all-target C-SDLC v2 Clippy passed\n- git diff --check passed\n\nReview: one exact pre-PR GPT-5.5 review completed; its rendered-card integrity finding and proof-file hygiene finding were fixed before publication.",
+  "draft": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}

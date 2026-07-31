@@ -1,0 +1,14 @@
+{
+  "issue": 4761,
+  "card": "srp",
+  "expected_generation": 15,
+  "expected_digest": "d3c4ca79e32d1c5c3630bee0d81316648069c7630b35a20d49b0c7a1936ad9f0",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Exact scoped pre-PR review passed with no actionable findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

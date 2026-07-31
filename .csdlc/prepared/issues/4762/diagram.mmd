@@ -1,0 +1,28 @@
+flowchart TD
+  issue["#4762 birth-witnesses issue"]
+  wp21["WP-21 / #5362 v0.92 handoff truth"]
+  source["v0.91.8 and v0.92 source docs"]
+  claim["Execution-time claim acquisition"]
+  design["Preparation design and six cards"]
+  witness["Birth witness register"]
+  receipt["Receipt package"]
+  negatives["Not-a-birthday negative cases"]
+  redaction["Redaction-safe reviewer projection"]
+  handoff["v0.91.8 v0.92 handoff consumption path"]
+  review["Bounded preparation review"]
+  nonclaims["Non-claims: birthday readiness, citizenship, v0.93 governance, public launch"]
+
+  issue --> design
+  wp21 --> design
+  source --> design
+  design --> review
+  review --> design
+  claim -. "deferred to execution" .-> witness
+  design --> witness
+  design --> receipt
+  design --> negatives
+  witness --> redaction
+  receipt --> redaction
+  negatives --> receipt
+  redaction --> handoff
+  nonclaims -. "must remain outside receipt success" .-> handoff

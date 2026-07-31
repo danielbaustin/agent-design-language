@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5737,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2] Make claim recovery independent of unrelated terminal drift and stale design inputs",
+    "slug": "csdlc-authority-recovery",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2/src/lifecycle.rs\ncsdlc-v2/src/store.rs\ncsdlc-v2/tests/gate2.rs\n.csdlc/evidence/5737",
+      "review_revision": "git-blake3:4079e840d35a287eefbc637718cc6c1dafa4af77:65c11bb45e0642a62bce15abd24f4eb99769ae107ea9359cd9bb2792cdf19182",
+      "reviewer": "codex:gpt-5.5-claim-authority-review",
+      "review_prompts": [
+        "Check that terminal receipt identity is only consulted after a protected-path overlap is detected.",
+        "Check that stale projections whose claim branch/worktree do not match their active checkout are ignored for collision authority.",
+        "Check that authority-only reacquisition preserves card identity and does not bypass typed design reapproval.",
+        "Check that live overlapping claims still fail closed and tests cover the regression without weakening safety."
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Only claims matching a registered active checkout have collision authority; stale tracked projections remain retained evidence but no longer reserve paths."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5645,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Add typed fail-closed csdlc-merge command",
+    "slug": "typed-csdlc-merge-command",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Add the binary and contracts, enforce readiness and exact-head checks, test with a credential-free GitHub fixture, then review.",
+      "steps": [
+        {
+          "id": "merge-command",
+          "action": "Implement typed merge command and tests",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Exact reviewed head is required",
+        "Canonical merge_ready state is required",
+        "Merge result includes exact SHA",
+        "Secrets never enter output or artifacts"
+      ],
+      "risks": [
+        "GitHub permission denial",
+        "Remote head drift",
+        "Octocrab API shape changes"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Any readiness mismatch",
+        "Any token or secret leakage",
+        "Any test failure"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5645/retained/design.md",
+      "design_digest": "50bd7dfe835d21649f690eac40bb0b23f34c01249e36fcd3f6243aaf112fd3a3",
+      "diagram_ref": ".csdlc/issues/5645/retained/diagram.mmd",
+      "diagram_digest": "2ecc58425db1ab78512fbced65a0a3cb65a45a8e04830d721f02e8fec0645a93"
+    }
+  }
+}

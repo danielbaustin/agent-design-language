@@ -795,7 +795,7 @@
       "feature": "CSM Observatory visibility and operator-report surfaces",
       "canonical_status": "Implemented baseline; Runtime v3 live cutover unproven",
       "canonical_evidence": "visibility packet, static console, operator report, CLI bundle, command packet design, v0.90.2 operator report integration, v0.90.3 redacted projections, multimode UI architecture, inhabited flagship demo, `docs/milestones/v0.91.5/features/DEMO_AND_UNITY_OBSERVATORY_READINESS_v0.91.5.md`, and `docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md`",
-      "canonical_next_target": "v0.91.8 #5590 must prove authenticated HTML Observatory consumption through configuration-driven Runtime v3 access; #4739/#4741/#5332 remain WP-14A Unity dispositions",
+      "canonical_next_target": "v0.91.8 #5590 must prove authenticated HTML Observatory consumption through configuration-driven Runtime v3 access; WP-15 #5354 owns Unity proof issues #4739/#4741/#5332 independently of WP-14A",
       "classification": "secure_access_observatory",
       "owner_issues": [
         5590

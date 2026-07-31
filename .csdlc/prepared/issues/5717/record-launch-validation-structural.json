@@ -1,0 +1,21 @@
+{
+  "actor": "codex:5717-execution",
+  "card": "sor",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "expected_digest": "38e148382acbf870378a0970a339e1f5adf902497347e566e6f3de0d9e21a310",
+  "expected_generation": 6,
+  "issue": 5717,
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "python3",
+        "- <<'PY' ... podcast launch structural validation ... PY"
+      ],
+      "purpose": "Validate required `/podcast/` and `/_preview/podcast/` source files, hidden-route noindex truth, contact link, RSS owner/title/enclosure metadata, enclosure byte length, and local HTML href/src references.",
+      "outcome": "passed",
+      "evidence_ref": "commentary: podcast launch structural validation PASS"
+    }
+  },
+  "reason": "Record focused structural launch validation for the widened podcast launch-prep scope."
+}

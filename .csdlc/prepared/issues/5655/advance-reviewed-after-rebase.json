@@ -1,0 +1,14 @@
+{
+  "issue": 5655,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "f8beadb13c29359dba7792c186dac91996df159d173c9258a24b5e681012a036",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "reason": "Advance #5655 after Boole exact-head review passed on the rebased branch.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

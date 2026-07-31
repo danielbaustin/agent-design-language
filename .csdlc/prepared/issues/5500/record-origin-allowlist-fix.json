@@ -1,0 +1,20 @@
+{
+  "issue": 5500,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "04d81af04eaedc83a54bf7ad863885f5b43cbfdef9fed8d779c78d9cf975c97a",
+  "claim_id": "claim-5500-v0918-wp10a-dashboard-preparation",
+  "actor": "codex:issue-5500-implementation",
+  "reason": "Record the review-driven Runtime Observatory origin allowlist repair before publication.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented the read-only WP-10A workcell operator view inside docs/tooling/milestone-dashboard with Runtime v3 Observatory read-feed composition.",
+    "changes": [
+      "Fixed the Runtime v3 Observatory live adapter to fail closed when the snapshot declares no allowed origins, then extended validation to prove both empty-allowlist rejection and allowlisted HTTPS feed construction."
+    ],
+    "artifacts": [
+      "docs/tooling/milestone-dashboard/dashboard.js",
+      "adl/tools/test_milestone_dashboard.sh"
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5345,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10] Implement thin ADL CLI and authoritative selector",
+    "slug": "v0918-wp10-thin-adl-cli-authoritative-selector",
+    "version": "v0.91.8",
+    "generation": 9
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Implement WP-10 thin CLI and authoritative selector with focused proof.",
+      "actual_changes": [
+        "adl-v2/crates/adl-cli",
+        "adl-v2/tools/install-adl-v2.sh"
+      ],
+      "artifacts": [
+        ".csdlc/evidence/5345"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "true"
+          ],
+          "purpose": "Bounded local implementation finalization.",
+          "outcome": "passed",
+          "evidence_ref": "implementation-proof.log"
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "draft",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

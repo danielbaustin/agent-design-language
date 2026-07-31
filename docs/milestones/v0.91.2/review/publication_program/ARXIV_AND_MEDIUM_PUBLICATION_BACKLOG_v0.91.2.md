@@ -49,33 +49,33 @@ the formal transition model, limitations, and future-work notes.
 
 ## Medium Article Program
 
-The local planning corpus still describes a ten-article launch-style series,
-but the center of gravity has moved from the older `v0.88` launch arc to the
-`v0.95` MVP convergence story. For `v0.91.2`, the useful tracked outcome is not
-all article prose. It is a bounded backlog shape reviewers can inspect and later
-turn into article-drafting issues.
+The local planning corpus still describes a ten-article launch-style series.
+Issue `#5735` supersedes the earlier `v0.95`-oriented inventory and restores
+the operator-preferred public launch arc as the current planning truth. For
+`v0.91.2`, the useful tracked outcome is not all article prose. It is a bounded
+backlog shape reviewers can inspect and later turn into article-drafting issues.
 
 Current ten-article launch inventory:
 
-1. `What ADL Is Now`
-2. `Why Agent Systems Need Runtime Truth`
-3. `The ADL Control Plane`
-4. `CodeFriend: Repository Review As A Product Surface`
-5. `Aptitude Atlas And The Future Of Model Evaluation`
-6. `Cognitive Spacetime: Time, Memory, Identity, And Continuity`
-7. `Governance, Citizenship, And Social Cognition`
-8. `Secure Execution, Trust, And Economic Agency`
-9. `Godel Agents, GHB, And Mental Time Travel`
-10. `The v0.95 MVP: What We Can Finally Show`
+1. `What is ADL?`
+2. `The ADL Runtime and the Cognitive Spacetime Model`
+3. `Gödel Agents and the Gödel-Hadamard-Bayes Algorithm`
+4. `The Freedom Gate`
+5. `UTS and ACC — Making Agents With Tools Safe`
+6. `CodeFriend and the Cognitive SDLC`
+7. `Continuous Adversarial Verification For Continuous Security`
+8. `Agent Economics`
+9. `ADL and Social Intelligence`
+10. `What's Next for ADL?`
 
 The older article ideas remain usable as supporting examples:
 
 - Paper Sonata belongs inside artifact-truth, publication-workflow, or demo
   evidence rather than as the flagship center of the whole launch sequence.
-- Chronosense belongs inside the broader cognitive-spacetime article.
-- Instinct and bounded agency belong inside governance and secure-execution
-  context.
-- Early GHB/cognitive-spacetime framing belongs inside the Godel/GHB/MTT article
+- Chronosense belongs inside the runtime and cognitive-spacetime article.
+- Instinct and bounded agency belong inside Freedom Gate, governance, and
+  secure-execution context.
+- Early GHB/cognitive-spacetime framing belongs inside the Gödel/GHB article
   and later paper source packets.
 
 ## Priority Order For Writing Work
@@ -103,8 +103,8 @@ A later writing issue should be able to start from this packet and answer:
 - which items are intentionally not yet publication-ready;
 - where Godel/GHB fits without being silently dropped.
 - where the C-SDLC paper fits after v0.91.3/v0.91.4 evidence exists.
-- where the refreshed `v0.95` Medium sequence supersedes the older `v0.88`
-  launch framing without deleting its useful examples.
+- where the `#5735` operator-preferred Medium sequence supersedes the earlier
+  `v0.95`-oriented tracked inventory without deleting useful examples.
 
 ## Non-Claims
 

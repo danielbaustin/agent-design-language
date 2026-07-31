@@ -932,7 +932,7 @@ fn anthropic_provider_complete_records_output_and_version_header() {
     let target = provider_target(
         "anthropic",
         format!("{endpoint}/v1/messages"),
-        "claude-test",
+        "claude-opus-5",
     );
     let provider = AnthropicProvider::from_target(&spec, &target).expect("provider");
 
@@ -941,7 +941,7 @@ fn anthropic_provider_complete_records_output_and_version_header() {
 
     let captured = captured.lock().expect("capture").clone().expect("request");
     assert_eq!(captured.url, "/v1/messages");
-    assert!(captured.body.contains(r#""model":"claude-test""#));
+    assert!(captured.body.contains(r#""model":"claude-opus-5""#));
     assert!(captured.body.contains(r#""max_tokens":220"#));
     assert!(captured
         .headers

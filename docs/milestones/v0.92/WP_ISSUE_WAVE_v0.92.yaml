@@ -9,6 +9,7 @@ notes:
   - This file is a candidate issue-wave preflight surface, not an opened GitHub issue wave.
   - WP-01 must consume v0.91.5 release-tail closeout, the v0.91.5 activation-test map, the v0.91.6 readiness tranche, and the v0.91.7 implementation/proof tranche before seeding the final issue wave.
   - WP-01 must consume the v0.91.5 AEE completion tranche and seed or route concrete AEE proof work before v0.92 can claim birthday readiness.
+  - WP-01 must requalify post-5104 loop-runtime merge evidence against current Runtime v3 contracts before consuming loops as validated, replayable objects for adaptive-learning planning.
   - WP-01 must consume issue 3377 before seeding the final issue wave.
   - WP-01 must verify the v0.92 feature-doc package and ADR plan before opening implementation WPs.
   - No v0.92 issue should claim legal personhood, production citizenship, consciousness proof, or completed v0.93 constitutional governance.
@@ -69,6 +70,13 @@ work_packages:
     depends_on: [WP-04, WP-05, WP-06]
     primary_deliverable: evidence-grounded cognitive-profile contract
     proof_surface: ACP/profile fixtures, update rules, privacy boundary, and validation report
+  - wp: WP-07A
+    issue: pending
+    title: Adaptive Learning DAG queue
+    queue: docs_tools
+    depends_on: [WP-01, WP-07, issue-5104-merge-evidence, v0.91.7 reasoning-graph-loop-runtime-proof]
+    primary_deliverable: adaptive-learning feature contract, runtime-status verification checklist, evaluation/state/graph-delta queue, and negative-test plan
+    proof_surface: ADAPTIVE_LEARNING_DAG_v0.92.md, verified loop-runtime status checklist, replay-continuity negative plan, and graph-mutation policy boundary
   - wp: WP-08
     issue: pending
     title: ACIP binary schema and WebSocket carrier

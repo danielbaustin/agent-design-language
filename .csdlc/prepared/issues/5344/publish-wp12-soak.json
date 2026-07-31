@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5344,
+  "expected_generation": 41,
+  "expected_digest": "b5d6606cd84b073a4b0d1239741b87d08165283af0b2880992b6964c6fb3b02c",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5344-v0918-wp12-soak-rollback",
+  "title": "[v0.91.8][WP-12] Run opt-in soak and prove rollback (#5344)",
+  "body": "Closes #5344\n\n## Summary\n- retain real native Linux, macOS, and Windows Guardian process-0 qualification for Runtime v3\n- prove 10,000 lifecycle cycles, 100 ten-second stress runs, and 10 ten-minute endurance runs per platform with no failed or degraded cycles\n- prove isolated ADL v2 installation, locked selector mutation, rollback failure recovery, and exact prior selector-byte restoration\n- preserve Runtime v1 and Runtime v2, leave the production default unchanged, and authorize no legacy deletion\n- provide the accepted non-deleting cutover handoff for child issue #5343\n- parse Git tracked paths as literal NUL-delimited filenames so portable UTF-8 paths do not fail Windows policy checks\n- classify the external lifecycle qualification harness outside the in-process changed-source line gate while retaining full CI and native process proof\n\n## Validation\n- manifest-driven WP-12 report verification passed for all three native platform reports\n- deterministic rollback replay passed with exact selector restoration\n- lifecycle soak tests passed 8/8\n- Guardian CLI tests passed 3/3\n- Runtime kernel configuration tests passed 20/20\n- focused CI path-policy contract passed, including UTF-8, spaces, embedded-newline, and illegal-colon regressions\n- complete coverage-impact tooling contract passed against the live Guardian inventory\n- ordinary production Rust and unmapped source remain fail-closed under the unchanged 80 percent changed-source threshold\n- authenticated Guardian healthy-window test passed 20 consecutive exact runs\n- final exact-head subagent review passed with zero findings\n- typed C-SDLC v2 doctor passed at reviewed generation 41\n\nProvider evidence is a credential-free non-live disposition; no live-provider or demo credit is claimed.",
+  "draft": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}

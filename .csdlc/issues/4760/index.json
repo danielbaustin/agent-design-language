@@ -1,0 +1,192 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4760,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "5122de3f552f7d3e67507008600e4a269906e2987e6e22a18e536921df718948",
+  "phase": "published",
+  "generation": 4,
+  "digest": "5307e883d3713a86ddf6cd3c281c13f295de7cadbc8321abffec1a13386e2332",
+  "claim": {
+    "id": "claim-4760-memory-palace-20260731",
+    "owner": "codex:019fb9d5-3cc6-7a91-8c08-2d1454a91198",
+    "generation": 4,
+    "acquired_unix_seconds": 1785529687,
+    "expires_unix_seconds": 1785616087,
+    "heartbeat_unix_seconds": 1785529687,
+    "branch": "codex/4760-v0918-wp14-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4760",
+      ".csdlc/locks/4760.lock",
+      ".csdlc/prepared/issues/4760",
+      ".csdlc/evidence/4760",
+      "adl/src/memory_palace.rs",
+      "adl/src/lib.rs",
+      "adl/src/long_lived_agent.rs",
+      "adl/tests/memory_palace_tests.rs",
+      "adl/tests/fixtures/memory_palace/long_running_context.json"
+    ],
+    "purpose": "Implement and prove the real Memory Palace context handoff for issue #4760, including long-lived-agent runtime consumption and retained exact-head evidence."
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "codex:exact-head-reviewer-4760",
+    "scope": [
+      "adl/src/memory_palace.rs",
+      "adl/src/lib.rs",
+      "adl/src/long_lived_agent.rs",
+      "adl/tests/memory_palace_tests.rs",
+      "adl/tests/fixtures/memory_palace/long_running_context.json"
+    ],
+    "reviewed_revision": "git-blake3:80a098937899ff4602d0c91d46ac61cff9453486:628d6c613ad1fd065e76e02aa17283ff76c3bf4ecf21f522267bbfbf90514daf",
+    "findings": [],
+    "residual_risks": [
+      "cargo test --locked remains unavailable because the branch's checked-in adl/Cargo.lock is stale for the current manifest graph; focused validation used the issue-local offline wrapper that refuses pre-existing lock dirtiness and restores transient lock refresh.",
+      "Review was bounded to the #4760 Memory Palace implementation, fixture, long-lived-agent consumer hook, and issue-local lifecycle evidence; broader long-lived-agent runtime behavior was not exhaustively revalidated."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 4760,
+    "pull_request": 5740,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5740",
+    "base": "main",
+    "head": "codex/4760-v0918-wp14-preparation",
+    "revision": "git-blake3:96ac514193e6270571c62f38e6f9f76730deb16a:0fdce97c5e80bba991ef366cdd571444d5c35657d313919aed9110c8cafc45a0",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/4760/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4760/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:wp21-conductor",
+      "revision": "1c0974d04443fd8c73d72e6faf75bc9a3869ef45024f807cd7e8db982f42924a"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "73c85153f609361860df4c58bb25c9d852eb4a5c8439819733ef199809d8c6d7",
+      "rendered_digest": "7542064494a7e863fd694ee2d1d5e3924d8a781ac74590f415135d15d9bd5356",
+      "ast_digest": "887d3b54d44cf60ad95b588f06939cec2c6c5b273e2d966630cc33fbb747d69c"
+    },
+    "stp": {
+      "values_digest": "f4e66d760ef2d1480aa7774438c52148ac63f81f016832becdc8bd00c3b1f5a2",
+      "rendered_digest": "1fcef2d74880df2a0f0b640a78334dd2e319fa45cea6fec14bf54ea93d128cd4",
+      "ast_digest": "db6668ff7774043b40bd845e42d08010dc645619ae6825c28d326e2eee3b0a69"
+    },
+    "spp": {
+      "values_digest": "5771ca8f408982f7f529c306bd34658b539a4935245131b7e5c8f465657d0487",
+      "rendered_digest": "8fbb9b616370b24fc0bd7efc473efbcd00c1b604c41f56e9fe1ec6766415542c",
+      "ast_digest": "64c36f0fe21a90c891994e85f1ea705f15a3fffa5c26e58641ed877a69eafca9"
+    },
+    "vpp": {
+      "values_digest": "bb9ed9fee9b6489081a4484ad9cebf3e1a6d19144af01c26c73a3d85e03db88e",
+      "rendered_digest": "88ad3e947fea7b2754a84ef6a6bae269b9972d2c1b2df8bf75e69b793a621828",
+      "ast_digest": "c768300d59b85202de4c075bbb323a408b6bb2441468cf14b1111416e159a173"
+    },
+    "srp": {
+      "values_digest": "827675c3f5d561051987f37d76ebf9edfbbf778b5d4f0e73646da96ab597f188",
+      "rendered_digest": "64a5c329bbc4f52e9f0060ec60f5f27ecdaadf8a8c2fd6fea3c9ad6bf9b66253",
+      "ast_digest": "0bfb16ef7a663d39b6a69db66ee6b620d6c04062b2e0273188e2ba557e2e32ac"
+    },
+    "sor": {
+      "values_digest": "c82526737cd16678e02b4b507d6663c4a6148acdcfb0fe0e20434d565f26eb06",
+      "rendered_digest": "0f312617064923f6ed8405fb4ea622dfec299014df1cce8e5abdcd3ff21966d5",
+      "ast_digest": "2458a68d720543571a59b7e69308bbda9e7618f45055442ba83a5b1b26b1b3a0"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019fb9d5-3cc6-7a91-8c08-2d1454a91198",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019fb9d5-3cc6-7a91-8c08-2d1454a91198",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019fba08-f584-7493-aaf9-d507520e7b5f",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:exact-head-reviewer-4760",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019fba08-f584-7493-aaf9-d507520e7b5f",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f8bb9-beb6-7ad1-b40b-b9f8b1597a11",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019fb9d5-3cc6-7a91-8c08-2d1454a91198",
+      "reason": "Operator-authorized execution of issue #4760 in the existing FastWork worktree using the reviewed Memory Palace preparation packet.",
+      "operation": "{\"branch\":\"codex/4760-v0918-wp14-preparation\",\"claim_id\":\"claim-4760-memory-palace-20260731\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:019fb9d5-3cc6-7a91-8c08-2d1454a91198\",\"previous_claim_id\":\"prep-4760-v0918-wp14\",\"previous_owner\":\"codex:019f8bb9-beb6-7ad1-b40b-b9f8b1597a11\",\"protected_paths\":[\".csdlc/issues/4760\",\".csdlc/locks/4760.lock\",\".csdlc/prepared/issues/4760\",\".csdlc/evidence/4760\",\"adl/src/memory_palace.rs\",\"adl/src/lib.rs\",\"adl/src/long_lived_agent.rs\",\"adl/tests/memory_palace_tests.rs\",\"adl/tests/fixtures/memory_palace/long_running_context.json\"],\"purpose\":\"Implement and prove the real Memory Palace context handoff for issue #4760, including long-lived-agent runtime consumption and retained exact-head evidence.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:wp21-conductor",
+      "reason": "reapprove stale initialized issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:019fb9d5-3cc6-7a91-8c08-2d1454a91198",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:019fba08-f584-7493-aaf9-d507520e7b5f",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:exact-head-reviewer-4760",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:019fba08-f584-7493-aaf9-d507520e7b5f",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

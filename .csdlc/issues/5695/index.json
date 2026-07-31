@@ -1,0 +1,245 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5695,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "4cd0d8a97a8b7d3afd28be679d16291fe95cd477e824555b1d506ac0a4e9d96e",
+  "phase": "published",
+  "generation": 11,
+  "digest": "9b3f4f2407334aab97ef241b932625b61483e2f17d07f89e27639e30a7ad9f0d",
+  "claim": {
+    "id": "claim-5695-pr-state-mergeability",
+    "owner": "codex:issue-5695-pr-state-mergeability",
+    "generation": 11,
+    "acquired_unix_seconds": 1785113059,
+    "expires_unix_seconds": 1785717859,
+    "heartbeat_unix_seconds": 1785113059,
+    "branch": "codex/5695-pr-state-mergeability",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5695",
+      ".csdlc/issues/5695",
+      ".csdlc/locks/5695.lock",
+      ".csdlc/prepared/issues/5695",
+      "csdlc-v2/src/github.rs"
+    ],
+    "purpose": "Correct mergeability-state classification without widening merge authority"
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "codex-subagent:review-5695",
+    "scope": [
+      "csdlc-v2/src/github.rs",
+      "csdlc-v2/src/merge.rs"
+    ],
+    "reviewed_revision": "git-blake3:ac0df9138d3b80d48d8480bf7761bd581da787bb:91b31c0fb64a9065135b6e8b340b714e18a66bea661a18a31bbcb8cdc956406c",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5695,
+    "pull_request": 5700,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5700",
+    "base": "main",
+    "head": "codex/5695-pr-state-mergeability",
+    "revision": "git-blake3:ac0df9138d3b80d48d8480bf7761bd581da787bb:91b31c0fb64a9065135b6e8b340b714e18a66bea661a18a31bbcb8cdc956406c",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5695/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5695/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5695",
+      "revision": "24f656bfc0bafcd82c8bc9db001d949366843f0ae5ad148e2fbf03646ccd0f02"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "22855858fac0bac5f947cea341f4679c7274a75db4973ac0994c8020a667b630",
+      "rendered_digest": "0bd0312dca36c5465c44956f51706ee27ae9e44398b13a02fdc224bfd78569e9",
+      "ast_digest": "0c2a59857e860bd7ae0a8f611e082de8977429525241bf0a59390ed38b9d5cda"
+    },
+    "stp": {
+      "values_digest": "26c7ffd8a26febbda1e88b5afa5a00f3ba50534ddd1d0c4a7bbf8f995c30ff51",
+      "rendered_digest": "603c196dd25a2209c96aa42dc5a7dd77296cb6ccb73635059fd9a50cc3446f96",
+      "ast_digest": "74971ba8475b35d5b1657bbb4eb873ba81a338d32a79423fc040773507b4c585"
+    },
+    "spp": {
+      "values_digest": "ebb48d87af6ea8eec6dde5a1db27395b2eb38057a31103aa406f74dec50e2083",
+      "rendered_digest": "f48fece8f16014831d9445f95695e0bc911416284a0d81fcd1d650ca24786eed",
+      "ast_digest": "56d9e7ce4145caa1e12259397f852f0271f8e2c4ff44783e4e89526172e10b35"
+    },
+    "vpp": {
+      "values_digest": "b5248dd1ffcaf8b2bf4ae720d26d8629cd1815df24e0717e21866af7aa099a5a",
+      "rendered_digest": "b407dde88cf2d8569bd120633d7e73d8428b47ffeb27d1a60a7fbecf70c837ab",
+      "ast_digest": "3f71256bb7daed94a674523b02b7f02511727afaf240bf38cda0e8a3ed14f20d"
+    },
+    "srp": {
+      "values_digest": "363b65c29fbe6e6015ea7a5591e3cc7977d553b8630f0b722b730c201d811a07",
+      "rendered_digest": "0c83c2db6f4c604d67b581b9bd3fe3b48630aa4f5790ec3566d5bc1ff23965e9",
+      "ast_digest": "7e9df8d348ac9f9b4e62f797684ab08a57189f39e48c125f758efba5687e2781"
+    },
+    "sor": {
+      "values_digest": "e3114fc7dbbb7d603c3c8e4f0481e201285fd884e7c1687708407abca2a5e2e3",
+      "rendered_digest": "c2a633b8dac553108aeb998e1ed745e1b57c8ee668c72e32c56a92f60fa806f0",
+      "ast_digest": "36d8f5ad10889e5b01f96431f6978f431de1f82948213939161e8377c7f9ab37"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Bounded implementation and focused validation passed; advance to reviewable implementation phase."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Rebase changed the substantive revision; recover stale publication and review truth before recording the new exact-head review."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Record bounded implementation before review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implement explicit GitHub mergeability-state normalization and preserve fail-closed pending behavior.\",\"changes\":[\"Map Behind, Blocked, Clean, Dirty, Draft, HasHooks, Unstable, and Unknown explicitly\",\"Classify blocked, unstable, draft, and unknown as waiting; behind as stale_base; dirty as conflicted\",\"Add focused coverage for all supported mergeability variants and classification behavior\"],\"artifacts\":[\"csdlc-v2/src/github.rs\",\".csdlc/issues/5695/cards/sor.md\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Record focused formatting validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"fmt\",\"--check\"],\"purpose\":\"Verify formatting for the bounded Rust change.\",\"outcome\":\"passed\",\"evidence_ref\":\"local:cargo-fmt-check:passed\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Record focused mergeability classification tests.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"-p\",\"csdlc-v2\",\"github::tests\"],\"purpose\":\"Exercise every supported mergeability variant and preserve fail-closed pending classification.\",\"outcome\":\"passed\",\"evidence_ref\":\"local:cargo-test-github-tests:3-passed\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Record strict lint validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"-p\",\"csdlc-v2\",\"--lib\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Verify strict lint for the touched Rust library.\",\"outcome\":\"passed\",\"evidence_ref\":\"local:cargo-clippy-csdlc-v2-lib:passed\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Record the exact-head review repair before re-review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Preserve HasHooks as the clean merge target accepted by csdlc-merge.\",\"changes\":[\"Normalize HasHooks to clean to preserve merge-gate compatibility\",\"Add a regression test proving the normalized HasHooks packet is accepted by validate_remote\"],\"artifacts\":[\"csdlc-v2/src/github.rs\",\"csdlc-v2/src/merge.rs\",\".csdlc/issues/5695/cards/sor.md\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Bounded implementation and focused validation passed; advance to reviewable implementation phase.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 11,
+      "generation": 9,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Rebase changed the substantive revision; recover stale publication and review truth before recording the new exact-head review.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 10,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 11,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

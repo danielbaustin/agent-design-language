@@ -9,7 +9,7 @@
 - Milestone sprint umbrella: `#5595`
 - Historical planning sources: `#5335` and `#5383`
 - Restored source issue: `#4641` remains `v0.91.7` WP-14
-- New v0.91.8 platform handoff parent: `#5384` / WP-14A
+- v0.91.8 platform acceptance parent: `#5384` / WP-14A
 - Downstream milestone: `v0.92`
 
 ## Purpose
@@ -37,6 +37,9 @@ the missing local source of truth for those issues.
 - `#5595` is the single milestone sprint umbrella. Nested umbrellas `#5497`,
   `#5361`, and `#5384` own bounded multi-agent, Runtime v3, and integrated
   acceptance child sets without duplicating implementation ownership.
+- WP-14A accepts only the platform revisions. Unity proof is owned by WP-15,
+  C-SDLC tooling remediation by WP-20, and the exact-revision handoff,
+  Memory Palace, launch/identity, and Adaptive Learning inputs by WP-21.
 
 ## Status
 

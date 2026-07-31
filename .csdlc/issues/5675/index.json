@@ -1,0 +1,255 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5675,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "c600ad81a92f3c87eb5098faa2237f85713be1650bf3c1d713c0206a4ef263b9",
+  "phase": "published",
+  "generation": 10,
+  "digest": "3f6eab8112890d2b20571145e94f1aaf894d50fd3c76753b2aae4e82d21d5346",
+  "claim": {
+    "id": "claim-5675-provider-adapter-routes",
+    "owner": "codex:5675-execution",
+    "generation": 10,
+    "acquired_unix_seconds": 1785107892,
+    "expires_unix_seconds": 1785712692,
+    "heartbeat_unix_seconds": 1785107892,
+    "branch": "codex/5675-provider-adapter-routes-publish",
+    "worktree": ".worktrees/adl-wp-5675",
+    "protected_paths": [
+      ".csdlc/issues/5675",
+      ".csdlc/locks/5675.lock",
+      ".csdlc/prepared/issues/5675",
+      "adl/src/provider_adapter.rs",
+      "adl/src/provider/profiles.rs"
+    ],
+    "purpose": "Implement and validate Kimi and MiniMax hosted provider adapter routes"
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "codex:5675-opus-review",
+    "scope": [
+      "adl/src/provider_adapter.rs",
+      "adl/src/provider/profiles.rs"
+    ],
+    "reviewed_revision": "git-blake3:6ac376f0d72d60d8ae2fc7de0cea21bc3c1d0eb6:d2274443f705299f244e1ef85031f52b6a96a872e0815e0777b430f729204d02",
+    "findings": [],
+    "residual_risks": [
+      "Live Kimi and MiniMax completion success remains unproven because both approved accounts reported insufficient balance; adapter reachability and typed billing failure paths are proven.",
+      "Only lifecycle metadata, evidence, generated cards, design/diagram artifacts, and the Opus runbook changed after the source review."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5675,
+    "pull_request": 5676,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5676",
+    "base": "main",
+    "head": "codex/5675-provider-adapter-routes-publish",
+    "revision": "git-blake3:427f9627e59c7550998bede09156ae665b92a98d:abad8047b2fb0ab8d8b2376304d5c7eb756450b13b91d0cf68ff117de0ee2979",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5675/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5675/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5675-opus-review",
+      "revision": "ae491c4e197cfed06f0d51a0ff65dbcbb1fe0dd458a805c29c0c78659b4dd39f"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "823c03413e9b3cf483d6040e80c2c1a54b97581a778aaa3967f47719790538b7",
+      "rendered_digest": "2dc56e72c830eeb26afa62a9aabea5c3cb9cbf81b6eb0d6187be628e4bf8ef39",
+      "ast_digest": "fa7619680715cdb8942ef43186a5af1d6d843567ee56dfb71aafbce1f79567d5"
+    },
+    "stp": {
+      "values_digest": "1db009a167199239c35bfa70baf4b5332d4b27f60f1b1dd26fcec8fe7c0b417d",
+      "rendered_digest": "da91288730d18893c5e48dfa033e63c91e686996426f678d466ac51cf3ce6851",
+      "ast_digest": "ebeb2107e5c5a6401657727ddf62783563f6cb4e4a683e681aac4b67b60d80d4"
+    },
+    "spp": {
+      "values_digest": "4dd93e6aa581253f35a086a8ca20f6a3a9967ec7b732561e7dc3986d27351814",
+      "rendered_digest": "ba7997482a91ff85139903280c6217fb382cbb93f2dd78d5c9f8e388283fa2f4",
+      "ast_digest": "40081f37abee8861add7a4da099fb6ac64e90b1f94265afbf627b796d8b45fad"
+    },
+    "vpp": {
+      "values_digest": "f8870e28ea10809df41cdf1a401e2f7a7b4d79d5ae1467b73fb43d810ebb1c6b",
+      "rendered_digest": "71c431972dcae6c443ae563e8d5ca293b6fbdede90a9569a2b1cbde79a3ec297",
+      "ast_digest": "b804553b02659f056d635308a1ea495cac3afa9e7f42fafa8149b81ab8479ffb"
+    },
+    "srp": {
+      "values_digest": "0072d76c98eb94ad0485aca9c4f70ea682a2298ab9c42f6fcbc9ff67febc0534",
+      "rendered_digest": "e311b2fcffd4460c9d77d4ef3f7871616b9b253a381c48b0deabf1d16091a8f3",
+      "ast_digest": "e363a4cb429a93b92f34ce0b7083450845e312e3b2d77ac623dfd7d9a6609998"
+    },
+    "sor": {
+      "values_digest": "4a74a50025d72530b816ab6779de6dba381a9b6d0b5d8b5654f16d70edcc1ad0",
+      "rendered_digest": "8cedd7a03883af17082c1fd256f786d24cb3f684ae6693e495b7167cb27e7c41",
+      "ast_digest": "8e79cd8fb2e698fdb2d7fea7cd7ea487ec08064e6ef3c6daa289941d02ec23fd"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5675-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5675-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5675-execution",
+      "reason": "Implementation and focused validation are complete"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5675-execution",
+      "reason": "Opus exact-head review completed; all actionable findings fixed and re-reviewed clean."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:5675-execution",
+      "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5675-execution",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:5675-execution",
+      "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication."
+    },
+    {
+      "sequence": 8,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5675-execution",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 9,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5675-execution",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5675-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5675-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5675-execution",
+      "reason": "Record bounded Kimi and MiniMax adapter implementation and live probe evidence",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented typed Kimi/Moonshot and MiniMax hosted routes with bounded budgets, current MiniMax endpoint, billing envelope classification, and redacted shared extraction.\",\"changes\":[\"adl/src/provider_adapter.rs\",\"adl/src/provider/profiles.rs\"],\"artifacts\":[\".csdlc/prepared/issues/5675/design.md\",\".csdlc/prepared/issues/5675/diagram.mmd\",\".adl/provider-adapter-focused-tests.log\",\".adl/live-provider-probe-disposition.md\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5675-execution",
+      "reason": "Record focused Rust tests, exact-head review, and live provider dispositions",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_adapter::tests\",\"--lib\"],\"purpose\":\"Focused adapter routing, budget, envelope, and redaction proof\",\"outcome\":\"passed\",\"evidence_ref\":\".adl/provider-adapter-focused-tests.log\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5675-execution",
+      "reason": "Implementation and focused validation are complete",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5675-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5675-opus-review",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5675-execution",
+      "reason": "Opus exact-head review completed; all actionable findings fixed and re-reviewed clean.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5675-execution",
+      "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5675-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5675-execution",
+      "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:5675-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:5675-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "issue": 4759,
+  "card": "sip",
+  "expected_generation": 2,
+  "expected_digest": "8bdf22b7349c85ecf4f6aa33a240c5c334c2259bd69d4e8c1b01da6e66d801ae",
+  "claim_id": "claim-4759-v0918-activation-execution-20260731",
+  "actor": "codex:issue-4759-execution",
+  "reason": "Update SIP required outcome to the implemented activation bridge handoff surface.",
+  "operation": {
+    "operation": "replan",
+    "field": "required_outcome",
+    "value": "A reviewed, validated activation bridge in the v0.91.8 pre-v0.92 path, consumed by the v0.92 bridge ledger and handed to #4762 without claiming v0.92 implementation or birthday readiness."
+  }
+}

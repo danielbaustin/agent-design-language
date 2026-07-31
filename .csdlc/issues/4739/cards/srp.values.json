@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4739,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][tooling] Align Unity-MCP live project and port proof for deployed observatory",
+    "slug": "v0918-wp15-unity-mcp-live-project-endpoint-alignment",
+    "version": "v0.91.8",
+    "generation": 26
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl/tools/probe_unity_mcp_observatory_alignment.sh\nadl/tools/test_v0916_unity_mcp_alignment_unit.sh\nadl/tools/test_v0916_unity_observatory_contract.sh\nadl/config/validation_lane_selector.v0.91.6.json\nadl/tools/test_select_validation_lanes.sh\ndocs/tooling/unity_mcp_observatory_alignment.md\n.csdlc/issues/4739\n.csdlc/prepared/issues/4739",
+      "review_revision": "git-blake3:2934df9a89a307ce245bf7dbdfed6d0e8ad87a07:898bfbd0900756209ed3125799503ce5b05870e89e443ee9f4453704a80ffded",
+      "reviewer": "subagent:019f95ae-c03a-7e90-808f-803f476c9738",
+      "review_prompts": [
+        "Does every pass require matching project identity, endpoint identity, liveness, and a read-only MCP result?",
+        "Can malformed, cloud, missing-editor, and mismatched-project states fail closed without leaking secrets?",
+        "Is the final change limited to #4739 ownership and free of batch, ILPP, scene, runtime, and rendering work?",
+        "Are fixed-port assumptions absent from code, tests, and documentation?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Unity-MCP CLI 0.82.2 can report zero Unity processes for the live intended editor, so the bounded PID plus project-local Editor.log fallback remains necessary.",
+        "The observed 0.82.3 to 0.86.1 plugin update-order defect remains external; this proof uses the compatible pinned package and records the defect under #4739.",
+        "This review proves local MCP project and scene alignment only; it does not establish runtime integration, visual quality, or investor readiness."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5686,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][records] Publish #5662 terminal projection to main",
+    "slug": "publish-5662-terminal-projection",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5662\n.csdlc/publication/5662.intent.json\n.csdlc/evidence/5686\n.csdlc/issues/5686\n.csdlc/locks/5686.lock\n.csdlc/prepared/issues/5686",
+      "review_revision": "git-blake3:ff14deb06b8de6721ae22bf75a1816d4e0f8b156:009d937602b4463bed87c24c9a7f8b5f929a22c2c2ee89e14557d81393289353",
+      "reviewer": "subagent:codex-review:019fa160-30d6-7f40-b673-3ae44ea0bd3d",
+      "review_prompts": [
+        "Does the resulting #5662 record exactly match the canonical terminal receipt?",
+        "Is the diff limited to terminal projection and #5686 lifecycle truth?",
+        "Did any implementation or canonical receipt content change?",
+        "Does the PR target current main?"
+      ],
+      "findings": [
+        {
+          "id": "R5686-1",
+          "severity": "p2",
+          "summary": "Verifier inspected only worktree status and missed committed repair paths.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:ff14deb06b8de6721ae22bf75a1816d4e0f8b156:009d937602b4463bed87c24c9a7f8b5f929a22c2c2ee89e14557d81393289353",
+          "route": null
+        },
+        {
+          "id": "R5686-2",
+          "severity": "p2",
+          "summary": "Broad projection prefixes allowed additional unverified #5662 files.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:ff14deb06b8de6721ae22bf75a1816d4e0f8b156:009d937602b4463bed87c24c9a7f8b5f929a22c2c2ee89e14557d81393289353",
+          "route": null
+        },
+        {
+          "id": "R5686-3",
+          "severity": "p2",
+          "summary": "Parity proof depended on locally reachable retained commit objects.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:ff14deb06b8de6721ae22bf75a1816d4e0f8b156:009d937602b4463bed87c24c9a7f8b5f929a22c2c2ee89e14557d81393289353",
+          "route": null
+        },
+        {
+          "id": "R5686-4",
+          "severity": "p2",
+          "summary": "Parity proof followed mutable origin/main state and would collapse after merge.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:ff14deb06b8de6721ae22bf75a1816d4e0f8b156:009d937602b4463bed87c24c9a7f8b5f929a22c2c2ee89e14557d81393289353",
+          "route": null
+        },
+        {
+          "id": "R5686-5",
+          "severity": "p1",
+          "summary": "Primary parity lane required an untracked Git-common-directory receipt absent from fresh clones.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:ff14deb06b8de6721ae22bf75a1816d4e0f8b156:009d937602b4463bed87c24c9a7f8b5f929a22c2c2ee89e14557d81393289353",
+          "route": null
+        }
+      ],
+      "residual_risk": [],
+      "review_result": "pass"
+    }
+  }
+}

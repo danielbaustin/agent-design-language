@@ -1,0 +1,63 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "claim-revoke-focused",
+        "proof_role": "Focused claim-revoke implementation proof",
+        "purpose": "Prove operator CAS revoke, stale guards, formatting, and strict targeted lint",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 1024, "tokens": 3000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "tests",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 600,
+        "executable": "/usr/bin/env",
+        "argv": ["cargo", "test", "--manifest-path", "csdlc-v2/Cargo.toml", "claim_revoke"],
+        "evidence": {"max_log_bytes": 131072, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "claim-revoke-format",
+        "proof_role": "Formatting proof",
+        "purpose": "Prove canonical Rust formatting",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 500},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "lint",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 300,
+        "executable": "/usr/bin/env",
+        "argv": ["cargo", "fmt", "--manifest-path", "csdlc-v2/Cargo.toml", "--", "--check"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "claim-revoke-clippy",
+        "proof_role": "Strict lint proof",
+        "purpose": "Prove touched lifecycle and bind surfaces are warning-free",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 1024, "tokens": 2500},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": ["claim-revoke-format"],
+        "parallel_group": "lint",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 600,
+        "executable": "/usr/bin/env",
+        "argv": ["cargo", "clippy", "--manifest-path", "csdlc-v2/Cargo.toml", "--lib", "--bin", "csdlc-bind", "--tests", "--", "-D", "warnings"],
+        "evidence": {"max_log_bytes": 131072, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {"requested_lanes": ["claim-revoke-focused", "claim-revoke-format", "claim-revoke-clippy"], "allow_network": false, "available_credentials": []},
+  "budget": {"max_parallel": 2, "cpu_units": 2, "memory_mib": 2048, "tokens": 6000},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5648/local",
+  "cancellation_file": null
+}

@@ -1,0 +1,264 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4763,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "de570b0095a75b8aa7114f780283cfb652a4b99c9d315de2e0301efc58a83323",
+  "phase": "published",
+  "generation": 11,
+  "digest": "aaad14a13942548fd945e117a8006744b64f7f0f8962ee501c5134913f5e4d50",
+  "claim": {
+    "id": "prep-4763-v0918-wp14-refresh-20260731",
+    "owner": "codex:019f9ad4-4763-preparation-refresh",
+    "generation": 11,
+    "acquired_unix_seconds": 1785525825,
+    "expires_unix_seconds": 1786130625,
+    "heartbeat_unix_seconds": 1785525825,
+    "branch": "codex/4763-v0918-wp14-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4763",
+      ".csdlc/locks/4763.lock",
+      ".csdlc/prepared/issues/4763"
+    ],
+    "purpose": "Preparation-only refresh for #4763 first-birthday docs and external launch surfaces; no implementation, PR, publication, merge, or closeout."
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "codex:repo-code-review-4763-post-integration",
+    "scope": [
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md",
+      "docs/milestones/v0.92/README.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md",
+      "docs/milestones/v0.92/external_launch",
+      "docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md",
+      "docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md",
+      "docs/milestones/v0.92/features/README.md"
+    ],
+    "reviewed_revision": "git-blake3:073c79736380b4cb676c4b6c4af749b0aff99a50:e32a336dbd73e9078e72a1a52dc80625f720aede67a14880cdb4dfe92bff5497",
+    "findings": [
+      {
+        "id": "POSTINT-1",
+        "severity": "p3",
+        "summary": "Ready-variant wording retained an overlong sentence and pre-merge acceptance language after #4762 merged.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:073c79736380b4cb676c4b6c4af749b0aff99a50:e32a336dbd73e9078e72a1a52dc80625f720aede67a14880cdb4dfe92bff5497",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Merged #4762 proof is a retained witness and receipt input with birth_event_status not_claimed; it does not prove that the v0.92 birthday event occurred.",
+      "Final external publication still requires v0.92 packet validation, exact evidence citation, and explicit operator authorization for the target channel.",
+      "This docs-focused review did not execute a birthday runtime or publish external content."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 4763,
+    "pull_request": 5734,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5734",
+    "base": "main",
+    "head": "codex/4763-v0918-wp14-preparation",
+    "revision": "git-blake3:e6383ec51b08b544a6312a3f5e55ed278bb2bb7a:e8aa9228bff269b093f4f9506102020d7c7ca272e2660a826e38043a24552805",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/4763/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4763/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "gpt-5.5:bounded-preparation-review",
+      "revision": "c9648979f52a6c7faec83bfae3c719b6c042c22ba362d593c5fc325d1c0b4168"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "ef3a8945bd5f511a0686d5349ea645fb0821e4acde899d8af8c1b61e93aeb8e9",
+      "rendered_digest": "e2a837852a0cf17b65963d19fe34d7b2a6feae92bd583a035be2e97a33247881",
+      "ast_digest": "589adbf9bce5296abecb6aecf382caf6c78fb490172791708636dc965330a598"
+    },
+    "stp": {
+      "values_digest": "1cb082ce2c5906ac53bda8da063e676148b7ff3ab81e89e8c96e50266269f41a",
+      "rendered_digest": "8c326aba5b35dd9eab725412b98fbb8bb3534cc276b16d1005dba2aaa26f78eb",
+      "ast_digest": "c1e5bc20ae673cd2054701b9ee6e5f9882f16cefdc4ba35f60bd405df9122bec"
+    },
+    "spp": {
+      "values_digest": "45d502fe37eddabdd35ba9ad26b4648c2d3fdcce335230d6dd1fdc73cdf29f2c",
+      "rendered_digest": "cbeb8d9d74a33c69a9537307d689db43f787dd54a0025a95c6e7e282e9d943ba",
+      "ast_digest": "6c7909e9ab81d3d1dfba7a787ce793f5ba68da1591b26823300704ee3c42ad14"
+    },
+    "vpp": {
+      "values_digest": "cb1e475a701e9a5d879186c3b41215c09b537bd78ef96f25e98d277604899bce",
+      "rendered_digest": "fad5e0e9ca739655592a7a4ffbd3885f1daa506ed5305abf782735b1b664540d",
+      "ast_digest": "4709fdb235a000daf6fd128431b9a2fe2766a67ddb4b1944f33e6c80f2641ada"
+    },
+    "srp": {
+      "values_digest": "8bb983eb94d63e646af0383710c1ba09f3342db1b82ae09ad9c5cf7416a5460f",
+      "rendered_digest": "64b4f0f76825c8f8bd9eb3ed76f1d7b52a750485fb7a3e7560687f4f0324469b",
+      "ast_digest": "190026bafc20dcf7086a9c078aeb2fc6f7329e010a9dc3b3f975625a9baf8148"
+    },
+    "sor": {
+      "values_digest": "4f1d6f2cad385ece384490b6b6da373e51154515978757d1096e0e3516f6733e",
+      "rendered_digest": "d3799c9e7ab5ccbb21f49a93fc158446447a415879688080d1d8a0c37d7864b6",
+      "ast_digest": "41f6f6f2f420955db1383a6acbac8768bd1a06e9c2b7b38bee140a629be5097f"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019fb9df-375d-7a73-a465-14e5da33a8d9",
+      "reason": "advance #4763 from prepared initialization into execution readiness for docs implementation"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019fb9df-375d-7a73-a465-14e5da33a8d9",
+      "reason": "bind #4763 execution to the existing requested worktree and branch"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019fb9df-375d-7a73-a465-14e5da33a8d9",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019fb9df-375d-7a73-a465-14e5da33a8d9",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:issue-4763-pr-5734-integration",
+      "reason": "Current origin/main integration and merged #4762 dependency evidence changed the reviewed substantive head; recover for one exact post-integration review before updating PR #5734."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:repo-code-review-4763-post-integration",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-4763-pr-5734-integration",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f8bb9-beb6-7ad1-b40b-b9f8b1597a11",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f9ad4-4763-preparation-refresh",
+      "reason": "typed #4763 claim reacquisition was attempted before card edits and blocked by unrelated #5332 terminal-authority reconciliation",
+      "operation": "{\"error\":\"reconciliation_required: terminal authority for issue 5332 has different identity\",\"operation\":\"reacquire_claim_attempt_blocked\",\"request\":\".csdlc/prepared/issues/4763/reacquire-claim-20260731.json\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f9ad4-4763-preparation-refresh",
+      "reason": "refresh issue-specific preparation cards, design, diagram, dependency gates, budgets, PVF lanes, rollback/no-deferral criteria, and bounded preparation review fixes",
+      "operation": "{\"closeout\":false,\"implementation\":false,\"merge\":false,\"operation\":\"manual_issue_local_preparation_refresh\",\"pr\":false,\"publication\":false,\"scope\":\"preparation_only\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:019f9ad4-4763-preparation-refresh",
+      "reason": "typed #4763 claim reacquisition was attempted before card edits and blocked by unrelated #5332 terminal-authority reconciliation",
+      "operation": "{\"error\":\"reconciliation_required: terminal authority for issue 5332 has different identity\",\"operation\":\"reacquire_claim_attempt_blocked\",\"request\":\".csdlc/prepared/issues/4763/reacquire-claim-20260731.json\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:019f9ad4-4763-preparation-refresh",
+      "reason": "refresh issue-specific preparation cards, design, diagram, dependency gates, budgets, PVF lanes, rollback/no-deferral criteria, and bounded preparation review fixes",
+      "operation": "{\"closeout\":false,\"implementation\":false,\"merge\":false,\"operation\":\"manual_issue_local_preparation_refresh\",\"pr\":false,\"publication\":false,\"scope\":\"preparation_only\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:019fb9df-375d-7a73-a465-14e5da33a8d9",
+      "reason": "advance #4763 from prepared initialization into execution readiness for docs implementation",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:019fb9df-375d-7a73-a465-14e5da33a8d9",
+      "reason": "bind #4763 execution to the existing requested worktree and branch",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"bound\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019fb9df-375d-7a73-a465-14e5da33a8d9",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019fb9df-375d-7a73-a465-14e5da33a8d9",
+      "reason": "record bounded implementation-review fix for stale preparation-era SOR truth",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented #4763 first-birthday docs and external launch surfaces as claim-bounded repository documentation, with exact validation evidence retained; final birthday/public-launch proof remains gated on #4762 accepted witness and receipt evidence.\",\"changes\":[\"Bounded implementation review found preparation-era lifecycle wording still present in historical planning cards after the typed phase advanced to implemented.\",\"The current phase permits SOR/SRP truth updates, so this SOR entry records the implementation-era correction without hand-editing locked planning cards.\",\"Typed claim-purpose transition was attempted and failed closed on unrelated #5332 terminal-authority reconciliation; #4763 finalize, doctor, and docs validation still passed under the existing live claim.\"],\"artifacts\":[]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019fb9df-375d-7a73-a465-14e5da33a8d9",
+      "reason": "record typed claim-purpose transition blocker observed during #4763 implementation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"./csdlc-v2/target/debug/csdlc-bind\",\"--root\",\".\",\"--transition-request\",\"/Users/daniel/git/agent-design-language/.git/csdlc-v2/requests/4763.json\"],\"purpose\":\"Transition the active #4763 claim purpose/scope from preparation-only to implementation/publication after binding.\",\"outcome\":\"blocked\",\"evidence_ref\":\"Typed transition failed closed with reconciliation_required: terminal authority for issue 5332 has different identity.\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:019fb9df-375d-7a73-a465-14e5da33a8d9",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:issue-4763-pr-5734-integration",
+      "reason": "Current origin/main integration and merged #4762 dependency evidence changed the reviewed substantive head; recover for one exact post-integration review before updating PR #5734.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:repo-code-review-4763-post-integration",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:issue-4763-pr-5734-integration",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

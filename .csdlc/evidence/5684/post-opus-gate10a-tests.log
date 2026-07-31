@@ -1,0 +1,24 @@
+command: /usr/bin/env CARGO_TARGET_DIR=/Volumes/FastWork/cargo-targets/adl-csdlc-install-manifest cargo test --manifest-path csdlc-v2/Cargo.toml --test gate10a
+
+   Compiling csdlc-v2 v0.1.0 (/Volumes/FastWork/adl-csdlc-install-manifest/csdlc-v2)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.33s
+     Running tests/gate10a.rs (/Volumes/FastWork/cargo-targets/adl-csdlc-install-manifest/debug/deps/gate10a-fc87299b29c036a0)
+
+running 15 tests
+test current_guidance_guard_rejects_exact_former_wrapper_command ... ok
+test ten_skills_are_typed_and_bind_the_generation_selector ... ok
+test coexistence_fails_closed_when_v1_or_v2_is_missing ... ok
+test external_cargo_target_is_exact_existing_and_outside_checkout ... ok
+test operator_guidance_is_bound_to_manifest_and_coexistence_contract ... ok
+test shared_destination_and_non_executable_sources_are_rejected_without_mutation ... ok
+test missing_late_source_leaves_prior_generation_untouched ... ok
+test current_bootstrap_guidance_does_not_call_deleted_prompt_wrapper ... ok
+test current_operator_guidance_has_no_sunset_v1_route ... ok
+test untracked_build_input_is_rejected_before_cargo_runs ... ok
+test dirty_shared_owner_dependency_is_rejected_before_cargo_runs ... ok
+test stale_owner_binary_provenance_fails_closed ... ok
+test freshly_installed_stable_edit_binary_is_executable ... ok
+test symlinked_installed_binaries_fail_coexistence ... ok
+test installer_records_provenance_without_replacing_other_files ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.81s

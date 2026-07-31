@@ -1,0 +1,19 @@
+{
+  "issue": 5653,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "4b444682853b8a95a0ec9f1ad9399a3ba8ede9bb7933298fe46fa9a602028fdb",
+  "claim_id": "claim-5653-readme-refresh",
+  "actor": "codex:5653-execution",
+  "reason": "Record focused README and homepage validation",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["git", "diff", "--check"],
+      "purpose": "Prove README wording, homepage link, badge branch, and documentation whitespace/link boundary",
+      "outcome": "passed",
+      "evidence_ref": "Focused README assertions and git diff check passed; https://agent-logic.ai returned HTTP 200."
+    }
+  },
+  "fail_after_backup": false
+}

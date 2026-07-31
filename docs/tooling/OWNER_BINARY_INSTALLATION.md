@@ -6,39 +6,42 @@ Git, and they are not owned by Cargo `target/` directories.
 The stable local install location is:
 
 ```text
-.adl/bin/
+.adl/bin/csdlc-v2/
 ```
 
-Use:
+For C-SDLC v2, use the reviewed installer:
 
 ```sh
-bash adl/tools/install_owner_binaries.sh
+csdlc-install install --repo . --destination .adl/bin/csdlc-v2
 ```
 
-To populate the stable directory from already-built binaries without rebuilding,
-use:
+Then verify the installed generation against the checked-in coexistence
+inventory:
 
 ```sh
-bash adl/tools/install_owner_binaries.sh --source-bin-dir adl/target/debug --no-build
+csdlc-install verify --repo . --bin-dir .adl/bin/csdlc-v2 --inventory csdlc-v2/operator/coexistence.json
 ```
 
-In default `--no-build` mode, binaries missing from the source directory are
-reported and skipped so an already-built subset can still be restored, but the
-command exits nonzero when the default install is incomplete. An explicit
-`--bin <name>` request still fails closed when the requested source binary is
-absent.
+The v2 installer builds from reviewed source into a disposable Cargo target and
+copies only the manifest-required binaries into the dedicated generation
+directory. It fails closed when source inputs are dirty, required binaries are
+missing, the destination is not named `csdlc-v2`, or the coexistence inventory is
+not the embedded reviewed inventory.
 
-The installer records per-binary provenance under `.adl/bin/.provenance/`.
-Re-running it is a no-op when the recorded source hash still matches the current
-owner-binary source inputs. This prevents unrelated issue merges or closeouts
-from replacing operational binaries.
+Current C-SDLC v2 GitHub owner binaries include:
 
-The source hash includes tracked and untracked non-test owner-binary source
-inputs. A feature worktree with newer production Rust inputs must rebuild or use
-its own installed binary; primary-checkout `.adl/bin/` binaries are not allowed
-to mask newer worktree code.
+- `csdlc-github`
+- `csdlc-github-issue`
+- `csdlc-github-pr`
+- `csdlc-pr-state`
+- `csdlc-merge`
+
+`csdlc-github` remains a compatibility facade. New issue actions should route
+through `csdlc-github-issue`; PR observation should route through
+`csdlc-github-pr` or the dedicated `csdlc-pr-state` observer. `csdlc-merge`
+remains the exact-head merge authority and must stay installed.
 
 Cargo `target/` directories remain build/cache output only. They may be deleted
-or pruned without taking the operational command surface with them. Wrappers
-such as `pr.sh`, `validate_structured_prompt.sh`, and `prompt_template.sh`
-prefer `.adl/bin/` before checking `target/debug`.
+or pruned without taking the operational command surface with them. C-SDLC v2
+workflow commands should resolve through `.adl/bin/csdlc-v2/` before considering
+Cargo `target/debug` output.

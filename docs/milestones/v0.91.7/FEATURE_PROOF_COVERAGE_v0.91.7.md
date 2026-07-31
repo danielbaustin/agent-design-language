@@ -28,7 +28,7 @@ closeout-audit evidence preserved; WP-23 #4650 is the ceremony integration gate.
 | Surface | WP-15 status | Current issue truth | Evidence | Non-claims |
 | --- | --- | --- | --- | --- |
 | Demo matrix | proven | #4691 closed | `docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md`; `docs/milestones/v0.91.7/review/demo_matrix_4691/4691-birthday-visible-demo-matrix-proof.md` | Release readiness and v0.92 activation readiness. |
-| HTML Observatory | proven | #4690 closed | `demos/v0.91.7/html-observatory/README.md`; `adl/tools/test_v0917_html_observatory_integrated_proof.sh` | Browser-owned AWS mutation, runtime mutation, and default Runtime v3 cutover. |
+| HTML Observatory | proven | #4690 closed | `demos/html-observatory/README.md`; `adl/tools/test_v0917_html_observatory_integrated_proof.sh` | Browser-owned AWS mutation, runtime mutation, and default Runtime v3 cutover. |
 | Runtime v2 Observatory packet | proven-retained | #4682 closed | `docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/` | Fresh soak rerun by WP-15 and full product completion. |
 | Runtime v3 Observatory consumption | proved-explicit-opt-in | #5286 closed | `docs/architecture/runtime_v3_observatory_consumption_5286.v1.json` | Runtime v3 default runtime, Runtime v2 decommission, and browser mutation authority. |
 | Unity Observatory shell, stage, and walkthrough | proven-limited | #4652, #4689, #4702, #4703, #4704, and #4745 closed | Unity proof packets under `docs/milestones/v0.91.7/review/unity_observatory_*` | Player-build readiness, clean-checkout third-party asset replay, and Unity live Runtime v3 consumption. |

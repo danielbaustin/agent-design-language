@@ -1,0 +1,17 @@
+flowchart TD
+    A["origin/main 51bc5ae5 integrated"] --> B["#4763 preparation packet"]
+    B --> C["Six issue-specific cards"]
+    B --> D["Design and diagram"]
+    B --> E["Bounded gpt-5.5 preparation review"]
+    F["#4762 actual retained implementation proof"] --> G["Later #4763 execution gate"]
+    H["#4762 claim/receipt/closeout"] -. "not a prep blocker; not proof substitute" .-> G
+    C --> G
+    D --> G
+    E --> G
+    I["Typed #4763 reacquire/doctor"] --> G
+    J["Unrelated #5332 terminal-authority reconciliation"] -. "currently blocks typed reacquire" .-> I
+    G --> K["First-birthday docs implementation"]
+    G --> L["External launch surfaces staging"]
+    K --> M["Docs proof and public-claim redaction"]
+    L --> M
+    M --> N["Future PR/publication only with explicit authority"]

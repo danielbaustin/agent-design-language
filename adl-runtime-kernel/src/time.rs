@@ -1,7 +1,7 @@
 use std::{
     fmt,
     sync::{Arc, Mutex},
-    time::{Duration, Instant},
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
 use async_trait::async_trait;
@@ -30,6 +30,8 @@ pub struct TimeQualificationBounds {
     pub timeout: Duration,
     pub max_offset: Duration,
     pub max_round_trip: Duration,
+    pub retry_delay: Duration,
+    pub refresh_interval: Duration,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -122,6 +124,27 @@ pub struct BlockingTimeSampleSource<F> {
 
 pub struct RsntpTimeSampleSource {
     server: String,
+}
+
+#[derive(Clone, Copy, Debug, Default)]
+pub struct SystemTimeSampleSource;
+
+#[async_trait]
+impl TimeSampleSource for SystemTimeSampleSource {
+    async fn sample(&self) -> Result<TimeSample, TimeSampleError> {
+        let unix_millis = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map_err(|error| TimeSampleError::new(error.to_string()))?
+            .as_millis()
+            .try_into()
+            .map_err(|_| TimeSampleError::new("system clock exceeds supported range"))?;
+        Ok(TimeSample {
+            source: "host_system_clock".to_owned(),
+            unix_millis,
+            offset_millis: 0,
+            round_trip: Duration::ZERO,
+        })
+    }
 }
 
 impl RsntpTimeSampleSource {
@@ -241,15 +264,39 @@ struct QualifiedTimeComponent {
 #[async_trait]
 impl Component for QualifiedTimeComponent {
     async fn run(self: Box<Self>, mut context: ComponentContext) -> Result<(), ComponentError> {
-        context
-            .recorder
-            .set_clock_authority(initial_clock_authority());
+        let bootstrap =
+            qualify_time(&SystemTimeSampleSource, self.bounds, &context.cancellation).await;
+        context.recorder.set_clock_authority(bootstrap);
         context.ready();
-        let authority =
-            qualify_time(self.source.as_ref(), self.bounds, &context.cancellation).await;
-        context.recorder.set_clock_authority(authority);
-        context.cancellation.cancelled().await;
-        Ok(())
+
+        loop {
+            let authority =
+                qualify_time(self.source.as_ref(), self.bounds, &context.cancellation).await;
+            let delay = match authority {
+                ClockAuthority::Authoritative { .. } => {
+                    context.recorder.set_clock_authority(authority);
+                    self.bounds.refresh_interval
+                }
+                ClockAuthority::Degraded { ref reason }
+                    if reason == "time qualification cancelled" =>
+                {
+                    return Ok(());
+                }
+                ClockAuthority::Degraded { reason } => {
+                    tracing::warn!(
+                        event = "trusted_time_refresh_failed",
+                        reason,
+                        "SNTP refresh failed; retaining the last authoritative clock"
+                    );
+                    self.bounds.retry_delay
+                }
+            };
+
+            tokio::select! {
+                _ = context.cancellation.cancelled() => return Ok(()),
+                _ = tokio::time::sleep(delay) => {}
+            }
+        }
     }
 }
 

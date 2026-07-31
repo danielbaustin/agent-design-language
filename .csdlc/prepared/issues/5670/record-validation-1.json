@@ -1,0 +1,21 @@
+{
+  "issue": 5670,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "c0a527bc9b7becae9ee8404841040ef4345c7f2766096d09fad9002b7dad9ec5",
+  "claim_id": "claim-5670-coverage-shard-fanout",
+  "actor": "codex:issue-5670-slot-1",
+  "reason": "Record focused validation 1 for hosted coverage sharding.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_run_authoritative_coverage_lane.sh"
+      ],
+      "purpose": "Prove coverage collect/report modes, shard partition selection, unsafe run-id rejection, compile-only profile cleanup, profraw import, isolated outputs, and release artifact behavior.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5670/test_run_authoritative_coverage_lane.log"
+    }
+  }
+}

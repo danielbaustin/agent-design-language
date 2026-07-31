@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5715,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast][ui] Update podcast studio from operator-provided page design",
+    "slug": "v0-91-8-podcast-ui-update-podcast-studio-from-operator-provided-page-design",
+    "version": "v0.91.8",
+    "generation": 4
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Wire the current Agent Logic podcast page to the operator-provided studio page design without editing the exported HTML content and without regressing audio or RSS.",
+      "required_outcome": "The generated podcast landing page links to the studio route, the studio route serves the exact exported HTML text/images under a clean filename, and the existing audio/RSS launch behavior remains validated.",
+      "declared_scope": [
+        "podcast launch generator and generated demo surfaces",
+        "copied podcast studio reference assets",
+        "podcast RSS and audio validation",
+        "issue-local C-SDLC lifecycle evidence"
+      ],
+      "authority_boundary": [
+        "GitHub issue #5715",
+        "operator-provided design zip as immutable source evidence",
+        "#5711 audio/RSS launch foundation"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use the exported HTML text and images exactly.",
+        "Make only the changes needed to wire the export into the route.",
+        "Use a clean filename without .dc and without spaces.",
+        "Do not write tracked changes on main.",
+        "Use FastWork for issue work.",
+        "Preserve audio and RSS; do not replace them with a visual mock.",
+        "Do not claim production deployment without live deployment proof."
+      ]
+    }
+  }
+}

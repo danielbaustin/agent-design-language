@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4759,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][activation] Implement v0.92 activation map from accepted deployed products",
+    "slug": "v0918-wp14-activation-map",
+    "version": "v0.91.8",
+    "generation": 12
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Future review covers only the #4759 activation-map artifact and issue-local lifecycle records; exclude v0.92 implementation, sibling WP-14 children, GitHub mutation, AWS, and closeout authority.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does the activation lane require live #5384 merge plus ancestry before execution?",
+        "Could any wording treat #5335 or receipts as execution authority?",
+        "Does the packet avoid v0.92 implementation and sibling WP-14 scope?",
+        "Is later proof tied to implemented deployed-product evidence?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

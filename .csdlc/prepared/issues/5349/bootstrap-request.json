@@ -1,0 +1,177 @@
+{
+  "issue": 5349,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5349/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5349/diagram.mmd",
+  "design_reviewer": "subagent:pending-preparation-review",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5349-v0918-wp09-preparation",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784659955,
+    "expires_unix_seconds": 1785264755,
+    "heartbeat_unix_seconds": 1784659955,
+    "branch": "codex/5349-v0918-wp09-provider-tool-adapters",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5349",
+      ".csdlc/locks/5349.lock",
+      ".csdlc/prepared/issues/5349",
+      ".csdlc/evidence/5349"
+    ],
+    "purpose": "Prepare, review, bind, commit, and push #5349 without product implementation; product authority remains prohibited until #5340 and #5341 are merged, typed closed_out, receipt-retained, and ancestral to current origin/main"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-09] Implement provider and governed-tool adapters",
+    "slug": "v0-91-8-wp09-provider-governed-tool-adapters",
+    "version": "v0.91.8",
+    "goal": "Implement small, contract-driven mock, bounded HTTPS, governed-tool, and compatibility adapters behind terminal ADL engine and Runtime v3 ports without acquiring scheduling, policy, provider-selection, credential, or lifecycle authority.",
+    "required_outcome": "At one exact integrated revision, the independent adl-adapters crate proves deterministic mock behavior, bounded HTTPS transport, verified governed-tool authorization binding, lossless compatibility classification, stable typed errors, denial preservation, secret hygiene, exact COTS and size budgets, and truthful no-credential live-claim boundaries while Runtime v3 remains execution authority.",
+    "declared_scope": [
+      "preparation-only issue-local cards, design, diagram, dependency gate, COTS and budget policy, PVF plan, review, and evidence",
+      "one future product crate at adl-v2/crates/adl-adapters after terminal dependency clearance",
+      "deterministic mock provider and governed-tool adapters behind terminal #5340 ports",
+      "bounded HTTPS client adapter using a runtime-issued endpoint permit, Rustls, explicit limits, cancellation, and stable normalized outcomes",
+      "governed-tool adapter requiring a verified authorization envelope and preserving denial, appeal, provenance, and typed error evidence",
+      "versioned compatibility adapter with explicit allowlisted mappings and no incumbent source reuse",
+      "negative authority, secret-canary, error-fidelity, rollback, COTS, LoC, test, exact-revision, and no-live-claim proof"
+    ],
+    "authority_boundary": [
+      "#5340 owns typed provider/tool ports plus scheduling, retry, cancellation, and engine outcome semantics; adapters perform one admitted bounded call and preserve outcomes",
+      "#5341 and Runtime v3 own canonical admission, execution context, supervision, continuity, and provider/tool execution authority; #5349 cannot bypass ingress or mutate runtime state",
+      "#5342 owns records, signing, provenance, and verification; #5349 preserves verified evidence and cannot sign, re-sign, downgrade, or rewrite history",
+      "Freedom Gate and governance owners decide capabilities, commitments, lawful execution, refusal, and appeal; #5349 only verifies envelope binding and preserves denial",
+      "#5526 owns vendor/model identities, capability matrices, provider-specific normalization, and bounded credentialed smoke after the parent adapter interfaces freeze",
+      "C-SDLC v2 owns issue, card, claim, review, publication, shepherding, and closeout truth",
+      "Runtime v2 and incumbent ADL source are behavioral evidence only and cannot be imported, copied, modified, linked, or used as fallback"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries and semantic card operations only; no v1 wrappers or hand-edited rendered cards",
+      "Keep root main clean and read-only; all #5349 mutations stay in /Volumes/FastWork/adl-wp-5349",
+      "This task stops after preparation review, fixes, commit, and push; no product implementation, publication, PR, merge, or closeout",
+      "Do not use raw gh, AWS, Runtime v2, provider credentials, credential-file scans, or live provider calls",
+      "Do not add a product protected path until #5340 and #5341 are each GitHub merged, typed closed_out, receipt-retained, and ancestral to current origin/main",
+      "After the dependency gate passes, verify sole-writer authority and use typed csdlc-bind amendment to add only adl-v2/crates/adl-adapters",
+      "Use /Volumes/FastWork/adl-5349 for every future Rust artifact and run every required PVF lane locally with no skipped, ignored, degraded, fixture-only, prose-only, pending, waived, or CI-only acceptance",
+      "Run bounded exact-revision subagent review, fix every actionable finding, and preserve the no-credential/no-live-claim boundary"
+    ],
+    "task_boundary": "Fully prepare, review, bind, commit, and push #5349 now. Product implementation, product-path claim expansion, acceptance execution, publication, PR creation, merge, provider credential use, and live provider claims are forbidden in this task.",
+    "deliverables": [
+      "all six issue-specific C-SDLC v2 cards generated and validated through typed v2",
+      "reviewed provider/governed-tool adapter design and architecture diagram",
+      "executable fail-closed dependency gate for terminal #5340 and #5341 merge, closeout receipt, and ancestry truth",
+      "exact preparation protected paths and one future adl-v2/crates/adl-adapters product path with collision proof",
+      "pinned COTS inventory for reqwest, secrecy, url, serde, serde_json, tokio, and wiremock with explicit feature boundaries",
+      "1500-source-line, 2500-test-line, 350-line module, minimum-30-test, six-production-COTS, one-dev-COTS, 3600-second lane allocation, and 7200-second hard validation ceiling",
+      "no-deferral positive/negative PVF matrix for mock, HTTPS, governed-tool, compatibility, error, denial, secret, rollback, and exact-revision behavior",
+      "truthful no-credential live-claim gate routing direct-provider smoke and vendor/model expansion to #5526",
+      "bounded preparation review with every actionable finding fixed, followed by a clean commit and pushed branch"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Before any product edit or product-path claim, #5340 and #5341 are each live-GitHub merged, typed closed_out, receipt-retained, and their terminal merged SHAs are ancestors of current origin/main",
+      "AC-2: The deterministic mock adapter produces identical scripted observations for identical canonical requests and rejects unexpected order, identity, input, or exhausted scripts without clock, environment, filesystem, network, or credentials",
+      "AC-3: The HTTPS adapter accepts only a runtime-issued endpoint permit for an HTTPS URL, disables redirects and proxy discovery, enforces explicit deadlines and body limits, honors cancellation, and classifies malformed, oversized, timeout, unavailable, authentication, rate-limit, and unsupported responses without internal retry",
+      "AC-4: The governed-tool adapter requires a verified authorization envelope whose subject, action, resource, scope, expiry, and request digest match; it invokes exactly one named typed port and preserves denial, refusal, appeal, provenance, and error evidence without policy or shell authority",
+      "AC-5: The compatibility adapter accepts only explicit approved versions and lossless mappings, emits a stable classification, and rejects unknown, ambiguous, lossy, alias-drift, and extra-field inputs without incumbent source reuse or fallback",
+      "AC-6: Accepted, saturated, cancelled, timed out, denied, unsupported, conflicting, malformed, rate-limited, authentication-failed, unavailable, and execution-failed outcomes remain distinct and cannot be retried, hidden, reordered, or converted to success by the adapter",
+      "AC-7: Secrets use non-serializable secrecy wrappers and a canary is absent from stdout, stderr, Debug, Display, errors, traces, fixtures, snapshots, and retained artifacts across every success and failure path",
+      "AC-8: Product scope is confined to adl-v2/crates/adl-adapters and uses only reqwest 0.13.4, secrecy 0.10.3, url 2.5.8, serde 1.0.229, serde_json 1.0.151, tokio 1.53.1, wiremock 0.6.5, and terminal in-repo path contracts; Runtime v2, AWS, provider SDKs, shells, dynamic loading, policy engines, databases, alternate HTTP/TLS stacks, shared manifests, and sibling-owner writes are absent",
+      "AC-9: Exact physical-line proof stays within 1500 production lines, 2500 test lines, 350 lines per production module, at least 30 explicit tests, six direct production COTS, one direct dev COTS, a 3600-second required-lane allocation, and a 7200-second hard local FastWork ceiling; any variance requires typed replanning and exact review without weakening proof",
+      "AC-10: Every required PVF lane passes at one clean committed revision, bounded exact-revision review has no actionable finding, required CI is green, the exact head is merged, post-merge validation passes, and typed closed_out receipt truth is retained",
+      "AC-11: Parent #5349 makes no credentialed or live-provider readiness claim; mocks, protocol compatibility, OpenRouter, or missing credentials never count as direct-provider proof, and #5526 owns bounded operator-credential smoke after interface freeze",
+      "AC-12: Rollback unregisters the opt-in adapters and returns typed adapter_unavailable without silent fallback to incumbent ADL, Runtime v2, raw HTTP, alternate providers, or ungoverned tools"
+    ],
+    "dependencies": [
+      "WP-06 #5340 GitHub merged, typed closed_out, receipt-retained, and merged-SHA ancestral to current origin/main",
+      "WP-08 #5341 GitHub merged, typed closed_out, receipt-retained, and merged-SHA ancestral to current origin/main",
+      "WP-07 #5342 records/trust and #5591 Runtime v3 ingress are consumed transitively through terminal #5341 rather than added as conflicting direct wave dependencies",
+      "#5526 is a downstream WP-09 provider-expansion child and does not block parent interface implementation or deterministic acceptance"
+    ],
+    "repo_inputs": [
+      "https://github.com/danielbaustin/agent-design-language/issues/5349",
+      "https://github.com/danielbaustin/agent-design-language/issues/5526",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+      "docs/milestones/v0.91.8/BASELINE_AND_OWNERSHIP_v0.91.8.md",
+      "docs/milestones/v0.91.8/DESIGN_v0.91.8.md",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/ADL_V2_CORE_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/RUNTIME_V3_ADAPTER_v0.91.8.md",
+      "terminal #5340 and #5341 typed contracts and retained receipts at implementation start"
+    ],
+    "non_goals": [
+      "product implementation, product-path claim, acceptance execution, publication, PR, merge, or closeout during this preparation-only task",
+      "provider/model expansion, capability matrix, provider-specific SDK integration, model discovery, alias lifecycle, or live direct-provider smoke owned by #5526",
+      "language, compiler, engine scheduling/retry, records/signing, Runtime v3 admission/supervision/state, C-SDLC, CLI, selector, workcell, parity, cutover, deletion, deployment, release, or v0.92 birthday work",
+      "Runtime v2 or incumbent ADL source reuse, import, copying, modification, linkage, defaulting, deletion, or fallback",
+      "AWS, Bedrock, credentials, credential files, live providers, raw gh, hard-coded endpoints, HTTP-only production access, dynamic plugins, shell/process execution, policy decisions, shared-manifest edits, or sibling-owner edits",
+      "skipped, ignored, degraded, fixture-only, prose-only, pending, waived, or CI-only deterministic acceptance"
+    ],
+    "plan_summary": "Prepare and exact-review the complete adapter contract now; bind only issue-local paths and durably push the packet. After #5340 and #5341 are terminal and ancestral, amend the typed claim to the single adapter crate, implement the four contract-driven adapter families, run every no-deferral FastWork lane, exact-review, publish, require green CI, merge, post-merge validate, and typed-closeout without making any ungrounded live-provider claim.",
+    "planning_profile": "large",
+    "steps": [
+      {"id":"S1","action":"Verify live issue/canonical wave truth, clean worktree ownership, active claim collisions, exact dependencies, and disjoint preparation/future product paths","acceptance_ids":["AC-1","AC-8"],"status":"pending"},
+      {"id":"S2","action":"Generate all six cards, design, diagram, COTS/budget/PVF/no-deferral/no-live-claim gates through typed v2, bind issue-local preparation scope, doctor, review, fix, commit, and push without product work","acceptance_ids":["AC-1","AC-8","AC-9","AC-11","AC-12"],"status":"pending"},
+      {"id":"S3","action":"After terminal dependency clearance and typed claim amendment, implement deterministic mock and bounded HTTPS adapters with stable outcomes and secret hygiene","acceptance_ids":["AC-2","AC-3","AC-6","AC-7","AC-8"],"status":"pending"},
+      {"id":"S4","action":"Implement verified governed-tool and versioned compatibility adapters with denial preservation and no policy, shell, incumbent, or fallback authority","acceptance_ids":["AC-4","AC-5","AC-6","AC-8","AC-12"],"status":"pending"},
+      {"id":"S5","action":"Run every FastWork PVF lane, exact COTS/LoC/test/time inventory, negative authority and no-live-claim proof, fixing every failure without deferral","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8","AC-9","AC-11","AC-12"],"status":"pending"},
+      {"id":"S6","action":"Obtain bounded exact-revision review, fix every actionable finding, typed-publish, require green CI, merge exact head, post-merge validate, and retain typed closed_out receipt","acceptance_ids":["AC-10"],"status":"pending"}
+    ],
+    "risks": [
+      "port contracts may drift before terminal predecessors merge, making preview interfaces unsafe implementation authority",
+      "an HTTP convenience layer may acquire endpoint, proxy, credential, retry, redirect, or provider-selection authority",
+      "a governed-tool adapter may accidentally duplicate Freedom Gate policy or turn denial into fallback execution",
+      "compatibility translation may hide lossy or ambiguous incumbent behavior and become an undeclared v1 dependency",
+      "secret values may leak through URL, header, Debug, error, trace, fixture, snapshot, or retained evidence surfaces",
+      "provider child #5526 scope may be absorbed into the parent or mock/protocol proof may be mislabeled live readiness",
+      "adapter growth or COTS sprawl may create a second runtime/provider subsystem instead of a thin boundary"
+    ],
+    "invariants": [
+      "no product code or product-path claim until #5340 and #5341 are merged, typed closed_out, receipt-retained, and ancestral",
+      "root main remains clean/read-only and every #5349 mutation stays in the dedicated FastWork worktree",
+      "one admitted invocation yields one bounded adapter outcome with no adapter-owned retry, scheduling, policy, signing, supervision, or lifecycle action",
+      "identical canonical mock input and observed HTTP/tool response yield identical normalized records and error classifications",
+      "authorization can only be preserved or reduced; adapters cannot mint, widen, or infer authority",
+      "secrets are never serializable, printable, retained, or used as request identity",
+      "no Runtime v2, incumbent source, AWS, provider SDK, shell, dynamic loading, database, alternate TLS/HTTP stack, shared manifest, or sibling-owner path",
+      "no credentialed/live-provider claim belongs to parent deterministic acceptance",
+      "every acceptance claim is exact-revision, locally FastWork-proven, reviewed, CI-green, integrated, post-merge-validated, and receipt-backed"
+    ],
+    "stop_conditions": [
+      "#5340 or #5341 terminal merge, closeout receipt, or ancestry truth is absent when product work would begin",
+      "an active or recovered claim overlaps issue-local preparation paths or adl-v2/crates/adl-adapters",
+      "terminal predecessor contracts contradict the prepared port, authority, COTS, budget, test, or validation assumptions and typed replanning has not completed",
+      "implementation requires any path outside the exact adapter crate, including shared manifests, sibling ADL v2 crates, Runtime source trees, Runtime v2, or C-SDLC product code",
+      "implementation requires provider SDKs, AWS, credential files, live providers, shells/processes, dynamic plugins, policy decisions, or another HTTP/TLS stack",
+      "any required deterministic, denial, secret, error, compatibility, COTS, budget, exact-revision, review, CI, post-merge, or closeout proof is absent, stale, weakened, or deferred",
+      "source, module, test, COTS, 3600-second lane allocation, or 7200-second hard validation ceiling cannot be met without reducing functionality or proof"
+    ],
+    "validation_lanes": [
+      {"lane":"dependency-and-ownership-gate","proof_role":"Prove terminal #5340/#5341 receipts and ancestry plus disjoint issue-local/future product claims","acceptance_ids":["AC-1","AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":60,"budget_tokens":2000,"argv":["ruby",".csdlc/prepared/issues/5349/dependency_gate.rb"],"parallel_group":"adapter-control","defer_reason":null},
+      {"lane":"deterministic-mock-matrix","proof_role":"Prove canonical scripted success and every typed failure without external state","acceptance_ids":["AC-2","AC-6"],"deterministic":true,"resource_profile":"small","budget_seconds":300,"budget_tokens":4000,"argv":["ruby",".csdlc/prepared/issues/5349/run_validation_lane.rb","mock"],"parallel_group":"adapter-local","defer_reason":null},
+      {"lane":"https-contract-matrix","proof_role":"Prove endpoint permit, TLS-only, redirect/proxy denial, bounds, cancellation, response normalization, and error fidelity","acceptance_ids":["AC-3","AC-6","AC-7"],"deterministic":true,"resource_profile":"medium","budget_seconds":600,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5349/run_validation_lane.rb","https"],"parallel_group":"adapter-local","defer_reason":null},
+      {"lane":"governed-tool-matrix","proof_role":"Prove authorization binding, one named call, denial/appeal preservation, and no policy or direct-execution bypass","acceptance_ids":["AC-4","AC-6","AC-7"],"deterministic":true,"resource_profile":"medium","budget_seconds":600,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5349/run_validation_lane.rb","governed-tool"],"parallel_group":"adapter-local","defer_reason":null},
+      {"lane":"compatibility-matrix","proof_role":"Prove explicit lossless translation and stable classification plus unknown/lossy/ambiguous/alias-drift rejection","acceptance_ids":["AC-5","AC-6","AC-12"],"deterministic":true,"resource_profile":"small","budget_seconds":300,"budget_tokens":4000,"argv":["ruby",".csdlc/prepared/issues/5349/run_validation_lane.rb","compatibility"],"parallel_group":"adapter-local","defer_reason":null},
+      {"lane":"secret-and-negative-authority","proof_role":"Prove canary non-leakage and reject escalation, retry, fallback, shell, AWS, Runtime v2, provider SDK, direct Runtime, and lifecycle authority","acceptance_ids":["AC-4","AC-6","AC-7","AC-8","AC-11","AC-12"],"deterministic":true,"resource_profile":"medium","budget_seconds":480,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5349/run_validation_lane.rb","negative-authority"],"parallel_group":"adapter-security","defer_reason":null},
+      {"lane":"complete-adapter-suite","proof_role":"Run every adapter target and doctest at one revision","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-10"],"deterministic":true,"resource_profile":"medium","budget_seconds":420,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5349/run_validation_lane.rb","complete"],"parallel_group":"adapter-regression","defer_reason":null},
+      {"lane":"strict-quality","proof_role":"Prove exact formatting and warning-free all-target/all-feature adapter code","acceptance_ids":["AC-8","AC-9","AC-10"],"deterministic":true,"resource_profile":"small","budget_seconds":300,"budget_tokens":3000,"argv":["ruby",".csdlc/prepared/issues/5349/run_validation_lane.rb","strict-quality"],"parallel_group":"adapter-quality","defer_reason":null},
+      {"lane":"cots-budget-path-inventory","proof_role":"Enforce exact COTS requirements/features, approved path dependencies, forbidden-package absence, source/module/test budgets, minimum tests, and exact crate scope","acceptance_ids":["AC-8","AC-9"],"deterministic":true,"resource_profile":"small","budget_seconds":240,"budget_tokens":3000,"argv":["ruby",".csdlc/prepared/issues/5349/validate_budget.rb"],"parallel_group":"adapter-quality","defer_reason":null},
+      {"lane":"exact-revision-lifecycle-truth","proof_role":"Prove clean diff, typed doctor, exact review identity, no-deferral matrix, rollback, and retained lifecycle truth","acceptance_ids":["AC-10","AC-11","AC-12"],"deterministic":true,"resource_profile":"small","budget_seconds":300,"budget_tokens":3000,"argv":["ruby",".csdlc/prepared/issues/5349/run_validation_lane.rb","exact-revision"],"parallel_group":"adapter-lifecycle","defer_reason":null}
+    ],
+    "failure_policy": "Fail closed without product implementation or publication on false/stale dependency truth, claim collision, unauthorized endpoint or tool invocation, authorization mismatch, denial loss, nondeterminism, retry/fallback authority, secret leakage, lossy compatibility, malformed response acceptance, undeclared COTS/path growth, budget breach, Runtime v2/AWS/provider credential use, ungrounded live claim, stale review, red validation, or incomplete receipt truth.",
+    "review_prompts": [
+      "Do the direct dependencies exactly match the canonical WP-06 and WP-08 wave, with WP-07/#5591 transitive through #5341 and #5526 correctly downstream?",
+      "Are preparation and future product protected paths disjoint from every active claim, with no shared-manifest or Runtime source write?",
+      "Does every adapter have explicit preconditions, postconditions, stable errors, bounds, cancellation, and no hidden retry/scheduling/policy/signing authority?",
+      "Can URL parsing, redirects, proxies, DNS/endpoint authority, oversized bodies, malformed JSON, header values, or cancellation bypass the HTTPS contract?",
+      "Can any governed-tool input mint or widen authority, bypass Freedom Gate, suppress denial, execute a shell, alter evidence, or invoke a different tool?",
+      "Do compatibility mappings reject unknown, ambiguous, lossy, extra-field, and alias-drift inputs without incumbent source reuse or silent fallback?",
+      "Do exact COTS versions/features, LoC/module/test/time budgets, secret-canary proof, no-deferral matrix, rollback, and no-credential live-claim gate cover every acceptance criterion?"
+    ],
+    "review_scope": ".csdlc/issues/5349\n.csdlc/locks/5349.lock\n.csdlc/prepared/issues/5349\n.csdlc/evidence/5349\nadl-v2/crates/adl-adapters"
+  }
+}

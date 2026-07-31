@@ -1,0 +1,23 @@
+{
+  "issue": 5344,
+  "expected_generation": 39,
+  "expected_digest": "abd9c943ab3c56009a12aeeba3b15e388be33e2c56e1455912e67c7bd5308231",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+  "evidence": {
+    "reviewer": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+    "scope": [
+      ".csdlc/issues/5344",
+      ".csdlc/prepared/issues/5344",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/test_check_coverage_impact.sh"
+    ],
+    "reviewed_revision": "git-blake3:d0229bf68b99ae44115160c11a5d058c7da7f67b:b16d1172159088e5b124c583ae5cd30a9cfff729e9a833df21909609eda797b5",
+    "findings": [],
+    "residual_risks": [
+      "The lifecycle-soak binary remains exercised by full CI and its native cross-platform process qualification suites, but is intentionally excluded from the in-process changed-source line threshold because llvm-cov cannot observe its child-process orchestration.",
+      "All ordinary production Rust and unmapped source remain subject to the unchanged fail-closed 80 percent changed-source coverage policy."
+    ],
+    "completed": true
+  }
+}

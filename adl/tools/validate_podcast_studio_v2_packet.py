@@ -31,12 +31,27 @@ REQUIRED_PACKET_SNIPPETS = [
 ]
 
 REQUIRED_CARD_SNIPPETS = [
-    "ADL Podcast Studio v2",
-    "Packet status: local pass",
-    "Audio status: manifest only",
+    "Weekly AI conversations",
+    "Weekly show format",
+    "Audio launch next",
+    "Reusable guest thought bubbles",
     "Stable Host Lineup",
     "Transcript",
     "Best Lines",
+]
+
+FORBIDDEN_PUBLIC_CARD_SNIPPETS = [
+    "framing synthesizer",
+    "governing thesis",
+    "latency and orchestration debt",
+    "engineering bottlenecks",
+    "truth boundaries",
+    "sterile workflow worship",
+    "Packet status",
+    "render_status",
+    "rendered_audio_present",
+    "proof boundary",
+    "public route proof",
 ]
 
 
@@ -127,6 +142,9 @@ def main() -> int:
     for snippet in REQUIRED_CARD_SNIPPETS:
         if snippet not in card_text:
             return fail(f"episode card missing snippet: {snippet}")
+    for snippet in FORBIDDEN_PUBLIC_CARD_SNIPPETS:
+        if snippet in card_text:
+            return fail(f"public episode card exposes internal studio wording: {snippet}")
 
     manifest = json.loads((review_dir / "ct_demo_004_audio_render_manifest.json").read_text(encoding="utf-8"))
     if manifest.get("render_status") != "manifest_only":
@@ -137,7 +155,7 @@ def main() -> int:
         return fail("audio render manifest must report hidden_credentials_required=false")
 
     transcript_text = (review_dir / "ct_demo_004_transcript.md").read_text(encoding="utf-8")
-    for snippet in ("# ADL Podcast Studio", "## Episode 04: Can governed creative production feel alive?", "## Transcript"):
+    for snippet in ("# ADL Podcast Studio", "## Episode 01: Can AI Be a Good Teammate?", "## Transcript"):
         if snippet not in transcript_text:
             return fail(f"transcript missing snippet: {snippet}")
     for speaker in ("ChatGPT", "Gemini", "Claude"):

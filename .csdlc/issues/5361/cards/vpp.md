@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5361/diagram.mmd
 [
   {
     "lane": "dependency-and-consumer-register",
-    "proof_role": "Verify retained exact-revision architecture, parity, adapter, provider/tool, and live workcell evidence is integrated into the accepted revision",
+    "proof_role": "Verify retained exact-revision architecture, Runtime parity, ADL v1/v2 shadow parity, adapter, provider/tool, and live workcell evidence is integrated into the accepted revision",
     "acceptance_ids": [
       "AC-1",
       "AC-4",
@@ -42,7 +42,7 @@ Diagram: .csdlc/prepared/issues/5361/diagram.mmd
       "dependencies"
     ],
     "parallel_group": "acceptance-register",
-    "defer_reason": "Wait for #5336, #5591, #5592, #5589, #5590, #5341, #5349, and #5501 to integrate and publish retained proof."
+    "defer_reason": "Wait for #5336, #5591, #5592, #5589, #5590, #5341, #5349, #5350, and #5501 to integrate and publish retained proof."
   },
   {
     "lane": "secure-access-and-observatory-register",
@@ -87,7 +87,7 @@ Diagram: .csdlc/prepared/issues/5361/diagram.mmd
   },
   {
     "lane": "quality-and-independence-register",
-    "proof_role": "Verify Runtime v2 independence, reasoning and learning surfaces, strict lint, test count, CI, retained artifacts, and explicit AWS/GPU/remote-provider non-claims",
+    "proof_role": "Verify Runtime v2 independence, reasoning and learning surfaces, strict lint, line count, module growth, dependency audit, test count, CI, exact-revision review, retained artifacts, and explicit AWS/GPU/remote-provider non-claims",
     "acceptance_ids": [
       "AC-3",
       "AC-6",
@@ -170,7 +170,7 @@ Diagram: .csdlc/prepared/issues/5361/diagram.mmd
   },
   {
     "lane": "runtime-v3-inventory",
-    "proof_role": "Report Runtime v3 source size, test count, and module-growth budget",
+    "proof_role": "Report Runtime v3 line count, module growth, dependency audit, test count, and exact-revision review evidence",
     "acceptance_ids": [
       "AC-6"
     ],

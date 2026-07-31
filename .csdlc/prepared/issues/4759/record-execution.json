@@ -1,0 +1,26 @@
+{
+  "issue": 4759,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "e9ffc59deb4f34c13d93f8f988e6bfcd00af6a0e4c6631760bc690623380e8f2",
+  "claim_id": "claim-4759-v0918-activation-execution-20260731",
+  "actor": "codex:issue-4759-execution",
+  "reason": "Record #4759 WP-21 activation bridge implementation artifacts before focused validation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented the #4759 v0.91.8 WP-21 activation bridge as a concrete v0.92 consumption/handoff artifact backed by the accepted WP-14A platform ledger.",
+    "changes": [
+      "Converted docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md from issue-routing text into the activation bridge with exact WP-14A baseline and accepted merge evidence.",
+      "Updated docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md to consume the #4759 bridge and name the downstream #4762 birth-witness handoff.",
+      "Updated docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md to identify the activation bridge boundary and non-claims.",
+      "Updated docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md to consume the v0.91.8 bridge without claiming v0.92 readiness."
+    ],
+    "artifacts": [
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md",
+      "docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md"
+    ]
+  }
+}

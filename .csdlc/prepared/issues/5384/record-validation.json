@@ -1,0 +1,21 @@
+{
+  "issue": 5384,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "912ad1ecc6ca1020143ecb3eff6c3a6ef424e72afed3be6d06c77788f52d334f",
+  "claim_id": "claim-5384-v0918-wp14a-preparation-refresh",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the focused WP-14A exact-input, retained-evidence, stable-generation, doctor, and diff validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5384/validate_dependency_gate.rb"
+      ],
+      "purpose": "Prove all four direct inputs are closed and merged with green required checks, their accepted commits are present in the baseline, retained evidence hashes match, C-SDLC resolves to v2, typed doctor passes, and the patch is hygienic.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5384/platform-acceptance-ledger.v1.json"
+    }
+  }
+}

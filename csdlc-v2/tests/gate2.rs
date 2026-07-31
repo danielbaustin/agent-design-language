@@ -2,8 +2,9 @@ use std::fs;
 
 use csdlc_v2::doctor::DoctorStatus;
 use csdlc_v2::{
-    amend_claim_scope, diagnose, edit_issue, AmendClaimScopeRequest, BootstrapRequest, CardKind,
-    Claim, EditRequest, ErrorCode, PlanningCollectionField, SemanticOperation, Store,
+    amend_claim_scope, closeout_issue, diagnose, edit_issue, AmendClaimScopeRequest,
+    BootstrapRequest, CardKind, Claim, EditRequest, ErrorCode, PlanningCollectionField,
+    ReacquireClaimRequest, SemanticOperation, Store, TerminalDisposition, TerminalObservation,
 };
 use tempfile::TempDir;
 
@@ -149,8 +150,9 @@ fn bind_fixture() -> (TempDir, Store, csdlc_v2::IssueRecord) {
         },
     )
     .expect("bind fixture");
-    let bound = store.load_record(42).expect("bound record");
-    (temp, store, bound)
+    let bound_store = Store::new(temp.path().join(".worktrees/issue-42"));
+    let bound = bound_store.load_record(42).expect("bound record");
+    (temp, bound_store, bound)
 }
 
 fn bind_issue_5337_fixture() -> (TempDir, Store, csdlc_v2::IssueRecord) {
@@ -187,8 +189,9 @@ fn bind_issue_5337_fixture() -> (TempDir, Store, csdlc_v2::IssueRecord) {
         },
     )
     .expect("bind #5337 fixture");
-    let bound = store.load_record(5_337).expect("bound #5337 record");
-    (temp, store, bound)
+    let bound_store = Store::new(temp.path().join(".worktrees/issue-5337"));
+    let bound = bound_store.load_record(5_337).expect("bound #5337 record");
+    (temp, bound_store, bound)
 }
 
 fn edit_current(
@@ -402,15 +405,16 @@ fn bind_creates_and_idempotently_reuses_typed_worktree() {
     };
     let first = csdlc_v2::bind_issue(&store, request.clone()).expect("bind");
     assert!(first.created);
-    let bound_digest = store.load_record(42).expect("bound record").digest;
+    let bound_store = Store::new(temp.path().join(".worktrees/issue-42"));
+    let bound_digest = bound_store.load_record(42).expect("bound record").digest;
     assert_eq!(
-        store.load_record(42).expect("bound record").phase,
+        bound_store.load_record(42).expect("bound record").phase,
         csdlc_v2::LifecyclePhase::Bound
     );
     let second = csdlc_v2::bind_issue(&store, request).expect("rebind");
     assert!(!second.created);
     assert_eq!(
-        store.load_record(42).expect("reused record").digest,
+        bound_store.load_record(42).expect("reused record").digest,
         bound_digest
     );
 }
@@ -761,6 +765,144 @@ fn active_claim_transition_atomically_updates_purpose_and_scope() {
 }
 
 #[test]
+fn claim_revoke_clears_unexpired_claim_with_operator_cas_audit() {
+    let (_temp, store, record) = fixture();
+    let claim_id = record.claim.as_ref().expect("claim").id.clone();
+    let result = csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: claim_id.clone(),
+            expected_generation: record.generation,
+            expected_digest: record.digest.clone(),
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5648".into(),
+            reason: "release abandoned setup claim before lease expiry".into(),
+        },
+    )
+    .expect("revoke");
+    assert_eq!(result.claim_id, claim_id);
+    assert_eq!(result.previous_owner, "agent");
+    assert!(result.released);
+    assert_eq!(result.generation, record.generation);
+    let released = store.load_record(42).expect("record");
+    assert!(released.claim.is_none());
+    assert_eq!(released.phase, record.phase);
+    assert_eq!(released.digest, result.digest);
+    assert!(!released
+        .claim
+        .as_ref()
+        .is_some_and(|claim| claim.protected_paths.iter().any(|path| path == "src")));
+    assert!(released
+        .audit
+        .last()
+        .expect("audit")
+        .operation
+        .contains("revoke_active_claim"));
+    assert!(released
+        .audit
+        .last()
+        .expect("audit")
+        .operation
+        .contains("operator-authorized:5648"));
+}
+
+#[test]
+fn claim_revoke_fails_closed_for_stale_digest_and_missing_authority() {
+    let (_temp, store, record) = fixture();
+    let claim_id = record.claim.as_ref().expect("claim").id.clone();
+    let stale = csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: claim_id.clone(),
+            expected_generation: record.generation,
+            expected_digest: "stale".into(),
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5648".into(),
+            reason: "stale request".into(),
+        },
+    )
+    .expect_err("stale digest");
+    assert!(matches!(stale.code, ErrorCode::StaleDigest));
+    let missing_authority = csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: claim_id,
+            expected_generation: record.generation,
+            expected_digest: record.digest.clone(),
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: " ".into(),
+            reason: "missing authority".into(),
+        },
+    )
+    .expect_err("authority required");
+    assert!(matches!(missing_authority.code, ErrorCode::InvalidInput));
+
+    let stale_generation = csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: "claim-1".into(),
+            expected_generation: record.generation + 1,
+            expected_digest: record.digest.clone(),
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5648".into(),
+            reason: "stale generation".into(),
+        },
+    )
+    .expect_err("stale generation");
+    assert!(matches!(stale_generation.code, ErrorCode::StaleGeneration));
+
+    let claim_mismatch = csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: "wrong-claim".into(),
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5648".into(),
+            reason: "claim mismatch".into(),
+        },
+    )
+    .expect_err("claim mismatch");
+    assert!(matches!(claim_mismatch.code, ErrorCode::InvalidClaim));
+}
+
+#[test]
+fn claim_revoke_requires_unexpired_claim() {
+    let (_temp, store, record) = fixture();
+    let error = csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: "claim-1".into(),
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            now_unix_seconds: u64::MAX,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5648".into(),
+            reason: "expired request must route to recovery".into(),
+        },
+    )
+    .expect_err("expired claim");
+    assert!(matches!(error.code, ErrorCode::ExpiredClaim));
+}
+
+#[test]
 fn active_claim_transition_rejects_stale_owner_without_any_write() {
     let (_temp, store, mut record) = fixture();
     record = csdlc_v2::edit_issue(
@@ -885,6 +1027,8 @@ fn active_claim_transition_guards_cas_expiry_collision_and_real_cli() {
     other.issue = 43;
     let other_claim = other.claim.as_mut().unwrap();
     other_claim.id = "claim-43".into();
+    other_claim.branch = "main".into();
+    other_claim.worktree = ".".into();
     other_claim.protected_paths = vec!["product/nested".into()];
     fs::create_dir_all(store.issue_dir(43)).unwrap();
     fs::write(
@@ -1006,7 +1150,10 @@ fn bind_refuses_overlapping_protected_path_reserved_by_another_issue() {
     git(temp.path(), &["commit", "-m", "fixture"]);
     let mut other = record.clone();
     other.issue = 43;
-    other.claim.as_mut().expect("claim").protected_paths = vec!["src/nested".into()];
+    let other_claim = other.claim.as_mut().expect("claim");
+    other_claim.branch = "main".into();
+    other_claim.worktree = ".".into();
+    other_claim.protected_paths = vec!["src/nested".into()];
     fs::create_dir_all(store.issue_dir(43)).expect("other issue");
     fs::write(
         store.issue_dir(43).join("index.json"),
@@ -1065,7 +1212,7 @@ fn heartbeat_is_compare_and_swap_and_missed_heartbeat_does_not_enable_recovery()
 
 #[test]
 fn heartbeat_and_expired_recovery_record_positive_evidence() {
-    let (_temp, store, record) = fixture();
+    let (temp, store, record) = fixture();
     csdlc_v2::heartbeat_claim(&store, 42, "claim-1", 0, 2, 60).expect("heartbeat");
     let replacement = Claim {
         id: "replacement".into(),
@@ -1075,10 +1222,25 @@ fn heartbeat_and_expired_recovery_record_positive_evidence() {
         expires_unix_seconds: u64::MAX,
         heartbeat_unix_seconds: 62,
         branch: "issue-42".into(),
-        worktree: ".worktrees/issue-42".into(),
+        worktree: ".".into(),
         protected_paths: vec!["src".into()],
         purpose: "explicit recovery".into(),
     };
+    let wrong_checkout = csdlc_v2::recover_claim(
+        &store,
+        csdlc_v2::RecoverClaimRequest {
+            issue: 42,
+            expected_claim_id: record.claim.as_ref().expect("claim").id.clone(),
+            expected_generation: 0,
+            now_unix_seconds: 62,
+            replacement: replacement.clone(),
+            recovery_actor: "operator".into(),
+            reason: "lease expired".into(),
+        },
+    )
+    .expect_err("wrong checkout");
+    assert_eq!(wrong_checkout.code, ErrorCode::UnsafeCheckout);
+    git(temp.path(), &["branch", "-m", "issue-42"]);
     let evidence = csdlc_v2::recover_claim(
         &store,
         csdlc_v2::RecoverClaimRequest {
@@ -1105,6 +1267,826 @@ fn heartbeat_and_expired_recovery_record_positive_evidence() {
     );
 }
 
+fn reacquired_claim(generation: u64) -> Claim {
+    Claim {
+        id: "claim-reacquired".into(),
+        owner: "next-owner".into(),
+        generation,
+        acquired_unix_seconds: 10,
+        expires_unix_seconds: u64::MAX,
+        heartbeat_unix_seconds: 10,
+        branch: "issue-42".into(),
+        worktree: ".".into(),
+        protected_paths: vec!["src".into()],
+        purpose: "resume dormant issue".into(),
+    }
+}
+
+#[test]
+fn released_claim_reacquires_without_phase_or_audit_rewind() {
+    let (temp, store, record) = fixture();
+    git(temp.path(), &["branch", "-m", "issue-42"]);
+    let released = csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: "claim-1".into(),
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5727".into(),
+            reason: "deliberately release dormant preparation".into(),
+        },
+    )
+    .expect("release");
+    let dormant = store.load_record(42).expect("dormant");
+    let dormant_audit_len = dormant.audit.len();
+    let doctor = diagnose(&store, 42);
+    assert_eq!(doctor.status, DoctorStatus::Block);
+    assert_eq!(doctor.next_operation.as_deref(), Some("reacquire_claim"));
+
+    let request_path = temp.path().join("reacquire.json");
+    fs::write(
+        &request_path,
+        serde_json::to_vec(&ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation,
+            expected_digest: released.digest,
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "resume accepted work".into(),
+            replacement: reacquired_claim(dormant.generation),
+        })
+        .expect("serialize request"),
+    )
+    .expect("write request");
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_csdlc-bind"))
+        .args([
+            "--root",
+            temp.path().to_str().expect("root"),
+            "--reacquire-request",
+            request_path.to_str().expect("request"),
+        ])
+        .output()
+        .expect("run csdlc-bind");
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let result: csdlc_v2::ReacquireClaimResult =
+        serde_json::from_slice(&output.stdout).expect("typed result");
+    let resumed = store.load_record(42).expect("resumed");
+    assert_eq!(resumed.phase, dormant.phase);
+    assert_eq!(resumed.audit.len(), dormant_audit_len + 1);
+    assert!(resumed.audit[dormant_audit_len - 1]
+        .operation
+        .contains("revoke_active_claim"));
+    assert!(resumed.audit[dormant_audit_len]
+        .operation
+        .contains("reacquire_claim"));
+    assert_eq!(result.previous_claim_id, None);
+    assert_eq!(diagnose(&store, 42).status, DoctorStatus::Pass);
+}
+
+#[test]
+fn expired_claim_reacquires_and_preserves_previous_owner_evidence() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    fs::create_dir_all(temp.path().join("docs")).expect("docs");
+    fs::write(temp.path().join("docs/design.md"), "# Reviewed design\n").expect("design");
+    fs::write(
+        temp.path().join("docs/diagram.mmd"),
+        "flowchart LR\n  A --> B\n",
+    )
+    .expect("diagram");
+    let store = Store::new(temp.path());
+    let mut bootstrap = request();
+    bootstrap.claim.expires_unix_seconds = u64::MAX - 2;
+    let record = initialize_issue(&store, bootstrap).expect("initialize");
+    git(temp.path(), &["branch", "-m", "issue-42"]);
+    let result = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            now_unix_seconds: u64::MAX - 1,
+            actor: "next-owner".into(),
+            reason: "replace expired lease".into(),
+            replacement: Claim {
+                acquired_unix_seconds: u64::MAX - 1,
+                heartbeat_unix_seconds: u64::MAX - 1,
+                ..reacquired_claim(record.generation)
+            },
+        },
+    )
+    .expect("expired reacquire");
+    assert_eq!(result.previous_claim_id.as_deref(), Some("claim-1"));
+    assert_eq!(result.previous_owner.as_deref(), Some("agent"));
+}
+
+#[test]
+fn reacquire_fails_closed_for_stale_binding_and_live_overlap() {
+    let (temp, store, record) = fixture();
+    git(temp.path(), &["branch", "-m", "issue-42"]);
+    csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: "claim-1".into(),
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5727".into(),
+            reason: "release".into(),
+        },
+    )
+    .expect("release");
+    let dormant = store.load_record(42).expect("dormant");
+    let stale = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation + 1,
+            expected_digest: dormant.digest.clone(),
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "stale".into(),
+            replacement: reacquired_claim(dormant.generation),
+        },
+    )
+    .expect_err("stale generation");
+    assert_eq!(stale.code, ErrorCode::StaleGeneration);
+
+    let stale_digest = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation,
+            expected_digest: "stale".into(),
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "stale digest".into(),
+            replacement: reacquired_claim(dormant.generation),
+        },
+    )
+    .expect_err("stale digest");
+    assert_eq!(stale_digest.code, ErrorCode::StaleDigest);
+
+    let mut invalid_binding = reacquired_claim(dormant.generation);
+    invalid_binding.branch = "other-branch".into();
+    let invalid = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation,
+            expected_digest: dormant.digest.clone(),
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "wrong branch".into(),
+            replacement: invalid_binding,
+        },
+    )
+    .expect_err("invalid binding");
+    assert_eq!(invalid.code, ErrorCode::UnsafeCheckout);
+
+    let mut invalid_worktree = reacquired_claim(dormant.generation);
+    invalid_worktree.worktree = ".worktrees/not-this-one".into();
+    let invalid = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation,
+            expected_digest: dormant.digest.clone(),
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "wrong worktree".into(),
+            replacement: invalid_worktree,
+        },
+    )
+    .expect_err("invalid worktree");
+    assert_eq!(invalid.code, ErrorCode::UnsafeCheckout);
+
+    let mut other_request = request();
+    other_request.issue = 43;
+    other_request.claim.id = "claim-43".into();
+    other_request.claim.branch = "issue-42".into();
+    other_request.claim.worktree = ".".into();
+    other_request.claim.protected_paths = vec!["src/nested".into()];
+    initialize_issue(&store, other_request).expect("other issue");
+    let collision = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation,
+            expected_digest: dormant.digest,
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "colliding resume".into(),
+            replacement: reacquired_claim(dormant.generation),
+        },
+    )
+    .expect_err("live overlap");
+    assert_eq!(collision.code, ErrorCode::ClaimCollision);
+}
+
+#[test]
+fn inactive_stale_projection_with_stale_terminal_identity_does_not_block_authority() {
+    {
+        let (_temp, store) = fixture_with_unrelated_stale_terminal_identity();
+        initialize_issue(&store, request()).expect("unrelated stale receipt does not block init");
+    }
+
+    {
+        let (temp, store) = fixture_with_unrelated_stale_terminal_identity();
+        let record = initialize_issue(&store, request()).expect("initialize bind target");
+        git(
+            temp.path(),
+            &["config", "user.email", "test@example.invalid"],
+        );
+        git(temp.path(), &["config", "user.name", "C-SDLC Test"]);
+        git(temp.path(), &["add", "."]);
+        git(temp.path(), &["commit", "-m", "fixture"]);
+        let claim = record.claim.clone().expect("claim");
+        csdlc_v2::bind_issue(
+            &store,
+            csdlc_v2::BindRequest {
+                issue: 42,
+                base_branch: "main".into(),
+                branch: claim.branch.clone(),
+                worktree: claim.worktree.clone(),
+                claim,
+            },
+        )
+        .expect("unrelated stale receipt does not block bind");
+    }
+
+    {
+        let (temp, store) = fixture_with_unrelated_stale_terminal_identity();
+        let record = initialize_issue(&store, request()).expect("initialize reacquire target");
+        git(temp.path(), &["branch", "-m", "issue-42"]);
+        csdlc_v2::revoke_active_claim(
+            &store,
+            csdlc_v2::RevokeActiveClaimRequest {
+                issue: 42,
+                repository: "example/repo".into(),
+                expected_claim_id: "claim-1".into(),
+                expected_generation: record.generation,
+                expected_digest: record.digest,
+                now_unix_seconds: 2,
+                actor: "operator".into(),
+                operator_authority: "operator-authorized:test".into(),
+                reason: "release for stale receipt regression".into(),
+            },
+        )
+        .expect("release");
+        let dormant = store.load_record(42).expect("dormant");
+        fs::write(
+            temp.path().join("docs/design.md"),
+            "# Design changed while the claim was dormant\n",
+        )
+        .expect("stale dormant design");
+        let reacquired = csdlc_v2::reacquire_claim(
+            &store,
+            ReacquireClaimRequest {
+                issue: 42,
+                expected_generation: dormant.generation,
+                expected_digest: dormant.digest,
+                now_unix_seconds: 10,
+                actor: "next-owner".into(),
+                reason: "resume without consulting unrelated stale receipt".into(),
+                replacement: reacquired_claim(dormant.generation),
+            },
+        )
+        .expect("unrelated stale receipt does not block reacquire");
+        csdlc_v2::approve_design(
+            &store,
+            csdlc_v2::ApproveDesignRequest {
+                issue: 42,
+                expected_generation: reacquired.generation,
+                expected_digest: reacquired.digest,
+                claim_id: "claim-reacquired".into(),
+                reviewer: "recovery-reviewer".into(),
+            },
+        )
+        .expect("typed design reapproval follows authority recovery");
+    }
+}
+
+#[test]
+fn active_nonoverlap_does_not_consult_stale_terminal_identity() {
+    let (_temp, store) = fixture_with_stale_terminal_identity("main", "terminal-only");
+    initialize_issue(&store, request())
+        .expect("non-overlapping active claim does not consult unrelated terminal identity");
+}
+
+#[test]
+fn reacquire_rejects_direct_rendered_card_drift() {
+    let (temp, store, record) = fixture();
+    git(temp.path(), &["branch", "-m", "issue-42"]);
+    csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: "claim-1".into(),
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:test".into(),
+            reason: "prepare direct drift regression".into(),
+        },
+    )
+    .expect("release");
+    let dormant = store.load_record(42).expect("dormant");
+    fs::write(store.issue_dir(42).join("cards/sip.md"), "# direct drift\n")
+        .expect("write direct drift");
+    let error = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
+            issue: 42,
+            expected_generation: dormant.generation,
+            expected_digest: dormant.digest,
+            now_unix_seconds: 10,
+            actor: "next-owner".into(),
+            reason: "direct drift must fail closed".into(),
+            replacement: reacquired_claim(dormant.generation),
+        },
+    )
+    .expect_err("direct rendered-card drift");
+    assert_eq!(error.code, ErrorCode::CorruptRecord);
+}
+
+fn fixture_with_unrelated_stale_terminal_identity() -> (TempDir, Store) {
+    fixture_with_stale_terminal_identity("inactive-issue-43", "src")
+}
+
+fn fixture_with_stale_terminal_identity(
+    local_branch: &str,
+    protected_path: &str,
+) -> (TempDir, Store) {
+    let temp = tempfile::tempdir().expect("tempdir");
+    git(temp.path(), &["init", "-b", "main"]);
+    fs::create_dir_all(temp.path().join("docs")).expect("docs");
+    fs::write(temp.path().join("docs/design.md"), "# Reviewed design\n").expect("design");
+    fs::write(
+        temp.path().join("docs/diagram.mmd"),
+        "flowchart LR\n  A --> B\n",
+    )
+    .expect("diagram");
+    let store = Store::new(temp.path());
+    let mut local = request();
+    local.issue = 43;
+    local.claim.id = "claim-43-local".into();
+    local.claim.branch = local_branch.into();
+    local.claim.worktree = ".".into();
+    local.claim.protected_paths = vec![protected_path.into()];
+    local.initial.goal = "Local issue identity that differs from retained terminal receipt.".into();
+    initialize_issue(&store, local).expect("local unrelated issue");
+    install_stale_terminal_receipt_for_issue_43(&store);
+    (temp, store)
+}
+
+fn install_stale_terminal_receipt_for_issue_43(target: &Store) {
+    let source = tempfile::tempdir().expect("source tempdir");
+    fs::create_dir_all(source.path().join("docs")).expect("source docs");
+    fs::write(source.path().join("docs/design.md"), "# Reviewed design\n").expect("design");
+    fs::write(
+        source.path().join("docs/diagram.mmd"),
+        "flowchart LR\n  A --> B\n",
+    )
+    .expect("diagram");
+    let source_store = Store::new(source.path());
+    let mut request = request();
+    request.issue = 43;
+    request.claim.id = "claim-43-terminal".into();
+    request.claim.branch = "issue-43-terminal".into();
+    request.claim.worktree = ".".into();
+    request.claim.protected_paths = vec!["terminal-only".into()];
+    request.initial.goal = "Retained terminal identity that is stale for the local record.".into();
+    let mut record = initialize_issue(&source_store, request).expect("terminal source init");
+    for phase in [
+        csdlc_v2::LifecyclePhase::Ready,
+        csdlc_v2::LifecyclePhase::Bound,
+    ] {
+        record = edit_issue(
+            &source_store,
+            edit_for(
+                43,
+                "claim-43-terminal",
+                &record,
+                CardKind::Sip,
+                SemanticOperation::AdvancePhase { phase },
+            ),
+        )
+        .expect("advance terminal source");
+    }
+    record = edit_issue(
+        &source_store,
+        edit_for(
+            43,
+            "claim-43-terminal",
+            &record,
+            CardKind::Sor,
+            SemanticOperation::RecordExecution {
+                summary: "terminal source complete".into(),
+                changes: vec!["terminal source".into()],
+                artifacts: vec!["terminal-source.json".into()],
+            },
+        ),
+    )
+    .expect("record execution");
+    record = edit_issue(
+        &source_store,
+        edit_for(
+            43,
+            "claim-43-terminal",
+            &record,
+            CardKind::Sip,
+            SemanticOperation::AdvancePhase {
+                phase: csdlc_v2::LifecyclePhase::Implemented,
+            },
+        ),
+    )
+    .expect("advance implemented");
+    record = edit_issue(
+        &source_store,
+        edit_for(
+            43,
+            "claim-43-terminal",
+            &record,
+            CardKind::Sor,
+            SemanticOperation::RecordValidation {
+                result: csdlc_v2::cards::ValidationResult {
+                    command: vec!["cargo".into(), "test".into()],
+                    purpose: "stale terminal identity regression proof".into(),
+                    outcome: csdlc_v2::cards::EvidenceOutcome::Passed,
+                    evidence_ref: "evidence/stale-terminal-identity.json".into(),
+                },
+            },
+        ),
+    )
+    .expect("record validation");
+    record = edit_issue(
+        &source_store,
+        edit_for(
+            43,
+            "claim-43-terminal",
+            &record,
+            CardKind::Srp,
+            SemanticOperation::RecordReview {
+                reviewer: "independent-reviewer".into(),
+                revision: "terminal-source-revision".into(),
+                result: csdlc_v2::cards::ReviewResult::Pass,
+                residual_risk: Vec::new(),
+            },
+        ),
+    )
+    .expect("record review");
+    record = edit_issue(
+        &source_store,
+        edit_for(
+            43,
+            "claim-43-terminal",
+            &record,
+            CardKind::Sip,
+            SemanticOperation::AdvancePhase {
+                phase: csdlc_v2::LifecyclePhase::Reviewed,
+            },
+        ),
+    )
+    .expect("advance reviewed");
+    closeout_issue(
+        &source_store,
+        TerminalObservation {
+            schema: "csdlc.terminal_observation.v1".into(),
+            issue: 43,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            claim_id: "claim-43-terminal".into(),
+            actor: "closer".into(),
+            pull_request: None,
+            disposition: TerminalDisposition::ClosedNoPr,
+            observed_sha: None,
+            observed_state: "closed_no_pr".into(),
+            approved_no_pr_reason: Some("operator-approved no-PR closeout".into()),
+            receipt_path: "csdlc-v2/closeout/43.json".into(),
+        },
+    )
+    .expect("close terminal source");
+    source_store
+        .retain_terminal_receipt(43)
+        .expect("retain source receipt");
+    let source_receipt = source_store
+        .terminal_receipt_path(43)
+        .expect("source receipt path");
+    let target_receipt = target
+        .terminal_receipt_path(43)
+        .expect("target receipt path");
+    fs::create_dir_all(target_receipt.parent().expect("receipt parent")).expect("receipt dir");
+    fs::copy(source_receipt, target_receipt).expect("copy stale receipt");
+}
+
+#[test]
+fn concurrent_reacquisition_across_worktrees_allows_only_one_overlapping_writer() {
+    let (temp, store, record_42) = fixture();
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "test"]);
+    csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 42,
+            repository: "example/repo".into(),
+            expected_claim_id: "claim-1".into(),
+            expected_generation: record_42.generation,
+            expected_digest: record_42.digest,
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5727".into(),
+            reason: "prepare dormant issue 42".into(),
+        },
+    )
+    .expect("release issue 42");
+
+    let mut request_43 = request();
+    request_43.issue = 43;
+    request_43.design_path = "docs/design-43.md".into();
+    request_43.diagram_path = "docs/diagram-43.mmd".into();
+    request_43.claim.id = "claim-43".into();
+    request_43.claim.branch = "issue-43".into();
+    request_43.claim.protected_paths = vec!["src/nested".into()];
+    fs::write(temp.path().join("docs/design-43.md"), "# Reviewed design\n").expect("design");
+    fs::write(
+        temp.path().join("docs/diagram-43.mmd"),
+        "flowchart LR\n  A --> B\n",
+    )
+    .expect("diagram");
+    let record_43 = initialize_issue(&store, request_43).expect("initialize issue 43");
+    csdlc_v2::revoke_active_claim(
+        &store,
+        csdlc_v2::RevokeActiveClaimRequest {
+            issue: 43,
+            repository: "example/repo".into(),
+            expected_claim_id: "claim-43".into(),
+            expected_generation: record_43.generation,
+            expected_digest: record_43.digest,
+            now_unix_seconds: 2,
+            actor: "operator".into(),
+            operator_authority: "operator-authorized:5727".into(),
+            reason: "prepare dormant issue 43".into(),
+        },
+    )
+    .expect("release issue 43");
+    git(temp.path(), &["add", "."]);
+    git(temp.path(), &["commit", "-m", "two dormant issues"]);
+
+    let worktree_42 = temp.path().join("worktree-42");
+    let worktree_43 = temp.path().join("worktree-43");
+    git(
+        temp.path(),
+        &[
+            "worktree",
+            "add",
+            "-b",
+            "issue-42",
+            worktree_42.to_str().expect("worktree 42"),
+        ],
+    );
+    git(
+        temp.path(),
+        &[
+            "worktree",
+            "add",
+            "-b",
+            "issue-43",
+            worktree_43.to_str().expect("worktree 43"),
+        ],
+    );
+    let dormant_42 = Store::new(&worktree_42).load_record(42).expect("issue 42");
+    let dormant_43 = Store::new(&worktree_43).load_record(43).expect("issue 43");
+    let barrier = std::sync::Arc::new(std::sync::Barrier::new(2));
+
+    let run = |issue: u64,
+               root: std::path::PathBuf,
+               dormant: csdlc_v2::IssueRecord,
+               branch: &str,
+               claim_id: &str,
+               path: &str,
+               barrier: std::sync::Arc<std::sync::Barrier>| {
+        let branch = branch.to_owned();
+        let claim_id = claim_id.to_owned();
+        let path = path.to_owned();
+        std::thread::spawn(move || {
+            barrier.wait();
+            csdlc_v2::reacquire_claim(
+                &Store::new(root),
+                ReacquireClaimRequest {
+                    issue,
+                    expected_generation: dormant.generation,
+                    expected_digest: dormant.digest,
+                    now_unix_seconds: 10,
+                    actor: format!("owner-{issue}"),
+                    reason: "concurrent cross-worktree reacquisition".into(),
+                    replacement: Claim {
+                        id: claim_id,
+                        owner: format!("owner-{issue}"),
+                        generation: dormant.generation,
+                        acquired_unix_seconds: 10,
+                        expires_unix_seconds: u64::MAX,
+                        heartbeat_unix_seconds: 10,
+                        branch,
+                        worktree: ".".into(),
+                        protected_paths: vec![path],
+                        purpose: "prove one overlapping writer".into(),
+                    },
+                },
+            )
+        })
+    };
+    let thread_42 = run(
+        42,
+        worktree_42,
+        dormant_42,
+        "issue-42",
+        "claim-reacquired-42",
+        "src",
+        barrier.clone(),
+    );
+    let thread_43 = run(
+        43,
+        worktree_43,
+        dormant_43,
+        "issue-43",
+        "claim-reacquired-43",
+        "src/nested",
+        barrier,
+    );
+    let result_42 = thread_42.join().expect("issue 42 thread");
+    let result_43 = thread_43.join().expect("issue 43 thread");
+    let outcomes = [result_42, result_43];
+    assert_eq!(outcomes.iter().filter(|result| result.is_ok()).count(), 1);
+    assert_eq!(
+        outcomes
+            .iter()
+            .filter(|result| {
+                result
+                    .as_ref()
+                    .is_err_and(|error| error.code == ErrorCode::ClaimCollision)
+            })
+            .count(),
+        1
+    );
+    assert!(temp.path().join(".git/csdlc-v2/bindings.lock").exists());
+}
+
+#[test]
+fn expired_recovery_cannot_bypass_cross_worktree_overlap_authority() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let store = Store::new(temp.path());
+    let mut request_42 = request();
+    request_42.claim.protected_paths = vec!["old/42".into()];
+    request_42.claim.expires_unix_seconds = u64::MAX - 2;
+    fs::create_dir_all(temp.path().join("docs")).expect("docs");
+    fs::write(temp.path().join("docs/design.md"), "# Reviewed design\n").expect("design");
+    fs::write(
+        temp.path().join("docs/diagram.mmd"),
+        "flowchart LR\n  A --> B\n",
+    )
+    .expect("diagram");
+    let record_42 = initialize_issue(&store, request_42).expect("initialize issue 42");
+
+    let mut request_43 = request();
+    request_43.issue = 43;
+    request_43.design_path = "docs/design-43.md".into();
+    request_43.diagram_path = "docs/diagram-43.mmd".into();
+    request_43.claim.id = "claim-43".into();
+    request_43.claim.branch = "issue-43".into();
+    request_43.claim.worktree = ".worktrees/issue-43".into();
+    request_43.claim.protected_paths = vec!["old/43".into()];
+    request_43.claim.expires_unix_seconds = u64::MAX - 2;
+    fs::write(temp.path().join("docs/design-43.md"), "# Reviewed design\n").expect("design");
+    fs::write(
+        temp.path().join("docs/diagram-43.mmd"),
+        "flowchart LR\n  A --> B\n",
+    )
+    .expect("diagram");
+    let record_43 = initialize_issue(&store, request_43).expect("initialize issue 43");
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "test"]);
+    git(temp.path(), &["add", "."]);
+    git(temp.path(), &["commit", "-m", "two expiring issues"]);
+
+    let worktree_42 = temp.path().join("worktree-42");
+    let worktree_43 = temp.path().join("worktree-43");
+    git(
+        temp.path(),
+        &[
+            "worktree",
+            "add",
+            "-b",
+            "issue-42",
+            worktree_42.to_str().expect("worktree 42"),
+        ],
+    );
+    git(
+        temp.path(),
+        &[
+            "worktree",
+            "add",
+            "-b",
+            "issue-43",
+            worktree_43.to_str().expect("worktree 43"),
+        ],
+    );
+    let barrier = std::sync::Arc::new(std::sync::Barrier::new(2));
+    let run = |issue: u64,
+               root: std::path::PathBuf,
+               record: csdlc_v2::IssueRecord,
+               claim_id: &str,
+               branch: &str,
+               worktree: &str,
+               path: &str,
+               barrier: std::sync::Arc<std::sync::Barrier>| {
+        let claim_id = claim_id.to_owned();
+        let branch = branch.to_owned();
+        let worktree = worktree.to_owned();
+        let path = path.to_owned();
+        std::thread::spawn(move || {
+            barrier.wait();
+            csdlc_v2::recover_claim(
+                &Store::new(root),
+                csdlc_v2::RecoverClaimRequest {
+                    issue,
+                    expected_claim_id: record.claim.expect("expired claim").id,
+                    expected_generation: record.generation,
+                    now_unix_seconds: u64::MAX - 1,
+                    replacement: Claim {
+                        id: claim_id,
+                        owner: format!("owner-{issue}"),
+                        generation: record.generation,
+                        acquired_unix_seconds: u64::MAX - 1,
+                        expires_unix_seconds: u64::MAX,
+                        heartbeat_unix_seconds: u64::MAX - 1,
+                        branch,
+                        worktree,
+                        protected_paths: vec![path],
+                        purpose: "recover through shared authority".into(),
+                    },
+                    recovery_actor: format!("operator-{issue}"),
+                    reason: "expired cross-worktree recovery".into(),
+                },
+            )
+        })
+    };
+    let thread_42 = run(
+        42,
+        worktree_42,
+        record_42,
+        "replacement-42",
+        "issue-42",
+        ".",
+        "src",
+        barrier.clone(),
+    );
+    let thread_43 = run(
+        43,
+        worktree_43,
+        record_43,
+        "replacement-43",
+        "issue-43",
+        ".",
+        "src/nested",
+        barrier,
+    );
+    let outcomes = [
+        thread_42.join().expect("issue 42 thread"),
+        thread_43.join().expect("issue 43 thread"),
+    ];
+    assert_eq!(outcomes.iter().filter(|result| result.is_ok()).count(), 1);
+    assert_eq!(
+        outcomes
+            .iter()
+            .filter(|result| {
+                result
+                    .as_ref()
+                    .is_err_and(|error| error.code == ErrorCode::ClaimCollision)
+            })
+            .count(),
+        1
+    );
+}
+
 #[test]
 fn bound_claim_scope_amendment_is_collision_checked_and_audited() {
     let (temp, store, record) = fixture();
@@ -1128,9 +2110,10 @@ fn bound_claim_scope_amendment_is_collision_checked_and_audited() {
         },
     )
     .expect("bind");
-    let bound = store.load_record(42).expect("bound");
+    let bound_store = Store::new(temp.path().join(".worktrees/issue-42"));
+    let bound = bound_store.load_record(42).expect("bound");
     let amended = amend_claim_scope(
-        &store,
+        &bound_store,
         AmendClaimScopeRequest {
             issue: 42,
             claim_id: "claim-1".into(),
@@ -1144,7 +2127,7 @@ fn bound_claim_scope_amendment_is_collision_checked_and_audited() {
     )
     .expect("amend");
     assert_eq!(amended.protected_paths, vec!["docs/review", "src"]);
-    let current = store.load_record(42).expect("current");
+    let current = bound_store.load_record(42).expect("current");
     assert_eq!(current.generation, bound.generation);
     assert!(current
         .audit
@@ -1158,14 +2141,14 @@ fn bound_claim_scope_amendment_is_collision_checked_and_audited() {
     other.claim.as_mut().expect("claim").id = "other".into();
     other.claim.as_mut().expect("claim").protected_paths = vec!["docs/owned".into()];
     other.claim.as_mut().expect("claim").expires_unix_seconds = 2;
-    fs::create_dir_all(store.issue_dir(43)).expect("other issue");
+    fs::create_dir_all(bound_store.issue_dir(43)).expect("other issue");
     fs::write(
-        store.issue_dir(43).join("index.json"),
+        bound_store.issue_dir(43).join("index.json"),
         serde_json::to_vec(&other).expect("json"),
     )
     .expect("other record");
     let error = amend_claim_scope(
-        &store,
+        &bound_store,
         AmendClaimScopeRequest {
             issue: 42,
             claim_id: "claim-1".into(),
@@ -1182,12 +2165,22 @@ fn bound_claim_scope_amendment_is_collision_checked_and_audited() {
 }
 
 fn edit(record: &csdlc_v2::IssueRecord, operation: SemanticOperation) -> EditRequest {
+    edit_for(42, "claim-1", record, CardKind::Sip, operation)
+}
+
+fn edit_for(
+    issue: u64,
+    claim_id: &str,
+    record: &csdlc_v2::IssueRecord,
+    card: CardKind,
+    operation: SemanticOperation,
+) -> EditRequest {
     EditRequest {
-        issue: 42,
-        card: CardKind::Sip,
+        issue,
+        card,
         expected_generation: record.generation,
         expected_digest: record.digest.clone(),
-        claim_id: "claim-1".into(),
+        claim_id: claim_id.into(),
         actor: "agent".into(),
         reason: "test edit".into(),
         operation,
@@ -1269,9 +2262,10 @@ fn bound_replan_is_typed_claimed_and_limited_to_planning_cards() {
         },
     )
     .expect("bind");
-    let bound_record = store.load_record(42).expect("bound record");
+    let bound_store = Store::new(temp.path().join(".worktrees/issue-42"));
+    let bound_record = bound_store.load_record(42).expect("bound record");
     let updated = edit_issue(
-        &store,
+        &bound_store,
         EditRequest {
             issue: 42,
             card: CardKind::Spp,
@@ -1294,7 +2288,7 @@ fn bound_replan_is_typed_claimed_and_limited_to_planning_cards() {
     assert!(replan_audit.contains("previous_value"));
     assert!(replan_audit.contains("Build then diagnose."));
     let sip = edit_issue(
-        &store,
+        &bound_store,
         EditRequest {
             issue: 42,
             card: CardKind::Sip,
@@ -1312,7 +2306,7 @@ fn bound_replan_is_typed_claimed_and_limited_to_planning_cards() {
     )
     .expect("SIP replan");
     let stp = edit_issue(
-        &store,
+        &bound_store,
         EditRequest {
             issue: 42,
             card: CardKind::Stp,
@@ -1330,7 +2324,7 @@ fn bound_replan_is_typed_claimed_and_limited_to_planning_cards() {
     )
     .expect("STP replan");
     let sip_constraints = edit_issue(
-        &store,
+        &bound_store,
         EditRequest {
             issue: 42,
             card: CardKind::Sip,
@@ -1347,7 +2341,7 @@ fn bound_replan_is_typed_claimed_and_limited_to_planning_cards() {
     )
     .expect("SIP constraint replacement");
     let srp_scope = edit_issue(
-        &store,
+        &bound_store,
         EditRequest {
             issue: 42,
             card: CardKind::Srp,
@@ -1364,9 +2358,11 @@ fn bound_replan_is_typed_claimed_and_limited_to_planning_cards() {
         },
     )
     .expect("bound SRP scope replan");
-    let before_invalid = store.load_cards(42).expect("cards before invalid edit");
+    let before_invalid = bound_store
+        .load_cards(42)
+        .expect("cards before invalid edit");
     let invalid = edit_issue(
-        &store,
+        &bound_store,
         EditRequest {
             issue: 42,
             card: CardKind::Stp,
@@ -1383,9 +2379,9 @@ fn bound_replan_is_typed_claimed_and_limited_to_planning_cards() {
     )
     .expect_err("SPP and VPP must cover every replacement criterion");
     assert!(matches!(invalid.code, ErrorCode::CardInvalid));
-    assert_eq!(store.load_cards(42).unwrap(), before_invalid);
+    assert_eq!(bound_store.load_cards(42).unwrap(), before_invalid);
     let stale = edit_issue(
-        &store,
+        &bound_store,
         EditRequest {
             issue: 42,
             card: CardKind::Stp,
@@ -1402,9 +2398,9 @@ fn bound_replan_is_typed_claimed_and_limited_to_planning_cards() {
     )
     .expect_err("removed criteria cannot leave stale SPP or VPP mappings");
     assert!(matches!(stale.code, ErrorCode::CardInvalid));
-    assert_eq!(store.load_cards(42).unwrap(), before_invalid);
+    assert_eq!(bound_store.load_cards(42).unwrap(), before_invalid);
     let prepared = edit_issue(
-        &store,
+        &bound_store,
         EditRequest {
             issue: 42,
             card: CardKind::Stp,
@@ -1421,7 +2417,7 @@ fn bound_replan_is_typed_claimed_and_limited_to_planning_cards() {
     )
     .expect("covered STP replacement");
     let sor = edit_issue(
-        &store,
+        &bound_store,
         EditRequest {
             issue: 42,
             card: CardKind::Sor,
@@ -1464,9 +2460,10 @@ fn bound_plan_progress_and_validation_lane_replacement_are_typed() {
         },
     )
     .expect("bind");
-    let bound = store.load_record(42).expect("bound");
+    let bound_store = Store::new(temp.path().join(".worktrees/issue-42"));
+    let bound = bound_store.load_record(42).expect("bound");
     let progressed = edit_issue(
-        &store,
+        &bound_store,
         EditRequest {
             issue: 42,
             card: CardKind::Spp,
@@ -1496,7 +2493,7 @@ fn bound_plan_progress_and_validation_lane_replacement_are_typed() {
         defer_reason: None,
     }];
     edit_issue(
-        &store,
+        &bound_store,
         EditRequest {
             issue: 42,
             card: CardKind::Vpp,
@@ -1512,7 +2509,7 @@ fn bound_plan_progress_and_validation_lane_replacement_are_typed() {
         },
     )
     .expect("replace lanes");
-    let cards = store.load_cards(42).expect("cards");
+    let cards = bound_store.load_cards(42).expect("cards");
     match &cards[&CardKind::Spp].content {
         csdlc_v2::cards::CardContent::Spp(spp) => {
             assert_eq!(spp.steps[0].status, csdlc_v2::cards::StepStatus::Completed)
@@ -1599,7 +2596,7 @@ fn illegal_transition_fails_closed() {
 
 #[test]
 fn issue_5337_preparation_converts_to_complete_implementation_truth_with_typed_edits() {
-    let (temp, store, mut record) = bind_issue_5337_fixture();
+    let (_temp, store, mut record) = bind_issue_5337_fixture();
 
     for (card, field, replacement) in [
         (
@@ -1664,7 +2661,7 @@ fn issue_5337_preparation_converts_to_complete_implementation_truth_with_typed_e
         ),
     ] {
         record = cli_edit_current(
-            temp.path(),
+            store.root(),
             &store,
             &record,
             card,
@@ -1675,7 +2672,7 @@ fn issue_5337_preparation_converts_to_complete_implementation_truth_with_typed_e
         );
     }
     record = cli_edit_current(
-        temp.path(),
+        store.root(),
         &store,
         &record,
         CardKind::Sip,
@@ -1687,7 +2684,7 @@ fn issue_5337_preparation_converts_to_complete_implementation_truth_with_typed_e
         },
     );
     record = cli_edit_current(
-        temp.path(),
+        store.root(),
         &store,
         &record,
         CardKind::Srp,
@@ -1697,7 +2694,7 @@ fn issue_5337_preparation_converts_to_complete_implementation_truth_with_typed_e
         },
     );
     record = cli_edit_current(
-        temp.path(),
+        store.root(),
         &store,
         &record,
         CardKind::Spp,
@@ -1742,7 +2739,7 @@ fn issue_5337_preparation_converts_to_complete_implementation_truth_with_typed_e
         },
     );
     record = cli_edit_current(
-        temp.path(),
+        store.root(),
         &store,
         &record,
         CardKind::Srp,
@@ -1754,9 +2751,9 @@ fn issue_5337_preparation_converts_to_complete_implementation_truth_with_typed_e
 
     let cards = store.load_cards(5_337).expect("converted cards");
     let design_digest =
-        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/design.md")).expect("design"));
+        csdlc_v2::cards::digest(&fs::read(store.root().join("docs/design.md")).expect("design"));
     let diagram_digest =
-        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/diagram.mmd")).expect("diagram"));
+        csdlc_v2::cards::digest(&fs::read(store.root().join("docs/diagram.mmd")).expect("diagram"));
     csdlc_v2::cards::validate_cross_card(
         &cards,
         "docs/design.md",
@@ -2117,7 +3114,11 @@ fn public_schema_bundle_covers_requests_state_and_doctor_output() {
         "bind_request",
         "bind_result",
         "recover_claim_request",
+        "reacquire_claim_request",
+        "reacquire_claim_result",
         "release_closed_claim_request",
+        "revoke_active_claim_request",
+        "revoke_active_claim_result",
         "amend_claim_scope_request",
         "issue_record",
         "terminal_receipt",
@@ -2171,9 +3172,9 @@ fn placeholder_design_is_pending_then_can_be_completed_approved_and_bound() {
     );
     let cards = store.load_cards(42).expect("approved cards");
     let design_digest =
-        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/design.md")).expect("design"));
+        csdlc_v2::cards::digest(&fs::read(store.root().join("docs/design.md")).expect("design"));
     let diagram_digest =
-        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/diagram.mmd")).expect("diagram"));
+        csdlc_v2::cards::digest(&fs::read(store.root().join("docs/diagram.mmd")).expect("diagram"));
     for kind in [CardKind::Spp, CardKind::Vpp] {
         match &cards[&kind].content {
             csdlc_v2::cards::CardContent::Spp(values) => {
@@ -2209,7 +3210,10 @@ fn placeholder_design_is_pending_then_can_be_completed_approved_and_bound() {
     )
     .expect("bind");
     assert_eq!(
-        store.load_record(42).expect("record").phase,
+        Store::new(temp.path().join(".worktrees/issue-42"))
+            .load_record(42)
+            .expect("record")
+            .phase,
         csdlc_v2::LifecyclePhase::Bound
     );
 }
@@ -2392,9 +3396,9 @@ fn bound_and_implemented_design_reapproval_refreshes_truth_and_reviewed_rejects(
     assert_eq!(reapproved.transitions, implemented_transitions);
     assert_eq!(reapproved.generation, implemented.generation + 1);
     let design_digest =
-        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/design.md")).expect("design"));
+        csdlc_v2::cards::digest(&fs::read(store.root().join("docs/design.md")).expect("design"));
     let diagram_digest =
-        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/diagram.mmd")).expect("diagram"));
+        csdlc_v2::cards::digest(&fs::read(store.root().join("docs/diagram.mmd")).expect("diagram"));
     assert!(matches!(
         &reapproved.design_review,
         csdlc_v2::DesignReview::Approved { revision, .. } if revision == &design_digest
@@ -2584,9 +3588,9 @@ fn ready_transition_requires_current_design_and_automatic_budgets() {
         vpp.lanes[0].budget_tokens = vpp.planned_validation_tokens + 1;
     }
     let design_digest =
-        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/design.md")).expect("design"));
+        csdlc_v2::cards::digest(&fs::read(store.root().join("docs/design.md")).expect("design"));
     let diagram_digest =
-        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/diagram.mmd")).expect("diagram"));
+        csdlc_v2::cards::digest(&fs::read(store.root().join("docs/diagram.mmd")).expect("diagram"));
     assert!(csdlc_v2::cards::validate_cross_card(
         &over_budget,
         "docs/design.md",

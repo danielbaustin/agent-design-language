@@ -1,0 +1,11 @@
+{
+  "issue": 4759,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-4759-v0918-preparation",
+  "expected_generation": 0,
+  "expected_digest": "30288df2ae84ee231850107c1074bb1f5b8acca7db34e01ee083e67d3cf7b341",
+  "now_unix_seconds": 1785345900,
+  "actor": "codex:claim-hygiene",
+  "operator_authority": "operator-authorized:preparation-does-not-own-execution-paths",
+  "reason": "Release preparation-only ownership until issue execution actually starts"
+}

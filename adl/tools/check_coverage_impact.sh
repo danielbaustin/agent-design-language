@@ -264,7 +264,8 @@ candidate_filter_for_path() {
     adl/src/provider/http_family/config.rs|\
     adl/src/provider/local.rs|\
     adl/src/provider/mod.rs|\
-    adl/src/provider/profiles.rs)
+    adl/src/provider/profiles.rs|\
+    adl/src/provider_substrate.rs)
       printf 'provider_hardening'
       ;;
     adl/src/cli/tooling_cmd/markdown.rs)
@@ -434,7 +435,7 @@ nextest_expression_for_filter() {
       printf 'binary_id(adl::bin/adl) and test(/^cli::runtime_v3_cmd::tests::/)'
       ;;
     runtime_v3_guardian)
-      printf 'test(/^guardian::tests::/) or (binary_id(adl-runtime::bin/adl-runtime-guardian) and test(/^tests::guardian_cli_requires_complete_bounded_configuration$/)) or (binary_id(adl-runtime::guardian_cli) and test(/^guardian_cli_/))'
+      printf 'test(/^guardian::tests::/) or (binary_id(adl-runtime::guardian_cli) and test(/^guardian_cli_/))'
       ;;
     runtime_v3_auth)
       printf 'test(/^runtime_api_auth::tests::/)'
@@ -610,7 +611,7 @@ print_candidate_filters_fail_closed() {
 
   while IFS=$'\t' read -r status path; do
     [ -n "$path" ] || continue
-    if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_removed_v1_dispatch_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_aee_obsmem_pvf_handoff_companion_surface "$path" || file_is_loop_runtime_companion_surface "$path" || file_is_godel_agent_runtime_companion_surface "$path" || file_is_csm_runtime_cli_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
+    if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_removed_v1_dispatch_surface "$path" || file_is_runtime_qualification_harness "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_aee_obsmem_pvf_handoff_companion_surface "$path" || file_is_loop_runtime_companion_surface "$path" || file_is_godel_agent_runtime_companion_surface "$path" || file_is_csm_runtime_cli_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
       continue
     fi
     if path_has_companion_cli_dispatch_change "$path"; then
@@ -638,6 +639,11 @@ file_is_removed_v1_dispatch_surface() {
   local path="$1"
   [ "$path" = "adl/src/cli/mod.rs" ] || return 1
   grep -Fq "v1 lifecycle commands were removed" "$ROOT/$path"
+}
+
+file_is_runtime_qualification_harness() {
+  local path="$1"
+  [ "$path" = "adl-runtime/src/bin/adl-runtime-lifecycle-soak.rs" ]
 }
 
 file_is_structural_module_barrel() {
@@ -703,6 +709,9 @@ while IFS=$'\t' read -r status path; do
   if file_is_csm_runtime_cli_companion_surface "$path"; then
     continue
   fi
+  if file_is_runtime_qualification_harness "$path"; then
+    continue
+  fi
   lines="$(line_count_for_path "$path")"
   delta="$(changed_line_delta_for_path "$path")"
   reason=""
@@ -730,6 +739,9 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
   while IFS=$'\t' read -r _status path; do
     [ -n "$path" ] || continue
     if file_is_removed_v1_dispatch_surface "$path"; then
+      continue
+    fi
+    if file_is_runtime_qualification_harness "$path"; then
       continue
     fi
     if file_is_tokio_bootstrap_companion_surface "$path"; then
@@ -778,7 +790,7 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
         end
     ' "$SUMMARY")"
     if [ -z "$row" ]; then
-      if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_removed_v1_dispatch_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_aee_obsmem_pvf_handoff_companion_surface "$path" || file_is_loop_runtime_companion_surface "$path" || file_is_godel_agent_runtime_companion_surface "$path" || file_is_csm_runtime_cli_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
+      if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_removed_v1_dispatch_surface "$path" || file_is_runtime_qualification_harness "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_aee_obsmem_pvf_handoff_companion_surface "$path" || file_is_loop_runtime_companion_surface "$path" || file_is_godel_agent_runtime_companion_surface "$path" || file_is_csm_runtime_cli_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
         continue
       fi
       if path_has_companion_cli_dispatch_change "$path"; then

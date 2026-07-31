@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 4762,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/4762-v0918-wp14-preparation",
+  "title": "[v0.91.8][WP-21] Prepare birth-witness receipt package",
+  "body": "Closes #4762\n\n## Summary\n- adds the auditable birth-witness register, receipt package, negative-case dispositions, retained schema, and deterministic package validator for the v0.91.8 to v0.92 handoff\n- wires the v0.91.8 activation/handoff docs and v0.92 launch packet to the retained #4762 package by exact path\n- records typed C-SDLC v2 lifecycle truth through implemented and reviewed without claiming the v0.92 birthday occurred\n\n## Validation\n- ruby .csdlc/prepared/issues/4762/validate_birth_receipt_package.rb\n- git diff --check -- .csdlc/issues/4762 .csdlc/prepared/issues/4762 .csdlc/evidence/4762 docs/milestones/v0.91.8 docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md\n- rg 'birth_event_status|first true Godel-agent birthday has happened|not a birthday occurrence|not_claimed|legal personhood|production citizenship|completed constitutional governance|v0.93 governance completion' .csdlc/prepared/issues/4762 docs/milestones/v0.91.8/review/v092_handoff_4762 docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md\n- /Volumes/FastWork/adl-wp-5737/csdlc-v2/target/debug/csdlc-doctor --repo . --issue 4762\n\n## Review\n- exact-head review recorded for substantive revision git-blake3:6b588911002ab46009528847fb5a420cafa744b6:4769d4e234527743717004a01431e1021bca41e6bf49fabf13911313d86ef58b\n- findings: none\n\n## Scope Hygiene\n- integrated current origin/main after #4759 merged\n- removed unrelated #5332 closeout from the PR branch with non-destructive revert/correction commits\n- verified git diff --name-only origin/main...HEAD -- .csdlc/issues/5332 is empty\n\nNo merge or post-merge closeout is performed by this PR.",
+  "draft": false,
+  "revision": "git-blake3:71660428c889702b6869a0b77f8f0be53c86016c:be10da99d0df8589c2659be8f5aa170afecf47cf445374b41a2e3978f0aaa8b4",
+  "commit_sha": "71660428c889702b6869a0b77f8f0be53c86016c"
+}

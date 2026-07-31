@@ -1,0 +1,29 @@
+{
+  "issue": 5655,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "04fd2f2155ab31082929dff0aaf225fb121ed27d04b753a8aea130521b8790e7",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "reason": "Record csdlc-github schema command proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "run",
+        "--locked",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml",
+        "--bin",
+        "csdlc-github",
+        "--",
+        "schema"
+      ],
+      "purpose": "Prove the new Rust command binary builds and exposes the public schema bundle including github_action request/result surfaces.",
+      "outcome": "passed",
+      "evidence_ref": "local exit 0 with TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target"
+    }
+  },
+  "fail_after_backup": false
+}

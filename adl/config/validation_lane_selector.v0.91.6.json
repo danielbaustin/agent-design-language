@@ -304,6 +304,33 @@
       "reason": "coverage_impact_surface_requires_coverage_impact_contract_checks"
     },
     {
+      "id": "podcast_launch_packet",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "review",
+      "proof_role": "demo_contract",
+      "requirement_ids": [
+        "podcast_launch_packet"
+      ],
+      "path_selectors": [
+        "adl/tools/generate_podcast_launch_packet.py",
+        "adl/tools/validate_podcast_launch_packet.py",
+        "adl/tools/test_podcast_launch_packet.sh",
+        "demos/podcast/**",
+        "docs/milestones/v0.91.8/review/podcast_launch_5711/**"
+      ],
+      "path_hints": [
+        "adl/tools/generate_podcast_launch_packet.py",
+        "adl/tools/validate_podcast_launch_packet.py",
+        "adl/tools/test_podcast_launch_packet.sh",
+        "demos/podcast/",
+        "docs/milestones/v0.91.8/review/podcast_launch_5711/"
+      ],
+      "command": "bash adl/tools/test_podcast_launch_packet.sh",
+      "run_command": "bash adl/tools/test_podcast_launch_packet.sh",
+      "reason": "podcast_launch_surface_requires_audio_rss_and_studio_packet_validation"
+    },
+    {
       "id": "html_observatory_governed_surface",
       "lane_class": "cli_workflow",
       "default_surface": "tooling",
@@ -335,6 +362,75 @@
       "command": "bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh",
       "run_command": "bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh",
       "reason": "portable_html_observatory_surface_requires_governed_demo_smoke"
+    },
+    {
+      "id": "unity_mcp_alignment",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "review",
+      "proof_role": "demo_contract",
+      "requirement_ids": [
+        "unity_mcp_alignment"
+      ],
+      "path_selectors": [
+        "adl/tools/probe_unity_mcp_observatory_alignment.sh",
+        "adl/tools/test_v0916_unity_mcp_alignment_unit.sh",
+        "docs/tooling/unity_mcp_observatory_alignment.md"
+      ],
+      "path_hints": [
+        "adl/tools/probe_unity_mcp_observatory_alignment.sh",
+        "adl/tools/test_v0916_unity_mcp_alignment_unit.sh",
+        "docs/tooling/unity_mcp_observatory_alignment.md"
+      ],
+      "command": "bash -n adl/tools/probe_unity_mcp_observatory_alignment.sh && bash -n adl/tools/test_v0916_unity_mcp_alignment_unit.sh && bash adl/tools/test_v0916_unity_mcp_alignment_unit.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh",
+      "run_command": "bash -n adl/tools/probe_unity_mcp_observatory_alignment.sh && bash -n adl/tools/test_v0916_unity_mcp_alignment_unit.sh && bash adl/tools/test_v0916_unity_mcp_alignment_unit.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh",
+      "reason": "unity_mcp_alignment_paths_require_project_endpoint_and_read_only_failure_classifier_proof"
+    },
+    {
+      "id": "unity_editor_liveness",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "review",
+      "proof_role": "demo_contract",
+      "requirement_ids": [
+        "unity_editor_liveness"
+      ],
+      "path_selectors": [
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"
+      ],
+      "path_hints": [
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"
+      ],
+      "command": "bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh",
+      "run_command": "bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh",
+      "reason": "unity_editor_liveness_paths_require_focused_mode_and_watchdog_proof"
+    },
+    {
+      "id": "unity_ilpp_diagnostics",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "review",
+      "proof_role": "demo_contract",
+      "requirement_ids": [
+        "unity_ilpp_diagnostics"
+      ],
+      "path_selectors": [
+        "adl/tools/lib/unity_observatory_batch_classifiers.sh",
+        "adl/tools/run_v0918_unity_ilpp_diagnostic_matrix.sh",
+        "adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh",
+        "docs/tooling/unity_ilpp_getdomainname_diagnosis.md"
+      ],
+      "path_hints": [
+        "adl/tools/lib/unity_observatory_batch_classifiers.sh",
+        "adl/tools/run_v0918_unity_ilpp_diagnostic_matrix.sh",
+        "adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh",
+        "docs/tooling/unity_ilpp_getdomainname_diagnosis.md"
+      ],
+      "command": "bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash -n adl/tools/lib/unity_observatory_batch_classifiers.sh && bash -n adl/tools/run_v0918_unity_ilpp_diagnostic_matrix.sh && bash -n adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh",
+      "run_command": "bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash -n adl/tools/lib/unity_observatory_batch_classifiers.sh && bash -n adl/tools/run_v0918_unity_ilpp_diagnostic_matrix.sh && bash -n adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh",
+      "reason": "unity_ilpp_paths_require_focused_host_identity_and_progress_classifier_proof"
     },
     {
       "id": "unity_observatory_contract_surface",
@@ -401,6 +497,27 @@
       "reason": "v0917_unity_observatory_integrated_rollup_requires_retained_proof_chain_check"
     },
     {
+      "id": "podcast_static_demo_surface",
+      "lane_class": "docs",
+      "default_surface": "docs",
+      "owner": "site",
+      "proof_role": "demo_contract",
+      "requirement_ids": [
+        "podcast_static_demo_surface"
+      ],
+      "path_selectors": [
+        "demos/podcast/**",
+        "demos/_preview/podcast/**"
+      ],
+      "path_hints": [
+        "demos/podcast/",
+        "demos/_preview/podcast/"
+      ],
+      "command": "git diff --check",
+      "run_command": "git diff --check",
+      "reason": "podcast_static_demo_surface_requires_diff_hygiene_and_demo_smoke"
+    },
+    {
       "id": "html_observatory_v0917_runtime_surface",
       "lane_class": "cli_workflow",
       "default_surface": "tooling",
@@ -412,12 +529,12 @@
       "path_selectors": [
         "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
         "adl/tools/validate_v0917_html_observatory.py",
-        "demos/v0.91.7/html-observatory/**"
+        "demos/html-observatory/**"
       ],
       "path_hints": [
         "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
         "adl/tools/validate_v0917_html_observatory.py",
-        "demos/v0.91.7/html-observatory/"
+        "demos/html-observatory/"
       ],
       "command": "bash adl/tools/test_v0917_html_observatory_integrated_proof.sh",
       "run_command": "bash adl/tools/test_v0917_html_observatory_integrated_proof.sh",
@@ -1299,6 +1416,7 @@
         "docs/**",
         "*.md",
         ".csdlc/**",
+        "adl/tools/test_opus_review_runbook.sh",
         "adl/tools/validate_v0917_*_status.sh"
       ],
       "path_hints": [

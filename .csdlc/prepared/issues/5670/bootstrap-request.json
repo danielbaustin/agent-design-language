@@ -1,0 +1,156 @@
+{
+  "issue": 5670,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5670/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5670/diagram.mmd",
+  "design_reviewer": "operator:5670",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5670-coverage-shard-fanout",
+    "owner": "codex:issue-5670-slot-1",
+    "generation": 0,
+    "acquired_unix_seconds": 1785024000,
+    "expires_unix_seconds": 1785628800,
+    "heartbeat_unix_seconds": 1785024000,
+    "branch": "codex/5670-coverage-shard-fanout",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5670",
+      ".csdlc/issues/5670",
+      ".csdlc/locks/5670.lock",
+      ".csdlc/prepared/issues/5670",
+      ".github/workflows/ci.yaml",
+      "adl/tools/run_authoritative_coverage_lane.sh",
+      "adl/tools/test_run_authoritative_coverage_lane.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_ci_path_policy.sh"
+    ],
+    "purpose": "Parallelize hosted coverage with shard producers and an aggregation gate"
+  },
+  "initial": {
+    "title": "[v0.91.8][ci][coverage] Parallelize hosted coverage with shard producers and aggregation gate",
+    "slug": "v0-91-8-ci-coverage-hosted-shards",
+    "version": "v0.91.8",
+    "goal": "Reduce PR latency by fanning hosted coverage work into parallel shard producers while preserving one authoritative final coverage gate.",
+    "required_outcome": "Hosted coverage uses deterministic parallel shard producers and a fail-closed aggregation gate without weakening coverage thresholds, ownership filtering, path policy, or evidence truth.",
+    "declared_scope": [
+      "GitHub Actions hosted coverage topology",
+      "authoritative coverage runner shard controls",
+      "focused CI/runtime/path-policy contract tests",
+      "issue-local C-SDLC v2 lifecycle records"
+    ],
+    "authority_boundary": [
+      "typed C-SDLC v2 remains lifecycle authority",
+      "adl-coverage-hosted remains the final required coverage gate",
+      "coverage shards produce evidence; aggregation owns final authority",
+      "FastWork is required for local build and temp output"
+    ],
+    "operator_constraints": [
+      "Use FastWork only for worktree, temp, and build output",
+      "Do not write implementation changes on root main",
+      "No AWS execution",
+      "No threshold reduction or hidden test-scope reduction",
+      "Move quickly and avoid broad rewrites"
+    ],
+    "task_boundary": "Implement, validate, review, publish, shepherd, merge, and close out the hosted coverage shard fan-out issue.",
+    "deliverables": [
+      "Updated `.github/workflows/ci.yaml` hosted coverage shard topology",
+      "Updated `adl/tools/run_authoritative_coverage_lane.sh` shard controls",
+      "Focused contract tests for runner and workflow topology"
+    ],
+    "acceptance_criteria": [
+      "AC-1: `adl-coverage-hosted` is a small aggregation/gate job, not the long workspace coverage producer.",
+      "AC-2: Workspace hosted coverage has deterministic parallel shard producers with isolated run ids, profile roots, output roots, logs, and artifact names.",
+      "AC-3: Runtime/companion coverage remains explicit and only runs when policy requires it.",
+      "AC-4: Aggregation fails closed on missing, stale, duplicate, or inconsistent shard evidence.",
+      "AC-5: Coverage thresholds, ownership filtering, path-policy routing, no-report collection, and no-stale-output protections are preserved.",
+      "AC-6: Focused contracts prove CI topology, shard command shape, artifact names, and failure behavior."
+    ],
+    "dependencies": [
+      "GitHub issue #5670",
+      "Issue #5666 proportional fast-lane policy",
+      "Issue #5602 no partition-local report crash fix",
+      "Issue #5610 coverage summary merge correctness",
+      "WP19-01 run-scoped coverage isolation"
+    ],
+    "repo_inputs": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/run_authoritative_coverage_lane.sh",
+      "adl/tools/test_run_authoritative_coverage_lane.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "docs/milestones/v0.91.7/review/wp20_remediation_4647/WP19_FINDING_REMEDIATION_MATRIX_4647.md"
+    ],
+    "non_goals": [
+      "AWS or Spot backend changes",
+      "coverage threshold reduction",
+      "test-scope reduction",
+      "runtime/product behavior changes",
+      "C-SDLC lifecycle tool rewrite"
+    ],
+    "plan_summary": "Split hosted workspace coverage into deterministic shard producers and keep adl-coverage-hosted as the authoritative aggregation gate.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Add runner shard controls and focused runner contracts",
+        "status": "pending",
+        "acceptance_ids": ["AC-2", "AC-5", "AC-6"]
+      },
+      {
+        "id": "S2",
+        "action": "Update CI hosted coverage topology and aggregation contracts",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-3", "AC-4", "AC-6"]
+      },
+      {
+        "id": "S3",
+        "action": "Validate, review, publish, shepherd, merge, and close out",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"]
+      }
+    ],
+    "invariants": [
+      "final required coverage gate remains authoritative",
+      "shard evidence is isolated and deterministic",
+      "coverage thresholds and ownership filtering are not weakened",
+      "local validation uses FastWork only"
+    ],
+    "risks": [
+      "workflow matrix fan-out can make check naming or required-check semantics confusing",
+      "artifact naming mistakes can hide missing shard evidence",
+      "runner shard controls can accidentally reduce test scope if not contract-tested"
+    ],
+    "planning_profile": "medium",
+    "stop_conditions": [
+      "FastWork is unavailable",
+      "typed lifecycle cannot bind #5670",
+      "implementation requires AWS or threshold reduction",
+      "contracts show final gate semantics weakened",
+      "review finds unresolved actionables"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "coverage-shard-contracts",
+        "proof_role": "Run focused coverage runner and CI topology contracts plus diff hygiene.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 180,
+        "budget_tokens": 1200,
+        "argv": ["bash", "adl/tools/test_run_authoritative_coverage_lane.sh"],
+        "parallel_group": "coverage-contracts",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on missing shard evidence, stale or duplicate shard IDs, weakened coverage gates, local-disk fallback, failed contracts, or unresolved review findings.",
+    "review_prompts": [
+      "Does the workflow make hosted coverage faster by parallelizing producers while keeping one authoritative final gate?",
+      "Can any shard or aggregation path silently skip required coverage evidence?",
+      "Are run ids, profile roots, output roots, logs, and artifacts isolated per shard?",
+      "Do focused contracts prove topology and failure behavior without overfitting?",
+      "Is the change proportional and free of AWS/product/runtime scope?"
+    ],
+    "review_scope": "Review workflow topology, coverage runner shard controls, focused contract tests, and issue-local lifecycle truth."
+  }
+}
+

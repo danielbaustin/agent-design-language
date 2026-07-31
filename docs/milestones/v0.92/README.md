@@ -58,6 +58,9 @@ v0.92 should establish:
 - capability envelope at birth
 - ACP / cognitive profiles as a bounded runtime profile surface grounded in
   memory, capability, continuity, ToM, and intelligence evidence
+- Adaptive Learning DAG planning as the queued post-loop-runtime path from
+  evaluation feedback to stateful adaptation and policy-governed reasoning
+  graph modification, without claiming full autonomous learning at birth
 - ACIP binary schema, public schema catalog, deterministic JSON projection, and
   optional WebSocket carrier proof as the transport-readiness slice that
   follows the v0.91/v0.91.1 ACIP baseline
@@ -165,6 +168,9 @@ The likely `v0.92` tranche is:
 - Memory Palace context-topology bridge.
 - Capability envelope.
 - ACP / cognitive profiles as a runtime-visible profile contract.
+- Adaptive Learning DAG planning and proof requirements, contingent on verified
+  v0.91.7 loop-runtime evidence and kept separate from the first-birthday
+  claim.
 - ACIP binary schema, public schema catalog, deterministic JSON projection, and
   mock/loopback WebSocket carrier proof.
 - Birth witnesses and receipt.
@@ -188,6 +194,8 @@ The likely `v0.92` tranche is:
 - v0.93 ACIP key lifecycle, encryption, signing, rotation, or revocation.
 - v0.94 signed/queryable trace completion.
 - Free-floating cognitive labels that are not grounded in evidence.
+- Full adaptive-learning implementation, autonomous graph mutation, or
+  learning-driven birthday claims not backed by policy and replay evidence.
 - Replacing v0.90.3 citizen-state/security work.
 - Replacing v0.91 moral trace or moral trajectory review.
 
@@ -207,6 +215,8 @@ The likely `v0.92` tranche is:
 - Feature plans: [features/README.md](features/README.md)
 - Activation bridge ledger:
   [V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md](V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md)
+- External first-birthday launch surface:
+  [external_launch/README.md](external_launch/README.md)
 - Memory Palace context topology:
   [MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md](features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md)
 - First-birthday launch packet:
@@ -218,6 +228,8 @@ The likely `v0.92` tranche is:
   [#3377](https://github.com/danielbaustin/agent-design-language/issues/3377)
 - ACP / cognitive profiles:
   [ACP_COGNITIVE_PROFILES_v0.92.md](features/ACP_COGNITIVE_PROFILES_v0.92.md)
+- Adaptive Learning DAG:
+  [ADAPTIVE_LEARNING_DAG_v0.92.md](features/ADAPTIVE_LEARNING_DAG_v0.92.md)
 - ACIP binary schema and WebSocket transport:
   [ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md](features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md)
 - Cross-polis continuity and migration planning:
@@ -241,8 +253,8 @@ Later WP planning should preserve the standard milestone rhythm:
   `v0.91.7` implementation/proof tranche, and `#3377` readiness packet
   rather than reconstructing the birthday plan from chat.
 - feature WPs: implement identity, continuity, memory grounding, capability,
-  ACP/cognitive profile, ACIP binary transport-readiness, witness, receipt, and
-  birthday-record surfaces
+  ACP/cognitive profile, Adaptive Learning DAG queue/proof planning, ACIP
+  binary transport-readiness, witness, receipt, and birthday-record surfaces
 - demo WP: build first-birthday proof demos and negative cases
 - quality/review WPs: validate docs, tests, demo evidence, and review packets
 - release WP: close the milestone under the normal ceremony pattern
@@ -252,9 +264,10 @@ The exact WP sequence is intentionally deferred until v0.92 planning is active.
 ## Demo and Validation Surface
 
 v0.92 demos should prove birthday behavior, negative cases, continuity,
-memory grounding, capability envelopes, ACP/cognitive-profile evidence, ACIP
-schema-public inspectability, and governance handoff. The candidate demo plan
-is tracked in [DEMO_MATRIX_v0.92.md](DEMO_MATRIX_v0.92.md).
+memory grounding, capability envelopes, ACP/cognitive-profile evidence,
+adaptive-learning boundary conditions, ACIP schema-public inspectability, and
+governance handoff. The candidate demo plan is tracked in
+[DEMO_MATRIX_v0.92.md](DEMO_MATRIX_v0.92.md).
 
 Validation for this planning package is structural only until v0.92 execution:
 planning-template validation, Markdown link checks, YAML parsing, and

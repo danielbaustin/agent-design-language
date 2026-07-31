@@ -1,0 +1,26 @@
+{
+  "issue": 5717,
+  "expected_generation": 13,
+  "expected_digest": "66efc9e47d12ef58c54d833c2f1be23ac85f94a60a9e462120cebda008d3542e",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "actor": "codex:5717-execution",
+  "evidence": {
+    "reviewer": "codex-subagent:019fb615-80b0-7bf3-b207-d3fc3499ee18",
+    "scope": [
+      ".csdlc/issues/5717",
+      ".csdlc/prepared/issues/5717",
+      "demos/_preview/podcast/index.html",
+      "demos/podcast/LAUNCH_READINESS.md",
+      "demos/podcast/episodes/meet-the-ai-coworkers/index.html",
+      "demos/podcast/feed.xml",
+      "demos/podcast/index.html"
+    ],
+    "reviewed_revision": "git-blake3:b2c7271a8ad8733ad651e8bdb68a3494d24604d8:e8c9dba00635d555c21090f950ddb058e8bed255498fd61727fa5f0be3785509",
+    "findings": [],
+    "residual_risks": [
+      "Launch still requires public HTTPS hosting, mailbox verification for podcast@agent-logic.ai, final show artwork, final approved audio/title/description/publish-date/content-rights truth, directory account submissions after approval, and final human approval."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

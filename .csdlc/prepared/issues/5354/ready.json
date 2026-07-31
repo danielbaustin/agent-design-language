@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.ready_publication_request.v1",
+  "issue": 5354,
+  "expected_generation": 9,
+  "expected_digest": "c11eeb465d2add3bef8de9bd978caa6f0c9dba60da876ad65ce4b0378bcfb886",
+  "claim_id": "claim-5354-v0918-wp15-reacquired",
+  "actor": "codex:5354-wp15-owner",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5731,
+  "expected_head_sha": "f3c7627ee99be4e013ec690a05d35dc40d683df1",
+  "token_file": "/Users/daniel/keys/github.token"
+}

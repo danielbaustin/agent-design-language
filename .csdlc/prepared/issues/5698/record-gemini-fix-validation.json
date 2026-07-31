@@ -1,0 +1,21 @@
+{
+  "issue": 5698,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "94c999399d3d5e663eb8f8fee66f9005bd48ec76a503c63647926a4c1bacbe9e",
+  "claim_id": "claim-5698-runtime-v3-redb-state",
+  "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+  "reason": "Record focused proof after the Gemini exact-head review finding was fixed by making redb sequence allocation atomic with row/head writes.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate --root /Volumes/FastWork/adl-wp-5698 --request /Users/daniel/git/agent-design-language/.git/csdlc-v2/requests/5698.json"
+      ],
+      "purpose": "Prove the real redb durable kernel-state migration after review remediation: durable_state 4/4 including concurrent sequence/head regression, assembly 9/9, governed_operations 28/28, strict all-target Clippy, and diff hygiene.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5698"
+    }
+  },
+  "fail_after_backup": false
+}

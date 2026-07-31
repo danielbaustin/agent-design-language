@@ -1,0 +1,11 @@
+
+running 3 tests
+test operation_marker_is_stable_and_idempotent ... ok
+test split_github_binaries_reject_the_wrong_surface_before_network ... ok
+test issue_create_and_comment_reconcile_by_marker_with_exact_readback ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.45s
+
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.41s
+     Running tests/gate_github_actions.rs (/Volumes/FastWork/cargo-targets/adl-csdlc-install-manifest/debug/deps/gate_github_actions-16aab2ff6195a608)

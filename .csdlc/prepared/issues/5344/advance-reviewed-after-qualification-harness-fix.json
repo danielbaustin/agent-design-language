@@ -1,0 +1,13 @@
+{
+  "issue": 5344,
+  "card": "srp",
+  "expected_generation": 40,
+  "expected_digest": "614837aae0e88814a550cc6657120455c77ac1bb913c619626545361907c12a9",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Advance after the exact qualification-harness coverage classification review passed with no findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

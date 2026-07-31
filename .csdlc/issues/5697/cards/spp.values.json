@@ -1,0 +1,93 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5697,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][time] Make Chronosense consume trusted_time at startup",
+    "slug": "chronosense-trusted-time",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Initialize and bind #5697, transplant source-only commit 059cd5a48 onto origin/main, run focused tests and strict Clippy, obtain exact review, and publish a ready PR closing #5697.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Initialize and bind the #5697 branch/worktree from current origin/main",
+          "acceptance_ids": [
+            "AC-8"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Transplant source/test semantics from commit 059cd5a48 without #5663 lifecycle files",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run focused assembly and governed-operation tests plus strict all-target Clippy",
+          "acceptance_ids": [
+            "AC-5",
+            "AC-6"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Run exact-head review and fix actionable findings",
+          "acceptance_ids": [
+            "AC-7"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S5",
+          "action": "Publish one ready PR with Closes #5697",
+          "acceptance_ids": [
+            "AC-8"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "trusted_time remains the qualified clock authority",
+        "Chronosense does not call SystemTime directly in production execution",
+        "Control/readiness dependencies are metadata dependencies, not fabricated OperationResult inputs",
+        "Issue #5663 remains terminal and untouched"
+      ],
+      "risks": [
+        "Current main may have drifted around Runtime v3 assembly or operation factory signatures",
+        "The source-only transplant could accidentally carry stale #5663 lifecycle material if paths are not constrained",
+        "Startup-order proof could pass without proving immediate Chronosense adjacency if assertions are too weak"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 21600,
+        "total_tokens": 80000,
+        "validation_seconds": 3600
+      },
+      "stop_conditions": [
+        "Any typed claim collision on protected source paths",
+        "Any need to mutate #5663 lifecycle state or main checkout files",
+        "Any failed focused proof, strict Clippy failure, or actionable exact-review finding"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5697/design.md",
+      "design_digest": "6798ab94db24ce72d708314bf7922548f26bdc12bbc63822d8d9cbdf1e3088bb",
+      "diagram_ref": ".csdlc/prepared/issues/5697/diagram.mmd",
+      "diagram_digest": "43ef573630aa020d95c730f5c03b8337c97723c19239f8abcacac169fc6945b8"
+    }
+  }
+}

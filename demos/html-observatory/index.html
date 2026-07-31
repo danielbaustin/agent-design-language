@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ADL HTML Observatory - Runtime Proof</title>
+    <meta
+      name="description"
+      content="ADL Observatory for the live Runtime v3 API with retained historical evidence."
+    >
+    <link rel="stylesheet" href="./styles.css?v=runtime-v3-live-controls-2">
+  </head>
+  <body>
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="icon-pulse" viewBox="0 0 24 24">
+        <path d="M3 12h4l2-7 4 14 2-7h6" />
+      </symbol>
+      <symbol id="icon-agent" viewBox="0 0 24 24">
+        <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+        <path d="M4 21a8 8 0 0 1 16 0" />
+      </symbol>
+      <symbol id="icon-events" viewBox="0 0 24 24">
+        <path d="M6 3v6h6" />
+        <path d="M18 21v-6h-6" />
+        <path d="M6 9a7 7 0 0 1 12-3" />
+        <path d="M18 15a7 7 0 0 1-12 3" />
+      </symbol>
+      <symbol id="icon-cloud" viewBox="0 0 24 24">
+        <path d="M17.5 19H8a5 5 0 0 1-.6-9.96A7 7 0 0 1 21 11.5 3.75 3.75 0 0 1 17.5 19Z" />
+      </symbol>
+      <symbol id="icon-shield" viewBox="0 0 24 24">
+        <path d="M12 3 20 6v6c0 5-3.4 7.8-8 9-4.6-1.2-8-4-8-9V6l8-3Z" />
+        <path d="m9 12 2 2 4-5" />
+      </symbol>
+      <symbol id="icon-evidence" viewBox="0 0 24 24">
+        <path d="M7 3h7l4 4v14H7z" />
+        <path d="M14 3v5h5" />
+        <path d="M9 13h6" />
+        <path d="M9 17h6" />
+      </symbol>
+      <symbol id="icon-packet" viewBox="0 0 24 24">
+        <path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z" />
+        <path d="m4 7.5 8 4.5 8-4.5" />
+        <path d="M12 12v9" />
+      </symbol>
+      <symbol id="icon-download" viewBox="0 0 24 24">
+        <path d="M12 3v12" />
+        <path d="m7 10 5 5 5-5" />
+        <path d="M5 21h14" />
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path d="M20 6 9 17l-5-5" />
+      </symbol>
+      <symbol id="icon-bot" viewBox="0 0 24 24">
+        <path d="M8 8h8a4 4 0 0 1 4 4v5a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-5a4 4 0 0 1 4-4Z" />
+        <path d="M12 4v4" />
+        <path d="M9 14h.01" />
+        <path d="M15 14h.01" />
+      </symbol>
+      <symbol id="icon-clock" viewBox="0 0 24 24">
+        <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
+        <path d="M12 7v5l3 2" />
+      </symbol>
+      <symbol id="icon-bolt" viewBox="0 0 24 24">
+        <path d="m13 2-8 12h6l-1 8 9-13h-6z" />
+      </symbol>
+      <symbol id="icon-database" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="5" rx="7" ry="3" />
+        <path d="M5 5v14c0 1.7 3.1 3 7 3s7-1.3 7-3V5" />
+        <path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3" />
+      </symbol>
+    </svg>
+    <main
+      class="observatory"
+      data-packet-ref="../../../docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json"
+      data-report-ref="../../../docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/operator_report.md"
+      data-csm-service-ref="../../../docs/milestones/v0.91.7/review/runtime/csm_service_4903/service/service_manifest.json"
+      data-csm-api-ref="../../../docs/milestones/v0.91.7/review/runtime/CSM_RUNTIME_API_4929.md"
+      data-csm-status-ref="../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/status.json"
+      data-csm-health-ref="../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/health.json"
+      data-csm-ready-ref="../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/ready.json"
+      data-csm-metrics-ref="../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/metrics.json"
+      data-csm-events-ref="../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/events.json"
+      data-cloudwatch-ref="../../../docs/milestones/v0.91.7/review/runtime/wp08_heartbeat_4684/live_heartbeat_summary.json"
+      data-cloudwatch-events-ref="../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/aws/cloudwatch_recent_events.redacted.json"
+      data-acip-sns-ref="../../../docs/milestones/v0.91.7/review/runtime/wp08_acip_sns_4685/acip_sns_summary.json"
+      data-sns-resource-ref="../../../docs/milestones/v0.91.7/review/runtime/wp08_acip_sns_4685/sns_resource_summary.json"
+    >
+      <header class="topbar" aria-label="Observatory status">
+        <a class="brand" href="#runtime-proof" aria-label="ADL HTML Observatory">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>ADL Observatory</span>
+          <span class="version-chip">Runtime v3</span>
+        </a>
+        <div class="topbar-controls" aria-label="Runtime controls">
+          <div class="top-readout">
+            <span>Environment</span>
+            <strong>prod-polis</strong>
+          </div>
+          <label class="top-select">
+            <span>Mode</span>
+            <select id="top-mode-select" aria-label="Mode">
+              <option value="published">Published Mirror</option>
+              <option value="retained">Retained Mirror</option>
+              <option value="live">Live Loopback</option>
+            </select>
+          </label>
+          <div class="top-readout">
+            <span>Runtime Mirror</span>
+            <strong id="packet-status">Loading packet</strong>
+          </div>
+          <div class="top-readout">
+            <span>Capture Time</span>
+            <strong id="hero-uptime">pending</strong>
+          </div>
+          <a class="button button-secondary" id="packet-link" href="#" target="_blank" rel="noopener noreferrer" data-proof-link><svg><use href="#icon-packet"></use></svg>Packet</a>
+          <a class="button button-secondary" id="report-link" href="#" target="_blank" rel="noopener noreferrer" data-proof-link><svg><use href="#icon-evidence"></use></svg>Proof Report</a>
+          <button class="button button-secondary" type="button" id="export-proof"><svg><use href="#icon-download"></use></svg>Export</button>
+          <span class="status-pill">Operator</span>
+        </div>
+      </header>
+
+      <section class="hero ops-hero" id="runtime-proof" aria-labelledby="hero-title">
+        <aside class="dashboard-rail" aria-label="Observatory navigation">
+          <a href="#runtime-proof" data-dashboard-link="runtime" aria-current="page"><svg><use href="#icon-pulse"></use></svg>Runtime</a>
+          <a href="#panopticon" data-dashboard-link="agents"><svg><use href="#icon-agent"></use></svg>Agents</a>
+          <a href="#csm-api" data-dashboard-link="csm-api"><svg><use href="#icon-events"></use></svg>Events</a>
+          <a href="#cloudwatch" data-dashboard-link="cloudwatch"><svg><use href="#icon-cloud"></use></svg>AWS</a>
+          <a href="#governance" data-dashboard-link="governance"><svg><use href="#icon-shield"></use></svg>Governance</a>
+          <a href="#evidence" data-dashboard-link="evidence"><svg><use href="#icon-evidence"></use></svg>Evidence</a>
+          <div class="rail-telemetry" aria-label="Runtime sidebar telemetry">
+            <span>System Time</span>
+            <strong id="rail-capture-time">pending</strong>
+            <span>Manifold</span>
+            <strong id="rail-manifold-id">pending</strong>
+            <span>State</span>
+            <strong class="rail-ready" id="rail-state">pending</strong>
+            <span>Tick</span>
+            <strong id="rail-tick">0</strong>
+          </div>
+        </aside>
+        <section class="ops-command" aria-labelledby="hero-title">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Runtime v3 / live Observatory / CSM polis control room</p>
+              <h1 id="hero-title">Panopticon</h1>
+            </div>
+            <span class="mini-badge" id="evidence-level">pending</span>
+          </div>
+          <p class="lede" id="claim-boundary">
+            Loading the bounded runtime capture and operator report.
+          </p>
+          <div class="ops-status-grid" aria-label="Runtime status summary">
+            <article class="ops-stat" data-state="unknown">
+              <svg class="stat-icon"><use href="#icon-check"></use></svg>
+              <span class="row-kicker">Runtime Readiness</span>
+              <strong id="hero-ready-state">pending</strong>
+              <p class="row-detail" id="hero-ready-detail">Waiting for CSM /ready mirror.</p>
+            </article>
+            <article class="ops-stat" data-state="unknown">
+              <svg class="stat-icon"><use href="#icon-bot"></use></svg>
+              <span class="row-kicker">Active in Polis</span>
+              <strong id="hero-agent-count">0</strong>
+              <p class="row-detail">Runtime owner, scheduler, telemetry, event, and checkpoint lanes.</p>
+            </article>
+            <article class="ops-stat" data-state="unknown">
+              <svg class="stat-icon"><use href="#icon-pulse"></use></svg>
+              <span class="row-kicker">Last 5 Minutes</span>
+              <strong id="hero-event-count">0</strong>
+              <p class="row-detail" id="hero-event-detail">Waiting for CSM /events mirror.</p>
+            </article>
+            <article class="ops-stat" data-state="unknown">
+              <svg class="stat-icon"><use href="#icon-cloud"></use></svg>
+              <span class="row-kicker">Heartbeat Verified</span>
+              <strong id="hero-cloudwatch-state">pending</strong>
+              <p class="row-detail" id="hero-cloudwatch-detail">CloudWatch heartbeat proof pending load.</p>
+            </article>
+          </div>
+          <div class="dashboard-core">
+            <section class="ops-map-panel" aria-labelledby="hero-map-title">
+              <div class="panel-head">
+                <div>
+                  <h2 id="hero-map-title">Panopticon</h2>
+                  <p class="row-detail">CSM Polis Topology</p>
+                </div>
+                <span class="mini-badge" id="hero-map-mode">Auto Layout</span>
+              </div>
+              <div class="hero-agent-map" id="hero-agent-map" aria-label="Visible CSM agents"></div>
+            </section>
+            <section class="mini-console dashboard-events" aria-label="Runtime event preview" aria-live="polite">
+              <div class="panel-head">
+                <h2 id="hero-event-title">Event Stream</h2>
+                <span class="mini-badge" id="hero-latest-event">event 0</span>
+              </div>
+              <ol class="trace-list hero-trace" id="hero-event-stream">
+                <li class="trace-row">
+                  <span class="trace-seq">00</span>
+                  <span><strong>Waiting</strong><br><span class="row-detail">Runtime events load from retained or loopback CSM data.</span></span>
+                </li>
+              </ol>
+            </section>
+          </div>
+          <div class="hero-actions" aria-label="Primary proof actions">
+            <a class="button button-primary" href="#panopticon" data-dashboard-link="agents">Focus panopticon</a>
+            <a class="button button-secondary" href="#communication" data-dashboard-link="communication">Draft operator probe</a>
+            <a class="button button-secondary" href="#cloudwatch" data-dashboard-link="cloudwatch">CloudWatch</a>
+            <a class="button button-secondary" href="#evidence" data-dashboard-link="evidence">Evidence</a>
+          </div>
+        </section>
+
+        <section class="ops-sidecar" aria-labelledby="packet-heading">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Inspector</p>
+              <h2 id="packet-heading">Owner Agent <span class="inspector-agent-id">(owner-v2)</span></h2>
+            </div>
+            <span class="mini-badge" id="hero-live-mode">pending</span>
+          </div>
+          <dl class="metric-grid compact-metrics">
+            <div>
+              <dt>Manifold</dt>
+              <dd id="manifold-id">pending</dd>
+            </div>
+            <div>
+              <dt>State</dt>
+              <dd id="manifold-state">pending</dd>
+            </div>
+            <div>
+              <dt>Tick</dt>
+              <dd id="manifold-tick">0</dd>
+            </div>
+            <div>
+              <dt>Packet</dt>
+              <dd id="packet-id">pending</dd>
+            </div>
+          </dl>
+          <div class="inspector-stack" aria-label="CSM API and operator controls">
+            <article class="agent-detail-card">
+              <span class="row-kicker">Agent Details</span>
+              <strong>Owner Agent</strong>
+              <dl class="detail-list">
+                <div><dt>Role</dt><dd>Runtime Owner</dd></div>
+                <div><dt>Version</dt><dd>2.1.0</dd></div>
+                <div><dt>Heartbeat</dt><dd id="agent-heartbeat">pending</dd></div>
+                <div><dt>State</dt><dd id="agent-state">pending</dd></div>
+              </dl>
+            </article>
+            <article class="gauge-card">
+              <span class="row-kicker">Runtime Gauges</span>
+              <div class="gauge-grid">
+                <span><strong id="hero-gauge-agents">0</strong><small>Agents</small></span>
+                <span><strong id="hero-gauge-events">0</strong><small>Events</small></span>
+                <span><strong id="hero-gauge-metrics">0</strong><small>Metrics</small></span>
+                <span><strong id="hero-gauge-ready">pending</strong><small>Ready</small></span>
+              </div>
+            </article>
+            <article>
+              <span class="row-kicker">CSM API</span>
+              <strong id="hero-csm-api-status">pending</strong>
+              <p class="row-detail">A configured API base can select Runtime v3 on port 20997 without changing the default mirror.</p>
+              <div class="api-mini-list" id="hero-api-list" aria-label="CSM API endpoint status"></div>
+            </article>
+            <article class="runtime-test-card">
+              <span class="row-kicker">Real Runtime Test</span>
+              <strong id="dashboard-live-test-status">retained mirror</strong>
+              <label class="compact-field" for="dashboard-live-api-base">API base</label>
+              <input id="dashboard-live-api-base" type="url" inputmode="url" placeholder="https://runtime-gateway-host">
+              <div class="runtime-test-actions" aria-label="Runtime test controls">
+                <button class="button button-primary" type="button" id="dashboard-connect-live">Connect</button>
+                <button class="button button-secondary" type="button" id="dashboard-refresh-live">Refresh</button>
+                <button class="button button-secondary" type="button" id="dashboard-stop-live">Stop</button>
+              </div>
+              <p class="row-detail" id="dashboard-live-test-detail">Supply `?runtime=v3&runtimeApiBase=https://runtime-gateway-host` for Runtime v3 API access.</p>
+            </article>
+            <article>
+              <span class="row-kicker">Operator Channel</span>
+              <strong id="hero-communication-status">public read</strong>
+              <p class="row-detail">Log in to submit runtime-verified signed commands; public monitoring remains available without login.</p>
+            </article>
+            <article>
+              <span class="row-kicker">Governance Proof</span>
+              <strong id="hero-governance-state">bounded</strong>
+              <p class="row-detail">Packet, report, API mirror, and CloudWatch evidence stay source-linked.</p>
+            </article>
+          </div>
+          <div class="mini-console compact-composer" aria-label="Operator communication draft">
+            <div class="panel-head">
+              <p class="eyebrow">Operator Channel</p>
+              <span class="mini-badge">draft probe</span>
+            </div>
+            <p class="row-detail">Prepare a CSM event envelope from the communication pane; live sends require a proved loopback endpoint.</p>
+            <div class="compact-comms-proof" id="compact-comms-proof" aria-label="ACIP and SNS proof summary"></div>
+            <textarea class="compact-message-box" id="compact-operator-message" rows="2" aria-label="Operator message" placeholder="Compose message to operator channel..."></textarea>
+            <div class="compact-message-actions">
+              <button class="button button-secondary" type="button" id="compact-clear-envelope">Clear</button>
+              <a class="button button-primary" href="#communication" data-dashboard-link="communication" id="compact-prepare-envelope">Prepare Envelope</a>
+            </div>
+          </div>
+          <article class="dashboard-focus-panel" id="dashboard-focus-panel" aria-live="polite">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow" id="dashboard-focus-kicker">Runtime</p>
+                <h3 id="dashboard-focus-title">Runtime mirror</h3>
+              </div>
+              <span class="mini-badge" id="dashboard-focus-status">ready</span>
+            </div>
+            <p class="row-detail" id="dashboard-focus-detail">Use the navigation rail or proof actions to inspect a bounded dashboard surface.</p>
+            <div class="dashboard-focus-list" id="dashboard-focus-list" aria-label="Selected surface details"></div>
+            <div class="focus-action-row">
+              <a class="button button-secondary" id="dashboard-focus-link" href="#runtime-proof">Surface selected</a>
+            </div>
+          </article>
+        </section>
+      </section>
+
+      <section class="panopticon-shell" id="panopticon" aria-labelledby="panopticon-title">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Runtime system</p>
+            <h2 id="panopticon-title">CSM polis panopticon</h2>
+          </div>
+          <span class="mini-badge" id="live-status">retained fallback</span>
+        </div>
+        <div class="live-control-strip">
+          <label class="field">
+            <span class="row-kicker">Loopback CSM API base</span>
+              <input id="live-api-base" type="url" inputmode="url" placeholder="Optional loopback Runtime v3 or CSM API base">
+          </label>
+          <div class="live-actions">
+            <button class="button button-primary" type="button" id="connect-live">Connect live</button>
+            <button class="button button-secondary" type="button" id="refresh-live">Refresh once</button>
+            <button class="button button-secondary" type="button" id="stop-live">Stop</button>
+          </div>
+        </div>
+        <div class="panopticon-layout">
+          <section class="panopticon-stage" aria-labelledby="agent-map-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Agents</p>
+                <h3 id="agent-map-title">Polis map</h3>
+              </div>
+              <span class="mini-badge" id="agent-count">0 agents</span>
+            </div>
+            <div class="agent-map" id="panopticon-map"></div>
+          </section>
+          <section class="panopticon-column" aria-labelledby="live-agents-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Roster</p>
+                <h3 id="live-agents-title">Agent status</h3>
+              </div>
+              <span class="mini-badge" id="live-readiness">unknown</span>
+            </div>
+            <div class="agent-list" id="live-agent-list"></div>
+          </section>
+          <section class="panopticon-column" aria-labelledby="live-signals-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Control plane</p>
+                <h3 id="live-signals-title">Signals</h3>
+              </div>
+              <span class="mini-badge" id="live-updated">not connected</span>
+            </div>
+            <div class="signal-list" id="live-signal-list"></div>
+          </section>
+          <section class="panopticon-column" aria-labelledby="live-metrics-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Metrics</p>
+                <h3 id="live-metrics-title">Runtime gauges</h3>
+              </div>
+              <span class="mini-badge" id="live-metric-count">0 gauges</span>
+            </div>
+            <div class="metric-list" id="live-metric-list"></div>
+          </section>
+          <section class="panopticon-events" aria-labelledby="live-events-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Event stream</p>
+                <h3 id="live-events-title">Operator tail</h3>
+              </div>
+              <span class="mini-badge" id="live-event-count">0 events</span>
+            </div>
+            <ol class="trace-list" id="live-event-stream"></ol>
+          </section>
+        </div>
+      </section>
+
+      <section class="runtime-grid" aria-label="Runtime proof dashboard">
+        <section class="panel system-map" aria-labelledby="map-title">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">CSM runtime</p>
+              <h2 id="map-title">Proof topology</h2>
+            </div>
+            <span class="mini-badge">public reads + signed writes</span>
+          </div>
+          <div class="orbit-map" id="orbit-map" aria-label="Runtime lanes"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="services-title">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Kernel pulse</p>
+              <h2 id="services-title">Services</h2>
+            </div>
+            <span id="kernel-status" class="mini-badge">pending</span>
+          </div>
+          <div class="service-list" id="service-list"></div>
+        </section>
+
+        <section class="panel" id="csm-api" aria-labelledby="csm-api-title">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Runtime API</p>
+              <h2 id="csm-api-title">CSM local control plane</h2>
+            </div>
+            <span class="mini-badge" id="csm-api-status">pending</span>
+          </div>
+          <div class="integration-list" id="csm-api-list"></div>
+        </section>
+
+        <section class="panel" id="cloudwatch" aria-labelledby="cloudwatch-title">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">AWS linkage</p>
+              <h2 id="cloudwatch-title">CloudWatch heartbeat</h2>
+            </div>
+            <span class="mini-badge" id="cloudwatch-status">pending</span>
+          </div>
+          <div class="integration-list" id="cloudwatch-list"></div>
+        </section>
+
+        <section class="panel wide-panel" id="communication" aria-labelledby="communication-title">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Operator communication</p>
+              <h2 id="communication-title">ACIP event channel</h2>
+            </div>
+            <span class="mini-badge" id="communication-status">offline draft</span>
+          </div>
+          <div class="communication-grid">
+            <label class="field">
+              <span class="row-kicker">Live runtime API base</span>
+              <input id="runtime-api-base" type="url" inputmode="url" placeholder="Loopback Runtime v3 or CSM API base">
+            </label>
+            <label class="field">
+              <span class="row-kicker">Channel</span>
+              <select id="operator-channel">
+                <option value="events">CSM /events read</option>
+                <option value="acip_sns">ACIP -> SNS projection</option>
+              </select>
+            </label>
+            <label class="field field-wide">
+              <span class="row-kicker">Operator write token</span>
+              <input id="operator-write-token" type="password" autocomplete="current-password" placeholder="Required only for writes">
+            </label>
+            <div class="communication-actions">
+              <button class="button button-primary" type="button" id="operator-login">Log in for writes</button>
+              <button class="button button-secondary" type="button" id="operator-logout">Log out</button>
+              <span class="mini-badge" id="operator-auth-status">public read</span>
+            </div>
+            <label class="field field-wide">
+              <span class="row-kicker">Signed Runtime v3 command</span>
+              <textarea id="signed-control-command" rows="8" spellcheck="false" placeholder='Paste an adl.runtime.control_command.v1 JSON envelope signed by a trusted operator key.'></textarea>
+            </label>
+            <div class="communication-actions">
+              <button class="button button-primary" type="button" id="send-signed-command" disabled>Send signed command</button>
+            </div>
+            <pre class="message-envelope" id="operator-control-result" aria-live="polite">Public monitoring is active. Log in to enable signed writes.</pre>
+            <label class="field field-wide">
+              <span class="row-kicker">Message</span>
+              <textarea id="operator-message" rows="4">Request current CSM event tail and runtime readiness.</textarea>
+            </label>
+            <div class="communication-actions">
+              <button class="button button-secondary" type="button" id="check-events">Check /events</button>
+              <button class="button button-primary" type="button" id="prepare-envelope">Prepare envelope</button>
+            </div>
+            <div class="communication-proof-list" id="communication-proof-list" aria-label="ACIP and transport proof"></div>
+            <pre class="message-envelope" id="message-envelope" aria-live="polite"></pre>
+          </div>
+        </section>
+
+        <section class="panel" id="governance" aria-labelledby="governance-title">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Freedom gate</p>
+              <h2 id="governance-title">Decisions</h2>
+            </div>
+            <span class="mini-badge" id="decision-counts">0 / 0 / 0</span>
+          </div>
+          <div class="decision-stack" id="decision-stack"></div>
+        </section>
+
+        <section class="panel wide-panel" aria-labelledby="trace-title">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Trace ribbon</p>
+              <h2 id="trace-title">Latest proof events</h2>
+            </div>
+            <span class="mini-badge" id="latest-event">event 0</span>
+          </div>
+          <ol class="trace-list" id="trace-list"></ol>
+        </section>
+
+        <section class="panel wide-panel" aria-labelledby="cloudwatch-events-title">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Live AWS signal sample</p>
+              <h2 id="cloudwatch-events-title">CloudWatch event tail</h2>
+            </div>
+            <span class="mini-badge" id="cloudwatch-event-count">0 events</span>
+          </div>
+          <ol class="trace-list" id="cloudwatch-events-list"></ol>
+        </section>
+
+        <section class="panel" aria-labelledby="invariant-title">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Safety envelope</p>
+              <h2 id="invariant-title">Invariants</h2>
+            </div>
+            <span class="mini-badge">fail closed</span>
+          </div>
+          <div class="invariant-list" id="invariant-list"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="operator-title">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Operator rail</p>
+              <h2 id="operator-title">Available actions</h2>
+            </div>
+            <span class="mini-badge">proposal only</span>
+          </div>
+          <div class="action-list" id="action-list"></div>
+        </section>
+
+        <section class="panel wide-panel" aria-labelledby="aws-linkage-title">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">WP-08 integration plan</p>
+              <h2 id="aws-linkage-title">AWS runtime linkages</h2>
+            </div>
+            <span class="mini-badge">truthful status</span>
+          </div>
+          <div class="linkage-list" id="aws-linkage-list"></div>
+        </section>
+      </section>
+
+      <section class="evidence-band" id="evidence" aria-labelledby="evidence-title">
+        <div>
+          <p class="eyebrow">Integrated evidence</p>
+          <h2 id="evidence-title">Same packet, same report, same boundary.</h2>
+        </div>
+        <p id="report-summary">
+          The HTML Observatory loads the retained runtime packet and links the operator report from the same artifact root.
+        </p>
+      </section>
+
+      <footer class="dashboard-statusbar" aria-label="Observatory mirror status">
+        <span><b id="statusbar-indicator"></b>Runtime Mirror</span>
+        <span id="statusbar-source">retained packet</span>
+        <span>WSS <strong id="statusbar-websocket">idle</strong></span>
+        <span>Last Update <strong id="statusbar-updated">pending</strong></span>
+        <span>Data Source <strong>Runtime v3 opt-in + CSM Runtime + AWS CloudWatch + ACIP/SNS</strong></span>
+        <span>Mode <strong id="statusbar-mode">Retained Mirror</strong></span>
+      </footer>
+    </main>
+
+    <script src="./app.js?v=runtime-v3-live-controls"></script>
+  </body>
+</html>

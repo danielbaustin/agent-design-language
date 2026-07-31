@@ -1,0 +1,25 @@
+flowchart TD
+    D5349["#5349 provider and governed-tool adapters live merge ancestral"] --> Gate["Live merge plus ancestry dependency gate"]
+    D5499["#5499 conductor live merge ancestral"] --> Gate
+    D5498["#5498 Codex task adapter live merge ancestral"] --> Gate
+    D5500["#5500 live dashboard live merge ancestral"] --> Gate
+    D5502["#5502 convergence live merge ancestral"] --> Gate
+
+    Gate --> Plan["Admitted plan plus fail-closed negative case"]
+    Plan --> Manifest["Reviewed live-run manifest freezes 2-4 exact shard identities and disjoint paths"]
+    Manifest --> S1["Real writable shard A: issue, claim, branch, worktree, revision"]
+    Manifest --> S2["Real writable shard B: issue, claim, branch, worktree, revision"]
+    S1 --> Context["Bounded provenance-bearing context and outputs"]
+    S2 --> Context
+    Context --> Dashboard["Typed and live dashboard observations"]
+    Context --> Review["Independent review"]
+    Review --> Converge["#5502 integrate, replan, or blocked decision"]
+    Converge --> Serial["Serialized PR, checks, merge, validation, closeout"]
+    Serial --> Packet["Exact-revision retained live proof packet"]
+
+    Manifest --> Baseline["Equivalent bounded single-agent baseline"]
+    Baseline --> Compare["Timing and coordination comparison"]
+    Packet --> Compare
+    Compare --> Parent["#5497 umbrella and #5361 acceptance consumers"]
+
+    Packet -. "does not grant" .-> NoAuth["Autonomous review, merge, closeout, or lifecycle authority"]

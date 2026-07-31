@@ -1,0 +1,15 @@
+{
+  "issue": 5344,
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-preparation",
+  "expected_owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "expected_generation": 1,
+  "expected_digest": "acc5ed9934fedae2aed4242a0a9439ed154f16b543e2490d3878e7ab08d5fa7c",
+  "now_unix_seconds": 1784755000,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Refresh execution dependency gate wording so live merge plus ancestry is blocking and receipts/typed closeout are audit observations.",
+  "expected_purpose": "Prepare and review WP-12 soak and rollback contracts only; execution remains prohibited until #5350 and #5361 are merged, typed closed_out, receipt-backed, and ancestral",
+  "purpose": "Prepare and review WP-12 soak and rollback contracts only; execution remains prohibited until #5350 and #5361 each have a live merged landing commit ancestral to the exact execution revision; receipts and typed closeout are audit observations only",
+  "add_protected_paths": [
+    ".csdlc/issues/5344"
+  ]
+}

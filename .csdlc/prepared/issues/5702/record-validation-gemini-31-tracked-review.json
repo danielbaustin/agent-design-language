@@ -1,0 +1,24 @@
+{
+  "issue": 5702,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "5e803f56babe354860ab6cdcf85f8342c22b54cac089fd3f7b6e57a7b229a203",
+  "claim_id": "claim-5702-podcast-launch-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "record tracked Gemini 3.1 Pro review harness validation evidence",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ADL_GEMINI_REVIEW_MODEL=gemini-3.1-pro-preview",
+        "ADL_GEMINI_REVIEW_TIMEOUT_SECONDS=600",
+        "ADL_GEMINI_REVIEW_ATTEMPTS=3",
+        "python3",
+        ".csdlc/prepared/issues/5702/call_gemini_31_review.py"
+      ],
+      "purpose": "Run the operator-required Gemini 3.1 Pro planning review through the tracked issue-local harness.",
+      "outcome": "passed",
+      "evidence_ref": "gemini-3.1-pro-review-summary.json"
+    }
+  }
+}

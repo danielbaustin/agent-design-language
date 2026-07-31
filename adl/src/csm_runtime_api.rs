@@ -51,13 +51,33 @@ pub use adl_runtime::runtime_api::{
     CSM_RUNTIME_API_ACIP_SCHEMA, CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA,
     CSM_RUNTIME_API_CAV_SCHEMA, CSM_RUNTIME_API_CHRONOSENSE_SCHEMA,
     CSM_RUNTIME_API_CONSTRUCTABILITY_SCHEMA, CSM_RUNTIME_API_CURIOSITY_SCHEMA,
-    CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA, CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA,
+    CSM_RUNTIME_API_EVENTS_SCHEMA, CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA,
     CSM_RUNTIME_API_HEALTH_SCHEMA, CSM_RUNTIME_API_METRICS_SCHEMA,
     CSM_RUNTIME_API_PERSISTENCE_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA,
     CSM_RUNTIME_API_REASONING_SCHEMA, CSM_RUNTIME_API_SCHEMA, CSM_RUNTIME_API_SHEPHERD_SCHEMA,
     CSM_RUNTIME_API_STATUS_SCHEMA,
 };
 pub use api_gateway_bridge::{prove_api_gateway_bridge, ApiGatewayBridgeOptions};
+
+const CSM_RUNTIME_API_ENDPOINTS: [&str; 16] = [
+    "/status",
+    "/health",
+    "/ready",
+    "/metrics",
+    "/events",
+    "/chronosense",
+    "/shepherd",
+    "/cav",
+    "/curiosity",
+    "/acip",
+    "/acip/ws",
+    "/freedom-gate",
+    "/reasoning",
+    "/api-gateway-bridge",
+    "/constructability",
+    "/persistence",
+];
+
 const CSM_RUNTIME_API_BROWSER_DEMO_PORT: &str = "8765";
 
 #[derive(Debug, Clone)]
@@ -3931,7 +3951,7 @@ memory: {}
         );
         assert_eq!(
             status["runtime_stack"]["acip_carrier"]["websocket_path"],
-            "/acip/ws"
+            "/v1/acip/ws"
         );
 
         let acip = runtime_api_response(&options, "/acip").unwrap();

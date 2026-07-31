@@ -1,0 +1,15 @@
+{
+  "status": "pass",
+  "issue": 4761,
+  "accepted_products": 4,
+  "capability_categories": [
+    "provider",
+    "model",
+    "tool",
+    "skill",
+    "authority",
+    "limit"
+  ],
+  "source_count": 18,
+  "unsupported_claims": 12
+}

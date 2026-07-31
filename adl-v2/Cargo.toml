@@ -1,0 +1,14 @@
+[workspace]
+resolver = "2"
+members = [
+  "crates/adl-adapters",
+  "crates/adl-language",
+  "crates/adl-compiler",
+  "crates/adl-engine",
+  "crates/adl-records",
+  "crates/adl-runtime-v3-adapter",
+  "crates/adl-cli",
+  "crates/adl-workcell-conductor",
+  "crates/adl-workcell-convergence",
+  "crates/adl-workcell-task-adapter",
+]

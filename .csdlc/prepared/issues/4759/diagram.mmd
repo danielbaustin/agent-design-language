@@ -1,0 +1,8 @@
+flowchart TD
+  I4759["#4759 activation map"] --> Gate["Live #5384 merge + ancestry gate"]
+  P5335["#5335 routing context"] -. "audit only" .-> Gate
+  Gate --> Evidence["Accepted deployed-product evidence"]
+  Evidence --> Map["Integrated activation map"]
+  Map --> Path["v0.91.8 pre-v0.92 consumption path"]
+  Receipts["Closeout receipts"] -. "audit only; non-blocking" .-> Map
+  Map -. "non-goal" .-> V092["No v0.92 implementation"]

@@ -1,0 +1,66 @@
+{
+  "schema": "adl.wp10a.single-agent-comparison.v1",
+  "kind": "truthful_single_agent_comparison",
+  "declared_work": "Implement equivalent dashboard plus convergence work in one serialized agent lane with the same dependency, validation, review, publication, and merge boundaries.",
+  "baseline_status": "measured_lifecycle_window_comparison",
+  "budget_seconds": 1800,
+  "parallel_workcell": {
+    "shards": [
+      5500,
+      5502
+    ],
+    "observed_outcome": "both_shards_merged",
+    "observed_window": {
+      "started_at": "2026-07-23T00:04:40Z",
+      "completed_at": "2026-07-23T04:24:13Z",
+      "elapsed_seconds": 15573,
+      "measurement": "earliest child PR creation through latest child PR merge"
+    },
+    "child_windows": [
+      {
+        "issue": 5500,
+        "started_at": "2026-07-23T00:04:40Z",
+        "completed_at": "2026-07-23T04:24:13Z",
+        "elapsed_seconds": 15573,
+        "ci_reruns": 0,
+        "integration_retries": 1,
+        "observed_failure": "GitHub connector merge returned 403; the already-authorized authenticated UI merge succeeded."
+      },
+      {
+        "issue": 5502,
+        "started_at": "2026-07-23T00:26:54Z",
+        "completed_at": "2026-07-23T00:33:59Z",
+        "elapsed_seconds": 425,
+        "ci_reruns": 0,
+        "integration_retries": 0,
+        "observed_failure": "The implementation worker could not spawn its own reviewer; the coordinator supplied the single GPT-5.5 review."
+      }
+    ],
+    "coordination_overhead_observed": [
+      "distinct issue claims",
+      "distinct branches",
+      "distinct worktrees",
+      "disjoint protected and write paths",
+      "serialized publication and merge gates"
+    ]
+  },
+  "single_agent_baseline": {
+    "would_have_serialized": [
+      "dashboard implementation",
+      "convergence implementation",
+      "focused validation for both surfaces",
+      "review and publication handoff for both surfaces"
+    ],
+    "serialized_observed_window_seconds": 15998,
+    "calculation": "15573 + 425 seconds, summing the two observed child PR lifecycle windows",
+    "limitations": "This is a conservative serialized lifecycle-window baseline, not a second implementation run. It includes review, CI, merge waiting, and coordination delays and therefore is not a pure coding-time measurement."
+  },
+  "comparison": {
+    "claim": "The completed parallel workcell proved safe disjoint execution and serialized integration gates. The measured windows are retained for operational comparison only.",
+    "fairness_result": "measured_bounded_comparison_without_speedup_claim",
+    "numeric_speedup_claim": false,
+    "observed_failures": 2,
+    "ci_reruns": 0,
+    "integration_retries": 1
+  }
+}

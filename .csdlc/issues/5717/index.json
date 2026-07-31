@@ -1,0 +1,417 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5717,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "076248de115adaa0f9c9eff8cbbd8ff162b2d01f5bdb2d6a9d316c57f9ea4b83",
+  "phase": "reviewed",
+  "generation": 20,
+  "digest": "7ebd18a369c33597f583182d1b9d4b65382fc2ad075e2693234088397909e5cb",
+  "claim": {
+    "id": "claim-5717-podcast-studio-copy",
+    "owner": "codex:5717-execution",
+    "generation": 20,
+    "acquired_unix_seconds": 1785361490,
+    "expires_unix_seconds": 1785966290,
+    "heartbeat_unix_seconds": 1785361490,
+    "branch": "codex/5717-podcast-studio-copy",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5715",
+      ".csdlc/issues/5717",
+      ".csdlc/locks/5717.lock",
+      ".csdlc/prepared/issues/5717",
+      "demos/_preview/podcast/index.html",
+      "demos/podcast/LAUNCH_READINESS.md",
+      "demos/podcast/episodes/meet-the-ai-coworkers/index.html",
+      "demos/podcast/feed.xml",
+      "demos/podcast/index.html",
+      "demos/podcast/studio-reference/REFERENCE_DIGESTS.txt",
+      "demos/podcast/studio-reference/podcast-studio.html",
+      "demos/podcast/studio-reference/uploads/agent-logic-logo.png",
+      "demos/podcast/studio-reference/uploads/agent-logic-logo.svg",
+      "demos/podcast/studio/REFERENCE_DIGESTS.txt",
+      "demos/podcast/studio/podcast-studio.html",
+      "demos/podcast/studio/reference.sha256",
+      "demos/podcast/studio/uploads/agent-logic-logo.png",
+      "demos/podcast/studio/uploads/agent-logic-logo.svg"
+    ],
+    "purpose": "Update the integrated podcast studio page copy and logo for launch readiness while preserving the #5715 route, assets, audio, and RSS wiring"
+  },
+  "review_assignment": {
+    "reviewer": "codex-subagent:019fb9a0-c459-76b0-8ceb-018b065a72db",
+    "assigned_by": "codex:5717-execution",
+    "revision": "git-blake3:b61738969b6fda30924b429577a3da5b282dce1d:a58ff4fbe945f16979350d0588ed4fb33cb2ef68a677b8fa0458d5f0a437d821",
+    "scope": [
+      ".csdlc/issues/5701",
+      ".csdlc/issues/5717",
+      ".csdlc/prepared/issues/5717",
+      ".github/workflows/ci.yaml",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/generate_podcast_launch_packet.py",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_podcast_launch_packet.sh",
+      "adl/tools/test_select_validation_lanes.sh",
+      "adl/tools/test_validation_manager.sh",
+      "adl/tools/validate_podcast_launch_packet.py",
+      "demos/_preview/podcast/index.html",
+      "demos/podcast/LAUNCH_READINESS.md",
+      "demos/podcast/episodes/meet-the-ai-coworkers/index.html",
+      "demos/podcast/feed.xml",
+      "demos/podcast/index.html"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-subagent:019fb9a0-c459-76b0-8ceb-018b065a72db",
+    "scope": [
+      ".csdlc/issues/5701",
+      ".csdlc/issues/5717",
+      ".csdlc/prepared/issues/5717",
+      ".github/workflows/ci.yaml",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/generate_podcast_launch_packet.py",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_podcast_launch_packet.sh",
+      "adl/tools/test_select_validation_lanes.sh",
+      "adl/tools/test_validation_manager.sh",
+      "adl/tools/validate_podcast_launch_packet.py",
+      "demos/_preview/podcast/index.html",
+      "demos/podcast/LAUNCH_READINESS.md",
+      "demos/podcast/episodes/meet-the-ai-coworkers/index.html",
+      "demos/podcast/feed.xml",
+      "demos/podcast/index.html"
+    ],
+    "reviewed_revision": "git-blake3:b61738969b6fda30924b429577a3da5b282dce1d:a58ff4fbe945f16979350d0588ed4fb33cb2ef68a677b8fa0458d5f0a437d821",
+    "findings": [],
+    "residual_risks": [
+      "Public launch still requires final human review after PR publication, production hosting cutover under /podcast/, mailbox verification for podcast@agent-logic.ai, directory account submission approval, and final episode-content approval.",
+      "The typed #5717 protected scope could not be amended for adl/config/validation_lane_selector.v0.91.6.json and adl/tools/test_select_validation_lanes.sh because origin/main still carries a stale active claim from closed issue #5701; #5701 claim revocation was recorded in this worktree and the exact-head review covered those paths explicitly."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5717/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5717/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5717-execution",
+      "revision": "1957aeebaa7648bba86dc24501cc9578d8e3c95fb5f5b80108aaedc5b5511d7a"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "f010cc6a0db6f04078bc4cd6557a5392eebc35f2eddab4d7ac10839f6951016a",
+      "rendered_digest": "72b19c7db1294878ef02538e3c2c1afcd75c4962eed345a546782b4c4a01703c",
+      "ast_digest": "44990155f81bd4fe0b63937ab141c8169a0b74a8c485f0f1ad1c67f06d9502dd"
+    },
+    "stp": {
+      "values_digest": "71fb061683470561536efb3b990c1a07f5db9f0105237cc2ad65d28ef3bf6b25",
+      "rendered_digest": "79384f1b1112b72739525c66c07f15aaf6b41ff8d1d4d9692428171882b8141f",
+      "ast_digest": "60a985e4b0af0ce1214f640fc699395f397face6fedd1ff9270f742992f7331a"
+    },
+    "spp": {
+      "values_digest": "7f9dea8b8cbf6a8e69b6f225049492475782b39014887abb7790863c79b3eb4e",
+      "rendered_digest": "d3b4f7483ba6b1141a655013189e5d14ae73794d4cabd676351ba3e292b9c1af",
+      "ast_digest": "a1410f989e1feab41cd381de6aa45590c9d044cec08b55dc55effad879befb2e"
+    },
+    "vpp": {
+      "values_digest": "d5b6fa52b977a1e11536ef856f5dac8197be26c3db641c496c6f1a802b7f9ec7",
+      "rendered_digest": "d4b179d6ddfe7e069e109aac976bf47c9b190fa9ae5d17e5ab31011b5df07990",
+      "ast_digest": "beb988a8127e2b82f642f57dae1be11765034e5e7375d161f975b12b60f8dc9d"
+    },
+    "srp": {
+      "values_digest": "2cc53b8ce4f8e1cee94d295b9236177490ab9e34a29b9b4148cab2a6006c6ccb",
+      "rendered_digest": "07990bfd0ca5113ab6adf7a73bf35e9a1c783bbdd1dccaa59d8cec4248cb6609",
+      "ast_digest": "1f4ee3853ef6e4cdd865e55b275091901a4027fd50656c69b23fef3328f2c0a9"
+    },
+    "sor": {
+      "values_digest": "c197b35870eb710ebcba7ae4a862bd37766ad7c93eedbb38df988c0241c5f900",
+      "rendered_digest": "5fa9c9327a117da56d8ef1b66a69b3d3af689d2126a2fba39dfba987ca389693",
+      "ast_digest": "a30d9256f2c9bf79bc1b6b949a58bccdf98ec164ea4ccbbc0dbd97e0ab9a8b1b"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5717-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5717-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5717-execution",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5717-execution",
+      "reason": "Exact Gemini 3.1 Pro review passed with no actionable findings after the podcast studio copy, logo, link, and launch-readiness updates."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5717-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5717-execution",
+      "reason": "Recover stale review/publication truth after the operator approved additional launch-prep gates beyond the already published podcast studio copy PR."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5717-execution",
+      "reason": "Exact codex subagent review passed with no P0-P3 findings for the b2c7271a launch-prep gates 1-8 packet."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5717-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5717-execution",
+      "reason": "Recover #5717 from stale published review after PR #5720 exact-head review found in-scope validation and review-scope blockers."
+    },
+    {
+      "sequence": 10,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5717-execution",
+      "reason": "Exact codex subagent review passed with no P0-P3 findings for PR #5720 head b61738969 after checked-in podcast route validation and Windows deleted-path guard fixes."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5717-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5717-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5717-execution",
+      "reason": "Operator supplied the correct Agent Logic logo as an SVG rather than PNG; include the actual reference and generated SVG logo asset paths in #5717 protected scope before editing/committing them.",
+      "operation": "{\"add_protected_paths\":[\"demos/podcast/studio-reference/uploads/agent-logic-logo.svg\",\"demos/podcast/studio/uploads/agent-logic-logo.svg\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 0,
+      "actor": "codex:5717-execution",
+      "reason": "Cover the typed predecessor #5715 claim-release metadata required to bind and publish this stacked #5717 podcast studio follow-up without leaving implicit lifecycle side effects.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/issues/5715\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5717-execution",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 6,
+      "generation": 1,
+      "actor": "codex:5717-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 2,
+      "actor": "codex:5717-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 3,
+      "actor": "codex:5717-execution",
+      "reason": "Exact Gemini 3.1 Pro review passed with no actionable findings after the podcast studio copy, logo, link, and launch-readiness updates.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 4,
+      "actor": "codex:5717-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 10,
+      "generation": 5,
+      "actor": "codex:5717-execution",
+      "reason": "Recover stale review/publication truth after the operator approved additional launch-prep gates beyond the already published podcast studio copy PR.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 5,
+      "actor": "codex:5717-execution",
+      "reason": "Extend #5717 from studio-copy polish into the operator-approved podcast launch-prep gates for hidden preview, production /podcast/ entrypoint, RSS/feed metadata, first episode page naming, and launch readiness truth.",
+      "operation": "{\"add_protected_paths\":[\"demos/_preview/podcast/index.html\",\"demos/podcast/LAUNCH_READINESS.md\",\"demos/podcast/episodes/meet-the-ai-coworkers/index.html\",\"demos/podcast/feed.xml\",\"demos/podcast/index.html\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 6,
+      "actor": "codex:5717-execution",
+      "reason": "Record the operator-approved launch-prep execution truth before exact-head review and PR refresh.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Prepared the Synthetic Minds Podcast surface for launch testing: promoted the polished studio design to the production `/podcast/` entrypoint, added an unlisted `/_preview/podcast/` route with noindex/nofollow, updated RSS metadata and owner/contact truth, aligned the first episode page naming, and added a launch-readiness packet covering gates 1-8 while preserving human review as post-PR.\",\"changes\":[\".csdlc/issues/5717\",\".csdlc/prepared/issues/5717\",\"demos/_preview/podcast/index.html\",\"demos/podcast/LAUNCH_READINESS.md\",\"demos/podcast/episodes/meet-the-ai-coworkers/index.html\",\"demos/podcast/feed.xml\",\"demos/podcast/index.html\",\"demos/podcast/studio/podcast-studio.html\",\"demos/podcast/studio/uploads/agent-logic-logo.svg\"],\"artifacts\":[\"demos/podcast/LAUNCH_READINESS.md\",\"http://127.0.0.1:8916/podcast/\",\"http://127.0.0.1:8916/_preview/podcast/\",\"http://127.0.0.1:8916/podcast/feed.xml\",\"http://127.0.0.1:8916/podcast/audio/meet-the-ai-coworkers.wav\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 7,
+      "actor": "codex:5717-execution",
+      "reason": "Record focused structural launch validation for the widened podcast launch-prep scope.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"python3\",\"- <<'PY' ... podcast launch structural validation ... PY\"],\"purpose\":\"Validate required `/podcast/` and `/_preview/podcast/` source files, hidden-route noindex truth, contact link, RSS owner/title/enclosure metadata, enclosure byte length, and local HTML href/src references.\",\"outcome\":\"passed\",\"evidence_ref\":\"commentary: podcast launch structural validation PASS\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 8,
+      "actor": "codex:5717-execution",
+      "reason": "Record local deploy-shape HTTP smoke validation for `/podcast/` and hidden preview.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"zsh\",\"-c\",\"for url in http://127.0.0.1:8916/podcast/ http://127.0.0.1:8916/_preview/podcast/ http://127.0.0.1:8916/podcast/feed.xml http://127.0.0.1:8916/podcast/audio/meet-the-ai-coworkers.wav; do curl -s -o /dev/null -w \\\"$url %{http_code} %{content_type} %{size_download}\\\\n\\\" \\\"$url\\\"; done\"],\"purpose\":\"Smoke-test the hosted route shape from a local server rooted at `demos/`: production page, hidden preview, RSS feed, and audio enclosure all return 200 with expected content types and byte counts.\",\"outcome\":\"passed\",\"evidence_ref\":\"commentary: /podcast 200 text/html 29237; /_preview/podcast 200 text/html 29361; /podcast/feed.xml 200 application/xml 1881; audio WAV 200 audio/x-wav 417644\"}}"
+    },
+    {
+      "sequence": 15,
+      "generation": 9,
+      "actor": "codex:5717-execution",
+      "reason": "Record diff hygiene validation before exact-head review.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Verify launch-prep edits and typed lifecycle projections have no whitespace errors.\",\"outcome\":\"passed\",\"evidence_ref\":\"command output: no output, exit 0\"}}"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex:5717-execution",
+      "reason": "Mark launch-prep page/feed/copy edits complete after implementing the widened operator-approved scope.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 11,
+      "actor": "codex:5717-execution",
+      "reason": "Mark served podcast entrypoint and route-output updates complete after promoting the studio page to `/podcast/` and adding hidden preview.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex:5717-execution",
+      "reason": "Mark focused studio/audio/RSS validation complete after structural, HTTP, browser, and diff hygiene checks passed.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex:5717-execution",
+      "reason": "Record focused validation after fixing bounded pre-PR review findings.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"python3\",\"- <<'PY' ... podcast launch structural validation with review-fix assertions ... PY\"],\"purpose\":\"Revalidate the podcast launch-prep packet after pre-PR review fixes: Friday planned cadence, human guest invitation, directory availability as after-approval truth, smoke sample separated from proposed episodes, RSS trailer metadata, route files, feed enclosure length, contact button, and local asset references.\",\"outcome\":\"passed\",\"evidence_ref\":\"commentary: podcast launch structural validation PASS; HTTP deploy-shape smoke returned 200 for /podcast/, /_preview/podcast/, feed.xml, and WAV audio; git diff --check PASS\"}}"
+    },
+    {
+      "sequence": 20,
+      "generation": 13,
+      "actor": "codex:5717-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 13,
+      "actor": "codex:5717-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 14,
+      "actor": "codex:5717-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 15,
+      "actor": "codex:5717-execution",
+      "reason": "Exact codex subagent review passed with no P0-P3 findings for the b2c7271a launch-prep gates 1-8 packet.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 24,
+      "generation": 16,
+      "actor": "codex:5717-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 25,
+      "generation": 17,
+      "actor": "codex:5717-execution",
+      "reason": "record exact existing PR ready-for-review after remote success",
+      "operation": "record_ready_publication"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:5717-execution",
+      "reason": "Recover #5717 from stale published review after PR #5720 exact-head review found in-scope validation and review-scope blockers.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 18,
+      "actor": "codex:5717-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 19,
+      "actor": "codex:5717-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 29,
+      "generation": 20,
+      "actor": "codex:5717-execution",
+      "reason": "Exact codex subagent review passed with no P0-P3 findings for PR #5720 head b61738969 after checked-in podcast route validation and Windows deleted-path guard fixes.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    }
+  ]
+}

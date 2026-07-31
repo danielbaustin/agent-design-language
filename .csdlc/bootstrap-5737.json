@@ -1,0 +1,195 @@
+{
+  "issue": 5737,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5737/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5737/diagram.mmd",
+  "design_reviewer": "codex:5737-preflight",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5737-csdlc-authority-recovery",
+    "owner": "codex:5737-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1785532834,
+    "expires_unix_seconds": 1786137634,
+    "heartbeat_unix_seconds": 1785532834,
+    "branch": "codex/5737-csdlc-authority-recovery",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5737",
+      ".csdlc/locks/5737.lock",
+      ".csdlc/prepared/issues/5737",
+      ".csdlc/evidence/5737",
+      ".csdlc/publication/5737.intent.json",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "purpose": "Repair C-SDLC v2 claim authority recovery around unrelated terminal drift, stale inactive projections, and stale dormant design inputs."
+  },
+  "initial": {
+    "title": "[v0.91.8][csdlc-v2] Make claim recovery independent of unrelated terminal drift and stale design inputs",
+    "slug": "csdlc-authority-recovery",
+    "version": "v0.91.8",
+    "goal": "Keep claim authority scans precise and recoverable when unrelated terminal records, inactive stale projections, or dormant design inputs are stale.",
+    "required_outcome": "Non-overlapping init, bind, and reacquire ignore unrelated stale terminal identities and inactive stale projections; dormant claim authority can be reacquired before typed design reapproval; live overlaps still fail closed.",
+    "declared_scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "authority_boundary": [
+      "C-SDLC v2 lifecycle authority remains in the Rust binaries and typed state store.",
+      "The patch changes claim-scan filtering, terminal-check ordering, and authority-record replacement only; it does not weaken live claim collision, checkout, lease, or CAS checks."
+    ],
+    "operator_constraints": [
+      "never touch or switch primary main",
+      "use typed v2 binaries",
+      "do not hand-edit rendered cards",
+      "do not use /private/tmp",
+      "report protected-path collisions immediately"
+    ],
+    "task_boundary": "Record and publish the product/test patch for issue #5737 from the existing worktree.",
+    "deliverables": [
+      "claim-scan terminal check ordering fix",
+      "inactive stale projection filtering",
+      "authority-only reacquisition record replacement",
+      "focused Gate 2 regression coverage",
+      "strict Clippy proof",
+      "exact-head review",
+      "ready PR closing #5737"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Unrelated stale terminal identity cannot block non-overlapping init, bind, or reacquire.",
+      "AC-2: A dormant issue with changed design inputs can reacquire authority and then use typed design reapproval.",
+      "AC-3: Real overlapping live claims still fail closed.",
+      "AC-4: Stale projections whose claim branch/worktree do not match their active checkout do not act as collision authority.",
+      "AC-5: Focused Gate 2 tests and strict Clippy pass."
+    ],
+    "dependencies": [
+      "existing C-SDLC v2 claim and store APIs",
+      "repo-native v2 binaries from adl-wp-5107 target/debug"
+    ],
+    "repo_inputs": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "non_goals": [
+      "changing card templates",
+      "weakening live protected-path collision behavior",
+      "introducing shell lifecycle wrappers",
+      "modifying primary main"
+    ],
+    "plan_summary": "Initialize and bind #5737 lifecycle state, validate the focused Gate 2 patch and strict Clippy, record exact-head review, then publish a ready PR.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Initialize and bind issue-local C-SDLC v2 lifecycle state for #5737.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Run focused Gate 2 regression proof and strict Clippy.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Record exact-head review, commit, push, and publish a ready PR.",
+        "acceptance_ids": [
+          "AC-5"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "non-overlap scans do not consult unrelated terminal receipt identity",
+      "inactive stale projections do not reserve protected paths",
+      "overlapping live claims still fail closed",
+      "authority recovery remains CAS-protected",
+      "rendered cards are generated by typed v2 tooling"
+    ],
+    "risks": [
+      "an active worktree may expose a real protected-path collision",
+      "strict Clippy may surface warnings in the touched crate"
+    ],
+    "planning_profile": "small",
+    "stop_conditions": [
+      "protected-path collision is reported by typed v2 binding",
+      "focused Gate 2 regression fails",
+      "strict Clippy fails",
+      "exact-head review has actionable in-scope findings"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "gate2-authority-recovery-focused",
+        "proof_role": "Focused Gate 2 regression for unrelated stale terminal identity, stale projection filtering, reacquire, and live overlap behavior.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": [
+          "cargo",
+          "test",
+          "--manifest-path",
+          "csdlc-v2/Cargo.toml",
+          "--test",
+          "gate2",
+          "stale_terminal_identity"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      },
+      {
+        "lane": "csdlc-v2-strict-clippy",
+        "proof_role": "Strict Clippy over the C-SDLC v2 crate for the touched lifecycle/store/test surface.",
+        "acceptance_ids": [
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 300,
+        "budget_tokens": 1000,
+        "argv": [
+          "cargo",
+          "clippy",
+          "--manifest-path",
+          "csdlc-v2/Cargo.toml",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on stale CAS, protected-path collision, missing lifecycle evidence, failed focused tests, failed Clippy, or stale exact-head review.",
+    "review_prompts": [
+      "Check that terminal receipt identity is only consulted after a protected-path overlap is detected.",
+      "Check that stale projections whose claim branch/worktree do not match their active checkout are ignored for collision authority.",
+      "Check that authority-only reacquisition preserves card identity and does not bypass typed design reapproval.",
+      "Check that live overlapping claims still fail closed and tests cover the regression without weakening safety."
+    ],
+    "review_scope": "csdlc-v2/src/lifecycle.rs, csdlc-v2/src/store.rs, and csdlc-v2/tests/gate2.rs"
+  }
+}

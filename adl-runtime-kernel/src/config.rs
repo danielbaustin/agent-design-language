@@ -1,7 +1,7 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
     net::{SocketAddr, ToSocketAddrs},
-    path::PathBuf,
+    path::{Path, PathBuf},
 };
 
 use serde::{Deserialize, Serialize};
@@ -11,6 +11,13 @@ use crate::ComponentId;
 
 pub const RUNTIME_CONFIG_SCHEMA: &str = "adl.runtime.config.v1";
 pub const RUNTIME_INIT_SCHEMA: &str = "adl.runtime_v3.init.v1";
+const MAX_RUNTIME_INIT_MILLIS: u64 = 600_000;
+const MAX_RUNTIME_INIT_CAPACITY: usize = 1_000_000;
+const MAX_GUARDIAN_RESTART_BUDGET: u32 = 10_000;
+const MAX_OBSERVABILITY_FILE_BYTES: u64 = 1024 * 1024 * 1024;
+const MAX_OBSERVABILITY_RETAINED_FILES: usize = 128;
+const MAX_GUARDIAN_CONFIGURATION_EXIT_CODES: usize = 16;
+const MAX_GUARDIAN_LEASE_AUTH_ATTEMPTS: u32 = 32;
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
@@ -210,40 +217,24 @@ pub enum ConfigError {
 #[serde(deny_unknown_fields)]
 pub struct RuntimeInitConfig {
     pub schema: String,
-    #[serde(default)]
+    pub state_root: PathBuf,
+    pub binaries: RuntimeBinariesInitConfig,
+    pub paths: RuntimePathsInitConfig,
     pub api: RuntimeApiInitConfig,
-    #[serde(default)]
+    pub kernel: RuntimeKernelInitConfig,
+    pub credentials: RuntimeCredentialInitConfig,
+    pub shutdown: RuntimeShutdownInitConfig,
+    pub guardian: RuntimeGuardianInitConfig,
+    pub qualification: RuntimeQualificationInitConfig,
     pub observatory: ObservatoryInitConfig,
-    #[serde(default)]
-    pub agents: RuntimeAgentsInitConfig,
-    #[serde(default)]
+    pub observability_pipeline: RuntimeObservabilityInitConfig,
     pub weather: WeatherConfig,
 }
 
 impl RuntimeInitConfig {
-    pub fn local_development_default() -> Self {
-        Self {
-            schema: RUNTIME_INIT_SCHEMA.to_owned(),
-            api: RuntimeApiInitConfig {
-                address: default_runtime_api_address_option(),
-                public_base_url: default_runtime_public_base_url(),
-                tls: RuntimeTlsInitConfig::default(),
-            },
-            observatory: ObservatoryInitConfig {
-                allowed_origins: default_local_observatory_origins(),
-            },
-            agents: RuntimeAgentsInitConfig::default(),
-            weather: WeatherConfig::default(),
-        }
-    }
-
     pub fn load(path: Option<PathBuf>) -> Result<Self, RuntimeInitError> {
-        if let Some(path) = path {
-            return Self::from_path(path);
-        }
-        let config = Self::local_development_default();
-        config.validate()?;
-        Ok(config)
+        let path = path.ok_or(RuntimeInitError::MissingInitFile)?;
+        Self::from_path(path)
     }
 
     pub fn from_path(path: PathBuf) -> Result<Self, RuntimeInitError> {
@@ -263,9 +254,106 @@ impl RuntimeInitConfig {
         if self.schema != RUNTIME_INIT_SCHEMA {
             return Err(RuntimeInitError::UnsupportedSchema(self.schema.clone()));
         }
-        self.api.validate()?;
-        self.observatory.validate()?;
-        self.agents.validate()?;
+        validate_absolute_path("state_root", &self.state_root)?;
+        self.binaries.validate()?;
+        self.paths.validate()?;
+        self.kernel.validate()?;
+        let tls_root = self.paths.tls_root(&self.state_root);
+        let credential_root = self.paths.credentials_root(&self.state_root);
+        validate_non_empty_trimmed("api.address", &self.api.address)?;
+        if self.socket_addrs()?.iter().any(SocketAddr::is_ipv6) {
+            return Err(RuntimeInitError::Policy(
+                "api.address must resolve only to IPv4".to_owned(),
+            ));
+        }
+        validate_https_base_url("api.public_base_url", &self.api.public_base_url)?;
+        if self.api.bind_attempts == 0 || self.api.bind_attempts > 100 {
+            return Err(RuntimeInitError::Policy(
+                "api.bind_attempts must be between 1 and 100".to_owned(),
+            ));
+        }
+        for (field, value) in [
+            ("api.bind_retry_millis", self.api.bind_retry_millis),
+            (
+                "api.websocket_auth_timeout_millis",
+                self.api.websocket_auth_timeout_millis,
+            ),
+            (
+                "api.websocket_refresh_millis",
+                self.api.websocket_refresh_millis,
+            ),
+        ] {
+            validate_bounded_millis(field, value)?;
+        }
+        validate_bounded_capacity(
+            "api.websocket_max_frame_bytes",
+            self.api.websocket_max_frame_bytes,
+        )?;
+        validate_distinct_paths(
+            "api.tls.certificate_chain_path",
+            &self.api.tls.certificate_chain_path,
+            "api.tls.private_key_path",
+            &self.api.tls.private_key_path,
+        )?;
+        validate_child_path(
+            "api.tls.certificate_chain_path",
+            &tls_root,
+            &self.api.tls.certificate_chain_path,
+        )?;
+        validate_child_path(
+            "api.tls.private_key_path",
+            &tls_root,
+            &self.api.tls.private_key_path,
+        )?;
+        for (field, value) in [
+            (
+                "credentials.control_key_id",
+                &self.credentials.control_key_id,
+            ),
+            (
+                "credentials.control_principal",
+                &self.credentials.control_principal,
+            ),
+            (
+                "credentials.operation_key_id",
+                &self.credentials.operation_key_id,
+            ),
+            (
+                "credentials.continuity_key_id",
+                &self.credentials.continuity_key_id,
+            ),
+        ] {
+            validate_non_empty_trimmed(field, value)?;
+        }
+        validate_non_empty_trimmed("credentials.sntp_server", &self.credentials.sntp_server)?;
+        for (field, path) in [
+            (
+                "credentials.control_public_key_path",
+                &self.credentials.control_public_key_path,
+            ),
+            (
+                "credentials.operation_public_key_path",
+                &self.credentials.operation_public_key_path,
+            ),
+            (
+                "credentials.continuity_signing_key_path",
+                &self.credentials.continuity_signing_key_path,
+            ),
+            (
+                "credentials.observatory_token_path",
+                &self.credentials.observatory_token_path,
+            ),
+        ] {
+            validate_child_path(field, &credential_root, path)?;
+        }
+        self.shutdown.validate()?;
+        self.guardian.validate()?;
+        self.qualification.validate()?;
+        validate_origin_list(
+            "observatory.allowed_origins",
+            &self.observatory.allowed_origins,
+        )?;
+        self.observability_pipeline.validate()?;
         self.weather
             .validate()
             .map_err(|error| RuntimeInitError::Weather(error.to_string()))?;
@@ -273,12 +361,8 @@ impl RuntimeInitConfig {
     }
 
     pub fn socket_addrs(&self) -> Result<Vec<SocketAddr>, RuntimeInitError> {
-        let address = self
-            .api
+        self.api
             .address
-            .as_deref()
-            .unwrap_or(default_runtime_api_address());
-        address
             .to_socket_addrs()
             .map(|addrs| addrs.collect::<Vec<_>>())
             .map_err(|error| RuntimeInitError::BindAddress(error.to_string()))
@@ -297,48 +381,168 @@ impl RuntimeInitConfig {
         self.observatory.allowed_origins.clone()
     }
 
-    pub fn agent_population(&self) -> crate::AgentPopulationFeed {
-        let sample_count = self.agents.count.min(self.agents.sample_limit);
-        let width = self.agents.count.max(1).to_string().len().max(4);
-        let sample = (1..=sample_count)
-            .map(|index| crate::AgentSample {
-                id: format!("agent-{index:0width$}"),
-                label: format!("Runtime agent {index}"),
-                role: "runtime agent".to_owned(),
-                state: "running".to_owned(),
-                detail: format!("sample {index} of {}", self.agents.count),
-            })
-            .collect();
-        crate::AgentPopulationFeed {
-            total_count: self.agents.count,
-            rendered_sample_count: sample_count,
-            sample,
+    pub fn runtime_observability(&self) -> &RuntimeObservabilityInitConfig {
+        &self.observability_pipeline
+    }
+
+    pub fn guardian_shutdown_grace_millis(&self) -> u64 {
+        self.shutdown
+            .checkpoint_deadline_millis
+            .saturating_add(self.shutdown.kernel_grace_millis)
+            .saturating_add(self.shutdown.api_drain_millis)
+            .saturating_add(self.shutdown.guardian_margin_millis)
+    }
+
+    pub fn state_root(&self) -> &PathBuf {
+        &self.state_root
+    }
+
+    pub fn continuity_root(&self) -> PathBuf {
+        self.paths.continuity_root(&self.state_root)
+    }
+
+    pub fn continuity_identity_projection(&self) -> Result<serde_json::Value, serde_json::Error> {
+        let mut value = serde_json::to_value(self)?;
+        if let Some(credentials) = value
+            .get_mut("credentials")
+            .and_then(serde_json::Value::as_object_mut)
+        {
+            credentials.remove("continuity_min_generation");
         }
+        if let Some(observability) = value
+            .get_mut("observability_pipeline")
+            .and_then(serde_json::Value::as_object_mut)
+        {
+            observability.remove("lifecycle_run");
+            observability.remove("lifecycle_cycle");
+        }
+        Ok(value)
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct RuntimeAgentsInitConfig {
-    #[serde(default = "default_runtime_agent_count")]
-    pub count: u64,
-    #[serde(default = "default_runtime_agent_sample_limit")]
-    pub sample_limit: u64,
+pub struct RuntimeBinariesInitConfig {
+    pub kernel_path: PathBuf,
 }
 
-impl Default for RuntimeAgentsInitConfig {
-    fn default() -> Self {
-        Self {
-            count: default_runtime_agent_count(),
-            sample_limit: default_runtime_agent_sample_limit(),
-        }
+impl RuntimeBinariesInitConfig {
+    fn validate(&self) -> Result<(), RuntimeInitError> {
+        validate_absolute_path("binaries.kernel_path", &self.kernel_path)
     }
 }
 
-impl RuntimeAgentsInitConfig {
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuntimePathsInitConfig {
+    pub continuity_dir: PathBuf,
+    pub tls_dir: PathBuf,
+    pub credentials_dir: PathBuf,
+    pub observability_dir: PathBuf,
+}
+
+impl RuntimePathsInitConfig {
     fn validate(&self) -> Result<(), RuntimeInitError> {
-        if self.count == 0 || self.sample_limit == 0 || self.sample_limit > 100 {
-            return Err(RuntimeInitError::InvalidAgentPopulation);
+        validate_relative_runtime_path("paths.continuity_dir", &self.continuity_dir)?;
+        validate_relative_runtime_path("paths.tls_dir", &self.tls_dir)?;
+        validate_relative_runtime_path("paths.credentials_dir", &self.credentials_dir)?;
+        validate_relative_runtime_path("paths.observability_dir", &self.observability_dir)?;
+        Ok(())
+    }
+
+    pub fn continuity_root(&self, state_root: &Path) -> PathBuf {
+        state_root.join(&self.continuity_dir)
+    }
+
+    pub fn tls_root(&self, state_root: &Path) -> PathBuf {
+        state_root.join(&self.tls_dir)
+    }
+
+    pub fn credentials_root(&self, state_root: &Path) -> PathBuf {
+        state_root.join(&self.credentials_dir)
+    }
+
+    pub fn observability_root(&self, state_root: &Path) -> PathBuf {
+        state_root.join(&self.observability_dir)
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuntimeKernelInitConfig {
+    pub recorder_capacity: usize,
+    pub control_history_capacity: usize,
+    pub checkpoint_channel_capacity: usize,
+    pub component_readiness_timeout_millis: u64,
+    pub observability_poll_millis: u64,
+    pub weather_stale_after_millis: u64,
+    pub guardian_lease_connect_millis: u64,
+    pub guardian_lease_auth_millis: u64,
+    pub trusted_time_sample_timeout_millis: u64,
+    pub trusted_time_max_offset_millis: u64,
+    pub trusted_time_max_round_trip_millis: u64,
+    pub trusted_time_retry_millis: u64,
+    pub trusted_time_refresh_millis: u64,
+}
+
+impl RuntimeKernelInitConfig {
+    fn validate(&self) -> Result<(), RuntimeInitError> {
+        for (field, value) in [
+            ("kernel.recorder_capacity", self.recorder_capacity),
+            (
+                "kernel.control_history_capacity",
+                self.control_history_capacity,
+            ),
+            (
+                "kernel.checkpoint_channel_capacity",
+                self.checkpoint_channel_capacity,
+            ),
+        ] {
+            validate_bounded_capacity(field, value)?;
+        }
+        for (field, value) in [
+            (
+                "kernel.component_readiness_timeout_millis",
+                self.component_readiness_timeout_millis,
+            ),
+            (
+                "kernel.observability_poll_millis",
+                self.observability_poll_millis,
+            ),
+            (
+                "kernel.weather_stale_after_millis",
+                self.weather_stale_after_millis,
+            ),
+            (
+                "kernel.guardian_lease_connect_millis",
+                self.guardian_lease_connect_millis,
+            ),
+            (
+                "kernel.guardian_lease_auth_millis",
+                self.guardian_lease_auth_millis,
+            ),
+            (
+                "kernel.trusted_time_sample_timeout_millis",
+                self.trusted_time_sample_timeout_millis,
+            ),
+            (
+                "kernel.trusted_time_max_offset_millis",
+                self.trusted_time_max_offset_millis,
+            ),
+            (
+                "kernel.trusted_time_max_round_trip_millis",
+                self.trusted_time_max_round_trip_millis,
+            ),
+            (
+                "kernel.trusted_time_retry_millis",
+                self.trusted_time_retry_millis,
+            ),
+            (
+                "kernel.trusted_time_refresh_millis",
+                self.trusted_time_refresh_millis,
+            ),
+        ] {
+            validate_bounded_millis(field, value)?;
         }
         Ok(())
     }
@@ -347,57 +551,168 @@ impl RuntimeAgentsInitConfig {
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RuntimeApiInitConfig {
-    #[serde(default = "default_runtime_api_address_option")]
-    pub address: Option<String>,
-    #[serde(default = "default_runtime_public_base_url")]
+    pub address: String,
     pub public_base_url: String,
-    #[serde(default)]
+    pub bind_attempts: u32,
+    pub bind_retry_millis: u64,
+    pub websocket_auth_timeout_millis: u64,
+    pub websocket_refresh_millis: u64,
+    pub websocket_max_frame_bytes: usize,
     pub tls: RuntimeTlsInitConfig,
 }
 
-impl Default for RuntimeApiInitConfig {
-    fn default() -> Self {
-        Self {
-            address: default_runtime_api_address_option(),
-            public_base_url: default_runtime_public_base_url(),
-            tls: RuntimeTlsInitConfig::default(),
-        }
-    }
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuntimeTlsInitConfig {
+    pub certificate_chain_path: PathBuf,
+    pub private_key_path: PathBuf,
 }
 
-impl RuntimeApiInitConfig {
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuntimeCredentialInitConfig {
+    pub control_public_key_path: PathBuf,
+    pub control_key_id: String,
+    pub control_principal: String,
+    pub operation_public_key_path: PathBuf,
+    pub operation_key_id: String,
+    pub continuity_signing_key_path: PathBuf,
+    pub continuity_key_id: String,
+    pub observatory_token_path: PathBuf,
+    pub continuity_min_generation: u64,
+    pub sntp_server: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuntimeShutdownInitConfig {
+    pub checkpoint_deadline_millis: u64,
+    pub kernel_grace_millis: u64,
+    pub api_drain_millis: u64,
+    pub guardian_margin_millis: u64,
+}
+
+impl RuntimeShutdownInitConfig {
     fn validate(&self) -> Result<(), RuntimeInitError> {
-        validate_https_base_url("api.public_base_url", &self.public_base_url)?;
-        self.tls.validate()?;
+        for (field, value) in [
+            (
+                "shutdown.checkpoint_deadline_millis",
+                self.checkpoint_deadline_millis,
+            ),
+            ("shutdown.kernel_grace_millis", self.kernel_grace_millis),
+            ("shutdown.api_drain_millis", self.api_drain_millis),
+            (
+                "shutdown.guardian_margin_millis",
+                self.guardian_margin_millis,
+            ),
+        ] {
+            validate_bounded_millis(field, value)?;
+        }
         Ok(())
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct RuntimeTlsInitConfig {
-    #[serde(default = "default_runtime_tls_certificate_chain_path")]
-    pub certificate_chain_path: PathBuf,
-    #[serde(default = "default_runtime_tls_private_key_path")]
-    pub private_key_path: PathBuf,
+pub struct RuntimeGuardianInitConfig {
+    pub restart_budget: u32,
+    pub backoff_base_millis: u64,
+    pub backoff_cap_millis: u64,
+    pub healthy_window_millis: u64,
+    pub lease_auth_timeout_millis: u64,
+    pub lease_auth_attempts: u32,
+    pub capture_max_bytes: u64,
+    pub capture_drain_grace_millis: u64,
+    pub configuration_exit_codes: Vec<i32>,
 }
 
-impl Default for RuntimeTlsInitConfig {
-    fn default() -> Self {
-        Self {
-            certificate_chain_path: default_runtime_tls_certificate_chain_path(),
-            private_key_path: default_runtime_tls_private_key_path(),
+impl RuntimeGuardianInitConfig {
+    fn validate(&self) -> Result<(), RuntimeInitError> {
+        if self.restart_budget > MAX_GUARDIAN_RESTART_BUDGET {
+            return Err(RuntimeInitError::Policy(format!(
+                "guardian.restart_budget exceeds {MAX_GUARDIAN_RESTART_BUDGET}"
+            )));
         }
+        validate_bounded_millis("guardian.backoff_base_millis", self.backoff_base_millis)?;
+        validate_bounded_millis("guardian.backoff_cap_millis", self.backoff_cap_millis)?;
+        validate_bounded_millis("guardian.healthy_window_millis", self.healthy_window_millis)?;
+        validate_bounded_millis(
+            "guardian.lease_auth_timeout_millis",
+            self.lease_auth_timeout_millis,
+        )?;
+        validate_bounded_millis(
+            "guardian.capture_drain_grace_millis",
+            self.capture_drain_grace_millis,
+        )?;
+        if self.lease_auth_attempts == 0
+            || self.lease_auth_attempts > MAX_GUARDIAN_LEASE_AUTH_ATTEMPTS
+        {
+            return Err(RuntimeInitError::Policy(format!(
+                "guardian.lease_auth_attempts must be in 1..={MAX_GUARDIAN_LEASE_AUTH_ATTEMPTS}"
+            )));
+        }
+        if self.capture_max_bytes == 0 || self.capture_max_bytes > MAX_OBSERVABILITY_FILE_BYTES {
+            return Err(RuntimeInitError::Policy(format!(
+                "guardian.capture_max_bytes must be in 1..={MAX_OBSERVABILITY_FILE_BYTES}"
+            )));
+        }
+        if self.backoff_cap_millis < self.backoff_base_millis {
+            return Err(RuntimeInitError::Policy(
+                "guardian.backoff_cap_millis must be >= backoff_base_millis".to_owned(),
+            ));
+        }
+        if self.configuration_exit_codes.is_empty()
+            || self.configuration_exit_codes.len() > MAX_GUARDIAN_CONFIGURATION_EXIT_CODES
+            || self.configuration_exit_codes.iter().any(|code| *code < 0)
+        {
+            return Err(RuntimeInitError::Policy(
+                "guardian.configuration_exit_codes must be a non-empty bounded list of positive exit codes".to_owned(),
+            ));
+        }
+        let unique = self
+            .configuration_exit_codes
+            .iter()
+            .collect::<BTreeSet<_>>();
+        if unique.len() != self.configuration_exit_codes.len() {
+            return Err(RuntimeInitError::Policy(
+                "guardian.configuration_exit_codes must be unique".to_owned(),
+            ));
+        }
+        Ok(())
     }
 }
 
-impl RuntimeTlsInitConfig {
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuntimeQualificationInitConfig {
+    pub readiness_timeout_millis: u64,
+    pub readiness_poll_millis: u64,
+    pub shutdown_wait_millis: u64,
+}
+
+impl RuntimeQualificationInitConfig {
     fn validate(&self) -> Result<(), RuntimeInitError> {
-        if self.certificate_chain_path.as_os_str().is_empty()
-            || self.private_key_path.as_os_str().is_empty()
-            || self.certificate_chain_path == self.private_key_path
-        {
-            return Err(RuntimeInitError::InvalidTlsPaths);
+        for (field, value) in [
+            (
+                "qualification.readiness_timeout_millis",
+                self.readiness_timeout_millis,
+            ),
+            (
+                "qualification.readiness_poll_millis",
+                self.readiness_poll_millis,
+            ),
+            (
+                "qualification.shutdown_wait_millis",
+                self.shutdown_wait_millis,
+            ),
+        ] {
+            validate_bounded_millis(field, value)?;
+        }
+        if self.readiness_poll_millis >= self.readiness_timeout_millis {
+            return Err(RuntimeInitError::Policy(
+                "qualification.readiness_poll_millis must be less than readiness_timeout_millis"
+                    .to_owned(),
+            ));
         }
         Ok(())
     }
@@ -406,54 +721,246 @@ impl RuntimeTlsInitConfig {
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ObservatoryInitConfig {
-    #[serde(default = "default_local_observatory_origins")]
     pub allowed_origins: Vec<String>,
 }
 
-impl Default for ObservatoryInitConfig {
-    fn default() -> Self {
-        Self {
-            allowed_origins: default_local_observatory_origins(),
-        }
-    }
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuntimeObservabilityInitConfig {
+    pub vector_binary_path: PathBuf,
+    pub service_name: String,
+    pub revision: String,
+    pub guardian_id: String,
+    pub lifecycle_suite: String,
+    pub lifecycle_run: String,
+    pub lifecycle_cycle: String,
+    pub trace_filter: String,
+    pub otlp_endpoint: Option<String>,
+    pub otlp_timeout_millis: u64,
+    pub vector_startup_attempts: u32,
+    pub vector_startup_backoff_millis: u64,
+    pub vector_shutdown_limit_millis: u64,
+    pub drain_timeout_millis: u64,
+    pub vector_config_path: PathBuf,
+    pub ingress_spool_path: PathBuf,
+    pub master_log_path: PathBuf,
+    pub audit_path: PathBuf,
+    pub sequence_checkpoint_path: PathBuf,
+    pub vector_data_dir: PathBuf,
+    pub spool_max_bytes: u64,
+    pub spool_retained_files: usize,
 }
 
-impl ObservatoryInitConfig {
+impl RuntimeObservabilityInitConfig {
     fn validate(&self) -> Result<(), RuntimeInitError> {
-        validate_origin_list("observatory.allowed_origins", &self.allowed_origins)
+        validate_absolute_path(
+            "observability_pipeline.vector_binary_path",
+            &self.vector_binary_path,
+        )?;
+        for (field, value) in [
+            ("observability_pipeline.service_name", &self.service_name),
+            ("observability_pipeline.revision", &self.revision),
+            ("observability_pipeline.guardian_id", &self.guardian_id),
+            (
+                "observability_pipeline.lifecycle_suite",
+                &self.lifecycle_suite,
+            ),
+            ("observability_pipeline.lifecycle_run", &self.lifecycle_run),
+            (
+                "observability_pipeline.lifecycle_cycle",
+                &self.lifecycle_cycle,
+            ),
+            ("observability_pipeline.trace_filter", &self.trace_filter),
+        ] {
+            validate_non_empty_trimmed(field, value)?;
+        }
+        for (field, value) in [
+            (
+                "observability_pipeline.otlp_timeout_millis",
+                self.otlp_timeout_millis,
+            ),
+            (
+                "observability_pipeline.vector_startup_backoff_millis",
+                self.vector_startup_backoff_millis,
+            ),
+            (
+                "observability_pipeline.drain_timeout_millis",
+                self.drain_timeout_millis,
+            ),
+            (
+                "observability_pipeline.vector_shutdown_limit_millis",
+                self.vector_shutdown_limit_millis,
+            ),
+        ] {
+            validate_bounded_millis(field, value)?;
+        }
+        if self.vector_startup_attempts == 0 || self.vector_startup_attempts > 10 {
+            return Err(RuntimeInitError::Policy(
+                "observability_pipeline.vector_startup_attempts must be between 1 and 10"
+                    .to_owned(),
+            ));
+        }
+        if self.vector_shutdown_limit_millis >= self.drain_timeout_millis {
+            return Err(RuntimeInitError::Policy(
+                "observability_pipeline.vector_shutdown_limit_millis must be less than drain_timeout_millis"
+                    .to_owned(),
+            ));
+        }
+        if self.spool_max_bytes == 0 || self.spool_max_bytes > MAX_OBSERVABILITY_FILE_BYTES {
+            return Err(RuntimeInitError::Policy(format!(
+                "observability_pipeline.spool_max_bytes must be between 1 and {MAX_OBSERVABILITY_FILE_BYTES}"
+            )));
+        }
+        if self.spool_retained_files == 0
+            || self.spool_retained_files > MAX_OBSERVABILITY_RETAINED_FILES
+        {
+            return Err(RuntimeInitError::Policy(format!(
+                "observability_pipeline.spool_retained_files must be between 1 and {MAX_OBSERVABILITY_RETAINED_FILES}"
+            )));
+        }
+        if let Some(endpoint) = self.otlp_endpoint.as_deref() {
+            validate_observability_otlp_endpoint(endpoint)?;
+        }
+        for (field, path) in [
+            ("vector_config_path", &self.vector_config_path),
+            ("ingress_spool_path", &self.ingress_spool_path),
+            ("master_log_path", &self.master_log_path),
+            ("audit_path", &self.audit_path),
+            ("sequence_checkpoint_path", &self.sequence_checkpoint_path),
+            ("vector_data_dir", &self.vector_data_dir),
+        ] {
+            validate_relative_runtime_path(field, path)?;
+        }
+        Ok(())
     }
 }
 
-fn default_runtime_api_address() -> &'static str {
-    "localhost:20997"
+fn validate_non_empty_trimmed(field: &'static str, value: &str) -> Result<(), RuntimeInitError> {
+    if value.trim().is_empty() || value != value.trim() {
+        return Err(RuntimeInitError::Policy(format!(
+            "{field} must be non-empty without surrounding whitespace"
+        )));
+    }
+    Ok(())
 }
 
-fn default_runtime_api_address_option() -> Option<String> {
-    Some(default_runtime_api_address().to_owned())
+fn validate_bounded_millis(field: &'static str, value: u64) -> Result<(), RuntimeInitError> {
+    if value == 0 || value > MAX_RUNTIME_INIT_MILLIS {
+        return Err(RuntimeInitError::Policy(format!(
+            "{field} must be between 1 and {MAX_RUNTIME_INIT_MILLIS}"
+        )));
+    }
+    Ok(())
 }
 
-fn default_runtime_public_base_url() -> String {
-    "https://runtime-gateway-host".to_owned()
+fn validate_bounded_capacity(field: &'static str, value: usize) -> Result<(), RuntimeInitError> {
+    if value == 0 || value > MAX_RUNTIME_INIT_CAPACITY {
+        return Err(RuntimeInitError::Policy(format!(
+            "{field} must be between 1 and {MAX_RUNTIME_INIT_CAPACITY}"
+        )));
+    }
+    Ok(())
 }
 
-fn default_runtime_tls_certificate_chain_path() -> PathBuf {
-    PathBuf::from(".adl/runtime-v3/tls/localhost-cert.pem")
+fn validate_relative_runtime_path(
+    field: &'static str,
+    path: &Path,
+) -> Result<(), RuntimeInitError> {
+    if path.as_os_str().is_empty() || path.is_absolute() {
+        return Err(RuntimeInitError::Policy(format!(
+            "{field} must be a non-empty path relative to state_root"
+        )));
+    }
+    if path.components().any(|component| {
+        matches!(
+            component,
+            std::path::Component::ParentDir
+                | std::path::Component::RootDir
+                | std::path::Component::Prefix(_)
+        )
+    }) {
+        return Err(RuntimeInitError::Policy(format!(
+            "{field} must not escape state_root"
+        )));
+    }
+    Ok(())
 }
 
-fn default_runtime_tls_private_key_path() -> PathBuf {
-    PathBuf::from(".adl/runtime-v3/tls/localhost-key.pem")
+fn validate_observability_otlp_endpoint(value: &str) -> Result<(), RuntimeInitError> {
+    let uri = parse_http_uri(value)?;
+    if uri.scheme_str() == Some("https") {
+        return Ok(());
+    }
+    let host = uri.host().unwrap_or_default();
+    if uri.scheme_str() == Some("http")
+        && matches!(host, "localhost" | "127.0.0.1" | "::1" | "[::1]")
+    {
+        return Ok(());
+    }
+    Err(RuntimeInitError::Observability(
+        "otlp_endpoint must be HTTPS or loopback HTTP".to_owned(),
+    ))
 }
 
-fn default_local_observatory_origins() -> Vec<String> {
-    vec!["https://localhost:8765".to_owned()]
+fn validate_absolute_path(field: &'static str, path: &Path) -> Result<(), RuntimeInitError> {
+    if path.as_os_str().is_empty() || !path.is_absolute() {
+        return Err(RuntimeInitError::RelativePath(field));
+    }
+    if path
+        .components()
+        .any(|component| matches!(component, std::path::Component::ParentDir))
+    {
+        return Err(RuntimeInitError::RelativePath(field));
+    }
+    Ok(())
 }
 
-fn default_runtime_agent_count() -> u64 {
-    1
+fn validate_child_path(
+    field: &'static str,
+    root: &Path,
+    path: &Path,
+) -> Result<(), RuntimeInitError> {
+    validate_absolute_path(field, path)?;
+    if root.exists() && path.exists() {
+        let canonical_root = root
+            .canonicalize()
+            .map_err(|_| RuntimeInitError::PathOutsideStateRoot(field))?;
+        let canonical_path = path
+            .canonicalize()
+            .map_err(|_| RuntimeInitError::PathOutsideStateRoot(field))?;
+        if !canonical_path.starts_with(canonical_root) {
+            return Err(RuntimeInitError::PathOutsideStateRoot(field));
+        }
+    } else if !lexically_contains(root, path) {
+        return Err(RuntimeInitError::PathOutsideStateRoot(field));
+    }
+    Ok(())
 }
 
-fn default_runtime_agent_sample_limit() -> u64 {
-    6
+fn validate_distinct_paths(
+    left_field: &'static str,
+    left: &Path,
+    right_field: &'static str,
+    right: &Path,
+) -> Result<(), RuntimeInitError> {
+    if left == right {
+        return Err(RuntimeInitError::InvalidTlsPaths);
+    }
+    validate_absolute_path(left_field, left)?;
+    validate_absolute_path(right_field, right)?;
+    Ok(())
+}
+
+fn lexically_contains(root: &Path, path: &Path) -> bool {
+    if path.components().any(|component| {
+        matches!(
+            component,
+            std::path::Component::CurDir | std::path::Component::ParentDir
+        )
+    }) {
+        return false;
+    }
+    path.starts_with(root)
 }
 
 fn validate_https_base_url(field: &'static str, value: &str) -> Result<(), RuntimeInitError> {
@@ -516,6 +1023,8 @@ fn parse_http_uri(value: &str) -> Result<axum::http::Uri, RuntimeInitError> {
 
 #[derive(Debug, Error, Eq, PartialEq)]
 pub enum RuntimeInitError {
+    #[error("runtime serve requires an explicit init file")]
+    MissingInitFile,
     #[error("runtime init file could not be read at {0}: {1}")]
     Read(PathBuf, String),
     #[error("invalid runtime init TOML: {0}")]
@@ -534,8 +1043,14 @@ pub enum RuntimeInitError {
     BindAddress(String),
     #[error("runtime init TLS certificate and private-key paths must be non-empty and distinct")]
     InvalidTlsPaths,
-    #[error("runtime init agents.count and agents.sample_limit must be positive, with sample_limit <= 100")]
-    InvalidAgentPopulation,
+    #[error("runtime init {0} must be an absolute path without parent traversal")]
+    RelativePath(&'static str),
+    #[error("runtime init {0} must stay inside state_root")]
+    PathOutsideStateRoot(&'static str),
     #[error("runtime init weather configuration is invalid: {0}")]
     Weather(String),
+    #[error("runtime init observability pipeline configuration is invalid: {0}")]
+    Observability(String),
+    #[error("runtime init policy is invalid: {0}")]
+    Policy(String),
 }

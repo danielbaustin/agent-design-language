@@ -11,7 +11,9 @@
 - [ ] Runtime v3 Parity-A `#5591` precedes reviewed Parity-B/C/D execution through `#5592`, `#5589`, and `#5590`.
 - [ ] Shadow parity, soak, rollback, and cutover proof pass.
 - [ ] Deletion manifest and eligibility proof are reviewed before deletion.
-- [ ] WP-14A child topology is closed or blocked with evidence.
+- [ ] WP-14A accepts exact reviewed ADL v2, Runtime v3, and C-SDLC v2 revisions.
+- [ ] WP-15 owns Unity proof; WP-20 owns C-SDLC tooling remediation.
+- [ ] WP-21 owns exact handoff, Memory Palace, launch/identity, capability, and Adaptive Learning planning.
 - [ ] Demo, quality, docs, internal review, external review, remediation, and preflight converge.
 - [ ] v0.92 handoff names exact revisions and non-claims.
 - [ ] Release ceremony and lifecycle closeout record truthful terminal state.

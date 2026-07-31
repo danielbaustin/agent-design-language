@@ -1,0 +1,259 @@
+# Validation Planning Prompt
+
+Template: 1.0.0
+
+Issue: 5349
+
+Repository: danielbaustin/agent-design-language
+
+Card: vpp
+
+Status: ready
+
+## Summary
+
+Execute the smallest proving validation DAG.
+
+## Lane Inputs
+
+Design: .csdlc/prepared/issues/5349/design.md
+
+Diagram: .csdlc/prepared/issues/5349/diagram.mmd
+
+## Selected Lanes
+
+[
+  {
+    "lane": "dependency-and-ownership-gate",
+    "proof_role": "Prove required source interfaces and disjoint issue-local/product claims; receipts are not consulted",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-8"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 60,
+    "budget_tokens": 2000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5349/dependency_gate.rb"
+    ],
+    "parallel_group": "adapter-control",
+    "defer_reason": null
+  },
+  {
+    "lane": "deterministic-mock-matrix",
+    "proof_role": "Prove canonical scripted success and every typed failure without external state",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-6"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 4000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5349/run_validation_lane.rb",
+      "mock"
+    ],
+    "parallel_group": "adapter-local",
+    "defer_reason": null
+  },
+  {
+    "lane": "https-contract-matrix",
+    "proof_role": "Prove endpoint permit, TLS-only, redirect/proxy denial, bounds, cancellation, response normalization, and error fidelity",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-6",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 600,
+    "budget_tokens": 6000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5349/run_validation_lane.rb",
+      "https"
+    ],
+    "parallel_group": "adapter-local",
+    "defer_reason": null
+  },
+  {
+    "lane": "governed-tool-matrix",
+    "proof_role": "Prove authorization binding, one named call, denial/appeal preservation, and no policy or direct-execution bypass",
+    "acceptance_ids": [
+      "AC-4",
+      "AC-6",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 600,
+    "budget_tokens": 6000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5349/run_validation_lane.rb",
+      "governed-tool"
+    ],
+    "parallel_group": "adapter-local",
+    "defer_reason": null
+  },
+  {
+    "lane": "compatibility-matrix",
+    "proof_role": "Prove explicit lossless translation and stable classification plus unknown/lossy/ambiguous/alias-drift rejection",
+    "acceptance_ids": [
+      "AC-5",
+      "AC-6",
+      "AC-12"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 4000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5349/run_validation_lane.rb",
+      "compatibility"
+    ],
+    "parallel_group": "adapter-local",
+    "defer_reason": null
+  },
+  {
+    "lane": "secret-and-negative-authority",
+    "proof_role": "Prove canary non-leakage and reject escalation, retry, fallback, shell, AWS, Runtime v2, provider SDK, direct Runtime, and lifecycle authority",
+    "acceptance_ids": [
+      "AC-4",
+      "AC-6",
+      "AC-7",
+      "AC-8",
+      "AC-11",
+      "AC-12"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 480,
+    "budget_tokens": 6000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5349/run_validation_lane.rb",
+      "negative-authority"
+    ],
+    "parallel_group": "adapter-security",
+    "defer_reason": null
+  },
+  {
+    "lane": "complete-adapter-suite",
+    "proof_role": "Run every adapter target and doctest at one revision",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7",
+      "AC-10"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 420,
+    "budget_tokens": 6000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5349/run_validation_lane.rb",
+      "complete"
+    ],
+    "parallel_group": "adapter-regression",
+    "defer_reason": null
+  },
+  {
+    "lane": "strict-quality",
+    "proof_role": "Prove exact formatting and warning-free all-target/all-feature adapter code",
+    "acceptance_ids": [
+      "AC-8",
+      "AC-9",
+      "AC-10"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 3000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5349/run_validation_lane.rb",
+      "strict-quality"
+    ],
+    "parallel_group": "adapter-quality",
+    "defer_reason": null
+  },
+  {
+    "lane": "cots-budget-path-inventory",
+    "proof_role": "Enforce exact COTS requirements/features, approved path dependencies, forbidden-package absence, source/module/test budgets, minimum tests, and exact crate scope",
+    "acceptance_ids": [
+      "AC-8",
+      "AC-9"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 240,
+    "budget_tokens": 3000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5349/validate_budget.rb"
+    ],
+    "parallel_group": "adapter-quality",
+    "defer_reason": null
+  },
+  {
+    "lane": "exact-revision-lifecycle-truth",
+    "proof_role": "Prove clean diff, typed doctor, exact review identity, no-deferral matrix, rollback, and retained lifecycle truth",
+    "acceptance_ids": [
+      "AC-10",
+      "AC-11",
+      "AC-12"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 3000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5349/run_validation_lane.rb",
+      "exact-revision"
+    ],
+    "parallel_group": "adapter-lifecycle",
+    "defer_reason": null
+  }
+]
+
+## Parallelization
+
+Only declared parallel groups may overlap.
+
+## Budgets
+
+Seconds: 7200
+
+Tokens: 50000
+
+## Commands
+
+- `ruby .csdlc/prepared/issues/5349/dependency_gate.rb`
+- `ruby .csdlc/prepared/issues/5349/run_validation_lane.rb mock`
+- `ruby .csdlc/prepared/issues/5349/run_validation_lane.rb https`
+- `ruby .csdlc/prepared/issues/5349/run_validation_lane.rb governed-tool`
+- `ruby .csdlc/prepared/issues/5349/run_validation_lane.rb compatibility`
+- `ruby .csdlc/prepared/issues/5349/run_validation_lane.rb negative-authority`
+- `ruby .csdlc/prepared/issues/5349/run_validation_lane.rb complete`
+- `ruby .csdlc/prepared/issues/5349/run_validation_lane.rb strict-quality`
+- `ruby .csdlc/prepared/issues/5349/validate_budget.rb`
+- `ruby .csdlc/prepared/issues/5349/run_validation_lane.rb exact-revision`
+
+## Failure Semantics
+
+Fail closed without product implementation or publication on false/stale dependency truth, claim collision, unauthorized endpoint or tool invocation, authorization mismatch, denial loss, nondeterminism, retry/fallback authority, secret leakage, lossy compatibility, malformed response acceptance, undeclared COTS/path growth, budget breach, Runtime v2/AWS/provider credential use, ungrounded live claim, stale review, red validation, or incomplete receipt truth.
+
+## Handoff
+
+Retain typed evidence before convergence.

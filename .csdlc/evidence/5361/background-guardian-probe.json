@@ -1,0 +1,10 @@
+{
+  "schema": "adl.runtime_v3.acceptance.background_guardian_probe.v1",
+  "issue": 5361,
+  "url": "https://localhost:20997/v1/observatory",
+  "pid": "78151",
+  "pid_alive": false,
+  "https_probe": "connection_refused",
+  "status": "not_available",
+  "note": "Operator-provided background guardian was stale during #5361 acceptance; no secrets printed; bounded FastWork operational proof separately proved current Runtime v3 guardian HTTPS/Observatory/rollback."
+}

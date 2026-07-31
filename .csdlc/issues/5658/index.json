@@ -1,0 +1,266 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5658,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "f0956ae3f1c83909acb21792fa8016035926ce54c66ff3c20504c484a18e4c36",
+  "phase": "published",
+  "generation": 12,
+  "digest": "c4318c857817c02c21c0c34f2d4f94593bc6072e6eab275c7a20ed8a1d797ca3",
+  "claim": {
+    "id": "claim-5658-bound-worktree-lifecycle",
+    "owner": "codex:5658-execution",
+    "generation": 12,
+    "acquired_unix_seconds": 1785037680,
+    "expires_unix_seconds": 1785642480,
+    "heartbeat_unix_seconds": 1785037680,
+    "branch": "codex/5658-bound-worktree-lifecycle",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5658",
+      ".csdlc/locks/5658.lock",
+      ".csdlc/prepared/issues/5658",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "purpose": "Keep typed C-SDLC lifecycle writes rooted in the bound issue worktree"
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "subagent:019f9cb8-4963-7c13-bc36-0f5ac5bbf97a",
+    "scope": [
+      ".csdlc/issues/5658",
+      ".csdlc/prepared/issues/5658",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/tests/gate2.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "reviewed_revision": "git-blake3:d29836f671df537b6bb3e18ba4dd34f55119350e:d7bb110820fb473c7c148e5d737de3595d6fc7334b004c47d0f8bdff008aba96",
+    "findings": [],
+    "residual_risks": [
+      "Review did not rerun Rust tests; local owner validation recorded gate2 47 passing tests and gate7_lifecycle 33 passing tests with FastWork target output."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5658,
+    "pull_request": 5674,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5674",
+    "base": "main",
+    "head": "codex/5658-bound-worktree-lifecycle",
+    "revision": "git-blake3:5e859cb42bc245a6e466505005fc7ea15af3c5e8:46f315374d39740ef2d68c35189c91bf79b49de3bfe59538546a90f5a60347a9",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5658/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5658/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5658-preparation-review",
+      "revision": "189b48e4d4e95c977ca91cf04fc0d9cb51b22c9fd9273dff485ce5c40ef6481d"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "bbfcd99eafcf26842decafbda7fd4ff36e407780a5496024013311402cbf6a1c",
+      "rendered_digest": "551ba08dc73004705b04e86ccaa077c8e4bcfcb1069e144cee65074be9fecace",
+      "ast_digest": "bb4f521e7ac0b09e53d10f9b43cc86eed0fff465875c43595db60ac7b70cdf83"
+    },
+    "stp": {
+      "values_digest": "99c150a2afdc831a343ba6a0f26c1853826d8c015e593659541654acc83281fe",
+      "rendered_digest": "5aaeed13c9bd7ab5302de29deab901a15da4cfa9e10a73d7cedb8e418860f594",
+      "ast_digest": "7e3ee6c313328af17261029213091258211585874fa491693c0a0351b553fb6a"
+    },
+    "spp": {
+      "values_digest": "11296a027530e6cea77d6d89685ab90fab7bd09c2526f6dd7f73a5e5458d6583",
+      "rendered_digest": "53a740a9166c06be89e2c686fe0f58e051b66f377bab77c84ee1848b8f6758e8",
+      "ast_digest": "52608b7fcd8455e58feb6c765a7519d16520b4b8274528889aa5f086e2213ff6"
+    },
+    "vpp": {
+      "values_digest": "0d2c305ad7274e90a185a76740ab77dd5e2753bf53e45941d9989b06b1ad6520",
+      "rendered_digest": "34dfcb06286b53578b0167aef9662c22f46ec9ad3cf994f6af18e8c50232698c",
+      "ast_digest": "3f5b47021b687b2c8c7e5064bc56612f8a06ebd6ee617ccae80a79b5282db099"
+    },
+    "srp": {
+      "values_digest": "239a73a7c2a860fe36513a26b3e4f0449326e59fba5610cccaffee462216e03a",
+      "rendered_digest": "442d40e49a9ab00b1a7e6e0e691acb0129ad31d6528dbeb266fb11baeca6dc3b",
+      "ast_digest": "4895988948a8f2b207c8ba75ad81ff918e7e9dccfb635c7f2d1a13571796e315"
+    },
+    "sor": {
+      "values_digest": "b126fad51bde193d3cfc269b7e77deb0fc22fa1e919454e39b892809e314b870",
+      "rendered_digest": "958f9f0035875adb29e4c05b65af546961ed716ab38059a6009fde338f3f7323",
+      "ast_digest": "502b5878d86adbde5e94128c930074935f6d111466ee4210fed34547ebe42374"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5658-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5658-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5658-execution",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5658-execution",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5658-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5658-execution",
+      "reason": "Recover stale reviewed/published truth after CI standalone gate2 fix changed substantive source and tests."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5658-execution",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5658-execution",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5658-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5658-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5658-execution",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5658-execution",
+      "reason": "Record focused validation after pre-PR review hardening fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Verify bound-worktree lifecycle materialization, unregistered target rejection, evidence transfer, symlink fail-closed cleanup, and stale target side-state rejection after pre-PR review fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS on 9481fa2e0 with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; 29 passed\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5658-execution",
+      "reason": "Record final focused validation after stale target CAS-ordering repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Verify final bound-worktree lifecycle hardening, including stale registered target record rejection before prepared/evidence side-state materialization.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS on aa3dce8c8 with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; 30 passed\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5658-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:5658-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:5658-execution",
+      "reason": "Recover stale reviewed/published truth after CI standalone gate2 fix changed substantive source and tests.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5658-execution",
+      "reason": "CI standalone repair updated gate2 bind lifecycle tests for the same protected invariant.",
+      "operation": "{\"add_protected_paths\":[\"csdlc-v2/tests/gate2.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5658-execution",
+      "reason": "Record focused validation after CI standalone gate2 repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Verify CI standalone gate2 expectations now use worktree-owned lifecycle state while gate7 bound-worktree materialization invariants remain green.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS on 47c29e27a with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; gate2 47 passed, gate7_lifecycle 30 passed\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5658-execution",
+      "reason": "Record focused validation after idempotent bind identity check repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Verify CI standalone gate2 behavior and gate7 idempotent bind identity rejection after final review finding repair.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS on d305d501b with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; gate2 47 passed, gate7_lifecycle 31 passed\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:5658-execution",
+      "reason": "Record focused validation after idempotent bind identity check repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Verify CI standalone gate2 behavior and gate7 idempotent bind identity tuple rejection after final review finding repair.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS after adding repository, issue, and initialization_digest idempotent-bind identity negative cases with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; gate2 47 passed, gate7_lifecycle 33 passed\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:5658-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:5658-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:5658-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

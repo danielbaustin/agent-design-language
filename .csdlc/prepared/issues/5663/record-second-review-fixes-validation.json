@@ -1,0 +1,19 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 27,
+  "expected_digest": "f8aa7138184f848c82feba2eaa2956b59f9e9590b6e9a840662693e45e65aab9",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record typed PVF local_pass after consolidated exact-review blocker fixes.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate", "--root", ".", "--request", ".csdlc/prepared/issues/5663/validate-real-fixes.json"],
+      "purpose": "Run the typed PVF manifest covering real adapter assembly behavior, governed regression, strict Clippy, net-negative LoC, and diff hygiene after the consolidated exact-review blocker fixes.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5663"
+    }
+  },
+  "fail_after_backup": false
+}

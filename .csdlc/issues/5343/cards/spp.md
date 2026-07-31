@@ -1,0 +1,140 @@
+# Structured Planning Prompt
+
+Template: 1.0.0
+
+Issue: 5343
+
+Repository: danielbaustin/agent-design-language
+
+Card: spp
+
+Status: ready
+
+## Summary
+
+Render and validate all six cards; freeze exact #5344/#5345 dependency gates, selector transaction, fresh-install identity, explicit-v1 rollback window, evidence schema, ownership, protected paths, COTS, budgets, PVF, and no-deferral invariants; commit and push preparation only without preparation-review churn; remain blocked until #5344 and #5345 each have live merged landing commits ancestral to the exact execution revision; treat receipts and typed closeout as audit-only observations; then execute the full reviewed lifecycle and run the single bounded review just before PR without widening scope.
+
+## Plan
+
+Revision 5
+
+## Steps
+
+[
+  {
+    "id": "S1",
+    "action": "Verify the live #5344 and #5345 merged landing commits are ancestral to the exact execution revision and accept the exact #5344 cutover handoff; observe lifecycle receipts only as audit metadata",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S2",
+    "action": "Fresh-install ADL v2 into an isolated issue evidence root, retain a byte-identical installed v1 executable, and verify both installation identities before mutation",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-4",
+      "AC-8"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S3",
+    "action": "Exercise malformed input, receipt, digest, compare-and-swap, lock interruption, and persistence failures while proving the prior selector remains byte-identical",
+    "acceptance_ids": [
+      "AC-4",
+      "AC-5",
+      "AC-8"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S4",
+    "action": "Select and execute v2, roll back exact prior bytes and execute v1, then select and execute v2 as final default with a fourteen-day no-deletion rollback window",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-5",
+      "AC-6",
+      "AC-7",
+      "AC-9"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S5",
+    "action": "Run one exact-revision review, publish through typed v2, shepherd required checks, merge, verify the integrated cutover evidence, and leave closeout nonblocking",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7",
+      "AC-8",
+      "AC-9"
+    ],
+    "status": "pending"
+  }
+]
+
+## Invariants
+
+- No selector mutation begins before #5344 and #5345 live merged landing commits are ancestral to the exact execution revision and the exact #5344 handoff is accepted; receipts and closeout are audit-only
+- #5343 reuses the authoritative #5345 selector transaction and never edits active selector storage directly or implements a second selector
+- The selected executable and installation receipt are exact and fresh-install verified before mutation
+- Prior selector bytes, digest, v1 executable, and v1 receipt remain intact throughout the fourteen-day rollback window
+- Every rejected or interrupted transaction preserves the prior selector bytes
+- Rollback restores exact prior selector bytes and executes retained v1 before v2 becomes final again
+- Evidence is deterministic, redacted, repo-relative, exact-revision bound, and non-secret
+- Runtime v2 and incumbent ADL remain untouched rollback targets and no legacy deletion occurs
+- One exact-revision review runs immediately before publication and every actionable finding is fixed
+
+## Risks
+
+- A cutover wrapper can become a second selector or bypass the #5345 transaction
+- Fresh-install identity can drift from the executable actually selected
+- Stale writers, lock contention, interruption, or partial persistence can damage prior selector state
+- A green smoke can hide broken explicit-v1 override or rollback-window checkpoints
+- Metadata can be mistaken for accepted #5344 soak/rollback proof
+- A compatibility clock can start before all exact verification passes or remain ambiguous
+- Evidence can leak host paths, credentials, or unreviewed production claims
+- Cutover can be misread as WP-13 deletion authority
+
+## Estimates
+
+{
+  "elapsed_seconds": 86400,
+  "total_tokens": 240000,
+  "validation_seconds": 21600
+}
+
+## Design
+
+.csdlc/prepared/issues/5343/design.md
+
+Digest: 4be441ce171b50aad73aad5f6140fa5d0b9653ef83b10329870b13a818b7c91d
+
+## Diagram
+
+.csdlc/prepared/issues/5343/diagram.mmd
+
+Digest: 9c3173bf34cdfcdc240b257dab20ffe3b2646471586e28eaa5bfdb8b9b2e239e
+
+## Stop Conditions
+
+- A required live merged landing is not ancestral to the exact execution revision or the accepted #5344 handoff is contradictory
+- Any intended protected path collides with an active typed claim
+- The selector requires direct active-storage editing, implicit fallback, hidden network, credentials, AWS, Runtime v2 edits, or production-state mutation
+- Exact prior selector bytes, digest, v1 executable, or receipt cannot be retained and verified
+- Any rejected or interrupted transaction changes prior selector bytes
+- Rollback does not restore exact prior bytes or retained v1 cannot execute after rollback
+- The fourteen-day rollback window is absent or authorizes legacy deletion
+- Evidence is secret-bearing, host-bound, incomplete, or not bound to the exact implementation revision
+- Exact-revision review has an unresolved actionable finding
+
+## Handoff
+
+Proceed only after doctor readiness.

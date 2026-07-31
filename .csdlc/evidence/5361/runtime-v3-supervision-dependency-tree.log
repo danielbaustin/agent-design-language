@@ -1,0 +1,112 @@
+adl-runtime v0.91.7 (/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5361/adl-runtime)
+├── base64 v0.22.1
+├── fs2 v0.4.3
+│   └── libc v0.2.186
+├── hmac v0.12.1
+│   └── digest v0.10.7
+│       ├── block-buffer v0.10.4
+│       │   └── generic-array v0.14.7
+│       │       └── typenum v1.20.1
+│       │       [build-dependencies]
+│       │       └── version_check v0.9.5
+│       ├── crypto-common v0.1.7
+│       │   ├── generic-array v0.14.7 (*)
+│       │   └── typenum v1.20.1
+│       └── subtle v2.6.1
+├── libc v0.2.186
+├── prost v0.13.5
+│   ├── bytes v1.12.1
+│   └── prost-derive v0.13.5 (proc-macro)
+│       ├── anyhow v1.0.103
+│       ├── itertools v0.14.0
+│       │   └── either v1.16.0
+│       ├── proc-macro2 v1.0.106
+│       │   └── unicode-ident v1.0.24
+│       ├── quote v1.0.46
+│       │   └── proc-macro2 v1.0.106 (*)
+│       └── syn v2.0.118
+│           ├── proc-macro2 v1.0.106 (*)
+│           ├── quote v1.0.46 (*)
+│           └── unicode-ident v1.0.24
+├── rand v0.8.7
+│   ├── libc v0.2.186
+│   ├── rand_chacha v0.3.1
+│   │   ├── ppv-lite86 v0.2.21
+│   │   │   └── zerocopy v0.8.54
+│   │   └── rand_core v0.6.4
+│   │       └── getrandom v0.2.17
+│   │           ├── cfg-if v1.0.4
+│   │           └── libc v0.2.186
+│   └── rand_core v0.6.4 (*)
+├── redb v4.1.0
+├── secrecy v0.8.0
+│   └── zeroize v1.9.0
+├── serde v1.0.228
+│   ├── serde_core v1.0.228
+│   └── serde_derive v1.0.228 (proc-macro)
+│       ├── proc-macro2 v1.0.106 (*)
+│       ├── quote v1.0.46 (*)
+│       └── syn v2.0.118 (*)
+├── serde_jcs v0.2.0
+│   ├── ryu-js v0.2.2
+│   ├── serde v1.0.228 (*)
+│   └── serde_json v1.0.150
+│       ├── itoa v1.0.18
+│       ├── memchr v2.8.3
+│       ├── serde_core v1.0.228
+│       └── zmij v1.0.21
+├── serde_json v1.0.150 (*)
+├── sha2 v0.10.9
+│   ├── cfg-if v1.0.4
+│   ├── cpufeatures v0.2.17
+│   │   └── libc v0.2.186
+│   └── digest v0.10.7 (*)
+├── subtle v2.6.1
+├── sysinfo v0.38.4
+│   ├── libc v0.2.186
+│   ├── memchr v2.8.3
+│   ├── objc2-core-foundation v0.3.2
+│   │   └── bitflags v2.13.0
+│   └── objc2-io-kit v0.3.2
+│       ├── libc v0.2.186
+│       └── objc2-core-foundation v0.3.2 (*)
+├── tokio v1.52.3
+│   ├── bytes v1.12.1
+│   ├── libc v0.2.186
+│   ├── mio v1.2.1
+│   │   └── libc v0.2.186
+│   ├── pin-project-lite v0.2.17
+│   ├── signal-hook-registry v1.4.8
+│   │   ├── errno v0.3.14
+│   │   │   └── libc v0.2.186
+│   │   └── libc v0.2.186
+│   └── tokio-macros v2.7.0 (proc-macro)
+│       ├── proc-macro2 v1.0.106 (*)
+│       ├── quote v1.0.46 (*)
+│       └── syn v2.0.118 (*)
+└── tokio-util v0.7.18
+    ├── bytes v1.12.1
+    ├── futures-core v0.3.32
+    ├── futures-sink v0.3.32
+    ├── futures-util v0.3.32
+    │   ├── futures-core v0.3.32
+    │   ├── futures-macro v0.3.32 (proc-macro)
+    │   │   ├── proc-macro2 v1.0.106 (*)
+    │   │   ├── quote v1.0.46 (*)
+    │   │   └── syn v2.0.118 (*)
+    │   ├── futures-task v0.3.32
+    │   ├── pin-project-lite v0.2.17
+    │   └── slab v0.4.12
+    ├── pin-project-lite v0.2.17
+    └── tokio v1.52.3 (*)
+[dev-dependencies]
+└── tempfile v3.27.0
+    ├── fastrand v2.4.1
+    ├── getrandom v0.4.3
+    │   ├── cfg-if v1.0.4
+    │   └── libc v0.2.186
+    ├── once_cell v1.21.4
+    └── rustix v1.1.4
+        ├── bitflags v2.13.0
+        ├── errno v0.3.14 (*)
+        └── libc v0.2.186

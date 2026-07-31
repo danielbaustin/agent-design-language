@@ -1,0 +1,8 @@
+local_pass
+command: CARGO_HOME=/Volumes/FastWork/cargo CARGO_TARGET_DIR=/Volumes/FastWork/adl-5526 cargo test --manifest-path adl/Cargo.toml provider_
+result: passed
+scope: provider profiles, substrate, adapters, provider integration tests
+tests: provider unit tests and provider_tests filtered lane passed; no credentials or live provider calls used
+changes: distinct Kimi, MiniMax, hosted Qwen, xAI, Mistral, Cohere, DeepSeek v4, Z.ai GLM-5, and Gemini 3.1 profiles with stable provider model identifiers and vendor inference
+adapter proof: profile-aware chat payloads and response extraction cover chat-completions and Gemini generateContent shapes; legacy generic HTTP retains its prompt/output contract
+negative posture: AWS/Bedrock unchanged and no provider credentials accessed

@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5686,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5686-publish-5662-terminal-projection",
+  "title": "[v0.91.8][csdlc-v2][records] Publish #5662 terminal projection to main",
+  "body": "Closes #5686\n\n## Summary\n- reapply the two retained #5662 terminal-projection commits onto current main\n- preserve the immutable #5662 closeout receipt as portable verification evidence\n- prove the complete 17-file projection tree and semantic card truth match the canonical receipt\n\n## Focused proof\n- `node .csdlc/evidence/5686/verify_receipt_parity.mjs`\n- typed `csdlc-doctor` PASS for #5686 and #5662\n- bounded exact-head Codex subagent review at `ff14deb06b8de6721ae22bf75a1816d4e0f8b156`: no actionable findings\n\n## Truth boundary\nThis PR changes terminal lifecycle projection and issue-local evidence only. It does not change Unity assets, runtime behavior, owner binaries, or the canonical receipt.",
+  "draft": false,
+  "revision": "git-blake3:e457915e173750b06e3d50e3ce709fe9c46cf1e8:e5c5904122951f7db4af70774b70dfc0eb402ba10f34add78ec59034a03768dd",
+  "commit_sha": "e457915e173750b06e3d50e3ce709fe9c46cf1e8"
+}

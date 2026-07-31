@@ -1,0 +1,13 @@
+{
+  "issue": 5499,
+  "card": "sor",
+  "expected_generation": 12,
+  "expected_digest": "ff5190b52c23c65a25a2e6841c9ad13607979b09ac150a7cd6a383fce7b9c39e",
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded implementation and complete focused validation are ready for the single pre-PR exact-revision review.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

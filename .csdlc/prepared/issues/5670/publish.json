@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5670,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_generation": 11,
+  "expected_digest": "d708b54f48aab3f4be3f4cdc554225b4bd73b4c9a3ea1639b03bef30147dafc7",
+  "claim_id": "claim-5670-coverage-shard-fanout",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5670-coverage-shard-fanout",
+  "title": "[v0.91.8][ci][coverage] Parallelize hosted coverage aggregation",
+  "body": "Closes #5670\n\nSplits hosted full workspace coverage into four profraw shard producers plus one authoritative aggregation gate. The full hosted path now collects shard profiles in parallel, verifies shard provenance, imports shard profraw into a report-only workspace pass, and merges the resulting workspace summary with runtime coverage. Non-full PR-fast hosted coverage stays on a separate single-run producer so fast and slow coverage are not mixed.\n\nLocal proof passed:\n- `ADL_TEST_TMP_ROOT=/Volumes/FastWork/adl-wp-5670/.adl/tmp bash adl/tools/test_run_authoritative_coverage_lane.sh`\n- `ADL_TEST_TMP_ROOT=/Volumes/FastWork/adl-wp-5670/.adl/tmp bash adl/tools/test_ci_runtime_contracts.sh`\n- `ADL_TEST_TMP_ROOT=/Volumes/FastWork/adl-wp-5670/.adl/tmp bash adl/tools/test_ci_path_policy.sh`\n- `ruby -e 'require \"yaml\"; YAML.safe_load(File.read(\".github/workflows/ci.yaml\"), aliases: true); puts \"yaml ok\"'`\n- `git diff --check`\n\nBounded subagent review found two actionable issues during development; both are fixed in the reviewed head. Hosted GitHub Actions artifact fan-in cannot be fully exercised locally, so CI remains the integration proof before merge.",
+  "draft": true,
+  "token_file": null
+}

@@ -1,0 +1,16 @@
+{
+  "issue": 5354,
+  "claim_id": "claim-5354-v0918-wp15-reacquired",
+  "expected_owner": "codex:5354-preparation-owner",
+  "expected_generation": 1,
+  "expected_digest": "efc44e35da544a0c9c95c52cdf945c60cf986f116ad5b887e36a77750069d4cc",
+  "now_unix_seconds": 1785466618,
+  "actor": "codex:5354-wp15-owner",
+  "reason": "Begin the accepted WP-15 convergence implementation after the typed #5727 claim-reacquisition proof and terminal WP-14A dependency gate.",
+  "expected_purpose": "Resume #5354 preparation-only work without claiming product, demo, or shared milestone paths",
+  "purpose": "Implement and validate the bounded WP-15 integrated convergence packet and its two milestone claim matrices.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+    "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md"
+  ]
+}

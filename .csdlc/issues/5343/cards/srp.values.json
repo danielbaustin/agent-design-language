@@ -1,0 +1,54 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5343,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-12][cutover] Execute reviewed reversible ADL default switch",
+    "slug": "v0918-wp12-reversible-adl-default-switch",
+    "version": "v0.91.8",
+    "generation": 20
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5343\n.csdlc/prepared/issues/5343\ndocs/milestones/v0.91.8/evidence/wp12/cutover-5343/report.json\ndocs/milestones/v0.91.8/evidence/wp12/cutover-handoff-5344.v1.json\nadl-v2/tools/install-adl-v2.sh\nadl-v2/crates/adl-cli/src/main.rs",
+      "review_revision": "git-blake3:26457888a1c13abee54a8db7cd30ba15e25bbbbc:a36a58255d3f58d9583c6716786ca633e80257ddcd7c037e9f1ffbfc74a74af9",
+      "reviewer": "subagent:gpt-5.5:Anscombe",
+      "review_prompts": [
+        "Can any missing, stale, malformed, contradictory, non-ancestral, or metadata-only #5344/#5345 fact bypass the execution gate?",
+        "Can any argument, environment value, path, symlink, stale writer, lock race, interruption, or malformed receipt bypass exact installation verification or alter prior selector bytes outside the #5345 transaction?",
+        "Are fresh-install selection, explicit v1 override, rollback-window checkpoints, exact restoration, and every failure class deterministic and fail-closed?",
+        "Does #5343 own only cutover evidence and avoid selector implementation, Runtime v2 edits, legacy deletion, AWS, credentials, hidden network, and production overclaim?",
+        "Are COTS, protected paths, LoC/test/module/time budgets, PVF classification, no-deferral, CI, exact review, and post-merge proof complete and executable?"
+      ],
+      "findings": [
+        {
+          "id": "P1-malformed-selector-transaction-not-proven",
+          "severity": "p1",
+          "summary": "The malformed-selector case now executes a real selector transaction against copied active state and verifies both malformed and primary selector bytes remain unchanged.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:26457888a1c13abee54a8db7cd30ba15e25bbbbc:a36a58255d3f58d9583c6716786ca633e80257ddcd7c037e9f1ffbfc74a74af9",
+          "route": null
+        },
+        {
+          "id": "P1-host-specific-default-target-path",
+          "severity": "p1",
+          "summary": "The proof target now defaults portably through issue or Cargo configuration and then the repository-relative target directory.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:26457888a1c13abee54a8db7cd30ba15e25bbbbc:a36a58255d3f58d9583c6716786ca633e80257ddcd7c037e9f1ffbfc74a74af9",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "The reviewer did not independently rerun the mutating transaction fault matrix; the conductor reran it at repair commit 8f5590dcd96fa173a84669b98c814a7d060c6882 and retained the passing exact report."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

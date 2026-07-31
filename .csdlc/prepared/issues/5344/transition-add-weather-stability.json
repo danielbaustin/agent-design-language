@@ -1,0 +1,17 @@
+{
+  "issue": 5344,
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-preparation",
+  "expected_owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "expected_generation": 2,
+  "expected_digest": "3348cac8581556f51ad514d5cf4ba505a8dd403f86f5d080f2e2bdefd575fec4",
+  "expected_purpose": "Execute #5344 Runtime v3 opt-in soak and rollback proof, repair Guardian process-0 child ownership so a dead Guardian cannot leave an orphan Runtime, validate on macOS, Linux, and native Windows, and retain truthful evidence without weakening TLS or deleting Runtime v1",
+  "now_unix_seconds": 1784840347,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Repair the live-soak defect where transient CPU saturation was treated as capacity-threatening pressure and cleanly stopped a healthy Runtime",
+  "purpose": "Execute #5344 Runtime v3 opt-in soak and rollback proof, repair Guardian process-0 child ownership so a dead Guardian cannot leave an orphan Runtime, validate on macOS, Linux, and native Windows, and retain truthful evidence without weakening TLS or deleting Runtime v1",
+  "add_protected_paths": [
+    "adl-runtime-kernel/src/continuity.rs",
+    "adl-runtime-kernel/src/weather.rs",
+    "adl-runtime-kernel/tests/configuration.rs"
+  ]
+}

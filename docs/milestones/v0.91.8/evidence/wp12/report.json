@@ -1,0 +1,79 @@
+{
+  "schema": "adl.wp12.soak_report.v1",
+  "issue": 5344,
+  "status": "pass",
+  "revision": "0e2bc61a0abec79fcc5b567c6030e10100606fba",
+  "manifest_sha256": "26ca19ad7562ab81ae47ba41fa8e3ced8c219665e82f764d5f7017831a17ba83",
+  "mode": "run",
+  "results": [
+    {
+      "id": "rollback-matrix",
+      "claim_class": "rollback",
+      "status": "pass",
+      "exit_code": 0,
+      "duration_ms": 1134,
+      "artifact_sha256": "200f6059e2ae08dd586f781bd034d8132c17dc8f258eecc432073aac0114fa6f"
+    },
+    {
+      "id": "runtime-acceptance",
+      "claim_class": "runtime_v3_acceptance",
+      "status": "pass",
+      "exit_code": 0,
+      "duration_ms": 85,
+      "artifact_sha256": "a17fcf0a2f50e2d495e4f90ce263410edc183add6c62699a2facbccf60410f74"
+    },
+    {
+      "id": "runtime-linux",
+      "claim_class": "runtime_v3_live",
+      "status": "pass",
+      "exit_code": 0,
+      "duration_ms": 228,
+      "artifact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "runtime-macos",
+      "claim_class": "runtime_v3_live",
+      "status": "pass",
+      "exit_code": 0,
+      "duration_ms": 233,
+      "artifact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "runtime-windows",
+      "claim_class": "runtime_v3_live",
+      "status": "pass",
+      "exit_code": 0,
+      "duration_ms": 228,
+      "artifact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "rollback": {
+    "schema": "adl.wp12.rollback_report.v1",
+    "issue": 5344,
+    "status": "pass",
+    "revision": "0e2bc61a0abec79fcc5b567c6030e10100606fba",
+    "selector_root": "isolated_ephemeral",
+    "prior_sha256": "feff5680c1fe681b95140ce13d4b5352b261dd08d5219fd27bd6928e5d556970",
+    "selected_sha256": "a3653d349f6a5fe9f254dbb9297c7cfe79d8abcdea1df7b4e584e3bdd8456078",
+    "restored_sha256": "feff5680c1fe681b95140ce13d4b5352b261dd08d5219fd27bd6928e5d556970",
+    "v1_fixture_sha256": "6e6c485f021c36fe32ee88b9d12f3e6e136ba23124c494ff8b590b23f0c6467c",
+    "v2_sha256": "6e6c485f021c36fe32ee88b9d12f3e6e136ba23124c494ff8b590b23f0c6467c",
+    "fresh_install_receipt_ref": ".csdlc/evidence/5344/rollback/fresh-install-receipt.json",
+    "fresh_install_receipt_sha256": "3d45aa497ae2644ac7891acd9631efdc1d8c338d85d642fe259ff733cdfa0561",
+    "exact_prior_bytes_restored": true,
+    "authoritative_cli_only": true,
+    "cases": [
+      "invalid_generation",
+      "missing_receipt",
+      "mismatched_receipt",
+      "stale_compare_and_swap",
+      "interrupted_before_commit",
+      "successful_opt_in",
+      "failed_soak_explicit_rollback"
+    ],
+    "boundary": "The v1 fixture proves selector transaction restoration only; #5343 owns real legacy executable restoration."
+  },
+  "default_generation_changed": false,
+  "runtime_v2_edited": false,
+  "deferred_acceptance": false
+}

@@ -52,6 +52,11 @@ def assert_contains(label: str, haystack: str, needle: str) -> None:
         fail(f"{label} missing {needle!r}")
 
 
+def assert_not_contains(label: str, haystack: str, needle: str) -> None:
+    if needle in haystack:
+        fail(f"{label} contains forbidden text {needle!r}")
+
+
 def run_js_view_model(
     js_path: Path,
     packet_path: Path,
@@ -214,6 +219,7 @@ def run_js_view_model(
           "hero-map-mode",
           "hero-event-title",
           "statusbar-mode",
+          "statusbar-websocket",
           "statusbar-updated",
           "statusbar-indicator",
           "agent-count",
@@ -248,7 +254,14 @@ def run_js_view_model(
           "dashboard-focus-link",
           "compact-comms-proof",
           "export-proof",
-          "prepare-envelope"
+          "prepare-envelope",
+          "operator-write-token",
+          "operator-login",
+          "operator-logout",
+          "operator-auth-status",
+          "signed-control-command",
+          "send-signed-command",
+          "operator-control-result"
         ].forEach((id) => element(id, {{ addEventListener: () => {{}} }}));
         elements.get("dashboard-live-api-base").value = "";
         const dashboardLinks = [
@@ -272,11 +285,8 @@ def run_js_view_model(
           querySelector: (selector) => selector === ".observatory" ? observatoryElement : null,
           querySelectorAll: (selector) => selector === "[data-dashboard-link]" ? dashboardLinks : []
         }};
-        const mockFetch = async (ref, options = {{}}) => {{
+        const mockFetch = async (ref) => {{
           const key = String(ref);
-          if (key.endsWith("/v1/observatory") && options.headers?.Authorization !== "Bearer validator-observatory-token-0001") {{
-            return {{ ok: false, status: 401, text: async () => "", json: async () => {{ throw new Error("unauthorized"); }} }};
-          }}
           const body = retainedFiles.get(key) || livePayloads.get(key);
           return body == null
             ? {{ ok: false, status: 404, text: async () => "", json: async () => {{ throw new Error("missing mock payload"); }} }}
@@ -297,7 +307,7 @@ def run_js_view_model(
           }},
           clearInterval: () => {{}},
           sessionStorage: {{
-            getItem: (key) => key === "adl.runtimeV3.observatoryToken" ? "validator-observatory-token-0001" : null
+            getItem: () => null
           }},
           globalThis: {{}}
         }};
@@ -550,7 +560,8 @@ def main() -> int:
     assert_contains("HTML retained CSM metrics ref", html, f'data-csm-metrics-ref="{CSM_METRICS_REF}"')
     assert_contains("HTML retained CSM events ref", html, f'data-csm-events-ref="{CSM_EVENTS_REF}"')
     assert_contains("HTML title", html, "ADL HTML Observatory - Runtime Proof")
-    assert_contains("HTML integrated proof copy", html, "HTML Observatory integrated proof")
+    assert_contains("HTML live Observatory copy", html, "Runtime v3 / live Observatory")
+    assert_not_contains("HTML obsolete visible version chip", html, '<span class="version-chip">v0.91.7</span>')
     assert_contains("HTML inline icon sprite", html, 'class="icon-sprite"')
     assert_contains("HTML pulse icon", html, 'href="#icon-pulse"')
     assert_contains("HTML packet icon", html, 'href="#icon-packet"')
@@ -657,13 +668,24 @@ def main() -> int:
     assert_contains("JS Runtime v3 observatory feed polling", js, "fetchRuntimeV3ObservatorySnapshot")
     assert_contains("JS Runtime v3 observatory endpoint", js, 'RUNTIME_V3_OBSERVATORY_ENDPOINT = "/v1/observatory"')
     assert_contains("JS Runtime v3 observatory schema", js, 'RUNTIME_V3_OBSERVATORY_SCHEMA = "adl.runtime_v3.observatory_feed.v2"')
-    assert_contains("JS Runtime v3 bearer authentication", js, "Authorization: `Bearer ${readToken}`")
+    assert_not_contains("JS public Runtime v3 reads omit bearer authentication", js, "Authorization: `Bearer ${readToken}`")
+    assert_contains("JS Runtime v3 write login", js, "authenticateRuntimeV3ObservatorySocket")
+    assert_contains("JS Runtime v3 login result handling", js, 'frame.status === "authenticated"')
+    assert_contains("JS Runtime v3 signed command send", js, 'liveSocket.send(JSON.stringify(command))')
+    assert_contains("HTML Runtime v3 write login", html, 'id="operator-login"')
+    assert_contains("HTML Runtime v3 signed command input", html, 'id="signed-control-command"')
     assert_contains("JS Runtime v3 weather staleness", js, "weather_stale_after_millis")
     assert_contains("JS Runtime v3 explicit opt-in selection", js, "runtime_v3_explicit_opt_in")
     assert_contains("JS runtime query base bootstrap", js, "getQueryApiBase")
     assert_contains("JS runtime auto-connect gate", js, "shouldAutoConnectLive")
     assert_contains("JS dashboard runtime status mirror", js, 'setText("dashboard-live-test-status"')
-    assert_contains("JS v0.91.7 display version", js, 'OBSERVATORY_VERSION = "v0.91.7"')
+    assert_contains("JS Runtime v3 display version", js, 'OBSERVATORY_VERSION = "Runtime v3"')
+    assert_contains("HTML Runtime v3 version chip", html, '<span class="version-chip">Runtime v3</span>')
+    assert_contains(
+        "HTML Runtime v3 live Observatory eyebrow",
+        html,
+        "Runtime v3 / live Observatory / CSM polis control room",
+    )
     assert_contains("JS display claim boundary normalization", js, "displayClaimBoundary")
     assert_contains("JS display packet label normalization", js, "displayPacketId")
     assert_contains("JS retained runtime mirror polling", js, "fetchRetainedRuntimeSnapshot")
@@ -692,6 +714,14 @@ def main() -> int:
     assert_contains("JS source-driven gauges", js, 'setText("hero-gauge-agents"')
     assert_contains("JS source-driven event title", js, 'setText("hero-event-title"')
     assert_contains("JS source-driven statusbar", js, 'setText("statusbar-mode"')
+    assert_contains("HTML WebSocket lifecycle statusbar", html, 'id="statusbar-websocket"')
+    assert_contains("JS WebSocket lifecycle statusbar", js, 'setText("statusbar-websocket"')
+    for websocket_state in ("connecting", "connected", "disconnected", "stopped"):
+      assert_contains(
+          f"JS WebSocket {websocket_state} status",
+          js,
+          f'setText("statusbar-websocket", "{websocket_state}")',
+      )
     assert_contains("JS statusbar current update timestamp", js, 'setText("statusbar-updated", vm.mode === "live" ? formatTimestampLabel(vm.fetchedAt) : formatCurrentTimestampLabel())')
     assert_contains("JS statusbar state indicator", js, 'setDataset("statusbar-indicator"')
 

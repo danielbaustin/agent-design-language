@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5719,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][ci][coverage] Avoid duplicate hosted coverage on podcast/demo page PRs",
+    "slug": "v0-91-8-ci-coverage-avoid-duplicate-hosted-coverage-on-podcast-demo-page-prs",
+    "version": "v0.91.8",
+    "generation": 4
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "ci_path_policy_contracts",
+          "proof_role": "focused selector and workflow contract validation",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 240,
+          "budget_tokens": 2000,
+          "argv": [
+            "bash",
+            "adl/tools/test_ci_path_policy.sh"
+          ],
+          "parallel_group": "focused",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on any selector ambiguity that could skip full coverage for source/runtime/provider/tooling behavior.",
+      "design_ref": ".csdlc/prepared/issues/5719/design.md",
+      "design_digest": "669865d6d9df6873d4b8b4f54a492499d00d3173912437883abddd0bebee5b35",
+      "diagram_ref": ".csdlc/prepared/issues/5719/diagram.mmd",
+      "diagram_digest": "1429f9a11d794b37f2a778dd3691f646b89873013d61a226235092ef77f5cb82"
+    }
+  }
+}

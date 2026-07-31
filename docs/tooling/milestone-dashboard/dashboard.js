@@ -9,6 +9,8 @@ const state = {
   laneFilter: "all"
 };
 
+const workcellStates = new Set(["live", "retained", "stale", "unknown", "blocked", "non-authoritative"]);
+
 function byId(id) {
   return document.getElementById(id);
 }
@@ -26,9 +28,12 @@ function humanStatus(status) {
   return {
     complete: "Complete",
     active: "Active",
+    live: "Live",
+    retained: "Retained",
     unknown: "Unknown / unverified",
     blocked: "Blocked / gated",
     stale: "Stale",
+    "non-authoritative": "Non-authoritative",
     guarded: "Guarded",
     bounded: "Bounded",
     warn: "Attention",
@@ -38,6 +43,19 @@ function humanStatus(status) {
 
 function statusClass(status) {
   return `status-${status}`;
+}
+
+function safeState(status) {
+  return workcellStates.has(status) ? status : "unknown";
+}
+
+function safeList(value, limit = 20) {
+  return Array.isArray(value) ? value.slice(0, limit) : [];
+}
+
+function boundedText(value, limit = 240) {
+  const text = String(value ?? "unknown");
+  return text.length > limit ? `${text.slice(0, limit)}...` : text;
 }
 
 function snapshotAgeHours() {
@@ -309,6 +327,210 @@ function renderPrChecks() {
     .join("");
 }
 
+function renderWorkcellItems(id, items) {
+  byId(id).innerHTML = safeList(items)
+    .map((item) => {
+      const itemState = safeState(item.state);
+      const meta = [item.role, item.source, item.revision, item.freshness, item.note]
+        .filter(Boolean)
+        .map((value) => boundedText(value, 180))
+        .join(" / ");
+      return `
+        <article class="issue-item">
+          <span class="inline-pill ${statusClass(itemState)}">${escapeHtml(humanStatus(itemState))}</span>
+          <strong>${escapeHtml(boundedText(item.label, 120))}</strong>
+          <span class="issue-copy">${escapeHtml(meta)}</span>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+function runtimeConfigFromSearch(search, workcell) {
+  if (typeof URL === "undefined" || typeof URLSearchParams === "undefined") {
+    return null;
+  }
+
+  const params = new URLSearchParams(search || "");
+  if (params.get("live") !== "1" || params.get("runtime") !== "v3") {
+    return null;
+  }
+
+  const runtimeApiBase = params.get("runtimeApiBase");
+  if (!runtimeApiBase) {
+    return { state: "unknown", message: "Runtime v3 live mode requested without runtimeApiBase." };
+  }
+
+  let baseUrl;
+  try {
+    baseUrl = new URL(runtimeApiBase);
+  } catch (_error) {
+    return { state: "blocked", message: "Runtime v3 Observatory base URL is invalid." };
+  }
+
+  if (baseUrl.protocol !== workcell.runtime.requiredProtocol) {
+    return { state: "blocked", message: "Runtime v3 Observatory reads require HTTPS." };
+  }
+
+  const allowedOrigins = safeList(workcell.runtime.allowedOrigins, 20);
+  if (allowedOrigins.length === 0) {
+    return { state: "blocked", message: "Runtime v3 Observatory origin allowlist is empty in the snapshot." };
+  }
+  if (!allowedOrigins.includes(baseUrl.origin)) {
+    return { state: "blocked", message: "Runtime v3 Observatory origin is not allowlisted by the snapshot." };
+  }
+
+  return {
+    state: "live",
+    feedUrl: new URL(workcell.runtime.feedPath, baseUrl.origin).toString(),
+    timeoutMs: workcell.runtime.timeoutMs,
+    maxPayloadBytes: workcell.runtime.maxPayloadBytes,
+    tokenStorageKey: workcell.runtime.tokenStorageKey
+  };
+}
+
+function renderRuntimeStatus(stateName, message) {
+  const status = safeState(stateName);
+  const statusElement = byId("runtime-live-status");
+  statusElement.className = `runtime-status ${statusClass(status)}`;
+  statusElement.textContent = `${humanStatus(status)}: ${boundedText(message, 220)}`;
+}
+
+function renderRuntimeObservations(observations) {
+  byId("runtime-observatory-list").innerHTML = safeList(observations, 8)
+    .map(
+      (item) => `
+        <article class="runtime-observation">
+          <span class="inline-pill ${statusClass(safeState(item.state))}">${escapeHtml(humanStatus(safeState(item.state)))}</span>
+          <strong>${escapeHtml(boundedText(item.label, 90))}</strong>
+          <span>${escapeHtml(boundedText(item.note, 180))}</span>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function retainedRuntimeObservations(workcell) {
+  return [
+    {
+      label: "Retained fallback",
+      state: "retained",
+      note: workcell.runtime.fallback
+    },
+    ...safeList(workcell.blockers, 4)
+  ];
+}
+
+function observationsFromRuntimePayload(payload) {
+  const agents = safeList(payload?.agents || payload?.topology?.agents || payload?.nodes, 6);
+  const observedAt = payload?.observed_at || payload?.observedAt || payload?.timestamp || "live response";
+  const total = payload?.total_agents || payload?.totalAgents || agents.length;
+  const observations = [
+    {
+      label: "Runtime feed",
+      state: "live",
+      note: `Observed ${total} runtime agents at ${observedAt}.`
+    }
+  ];
+
+  agents.forEach((agent) => {
+    observations.push({
+      label: agent.id || agent.name || agent.label || "runtime agent",
+      state: safeState(agent.state || agent.status || "live"),
+      note: agent.role || agent.kind || "Runtime v3 Observatory agent sample."
+    });
+  });
+
+  return observations;
+}
+
+async function refreshRuntimeObservatory(workcell) {
+  const search = window.location?.search || "";
+  const config = runtimeConfigFromSearch(search, workcell);
+  if (!config) {
+    renderRuntimeStatus("retained", workcell.runtime.fallback);
+    renderRuntimeObservations(retainedRuntimeObservations(workcell));
+    return;
+  }
+
+  if (config.state !== "live") {
+    renderRuntimeStatus(config.state, config.message);
+    renderRuntimeObservations(retainedRuntimeObservations(workcell));
+    return;
+  }
+
+  if (typeof fetch !== "function" || typeof AbortController === "undefined" || !window.sessionStorage) {
+    renderRuntimeStatus("unknown", "Browser Runtime v3 fetch support or session token storage is unavailable.");
+    renderRuntimeObservations(retainedRuntimeObservations(workcell));
+    return;
+  }
+
+  const token = window.sessionStorage.getItem(config.tokenStorageKey);
+  if (!token) {
+    renderRuntimeStatus("unknown", "Runtime v3 Observatory session token is missing.");
+    renderRuntimeObservations(retainedRuntimeObservations(workcell));
+    return;
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), config.timeoutMs);
+  try {
+    const response = await fetch(config.feedUrl, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      signal: controller.signal
+    });
+    const text = await response.text();
+    if (text.length > config.maxPayloadBytes) {
+      throw new Error("Runtime v3 Observatory payload exceeded dashboard limit.");
+    }
+    if (!response.ok) {
+      throw new Error(`Runtime v3 Observatory returned HTTP ${response.status}.`);
+    }
+    const payload = JSON.parse(text);
+    renderRuntimeStatus("live", "Runtime v3 Observatory read feed responded.");
+    renderRuntimeObservations(observationsFromRuntimePayload(payload));
+  } catch (error) {
+    renderRuntimeStatus("stale", error.message);
+    renderRuntimeObservations(retainedRuntimeObservations(workcell));
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function renderWorkcellOperator() {
+  const workcell = milestoneData.workcellOperator;
+  if (!workcell || workcell.schema !== "adl.workcell.operator.snapshot.v1") {
+    renderRuntimeStatus("unknown", "Workcell operator snapshot is unavailable.");
+    return;
+  }
+
+  const workcellState = safeState(workcell.status);
+  const status = byId("workcell-status");
+  status.textContent = humanStatus(workcellState);
+  status.className = `status-badge ${statusClass(workcellState)}`;
+
+  byId("workcell-summary").innerHTML = safeList(workcell.metrics, 8)
+    .map(
+      (metric) => `
+        <div class="metric">
+          <span class="metric-label">${escapeHtml(boundedText(metric.label, 80))}</span>
+          <strong>${escapeHtml(boundedText(metric.value, 80))}</strong>
+          <span>${escapeHtml(boundedText(metric.source, 140))}</span>
+        </div>
+      `
+    )
+    .join("");
+
+  renderWorkcellItems("workcell-dependencies", workcell.dependencies);
+  renderWorkcellItems("workcell-agents", workcell.agents);
+  renderWorkcellItems("workcell-authority", workcell.authority);
+  refreshRuntimeObservatory(workcell);
+}
+
 function renderReviewTail() {
   byId("review-tail-list").innerHTML = milestoneData.reviewTail
     .map(
@@ -355,9 +577,16 @@ function init() {
   renderAuthority();
   renderValidationProfiles();
   renderPrChecks();
+  renderWorkcellOperator();
   renderReviewTail();
   renderBlockers();
   renderDeferredFindings();
 }
 
 init();
+
+window.dashboardInternals = {
+  renderWorkcellOperator,
+  runtimeConfigFromSearch,
+  observationsFromRuntimePayload
+};

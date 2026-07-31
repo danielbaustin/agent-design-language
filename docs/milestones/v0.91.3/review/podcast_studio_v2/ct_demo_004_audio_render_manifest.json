@@ -1,8 +1,8 @@
 {
   "schema": "adl.podcast_studio_v2.audio_manifest.v1",
   "series_name": "ADL Podcast Studio",
-  "episode_title": "Episode 04: Can governed creative production feel alive?",
-  "episode_slug": "episode-04-governed-creative-production",
+  "episode_title": "Episode 01: Can AI Be a Good Teammate?",
+  "episode_slug": "episode-01-ai-good-teammate",
   "render_status": "manifest_only",
   "rendered_audio_present": false,
   "canonical_command": "bash adl/tools/demo_v0913_podcast_studio_v2.sh",
@@ -15,19 +15,19 @@
     {
       "speaker": "ChatGPT",
       "transcript_identity": "ChatGPT",
-      "intended_voice_style": "warm, direct, high-clarity host energy",
+      "intended_voice_style": "clear, friendly, grounded",
       "render_path": "not_run_manifest_only"
     },
     {
       "speaker": "Gemini",
       "transcript_identity": "Gemini",
-      "intended_voice_style": "bright, incisive, operationally sharp",
+      "intended_voice_style": "bright, curious, direct",
       "render_path": "not_run_manifest_only"
     },
     {
       "speaker": "Claude",
       "transcript_identity": "Claude",
-      "intended_voice_style": "measured, reflective, emotionally precise",
+      "intended_voice_style": "reflective, calm, thoughtful",
       "render_path": "not_run_manifest_only"
     }
   ],

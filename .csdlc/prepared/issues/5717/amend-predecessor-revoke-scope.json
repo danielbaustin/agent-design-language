@@ -1,0 +1,12 @@
+{
+  "issue": 5717,
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "expected_generation": 0,
+  "expected_digest": "e5eb058d59afc513db7e9d62a2bf9b7180e91253104c04c6c93e1ee789e68a0b",
+  "now_unix_seconds": 1785361490,
+  "actor": "codex:5717-execution",
+  "reason": "Cover the typed predecessor #5715 claim-release metadata required to bind and publish this stacked #5717 podcast studio follow-up without leaving implicit lifecycle side effects.",
+  "add_protected_paths": [
+    ".csdlc/issues/5715"
+  ]
+}

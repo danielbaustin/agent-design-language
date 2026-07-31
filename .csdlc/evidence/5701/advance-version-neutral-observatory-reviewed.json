@@ -1,0 +1,14 @@
+{
+  "issue": 5701,
+  "card": "srp",
+  "expected_generation": 32,
+  "expected_digest": "35fd8b0e328f1c3c167e19f48ecddc2d26eb4e8b00efdc7895ead00cec3aa434",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The exact GPT-5.5 review confirmed the Observatory design is unchanged, the version-neutral path is coherent, and all actionable findings are resolved.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

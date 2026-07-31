@@ -1,0 +1,28 @@
+{
+  "actor": "codex:issue-5683-unity-remediation",
+  "card": "sor",
+  "claim_id": "claim-5683-v0918-unity-observatory-visual-remediation",
+  "expected_digest": "674cd8e335465664aa8fde2ac7858a16da3f46967fe1afe958b2a46db0dd4031",
+  "expected_generation": 1,
+  "issue": 5683,
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Remediated the flagship Unity Observatory hero view in the bound worktree and retained direct dual-resolution Unity proof.",
+    "changes": [
+      "Suppressed incompatible imported particle systems and particle-heavy prefab roots that produced square render corruption.",
+      "Reframed and relit the investor hero camera, added a bounded observatory room shell, and normalized presentation geometry.",
+      "Added deterministic Full HD and QHD camera and Game View proof helpers.",
+      "Increased command-shell legibility while preserving explicit fixture and contract-only truth labels.",
+      "Extended the focused Unity Observatory contract guardrail for the remediated stage-builder proof surface."
+    ],
+    "artifacts": [
+      ".csdlc/evidence/5683/final-full-hd-game-view.png",
+      ".csdlc/evidence/5683/final-qhd-game-view.png",
+      ".csdlc/evidence/5683/raw-environment-full-hd-pass-3.png",
+      ".csdlc/evidence/5683/raw-environment-qhd-pass-3.png",
+      ".csdlc/evidence/5683/LIVE_UNITY_PROOF.md",
+      ".csdlc/evidence/5683/TOOLING_ANOMALIES.md"
+    ]
+  },
+  "reason": "Record observed issue-bound Unity execution before review"
+}

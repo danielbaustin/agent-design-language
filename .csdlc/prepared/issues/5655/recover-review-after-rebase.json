@@ -1,0 +1,8 @@
+{
+  "issue": 5655,
+  "expected_generation": 11,
+  "expected_digest": "e3a5f432ef52732590bddeb174d4942aa72dadee9cffe6bbda75693af9660a03",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "reason": "Recover stale #5655 review and publication after rebasing the issue branch onto current origin/main."
+}

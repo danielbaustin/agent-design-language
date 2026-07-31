@@ -1,0 +1,53 @@
+{
+  "issue": 5344,
+  "expected_generation": 18,
+  "expected_digest": "8508b624256306028f2e89b42faca92785069246ea2213805a6c60832efda430",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+  "evidence": {
+    "reviewer": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+    "scope": [
+      ".csdlc/issues/5344",
+      ".csdlc/prepared/issues/5344",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh"
+    ],
+    "reviewed_revision": "git-blake3:d6e56c26bd33e51ce8d179fdfbc1cd9577e21ad5:5fdbfd928c741bd729828b11e9b1595701a0dd8a078eb9f3f00a57f84937dd14",
+    "findings": [
+      {
+        "id": "F-5344-CI-1",
+        "severity": "p1",
+        "summary": "Line-oriented component splitting can hide a Windows-illegal suffix after an embedded newline.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:d6e56c26bd33e51ce8d179fdfbc1cd9577e21ad5:5fdbfd928c741bd729828b11e9b1595701a0dd8a078eb9f3f00a57f84937dd14",
+        "route": null
+      },
+      {
+        "id": "F-5344-CI-2",
+        "severity": "p2",
+        "summary": "The regression does not cover spaces or an illegal component after an embedded newline.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:d6e56c26bd33e51ce8d179fdfbc1cd9577e21ad5:5fdbfd928c741bd729828b11e9b1595701a0dd8a078eb9f3f00a57f84937dd14",
+        "route": null
+      },
+      {
+        "id": "F-5344-CI-3",
+        "severity": "p2",
+        "summary": "The SRP prompts remain stale selector questions instead of the bounded CI path-policy recovery scope.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "accepted_risk",
+        "fix_revision": null,
+        "route": "Immediate typed review recovery, prompt correction, and final exact-head review before publication."
+      }
+    ],
+    "residual_risks": [
+      "The stale SRP prompts are accepted only as an intermediate lifecycle bridge; publication remains blocked until typed recovery corrects them and a fresh exact-head review passes."
+    ],
+    "completed": true
+  }
+}

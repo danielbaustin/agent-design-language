@@ -1,0 +1,14 @@
+{
+  "issue": 5665,
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "expected_generation": 0,
+  "expected_digest": "1e54f5a768dd047ce7b7812f798ab67e65ddb0c7e93dd3b4229402a4a68fae04",
+  "now_unix_seconds": 1784936021,
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "remove obsolete duplicate WP-12 websocket proof wrapper after replacing it with real runtime API WSS proof",
+  "add_protected_paths": [
+    "adl/Cargo.toml",
+    "adl/src/bin/run_wp12_acip_websocket_transport_proof.rs",
+    "docs/milestones/v0.91.7/review/runtime/WP12_ACIP_WEBSOCKET_TRANSPORT_4659.md"
+  ]
+}

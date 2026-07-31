@@ -1,0 +1,33 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 26,
+  "expected_digest": "c929523519fb80c87acafa86386fe313673625d04dfa314c4363241f68ae855c",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record implementation of the consolidated exact-review blocker fixes before rerouting exact review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Resolved the consolidated exact-review blockers on top of the five real adapter fixes. Cancellation results are no longer cached as completed idempotent work, so the same cancelled request key can be retried successfully. writer.lock is now an owner-recorded directory lock with pid-based stale recovery and ownership-checked release. Production local executor construction now returns configuration errors to callers instead of panicking. Current touched source/test physical LoC is before 3796, after 3737, net -59.",
+    "changes": [
+      "Skipped completed-idempotency caching for AdmissionClosed cancellation results and added same-idempotency retry proof.",
+      "Replaced the plain writer.lock file with an owner.json directory lock, live-pid stale detection, atomic stale-lock rename recovery, and ownership-checked drop cleanup.",
+      "Changed build_production_operation_executors to return io::Result and updated binary/governed/test callers to handle invalid configured state roots without panic.",
+      "Trimmed duplicate assembly tests while preserving real end-to-end proofs for the five required behaviors and review blockers."
+    ],
+    "artifacts": [
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      ".csdlc/prepared/issues/5663/validate-real-fixes.json",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-governed.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log"
+    ]
+  },
+  "fail_after_backup": false
+}

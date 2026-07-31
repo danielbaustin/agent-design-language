@@ -1,0 +1,211 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5719,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "3311f6460b0988706cb978ea2fcf7da322d7af3273fc5c96c2813a6f7a4fc271",
+  "phase": "published",
+  "generation": 4,
+  "digest": "6be197a401de175642148e96d722b5e743df0a76a3fedc316a0d20f518fe427e",
+  "claim": {
+    "id": "claim-5719-ci-coverage-page-policy",
+    "owner": "codex:5719-execution",
+    "generation": 4,
+    "acquired_unix_seconds": 1785363942,
+    "expires_unix_seconds": 1785968742,
+    "heartbeat_unix_seconds": 1785363942,
+    "branch": "codex/5719-ci-coverage-page-policy",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5719",
+      ".csdlc/locks/5719.lock",
+      ".csdlc/prepared/issues/5719",
+      ".github/workflows/ci.yaml",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_validation_manager.sh"
+    ],
+    "purpose": "Fix CI path-policy selection so podcast/demo page-only PRs do not schedule duplicate hosted runtime and workspace coverage while preserving full coverage for Rust/runtime/provider/tooling changes"
+  },
+  "review_assignment": {
+    "reviewer": "Heisenberg",
+    "assigned_by": "codex:5719-execution",
+    "revision": "git-blake3:b0f71eabb06945d5a7ad6147d7178586e3db86da:a6218709a4daeb864cd8deaf812e424aa9342260d5592dd722049a4ef0dd5be0",
+    "scope": [
+      ".csdlc/issues/5719",
+      ".csdlc/evidence/5719",
+      ".csdlc/prepared/issues/5719",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "Heisenberg",
+    "scope": [
+      ".csdlc/issues/5719",
+      ".csdlc/evidence/5719",
+      ".csdlc/prepared/issues/5719",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh"
+    ],
+    "reviewed_revision": "git-blake3:b0f71eabb06945d5a7ad6147d7178586e3db86da:a6218709a4daeb864cd8deaf812e424aa9342260d5592dd722049a4ef0dd5be0",
+    "findings": [],
+    "residual_risks": [
+      "Review was read-only and confirmed the selector/path-policy contract at exact HEAD b0f71eabb; hosted CI behavior remains deferred to the published PR checks."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5719,
+    "pull_request": 5721,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5721",
+    "base": "main",
+    "head": "codex/5719-ci-coverage-page-policy",
+    "revision": "git-blake3:fdd526202033fd0d119ac020e341c1e40f8b0c79:2d5ce896bbe2adadfb376fc119859ec9159eb2f8aed49ac5acfaca25d4612acc",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5719/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5719/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5719-execution",
+      "revision": "669865d6d9df6873d4b8b4f54a492499d00d3173912437883abddd0bebee5b35"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "cac0dcaa0ee9b77edfb921dae5be3a115e2e81b077f11cd3949b5c666f03f3b0",
+      "rendered_digest": "5edc703d78bb5d850b627fa794f4eb45e023a7c3cf86f62a04ec9b1e6fbebef0",
+      "ast_digest": "9798d8fc4365de347cba719ad458e1c5d6f62b23ba9451554a151dc6a99fd129"
+    },
+    "stp": {
+      "values_digest": "eecd6ab781cd3c18078b3f1d11ce54e620af35d881ec201d324198ffaccf01eb",
+      "rendered_digest": "3a46127e74167c14f3cf932b65fd169a5f087f132c4f5c0473968f0c7003044c",
+      "ast_digest": "36f64615fce3a1933d837007862c8eee9304620c5b01fbe632a35271b7624868"
+    },
+    "spp": {
+      "values_digest": "5e1e5a4471c54a5285ff11d4c94de350c311d412add41bc2c762aa5ed360dac6",
+      "rendered_digest": "4c33e2a1cd788a668dcedeec7d45294528a99aa439cd07ac4118a1181f91cccd",
+      "ast_digest": "df7462547dbef6bf41ecf7bbfe77d4f213d05d353d4ea38b290c28e07616325f"
+    },
+    "vpp": {
+      "values_digest": "0907db0945a24b9ca6504d1c6ae1502928060653c7572722d325f4f762052959",
+      "rendered_digest": "53b870f75afb2af19703292ae1300e6d7251054fe899d5fac6685e941c194b58",
+      "ast_digest": "7dde77af196d5a1964814b78770b680f9988b6f569a44e25219157e58306f985"
+    },
+    "srp": {
+      "values_digest": "0f4f1b0c0d4a42bc788212ae02b7acbcdb11cc05b353e81b502d593d0ebbff49",
+      "rendered_digest": "5f5fba1cc84a8d39c69abcfc670f8f526070a8cad8012dbdf063a2e9e476d997",
+      "ast_digest": "934f41a98fd3d24fc252acd7fa5d5fb1855a993707d3c462451e39e3706e2756"
+    },
+    "sor": {
+      "values_digest": "ab202e8924787b55f69e3b8cca164bcc20981de24e4608b6758ac3622a26c895",
+      "rendered_digest": "2801be906fc260ce5adc6006122d9b4c2f6b2979d58d3b3be4c3ccb0569b96cf",
+      "ast_digest": "1fadc9c2e1f3978efdd0817e40dc16986174ae9c4729c711c9039287101b8835"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5719-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5719-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5719-execution",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5719-execution",
+      "reason": "Exact bounded review passed with no actionable findings for the podcast CI coverage path-policy fix."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5719-execution",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5719-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5719-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5719-execution",
+      "reason": "The reproduced #5716-like failure is an unmapped validation-manager surface, so #5719 must update the validation lane selector manifest as part of the CI coverage selection fix.",
+      "operation": "{\"add_protected_paths\":[\"adl/config/validation_lane_selector.v0.91.6.json\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5719-execution",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5719-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5719-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5719-execution",
+      "reason": "Exact bounded review passed with no actionable findings for the podcast CI coverage path-policy fix.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5719-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

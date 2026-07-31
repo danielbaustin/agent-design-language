@@ -1,0 +1,121 @@
+# Structured Planning Prompt
+
+Template: 1.0.0
+
+Issue: 5500
+
+Repository: danielbaustin/agent-design-language
+
+Card: spp
+
+Status: ready
+
+## Summary
+
+Prepare and independently review a small read-only extension of the existing milestone dashboard, hold product scope behind exact #5498/#5349 terminal gates, then later implement deterministic secure fixture-backed projection and Runtime Observatory composition.
+
+## Plan
+
+Revision 3
+
+## Steps
+
+[
+  {
+    "id": "S1",
+    "action": "Render and validate all six cards, design, diagram, dependencies, protected paths, COTS, budgets, security boundaries, and PVF lanes without adding preparation review churn",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-3",
+      "AC-4",
+      "AC-7"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S2",
+    "action": "Wait fail-closed for #5498 and final gate #5349 to be live-merged on origin/main and ancestral to the #5500 execution base; retain typed closeout receipts as audit evidence only",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-4"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S3",
+    "action": "Extend the existing dashboard with typed snapshot and bounded live observation adapters, safe deterministic rendering, mobile layout, and zero mutation capability",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Run focused and full proof, exact-revision implementation review immediately before PR, typed publication, serialized merge, post-merge validation, and closeout",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7"
+    ],
+    "status": "pending"
+  }
+]
+
+## Invariants
+
+- no tracked work on main
+- no product implementation before #5498 and #5349 terminal gates
+- preparation claim protects only issue-local lifecycle paths
+- future product paths are docs/tooling/milestone-dashboard and adl/tools/test_milestone_dashboard.sh only until reviewed amendment
+- no Runtime v2, AWS, raw gh, provider, unauthenticated HTTP, hard-coded IP, or secret retention
+- zero mutation or autonomous merge/closeout authority
+- deterministic safe rendering with explicit provenance and freshness
+
+## Risks
+
+- the view could accidentally become a second source of truth or mutation surface
+- stale retained or partial live observations could be displayed as current
+- untrusted text or URLs could create XSS, credential, or origin-boundary defects
+- runtime observations could overwrite lifecycle or GitHub authority
+- dashboard scope could overlap #5502 convergence or another child
+- a small static surface could regrow into a backend framework
+
+## Estimates
+
+{
+  "elapsed_seconds": 21600,
+  "total_tokens": 80000,
+  "validation_seconds": 3600
+}
+
+## Design
+
+.csdlc/prepared/issues/5500/design.md
+
+Digest: 1fd72ec7df400be275671013f2998d9b199913c3977b375737a5557c39a62333
+
+## Diagram
+
+.csdlc/prepared/issues/5500/diagram.mmd
+
+Digest: 2e9d128f5fc0f656a4971b46d7064e0a95ff82f5a21b5750f885ded47cb9e58e
+
+## Stop Conditions
+
+- #5498 or #5349 is not live-merged on origin/main or its merged revision is not ancestral to the #5500 execution base
+- a future dashboard path overlaps an active typed claim including #5502 or another workcell child
+- implementation requires mutation, a second state store, a backend, or lifecycle authority
+- live access cannot remain authenticated HTTPS and configuration-driven
+- the declared LoC, test, time, dependency, or security budget is exceeded without reviewed typed exception
+
+## Handoff
+
+Proceed only after doctor readiness.

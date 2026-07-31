@@ -1,0 +1,6 @@
+dependency-ancestry: PASS 11151e0beab02b1667f6505b7f8992bfd47d2f8f is ancestor of origin/main
+manifest-integrity: PASS 4 JSON artifacts parsed and manifest digest recorded
+path-confinement: PASS 29 branch paths all confined to #4758 allowlist
+consumer-integration: PASS consumption.v1.json records manifest digest d8bfde371e76ad96c1d2556f4eeaea4e0f12de54a7d6bfcc4437dc29f0646096
+rollback: PASS rollback.v1.json records trigger, method, before/after revisions, verification, and passed outcome
+exact-review: PENDING typed csdlc-review record after implementation commit

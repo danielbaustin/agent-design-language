@@ -1,0 +1,148 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5655
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: pre_phase
+
+## Summary
+
+Implemented a repo-native Rust csdlc-github command for idempotent issue create/update/comment/close/read and PR state observation, backed by typed schemas, shared token resolution, exact marker reconciliation, operator guidance, and focused tests.
+
+## Artifacts
+
+- csdlc-v2/src/bin/csdlc-github.rs
+- csdlc-v2/src/github.rs
+- csdlc-v2/tests/gate_github_actions.rs
+- csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md
+
+## Execution
+
+- Added csdlc-github binary with typed run/schema commands.
+- Added GithubAction request/result/issue schemas and library execution entrypoint.
+- Added idempotent issue marker reconciliation with post-mutation readback for issue creation and comments.
+- Exposed PR state observation through the same request/result surface while preserving existing Rust v2 publish/ready/merge/closeout commands for terminal lifecycle actions.
+- Added operator skill guidance prohibiting connector/raw gh/legacy wrapper/AWS routing.
+- Added focused fail-fast and loopback mock tests for marker stability, invalid input, and idempotent issue/comment readback.
+
+## Validation
+
+[
+  {
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--bin",
+      "csdlc-github",
+      "--",
+      "schema"
+    ],
+    "purpose": "Prove the new Rust command binary builds and exposes the public schema bundle including github_action request/result surfaces.",
+    "outcome": "passed",
+    "evidence_ref": "local exit 0 with TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate_github_actions"
+    ],
+    "purpose": "Prove idempotent operation markers, fail-fast invalid input, and loopback GitHub issue/comment create/readback reconciliation.",
+    "outcome": "passed",
+    "evidence_ref": "6 passed, 0 failed with TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml"
+    ],
+    "purpose": "Prove the new GitHub action command surface does not regress C-SDLC v2 lifecycle, schema, publication, merge, closeout, import, and cutover behavior.",
+    "outcome": "passed",
+    "evidence_ref": "Full suite passed including gate_github_actions 6/6 and doc-test 1/1 with TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml"
+    ],
+    "purpose": "Prove review fixes for issue_update/issue_close exact readback and expanded focused mutation coverage without regressing C-SDLC v2.",
+    "outcome": "passed",
+    "evidence_ref": "Full suite passed after Boole review fixes, including gate_github_actions 6/6 covering create/comment/update/close/stale-readback and doc-test 1/1; TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp; CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml"
+    ],
+    "purpose": "Prove the Rust-only csdlc-github action surface, including issue create/comment/update/close exact readback, body equality, exact label and assignee sets, stale and extra readback rejection, and full C-SDLC v2 regression safety.",
+    "outcome": "passed",
+    "evidence_ref": "Focused gate_github_actions passed 2/2; full csdlc-v2 suite passed including gate_github_actions 2/2 and Doc-tests csdlc_v2 1/1. TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp; CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target."
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml"
+    ],
+    "purpose": "Prove the rebased Rust-only csdlc-github action surface and full C-SDLC v2 suite after stale review/publication recovery.",
+    "outcome": "passed",
+    "evidence_ref": "After rebase onto origin/main 1facdf209: focused gate_github_actions passed 2/2; full csdlc-v2 suite passed including gate_github_actions 2/2 and Doc-tests csdlc_v2 1/1. TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp; CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target."
+  },
+  {
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "purpose": "Prove the CI-reported strict Clippy blockers in csdlc-v2/src/github.rs are fixed before re-review and republication.",
+    "outcome": "passed",
+    "evidence_ref": "Strict Clippy passed after collapsing the issue_create guard and returning normalize_issue directly. Focused gate_github_actions passed 2/2; full csdlc-v2 suite passed including gate_github_actions 2/2 and Doc-tests csdlc_v2 1/1. TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp; CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target."
+  }
+]
+
+## Integration
+
+pr_open
+
+## Publication
+
+Publication: ready
+
+Merge: not_merged
+
+## Closeout
+
+not_started
+
+## Follow Ups
+
+- none

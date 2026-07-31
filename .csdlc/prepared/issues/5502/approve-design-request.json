@@ -1,0 +1,7 @@
+{
+  "issue": 5502,
+  "expected_generation": 0,
+  "expected_digest": "bffe4b1dd28c990d50bcf5e3bab1a20f13ebf9d1eb717e8722755d572cc6443c",
+  "claim_id": "claim-5502-v0918-output-convergence-preparation",
+  "reviewer": "codex-subagent:gpt-5.4-mini:019f862d-8b86-78d2-8911-59f626471d49"
+}

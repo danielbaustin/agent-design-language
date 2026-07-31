@@ -1,0 +1,7 @@
+{
+  "issue": 5498,
+  "expected_generation": 0,
+  "expected_digest": "ba95fbe1155b7d970976eea3f273fa5e0d0f437e4599b74c051f96a005c5bfba",
+  "claim_id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+  "reviewer": "subagent:019f8630-93ef-7e51-8621-25fcd54d2fa4"
+}

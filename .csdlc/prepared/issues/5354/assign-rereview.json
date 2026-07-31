@@ -1,0 +1,16 @@
+{
+  "issue": 5354,
+  "expected_generation": 11,
+  "expected_digest": "0914d65d5aafa60e535b2fa3ca925ee4a4d1a16d324ca1f3942fff3fc16d7ce8",
+  "claim_id": "claim-5354-v0918-wp15-reacquired",
+  "reviewer": "codex:gpt-5.5-exact-head-review",
+  "assigned_by": "codex:5354-wp15-owner",
+  "scope": [
+    ".csdlc/evidence/5354",
+    ".csdlc/issues/5354",
+    ".csdlc/prepared/issues/5354",
+    "adl-v2/Cargo.lock",
+    "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+    "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md"
+  ]
+}

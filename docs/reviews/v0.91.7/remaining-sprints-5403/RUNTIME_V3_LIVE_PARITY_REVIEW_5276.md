@@ -41,7 +41,7 @@ the packet to mocked client-contract validation.
 `GET /v1/observatory` returns the complete feed without signed authorization at
 `adl-runtime-kernel/src/control.rs:642` and line 673. CORS controls browser
 origins, not network access. The demo README instructs external binding at
-`demos/v0.91.7/html-observatory/README.md:129`, while the release packet calls
+`demos/html-observatory/README.md:129`, while the release packet calls
 the surface loopback-only at
 `docs/architecture/runtime_v3_release_proof_gate_5220.v1.json:89`.
 

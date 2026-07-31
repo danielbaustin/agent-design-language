@@ -1,0 +1,13 @@
+{
+  "issue": 5384,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "fc59b98d636f97681bdcaa8fd40f4346b42183eab106b7e04c963461f96bb9c3",
+  "claim_id": "claim-5384-v0918-wp14a-preparation-refresh",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Gemini 3.1 Pro reviewed the exact WP-14A acceptance revision and returned PASS with zero blockers.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

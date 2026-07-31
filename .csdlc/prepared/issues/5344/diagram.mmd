@@ -1,0 +1,27 @@
+flowchart TD
+    A["Preparation only: six cards + reviewed design"] --> B{"#5350 and #5361 terminal gates"}
+    B -->|"missing merge, closed_out, receipt, or ancestry"| X["Stop: no selector mutation"]
+    B -->|"all exact gates pass"| C["Freeze and hash soak manifest"]
+    C --> D["Snapshot prior selector bytes + digest + receipt"]
+    D --> E{"Verify isolated root and opt-in installation"}
+    E -->|"verification fails"| R1["Prove prior bytes unchanged"]
+    E -->|"verified"| F["Authoritative locked CAS opt-in"]
+    F -->|"selection fails"| R1
+    F -->|"selection succeeds"| G["Run bounded local / CI / Runtime v3 / provider / demo soak"]
+    G --> H{"Soak result"}
+    H -->|"pass"| R2["Explicit rollback through same CAS API"]
+    H -->|"fail"| R2
+    R2 --> I{"Exact prior bytes and digest restored?"}
+    I -->|"no"| Z["Hard stop: block #5343 and deletion"]
+    I -->|"yes"| J["Normalize and hash evidence packet"]
+    R1 --> K{"Prior bytes unchanged?"}
+    K -->|"no"| Z
+    K -->|"yes"| J
+    J --> L["Exact-revision review + all PVF lanes"]
+    L -->|"finding or deferred proof"| X
+    L -->|"accepted"| M["Handoff to #5343; no default change by #5344"]
+
+    N["#5345 selector/CLI"] -. "read-only dependency" .-> D
+    P["#5350 parity packet"] -. "read-only input" .-> C
+    Q["#5361 Runtime v3 acceptance"] -. "read-only input" .-> G
+    S["Runtime v2"] -. "untouched rollback evidence" .-> M

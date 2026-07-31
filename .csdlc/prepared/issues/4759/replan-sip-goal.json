@@ -1,0 +1,14 @@
+{
+  "issue": 4759,
+  "card": "sip",
+  "expected_generation": 1,
+  "expected_digest": "7a5f4d732e29bed879fb7af319e3078ba495499fd34e904f9648b90e4d5505d5",
+  "claim_id": "claim-4759-v0918-activation-execution-20260731",
+  "actor": "codex:issue-4759-execution",
+  "reason": "Update SIP from preparation-only intent to the operator-authorized #4759 execution intent.",
+  "operation": {
+    "operation": "replan",
+    "field": "goal",
+    "value": "Implement the v0.91.8 WP-21 activation bridge that maps v0.92 activation inputs to accepted platform evidence, named WP-21 owners, explicit blockers, or non-claims."
+  }
+}

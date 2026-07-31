@@ -22,7 +22,7 @@
       {
         "id": "card-contract",
         "proof_role": "Complete six-card generation and acceptance-coverage proof",
-        "purpose": "Verify all cards share generation 4, constraints and preparation review scope are explicit, and every AC is covered by SPP and VPP",
+        "purpose": "Verify all cards share generation 9, constraints and preparation review scope are explicit, every AC is covered by SPP and VPP, and #5350 plus the full AC-6 evidence contract are retained",
         "determinism": "deterministic",
         "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
         "credentials": [],
@@ -33,7 +33,7 @@
         "execution": "local",
         "timeout_seconds": 60,
         "executable": "ruby",
-        "argv": ["-rjson", "-e", "cards=%w[sip stp spp vpp srp sor].map{|k| JSON.parse(File.read(\".csdlc/issues/5361/cards/#{k}.values.json\"))}; abort(\"generation mismatch\") unless cards.map{|c| c.dig(\"identity\",\"generation\")}.uniq==[4]; by_kind=cards.to_h{|c| [c.dig(\"content\",\"card_kind\"),c.dig(\"content\",\"values\")]}; abort(\"missing constraints\") if by_kind.fetch(\"sip\").fetch(\"operator_constraints\").empty?; scope=by_kind.fetch(\"srp\").fetch(\"review_scope\"); abort(\"generic review scope\") unless scope.include?(\"preparation revision\") && scope.include?(\"AC-1 through AC-7\"); ac=by_kind.fetch(\"stp\").fetch(\"acceptance_criteria\").map{|x| x[/AC-\\d+/]}.uniq.sort; spp=by_kind.fetch(\"spp\").fetch(\"steps\").flat_map{|x| x.fetch(\"acceptance_ids\")}.uniq.sort; vpp=by_kind.fetch(\"vpp\").fetch(\"lanes\").flat_map{|x| x.fetch(\"acceptance_ids\")}.uniq.sort; abort(\"SPP coverage incomplete\") unless spp==ac; abort(\"VPP coverage incomplete\") unless vpp==ac; puts(\"cards=6 generation=4 acceptance=7 spp_coverage=complete vpp_coverage=complete\")"],
+        "argv": ["-rjson", "-e", "cards=%w[sip stp spp vpp srp sor].map{|k| JSON.parse(File.read(\".csdlc/issues/5361/cards/#{k}.values.json\"))}; abort(\"generation mismatch\") unless cards.map{|c| c.dig(\"identity\",\"generation\")}.uniq==[9]; by_kind=cards.to_h{|c| [c.dig(\"content\",\"card_kind\"),c.dig(\"content\",\"values\")]}; abort(\"missing constraints\") if by_kind.fetch(\"sip\").fetch(\"operator_constraints\").empty?; scope=by_kind.fetch(\"srp\").fetch(\"review_scope\"); abort(\"generic review scope\") unless scope.include?(\"preparation revision\") && scope.include?(\"AC-1 through AC-7\"); stp=by_kind.fetch(\"stp\"); abort(\"missing #5350 dependency\") unless stp.fetch(\"dependencies\").any?{|x| x.include?(\"#5350\")}; ac=stp.fetch(\"acceptance_criteria\").map{|x| x[/AC-\\d+/]}.uniq.sort; spp=by_kind.fetch(\"spp\").fetch(\"steps\").flat_map{|x| x.fetch(\"acceptance_ids\")}.uniq.sort; lanes=by_kind.fetch(\"vpp\").fetch(\"lanes\"); vpp=lanes.flat_map{|x| x.fetch(\"acceptance_ids\")}.uniq.sort; abort(\"SPP coverage incomplete\") unless spp==ac; abort(\"VPP coverage incomplete\") unless vpp==ac; proof=lanes.map{|x| [x.fetch(\"proof_role\"),x[\"defer_reason\"]].compact.join(\" \")}.join(\" \"); [\"#5350\",\"line count\",\"module growth\",\"dependency audit\",\"test count\",\"ci\",\"exact-revision review\"].each{|term| abort(\"missing proof term: #{term}\") unless proof.downcase.include?(term.downcase)}; puts(\"cards=6 generation=9 acceptance=7 spp_coverage=complete vpp_coverage=complete shadow_parity=required ac6=complete\")"],
         "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
       },
       {

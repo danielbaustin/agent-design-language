@@ -1,0 +1,16 @@
+{
+  "issue": 5344,
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-preparation",
+  "expected_owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "expected_generation": 4,
+  "expected_digest": "5be9e460f6bf368fe9d608167d9f44b5a18b1c006fe41c664e6eb2845135e6f8",
+  "expected_purpose": "Execute #5344 Runtime v3 opt-in soak and rollback proof, repair Guardian process-0 child ownership so a dead Guardian cannot leave an orphan Runtime, validate on macOS, Linux, and native Windows, and retain truthful evidence without weakening TLS or deleting Runtime v1",
+  "now_unix_seconds": 1784913831,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Replace source inclusion of the Guardian implementation with an explicit test dependency so strict all-target validation sees the Guardian COTS dependency boundary",
+  "purpose": "Execute #5344 Runtime v3 opt-in soak and rollback proof, repair Guardian process-0 child ownership so a dead Guardian cannot leave an orphan Runtime, validate on macOS, Linux, and native Windows, and retain truthful evidence without weakening TLS or deleting Runtime v1",
+  "add_protected_paths": [
+    "adl-runtime-kernel/Cargo.toml",
+    "adl-runtime-kernel/tests/parity_b_live_kernel.rs"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "issue": 5655,
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "expected_generation": 1,
+  "expected_digest": "41d587c9a5a2a4ba1509185f9dbe007137819ae9ff98ef4c6ad754b47cd2ec5b",
+  "now_unix_seconds": 1784921361,
+  "actor": "codex:issue-5655-slot-1",
+  "reason": "Add implementation, schema, focused test, and operator documentation paths for the repo-native Rust GitHub action command surface.",
+  "add_protected_paths": [
+    "csdlc-v2/Cargo.toml",
+    "csdlc-v2/src/bin/csdlc-github.rs",
+    "csdlc-v2/src/github.rs",
+    "csdlc-v2/src/github_token.rs",
+    "csdlc-v2/src/lib.rs",
+    "csdlc-v2/src/schema.rs",
+    "csdlc-v2/tests/gate_github_actions.rs"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "issue": 5499,
+  "expected_generation": 13,
+  "expected_digest": "17d008d1675f4eeea3f2dffff39c3c65283d9bf0fc255db8b00c4854a4c6d6f7",
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "reviewer": "subagent:019f8bf0-a08b-7c92-ac2f-ca70c074bde7",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    "adl-v2/crates/adl-workcell-conductor",
+    ".csdlc/issues/5499",
+    ".csdlc/prepared/issues/5499"
+  ]
+}

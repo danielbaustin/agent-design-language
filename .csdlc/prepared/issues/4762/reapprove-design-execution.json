@@ -1,0 +1,7 @@
+{
+  "issue": 4762,
+  "expected_generation": 0,
+  "expected_digest": "0d0a37771f18416ea4cdef716d544622f3779a3cb66cd0761ef8d35049cc983c",
+  "claim_id": "claim-4762-birth-witness-receipt-execution",
+  "reviewer": "codex:execution-design-reapproval"
+}

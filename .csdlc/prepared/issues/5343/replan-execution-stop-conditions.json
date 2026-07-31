@@ -1,0 +1,25 @@
+{
+  "issue": 5343,
+  "card": "spp",
+  "expected_generation": 6,
+  "expected_digest": "18421a7d0093e2db1c6e8f776a4f3ce4576e12b8579d3277004e4cbd93c24fde",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Keep execution fail-closed on cutover integrity rather than unrelated closeout paperwork.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "A required live merged landing is not ancestral to the exact execution revision or the accepted #5344 handoff is contradictory",
+      "Any intended protected path collides with an active typed claim",
+      "The selector requires direct active-storage editing, implicit fallback, hidden network, credentials, AWS, Runtime v2 edits, or production-state mutation",
+      "Exact prior selector bytes, digest, v1 executable, or receipt cannot be retained and verified",
+      "Any rejected or interrupted transaction changes prior selector bytes",
+      "Rollback does not restore exact prior bytes or retained v1 cannot execute after rollback",
+      "The fourteen-day rollback window is absent or authorizes legacy deletion",
+      "Evidence is secret-bearing, host-bound, incomplete, or not bound to the exact implementation revision",
+      "Exact-revision review has an unresolved actionable finding"
+    ]
+  },
+  "fail_after_backup": false
+}

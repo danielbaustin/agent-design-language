@@ -1,0 +1,125 @@
+# Structured Planning Prompt
+
+Template: 1.0.0
+
+Issue: 4763
+
+Repository: danielbaustin/agent-design-language
+
+Card: spp
+
+Status: ready
+
+## Summary
+
+Issue #4763 is prepared as a later documentation/external-launch execution packet. The plan is intentionally non-executing and gates future work on #4762 actual retained implementation proof, not on lifecycle bookkeeping.
+
+## Plan
+
+Revision 2
+
+## Steps
+
+[
+  {
+    "id": "S1",
+    "action": "Integrate current origin/main into /Volumes/FastWork/adl-wp-4763 on codex/4763-v0918-wp14-preparation and record the exact source baseline.",
+    "acceptance_ids": [
+      "AC-1"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S2",
+    "action": "Refresh all six cards with issue-specific preparation scope, non-goals, dependencies, and acceptance coverage.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-3",
+      "AC-8"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S3",
+    "action": "Write design and diagram for first-birthday docs and external launch surfaces without implementing or publishing those surfaces.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-4"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S4",
+    "action": "Define exact issue-local paths, intended future implementation paths, COTS posture, LoC/time budgets, and PVF lanes.",
+    "acceptance_ids": [
+      "AC-4",
+      "AC-5",
+      "AC-6"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S5",
+    "action": "Record rollback and no-deferral criteria, including fail-closed behavior for missing #4762 implementation proof and unsupported public claims.",
+    "acceptance_ids": [
+      "AC-7"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S6",
+    "action": "Run a bounded gpt-5.5 preparation review, apply preparation-scope fixes, and record remaining lifecycle blocker truthfully.",
+    "acceptance_ids": [
+      "AC-6",
+      "AC-8"
+    ],
+    "status": "completed"
+  }
+]
+
+## Invariants
+
+- Preparation does not equal implementation, publication, PR readiness, merge readiness, or closeout.
+- #4762 actual retained implementation proof is required for later #4763 execution; #4762 lifecycle claim/receipt/closeout state alone is not enough.
+- External launch surfaces must remain claim-bounded until docs and dependencies are proven.
+- No COTS addition is authorized by this plan.
+- All future execution changes must stay within the intended paths unless the issue is explicitly re-planned.
+
+## Risks
+
+- Typed C-SDLC reacquire is currently blocked by unrelated #5332 terminal-authority reconciliation.
+- #4762 may remain preparation-only or unproven when #4763 implementation is attempted.
+- Birthday/launch copy can overclaim legal status, personhood, consciousness, autonomy, or public-readiness if redaction gates are skipped.
+- External launch surfaces may widen into publication mechanics without explicit authorization.
+
+## Estimates
+
+{
+  "elapsed_seconds": 14400,
+  "total_tokens": 60000,
+  "validation_seconds": 2400
+}
+
+## Design
+
+.csdlc/prepared/issues/4763/design.md
+
+Digest: c9648979f52a6c7faec83bfae3c719b6c042c22ba362d593c5fc325d1c0b4168
+
+## Diagram
+
+.csdlc/prepared/issues/4763/diagram.mmd
+
+Digest: 4f58a1b1a195df027c15e9c0bc39d4833df6891272123895d8bfc8f1c0dabde3
+
+## Stop Conditions
+
+- Stop before implementation if #4762 retained implementation proof is absent or insufficient.
+- Stop if typed claim reacquisition or doctor remains blocked after unrelated #5332 reconciliation is still unresolved.
+- Stop if requested changes touch paths outside the issue-local prep packet or intended future docs paths.
+- Stop if public claims cannot be tied to retained evidence.
+- Stop if a new COTS dependency appears necessary.
+
+## Handoff
+
+Proceed only after doctor readiness.

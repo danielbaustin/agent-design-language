@@ -1,0 +1,61 @@
+{
+  "issue": 5695,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5695/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5695/diagram.mmd",
+  "design_reviewer": "operator:issue-5695",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5695-pr-state-mergeability",
+    "owner": "codex:issue-5695-pr-state-mergeability",
+    "generation": 0,
+    "acquired_unix_seconds": 1785113059,
+    "expires_unix_seconds": 1785717859,
+    "heartbeat_unix_seconds": 1785113059,
+    "branch": "codex/5695-pr-state-mergeability",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5695",
+      ".csdlc/issues/5695",
+      ".csdlc/locks/5695.lock",
+      ".csdlc/prepared/issues/5695",
+      "csdlc-v2/src/github.rs"
+    ],
+    "purpose": "Correct mergeability-state classification without widening merge authority"
+  },
+  "initial": {
+    "title": "[v0.91.8][csdlc-v2][tooling] Preserve blocked and unstable PR mergeability states",
+    "slug": "pr-state-mergeability",
+    "version": "v0.91.8",
+    "goal": "Make csdlc-pr-state distinguish stale-base ancestry from pending GitHub merge-policy states.",
+    "required_outcome": "Explicit mergeability classification preserves behind as stale_base, blocked and unstable as waiting, dirty as conflicted, and unknown as waiting with focused proof.",
+    "declared_scope": ["csdlc-v2/src/github.rs", "csdlc-v2/src/github.rs tests", "issue-local typed cards and evidence"],
+    "authority_boundary": ["Issue 5695 owns mergeability classification and focused tests only", "csdlc-merge remains fail-closed and GitHub remains merge authority"],
+    "operator_constraints": ["Typed C-SDLC v2 only", "No main checkout edits", "No AWS", "No provider or runtime changes", "Do not reopen issue 5683"],
+    "task_boundary": "Repair the bounded mergeability mapping and prove its state table before execution.",
+    "deliverables": ["Corrected mergeability mapping", "Focused classification tests", "Exact review and publication evidence"],
+    "acceptance_criteria": ["AC-1: Every supported mergeability variant has an explicit classification", "AC-2: blocked and unstable cannot be reported as stale_base", "AC-3: behind remains stale_base and dirty remains conflicted", "AC-4: Focused tests prove the table and csdlc-merge remains fail-closed until clean ancestry and required checks are observed"],
+    "dependencies": ["octocrab MergeableState variants", "Existing csdlc-pr-state classification and merge gate tests"],
+    "repo_inputs": ["csdlc-v2/src/github.rs", "csdlc-v2/src/merge.rs", "Issue 5695"],
+    "non_goals": ["No provider, Runtime, AWS, or CI workflow changes", "No GitHub merge-policy changes", "No reopening of issue 5683", "No broad test-suite expansion"],
+    "plan_summary": "Read the current octocrab state mapping, implement an explicit classification table, add focused state coverage, validate the touched crate, obtain exact review, and publish only after review.",
+    "planning_profile": "small",
+    "steps": [
+      {"id":"S1","action":"Bind issue 5695 with disjoint source and card paths","status":"pending","acceptance_ids":["AC-1","AC-4"]},
+      {"id":"S2","action":"Replace wildcard mergeability fallback with explicit pending-state mapping","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3"]},
+      {"id":"S3","action":"Add focused tests for every supported mergeability variant and merge fail-closed behavior","status":"pending","acceptance_ids":["AC-4"]},
+      {"id":"S4","action":"Run focused validation and exact review before publication","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4"]}
+    ],
+    "invariants": ["Only behind denotes stale-base ancestry", "blocked and unstable are pending rather than stale", "Dirty remains conflicted", "Unknown remains waiting", "Merge eligibility still requires required checks and review"],
+    "risks": ["octocrab may add a new enum variant", "classification tests can omit a state", "pending states can be mistaken for merge eligibility"],
+    "stop_conditions": ["The enum variants cannot be verified from the pinned dependency", "The change requires merge-authority policy changes", "Work would touch provider, Runtime, AWS, or unrelated CI surfaces"],
+    "validation_lanes": [
+      {"lane":"github-pr-state-classification","proof_role":"Exercise explicit mergeability-state classification and fail-closed merge predicates","deterministic":true,"resource_profile":"small","parallel_group":"rust","budget_seconds":120,"budget_tokens":1200,"argv":["cargo","test","-p","csdlc-v2","github::tests"],"acceptance_ids":["AC-1","AC-2","AC-3","AC-4"]},
+      {"lane":"github-pr-state-format","proof_role":"Verify formatting and strict lint for the touched Rust source","deterministic":true,"resource_profile":"small","parallel_group":"rust","budget_seconds":120,"budget_tokens":1200,"argv":["cargo","fmt","--check"],"acceptance_ids":["AC-1","AC-4"]},
+      {"lane":"github-pr-state-diff-hygiene","proof_role":"Verify the bounded diff has no whitespace corruption","deterministic":true,"resource_profile":"small","parallel_group":"rust","budget_seconds":30,"budget_tokens":200,"argv":["git","diff","--check"],"acceptance_ids":["AC-4"]}
+    ],
+    "failure_policy": "Fail closed on unclassified variants, stale-base misclassification, merge-gate weakening, scope drift, or failed focused validation.",
+    "review_prompts": ["Does every supported octocrab MergeableState map explicitly?", "Can blocked or unstable ever become stale_base?", "Does csdlc-merge remain fail-closed while checks or ancestry are pending?"],
+    "review_scope": "csdlc-v2/src/github.rs\ncsdlc-v2/src/merge.rs\n.csdlc/issues/5695"
+  }
+}

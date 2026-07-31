@@ -1,0 +1,66 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5648,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][tools] Add explicit operator active-claim revoke",
+    "slug": "operator-active-claim-revoke",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Added typed operator-authorized active-claim revoke with CAS, expiry guard, audit, schema, CLI route, and focused tests.",
+      "actual_changes": [
+        "csdlc-v2/src/lifecycle.rs",
+        "csdlc-v2/src/bin/csdlc-bind.rs",
+        "csdlc-v2/src/schema.rs",
+        "csdlc-v2/src/lib.rs",
+        "csdlc-v2/tests/gate2.rs"
+      ],
+      "artifacts": [
+        ".csdlc/evidence/5648/local"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "csdlc-validate",
+            "--request",
+            ".csdlc/prepared/issues/5648/validate-local.json"
+          ],
+          "purpose": "Prove operator CAS revoke, stale guards, formatting, and strict targeted lint",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5648/local contains a local_pass three-lane proof: claim-revoke focused tests, cargo fmt --check, and strict targeted Clippy all passed."
+        },
+        {
+          "command": [
+            "csdlc-validate",
+            "--request",
+            ".csdlc/prepared/issues/5648/validate-local.json"
+          ],
+          "purpose": "Prove operator CAS revoke, stale guards, formatting, and strict targeted lint",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5648/local contains a local_pass three-lane proof: claim-revoke focused tests, cargo fmt --check, and strict targeted Clippy all passed."
+        },
+        {
+          "command": [
+            "csdlc-validate",
+            "--request",
+            ".csdlc/prepared/issues/5648/validate-local.json"
+          ],
+          "purpose": "Prove operator CAS revoke, stale guards, formatting, and strict targeted lint",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5648/local contains a local_pass three-lane proof: claim-revoke focused tests, cargo fmt --check, and strict targeted Clippy all passed."
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "draft",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

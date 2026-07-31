@@ -3,72 +3,12 @@
   "issue": 5587,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "a5944a332503136886e500c86d1c782c64846fad42b1a325ca4e5fe8e748f8d2",
-  "phase": "reviewed",
-  "generation": 17,
-  "digest": "d3142ef418bc7b908714f8aa5c3fb9348bd562da1d6974f4536dcbf5d5e8fd52",
-  "claim": {
-    "id": "claim-5587-google-drive-context-mirror",
-    "owner": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
-    "generation": 17,
-    "acquired_unix_seconds": 1784659080,
-    "expires_unix_seconds": 1784745480,
-    "heartbeat_unix_seconds": 1784659080,
-    "branch": "codex/5587-google-drive-context-mirror",
-    "worktree": ".",
-    "protected_paths": [
-      "adl/Cargo.toml",
-      "adl/src/adl_gws_context_mirror.rs",
-      "adl/src/adl_gws_drive_sync.rs",
-      "adl/src/adl_gws_native.rs",
-      "adl/src/bin/demo_adl_gws_context_mirror.rs",
-      "adl/tools/check_coverage_impact.sh",
-      "adl/tools/run_pr_fast_test_lane.sh",
-      "adl/tools/test_check_coverage_impact.sh",
-      "adl/tools/test_run_pr_fast_test_lane.sh",
-      "docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md"
-    ],
-    "purpose": "Make the ADL Google Drive context mirror work and verify content end to end"
-  },
-  "review_assignment": {
-    "reviewer": "codex-subagent:review_5587_exact_head",
-    "assigned_by": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
-    "revision": "git-blake3:97a6fe6e10b8d7b89dc13d01cdaac7dc17170050:aef968c237c59533ef426d45107820448b91abfcd88c65f841d4a4e47b984854",
-    "scope": [
-      "adl/Cargo.toml",
-      "adl/src/adl_gws_context_mirror.rs",
-      "adl/src/adl_gws_drive_sync.rs",
-      "adl/src/adl_gws_native.rs",
-      "adl/src/bin/demo_adl_gws_context_mirror.rs",
-      "adl/tools/check_coverage_impact.sh",
-      "adl/tools/run_pr_fast_test_lane.sh",
-      "adl/tools/test_check_coverage_impact.sh",
-      "adl/tools/test_run_pr_fast_test_lane.sh",
-      "docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md"
-    ]
-  },
-  "review": {
-    "reviewer": "codex-subagent:review_5587_exact_head",
-    "scope": [
-      "adl/Cargo.toml",
-      "adl/src/adl_gws_context_mirror.rs",
-      "adl/src/adl_gws_drive_sync.rs",
-      "adl/src/adl_gws_native.rs",
-      "adl/src/bin/demo_adl_gws_context_mirror.rs",
-      "adl/tools/check_coverage_impact.sh",
-      "adl/tools/run_pr_fast_test_lane.sh",
-      "adl/tools/test_check_coverage_impact.sh",
-      "adl/tools/test_run_pr_fast_test_lane.sh",
-      "docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md"
-    ],
-    "reviewed_revision": "git-blake3:97a6fe6e10b8d7b89dc13d01cdaac7dc17170050:aef968c237c59533ef426d45107820448b91abfcd88c65f841d4a4e47b984854",
-    "findings": [],
-    "residual_risks": [
-      "Native unattended credentials remain operator-managed outside the repository; the accepted live proof used the approved authenticated Drive connector.",
-      "GitHub CI must rerun against the strict-Clippy-clean published head."
-    ],
-    "completed": true,
-    "non_substantive_proof": null
-  },
+  "phase": "implemented",
+  "generation": 18,
+  "digest": "b0c5884cab61dfb68c167af95ed101c890fc3f139f0ec93c230caa13b6d6b7e6",
+  "claim": null,
+  "review_assignment": null,
+  "review": null,
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -83,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "531b32e4e8ad32ba5b3247add4c9124831f66704e939ced0d08a7d8e4c39073e",
+      "values_digest": "dec631aef5c2a01a890c2e088c29eb76f0019f0aa30b8474c9e5e53365c31cd7",
       "rendered_digest": "867bf9115b60902dab9b8c648a00a25b8b7d36d855ebce19c4b82b0756b4cd6d",
       "ast_digest": "5db72db4a2e2230d6da78375077b0441985f175d427474e9370898dff43d3b14"
     },
     "stp": {
-      "values_digest": "94ab525eb5b76a75fca210ff88381b0d977cc7e547e1c68ee852c13b43d68879",
+      "values_digest": "ff82a53643cb5c8b127ba659630cd4bfd1024f3c5b874994833661426da4e5eb",
       "rendered_digest": "be4864ed0f1e4bf50f8cf47d142659362982eb9d969f2e3fb446cd1c3b8f3933",
       "ast_digest": "55d986feaa9113104e8a50bf8198e19112d391f78ffab0a6add7545ca72f0634"
     },
     "spp": {
-      "values_digest": "df1353c3fe2de89e06741e5181a1e5e7d1542c4528234285d4f8dd202f7ae110",
+      "values_digest": "3e5830fd12ae8f4383693fcf254ca80c5034ce4a7a817484beb96d0e26ec3359",
       "rendered_digest": "30e2dd52266eeca38592583b434c88b7f429a48ae0efdec52674f8960aeb459d",
       "ast_digest": "88fd5c2643cc42d34449fa8c8969d9cbce11f70ca3d92f4e5d2dadede0ad3bcc"
     },
     "vpp": {
-      "values_digest": "0e1e5d35720efb00a6441d579e1cf433d35345ef9a589e14f42294d744e8c998",
+      "values_digest": "969145fcd36be4ba63f6bb80bf49f3629380e0b2da7e92a6f25cc3006daf849d",
       "rendered_digest": "b26cf896bc0c86323db9ff567aa3e55c51f27d20c4575ffac443f25548150a51",
       "ast_digest": "3ea6c927b7b5fa4f25d17da1cf18c09d3ef3f104d77b593f40e3da9d8f802373"
     },
     "srp": {
-      "values_digest": "591a9a8300df5fe9a8954bb2117b715c1d7e13a5ba4d1fddbb4ce8bf3d895723",
-      "rendered_digest": "98de558e57695c5e598569574226113c2ca0ac5b533a679586ab43be5b927904",
-      "ast_digest": "39326df7690a54ebdac9eaa8a44eb66e229bb6125d184648b6b2223530da7abd"
+      "values_digest": "315a9564f0e8e95d05d5b22bcc869f96706ff71dfd5925fbed8b8573ef844f17",
+      "rendered_digest": "b87c6b94da99df7ea623e2dac935a47039221b45fcb48312b47be618013965a9",
+      "ast_digest": "0846ac0e5ddac688e3b6b3f0932502c27ca7149fbdcce1a5930b6223b15670b5"
     },
     "sor": {
-      "values_digest": "36d29fefcf8dece28941c585ca5f3c4228b4cb72a561f8b2ce3311006af36143",
+      "values_digest": "541fc9221377c713f40df6acf998336f2000dd14f5f012250d540e071b5e97a5",
       "rendered_digest": "a95b9e90e43f777c41a3f1905bd597c80ee6e0e39fbfffecfa2217e95557a624",
       "ast_digest": "bffbf6d704482702714c1501877d920ce9316f0b709b9efe0ffcd294c05587a3"
     }
@@ -183,6 +123,13 @@
       "to": "reviewed",
       "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
       "reason": "Exact-head review of 97a6fe6e1 confirmed the byte-slice Clippy repair is behaviorally identical, and focused Clippy plus 11 context-mirror tests passed."
+    },
+    {
+      "sequence": 11,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "GitHub issue #5587 and PR #5626 are already closed and merged; recover stale reviewed lifecycle truth solely to use the supported closed-issue claim release without running or re-enabling the paused Drive mirror."
     }
   ],
   "audit": [
@@ -353,6 +300,27 @@
       "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
       "reason": "Exact-head review of 97a6fe6e1 confirmed the byte-slice Clippy repair is behaviorally identical, and focused Clippy plus 11 context-mirror tests passed.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 17,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The original #5587 claim expired after PR #5626 merged and issue #5587 closed; recover it briefly and exactly so typed closed-issue release can clear stale protected-path ownership.",
+      "operation": "{\"previous_owner\":\"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061\",\"observed_expiry_unix_seconds\":1784745480,\"recovery_actor\":\"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d\",\"reason\":\"The original #5587 claim expired after PR #5626 merged and issue #5587 closed; recover it briefly and exactly so typed closed-issue release can clear stale protected-path ownership.\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "GitHub issue #5587 and PR #5626 are already closed and merged; recover stale reviewed lifecycle truth solely to use the supported closed-issue claim release without running or re-enabling the paused Drive mirror.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "GitHub issue #5587 is closed completed and PR #5626 is merged; release its stale product-path claim without waiting for or fabricating terminal closeout.",
+      "operation": "{\"observation_source\":\"github://danielbaustin/agent-design-language/issues/5587\",\"observed_issue_state\":\"closed\",\"operation\":\"release_closed_claim\"}"
     }
   ]
 }

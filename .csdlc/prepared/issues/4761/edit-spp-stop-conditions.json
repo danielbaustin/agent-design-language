@@ -1,0 +1,20 @@
+{
+  "issue": 4761,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "7e360bcc20ea3e81700ef5396b7b76f7637d4cccde364e212f0c01f9534ab587",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Update SPP stop conditions for execution and publication.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "A live claim collision appears.",
+      "The capability-envelope validator or diff hygiene check fails.",
+      "Review finds an actionable in-scope issue that is not fixed.",
+      "Publication cannot create a ready PR against main with Closes #4761."
+    ]
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,220 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5737,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "8389c08811378222f293ccc0d9046c6ca438c358e387a9db2258defe952f0fd5",
+  "phase": "published",
+  "generation": 7,
+  "digest": "7bda61f088ccdccd873ab2e77f3bc2ff1f2fc238b7b83f4c95419d7c625d908f",
+  "claim": {
+    "id": "claim-5737-csdlc-authority-recovery",
+    "owner": "codex:5737-execution",
+    "generation": 7,
+    "acquired_unix_seconds": 1785532834,
+    "expires_unix_seconds": 1786137634,
+    "heartbeat_unix_seconds": 1785532834,
+    "branch": "codex/5737-csdlc-authority-recovery",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5737",
+      ".csdlc/locks/5737.lock",
+      ".csdlc/prepared/issues/5737",
+      ".csdlc/evidence/5737",
+      ".csdlc/publication/5737.intent.json",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "purpose": "Repair C-SDLC v2 claim authority recovery around unrelated terminal drift, stale inactive projections, and stale dormant design inputs."
+  },
+  "review_assignment": {
+    "reviewer": "codex:gpt-5.5-claim-authority-review",
+    "assigned_by": "codex:5737-execution",
+    "revision": "git-blake3:4079e840d35a287eefbc637718cc6c1dafa4af77:65c11bb45e0642a62bce15abd24f4eb99769ae107ea9359cd9bb2792cdf19182",
+    "scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs",
+      ".csdlc/evidence/5737"
+    ]
+  },
+  "review": {
+    "reviewer": "codex:gpt-5.5-claim-authority-review",
+    "scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs",
+      ".csdlc/evidence/5737"
+    ],
+    "reviewed_revision": "git-blake3:4079e840d35a287eefbc637718cc6c1dafa4af77:65c11bb45e0642a62bce15abd24f4eb99769ae107ea9359cd9bb2792cdf19182",
+    "findings": [],
+    "residual_risks": [
+      "Only claims matching a registered active checkout have collision authority; stale tracked projections remain retained evidence but no longer reserve paths."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5737,
+    "pull_request": 5745,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5745",
+    "base": "main",
+    "head": "codex/5737-csdlc-authority-recovery",
+    "revision": "git-blake3:1b0dbef82b0c66b2b4ccab81927a0598575a81d8:205be32cd76a878d944f05327d2504390f6d40a30817f0aee4ac2d4d0b778c5f",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5737/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5737/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5737-preflight",
+      "revision": "6e29a4e399b52ccf6d9ae550bcc31a1706b048447f35e8b0eb2515120ecbeb68"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "ece4240098eefbe4a9555c67b5b9e5435df90416e0aa486859b02afefd924df8",
+      "rendered_digest": "1e6109b6a0691d18a348c552bc76c0b71ffb34bc9d07d47aa59577fd96c805d4",
+      "ast_digest": "89bc5b6c3a8c65de169b9514f44d96e0051c5be3ff294e9b9cac89f0f71b3847"
+    },
+    "stp": {
+      "values_digest": "3deb4b6e24bc8ab0e7ed6ce95107f7f01671a0e42e66b1e8e539ef04bcbcb184",
+      "rendered_digest": "3e675683d5950627268ae73f4b1bd46c6673497e36dac186c80ce8a8a20ad65d",
+      "ast_digest": "4d5ace43e52d7731963d5412ac1065ecb316db7ace71472429734ed9acba31bd"
+    },
+    "spp": {
+      "values_digest": "d2d37dbd642f93b3572a56178237997a9748269b346025bd68f1ebab44754f88",
+      "rendered_digest": "6aeb12b6706325f3d15d6a10add9e3dd1459d65a8f22ff29559ef7ef7488feb1",
+      "ast_digest": "0cc5e8a1c5fe3afd4ddbe33673d66bec0704557cde46d918cc0cf4a33a97d8d5"
+    },
+    "vpp": {
+      "values_digest": "f98b8870a0c13a80b3a4486ec6a7581ebc755645ac6daf807b4f67ab5719bac3",
+      "rendered_digest": "5a9b15f9dc7da6335ecbeebefe24d1c15ef42d21df1c35b751fd192f4754a7b0",
+      "ast_digest": "cd9e9544b4be82605a123385fd13ef45b04f986df6791aa57276d362c46f5a88"
+    },
+    "srp": {
+      "values_digest": "6da7fc83fa650f3e4ffaf586230dd98f358f3649b0a26f8b90b3f0671a55efef",
+      "rendered_digest": "d1cf674846ff2c05e2562344a86ea6ba8b21cf790cb86af2e5e1b614e8f84e74",
+      "ast_digest": "dd5280b235bc1090638d568c86385d42711f8a84e7ab10cfb7a37e7f30d6eb52"
+    },
+    "sor": {
+      "values_digest": "d69a4ca8edfb67e4c44eb38acfbbf0d5d10c1ac354f87854bcb1c2390d97a1a2",
+      "rendered_digest": "95d95af33076abb40e993198e168581cabe2b3644c5f3c3c21e447bc7cb067c8",
+      "ast_digest": "3c67f0dbe976be159adce251a93fac37577135f19981b62fa4867357a719b23b"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5737-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5737-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5737-execution",
+      "reason": "Implementation and focused validation are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5737-execution",
+      "reason": "The assigned exact-head review is complete with no safety blockers."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5737-execution",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5737-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5737-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5737-execution",
+      "reason": "Record the bounded active-claim authority simplification.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Claim scans now consider only claims matching active checkouts, defer terminal receipt checks until a real path overlap, and repair dormant typed projections during authority reacquisition.\",\"changes\":[\"csdlc-v2/src/lifecycle.rs\",\"csdlc-v2/src/store.rs\",\"csdlc-v2/tests/gate2.rs\"],\"artifacts\":[\".csdlc/evidence/5737/gate2.log\",\".csdlc/evidence/5737/clippy.log\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5737-execution",
+      "reason": "Record complete Gate 2 validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\"],\"purpose\":\"Prove active claim collision safety, stale projection filtering, and authority reacquisition.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5737/gate2.log\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5737-execution",
+      "reason": "Record strict C-SDLC v2 Clippy validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Prove the simplified claim implementation remains warning-free across all targets.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5737/clippy.log\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5737-execution",
+      "reason": "Implementation and focused validation are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5737-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5737-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5737-execution",
+      "reason": "The assigned exact-head review is complete with no safety blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5737-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

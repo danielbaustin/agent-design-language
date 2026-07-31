@@ -1,0 +1,81 @@
+# Structured Review Prompt
+
+Template: 1.0.0
+
+Issue: 5665
+
+Repository: danielbaustin/agent-design-language
+
+Card: srp
+
+Status: draft
+
+## Scope
+
+adl-runtime/src/runtime_api.rs
+adl-runtime/tests/runtime_api_wss.rs
+adl-runtime/Cargo.toml
+adl-runtime/Cargo.lock
+adl/Cargo.lock
+adl/src/bin/run_wp12_acip_websocket_transport_proof.rs
+adl/src/bin/run_v0916_acip_aee_memory_integration.rs
+adl/src/bin/run_v0916_integrated_runtime_soak.rs
+adl/src/bin/run_v0916_runtime_failure_injection.rs
+adl/src/bin/run_v0917_integrated_resilience_failure_injection.rs
+infra/runtime-v3/runtime-api-5665.toml
+docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json
+.csdlc/evidence/5665/runtime-v3-wss-focused.log
+.csdlc/evidence/5665/runtime-v3-strict-clippy.log
+.csdlc/evidence/5665/wp12-wrapper-tombstone-check.log
+.csdlc/evidence/5665/runtime-v2-wrapper-tombstone-checks.log
+.csdlc/evidence/5665/runtime-v3-loc-measurement.md
+.csdlc/issues/5665/index.json
+
+## Prompts
+
+- Does the WSS proof exercise a real Axum/Tokio/Rustls API path rather than URL, fixture, or metadata proof?
+- Are authentication, bidirectional frames, token rotation, token revocation, and shutdown covered?
+- Are Observatory health states and telemetry fields truthful and sink-bounded?
+- Does the feature/adapter matrix avoid unresolved claimed features?
+- Did the change stay disjoint from #5657/#5663/#5664 protected paths and preserve the API-only runtime boundary?
+
+## Findings
+
+[
+  {
+    "id": "P2-feature-matrix-proof-uses-test-local-subset",
+    "severity": "p2",
+    "summary": "Fixed: runtime_api_wss.rs loads the committed matrix artifact, injects it into RuntimeApiService, compares the WSS feature_matrix response to the parsed artifact, and asserts health/telemetry rows are present.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:3fc16746788801da641552c2a862da8997305828:047a47b0a339af9db73aeaa074962e3e98d84a4aa31a7e84971d8cbc4e9e5abd",
+    "route": null
+  },
+  {
+    "id": "P3-validation-record-command-mismatch",
+    "severity": "p3",
+    "summary": "Fixed: index.json and SOR now carry a superseding validation record whose argv is the full adl-runtime test command and whose evidence_ref matches the retained full-test log.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:3fc16746788801da641552c2a862da8997305828:047a47b0a339af9db73aeaa074962e3e98d84a4aa31a7e84971d8cbc4e9e5abd",
+    "route": null
+  }
+]
+
+## Dispositions
+
+Every actionable finding requires a terminal disposition.
+
+## Residual Risk
+
+- Noether did not run tests during read-only review. Strict Clippy evidence remains terse, and #5663/#5664 records remain absent from visible repo evidence, so that disjointness check remains limited to visible paths.
+
+## Review Result
+
+Revision: Some("git-blake3:3fc16746788801da641552c2a862da8997305828:047a47b0a339af9db73aeaa074962e3e98d84a4aa31a7e84971d8cbc4e9e5abd")
+
+Reviewer: Some("Noether")
+
+Result: pass

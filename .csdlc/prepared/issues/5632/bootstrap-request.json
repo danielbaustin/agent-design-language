@@ -1,0 +1,53 @@
+{
+  "issue": 5632,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": "docs/architecture/adl_pr_cycle_v2_skill.md",
+  "diagram_path": "docs/architecture/adl_pr_cycle_v2_skill.mmd",
+  "design_reviewer": "codex",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5632-adl-pr-cycle-v2",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1,
+    "expires_unix_seconds": 4102444800,
+    "heartbeat_unix_seconds": 1,
+    "branch": "codex/5632-adl-pr-cycle-v2",
+    "worktree": ".worktrees/adl-wp-5632",
+    "protected_paths": ["docs/tooling/adl_pr_cycle_skill.md", "docs/architecture/"],
+    "purpose": "Update the installed authoring skill to route through C-SDLC v2."
+  },
+  "initial": {
+    "title": "Update adl_pr_cycle skill for C-SDLC v2",
+    "slug": "adl-pr-cycle-v2-skill",
+    "version": "v0.91.8",
+    "goal": "Replace sunset lifecycle guidance in the authoring skill with the independent typed C-SDLC v2 route.",
+    "required_outcome": "The canonical and installed skill describe only v2 binaries, typed cards, bounded validation, review-before-publication, and truthful stop boundaries.",
+    "declared_scope": ["docs/tooling/adl_pr_cycle_skill.md", "docs/architecture/adl_pr_cycle_v2_skill.md", "docs/architecture/adl_pr_cycle_v2_skill.mmd"],
+    "authority_boundary": ["C-SDLC v2 operator skills and Rust binaries are lifecycle authority", "This skill routes and reports but does not own state"],
+    "operator_constraints": ["never write tracked files on main", "no AWS", "no raw GitHub CLI", "do not invoke sunset v1 wrappers"],
+    "task_boundary": "Update the canonical skill source and prove installer parity without changing runtime or v2 binaries.",
+    "deliverables": ["v2-routed canonical skill", "architecture design", "block diagram", "installer parity proof"],
+    "acceptance_criteria": ["No executable v1 lifecycle command remains in the skill", "Typed v2 operation sequence is complete", "Review is required before publication", "Installed copy is byte-identical to canonical source"],
+    "dependencies": ["csdlc-v2 operator skill contracts", "install_adl_pr_cycle_skill.sh"],
+    "repo_inputs": ["docs/tooling/adl_pr_cycle_skill.md", "csdlc-v2/operator/skills/", "adl/tools/install_adl_pr_cycle_skill.sh"],
+    "non_goals": ["editing other lifecycle skills", "changing C-SDLC binaries", "deleting historical v1 evidence"],
+    "plan_summary": "Replace the skill prompt, add source-grounded design artifacts, install into a temporary and operator skill directory, then validate parity and prohibited-command absence.",
+    "steps": [
+      {"id": "S1", "action": "Update canonical skill and design artifacts", "acceptance_ids": ["AC-1", "AC-2"], "status": "pending"},
+      {"id": "S2", "action": "Install and validate the generated skill", "acceptance_ids": ["AC-3", "AC-4"], "status": "pending"},
+      {"id": "S3", "action": "Review the exact revision before publication", "acceptance_ids": ["AC-3"], "status": "pending"}
+    ],
+    "invariants": ["canonical source and installed copy remain byte-identical", "v2 is sole operational authority", "review truth precedes publication"],
+    "risks": ["other legacy skills may still contain stale v1 guidance and require a separate bounded migration issue"],
+    "planning_profile": "small",
+    "stop_conditions": ["stop on missing v2 binary or stale claim", "stop before merge without explicit authorization"],
+    "validation_lanes": [
+      {"lane": "skill-frontmatter", "proof_role": "structure", "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"], "deterministic": true, "resource_profile": "small", "budget_seconds": 30, "budget_tokens": 1000, "argv": ["bash", "adl/tools/validate_skill_frontmatter.sh", "docs/tooling/adl_pr_cycle_skill.md"], "parallel_group": "docs", "defer_reason": null},
+      {"lane": "installer-parity", "proof_role": "generated-copy", "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"], "deterministic": true, "resource_profile": "small", "budget_seconds": 30, "budget_tokens": 1000, "argv": ["bash", "adl/tools/install_adl_pr_cycle_skill.sh"], "parallel_group": "docs", "defer_reason": null}
+    ],
+    "failure_policy": "Fail closed, preserve evidence, and report one typed recovery operation.",
+    "review_prompts": ["Does the skill route only through v2 typed binaries?", "Are review, claims, budgets, and stop boundaries explicit?", "Does any instruction accidentally revive a v1 wrapper?"],
+    "review_scope": "docs/tooling/adl_pr_cycle_skill.md and its design/diagram artifacts at the exact revision"
+  }
+}

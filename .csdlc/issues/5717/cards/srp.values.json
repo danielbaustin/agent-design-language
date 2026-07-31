@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5717,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast][ui] Update podcast studio copy from integrated design",
+    "slug": "v0-91-8-podcast-ui-update-podcast-studio-copy-from-integrated-design",
+    "version": "v0.91.8",
+    "generation": 20
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5701\n.csdlc/issues/5717\n.csdlc/prepared/issues/5717\n.github/workflows/ci.yaml\nadl/config/validation_lane_selector.v0.91.6.json\nadl/tools/ci_path_policy.sh\nadl/tools/generate_podcast_launch_packet.py\nadl/tools/test_ci_path_policy.sh\nadl/tools/test_ci_runtime_contracts.sh\nadl/tools/test_podcast_launch_packet.sh\nadl/tools/test_select_validation_lanes.sh\nadl/tools/test_validation_manager.sh\nadl/tools/validate_podcast_launch_packet.py\ndemos/_preview/podcast/index.html\ndemos/podcast/LAUNCH_READINESS.md\ndemos/podcast/episodes/meet-the-ai-coworkers/index.html\ndemos/podcast/feed.xml\ndemos/podcast/index.html",
+      "review_revision": "git-blake3:b61738969b6fda30924b429577a3da5b282dce1d:a58ff4fbe945f16979350d0588ed4fb33cb2ef68a677b8fa0458d5f0a437d821",
+      "reviewer": "codex-subagent:019fb9a0-c459-76b0-8ceb-018b065a72db",
+      "review_prompts": [
+        "Does the studio page satisfy each operator-requested copy/logo/layout fix?",
+        "Are fake historical episode numbers removed in favor of proposed launch topics starting at 1?",
+        "Do the studio route, assets, audio artifact, and RSS feed still validate?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Public launch still requires final human review after PR publication, production hosting cutover under /podcast/, mailbox verification for podcast@agent-logic.ai, directory account submission approval, and final episode-content approval.",
+        "The typed #5717 protected scope could not be amended for adl/config/validation_lane_selector.v0.91.6.json and adl/tools/test_select_validation_lanes.sh because origin/main still carries a stale active claim from closed issue #5701; #5701 claim revocation was recorded in this worktree and the exact-head review covered those paths explicitly."
+      ],
+      "review_result": "pass"
+    }
+  }
+}
