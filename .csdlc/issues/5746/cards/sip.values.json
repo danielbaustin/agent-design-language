@@ -1,0 +1,40 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5746,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Materialize retained terminal projections",
+    "slug": "v0918-retained-terminal-projections",
+    "version": "v0.91.8",
+    "generation": 4
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Materialize all currently valid retained v0.91.8 terminal receipts into reviewed tracked projections without coercing unsafe exceptions.",
+      "required_outcome": "The reviewed aggregate branch records receipt-identical terminal projections for every eligible issue and preserves a truthful blocked boundary for excluded cases.",
+      "declared_scope": [
+        "Typed reconciliation of valid retained terminal receipts",
+        "Tracked issue index, six-card, audit, and retained-artifact projections",
+        "Focused receipt equality, doctor, path, and diff validation",
+        "Independent aggregate review and governed publication"
+      ],
+      "authority_boundary": [
+        "Issue #5746 owns only its lifecycle bundle and the exact included terminal projection directories",
+        "Git-common receipts remain source authority",
+        "Excluded issue records and product implementation are not changed"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Never write tracked changes on main",
+        "Typed C-SDLC v2 only",
+        "No AWS",
+        "No manual card or receipt edits",
+        "No force prune",
+        "Do not close #5595"
+      ]
+    }
+  }
+}

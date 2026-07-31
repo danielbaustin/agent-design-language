@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5746,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Materialize retained terminal projections",
+    "slug": "v0918-retained-terminal-projections",
+    "version": "v0.91.8",
+    "generation": 4
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Publish the already-completed typed terminal projection batch and stop at truthful closeout of #5746.",
+      "deliverables": [
+        "Tracked terminal projections for the included issue set",
+        "Receipt-equality and doctor validation result",
+        "Independent review result",
+        "Ready PR closing #5746",
+        "Explicit excluded-issue blocker summary"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Every included projection is closed_out, claim-null, terminal-evidence complete, and receipt-identical",
+        "AC-2: Every included issue passes csdlc-doctor",
+        "AC-3: The aggregate diff contains only declared .csdlc/issues paths and passes diff hygiene",
+        "AC-4: Independent review has no actionable findings",
+        "AC-5: Unsafe or unsupported cases remain excluded and explicitly reported",
+        "AC-6: Publication closes #5746 only and does not claim milestone release or worktree pruning"
+      ],
+      "dependencies": [
+        "Git-common retained terminal receipts",
+        "Merged GitHub issue and PR observations already captured by typed closeout",
+        "Current origin/main baseline"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5746",
+        "Included issue projections: 4739, 4741, 4758, 4761, 4762, 5107, 5338, 5340, 5341, 5343, 5344, 5345, 5349, 5350, 5361, 5384, 5497, 5498, 5500, 5501, 5502, 5526, 5563, 5589, 5590, 5592, 5594, 5605, 5613, 5615, 5624, 5627, 5648, 5653, 5658, 5666, 5671, 5683, 5686, 5691, 5695, 5697, 5698, 5702, 5710, 5715, 5717, 5719, 5727, 5737",
+        "Git-common csdlc-v2/closeout receipts",
+        "csdlc-v2 typed closeout and doctor binaries"
+      ],
+      "non_goals": [
+        "No product implementation",
+        "No repair of excluded lifecycle histories",
+        "No manual receipt/card editing",
+        "No worktree pruning",
+        "No #5595 sprint closure"
+      ]
+    }
+  }
+}

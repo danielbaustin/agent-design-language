@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5746,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Materialize retained terminal projections",
+    "slug": "v0918-retained-terminal-projections",
+    "version": "v0.91.8",
+    "generation": 4
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/4739\n.csdlc/issues/4741\n.csdlc/issues/4758\n.csdlc/issues/4761\n.csdlc/issues/4762\n.csdlc/issues/5107\n.csdlc/issues/5338\n.csdlc/issues/5340\n.csdlc/issues/5341\n.csdlc/issues/5343\n.csdlc/issues/5344\n.csdlc/issues/5345\n.csdlc/issues/5349\n.csdlc/issues/5350\n.csdlc/issues/5361\n.csdlc/issues/5384\n.csdlc/issues/5497\n.csdlc/issues/5498\n.csdlc/issues/5500\n.csdlc/issues/5501\n.csdlc/issues/5502\n.csdlc/issues/5526\n.csdlc/issues/5563\n.csdlc/issues/5589\n.csdlc/issues/5590\n.csdlc/issues/5592\n.csdlc/issues/5594\n.csdlc/issues/5605\n.csdlc/issues/5613\n.csdlc/issues/5615\n.csdlc/issues/5624\n.csdlc/issues/5627\n.csdlc/issues/5648\n.csdlc/issues/5653\n.csdlc/issues/5658\n.csdlc/issues/5666\n.csdlc/issues/5671\n.csdlc/issues/5683\n.csdlc/issues/5686\n.csdlc/issues/5691\n.csdlc/issues/5695\n.csdlc/issues/5697\n.csdlc/issues/5698\n.csdlc/issues/5702\n.csdlc/issues/5710\n.csdlc/issues/5715\n.csdlc/issues/5717\n.csdlc/issues/5719\n.csdlc/issues/5727\n.csdlc/issues/5737\n.csdlc/issues/5746",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does every included issue exactly match its terminal receipt?",
+        "Are all changed paths limited to the declared projection set?",
+        "Does the batch preserve blocked/non-claim truth for excluded issues?",
+        "Could publication incorrectly close #5595 or claim milestone release?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

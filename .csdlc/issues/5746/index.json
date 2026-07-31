@@ -1,0 +1,153 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5746,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "eae528ea03f96b45cd6c882c001f86b97ba8c63c9b04a0a4c8ff049792ae0d4d",
+  "phase": "implemented",
+  "generation": 4,
+  "digest": "e5272cb8b488fcd96df830349c8ae4b3dfa200ecb7a7692ddde691cc878e71d6",
+  "claim": {
+    "id": "claim-5746-v0918-terminal-projection-wave",
+    "owner": "codex:v0918-terminal-projection-wave",
+    "generation": 4,
+    "acquired_unix_seconds": 1785538383,
+    "expires_unix_seconds": 1786143183,
+    "heartbeat_unix_seconds": 1785538383,
+    "branch": "codex/5746-v0918-terminal-reconcile-wave",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5746",
+      ".csdlc/issues/5746",
+      ".csdlc/locks/5746.lock",
+      ".csdlc/prepared/issues/5746"
+    ],
+    "purpose": "Publish and shepherd the reviewed v0.91.8 terminal projection reconciliation batch without widening lifecycle truth."
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5746/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5746/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:daniel",
+      "revision": "8d95791fbb571dac98ff3b1cf368407de2cc53c3d103b7a82f5f4d73d4834f36"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "afa496856622e87d0629a89ccadc5ea7228983f2e5f171c51732c32db76f05e2",
+      "rendered_digest": "3c4372d0075360d87ea67423bc21316c6c7042f431c0c1b4fd3a0d15aa50f886",
+      "ast_digest": "e313d0336ff506eef911a41416b955c09684c3d25e1860620e60fdd5cd800655"
+    },
+    "stp": {
+      "values_digest": "ff7e4ec9a995aee92e47ea77f3bd9aee8b8ce5d3293dc07a97fd3be38d0f72cc",
+      "rendered_digest": "45a3151a7904b28ddb4a2fab957d64794d1977eff14f1f1e4f96db4f46bccd88",
+      "ast_digest": "6801c8f8877721131eb2258bee98c4bfde641439202ab787338b8a7f257c2784"
+    },
+    "spp": {
+      "values_digest": "d10933dc017fff450bdcdf15012646442af451e490b1956cf96ffb91d860878c",
+      "rendered_digest": "f318a1b0ef3a56f29c8d4bb847acf0d685ebd0bda877d1148859d90baf7a7d47",
+      "ast_digest": "08ff0eabf0bc87e660f707c886f6670b907cbd478aa81a7e2ba9756ee25a5b1f"
+    },
+    "vpp": {
+      "values_digest": "eb8341d4f66f837c76f23b6a709d3cb39147a7553e9b4518f2ced7098e786f52",
+      "rendered_digest": "246fcaddde9b4f37ea12f1b935a25d0daa9808980e760ef6edb3d31d67345bc9",
+      "ast_digest": "e0439b895824cc65b92250523dafc76b7565bb5492bfb3b1e7a7eb7c23417af0"
+    },
+    "srp": {
+      "values_digest": "aedbe5dd29ea0e4c71fd1f54dd70e114bacf95ea2c9bedf69d97b94de35e79c1",
+      "rendered_digest": "86bfe39d5929bbc65a47f3f40ff8fbe2364dc1ad15d5a2454fe1ac4a5b1650d3",
+      "ast_digest": "62c5a153de5fefe49f0f7d355297fde50695d00ee17873e94e6515bb6d6e4dcf"
+    },
+    "sor": {
+      "values_digest": "7efdae571c8cc02eb0babb76d3e99e0f3d434c3e7cb75d52f1aebce91ff2aa2f",
+      "rendered_digest": "fdd859683cde473d891a1777f8cd9c9eb8fc968f70a9c25d322c96145d4b335c",
+      "ast_digest": "600448d9bb743e1913c6290d40857ae7c35eaf389be4bcf78a978214bf411cb0"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "execution and passing validation finalized atomically"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "Replace the just-created absolute-path claim with the required issue-named branch and issue-local worktree identity before implementation recording.",
+      "operation": "{\"claim_id\":\"claim-5746-v0918-terminal-projection-wave\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:repair-new-5746-binding\",\"previous_owner\":\"codex:v0918-terminal-projection-wave\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "Acquire corrected issue-named branch and issue-local worktree authority for #5746 publication.",
+      "operation": "{\"branch\":\"codex/5746-v0918-terminal-reconcile-wave\",\"claim_id\":\"claim-5746-v0918-terminal-projection-wave\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:v0918-terminal-projection-wave\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5746\",\".csdlc/issues/5746\",\".csdlc/locks/5746.lock\",\".csdlc/prepared/issues/5746\"],\"purpose\":\"Publish and shepherd the reviewed v0.91.8 terminal projection reconciliation batch without widening lifecycle truth.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 0,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "Replace bootstrap placeholders with the exact executable aggregate closeout proof lanes.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"terminal-doctor-sweep\",\"proof_role\":\"Run C-SDLC v2 doctor for every included terminal projection\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"/bin/bash\",\"-lc\",\"for i in 4739 4741 4758 4761 4762 5107 5338 5340 5341 5343 5344 5345 5349 5350 5361 5384 5497 5498 5500 5501 5502 5526 5563 5589 5590 5592 5594 5605 5613 5615 5624 5627 5648 5653 5658 5666 5671 5683 5686 5691 5695 5697 5698 5702 5710 5715 5717 5719 5727 5737; do .adl/bin/csdlc-v2/csdlc-doctor --repo . --issue $i >/dev/null || exit 1; done\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null},{\"lane\":\"terminal-receipt-equality\",\"proof_role\":\"Compare every included tracked index byte-for-byte with retained terminal authority\",\"acceptance_ids\":[\"AC-1\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"/bin/bash\",\"-lc\",\"for i in 4739 4741 4758 4761 4762 5107 5338 5340 5341 5343 5344 5345 5349 5350 5361 5384 5497 5498 5500 5501 5502 5526 5563 5589 5590 5592 5594 5605 5613 5615 5624 5627 5648 5653 5658 5666 5671 5683 5686 5691 5695 5697 5698 5702 5710 5715 5717 5719 5727 5737; do cmp -s .csdlc/issues/$i/index.json \\\"$(git rev-parse --git-common-dir)/csdlc-v2/closeout/$i/receipt.json\\\" || exit 1; done\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null},{\"lane\":\"aggregate-scope-and-review-preflight\",\"proof_role\":\"Prove the aggregate commit contains only the declared fifty issue projections and freeze the bounded review scope\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"/bin/bash\",\"-lc\",\"git diff --name-only origin/main...a12e9212d | awk 'BEGIN{ok=1} !/^\\\\.csdlc\\\\/issues\\\\/(4739|4741|4758|4761|4762|5107|5338|5340|5341|5343|5344|5345|5349|5350|5361|5384|5497|5498|5500|5501|5502|5526|5563|5589|5590|5592|5594|5605|5613|5615|5624|5627|5648|5653|5658|5666|5671|5683|5686|5691|5695|5697|5698|5702|5710|5715|5717|5719|5727|5737)\\\\// {print; ok=0} END{exit !ok}'\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null},{\"lane\":\"aggregate-diff-hygiene\",\"proof_role\":\"Prove the aggregate terminal projection commit has no whitespace errors\",\"acceptance_ids\":[\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\",\"origin/main...a12e9212d\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "Replace bootstrap placeholders with the exact executable aggregate closeout proof lanes.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"terminal-doctor-sweep\",\"proof_role\":\"Run C-SDLC v2 doctor for every included terminal projection\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"/bin/bash\",\"-lc\",\"for i in 4739 4741 4758 4761 4762 5107 5338 5340 5341 5343 5344 5345 5349 5350 5361 5384 5497 5498 5500 5501 5502 5526 5563 5589 5590 5592 5594 5605 5613 5615 5624 5627 5648 5653 5658 5666 5671 5683 5686 5691 5695 5697 5698 5702 5710 5715 5717 5719 5727 5737; do /Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor --repo . --issue $i >/dev/null || exit 1; done\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null},{\"lane\":\"terminal-receipt-equality\",\"proof_role\":\"Compare every included tracked index byte-for-byte with retained terminal authority\",\"acceptance_ids\":[\"AC-1\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"/bin/bash\",\"-lc\",\"for i in 4739 4741 4758 4761 4762 5107 5338 5340 5341 5343 5344 5345 5349 5350 5361 5384 5497 5498 5500 5501 5502 5526 5563 5589 5590 5592 5594 5605 5613 5615 5624 5627 5648 5653 5658 5666 5671 5683 5686 5691 5695 5697 5698 5702 5710 5715 5717 5719 5727 5737; do cmp -s .csdlc/issues/$i/index.json \\\"$(git rev-parse --git-common-dir)/csdlc-v2/closeout/$i.json\\\" || exit 1; done\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null},{\"lane\":\"aggregate-scope-and-review-preflight\",\"proof_role\":\"Prove the aggregate commit contains only the declared fifty issue projections and freeze the bounded review scope\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"/bin/bash\",\"-lc\",\"git diff --name-only origin/main...a12e9212d | awk 'BEGIN{ok=1} !/^\\\\.csdlc\\\\/issues\\\\/(4739|4741|4758|4761|4762|5107|5338|5340|5341|5343|5344|5345|5349|5350|5361|5384|5497|5498|5500|5501|5502|5526|5563|5589|5590|5592|5594|5605|5613|5615|5624|5627|5648|5653|5658|5666|5671|5683|5686|5691|5695|5697|5698|5702|5710|5715|5717|5719|5727|5737)\\\\// {print; ok=0} END{exit !ok}'\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null},{\"lane\":\"aggregate-diff-hygiene\",\"proof_role\":\"Prove the aggregate terminal projection commit has no whitespace errors\",\"acceptance_ids\":[\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\",\"origin/main...a12e9212d\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "Replace bootstrap placeholders with the exact executable aggregate closeout proof lanes.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"terminal-doctor-sweep\",\"proof_role\":\"Run C-SDLC v2 doctor for every included terminal projection\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"/bin/bash\",\"-lc\",\"for i in 4739 4741 4758 4761 4762 5107 5338 5340 5341 5343 5344 5345 5349 5350 5361 5384 5497 5498 5500 5501 5502 5526 5563 5589 5590 5592 5594 5605 5613 5615 5624 5627 5648 5653 5658 5666 5671 5683 5686 5691 5695 5697 5698 5702 5710 5715 5717 5719 5727 5737; do /Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor --repo . --issue $i >/dev/null || exit 1; done\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null},{\"lane\":\"terminal-receipt-equality\",\"proof_role\":\"Compare every included tracked index byte-for-byte with retained terminal authority\",\"acceptance_ids\":[\"AC-1\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"/bin/bash\",\"-lc\",\"for i in 4739 4741 4758 4761 4762 5107 5338 5340 5341 5343 5344 5345 5349 5350 5361 5384 5497 5498 5500 5501 5502 5526 5563 5589 5590 5592 5594 5605 5613 5615 5624 5627 5648 5653 5658 5666 5671 5683 5686 5691 5695 5697 5698 5702 5710 5715 5717 5719 5727 5737; do jq -e -s '.[0].record == .[1]' \\\"$(git rev-parse --git-common-dir)/csdlc-v2/closeout/$i.json\\\" .csdlc/issues/$i/index.json >/dev/null || exit 1; done\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null},{\"lane\":\"aggregate-scope-and-review-preflight\",\"proof_role\":\"Prove the aggregate commit contains only the declared fifty issue projections and freeze the bounded review scope\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"/bin/bash\",\"-lc\",\"git diff --name-only origin/main...a12e9212d | awk 'BEGIN{ok=1} !/^\\\\.csdlc\\\\/issues\\\\/(4739|4741|4758|4761|4762|5107|5338|5340|5341|5343|5344|5345|5349|5350|5361|5384|5497|5498|5500|5501|5502|5526|5563|5589|5590|5592|5594|5605|5613|5615|5624|5627|5648|5653|5658|5666|5671|5683|5686|5691|5695|5697|5698|5702|5710|5715|5717|5719|5727|5737)\\\\// {print; ok=0} END{exit !ok}'\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null},{\"lane\":\"aggregate-diff-hygiene\",\"proof_role\":\"Prove the aggregate terminal projection commit has no whitespace errors\",\"acceptance_ids\":[\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\",\"origin/main...a12e9212d\"],\"parallel_group\":\"terminal-audit\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    }
+  ]
+}
