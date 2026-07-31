@@ -67,4 +67,3 @@ the reversible default-selection proof.
 
 - This ADR does not give ADL v2 direct provider, filesystem, or network access.
 - This ADR does not authorize deletion of the rollback generation.
-

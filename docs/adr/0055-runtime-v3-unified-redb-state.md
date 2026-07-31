@@ -18,24 +18,36 @@ made consistent checkpoints and restart behavior harder to guarantee.
 
 ## Decision
 
-Runtime v3 durable kernel state uses redb as the single embedded transactional
-store.
+Runtime v3 uses redb for the migrated local checkpoint, lifelog, and
+governed-operation namespaces.
 
-All durable adapter namespaces share the configured state root and database
+Those migrated namespaces share the configured state root and database
 transaction boundary. State identity, schema version, principal ownership,
 integrity metadata, replay position, and migration behavior are explicit.
 Callers do not silently fall back to cwd- or temporary-directory state.
+
+Runtime v3 still has file-backed durable surfaces outside redb. These include
+signed continuity generation directories, signed continuity binary snapshots,
+signed continuity `manifest.json`, and observability spool, audit, master-log,
+configuration, and sequence files. A backup of `runtime-kernel.redb` captures
+only the redb-managed namespaces; it does not capture all Runtime v3 state and
+must be paired with the remaining file-backed durable surfaces for whole-state
+recovery.
 
 The kernel remains responsible for serialization and policy; redb supplies the
 embedded transactional storage mechanism, not business authority.
 
 ## Consequences
 
-- Atomic transactions replace multi-file partial-update windows.
-- Restart and checkpoint restoration use one storage boundary.
+- Atomic transactions replace multi-file partial-update windows for migrated
+  redb namespaces.
+- Restart and checkpoint restoration use one storage boundary for migrated
+  redb namespaces.
 - Schema migrations and backup/restore require explicit versioned handling.
 - A single writer database simplifies consistency but makes transaction scope
   and long-running read/write behavior important performance concerns.
+- Whole-state Runtime v3 backup and restore still require explicit handling for
+  file-backed durable surfaces outside `runtime-kernel.redb`.
 
 ## Alternatives Considered
 
@@ -52,10 +64,12 @@ deployment dependency without improving single-node ownership.
 
 Validate atomic commit/rollback, process restart, corruption rejection,
 identity and integrity checks, concurrent access behavior, migration failure,
-backup/restore, and configured absolute state-root handling.
+redb-scoped backup/restore, file-backed durable-surface recovery, and configured
+absolute state-root handling.
 
 ## Non-Claims
 
 - This ADR does not define distributed replication or consensus.
 - This ADR does not make redb records a public wire protocol.
-
+- This ADR does not claim `runtime-kernel.redb` backup captures all Runtime v3
+  durable state.

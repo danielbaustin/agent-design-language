@@ -61,4 +61,3 @@ duplicate fields, and bounded channel decoding.
 
 - This ADR does not define key generation, storage, rotation, or discovery.
 - This ADR does not make every signed record trusted by every polis.
-

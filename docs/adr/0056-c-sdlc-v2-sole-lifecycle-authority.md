@@ -65,4 +65,3 @@ conflict recovery, exact-head review, merge, and terminal reconciliation.
 
 - This ADR does not make every lifecycle gate necessary forever.
 - This ADR does not permit manual state edits when a typed operation is absent.
-

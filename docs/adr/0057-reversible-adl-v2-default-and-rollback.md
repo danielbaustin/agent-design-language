@@ -58,4 +58,3 @@ compare-and-swap failure, interruption recovery, and selected-default identity.
 
 - This ADR does not authorize legacy deletion before the rollback gate opens.
 - This ADR does not claim byte-identical internal implementations.
-

@@ -68,4 +68,3 @@ lifecycle behavior.
 
 - This ADR does not claim distributed multi-node relocation.
 - This ADR does not make the Observatory an execution authority.
-
