@@ -1630,6 +1630,146 @@ fn concurrent_reacquisition_across_worktrees_allows_only_one_overlapping_writer(
 }
 
 #[test]
+fn expired_recovery_cannot_bypass_cross_worktree_overlap_authority() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let store = Store::new(temp.path());
+    let mut request_42 = request();
+    request_42.claim.protected_paths = vec!["old/42".into()];
+    request_42.claim.expires_unix_seconds = u64::MAX - 2;
+    fs::create_dir_all(temp.path().join("docs")).expect("docs");
+    fs::write(temp.path().join("docs/design.md"), "# Reviewed design\n").expect("design");
+    fs::write(
+        temp.path().join("docs/diagram.mmd"),
+        "flowchart LR\n  A --> B\n",
+    )
+    .expect("diagram");
+    let record_42 = initialize_issue(&store, request_42).expect("initialize issue 42");
+
+    let mut request_43 = request();
+    request_43.issue = 43;
+    request_43.design_path = "docs/design-43.md".into();
+    request_43.diagram_path = "docs/diagram-43.mmd".into();
+    request_43.claim.id = "claim-43".into();
+    request_43.claim.branch = "issue-43".into();
+    request_43.claim.worktree = ".worktrees/issue-43".into();
+    request_43.claim.protected_paths = vec!["old/43".into()];
+    request_43.claim.expires_unix_seconds = u64::MAX - 2;
+    fs::write(temp.path().join("docs/design-43.md"), "# Reviewed design\n").expect("design");
+    fs::write(
+        temp.path().join("docs/diagram-43.mmd"),
+        "flowchart LR\n  A --> B\n",
+    )
+    .expect("diagram");
+    let record_43 = initialize_issue(&store, request_43).expect("initialize issue 43");
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "test"]);
+    git(temp.path(), &["add", "."]);
+    git(temp.path(), &["commit", "-m", "two expiring issues"]);
+
+    let worktree_42 = temp.path().join("worktree-42");
+    let worktree_43 = temp.path().join("worktree-43");
+    git(
+        temp.path(),
+        &[
+            "worktree",
+            "add",
+            "-b",
+            "issue-42",
+            worktree_42.to_str().expect("worktree 42"),
+        ],
+    );
+    git(
+        temp.path(),
+        &[
+            "worktree",
+            "add",
+            "-b",
+            "issue-43",
+            worktree_43.to_str().expect("worktree 43"),
+        ],
+    );
+    let barrier = std::sync::Arc::new(std::sync::Barrier::new(2));
+    let run = |issue: u64,
+               root: std::path::PathBuf,
+               record: csdlc_v2::IssueRecord,
+               claim_id: &str,
+               branch: &str,
+               worktree: &str,
+               path: &str,
+               barrier: std::sync::Arc<std::sync::Barrier>| {
+        let claim_id = claim_id.to_owned();
+        let branch = branch.to_owned();
+        let worktree = worktree.to_owned();
+        let path = path.to_owned();
+        std::thread::spawn(move || {
+            barrier.wait();
+            csdlc_v2::recover_claim(
+                &Store::new(root),
+                csdlc_v2::RecoverClaimRequest {
+                    issue,
+                    expected_claim_id: record.claim.expect("expired claim").id,
+                    expected_generation: record.generation,
+                    now_unix_seconds: u64::MAX - 1,
+                    replacement: Claim {
+                        id: claim_id,
+                        owner: format!("owner-{issue}"),
+                        generation: record.generation,
+                        acquired_unix_seconds: u64::MAX - 1,
+                        expires_unix_seconds: u64::MAX,
+                        heartbeat_unix_seconds: u64::MAX - 1,
+                        branch,
+                        worktree,
+                        protected_paths: vec![path],
+                        purpose: "recover through shared authority".into(),
+                    },
+                    recovery_actor: format!("operator-{issue}"),
+                    reason: "expired cross-worktree recovery".into(),
+                },
+            )
+        })
+    };
+    let thread_42 = run(
+        42,
+        worktree_42,
+        record_42,
+        "replacement-42",
+        "issue-42",
+        ".worktrees/issue-42",
+        "src",
+        barrier.clone(),
+    );
+    let thread_43 = run(
+        43,
+        worktree_43,
+        record_43,
+        "replacement-43",
+        "issue-43",
+        ".worktrees/issue-43",
+        "src/nested",
+        barrier,
+    );
+    let outcomes = [
+        thread_42.join().expect("issue 42 thread"),
+        thread_43.join().expect("issue 43 thread"),
+    ];
+    assert_eq!(outcomes.iter().filter(|result| result.is_ok()).count(), 1);
+    assert_eq!(
+        outcomes
+            .iter()
+            .filter(|result| {
+                result
+                    .as_ref()
+                    .is_err_and(|error| error.code == ErrorCode::ClaimCollision)
+            })
+            .count(),
+        1
+    );
+}
+
+#[test]
 fn bound_claim_scope_amendment_is_collision_checked_and_audited() {
     let (temp, store, record) = fixture();
     git(temp.path(), &["init", "-b", "main"]);

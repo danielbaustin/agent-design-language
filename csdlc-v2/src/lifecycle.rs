@@ -1006,6 +1006,30 @@ pub fn transition_active_claim(
 }
 
 pub fn recover_claim(store: &Store, request: RecoverClaimRequest) -> Result<ClaimRecovery> {
+    if request.issue == 0
+        || request.recovery_actor.trim().is_empty()
+        || request.reason.trim().is_empty()
+        || request.replacement.id.trim().is_empty()
+        || request.replacement.owner.trim().is_empty()
+        || request.replacement.purpose.trim().is_empty()
+        || request.replacement.branch == "main"
+        || request.replacement.protected_paths.is_empty()
+        || request
+            .replacement
+            .protected_paths
+            .iter()
+            .any(|path| !clean_relative(path))
+        || (request.replacement.worktree != "." && !clean_relative(&request.replacement.worktree))
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "recovery requires complete actor, reason, binding, purpose, and protected paths",
+        ));
+    }
+    request
+        .replacement
+        .validate(&request.replacement.id, request.now_unix_seconds)?;
+    let _binding_lock = store.binding_lock()?;
     let mut record = store.load_record(request.issue)?;
     let expected_digest = record.digest.clone();
     let current = record
@@ -1021,10 +1045,12 @@ pub fn recover_claim(store: &Store, request: RecoverClaimRequest) -> Result<Clai
             "stale recovery compare-and-swap or expiry check failed",
         ));
     }
-    if request.reason.trim().is_empty() || request.recovery_actor.trim().is_empty() {
+    if request.replacement.branch != current.branch
+        || request.replacement.worktree != current.worktree
+    {
         return Err(V2Error::new(
-            ErrorCode::InvalidInput,
-            "recovery actor and reason required",
+            ErrorCode::UnsafeCheckout,
+            "replacement claim must preserve the expired claim branch/worktree binding",
         ));
     }
     let evidence = ClaimRecovery {
@@ -1033,14 +1059,43 @@ pub fn recover_claim(store: &Store, request: RecoverClaimRequest) -> Result<Clai
         recovery_actor: request.recovery_actor.clone(),
         reason: request.reason.clone(),
     };
-    request
-        .replacement
-        .validate(&request.replacement.id, request.now_unix_seconds)?;
     if request.replacement.generation != record.generation {
         return Err(V2Error::new(
             ErrorCode::StaleGeneration,
             "replacement claim generation is stale",
         ));
+    }
+    for (other_store, other) in issue_records_across_worktrees(store)? {
+        if other.issue == request.issue || terminally_released(&other_store, &other)? {
+            continue;
+        }
+        let Some(other_claim) = other.claim else {
+            continue;
+        };
+        if other_claim
+            .validate(&other_claim.id, request.now_unix_seconds)
+            .is_err()
+        {
+            continue;
+        }
+        if let Some((reserved, candidate)) =
+            other_claim.protected_paths.iter().find_map(|reserved| {
+                request
+                    .replacement
+                    .protected_paths
+                    .iter()
+                    .find(|candidate| overlaps(reserved, candidate))
+                    .map(|candidate| (reserved, candidate))
+            })
+        {
+            return Err(V2Error::new(
+                ErrorCode::ClaimCollision,
+                format!(
+                    "protected path '{}' overlaps requested '{}' from live issue {}",
+                    reserved, candidate, other.issue
+                ),
+            ));
+        }
     }
     record.claim = Some(request.replacement);
     record.audit.push(AuditEvent {
