@@ -84,8 +84,8 @@ COMMAND_FAMILIES = (
     CommandFamily(
         key="direct_adl_pr",
         label="direct `adl pr ...` issue-mode commands",
-        preferred_owner="adl/tools/pr.sh ...",
-        required_action="migrate if active; preserve if historical; route if unknown",
+        preferred_owner="csdlc-install resolve + typed csdlc-* binaries",
+        required_action="forbid if active; preserve if historical; route if unknown",
         pattern=r"(?<![\w/-])adl pr (?:create|init|doctor|ready|preflight|run|finish|closeout)\b",
     ),
     CommandFamily(
@@ -133,8 +133,8 @@ COMMAND_FAMILIES = (
     CommandFamily(
         key="csdlc_issue_run",
         label="`adl-csdlc issue run <issue>`",
-        preferred_owner="adl/tools/pr.sh run <issue>",
-        required_action="block if active until wrapper migration explicitly changes public truth",
+        preferred_owner="csdlc-bind --root <worktree> --request <bind-request.json>",
+        required_action="forbid if active; preserve if historical; route if unknown",
         pattern=r"(?<![\w/-])adl-csdlc issue run\b",
     ),
 )

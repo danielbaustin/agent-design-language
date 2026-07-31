@@ -26,7 +26,6 @@ PRIMARY_BINARIES = {
 }
 
 SUPPORTED_SHIMS = {
-    "pr.sh": "Canonical agent-facing issue workflow wrapper; implementation owner may move but wrapper remains public workflow spine.",
     "validate_structured_prompt.sh": "Compatibility shim over the direct structured-prompt validator binary.",
     "lint_prompt_spec.sh": "Compatibility shim over the direct prompt-spec lint binary.",
 }
@@ -64,40 +63,40 @@ HISTORICAL_EVIDENCE = [
 
 CORE_WORKFLOW_COMMANDS = [
     (
-        "adl/tools/pr.sh init <issue>",
+        "csdlc-install resolve",
         "core workflow command",
         "primary",
-        "Canonical issue bootstrap command in the current governed workflow spine.",
+        "Resolve the installed v2 generation selector before issue work.",
     ),
     (
-        "adl/tools/pr.sh doctor <issue>",
+        "csdlc-init --root <worktree> --request <bootstrap-request.json>",
         "core workflow command",
         "primary",
-        "Canonical readiness/doctor command for tracked issue work.",
+        "Atomically create the canonical issue record and six projections.",
     ),
     (
-        "adl/tools/pr.sh run <issue>",
+        "csdlc-bind --root <worktree> --request <bind-request.json>",
         "core workflow command",
         "primary",
-        "Canonical issue binding command for execution-time branch/worktree setup.",
+        "Bind the issue claim, branch, and worktree through typed argv.",
     ),
     (
-        "adl/tools/pr.sh ready <issue>",
+        "csdlc-validate --root <worktree> finalize --request <finalize-request.json>",
         "core workflow command",
         "primary",
-        "Canonical readiness classification command for tracked issue work.",
+        "Execute declared PVF proof and atomically record Implemented truth.",
     ),
     (
-        "adl/tools/pr.sh finish <issue>",
+        "csdlc-review record --request <review-request.json>",
         "core workflow command",
         "primary",
-        "Canonical finish/publication command for issue branches.",
+        "Record exact-head review truth before publication.",
     ),
     (
-        "adl/tools/pr.sh closeout <issue>",
+        "csdlc-publish publish --request <publication-request.json>",
         "core workflow command",
         "primary",
-        "Canonical closeout command after merge or no-PR resolution.",
+        "Publish one ready PR only after review and validation gates pass.",
     ),
     (
         "pr-janitor skill / janitor workflow",

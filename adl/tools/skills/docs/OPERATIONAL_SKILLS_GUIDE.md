@@ -1141,7 +1141,7 @@ Structured schema:
 Preferred execution order:
 
 - `adl/tools/pr.sh doctor --json`
-- `adl/tools/pr.sh run`
+- `csdlc-bind --root <worktree> --request <bind-request.json>`
 - `adl/tools/pr.sh ready`
 - `adl/tools/pr.sh preflight`
 

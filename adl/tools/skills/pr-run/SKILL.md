@@ -327,7 +327,7 @@ Canonical machine surface:
 - `adl/tools/pr.sh doctor --json`
 
 Execution surface:
-- `adl/tools/pr.sh run`
+- `csdlc-bind --root <worktree> --request <bind-request.json>`
 
 Compatibility aliases:
 - `adl/tools/pr.sh ready`

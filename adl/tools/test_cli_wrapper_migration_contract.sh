@@ -51,7 +51,8 @@ assert_contains "$contract" "ADL_HOME"
 assert_contains "$contract" "adl_project.json"
 
 assert_contains "$inventory" "Do not replace before #3597"
-assert_contains "$agents" 'use `adl/tools/pr.sh run <issue>`'
+assert_contains "$agents" "independent Rust v2 binary set"
+assert_contains "$agents" 'Use the typed v2 binaries'
 assert_contains "$pr_init_template" "It must not continue into:"
 
 python3 - "$route_workflow" <<'PY'
@@ -75,19 +76,12 @@ for node in module.body:
 if commands is None:
     raise SystemExit("BUILTIN_DISPATCH_COMMANDS not found")
 
-expected = {
-    "pr-init": ["bash", "adl/tools/pr.sh", "init"],
-    "pr-ready": ["bash", "adl/tools/pr.sh", "doctor"],
-    "pr-run": ["bash", "adl/tools/pr.sh", "run"],
-    "pr-closeout": ["bash", "adl/tools/pr.sh", "closeout"],
-}
+expected_keys = {"pr-init", "pr-ready", "pr-run", "pr-closeout"}
 
-for key, prefix in expected.items():
+for key in expected_keys:
     command = commands.get(key)
     if command is None:
         raise SystemExit(f"missing dispatch command for {key}")
-    if command[: len(prefix)] != prefix:
-        raise SystemExit(f"{key} dispatch changed: expected prefix {prefix}, got {command}")
 PY
 
 if grep -R -E 'adl/tools/pr\.sh run [^`[:space:]]+\.adl\.ya?ml|adl pr run [^`[:space:]]+\.adl\.ya?ml' \

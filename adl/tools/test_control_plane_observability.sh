@@ -12,10 +12,10 @@ source "$OBS"
 export ADL_OBSERVABILITY_REPO_ROOT="$ROOT_DIR"
 export ADL_OBSERVABILITY_LOG="$TMP_DIR/events.log"
 
-TOOLING_BIN=""
-for candidate in "$ROOT_DIR/.adl/bin/adl" "$ROOT_DIR/adl/target/debug/adl"; do
+VALIDATOR_BIN=""
+for candidate in "$ROOT_DIR/.adl/bin/adl-validate-structured-prompt" "$ROOT_DIR/adl/target/debug/adl-validate-structured-prompt" "$ROOT_DIR/../../.adl/bin/adl-validate-structured-prompt"; do
   if [[ -x "$candidate" ]]; then
-    TOOLING_BIN="$candidate"
+    VALIDATOR_BIN="$candidate"
     break
   fi
 done
@@ -83,17 +83,16 @@ printf 'occupied\n' >"$bad_sink_parent"
 bad_stderr="$TMP_DIR/bad-sink-stderr.log"
 bad_stdout="$TMP_DIR/bad-sink-stdout.log"
 validate_cmd=(
-  tooling validate-structured-prompt
   --type sor
   --phase bootstrap
   --input "$ROOT_DIR/docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sor.md"
 )
-if [[ -n "$TOOLING_BIN" ]]; then
+if [[ -n "$VALIDATOR_BIN" ]]; then
   ADL_OBSERVABILITY_STDERR=0 ADL_OBSERVABILITY_LOG="$bad_sink" \
-    "$TOOLING_BIN" "${validate_cmd[@]}" >"$bad_stdout" 2>"$bad_stderr"
+    "$VALIDATOR_BIN" "${validate_cmd[@]}" >"$bad_stdout" 2>"$bad_stderr"
 else
   ADL_OBSERVABILITY_STDERR=0 ADL_OBSERVABILITY_LOG="$bad_sink" \
-    cargo run --manifest-path "$ROOT_DIR/adl/Cargo.toml" --quiet --bin adl -- \
+    cargo run --manifest-path "$ROOT_DIR/adl/Cargo.toml" --quiet --bin adl-validate-structured-prompt -- \
     "${validate_cmd[@]}" >"$bad_stdout" 2>"$bad_stderr"
 fi
 [[ ! -s "$bad_stderr" ]] || {

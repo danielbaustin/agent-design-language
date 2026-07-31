@@ -14,16 +14,16 @@ fail() {
 }
 
 out="$(bash adl/tools/editor_action.sh prepare --phase run --issue 2053 --slug backlog-tools-refresh-web-task-editor-current-skills --version v0.90)"
-[[ "$out" == "./adl/tools/pr.sh run 2053 --slug backlog-tools-refresh-web-task-editor-current-skills --version v0.90" ]] || fail "prepare should emit the current pr run command"
-pass "prepare emits current pr run command"
+[[ "$out" == ".adl/bin/csdlc-v2/csdlc-bind --root <worktree> --request <bind-request.json>" ]] || fail "prepare should emit the current csdlc-bind command"
+pass "prepare emits current csdlc-bind command"
 
 out="$(bash adl/tools/editor_action.sh prepare --phase doctor-ready --issue 2053 --slug backlog-tools-refresh-web-task-editor-current-skills --version v0.90)"
-[[ "$out" == "./adl/tools/pr.sh doctor 2053 --slug backlog-tools-refresh-web-task-editor-current-skills --version v0.90 --mode ready" ]] || fail "prepare should emit the ready doctor command"
-pass "prepare emits ready doctor command"
+[[ "$out" == ".adl/bin/csdlc-v2/csdlc-doctor --root <worktree> --request <doctor-request.json>" ]] || fail "prepare should emit the ready csdlc-doctor command"
+pass "prepare emits ready csdlc-doctor command"
 
 out="$(bash adl/tools/editor_action.sh prepare --phase finish --issue 2053 --slug backlog-tools-refresh-web-task-editor-current-skills --version v0.90 --title "[v0.90][tools] Refresh editor" --paths "docs/tooling/editor/README.md")"
-[[ "$out" == "./adl/tools/pr.sh finish 2053 --title '[v0.90][tools] Refresh editor' --paths 'docs/tooling/editor/README.md'" ]] || fail "prepare should shell-quote finish title and paths"
-pass "prepare emits quoted finish command"
+[[ "$out" == ".adl/bin/csdlc-v2/csdlc-validate --root <worktree> finalize --request <finalize-request.json>" ]] || fail "prepare should emit the finalize validation command"
+pass "prepare emits finalize validation command"
 
 out="$(bash adl/tools/editor_action.sh contract)"
 [[ "$out" == *"editor_adapter_schema: editor.command_adapter.v2"* ]] || fail "contract text should include schema header"
