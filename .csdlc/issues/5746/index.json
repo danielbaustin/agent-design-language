@@ -3,13 +3,13 @@
   "issue": 5746,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "eae528ea03f96b45cd6c882c001f86b97ba8c63c9b04a0a4c8ff049792ae0d4d",
-  "phase": "implemented",
-  "generation": 10,
-  "digest": "f1f1efad862583ad92bba02d8dd56b6ca66500c9151c1057c648eaca221be19c",
+  "phase": "reviewed",
+  "generation": 11,
+  "digest": "c5c70e2b4ef1ab44e314e2736a1b5a61cdb6e6d51bda10fb6fbe2794563c5a85",
   "claim": {
     "id": "claim-5746-v0918-terminal-projection-wave",
     "owner": "codex:v0918-terminal-projection-wave",
-    "generation": 10,
+    "generation": 11,
     "acquired_unix_seconds": 1785538383,
     "expires_unix_seconds": 1786143183,
     "heartbeat_unix_seconds": 1785538383,
@@ -24,7 +24,20 @@
     "purpose": "Publish and shepherd the reviewed v0.91.8 terminal projection reconciliation batch without widening lifecycle truth."
   },
   "review_assignment": null,
-  "review": null,
+  "review": {
+    "reviewer": "codex-subagent:/root/closeout_runtime_tooling",
+    "scope": [
+      ".csdlc"
+    ],
+    "reviewed_revision": "git-blake3:bcdf9024a00c4154529ab9ed4a9c5c2ffdfeadd5:1d47068b137003b5d92a7caeacd8e92996b63a850be313d931b5ddabe48b287a",
+    "findings": [],
+    "residual_risks": [
+      "Thirty excluded issues remain governed by #5748 and are not claimed complete by this batch.",
+      "Historical receipt-authored machine-local fields remain immutable terminal evidence; current publication proof is the repo-relative c4ef77c46 current-* evidence set."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -39,32 +52,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "ee02f227a828340a0e0d50c01a054133868f5b8fc026a00679a5ff97e7e78ca6",
+      "values_digest": "a5f7e34d81eeac90b77b39ec475efedaed1c9e448478f4c59523e5688d33a235",
       "rendered_digest": "3c4372d0075360d87ea67423bc21316c6c7042f431c0c1b4fd3a0d15aa50f886",
       "ast_digest": "e313d0336ff506eef911a41416b955c09684c3d25e1860620e60fdd5cd800655"
     },
     "stp": {
-      "values_digest": "33a09429fb6977481c08c3e4f5c4dc3b62f1035413ded3f21dce3a089efea6f0",
+      "values_digest": "236c7eb0b8cf561053160717f790f23d35f6fe6049fe0296f165525f245be233",
       "rendered_digest": "45a3151a7904b28ddb4a2fab957d64794d1977eff14f1f1e4f96db4f46bccd88",
       "ast_digest": "6801c8f8877721131eb2258bee98c4bfde641439202ab787338b8a7f257c2784"
     },
     "spp": {
-      "values_digest": "c6e6942eba6e8e4c3a2753c04351fc01e3621b7dea1a33af5869094cb9fc0818",
+      "values_digest": "767b04c450aaf73632364cdac6ac6bc7b9ff9e6947ba87d65bad8c2ff36e8785",
       "rendered_digest": "f318a1b0ef3a56f29c8d4bb847acf0d685ebd0bda877d1148859d90baf7a7d47",
       "ast_digest": "08ff0eabf0bc87e660f707c886f6670b907cbd478aa81a7e2ba9756ee25a5b1f"
     },
     "vpp": {
-      "values_digest": "d8646abe23ec79848efb3e106ae8bca1f5e9df48de7b39d2ca609e893db94289",
+      "values_digest": "a6b2c443a7813ddedbea7d675b64e0ef04d94188b75b28f4ce6e5eebdde9c49f",
       "rendered_digest": "90d1ae77eb6cb1bf0c677aa6d92b40ecf957d610d77a02dda571047ed1d27aaa",
       "ast_digest": "986884378f6ad79069f768afcbd57adcb57323b0395fc17a20b57a8915f5979b"
     },
     "srp": {
-      "values_digest": "06ec3481850006c093042e1bc24fb188a17228e9d0d206cf617a5c5c68946d78",
-      "rendered_digest": "d4a907854b041b88f06e41ec5b22ca2dc7a6c56c766e9f1b2b8adc74d087ae91",
-      "ast_digest": "35cdfd3d40775fb8c015ebbd32d6f6058721e72073902d8693227f77832ca07b"
+      "values_digest": "dd8be71d570d91b6d1a333c0082f87b9334d39b7731ec09da488bd91be4b15da",
+      "rendered_digest": "9278be4b5545e38fcd3d4e507af9f90c52cbc5d48b5b12414fae6b5eb05d78cb",
+      "ast_digest": "e9009c384b7fcd92eedd0e02df09e92b9181e2dce301b7b38ead7aea45952e80"
     },
     "sor": {
-      "values_digest": "a8c4c9aa0668e70bfabf9e5a7f0c5346b5c59db1903ebd3c8385d7ab9b8bfa62",
+      "values_digest": "d253862703a29626f6e69a48e5a8cf2c5587ea9191c042980df6d836dfb9c951",
       "rendered_digest": "1ecd49c642c105d0af447c3a881e3b1e7f92147edd032fe368011b11d1014a55",
       "ast_digest": "b38e76bf3495c6c9d0eab2e31c480c09edfd6a718bc5b233a4fe0f7e03f193ba"
     }
@@ -90,6 +103,13 @@
       "to": "implemented",
       "actor": "codex:v0918-terminal-projection-wave",
       "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "exact scoped review passed"
     }
   ],
   "audit": [
@@ -190,6 +210,13 @@
       "actor": "codex:v0918-terminal-projection-wave",
       "reason": "Clarify the immutable historical receipt boundary and the portable current validation authority identified by review.",
       "operation": "{\"operation\":\"append_reference\",\"value\":\"Historical receipt-authored fields are preserved verbatim, including machine-local paths that are immutable terminal evidence rather than reusable commands. The superseding #5746 current-* validation uses repo-relative commands at projection commit c4ef77c46; those non-empty logs are the current publication proof.\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:v0918-terminal-projection-wave",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
     }
   ]
 }
