@@ -12,7 +12,13 @@ Status: pre_phase
 
 ## Scope
 
-csdlc-v2 claim lifecycle, store doctor validation, csdlc-bind routing, focused claim tests, and issue-local lifecycle evidence
+csdlc-v2/src/bin/csdlc-bind.rs
+csdlc-v2/src/doctor.rs
+csdlc-v2/src/lib.rs
+csdlc-v2/src/lifecycle.rs
+csdlc-v2/src/schema.rs
+csdlc-v2/src/store.rs
+csdlc-v2/tests/gate2.rs
 
 ## Prompts
 
@@ -23,7 +29,38 @@ csdlc-v2 claim lifecycle, store doctor validation, csdlc-bind routing, focused c
 
 ## Findings
 
-[]
+[
+  {
+    "id": "5727-review-p1-cross-worktree-reacquire",
+    "severity": "p1",
+    "summary": "Reacquisition initially used checkout-local collision authority.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+    "route": null
+  },
+  {
+    "id": "5727-review-p1-recover-bypass",
+    "severity": "p1",
+    "summary": "Expired recovery initially bypassed shared collision authority.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+    "route": null
+  },
+  {
+    "id": "5727-review-p1-wrong-checkout-recovery",
+    "severity": "p1",
+    "summary": "Expired recovery initially did not validate the actual checkout identity.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+    "route": null
+  }
+]
 
 ## Dispositions
 
@@ -35,8 +72,8 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf")
 
-Reviewer: None
+Reviewer: Some("codex-subagent:/root/review_5727")
 
-Result: pre_review
+Result: pass

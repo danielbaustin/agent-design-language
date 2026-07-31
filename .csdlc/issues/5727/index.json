@@ -3,13 +3,13 @@
   "issue": 5727,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "509845bfe734b0de7a7c7042e53facd5b5621f2de91962a4cf7b974b83a3388b",
-  "phase": "implemented",
-  "generation": 10,
-  "digest": "1c520563ee2856dd4aa3a671766f27d2487f2e8c89dd58aef69aaf7b229bd5b3",
+  "phase": "published",
+  "generation": 12,
+  "digest": "8dc658e670d0094fe9151c49745d50cbb544ddc23482b23043be14300067ccab",
   "claim": {
     "id": "claim-5727-csdlc-claim-reacquire",
     "owner": "codex:5727-owner",
-    "generation": 10,
+    "generation": 12,
     "acquired_unix_seconds": 1785465403,
     "expires_unix_seconds": 1786070203,
     "heartbeat_unix_seconds": 1785465403,
@@ -31,8 +31,65 @@
     "purpose": "Implement typed safe reacquisition of released or expired C-SDLC v2 claims without lifecycle rewind"
   },
   "review_assignment": null,
-  "review": null,
-  "publication": null,
+  "review": {
+    "reviewer": "codex-subagent:/root/review_5727",
+    "scope": [
+      "csdlc-v2/src/bin/csdlc-bind.rs",
+      "csdlc-v2/src/doctor.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "reviewed_revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+    "findings": [
+      {
+        "id": "5727-review-p1-cross-worktree-reacquire",
+        "severity": "p1",
+        "summary": "Reacquisition initially used checkout-local collision authority.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+        "route": null
+      },
+      {
+        "id": "5727-review-p1-recover-bypass",
+        "severity": "p1",
+        "summary": "Expired recovery initially bypassed shared collision authority.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+        "route": null
+      },
+      {
+        "id": "5727-review-p1-wrong-checkout-recovery",
+        "severity": "p1",
+        "summary": "Expired recovery initially did not validate the actual checkout identity.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5727,
+    "pull_request": 5730,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5730",
+    "base": "main",
+    "head": "codex/5727-csdlc-claim-reacquire",
+    "revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+    "draft": false,
+    "observed_state": "open"
+  },
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -46,34 +103,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "482716516e506abf9e862ca542aed270ce72e792784b43a98367b13de836769d",
+      "values_digest": "90f5403b1b5391ef3bacb2de8f46455b85e1253c7af5b5de7e14cdf2761c377b",
       "rendered_digest": "174f5e79b1b305dd7a6931b96915f11e767b72f561aa25ae3c22f9267e574213",
       "ast_digest": "0a1a13d1a514ba58f90267a6985edea018115f7a9bae65531219474693e55272"
     },
     "stp": {
-      "values_digest": "1f5a160560eb1058b2e01beebc515f13750c47bcd62876116b6415dd0ee7cb28",
+      "values_digest": "14e01e2615bc8e4ee0805ffa75d7252cf536826402866a6e49a542d1e9e0bbd7",
       "rendered_digest": "3cdc7a6a2a6d33869b4669e3393d5ff6ff719e2eb59ba9a05e430ad50c330fc8",
       "ast_digest": "932c22e642456d4250c690c4dd0ea728658f7175a5de1a349150cd63292a4bdd"
     },
     "spp": {
-      "values_digest": "f3d34b44d55f876ee8be2c6e6718d77eccb620159fc6090bf668f64e51dd6834",
+      "values_digest": "d93697c5d77ddcf477f57852b7d44e41e0ef56aff48996e17262565b9fe6953b",
       "rendered_digest": "9fdab33fb4a5cc1f3562a7ee8dfc941d6ddc7242b4e0b1748da22981504c6c31",
       "ast_digest": "a744c88ebf6466c7778d1ca38eab05e72edee42f501586da9b54857c53922441"
     },
     "vpp": {
-      "values_digest": "588652eb7b933d326706d2d5423cee90ad7f3ddf2a9f865874e98de0461190d5",
+      "values_digest": "9b63ffb02404d9ca2f369ad9594c99ae57b68ec70dcdc4a507de8597723b9cfb",
       "rendered_digest": "a8990e159cbbd0d02665cb1791d886891f99c458229862bace4acee94f2ee1fd",
       "ast_digest": "10f1c93e18377daea8d2971c0d65b0dab4be88e9a7f8610fe52e0eb697f3747c"
     },
     "srp": {
-      "values_digest": "ce4c2cec503197c198a5066db60afb652155b0e6ea557e45f8ed59e0cd530070",
-      "rendered_digest": "a0b2233b21d58b7d0dae7d6f8eaad5961b389feddce9bdb563a60ba73cefba08",
-      "ast_digest": "c540c68bd1839f8583bebf2803da6b41aeff7aa118206c80ffe8b9b46dfd455b"
+      "values_digest": "8d52e6e10972091751da2e641e8e6eba56e7c305522e2bf2e02eb3bbe5a8e7f3",
+      "rendered_digest": "ceab0624337e5f49deceeaaabe02237ad343ab050c2fce83d87e5a0f3eb3ec53",
+      "ast_digest": "bcaed31c220f1f5782b1dc64dbe5d31df4e4846697cd6d4cdfba096c3e61c57e"
     },
     "sor": {
-      "values_digest": "cb13d1499f362ba98990362cc43a0a1517b48a30efb4d1eafb4a545e3a926a28",
-      "rendered_digest": "cf79d1a57e575e04244d2d07a1b7d6af292e1302cab31fdc555574b9f90efced",
-      "ast_digest": "e36a34631809a6e21a9b0556a8f9a42521219ae267e477c7c9b150bd60184d8e"
+      "values_digest": "aa9d862e446268a9a6acabda94f952428b151d3313fd963f22ce324e20e48ac4",
+      "rendered_digest": "034c7c0e58198121f9fa5e4e22d37d7a8b177cece01689f85ff2f8090f2caffd",
+      "ast_digest": "8ced14d33319f4f71eae8abfc27418766fd4871008d771e16131e0b0d0b524c2"
     }
   },
   "transitions": [
@@ -97,6 +154,20 @@
       "to": "implemented",
       "actor": "codex:5727-owner",
       "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5727-owner",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5727-owner",
+      "reason": "observed exact PR after current review"
     }
   ],
   "audit": [
@@ -190,6 +261,20 @@
       "actor": "codex:5727-owner",
       "reason": "Record final Gate 2 proof for actual-checkout and cross-worktree claim exclusivity.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\"],\"purpose\":\"Prove every claim replacement route enforces active-checkout and cross-worktree exclusion, schema, CAS, collision, and CLI behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/gate2.log\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:5727-owner",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:5727-owner",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
     }
   ]
 }
