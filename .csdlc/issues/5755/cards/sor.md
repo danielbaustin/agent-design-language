@@ -143,11 +143,11 @@ Implemented #5755 Runtime v3 protocol/control security fixes needed to unblock #
 
 ## Integration
 
-worktree_only
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 
