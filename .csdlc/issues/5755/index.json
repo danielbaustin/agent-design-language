@@ -3,13 +3,13 @@
   "issue": 5755,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "73882389d54ae0d12e78152b7d469ed4a25cd70e2c9578946a4040bac99ca733",
-  "phase": "implemented",
-  "generation": 6,
-  "digest": "fb6714da5538280e32272570fce91a93efc32810c638334f9dfc039bf2b31028",
+  "phase": "reviewed",
+  "generation": 7,
+  "digest": "2e4d5f5c3411cbaee6dd72d9ee33d028fb0f6a3ed683f41ee87ded2719a99345",
   "claim": {
     "id": "claim-5755-runtime-protocol-security",
     "owner": "codex:5755-runtime-protocol-security",
-    "generation": 6,
+    "generation": 7,
     "acquired_unix_seconds": 1785566965,
     "expires_unix_seconds": 1785653365,
     "heartbeat_unix_seconds": 1785566965,
@@ -28,7 +28,23 @@
     "purpose": "Resolve #5664 protocol-adapter mTLS and Runtime control body-bound closeout blockers"
   },
   "review_assignment": null,
-  "review": null,
+  "review": {
+    "reviewer": "codex-subagent:019fbc22-2f1c-72f2-aa2f-95ae73f9558c",
+    "scope": [
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/src/protocol_adapters.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs",
+      ".csdlc/issues/5755"
+    ],
+    "reviewed_revision": "git-blake3:1b97b7ec5e2dc03667a7c8799d951e2ff3df53d0:44f765456b4b8c136575fd7699f22247b934dfd66f757d17a5accdd1ce4c2863",
+    "findings": [],
+    "residual_risks": [
+      "Reviewer was read-only and relied on recorded local SOR validation; implementation owner separately ran cargo fmt --check and focused tests locally on FastWork."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -43,32 +59,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "aa10274fdddc84f9930bce00e13f0aa615d31cd0ee0f8c2eb42fcaaf665fee2c",
+      "values_digest": "38b9b9b2cb63e8a06b068abdf745cd07f46ed59c1930a871e1c35388c8977182",
       "rendered_digest": "5cfe45c018478acddab8d50505e3ccfa41f84fb85b62a26259a2de47ec5aa146",
       "ast_digest": "9e0ff02db3151176af0431608bc598107a1660525d9480a940d86a085d89f875"
     },
     "stp": {
-      "values_digest": "8a3a3d967998c425084eb50fdc2c01f037eeeb8d05ea53f5264eb9ea34f1d10b",
+      "values_digest": "e0e9ff318088e97fdcfeb842fc81503b510b7ee08c5f2d8ac892e1753967a14e",
       "rendered_digest": "9428b15ecdedadcddb34485afe670c60b4791096939da5d45fb201f8c0a16ca5",
       "ast_digest": "5826ac6aee3e75f3961fd6b30966529e27a1300083fe3af625b234d9edd76141"
     },
     "spp": {
-      "values_digest": "17450744cb75e181c6eaaed39e7faff06cb73761dae976bc6b21b506933f9fa6",
+      "values_digest": "5a87b967a0c5c9266575cf20c473c0519048b17ead6ec3d7bc95e866684444d0",
       "rendered_digest": "9585c16c540f32159f768ab41c3837750e3264f76cee6efb6ae01ce710d641dc",
       "ast_digest": "206726bb2d961a3952e4bb1676bb36d9fe7042c39fe11e23b2ee59b6ef9943a1"
     },
     "vpp": {
-      "values_digest": "be750972f90d510c34bf8398570cbebc08e05d0c2736154ff716d66c2b36621b",
+      "values_digest": "f81b83d08a41c17f1c483ae3a0d1e1ca015afab5d32873bc916b250592b5778e",
       "rendered_digest": "98b6a03b946da456db71b54930b77a1c7ac249ebeafdb535c43e01d4c03a00e0",
       "ast_digest": "32f2b2ef53d1602bb53a52e39992bf7f546ffe31593c673934e2f463c784e3c3"
     },
     "srp": {
-      "values_digest": "9119535ab2e6407d15f47d9f7c9399d2f5971863d0c4e1409c64997b2834f751",
-      "rendered_digest": "88874c0c479579cf0458dabcc57cb82b8a72dc39a858de4a2fd88cc2f7020052",
-      "ast_digest": "15da8fc3ca88243deb5a23f5d106992d3422fd93832c60b63dabbfe3ed0cf13d"
+      "values_digest": "bdd9df182c664d38942f43485fc88f936cff9a45e32c410a1b823fbadfcb8c7e",
+      "rendered_digest": "2ae37e28638b20c7ec93e20fbd6e7115bf8c45055e4d42b3c5e0a12c9a3ad0b4",
+      "ast_digest": "5720bbd0f5b7d4a490ae8c11b321f1c4ace0f73eb6e6dfe690f0f06d93681d05"
     },
     "sor": {
-      "values_digest": "15df152e3c24fec2921df728925686d2f3a2c31de3bdfdea2332e74158a65a11",
+      "values_digest": "10cb05e590077669215ba7a0ea5033635677383f56df5dc5606bd2f501d76a64",
       "rendered_digest": "a492a029cd8504a4f514cca458dd39850ca4b00eab7c9fe929313f0a78a259bf",
       "ast_digest": "5399f22b26a71cfa32ee113eab1e413115a17383550ef5813b9a3df6cc15490b"
     }
@@ -94,6 +110,13 @@
       "to": "implemented",
       "actor": "codex:5755-runtime-protocol-security",
       "reason": "Focused implementation and local validation are complete for #5755."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "exact scoped review passed"
     }
   ],
   "audit": [
@@ -166,6 +189,13 @@
       "actor": "codex:5755-runtime-protocol-security",
       "reason": "Record rustfmt validation.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"fmt\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--check\"],\"purpose\":\"Prove Rust formatting for #5755 Runtime v3 security repair.\",\"outcome\":\"passed\",\"evidence_ref\":\"local terminal output: cargo fmt --check passed\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
     }
   ]
 }

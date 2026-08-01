@@ -7,23 +7,25 @@
     "title": "[v0.91.8][runtime-v3][protocols] Resolve #5664 terminal closeout security blockers",
     "slug": "runtime-v3-protocol-security-closeout-blockers",
     "version": "v0.91.8",
-    "generation": 6
+    "generation": 7
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "Exact-head review of protocol adapter security, Runtime control body-bound behavior, and focused tests.",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "adl-runtime-kernel/src/control.rs\nadl-runtime-kernel/tests/control.rs\nadl-runtime-kernel/src/protocol_adapters.rs\nadl-runtime-kernel/tests/protocol_adapters.rs\n.csdlc/issues/5755",
+      "review_revision": "git-blake3:1b97b7ec5e2dc03667a7c8799d951e2ff3df53d0:44f765456b4b8c136575fd7699f22247b934dfd66f757d17a5accdd1ce4c2863",
+      "reviewer": "codex-subagent:019fbc22-2f1c-72f2-aa2f-95ae73f9558c",
       "review_prompts": [
         "Does the protocol adapter security repair close the accepted #5664 mTLS/client-auth or equivalent boundary without overclaiming?",
         "Does the Runtime control route reject oversized request bodies before unbounded JSON parsing?",
         "Are tests focused and sufficient for the two accepted blockers?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "Reviewer was read-only and relied on recorded local SOR validation; implementation owner separately ran cargo fmt --check and focused tests locally on FastWork."
+      ],
+      "review_result": "pass"
     }
   }
 }
