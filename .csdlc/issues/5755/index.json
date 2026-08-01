@@ -3,13 +3,13 @@
   "issue": 5755,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "73882389d54ae0d12e78152b7d469ed4a25cd70e2c9578946a4040bac99ca733",
-  "phase": "reviewed",
-  "generation": 7,
-  "digest": "2e4d5f5c3411cbaee6dd72d9ee33d028fb0f6a3ed683f41ee87ded2719a99345",
+  "phase": "published",
+  "generation": 8,
+  "digest": "434329ddf70ea3c66e6aa7bc4dcfac95f4b73955a4e2f91d1f26ff26a1ce04af",
   "claim": {
     "id": "claim-5755-runtime-protocol-security",
     "owner": "codex:5755-runtime-protocol-security",
-    "generation": 7,
+    "generation": 8,
     "acquired_unix_seconds": 1785566965,
     "expires_unix_seconds": 1785653365,
     "heartbeat_unix_seconds": 1785566965,
@@ -45,7 +45,17 @@
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5755,
+    "pull_request": 5758,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5758",
+    "base": "main",
+    "head": "codex/5755-runtime-protocol-security",
+    "revision": "git-blake3:50fdb79d208776ff6ecbf4a173e3eff9b2acc730:64b456028a2c75908fc5546bf0f292f19ab4115de01ed5a140222483b5a72aa9",
+    "draft": true,
+    "observed_state": "open"
+  },
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -59,34 +69,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "38b9b9b2cb63e8a06b068abdf745cd07f46ed59c1930a871e1c35388c8977182",
+      "values_digest": "abee43989ac837b0cbc1411945922eb12cc87a5963a597578a8ece33dccafc2d",
       "rendered_digest": "5cfe45c018478acddab8d50505e3ccfa41f84fb85b62a26259a2de47ec5aa146",
       "ast_digest": "9e0ff02db3151176af0431608bc598107a1660525d9480a940d86a085d89f875"
     },
     "stp": {
-      "values_digest": "e0e9ff318088e97fdcfeb842fc81503b510b7ee08c5f2d8ac892e1753967a14e",
+      "values_digest": "e5333882f253fdfa271f4da43a5bc8d94be87d6db287e895bc04bd780edf97b8",
       "rendered_digest": "9428b15ecdedadcddb34485afe670c60b4791096939da5d45fb201f8c0a16ca5",
       "ast_digest": "5826ac6aee3e75f3961fd6b30966529e27a1300083fe3af625b234d9edd76141"
     },
     "spp": {
-      "values_digest": "5a87b967a0c5c9266575cf20c473c0519048b17ead6ec3d7bc95e866684444d0",
+      "values_digest": "59076b2e647e0568efcee04c0eeb1e27bb154e5a9ccfe5017748d23d5fe1456f",
       "rendered_digest": "9585c16c540f32159f768ab41c3837750e3264f76cee6efb6ae01ce710d641dc",
       "ast_digest": "206726bb2d961a3952e4bb1676bb36d9fe7042c39fe11e23b2ee59b6ef9943a1"
     },
     "vpp": {
-      "values_digest": "f81b83d08a41c17f1c483ae3a0d1e1ca015afab5d32873bc916b250592b5778e",
+      "values_digest": "000d32cb7b60a0e73e272349411e993623bebb2c067d0958ffe59e2d4042a2c3",
       "rendered_digest": "98b6a03b946da456db71b54930b77a1c7ac249ebeafdb535c43e01d4c03a00e0",
       "ast_digest": "32f2b2ef53d1602bb53a52e39992bf7f546ffe31593c673934e2f463c784e3c3"
     },
     "srp": {
-      "values_digest": "bdd9df182c664d38942f43485fc88f936cff9a45e32c410a1b823fbadfcb8c7e",
+      "values_digest": "621ff84d56f4f9f300f73300d7f94cd1af7d91372fd3c57dab6338311705519a",
       "rendered_digest": "2ae37e28638b20c7ec93e20fbd6e7115bf8c45055e4d42b3c5e0a12c9a3ad0b4",
       "ast_digest": "5720bbd0f5b7d4a490ae8c11b321f1c4ace0f73eb6e6dfe690f0f06d93681d05"
     },
     "sor": {
-      "values_digest": "10cb05e590077669215ba7a0ea5033635677383f56df5dc5606bd2f501d76a64",
-      "rendered_digest": "a492a029cd8504a4f514cca458dd39850ca4b00eab7c9fe929313f0a78a259bf",
-      "ast_digest": "5399f22b26a71cfa32ee113eab1e413115a17383550ef5813b9a3df6cc15490b"
+      "values_digest": "39c07c2cf98ef23972c8ff4ab7a1d689813a6cb62f8822264f228c9839b3735e",
+      "rendered_digest": "d045636c4545692da78db62e9cb3b4ed8289537def4cce8ba86eae29bc496456",
+      "ast_digest": "2951690d6b33d8e67a0e3ccaee6d44059f425045248180665b4973e3e4428444"
     }
   },
   "transitions": [
@@ -117,6 +127,13 @@
       "to": "reviewed",
       "actor": "codex:5755-runtime-protocol-security",
       "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "Codex",
+      "reason": "observed exact PR after current review"
     }
   ],
   "audit": [
@@ -196,6 +213,13 @@
       "actor": "codex:5755-runtime-protocol-security",
       "reason": "atomically record exact review evidence and reviewed phase",
       "operation": "record_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "Codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
     }
   ]
 }
