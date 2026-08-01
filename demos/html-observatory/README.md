@@ -118,16 +118,18 @@ sessionStorage.setItem("adl.runtimeV3.observatoryToken", "<operator-local-token>
 ```
 
 Serve this Observatory from the allowed HTTPS origin
-`https://localhost:8765`, then open:
+`https://localhost:8765` using the shared localhost certificate identity for
+the static host and Runtime v3 API, then open:
 
 ```text
 https://localhost:8765/demos/html-observatory/?runtime=v3&runtimeApiBase=https://localhost:20997&live=1
 ```
 
 The token elevates only that WSS connection for writes; signature verification
-and canonical ingress policy still apply. Both certificates must be trusted by
-the browser. The kernel terminates its own TLS connection; a local API Gateway
-or sidecar is not required.
+and canonical ingress policy still apply. The shared localhost certificate must
+be trusted by the browser for both `https://localhost:8765` and
+`https://localhost:20997`. The kernel terminates its own TLS connection; a
+local API Gateway or sidecar is not required.
 
 One COTS way to serve the Observatory over local HTTPS is Caddy:
 
@@ -144,17 +146,14 @@ true total while rendering only the sample, so live polis-scale demos do not
 create 10,000 DOM nodes.
 
 For an externally reachable polis, copy that init file to an operator-local
-path, set `[api].address` to the runtime host interface, set
-`[api].public_base_url` to the HTTPS public route, set `[api.tls]` to that
-route's certificate and key paths, and add the dashboard origin to
-`[observatory].allowed_origins`. Public routing may be provided by the
-operator's ingress layer but is not hardcoded in Runtime v3 source. Remote and
-local health, metrics, and Observatory reads are public. CORS limits which
-browser origins may read responses but is not authentication. Native clients
-may read without an Origin header.
+path and configure the runtime host interface, public route, certificate paths,
+and allowed origins there. This packaged browser dashboard only sends Runtime v3
+WSS/auth traffic to the trusted localhost API base. Native clients may still
+read the runtime-owned Observatory feed without an Origin header when the
+operator's deployment policy allows it.
 
 ```text
-https://<observatory-host>/demos/html-observatory/?runtime=v3&runtimeApiBase=https://<runtime-gateway-host>&live=1
+https://localhost:8765/demos/html-observatory/?runtime=v3&runtimeApiBase=https://localhost:20997&live=1
 ```
 
 The Runtime v3 browser path consumes the public runtime-owned read feed at

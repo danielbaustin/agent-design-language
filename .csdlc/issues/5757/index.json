@@ -1,0 +1,135 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5757,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "4688628ae0ce9d60ae255bf8cb770bb991f77366416595d38b77e15f45bf045e",
+  "phase": "implemented",
+  "generation": 2,
+  "digest": "5aaa6e7c44654e98ae308811d99e630d6d3003cbf90bde32a43d1228f2fe32e7",
+  "claim": {
+    "id": "codex-5757-observatory-corrective-20260801",
+    "owner": "codex",
+    "generation": 2,
+    "acquired_unix_seconds": 1785568022,
+    "expires_unix_seconds": 1785596822,
+    "heartbeat_unix_seconds": 1785568022,
+    "branch": "codex/5757-observatory-corrective",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5757/",
+      "adl-runtime-kernel/tests/observatory.rs",
+      "adl/src/runtime_v3/",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+      "adl/tools/validate_v0917_html_observatory.py",
+      "demos/html-observatory/",
+      "infra/runtime-v3/"
+    ],
+    "purpose": "implement corrective issue #5757"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/evidence/5757/DESIGN.md",
+  "diagram_path": ".csdlc/evidence/5757/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex",
+      "revision": "401af5cfb67e2a7352a888f7ea92651d0e6ccc48c6145a9e592a69ad97548c1f"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "20e2f4aff715075f73b6ee8b963483f540e38e07f239d120f8f86fe71968cbc9",
+      "rendered_digest": "f077abc033087fb625b5a7b04bdd28cce0c52f17c585945591a6c6d34df9e381",
+      "ast_digest": "e3337c2bd07c96da0eea89cd8e9921f383dec217dca7d88f9046146e34fa1977"
+    },
+    "stp": {
+      "values_digest": "a374f326cbb72d7dbf5803048aaeccf314f186cd2dcdb1e9fcbec6d80d6d4f23",
+      "rendered_digest": "32cf9f6e12e252e94df5e89aa95680b6a905f495c496a2236fb131166e2efe43",
+      "ast_digest": "ae27eaef68bbb94d7588f0c80afa4939a1bb8f4a078cdc12286da34499508183"
+    },
+    "spp": {
+      "values_digest": "f50117d6c774740d383a641687188040ec9427f4820e85c0a563a063b42ceff9",
+      "rendered_digest": "9a9f7a6f49caa909498fe96a2d4d34ec20767a4fa1ee0be4ca5265aff97c8718",
+      "ast_digest": "f4c1c7f7c27334b026e395e3c93bef6d2281d4c6a4fff69fad2ebfc878a2b74d"
+    },
+    "vpp": {
+      "values_digest": "e2ec21f2bcabec7e4faa36cee959fb2e3a0546784f9fac72b9a43b8508fb4120",
+      "rendered_digest": "3ae9bc54dd619d1277882bfe8660635782ce4cb1d53910e94621091aff30a55e",
+      "ast_digest": "7f5efa03b5a9a4a3826a29e42efcd2dc63ddda4665b9b20eec6f8caa2d9e52c6"
+    },
+    "srp": {
+      "values_digest": "4af27ef21953220586adf7f9005ad3a557a6ae3aa84d7f66718def8217474cc9",
+      "rendered_digest": "566dba64e3163d8af6b904f17b1e17263a6dac00fcca3e1f2f6cb38e00a07175",
+      "ast_digest": "b47b26de921525a05b48ca19c997ae22cbd42eba526ed8ee8657ab5542e1ec97"
+    },
+    "sor": {
+      "values_digest": "ab9889a0bf614c4b6e6a6df67fd486fa6dd122e8de0370f75ee66c69a0d39f65",
+      "rendered_digest": "71434ad650eba784d2dda8a0477568f6db1e1e0e37f67b202f37008c7b7b7b79",
+      "ast_digest": "15f4465b9330eed94fa004093ec056c0e5bce87058c4204bb40880d174d31c4b"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "execution and passing validation finalized atomically"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "include focused validator and Runtime v3 WSS/TLS proof tests in #5757 claim scope",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/validate_v0917_html_observatory.py\",\"adl-runtime-kernel/tests/observatory.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    }
+  ]
+}

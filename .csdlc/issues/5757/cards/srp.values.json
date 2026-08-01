@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5757,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][observatory][security] Fix trusted-origin, rerender race, and shared-certificate proof",
+    "slug": "observatory-corrective-security-race-tls",
+    "version": "v0.91.8",
+    "generation": 2
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Bounded exact-head review of #5757 product changes and focused proof.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Verify untrusted origins are rejected before bearer/WSS use.",
+        "Verify monotonic generation ordering covers live, retained, WSS, and fallback completions.",
+        "Verify shared-certificate/browser-control/authenticated-WSS proof is real and not fixture-only."
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

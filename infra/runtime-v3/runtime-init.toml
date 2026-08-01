@@ -12,7 +12,7 @@ observability_dir = "observability"
 
 [api]
 address = "127.0.0.1:20997"
-public_base_url = "https://runtime-gateway-host"
+public_base_url = "https://localhost:20997"
 bind_attempts = 20
 bind_retry_millis = 100
 websocket_auth_timeout_millis = 5000

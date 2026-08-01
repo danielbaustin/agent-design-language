@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5757,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][observatory][security] Fix trusted-origin, rerender race, and shared-certificate proof",
+    "slug": "observatory-corrective-security-race-tls",
+    "version": "v0.91.8",
+    "generation": 2
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Issue #5757 corrective implementation and proof only.",
+      "deliverables": [
+        "Trusted localhost Runtime API origin guard",
+        "Monotonic generation guard for async Observatory completions",
+        "Real shared-certificate browser and authenticated WSS proof",
+        "Focused validation evidence",
+        "Ready PR with Closes #5757"
+      ],
+      "acceptance_criteria": [
+        "Untrusted runtime origins are rejected before any bearer token is attached or transmitted",
+        "Late retained/live/WSS completions cannot overwrite newer operator intent",
+        "Browser-visible HTTPS/WSS proof verifies shared certificate identity on ports 8765 and 20997",
+        "Focused Observatory tests, JavaScript syntax, Runtime HTTPS/WSS control proof, and diff hygiene pass",
+        "PR body includes Closes #5757",
+        "No /private/tmp is used"
+      ],
+      "dependencies": [
+        "Current origin/main at 85f0aa3d1f6b442acb61ada97fb3a5a73b50a444",
+        "Issue #5722 source context"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5757",
+        "GitHub issue #5722",
+        "demos/html-observatory/app.js",
+        "demos/html-observatory/README.md",
+        "infra/runtime-v3/runtime-api-5665.toml",
+        "Runtime v3 HTTPS/WSS proof tests"
+      ],
+      "non_goals": [
+        "Observatory visual redesign",
+        "Moving the HTML Observatory into the runtime binary",
+        "Rewriting historical evidence",
+        "Any #5748 lifecycle or worktree action"
+      ]
+    }
+  }
+}

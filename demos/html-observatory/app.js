@@ -543,7 +543,7 @@ function getQueryApiBase() {
   const candidate = params.get("runtimeApiBase") || params.get("csmApiBase") || params.get("apiBase") || "";
   const normalized = normalizeApiBase(candidate);
   if (requestedRuntimeSelection() === "v3") {
-    return isRuntimeV3ApiBase(normalized) ? normalized : "";
+    return isRuntimeV3ApiBase(normalized) ? normalizeTrustedRuntimeV3ApiBase(normalized) : "";
   }
   return isLoopbackApiBase(normalized) ? normalized : "";
 }
@@ -555,10 +555,29 @@ function requestedRuntimeSelection() {
 
 function isRuntimeV3ApiBase(value) {
   try {
-    return new URL(normalizeApiBase(value)).protocol === "https:";
+    normalizeTrustedRuntimeV3ApiBase(value);
+    return true;
   } catch (_error) {
     return false;
   }
+}
+
+function normalizeTrustedRuntimeV3ApiBase(value) {
+  const base = normalizeApiBase(value);
+  const parsed = new URL(base);
+  if (
+    parsed.protocol !== "https:" ||
+    parsed.hostname !== "localhost" ||
+    parsed.username ||
+    parsed.password ||
+    parsed.pathname !== "/" ||
+    parsed.search ||
+    parsed.hash ||
+    parsed.port !== "20997"
+  ) {
+    throw new Error("Runtime v3 selection requires the trusted HTTPS localhost:20997 API base.");
+  }
+  return parsed.origin;
 }
 
 function shouldAutoConnectLive() {
@@ -625,10 +644,7 @@ async function fetchRuntimeSnapshot(apiBase) {
 }
 
 async function fetchRuntimeV3ObservatorySnapshot(apiBase) {
-  const base = normalizeApiBase(apiBase);
-  if (!isRuntimeV3ApiBase(base)) {
-    throw new Error("Runtime v3 selection requires a configured HTTPS runtime API base.");
-  }
+  const base = normalizeTrustedRuntimeV3ApiBase(apiBase);
   const response = await fetch(`${base}${RUNTIME_V3_OBSERVATORY_ENDPOINT}`, { method: "GET" });
   if (!response.ok) {
     throw new Error(`${RUNTIME_V3_OBSERVATORY_ENDPOINT} returned ${response.status}`);
@@ -706,10 +722,7 @@ function connectRuntimeV3ObservatoryWebSocket(
   onClose = onError,
   onControlFrame = () => {}
 ) {
-  const base = normalizeApiBase(apiBase);
-  if (!isRuntimeV3ApiBase(base)) {
-    throw new Error("Runtime v3 selection requires a configured HTTPS runtime API base.");
-  }
+  const base = normalizeTrustedRuntimeV3ApiBase(apiBase);
   const endpoint = new URL(`${base}${RUNTIME_V3_OBSERVATORY_WS_ENDPOINT}`);
   endpoint.protocol = "wss:";
   const socket = new WebSocket(endpoint.toString());
@@ -1422,6 +1435,11 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
   let liveSocket = null;
   let liveStoppedByOperator = false;
   let liveRequestGeneration = 0;
+  const nextLiveGeneration = () => {
+    liveRequestGeneration += 1;
+    return liveRequestGeneration;
+  };
+  const isCurrentLiveGeneration = (generation) => generation === liveRequestGeneration;
   const refs = {
     statusRef: document.querySelector(".observatory")?.dataset.csmStatusRef || "",
     healthRef: document.querySelector(".observatory")?.dataset.csmHealthRef || "",
@@ -1493,9 +1511,12 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
     setRuntimeTestStatus("retained fallback", error instanceof Error ? error.message : "Retained runtime mirror is available; live loopback is not connected.");
   };
 
-  const refreshRetained = async (extraErrors = {}) => {
+  const refreshRetained = async (extraErrors = {}, requestGeneration = nextLiveGeneration()) => {
     try {
       const snapshot = await fetchRetainedRuntimeSnapshot(refs);
+      if (!isCurrentLiveGeneration(requestGeneration)) {
+        return;
+      }
       const mergedSnapshot = {
         ...snapshot,
         errors: {
@@ -1509,23 +1530,29 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
       setText("live-status", status);
       setRuntimeTestStatus(status, lastLiveError ? `Live loopback not proved: ${lastLiveError}` : "Using retained publishable CSM API artifacts until a loopback runtime is connected.");
     } catch (error) {
+      if (!isCurrentLiveGeneration(requestGeneration)) {
+        return;
+      }
       renderMinimalFallback(error);
     }
   };
 
-  const renderLiveError = async (error) => {
+  const renderLiveError = async (error, requestGeneration) => {
+    if (!isCurrentLiveGeneration(requestGeneration)) {
+      return;
+    }
     lastLiveError = error instanceof Error ? error.message : "unknown live polling error";
     await refreshRetained({
       live: lastLiveError
-    });
+    }, requestGeneration);
   };
 
   const refreshLive = async () => {
-    const requestGeneration = liveRequestGeneration;
+    const requestGeneration = nextLiveGeneration();
     const base = readApiBase();
     if (!base) {
       runtimeBaseActive = false;
-      await refreshRetained();
+      await refreshRetained({}, requestGeneration);
       return;
     }
     runtimeBaseActive = true;
@@ -1537,7 +1564,7 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
     setRuntimeTestStatus("polling loopback", `Checking ${base}/status, /health, /ready, /metrics, and /events.`);
     try {
       const snapshot = await fetchRuntimeSnapshot(base);
-      if (liveStoppedByOperator || requestGeneration !== liveRequestGeneration) {
+      if (liveStoppedByOperator || !isCurrentLiveGeneration(requestGeneration)) {
         return;
       }
       const endpointKeys = ["status", "health", "ready", "metrics", "events"];
@@ -1552,16 +1579,16 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
       const runtimeKind = snapshot.runtimeSelection === "runtime_v3_explicit_opt_in" ? "Runtime v3 observatory feed" : "loopback CSM server";
       setRuntimeTestStatus(status, Object.keys(snapshot.errors || {}).length ? "Runtime reached, but one or more endpoints failed." : `Runtime API endpoints responded from the ${runtimeKind}.`);
     } catch (error) {
-      if (liveStoppedByOperator || requestGeneration !== liveRequestGeneration) {
+      if (liveStoppedByOperator || !isCurrentLiveGeneration(requestGeneration)) {
         return;
       }
-      await renderLiveError(error);
+      await renderLiveError(error, requestGeneration);
     }
   };
 
   const stopPolling = () => {
     liveStoppedByOperator = true;
-    liveRequestGeneration += 1;
+    nextLiveGeneration();
     setLiveConnectionState("stopped");
     if (liveSocket) {
       liveSocket.close(1000, "operator_stop");
@@ -1585,6 +1612,7 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
   const connectLive = () => {
     stopPolling();
     liveStoppedByOperator = false;
+    const requestGeneration = nextLiveGeneration();
     setLiveConnectionState("connecting");
     if (requestedRuntimeSelection() === "v3") {
       runtimeBaseActive = true;
@@ -1599,7 +1627,7 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
         socket = connectRuntimeV3ObservatoryWebSocket(
           base,
           (snapshot) => {
-            if (liveStoppedByOperator || liveSocket !== socket) {
+            if (liveStoppedByOperator || liveSocket !== socket || !isCurrentLiveGeneration(requestGeneration)) {
               return;
             }
             lastLiveError = null;
@@ -1610,25 +1638,25 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
             setRuntimeTestStatus("live secure stream", "Runtime v3 public WebSocket feed is active; operator login is required only for writes.");
           },
           (error) => {
-            if (liveStoppedByOperator || liveSocket !== socket) {
+            if (liveStoppedByOperator || liveSocket !== socket || !isCurrentLiveGeneration(requestGeneration)) {
               return;
             }
             setText("statusbar-websocket", "disconnected");
-            renderLiveError(error);
+            renderLiveError(error, requestGeneration);
           },
           (error) => {
-            if (liveStoppedByOperator) {
+            if (liveStoppedByOperator || !isCurrentLiveGeneration(requestGeneration)) {
               return;
             }
             if (liveSocket === socket) {
               liveSocket = null;
               setText("statusbar-websocket", "disconnected");
               setWriteAccess(false, "public read", "The live connection closed. Public monitoring can reconnect without login.");
-              renderLiveError(error);
+              renderLiveError(error, requestGeneration);
             }
           },
           (frame) => {
-            if (liveStoppedByOperator || liveSocket !== socket) {
+            if (liveStoppedByOperator || liveSocket !== socket || !isCurrentLiveGeneration(requestGeneration)) {
               return;
             }
             renderControlFrame(frame);
@@ -1636,8 +1664,11 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
         );
         liveSocket = socket;
       } catch (error) {
+        if (!isCurrentLiveGeneration(requestGeneration)) {
+          return;
+        }
         setText("statusbar-websocket", "disconnected");
-        renderLiveError(error);
+        renderLiveError(error, requestGeneration);
       }
       return;
     }
@@ -1814,6 +1845,7 @@ globalThis.AdlHtmlObservatory = {
   fetchRetainedRuntimeSnapshot,
   requestedRuntimeSelection,
   isRuntimeV3ApiBase,
+  normalizeTrustedRuntimeV3ApiBase,
   buildRuntimeAgentRows,
   buildViewModel,
   buildIntegrationViewModel,

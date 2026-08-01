@@ -32,7 +32,7 @@ CSM_HEALTH_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4
 CSM_READY_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/ready.json"
 CSM_METRICS_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/metrics.json"
 CSM_EVENTS_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/events.json"
-RUNTIME_V3_OBSERVATORY_ENDPOINT = "https://runtime-gateway-host/v1/observatory"
+RUNTIME_V3_OBSERVATORY_ENDPOINT = "https://localhost:20997/v1/observatory"
 
 
 def fail(message: str) -> None:
@@ -181,7 +181,7 @@ def run_js_view_model(
           ["http://localhost:49210/ready", retainedFiles.get(retainedRefs.readyRef)],
           ["http://localhost:49210/metrics", retainedFiles.get(retainedRefs.metricsRef)],
           ["http://localhost:49210/events", retainedFiles.get(retainedRefs.eventsRef)],
-          ["https://runtime-gateway-host/v1/observatory", runtimeV3Feed]
+          ["https://localhost:20997/v1/observatory", runtimeV3Feed]
         ]);
         const textWrites = [];
         const datasetWrites = [];
@@ -197,6 +197,7 @@ def run_js_view_model(
             href: "",
             setAttribute: (name, value) => {{ node[name] = value; }},
             removeAttribute: (name) => {{ delete node[name]; }},
+            addEventListener: (name, callback) => {{ node[`on${{name}}`] = callback; }},
             ...extra
           }};
           elements.set(id, node);
@@ -261,8 +262,9 @@ def run_js_view_model(
           "operator-auth-status",
           "signed-control-command",
           "send-signed-command",
-          "operator-control-result"
-        ].forEach((id) => element(id, {{ addEventListener: () => {{}} }}));
+          "operator-control-result",
+          "top-mode-select"
+        ].forEach((id) => element(id));
         elements.get("dashboard-live-api-base").value = "";
         const dashboardLinks = [
           {{ dataset: {{ dashboardLink: "runtime" }}, setAttribute: () => {{}}, removeAttribute: () => {{}}, addEventListener: () => {{}} }},
@@ -279,19 +281,67 @@ def run_js_view_model(
           csmReadyRef: retainedRefs.readyRef,
           csmMetricsRef: retainedRefs.metricsRef,
           csmEventsRef: retainedRefs.eventsRef
-        }} }};
+        }}, setAttribute: (name, value) => {{ observatoryElement[name] = value; }} }};
         const mockDocument = {{
           getElementById: (id) => elements.get(id) || null,
           querySelector: (selector) => selector === ".observatory" ? observatoryElement : null,
           querySelectorAll: (selector) => selector === "[data-dashboard-link]" ? dashboardLinks : []
         }};
-        const mockFetch = async (ref) => {{
+        let fetchMode = "immediate";
+        const pendingFetches = [];
+        function responseFor(ref) {{
           const key = String(ref);
           const body = retainedFiles.get(key) || livePayloads.get(key);
           return body == null
             ? {{ ok: false, status: 404, text: async () => "", json: async () => {{ throw new Error("missing mock payload"); }} }}
             : {{ ok: true, status: 200, text: async () => body, json: async () => JSON.parse(body) }};
+        }}
+        const mockFetch = async (ref) => {{
+          if (fetchMode === "defer") {{
+            return new Promise((resolve) => pendingFetches.push({{ ref, resolve }}));
+          }}
+          return responseFor(ref);
         }};
+        const resolvePendingFetches = () => {{
+          while (pendingFetches.length) {{
+            const pending = pendingFetches.shift();
+            pending.resolve(responseFor(pending.ref));
+          }}
+        }};
+        const sessionValues = new Map();
+        class MockWebSocket {{
+          static CONNECTING = 0;
+          static OPEN = 1;
+          static CLOSING = 2;
+          static CLOSED = 3;
+          static instances = [];
+          constructor(url) {{
+            this.url = String(url);
+            this.readyState = MockWebSocket.CONNECTING;
+            this.sent = [];
+            this.listeners = {{}};
+            MockWebSocket.instances.push(this);
+          }}
+          addEventListener(name, callback) {{
+            this.listeners[name] = this.listeners[name] || [];
+            this.listeners[name].push(callback);
+          }}
+          send(value) {{
+            this.sent.push(String(value));
+          }}
+          close(code = 1000, reason = "") {{
+            this.readyState = MockWebSocket.CLOSED;
+            this.emit("close", {{ code, reason }});
+          }}
+          emit(name, event = {{}}) {{
+            if (name === "open") {{
+              this.readyState = MockWebSocket.OPEN;
+            }}
+            for (const callback of this.listeners[name] || []) {{
+              callback(event);
+            }}
+          }}
+        }}
         const mockLocation = {{ search: "?csmApiBase=http://localhost:49210" }};
         const context = {{
           console,
@@ -307,8 +357,11 @@ def run_js_view_model(
           }},
           clearInterval: () => {{}},
           sessionStorage: {{
-            getItem: () => null
+            getItem: (key) => sessionValues.get(String(key)) || null,
+            setItem: (key, value) => sessionValues.set(String(key), String(value)),
+            removeItem: (key) => sessionValues.delete(String(key))
           }},
+          WebSocket: MockWebSocket,
           globalThis: {{}}
         }};
         context.globalThis = context;
@@ -373,12 +426,61 @@ def run_js_view_model(
         const retainedFetchPanopticon = context.AdlHtmlObservatory.buildPanopticonViewModel(retainedSnapshot, packet);
         const liveSnapshot = await context.AdlHtmlObservatory.fetchRuntimeSnapshot("http://localhost:49210");
         const liveFetchPanopticon = context.AdlHtmlObservatory.buildPanopticonViewModel(liveSnapshot, packet);
-        mockLocation.search = "?runtime=v3&runtimeApiBase=https://runtime-gateway-host";
-        const runtimeV3Snapshot = await context.AdlHtmlObservatory.fetchRuntimeSnapshot("https://runtime-gateway-host");
+        mockLocation.search = "?runtime=v3&runtimeApiBase=https://localhost:20997";
+        const runtimeV3Snapshot = await context.AdlHtmlObservatory.fetchRuntimeSnapshot("https://localhost:20997");
         const runtimeV3Panopticon = context.AdlHtmlObservatory.buildPanopticonViewModel(runtimeV3Snapshot, packet);
         mockLocation.search = "?csmApiBase=http://localhost:49210";
         context.AdlHtmlObservatory.bindLivePanopticon(packet);
         await new Promise((resolve) => setImmediate(resolve));
+        const initialLiveBinding = {{
+          base: elements.get("dashboard-live-api-base").value,
+          retainedIntervalCount: timers.filter((timer) => timer.name === "refreshRetained").length,
+          liveIntervalCount: timers.filter((timer) => timer.name === "refreshLive").length,
+          runtimeStatus: elements.get("dashboard-live-test-status").textContent,
+          statusbarMode: elements.get("statusbar-mode").textContent
+        }};
+        elements.get("dashboard-live-api-base").value = "";
+        fetchMode = "defer";
+        elements.get("refresh-live").onclick();
+        elements.get("stop-live").onclick();
+        resolvePendingFetches();
+        await new Promise((resolve) => setImmediate(resolve));
+        const retainedRace = {{
+          status: elements.get("live-status").textContent,
+          runtimeStatus: elements.get("dashboard-live-test-status").textContent,
+          connectionState: observatoryElement["data-live-connection"]
+        }};
+        fetchMode = "immediate";
+        mockLocation.search = "?runtime=v3&runtimeApiBase=https://localhost:20997";
+        elements.get("dashboard-live-api-base").value = "https://localhost:20997";
+        elements.get("operator-write-token").value = "operator-write-token-5757";
+        elements.get("dashboard-connect-live").onclick();
+        const socket = MockWebSocket.instances[MockWebSocket.instances.length - 1];
+        socket.emit("open");
+        elements.get("operator-login").onclick();
+        const trustedWss = {{
+          endpoint: socket.url,
+          authFrame: socket.sent.find((frame) => frame.includes("observatory_ws_auth")) || ""
+        }};
+        elements.get("stop-live").onclick();
+        socket.emit("message", {{ data: runtimeV3Feed }});
+        await new Promise((resolve) => setImmediate(resolve));
+        const wssRace = {{
+          status: elements.get("live-status").textContent,
+          runtimeStatus: elements.get("dashboard-live-test-status").textContent,
+          websocketStatus: elements.get("statusbar-websocket").textContent
+        }};
+        const socketCountBeforeRejected = MockWebSocket.instances.length;
+        let rejectedUntrustedWss = false;
+        try {{
+          context.AdlHtmlObservatory.connectRuntimeV3ObservatoryWebSocket(
+            "https://example.com?runtimeApiBase=https://localhost:20997",
+            () => {{}},
+            () => {{}}
+          );
+        }} catch (_error) {{
+          rejectedUntrustedWss = true;
+        }}
         const blockedCloudwatchViewModel = context.AdlHtmlObservatory.buildIntegrationViewModel({{
           serviceManifest,
           apiText,
@@ -408,7 +510,12 @@ def run_js_view_model(
           operatorEnvelope,
           loopbackPolicy: {{
             localhostHttp: context.AdlHtmlObservatory.isLoopbackApiBase("http://localhost:49210"),
+            runtimeTrustedLocalhost: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://localhost:20997"),
             runtimeRemoteHttps: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://runtime-gateway-host"),
+            runtimeWrongPort: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://localhost:8765"),
+            runtimeUrlCredentials: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://operator:token@localhost:20997"),
+            runtimeUrlQuery: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://localhost:20997?runtimeApiBase=https://example.com"),
+            runtimePath: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://localhost:20997/collect"),
             runtimeHttp: context.AdlHtmlObservatory.isRuntimeV3ApiBase("http://localhost:20997"),
             remoteHttp: context.AdlHtmlObservatory.isLoopbackApiBase("https://example.com"),
             malformed: context.AdlHtmlObservatory.isLoopbackApiBase("not a url")
@@ -470,11 +577,21 @@ def run_js_view_model(
             heroEventCount: String(retainedFetchPanopticon.events.length)
           }},
           liveBinding: {{
-            base: elements.get("dashboard-live-api-base").value,
-            retainedIntervalCount: timers.filter((timer) => timer.name === "refreshRetained").length,
-            liveIntervalCount: timers.filter((timer) => timer.name === "refreshLive").length,
-            runtimeStatus: elements.get("dashboard-live-test-status").textContent,
-            statusbarMode: elements.get("statusbar-mode").textContent
+            ...initialLiveBinding
+          }},
+          asyncRace: {{
+            retainedStopStatus: retainedRace.status,
+            retainedStopRuntimeStatus: retainedRace.runtimeStatus,
+            retainedStopConnectionState: retainedRace.connectionState,
+            wssStopStatus: wssRace.status,
+            wssStopRuntimeStatus: wssRace.runtimeStatus,
+            wssStopWebsocketStatus: wssRace.websocketStatus
+          }},
+          trustedWss: {{
+            endpoint: trustedWss.endpoint,
+            authFrameSent: trustedWss.authFrame.includes("operator-write-token-5757"),
+            rejectedUntrustedWss,
+            rejectedUntrustedCreatedSocket: MockWebSocket.instances.length !== socketCountBeforeRejected
           }}
         }}));
         }})().catch((error) => {{
@@ -587,7 +704,7 @@ def main() -> int:
     assert_contains("HTML dashboard real runtime refresh", html, 'id="dashboard-refresh-live"')
     assert_contains("HTML dashboard real runtime stop", html, 'id="dashboard-stop-live"')
     assert_contains("HTML Runtime v3 opt-in port", html, "20997")
-    assert_contains("HTML Runtime v3 explicit opt-in query", html, "runtime=v3&runtimeApiBase=https://runtime-gateway-host")
+    assert_contains("HTML Runtime v3 explicit opt-in query", html, "runtime=v3&runtimeApiBase=https://localhost:20997")
     assert_contains("HTML dashboard communication inspector", html, 'id="hero-communication-status"')
     assert_contains("HTML dashboard status bar", html, 'class="dashboard-statusbar"')
     assert_contains("HTML topbar capture time field", html, "Capture Time")
@@ -668,6 +785,11 @@ def main() -> int:
     assert_contains("JS Runtime v3 observatory feed polling", js, "fetchRuntimeV3ObservatorySnapshot")
     assert_contains("JS Runtime v3 observatory endpoint", js, 'RUNTIME_V3_OBSERVATORY_ENDPOINT = "/v1/observatory"')
     assert_contains("JS Runtime v3 observatory schema", js, 'RUNTIME_V3_OBSERVATORY_SCHEMA = "adl.runtime_v3.observatory_feed.v2"')
+    assert_contains("JS trusted Runtime v3 origin normalizer", js, "normalizeTrustedRuntimeV3ApiBase")
+    assert_contains("JS trusted Runtime v3 localhost port", js, 'parsed.port !== "20997"')
+    assert_contains("JS trusted Runtime v3 root path", js, 'parsed.pathname !== "/"')
+    assert_contains("JS shared live generation guard", js, "isCurrentLiveGeneration")
+    assert_contains("JS retained generation guard", js, "refreshRetained = async (extraErrors = {}, requestGeneration = nextLiveGeneration())")
     assert_not_contains("JS public Runtime v3 reads omit bearer authentication", js, "Authorization: `Bearer ${readToken}`")
     assert_contains("JS Runtime v3 write login", js, "authenticateRuntimeV3ObservatorySocket")
     assert_contains("JS Runtime v3 login result handling", js, 'frame.status === "authenticated"')
@@ -840,8 +962,10 @@ def main() -> int:
     loopback_policy = smoke["loopbackPolicy"]
     if not loopback_policy["localhostHttp"]:
       fail(f"loopback CSM API bases were not accepted: {loopback_policy!r}")
-    if not loopback_policy["runtimeRemoteHttps"]:
-      fail(f"configured Runtime v3 remote API base was not accepted: {loopback_policy!r}")
+    if not loopback_policy["runtimeTrustedLocalhost"]:
+      fail(f"trusted Runtime v3 localhost API base was not accepted: {loopback_policy!r}")
+    if loopback_policy["runtimeRemoteHttps"] or loopback_policy["runtimeWrongPort"] or loopback_policy["runtimeUrlCredentials"] or loopback_policy["runtimeUrlQuery"] or loopback_policy["runtimePath"]:
+      fail(f"untrusted Runtime v3 API base was accepted before bearer/WSS use: {loopback_policy!r}")
     if loopback_policy["runtimeHttp"]:
       fail(f"non-HTTPS Runtime v3 API base was accepted: {loopback_policy!r}")
     if loopback_policy["remoteHttp"] or loopback_policy["malformed"]:
@@ -911,6 +1035,26 @@ def main() -> int:
       fail(f"live binding did not preserve proved loopback status: {live_binding!r}")
     if live_binding.get("statusbarMode") != "Live Loopback":
       fail(f"live binding did not preserve statusbar live mode: {live_binding!r}")
+    async_race = smoke["asyncRace"]
+    if async_race.get("retainedStopStatus") != "polling stopped":
+      fail(f"late retained completion overwrote Stop state: {async_race!r}")
+    if async_race.get("retainedStopRuntimeStatus") != "polling stopped":
+      fail(f"late retained completion overwrote Stop runtime status: {async_race!r}")
+    if async_race.get("retainedStopConnectionState") != "stopped":
+      fail(f"Stop did not remain browser-visible after retained completion: {async_race!r}")
+    if async_race.get("wssStopStatus") != "polling stopped":
+      fail(f"late WSS completion overwrote Stop state: {async_race!r}")
+    if async_race.get("wssStopRuntimeStatus") != "polling stopped":
+      fail(f"late WSS completion overwrote Stop runtime status: {async_race!r}")
+    if async_race.get("wssStopWebsocketStatus") != "stopped":
+      fail(f"late WSS completion overwrote stopped WebSocket status: {async_race!r}")
+    trusted_wss = smoke["trustedWss"]
+    if trusted_wss.get("endpoint") != "wss://localhost:20997/v1/observatory/ws":
+      fail(f"trusted WSS endpoint was not localhost:20997: {trusted_wss!r}")
+    if trusted_wss.get("authFrameSent") is not True:
+      fail(f"operator token was not sent after trusted localhost WSS open: {trusted_wss!r}")
+    if trusted_wss.get("rejectedUntrustedWss") is not True or trusted_wss.get("rejectedUntrustedCreatedSocket") is not False:
+      fail(f"untrusted WSS was not rejected before WebSocket/token use: {trusted_wss!r}")
     runtime_v3_panopticon = smoke["runtimeV3Panopticon"]
     if runtime_v3_panopticon.get("mode") != "live":
       fail(f"Runtime v3 observatory feed did not preserve live mode: {runtime_v3_panopticon!r}")
