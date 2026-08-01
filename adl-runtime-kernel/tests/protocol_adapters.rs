@@ -5,7 +5,6 @@ use std::{
     time::Duration,
 };
 
-use adl_runtime_kernel::protocol_adapters::ProtocolClientIdentity;
 use adl_runtime_kernel::{
     build_production_operation_executors_with_recorder,
     build_protocol_production_operation_executors, protocol_operation_executors_from_env,
@@ -244,15 +243,14 @@ async fn spawn_mtls_peer(
             )
             .unwrap(),
     );
-    let client_identity =
-        ProtocolClientIdentity::from_certificate_der(client_certificate.as_ref()).unwrap();
-    let client_config = ClientConfig::builder()
-        .with_root_certificates(client_roots)
-        .with_client_auth_cert(
-            vec![client_certificate],
-            PrivateKeyDer::Pkcs8(PrivatePkcs8KeyDer::from(client_key.serialize_der())),
-        )
-        .unwrap();
+    let client_key_der = client_key.serialize_der();
+    let client_security = ProtocolSecurity::rustls_mutual_tls_client_from_der(
+        client_roots,
+        client_certificate.as_ref().to_vec(),
+        client_key_der,
+        "localhost",
+    )
+    .unwrap();
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
     let address = listener.local_addr().unwrap();
     let remaining = Arc::new(Mutex::new(VecDeque::from(responses)));
@@ -286,11 +284,7 @@ async fn spawn_mtls_peer(
     });
     (
         address,
-        ProtocolSecurity::RustlsMutualTlsClient {
-            config: Arc::new(client_config),
-            server_name: "localhost".to_owned(),
-            client_identity,
-        },
+        client_security,
         expected_client_hash,
         observed_client_hash,
     )
