@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5756,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][providers] Scope MiniMax billing classification to MiniMax responses",
+    "slug": "minimax-billing-classification",
+    "version": "v0.91.8",
+    "generation": 3
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl/src/provider_adapter.rs and .csdlc issue 5756 lifecycle artifacts",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Verify the shared non-2xx classifier can no longer map bare 1008 text to ProviderBillingBlocked for non-MiniMax providers.",
+        "Verify MiniMax structured status_code 1008 remains non-retryable ProviderBillingBlocked.",
+        "Verify tests cover OpenAI, Anthropic, DeepSeek, and generic provider responses containing 1008 without relying on live credentials."
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

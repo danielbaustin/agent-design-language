@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5756,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][providers] Scope MiniMax billing classification to MiniMax responses",
+    "slug": "minimax-billing-classification",
+    "version": "v0.91.8",
+    "generation": 3
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement the smallest provider-aware fix for the global non-2xx bare substring 1008 bug and add positive MiniMax plus negative cross-provider tests.",
+      "deliverables": [
+        "provider-aware classification fix",
+        "MiniMax positive regression",
+        "OpenAI, Anthropic, DeepSeek, and generic negative regressions",
+        "focused provider tests and strict Clippy evidence",
+        "ready PR closing #5756"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Only a validated MiniMax response can produce MiniMax insufficient-balance classification.",
+        "AC-2: OpenAI, Anthropic, DeepSeek, and generic provider errors containing 1008 retain their provider-specific retry/classification behavior.",
+        "AC-3: Focused provider-adapter tests and strict Clippy pass.",
+        "AC-4: The PR body includes Closes #5756.",
+        "AC-5: No AWS use and no /private/tmp; all work remains in the issue worktree."
+      ],
+      "dependencies": [
+        "current origin/main at 85f0aa3d1f6b442acb61ada97fb3a5a73b50a444"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5756",
+        "adl/src/provider_adapter.rs",
+        ".csdlc/designs/5756/design.md",
+        ".csdlc/designs/5756/diagram.mmd"
+      ],
+      "non_goals": [
+        "provider adapter refactor",
+        "AWS proof",
+        "issue #5748 inspection",
+        "issue #5757 Observatory work",
+        "merge or asynchronous closeout"
+      ]
+    }
+  }
+}

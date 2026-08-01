@@ -1,0 +1,129 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5756,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "4d17d6d585363c1f9d984fc262eae3544b655682c1a09740c0cdff2d8e49bd39",
+  "phase": "implemented",
+  "generation": 3,
+  "digest": "11d1b09b507793fb4c3a032e7a6da4bacd566ff284303193b0ed1ba30cb3928e",
+  "claim": {
+    "id": "codex-5756-20260801",
+    "owner": "codex",
+    "generation": 3,
+    "acquired_unix_seconds": 1785568134,
+    "expires_unix_seconds": 1785654534,
+    "heartbeat_unix_seconds": 1785568134,
+    "branch": "codex/5756-minimax-billing-classification",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/src/provider_adapter.rs"
+    ],
+    "purpose": "Implement corrective issue #5756 MiniMax billing classification scope fix"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/designs/5756/design.md",
+  "diagram_path": ".csdlc/designs/5756/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator",
+      "revision": "04dd4283135d39f64ebee68fb19ace701493ed28cd054a78f6ed644ba3512572"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "56d39da5155c33a698303cfef6101075ed0e79e05a5f170f01bc3fe115b1587f",
+      "rendered_digest": "c7c3f8c5ad6c62689dbdffbe7975cc3376e72f94af303101e7261f3251b7568f",
+      "ast_digest": "abab5bf49ed88d40ec24837d5262b16c1d8474c17947db6430b55f8a5ffce5cf"
+    },
+    "stp": {
+      "values_digest": "2d0a994c1eb9901d1e351240c613ad8889b1e9a508727910bf9ab40b603d5322",
+      "rendered_digest": "da00ee1a8c16b895f41cd7831e874119d09b26ff32a224d5725053d5e70a7107",
+      "ast_digest": "f0ac95c8696e3847c6c49fffabc4db3a731762ffbf7d4c40e92b63d19b74ee7c"
+    },
+    "spp": {
+      "values_digest": "b8b5fd3560e8708852d3cf02e99553109deb22701e3615bc57a789ff164f56a9",
+      "rendered_digest": "e86d846d064ff00697f0ccaa0121dd8651c2845ea8895ba45910f13e500c4258",
+      "ast_digest": "4b35d7a46bb66daf1b41fb507efb9705a59929f2bb8e62c3d0c1328f48fbd06a"
+    },
+    "vpp": {
+      "values_digest": "340272f6eac17e623918d89c7856bef39b13d722a1dfec146dea4ac54d03dec1",
+      "rendered_digest": "1c7ce6f9d050f7ad2d1bc34e31d1134e61c3933d2e077268488a8d66e15225e6",
+      "ast_digest": "77406c78176cf673e7336a3f7870d466cf17f5f7aaaa904a83f7a7a42c757732"
+    },
+    "srp": {
+      "values_digest": "99563e5b5abb08ad91ccdf5fb6c8e9f07c575f8c4b3beffae05940d3aab7e887",
+      "rendered_digest": "3de9fc21e87dc2cbb824b834202c632bad7a743225e8c03282904dc8e12fab59",
+      "ast_digest": "607dd9486c7c8bd6cb3b9cb5b81533ac0f49612f20e564c1df52ed520ad28895"
+    },
+    "sor": {
+      "values_digest": "87cb9f4ad969e07c8ff4ea81a761fff81a77b6b6b2af097c69fbea54a8d06c6d",
+      "rendered_digest": "80c47e840589150e73abacdc1fcfdac75770d7c87b162dd1b5db95aa7f3289cd",
+      "ast_digest": "38041b228585460261c4db782212a5d07ea312fb7d396f9b39de66fbc9d8d8aa"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "execution and passing validation finalized atomically"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "align validation lanes with repository-root typed finalize commands",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"provider-minimax-tests\",\"proof_role\":\"Focused MiniMax adapter regressions for structured 1008 billing classification on success and non-success HTTP responses.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_adapter::tests::minimax\",\"--lib\"],\"parallel_group\":\"local\",\"defer_reason\":null},{\"lane\":\"provider-non-minimax-tests\",\"proof_role\":\"Focused OpenAI, Anthropic, DeepSeek, and generic hosted provider regressions for bare 1008 non-billing classification.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_adapter::tests::non_minimax\",\"--lib\"],\"parallel_group\":\"local\",\"defer_reason\":null},{\"lane\":\"strict-clippy\",\"proof_role\":\"Strict lint proof for the touched provider adapter crate surface.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"clippy\",\"--manifest-path\",\"adl/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "align validation lanes with repository-root typed finalize commands",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"provider-minimax-tests\",\"proof_role\":\"Focused MiniMax adapter regressions for structured 1008 billing classification on success and non-success HTTP responses.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"test\",\"--offline\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_adapter::tests::minimax\",\"--lib\"],\"parallel_group\":\"local\",\"defer_reason\":null},{\"lane\":\"provider-non-minimax-tests\",\"proof_role\":\"Focused OpenAI, Anthropic, DeepSeek, and generic hosted provider regressions for bare 1008 non-billing classification.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"test\",\"--offline\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_adapter::tests::non_minimax\",\"--lib\"],\"parallel_group\":\"local\",\"defer_reason\":null},{\"lane\":\"strict-clippy\",\"proof_role\":\"Strict lint proof for the touched provider adapter crate surface.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"clippy\",\"--offline\",\"--manifest-path\",\"adl/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    }
+  ]
+}

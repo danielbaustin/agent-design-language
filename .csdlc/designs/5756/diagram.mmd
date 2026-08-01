@@ -1,0 +1,7 @@
+flowchart LR
+  A["Hosted provider non-2xx response"] --> B["Shared HTTP classifier"]
+  B --> C["Provider-specific retry/failure kind"]
+  D["MiniMax success HTTP envelope"] --> E["MiniMax decoder"]
+  E --> F["base_resp.status_code 1008"]
+  F --> G["ProviderBillingBlocked"]
+  B --> H["Bare 1008 text does not imply MiniMax billing"]

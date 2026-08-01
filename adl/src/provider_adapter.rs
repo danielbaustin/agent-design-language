@@ -1192,6 +1192,9 @@ fn decode_minimax_response(
     let status = response.status();
     let body = response.text().map_err(map_reqwest_error)?;
     if !status.is_success() {
+        if let Some(failure) = minimax_failure_from_body(&body, status.as_u16()) {
+            return Err(failure);
+        }
         return Err(map_http_failure(
             status.as_u16(),
             &body,
@@ -1204,31 +1207,8 @@ fn decode_minimax_response(
             Some(status.as_u16()),
         )
     })?;
-    if let Some(base_resp) = json.get("base_resp") {
-        let code = base_resp
-            .get("status_code")
-            .and_then(Value::as_i64)
-            .unwrap_or_default();
-        if code != 0 {
-            let message = base_resp
-                .get("status_msg")
-                .and_then(Value::as_str)
-                .unwrap_or("MiniMax request failed");
-            let kind = match code {
-                1004 => ProviderFailureKindV1::ProviderAuthError,
-                1008 => ProviderFailureKindV1::ProviderBillingBlocked,
-                1002 => ProviderFailureKindV1::ProviderRateLimited,
-                _ => ProviderFailureKindV1::ProviderError,
-            };
-            let retryable = matches!(kind, ProviderFailureKindV1::ProviderRateLimited);
-            return Err(ProviderFailureV1 {
-                kind,
-                retryable,
-                message: format!("MiniMax error {code}: {message}"),
-                provider_error_excerpt: Some(format!("MiniMax error {code}: {message}")),
-                http_status: Some(status.as_u16()),
-            });
-        }
+    if let Some(failure) = minimax_failure_from_json(&json, status.as_u16()) {
+        return Err(failure);
     }
     let output_text = extract_chat_completion_output_text(&json)
         .filter(|text| !text.trim().is_empty())
@@ -1237,6 +1217,40 @@ fn decode_minimax_response(
         output_text,
         http_status: status.as_u16(),
         observed_provider_model_id: extract_chat_completion_model_id(&json),
+    })
+}
+
+fn minimax_failure_from_body(body: &str, http_status: u16) -> Option<ProviderFailureV1> {
+    let json = serde_json::from_str::<Value>(body).ok()?;
+    minimax_failure_from_json(&json, http_status)
+}
+
+fn minimax_failure_from_json(json: &Value, http_status: u16) -> Option<ProviderFailureV1> {
+    let base_resp = json.get("base_resp")?;
+    let code = base_resp
+        .get("status_code")
+        .and_then(Value::as_i64)
+        .unwrap_or_default();
+    if code == 0 {
+        return None;
+    }
+    let message = base_resp
+        .get("status_msg")
+        .and_then(Value::as_str)
+        .unwrap_or("MiniMax request failed");
+    let kind = match code {
+        1004 => ProviderFailureKindV1::ProviderAuthError,
+        1008 => ProviderFailureKindV1::ProviderBillingBlocked,
+        1002 => ProviderFailureKindV1::ProviderRateLimited,
+        _ => ProviderFailureKindV1::ProviderError,
+    };
+    let retryable = matches!(kind, ProviderFailureKindV1::ProviderRateLimited);
+    Some(ProviderFailureV1 {
+        kind,
+        retryable,
+        message: format!("MiniMax error {code}: {message}"),
+        provider_error_excerpt: Some(format!("MiniMax error {code}: {message}")),
+        http_status: Some(http_status),
     })
 }
 
@@ -1438,7 +1452,6 @@ fn map_http_failure(
         if lower.contains("insufficient balance")
             || lower.contains("insufficient_balance")
             || lower.contains("quota exhausted")
-            || lower.contains("1008")
         {
             let message = format!("provider billing blocked http {status}: {body}");
             return ProviderFailureV1 {
@@ -3069,6 +3082,131 @@ mod tests {
             .contains("1008"));
         let _ = fs::remove_file(path);
         env::remove_var("ADL_PROVIDER_ADAPTER_MINIMAX_BILLING_KEY");
+    }
+
+    #[test]
+    fn minimax_non_success_status_error_envelope_is_billing_blocked() {
+        env::set_var(
+            "ADL_PROVIDER_ADAPTER_MINIMAX_HTTP_BILLING_KEY",
+            "minimax-test-key",
+        );
+        let endpoint = one_shot_server(
+            r#"{"base_resp":{"status_code":1008,"status_msg":"account recharge required"}}"#,
+            "402 Payment Required",
+        );
+        let path = temp_log("minimax-http-billing");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.provider = "minimax".to_string();
+        req.route.provider_model_id = "MiniMax-M2.5".to_string();
+        req.route.credential_ref =
+            Some("env:ADL_PROVIDER_ADAPTER_MINIMAX_HTTP_BILLING_KEY".to_string());
+
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Failed);
+        assert_eq!(
+            result.failure.as_ref().map(|failure| failure.kind.clone()),
+            Some(ProviderFailureKindV1::ProviderBillingBlocked)
+        );
+        assert!(!result.failure.as_ref().expect("failure").retryable);
+        assert!(result
+            .failure
+            .as_ref()
+            .expect("failure")
+            .message
+            .contains("1008"));
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_MINIMAX_HTTP_BILLING_KEY");
+    }
+
+    #[test]
+    fn non_minimax_hosted_1008_http_errors_are_not_billing_blocked() {
+        let _guard = env_lock();
+        for (provider, model, env_name, expected_kind, expected_retryable) in [
+            (
+                "openai",
+                "gpt-test",
+                "ADL_PROVIDER_ADAPTER_OPENAI_1008_KEY",
+                ProviderFailureKindV1::ProviderRateLimited,
+                true,
+            ),
+            (
+                "anthropic",
+                "claude-test",
+                "ADL_PROVIDER_ADAPTER_ANTHROPIC_1008_KEY",
+                ProviderFailureKindV1::ProviderRateLimited,
+                true,
+            ),
+            (
+                "deepseek",
+                "deepseek-test",
+                "ADL_PROVIDER_ADAPTER_DEEPSEEK_1008_KEY",
+                ProviderFailureKindV1::ProviderRateLimited,
+                true,
+            ),
+            (
+                "z_ai",
+                "glm-test",
+                "ADL_PROVIDER_ADAPTER_GENERIC_1008_KEY",
+                ProviderFailureKindV1::ProviderRateLimited,
+                true,
+            ),
+        ] {
+            env::set_var(env_name, "test-key");
+            let endpoint = scripted_server(vec![
+                (
+                    r#"{"error":{"message":"rate limit ticket 1008, retry later"}}"#,
+                    "429 Too Many Requests",
+                ),
+                (
+                    r#"{"error":{"message":"rate limit ticket 1008, retry later"}}"#,
+                    "429 Too Many Requests",
+                ),
+            ]);
+            let path = temp_log(&format!("{provider}-1008"));
+            let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+            let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+            req.route.provider = provider.to_string();
+            req.route.provider_model_id = model.to_string();
+            req.route.credential_ref = Some(format!("env:{env_name}"));
+            req.model_identity =
+                hosted_model_identity(provider, model, model, Some("test".to_string()));
+            req.attempt_policy.max_attempts = 2;
+            req.attempt_policy.retry_backoff_ms = Some(1);
+
+            let result = execute_provider_invocation(req, &mut logger);
+            drop(logger);
+            assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Failed);
+            assert_eq!(result.attempts.len(), 2);
+            assert_eq!(
+                result.attempts[0]
+                    .failure
+                    .as_ref()
+                    .map(|failure| failure.kind.clone()),
+                Some(expected_kind.clone()),
+                "{provider} classified bare 1008 unexpectedly"
+            );
+            assert_eq!(
+                result.attempts[0]
+                    .failure
+                    .as_ref()
+                    .map(|failure| failure.retryable),
+                Some(expected_retryable),
+                "{provider} retryability changed for bare 1008 response"
+            );
+            assert_ne!(
+                result.attempts[0]
+                    .failure
+                    .as_ref()
+                    .map(|failure| failure.kind.clone()),
+                Some(ProviderFailureKindV1::ProviderBillingBlocked),
+                "{provider} must not inherit MiniMax billing classification"
+            );
+
+            let _ = fs::remove_file(path);
+            env::remove_var(env_name);
+        }
     }
 
     #[test]

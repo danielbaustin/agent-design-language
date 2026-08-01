@@ -1,0 +1,20 @@
+{
+  "issue": 5756,
+  "base_branch": "main",
+  "branch": "codex/5756-minimax-billing-classification",
+  "worktree": ".",
+  "claim": {
+    "id": "codex-5756-20260801",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1785568134,
+    "expires_unix_seconds": 1785654534,
+    "heartbeat_unix_seconds": 1785568134,
+    "branch": "codex/5756-minimax-billing-classification",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/src/provider_adapter.rs"
+    ],
+    "purpose": "Implement corrective issue #5756 MiniMax billing classification scope fix"
+  }
+}

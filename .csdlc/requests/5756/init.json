@@ -1,0 +1,168 @@
+{
+  "issue": 5756,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/designs/5756/design.md",
+  "diagram_path": ".csdlc/designs/5756/diagram.mmd",
+  "design_reviewer": "operator",
+  "design_approved": true,
+  "claim": {
+    "id": "codex-5756-20260801",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1785568134,
+    "expires_unix_seconds": 1785654534,
+    "heartbeat_unix_seconds": 1785568134,
+    "branch": "codex/5756-minimax-billing-classification",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/src/provider_adapter.rs"
+    ],
+    "purpose": "Implement corrective issue #5756 MiniMax billing classification scope fix"
+  },
+  "initial": {
+    "title": "[v0.91.8][runtime-v3][providers] Scope MiniMax billing classification to MiniMax responses",
+    "slug": "minimax-billing-classification",
+    "version": "v0.91.8",
+    "goal": "Scope MiniMax billing classification so bare 1008 substrings in other hosted provider non-2xx responses do not become ProviderBillingBlocked.",
+    "required_outcome": "MiniMax code 1008 remains non-retryable ProviderBillingBlocked, while OpenAI, Anthropic, DeepSeek, and generic provider bodies containing 1008 retain their normal provider-specific classification and retry behavior.",
+    "declared_scope": [
+      "adl/src/provider_adapter.rs shared hosted HTTP failure classification",
+      "focused provider adapter regression tests"
+    ],
+    "authority_boundary": [
+      "typed C-SDLC v2 binaries own lifecycle state",
+      "no AWS use",
+      "no /private/tmp",
+      "no #5748 inspection or dependency"
+    ],
+    "operator_constraints": [
+      "work only in /Volumes/FastWork/adl-wp-5756",
+      "do not write tracked files on primary main",
+      "publish a ready PR with Closes #5756",
+      "do not block on asynchronous closeout"
+    ],
+    "task_boundary": "Implement the smallest provider-aware fix for the global non-2xx bare substring 1008 bug and add positive MiniMax plus negative cross-provider tests.",
+    "deliverables": [
+      "provider-aware classification fix",
+      "MiniMax positive regression",
+      "OpenAI, Anthropic, DeepSeek, and generic negative regressions",
+      "focused provider tests and strict Clippy evidence",
+      "ready PR closing #5756"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Only a validated MiniMax response can produce MiniMax insufficient-balance classification.",
+      "AC-2: OpenAI, Anthropic, DeepSeek, and generic provider errors containing 1008 retain their provider-specific retry/classification behavior.",
+      "AC-3: Focused provider-adapter tests and strict Clippy pass.",
+      "AC-4: The PR body includes Closes #5756.",
+      "AC-5: No AWS use and no /private/tmp; all work remains in the issue worktree."
+    ],
+    "dependencies": [
+      "current origin/main at 85f0aa3d1f6b442acb61ada97fb3a5a73b50a444"
+    ],
+    "repo_inputs": [
+      "GitHub issue #5756",
+      "adl/src/provider_adapter.rs",
+      ".csdlc/designs/5756/design.md",
+      ".csdlc/designs/5756/diagram.mmd"
+    ],
+    "non_goals": [
+      "provider adapter refactor",
+      "AWS proof",
+      "issue #5748 inspection",
+      "issue #5757 Observatory work",
+      "merge or asynchronous closeout"
+    ],
+    "plan_summary": "Bind #5756, remove the global bare-1008 billing shortcut from the shared HTTP classifier, add MiniMax positive and cross-provider negative regressions, validate, review, and publish a ready corrective PR.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Initialize and bind #5756 lifecycle in the issue worktree.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Implement the provider-aware classifier correction.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Add MiniMax positive and OpenAI, Anthropic, DeepSeek, and generic negative regressions.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Run focused provider tests, strict Clippy, diff hygiene, review, and publish.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "MiniMax structured status code 1008 remains non-retryable billing blocked.",
+      "Shared non-2xx hosted provider classification does not classify bare 1008 as billing blocked.",
+      "Validation artifacts remain under .csdlc/evidence/5756 in this worktree."
+    ],
+    "risks": [
+      "Over-broad text matching could still classify unrelated providers as billing blocked.",
+      "Tests could accidentally exercise retry exhaustion instead of first-attempt classification."
+    ],
+    "planning_profile": "small",
+    "stop_conditions": [
+      "typed lifecycle claim collision",
+      "focused provider tests fail after scoped fix",
+      "strict Clippy reports actionable warnings",
+      "publication fails closed on stale review or remote drift"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "provider-tests",
+        "proof_role": "Focused provider adapter regression tests for MiniMax and cross-provider 1008 classification.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 240,
+        "budget_tokens": 1000,
+        "argv": [
+          "cargo",
+          "test",
+          "-p",
+          "adl",
+          "provider_adapter::tests::",
+          "--lib"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      },
+      {
+        "lane": "strict-clippy",
+        "proof_role": "Strict lint proof for the touched provider adapter crate surface.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 600,
+        "budget_tokens": 1000,
+        "argv": [
+          "cargo",
+          "clippy",
+          "-p",
+          "adl",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed, preserve request/evidence artifacts, and report the typed blocker without widening scope.",
+    "review_prompts": [
+      "Verify the shared non-2xx classifier can no longer map bare 1008 text to ProviderBillingBlocked for non-MiniMax providers.",
+      "Verify MiniMax structured status_code 1008 remains non-retryable ProviderBillingBlocked.",
+      "Verify tests cover OpenAI, Anthropic, DeepSeek, and generic provider responses containing 1008 without relying on live credentials."
+    ],
+    "review_scope": "adl/src/provider_adapter.rs and .csdlc issue 5756 lifecycle artifacts"
+  }
+}
