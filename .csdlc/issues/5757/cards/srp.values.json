@@ -7,15 +7,15 @@
     "title": "[v0.91.8][observatory][security] Fix trusted-origin, rerender race, and shared-certificate proof",
     "slug": "observatory-corrective-security-race-tls",
     "version": "v0.91.8",
-    "generation": 2
+    "generation": 4
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "Bounded exact-head review of #5757 product changes and focused proof.",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "adl/tools/test_v0917_html_observatory_integrated_proof.sh\nadl/tools/validate_v0917_html_observatory.py\ndemos/html-observatory/\ninfra/runtime-v3/runtime-init.toml",
+      "review_revision": "git-blake3:21536d308bfb0648c395490b621a388f9be191bc:5b4f0b7a078af58462c36b9470113e867b7fb5e1e37ec1ac1cbeaa785fcb15a4",
+      "reviewer": "codex-bounded-review",
       "review_prompts": [
         "Verify untrusted origins are rejected before bearer/WSS use.",
         "Verify monotonic generation ordering covers live, retained, WSS, and fallback completions.",
@@ -23,7 +23,7 @@
       ],
       "findings": [],
       "residual_risk": [],
-      "review_result": "pre_review"
+      "review_result": "pass"
     }
   }
 }

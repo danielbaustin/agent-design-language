@@ -3,13 +3,13 @@
   "issue": 5757,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "4688628ae0ce9d60ae255bf8cb770bb991f77366416595d38b77e15f45bf045e",
-  "phase": "implemented",
-  "generation": 2,
-  "digest": "5aaa6e7c44654e98ae308811d99e630d6d3003cbf90bde32a43d1228f2fe32e7",
+  "phase": "reviewed",
+  "generation": 4,
+  "digest": "2ccd97fbbae2155e966ffdec83f3fc1869d9b9d73949485b3cd2e11fba6b425c",
   "claim": {
     "id": "codex-5757-observatory-corrective-20260801",
     "owner": "codex",
-    "generation": 2,
+    "generation": 4,
     "acquired_unix_seconds": 1785568022,
     "expires_unix_seconds": 1785596822,
     "heartbeat_unix_seconds": 1785568022,
@@ -26,8 +26,31 @@
     ],
     "purpose": "implement corrective issue #5757"
   },
-  "review_assignment": null,
-  "review": null,
+  "review_assignment": {
+    "reviewer": "codex-bounded-review",
+    "assigned_by": "codex",
+    "revision": "git-blake3:21536d308bfb0648c395490b621a388f9be191bc:5b4f0b7a078af58462c36b9470113e867b7fb5e1e37ec1ac1cbeaa785fcb15a4",
+    "scope": [
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+      "adl/tools/validate_v0917_html_observatory.py",
+      "demos/html-observatory/",
+      "infra/runtime-v3/runtime-init.toml"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-bounded-review",
+    "scope": [
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+      "adl/tools/validate_v0917_html_observatory.py",
+      "demos/html-observatory/",
+      "infra/runtime-v3/runtime-init.toml"
+    ],
+    "reviewed_revision": "git-blake3:21536d308bfb0648c395490b621a388f9be191bc:5b4f0b7a078af58462c36b9470113e867b7fb5e1e37ec1ac1cbeaa785fcb15a4",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -42,32 +65,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "20e2f4aff715075f73b6ee8b963483f540e38e07f239d120f8f86fe71968cbc9",
+      "values_digest": "326db912ebe15f7bb678331810d10efd9ca363152d8154bcfc4d3a70e967e430",
       "rendered_digest": "f077abc033087fb625b5a7b04bdd28cce0c52f17c585945591a6c6d34df9e381",
       "ast_digest": "e3337c2bd07c96da0eea89cd8e9921f383dec217dca7d88f9046146e34fa1977"
     },
     "stp": {
-      "values_digest": "a374f326cbb72d7dbf5803048aaeccf314f186cd2dcdb1e9fcbec6d80d6d4f23",
+      "values_digest": "764111bd5a65a4b96b58fb15fc299869fdd8933701700fce3adb051f07021d59",
       "rendered_digest": "32cf9f6e12e252e94df5e89aa95680b6a905f495c496a2236fb131166e2efe43",
       "ast_digest": "ae27eaef68bbb94d7588f0c80afa4939a1bb8f4a078cdc12286da34499508183"
     },
     "spp": {
-      "values_digest": "f50117d6c774740d383a641687188040ec9427f4820e85c0a563a063b42ceff9",
+      "values_digest": "2d85abb7ef174e3fcbf2e40ac4b54a06518be3d70ff22dfbff3ca16c60d68cb0",
       "rendered_digest": "9a9f7a6f49caa909498fe96a2d4d34ec20767a4fa1ee0be4ca5265aff97c8718",
       "ast_digest": "f4c1c7f7c27334b026e395e3c93bef6d2281d4c6a4fff69fad2ebfc878a2b74d"
     },
     "vpp": {
-      "values_digest": "e2ec21f2bcabec7e4faa36cee959fb2e3a0546784f9fac72b9a43b8508fb4120",
+      "values_digest": "79d687f99ede3bb791d15732babb36dfaff68aa88219c2f8e4bf2b8b13f1f94b",
       "rendered_digest": "3ae9bc54dd619d1277882bfe8660635782ce4cb1d53910e94621091aff30a55e",
       "ast_digest": "7f5efa03b5a9a4a3826a29e42efcd2dc63ddda4665b9b20eec6f8caa2d9e52c6"
     },
     "srp": {
-      "values_digest": "4af27ef21953220586adf7f9005ad3a557a6ae3aa84d7f66718def8217474cc9",
-      "rendered_digest": "566dba64e3163d8af6b904f17b1e17263a6dac00fcca3e1f2f6cb38e00a07175",
-      "ast_digest": "b47b26de921525a05b48ca19c997ae22cbd42eba526ed8ee8657ab5542e1ec97"
+      "values_digest": "6139da34db5ca95a8044f9105edac88c70e3e0a13248b3fdd6d4ea95f825f341",
+      "rendered_digest": "b0bfc0cf3c25dba3b069a84372da817a17e98a2a81c01498db700212313354da",
+      "ast_digest": "c30cb0ea289659a6e797ee058fa66d7fe1a88574ab3b0478cfbdaa1bb9f3966c"
     },
     "sor": {
-      "values_digest": "ab9889a0bf614c4b6e6a6df67fd486fa6dd122e8de0370f75ee66c69a0d39f65",
+      "values_digest": "ea093d40cfb61583088974cf2b4a0d3fcce41f6f0ab518ae1ba704538db2a4b1",
       "rendered_digest": "71434ad650eba784d2dda8a0477568f6db1e1e0e37f67b202f37008c7b7b7b79",
       "ast_digest": "15f4465b9330eed94fa004093ec056c0e5bce87058c4204bb40880d174d31c4b"
     }
@@ -93,6 +116,13 @@
       "to": "implemented",
       "actor": "codex",
       "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "advance after bounded pre-PR review evidence passed"
     }
   ],
   "audit": [
@@ -130,6 +160,27 @@
       "actor": "codex",
       "reason": "reapprove changed issue design",
       "operation": "approve_design"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "advance after bounded pre-PR review evidence passed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
     }
   ]
 }
