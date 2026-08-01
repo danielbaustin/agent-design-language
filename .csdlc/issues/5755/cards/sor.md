@@ -89,16 +89,65 @@ Implemented #5755 Runtime v3 protocol/control security fixes needed to unblock #
     "purpose": "Prove Rust formatting for #5755 Runtime v3 security repair.",
     "outcome": "passed",
     "evidence_ref": "local terminal output: cargo fmt --check passed"
+  },
+  {
+    "command": [
+      "env",
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5755-target",
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml",
+      "rustls_mutual_tls_client_requires_verified_identity_proof"
+    ],
+    "purpose": "Prove direct public construction cannot forge a RustlsMutualTlsClient without a matching crate-owned mTLS proof.",
+    "outcome": "passed",
+    "evidence_ref": "local terminal output: 1 passed; 0 failed"
+  },
+  {
+    "command": [
+      "env",
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5755-target",
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml",
+      "--test",
+      "control",
+      "--test",
+      "protocol_adapters"
+    ],
+    "purpose": "Prove /v1/control body limit, mTLS boundary, no-client-auth rejection, env-built client-auth path, and protocol regression tests after the exact-head review fix.",
+    "outcome": "passed",
+    "evidence_ref": "local terminal output: control 22 passed; protocol_adapters 12 passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml",
+      "--check",
+      "&&",
+      "git",
+      "diff",
+      "--check"
+    ],
+    "purpose": "Prove Rust formatting and whitespace hygiene after the mTLS construction hardening fix.",
+    "outcome": "passed",
+    "evidence_ref": "local terminal output: cargo fmt --check passed; git diff --check produced no output"
   }
 ]
 
 ## Integration
 
-pr_open
+worktree_only
 
 ## Publication
 
-Publication: ready
+Publication: not_published
 
 Merge: not_merged
 

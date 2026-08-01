@@ -3,13 +3,13 @@
   "issue": 5755,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "73882389d54ae0d12e78152b7d469ed4a25cd70e2c9578946a4040bac99ca733",
-  "phase": "published",
-  "generation": 9,
-  "digest": "54602fd9a8b70aa47294d63bed8ff7ce6c4f49dad8f3013368477bf15db21687",
+  "phase": "implemented",
+  "generation": 13,
+  "digest": "244be9fc3560e81f0d8c425615d598241834244d0df1f3a281878913b177791f",
   "claim": {
     "id": "claim-5755-runtime-protocol-security",
     "owner": "codex:5755-runtime-protocol-security",
-    "generation": 9,
+    "generation": 13,
     "acquired_unix_seconds": 1785566965,
     "expires_unix_seconds": 1785653365,
     "heartbeat_unix_seconds": 1785566965,
@@ -28,34 +28,8 @@
     "purpose": "Resolve #5664 protocol-adapter mTLS and Runtime control body-bound closeout blockers"
   },
   "review_assignment": null,
-  "review": {
-    "reviewer": "codex-subagent:019fbc22-2f1c-72f2-aa2f-95ae73f9558c",
-    "scope": [
-      "adl-runtime-kernel/src/control.rs",
-      "adl-runtime-kernel/tests/control.rs",
-      "adl-runtime-kernel/src/protocol_adapters.rs",
-      "adl-runtime-kernel/tests/protocol_adapters.rs",
-      ".csdlc/issues/5755"
-    ],
-    "reviewed_revision": "git-blake3:1b97b7ec5e2dc03667a7c8799d951e2ff3df53d0:44f765456b4b8c136575fd7699f22247b934dfd66f757d17a5accdd1ce4c2863",
-    "findings": [],
-    "residual_risks": [
-      "Reviewer was read-only and relied on recorded local SOR validation; implementation owner separately ran cargo fmt --check and focused tests locally on FastWork."
-    ],
-    "completed": true,
-    "non_substantive_proof": null
-  },
-  "publication": {
-    "repository": "danielbaustin/agent-design-language",
-    "issue": 5755,
-    "pull_request": 5758,
-    "url": "https://github.com/danielbaustin/agent-design-language/pull/5758",
-    "base": "main",
-    "head": "codex/5755-runtime-protocol-security",
-    "revision": "git-blake3:b654d0ed4f6973767fce2cb5df917174cb7ddd8b:0cfede27272f08dd0a69fd6c9292209c9bc358a44a93e13158462015ee5d6aff",
-    "draft": false,
-    "observed_state": "open"
-  },
+  "review": null,
+  "publication": null,
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -69,34 +43,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "c238fda98fc05aac90a8ea9d3008466b16ce06ef5925468f4830eca0413f9bc1",
+      "values_digest": "9e05912c0adb2c957ea863c3ec39acd13edbcbfe105bd6c3b764590e9fccfb77",
       "rendered_digest": "5cfe45c018478acddab8d50505e3ccfa41f84fb85b62a26259a2de47ec5aa146",
       "ast_digest": "9e0ff02db3151176af0431608bc598107a1660525d9480a940d86a085d89f875"
     },
     "stp": {
-      "values_digest": "4c8d9f94a89ec3cec2987119c8bb61f90553d5a148878d9f4aea01c5254c91cf",
+      "values_digest": "6f94d43d93ebd82dca8d192743dd529195c6e729f1629b69971b32638a1ea427",
       "rendered_digest": "9428b15ecdedadcddb34485afe670c60b4791096939da5d45fb201f8c0a16ca5",
       "ast_digest": "5826ac6aee3e75f3961fd6b30966529e27a1300083fe3af625b234d9edd76141"
     },
     "spp": {
-      "values_digest": "3d9962010e4e8af662a57cfde21096917286d12386b91bc0f124bc507bb3a476",
+      "values_digest": "41b0145bc797e165e0af44177fa44d6c57f2d94a078eaede5df262b992632611",
       "rendered_digest": "9585c16c540f32159f768ab41c3837750e3264f76cee6efb6ae01ce710d641dc",
       "ast_digest": "206726bb2d961a3952e4bb1676bb36d9fe7042c39fe11e23b2ee59b6ef9943a1"
     },
     "vpp": {
-      "values_digest": "b2b4792dde718be50dffedc03e1b8e7b6a78db7c01443cd920695f86e1b91f53",
+      "values_digest": "fbeb1f20d5cff80b10d55bcdf3041ebad7696370bdfe2df7bf3360cd88374847",
       "rendered_digest": "98b6a03b946da456db71b54930b77a1c7ac249ebeafdb535c43e01d4c03a00e0",
       "ast_digest": "32f2b2ef53d1602bb53a52e39992bf7f546ffe31593c673934e2f463c784e3c3"
     },
     "srp": {
-      "values_digest": "2e8ce9d3224981cad1698c2e5f8c3676289a869d24a49c095afd074852895fa3",
-      "rendered_digest": "2ae37e28638b20c7ec93e20fbd6e7115bf8c45055e4d42b3c5e0a12c9a3ad0b4",
-      "ast_digest": "5720bbd0f5b7d4a490ae8c11b321f1c4ace0f73eb6e6dfe690f0f06d93681d05"
+      "values_digest": "7adf2f702f2da80128afa8d1acd60f27392c470918bc50d49e34557dba420550",
+      "rendered_digest": "4be6a5ffa7b698291bafdd1d14b8998e7354a03e671113ef4ea79defc766db91",
+      "ast_digest": "712acf1ef7f07ee5664be3f0f5a0e61334f6eed7b801666b49e25efd7e019095"
     },
     "sor": {
-      "values_digest": "598798bd4f7c0999023f1aae3cf8bfcc3348435e7c36e7eb226deeeae20d9e66",
-      "rendered_digest": "f7414a3ba11dca0f8f18719926a961c070306af94cc91580dccc94884b303d7a",
-      "ast_digest": "1ba7cababa464d65c9b7f9bb4269a5303e8b8b321354f4b486107df65a27d1b9"
+      "values_digest": "a6a635625e5b0aa2f54b2ba6bc2b82a98af277e688183b1121695835aa3b46d8",
+      "rendered_digest": "8fe8e53288c2a8aeda7606d06f02e8c34625ec21c318b3f070b27935b8f8152f",
+      "ast_digest": "a44c2c82412bdbc48294e4e42febe137a7678a0987345669ee5c0036c3bea258"
     }
   },
   "transitions": [
@@ -134,6 +108,13 @@
       "to": "published",
       "actor": "Codex",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "Codex",
+      "reason": "Recover review/publication truth after fixing exact-head review finding for public mTLS construction hardening."
     }
   ],
   "audit": [
@@ -227,6 +208,34 @@
       "actor": "Codex",
       "reason": "record exact existing PR ready-for-review after remote success",
       "operation": "record_ready_publication"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "Codex",
+      "reason": "Recover review/publication truth after fixing exact-head review finding for public mTLS construction hardening.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "Codex",
+      "reason": "Record focused unit regression for forged public mTLS construction rejection.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"env\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5755-target\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"rustls_mutual_tls_client_requires_verified_identity_proof\"],\"purpose\":\"Prove direct public construction cannot forge a RustlsMutualTlsClient without a matching crate-owned mTLS proof.\",\"outcome\":\"passed\",\"evidence_ref\":\"local terminal output: 1 passed; 0 failed\"}}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "Codex",
+      "reason": "Record focused integration validation after public mTLS construction hardening.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"env\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5755-target\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"control\",\"--test\",\"protocol_adapters\"],\"purpose\":\"Prove /v1/control body limit, mTLS boundary, no-client-auth rejection, env-built client-auth path, and protocol regression tests after the exact-head review fix.\",\"outcome\":\"passed\",\"evidence_ref\":\"local terminal output: control 22 passed; protocol_adapters 12 passed\"}}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "Codex",
+      "reason": "Record formatting and diff hygiene after public mTLS construction hardening.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"fmt\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--check\",\"&&\",\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove Rust formatting and whitespace hygiene after the mTLS construction hardening fix.\",\"outcome\":\"passed\",\"evidence_ref\":\"local terminal output: cargo fmt --check passed; git diff --check produced no output\"}}"
     }
   ]
 }
