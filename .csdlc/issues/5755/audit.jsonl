@@ -10,3 +10,4 @@
 {"sequence":10,"generation":6,"actor":"codex:5755-runtime-protocol-security","reason":"Record rustfmt validation.","operation":"{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"fmt\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--check\"],\"purpose\":\"Prove Rust formatting for #5755 Runtime v3 security repair.\",\"outcome\":\"passed\",\"evidence_ref\":\"local terminal output: cargo fmt --check passed\"}}"}
 {"sequence":11,"generation":7,"actor":"codex:5755-runtime-protocol-security","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
 {"sequence":12,"generation":8,"actor":"Codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":13,"generation":9,"actor":"Codex","reason":"record exact existing PR ready-for-review after remote success","operation":"record_ready_publication"}
