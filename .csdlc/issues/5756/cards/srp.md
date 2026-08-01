@@ -12,7 +12,7 @@ Status: pre_phase
 
 ## Scope
 
-adl/src/provider_adapter.rs and .csdlc issue 5756 lifecycle artifacts
+adl/src/provider_adapter.rs
 
 ## Prompts
 
@@ -34,8 +34,8 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:55580056a83ff422cdb6f075e02f4a63fe4d460a:a607e7a620bf1ac17c8ce188b7bddd3e597b632eaa2cee493d565756268097e7")
 
-Reviewer: None
+Reviewer: Some("codex-bounded-review")
 
-Result: pre_review
+Result: pass

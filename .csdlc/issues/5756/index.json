@@ -3,13 +3,13 @@
   "issue": 5756,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "4d17d6d585363c1f9d984fc262eae3544b655682c1a09740c0cdff2d8e49bd39",
-  "phase": "implemented",
-  "generation": 3,
-  "digest": "11d1b09b507793fb4c3a032e7a6da4bacd566ff284303193b0ed1ba30cb3928e",
+  "phase": "reviewed",
+  "generation": 4,
+  "digest": "966e7f4e5c47a41911277b86a61bccc468f6337b214b22dff20594f2b5629329",
   "claim": {
     "id": "codex-5756-20260801",
     "owner": "codex",
-    "generation": 3,
+    "generation": 4,
     "acquired_unix_seconds": 1785568134,
     "expires_unix_seconds": 1785654534,
     "heartbeat_unix_seconds": 1785568134,
@@ -21,7 +21,17 @@
     "purpose": "Implement corrective issue #5756 MiniMax billing classification scope fix"
   },
   "review_assignment": null,
-  "review": null,
+  "review": {
+    "reviewer": "codex-bounded-review",
+    "scope": [
+      "adl/src/provider_adapter.rs"
+    ],
+    "reviewed_revision": "git-blake3:55580056a83ff422cdb6f075e02f4a63fe4d460a:a607e7a620bf1ac17c8ce188b7bddd3e597b632eaa2cee493d565756268097e7",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -36,32 +46,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "56d39da5155c33a698303cfef6101075ed0e79e05a5f170f01bc3fe115b1587f",
+      "values_digest": "1012e98c8d40e7eab6eb2ddee46fc8fa7f0c136bf81fb59457ac3cd0d78a7e4e",
       "rendered_digest": "c7c3f8c5ad6c62689dbdffbe7975cc3376e72f94af303101e7261f3251b7568f",
       "ast_digest": "abab5bf49ed88d40ec24837d5262b16c1d8474c17947db6430b55f8a5ffce5cf"
     },
     "stp": {
-      "values_digest": "2d0a994c1eb9901d1e351240c613ad8889b1e9a508727910bf9ab40b603d5322",
+      "values_digest": "f5545b091a1db539038661186eb89276d803abac36ad9d3cc9e2280f88e0acdb",
       "rendered_digest": "da00ee1a8c16b895f41cd7831e874119d09b26ff32a224d5725053d5e70a7107",
       "ast_digest": "f0ac95c8696e3847c6c49fffabc4db3a731762ffbf7d4c40e92b63d19b74ee7c"
     },
     "spp": {
-      "values_digest": "b8b5fd3560e8708852d3cf02e99553109deb22701e3615bc57a789ff164f56a9",
+      "values_digest": "b887d09226efa14b98d7561ca1a05d2cb6445c9f05c5649ed7d89905a713ff26",
       "rendered_digest": "e86d846d064ff00697f0ccaa0121dd8651c2845ea8895ba45910f13e500c4258",
       "ast_digest": "4b35d7a46bb66daf1b41fb507efb9705a59929f2bb8e62c3d0c1328f48fbd06a"
     },
     "vpp": {
-      "values_digest": "340272f6eac17e623918d89c7856bef39b13d722a1dfec146dea4ac54d03dec1",
+      "values_digest": "536c22c053a4d516164e04ae10d3bd6fbc4bdef7c99ef6f299acb5517306ba50",
       "rendered_digest": "1c7ce6f9d050f7ad2d1bc34e31d1134e61c3933d2e077268488a8d66e15225e6",
       "ast_digest": "77406c78176cf673e7336a3f7870d466cf17f5f7aaaa904a83f7a7a42c757732"
     },
     "srp": {
-      "values_digest": "99563e5b5abb08ad91ccdf5fb6c8e9f07c575f8c4b3beffae05940d3aab7e887",
-      "rendered_digest": "3de9fc21e87dc2cbb824b834202c632bad7a743225e8c03282904dc8e12fab59",
-      "ast_digest": "607dd9486c7c8bd6cb3b9cb5b81533ac0f49612f20e564c1df52ed520ad28895"
+      "values_digest": "0d5a0209db514f860d0650dd4474fac20980fcbf7d76e4342618e1cae3a341c9",
+      "rendered_digest": "b9266e3a1377858a284b5713304d676258efc0b29ee7d88fb4cbdf1a60b44042",
+      "ast_digest": "b7370533f4212fb600a46dbebcd090628d17db995806e06fd10e800b97fd16c9"
     },
     "sor": {
-      "values_digest": "87cb9f4ad969e07c8ff4ea81a761fff81a77b6b6b2af097c69fbea54a8d06c6d",
+      "values_digest": "50439ccc13f4b2da804a87327e71266f130c0b7195b1abbe762c613274e7bd8a",
       "rendered_digest": "80c47e840589150e73abacdc1fcfdac75770d7c87b162dd1b5db95aa7f3289cd",
       "ast_digest": "38041b228585460261c4db782212a5d07ea312fb7d396f9b39de66fbc9d8d8aa"
     }
@@ -87,6 +97,13 @@
       "to": "implemented",
       "actor": "codex",
       "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "exact scoped review passed"
     }
   ],
   "audit": [
@@ -124,6 +141,13 @@
       "actor": "codex",
       "reason": "atomically record execution, validation, and implemented phase",
       "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
     }
   ]
 }

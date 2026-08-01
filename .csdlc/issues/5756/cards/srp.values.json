@@ -7,15 +7,15 @@
     "title": "[v0.91.8][runtime-v3][providers] Scope MiniMax billing classification to MiniMax responses",
     "slug": "minimax-billing-classification",
     "version": "v0.91.8",
-    "generation": 3
+    "generation": 4
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "adl/src/provider_adapter.rs and .csdlc issue 5756 lifecycle artifacts",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "adl/src/provider_adapter.rs",
+      "review_revision": "git-blake3:55580056a83ff422cdb6f075e02f4a63fe4d460a:a607e7a620bf1ac17c8ce188b7bddd3e597b632eaa2cee493d565756268097e7",
+      "reviewer": "codex-bounded-review",
       "review_prompts": [
         "Verify the shared non-2xx classifier can no longer map bare 1008 text to ProviderBillingBlocked for non-MiniMax providers.",
         "Verify MiniMax structured status_code 1008 remains non-retryable ProviderBillingBlocked.",
@@ -23,7 +23,7 @@
       ],
       "findings": [],
       "residual_risk": [],
-      "review_result": "pre_review"
+      "review_result": "pass"
     }
   }
 }
