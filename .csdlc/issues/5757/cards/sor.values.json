@@ -7,7 +7,7 @@
     "title": "[v0.91.8][observatory][security] Fix trusted-origin, rerender race, and shared-certificate proof",
     "slug": "observatory-corrective-security-race-tls",
     "version": "v0.91.8",
-    "generation": 4
+    "generation": 5
   },
   "status": "pre_phase",
   "content": {
@@ -60,8 +60,8 @@
           "evidence_ref": "observatory-js-syntax.log"
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
+      "integration_state": "pr_open",
+      "publication_state": "ready",
       "merge_state": "not_merged",
       "closeout_state": "not_started",
       "follow_ups": []

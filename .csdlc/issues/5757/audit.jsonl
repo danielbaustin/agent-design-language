@@ -6,3 +6,4 @@
 {"sequence":6,"generation":2,"actor":"codex","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":7,"generation":3,"actor":"codex","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":8,"generation":4,"actor":"codex","reason":"advance after bounded pre-PR review evidence passed","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":9,"generation":5,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}

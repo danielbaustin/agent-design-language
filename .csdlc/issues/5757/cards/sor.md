@@ -67,11 +67,11 @@ Fix Runtime v3 Observatory trusted localhost origin validation, monotonic live c
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 
