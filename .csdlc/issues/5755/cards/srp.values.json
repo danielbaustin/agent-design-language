@@ -7,23 +7,25 @@
     "title": "[v0.91.8][runtime-v3][protocols] Resolve #5664 terminal closeout security blockers",
     "slug": "runtime-v3-protocol-security-closeout-blockers",
     "version": "v0.91.8",
-    "generation": 13
+    "generation": 14
   },
   "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "adl-runtime-kernel/src/control.rs\nadl-runtime-kernel/tests/control.rs\nadl-runtime-kernel/src/protocol_adapters.rs\nadl-runtime-kernel/tests/protocol_adapters.rs\n.csdlc/issues/5755",
+      "review_revision": "git-blake3:92d56e853ce67c48bc79fa8fe7734f72098e44bf:d2a694812b5b087589ffa5f6a3735b9d60e46a152e026fea07de3df51f0e2c8e",
+      "reviewer": "Popper",
       "review_prompts": [
         "Does the protocol adapter security repair close the accepted #5664 mTLS/client-auth or equivalent boundary without overclaiming?",
         "Does the Runtime control route reject oversized request bodies before unbounded JSON parsing?",
         "Are tests focused and sufficient for the two accepted blockers?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "Reviewer was read-only and did not rerun tests; implementation owner separately ran focused FastWork validation and hygiene checks."
+      ],
+      "review_result": "pass"
     }
   }
 }

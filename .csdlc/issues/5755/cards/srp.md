@@ -12,7 +12,11 @@ Status: draft
 
 ## Scope
 
-
+adl-runtime-kernel/src/control.rs
+adl-runtime-kernel/tests/control.rs
+adl-runtime-kernel/src/protocol_adapters.rs
+adl-runtime-kernel/tests/protocol_adapters.rs
+.csdlc/issues/5755
 
 ## Prompts
 
@@ -30,12 +34,12 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- Reviewer was read-only and did not rerun tests; implementation owner separately ran focused FastWork validation and hygiene checks.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:92d56e853ce67c48bc79fa8fe7734f72098e44bf:d2a694812b5b087589ffa5f6a3735b9d60e46a152e026fea07de3df51f0e2c8e")
 
-Reviewer: None
+Reviewer: Some("Popper")
 
-Result: pre_review
+Result: pass
