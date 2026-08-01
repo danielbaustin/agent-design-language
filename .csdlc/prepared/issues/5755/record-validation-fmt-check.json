@@ -1,0 +1,24 @@
+{
+  "issue": 5755,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "b3079b9730d735f7e1e2d5576dbe447ae073c04b8a6960f66a8f37576b9a7981",
+  "claim_id": "claim-5755-runtime-protocol-security",
+  "actor": "codex:5755-runtime-protocol-security",
+  "reason": "Record rustfmt validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "adl-runtime-kernel/Cargo.toml",
+        "--check"
+      ],
+      "purpose": "Prove Rust formatting for #5755 Runtime v3 security repair.",
+      "outcome": "passed",
+      "evidence_ref": "local terminal output: cargo fmt --check passed"
+    }
+  }
+}

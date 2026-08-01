@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5755,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][protocols] Resolve #5664 terminal closeout security blockers",
+    "slug": "runtime-v3-protocol-security-closeout-blockers",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Fix the two accepted #5664 terminal-closeout security blockers so #5664 can be closed out truthfully.",
+      "required_outcome": "Runtime v3 protocol adapters have a current authenticated TLS client-identity boundary or equivalent, Runtime control rejects oversized inbound bodies at the route boundary, and focused tests prove both negative paths.",
+      "declared_scope": [
+        "adl-runtime-kernel/src/protocol_adapters.rs",
+        "adl-runtime-kernel/tests/protocol_adapters.rs",
+        "adl-runtime-kernel/src/control.rs",
+        "adl-runtime-kernel/tests/control.rs",
+        ".csdlc/evidence/5755"
+      ],
+      "authority_boundary": [
+        "Issue #5755 owns the repair.",
+        "Issue #5664 terminal closeout consumes the result after merge.",
+        "No AWS or external infrastructure authority."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "use /Volumes/FastWork",
+        "no AWS",
+        "no tracked product edits on main"
+      ]
+    }
+  }
+}

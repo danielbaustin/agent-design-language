@@ -19,7 +19,10 @@ use tokio::{
 };
 use tokio_rustls::{
     client::TlsStream,
-    rustls::{pki_types::CertificateDer, pki_types::ServerName, ClientConfig, RootCertStore},
+    rustls::{
+        pki_types::{CertificateDer, PrivateKeyDer, PrivatePkcs8KeyDer, ServerName},
+        ClientConfig, RootCertStore,
+    },
     TlsConnector,
 };
 use tokio_util::sync::CancellationToken;
@@ -84,6 +87,34 @@ pub enum ProtocolSecurity {
         config: Arc<ClientConfig>,
         server_name: String,
     },
+    RustlsMutualTlsClient {
+        config: Arc<ClientConfig>,
+        server_name: String,
+        client_identity: ProtocolClientIdentity,
+    },
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ProtocolClientIdentity {
+    certificate_der_sha256: String,
+}
+
+impl ProtocolClientIdentity {
+    pub fn from_certificate_der(certificate_der: &[u8]) -> Result<Self, ProtocolBuildError> {
+        if certificate_der.is_empty() {
+            return Err(config(
+                "CLIENT_CERT_DER_FILE",
+                "expected non-empty client certificate DER",
+            ));
+        }
+        Ok(Self {
+            certificate_der_sha256: blake3::hash(certificate_der).to_hex().to_string(),
+        })
+    }
+
+    pub fn certificate_der_sha256(&self) -> &str {
+        &self.certificate_der_sha256
+    }
 }
 
 #[derive(Clone)]
@@ -358,6 +389,26 @@ impl ProtocolAdapter {
         if endpoint.timeout.is_zero() {
             return Err(config("TIMEOUT_MILLIS", "expected non-zero timeout"));
         }
+        match &endpoint.security {
+            #[cfg(debug_assertions)]
+            ProtocolSecurity::PlainForLocalTest => {}
+            ProtocolSecurity::RustlsClient { .. } => {
+                return Err(config(
+                    "SECURITY",
+                    "rustls protocol transport requires client certificate authentication",
+                ));
+            }
+            ProtocolSecurity::RustlsMutualTlsClient {
+                client_identity, ..
+            } => {
+                if client_identity.certificate_der_sha256().trim().is_empty() {
+                    return Err(config(
+                        "CLIENT_CERT_DER_FILE",
+                        "expected bound client certificate identity",
+                    ));
+                }
+            }
+        }
         #[cfg(debug_assertions)]
         if matches!(endpoint.security, ProtocolSecurity::PlainForLocalTest)
             && (!cfg!(debug_assertions) || !endpoint.address.ip().is_loopback())
@@ -505,9 +556,13 @@ impl ProtocolAdapter {
         match &self.endpoint.security {
             #[cfg(debug_assertions)]
             ProtocolSecurity::PlainForLocalTest => Ok(ProtocolStream::Plain(stream)),
-            ProtocolSecurity::RustlsClient {
+            ProtocolSecurity::RustlsClient { .. } => {
+                Err(fatal("rustls client authentication is required"))
+            }
+            ProtocolSecurity::RustlsMutualTlsClient {
                 config,
                 server_name,
+                ..
             } => TlsConnector::from(config.clone())
                 .connect(
                     ServerName::try_from(server_name.clone())
@@ -914,21 +969,29 @@ fn endpoint_from_env(
         .map_err(|error| config("ENDPOINT", error))?;
     let secret = ProtocolSecret::from_key_file(required_var(prefix, "SECRET_FILE")?)?;
     let mut roots = RootCertStore::empty();
-    roots
-        .add(CertificateDer::from(
-            fs::read(required_var(prefix, "CA_DER_FILE")?)
-                .map_err(|error| config("CA_DER_FILE", error))?,
-        ))
+    let ca_der = fs::read(required_var(prefix, "CA_DER_FILE")?)
         .map_err(|error| config("CA_DER_FILE", error))?;
+    roots
+        .add(CertificateDer::from(ca_der))
+        .map_err(|error| config("CA_DER_FILE", error))?;
+    let client_cert_der = fs::read(required_var(prefix, "CLIENT_CERT_DER_FILE")?)
+        .map_err(|error| config("CLIENT_CERT_DER_FILE", error))?;
+    let client_key_der = fs::read(required_var(prefix, "CLIENT_KEY_DER_FILE")?)
+        .map_err(|error| config("CLIENT_KEY_DER_FILE", error))?;
+    let client_identity = ProtocolClientIdentity::from_certificate_der(&client_cert_der)?;
+    let client_cert = CertificateDer::from(client_cert_der);
+    let client_key = PrivateKeyDer::Pkcs8(PrivatePkcs8KeyDer::from(client_key_der));
     Ok(ProtocolEndpoint {
         address,
-        security: ProtocolSecurity::RustlsClient {
+        security: ProtocolSecurity::RustlsMutualTlsClient {
             config: Arc::new(
                 ClientConfig::builder()
                     .with_root_certificates(roots)
-                    .with_no_client_auth(),
+                    .with_client_auth_cert(vec![client_cert], client_key)
+                    .map_err(|error| config("CLIENT_CERT_DER_FILE/CLIENT_KEY_DER_FILE", error))?,
             ),
             server_name: required_var(prefix, "SERVER_NAME")?,
+            client_identity,
         },
         timeout: Duration::from_millis(optional_u64(prefix, "TIMEOUT_MILLIS", 5_000)?),
         frame_freshness: Duration::from_millis(optional_u64(prefix, "FRESHNESS_MILLIS", 5_000)?),

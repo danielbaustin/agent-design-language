@@ -1,0 +1,22 @@
+{
+  "issue": 5755,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "37d050382c2442c5e87dc16d507850e6f641763f01e82b0377fcb76c53b1d58c",
+  "claim_id": "claim-5755-runtime-protocol-security",
+  "actor": "codex:5755-runtime-protocol-security",
+  "reason": "Record diff hygiene validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "purpose": "Prove whitespace/diff hygiene for #5755 Runtime v3 security repair.",
+      "outcome": "passed",
+      "evidence_ref": "local terminal output: git diff --check produced no output"
+    }
+  }
+}

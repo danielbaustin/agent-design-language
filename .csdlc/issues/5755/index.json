@@ -1,0 +1,171 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5755,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "73882389d54ae0d12e78152b7d469ed4a25cd70e2c9578946a4040bac99ca733",
+  "phase": "implemented",
+  "generation": 6,
+  "digest": "fb6714da5538280e32272570fce91a93efc32810c638334f9dfc039bf2b31028",
+  "claim": {
+    "id": "claim-5755-runtime-protocol-security",
+    "owner": "codex:5755-runtime-protocol-security",
+    "generation": 6,
+    "acquired_unix_seconds": 1785566965,
+    "expires_unix_seconds": 1785653365,
+    "heartbeat_unix_seconds": 1785566965,
+    "branch": "codex/5755-runtime-protocol-security",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5755",
+      ".csdlc/issues/5755",
+      ".csdlc/locks/5755.lock",
+      ".csdlc/prepared/issues/5755",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/protocol_adapters.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ],
+    "purpose": "Resolve #5664 protocol-adapter mTLS and Runtime control body-bound closeout blockers"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5755/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5755/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5755-bootstrap",
+      "revision": "a8c1bd11379408c7a249903471993aedd5bb9258c02ffba12233a5fc40e0bdea"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "aa10274fdddc84f9930bce00e13f0aa615d31cd0ee0f8c2eb42fcaaf665fee2c",
+      "rendered_digest": "5cfe45c018478acddab8d50505e3ccfa41f84fb85b62a26259a2de47ec5aa146",
+      "ast_digest": "9e0ff02db3151176af0431608bc598107a1660525d9480a940d86a085d89f875"
+    },
+    "stp": {
+      "values_digest": "8a3a3d967998c425084eb50fdc2c01f037eeeb8d05ea53f5264eb9ea34f1d10b",
+      "rendered_digest": "9428b15ecdedadcddb34485afe670c60b4791096939da5d45fb201f8c0a16ca5",
+      "ast_digest": "5826ac6aee3e75f3961fd6b30966529e27a1300083fe3af625b234d9edd76141"
+    },
+    "spp": {
+      "values_digest": "17450744cb75e181c6eaaed39e7faff06cb73761dae976bc6b21b506933f9fa6",
+      "rendered_digest": "9585c16c540f32159f768ab41c3837750e3264f76cee6efb6ae01ce710d641dc",
+      "ast_digest": "206726bb2d961a3952e4bb1676bb36d9fe7042c39fe11e23b2ee59b6ef9943a1"
+    },
+    "vpp": {
+      "values_digest": "be750972f90d510c34bf8398570cbebc08e05d0c2736154ff716d66c2b36621b",
+      "rendered_digest": "98b6a03b946da456db71b54930b77a1c7ac249ebeafdb535c43e01d4c03a00e0",
+      "ast_digest": "32f2b2ef53d1602bb53a52e39992bf7f546ffe31593c673934e2f463c784e3c3"
+    },
+    "srp": {
+      "values_digest": "9119535ab2e6407d15f47d9f7c9399d2f5971863d0c4e1409c64997b2834f751",
+      "rendered_digest": "88874c0c479579cf0458dabcc57cb82b8a72dc39a858de4a2fd88cc2f7020052",
+      "ast_digest": "15da8fc3ca88243deb5a23f5d106992d3422fd93832c60b63dabbfe3ed0cf13d"
+    },
+    "sor": {
+      "values_digest": "15df152e3c24fec2921df728925686d2f3a2c31de3bdfdea2332e74158a65a11",
+      "rendered_digest": "a492a029cd8504a4f514cca458dd39850ca4b00eab7c9fe929313f0a78a259bf",
+      "ast_digest": "5399f22b26a71cfa32ee113eab1e413115a17383550ef5813b9a3df6cc15490b"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "Focused implementation and local validation are complete for #5755."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "Release malformed root-relative init claim so #5755 can be reacquired as the active FastWork issue worktree.",
+      "operation": "{\"claim_id\":\"claim-5755-runtime-protocol-security\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5755-root-cleanup-and-fastwork-bind\",\"previous_owner\":\"codex:5755-runtime-protocol-security\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "Reacquire #5755 claim as the active FastWork issue worktree before typed binding.",
+      "operation": "{\"branch\":\"codex/5755-runtime-protocol-security\",\"claim_id\":\"claim-5755-runtime-protocol-security\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5755-runtime-protocol-security\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5755\",\".csdlc/issues/5755\",\".csdlc/locks/5755.lock\",\".csdlc/prepared/issues/5755\",\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/src/protocol_adapters.rs\",\"adl-runtime-kernel/tests/control.rs\",\"adl-runtime-kernel/tests/protocol_adapters.rs\"],\"purpose\":\"Resolve #5664 protocol-adapter mTLS and Runtime control body-bound closeout blockers\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 0,
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "Record bounded #5755 Runtime v3 security implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented #5755 Runtime v3 protocol/control security fixes needed to unblock #5664 terminal closeout.\",\"changes\":[\"Added route-level /v1/control request body limit and oversized-body negative test.\",\"Added explicit RustlsMutualTlsClient mode with bound client certificate identity.\",\"Rejected no-client-auth RustlsClient usage for protocol adapters.\",\"Updated protocol env construction to require client certificate and key files.\",\"Added mTLS positive proof with server-observed client certificate identity.\"],\"artifacts\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/tests/control.rs\",\"adl-runtime-kernel/src/protocol_adapters.rs\",\"adl-runtime-kernel/tests/protocol_adapters.rs\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "Record focused Runtime v3 security validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"env\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5755-target\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"control\",\"--test\",\"protocol_adapters\"],\"purpose\":\"Prove /v1/control body limit, protocol adapter no-client-auth rejection, and mTLS client identity positive path.\",\"outcome\":\"passed\",\"evidence_ref\":\"local terminal output: control 22 passed; protocol_adapters 11 passed\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "Record diff hygiene validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove whitespace/diff hygiene for #5755 Runtime v3 security repair.\",\"outcome\":\"passed\",\"evidence_ref\":\"local terminal output: git diff --check produced no output\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "Focused implementation and local validation are complete for #5755.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "Record final focused validation after review P3 diagnostic fix.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"env\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5755-target\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"control\",\"--test\",\"protocol_adapters\"],\"purpose\":\"Final exact-diff proof after diagnostic fix: /v1/control body limit, mTLS boundary, no-client-auth rejection, and invalid mTLS key diagnostic regression.\",\"outcome\":\"passed\",\"evidence_ref\":\"local terminal output: control 22 passed; protocol_adapters 12 passed\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5755-runtime-protocol-security",
+      "reason": "Record rustfmt validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"fmt\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--check\"],\"purpose\":\"Prove Rust formatting for #5755 Runtime v3 security repair.\",\"outcome\":\"passed\",\"evidence_ref\":\"local terminal output: cargo fmt --check passed\"}}"
+    }
+  ]
+}

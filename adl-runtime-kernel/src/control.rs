@@ -13,7 +13,7 @@ use axum::{
     body::Bytes,
     extract::{
         ws::{close_code, CloseFrame, Message, WebSocket, WebSocketUpgrade},
-        State,
+        DefaultBodyLimit, State,
     },
     http::{header, HeaderMap, HeaderValue, StatusCode},
     response::{IntoResponse, Response},
@@ -50,6 +50,7 @@ pub const OBSERVATORY_WS_PATH: &str = "/v1/observatory/ws";
 pub const OBSERVATORY_WS_AUTH_SCHEMA: &str = "adl.runtime_v3.observatory_ws_auth.v1";
 pub const OBSERVATORY_WS_CONTROL_RESULT_SCHEMA: &str =
     "adl.runtime_v3.observatory_ws_control_result.v1";
+pub const CONTROL_MAX_BODY_BYTES: usize = 64 * 1024;
 const RUNTIME_OPENAPI_DOCUMENT: &str = include_str!("../../docs/api/runtime-v3/v1/openapi.json");
 const OBSERVATORY_OPENAPI_DOCUMENT: &str =
     include_str!("../../docs/api/runtime-v3/v1/observatory.openapi.json");
@@ -60,6 +61,7 @@ pub struct ControlApiPolicy {
     pub websocket_auth_timeout: Duration,
     pub websocket_refresh: Duration,
     pub websocket_max_frame_bytes: usize,
+    pub control_max_body_bytes: usize,
 }
 
 impl ControlApiPolicy {
@@ -81,6 +83,7 @@ impl ControlApiPolicy {
             websocket_auth_timeout,
             websocket_refresh,
             websocket_max_frame_bytes,
+            control_max_body_bytes: CONTROL_MAX_BODY_BYTES,
         })
     }
 }
@@ -1059,7 +1062,11 @@ where
             get(observatory_feed_handler::<C>).options(observatory_preflight_handler::<C>),
         )
         .route(OBSERVATORY_WS_PATH, get(observatory_ws_handler::<C>))
-        .route("/v1/control", post(control_handler::<C>))
+        .route(
+            "/v1/control",
+            post(control_handler::<C>)
+                .layer(DefaultBodyLimit::max(api_policy.control_max_body_bytes)),
+        )
         .merge(swagger_ui)
         .merge(observatory_swagger_ui)
         .with_state(service);

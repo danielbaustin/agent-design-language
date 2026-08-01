@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5755,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][protocols] Resolve #5664 terminal closeout security blockers",
+    "slug": "runtime-v3-protocol-security-closeout-blockers",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Exact-head review of protocol adapter security, Runtime control body-bound behavior, and focused tests.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does the protocol adapter security repair close the accepted #5664 mTLS/client-auth or equivalent boundary without overclaiming?",
+        "Does the Runtime control route reject oversized request bodies before unbounded JSON parsing?",
+        "Are tests focused and sufficient for the two accepted blockers?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

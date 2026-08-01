@@ -809,6 +809,49 @@ async fn axum_adapter_serves_signed_control_payloads() {
 }
 
 #[tokio::test]
+async fn control_route_rejects_oversized_request_body_before_command_parse() {
+    let key = SigningKey::from_bytes(&[17; 32]);
+    let calls = Arc::new(AtomicUsize::new(0));
+    let service = Arc::new(ControlService::new(
+        "instance-1",
+        RuntimeRecorder::new(4),
+        FakeLifecycle {
+            calls: calls.clone(),
+        },
+        authority(&key, [ControlCapability::Read]),
+        4,
+    ));
+    let listener = tokio::net::TcpListener::bind((TEST_BIND_HOST, 0))
+        .await
+        .unwrap();
+    let address = listener.local_addr().unwrap();
+    let (tls, client) = test_https().await;
+    let (ready_sender, ready_receiver) = tokio::sync::oneshot::channel();
+    let server = tokio::spawn(serve_control_listener_until_ready(
+        service,
+        listener,
+        tls,
+        test_api_policy(),
+        ready_sender,
+        std::future::pending(),
+    ));
+    assert_eq!(ready_receiver.await.unwrap(), address);
+
+    let body = vec![b' '; adl_runtime_kernel::CONTROL_MAX_BODY_BYTES + 1];
+    let mut request = format!(
+        "POST /v1/control HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
+        body.len(),
+    )
+    .into_bytes();
+    request.extend_from_slice(&body);
+    let response = https_request(&client, address, &request).await;
+
+    assert!(response.starts_with("HTTP/1.1 413 Payload Too Large"));
+    assert_eq!(calls.load(Ordering::SeqCst), 0);
+    server.abort();
+}
+
+#[tokio::test]
 async fn observatory_https_reads_are_public_and_report_weather_freshness() {
     let key = SigningKey::from_bytes(&[12; 32]);
     let recorder = RuntimeRecorder::new(8);

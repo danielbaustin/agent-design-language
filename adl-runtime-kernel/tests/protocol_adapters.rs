@@ -5,13 +5,15 @@ use std::{
     time::Duration,
 };
 
+use adl_runtime_kernel::protocol_adapters::ProtocolClientIdentity;
 use adl_runtime_kernel::{
     build_production_operation_executors_with_recorder,
-    build_protocol_production_operation_executors, AdapterKind, AdapterPolicy, AuthorityMode,
-    ClockAuthority, ExecutionPermit, FailureClass, OperationError, OperationExecutor,
-    OperationRequest, OperationalAdapter, ProtocolAdapter, ProtocolEndpoint, ProtocolFrame,
-    ProtocolResponse, ProtocolSecret, ProtocolSecurity, ProtocolStatus, RuntimeRecorder,
-    MAX_PROTOCOL_FRAME_FRESHNESS_MILLIS, MAX_PROTOCOL_RESPONSE_BYTES, OPERATION_REQUEST_SCHEMA,
+    build_protocol_production_operation_executors, protocol_operation_executors_from_env,
+    AdapterKind, AdapterPolicy, AuthorityMode, ClockAuthority, ExecutionPermit, FailureClass,
+    OperationError, OperationExecutor, OperationRequest, OperationalAdapter, ProtocolAdapter,
+    ProtocolBuildError, ProtocolEndpoint, ProtocolFrame, ProtocolResponse, ProtocolSecret,
+    ProtocolSecurity, ProtocolStatus, RuntimeRecorder, MAX_PROTOCOL_FRAME_FRESHNESS_MILLIS,
+    MAX_PROTOCOL_RESPONSE_BYTES, OPERATION_REQUEST_SCHEMA,
 };
 use ed25519_dalek::SigningKey;
 use rcgen::{generate_simple_self_signed, CertifiedKey};
@@ -22,6 +24,7 @@ use tokio::{
     sync::{Mutex, Notify},
 };
 use tokio_rustls::{
+    rustls::server::WebPkiClientVerifier,
     rustls::{
         pki_types::{CertificateDer, PrivateKeyDer, PrivatePkcs8KeyDer},
         ClientConfig, RootCertStore, ServerConfig,
@@ -200,28 +203,62 @@ async fn spawn_read_then_hang_peer() -> (std::net::SocketAddr, Arc<Notify>) {
     (address, read)
 }
 
-async fn spawn_tls_peer(
+async fn spawn_mtls_peer(
     secret: ProtocolSecret,
     responses: Vec<ProtocolStatus>,
-) -> (std::net::SocketAddr, ProtocolSecurity) {
-    let CertifiedKey { cert, signing_key } =
-        generate_simple_self_signed(["localhost".to_owned()]).unwrap();
-    let certificate = CertificateDer::from(cert.der().to_vec());
+) -> (
+    std::net::SocketAddr,
+    ProtocolSecurity,
+    String,
+    Arc<Mutex<Option<String>>>,
+) {
+    let CertifiedKey {
+        cert: server_cert,
+        signing_key: server_key,
+    } = generate_simple_self_signed(["localhost".to_owned()]).unwrap();
+    let CertifiedKey {
+        cert: client_cert,
+        signing_key: client_key,
+    } = generate_simple_self_signed(["adl-runtime-client".to_owned()]).unwrap();
+    let server_certificate = CertificateDer::from(server_cert.der().to_vec());
+    let client_certificate = CertificateDer::from(client_cert.der().to_vec());
+    let expected_client_hash = blake3::hash(client_certificate.as_ref())
+        .to_hex()
+        .to_string();
+
+    let mut client_roots = RootCertStore::empty();
+    client_roots.add(server_certificate.clone()).unwrap();
+    let mut client_verifier_roots = RootCertStore::empty();
+    client_verifier_roots
+        .add(client_certificate.clone())
+        .unwrap();
+    let client_verifier = WebPkiClientVerifier::builder(Arc::new(client_verifier_roots))
+        .build()
+        .unwrap();
     let server = Arc::new(
         ServerConfig::builder()
-            .with_no_client_auth()
+            .with_client_cert_verifier(client_verifier)
             .with_single_cert(
-                vec![certificate.clone()],
-                PrivateKeyDer::Pkcs8(PrivatePkcs8KeyDer::from(signing_key.serialize_der())),
+                vec![server_certificate],
+                PrivateKeyDer::Pkcs8(PrivatePkcs8KeyDer::from(server_key.serialize_der())),
             )
             .unwrap(),
     );
-    let mut roots = RootCertStore::empty();
-    roots.add(certificate).unwrap();
+    let client_identity =
+        ProtocolClientIdentity::from_certificate_der(client_certificate.as_ref()).unwrap();
+    let client_config = ClientConfig::builder()
+        .with_root_certificates(client_roots)
+        .with_client_auth_cert(
+            vec![client_certificate],
+            PrivateKeyDer::Pkcs8(PrivatePkcs8KeyDer::from(client_key.serialize_der())),
+        )
+        .unwrap();
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
     let address = listener.local_addr().unwrap();
     let remaining = Arc::new(Mutex::new(VecDeque::from(responses)));
     let seen = Arc::new(Mutex::new(BTreeSet::<String>::new()));
+    let observed_client_hash = Arc::new(Mutex::new(None));
+    let observed_for_task = observed_client_hash.clone();
     tokio::spawn(async move {
         let acceptor = TlsAcceptor::from(server);
         loop {
@@ -232,8 +269,16 @@ async fn spawn_tls_peer(
             let secret = secret.clone();
             let remaining = remaining.clone();
             let seen = seen.clone();
+            let observed_for_connection = observed_for_task.clone();
             tokio::spawn(async move {
                 if let Ok(stream) = acceptor.accept(stream).await {
+                    let peer_hash = stream
+                        .get_ref()
+                        .1
+                        .peer_certificates()
+                        .and_then(|certificates| certificates.first())
+                        .map(|certificate| blake3::hash(certificate.as_ref()).to_hex().to_string());
+                    *observed_for_connection.lock().await = peer_hash;
                     handle_peer_stream(stream, secret, remaining, seen, Duration::ZERO).await;
                 }
             });
@@ -241,14 +286,13 @@ async fn spawn_tls_peer(
     });
     (
         address,
-        ProtocolSecurity::RustlsClient {
-            config: Arc::new(
-                ClientConfig::builder()
-                    .with_root_certificates(roots)
-                    .with_no_client_auth(),
-            ),
+        ProtocolSecurity::RustlsMutualTlsClient {
+            config: Arc::new(client_config),
             server_name: "localhost".to_owned(),
+            client_identity,
         },
+        expected_client_hash,
+        observed_client_hash,
     )
 }
 
@@ -705,7 +749,7 @@ async fn unauthorized_malformed_timeout_retry_and_shutdown_fail_closed() {
 }
 
 #[tokio::test]
-async fn cloud_bridge_capability_and_rustls_boundary_are_explicit() {
+async fn cloud_bridge_capability_and_mtls_boundary_are_explicit() {
     let secret = ProtocolSecret::from_key([9; 32]);
     let address = spawn_peer(secret.clone(), vec![ProtocolStatus::Ok], Duration::ZERO).await;
     let missing = ProtocolEndpoint {
@@ -719,28 +763,28 @@ async fn cloud_bridge_capability_and_rustls_boundary_are_explicit() {
     let config = ClientConfig::builder()
         .with_root_certificates(RootCertStore::empty())
         .with_no_client_auth();
-    let tls_endpoint = ProtocolEndpoint {
+    let no_client_auth_endpoint = ProtocolEndpoint {
         security: ProtocolSecurity::RustlsClient {
             config: Arc::new(config),
             server_name: "localhost".to_owned(),
         },
         ..endpoint(address, AdapterKind::CloudBridge, secret)
     };
-    let adapter = ProtocolAdapter::new(
+    let error = match ProtocolAdapter::new(
         AdapterKind::CloudBridge,
-        tls_endpoint,
+        no_client_auth_endpoint,
         CancellationToken::new(),
-    )
-    .unwrap();
-    let error = adapter
-        .execute(&operation("tls-to-plain-peer", b"cloud"))
-        .await
-        .unwrap_err();
-    assert_eq!(error.class, FailureClass::Retryable);
+    ) {
+        Ok(_) => panic!("no-client-auth rustls protocol adapter was accepted"),
+        Err(error) => error,
+    };
+    assert!(error
+        .to_string()
+        .contains("client certificate authentication"));
 
     let tls_secret = ProtocolSecret::from_key([10; 32]);
-    let (tls_address, security) =
-        spawn_tls_peer(tls_secret.clone(), vec![ProtocolStatus::Ok]).await;
+    let (tls_address, security, expected_client_hash, observed_client_hash) =
+        spawn_mtls_peer(tls_secret.clone(), vec![ProtocolStatus::Ok]).await;
     let adapter = ProtocolAdapter::new(
         AdapterKind::CloudBridge,
         ProtocolEndpoint {
@@ -757,6 +801,10 @@ async fn cloud_bridge_capability_and_rustls_boundary_are_explicit() {
             .unwrap(),
         b"peer-response"
     );
+    assert_eq!(
+        observed_client_hash.lock().await.as_deref(),
+        Some(expected_client_hash.as_str())
+    );
 }
 
 #[test]
@@ -766,6 +814,8 @@ fn production_builder_returns_no_partial_executors_when_protocol_config_is_missi
         "ADL_RUNTIME_PROVIDER_ENDPOINT",
         "ADL_RUNTIME_PROVIDER_SECRET_FILE",
         "ADL_RUNTIME_PROVIDER_CA_DER_FILE",
+        "ADL_RUNTIME_PROVIDER_CLIENT_CERT_DER_FILE",
+        "ADL_RUNTIME_PROVIDER_CLIENT_KEY_DER_FILE",
         "ADL_RUNTIME_PROVIDER_SERVER_NAME",
         "ADL_RUNTIME_PROVIDER_TIMEOUT_MILLIS",
         "ADL_RUNTIME_PROVIDER_FRESHNESS_MILLIS",
@@ -773,6 +823,8 @@ fn production_builder_returns_no_partial_executors_when_protocol_config_is_missi
         "ADL_RUNTIME_ACIP_ENDPOINT",
         "ADL_RUNTIME_ACIP_SECRET_FILE",
         "ADL_RUNTIME_ACIP_CA_DER_FILE",
+        "ADL_RUNTIME_ACIP_CLIENT_CERT_DER_FILE",
+        "ADL_RUNTIME_ACIP_CLIENT_KEY_DER_FILE",
         "ADL_RUNTIME_ACIP_SERVER_NAME",
         "ADL_RUNTIME_ACIP_TIMEOUT_MILLIS",
         "ADL_RUNTIME_ACIP_FRESHNESS_MILLIS",
@@ -780,6 +832,8 @@ fn production_builder_returns_no_partial_executors_when_protocol_config_is_missi
         "ADL_RUNTIME_A2A_ENDPOINT",
         "ADL_RUNTIME_A2A_SECRET_FILE",
         "ADL_RUNTIME_A2A_CA_DER_FILE",
+        "ADL_RUNTIME_A2A_CLIENT_CERT_DER_FILE",
+        "ADL_RUNTIME_A2A_CLIENT_KEY_DER_FILE",
         "ADL_RUNTIME_A2A_SERVER_NAME",
         "ADL_RUNTIME_A2A_TIMEOUT_MILLIS",
         "ADL_RUNTIME_A2A_FRESHNESS_MILLIS",
@@ -787,6 +841,8 @@ fn production_builder_returns_no_partial_executors_when_protocol_config_is_missi
         "ADL_RUNTIME_CLOUD_BRIDGE_ENDPOINT",
         "ADL_RUNTIME_CLOUD_BRIDGE_SECRET_FILE",
         "ADL_RUNTIME_CLOUD_BRIDGE_CA_DER_FILE",
+        "ADL_RUNTIME_CLOUD_BRIDGE_CLIENT_CERT_DER_FILE",
+        "ADL_RUNTIME_CLOUD_BRIDGE_CLIENT_KEY_DER_FILE",
         "ADL_RUNTIME_CLOUD_BRIDGE_SERVER_NAME",
         "ADL_RUNTIME_CLOUD_BRIDGE_TIMEOUT_MILLIS",
         "ADL_RUNTIME_CLOUD_BRIDGE_FRESHNESS_MILLIS",
@@ -815,4 +871,59 @@ fn production_builder_returns_no_partial_executors_when_protocol_config_is_missi
     }
     assert!(executors.is_empty());
     assert!(canonical.contains_key(&AdapterKind::Agent));
+}
+
+#[test]
+fn protocol_env_reports_client_key_surface_for_invalid_mtls_key_material() {
+    let _guard = ENV_LOCK.lock().unwrap();
+    let keys = [
+        "ADL_RUNTIME_PROVIDER_ENDPOINT",
+        "ADL_RUNTIME_PROVIDER_SECRET_FILE",
+        "ADL_RUNTIME_PROVIDER_CA_DER_FILE",
+        "ADL_RUNTIME_PROVIDER_CLIENT_CERT_DER_FILE",
+        "ADL_RUNTIME_PROVIDER_CLIENT_KEY_DER_FILE",
+        "ADL_RUNTIME_PROVIDER_SERVER_NAME",
+        "ADL_RUNTIME_PROVIDER_CAPABILITIES",
+    ];
+    let previous = keys.map(|key| (key, env::var(key).ok()));
+    for key in keys {
+        env::remove_var(key);
+    }
+    let root = TempDir::new().unwrap();
+    let CertifiedKey { cert, .. } = generate_simple_self_signed(["localhost".to_owned()]).unwrap();
+    let secret_path = root.path().join("secret.key");
+    let ca_path = root.path().join("ca.der");
+    let cert_path = root.path().join("client.der");
+    let key_path = root.path().join("client.key");
+    std::fs::write(&secret_path, [7; 32]).unwrap();
+    std::fs::write(&ca_path, cert.der()).unwrap();
+    std::fs::write(&cert_path, cert.der()).unwrap();
+    std::fs::write(&key_path, b"not-a-pkcs8-key").unwrap();
+    env::set_var("ADL_RUNTIME_PROVIDER_ENDPOINT", "127.0.0.1:1");
+    env::set_var("ADL_RUNTIME_PROVIDER_SECRET_FILE", &secret_path);
+    env::set_var("ADL_RUNTIME_PROVIDER_CA_DER_FILE", &ca_path);
+    env::set_var("ADL_RUNTIME_PROVIDER_CLIENT_CERT_DER_FILE", &cert_path);
+    env::set_var("ADL_RUNTIME_PROVIDER_CLIENT_KEY_DER_FILE", &key_path);
+    env::set_var("ADL_RUNTIME_PROVIDER_SERVER_NAME", "localhost");
+    env::set_var("ADL_RUNTIME_PROVIDER_CAPABILITIES", "provider");
+
+    let error = match protocol_operation_executors_from_env(CancellationToken::new()) {
+        Ok(_) => panic!("expected invalid mTLS key material to fail"),
+        Err(error) => error,
+    };
+
+    match error {
+        ProtocolBuildError::Config { field, .. } => {
+            assert!(field.contains("CLIENT_KEY_DER_FILE"));
+            assert!(field.contains("CLIENT_CERT_DER_FILE"));
+        }
+        other => panic!("expected config error, got {other:?}"),
+    }
+    for (key, value) in previous {
+        if let Some(value) = value {
+            env::set_var(key, value);
+        } else {
+            env::remove_var(key);
+        }
+    }
 }
