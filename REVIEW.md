@@ -553,18 +553,6 @@ If command examples are included in a future canonical version of this guide, th
 - current repo examples
 - not universal truths
 
-### Cargo Validation Hygiene
-
-- Run dependency-stable Cargo validation with `--locked`; dependency updates
-  require an explicit issue outcome rather than an incidental validation side
-  effect.
-- Prefer `adl/tools/run_cargo_validation.sh` for issue-worktree Cargo commands
-  so build output stays outside the repository and tracked `Cargo.lock` files
-  are checked before and after the command.
-- Treat validation-created lockfile drift as a failed proof. Report the exact
-  paths and preserve the caller's pre-existing working-copy bytes; never hide
-  or overwrite user-owned lock changes.
-
 ---
 
 ## 7. Recurring Review Risks

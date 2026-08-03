@@ -12,6 +12,7 @@ Status: pre_phase
 
 ## Scope
 
+REVIEW.md
 adl/tools/install_owner_binaries.sh
 adl/tools/run_cargo_validation.sh
 adl/tools/run_owner_validation_lane.sh
@@ -34,8 +35,8 @@ adl/tools/test_run_cargo_validation.sh
     "summary": "Exact-head SRP scope omitted the Cargo validation wrapper and its test.",
     "actionable": true,
     "in_scope": true,
-    "disposition": "open",
-    "fix_revision": null,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
     "route": null
   },
   {
@@ -44,8 +45,8 @@ adl/tools/test_run_cargo_validation.sh
     "summary": "The SOR referenced a validation evidence path that was not retained.",
     "actionable": true,
     "in_scope": true,
-    "disposition": "open",
-    "fix_revision": null,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
     "route": null
   },
   {
@@ -54,14 +55,24 @@ adl/tools/test_run_cargo_validation.sh
     "summary": "The owner lane warm-cache step used a different target and wrote repo-local output.",
     "actionable": true,
     "in_scope": true,
-    "disposition": "open",
-    "fix_revision": null,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
     "route": null
   },
   {
     "id": "F-5788-4",
     "severity": "p2",
     "summary": "The inventory test was hard-coded and did not reject a duplicate nested build.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
+    "route": null
+  },
+  {
+    "id": "F-5788-5",
+    "severity": "p2",
+    "summary": "The rereview worktree contained uncommitted lifecycle and review-guide metadata.",
     "actionable": true,
     "in_scope": true,
     "disposition": "open",
@@ -80,7 +91,7 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:05f424c6a6e9b5e60a09a6b4f290b9c49dd83681:e16d11a0c894cb216554a75aa52866b5fdeed70e90ab8dc6432f5d123baff592")
+Revision: Some("git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb")
 
 Reviewer: Some("subagent:019fc8ce-d14d-7783-a875-70ad800660a2")
 

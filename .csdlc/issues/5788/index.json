@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9bfd198cf34f50aebb4ba992ffad53ede0006f3bfff0bbe06a5ecc8a230f3fb0",
   "phase": "implemented",
-  "generation": 4,
-  "digest": "b2a63a7fb13c6170a8f518f630f5ea41deb7e49c3dedb07f0ab1e7dc1dc0e819",
+  "generation": 5,
+  "digest": "48c245169e372ef13dcca7e5fbb7941004b37ee9040c7c19d489f21eaa0a670d",
   "claim": {
     "id": "claim-5788-lockfile-preservation",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 4,
+    "generation": 5,
     "acquired_unix_seconds": 1785779765,
     "expires_unix_seconds": 1785866165,
     "heartbeat_unix_seconds": 1785779765,
@@ -30,8 +30,9 @@
   "review_assignment": {
     "reviewer": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
+    "revision": "git-blake3:87d12afe2cb607b1b8e3598deded9450509e899a:b41f4703a98033da00a780a75ae7347fd9e3a6f02b5aeda2ad0fd9a0fb3ecfa0",
     "scope": [
+      "REVIEW.md",
       "adl/tools/install_owner_binaries.sh",
       "adl/tools/run_cargo_validation.sh",
       "adl/tools/run_owner_validation_lane.sh",
@@ -55,32 +56,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "4b54e9e985a209f1c082e0bb78764df7f4ca3b949894ea0f280d2f84a15cea81",
+      "values_digest": "dc76b0aadafc0138e97dc590dc604ecddfdad15a81629bcb046cd9ac3affb0a9",
       "rendered_digest": "2c2c43485f428d885cc21925d010cae76b9885c8777518450e3c5b06d077fb8c",
       "ast_digest": "62eb9620c03f4d055a3a380ee5c6bdb2247439b8f05fa9e859316be0692f7483"
     },
     "stp": {
-      "values_digest": "51b2e70739a49995e9064a589ff8ea1712b3a4a05a714b10e7761299d8a57227",
+      "values_digest": "1795b9d9a88a45401aad09a6795218e2c79e47ddd112c09fa37302ee9eabcd4f",
       "rendered_digest": "e67f85644b70ad55ead3229e5a6b127bafe83a2cd9fd8e92617246540a42c4db",
       "ast_digest": "05200d37a68550804c816066cd0a6052d858dfd28692f18ea458f646988c2ba3"
     },
     "spp": {
-      "values_digest": "8a882ecae3643a968815e324a107e1ff56e4e88aa0856a8361cb064fb23ca15a",
+      "values_digest": "fc0496ab858c2882ff9c3fb78c71d12bc37f35c053c6a68b76220d2c6866333b",
       "rendered_digest": "37d611aa0adb325d69aec8d4332242aaf48a0cfd20ca7a0ee603e915074f5eb8",
       "ast_digest": "2ae1eb725131e1f007bb924363af1511789deeeabf853915b9a67b852d560ca9"
     },
     "vpp": {
-      "values_digest": "68c70f16194a58ea3da79af1613793a9c36266c944e2e8bd3c9c37d98feff28b",
+      "values_digest": "b7c0badd6f3ee117fb46534689852fb28db20bcc559227c06999ebeb30b467da",
       "rendered_digest": "b7f441ec108c6e05170b25f2148f229af6586be9753ee3d985b4e9ad64162537",
       "ast_digest": "1850d13ac006712634f040e6c8a124671bce71e73e5ce55cb92795de8987d6dc"
     },
     "srp": {
-      "values_digest": "a94bc0e0c22e047d79ad241a04338cae38be258a221e06685482e3f586d4812a",
-      "rendered_digest": "aa78cec677b46144f63fda325e9f2269aa6c075b1c3b91079a357c87ec5d786a",
-      "ast_digest": "4a7a8df7a25830b055fd973d8be4a2f99b6c135a71381ce9663207125ca7cf85"
+      "values_digest": "e2f82b5ac95b6c2296b4364e2629e7917ada638fe17464f04875b29da2668458",
+      "rendered_digest": "4c9e81c504bdb3be3e9b4da07eb32f5f28f784b275a8fb7aae1d8661627a25c1",
+      "ast_digest": "ba28e1c62abe9f1b8c7bbd05baf7b72f7dd1a6af704ea97b1897124f70bd357b"
     },
     "sor": {
-      "values_digest": "d91fb60f6d7f9e7864ba33596f793c896fae201d2c5962113b6f0b7375638c08",
+      "values_digest": "fd969df89ee7b8bb3d04038de9a7c448c1dcf534b7f220144ccc9bb74a64c977",
       "rendered_digest": "4bb890fc13e83ddd4c27050feaddde16628a534f4d2881d5c88e2dd843c71c31",
       "ast_digest": "fee9ac272bde97039953af93863bdeff874f9d647a89dea77907b0e20097f27b"
     }
@@ -185,6 +186,20 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Document the canonical review rule for lock-preserving Cargo validation.",
       "operation": "{\"add_protected_paths\":[\"REVIEW.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 5,
+      "actor": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
     }
   ]
 }
