@@ -1,0 +1,11 @@
+{
+  "issue": 5788,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5788-lockfile-preservation",
+  "expected_generation": 8,
+  "expected_digest": "6360aaee5b4842f1c2e52bdbfbdb5f88e54b36c04af26295c1e849ada3765cba",
+  "now_unix_seconds": 1785783331,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "operator_authority": "Operator assigned REVIEW.md and the review handoff to WP-19 issue #5357, not issue #5788.",
+  "reason": "Release the stale over-broad claim. The published #5788 branch has no REVIEW.md diff and retains its exact implementation scope."
+}
