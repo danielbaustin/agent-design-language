@@ -14,3 +14,4 @@
 {"sequence":14,"generation":5,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":15,"generation":6,"actor":"subagent:019fc8ce-d14d-7783-a875-70ad800660a2","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":16,"generation":7,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"Exact six-script review passed with zero blockers after all five findings were fixed; WP-19 review documentation remains out of scope.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":17,"generation":8,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}

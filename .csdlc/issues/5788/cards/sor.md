@@ -52,11 +52,11 @@ Current-target owner builds now delegate through one --locked Cargo validation b
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 
