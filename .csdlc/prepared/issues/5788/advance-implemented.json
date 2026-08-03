@@ -1,0 +1,10 @@
+{
+  "issue": 5788,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "c27c7080cf0355ec5cdc38a1d5669847a16324dcaf73a104af3846c10c5c5073",
+  "claim_id": "claim-5788-lockfile-preservation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded implementation and focused lock-preservation contracts are complete.",
+  "operation": {"operation":"advance_phase","phase":"implemented"}
+}

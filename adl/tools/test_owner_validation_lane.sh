@@ -16,22 +16,30 @@ installer_bins="$(
     xargs -n1 |
     LC_ALL=C sort
 )"
-runner_bins="$(
-  grep -o -- '--bin [[:alnum:]-]*' <<<"$plan_output" |
-    awk '{ print $2 }' |
-    LC_ALL=C sort
-)"
-if ! diff -u \
-  <(printf '%s\n' "$installer_bins") \
-  <(printf '%s\n' "$runner_bins"); then
-  echo "owner validation build set does not match installer defaults" >&2
+expected_bins="$(printf '%s\n' adl adl-runtime csm csmctl adl-review adl-process adl-remote adl-aws-remote-validation adl-provider-adapter | LC_ALL=C sort)"
+if ! diff -u <(printf '%s\n' "$expected_bins") <(printf '%s\n' "$installer_bins"); then
+  echo "owner installer defaults do not match current operational targets" >&2
   exit 1
 fi
 
+grep -Fq 'cargo_args=(cargo build --quiet --locked' "$INSTALLER" || {
+  echo "owner installer build does not use --locked" >&2
+  exit 1
+}
+grep -Fq 'bash adl/tools/install_owner_binaries.sh' <<<"$plan_output" || {
+  echo "owner validation does not delegate to the hardened installer" >&2
+  exit 1
+}
+for removed in csdlc adl-csdlc adl-pr-closeout adl-session; do
+  if grep -Fxq -- "$removed" <<<"$installer_bins"; then
+    echo "owner installer still requests removed binary target: $removed" >&2
+    exit 1
+  fi
+done
+
 for expected in \
-  "cargo build owner binaries" \
+  "install stable owner binaries" \
   "C-SDLC wrapper migration contract" \
-  "C-SDLC run ambiguity policy" \
   "C-SDLC control-plane observability contract" \
   "runtime CSM binary availability contract" \
   "runtime CSM binary availability guard" \
@@ -44,8 +52,6 @@ for expected in \
     exit 1
   }
 done
-
-bash "$RUNNER" csdlc
 
 set +e
 bad_output="$(bash "$RUNNER" unknown 2>&1)"

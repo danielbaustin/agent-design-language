@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5788,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][tooling][lockfile] Prevent validation and binary installation from rewriting tracked Cargo.lock files",
+    "slug": "lockfile-preservation",
+    "version": "v0.91.8",
+    "generation": 3
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl/tools/install_owner_binaries.sh\nadl/tools/run_owner_validation_lane.sh\nadl/tools/test_owner_binary_install.sh\nadl/tools/test_owner_validation_lane.sh",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Can any failure leave Cargo.lock changed?",
+        "Are all requested default bins current?",
+        "Are pre-existing dirty bytes preserved?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

@@ -56,7 +56,7 @@ done
 }
 
 package_version() {
-  cargo metadata --quiet --no-deps --format-version 1 --manifest-path "$MANIFEST" |
+  cargo metadata --quiet --locked --no-deps --format-version 1 --manifest-path "$MANIFEST" |
     python3 -c 'import json,sys; print(json.load(sys.stdin)["packages"][0]["version"])'
 }
 
@@ -80,28 +80,12 @@ run_command() {
 
 build_owner_bins() {
   [[ "$BUILD" == "1" ]] || return 0
-  run_command "cargo build owner binaries" \
-    cargo build --quiet --manifest-path "$MANIFEST" \
-      --bin adl --bin csdlc --bin adl-csdlc --bin adl-runtime --bin adl-review \
-      --bin csm \
-      --bin adl-pr-create --bin adl-pr-init --bin adl-pr-repair-issue-body \
-      --bin adl-pr-run --bin adl-pr-doctor --bin adl-pr-ready \
-      --bin adl-pr-preflight --bin adl-pr-finish --bin adl-pr-validation \
-      --bin adl-pr-inventory --bin adl-pr-shepherd --bin adl-pr-closing-linkage \
-      --bin adl-issue \
-      --bin adl-pr-closeout \
-      --bin adl-session --bin adl-process \
-      --bin adl-prompt-template --bin adl-validate-structured-prompt \
-      --bin adl-lint-prompt-spec --bin adl-remote \
-      --bin adl-aws-remote-validation --bin adl-provider-adapter
+  run_command "install stable owner binaries" \
+    bash adl/tools/install_owner_binaries.sh
   if [[ "$PRINT_PLAN" == "1" ]]; then
     return 0
   fi
-  run_command "install stable owner binaries" \
-    bash adl/tools/install_owner_binaries.sh --no-build
   export ADL_BIN="${ADL_OWNER_BIN_DIR:-$ROOT_DIR/.adl/bin}/adl"
-  export ADL_CSDLC_BIN="${ADL_OWNER_BIN_DIR:-$ROOT_DIR/.adl/bin}/csdlc"
-  export ADL_CSDLC_COMPAT_BIN="${ADL_OWNER_BIN_DIR:-$ROOT_DIR/.adl/bin}/adl-csdlc"
   export ADL_RUNTIME_BIN="${ADL_OWNER_BIN_DIR:-$ROOT_DIR/.adl/bin}/adl-runtime"
   export ADL_REVIEW_BIN="${ADL_OWNER_BIN_DIR:-$ROOT_DIR/.adl/bin}/adl-review"
   export ADL_CSM_BIN="${ADL_OWNER_BIN_DIR:-$ROOT_DIR/.adl/bin}/csm"

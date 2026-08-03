@@ -1,0 +1,5 @@
+flowchart LR
+  S["Capture exact Cargo.lock state"] --> B["Cargo build --locked with current bins"]
+  B --> C{"Lock bytes changed?"}
+  C -->|no| I["Install stable owner binaries"]
+  C -->|yes| R["Restore pre-invocation bytes and fail closed"]
