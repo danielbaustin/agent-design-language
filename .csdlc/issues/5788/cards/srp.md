@@ -13,9 +13,11 @@ Status: pre_phase
 ## Scope
 
 adl/tools/install_owner_binaries.sh
+adl/tools/run_cargo_validation.sh
 adl/tools/run_owner_validation_lane.sh
 adl/tools/test_owner_binary_install.sh
 adl/tools/test_owner_validation_lane.sh
+adl/tools/test_run_cargo_validation.sh
 
 ## Prompts
 

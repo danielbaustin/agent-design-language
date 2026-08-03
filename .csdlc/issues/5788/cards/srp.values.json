@@ -13,7 +13,7 @@
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "adl/tools/install_owner_binaries.sh\nadl/tools/run_owner_validation_lane.sh\nadl/tools/test_owner_binary_install.sh\nadl/tools/test_owner_validation_lane.sh",
+      "review_scope": "adl/tools/install_owner_binaries.sh\nadl/tools/run_cargo_validation.sh\nadl/tools/run_owner_validation_lane.sh\nadl/tools/test_owner_binary_install.sh\nadl/tools/test_owner_validation_lane.sh\nadl/tools/test_run_cargo_validation.sh",
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [

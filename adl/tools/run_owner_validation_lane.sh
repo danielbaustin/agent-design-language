@@ -156,13 +156,6 @@ run_review_lane() {
     bash adl/tools/test_adl_review_compatibility.sh
 }
 
-if [[ "$PRINT_PLAN" != "1" ]]; then
-  ADL_RUST_WARM_CACHE_SOURCE_TARGET="${ADL_OWNER_VALIDATION_WARM_SOURCE_TARGET:-}" \
-  ADL_RUST_WARM_CACHE_DEST_TARGET="${CARGO_TARGET_DIR:-$ROOT_DIR/adl/target}" \
-  ADL_RUST_WARM_CACHE_OUTPUT="${ADL_OWNER_VALIDATION_WARM_CACHE_OUTPUT:-$ROOT_DIR/adl/owner-validation-warm-cache.json}" \
-    bash "$ROOT_DIR/adl/tools/rust_validation_warm_cache.sh"
-fi
-
 build_owner_bins
 
 case "$SURFACE" in

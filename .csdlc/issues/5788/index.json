@@ -5,7 +5,7 @@
   "initialization_digest": "9bfd198cf34f50aebb4ba992ffad53ede0006f3bfff0bbe06a5ecc8a230f3fb0",
   "phase": "implemented",
   "generation": 3,
-  "digest": "101f25868d40521355392452c1b896bdd96c837133e5597dc4b43e08d3ca6275",
+  "digest": "db13c95a936627176337b4e5396c4dc0cd33f3b39d3293f77e4efcd56aedd9d0",
   "claim": {
     "id": "claim-5788-lockfile-preservation",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
@@ -16,6 +16,7 @@
     "branch": "codex/5788-lockfile-preservation",
     "worktree": ".",
     "protected_paths": [
+      ".csdlc/evidence/5788",
       "adl/tools/install_owner_binaries.sh",
       "adl/tools/run_cargo_validation.sh",
       "adl/tools/run_owner_validation_lane.sh",
@@ -25,7 +26,19 @@
     ],
     "purpose": "Prevent repository validation and owner-binary installation from mutating tracked Cargo.lock files"
   },
-  "review_assignment": null,
+  "review_assignment": {
+    "reviewer": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:05f424c6a6e9b5e60a09a6b4f290b9c49dd83681:e16d11a0c894cb216554a75aa52866b5fdeed70e90ab8dc6432f5d123baff592",
+    "scope": [
+      "adl/tools/install_owner_binaries.sh",
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/run_owner_validation_lane.sh",
+      "adl/tools/test_owner_binary_install.sh",
+      "adl/tools/test_owner_validation_lane.sh",
+      "adl/tools/test_run_cargo_validation.sh"
+    ]
+  },
   "review": null,
   "publication": null,
   "readiness": null,
@@ -61,9 +74,9 @@
       "ast_digest": "1850d13ac006712634f040e6c8a124671bce71e73e5ce55cb92795de8987d6dc"
     },
     "srp": {
-      "values_digest": "21a64a2faaaadd77ad9e145e52bf0eb52332fb410d15d65e3bc974efe940328f",
-      "rendered_digest": "b853b8afd094b9d7b2ba2288017e5beb371502e00d828abfbbc852e95862c966",
-      "ast_digest": "4a5d229e75c222b779a7eab28b727809365d45e2f33a523c10f4efc48bb25190"
+      "values_digest": "520d45971f53c938ea5824e66b67c6f078a58585271e8451853f2849905b3423",
+      "rendered_digest": "9504e755feed0aa0b41f7da682edf17ed3b324d5af30b9726cd6edb3b12b0a8d",
+      "ast_digest": "953e35eda9af8f299e98f022d5a466efba7a19783181343d6dd1c5d677a6f192"
     },
     "sor": {
       "values_digest": "edab5e2cc5d1c4af993c577ec5c4eef7085f82dcf6906d5930448d698d4cf123",
@@ -136,6 +149,20 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The bounded implementation and focused lock-preservation contracts are complete.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Retain the focused validation summary referenced by the typed SOR.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/evidence/5788\"],\"operation\":\"amend_claim_scope\"}"
     }
   ]
 }

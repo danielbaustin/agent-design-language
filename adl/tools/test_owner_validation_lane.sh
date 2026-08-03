@@ -16,8 +16,21 @@ installer_bins="$(
     xargs -n1 |
     LC_ALL=C sort
 )"
-expected_bins="$(printf '%s\n' adl adl-runtime csm csmctl adl-review adl-process adl-remote adl-aws-remote-validation adl-provider-adapter | LC_ALL=C sort)"
-if ! diff -u <(printf '%s\n' "$expected_bins") <(printf '%s\n' "$installer_bins"); then
+manifest_bins="$(
+  awk '
+    /^\[\[bin\]\]$/ { bin = 1; next }
+    bin && /^name = / {
+      name = $0
+      sub(/^name = "/, "", name)
+      sub(/"$/, "", name)
+      print name
+      bin = 0
+    }
+  ' "$ROOT_DIR/adl/Cargo.toml" |
+    grep -Ev '^(demo-|adl-gws-)' |
+    LC_ALL=C sort
+)"
+if ! diff -u <(printf '%s\n' "$manifest_bins") <(printf '%s\n' "$installer_bins"); then
   echo "owner installer defaults do not match current operational targets" >&2
   exit 1
 fi
@@ -28,6 +41,14 @@ grep -Fq 'cargo_args=(cargo build --quiet --locked' "$INSTALLER" || {
 }
 grep -Fq 'bash adl/tools/install_owner_binaries.sh' <<<"$plan_output" || {
   echo "owner validation does not delegate to the hardened installer" >&2
+  exit 1
+}
+if grep -Fq 'cargo build' <<<"$plan_output"; then
+  echo "owner validation plan reintroduced a duplicate nested Cargo build" >&2
+  exit 1
+fi
+[[ "$(grep -Fc 'bash adl/tools/install_owner_binaries.sh' <<<"$plan_output")" == "1" ]] || {
+  echo "owner validation plan must contain exactly one delegated build/install step" >&2
   exit 1
 }
 for removed in csdlc adl-csdlc adl-pr-closeout adl-session; do
