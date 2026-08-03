@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9bfd198cf34f50aebb4ba992ffad53ede0006f3bfff0bbe06a5ecc8a230f3fb0",
   "phase": "implemented",
-  "generation": 3,
-  "digest": "db13c95a936627176337b4e5396c4dc0cd33f3b39d3293f77e4efcd56aedd9d0",
+  "generation": 4,
+  "digest": "b2a63a7fb13c6170a8f518f630f5ea41deb7e49c3dedb07f0ab1e7dc1dc0e819",
   "claim": {
     "id": "claim-5788-lockfile-preservation",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 3,
+    "generation": 4,
     "acquired_unix_seconds": 1785779765,
     "expires_unix_seconds": 1785866165,
     "heartbeat_unix_seconds": 1785779765,
@@ -17,6 +17,7 @@
     "worktree": ".",
     "protected_paths": [
       ".csdlc/evidence/5788",
+      "REVIEW.md",
       "adl/tools/install_owner_binaries.sh",
       "adl/tools/run_cargo_validation.sh",
       "adl/tools/run_owner_validation_lane.sh",
@@ -29,7 +30,7 @@
   "review_assignment": {
     "reviewer": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "revision": "git-blake3:05f424c6a6e9b5e60a09a6b4f290b9c49dd83681:e16d11a0c894cb216554a75aa52866b5fdeed70e90ab8dc6432f5d123baff592",
+    "revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
     "scope": [
       "adl/tools/install_owner_binaries.sh",
       "adl/tools/run_cargo_validation.sh",
@@ -54,32 +55,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "f30074966e9ac99fa7477c982805e51e4760929d602a314979b766813232e7a4",
+      "values_digest": "4b54e9e985a209f1c082e0bb78764df7f4ca3b949894ea0f280d2f84a15cea81",
       "rendered_digest": "2c2c43485f428d885cc21925d010cae76b9885c8777518450e3c5b06d077fb8c",
       "ast_digest": "62eb9620c03f4d055a3a380ee5c6bdb2247439b8f05fa9e859316be0692f7483"
     },
     "stp": {
-      "values_digest": "8d854528bc47f1dca55fb86e8fab733a4d9379b1bb943408f995eac6f1f02544",
+      "values_digest": "51b2e70739a49995e9064a589ff8ea1712b3a4a05a714b10e7761299d8a57227",
       "rendered_digest": "e67f85644b70ad55ead3229e5a6b127bafe83a2cd9fd8e92617246540a42c4db",
       "ast_digest": "05200d37a68550804c816066cd0a6052d858dfd28692f18ea458f646988c2ba3"
     },
     "spp": {
-      "values_digest": "71bad27f69d97917bd6a0eef79e99a44f6c63b56ba555febbcabb957c0c47e25",
+      "values_digest": "8a882ecae3643a968815e324a107e1ff56e4e88aa0856a8361cb064fb23ca15a",
       "rendered_digest": "37d611aa0adb325d69aec8d4332242aaf48a0cfd20ca7a0ee603e915074f5eb8",
       "ast_digest": "2ae1eb725131e1f007bb924363af1511789deeeabf853915b9a67b852d560ca9"
     },
     "vpp": {
-      "values_digest": "b5f645c83bbbf1758b56c9f3f94a398cae92f7b3f03b423421ed8029735407a9",
+      "values_digest": "68c70f16194a58ea3da79af1613793a9c36266c944e2e8bd3c9c37d98feff28b",
       "rendered_digest": "b7f441ec108c6e05170b25f2148f229af6586be9753ee3d985b4e9ad64162537",
       "ast_digest": "1850d13ac006712634f040e6c8a124671bce71e73e5ce55cb92795de8987d6dc"
     },
     "srp": {
-      "values_digest": "520d45971f53c938ea5824e66b67c6f078a58585271e8451853f2849905b3423",
-      "rendered_digest": "9504e755feed0aa0b41f7da682edf17ed3b324d5af30b9726cd6edb3b12b0a8d",
-      "ast_digest": "953e35eda9af8f299e98f022d5a466efba7a19783181343d6dd1c5d677a6f192"
+      "values_digest": "a94bc0e0c22e047d79ad241a04338cae38be258a221e06685482e3f586d4812a",
+      "rendered_digest": "aa78cec677b46144f63fda325e9f2269aa6c075b1c3b91079a357c87ec5d786a",
+      "ast_digest": "4a7a8df7a25830b055fd973d8be4a2f99b6c135a71381ce9663207125ca7cf85"
     },
     "sor": {
-      "values_digest": "edab5e2cc5d1c4af993c577ec5c4eef7085f82dcf6906d5930448d698d4cf123",
+      "values_digest": "d91fb60f6d7f9e7864ba33596f793c896fae201d2c5962113b6f0b7375638c08",
       "rendered_digest": "4bb890fc13e83ddd4c27050feaddde16628a534f4d2881d5c88e2dd843c71c31",
       "ast_digest": "fee9ac272bde97039953af93863bdeff874f9d647a89dea77907b0e20097f27b"
     }
@@ -163,6 +164,27 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Retain the focused validation summary referenced by the typed SOR.",
       "operation": "{\"add_protected_paths\":[\".csdlc/evidence/5788\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 4,
+      "actor": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Document the canonical review rule for lock-preserving Cargo validation.",
+      "operation": "{\"add_protected_paths\":[\"REVIEW.md\"],\"operation\":\"amend_claim_scope\"}"
     }
   ]
 }
