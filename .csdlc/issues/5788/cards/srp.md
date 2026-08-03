@@ -12,7 +12,6 @@ Status: pre_phase
 
 ## Scope
 
-REVIEW.md
 adl/tools/install_owner_binaries.sh
 adl/tools/run_cargo_validation.sh
 adl/tools/run_owner_validation_lane.sh
@@ -36,7 +35,7 @@ adl/tools/test_run_cargo_validation.sh
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
+    "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
     "route": null
   },
   {
@@ -46,7 +45,7 @@ adl/tools/test_run_cargo_validation.sh
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
+    "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
     "route": null
   },
   {
@@ -56,7 +55,7 @@ adl/tools/test_run_cargo_validation.sh
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
+    "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
     "route": null
   },
   {
@@ -66,7 +65,7 @@ adl/tools/test_run_cargo_validation.sh
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
+    "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
     "route": null
   },
   {
@@ -75,8 +74,8 @@ adl/tools/test_run_cargo_validation.sh
     "summary": "The rereview worktree contained uncommitted lifecycle and review-guide metadata.",
     "actionable": true,
     "in_scope": true,
-    "disposition": "open",
-    "fix_revision": null,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
     "route": null
   }
 ]
@@ -91,8 +90,8 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb")
+Revision: Some("git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97")
 
 Reviewer: Some("subagent:019fc8ce-d14d-7783-a875-70ad800660a2")
 
-Result: changes_required
+Result: pass

@@ -3,13 +3,13 @@
   "issue": 5788,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9bfd198cf34f50aebb4ba992ffad53ede0006f3bfff0bbe06a5ecc8a230f3fb0",
-  "phase": "implemented",
-  "generation": 5,
-  "digest": "48c245169e372ef13dcca7e5fbb7941004b37ee9040c7c19d489f21eaa0a670d",
+  "phase": "reviewed",
+  "generation": 7,
+  "digest": "fa95819ec1b869884a72b3cbd696b9e5171d1eefa79968478d5fcb03450555f7",
   "claim": {
     "id": "claim-5788-lockfile-preservation",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 5,
+    "generation": 7,
     "acquired_unix_seconds": 1785779765,
     "expires_unix_seconds": 1785866165,
     "heartbeat_unix_seconds": 1785779765,
@@ -30,9 +30,8 @@
   "review_assignment": {
     "reviewer": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "revision": "git-blake3:87d12afe2cb607b1b8e3598deded9450509e899a:b41f4703a98033da00a780a75ae7347fd9e3a6f02b5aeda2ad0fd9a0fb3ecfa0",
+    "revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
     "scope": [
-      "REVIEW.md",
       "adl/tools/install_owner_binaries.sh",
       "adl/tools/run_cargo_validation.sh",
       "adl/tools/run_owner_validation_lane.sh",
@@ -41,7 +40,73 @@
       "adl/tools/test_run_cargo_validation.sh"
     ]
   },
-  "review": null,
+  "review": {
+    "reviewer": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
+    "scope": [
+      "adl/tools/install_owner_binaries.sh",
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/run_owner_validation_lane.sh",
+      "adl/tools/test_owner_binary_install.sh",
+      "adl/tools/test_owner_validation_lane.sh",
+      "adl/tools/test_run_cargo_validation.sh"
+    ],
+    "reviewed_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+    "findings": [
+      {
+        "id": "F-5788-1",
+        "severity": "p1",
+        "summary": "Exact-head SRP scope omitted the Cargo validation wrapper and its test.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+        "route": null
+      },
+      {
+        "id": "F-5788-2",
+        "severity": "p1",
+        "summary": "The SOR referenced a validation evidence path that was not retained.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+        "route": null
+      },
+      {
+        "id": "F-5788-3",
+        "severity": "p1",
+        "summary": "The owner lane warm-cache step used a different target and wrote repo-local output.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+        "route": null
+      },
+      {
+        "id": "F-5788-4",
+        "severity": "p2",
+        "summary": "The inventory test was hard-coded and did not reject a duplicate nested build.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+        "route": null
+      },
+      {
+        "id": "F-5788-5",
+        "severity": "p2",
+        "summary": "The rereview worktree contained uncommitted lifecycle and review-guide metadata.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -56,32 +121,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "dc76b0aadafc0138e97dc590dc604ecddfdad15a81629bcb046cd9ac3affb0a9",
+      "values_digest": "8dfbe8ea2f36233ebfcf5ddc2b481d4245d877c17fe8b7ac495c1b459d162378",
       "rendered_digest": "2c2c43485f428d885cc21925d010cae76b9885c8777518450e3c5b06d077fb8c",
       "ast_digest": "62eb9620c03f4d055a3a380ee5c6bdb2247439b8f05fa9e859316be0692f7483"
     },
     "stp": {
-      "values_digest": "1795b9d9a88a45401aad09a6795218e2c79e47ddd112c09fa37302ee9eabcd4f",
+      "values_digest": "6a5631717f6c7bbf29c895d001ec0c8237db634931552b7988a935e83175a1f1",
       "rendered_digest": "e67f85644b70ad55ead3229e5a6b127bafe83a2cd9fd8e92617246540a42c4db",
       "ast_digest": "05200d37a68550804c816066cd0a6052d858dfd28692f18ea458f646988c2ba3"
     },
     "spp": {
-      "values_digest": "fc0496ab858c2882ff9c3fb78c71d12bc37f35c053c6a68b76220d2c6866333b",
+      "values_digest": "feca6c0b4cfad370f2cb920e099a7cb7b97f55465358bdeeced85f51d4432390",
       "rendered_digest": "37d611aa0adb325d69aec8d4332242aaf48a0cfd20ca7a0ee603e915074f5eb8",
       "ast_digest": "2ae1eb725131e1f007bb924363af1511789deeeabf853915b9a67b852d560ca9"
     },
     "vpp": {
-      "values_digest": "b7c0badd6f3ee117fb46534689852fb28db20bcc559227c06999ebeb30b467da",
+      "values_digest": "c9d190fad0ba7dc1f4a2b03173ea109194a8742b7d24538e5e4cf26122c87b9e",
       "rendered_digest": "b7f441ec108c6e05170b25f2148f229af6586be9753ee3d985b4e9ad64162537",
       "ast_digest": "1850d13ac006712634f040e6c8a124671bce71e73e5ce55cb92795de8987d6dc"
     },
     "srp": {
-      "values_digest": "e2f82b5ac95b6c2296b4364e2629e7917ada638fe17464f04875b29da2668458",
-      "rendered_digest": "4c9e81c504bdb3be3e9b4da07eb32f5f28f784b275a8fb7aae1d8661627a25c1",
-      "ast_digest": "ba28e1c62abe9f1b8c7bbd05baf7b72f7dd1a6af704ea97b1897124f70bd357b"
+      "values_digest": "0a6ef769680450ff5c3ef4811153c4312ebd8924d4916859a4c807be611dec31",
+      "rendered_digest": "218db8d0918fda5d79af0c791e29a02a43522adedd49f5aeff07bb2fbe23f0cb",
+      "ast_digest": "7ff954800f824dc04512f3a2db138c9dd28e81bad9fe54de669d552fddfa30ff"
     },
     "sor": {
-      "values_digest": "fd969df89ee7b8bb3d04038de9a7c448c1dcf534b7f220144ccc9bb74a64c977",
+      "values_digest": "0651c34f0f813b53f711c9e539d6eb438450f2a95ab3c40e47176ecf15bd626b",
       "rendered_digest": "4bb890fc13e83ddd4c27050feaddde16628a534f4d2881d5c88e2dd843c71c31",
       "ast_digest": "fee9ac272bde97039953af93863bdeff874f9d647a89dea77907b0e20097f27b"
     }
@@ -107,6 +172,13 @@
       "to": "implemented",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The bounded implementation and focused lock-preservation contracts are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact six-script review passed with zero blockers after all five findings were fixed; WP-19 review documentation remains out of scope."
     }
   ],
   "audit": [
@@ -200,6 +272,27 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "assign bounded exact-revision review",
       "operation": "assign_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 6,
+      "actor": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact six-script review passed with zero blockers after all five findings were fixed; WP-19 review documentation remains out of scope.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
     }
   ]
 }

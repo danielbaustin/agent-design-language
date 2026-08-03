@@ -1,0 +1,29 @@
+{
+  "issue": 5788,
+  "expected_generation": 5,
+  "expected_digest": "7381738a50b213aa6dd8e59b9ddb76764770f46f65bb7dc32de2f6d6fb838986",
+  "claim_id": "claim-5788-lockfile-preservation",
+  "actor": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
+  "evidence": {
+    "reviewer": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
+    "scope": [
+      "adl/tools/install_owner_binaries.sh",
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/run_owner_validation_lane.sh",
+      "adl/tools/test_owner_binary_install.sh",
+      "adl/tools/test_owner_validation_lane.sh",
+      "adl/tools/test_run_cargo_validation.sh"
+    ],
+    "reviewed_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+    "findings": [
+      {"id":"F-5788-1","severity":"p1","summary":"Exact-head SRP scope omitted the Cargo validation wrapper and its test.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97","route":null},
+      {"id":"F-5788-2","severity":"p1","summary":"The SOR referenced a validation evidence path that was not retained.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97","route":null},
+      {"id":"F-5788-3","severity":"p1","summary":"The owner lane warm-cache step used a different target and wrote repo-local output.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97","route":null},
+      {"id":"F-5788-4","severity":"p2","summary":"The inventory test was hard-coded and did not reject a duplicate nested build.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97","route":null},
+      {"id":"F-5788-5","severity":"p2","summary":"The rereview worktree contained uncommitted lifecycle and review-guide metadata.","actionable":true,"in_scope":true,"disposition":"fixed","fix_revision":"git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97","route":null}
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

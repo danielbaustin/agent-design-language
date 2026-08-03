@@ -7,14 +7,14 @@
     "title": "[v0.91.8][tooling][lockfile] Prevent validation and binary installation from rewriting tracked Cargo.lock files",
     "slug": "lockfile-preservation",
     "version": "v0.91.8",
-    "generation": 5
+    "generation": 7
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "REVIEW.md\nadl/tools/install_owner_binaries.sh\nadl/tools/run_cargo_validation.sh\nadl/tools/run_owner_validation_lane.sh\nadl/tools/test_owner_binary_install.sh\nadl/tools/test_owner_validation_lane.sh\nadl/tools/test_run_cargo_validation.sh",
-      "review_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
+      "review_scope": "adl/tools/install_owner_binaries.sh\nadl/tools/run_cargo_validation.sh\nadl/tools/run_owner_validation_lane.sh\nadl/tools/test_owner_binary_install.sh\nadl/tools/test_owner_validation_lane.sh\nadl/tools/test_run_cargo_validation.sh",
+      "review_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
       "reviewer": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
       "review_prompts": [
         "Can any failure leave Cargo.lock changed?",
@@ -29,7 +29,7 @@
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
+          "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
           "route": null
         },
         {
@@ -39,7 +39,7 @@
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
+          "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
           "route": null
         },
         {
@@ -49,7 +49,7 @@
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
+          "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
           "route": null
         },
         {
@@ -59,7 +59,7 @@
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:1bcbe6b2f96abc82ad44ca435e75a2590c57b15b:4612ae8d0b60cd1dd66e0c67729de187b56485849bf4cc36e4b4f46bd4b01bdb",
+          "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
           "route": null
         },
         {
@@ -68,13 +68,13 @@
           "summary": "The rereview worktree contained uncommitted lifecycle and review-guide metadata.",
           "actionable": true,
           "in_scope": true,
-          "disposition": "open",
-          "fix_revision": null,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
           "route": null
         }
       ],
       "residual_risk": [],
-      "review_result": "changes_required"
+      "review_result": "pass"
     }
   }
 }
