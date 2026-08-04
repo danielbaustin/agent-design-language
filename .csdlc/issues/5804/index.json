@@ -5,7 +5,7 @@
   "initialization_digest": "932947c316eb7c9619b40535e70f3b916e07769661344383a199322633a6c103",
   "phase": "implemented",
   "generation": 7,
-  "digest": "eb6801ef7819312fd4dd162515c79606845768e6c490a0ab7550b5ff1d30c479",
+  "digest": "0a726ce3d24819a120c96a3429370b11b49ed1347266125d2690b9bf76528f7f",
   "claim": {
     "id": "claim-5804-v0918-external-review-doc-readiness",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
@@ -36,7 +36,7 @@
   "review_assignment": {
     "reviewer": "subagent:gpt-5.5-review-5804",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "revision": "git-blake3:47ce8152e1b4f7f3b794d4ce4dffa4dd3df3b9b6:54c8a685e6202b392f05bc833ce7149e6d52109204aa4796961da42ee7a27455",
+    "revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
     "scope": [
       ".csdlc/issues/5357",
       ".csdlc/issues/5804",
@@ -212,6 +212,13 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Record offline typed validation and live GitHub inventory proof after the review fixes.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"env\",\"ADL_VERIFY_LIVE_GITHUB=1\",\"ruby\",\".csdlc/prepared/issues/5804/validate-review-corpus.rb\"],\"purpose\":\"Prove exact corpus count, complete manifest existence, current live open-issue truth, and all retained documentation contracts after remediation.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5804/validation/review-corpus-contract.log plus live terminal verification\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
     }
   ]
 }
