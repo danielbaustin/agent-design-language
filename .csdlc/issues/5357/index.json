@@ -5,40 +5,8 @@
   "initialization_digest": "b4ef1aecf8cb4011e9fcc651284d7fa8be1ee0611fa79ed3f2215100f5627e00",
   "phase": "bound",
   "generation": 10,
-  "digest": "eec962baaa4830c564bf8e41e078762e8ca7655b222c4454ab32e6c6530cacbe",
-  "claim": {
-    "id": "claim-5357-v0918-wp19-review-readiness",
-    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 10,
-    "acquired_unix_seconds": 1785783165,
-    "expires_unix_seconds": 1786387965,
-    "heartbeat_unix_seconds": 1785783165,
-    "branch": "codex/5357-v0918-preparation",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/evidence/5357",
-      ".csdlc/issues/5357",
-      ".csdlc/locks/5357.lock",
-      ".csdlc/prepared/issues/5357",
-      "CHANGELOG.md",
-      "REVIEW.md",
-      "docs/README.md",
-      "docs/milestones/v0.91.8/MILESTONE_CHECKLIST_v0.91.8.md",
-      "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
-      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
-      "docs/milestones/v0.91.8/README.md",
-      "docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md",
-      "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md",
-      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
-      "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
-      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
-      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
-      "docs/milestones/v0.91.8/review/README.md",
-      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
-      "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_5356.md"
-    ],
-    "purpose": "Prepare #5357 WP-19 for exact-revision external review by refreshing REVIEW.md and the canonical handoff, freezing and validating the source corpus, and retaining issue-local readiness evidence; do not dispatch a paid review, publish, merge, or claim release approval."
-  },
+  "digest": "e2b7cee5cce9adf1f750b2e3ef03d64885f1a7039aae02c15d4a49f33aafe92b",
+  "claim": null,
   "review_assignment": null,
   "review": null,
   "publication": null,
@@ -199,6 +167,13 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Separate current documentation readiness from the intentionally deferred #5791 final-second-pass freeze gate.",
       "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"preparation-contract\",\"proof_role\":\"Prove six current typed cards, exact non-overlapping document scope, canonical-document existence and links, structured-file validity, stale-truth exclusions, undispatched handoff state, budgets, diff hygiene, and typed doctor truth\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5357/validate-preparation.rb\"],\"parallel_group\":\"preparation\",\"defer_reason\":null},{\"lane\":\"wp18-terminal-gate\",\"proof_role\":\"Prove closed first-pass #5356 plus merged final second-pass #5791 after residual coding, current-main integration, and ancestry to the exact external-review target\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5357/check-dependencies.rb\"],\"parallel_group\":\"execution-gate\",\"defer_reason\":\"Mandatory before corpus freeze; expected to fail until #5791 merges and current main is integrated\"},{\"lane\":\"corpus-dispatch-preflight\",\"proof_role\":\"Build and verify the immutable all-v0.91.8 exact-revision corpus and dispatch receipt while enforcing identity, independence, redaction, and non-self-inclusion\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5357/run-validation-lane.rb\",\"corpus-dispatch-preflight\"],\"parallel_group\":\"review\",\"defer_reason\":\"Mandatory after #5791 merge, current-main integration, and operator freeze; forbidden during documentation preparation\"},{\"lane\":\"review-output-contract\",\"proof_role\":\"Validate findings-first severity order, exact evidence, evidence/inference/author-decision separation, residual risk, and typed synthesis mapping\",\"acceptance_ids\":[\"AC-4\",\"AC-5\",\"AC-6\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":5000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5357/run-validation-lane.rb\",\"review-output-contract\"],\"parallel_group\":\"review\",\"defer_reason\":\"Mandatory after external reviewer output exists; forbidden before dispatch\"},{\"lane\":\"complete\",\"proof_role\":\"Run final-review ancestry, canonical-doc, link, structured-file, corpus, dispatch, output, redaction, exact-review, and publication preflight\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":900,\"budget_tokens\":9000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5357/run-validation-lane.rb\",\"complete\"],\"parallel_group\":\"pre-publication\",\"defer_reason\":\"Mandatory at the exact reviewed result revision before publication\"},{\"lane\":\"post-merge-exact\",\"proof_role\":\"Re-run target ancestry, canonical corpus/receipt/output digests, redaction, typed synthesis, CI, and WP-20 handoff after authorized merge\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":900,\"budget_tokens\":9000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5357/run-validation-lane.rb\",\"post-merge-exact\"],\"parallel_group\":\"post-merge\",\"defer_reason\":\"Mandatory after authorized serialized merge; terminal bookkeeping remains separate\"}]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Release the overlapping documentation claim to issue #5804 while retaining #5357 as the open external-review owner.",
+      "operation": "{\"claim_id\":\"claim-5357-v0918-wp19-review-readiness\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"User directed a separate prerequisite issue for documentation repairs so WP-19 remains open until the external review completes.\",\"previous_owner\":\"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d\"}"
     }
   ]
 }
