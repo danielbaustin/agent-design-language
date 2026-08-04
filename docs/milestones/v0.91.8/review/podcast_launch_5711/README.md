@@ -17,7 +17,7 @@ This packet turns the revived podcast plan into a launchable local path.
 
 ```bash
 ADL_PODCAST_AUDIO_TEST_TONES=1 \
-ADL_PODCAST_LAUNCH_WORK_DIR=/Volumes/FastWork/adl-podcast-launch-5711-work \
+ADL_PODCAST_LAUNCH_WORK_DIR="${ADL_PODCAST_LAUNCH_WORK_DIR:-.adl/local-artifacts/podcast-launch-5711}" \
 bash adl/tools/demo_v0918_podcast_launch.sh demos/podcast
 ```
 

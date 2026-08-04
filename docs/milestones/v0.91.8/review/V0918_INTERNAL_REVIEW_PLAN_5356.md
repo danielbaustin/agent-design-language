@@ -279,7 +279,7 @@ Plan preparation should run:
 ```sh
 git diff --check
 ruby -e 'require "yaml"; YAML.safe_load(File.read("docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml"), aliases: true)'
-CARGO_TARGET_DIR=/Volumes/FastWork/cargo-targets/adl-wp-5356 cargo run --locked --manifest-path csdlc-v2/Cargo.toml --bin csdlc-doctor -- --repo . --issue 5356
+CARGO_TARGET_DIR="${ADL_CARGO_TARGET_DIR:-target/wp18-review}" cargo run --locked --manifest-path csdlc-v2/Cargo.toml --bin csdlc-doctor -- --repo . --issue 5356
 ```
 
 Review execution should additionally run the live-state, packet-manifest,

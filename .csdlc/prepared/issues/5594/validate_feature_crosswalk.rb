@@ -19,7 +19,7 @@ File.readlines(path).each_with_index do |line, index|
 end
 
 expected_count = 122
-expected_digest = "3bedd1b2f668c1fec899583c723c1514368a400034aeb9131bc2e4e23deb1b53"
+expected_digest = "4cf6dcde57bab59523ef715d39552b7f1d9daeac963caae51817c8d88a8ceaaa"
 digest = Digest::SHA256.hexdigest(rows.map { |_, row| row.join("\u001f") }.join("\n"))
 
 abort("feature-row count changed: #{rows.length}") unless rows.length == expected_count

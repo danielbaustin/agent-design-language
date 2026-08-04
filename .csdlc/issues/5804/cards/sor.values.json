@@ -1,0 +1,53 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5804,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][docs][external-review] Repair final handoff packet readiness before WP-19 review",
+    "slug": "external-review-doc-readiness",
+    "version": "v0.91.8",
+    "generation": 4
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Repaired the final v0.91.8 external-review handoff and current milestone truth without performing the review or closing WP-19 #5357.",
+      "actual_changes": [
+        "Replaced placeholder implementation-manifest guidance with concrete source, test, and evidence entrypoints.",
+        "Refreshed open-issue, completed parity, demo-matrix, and v0.92 activation truth.",
+        "Removed machine-local paths from reusable review and podcast commands.",
+        "Refreshed the 122-row feature crosswalk digest, line map, and four canonical fields from the current source authority.",
+        "Added a single issue-local validator for the complete 75-document review corpus."
+      ],
+      "artifacts": [
+        "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+        "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+        "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+        "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+        "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json",
+        ".csdlc/prepared/issues/5804/validate-review-corpus.rb"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            ".adl/bin/csdlc-v2/csdlc-validate",
+            "--root",
+            ".",
+            "--request",
+            ".csdlc/prepared/issues/5804/validation-request.json"
+          ],
+          "purpose": "Prove the review-corpus contract, WP-18 ancestry, and diff hygiene through the issue's typed VPP lanes.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5804/validation (three lanes passed)"
+        }
+      ],
+      "integration_state": "not_started",
+      "publication_state": "not_published",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

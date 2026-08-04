@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5804,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][docs][external-review] Repair final handoff packet readiness before WP-19 review",
+    "slug": "external-review-doc-readiness",
+    "version": "v0.91.8",
+    "generation": 4
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md\ndocs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md\ndocs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md\ndocs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md\ndocs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md\ndocs/milestones/v0.91.8/review/podcast_launch_5711/README.md",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does the manifest cover real landed implementation and proof rather than docs-only placeholders?",
+        "Are live state and historical snapshots distinguished correctly?",
+        "Can an external reviewer use the packet without machine-local paths?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

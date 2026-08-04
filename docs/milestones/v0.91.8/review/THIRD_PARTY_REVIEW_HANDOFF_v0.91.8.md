@@ -260,24 +260,23 @@ This section is anchored by merged WP-16 evidence at
 `2e9d2dd7c4260dcf6ec6af954b0eea97554212df`. WP-16 records 67 audited issues, 34
 working-code outcomes, 21 useful durable results, 12 partial or ambiguous
 release-tail/umbrella/lifecycle-drift items, 0 unacceptable outcomes, and 0
-release blockers. The formal send-time packet must still refresh this manifest
-from closed issue evidence at the exact target revision. Do not send the review
-with a docs-only packet.
+release blockers. The paths below are the concrete implementation and proof
+entrypoints at the review revision; directory entries include their tracked
+descendants.
 
-Before send, enumerate landed paths and proof packets for each applicable
-owner surface:
+| Surface | Landed implementation and tests | Review evidence and issue truth |
+| --- | --- | --- |
+| ADL v2 language, compiler, engine, records, adapters, and CLI | `adl-v2/crates/adl-language/`, `adl-v2/crates/adl-compiler/`, `adl-v2/crates/adl-engine/`, `adl-v2/crates/adl-records/`, `adl-v2/crates/adl-adapters/`, `adl-v2/crates/adl-runtime-v3-adapter/`, and `adl-v2/crates/adl-cli/` | `.csdlc/evidence/5339/implementation-validation/`, `.csdlc/evidence/5340/engine-focused/`, `.csdlc/evidence/5341/`, `.csdlc/evidence/5342/`, and `.csdlc/evidence/5354/convergence-proof.v1.json`; terminal issue records under `.csdlc/issues/5338/` through `.csdlc/issues/5342/` |
+| C-SDLC v2 typed lifecycle | `csdlc-v2/src/`, `csdlc-v2/tests/`, and `csdlc-v2/operator/skills/` | `.csdlc/evidence/5351/csdlc-v2-all-targets.log`; issue records `.csdlc/issues/5358/`, `.csdlc/issues/5540/`, `.csdlc/issues/5541/`, `.csdlc/issues/5548/`, `.csdlc/issues/5558/`, `.csdlc/issues/5737/`, `.csdlc/issues/5778/`, `.csdlc/issues/5779/`, and `.csdlc/issues/5780/` record acceptance and corrective truth |
+| Runtime v3 kernel, guardian, protocols, state, and Observatory API | `adl-runtime-kernel/src/`, `adl-runtime-kernel/tests/`, `adl-runtime/src/`, `adl-runtime/tests/`, `infra/runtime-v3/`, and `demos/html-observatory/` | `.csdlc/evidence/5361/`, [runtime_v3_acceptance_5361.v1.json](runtime_v3_acceptance_5361.v1.json), `.csdlc/evidence/5698/`, `.csdlc/evidence/5701/`, `.csdlc/evidence/5713/`, and issue records `.csdlc/issues/5589/`, `.csdlc/issues/5590/`, `.csdlc/issues/5591/`, `.csdlc/issues/5592/`, `.csdlc/issues/5722/` |
+| Distributed C-SDLC workcell | `adl-v2/crates/adl-workcell-conductor/`, `adl-v2/crates/adl-workcell-task-adapter/`, and `adl-v2/crates/adl-workcell-convergence/` | `.csdlc/evidence/5501/retained-live-proof.json`, `.csdlc/evidence/5501/live-run-manifest.json`, and the WP-10A issue records named by [../WP_ISSUE_WAVE_v0.91.8.yaml](../WP_ISSUE_WAVE_v0.91.8.yaml) |
+| Platform acceptance, deployment, Observatory, soak, rollback, and deletion | `adl-v2/tools/run-soak.sh`, `adl-v2/tools/prove-rollback.sh`, `infra/runtime-v3/`, and `demos/html-observatory/` | [V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md](V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md), `.csdlc/evidence/5384/platform-acceptance-ledger.v1.json`, `.csdlc/evidence/5344/`, [../evidence/wp12/](../evidence/wp12/), [../evidence/wp13/](../evidence/wp13/), and [../evidence/wp13-external-bands/](../evidence/wp13-external-bands/) |
+| Integrated convergence, quality, documentation, and review | Integration proof is retained in `.csdlc/evidence/5354/convergence-proof.v1.json`; this row does not add a separate implementation surface | [../evidence/wp16/ISSUE_OUTCOME_AUDIT.md](../evidence/wp16/ISSUE_OUTCOME_AUDIT.md), [../evidence/wp16/QUALITY_GATE.md](../evidence/wp16/QUALITY_GATE.md), [V0918_INTERNAL_REVIEW_5356.md](V0918_INTERNAL_REVIEW_5356.md), `.csdlc/evidence/5360/documentation-alignment.v1.json`, `.csdlc/evidence/5791/focused-5791-validation.log`, and [../handoff/WP21_SPRINT_REVIEW_5352.md](../handoff/WP21_SPRINT_REVIEW_5352.md) |
 
-| Surface | Send-time requirement |
-| --- | --- |
-| ADL v2 core and owner binaries | List landed source, tests, generated/stable binary provenance, owner validation records, and issue closeout evidence for WP-02 through WP-08 as applicable. |
-| C-SDLC v2 acceptance | List landed typed-command source/tests, lifecycle proof packets, validation receipts, and open/closed acceptance-defect disposition including `#5540`, `#5541`, `#5548`, and `#5558`. |
-| Runtime v3 adapter and distributed workcells | List landed runtime/task-adapter source, tests, acceptance proof, workcell/output-contract proof, and dependent issue evidence including WP-10A plus `#5591`, `#5592`, `#5589`, and `#5590` closure truth. |
-| Platform acceptance, deployment, observatory, and rollback/cutover | List landed scripts/config/docs/tests/proof packets for acceptance, soak, deployment/observatory, rollback, deletion, and cutover gates. |
-| Review/remediation/release tail | List landed review packets, remediation proof, release-plan evidence, handoff evidence, and closeout records through the exact send revision. |
-
-If a row cannot be populated with landed code/test/proof evidence, return
-`blocked` or `deferred` and record the missing owner surface instead of asking
-the reviewer to infer completion from planning docs.
+This manifest is an entrypoint inventory, not a claim that every descendant is
+independently reviewed or that downstream WP-20 through WP-23 work is complete.
+If any listed path is absent at the exact target revision, return `blocked` or
+`deferred` rather than inferring completion from planning text.
 
 ### WP-16 Quality-Gate Evidence
 
@@ -298,6 +297,11 @@ Before send, refresh:
 - WP-19 / `#5357` owns the formal external-review send and WP-20 through WP-23
   remain downstream unless live issue truth changes;
 - focused validation from [../CANONICAL_DOC_INVENTORY_v0.91.8.md](../CANONICAL_DOC_INVENTORY_v0.91.8.md).
+
+Live GitHub truth refreshed on 2026-08-04: the open `version:v0.91.8` issues are
+`#5348`, `#5355`, `#5357`, `#5359`, `#5362`, `#5363`, and sprint umbrella
+`#5595`. All other issue inputs named by the implementation manifest are closed
+or retained historical evidence unless a later live refresh says otherwise.
 
 ## Required Review Questions
 

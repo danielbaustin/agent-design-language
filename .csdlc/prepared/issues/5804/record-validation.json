@@ -1,0 +1,24 @@
+{
+  "issue": 5804,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "a4045146c082590facd82744f9c877a486fe857a4911e8c6096b4566419f45f4",
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the complete typed local documentation validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        ".adl/bin/csdlc-v2/csdlc-validate",
+        "--root",
+        ".",
+        "--request",
+        ".csdlc/prepared/issues/5804/validation-request.json"
+      ],
+      "purpose": "Prove the review-corpus contract, WP-18 ancestry, and diff hygiene through the issue's typed VPP lanes.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5804/validation (three lanes passed)"
+    }
+  }
+}
