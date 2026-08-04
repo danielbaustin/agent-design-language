@@ -8,8 +8,9 @@ Current source truth for this handoff is the merged WP-16 quality-gate evidence
 at `2e9d2dd7c4260dcf6ec6af954b0eea97554212df`. That evidence records 67
 audited v0.91.8 issues, 34 working-code outcomes, 21 useful durable results, 12
 partial or ambiguous release-tail/umbrella/lifecycle-drift items, 0 unacceptable
-outcomes, and 0 release blockers. WP-17 `#5360` is now the active documentation
-alignment step consuming that evidence.
+outcomes, and 0 release blockers. WP-17 `#5360` closed the documentation
+alignment step consuming that evidence; WP-18 `#5791` owns the current final
+internal review pass before downstream release-tail gates.
 
 ## Required Handoff Contents
 

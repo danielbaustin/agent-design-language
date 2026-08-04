@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "ea470dd9f99634977909a2bd68cfd3f66cfb924e95fe17b2616ec51caa4cb3cb",
   "phase": "published",
-  "generation": 10,
-  "digest": "ee8372bca77dc3ce767e99a0230927f6c06bf57024b5ef66a5a7f98eb1acf6a7",
+  "generation": 13,
+  "digest": "4c9fab02e2b6f06e84dfb7eb8936d1e16dc0364feed8c73ca4e85c48ce4f7b6a",
   "claim": {
     "id": "claim-5791-wp18-final-internal-review-second-pass",
     "owner": "codex:5791-review",
-    "generation": 10,
+    "generation": 13,
     "acquired_unix_seconds": 1785801653,
     "expires_unix_seconds": 1785830453,
     "heartbeat_unix_seconds": 1785801653,
@@ -21,6 +21,7 @@
       ".csdlc/locks/5791.lock",
       ".csdlc/prepared/issues/5791",
       ".github/workflows/ci.yaml",
+      "README.md",
       "adl-runtime/Cargo.lock",
       "adl-runtime/Cargo.toml",
       "adl/Cargo.lock",
@@ -38,6 +39,8 @@
       "csdlc-v2/tests/gate4.rs",
       "csdlc-v2/tests/gate5.rs",
       "csdlc-v2/tests/gate_terminal_authority_deletion.rs",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
       "docs/reviews/v0.91.8/internal-review-5791",
       "docs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md",
       "docs/tooling/editor/command_adapter.md",
@@ -47,10 +50,13 @@
     "purpose": "Run #5791 WP-18 final internal review second pass."
   },
   "review_assignment": {
-    "reviewer": "codex-version-truth-review",
+    "reviewer": "codex-stale-wp17-doc-truth-review",
     "assigned_by": "codex:5791-review",
-    "revision": "git-blake3:e4ee565c98a5cce14afc6ec3b4e5cf3f9c394863:0cb36cefd88fbc7363e2b5bb78e634bef28127bae2696dc275b2b4d65ba6e4d4",
+    "revision": "git-blake3:b99de0df70874a14bb9ea9b10170bdd8d1a447b7:5285d13cab55c9847db6c33b078cc5faeb9294ff915997a72d43cce394d7250b",
     "scope": [
+      "README.md",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
       "adl/Cargo.toml",
       "adl/Cargo.lock",
       "adl-runtime/Cargo.toml",
@@ -60,8 +66,11 @@
     ]
   },
   "review": {
-    "reviewer": "codex-version-truth-review",
+    "reviewer": "codex-stale-wp17-doc-truth-review",
     "scope": [
+      "README.md",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
       "adl/Cargo.toml",
       "adl/Cargo.lock",
       "adl-runtime/Cargo.toml",
@@ -69,21 +78,32 @@
       "tools/aws_remote_validation/Cargo.toml",
       "tools/aws_remote_validation/Cargo.lock"
     ],
-    "reviewed_revision": "git-blake3:e4ee565c98a5cce14afc6ec3b4e5cf3f9c394863:0cb36cefd88fbc7363e2b5bb78e634bef28127bae2696dc275b2b4d65ba6e4d4",
+    "reviewed_revision": "git-blake3:b99de0df70874a14bb9ea9b10170bdd8d1a447b7:5285d13cab55c9847db6c33b078cc5faeb9294ff915997a72d43cce394d7250b",
     "findings": [
       {
-        "id": "IR5791-06",
+        "id": "IR5791-07",
         "severity": "p1",
-        "summary": "Active Rust package manifests and lockfiles still reported 0.91.7 during v0.91.8 WP-18 review.",
+        "summary": "WP-17 update-list truth left current release-tail docs saying WP-17 was active and root README reporting crate version 0.91.7.",
         "actionable": true,
         "in_scope": true,
         "disposition": "fixed",
-        "fix_revision": "git-blake3:e4ee565c98a5cce14afc6ec3b4e5cf3f9c394863:0cb36cefd88fbc7363e2b5bb78e634bef28127bae2696dc275b2b4d65ba6e4d4",
+        "fix_revision": "git-blake3:b99de0df70874a14bb9ea9b10170bdd8d1a447b7:5285d13cab55c9847db6c33b078cc5faeb9294ff915997a72d43cce394d7250b",
         "route": null
+      },
+      {
+        "id": "IR5791-08",
+        "severity": "p2",
+        "summary": "REVIEW.md still says WP-17 documentation truth alignment is active, but typed claim ownership blocks #5791 from editing REVIEW.md because #5357 owns that path.",
+        "actionable": true,
+        "in_scope": false,
+        "disposition": "out_of_scope",
+        "fix_revision": null,
+        "route": "#5357 protected REVIEW.md; do not edit in #5791"
       }
     ],
     "residual_risks": [
-      "WP-17 package-version alignment was missed before WP-18; #5801 tracks CI/lifecycle simplification separately."
+      "REVIEW.md remains a known stale current-truth line under #5357 ownership and must be corrected by the owning issue/worktree.",
+      "#5801 tracks broader CI/lifecycle simplification separately."
     ],
     "completed": true,
     "non_substantive_proof": null
@@ -95,7 +115,7 @@
     "url": "https://github.com/danielbaustin/agent-design-language/pull/5799",
     "base": "main",
     "head": "codex/5791-wp18-final-review-second-pass",
-    "revision": "git-blake3:e4ee565c98a5cce14afc6ec3b4e5cf3f9c394863:0cb36cefd88fbc7363e2b5bb78e634bef28127bae2696dc275b2b4d65ba6e4d4",
+    "revision": "git-blake3:b99de0df70874a14bb9ea9b10170bdd8d1a447b7:5285d13cab55c9847db6c33b078cc5faeb9294ff915997a72d43cce394d7250b",
     "draft": false,
     "observed_state": "open"
   },
@@ -112,32 +132,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "f25622e99d8eb398bd0c484e38b4385e53ed7094e9a74c0dd7c83b97712820ff",
+      "values_digest": "2862c263982785330902904f4e254a9bdd023aba29eaec21af51a7315eb65096",
       "rendered_digest": "db7d8c4866a047150bbf16b86078d5511be83f3be909e09f629b2ea0a3ecd76e",
       "ast_digest": "a0a98b88001bfaa813d9aa4f8e470e8f0badbba595920d9f5da09f22e8af06f2"
     },
     "stp": {
-      "values_digest": "d80c222e3355dc8f60e4cf2cef45302a685ccbcafc35f37d39b6dc6e0ffe5247",
+      "values_digest": "3753f172f460e91ca47033cadd2947b8f84bfa32a47211ee563279241ec7cbfc",
       "rendered_digest": "d6b23b788d0dc50b5b4e0ef0be9c258d68ee775db5b16f71720f4e08d9436ee4",
       "ast_digest": "49f757aaffeaf4448cb0ecf18eedf8b8c90314fcf362313209d7f663719d97a8"
     },
     "spp": {
-      "values_digest": "513d3de9f278d963721dfe19b459986580055cae9850731c930ba6ff3612af2a",
+      "values_digest": "c81d870a9c2f38ba77dec487f2f03848e4fda01185526632d06388372e35dec7",
       "rendered_digest": "341ae9efdf018bf6b01ca0de5dfb5c1a36f5c339119825ef4285a444a81297b9",
       "ast_digest": "3714d026fc940f360a1257792ee820a97049895f52980e2d6e1a6696fa9a4303"
     },
     "vpp": {
-      "values_digest": "2000cc65a4c8984b71d4835162cd8c47fa68dd3b70520e79719faddf22dfe8f4",
+      "values_digest": "6c6aea3b94588224ab6c1b9426041e6502586b5dac0d5f6bb17a1ce5342c11bf",
       "rendered_digest": "d99e8fa0195fc2cf10cc89f1b7a0323d19dabeffe956a41e853b04a36afceca8",
       "ast_digest": "d30a04d78506f152f0b77d3d0b7367cd1f5e2ecdafa3385c00b7574ff909bb40"
     },
     "srp": {
-      "values_digest": "a5ab4eeca9ceff370c55cf0597d7b001a5e814b0dc9aee236b2d10244df56680",
-      "rendered_digest": "456485bba30f995a54bc20d590d473670f903d4572fa5578ae7effd811eeeff3",
-      "ast_digest": "2e8522cfcc44129ec00f004e31374d1bfce17ed0f6725eed0b9aefd10c2de050"
+      "values_digest": "aa00748ec4c6e17774d592f200ec57be92f36cd2fdbff0831b8e466667e339e1",
+      "rendered_digest": "3397c1a31f99ed1277d5abc1032d2d69f66307a227f384b02c634eeb9cd7b1c8",
+      "ast_digest": "7e475d97ccfea2469e3c2d230e0c02ef54ad75ad898c873c62c4e296e0300b8f"
     },
     "sor": {
-      "values_digest": "e484e9556ec5d44257dc3e97aeb677cfe6cf5eff8c7bca7e892ccb3bf5f92036",
+      "values_digest": "36936f3a1b64122e3d1402a8efa0c3b540e3d4b280497999676c41b78eb12a7a",
       "rendered_digest": "0c9e80514d2e9c98672a176ee875650006dfc4e7016012fd4b6ac2ceb30aa1a2",
       "ast_digest": "bbef43e8b61984fde1bf2a5dab9440322d48c0e8704afb566ac9e910ef8980ba"
     }
@@ -215,6 +235,27 @@
     },
     {
       "sequence": 11,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5791-review",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 12,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5791-review",
+      "reason": "PR #5799 exact-head review found stale WP-17-active and package-version truth in current release-tail documentation; recover publication for a bounded doc-truth fix."
+    },
+    {
+      "sequence": 13,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5791-review",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 14,
       "from": "reviewed",
       "to": "published",
       "actor": "codex:5791-review",
@@ -379,6 +420,41 @@
     {
       "sequence": 23,
       "generation": 10,
+      "actor": "codex:5791-review",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 24,
+      "generation": 11,
+      "actor": "codex:5791-review",
+      "reason": "PR #5799 exact-head review found stale WP-17-active and package-version truth in current release-tail documentation; recover publication for a bounded doc-truth fix.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 11,
+      "actor": "codex:5791-review",
+      "reason": "The WP-18 second-pass review found stale WP-17-active and package-version truth in current release-tail documentation; protect the non-colliding documentation surfaces before repair.",
+      "operation": "{\"add_protected_paths\":[\"README.md\",\"docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md\",\"docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 11,
+      "actor": "codex:5791-review",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 12,
+      "actor": "codex:5791-review",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 13,
       "actor": "codex:5791-review",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"

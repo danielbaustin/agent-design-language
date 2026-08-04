@@ -318,18 +318,19 @@ production markets.
 
 ## Project Status
 
-- Active milestone: v0.91.8 bridge, release-tail WP-17 #5360
+- Active milestone: v0.91.8 bridge, release-tail WP-18 #5791
 - Active sprint umbrella: #5595
 - Downstream milestone: v0.92 consumes exact-revision v0.91.8 acceptance and handoff
-- Current ADL and Runtime v2 crate version: 0.91.7
+- Current ADL and Runtime v2 crate version: 0.91.8
 - Independent Runtime v3 kernel package version: 0.92.0; it remains separately
   versioned and does not by itself claim v0.92 activation readiness
 - Most recently completed implementation/readiness tranche and public release:
   v0.91.7 ([GitHub release](https://github.com/danielbaustin/agent-design-language/releases/tag/v0.91.7))
 - The active v0.91.8 bridge remains unreleased pending its documented gates.
 - Current milestone state: WP-16 quality gate passed at `2e9d2dd7c`; WP-17
-  documentation truth alignment is active and later release-tail review,
-  remediation, handoff, and ceremony gates remain open.
+  documentation truth alignment is closed, WP-18 final internal review is
+  active, and later release-tail remediation, handoff, and ceremony gates
+  remain open.
 - Primary implementation language: Rust
 
 ADL is under active development. The repository contains implemented runtime

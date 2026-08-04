@@ -21,3 +21,8 @@
 {"sequence":21,"generation":8,"actor":"codex:5791-review","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":22,"generation":9,"actor":"codex:5791-review","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
 {"sequence":23,"generation":10,"actor":"codex:5791-review","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":24,"generation":11,"actor":"codex:5791-review","reason":"PR #5799 exact-head review found stale WP-17-active and package-version truth in current release-tail documentation; recover publication for a bounded doc-truth fix.","operation":"recover_review"}
+{"sequence":25,"generation":11,"actor":"codex:5791-review","reason":"The WP-18 second-pass review found stale WP-17-active and package-version truth in current release-tail documentation; protect the non-colliding documentation surfaces before repair.","operation":"{\"add_protected_paths\":[\"README.md\",\"docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md\",\"docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md\"],\"operation\":\"amend_claim_scope\"}"}
+{"sequence":26,"generation":11,"actor":"codex:5791-review","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":27,"generation":12,"actor":"codex:5791-review","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
+{"sequence":28,"generation":13,"actor":"codex:5791-review","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}

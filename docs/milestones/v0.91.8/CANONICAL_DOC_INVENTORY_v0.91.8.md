@@ -1,12 +1,12 @@
 # v0.91.8 Canonical Document Inventory
 
-Status: active WP-17 audit surface. This file validates that the v0.91.8
+Status: retained WP-17 audit surface. This file validates that the v0.91.8
 documentation packet is present, internally linked, and bounded to
 planned-vs-proven truth after the WP-16 quality gate merged.
 
 WP-16 #5351 passed at `2e9d2dd7c` with 67 audited issue outcomes, 0
 unacceptable outcomes, and passing ADL v2, Runtime v3, and C-SDLC v2 lanes.
-WP-17 #5360 reconciles this inventory to that evidence. Later release-tail
+WP-17 #5360 reconciled this inventory to that evidence. Later release-tail
 review gates fail closed if any required canonical document or feature surface
 is missing, contradicts the `version:v0.91.8` routing authority, omits WP-10A,
 misstates dependencies, treats planned work as proven, reverses v0.91.8 bridge
@@ -42,8 +42,8 @@ precedence, or leaves current blocker/register truth stale.
 
 | Surface | Path | Required routing/dependency truth | Planned/proven state | WP-21A validation |
 | --- | --- | --- | --- | --- |
-| Repository README | [../../../README.md](../../../README.md) | Names v0.91.8 as active bridge, WP-16 quality-gate pass, WP-17 active docs alignment, and v0.92 downstream. | Current entrypoint | Must not retain v0.91.7 as active or claim release approval. |
-| README | [README.md](README.md) | Names WP-16 pass, WP-17 active docs alignment, historical #5335/#5383, #5384 WP-14A, #4641 restored v0.91.7 WP-14, and v0.92 downstream bridge. | Current release-tail entrypoint | Must link this inventory and not claim release readiness. |
+| Repository README | [../../../README.md](../../../README.md) | Names v0.91.8 as active bridge, WP-16 quality-gate pass, WP-17 docs alignment as closed, WP-18 final review as current, and v0.92 downstream. | Current entrypoint | Must not retain v0.91.7 as current or claim release approval. |
+| README | [README.md](README.md) | Names WP-16 pass, WP-17 docs alignment as closed, WP-18 final review as current, historical #5335/#5383, #5384 WP-14A, #4641 restored v0.91.7 WP-14, and v0.92 downstream bridge. | Current release-tail entrypoint | Must link this inventory and not claim release readiness. |
 | Vision | [VISION_v0.91.8.md](VISION_v0.91.8.md) | Keeps ADL v2, Runtime v3, and C-SDLC v2 ownership separate. | Current source surface | Must preserve bridge-before-v0.92 precedence. |
 | Design | [DESIGN_v0.91.8.md](DESIGN_v0.91.8.md) | Three-product acceptance boundary and deletion budget remain non-approval. | Current source surface | Must not pre-approve deletion or deployment. |
 | Decisions | [DECISIONS_v0.91.8.md](DECISIONS_v0.91.8.md) | #5383 is historical/closed setup authority; #5335 is stale predecessor; #5384 owns WP-14A. | Planned/current routing decisions | Must not call #5383 active. |
@@ -90,7 +90,7 @@ precedence, or leaves current blocker/register truth stale.
 | README links inventory | `rg "CANONICAL_DOC_INVENTORY_v0.91.8.md" docs/milestones/v0.91.8/README.md` | README links this matrix. |
 | README links parallel plan | `rg "PARALLEL_EXECUTION_PLAN_v0.91.8.md" docs/milestones/v0.91.8/README.md` | README links the planned parallel execution overlay. |
 | Review handoff linked | `rg "THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md" docs/milestones/v0.91.8/README.md docs/milestones/v0.91.8/review/README.md docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md` | Handoff is reachable from canonical entrypoints. |
-| Historical WP-21A preparation packet present | `test -f docs/milestones/v0.91.7/review/V0917_WP21A_NEXT_MILESTONE_DOCS_CLOSEOUT_5489.md && test -f docs/milestones/v0.91.7/review/wp21a_next_milestone_docs_5489/README.md` | Historical #5489 preparation surfaces exist; current docs readiness is WP-17 #5360. |
+| Historical WP-21A preparation packet present | `test -f docs/milestones/v0.91.7/review/V0917_WP21A_NEXT_MILESTONE_DOCS_CLOSEOUT_5489.md && test -f docs/milestones/v0.91.7/review/wp21a_next_milestone_docs_5489/README.md` | Historical #5489 preparation surfaces exist; WP-17 #5360 closed current docs readiness before WP-18. |
 | Review packet digest procedure | `docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md` Digest Procedure | Send-time reviewer can reproduce the sorted tracked mode/type/hash/path object-record digest plus normalized synthetic handoff record while excluding untracked/local artifacts and avoiding self-inclusion of the digest value. |
 | YAML parses | Ruby `YAML.safe_load(..., aliases: true)` | `WP_ISSUE_WAVE_v0.91.8.yaml` parses. |
 | Routing assertions | Ruby assertions over `wp_issue_map`, `work_packages`, and `parallel_execution` | WP-10A, WP-11, WP-13, WIP cap, #5343/#5347, and routing authority are consistent. |

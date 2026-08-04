@@ -12,6 +12,9 @@ Status: draft
 
 ## Scope
 
+README.md
+docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md
+docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md
 adl/Cargo.toml
 adl/Cargo.lock
 adl-runtime/Cargo.toml
@@ -30,14 +33,24 @@ tools/aws_remote_validation/Cargo.lock
 
 [
   {
-    "id": "IR5791-06",
+    "id": "IR5791-07",
     "severity": "p1",
-    "summary": "Active Rust package manifests and lockfiles still reported 0.91.7 during v0.91.8 WP-18 review.",
+    "summary": "WP-17 update-list truth left current release-tail docs saying WP-17 was active and root README reporting crate version 0.91.7.",
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:e4ee565c98a5cce14afc6ec3b4e5cf3f9c394863:0cb36cefd88fbc7363e2b5bb78e634bef28127bae2696dc275b2b4d65ba6e4d4",
+    "fix_revision": "git-blake3:b99de0df70874a14bb9ea9b10170bdd8d1a447b7:5285d13cab55c9847db6c33b078cc5faeb9294ff915997a72d43cce394d7250b",
     "route": null
+  },
+  {
+    "id": "IR5791-08",
+    "severity": "p2",
+    "summary": "REVIEW.md still says WP-17 documentation truth alignment is active, but typed claim ownership blocks #5791 from editing REVIEW.md because #5357 owns that path.",
+    "actionable": true,
+    "in_scope": false,
+    "disposition": "out_of_scope",
+    "fix_revision": null,
+    "route": "#5357 protected REVIEW.md; do not edit in #5791"
   }
 ]
 
@@ -47,12 +60,13 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- WP-17 package-version alignment was missed before WP-18; #5801 tracks CI/lifecycle simplification separately.
+- REVIEW.md remains a known stale current-truth line under #5357 ownership and must be corrected by the owning issue/worktree.
+- #5801 tracks broader CI/lifecycle simplification separately.
 
 ## Review Result
 
-Revision: Some("git-blake3:e4ee565c98a5cce14afc6ec3b4e5cf3f9c394863:0cb36cefd88fbc7363e2b5bb78e634bef28127bae2696dc275b2b4d65ba6e4d4")
+Revision: Some("git-blake3:b99de0df70874a14bb9ea9b10170bdd8d1a447b7:5285d13cab55c9847db6c33b078cc5faeb9294ff915997a72d43cce394d7250b")
 
-Reviewer: Some("codex-version-truth-review")
+Reviewer: Some("codex-stale-wp17-doc-truth-review")
 
 Result: pass
