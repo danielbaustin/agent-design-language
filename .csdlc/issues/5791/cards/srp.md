@@ -12,11 +12,8 @@ Status: draft
 
 ## Scope
 
-.csdlc/issues/5791
-adl/tools/run_cargo_validation.sh
-adl/tools/test_run_cargo_validation.sh
-csdlc-v2/tests/gate_terminal_authority_deletion.rs
-docs/reviews/v0.91.8/internal-review-5791
+csdlc-v2/src/review.rs
+csdlc-v2/tests/gate5.rs
 
 ## Prompts
 
@@ -29,13 +26,13 @@ docs/reviews/v0.91.8/internal-review-5791
 
 [
   {
-    "id": "IR5791-04",
+    "id": "IR5791-05",
     "severity": "p1",
-    "summary": "PR #5799 CI failed because run_cargo_validation required --locked for cargo fmt, but cargo fmt does not support --locked.",
+    "summary": "Assigned review evidence recorded a passing review but left the issue in implemented phase, blocking typed publication.",
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:3f26b4db01d3cba21c6e13708b8a5d6d8ced188c:bfe7b202ddee6cf4b38ae0179edcb6cb3fc1cd9ee45b9f3df8beb9d9a6a01b3c",
+    "fix_revision": "git-blake3:9065ae9d1d5d0b00c70865c42de24bf39678efbc:55be1c3cb3465b2c86ee76c750c97f6b253a84b3f81e218920e6747bb213f7dc",
     "route": null
   }
 ]
@@ -46,12 +43,12 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- The PR still needs exact-head GitHub CI after republishing.
+- The PR still needs exact-head GitHub CI completion after republishing/reconciling lifecycle state.
 
 ## Review Result
 
-Revision: Some("git-blake3:3f26b4db01d3cba21c6e13708b8a5d6d8ced188c:bfe7b202ddee6cf4b38ae0179edcb6cb3fc1cd9ee45b9f3df8beb9d9a6a01b3c")
+Revision: Some("git-blake3:9065ae9d1d5d0b00c70865c42de24bf39678efbc:55be1c3cb3465b2c86ee76c750c97f6b253a84b3f81e218920e6747bb213f7dc")
 
-Reviewer: Some("codex-current-head-ci-recovery-review")
+Reviewer: Some("codex-current-head-assigned-review-fix-review")
 
 Result: pass

@@ -13,3 +13,6 @@
 {"sequence":13,"generation":4,"actor":"codex:5791-review","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":14,"generation":5,"actor":"codex:5791-review","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
 {"sequence":15,"generation":5,"actor":"codex:5791-review","reason":"Typed CI recovery exposed that assigned review evidence records a passing review but leaves the issue in implemented phase, blocking publication; amend scope before fixing assigned-review phase advancement.","operation":"{\"add_protected_paths\":[\"csdlc-v2/src/review.rs\",\"csdlc-v2/tests/gate5.rs\"],\"operation\":\"amend_claim_scope\"}"}
+{"sequence":16,"generation":5,"actor":"codex:5791-review","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":17,"generation":6,"actor":"codex:5791-review","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
+{"sequence":18,"generation":7,"actor":"codex:5791-review","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}

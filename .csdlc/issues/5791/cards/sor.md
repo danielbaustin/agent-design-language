@@ -42,11 +42,11 @@ Completed WP-18 second-pass review packet and fixed active stale C-SDLC closeout
 
 ## Integration
 
-worktree_only
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 

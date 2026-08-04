@@ -7,15 +7,15 @@
     "title": "[v0.91.8][WP-18][review] Run final internal review second pass after residual coding",
     "slug": "wp18-final-internal-review-second-pass",
     "version": "v0.91.8",
-    "generation": 5
+    "generation": 7
   },
   "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": ".csdlc/issues/5791\nadl/tools/run_cargo_validation.sh\nadl/tools/test_run_cargo_validation.sh\ncsdlc-v2/tests/gate_terminal_authority_deletion.rs\ndocs/reviews/v0.91.8/internal-review-5791",
-      "review_revision": "git-blake3:3f26b4db01d3cba21c6e13708b8a5d6d8ced188c:bfe7b202ddee6cf4b38ae0179edcb6cb3fc1cd9ee45b9f3df8beb9d9a6a01b3c",
-      "reviewer": "codex-current-head-ci-recovery-review",
+      "review_scope": "csdlc-v2/src/review.rs\ncsdlc-v2/tests/gate5.rs",
+      "review_revision": "git-blake3:9065ae9d1d5d0b00c70865c42de24bf39678efbc:55be1c3cb3465b2c86ee76c750c97f6b253a84b3f81e218920e6747bb213f7dc",
+      "reviewer": "codex-current-head-assigned-review-fix-review",
       "review_prompts": [
         "Does the review corpus include issues closed since the prior WP-18 review?",
         "Does the review inspect actual code and validation surfaces?",
@@ -24,18 +24,18 @@
       ],
       "findings": [
         {
-          "id": "IR5791-04",
+          "id": "IR5791-05",
           "severity": "p1",
-          "summary": "PR #5799 CI failed because run_cargo_validation required --locked for cargo fmt, but cargo fmt does not support --locked.",
+          "summary": "Assigned review evidence recorded a passing review but left the issue in implemented phase, blocking typed publication.",
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:3f26b4db01d3cba21c6e13708b8a5d6d8ced188c:bfe7b202ddee6cf4b38ae0179edcb6cb3fc1cd9ee45b9f3df8beb9d9a6a01b3c",
+          "fix_revision": "git-blake3:9065ae9d1d5d0b00c70865c42de24bf39678efbc:55be1c3cb3465b2c86ee76c750c97f6b253a84b3f81e218920e6747bb213f7dc",
           "route": null
         }
       ],
       "residual_risk": [
-        "The PR still needs exact-head GitHub CI after republishing."
+        "The PR still needs exact-head GitHub CI completion after republishing/reconciling lifecycle state."
       ],
       "review_result": "pass"
     }
