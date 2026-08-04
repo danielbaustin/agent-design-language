@@ -3,13 +3,13 @@
   "issue": 5804,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "932947c316eb7c9619b40535e70f3b916e07769661344383a199322633a6c103",
-  "phase": "implemented",
-  "generation": 7,
-  "digest": "0a726ce3d24819a120c96a3429370b11b49ed1347266125d2690b9bf76528f7f",
+  "phase": "reviewed",
+  "generation": 9,
+  "digest": "734a22b94c2a2cff424ab08f65388e51c51f825d9f98a4d69a4968844931eda8",
   "claim": {
     "id": "claim-5804-v0918-external-review-doc-readiness",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 7,
+    "generation": 9,
     "acquired_unix_seconds": 1785862420,
     "expires_unix_seconds": 1786467220,
     "heartbeat_unix_seconds": 1785862420,
@@ -53,7 +53,63 @@
       "docs/milestones/v0.91.8/review/podcast_launch_5711/README.md"
     ]
   },
-  "review": null,
+  "review": {
+    "reviewer": "subagent:gpt-5.5-review-5804",
+    "scope": [
+      ".csdlc/issues/5357",
+      ".csdlc/issues/5804",
+      ".csdlc/evidence/5804",
+      ".csdlc/prepared/issues/5594/feature_decisions_5594.rb",
+      ".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb",
+      ".csdlc/prepared/issues/5804",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md",
+      "docs/milestones/v0.91.8/review/podcast_launch_5711/README.md"
+    ],
+    "reviewed_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+    "findings": [
+      {
+        "id": "F-5804-1",
+        "severity": "p1",
+        "summary": "The handoff omitted open prerequisite issue #5804 from its dated live issue inventory.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+        "route": null
+      },
+      {
+        "id": "F-5804-2",
+        "severity": "p1",
+        "summary": "The implementation manifest named nonexistent .csdlc/evidence/5342.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+        "route": null
+      },
+      {
+        "id": "F-5804-3",
+        "severity": "p2",
+        "summary": "The validator accepted an inexact corpus count and checked only selected manifest paths.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "The actual independent external review remains intentionally unperformed and owned by open WP-19 issue #5357.",
+      "The dated live issue inventory must be refreshed again immediately before the external packet is sent."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -68,32 +124,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "a25c4b5e6a9dd7e78f0e29e287ffa7d8ba3e12501c972ba71f56300d7b9e3e2c",
+      "values_digest": "c5c76b69948e81451a33fe9f53f26d4ec3182979a2e1790b76bcf7b935ecbaac",
       "rendered_digest": "697fc8c8230bf5281f5bd616a1323cddfbf07f7f8e57e8e164793a20dc6cd494",
       "ast_digest": "a84414bb01e9073443920ce8daf306ab00d709a71b41b807c6423721d7ada3fa"
     },
     "stp": {
-      "values_digest": "b4df911681ae371ec4df905432e758bc2ebc228ae5888772bfad1e27634ac387",
+      "values_digest": "7acdaeb32566cb5ac956db5d673c8702f74ca5b34df5af37ecef312688974b4e",
       "rendered_digest": "8408f8a17301d0f3ccf08ad7610f1976273229aa6ee4590e813326072b389f64",
       "ast_digest": "eb8907db9d1fa989a69cd96537138f32a7fc5db68a40fe7598872cba8c850a5d"
     },
     "spp": {
-      "values_digest": "9c41330d7fce419fa6c30341c1b2a395cbf5d9cd92fc8173e3e71c78994c45da",
+      "values_digest": "264c9cbb5359294bad0ffc292c3e48736365b9008eab1efddf2bd3643348fca1",
       "rendered_digest": "2da814930bb78e4bee4869a2c53ef83c9e8189b07b0d223b246d5cb93d734c0b",
       "ast_digest": "a4c44160909d02d2105d17bc3f3e923e89c40622e85d216dcb42e1c6b23d5c56"
     },
     "vpp": {
-      "values_digest": "26d320e01290430a5210725c3426a02acdfabd2fd5a45c26c07a16b5dfd1f322",
+      "values_digest": "8f774045406d127b67627072d482dd569521df2b17fbd5d9d68f484360974acb",
       "rendered_digest": "25efb7d104a22446048bacb79c7c8bf154dd2df6e408c1468c87f98a0782a1f3",
       "ast_digest": "bee3eb4a89a1657ec576d45ec38337a638e778454adf37932201992ce5d824e4"
     },
     "srp": {
-      "values_digest": "cdaef4595298553220b6448844540afac63c796268407f308eb7900695e28aad",
-      "rendered_digest": "8bb6404ed4c6ae07f2cf7047ab5ac613fa89e46389777801d39bb7a3f67ecbc6",
-      "ast_digest": "ffd9a3316dbc9cca0631f300ce81555704a3d62d967255d4b7583208be47e397"
+      "values_digest": "0d5ab35a9771ffe07a8c42effd9d5f64043ae633d1d49282b4f557f586275d35",
+      "rendered_digest": "d18e9d31831ddca9cfc5af26cc709330ed5d2076fb30690b8e9b675a699750b4",
+      "ast_digest": "b1419cd2922e98303eb56d4a81fefcb915393ea29820798c930c68bae24c1111"
     },
     "sor": {
-      "values_digest": "f3ee7fa10b8cbdcceca16a77128e0b20fb00db0955ce4750b42611480eeb2ffa",
+      "values_digest": "3b47bedd82755ff320e507f777139f4337ce63818f29ef842cb480589993e232",
       "rendered_digest": "e91891c6947665d6b67b9d9058711c8bbe3cc4df223a17166511f1c6f6bfacd8",
       "ast_digest": "159eb236306c4c0999636ba993d0d88b92aaf981abd7402255e2b5f563aee2b2"
     }
@@ -119,6 +175,13 @@
       "to": "implemented",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The bounded repair and all three typed validation lanes are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact remediation review passed with all findings fixed and zero blockers."
     }
   ],
   "audit": [
@@ -219,6 +282,20 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "assign bounded exact-revision review",
       "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 8,
+      "actor": "subagent:gpt-5.5-review-5804",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact remediation review passed with all findings fixed and zero blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
     }
   ]
 }

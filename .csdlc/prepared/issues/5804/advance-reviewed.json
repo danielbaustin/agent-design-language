@@ -1,0 +1,13 @@
+{
+  "issue": 5804,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "4d7d0112bb20a6ef9122d2deb63056d5b7b6efc73a9c49056133c3e420a11e80",
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact remediation review passed with all findings fixed and zero blockers.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

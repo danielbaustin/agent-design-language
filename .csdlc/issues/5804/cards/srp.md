@@ -34,7 +34,38 @@ docs/milestones/v0.91.8/review/podcast_launch_5711/README.md
 
 ## Findings
 
-[]
+[
+  {
+    "id": "F-5804-1",
+    "severity": "p1",
+    "summary": "The handoff omitted open prerequisite issue #5804 from its dated live issue inventory.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+    "route": null
+  },
+  {
+    "id": "F-5804-2",
+    "severity": "p1",
+    "summary": "The implementation manifest named nonexistent .csdlc/evidence/5342.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+    "route": null
+  },
+  {
+    "id": "F-5804-3",
+    "severity": "p2",
+    "summary": "The validator accepted an inexact corpus count and checked only selected manifest paths.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+    "route": null
+  }
+]
 
 ## Dispositions
 
@@ -42,12 +73,13 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- The actual independent external review remains intentionally unperformed and owned by open WP-19 issue #5357.
+- The dated live issue inventory must be refreshed again immediately before the external packet is sent.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c")
 
-Reviewer: None
+Reviewer: Some("subagent:gpt-5.5-review-5804")
 
-Result: pre_review
+Result: pass

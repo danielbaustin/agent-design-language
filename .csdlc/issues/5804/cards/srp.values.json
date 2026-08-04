@@ -7,23 +7,57 @@
     "title": "[v0.91.8][docs][external-review] Repair final handoff packet readiness before WP-19 review",
     "slug": "external-review-doc-readiness",
     "version": "v0.91.8",
-    "generation": 7
+    "generation": 9
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
       "review_scope": ".csdlc/issues/5357\n.csdlc/issues/5804\n.csdlc/evidence/5804\n.csdlc/prepared/issues/5594/feature_decisions_5594.rb\n.csdlc/prepared/issues/5594/validate_feature_crosswalk.rb\n.csdlc/prepared/issues/5804\ndocs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md\ndocs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md\ndocs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md\ndocs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json\ndocs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md\ndocs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md\ndocs/milestones/v0.91.8/review/podcast_launch_5711/README.md",
-      "review_revision": null,
-      "reviewer": null,
+      "review_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+      "reviewer": "subagent:gpt-5.5-review-5804",
       "review_prompts": [
         "Does the manifest cover real landed implementation and proof rather than docs-only placeholders?",
         "Are live state and historical snapshots distinguished correctly?",
         "Can an external reviewer use the packet without machine-local paths?"
       ],
-      "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "findings": [
+        {
+          "id": "F-5804-1",
+          "severity": "p1",
+          "summary": "The handoff omitted open prerequisite issue #5804 from its dated live issue inventory.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+          "route": null
+        },
+        {
+          "id": "F-5804-2",
+          "severity": "p1",
+          "summary": "The implementation manifest named nonexistent .csdlc/evidence/5342.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+          "route": null
+        },
+        {
+          "id": "F-5804-3",
+          "severity": "p2",
+          "summary": "The validator accepted an inexact corpus count and checked only selected manifest paths.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "The actual independent external review remains intentionally unperformed and owned by open WP-19 issue #5357.",
+        "The dated live issue inventory must be refreshed again immediately before the external packet is sent."
+      ],
+      "review_result": "pass"
     }
   }
 }
