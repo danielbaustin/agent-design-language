@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-20] Remediate review findings and run release preflight",
     "slug": "v0918-wp20-remediation-release-preflight",
     "version": "v0.91.8",
-    "generation": 6
+    "generation": 7
   },
   "status": "pre_phase",
   "content": {
@@ -49,8 +49,8 @@
           "evidence_ref": "PDF SHA-256 b1741fb24d0627ccf3d7875168f54cc9b7c558a186efc267800612a6af2748f5 and 10841 bytes; markdown links ok; eligibility denominator paths=58 loc=46358; post-deletion status=pass retained=0 denominator=46358; WP_ISSUE_WAVE YAML ok; git diff --check clean; csdlc-doctor issue 5363 status=pass phase=bound"
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
+      "integration_state": "pr_open",
+      "publication_state": "ready",
       "merge_state": "not_merged",
       "closeout_state": "not_started",
       "follow_ups": []

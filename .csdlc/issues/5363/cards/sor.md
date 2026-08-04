@@ -56,11 +56,11 @@ Retained the exact WP-19 external-review PDF, routed all three actionable findin
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 

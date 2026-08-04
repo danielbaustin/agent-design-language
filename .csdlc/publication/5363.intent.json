@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5363,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5363-v0918-preparation",
+  "title": "[v0.91.8][WP-20] Resolve external-review findings",
+  "body": "Closes #5357\nCloses #5363\n\n## Summary\n- retains the operator-supplied WP-19 external-review PDF byte-for-byte under the v0.91.8 review evidence tree\n- records all three blocked-review findings in a publication-safe WP-19 findings register and a WP-20 remediation register\n- corrects v0.91.8 review, release-note, deletion/cutover, handoff, and README status from unsent/ready to blocked-findings-remediated\n- replaces the deletion-denominator shorthand with independent eligibility-manifest accounting and narrows the code-reduction claim to the proven manifest scope\n- keeps release approval explicitly unclaimed; this closes WP-19 as findings-retained/routed and WP-20 as remediation complete\n\n## Validation\n- PDF SHA-256 and byte count verified: b1741fb24d0627ccf3d7875168f54cc9b7c558a186efc267800612a6af2748f5, 10841 bytes\n- v0.91.8 review Markdown links passed for the new retained evidence surfaces\n- deletion denominator independently verified from the eligibility manifest: 58 paths, 46,358 physical LOC, retained=0\n- WP_ISSUE_WAVE_v0.91.8.yaml parsed with Ruby YAML.safe_load\n- git diff --check passed\n- csdlc-doctor --repo . --issue 5363 passed at reviewed phase\n- csdlc-review guard passed for the reviewed remediation commit plus metadata-only review drift\n\n## Review\n- bounded subagent review: subagent:avicenna-019fcdfb-5363\n- findings fixed: missing tracked artifact evidence; handoff non-claim wording\n- retained residual: rendered SOR status line remains pre_phase because typed csdlc-edit rejects SOR mutation during implemented; index.json and csdlc-doctor are authoritative and pass, and the card was not hand-patched\n\nNo AWS was used. No release approval is claimed by this PR.",
+  "draft": false,
+  "revision": "git-blake3:67595031eef10479aa1550603c40d284bafc98c4:c56d47213b73ed22af55070de6704f34e0bb58da27b1e493fd5271ef00d99e29",
+  "commit_sha": "67595031eef10479aa1550603c40d284bafc98c4"
+}

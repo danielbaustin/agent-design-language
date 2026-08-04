@@ -10,3 +10,4 @@
 {"sequence":10,"generation":5,"actor":"codex:wp20-5363-remediation-owner","reason":"The bounded WP-20 external-review remediation docs and focused validation are implemented.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"}
 {"sequence":11,"generation":5,"actor":"codex:wp20-5363-remediation-owner","reason":"Retaining the exact external-review PDF requires Git to treat PDF artifacts as binary so diff hygiene does not inspect internal PDF bytes as text.","operation":"{\"add_protected_paths\":[\".gitattributes\"],\"operation\":\"amend_claim_scope\"}"}
 {"sequence":12,"generation":6,"actor":"subagent:avicenna-019fcdfb-5363","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
+{"sequence":13,"generation":7,"actor":"codex:wp20-5363-remediation-owner","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
