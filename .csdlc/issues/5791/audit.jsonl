@@ -16,3 +16,8 @@
 {"sequence":16,"generation":5,"actor":"codex:5791-review","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":17,"generation":6,"actor":"codex:5791-review","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
 {"sequence":18,"generation":7,"actor":"codex:5791-review","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":19,"generation":8,"actor":"codex:5791-review","reason":"PR #5799 exact-head coverage aggregate exposed active Rust package manifests still reporting 0.91.7 during the v0.91.8 review tail; recover publication for a bounded version-truth fix.","operation":"recover_review"}
+{"sequence":20,"generation":8,"actor":"codex:5791-review","reason":"The v0.91.8 WP-18 review tail exposed active Rust package manifests and lockfiles still reporting 0.91.7; protect the package metadata before the bounded version-truth fix.","operation":"{\"add_protected_paths\":[\"adl/Cargo.toml\",\"adl/Cargo.lock\",\"adl-runtime/Cargo.toml\",\"adl-runtime/Cargo.lock\",\"tools/aws_remote_validation/Cargo.toml\",\"tools/aws_remote_validation/Cargo.lock\"],\"operation\":\"amend_claim_scope\"}"}
+{"sequence":21,"generation":8,"actor":"codex:5791-review","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":22,"generation":9,"actor":"codex:5791-review","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
+{"sequence":23,"generation":10,"actor":"codex:5791-review","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}

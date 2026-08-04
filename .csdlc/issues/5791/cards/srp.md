@@ -12,8 +12,12 @@ Status: draft
 
 ## Scope
 
-csdlc-v2/src/review.rs
-csdlc-v2/tests/gate5.rs
+adl/Cargo.toml
+adl/Cargo.lock
+adl-runtime/Cargo.toml
+adl-runtime/Cargo.lock
+tools/aws_remote_validation/Cargo.toml
+tools/aws_remote_validation/Cargo.lock
 
 ## Prompts
 
@@ -26,13 +30,13 @@ csdlc-v2/tests/gate5.rs
 
 [
   {
-    "id": "IR5791-05",
+    "id": "IR5791-06",
     "severity": "p1",
-    "summary": "Assigned review evidence recorded a passing review but left the issue in implemented phase, blocking typed publication.",
+    "summary": "Active Rust package manifests and lockfiles still reported 0.91.7 during v0.91.8 WP-18 review.",
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:9065ae9d1d5d0b00c70865c42de24bf39678efbc:55be1c3cb3465b2c86ee76c750c97f6b253a84b3f81e218920e6747bb213f7dc",
+    "fix_revision": "git-blake3:e4ee565c98a5cce14afc6ec3b4e5cf3f9c394863:0cb36cefd88fbc7363e2b5bb78e634bef28127bae2696dc275b2b4d65ba6e4d4",
     "route": null
   }
 ]
@@ -43,12 +47,12 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- The PR still needs exact-head GitHub CI completion after republishing/reconciling lifecycle state.
+- WP-17 package-version alignment was missed before WP-18; #5801 tracks CI/lifecycle simplification separately.
 
 ## Review Result
 
-Revision: Some("git-blake3:9065ae9d1d5d0b00c70865c42de24bf39678efbc:55be1c3cb3465b2c86ee76c750c97f6b253a84b3f81e218920e6747bb213f7dc")
+Revision: Some("git-blake3:e4ee565c98a5cce14afc6ec3b4e5cf3f9c394863:0cb36cefd88fbc7363e2b5bb78e634bef28127bae2696dc275b2b4d65ba6e4d4")
 
-Reviewer: Some("codex-current-head-assigned-review-fix-review")
+Reviewer: Some("codex-version-truth-review")
 
 Result: pass

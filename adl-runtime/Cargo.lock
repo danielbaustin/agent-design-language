@@ -12,7 +12,7 @@ dependencies = [
 
 [[package]]
 name = "adl-runtime"
-version = "0.91.7"
+version = "0.91.8"
 dependencies = [
  "adl-resilience",
  "adl-runtime-kernel",

@@ -1,6 +1,6 @@
 [package]
 name = "adl-runtime"
-version = "0.91.7"
+version = "0.91.8"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "CSM runtime contracts and component topology for ADL"
