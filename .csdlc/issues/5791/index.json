@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "ea470dd9f99634977909a2bd68cfd3f66cfb924e95fe17b2616ec51caa4cb3cb",
   "phase": "implemented",
-  "generation": 4,
-  "digest": "3ced7eed78537379e1f54834d830962c4a7448cf784fae8a224bef28d654754e",
+  "generation": 5,
+  "digest": "107975601b6ccafa73628f980a53c8f753afecb7c2f527925d53cf19381c21f8",
   "claim": {
     "id": "claim-5791-wp18-final-internal-review-second-pass",
     "owner": "codex:5791-review",
-    "generation": 4,
+    "generation": 5,
     "acquired_unix_seconds": 1785801653,
     "expires_unix_seconds": 1785830453,
     "heartbeat_unix_seconds": 1785801653,
@@ -38,8 +38,46 @@
     ],
     "purpose": "Run #5791 WP-18 final internal review second pass."
   },
-  "review_assignment": null,
-  "review": null,
+  "review_assignment": {
+    "reviewer": "codex-current-head-ci-recovery-review",
+    "assigned_by": "codex:5791-review",
+    "revision": "git-blake3:3f26b4db01d3cba21c6e13708b8a5d6d8ced188c:bfe7b202ddee6cf4b38ae0179edcb6cb3fc1cd9ee45b9f3df8beb9d9a6a01b3c",
+    "scope": [
+      ".csdlc/issues/5791",
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/test_run_cargo_validation.sh",
+      "csdlc-v2/tests/gate_terminal_authority_deletion.rs",
+      "docs/reviews/v0.91.8/internal-review-5791"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-current-head-ci-recovery-review",
+    "scope": [
+      ".csdlc/issues/5791",
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/test_run_cargo_validation.sh",
+      "csdlc-v2/tests/gate_terminal_authority_deletion.rs",
+      "docs/reviews/v0.91.8/internal-review-5791"
+    ],
+    "reviewed_revision": "git-blake3:3f26b4db01d3cba21c6e13708b8a5d6d8ced188c:bfe7b202ddee6cf4b38ae0179edcb6cb3fc1cd9ee45b9f3df8beb9d9a6a01b3c",
+    "findings": [
+      {
+        "id": "IR5791-04",
+        "severity": "p1",
+        "summary": "PR #5799 CI failed because run_cargo_validation required --locked for cargo fmt, but cargo fmt does not support --locked.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:3f26b4db01d3cba21c6e13708b8a5d6d8ced188c:bfe7b202ddee6cf4b38ae0179edcb6cb3fc1cd9ee45b9f3df8beb9d9a6a01b3c",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "The PR still needs exact-head GitHub CI after republishing."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -54,32 +92,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "ce8872051bf6ba389ba849d3c658974b32d221064076c0a71bcf9faafa2bb455",
+      "values_digest": "4ebfb5e2b0f899f3c429755380c00882de79db7ae23575c8aea69b6137b1e409",
       "rendered_digest": "db7d8c4866a047150bbf16b86078d5511be83f3be909e09f629b2ea0a3ecd76e",
       "ast_digest": "a0a98b88001bfaa813d9aa4f8e470e8f0badbba595920d9f5da09f22e8af06f2"
     },
     "stp": {
-      "values_digest": "ffe69cd82b3948024a289a65b773fe005e2673e8d02f7bdfd59fe82606c2788e",
+      "values_digest": "adfc7275c5e7896c9d9c2263aff17899c7e73794721f5c4b71c89a5610311277",
       "rendered_digest": "d6b23b788d0dc50b5b4e0ef0be9c258d68ee775db5b16f71720f4e08d9436ee4",
       "ast_digest": "49f757aaffeaf4448cb0ecf18eedf8b8c90314fcf362313209d7f663719d97a8"
     },
     "spp": {
-      "values_digest": "7aab6f6375f2654c27cd956c2ec5ad161f896e781855b37d27f58851ab3b7631",
+      "values_digest": "a2dc87cbe108c2b56361889896c38e9ba4982664d68f58a39d26de537220712e",
       "rendered_digest": "341ae9efdf018bf6b01ca0de5dfb5c1a36f5c339119825ef4285a444a81297b9",
       "ast_digest": "3714d026fc940f360a1257792ee820a97049895f52980e2d6e1a6696fa9a4303"
     },
     "vpp": {
-      "values_digest": "60cf75797e348997b7f2e9910957388965d5092cd465d98a3ccf6db67fee281b",
+      "values_digest": "9289581aa296f7be16f657b35a71fbf119ecab386b391bdc81a458443d161eaa",
       "rendered_digest": "d99e8fa0195fc2cf10cc89f1b7a0323d19dabeffe956a41e853b04a36afceca8",
       "ast_digest": "d30a04d78506f152f0b77d3d0b7367cd1f5e2ecdafa3385c00b7574ff909bb40"
     },
     "srp": {
-      "values_digest": "cf05c0889b0668ce216a7cbe4c88699d1c48adebb2dd2042a9d9291373b7382e",
-      "rendered_digest": "9f14ff47f7010f73c3c3eea078ed3443761efc3d212c9df2ee09cddbccac6e56",
-      "ast_digest": "cec121af187f416944d2b7bdc727758c4fe386da529a6fb90b4ad605bfa67af5"
+      "values_digest": "b38fe225ada9832249160faeb88762043a02af7fda1c286e491f6751624e4035",
+      "rendered_digest": "dcc868c8355eccc0d7dc7e2c014446d0a9be20462ea6781ca3f30293712c0aa3",
+      "ast_digest": "8318e62851fa5e49498fbe6b544d21bba66a571e44f71c67205dc65c1b9d729e"
     },
     "sor": {
-      "values_digest": "ff0b664d4b26c0378c23586029ccbe82250f0b0e0e3425cd0d6849a6e1afd4b7",
+      "values_digest": "36878da1eb654776e4982255d03a32d578956797d8a09c8256a69f6531a1a15d",
       "rendered_digest": "043a4a75ae378225be6a0e9b703abf574f078431de39b290667c3cacb53343e5",
       "ast_digest": "027f937815848cdb95d9685ca3da30e3211a286b3a0e145a10079de924523234"
     }
@@ -212,6 +250,20 @@
       "actor": "codex:5791-review",
       "reason": "Add focused regression coverage for the cargo validation wrapper rule that cargo fmt is lock-guarded but cannot use --locked, while other cargo commands remain rejected without --locked.",
       "operation": "{\"add_protected_paths\":[\"adl/tools/test_run_cargo_validation.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 4,
+      "actor": "codex:5791-review",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 5,
+      "actor": "codex:5791-review",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
     }
   ]
 }

@@ -7,24 +7,37 @@
     "title": "[v0.91.8][WP-18][review] Run final internal review second pass after residual coding",
     "slug": "wp18-final-internal-review-second-pass",
     "version": "v0.91.8",
-    "generation": 4
+    "generation": 5
   },
   "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": ".csdlc/issues/5791\nadl/tools/run_cargo_validation.sh\nadl/tools/test_run_cargo_validation.sh\ncsdlc-v2/tests/gate_terminal_authority_deletion.rs\ndocs/reviews/v0.91.8/internal-review-5791",
+      "review_revision": "git-blake3:3f26b4db01d3cba21c6e13708b8a5d6d8ced188c:bfe7b202ddee6cf4b38ae0179edcb6cb3fc1cd9ee45b9f3df8beb9d9a6a01b3c",
+      "reviewer": "codex-current-head-ci-recovery-review",
       "review_prompts": [
         "Does the review corpus include issues closed since the prior WP-18 review?",
         "Does the review inspect actual code and validation surfaces?",
         "Are findings deduplicated and evidence-bound?",
         "Are release-readiness claims supported by exact current evidence?"
       ],
-      "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "findings": [
+        {
+          "id": "IR5791-04",
+          "severity": "p1",
+          "summary": "PR #5799 CI failed because run_cargo_validation required --locked for cargo fmt, but cargo fmt does not support --locked.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:3f26b4db01d3cba21c6e13708b8a5d6d8ced188c:bfe7b202ddee6cf4b38ae0179edcb6cb3fc1cd9ee45b9f3df8beb9d9a6a01b3c",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "The PR still needs exact-head GitHub CI after republishing."
+      ],
+      "review_result": "pass"
     }
   }
 }
