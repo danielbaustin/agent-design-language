@@ -68,11 +68,11 @@ Fixed the stale open-issue inventory, removed the nonexistent #5342 evidence pat
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 
