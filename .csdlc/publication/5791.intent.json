@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5791,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5791-wp18-final-review-second-pass",
+  "title": "[v0.91.8][WP-18] Complete internal review second pass",
+  "body": "## Summary\n\n- completes the #5791 WP-18 second-pass internal review packet for v0.91.8 changes since the prior WP-18 review\n- fixes active docs/helpers/tests that still referenced deleted C-SDLC closeout commands\n- verifies the stable C-SDLC v2 binary set now installs and verifies from the exact PR head\n\n## Validation\n\n- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate_terminal_authority_deletion`\n- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate4 routine_lifecycle_contract_measures_four_commands_and_two_artifacts`\n- `bash adl/tools/test_closeout_completed_issue_wave.sh`\n- `bash adl/tools/test_editor_action.sh`\n- `bash adl/tools/test_generate_active_command_reference_scan.sh`\n- `csdlc-install verify` against `.adl/bin/csdlc-v2`\n\nCloses #5791\n",
+  "draft": true,
+  "revision": "git-blake3:c1133d234155464d68c94b9b771e176d36a2ef0c:382bc6fe5cd6f6f9b3a83942fae3aab90f699b28dd64f095a31f09a86aa326c8",
+  "commit_sha": "c1133d234155464d68c94b9b771e176d36a2ef0c"
+}
