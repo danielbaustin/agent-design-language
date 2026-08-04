@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5804/diagram.mmd
 [
   {
     "lane": "review-corpus-contract",
-    "proof_role": "Validate the 75-document v0.91.8 corpus, concrete implementation manifest, live issue truth, portable paths, local links, structured files, 122-row feature crosswalk, WP-18 ancestry, and fail-closed undispatched handoff state",
+    "proof_role": "Validate the exact 75-document v0.91.8 corpus, every concrete implementation-manifest path, dated open-issue inventory, portable paths, local links, structured files, 122-row feature crosswalk, WP-18 ancestry, and fail-closed undispatched handoff state",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

@@ -10,19 +10,7 @@ ROOT = Pathname.new(__dir__).join("../../../..").expand_path
 ISSUE = 5804
 MILESTONE = ROOT.join("docs/milestones/v0.91.8")
 HANDOFF = MILESTONE.join("review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md")
-REQUIRED_MANIFEST_PATHS = %w[
-  adl-v2/crates/adl-language
-  adl-v2/crates/adl-compiler
-  csdlc-v2/src
-  csdlc-v2/tests
-  adl-runtime-kernel/src
-  adl-runtime-kernel/tests
-  .csdlc/evidence/5501
-  .csdlc/evidence/5351/csdlc-v2-all-targets.log
-  .csdlc/issues/5778
-  .csdlc/issues/5779
-  .csdlc/issues/5780
-].freeze
+EXPECTED_OPEN_ISSUES = [5348, 5355, 5357, 5359, 5362, 5363, 5595, 5804].freeze
 LOCAL_PATH_PATTERNS = [
   %r{/Volumes/FastWork},
   %r{/private/tmp},
@@ -77,17 +65,25 @@ handoff = HANDOFF.read
   "Implementation And Proof Manifest",
   "Live GitHub truth refreshed on 2026-08-04"
 ].each { |text| assert(handoff.include?(text), "handoff omits required truth: #{text}") }
-%w[#5348 #5355 #5357 #5359 #5362 #5363 #5595].each do |issue|
-  assert(handoff.include?("`#{issue}`"), "handoff omits open issue #{issue}")
+open_issue_block = handoff[/Live GitHub truth refreshed on 2026-08-04:(.*?)(?:\n\n|\z)/m, 1]
+assert(open_issue_block, "handoff lacks dated open-issue inventory")
+documented_open_issues = open_issue_block.scan(/#(\d+)/).flatten.map(&:to_i)
+assert(documented_open_issues == EXPECTED_OPEN_ISSUES, "dated open-issue inventory mismatch: #{documented_open_issues.inspect}")
+
+manifest = handoff[/## Implementation And Proof Manifest(.*?)### WP-16/m, 1]
+assert(manifest, "handoff lacks implementation manifest")
+manifest_paths = manifest.scan(/`([^`]+)`/).flatten.select do |value|
+  value.start_with?(".csdlc/", "adl-v2/", "adl-runtime/", "adl-runtime-kernel/", "csdlc-v2/", "infra/", "demos/")
 end
-REQUIRED_MANIFEST_PATHS.each do |relative|
-  assert(ROOT.join(relative).exist?, "manifest path does not exist: #{relative}")
-  assert(handoff.include?(relative), "handoff manifest omits: #{relative}")
+assert(!manifest_paths.empty?, "implementation manifest contains no repository paths")
+manifest_paths.each do |relative|
+  normalized = relative.sub(%r{/\z}, "")
+  assert(ROOT.join(normalized).exist?, "manifest path does not exist: #{relative}")
 end
 
 corpus = git("ls-files", "docs/milestones/v0.91.8").lines.map(&:strip)
   .select { |path| path.match?(/\.(?:md|ya?ml|json)\z/) }
-assert(corpus.length >= 70, "canonical v0.91.8 document corpus is unexpectedly small")
+assert(corpus.length == 75, "canonical v0.91.8 document corpus count changed: #{corpus.length}")
 corpus.each do |relative|
   path = ROOT.join(relative)
   bytes = path.binread
@@ -105,5 +101,16 @@ assert(system("ruby", ROOT.join(".csdlc/prepared/issues/5594/validate_feature_cr
 assert(system("ruby", ROOT.join(".csdlc/prepared/issues/5594/validate_links.rb").to_s, chdir: ROOT.to_s), "milestone link validation failed")
 assert(system("git", "-C", ROOT.to_s, "diff", "--check"), "git diff hygiene failed")
 assert(system("git", "-C", ROOT.to_s, "merge-base", "--is-ancestor", "1b1ba9990bee81cf74ea449f09c52373aeb7e16c", "HEAD"), "merged #5791 is not ancestral")
+
+if ENV["ADL_VERIFY_LIVE_GITHUB"] == "1"
+  output, status = Open3.capture2e(
+    "gh", "issue", "list", "--state", "open", "--label", "version:v0.91.8",
+    "--limit", "100", "--json", "number"
+  )
+  assert(status.success?, "live GitHub issue query failed: #{output.strip}")
+  live_open_issues = JSON.parse(output).map { |entry| entry.fetch("number") }.sort
+  assert(live_open_issues == EXPECTED_OPEN_ISSUES, "live open-issue inventory mismatch: #{live_open_issues.inspect}")
+  puts "live GitHub open-issue inventory: PASS"
+end
 
 puts "review corpus validation: PASS (#{corpus.length} documents)"

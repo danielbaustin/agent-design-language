@@ -266,7 +266,7 @@ descendants.
 
 | Surface | Landed implementation and tests | Review evidence and issue truth |
 | --- | --- | --- |
-| ADL v2 language, compiler, engine, records, adapters, and CLI | `adl-v2/crates/adl-language/`, `adl-v2/crates/adl-compiler/`, `adl-v2/crates/adl-engine/`, `adl-v2/crates/adl-records/`, `adl-v2/crates/adl-adapters/`, `adl-v2/crates/adl-runtime-v3-adapter/`, and `adl-v2/crates/adl-cli/` | `.csdlc/evidence/5339/implementation-validation/`, `.csdlc/evidence/5340/engine-focused/`, `.csdlc/evidence/5341/`, `.csdlc/evidence/5342/`, and `.csdlc/evidence/5354/convergence-proof.v1.json`; terminal issue records under `.csdlc/issues/5338/` through `.csdlc/issues/5342/` |
+| ADL v2 language, compiler, engine, records, adapters, and CLI | `adl-v2/crates/adl-language/`, `adl-v2/crates/adl-compiler/`, `adl-v2/crates/adl-engine/`, `adl-v2/crates/adl-records/`, `adl-v2/crates/adl-adapters/`, `adl-v2/crates/adl-runtime-v3-adapter/`, and `adl-v2/crates/adl-cli/` | `.csdlc/evidence/5339/implementation-validation/`, `.csdlc/evidence/5340/engine-focused/`, `.csdlc/evidence/5341/`, and `.csdlc/evidence/5354/convergence-proof.v1.json`; terminal issue records under `.csdlc/issues/5338/` through `.csdlc/issues/5342/` |
 | C-SDLC v2 typed lifecycle | `csdlc-v2/src/`, `csdlc-v2/tests/`, and `csdlc-v2/operator/skills/` | `.csdlc/evidence/5351/csdlc-v2-all-targets.log`; issue records `.csdlc/issues/5358/`, `.csdlc/issues/5540/`, `.csdlc/issues/5541/`, `.csdlc/issues/5548/`, `.csdlc/issues/5558/`, `.csdlc/issues/5737/`, `.csdlc/issues/5778/`, `.csdlc/issues/5779/`, and `.csdlc/issues/5780/` record acceptance and corrective truth |
 | Runtime v3 kernel, guardian, protocols, state, and Observatory API | `adl-runtime-kernel/src/`, `adl-runtime-kernel/tests/`, `adl-runtime/src/`, `adl-runtime/tests/`, `infra/runtime-v3/`, and `demos/html-observatory/` | `.csdlc/evidence/5361/`, [runtime_v3_acceptance_5361.v1.json](runtime_v3_acceptance_5361.v1.json), `.csdlc/evidence/5698/`, `.csdlc/evidence/5701/`, `.csdlc/evidence/5713/`, and issue records `.csdlc/issues/5589/`, `.csdlc/issues/5590/`, `.csdlc/issues/5591/`, `.csdlc/issues/5592/`, `.csdlc/issues/5722/` |
 | Distributed C-SDLC workcell | `adl-v2/crates/adl-workcell-conductor/`, `adl-v2/crates/adl-workcell-task-adapter/`, and `adl-v2/crates/adl-workcell-convergence/` | `.csdlc/evidence/5501/retained-live-proof.json`, `.csdlc/evidence/5501/live-run-manifest.json`, and the WP-10A issue records named by [../WP_ISSUE_WAVE_v0.91.8.yaml](../WP_ISSUE_WAVE_v0.91.8.yaml) |
@@ -299,8 +299,8 @@ Before send, refresh:
 - focused validation from [../CANONICAL_DOC_INVENTORY_v0.91.8.md](../CANONICAL_DOC_INVENTORY_v0.91.8.md).
 
 Live GitHub truth refreshed on 2026-08-04: the open `version:v0.91.8` issues are
-`#5348`, `#5355`, `#5357`, `#5359`, `#5362`, `#5363`, and sprint umbrella
-`#5595`. All other issue inputs named by the implementation manifest are closed
+`#5348`, `#5355`, `#5357`, `#5359`, `#5362`, `#5363`, sprint umbrella
+`#5595`, and prerequisite repair `#5804`. All other issue inputs named by the implementation manifest are closed
 or retained historical evidence unless a later live refresh says otherwise.
 
 ## Required Review Questions

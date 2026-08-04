@@ -12,7 +12,7 @@ Status: pre_phase
 
 ## Summary
 
-Repaired the final v0.91.8 external-review handoff and current milestone truth without performing the review or closing WP-19 #5357.
+Fixed the stale open-issue inventory, removed the nonexistent #5342 evidence path, and strengthened the corpus validator to prove its exact claims.
 
 ## Artifacts
 
@@ -22,6 +22,9 @@ Repaired the final v0.91.8 external-review handoff and current milestone truth w
 - docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md
 - docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json
 - .csdlc/prepared/issues/5804/validate-review-corpus.rb
+- docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md
+- .csdlc/prepared/issues/5804/validate-review-corpus.rb
+- .csdlc/prepared/issues/5804/validation-request.json
 
 ## Execution
 
@@ -30,6 +33,10 @@ Repaired the final v0.91.8 external-review handoff and current milestone truth w
 - Removed machine-local paths from reusable review and podcast commands.
 - Refreshed the 122-row feature crosswalk digest, line map, and four canonical fields from the current source authority.
 - Added a single issue-local validator for the complete 75-document review corpus.
+- Added open prerequisite issue #5804 to the dated v0.91.8 inventory.
+- Removed nonexistent .csdlc/evidence/5342 while retaining the real terminal issue record.
+- Required exactly 75 documents and swept every backticked repository path in the implementation manifest.
+- Added optional live GitHub comparison and narrowed the offline typed lane to the dated inventory it actually proves.
 
 ## Validation
 
@@ -45,6 +52,17 @@ Repaired the final v0.91.8 external-review handoff and current milestone truth w
     "purpose": "Prove the review-corpus contract, WP-18 ancestry, and diff hygiene through the issue's typed VPP lanes.",
     "outcome": "passed",
     "evidence_ref": ".csdlc/evidence/5804/validation (three lanes passed)"
+  },
+  {
+    "command": [
+      "env",
+      "ADL_VERIFY_LIVE_GITHUB=1",
+      "ruby",
+      ".csdlc/prepared/issues/5804/validate-review-corpus.rb"
+    ],
+    "purpose": "Prove exact corpus count, complete manifest existence, current live open-issue truth, and all retained documentation contracts after remediation.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5804/validation/review-corpus-contract.log plus live terminal verification"
   }
 ]
 

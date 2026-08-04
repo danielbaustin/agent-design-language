@@ -1,0 +1,18 @@
+{
+  "issue": 5804,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "c324bb2683f6c17e9eb0caf775ceefcf629d83f37e71e44ed6f5b2ceae465551",
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record offline typed validation and live GitHub inventory proof after the review fixes.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["env", "ADL_VERIFY_LIVE_GITHUB=1", "ruby", ".csdlc/prepared/issues/5804/validate-review-corpus.rb"],
+      "purpose": "Prove exact corpus count, complete manifest existence, current live open-issue truth, and all retained documentation contracts after remediation.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5804/validation/review-corpus-contract.log plus live terminal verification"
+    }
+  }
+}

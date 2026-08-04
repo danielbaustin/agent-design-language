@@ -1,11 +1,11 @@
 {
   "issue": 5804,
   "card": "vpp",
-  "expected_generation": 0,
-  "expected_digest": "c79e2ba43dea3463d7e2fc72e5a9d9bef956d082ba06629682d845ff7c66d4dc",
+  "expected_generation": 4,
+  "expected_digest": "6151bd583ac03456c30957008a40fecbbab804e9118779f778c88326e5ca30a4",
   "claim_id": "claim-5804-v0918-external-review-doc-readiness",
   "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-  "reason": "Make the issue-local 75-document corpus validator the typed proof authority for the prerequisite repair.",
+  "reason": "Narrow and strengthen the corpus proof after the exact review findings.",
   "operation": {
     "operation": "replace_validation_lanes",
     "lanes": [
