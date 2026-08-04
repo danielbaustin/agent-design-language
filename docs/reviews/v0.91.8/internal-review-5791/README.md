@@ -21,8 +21,8 @@ since the prior review packet:
 
 The review found one release-blocking tooling truth defect and one release
 evidence risk. The tooling defect was fixed in this issue and re-reviewed at
-`70f4e76509de219ccff6ffb534f9199d74eaece2`; the evidence risk is recorded for
-terminal reconciliation because it spans already-merged issue records.
+`70f4e76509de219ccff6ffb534f9199d74eaece2`; the evidence risk was superseded
+by operator-reported terminal closeout completion for the newly merged issues.
 
 ## Validation
 

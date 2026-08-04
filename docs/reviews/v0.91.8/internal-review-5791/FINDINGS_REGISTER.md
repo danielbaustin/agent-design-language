@@ -40,7 +40,7 @@ Validation:
 - `bash adl/tools/test_editor_action.sh`
 - `bash adl/tools/test_generate_active_command_reference_scan.sh`
 
-## IR5791-02 - P2 - Routed
+## IR5791-02 - P2 - Superseded
 
 Several merged v0.91.8 issue records remain in tracked `published` phase while
 GitHub issue/PR truth is closed/merged, and only a subset has derived-terminal
@@ -59,12 +59,13 @@ Release review surfaces can disagree depending on whether they read live
 GitHub, derived-terminal evidence, or tracked issue records. This does not
 invalidate the source fixes, but it leaves closeout visibility confusing.
 
-Disposition:
+Current disposition:
 
-Routed as terminal reconciliation evidence. This issue fixes the active command
-surface and records the gap; mutating already-merged issue records belongs to
-explicit typed finish/cleanup reconciliation for each affected issue, not a
-manual edit inside the WP-18 review worktree.
+Superseded by operator-reported terminal closeout truth after this finding was
+recorded. Closeout is complete for the six newly merged issues: derived terminal
+authority for #5765 and #5788; #5783, #5784, and #5785 folded into #5778 / PR
+#5782; #5787 folded into #5779. This issue therefore keeps the historical
+observation as review context but does not route additional remediation.
 
 ## IR5791-03 - P1 - Fixed
 
