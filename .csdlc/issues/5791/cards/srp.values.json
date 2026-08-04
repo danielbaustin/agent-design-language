@@ -7,47 +7,24 @@
     "title": "[v0.91.8][WP-18][review] Run final internal review second pass after residual coding",
     "slug": "wp18-final-internal-review-second-pass",
     "version": "v0.91.8",
-    "generation": 3
+    "generation": 4
   },
-  "status": "pre_phase",
+  "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": ".csdlc/issues/5791\n.csdlc/evidence/5791\nadl/tools/attach_post_merge_closeout.sh\nadl/tools/editor_action.sh\nadl/tools/fix_git_main_sync_preserve_local_adl.sh\nadl/tools/generate_active_command_reference_scan.py\nadl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md\nadl/tools/test_closeout_completed_issue_wave.sh\ncsdlc-v2/tests/gate4.rs\ncsdlc-v2/tests/gate_terminal_authority_deletion.rs\ndocs/reviews/v0.91.8/internal-review-5791\ndocs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md\ndocs/tooling/editor/command_adapter.md",
-      "review_revision": "git-blake3:6ff4e2ee24db70941830d354e0fdc04ae404d44b:3edfaf643677fc9bc41bffef201c7b782b23c987e05cb57f0d4a17c407305324",
-      "reviewer": "bounded-subagent-review",
+      "review_scope": "",
+      "review_revision": null,
+      "reviewer": null,
       "review_prompts": [
         "Does the review corpus include issues closed since the prior WP-18 review?",
         "Does the review inspect actual code and validation surfaces?",
         "Are findings deduplicated and evidence-bound?",
         "Are release-readiness claims supported by exact current evidence?"
       ],
-      "findings": [
-        {
-          "id": "IR5791-01",
-          "severity": "p1",
-          "summary": "Active surfaces referenced deleted closeout commands.",
-          "actionable": true,
-          "in_scope": true,
-          "disposition": "fixed",
-          "fix_revision": "git-blake3:6ff4e2ee24db70941830d354e0fdc04ae404d44b:3edfaf643677fc9bc41bffef201c7b782b23c987e05cb57f0d4a17c407305324",
-          "route": null
-        },
-        {
-          "id": "IR5791-03",
-          "severity": "p1",
-          "summary": "Review packet initially recorded a stale review head.",
-          "actionable": true,
-          "in_scope": true,
-          "disposition": "fixed",
-          "fix_revision": "git-blake3:6ff4e2ee24db70941830d354e0fdc04ae404d44b:3edfaf643677fc9bc41bffef201c7b782b23c987e05cb57f0d4a17c407305324",
-          "route": null
-        }
-      ],
-      "residual_risk": [
-        "Terminal reconciliation for newly merged issues was reported complete by the operator while #5791 was in progress; #5791 retains the earlier observation as historical context only."
-      ],
-      "review_result": "pass"
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
     }
   }
 }

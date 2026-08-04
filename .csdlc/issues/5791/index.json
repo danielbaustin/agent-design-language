@@ -3,13 +3,13 @@
   "issue": 5791,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "ea470dd9f99634977909a2bd68cfd3f66cfb924e95fe17b2616ec51caa4cb3cb",
-  "phase": "published",
-  "generation": 3,
-  "digest": "f0bb709969584e03797296ec4c7733a56ba32fbc323f403bbe50489cbd1bfc78",
+  "phase": "implemented",
+  "generation": 4,
+  "digest": "3ced7eed78537379e1f54834d830962c4a7448cf784fae8a224bef28d654754e",
   "claim": {
     "id": "claim-5791-wp18-final-internal-review-second-pass",
     "owner": "codex:5791-review",
-    "generation": 3,
+    "generation": 4,
     "acquired_unix_seconds": 1785801653,
     "expires_unix_seconds": 1785830453,
     "heartbeat_unix_seconds": 1785801653,
@@ -20,12 +20,16 @@
       ".csdlc/issues/5791",
       ".csdlc/locks/5791.lock",
       ".csdlc/prepared/issues/5791",
+      ".github/workflows/ci.yaml",
+      "adl/config/validation_lane_selector.v0.91.6.json",
       "adl/tools/attach_post_merge_closeout.sh",
       "adl/tools/editor_action.sh",
       "adl/tools/fix_git_main_sync_preserve_local_adl.sh",
       "adl/tools/generate_active_command_reference_scan.py",
+      "adl/tools/run_cargo_validation.sh",
       "adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md",
       "adl/tools/test_closeout_completed_issue_wave.sh",
+      "adl/tools/test_run_cargo_validation.sh",
       "csdlc-v2/tests/gate4.rs",
       "csdlc-v2/tests/gate_terminal_authority_deletion.rs",
       "docs/reviews/v0.91.8/internal-review-5791",
@@ -35,63 +39,8 @@
     "purpose": "Run #5791 WP-18 final internal review second pass."
   },
   "review_assignment": null,
-  "review": {
-    "reviewer": "bounded-subagent-review",
-    "scope": [
-      ".csdlc/issues/5791",
-      ".csdlc/evidence/5791",
-      "adl/tools/attach_post_merge_closeout.sh",
-      "adl/tools/editor_action.sh",
-      "adl/tools/fix_git_main_sync_preserve_local_adl.sh",
-      "adl/tools/generate_active_command_reference_scan.py",
-      "adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md",
-      "adl/tools/test_closeout_completed_issue_wave.sh",
-      "csdlc-v2/tests/gate4.rs",
-      "csdlc-v2/tests/gate_terminal_authority_deletion.rs",
-      "docs/reviews/v0.91.8/internal-review-5791",
-      "docs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md",
-      "docs/tooling/editor/command_adapter.md"
-    ],
-    "reviewed_revision": "git-blake3:6ff4e2ee24db70941830d354e0fdc04ae404d44b:3edfaf643677fc9bc41bffef201c7b782b23c987e05cb57f0d4a17c407305324",
-    "findings": [
-      {
-        "id": "IR5791-01",
-        "severity": "p1",
-        "summary": "Active surfaces referenced deleted closeout commands.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:6ff4e2ee24db70941830d354e0fdc04ae404d44b:3edfaf643677fc9bc41bffef201c7b782b23c987e05cb57f0d4a17c407305324",
-        "route": null
-      },
-      {
-        "id": "IR5791-03",
-        "severity": "p1",
-        "summary": "Review packet initially recorded a stale review head.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:6ff4e2ee24db70941830d354e0fdc04ae404d44b:3edfaf643677fc9bc41bffef201c7b782b23c987e05cb57f0d4a17c407305324",
-        "route": null
-      }
-    ],
-    "residual_risks": [
-      "Terminal reconciliation for newly merged issues was reported complete by the operator while #5791 was in progress; #5791 retains the earlier observation as historical context only."
-    ],
-    "completed": true,
-    "non_substantive_proof": null
-  },
-  "publication": {
-    "repository": "danielbaustin/agent-design-language",
-    "issue": 5791,
-    "pull_request": 5799,
-    "url": "https://github.com/danielbaustin/agent-design-language/pull/5799",
-    "base": "main",
-    "head": "codex/5791-wp18-final-review-second-pass",
-    "revision": "git-blake3:c1133d234155464d68c94b9b771e176d36a2ef0c:382bc6fe5cd6f6f9b3a83942fae3aab90f699b28dd64f095a31f09a86aa326c8",
-    "draft": true,
-    "observed_state": "open"
-  },
+  "review": null,
+  "publication": null,
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -105,34 +54,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "a1b98c0d973694a78229b29930a4bb03e585bff4ca1097c0e332fc1aa26c7559",
+      "values_digest": "ce8872051bf6ba389ba849d3c658974b32d221064076c0a71bcf9faafa2bb455",
       "rendered_digest": "db7d8c4866a047150bbf16b86078d5511be83f3be909e09f629b2ea0a3ecd76e",
       "ast_digest": "a0a98b88001bfaa813d9aa4f8e470e8f0badbba595920d9f5da09f22e8af06f2"
     },
     "stp": {
-      "values_digest": "0e9a22751f4718f1b367f251625c0f0da795eef3dfdcc978f273155627e6116e",
+      "values_digest": "ffe69cd82b3948024a289a65b773fe005e2673e8d02f7bdfd59fe82606c2788e",
       "rendered_digest": "d6b23b788d0dc50b5b4e0ef0be9c258d68ee775db5b16f71720f4e08d9436ee4",
       "ast_digest": "49f757aaffeaf4448cb0ecf18eedf8b8c90314fcf362313209d7f663719d97a8"
     },
     "spp": {
-      "values_digest": "f1f72307526607e595ad8e7e325e895dbea72e8cfa95c00b2a474d28059feb24",
+      "values_digest": "7aab6f6375f2654c27cd956c2ec5ad161f896e781855b37d27f58851ab3b7631",
       "rendered_digest": "341ae9efdf018bf6b01ca0de5dfb5c1a36f5c339119825ef4285a444a81297b9",
       "ast_digest": "3714d026fc940f360a1257792ee820a97049895f52980e2d6e1a6696fa9a4303"
     },
     "vpp": {
-      "values_digest": "1112f8137d0a8040dca25b11bcc055c196aebbb3a14d4d74c91c8f6e69c8d6aa",
+      "values_digest": "60cf75797e348997b7f2e9910957388965d5092cd465d98a3ccf6db67fee281b",
       "rendered_digest": "d99e8fa0195fc2cf10cc89f1b7a0323d19dabeffe956a41e853b04a36afceca8",
       "ast_digest": "d30a04d78506f152f0b77d3d0b7367cd1f5e2ecdafa3385c00b7574ff909bb40"
     },
     "srp": {
-      "values_digest": "a85f8bfdc6c8976562318b1ff9bca8465d0fde70b09e413984da5bf9bdabe68e",
-      "rendered_digest": "b970953a432a44a33113730f93ed6c1fc620e11131cd94282bf1b5bdf2476613",
-      "ast_digest": "7dbac40908b1412c67d437cb750901efb0b68b5274270b7fffecd6908ecaf725"
+      "values_digest": "cf05c0889b0668ce216a7cbe4c88699d1c48adebb2dd2042a9d9291373b7382e",
+      "rendered_digest": "9f14ff47f7010f73c3c3eea078ed3443761efc3d212c9df2ee09cddbccac6e56",
+      "ast_digest": "cec121af187f416944d2b7bdc727758c4fe386da529a6fb90b4ad605bfa67af5"
     },
     "sor": {
-      "values_digest": "c4ea58cebed90ce440394f17d3e8c30019077d568cf1685e15e83ae7b0b9e951",
-      "rendered_digest": "cd1f5fc9ed8b36200d76a882d23417267762806ce05f344bcd9f8b87bf05d3e9",
-      "ast_digest": "5b16d1d87ee8773a30088b72a2ce47f38da7ceede9c2471bdb29fd7ebe37b446"
+      "values_digest": "ff0b664d4b26c0378c23586029ccbe82250f0b0e0e3425cd0d6849a6e1afd4b7",
+      "rendered_digest": "043a4a75ae378225be6a0e9b703abf574f078431de39b290667c3cacb53343e5",
+      "ast_digest": "027f937815848cdb95d9685ca3da30e3211a286b3a0e145a10079de924523234"
     }
   },
   "transitions": [
@@ -170,6 +119,13 @@
       "to": "published",
       "actor": "codex:5791-review",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5791-review",
+      "reason": "PR #5799 exact-head CI failed in csdlc-v2-standalone because the workflow fmt step omitted --locked while run_cargo_validation requires explicit lock posture; recover published review truth for a bounded CI workflow repair and exact-head rereview."
     }
   ],
   "audit": [
@@ -221,6 +177,41 @@
       "actor": "codex:5791-review",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5791-review",
+      "reason": "PR #5799 exact-head CI failed in csdlc-v2-standalone because the workflow fmt step omitted --locked while run_cargo_validation requires explicit lock posture; recover published review truth for a bounded CI workflow repair and exact-head rereview.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 4,
+      "actor": "codex:5791-review",
+      "reason": "PR #5799 exact-head CI failed because the csdlc-v2-standalone workflow fmt step omitted --locked while run_cargo_validation requires explicit lock posture; amend scope before repairing the workflow.",
+      "operation": "{\"add_protected_paths\":[\".github/workflows/ci.yaml\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 4,
+      "actor": "codex:5791-review",
+      "reason": "The validation lane selector carries the same unlocked csdlc-v2 cargo fmt command as the failed CI workflow; amend scope before keeping selector and workflow command truth aligned.",
+      "operation": "{\"add_protected_paths\":[\"adl/config/validation_lane_selector.v0.91.6.json\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 4,
+      "actor": "codex:5791-review",
+      "reason": "The CI failure is caused by run_cargo_validation.sh requiring --locked for cargo fmt even though cargo fmt does not accept that flag; amend scope before repairing the wrapper policy.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/run_cargo_validation.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 4,
+      "actor": "codex:5791-review",
+      "reason": "Add focused regression coverage for the cargo validation wrapper rule that cargo fmt is lock-guarded but cannot use --locked, while other cargo commands remain rejected without --locked.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/test_run_cargo_validation.sh\"],\"operation\":\"amend_claim_scope\"}"
     }
   ]
 }

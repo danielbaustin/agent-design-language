@@ -52,7 +52,7 @@ if [[ $# -eq 0 ]]; then
   exit 2
 fi
 
-if [[ "$(basename "$1")" == "cargo" && "${ADL_ALLOW_CARGO_LOCK_UPDATE:-0}" != "1" ]]; then
+if [[ "$(basename "$1")" == "cargo" && "${2:-}" != "fmt" && "${ADL_ALLOW_CARGO_LOCK_UPDATE:-0}" != "1" ]]; then
   locked=0
   for arg in "$@"; do
     [[ "$arg" == "--locked" ]] && locked=1

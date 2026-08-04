@@ -84,7 +84,9 @@ mkdir -p "$guard_repo/fake-bin"
 cat >"$guard_repo/fake-bin/cargo" <<'EOF_CARGO'
 #!/usr/bin/env bash
 printf 'cargo ran\n' >"$FAKE_RAN"
-printf 'command-created drift\n' >"$TEST_LOCK_PATH"
+if [[ "${1:-}" != "fmt" ]]; then
+  printf 'command-created drift\n' >"$TEST_LOCK_PATH"
+fi
 exit "${FAKE_STATUS:-0}"
 EOF_CARGO
 chmod +x "$guard_repo/fake-bin/cargo"
@@ -104,6 +106,16 @@ fi
   echo "Cargo validation executed cargo before rejecting missing --locked" >&2
   exit 1
 }
+
+(
+  cd "$guard_repo"
+  PATH="$guard_repo/fake-bin:$PATH" \
+    FAKE_RAN="$tmp_dir/fmt-ran" \
+    TEST_LOCK_PATH="$guard_repo/adl/Cargo.lock" \
+    ADL_CARGO_BUILD_ROOT="$guard_build" \
+    bash adl/tools/run_cargo_validation.sh cargo fmt --manifest-path adl/Cargo.toml --all -- --check
+) >/dev/null 2>&1
+grep -Fx 'cargo ran' "$tmp_dir/fmt-ran" >/dev/null
 
 cp "$guard_repo/adl/Cargo.lock" "$tmp_dir/guard-lock.before"
 guard_log="$tmp_dir/guard.log"

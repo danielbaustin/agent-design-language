@@ -41,8 +41,7 @@ fn competing_closeout_binary_and_skill_are_absent() {
             .unwrap();
     let editor_action = fs::read_to_string(root.join("adl/tools/editor_action.sh")).unwrap();
     let operational_skills =
-        fs::read_to_string(root.join("adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md"))
-            .unwrap();
+        fs::read_to_string(root.join("adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md")).unwrap();
     let gate4 = fs::read_to_string(root.join("csdlc-v2/tests/gate4.rs")).unwrap();
     for surface in [
         cargo,
