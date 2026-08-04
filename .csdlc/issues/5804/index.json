@@ -5,7 +5,7 @@
   "initialization_digest": "932947c316eb7c9619b40535e70f3b916e07769661344383a199322633a6c103",
   "phase": "implemented",
   "generation": 4,
-  "digest": "73259e46030334a02430b2aef689aa27430c0972a230d08db0a222576c46dd92",
+  "digest": "6151bd583ac03456c30957008a40fecbbab804e9118779f778c88326e5ca30a4",
   "claim": {
     "id": "claim-5804-v0918-external-review-doc-readiness",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
@@ -33,7 +33,26 @@
     ],
     "purpose": "Repair the final v0.91.8 external-review documentation packet while leaving WP-19 #5357 open for the actual review."
   },
-  "review_assignment": null,
+  "review_assignment": {
+    "reviewer": "subagent:gpt-5.5-review-5804",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:47ce8152e1b4f7f3b794d4ce4dffa4dd3df3b9b6:54c8a685e6202b392f05bc833ce7149e6d52109204aa4796961da42ee7a27455",
+    "scope": [
+      ".csdlc/issues/5357",
+      ".csdlc/issues/5804",
+      ".csdlc/evidence/5804",
+      ".csdlc/prepared/issues/5594/feature_decisions_5594.rb",
+      ".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb",
+      ".csdlc/prepared/issues/5804",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md",
+      "docs/milestones/v0.91.8/review/podcast_launch_5711/README.md"
+    ]
+  },
   "review": null,
   "publication": null,
   "readiness": null,
@@ -69,9 +88,9 @@
       "ast_digest": "3d27ad6d56251b5d5fd3d28588a0cd85b833763c39103d0a5e7e2c06c5ba3f93"
     },
     "srp": {
-      "values_digest": "194ebb2937d8355e9dbb75be0b3dc2c419382c36febb1f939c093e367dba2fef",
-      "rendered_digest": "c67c71ec2778de08dafc5236f2c88dbdff773a3dc5581bae6aea01c8be42b3ed",
-      "ast_digest": "f4c06b6d4571a7a36745e39baad72c4f29b43d07e7c60d4e9f31069c5ac2df9b"
+      "values_digest": "286b2c65c7df5d95ea2d915954921d48e6213bace11979e265411ae8f3af9a91",
+      "rendered_digest": "8bb6404ed4c6ae07f2cf7047ab5ac613fa89e46389777801d39bb7a3f67ecbc6",
+      "ast_digest": "ffd9a3316dbc9cca0631f300ce81555704a3d62d967255d4b7583208be47e397"
     },
     "sor": {
       "values_digest": "479bcf76a9c28e68de94218996f8abd0b3adb32a886e815c676acb4feb102116",
@@ -165,6 +184,13 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Declare the typed #5357 claim-release projection required to leave WP-19 open and unblock its separate documentation repair.",
       "operation": "{\"add_protected_paths\":[\".csdlc/issues/5357\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
     }
   ]
 }
