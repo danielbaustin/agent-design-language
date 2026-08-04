@@ -1,0 +1,100 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5719,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][ci][coverage] Avoid duplicate hosted coverage on podcast/demo page PRs",
+    "slug": "v0-91-8-ci-coverage-avoid-duplicate-hosted-coverage-on-podcast-demo-page-prs",
+    "version": "v0.91.8",
+    "generation": 8
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Add a bounded static podcast/demo path classification, prove #5716-like paths avoid full hosted coverage, preserve producer lanes for behavioral changes, review, and publish.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Inspect current path-policy coverage selection and reproduce a #5716-like changed path set.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Patch the selector with the smallest static podcast/demo classification.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Add focused tests for static podcast/demo paths and Rust/tooling preservation.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Run path-policy, workflow contract, and validation-manager focused checks.",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S5",
+          "action": "Run bounded review, record lifecycle truth, and publish with Closes #5719.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "The aggregator job remains the stable coverage check.",
+        "Full hosted coverage remains fail-closed for source/runtime/provider/tooling-policy changes.",
+        "Static podcast/demo page changes do not pay for duplicate hosted producer coverage."
+      ],
+      "risks": [
+        "Over-broad static classification could skip coverage for code-bearing demo changes.",
+        "Workflow contract assertions could drift from the selector output.",
+        "Policy tests are large and may hide the focused regression if no specific fixture is added."
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "The selector cannot distinguish static podcast/demo files from code-bearing demo/runtime files.",
+        "A workflow contract proves both hosted producer lanes are still selected after the path-policy change.",
+        "A Rust/runtime/provider fixture regresses to skipped coverage."
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5719/retained/design.md",
+      "design_digest": "669865d6d9df6873d4b8b4f54a492499d00d3173912437883abddd0bebee5b35",
+      "diagram_ref": ".csdlc/issues/5719/retained/diagram.mmd",
+      "diagram_digest": "1429f9a11d794b37f2a778dd3691f646b89873013d61a226235092ef77f5cb82"
+    }
+  }
+}

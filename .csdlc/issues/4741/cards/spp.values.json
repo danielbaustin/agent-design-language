@@ -1,0 +1,120 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4741,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][tooling] Make Unity editor liveness and batch proof reliable for deployed observatory",
+    "slug": "v0918-wp15-unity-editor-liveness-batch-proof",
+    "version": "v0.91.8",
+    "generation": 25
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 2,
+      "summary": "Port only the current-base proof wrappers, formalize three execution modes, add deterministic progress/classifier tests, then run one focused live or staged proof and retain exact outcome truth.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Review current wrapper contracts and selectively port mode selection, approved staging, scratch isolation, and progress-watchdog behavior from preserved predecessor work",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-10"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement precise crash, licensing, readonly-progress, idle, and generic external-classifier handoff outcomes without encoding #5332 ILPP signatures or thresholds",
+          "acceptance_ids": [
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-10"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Expand focused no-Unity unit fixtures for mode selection, semantic progress, generic classifier routing, and cleanup",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-6",
+            "AC-7",
+            "AC-8"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Register the issue-owned paths in the validation selector and prove focused lane selection",
+          "acceptance_ids": [
+            "AC-10",
+            "AC-11"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S5",
+          "action": "Update the bounded operator runbook and run one live or staged proof using the selected safe mode",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-9"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S6",
+          "action": "Record bounded review findings and exact proof or blocker truth for WP-15 consumption",
+          "acceptance_ids": [
+            "AC-9",
+            "AC-10",
+            "AC-11"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Only one declared proof mode owns a project directory at a time",
+        "Semantic progress, not elapsed wall-clock alone, governs liveness",
+        "Staging and scratch state remain outside /private/tmp",
+        "Repository binaries remain the operational source of truth",
+        "Preserved predecessor work is not reset, overwritten, or silently absorbed"
+      ],
+      "risks": [
+        "Unity can keep logs active while repeating a non-progress startup loop",
+        "A live editor can own the same project directory targeted by batch mode",
+        "Readonly-database text can precede successful import and must be classified in context",
+        "The older candidate diff contains Unity scene changes outside #4741",
+        "Unity editor paths and installed versions can drift"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 21600,
+        "total_tokens": 80000,
+        "validation_seconds": 3600
+      },
+      "stop_conditions": [
+        "The intended project is already owned and no approved editor-mediated proof exists",
+        "The configured Unity editor is absent or has an unapproved baseline",
+        "Execution requires #4739 MCP internals or #5332 ILPP repair",
+        "The proof requires Unity scene or runtime semantic changes",
+        "Staging cannot be isolated under /Volumes/FastWork or issue-local .adl storage"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/4741/retained/design.md",
+      "design_digest": "087fb3265f17bc8a69e89b4eca87b7bec0c04c26f7ccc39c3bb348c068497b4c",
+      "diagram_ref": ".csdlc/issues/4741/retained/diagram.mmd",
+      "diagram_digest": "c74db180b4891e7b82f8e873817ea8b69591320de04e884841c8c1029779aeac"
+    }
+  }
+}

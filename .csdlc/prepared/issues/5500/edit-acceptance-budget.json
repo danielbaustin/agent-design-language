@@ -1,0 +1,22 @@
+{
+  "issue": 5500,
+  "card": "stp",
+  "expected_generation": 1,
+  "expected_digest": "d88bcf0546b3949dd1a2dd2068206f7eca1fd9713aaa5313f352ff7c72950f5b",
+  "claim_id": "claim-5500-v0918-wp10a-dashboard-preparation",
+  "actor": "codex:issue-5500-preparation",
+  "reason": "Resolve preparation review finding by aligning the complete typed validation envelope with generated VPP truth while preserving the 120-second focused dashboard cap",
+  "operation": {
+    "operation": "replace_acceptance_criteria",
+    "values": [
+      "AC-1: Extend docs/tooling/milestone-dashboard and compose with the existing Runtime v3 Observatory rather than creating another dashboard framework or backend",
+      "AC-2: Render issue/task ownership, claim heartbeat, branch/worktree, lifecycle phase, dependencies, protected paths, PR/check/review state, outputs, blockers, and agent topology from typed bounded inputs",
+      "AC-3: Mark every value live, retained, stale, unknown, blocked, or non-authoritative with source, revision or timestamp, and freshness; missing evidence never becomes green",
+      "AC-4: Remain strictly read-only with zero mutation requests, no hidden authority, no private transcript or secret retention, and authenticated HTTPS-only live Runtime access",
+      "AC-5: Treat all input as untrusted and prove schema/version checks, text-safe rendering, URL/origin restrictions, payload/count limits, timeouts/backoff, and stale downgrade",
+      "AC-6: Work at mobile-sized layouts and pass deterministic retained/live/partial/stale/security fixtures without network access",
+      "AC-7: Stay within 2,000 implementation LoC, 2,000 test/fixture LoC, fewer than 100 focused cases, a 120-second focused dashboard validation cap, a 3,600-second complete typed orchestration envelope, and zero new direct dependencies by default"
+    ]
+  },
+  "fail_after_backup": false
+}

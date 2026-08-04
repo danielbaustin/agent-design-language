@@ -21,7 +21,7 @@ The matrix consumes these landed proof surfaces:
 
 | Surface | Evidence |
 | --- | --- |
-| HTML Observatory integrated proof | `demos/v0.91.7/html-observatory/README.md`; `adl/tools/test_v0917_html_observatory_integrated_proof.sh` |
+| HTML Observatory integrated proof | `demos/html-observatory/README.md`; `adl/tools/test_v0917_html_observatory_integrated_proof.sh` |
 | HTML retained runtime API mirror | `docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/status.json`; `health.json`; `ready.json`; `metrics.json`; `events.json` |
 | HTML runtime/AWS/ACIP evidence | `docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json`; `docs/milestones/v0.91.7/review/runtime/wp08_heartbeat_4684/live_heartbeat_summary.json`; `docs/milestones/v0.91.7/review/runtime/wp08_acip_sns_4685/acip_sns_summary.json` |
 | Unity shell proof | `docs/milestones/v0.91.7/review/unity_observatory_4652/4652-unity-shell-proof-summary.md`; `docs/milestones/v0.91.7/review/unity_observatory_4652/flagship-shell-main-camera-4652.png` |
@@ -42,7 +42,7 @@ python3 -m http.server 8765
 Open the dashboard from the repository root:
 
 ```text
-http://127.0.0.1:8765/demos/v0.91.7/html-observatory/
+http://127.0.0.1:8765/demos/html-observatory/
 ```
 
 Optional live-loopback HTML proof, after installing the stable owner binary:

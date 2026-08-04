@@ -1,0 +1,12 @@
+{
+  "issue": 5499,
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "expected_generation": 10,
+  "expected_digest": "580a1c475ac07ed188b154548eee35e291a6b225bf6b45ac172fbcf85ce66c32",
+  "now_unix_seconds": 1784758813,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "All live merge and ancestry dependencies pass; activate the reviewed isolated conductor product boundary for issue #5499 execution.",
+  "add_protected_paths": [
+    "adl-v2/crates/adl-workcell-conductor"
+  ]
+}

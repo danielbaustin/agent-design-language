@@ -1,0 +1,14 @@
+{
+  "issue": 4761,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "4f0ff8e3d6f29c23aff851a86dba714c84e3fa929aba6ab491eac1e04a09040e",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Capability-envelope artifacts, consumer integration, and focused validation are recorded.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

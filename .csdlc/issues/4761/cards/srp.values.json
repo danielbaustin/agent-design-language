@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4761,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][capability-envelope] Prepare #4761 v0.92 capability envelope",
+    "slug": "v0918-wp14-capability-envelope-prep-4761",
+    "version": "v0.91.8",
+    "generation": 21
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/evidence/4761/capability-envelope\ndocs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md\ndocs/milestones/v0.92/DEMO_MATRIX_v0.92.md\ndocs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
+      "review_revision": "git-blake3:e93b36cc996429783f68ac4bed5365fb30fe3e07:7521d72c060102bcbba651260a2f3ff9eaf83c2e28cb33aa2fc77c3943ba56cc",
+      "reviewer": "codex-review:4761-capability-envelope",
+      "review_prompts": [
+        "Later review should verify that every capability claim maps to retained evidence and unsupported claims are explicit."
+      ],
+      "findings": [],
+      "residual_risk": [
+        "The envelope is a pre-v0.92 consumed input only; downstream birthday/runtime work must still emit its own retained proof before claiming execution completion.",
+        "C-SDLC metadata under .csdlc is lifecycle evidence and is excluded from the v2 substantive Git revision hash by design; it was inspected as part of this bounded review."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "issue": 5347,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "37c884067dcbb5fb4f0c5c41422332b56f944f1ae87327bb2af361b245044ad0",
+  "claim_id": "claim-5347-external-band-deletion",
+  "actor": "codex:5347-execution-owner",
+  "reason": "Record cleaned focused execution validation after removing stale Cargo.lock validation ownership from the issue-local helper.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5347/run-validation-lane.rb",
+        "execution"
+      ],
+      "purpose": "Final cleaned proof that #5347 deletes only manifest-listed obsolete external demo/proof binaries, preserves retained current binaries, has no Cargo.lock diff, does not depend on WP-16 or #5346 terminal closeout, remains disjoint from #5346 reserved core deletion paths, and removes 1476 net lines.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5347/execution-validation/external-band-deletion-cleaned.log"
+    }
+  },
+  "fail_after_backup": false
+}

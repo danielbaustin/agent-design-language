@@ -1,0 +1,29 @@
+{
+  "base_branch": "main",
+  "branch": "codex/5804-v0918-external-review-doc-readiness",
+  "worktree": ".",
+  "issue": 5804,
+  "claim": {
+    "id": "claim-5804-v0918-external-review-doc-readiness",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1785862420,
+    "expires_unix_seconds": 1786467220,
+    "heartbeat_unix_seconds": 1785862420,
+    "branch": "codex/5804-v0918-external-review-doc-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5804",
+      ".csdlc/issues/5804",
+      ".csdlc/locks/5804.lock",
+      ".csdlc/prepared/issues/5804",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md",
+      "docs/milestones/v0.91.8/review/podcast_launch_5711/README.md"
+    ],
+    "purpose": "Repair the final v0.91.8 external-review documentation packet while leaving WP-19 #5357 open for the actual review."
+  }
+}

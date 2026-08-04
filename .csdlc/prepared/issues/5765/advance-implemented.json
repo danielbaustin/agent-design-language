@@ -1,0 +1,11 @@
+{
+  "issue": 5765,
+  "card": "sip",
+  "expected_generation": 1,
+  "expected_digest": "4920fa930c3c5c83d80f2e4c918874df90c19c08d822d631ccd207275456e5fe",
+  "claim_id": "claim-5765-v092-account-migration-scheduling",
+  "actor": "codex:5765",
+  "reason": "The bounded planning-reference edit is implemented; advance to exact validation and review.",
+  "operation": {"operation": "advance_phase", "phase": "implemented"},
+  "fail_after_backup": false
+}

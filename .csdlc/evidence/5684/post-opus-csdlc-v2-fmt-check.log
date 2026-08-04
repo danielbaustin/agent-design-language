@@ -1,0 +1,1 @@
+command: /usr/bin/env ADL_CARGO_BUILD_ROOT=/Volumes/FastWork/cargo-targets/adl-csdlc-install-manifest-ci bash adl/tools/run_cargo_validation.sh cargo fmt --manifest-path csdlc-v2/Cargo.toml --all -- --check

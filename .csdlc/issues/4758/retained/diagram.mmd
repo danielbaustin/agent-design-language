@@ -1,0 +1,18 @@
+flowchart TD
+  Inputs["Exact v0.91.8 inputs and revisions"] --> Dependencies{"#5384 ancestry and WP-20/WP-21 gates"}
+  Dependencies -->|"missing or ambiguous"| Blocked["Blocked; no deferral and no readiness claim"]
+  Dependencies -->|"proved"| Claim["Acquire live typed #4758 execution claim"]
+  Claim --> Paths{"Issue-local paths only"}
+  Paths -->|"scope expands"| Replan["Stop for typed replanning"]
+  Paths -->|"confined"| Bundle[".csdlc/evidence/4758/launch-readiness/"]
+  Bundle --> Manifest["launch-readiness.v1.json"]
+  Bundle --> Support["inputs, review projection, consumption, rollback, validation, review"]
+  Manifest --> PVF{"All required PVF gates pass"}
+  Support --> PVF
+  PVF -->|"fail"| Rollback["Revert unconsumed evidence and verify prior state"]
+  PVF -->|"pass"| Review["Exact-revision execution review"]
+  Review -->|"unresolved finding"| Blocked
+  Review -->|"pass"| Consumer["Release review consumes manifest by exact digest"]
+  Consumer --> Proof["consumption.v1.json proves integration"]
+  Proof -. "non-claim" .-> V092["No v0.92 implementation or public launch"]
+  Receipts["#5335 and closeout receipts"] -. "audit only" .-> Inputs

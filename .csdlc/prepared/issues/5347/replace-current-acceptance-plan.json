@@ -1,0 +1,131 @@
+{
+  "issue": 5347,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "e07908092d059a7ece62ec74401f57e8d144561c97d1719416f237065a0a3c01",
+  "claim_id": "claim-5347-current-preparation-refresh",
+  "actor": "codex:5347-preparation-refresh",
+  "reason": "Refresh #5347 preparation plan to current origin/main truth without deletion or publication authority.",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "AC-1: Deletion execution is not ready until #5346 is GitHub merged, typed closed_out with claim released, backed by a valid retained merged receipt, ancestral to the candidate revision, has an exact reviewed final-core deletion manifest, and the live #5346/#5347 dependency cycle is authoritatively reconciled",
+      "AC-2: Current closed inputs #5343, #5344, #5358, and #5361 remain typed closed_out, claim-free, receipt-backed, and ancestral; any drift blocks execution admission",
+      "AC-3: The current-truth ledger names every external band with accepted owner, typed phase, exact replacement revision where terminal, exact evidence refs, manifest-admission status, retained-file authority, rollback rule, and no-deferral boundary",
+      "AC-4: A future canonically ordered immutable deletion manifest binds each candidate to normalized repo-relative path, baseline object identity, measured lines, capability, authority-rooted reachability, accepted replacement owner, exact revision, terminal receipt, proof references, disposition, and manifest digest",
+      "AC-5: The #5347 manifest has zero canonical path overlap with the exact reviewed #5346 language/compiler/engine/CLI manifest; ambiguous, mixed-owner, nonterminal, or consumer-dependent rows fail closed as blocked",
+      "AC-6: Every delete_external row has accepted replacement behavior and negative proof; every retained row names owner, consumer, rationale, proof role, and sunset condition; missing, stale, metadata-only, GitHub-only, fixture-only, or nonterminal evidence blocks deletion",
+      "AC-7: Product paths are added only by typed claim amendment after manifest freeze, disjointness proof, dependency proof, and review; deletion touches exactly tracked manifest files and rejects traversal, symlink escape, duplicates, submodules, generated output, and untracked files",
+      "AC-8: Focused owner tests, characterization/parity, security/determinism negatives, selector rollback, current CI, consumer reachability, rollback proof, budget accounting, and post-deletion validation pass at exact revisions with deterministic redacted repo-relative evidence and no deferred acceptance",
+      "AC-9: Runtime v2, ADL v2, Runtime v3, C-SDLC v2, #5346 core paths, selector/cutover state, and historical non-executable evidence remain outside #5347 mutation authority",
+      "AC-10: The later implementation reuses Git, typed C-SDLC v2, existing characterization/parity tools, and standard JSON parsing; manifest/gate code stays within 500 nonblank lines, tests/fixtures within 800 lines and fewer than 50 tests, retained evidence within 1,200 lines, focused gates within 120/300 seconds, complete proof within 3,600 seconds, and net source change is negative with separate accounting"
+    ],
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Refresh preparation-only cards, design, current-truth ledger, validators, protected paths, COTS, budgets, PVF, rollback, and no-deferral rules on the local #5347 branch without product deletion, PR, publication, push, merge, or closeout",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-9", "AC-10"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Maintain a read-only dependency watch and reject execution until #5346 terminal closeout, exact #5346 manifest, terminal projection blockers, receipt ancestry, and issue-graph reconciliation all pass",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-5"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Freeze and review exact #5346 and #5347 manifests, prove canonical disjointness, then amend the typed claim with only exact eligible product paths",
+        "acceptance_ids": ["AC-4", "AC-5", "AC-6", "AC-7"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Delete only exact delete_external rows and run every owner, parity, security, rollback, CI, reachability, budget, and evidence-integrity proof without deferral",
+        "acceptance_ids": ["AC-6", "AC-7", "AC-8", "AC-9", "AC-10"],
+        "status": "pending"
+      },
+      {
+        "id": "S5",
+        "action": "After authorized deletion execution only, obtain exact review, publish through typed v2, serialize merge after #5346, run post-merge proof, close out, retain receipt, and release claims",
+        "acceptance_ids": ["AC-1", "AC-4", "AC-5", "AC-6", "AC-7", "AC-8", "AC-9", "AC-10"],
+        "status": "pending"
+      }
+    ],
+    "validation_lanes": [
+      {
+        "lane": "preparation-contract",
+        "proof_role": "Prove six cards, design/diagram, current-truth ledger, exact scope, cycle and terminal gates, disjoint manifest boundary, protected paths, COTS, budgets, PVF, rollback, and no-deferral truth",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-5", "AC-9", "AC-10"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 3000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5347/validate-preparation.rb"],
+        "parallel_group": "preparation",
+        "defer_reason": null
+      },
+      {
+        "lane": "dependency-terminal-gate",
+        "proof_role": "Fail closed unless #5346 and every acceptance/cutover dependency are merged, typed closed_out, receipt-backed, claim-free, ancestral, and the cycle is reconciled",
+        "acceptance_ids": ["AC-1", "AC-2"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 2000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5347/check-dependencies.rb"],
+        "parallel_group": "execution-gate",
+        "defer_reason": "Run at execution admission; expected to fail until #5346 terminal closeout, exact #5346 manifest, and graph reconciliation exist"
+      },
+      {
+        "lane": "manifest-disjointness",
+        "proof_role": "Validate canonical paths, owner/replacement rows, retained rationales, exact receipts, zero #5346 overlap, digest binding, and exact typed product-path claim coverage",
+        "acceptance_ids": ["AC-4", "AC-5", "AC-6", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 3000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5347/run-validation-lane.rb", "manifest-disjointness"],
+        "parallel_group": "eligibility",
+        "defer_reason": "Mandatory after exact manifests exist and before any deletion or product-path claim amendment"
+      },
+      {
+        "lane": "owner-and-consumer-proof",
+        "proof_role": "Run focused accepted-owner tests, characterization/parity, security/determinism negatives, selector rollback, and authoritative consumer reachability proof",
+        "acceptance_ids": ["AC-6", "AC-8", "AC-9"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 300,
+        "budget_tokens": 6000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5347/run-validation-lane.rb", "owner-and-consumer-proof"],
+        "parallel_group": "proof",
+        "defer_reason": "Mandatory at exact deletion revision after dependency and manifest gates pass"
+      },
+      {
+        "lane": "deletion-budgets-and-evidence",
+        "proof_role": "Enforce net-negative source change, separate line accounting, COTS closure, LoC/test/time limits, manifest digest, deterministic evidence, redaction, repo-relative paths, and no-deferral",
+        "acceptance_ids": ["AC-4", "AC-8", "AC-10"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 300,
+        "budget_tokens": 5000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5347/run-validation-lane.rb", "deletion-budgets-and-evidence"],
+        "parallel_group": "evidence",
+        "defer_reason": "Mandatory at exact deletion revision before publication"
+      },
+      {
+        "lane": "post-deletion-exact",
+        "proof_role": "Re-run dependency ancestry, manifest disjointness, owner/consumer tests, parity, security, rollback, CI, reachability, budgets, evidence integrity, and revision identity after serialized merge",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-4", "AC-5", "AC-6", "AC-7", "AC-8", "AC-9", "AC-10"],
+        "deterministic": true,
+        "resource_profile": "large",
+        "budget_seconds": 3600,
+        "budget_tokens": 12000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5347/run-validation-lane.rb", "post-deletion-exact"],
+        "parallel_group": "post-merge",
+        "defer_reason": "Execute only after authorized serialized merge and typed merged-state reconciliation; mandatory before closeout"
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

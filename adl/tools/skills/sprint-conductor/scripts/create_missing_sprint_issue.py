@@ -720,7 +720,7 @@ def main() -> int:
                 'notes': ['Sprint issue created by skill; run live GitHub truth check before the first state transition.'],
             },
             'current_state': {
-                'selected_skill': 'workflow-conductor',
+                'selected_skill': 'pr-ready',
                 'current_phase': 'intake',
                 'blocker_reason': 'none',
             },
@@ -760,7 +760,7 @@ def main() -> int:
                 'status': 'continue',
                 'target_issue_number': ordered[0] if ordered else None,
                 'target_pr_url': None,
-                'next_skill': 'workflow-conductor',
+                'next_skill': 'pr-ready',
                 'child_session_goal': {
                     'required': bool(ordered),
                     'create_after_bind': bool(ordered),
@@ -768,7 +768,7 @@ def main() -> int:
                     'child_issue_number': ordered[0] if ordered else None,
                     'bounded_objective': 'Start the first ordered child issue only after readiness and bind succeed.' if ordered else None,
                 },
-                'rationale': 'Sprint-management issue and SEP bootstrap are complete; continue through workflow-conductor and the readiness sweep before child execution.',
+                'rationale': 'Sprint-management issue and SEP bootstrap are complete; continue through typed v2 readiness before child execution.',
             },
         }
         state_path.parent.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,13 @@
+{
+  "issue": 4739,
+  "expected_generation": 1,
+  "expected_digest": "a0d11de96a4e0d708ed822934c2fab6b7ef39d044bc53ece47cdcf3ae7fa2717",
+  "claim_id": "claim-4739-v0918-wp15-unity-mcp-alignment-prep",
+  "actor": "codex:issue-4739-preparation",
+  "reason": "Reserve focused validation selector registration required by specialist readiness review",
+  "now_unix_seconds": 1784835700,
+  "add_protected_paths": [
+    "adl/config/validation_lane_selector.v0.91.6.json",
+    "adl/tools/test_select_validation_lanes.sh"
+  ]
+}

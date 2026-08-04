@@ -1,0 +1,24 @@
+flowchart TD
+  Runtime["Runtime v3 production assembly"]
+  Agent["Agent local executor"]
+  Shepherd["Shepherd admission executor"]
+  Scheduler["Scheduler bounded state"]
+  Chronosense["Chronosense local time"]
+  Checkpoint["CheckpointStore atomic persistence"]
+  Lifelog["Lifelog redacted append"]
+  Ingress["Canonical ingress"]
+  Evidence["Focused tests and strict Clippy"]
+
+  Runtime --> Agent
+  Runtime --> Shepherd
+  Runtime --> Scheduler
+  Runtime --> Chronosense
+  Runtime --> Checkpoint
+  Runtime --> Lifelog
+  Ingress --> Agent
+  Agent --> Scheduler
+  Agent --> Lifelog
+  Scheduler --> Chronosense
+  Lifelog --> Checkpoint
+  Checkpoint --> Runtime
+  Runtime --> Evidence

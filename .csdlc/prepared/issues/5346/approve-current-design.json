@@ -1,0 +1,7 @@
+{
+  "issue": 5346,
+  "expected_generation": 0,
+  "expected_digest": "237256e4d99782f5535de3f97ccc47707e28e3802b8f8bf59e006c66eb7f3ec6",
+  "claim_id": "claim-5346-v0918-wp13-deletion-preparation-current",
+  "reviewer": "codex:5346-preparation-refresh"
+}

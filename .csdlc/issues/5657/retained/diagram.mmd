@@ -1,0 +1,9 @@
+flowchart LR
+    C[One init file] --> G[Guardian process 0]
+    G --> K[Tokio Axum Rustls kernel]
+    K --> H[/health]
+    K --> O[/ Observatory]
+    K --> F[/v1/observatory feed]
+    K --> W[/v1/observatory/ws authenticated]
+    K --> R[Readiness only after real adapters]
+    G --> S[bounded shutdown and child reap]

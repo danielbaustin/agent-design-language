@@ -1,0 +1,9 @@
+{
+  "issue": 5645,
+  "expected_initialization_digest": "66e6fe21fe3d3c791f480aa47526bc8fa658836c3434693467b04c80c03c40dd",
+  "expected_branch": "codex/5645-terminal-reconcile-current-main",
+  "expected_worktree": "/Volumes/FastWork/adl-wp-5645-terminal-reconcile",
+  "actor": "codex:5645-terminal-reconcile",
+  "reason": "Materialize retained terminal closeout authority from shared receipt into the tracked projection on current main.",
+  "follow_ups": []
+}

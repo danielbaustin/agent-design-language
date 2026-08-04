@@ -1,0 +1,158 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5354,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15] Converge integrated ADL Runtime and C-SDLC demos",
+    "slug": "v0918-wp15-integrated-demo-convergence",
+    "version": "v0.91.8",
+    "generation": 23
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "preparation-contract",
+          "proof_role": "Prove current-registry six cards, reviewed design and diagram, bounded scope, COTS, budgets, PVF, and clean typed doctor truth.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 3000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5354/validate-preparation.rb"
+          ],
+          "parallel_group": "preparation",
+          "defer_reason": null
+        },
+        {
+          "lane": "wp14a-merge-gate",
+          "proof_role": "Fail closed unless #5384 is GitHub merged and closed and its exact merge SHA is ancestral; never require typed closeout.",
+          "acceptance_ids": [
+            "AC-1"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 2000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5354/check-dependencies.rb"
+          ],
+          "parallel_group": "execution-gate",
+          "defer_reason": null
+        },
+        {
+          "lane": "integrated-live-demo",
+          "proof_role": "Prove ADL v2 compile and run, Runtime v3 canonical ingress and live TLS observation, full-duplex WSS, applicable C-SDLC v2 boundaries, and accepted Unity child evidence.",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 900,
+          "budget_tokens": 8000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5354/run-validation-lane.rb",
+            "integrated-live-demo"
+          ],
+          "parallel_group": "demo",
+          "defer_reason": null
+        },
+        {
+          "lane": "claim-boundary-matrix",
+          "proof_role": "Validate retained citations and proven, blocked, deferred, non-applicable, and explicit non-claim dispositions across the convergence packet and v0.91.8 matrices.",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 300,
+          "budget_tokens": 5000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5354/run-validation-lane.rb",
+            "claim-boundary-matrix"
+          ],
+          "parallel_group": "demo",
+          "defer_reason": null
+        },
+        {
+          "lane": "complete",
+          "proof_role": "Run the complete integrated, negative, redaction, identity, dependency, matrix, and exact-review pre-publication proof.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 1800,
+          "budget_tokens": 10000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5354/run-validation-lane.rb",
+            "complete"
+          ],
+          "parallel_group": "pre-publication",
+          "defer_reason": null
+        },
+        {
+          "lane": "post-merge-exact",
+          "proof_role": "Re-run exact integration and consumer proof after merge; typed closeout follows asynchronously and cannot gate downstream work.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 1800,
+          "budget_tokens": 10000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5354/run-validation-lane.rb",
+            "post-merge-exact"
+          ],
+          "parallel_group": "post-merge",
+          "defer_reason": "Runs only after merge and is never a prerequisite for downstream implementation."
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed without implementation, public claim, publication, merge, or closeout on incomplete #5384 terminal truth, claim collision, stale or non-ancestral product identity, Runtime v2 use, missing integrated/negative evidence, secret or host-bound output, hard-coded addresses, unsupported claim wording, matrix drift, new dependency, budget breach, deferred proof, stale review, red CI, or absent post-merge validation.",
+      "design_ref": ".csdlc/issues/5354/retained/design.md",
+      "design_digest": "42ddc15eee066ce47c0d7e6942593e2777421326e169c91fbc58910dcd078e48",
+      "diagram_ref": ".csdlc/issues/5354/retained/diagram.mmd",
+      "diagram_digest": "79ce2c8c9fdd76d5dd946f8b0b30620834f584d684e0e1560472e37ca61c43d1"
+    }
+  }
+}

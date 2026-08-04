@@ -1,0 +1,13 @@
+{
+  "issue": 4741,
+  "expected_generation": 1,
+  "expected_digest": "481c5b0cfd3f214e6690e7dce54ad0da7fc220093132c2097c3a8725edaf8987",
+  "claim_id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+  "actor": "codex:issue-4741-preparation",
+  "reason": "Reserve focused validation selector registration required by specialist readiness review",
+  "now_unix_seconds": 1784835600,
+  "add_protected_paths": [
+    "adl/config/validation_lane_selector.v0.91.6.json",
+    "adl/tools/test_select_validation_lanes.sh"
+  ]
+}

@@ -1,0 +1,406 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5713,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "f9a2970ba450cc073abac0f5085576fbd8b03f703611c96fce7b68c3001a4f87",
+  "phase": "closed_out",
+  "generation": 14,
+  "digest": "c510d78ed21cb4c0f812bcb056e28caa24224f2fff4644ae715be5cbf9677f6f",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:gpt-5.5-sartre",
+    "assigned_by": "codex:5713-review-remediation",
+    "revision": "git-blake3:00a261cb0c47ddcd6a2d42107f9ada74f3a62aea:f5bb750c78039327541f54205418d4db74c07a6b6fa2aab7d6c7f0e954741c66",
+    "scope": [
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/Cargo.lock",
+      "adl-runtime/src/lib.rs",
+      "adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs",
+      "adl-runtime/src/bin/adl-runtime-lifecycle-soak.rs",
+      "adl-runtime/src/local_tls.rs",
+      "adl-runtime/tests/local_tls.rs",
+      "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+      ".csdlc/evidence/5713",
+      ".csdlc/issues/5713"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:gpt-5.5-sartre",
+    "scope": [
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/Cargo.lock",
+      "adl-runtime/src/lib.rs",
+      "adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs",
+      "adl-runtime/src/bin/adl-runtime-lifecycle-soak.rs",
+      "adl-runtime/src/local_tls.rs",
+      "adl-runtime/tests/local_tls.rs",
+      "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+      ".csdlc/evidence/5713",
+      ".csdlc/issues/5713"
+    ],
+    "reviewed_revision": "git-blake3:00a261cb0c47ddcd6a2d42107f9ada74f3a62aea:f5bb750c78039327541f54205418d4db74c07a6b6fa2aab7d6c7f0e954741c66",
+    "findings": [],
+    "residual_risks": [
+      "Native Windows execution remains a pre-merge integration residual because nessus.local did not resolve during pre-PR validation; the protected current-user-only DACL behavior is implemented and covered by a native-Windows-gated Rust test."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5713,
+    "pull_request": 5754,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5754",
+    "base": "main",
+    "head": "codex/5713-runtime-v3-rcgen-local-tls",
+    "revision": "git-blake3:e56a5f1115d432407c4b89ef2e51040da26cf3fd:a70e6503501f7202b0c207e8be6d565722d4fbb1c4d6a45f4862bc352f93342a",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5754,
+    "head_sha": "e56a5f1115d432407c4b89ef2e51040da26cf3fd",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883418"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326907692"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883426"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883557"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883532"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883661"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883600"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326857187"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883579"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883637"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883730"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883619"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883592"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883482"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883598"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30684211905/job/91326883580"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5754,
+    "disposition": "merged",
+    "observed_sha": "e56a5f1115d432407c4b89ef2e51040da26cf3fd",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5713.json",
+    "released_branch": "codex/5713-runtime-v3-rcgen-local-tls",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5713",
+      ".csdlc/issues/5713",
+      ".csdlc/locks/5713.lock",
+      ".csdlc/prepared/issues/5713",
+      "adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs",
+      "adl-runtime/src/local_tls.rs",
+      "adl-runtime/tests/local_tls.rs",
+      "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5713/retained/design.md",
+  "diagram_path": ".csdlc/issues/5713/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5713",
+      "revision": "d626e42ed3b513388440e66f1786d5249d021bea11a547050c3d152dd10f310d"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "9f2fb5c08f61b10c5a8e7fe82e3a9585ef41261012e7805c01186ab217cbd267",
+      "rendered_digest": "84c6c53f8b73aaf6790c8e233483861d30dc6e51688396ee0e9452c73c569e99",
+      "ast_digest": "ea168e0c17ff9820ba024bb9dff74be483d9479379acd6d75ab42066f695ea71"
+    },
+    "stp": {
+      "values_digest": "09aab3644aa119afa7d6324f28abb6768b7cce322e68a77fbfea9820bb5c0356",
+      "rendered_digest": "f118146e95a8ad3b0b77a0976fb3a93718c506041613aa418f7b603e12d0b8f9",
+      "ast_digest": "a8364bb56c15894e1c1138b59f568fed849911ad8ccda4283277103558d6474f"
+    },
+    "spp": {
+      "values_digest": "3cd996e0516bb823d216da9c971ea9c7d61d6c43037322f8f6f8ec34fd790edf",
+      "rendered_digest": "f7c3e19e76ed018134d1d371ca68f8999666ec149714bda2932851f949a05774",
+      "ast_digest": "f392ae8823e65a098300aa7825f15531de07d7043bc73a4ea7fde5d96c1fb3ad"
+    },
+    "vpp": {
+      "values_digest": "2a1bb4d6e6cb0d32560aad74e0824cc51cab48fa4557ffc91cddce37c457df58",
+      "rendered_digest": "3c297a03fe5b26229bfa868546bf88bed60a16b29631c273c6360ca6ba59bdcd",
+      "ast_digest": "a6e108fb9783311cac347c5c10c3c5858a826e9f6596bdfaa216aab1d93def36"
+    },
+    "srp": {
+      "values_digest": "1baf6847ad0c500339e651e0b74bee73b83138c12128bfcc6c0f51305cd65086",
+      "rendered_digest": "1974c773dff6d9915ed4decbc0132f48e93c1de9178da214d67cfbb3fbd3e76f",
+      "ast_digest": "0dbcefa05c520961dbd848db8d3f1f26559cc06028b20a8f2ddea6183d9b25ab"
+    },
+    "sor": {
+      "values_digest": "ab11ed5269a7cd3f03441e62845309c0edc623bbd1425e7179742dfec571810d",
+      "rendered_digest": "5d8552ec8d08019273ec9e62aa81f0ed2cfc076bd9c2fb809a847a8b2427aaf8",
+      "ast_digest": "527266880346d2b23cf157c20f67f20e76fc7e868c38bb4844def2ac7500b868"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5713-runtime-v3-rcgen-local-tls",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5713-runtime-v3-rcgen-local-tls",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5713-runtime-v3-rcgen-local-tls",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5713-review-remediation",
+      "reason": "Exact-head GPT-5.5 review completed with zero findings after all remediation."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5713-publication",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5713-runtime-v3-rcgen-local-tls",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5713-runtime-v3-rcgen-local-tls",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:issue-5713-runtime-v3-rcgen-local-tls",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5713-review-remediation",
+      "reason": "Refresh exact implementation truth after the bounded TLS review fixes.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented stable state-root-scoped rcgen local TLS identity reuse, generation-manifest replacement, SAN validation, crash-releasing advisory locking, structured bootstrap failures, lifecycle-soak integration, and restrictive private-key handling on Unix and native Windows.\",\"changes\":[\"adl-runtime/Cargo.toml\",\"adl-runtime/Cargo.lock\",\"adl-runtime/src/lib.rs\",\"adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs\",\"adl-runtime/src/bin/adl-runtime-lifecycle-soak.rs\",\"adl-runtime/src/local_tls.rs\",\"adl-runtime/tests/local_tls.rs\",\"docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md\"],\"artifacts\":[\".csdlc/evidence/5713/local-tls-validation.md\",\".csdlc/evidence/5713/runtime-v3-local-tls-focused.log\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5713-review-remediation",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "subagent:gpt-5.5-sartre",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5713-review-remediation",
+      "reason": "Exact-head GPT-5.5 review completed with zero findings after all remediation.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5713-publication",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize newly merged #5713 from its typed retained terminal receipt in the exhaustive v0.91.8 closeout branch.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "typed terminal plan repair authorized by issue 5748",
+      "operation": "repair_terminal_plan_step:S1"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "typed terminal plan repair authorized by issue 5748",
+      "operation": "repair_terminal_plan_step:S2"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "typed terminal plan repair authorized by issue 5748",
+      "operation": "repair_terminal_plan_step:S3"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "typed terminal plan repair authorized by issue 5748",
+      "operation": "repair_terminal_plan_step:S4"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "typed terminal plan repair authorized by issue 5748",
+      "operation": "repair_terminal_plan_step:S5"
+    },
+    {
+      "sequence": 17,
+      "generation": 14,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "typed terminal plan repair authorized by issue 5748",
+      "operation": "repair_terminal_plan_step:S6"
+    }
+  ]
+}

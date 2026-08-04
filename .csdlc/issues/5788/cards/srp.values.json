@@ -1,0 +1,80 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5788,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][tooling][lockfile] Prevent validation and binary installation from rewriting tracked Cargo.lock files",
+    "slug": "lockfile-preservation",
+    "version": "v0.91.8",
+    "generation": 8
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl/tools/install_owner_binaries.sh\nadl/tools/run_cargo_validation.sh\nadl/tools/run_owner_validation_lane.sh\nadl/tools/test_owner_binary_install.sh\nadl/tools/test_owner_validation_lane.sh\nadl/tools/test_run_cargo_validation.sh",
+      "review_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+      "reviewer": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
+      "review_prompts": [
+        "Can any failure leave Cargo.lock changed?",
+        "Are all requested default bins current?",
+        "Are pre-existing dirty bytes preserved?"
+      ],
+      "findings": [
+        {
+          "id": "F-5788-1",
+          "severity": "p1",
+          "summary": "Exact-head SRP scope omitted the Cargo validation wrapper and its test.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+          "route": null
+        },
+        {
+          "id": "F-5788-2",
+          "severity": "p1",
+          "summary": "The SOR referenced a validation evidence path that was not retained.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+          "route": null
+        },
+        {
+          "id": "F-5788-3",
+          "severity": "p1",
+          "summary": "The owner lane warm-cache step used a different target and wrote repo-local output.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+          "route": null
+        },
+        {
+          "id": "F-5788-4",
+          "severity": "p2",
+          "summary": "The inventory test was hard-coded and did not reject a duplicate nested build.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+          "route": null
+        },
+        {
+          "id": "F-5788-5",
+          "severity": "p2",
+          "summary": "The rereview worktree contained uncommitted lifecycle and review-guide metadata.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:a024ff02dcae6b0cd03c294af7f204e19a7c1723:1cef3165741451b5beb05d45c6d94fba295cbb90a403e56014e792c19a093d97",
+          "route": null
+        }
+      ],
+      "residual_risk": [],
+      "review_result": "pass"
+    }
+  }
+}

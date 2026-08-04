@@ -77,15 +77,15 @@ Revision 1
 
 ## Design
 
-.csdlc/prepared/issues/5587/design.md
+.csdlc/issues/5587/retained/design.md
 
-Digest: 196bd587d9658475dab103e296fb196be3adb7428841932b3863c862741b8eb0
+Digest: ec76c9c8fa6de4828b2408759195fea8ec6f77b178ef815694d96effee17affe
 
 ## Diagram
 
-.csdlc/prepared/issues/5587/diagram.mmd
+.csdlc/issues/5587/retained/diagram.mmd
 
-Digest: 0a1ebe4263daff456c834757e1a3324001489f71a08a25651298529cf6ba4874
+Digest: 2157c19e2e59df171450026697330c9cb77042ead664151a33e8cd57abad7744
 
 ## Stop Conditions
 

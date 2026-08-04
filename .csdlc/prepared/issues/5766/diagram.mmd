@@ -1,0 +1,11 @@
+flowchart TD
+  Issue["#5766 endpoint mismatch"] --> Inventory["Advertised endpoint inventory"]
+  Issue --> Router["Mounted runtime/API routes"]
+  Inventory --> Compare["Focused route inventory test"]
+  Router --> Compare
+  Compare --> Truth{"All advertised paths served?"}
+  Truth -->|Yes| Keep["Keep availability claim"]
+  Truth -->|No| Narrow["Narrow or mark planned-only"]
+  Narrow --> Docs["Update operator-facing truth"]
+  Keep --> Tests["Focused runtime API tests"]
+  Docs --> Tests

@@ -44,7 +44,7 @@ cat >"$OUT_DIR/architecture_generation_manifest.json" <<EOF_JSON
     "docs/architecture/diagrams/trust_boundaries.mmd"
   ],
   "skills_represented": [
-    "workflow-conductor",
+    "csdlc-doctor",
     "pr-run",
     "diagram-author",
     "security-threat-model",

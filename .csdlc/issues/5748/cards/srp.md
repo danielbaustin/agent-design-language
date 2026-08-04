@@ -1,0 +1,47 @@
+# Structured Review Prompt
+
+Template: 1.0.0
+
+Issue: 5748
+
+Repository: danielbaustin/agent-design-language
+
+Card: srp
+
+Status: draft
+
+## Scope
+
+csdlc-v2
+.csdlc/issues
+.csdlc/evidence/5748
+.csdlc/prepared/issues/5748
+docs/milestones/v0.91.8/evidence/wp13/5346-post-deletion-validation.v1.json
+
+## Prompts
+
+- Does each tracked projection exactly preserve its retained receipt identity and terminal disposition?
+- Are false or special dispositions repaired through an explicit typed route rather than inferred?
+- Do retained design and diagram artifacts remain portable, canonical-path safe, and receipt-consistent?
+- Did the sweep preserve dirty worktrees and avoid modifying or pruning the active #5746 worktree?
+- Were GitHub accesses limited to read-only live observation or typed C-SDLC v2 mutation routes, with no AWS, v1, or import route?
+
+## Findings
+
+[]
+
+## Dispositions
+
+Every actionable finding requires a terminal disposition.
+
+## Residual Risk
+
+- none
+
+## Review Result
+
+Revision: Some("git-blake3:cd10882d8a00064612d33b89318e0791b24950c5:c9fa2970032c3b3fa4f7f79770b94a2bdc5a1833148e887683d1d3c1e57573af")
+
+Reviewer: Some("subagent:/root/review_5748_recovered_head")
+
+Result: pass

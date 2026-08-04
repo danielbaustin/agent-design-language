@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5778,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5778-derived-terminal-finish",
+  "title": "fix(csdlc): replace closeout churn with idempotent finish",
+  "body": "## Summary\n\n- add one typed `csdlc-finish` command that merges only from exact green reviewed GitHub state\n- derive terminal truth from live post-merge or approved no-PR GitHub state without a second tracked closeout PR\n- serialize finish with canonical issue authority and retain only minimal rebuildable terminal cache evidence\n- preserve exact-head decisive review state across later comment-only events\n- repair the current-main stable-rustfmt regression introduced by #5781 and tracked by #5783\n- replace the rehome-authority scheduling race with deterministic injected test ordering tracked by #5784\n- repair #5785 so normal Published authority accepts only a clean `.csdlc/`-only metadata descendant with immutable historical review evidence and a generation/checkout-bound claim\n- retain legacy closeout only for bounded migration and repair\n\n## Validation\n\n- 170 focused C-SDLC v2 tests passed\n- Gate 9 passed 48/48 after the deterministic #5784 repair\n- strict all-target C-SDLC clippy passed\n- current-main stable Rust formatting passed\n- focused Runtime API contract test passed\n- refreshed independent exact-head review passed with no blockers\n- live `closeout:no-pr-approved` repository label provisioned\n\nCloses #5778\nCloses #5783\nCloses #5784\nCloses #5785",
+  "draft": false,
+  "revision": "git-blake3:62b64fe9c26b9582d8d29a21716c74af62523ec8:9b7411cc23ae9bf5f84d44feb5b2d5b03e0982b23546f8470264408fdfacd9a9",
+  "commit_sha": "62b64fe9c26b9582d8d29a21716c74af62523ec8"
+}

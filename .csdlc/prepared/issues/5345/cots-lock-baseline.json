@@ -1,0 +1,21 @@
+{
+  "schema": "adl.v0918.wp10_cots_baseline.v1",
+  "revision": "79c7dccf12540863f6c038e1fd7ef45e2357a55e",
+  "status": "candidate_pins_not_final_adl_v2_closure",
+  "locks": {
+    "adl/Cargo.lock": "304ddd23f85c54df45b2ecc0496a8fae3432a78a2885d0f1935bc9002bc1e985",
+    "adl-runtime/Cargo.lock": "23ccb0af88cf3bda3f5646a47ef0a3b3faecb05259c10f279af392cb525b7724",
+    "adl-runtime-kernel/Cargo.lock": "cfd1fbefd690c6213dc21252027a199d0714edea3c71edd0437bbc370358c11c",
+    "csdlc-v2/Cargo.lock": "b6d6b6483e866796990c410e05c60f11977450826fb06ec325d492007d154b01",
+    "adl-v2/Cargo.lock": "bb829e08208047c57059eb9ef80c083bc955d54a3ed132f889f7f645ffa582b3"
+  },
+  "packages": {
+    "clap": {"version": "4.6.4", "evidence_lock": "adl-v2/Cargo.lock"},
+    "serde": {"version": "1.0.229", "evidence_lock": "adl-v2/Cargo.lock"},
+    "serde_json": {"version": "1.0.151", "evidence_lock": "adl-v2/Cargo.lock"},
+    "tempfile": {"version": "3.27.0", "evidence_lock": "csdlc-v2/Cargo.lock"},
+    "fs2": {"version": "0.4.3", "evidence_lock": "csdlc-v2/Cargo.lock"},
+    "sha2": {"version": "0.10.9", "evidence_lock": "csdlc-v2/Cargo.lock"}
+  },
+  "final_gate": "adl-v2/Cargo.lock must resolve these exact direct pins and receive exact-revision review after WP-04 through WP-09 land"
+}

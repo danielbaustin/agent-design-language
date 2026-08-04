@@ -1,0 +1,15 @@
+{
+  "issue": 5558,
+  "expected_generation": 26,
+  "expected_digest": "c65b29a3ea82c68d6ed0f1c3eb42ae9c87f5b74fdbe2ba975a195e12573dfac1",
+  "claim_id": "claim-5558-corrective-1785570394",
+  "reviewer": "subagent:019fbf2d-07af-7ee0-a7e1-ca480b4a5d0a",
+  "assigned_by": "codex:5558-corrective",
+  "scope": [
+    "adl/src/csdlc_prompt_editor",
+    "adl/tools/check_coverage_impact.sh",
+    "adl/tools/test_check_coverage_impact.sh",
+    "adl/tools/test_csdlc_prompt_editor.sh",
+    ".csdlc/issues/5558"
+  ]
+}

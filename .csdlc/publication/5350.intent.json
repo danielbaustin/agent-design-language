@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5350,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5350-v0918-wp11-shadow-parity",
+  "title": "[v0.91.8][WP-11] Prove exact ADL v1/v2 shadow parity",
+  "body": "Closes #5350\n\nAdds a bounded exact-revision shadow harness over the immutable 25-case ADL v1 characterization corpus and the installed ADL v2 candidate. It executes each mapped case three times, retains 75+75 observations and 23 behavior rows, enforces both equivalence groups and the sequential-order difference, and classifies every replacement difference with explicit authority, risk, proof, and rollback.\n\nThe same report binds all ten Runtime v3 parity groups, both adapter issues, and WP-10A live evidence without granting cutover, default-selector, or product authority. Receipts remain audit evidence rather than downstream execution blockers, and truthful squash integration is accepted by exact PR identity.\n\nValidation: 35/35 focused tests, strict all-target Clippy, fmt/diff hygiene, deterministic byte-identical full rerun, zero blockers, and one GPT-5.5 exact-revision review cycle. The review found four issues, including an ordering-group P1; all four are fixed and the exact fix-head re-review is PASS with no findings. No AWS or network-capable shadow command is used.",
+  "draft": false,
+  "revision": "git-blake3:5aefde7aae2d293f6a048ba5848f060a627d874a:09174ef2199ba32bcf934c8e704ecbe857a3d60d34d6fc36884748b01bf9c00f",
+  "commit_sha": "5aefde7aae2d293f6a048ba5848f060a627d874a"
+}

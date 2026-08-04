@@ -7,7 +7,7 @@
     "title": "Recover stale approved design in initialized records",
     "slug": "initialized-stale-design-recovery",
     "version": "v0.91.8",
-    "generation": 5
+    "generation": 12
   },
   "status": "ready",
   "content": {

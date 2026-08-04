@@ -1,0 +1,42 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5701,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][api] Define the complete versioned Runtime and Observatory OpenAPI contracts",
+    "slug": "runtime-v3-openapi-contracts",
+    "version": "v0.91.8",
+    "generation": 41
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Define first-class OpenAPI 3.1 Runtime Core API v1 and Observatory API v1 contracts suitable for client generation and runtime discovery.",
+      "required_outcome": "Canonical OpenAPI contracts cover every real Runtime v3 and Observatory endpoint without fixture, degraded, receipt-only, or unavailable claims; validation proves route parity and client-generation suitability.",
+      "declared_scope": [
+        "Runtime Core API v1 OpenAPI contract",
+        "Runtime-hosted Observatory API v1 OpenAPI contract",
+        "WSS upgrade and inbound/outbound frame schema documentation",
+        "Route inventory and schema/reference validation",
+        "Runtime discovery endpoint integration only after #5344 releases or transfers protected router/config paths"
+      ],
+      "authority_boundary": [
+        "#5701 owns only its issue-local state plus docs/api/runtime-v3/v1 and adl-runtime-kernel/tests/openapi_contract.rs initially",
+        "Active #5344 owns adl-runtime-kernel router/config/bin/control/lib paths and must not be edited by #5701 without typed transfer or release",
+        "The HTML Observatory application remains separate and out of runtime scope",
+        "Unsupported Provider, ACIP, A2A, Cloud Bridge, or other unavailable feature routes must not be documented as operational"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use only typed C-SDLC v2 lifecycle operations",
+        "Never write tracked files on main",
+        "Do not use /private/tmp",
+        "Keep constants such as port numbers, public base URL, TLS paths, and log locations in init/config rather than code",
+        "Use one exact-head subagent review immediately before PR publication",
+        "PR body must contain Closes #5701"
+      ]
+    }
+  }
+}

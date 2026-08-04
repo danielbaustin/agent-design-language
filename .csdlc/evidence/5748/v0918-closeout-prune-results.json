@@ -1,0 +1,1947 @@
+{
+  "schema": "adl.v0918.closeout_prune_results.v1",
+  "repository": "danielbaustin/agent-design-language",
+  "label": "version:v0.91.8",
+  "observed_at": "2026-08-02T00:30:25Z",
+  "source": "typed C-SDLC v2 closeout verification and validate-prune observation",
+  "issues": [
+    {
+      "number": 4739,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "eligible",
+        "eligible": true,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-4739-v0918",
+        "reason": null
+      }
+    },
+    {
+      "number": 4741,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "eligible",
+        "eligible": true,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-4741-v0918",
+        "reason": null
+      }
+    },
+    {
+      "number": 4758,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-4758",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 4759,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-4759",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 4760,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-4760",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 4761,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "eligible",
+        "eligible": true,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-4761",
+        "reason": null
+      }
+    },
+    {
+      "number": 4762,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-4762",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 4763,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-4763",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5007,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5107,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5107",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5332,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5335,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5336,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5337,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5338,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5339,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5340,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5341,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5342,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5342",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5343,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5344,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5344",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5345,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5346,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5347,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5347",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5349,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5350,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5350",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5351,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "eligible",
+        "eligible": true,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5351",
+        "reason": null
+      }
+    },
+    {
+      "number": 5352,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5352-final",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5354,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5354-ready",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5358,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5360,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5360",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5361,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5384,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5438,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5470,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5470",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5497,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5498,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5499,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5748",
+        "reason": "claim release audit missing"
+      }
+    },
+    {
+      "number": 5500,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5501,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5502,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5526,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5527,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5527",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5540,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5541,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5541",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5548,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5548",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5558,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5558",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5563,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5566,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5566",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5569,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5547-closeout-audit",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5572,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5587,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5587",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5589,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5590,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5591,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5592,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5594,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5597,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5600,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5600",
+        "reason": "prune requires closed-out canonical state"
+      }
+    },
+    {
+      "number": 5602,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5605,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5610,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5613,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5615,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5624,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5627,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5632,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5645,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-csdlc-merge-impl",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5648,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5653,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5657,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5658,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5662,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5662",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5663,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "eligible",
+        "eligible": true,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5663",
+        "reason": null
+      }
+    },
+    {
+      "number": 5664,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5665,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5666,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5670,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5671,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5675,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5678,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5678",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5679,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5683,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5686,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5687,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5691,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5695,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5697,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5698,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5698",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5701,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5701-closeout",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5702,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5708,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5708",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5710,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5711,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5713,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5715,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5717,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5717",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5718,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5719,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5722,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5727,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5728,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5728",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5733,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5733",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5735,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5735",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5737,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "eligible",
+        "eligible": true,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5737",
+        "reason": null
+      }
+    },
+    {
+      "number": 5746,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-v0918-terminal-reconcile-wave",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5755,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "eligible",
+        "eligible": true,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5755",
+        "reason": null
+      }
+    },
+    {
+      "number": 5756,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-5675-provider-adapter-routes",
+        "reason": "prune requires closed-out canonical state"
+      }
+    },
+    {
+      "number": 5757,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "blocked",
+        "eligible": false,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5757",
+        "reason": "dirty worktree cannot be pruned"
+      }
+    },
+    {
+      "number": 5762,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "eligible",
+        "eligible": true,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5762",
+        "reason": null
+      }
+    },
+    {
+      "number": 5763,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "eligible",
+        "eligible": true,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5763",
+        "reason": null
+      }
+    },
+    {
+      "number": 5764,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "eligible",
+        "eligible": true,
+        "pruned": false,
+        "worktree": "/Volumes/FastWork/adl-wp-5764",
+        "reason": null
+      }
+    },
+    {
+      "number": 5770,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    },
+    {
+      "number": 5773,
+      "closeout": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "doctor_pass": true,
+        "receipt_equal": true,
+        "cards_equal": true
+      },
+      "prune": {
+        "status": "not_registered",
+        "eligible": false,
+        "pruned": false,
+        "worktree": null,
+        "reason": "released branch is not currently registered as a worktree"
+      }
+    }
+  ]
+}

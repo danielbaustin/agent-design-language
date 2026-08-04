@@ -1,0 +1,54 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5717,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast][ui] Update podcast studio copy from integrated design",
+    "slug": "v0-91-8-podcast-ui-update-podcast-studio-copy-from-integrated-design",
+    "version": "v0.91.8",
+    "generation": 25
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "podcast_packet",
+          "proof_role": "local podcast/studio generation, digest, audio, and RSS validation",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8",
+            "AC-9",
+            "AC-10"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 180,
+          "budget_tokens": 2000,
+          "argv": [
+            "bash",
+            "adl/tools/test_podcast_launch_packet.sh"
+          ],
+          "parallel_group": "focused",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on missing logo, stale generated output, incorrect contact/video/episode truth, broken studio asset path, or audio/RSS regression.",
+      "design_ref": ".csdlc/issues/5717/retained/design.md",
+      "design_digest": "1957aeebaa7648bba86dc24501cc9578d8e3c95fb5f5b80108aaedc5b5511d7a",
+      "diagram_ref": ".csdlc/issues/5717/retained/diagram.mmd",
+      "diagram_digest": "f10566b18ec1325d250c0849a44f5c7aca3bb33e54b5781095f1b9770a1fa2b1"
+    }
+  }
+}

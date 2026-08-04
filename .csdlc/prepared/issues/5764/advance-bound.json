@@ -1,0 +1,14 @@
+{
+  "issue": 5764,
+  "card": "spp",
+  "expected_generation": 0,
+  "expected_digest": "18bd271fe81b49dc6d3b03217f7e98e7a5aa387c0be96bfdcd6001279ee53d14",
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Dedicated FastWork worktree and branch match the initialized claim; advance into a ready lifecycle state before implementation binding.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "ready"
+  },
+  "fail_after_backup": false
+}

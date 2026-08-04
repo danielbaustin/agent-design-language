@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5687,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][review] Complete bounded Opus 5 review of Runtime v3",
+    "slug": "recordless-terminal-recovery-5687",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Retain truthful terminal authority for closed issue #5687.",
+      "required_outcome": "A receipt-backed closed-out projection containing terminal evidence and explicit historical non-claims.",
+      "declared_scope": [
+        ".csdlc/issues/5687/"
+      ],
+      "authority_boundary": [
+        "No historical implementation, review, publication, readiness, or CI lifecycle is reconstructed by this terminal recovery."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "typed C-SDLC v2 only"
+      ]
+    }
+  }
+}

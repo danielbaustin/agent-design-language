@@ -1,24 +1,33 @@
-# The guardian pipes the kernel's stderr into this source. Deployment overlays
-# add managed OTLP or CloudWatch sinks; Vector owns buffering and retry policy.
+# Runtime v3 writes structured tracing records to the issue/runtime state root,
+# and Vector owns the canonical durable master log plus remote OTLP delivery.
+# The launcher renders concrete absolute paths at runtime.
 sources:
-  runtime_v3_stderr:
-    type: stdin
+  runtime_v3_ingress:
+    type: file
+    include:
+      - ${ADL_RUNTIME_V3_VECTOR_INGRESS}
+    read_from: beginning
+    fingerprint:
+      strategy: device_and_inode
 
 transforms:
-  runtime_v3_events:
+  runtime_v3_parse:
     type: remap
     inputs:
-      - runtime_v3_stderr
+      - runtime_v3_ingress
     source: |
-      if !starts_with!(.message, "adl_event ") { abort }
-      fields = parse_key_value!(slice!(.message, 10))
-      . = merge(., fields)
-      .service = "adl-runtime-v3"
-  runtime_v3_cloudwatch_emf:
+      . = parse_json!(.message)
+
+  runtime_v3_redacted:
     type: remap
     inputs:
-      - runtime_v3_events
+      - runtime_v3_parse
     source: |
+      if exists(.fields.secret) { .fields.secret = "<redacted>" }
+      if exists(.fields.token) { .fields.token = "<redacted>" }
+      if exists(.fields.authorization) { .fields.authorization = "<redacted>" }
+      if exists(.fields.password) { .fields.password = "<redacted>" }
+      if exists(.fields.api_key) { .fields.api_key = "<redacted>" }
       .cloudwatch_namespace = "ADL/RuntimeV3"
       .cloudwatch_log_group = "/adl/runtime-v3"
       .cloudwatch_route = "vector.runtime_v3_cloudwatch_emf"
@@ -26,18 +35,56 @@ transforms:
       ._aws = {
         "CloudWatchMetrics": [{
           "Namespace": .cloudwatch_namespace,
-          "Dimensions": [["service", "schema"]],
+          "Dimensions": [["service_name", "schema"]],
           "Metrics": [
             {"Name": "runtime_event_count", "Unit": "Count"}
           ]
         }]
       }
 
-sinks:
-  runtime_v3_local:
-    type: console
+  runtime_v3_metrics:
+    type: log_to_metric
     inputs:
-      - runtime_v3_cloudwatch_emf
-    target: stdout
+      - runtime_v3_redacted
+    metrics:
+      - type: counter
+        field: runtime_event_count
+        name: runtime_event_count
+        namespace: adl_runtime_v3
+        tags:
+          service: "{{service_name}}"
+          runtime_instance_id: "{{runtime_instance_id}}"
+          component: "{{component}}"
+          severity: "{{severity}}"
+
+sinks:
+  runtime_v3_master_log:
+    type: file
+    inputs:
+      - runtime_v3_redacted
+    path: ${ADL_RUNTIME_V3_MASTER_LOG}
     encoding:
       codec: json
+    buffer:
+      type: disk
+      max_size: 268435488
+      when_full: block
+
+  runtime_v3_otlp:
+    type: opentelemetry
+    inputs:
+      - runtime_v3_redacted
+      - runtime_v3_metrics
+    protocol:
+      type: http
+      uri: ${ADL_RUNTIME_V3_OTLP_ENDPOINT}
+      encoding:
+        codec: otlp
+    healthcheck:
+      enabled: true
+    acknowledgements:
+      enabled: true
+    buffer:
+      type: disk
+      max_size: 268435488
+      when_full: block

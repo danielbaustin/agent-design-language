@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4760,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][memory-palace] Prepare #4760 Memory Palace context-problem handoff",
+    "slug": "v0918-wp14-memory-palace-context-handoff-prep-4760",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl/src/memory_palace.rs\nadl/src/lib.rs\nadl/src/long_lived_agent.rs\nadl/tests/memory_palace_tests.rs\nadl/tests/fixtures/memory_palace/long_running_context.json",
+      "review_revision": "git-blake3:9719252262913351144a20adf0affb7ed4b5480d:0e9a3cc5bcd6025584c2714a370314d9681ae6bdc98439fb7fb5205a7801cf7b",
+      "reviewer": "subagent:/root/review_5727",
+      "review_prompts": [
+        "Later review should verify that execution remained within #4760 and did not overclaim v0.92 readiness."
+      ],
+      "findings": [],
+      "residual_risk": [
+        "The final merged-head delta after the prior Memory Palace review is disjoint from this scope and changes only adl/src/csm_runtime_api.rs; the existing focused Memory Palace validation and prior scope review remain the execution proof."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

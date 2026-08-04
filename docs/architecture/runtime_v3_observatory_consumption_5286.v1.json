@@ -31,9 +31,9 @@
     "signed_commands_required_for_mutation": true
   },
   "html_observatory": {
-    "path": "demos/v0.91.7/html-observatory/",
+    "path": "demos/html-observatory/",
     "default_consumption": "retained_runtime_v2_csm_mirror",
-    "runtime_v3_opt_in_url": "demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=https://<runtime-gateway-host>&live=1",
+    "runtime_v3_opt_in_url": "demos/html-observatory/?runtime=v3&runtimeApiBase=https://<runtime-gateway-host>&live=1",
     "runtime_v3_read_feed_consumed": true,
     "live_https_client_proof": "observatory_https_feed_requires_bearer_and_reports_weather_freshness",
     "static_validator_is_live_proof": false,

@@ -1,0 +1,2 @@
+PASS test_ci_runtime_contracts
+PASS test_run_pr_fast_coverage_lane

@@ -1,0 +1,220 @@
+{
+  "issue": 5662,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5662/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5662/diagram.mmd",
+  "design_reviewer": "operator:issue-5662-live-session",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5662-v0918-wp15-unity-observatory-polish",
+    "owner": "codex:issue-5662-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1784926413,
+    "expires_unix_seconds": 1785531213,
+    "heartbeat_unix_seconds": 1784926413,
+    "branch": "codex/5662-v0918-unity-observatory-polish",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5662",
+      ".csdlc/locks/5662.lock",
+      ".csdlc/prepared/issues/5662",
+      "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryFlagshipStageBuilder.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs",
+      "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uxml",
+      "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uss",
+      "demos/v0.91.6/unity-observatory/Assets/Resources/ObservatoryShellRuntime.uss",
+      "demos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json",
+      "demos/v0.91.6/unity-observatory/Assets/Scenes/FlagshipObservatoryStage.unity",
+      "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
+    ],
+    "purpose": "Execute #5662 as the bounded WP-15 visual and runtime presentation polish lane for the flagship Unity Observatory"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-15][unity][demo] Polish flagship Polis Observatory visual and runtime presentation",
+    "slug": "v0918-wp15-flagship-polis-observatory-polish",
+    "version": "v0.91.8",
+    "goal": "Turn the functional Observatory stage into a beautiful, coherent, truthful Unity control environment that demonstrates the living Polis to investors and inhabitants.",
+    "required_outcome": "The intended FastWork Unity project opens and plays one polished Observatory scene whose camera, environment, lighting, fixed operator shell, runtime state, and bounded interactions work together, with direct proof at 1920x1080 and 2560x1440.",
+    "declared_scope": [
+      "Flagship Observatory scene composition and hero camera",
+      "Terrain, platform, ramp, and architectural continuity",
+      "Lighting, emission, environment, and material readability",
+      "Fixed screen-space operator dashboard and clear iconography",
+      "Truthful CSM and Polis runtime presentation states",
+      "Agent inspection, event observation, governance and evidence visibility, and bounded communication",
+      "Direct Unity-MCP, Play Mode, and visual proof"
+    ],
+    "authority_boundary": [
+      "#5662 owns final visual and runtime presentation polish for the flagship Unity Observatory",
+      "#5354 owns WP-15 convergence and consumes this issue's proof",
+      "#4739, #4741, and #5332 remain the closed tooling and compatibility prerequisites",
+      "Licensed asset packs remain external to Git and are not republished",
+      "No player binaries, replacement owner binaries, WP-14A acceptance, or unsupported production-cloud claims"
+    ],
+    "task_boundary": "Polish and prove only the repository-owned Observatory scene, controller, UI, contract, and proof surfaces while authoring against the operator-provisioned FastWork Unity project.",
+    "deliverables": [
+      "Composed flagship Observatory environment and stable hero camera",
+      "Controlled lighting and material hierarchy",
+      "Fixed readable operator shell with clear icons and internal scrolling",
+      "Truthful live, degraded, disconnected, and demo runtime states",
+      "Supported agent, event, governance, evidence, and communication interactions",
+      "Retained intended-project Play Mode proof at both target resolutions",
+      "Durable routing for every tooling anomaly encountered"
+    ],
+    "acceptance_criteria": [
+      "AC-1: the hero view has a clear focal Observatory structure, grounded foreground, readable middle ground and background, and a deliberate route into the environment",
+      "AC-2: the camera does not clip major architecture or reveal accidental voids, floating terrain edges, disconnected ramps, or unfinished staging geometry",
+      "AC-3: lighting preserves material detail and depth, uses cyan as a controlled accent, and keeps dark regions intentionally readable",
+      "AC-4: UI text and icons are crisp, aligned, non-overlapping, and legible at 1920x1080 and 2560x1440 with a fixed dashboard and only internal scrolling",
+      "AC-5: the shell explicitly identifies live, degraded, disconnected, and demo states and never presents fixture data as live Polis truth",
+      "AC-6: live mode consumes repository-owned runtime contracts for supported agent, event, health, governance, evidence, and communication fields while unsupported fields remain explicit non-claims",
+      "AC-7: an operator can select an agent or subsystem, inspect current state, observe event flow, and send a bounded communication through the supported contract or receive an exact fail-closed reason",
+      "AC-8: direct Unity proof identifies the intended FastWork project, loaded FlagshipObservatoryStage, clean Play Mode result, and retained 1920x1080 and 2560x1440 captures",
+      "AC-9: focused validation passes without building a player binary or replacement owner binary and without copying licensed payloads into Git",
+      "AC-10: every encountered Unity-MCP, editor, runtime, asset, or proof-tool anomaly is retained in #5662 or routed to a named follow-up"
+    ],
+    "dependencies": [
+      "Typed closed_out prerequisites #4739, #4741, and #5332",
+      "Operator-provisioned FastWork Unity project and licensed local asset packs",
+      "Repository-installed Unity-MCP CLI and #4739 alignment probe",
+      "Repository-owned Observatory runtime contract",
+      "WP-15 #5354 consumes the final proof"
+    ],
+    "repo_inputs": [
+      "GitHub issue #5662",
+      "GitHub issue #5354",
+      "demos/v0.91.6/unity-observatory",
+      "adl/tools/probe_unity_mcp_observatory_alignment.sh",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      ".adl/docs/TBD/csm_observatory/UNITY_OBSERVATORY_DEMO.md",
+      "operator-provided current-stage screenshot and Observatory dashboard visual direction"
+    ],
+    "non_goals": [
+      "Do not build standalone player binaries",
+      "Do not build replacement ADL, C-SDLC, Unity-MCP, or other owner binaries",
+      "Do not republish licensed asset packs or add multi-gigabyte asset payloads to Git",
+      "Do not absorb WP-14A platform acceptance or unrelated release-tail work",
+      "Do not claim production cloud integration, complete investor readiness, or unsupported runtime semantics",
+      "Do not treat static source checks as Unity visual or runtime proof"
+    ],
+    "plan_summary": "Align the intended live project, establish a visual baseline, polish spatial composition and lighting, refine the fixed runtime shell, exercise supported interactions, then retain direct dual-resolution Play Mode proof and synchronize only repository-owned source.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Re-prove intended project, active MCP endpoint, loaded flagship scene, and clean editor state; capture the current baseline",
+        "status": "pending",
+        "acceptance_ids": ["AC-8", "AC-10"]
+      },
+      {
+        "id": "S2",
+        "action": "Correct hero camera, terrain and platform continuity, spatial hierarchy, and exposed staging defects through Unity-MCP or editor tooling",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-8"]
+      },
+      {
+        "id": "S3",
+        "action": "Tune lighting, emission, environment, and material readability for a controlled cinematic presentation",
+        "status": "pending",
+        "acceptance_ids": ["AC-3", "AC-8"]
+      },
+      {
+        "id": "S4",
+        "action": "Refine the fixed operator shell, icons, truth modes, and supported runtime interactions",
+        "status": "pending",
+        "acceptance_ids": ["AC-4", "AC-5", "AC-6", "AC-7"]
+      },
+      {
+        "id": "S5",
+        "action": "Capture direct 1920x1080 and 2560x1440 Play Mode proof, synchronize only repository-owned source, and run focused validation",
+        "status": "pending",
+        "acceptance_ids": ["AC-8", "AC-9", "AC-10"]
+      },
+      {
+        "id": "S6",
+        "action": "Run bounded pre-publication review, resolve findings, and retain truthful WP-15 handoff evidence",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7", "AC-8", "AC-9", "AC-10"]
+      }
+    ],
+    "risks": [
+      "Licensed prefab and material dependencies may not serialize portably into the tracked scene",
+      "Live editor and MCP endpoint may drift between project instances",
+      "The current camera and platform arrangement can expose large voids at wide aspect ratios",
+      "Runtime contracts may not yet expose every desired governance, evidence, or communication field",
+      "UI Toolkit scaling can become illegible or overlapping across target resolutions",
+      "Visual tuning can mask runtime truth unless state labeling remains fail closed"
+    ],
+    "invariants": [
+      "The intended project and loaded scene are proven before mutation or claims",
+      "Licensed assets remain external and untracked",
+      "Runtime truth is explicit and fixture data is never labeled live",
+      "The first Play Mode frame reads as the Observatory",
+      "The dashboard is fixed and only bounded internal windows scroll",
+      "No player or replacement owner binary is built",
+      "Tooling anomalies become durable issue evidence"
+    ],
+    "stop_conditions": [
+      "The live Unity editor is attached to a different project than the intended FastWork Observatory",
+      "MCP project identity cannot be proven or mutations target an ambiguous endpoint",
+      "Unity reports compile errors that prevent safe scene mutation",
+      "A required change would copy or publish licensed asset payloads",
+      "Runtime communication requires an unsupported or secret-bearing direct AWS operation",
+      "The work would need to absorb WP-14A or unrelated release-tail scope"
+    ],
+    "review_prompts": [
+      "Does the first Play Mode frame read as one deliberate Observatory rather than a staging pile?",
+      "Are camera, terrain, ramps, lighting, materials, UI, and runtime state coherent at both target resolutions?",
+      "Can every live, degraded, disconnected, demo, governance, evidence, and communication claim be traced to direct supported proof?",
+      "Does the diff contain only repository-owned publishable source and exclude licensed payloads and binary output?",
+      "Were all tooling anomalies retained or routed with current reproduction evidence?"
+    ],
+    "operator_constraints": [
+      "Typed C-SDLC v2 lifecycle only",
+      "Work only in the bound #5662 FastWork worktree and intended Unity project",
+      "Create the issue-bound goal before implementation",
+      "Use Unity-MCP or editor tools for scene mutation and direct proof",
+      "Use repository-installed binaries and permission-safe process checks",
+      "No raw gh, broad process scans, cloud fallback, secret exposure, player builds, or replacement binaries"
+    ],
+    "review_scope": "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryFlagshipStageBuilder.cs\ndemos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs\ndemos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs\ndemos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uxml\ndemos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uss\ndemos/v0.91.6/unity-observatory/Assets/Resources/ObservatoryShellRuntime.uss\ndemos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json\ndemos/v0.91.6/unity-observatory/Assets/Scenes/FlagshipObservatoryStage.unity\ndemos/v0.91.6/unity-observatory/PROOF_PACKET.md\n.csdlc/issues/5662\n.csdlc/prepared/issues/5662",
+    "planning_profile": "large",
+    "validation_lanes": [
+      {
+        "lane": "unity-observatory-contract",
+        "proof_role": "Prove repository-owned Unity project structure, runtime contract, and guarded asset publication boundary",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-static",
+        "budget_seconds": 180,
+        "budget_tokens": 4000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_contract.sh"],
+        "acceptance_ids": ["AC-5", "AC-6", "AC-9"]
+      },
+      {
+        "lane": "unity-observatory-diff-hygiene",
+        "proof_role": "Prove bounded source hygiene and absence of whitespace or patch corruption",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-static",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-9"]
+      },
+      {
+        "lane": "unity-observatory-live-playmode",
+        "proof_role": "Prove intended project identity, loaded flagship scene, Play Mode behavior, and dual-resolution visual presentation",
+        "deterministic": false,
+        "resource_profile": "medium",
+        "parallel_group": "unity-live",
+        "budget_seconds": 600,
+        "budget_tokens": 6000,
+        "argv": ["bash", "adl/tools/probe_unity_mcp_observatory_alignment.sh"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7", "AC-8", "AC-10"],
+        "defer_reason": "The alignment probe establishes the prerequisite identity; direct Unity-MCP Play Mode and screenshot operations complete the visual proof during execution."
+      }
+    ],
+    "failure_policy": "Fail closed on project ambiguity, compile errors, cloud fallback, unlabelled fixture data, unsupported runtime claims, licensed payload publication, player or replacement binary builds, missing dual-resolution proof, or unrecorded tooling anomalies."
+  }
+}

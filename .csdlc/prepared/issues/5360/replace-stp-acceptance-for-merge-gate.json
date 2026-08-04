@@ -1,0 +1,23 @@
+{
+  "issue": 5360,
+  "card": "stp",
+  "expected_generation": 3,
+  "expected_digest": "044cf8455bfebe2a2db044775ba965f56c3e4b1645f06d86a994260aaac83197",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "reason": "Align WP-17 acceptance with merge-gated predecessor and successor handoff truth.",
+  "operation": {
+    "operation": "replace_acceptance_criteria",
+    "values": [
+      "AC-1: Shared-document edits begin only after #5351 is merged with passing exact-head integrated proof and its merge SHA is ancestral to the exact #5360 execution revision; typed predecessor closeout is asynchronous",
+      "AC-2: Every changed material claim names its source path, prior and resulting classification, exact evidence reference, owning product, and disposition",
+      "AC-3: Proven, planned, blocked, deferred, superseded, and explicit_non_claim remain distinct; only exact retained evidence supports proven and no unsupported statement is promoted",
+      "AC-4: README, feature, WBS, sprint, checklist, handoff, issue-wave, deployment, release, proof-coverage, and ownership surfaces agree without erasing separate ADL v2, Runtime v3, and C-SDLC v2 authority",
+      "AC-5: Structured YAML and JSON are processed with structured parsers or owner tools; Markdown changes preserve local structure, links, repository-relative evidence, redaction, and exact revision identity",
+      "AC-6: No dependency is added; documentation delta stays within 2500 changed lines and issue-local orchestration stays within 1500 nonblank lines, 500 per module, and fewer than 150 focused assertions unless exactly reviewed",
+      "AC-7: Every required focused, complete, exact-review, CI, authorized merge, and post-merge identity gate passes without hidden deferral; #5360 merge releases WP-18 while typed closeout follows asynchronously",
+      "AC-8: Product defects, missing proof, path collisions, budget variance, and unsupported claims route to their owning issue and never become documentation-only green truth"
+    ]
+  },
+  "fail_after_backup": false
+}

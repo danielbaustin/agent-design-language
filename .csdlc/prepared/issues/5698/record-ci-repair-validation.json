@@ -1,0 +1,27 @@
+{
+  "issue": 5698,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "50e590b7a23dd4514e36a2831759769b8c43c350d3a0b6575fc54df322d598b0",
+  "claim_id": "claim-5698-runtime-v3-redb-state",
+  "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+  "reason": "Record #5698 exact-head CI repair proof after fixing the adl-v2 locked standalone lockfile drift and verifying Runtime v3 fast locally with the repo-local Vector binary available as in CI.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash adl/tools/run_adl_v2_standalone.sh",
+        "cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target --test assembly",
+        "cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target --test durable_state",
+        "cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target --test governed_operations",
+        "cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target --all-targets -- -D warnings",
+        "cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target",
+        "git diff --check"
+      ],
+      "purpose": "Prove the current #5698 PR repair: the adl-v2 standalone lane no longer fails on a stale Cargo.lock, the redb/state focused tests remain green, strict Runtime v3 Clippy is green, and the Runtime v3 fast lane including guardian_soak passes with Vector installed as CI does.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5698"
+    }
+  },
+  "fail_after_backup": false
+}

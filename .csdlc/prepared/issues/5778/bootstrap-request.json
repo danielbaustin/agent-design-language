@@ -1,0 +1,186 @@
+{
+  "issue": 5778,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5778/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5778/diagram.mmd",
+  "design_reviewer": "operator-approved Gemini-assisted closeout redesign",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5778-derived-terminal-finish",
+    "owner": "codex:5778-implementation",
+    "generation": 0,
+    "acquired_unix_seconds": 1785696508,
+    "expires_unix_seconds": 1786301308,
+    "heartbeat_unix_seconds": 1785696508,
+    "branch": "codex/5778-derived-terminal-finish",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5778",
+      ".csdlc/issues/5655",
+      ".csdlc/issues/5684",
+      ".csdlc/issues/5778",
+      ".csdlc/locks/5778.lock",
+      ".csdlc/prepared/issues/5778",
+      ".csdlc/publication/5778.intent.json",
+      "csdlc-v2/Cargo.lock",
+      "csdlc-v2/Cargo.toml",
+      "csdlc-v2/operator/coexistence.json",
+      "csdlc-v2/operator/skills.json",
+      "csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md",
+      "csdlc-v2/src/bin/csdlc-finish.rs",
+      "csdlc-v2/src/finish.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/model.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate_finish.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      "docs/default_workflow.md",
+      "docs/tooling/OWNER_BINARY_INSTALLATION.md"
+    ],
+    "purpose": "Implement #5778 derived terminal truth and one idempotent finish command without a second closeout PR."
+  },
+  "initial": {
+    "slug": "derived-terminal-finish",
+    "version": "v0.91.8",
+    "title": "Derive terminal truth and finish in one idempotent command",
+    "goal": "Replace the post-merge closeout transaction with derived terminal truth and one retry-safe typed finish command.",
+    "required_outcome": "An exact reviewed and green issue converges through merge and terminal confirmation without tracked post-merge mutation, a terminal receipt projection, or a second PR.",
+    "declared_scope": [
+      "C-SDLC v2 terminal resolution and finish command",
+      "Exact-head review and merge convergence",
+      "Logical terminal claim release",
+      "Legacy terminal read compatibility",
+      "Focused lifecycle tests and operator contracts"
+    ],
+    "repo_inputs": [
+      "GitHub issue #5778",
+      "#5627 and PR #5629",
+      "#5748 and PR #5777",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/merge.rs",
+      "csdlc-v2/src/github.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "acceptance_criteria": [
+      "AC-1: One implementation issue needs one PR and successful finish creates no tracked post-merge diff or second PR",
+      "AC-2: Exact-head review, required checks, publication identity, and expected-SHA merge protection remain fail-closed",
+      "AC-3: Already-merged, interrupted-after-merge, and concurrent finish calls converge idempotently",
+      "AC-4: Merged, closed-unmerged, and approved no-PR outcomes derive from live GitHub and immutable Git truth",
+      "AC-5: Terminal remote state makes stale local claims non-blocking without deleting dirty work",
+      "AC-6: Legacy terminal records and receipts remain readable without rewrite",
+      "AC-7: Focused Gate 4-7 tests and strict Clippy pass"
+    ],
+    "invariants": [
+      "Never write tracked files on main",
+      "No AWS or external ledger service",
+      "No weaker review, checks, publication identity, or expected-head merge gate",
+      "No terminal projection or second closeout PR",
+      "No worktree deletion in finish",
+      "Machine-readable JSON on stdout and human observability on stderr"
+    ],
+    "non_goals": [
+      "Legacy command deletion before parity",
+      "Standalone cleanup implementation owned by follow-on #5779",
+      "Historical record rewrite",
+      "Runtime, provider, ADL language, or deployment changes"
+    ],
+    "deliverables": [
+      "Derived terminal resolver and typed result schemas",
+      "csdlc-finish owner binary",
+      "Exact-head and idempotent finish integration tests",
+      "Logical terminal claim-release compatibility",
+      "Updated operator manifest and focused documentation"
+    ],
+    "dependencies": [
+      "#5627 and PR #5629 complete",
+      "GitHub API and Git graph remain canonical remote authorities",
+      "#5779 and #5780 follow after this issue"
+    ],
+    "failure_policy": "Fail closed before merge on any stale digest, claim, review, head, check, publication, repository, PR, or no-PR authority mismatch; after a proven remote terminal event, retries must converge without requiring tracked state.",
+    "authority_boundary": [
+      "Typed C-SDLC v2 Rust binaries only",
+      "GitHub mutation limited to expected-head merge and governed terminal observation",
+      "No raw lifecycle state or card edits",
+      "No cleanup or deletion authority"
+    ],
+    "operator_constraints": [
+      "Do not use AWS or Spot",
+      "Do not write tracked files on main",
+      "Use the dedicated #5778 worktree",
+      "Keep implementation within the declared protected paths",
+      "Run a bounded subagent review before publication"
+    ],
+    "plan_summary": "Characterize current closeout behavior; implement a pure derived terminal resolver; add csdlc-finish with exact-head merge and retry convergence; make terminal remote state non-blocking for claims while preserving legacy reads; validate focused Gate 4-7 behavior; obtain exact-head review and publish one ready PR.",
+    "steps": [
+      {"id": "S1", "action": "Add characterization fixtures and freeze the derived terminal input/output contract", "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-6"], "status": "pending"},
+      {"id": "S2", "action": "Implement the pure terminal resolver and legacy compatibility classification", "acceptance_ids": ["AC-3", "AC-4", "AC-6"], "status": "pending"},
+      {"id": "S3", "action": "Implement csdlc-finish exact-head merge and interruption-safe idempotent convergence", "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"], "status": "pending"},
+      {"id": "S4", "action": "Make proven terminal remote state non-blocking for claim collision and update operator contracts", "acceptance_ids": ["AC-5", "AC-6"], "status": "pending"},
+      {"id": "S5", "action": "Run focused validation, exact-head review, ready publication, and CI shepherding", "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"], "status": "pending"}
+    ],
+    "validation_lanes": [
+      {
+        "lane": "finish-characterization",
+        "proof_role": "Prove exact-head, terminal disposition, idempotency, interruption, concurrency, and legacy compatibility behavior",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-6"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 600,
+        "budget_tokens": 6000,
+        "argv": ["cargo", "test", "--manifest-path", "csdlc-v2/Cargo.toml", "--test", "gate_finish"],
+        "parallel_group": "finish-focused",
+        "defer_reason": null
+      },
+      {
+        "lane": "lifecycle-regression",
+        "proof_role": "Preserve Gate 7 legacy lifecycle reads and claim safety while the new finish path is added",
+        "acceptance_ids": ["AC-5", "AC-6"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 5000,
+        "argv": ["cargo", "test", "--manifest-path", "csdlc-v2/Cargo.toml", "--test", "gate7_lifecycle"],
+        "parallel_group": "finish-regression",
+        "defer_reason": null
+      },
+      {
+        "lane": "finish-quality",
+        "proof_role": "Prove warning-free C-SDLC v2 code across all targets",
+        "acceptance_ids": ["AC-7"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": ["cargo", "clippy", "--manifest-path", "csdlc-v2/Cargo.toml", "--all-targets", "--", "-D", "warnings"],
+        "parallel_group": "finish-quality",
+        "defer_reason": null
+      }
+    ],
+    "review_prompts": [
+      "Does finish preserve exact reviewed-head, required-check, publication identity, and expected-SHA merge guarantees?",
+      "Can any interruption or concurrent call create conflicting terminal results or require a second PR?",
+      "Does terminal claim release avoid weakening active nonterminal collision safety?",
+      "Are legacy records readable without becoming competing current authority?"
+    ],
+    "review_scope": "Issue #5778 C-SDLC v2 derived terminal resolver, finish binary, claim collision behavior, compatibility readers, focused tests, operator manifests, and docs.",
+    "risks": [
+      "Treating a stale or unrelated GitHub observation as terminal could release a live claim",
+      "Review evidence committed after review could recreate exact-head recursion",
+      "Squash merge ancestry differs from head ancestry and must use GitHub merge identity truthfully",
+      "Compatibility logic could accidentally retain the old receipt as canonical"
+    ],
+    "stop_conditions": [
+      "Any need to weaken exact-head review or required checks",
+      "Any need for raw GitHub lifecycle mutation",
+      "Any collision with a live nonterminal claim",
+      "Any requirement for AWS, external persistence, or worktree deletion",
+      "Any design that still needs a second closeout PR"
+    ],
+    "task_boundary": "Implement only the first serialized closeout-simplification slice: derived terminal truth and one idempotent finish command with compatibility reads; leave cleanup and deletion to #5779 and #5780.",
+    "planning_profile": "large"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "adl.wp10a.convergence-decision.v1",
+  "source_issue": 5502,
+  "component": "adl-workcell-convergence",
+  "source_head": "3b900210cd30ee381c860a624499d1e4d8aea0d8",
+  "decision": "integrate",
+  "integrated_issues": [
+    5500,
+    5502
+  ],
+  "source_refs": [
+    "adl-v2/crates/adl-workcell-convergence/src/lib.rs",
+    "adl-v2/crates/adl-workcell-convergence/tests/convergence.rs::integrates_successful_outputs_in_conductor_order_with_stable_identity"
+  ],
+  "validation_ref": ".csdlc/evidence/5502/implementation-validation/convergence-contract.log",
+  "truth_boundary": "The retained decision records that the merged #5502 convergence contract admits reviewed successful outputs in conductor order; it does not mutate GitHub or lifecycle state."
+}

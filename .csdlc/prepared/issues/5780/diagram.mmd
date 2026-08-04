@@ -1,0 +1,10 @@
+flowchart LR
+    P["csdlc-publish\nreviewed exact PR"] --> F["csdlc-finish\nsole terminal mutation"]
+    F --> G["Live GitHub terminal truth"]
+    F --> D["Derived terminal envelope\nGit-common cache"]
+    S["csdlc-pr-state\nstatus inspection"] --> G
+    C["csdlc-clean\nindependent cleanup"] --> W["Exact registered worktree"]
+    L["Legacy projections and receipts\nread-only"] --> I["Compatibility index"]
+    D --> I
+    X["Deleted: closeout, reconcile, repair,\ntransport, receipt writer, coupled prune"]:::deleted
+    classDef deleted fill:#fee,stroke:#b00,stroke-dasharray: 5 5

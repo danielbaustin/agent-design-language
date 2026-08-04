@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4758,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][launch] Implement launch readiness package after platform deployment",
+    "slug": "v0918-wp14-launch-readiness",
+    "version": "v0.91.8",
+    "generation": 8
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Prepare a later execution lane for the launch readiness artifact that v0.92 can consume after platform deployment evidence is accepted.",
+      "required_outcome": "An execution-ready preparation packet for the future integrated launch readiness artifact, with live dependency gates and non-claim boundaries recorded.",
+      "declared_scope": [
+        "six-card C-SDLC v2 preparation packet",
+        "concise launch readiness design and diagram",
+        "future integrated launch artifact plan",
+        "live #5384 merge and ancestry dependency gate"
+      ],
+      "authority_boundary": [
+        "preparation only in this session",
+        "no launch implementation, PR publication, review, broad tests, raw gh, AWS, or root-main writes",
+        "later execution requires live merge plus ancestry for #5384 on current origin/main",
+        "#5335 is routing audit context only",
+        "closeout receipts are audit-only and non-blocking"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "use typed C-SDLC v2 only",
+        "work only in /Volumes/FastWork/adl-wp-4758 on codex/4758-v0918-preparation",
+        "commit and push only the clean preparation branch",
+        "do not publish a PR or mutate GitHub",
+        "do not advance to implementation during preparation"
+      ]
+    }
+  }
+}

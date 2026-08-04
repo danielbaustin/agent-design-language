@@ -1,6 +1,6 @@
 milestone: v0.91.8
 version: v0.91.8
-status: active_readiness
+status: active_release_tail
 readiness_issue: 5594
 sprint_umbrella_issue: 5595
 historical_setup_issues: [5335, 5383]
@@ -9,7 +9,7 @@ wp14a_parent_issue: 5384
 notes:
   - "#5383 is the historical v0.91.7 setup authority for this package."
   - "#5383 is closed as of 2026-07-15; do not describe setup as in progress."
-  - "#5594 is active WP-01 readiness authority; #5595 is the single milestone sprint umbrella."
+  - "#5594 is the historical WP-01 readiness authority; #5595 is the single milestone sprint umbrella."
   - "#4641 remains v0.91.7 WP-14 after restoration."
   - "#5384 preserves the v0.91.8 platform acceptance content formerly on #4641."
   - "All entries are planned until issue-local proof says otherwise."
@@ -30,11 +30,11 @@ wp_issue_map:
   - {wp: WP-10A, issue: 5497}
   - {wp: WP-11, issue: 5350}
   - {wp: WP-12, issue: 5344}
-  - {wp: WP-13, issue: 5346}
   - {wp: WP-14A, issue: 5384}
   - {wp: WP-15, issue: 5354}
   - {wp: WP-16, issue: 5351}
   - {wp: WP-17, issue: 5360}
+  - {wp: WP-13, issue: 5346}
   - {wp: WP-18, issue: 5356}
   - {wp: WP-19, issue: 5357}
   - {wp: WP-20, issue: 5363}
@@ -60,10 +60,10 @@ sidecar_routes:
   - {issue: 5500, wp: WP-10A, assignment: "Read-only live workcell operator dashboard"}
   - {issue: 5502, wp: WP-10A, assignment: "Output convergence and deterministic replanning"}
   - {issue: 5501, wp: WP-10A, assignment: "Live distributed Codex workcell proof"}
-  - {issue: 5540, wp: WP-14A, assignment: "C-SDLC acceptance preflight inventory defect; do not absorb"}
-  - {issue: 5541, wp: WP-14A, assignment: "C-SDLC acceptance preflight inventory defect; do not absorb"}
-  - {issue: 5558, wp: WP-14A, assignment: "C-SDLC acceptance preflight inventory defect; do not absorb"}
-  - {issue: 5548, wp: WP-14A, assignment: "C-SDLC Gate 2 fixture defect; independently owned acceptance inventory"}
+  - {issue: 5540, route: closed_repair_history, assignment: "Closed C-SDLC acceptance preflight repair evidence"}
+  - {issue: 5541, route: closed_repair_history, assignment: "Closed C-SDLC acceptance preflight repair evidence"}
+  - {issue: 5558, live_wp: WP-20, parent_issue: 5363, assignment: "Remove sunset owner-lane guidance"}
+  - {issue: 5548, live_wp: WP-20, parent_issue: 5363, assignment: "Initialize Gate 2 fixture temp roots"}
   - {issue: 5587, route: operational_sidecar, assignment: "Google Drive context mirror; independently owned and not a core sprint blocker without an accepted dependency"}
   - {issue: 5438, route: closed_repair_history}
   - {issue: 5470, route: closed_repair_history}
@@ -72,18 +72,19 @@ sidecar_routes:
   - {issue: 5566, route: closed_repair_history}
   - {issue: 5569, route: closed_repair_history}
   - {issue: 5572, route: closed_repair_history}
-  - {issue: 5352, live_wp: WP-14, parent_wp: WP-14A, assignment: "Exact-revision v0.92 consumption handoff"}
-  - {issue: 4758, live_wp: WP-14, parent_wp: WP-14A, assignment: "Launch readiness package after platform deployment"}
-  - {issue: 4759, live_wp: WP-14, parent_wp: WP-14A, assignment: "v0.92 activation map from accepted deployed products"}
-  - {issue: 4760, live_wp: WP-14, parent_wp: WP-14A, assignment: "Memory Palace context handoff"}
-  - {issue: 4761, live_wp: WP-14, parent_wp: WP-14A, assignment: "v0.92 capability envelope"}
-  - {issue: 4762, live_wp: WP-14, parent_wp: WP-14A, assignment: "Birth witnesses and receipt package"}
-  - {issue: 4763, live_wp: WP-14, parent_wp: WP-14A, assignment: "First-birthday docs and external launch surfaces"}
-  - {issue: 5007, live_wp: WP-14, parent_wp: WP-14A, assignment: "Memory Palace ADR acceptance after complete platform proof"}
-  - {issue: 4739, live_wp: WP-14, parent_wp: WP-14A, assignment: "Unity-MCP live project and port proof"}
-  - {issue: 4741, live_wp: WP-14, parent_wp: WP-14A, assignment: "Unity editor liveness and batch proof"}
-  - {issue: 5332, live_wp: WP-14, parent_wp: WP-14A, assignment: "Unity ILPP GetDomainName loop"}
-  - {issue: 5107, live_wp: WP-14, parent_wp: WP-14A, assignment: "Adaptive Learning DAG downstream queue"}
+  - {issue: 5352, live_wp: WP-21, parent_issue: 5362, assignment: "Exact-revision v0.92 consumption handoff"}
+  - {issue: 5791, live_wp: WP-18, parent_issue: 5356, assignment: "Final internal review second pass after residual coding"}
+  - {issue: 4758, live_wp: WP-21, parent_issue: 5362, assignment: "Launch readiness package after platform deployment"}
+  - {issue: 4759, live_wp: WP-21, parent_issue: 5362, assignment: "v0.92 activation map from accepted deployed products"}
+  - {issue: 4760, live_wp: WP-21, parent_issue: 5362, assignment: "Memory Palace context handoff"}
+  - {issue: 4761, live_wp: WP-21, parent_issue: 5362, assignment: "v0.92 capability envelope"}
+  - {issue: 4762, live_wp: WP-21, parent_issue: 5362, assignment: "Birth witnesses and receipt package"}
+  - {issue: 4763, live_wp: WP-21, parent_issue: 5362, assignment: "First-birthday docs and external launch surfaces"}
+  - {issue: 5007, live_wp: WP-21, parent_issue: 5362, assignment: "Memory Palace ADR acceptance after complete platform proof"}
+  - {issue: 4739, live_wp: WP-15, parent_issue: 5354, assignment: "Unity-MCP live project and port proof"}
+  - {issue: 4741, live_wp: WP-15, parent_issue: 5354, assignment: "Unity editor liveness and batch proof"}
+  - {issue: 5332, live_wp: WP-15, parent_issue: 5354, assignment: "Unity ILPP GetDomainName loop"}
+  - {issue: 5107, live_wp: WP-21, parent_issue: 5362, assignment: "Adaptive Learning DAG downstream queue"}
 parallel_execution:
   status: planned
   plan: docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md
@@ -129,11 +130,11 @@ parallel_execution:
       after_parity_a: [5592, 5589, 5590]
       concurrent_execution_requires_disjoint_protected_paths: true
   cutover_deletion_path:
-    serial_prefix: [5350, 5344, 5343]
+    serial_prefix: [5350, 5344, 5343, 5384, 5354, 5351, 5360]
     acceptance: [5358, 5361]
     disjoint_deletion_execution: [5346, 5347]
-    merge_rule: "Deletion PR merges and post-merge validation remain serial."
-  release_tail_serial: [5354, 5351, 5360, 5356, 5357, 5363, 5362, 5355, 5359, 5348]
+    merge_rule: "WP-13 is deferred until immediately before #5356; its two deletion PR merges and post-merge validation remain serial."
+  release_tail_serial: [5354, 5351, 5360, 5346, 5347, 5356, 5791, 5357, 5363, 5362, 5355, 5359, 5348]
 work_packages:
   - wp: WP-01
     issue: 5594
@@ -217,20 +218,20 @@ work_packages:
     issue: 5346
     title: Delete replaced incumbent surfaces
     outcome: Delete only reviewed replaced ADL compiler/CLI and external-owned bands through #5346/#5347.
-    depends_on: ["WP-12", "#5358", "#5361"]
+    depends_on: ["WP-14A", "WP-15", "WP-16", "WP-17"]
     deliverables: ["deletion manifest", "eligibility proof", "post-deletion validation"]
   - wp: WP-14A
     issue: 5384
-    title: Integrated platform acceptance deployment and v0.92 birthday handoff
-    outcome: Accept and deploy ADL v2, Runtime v3, and C-SDLC v2 and dispose moved handoff children.
-    depends_on: ["WP-13", "#5358", "#5361"]
-    deliverables: ["acceptance packet", "deployment proof", "v0.92 handoff ledger"]
+    title: Integrated platform acceptance and deployment
+    outcome: Accept and deploy ADL v2, Runtime v3, and C-SDLC v2 at exact reviewed revisions.
+    depends_on: ["#5358", "#5361", "#5344", "#5343"]
+    deliverables: ["acceptance packet", "deployment proof"]
   - wp: WP-15
     issue: 5354
     title: Converge integrated ADL Runtime and C-SDLC demos
-    outcome: Demonstrate the deployed three-product stack and public claim boundaries.
+    outcome: Demonstrate the deployed three-product stack, converge Unity Observatory proof, and preserve public claim boundaries.
     depends_on: ["WP-14A"]
-    deliverables: ["demo packet", "claim-boundary matrix"]
+    deliverables: ["demo packet", "Unity Observatory proof or explicit blocker", "claim-boundary matrix"]
   - wp: WP-16
     issue: 5351
     title: Run integrated platform quality gate
@@ -246,27 +247,27 @@ work_packages:
   - wp: WP-18
     issue: 5356
     title: Run internal milestone review
-    outcome: Review code, deployment, docs, proof, issue graph, and release-tail packets.
+    outcome: Review code, deployment, docs, proof, issue graph, and release-tail packets, then run final second-pass issue #5791 after residual coding.
     depends_on: ["WP-17"]
-    deliverables: ["internal review register"]
+    deliverables: ["first-pass internal review register #5356", "final second-pass review #5791"]
   - wp: WP-19
     issue: 5357
     title: Run independent external milestone review
-    outcome: Run external review after internal review is consumable.
-    depends_on: ["WP-18"]
+    outcome: Run external review after final internal second-pass issue #5791 is consumable.
+    depends_on: ["WP-18 #5791"]
     deliverables: ["external review packet"]
   - wp: WP-20
     issue: 5363
     title: Remediate review findings and run release preflight
-    outcome: Fix accepted findings and rerun focused/integrated checks.
+    outcome: Fix accepted findings and owned C-SDLC tooling defects, then rerun focused/integrated checks.
     depends_on: ["WP-19"]
-    deliverables: ["remediation packet", "preflight proof"]
+    deliverables: ["remediation packet", "C-SDLC tooling fixes #5548 and #5558", "preflight proof"]
   - wp: WP-21
     issue: 5362
     title: Align feature list and v0.92 planning truth
-    outcome: Prepare v0.92 inputs from reviewed deployed truth.
+    outcome: Prepare exact-revision v0.92 handoff, launch/activation, Memory Palace, identity/birthday, capability, and Adaptive Learning inputs from reviewed deployed truth.
     depends_on: ["WP-20"]
-    deliverables: ["v0.92 input packet"]
+    deliverables: ["handoff #5352", "launch and activation #4758/#4759/#4761", "Memory Palace #4760/#5007", "identity and birthday #4762/#4763", "Adaptive Learning plan #5107"]
   - wp: WP-21A
     issue: 5355
     title: Prepare next-milestone closeout plan

@@ -119,17 +119,8 @@ fn usage_mentions_v0_4_and_legacy_examples() {
 #[test]
 fn code_review_filter_covers_global_usage_entry() {
     let text = usage();
-    assert!(
-        text.contains(
-            "adl tooling <card-prompt|code-review|csdlc-prompt-editor|generate-wp-issue-wave|lint-prompt-spec|prompt-template"
-        )
-    );
-    assert!(text.contains("srp-sor-update"));
-    assert!(text.contains(
-        "adl tooling code-review --out artifacts/reviews/pr-review --backend fixture --visibility packet-only"
-    ));
-    assert!(text.contains("adl pr finish <issue> --title <title>"));
-    assert!(text.contains("adl pr repair-issue-body <issue>"));
+    assert!(!text.contains("adl tooling"));
+    assert!(!text.contains("adl pr "));
     assert!(text.contains("adl runtime-v2 contract-market-demo"));
     assert!(text.contains("adl scheduler plan --input <bundle.json> [--out <path>] [--json]"));
 }

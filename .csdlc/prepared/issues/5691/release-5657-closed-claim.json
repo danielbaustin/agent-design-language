@@ -1,0 +1,12 @@
+{
+  "issue": 5657,
+  "expected_generation": 2,
+  "expected_digest": "fa376aed6ddd7d15df1394d30c62a41fa156489b6796422a0a4aef7c11cbcd76",
+  "expected_claim_id": "claim-5657-runtime-v3-launch-recovery",
+  "actor": "codex:5691-runtime-v3-vector-otel",
+  "repository": "danielbaustin/agent-design-language",
+  "observed_issue": 5657,
+  "observed_issue_state": "closed",
+  "observation_source": "github://danielbaustin/agent-design-language/issues/5657",
+  "reason": "Release stale active claim for GitHub-closed #5657 so #5691 can claim production Runtime v3 observability startup/status paths without manual record edits."
+}

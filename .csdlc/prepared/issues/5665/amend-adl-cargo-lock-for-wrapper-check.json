@@ -1,0 +1,12 @@
+{
+  "issue": 5665,
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "expected_generation": 6,
+  "expected_digest": "87ba63fbe9fca29dd20993ec80403eb5f9b00256cd4df27d6c9fff052874f620",
+  "now_unix_seconds": 1784936021,
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "allow focused wrapper bin compile check to refresh adl/Cargo.lock after adl-runtime dependency graph changed",
+  "add_protected_paths": [
+    "adl/Cargo.lock"
+  ]
+}

@@ -7,9 +7,9 @@
     "title": "[v0.91.8][ci][tooling] Route C-SDLC proof and FastWork builds correctly",
     "slug": "csdlc-ci-fastwork-routing",
     "version": "v0.91.8",
-    "generation": 20
+    "generation": 27
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

@@ -1,0 +1,185 @@
+{
+  "schema": "adl.v092.capability_envelope.v1",
+  "issue": 4761,
+  "concern": "capability-envelope",
+  "status": "implemented_with_evidence_bound_non_claims",
+  "worktree_head_at_authoring": "8c25d1caba62f8af24e25b67a78c8e2239c3dc9a",
+  "source_inventory": ".csdlc/evidence/4761/capability-envelope/inputs.v1.json",
+  "non_claims": ".csdlc/evidence/4761/capability-envelope/non-claims.v1.md",
+  "accepted_products": [
+    {
+      "product": "C-SDLC v2",
+      "issue": 5358,
+      "pr_head": "e048230245b1ad101c8056678123a2747faa4b60",
+      "accepted_merge": "fc75f4fc697262f89f99461679a406be0b4b3775",
+      "evidence_refs": [
+        "platform_acceptance_5384",
+        "feature_proof_coverage_v0918"
+      ],
+      "claim": "Typed C-SDLC v2 is an accepted pre-v0.92 product input for lifecycle routing and evidence discipline."
+    },
+    {
+      "product": "Runtime v3",
+      "issue": 5361,
+      "pr_head": "f7fc71421f4bcf70039b910c9b88b538bb111400",
+      "accepted_merge": "f7258b07e9da414bfee518f0c89a76071bc03ee8",
+      "evidence_refs": [
+        "platform_acceptance_5384",
+        "runtime_v3_acceptance_5361",
+        "wp12_manifest"
+      ],
+      "claim": "Runtime v3 is an accepted pre-v0.92 product input for bounded runtime, observatory, guardian, rollback, and continuity capability claims."
+    },
+    {
+      "product": "ADL v2 soak and rollback",
+      "issue": 5344,
+      "pr_head": "141dfa20ccc3753060687259ad933397331df9c7",
+      "accepted_merge": "d4825d4be9ed14ed6060dd33cbdafe5eaa5efcd2",
+      "evidence_refs": [
+        "platform_acceptance_5384",
+        "wp12_manifest",
+        "wp12_platform_linux",
+        "wp12_platform_macos",
+        "wp12_platform_windows"
+      ],
+      "claim": "ADL v2 soak and rollback are accepted pre-v0.92 product inputs for cross-platform lifecycle acceptance and rollback capability limits."
+    },
+    {
+      "product": "ADL v2 reversible default",
+      "issue": 5343,
+      "pr_head": "e4bbc988cad682cbb2ff8d24085e1a99bccec1ce",
+      "accepted_merge": "e1b6a34e4763a79d1c40c641e64c0c061a0aa96c",
+      "evidence_refs": [
+        "platform_acceptance_5384",
+        "feature_proof_coverage_v0918"
+      ],
+      "claim": "ADL v2 reversible default is an accepted pre-v0.92 product input for selector and rollback-window capability claims."
+    }
+  ],
+  "capability_categories": [
+    {
+      "category": "provider",
+      "state": "bounded_supported",
+      "supported_claims": [
+        "Provider/tool adapter proof covers mock, HTTP, governed-tool, authenticated WSS, health, and telemetry adapter behavior retained for v0.92 consumption."
+      ],
+      "evidence_refs": [
+        "runtime_adapter_matrix_5665",
+        "runtime_v3_acceptance_5361",
+        "feature_proof_coverage_v0918"
+      ],
+      "limits": [
+        "Credentialed remote-provider deployment is not claimed.",
+        "Provider/model reliability remains limited to retained proof surfaces and known failure-mode boundaries."
+      ]
+    },
+    {
+      "category": "model",
+      "state": "bounded_supported",
+      "supported_claims": [
+        "v0.92 may consume provider/model readiness only as named retained evidence with role suitability and proof limits."
+      ],
+      "evidence_refs": [
+        "activation_bridge_ledger_v092",
+        "feature_proof_coverage_v0918"
+      ],
+      "limits": [
+        "No new model baseline, Aptitude Atlas completion, or remote model deployment is claimed by this envelope."
+      ]
+    },
+    {
+      "category": "tool",
+      "state": "bounded_supported",
+      "supported_claims": [
+        "Governed tool and runtime API adapter capability is supported where retained tests or platform evidence name the tool surface."
+      ],
+      "evidence_refs": [
+        "runtime_adapter_matrix_5665",
+        "runtime_v3_acceptance_5361",
+        "wp12_manifest"
+      ],
+      "limits": [
+        "Tool authority does not extend beyond declared adapters, policy gates, and validated platform evidence."
+      ]
+    },
+    {
+      "category": "skill",
+      "state": "bounded_supported",
+      "supported_claims": [
+        "Typed lifecycle skill routing and proof-loop discipline are accepted as pre-v0.92 inputs through C-SDLC v2 and feature-proof coverage."
+      ],
+      "evidence_refs": [
+        "platform_acceptance_5384",
+        "feature_proof_coverage_v0918",
+        "activation_bridge_ledger_v092"
+      ],
+      "limits": [
+        "Skill claims are lifecycle and evidence-routing claims, not autonomous merge, closeout, or governance authority."
+      ]
+    },
+    {
+      "category": "authority",
+      "state": "bounded_supported",
+      "supported_claims": [
+        "The v0.92 birthday path may consume the envelope as a reviewable authority-bound context record for provider, model, tool, skill, and limit claims."
+      ],
+      "evidence_refs": [
+        "memory_grounding_capability_witnesses_v092",
+        "activation_bridge_ledger_v092",
+        "demo_matrix_v092"
+      ],
+      "limits": [
+        "The envelope is not constitutional, legal, governance, citizenship, or production standing authority.",
+        "The envelope does not complete v0.92 activation by itself."
+      ]
+    },
+    {
+      "category": "limit",
+      "state": "explicit",
+      "supported_claims": [
+        "Every supported capability is bounded by retained source evidence, exact accepted-product input revisions, and explicit non-claims."
+      ],
+      "evidence_refs": [
+        "non_claims_v1",
+        "platform_acceptance_5384",
+        "runtime_v3_acceptance_5361",
+        "wp12_manifest"
+      ],
+      "limits": [
+        "Planning-only v0.92 texts are consumption contracts, not completion proof.",
+        "Unsupported claims must remain blockers or non-claims until a later issue supplies retained evidence."
+      ]
+    }
+  ],
+  "birth_packet_consumption": {
+    "status": "available_as_pre_v092_input",
+    "consumer_surfaces": [
+      "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md"
+    ],
+    "required_consumer_behavior": [
+      "cite this envelope and validation log for D5 capability-envelope proof inputs",
+      "reject birthday/MVP claims that omit provider, model, tool, skill, authority, or limit context",
+      "preserve planning-only and non-claim boundaries until later birthday implementation proof exists"
+    ]
+  },
+  "unsupported_claim_ids": [
+    "unity_runtime_proof",
+    "memory_palace_runtime_completion",
+    "v092_birthday_execution_complete",
+    "aws_deployment",
+    "gpu_operation",
+    "credentialed_remote_provider_deployment",
+    "constitutional_or_legal_authority",
+    "production_citizenship",
+    "governance_completion",
+    "raw_private_memory_exposure",
+    "complete_aptitude_atlas_baseline",
+    "production_websocket_security"
+  ],
+  "validation": {
+    "validator": ".csdlc/evidence/4761/capability-envelope/validate_capability_envelope.rb",
+    "log": ".csdlc/evidence/4761/capability-envelope/validation.v1.log",
+    "failure_semantics": "fail_closed"
+  }
+}

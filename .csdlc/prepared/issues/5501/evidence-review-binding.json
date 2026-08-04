@@ -1,0 +1,9 @@
+{
+  "schema": "adl.wp10a.evidence-review-binding.v1",
+  "issue": 5501,
+  "evidence_revision": "592b1040ba128f65fa53a5a678dc894ff8c8737b",
+  "scope": [
+    ".csdlc/evidence/5501"
+  ],
+  "relation": "reviewed_head_must_descend_from_evidence_revision_with_zero_scoped_diff"
+}

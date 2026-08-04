@@ -1,0 +1,23 @@
+{
+  "issue": 5698,
+  "claim_id": "claim-5698-runtime-v3-redb-state",
+  "expected_owner": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+  "expected_generation": 0,
+  "expected_digest": "2daba68c224704e8856105a3db463151d5991037319a77b41238f4be9f789aca",
+  "now_unix_seconds": 1785344690,
+  "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+  "reason": "WP-12 #5344 is GitHub closed, typed closed_out, claim-free, and its retained terminal receipt releases the Runtime v3 paths needed by #5698; begin the scoped redb durable kernel-state implementation.",
+  "expected_purpose": "Prepare and coordinate #5698 redb durable state work; product implementation is blocked until active WP-12 #5344 releases or transfers overlapping Runtime v3 paths",
+  "purpose": "Implement #5698 Runtime v3 durable kernel-state unification on redb: replace local adapter and governed-operation flat-file checkpoint/lifelog persistence with real redb-backed persistence, recovery, integrity, and fail-closed migration behavior.",
+  "add_protected_paths": [
+    "adl-runtime-kernel/Cargo.lock",
+    "adl-runtime-kernel/Cargo.toml",
+    "adl-runtime-kernel/src/assembly.rs",
+    "adl-runtime-kernel/src/durable_state.rs",
+    "adl-runtime-kernel/src/governed_operations.rs",
+    "adl-runtime-kernel/src/lib.rs",
+    "adl-runtime-kernel/tests/assembly.rs",
+    "adl-runtime-kernel/tests/durable_state.rs",
+    "adl-runtime-kernel/tests/governed_operations.rs"
+  ]
+}

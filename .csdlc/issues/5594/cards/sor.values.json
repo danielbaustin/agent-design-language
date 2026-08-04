@@ -7,9 +7,9 @@
     "title": "[v0.91.8][WP-01][readiness] Reconcile plans, sprint umbrellas, and parallel execution",
     "slug": "v0-91-8-wp-01-execution-readiness",
     "version": "v0.91.8",
-    "generation": 36
+    "generation": 45
   },
-  "status": "ready",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -103,10 +103,10 @@
           "evidence_ref": "current proof: 122 real rows, pinned digest, eight explicit decision classes; supersedes the earlier 123-row/six-class entry"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "draft",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

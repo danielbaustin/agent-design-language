@@ -1,0 +1,34 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 19,
+  "expected_digest": "b2dca9a41e383af2fbbefda18d43f9609ca61dc5ffa282265ea5c3123fa43226",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record implementation of the five PR #5669 exact-review fixes while holding the external review/publication gate.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Fixed all five in-scope PR #5669 exact-review findings with real local Runtime v3 behavior. Agent now executes bounded typed work; Scheduler retires completed jobs and remains reusable; CheckpointStore persists and restores state bytes with principal/integrity checks; cancellation propagates through CancellationToken state; production local storage requires an explicit absolute state root with a single-writer lock. Current touched source/test physical LoC is before 3796, after 3728, net -68. Publication and merge remain held for exact external Opus 5 review.",
+    "changes": [
+      "Replaced receipt/text-trigger local Agent behavior with typed bounded blake3 and cancellation-aware sleep work, plus canonical ingress proof for real Agent dispatch.",
+      "Replaced Scheduler saturation-by-text behavior with a typed local schedule command that retires each completed job and accepts repeated sequential work beyond four requests.",
+      "Replaced metadata-only checkpointing with state_hex byte persistence, atomic checkpoint writes, restore-time principal verification, and payload hash integrity verification.",
+      "Replaced payload-text cancellation triggers with CancellationToken propagation through OperationalAdapter and in-process Agent execution.",
+      "Removed cwd/temp fallback state creation from production local adapters; callers must provide an explicit absolute state root guarded by writer.lock unique-writer behavior.",
+      "Deleted the superseded fixture-only operations test target and folded real adapter proof into assembly/governed end-to-end tests."
+    ],
+    "artifacts": [
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-governed.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log",
+      ".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log"
+    ]
+  },
+  "fail_after_backup": false
+}

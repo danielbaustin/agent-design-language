@@ -19,7 +19,7 @@ The editor should display:
 
 - current local bundle root: `.adl/v0.90/tasks/issue-2053__backlog-tools-refresh-web-task-editor-current-skills/`
 - current local card target for the active STP, SIP, or SOR card
-- a copy-only workflow action for the `pr-run` handoff
+- a copy-only workflow action for the `csdlc-bind` handoff
 - an ADL language contract panel listing `providers`, `tools`, `agents`, `tasks`, `workflows`, and `run`
 
 ## Command Proof
@@ -30,7 +30,7 @@ The adapter command used by the editor is:
 
 Expected output:
 
-- `./adl/tools/pr.sh run 2053 --slug backlog-tools-refresh-web-task-editor-current-skills --version v0.90`
+- `.adl/bin/csdlc-v2/csdlc-bind --root <worktree> --request <bind-request.json>`
 
 Additional supported handoffs:
 
@@ -44,10 +44,12 @@ The browser editor is a preparation surface only.
 
 It can help prepare commands for:
 
-- `pr-init`
-- `pr-ready` / doctor readiness
-- `pr-run`
-- `pr-finish`
+- `csdlc-init`
+- `csdlc-doctor`
+- `csdlc-bind`
+- `csdlc-validate`
+- `csdlc-review`
+- `csdlc-publish`
 
 It must not take over:
 

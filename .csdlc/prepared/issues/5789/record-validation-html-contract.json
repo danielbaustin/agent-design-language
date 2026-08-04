@@ -1,0 +1,21 @@
+{
+  "issue": 5789,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "3ad9f0c1f28532ac2d903a50aaa63eb15443165d2696c4f34c18bab164763e10",
+  "claim_id": "claim-5789-observatory-full-functionality",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record the dedicated checked-in HTML Observatory Runtime v3 browser contract proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_html_observatory.sh"
+      ],
+      "purpose": "Prove the checked-in HTML Observatory defaults to Runtime v3, reads the configured https://localhost:20997 base, checks Runtime v3 events through /v1/observatory, posts signed adl.runtime.control_command.v1 envelopes to /v1/control, and rejects credentialed/wrong-schema inputs.",
+      "outcome": "passed",
+      "evidence_ref": "commentary: PASS: HTML Observatory Runtime v3 default, event check, and signed command POST contract"
+    }
+  }
+}

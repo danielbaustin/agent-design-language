@@ -1,0 +1,24 @@
+{
+  "issue": 5648,
+  "base_branch": "main",
+  "branch": "codex/5648-operator-active-claim-revoke",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5648-operator-active-claim-revoke",
+    "owner": "codex:5648-execution",
+    "generation": 1,
+    "acquired_unix_seconds": 1784850000,
+    "expires_unix_seconds": 1785454800,
+    "heartbeat_unix_seconds": 1784850000,
+    "branch": "codex/5648-operator-active-claim-revoke",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5648",
+      ".csdlc/locks/5648.lock",
+      ".csdlc/prepared/issues/5648",
+      "csdlc-v2/src",
+      "csdlc-v2/tests"
+    ],
+    "purpose": "Implement the typed operator-authorized active-claim revoke operation"
+  }
+}

@@ -1,12 +1,27 @@
 schema = "adl.runtime_v3.init.v1"
+state_root = "/var/lib/adl/runtime-v3"
+
+[binaries]
+kernel_path = "/opt/adl/bin/adl-runtime-kernel"
+
+[paths]
+continuity_dir = "continuity"
+tls_dir = "tls"
+credentials_dir = "credentials"
+observability_dir = "observability"
 
 [api]
-address = "localhost:20997"
-public_base_url = "https://runtime-gateway-host"
+address = "127.0.0.1:20997"
+public_base_url = "https://localhost:20997"
+bind_attempts = 20
+bind_retry_millis = 100
+websocket_auth_timeout_millis = 5000
+websocket_refresh_millis = 1000
+websocket_max_frame_bytes = 65536
 
 [api.tls]
-certificate_chain_path = ".adl/runtime-v3/tls/localhost-cert.pem"
-private_key_path = ".adl/runtime-v3/tls/localhost-key.pem"
+certificate_chain_path = "/var/lib/adl/runtime-v3/tls/localhost-cert.pem"
+private_key_path = "/var/lib/adl/runtime-v3/tls/localhost-key.pem"
 
 [observatory]
 allowed_origins = [
@@ -14,9 +29,77 @@ allowed_origins = [
   "https://localhost:8766",
 ]
 
-[agents]
-count = 10000
-sample_limit = 6
+[kernel]
+recorder_capacity = 1024
+control_history_capacity = 1024
+checkpoint_channel_capacity = 4
+component_readiness_timeout_millis = 5000
+observability_poll_millis = 50
+weather_stale_after_millis = 2000
+guardian_lease_connect_millis = 5000
+guardian_lease_auth_millis = 5000
+trusted_time_sample_timeout_millis = 3000
+trusted_time_max_offset_millis = 5000
+trusted_time_max_round_trip_millis = 2000
+trusted_time_retry_millis = 1000
+trusted_time_refresh_millis = 60000
+
+[credentials]
+control_public_key_path = "/var/lib/adl/runtime-v3/credentials/control-public-key.hex"
+control_key_id = "operator"
+control_principal = "operator"
+operation_public_key_path = "/var/lib/adl/runtime-v3/credentials/operation-public-key.hex"
+operation_key_id = "runtime-operations"
+continuity_signing_key_path = "/var/lib/adl/runtime-v3/credentials/continuity-signing-key.hex"
+continuity_key_id = "runtime-continuity"
+observatory_token_path = "/var/lib/adl/runtime-v3/credentials/observatory-token.txt"
+continuity_min_generation = 0
+sntp_server = "time.cloudflare.com"
+
+[shutdown]
+checkpoint_deadline_millis = 5000
+kernel_grace_millis = 10000
+api_drain_millis = 3000
+guardian_margin_millis = 500
+
+[guardian]
+restart_budget = 3
+backoff_base_millis = 100
+backoff_cap_millis = 5000
+healthy_window_millis = 60000
+lease_auth_timeout_millis = 5000
+lease_auth_attempts = 3
+capture_max_bytes = 65536
+capture_drain_grace_millis = 2000
+configuration_exit_codes = [64]
+
+[qualification]
+readiness_timeout_millis = 10000
+readiness_poll_millis = 50
+shutdown_wait_millis = 50000
+
+[observability_pipeline]
+vector_binary_path = "/opt/adl/bin/vector"
+service_name = "adl-runtime-v3"
+revision = "0.92.0"
+guardian_id = "guardian-process-0"
+lifecycle_suite = "runtime-v3"
+lifecycle_run = "runtime-v3-production"
+lifecycle_cycle = "runtime-v3-production-cycle"
+trace_filter = "adl_runtime_kernel=info,adl_runtime=info"
+otlp_timeout_millis = 5000
+vector_startup_attempts = 3
+vector_startup_backoff_millis = 100
+vector_shutdown_limit_millis = 3000
+drain_timeout_millis = 5000
+vector_config_path = "config/runtime-v3-vector.json"
+ingress_spool_path = "spool/runtime-v3.current.jsonl"
+master_log_path = "durable/master.log.jsonl"
+audit_path = "durable/master-log-audit.json"
+sequence_checkpoint_path = "durable/sequence.json"
+vector_data_dir = "vector-data"
+spool_max_bytes = 8388608
+spool_retained_files = 4
 
 [weather]
 sample_millis = 1000

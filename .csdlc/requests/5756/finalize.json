@@ -1,0 +1,145 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5756,
+  "expected_generation": 2,
+  "expected_digest": "80ac2898259f631f4e094d5f8ff36388793ffa893669f4aee38dbec5c2407b67",
+  "claim_id": "codex-5756-20260801",
+  "actor": "codex",
+  "summary": "Implemented MiniMax-scoped billing classification for code 1008 and cross-provider regressions.",
+  "changes": [
+    "Refactored MiniMax base_resp error classification into a reusable MiniMax-only helper.",
+    "Parse MiniMax non-success HTTP base_resp envelopes before falling back to shared HTTP classification.",
+    "Removed the shared bare 1008 substring billing shortcut.",
+    "Added positive MiniMax and negative OpenAI, Anthropic, DeepSeek, and generic hosted provider regressions."
+  ],
+  "artifacts": [
+    "adl/src/provider_adapter.rs",
+    ".csdlc/evidence/5756"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "provider-minimax-tests",
+          "proof_role": "Focused MiniMax adapter regressions for structured 1008 billing classification on success and non-success HTTP responses.",
+          "purpose": "Prove MiniMax status_code 1008 remains non-retryable ProviderBillingBlocked.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 2,
+            "memory_mib": 4096,
+            "tokens": 1000
+          },
+          "credentials": [],
+          "network": "loopback",
+          "dependencies": [],
+          "parallel_group": "local",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 240,
+          "executable": "cargo",
+          "argv": [
+            "test",
+            "--offline",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "provider_adapter::tests::minimax",
+            "--lib"
+          ],
+          "evidence": {
+            "max_log_bytes": 20000,
+            "redact_values": [],
+            "require_relative_paths": false
+          }
+        },
+        {
+          "id": "provider-non-minimax-tests",
+          "proof_role": "Focused OpenAI, Anthropic, DeepSeek, and generic hosted provider regressions for bare 1008 non-billing classification.",
+          "purpose": "Prove non-MiniMax hosted providers do not inherit MiniMax billing classification from bare 1008 text.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 2,
+            "memory_mib": 4096,
+            "tokens": 1000
+          },
+          "credentials": [],
+          "network": "loopback",
+          "dependencies": [],
+          "parallel_group": "local",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 240,
+          "executable": "cargo",
+          "argv": [
+            "test",
+            "--offline",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "provider_adapter::tests::non_minimax",
+            "--lib"
+          ],
+          "evidence": {
+            "max_log_bytes": 20000,
+            "redact_values": [],
+            "require_relative_paths": false
+          }
+        },
+        {
+          "id": "strict-clippy",
+          "proof_role": "Strict lint proof for the touched provider adapter crate surface.",
+          "purpose": "Prove the provider adapter changes are warning-clean under strict Clippy.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 2,
+            "memory_mib": 4096,
+            "tokens": 1000
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [
+            "provider-minimax-tests",
+            "provider-non-minimax-tests"
+          ],
+          "parallel_group": "local",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 600,
+          "executable": "cargo",
+          "argv": [
+            "clippy",
+            "--offline",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "evidence": {
+            "max_log_bytes": 20000,
+            "redact_values": [],
+            "require_relative_paths": false
+          }
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": [
+        "provider-minimax-tests",
+        "provider-non-minimax-tests",
+        "strict-clippy"
+      ],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {
+      "max_parallel": 1,
+      "cpu_units": 2,
+      "memory_mib": 4096,
+      "tokens": 3000
+    },
+    "root": "/Volumes/FastWork/adl-wp-5756",
+    "evidence_dir": "/Volumes/FastWork/adl-wp-5756/.csdlc/evidence/5756",
+    "cancellation_file": null
+  }
+}

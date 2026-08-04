@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5708,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast][ui] Redesign Podcast Studio with Agent Logic MagicUI style",
+    "slug": "v0-91-8-podcast-ui-redesign-podcast-studio-agent-logic-style",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "podcast_studio_packet",
+          "proof_role": "Focused deterministic Podcast Studio packet validation",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 500,
+          "argv": [
+            "bash",
+            "adl/tools/test_podcast_studio_v2_packet.sh"
+          ],
+          "parallel_group": "focused",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on any identity, review, publication, or terminal-evidence mismatch.",
+      "design_ref": ".csdlc/issues/5708/retained/design.md",
+      "design_digest": "9784671a4137e538c4caf23874fef04d8208d67e9cac8536e7b6ecdf50be5972",
+      "diagram_ref": ".csdlc/issues/5708/retained/diagram.mmd",
+      "diagram_digest": "01ec038a0453f5358691860c05ccc0cc1249df22876654ea70c263ba0aaac857"
+    }
+  }
+}

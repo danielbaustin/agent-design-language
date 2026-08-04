@@ -1,0 +1,24 @@
+{
+  "issue": 5347,
+  "base_branch": "main",
+  "branch": "codex/5347-v0918-wp13-external-band-deletion",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5347-v0918-wp13-external-band-deletion-preparation",
+    "owner": "codex:current-session-5347",
+    "generation": 1,
+    "acquired_unix_seconds": 1784662079,
+    "expires_unix_seconds": 1785266879,
+    "heartbeat_unix_seconds": 1784662079,
+    "branch": "codex/5347-v0918-wp13-external-band-deletion",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5347",
+      ".csdlc/locks/5347.lock",
+      ".csdlc/prepared/issues/5347",
+      ".csdlc/evidence/5347",
+      "docs/milestones/v0.91.8/evidence/wp13-external-bands"
+    ],
+    "purpose": "Prepare and review #5347 external-band deletion contracts only; no product path or deletion authority until #5346 and every acceptance/cutover dependency are merged, typed closed_out, receipt-backed, claim-free, ancestral, and the issue-graph cycle is reconciled"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "schema": "adl.wp19.documentation_readiness.v1",
+  "issue": 5357,
+  "source_wp17_issue": 5360,
+  "source_wp17_evidence": ".csdlc/evidence/5360/documentation-alignment.v1.json",
+  "source_wp17_summary": {
+    "updated": 27,
+    "verified_no_edit": 5,
+    "delegated_collision": 2
+  },
+  "current_corpus": {
+    "root": "docs/milestones/v0.91.8",
+    "tracked_markdown_yaml_json": 75,
+    "validation": [
+      "all tracked files exist",
+      "all JSON parses",
+      "all YAML parses",
+      "all local Markdown links resolve",
+      "human-authored files have final newlines and no trailing whitespace"
+    ]
+  },
+  "updated_for_wp19": [
+    "CHANGELOG.md",
+    "REVIEW.md",
+    "docs/README.md",
+    "docs/milestones/v0.91.8/MILESTONE_CHECKLIST_v0.91.8.md",
+    "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+    "docs/milestones/v0.91.8/README.md",
+    "docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md",
+    "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+    "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+    "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+    "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/review/README.md",
+    "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_5356.md"
+  ],
+  "current_main_verified_without_edit": [
+    "AGENTS.md",
+    "adl/Cargo.lock",
+    "adl/Cargo.toml",
+    "docs/architecture/adr/README.md",
+    "docs/milestones/v0.91.8/RUNTIME_V3_FUNCTIONAL_PARITY_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/ADL_V2_CORE_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/CSDLC_V2_ACCEPTANCE_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/DELETION_AND_CUTOVER_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/README.md",
+    "docs/milestones/v0.91.8/features/RUNTIME_V3_ADAPTER_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/RUNTIME_V3_FUNCTIONAL_PARITY_v0.91.8.md",
+    "docs/milestones/v0.91.8/evidence/wp16/ISSUE_OUTCOME_AUDIT.md",
+    "docs/milestones/v0.91.8/evidence/wp16/QUALITY_GATE.md",
+    "docs/milestones/v0.92/README.md",
+    "docs/milestones/v0.92/WBS_v0.92.md",
+    "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+    "docs/planning/ADL_FEATURE_LIST.md"
+  ],
+  "integrate_from_final_internal_review": [
+    "README.md",
+    "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+    "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+    "docs/reviews/v0.91.8/internal-review-5791/README.md",
+    "docs/reviews/v0.91.8/internal-review-5791/FINDINGS_REGISTER.md"
+  ],
+  "final_internal_review_issue": 5791,
+  "final_internal_review_pr": 5799,
+  "final_internal_review_review_sha": "70f4e76509de219ccff6ffb534f9199d74eaece2",
+  "final_internal_review_merge_sha": "1b1ba9990bee81cf74ea449f09c52373aeb7e16c",
+  "merged_source_transfer": {
+    "reason": "PR #5799 is merged and its three canonical docs now require WP-19 live-truth alignment; asynchronous closeout is not a review-readiness dependency.",
+    "paths": [
+      "README.md",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md"
+    ]
+  },
+  "pre_freeze_review": {
+    "reviewer": "subagent:gpt-5.5:019fcabf-f558-7130-abce-93db35365950",
+    "reviewed_sha": "cae953df0d1afb32b7c371ead3382174c2ab864a",
+    "result": "pass",
+    "blockers": 0,
+    "fixed_findings": 1,
+    "evidence": ".csdlc/evidence/5357/pre-freeze-documentation-review.md"
+  },
+  "freeze_ready": true,
+  "external_review_dispatched": false,
+  "release_approved": false
+}

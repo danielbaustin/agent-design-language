@@ -1,0 +1,136 @@
+# Structured Planning Prompt
+
+Template: 1.0.0
+
+Issue: 5346
+
+Repository: danielbaustin/agent-design-language
+
+Card: spp
+
+Status: ready
+
+## Summary
+
+Execute WP-13 #5346 now under the corrected sequence: WP-21 is complete, #5351 WP-16 and #5360 WP-17 are downstream and nonblocking, #5347 remains a disjoint peer deletion lane with serialized merge ordering, and current origin/main is integrated only in the issue worktree. Repair the issue-local dependency and manifest checks, claim only exact #5346 deletion paths, delete only reviewed manifest rows, run focused proving validation, obtain one bounded GPT-5.5 pre-PR review, fix all findings, and publish a ready PR with Closes #5346. Typed closeout is explicitly asynchronous and must not block this implementation lane.
+
+## Plan
+
+Revision 5
+
+## Steps
+
+[
+  {
+    "id": "S1",
+    "action": "Repair #5346 dependency and claim truth through supported typed v2 operations: remove downstream WP-16/#5351 and WP-17/#5360 prerequisites, accept completed #5354/#5352 GitHub merge/closure as nonblocking upstream truth, and keep #5347 as a disjoint peer lane with serialized merge ordering",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-3",
+      "AC-8",
+      "AC-10"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S2",
+    "action": "Create exact #5346 deletion eligibility evidence and amend the active claim only to the reviewed #5346 product paths, excluding #5347 external bands and Runtime v2",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S3",
+    "action": "Delete only the exact #5346 manifest rows and record deleted, retained, and newly added LoC separately against the pinned denominator",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-5",
+      "AC-6",
+      "AC-9"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S4",
+    "action": "Run focused proving validation, typed doctor, diff hygiene, and one bounded GPT-5.5 pre-PR review; fix every actionable finding before publication",
+    "acceptance_ids": [
+      "AC-7",
+      "AC-9",
+      "AC-10"
+    ],
+    "status": "completed"
+  },
+  {
+    "id": "S5",
+    "action": "Publish a ready PR through typed v2 with Closes #5346, verify actual PR base/head, and shepherd required CI to merge readiness without doing typed closeout in this session",
+    "acceptance_ids": [
+      "AC-7",
+      "AC-8",
+      "AC-10"
+    ],
+    "status": "completed"
+  }
+]
+
+## Invariants
+
+- Primary main remains untouched; all #5346 tracked work happens in /Volumes/FastWork/adl-wp-5346
+- #5351 WP-16 and #5360 WP-17 are downstream release-tail work and never block #5346 execution or publication
+- #5354 and #5352 GitHub issue closure on merged PRs is sufficient upstream truth; typed closeout may proceed asynchronously and must not block #5346
+- #5346 and #5347 manifests remain disjoint and every path has exactly one owner/disposition
+- Only exact reviewed #5346 manifest rows may be deleted; broad glob deletion is forbidden
+- Deleted, retained, and new LoC remain separate; below 80 percent deletion is never completion
+- Every retained path has a named owner and justification
+- Runtime v2 is categorically outside #5346 ownership and may not be edited or deleted by this issue
+- Deletion merges and post-merge validation are serialized
+
+## Risks
+
+- A broad directory or glob can delete an unclassified or peer-owned path
+- Manifest aliasing, symlinks, generated files, or Cargo membership can hide overlap between #5346 and #5347
+- A stale receipt or non-ancestral merge can make deletion depend on evidence absent from the execution tree
+- Denominator drift or mixed deleted/new LoC can overstate the reduction percentage
+- Compatibility and rollback surfaces can be removed before the reviewed window expires
+- Retained files can become ownerless duplicate authority
+- Validation can pass locally while consumers, docs, demos, install, or selector paths still reference deleted code
+
+## Estimates
+
+{
+  "elapsed_seconds": 86400,
+  "total_tokens": 240000,
+  "validation_seconds": 21600
+}
+
+## Design
+
+.csdlc/issues/5346/retained/design.md
+
+Digest: 6e14bf35883a4240d2772360e5ae156ae839dfa6bc31027639008b4abf7026de
+
+## Diagram
+
+.csdlc/issues/5346/retained/diagram.mmd
+
+Digest: a925534121f5fb01d22f6c079ad452250ded1ab04cade79b2e80487c4c48527c
+
+## Stop Conditions
+
+- Any #5344/#5343/#5358/#5361/#5384 terminal receipt, claim release, merge state, or ancestry predicate is absent or contradictory
+- The #5354 or #5352 GitHub closed/completed merge truth or merge-commit ancestry predicate is absent or contradictory
+- The #5346 and #5347 manifests overlap or any #5346 path lacks exactly one disposition and owner
+- The reviewed #5346 manifest does not match the exact execution revision
+- The rollback window or selector cutover evidence is incomplete
+- The denominator cannot be reproduced or deleted/retained/new LoC would be mixed
+- A retained path lacks an owner/justification or replacement proof is absent for a removed path
+- A product path cannot be claimed without collision, requires broad/glob deletion, or belongs to #5347 external bands or Runtime v2
+- Any required validation would be deferred, skipped, host-bound, secret-bearing, stale, or replaced by metadata
+
+## Handoff
+
+Proceed only after doctor readiness.

@@ -1,0 +1,33 @@
+{
+  "schema": "adl.pr_inventory.v1",
+  "repo": "danielbaustin/agent-design-language",
+  "open_pr_count": 1,
+  "pull_requests": [
+    {
+      "number": 5720,
+      "title": "[v0.91.8][podcast][ui] Update Synthetic Minds podcast studio copy",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5720",
+      "head_ref_name": "codex/5717-podcast-studio-copy",
+      "base_ref_name": "main",
+      "state": "OPEN",
+      "is_draft": true,
+      "updated_at": "2026-07-29T22:29:06+00:00",
+      "mergeable": null,
+      "queue": null,
+      "closing_issue_numbers": [],
+      "check_summary": {
+        "total": 20,
+        "failed": 0,
+        "pending": 0,
+        "passed": 20,
+        "projection_status": "checks_green_but_draft"
+      },
+      "watcher": {
+        "status": "not_issue_bound",
+        "packet_path": null,
+        "terminal_disposition": null,
+        "reason": "pr_has_no_closing_issue_reference"
+      }
+    }
+  ]
+}

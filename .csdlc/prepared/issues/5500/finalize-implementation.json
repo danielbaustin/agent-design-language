@@ -1,0 +1,75 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5500,
+  "expected_generation": 8,
+  "expected_digest": "a35946d9b1a6dd9995b3e5684beeda6f0463efdf463d4d6a32b234b6b2262b86",
+  "claim_id": "claim-5500-v0918-wp10a-dashboard-preparation",
+  "actor": "codex:issue-5500-implementation",
+  "summary": "Implemented the read-only WP-10A workcell operator view inside docs/tooling/milestone-dashboard with Runtime v3 Observatory read-feed composition.",
+  "changes": [
+    "Added a bounded workcell operator snapshot to the existing dashboard data.",
+    "Rendered issue ownership, dependency, topology, authority, freshness, and Runtime Observatory status inside the existing static dashboard.",
+    "Added an opt-in HTTPS-only Runtime v3 /v1/observatory read adapter with no mutation controls and retained fallback behavior.",
+    "Extended focused dashboard validation for schema, safe rendering, origin policy, no default fetch, and token non-rendering."
+  ],
+  "artifacts": [
+    "docs/tooling/milestone-dashboard/index.html",
+    "docs/tooling/milestone-dashboard/dashboard.js",
+    "docs/tooling/milestone-dashboard/style.css",
+    "docs/tooling/milestone-dashboard/data/v0.90.4.js",
+    "docs/tooling/milestone-dashboard/README.md",
+    "adl/tools/test_milestone_dashboard.sh"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "dashboard-contract",
+          "proof_role": "Run offline deterministic dashboard fixture, security, mobile-layout, syntax, and non-authority tests after dependency admission.",
+          "purpose": "Prove #5500 read-only workcell operator view rendering, Runtime Observatory read-feed boundaries, stale/unknown handling, safe text rendering, and no implicit mutation/fetch behavior.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 1,
+            "memory_mib": 256,
+            "tokens": 3000
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "dashboard-local",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 120,
+          "executable": "bash",
+          "argv": [
+            ".csdlc/prepared/issues/5500/validate-dashboard.sh"
+          ],
+          "evidence": {
+            "max_log_bytes": 8192,
+            "redact_values": [
+              "operator-local-token"
+            ],
+            "require_relative_paths": true
+          }
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": [
+        "dashboard-contract"
+      ],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {
+      "max_parallel": 1,
+      "cpu_units": 1,
+      "memory_mib": 256,
+      "tokens": 3000
+    },
+    "root": "/Volumes/FastWork/adl-wp-5500",
+    "evidence_dir": "/Volumes/FastWork/adl-wp-5500/.csdlc/evidence/5500",
+    "cancellation_file": null
+  }
+}

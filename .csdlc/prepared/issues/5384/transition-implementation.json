@@ -1,0 +1,16 @@
+{
+  "issue": 5384,
+  "claim_id": "claim-5384-v0918-wp14a-preparation-refresh",
+  "expected_owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "expected_generation": 7,
+  "expected_digest": "1049287851d3e5cba65b2804807688b88f149d45fd9a3e8843df225682eb7ea5",
+  "now_unix_seconds": 1785449318,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Begin operator-authorized WP-14A execution on current main after all four direct inputs closed and merged.",
+  "expected_purpose": "Refresh WP-14A preparation after operator scheduling decision: accept the platform before deferred WP-13 deletion, record the deferral before internal review #5356, and perform no implementation or publication.",
+  "purpose": "Execute WP-14A as a thin exact-revision platform acceptance gate: verify the four merged inputs, run focused fresh-consumer checks, index retained rollback and operations evidence, obtain one Gemini review, and publish without absorbing deferred WP-13 or downstream work.",
+  "add_protected_paths": [
+    ".csdlc/evidence/5384",
+    "docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md"
+  ]
+}

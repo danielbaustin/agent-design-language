@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5780,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5780-delete-terminal-reconciliation",
+  "title": "[v0.91.8][csdlc-v2][closeout] Delete competing terminal authorities",
+  "body": "## Outcome\n\n- Deletes the standalone closeout and merge binaries, legacy receipt writers, terminal reconciliation/repair routes, readiness and merged-state writers, and obsolete writer-specific tests.\n- Makes `csdlc-finish` the sole exact-head merge and derived-terminal authority; raw merge execution is private and cannot bypass validation, re-observation, or envelope retention.\n- Preserves read-only compatibility for all 114 tracked v0.91.8 terminal records and 314 retained Git-common receipts.\n\n## Reduction\n\n- Production Rust: 28,722 -> 18,194 lines (-10,528; 36.65%).\n- Test Rust: 15,092 -> 9,276 lines (-5,816; 38.54%).\n- Combined Rust: 43,814 -> 27,470 lines (-16,344; 37.30%).\n- Owner binaries: 23 -> 21.\n\n## Validation\n\n- `cargo test --manifest-path csdlc-v2/Cargo.toml --locked`\n- `cargo clippy --manifest-path csdlc-v2/Cargo.toml --locked --all-targets -- -D warnings`\n- focused finish and terminal-authority deletion gates\n- clean-room install and coexistence verification: 21 binaries, 11 skills, v2 default, no forbidden v1 paths\n- independent exact-head review: PASS at `ce0994da07d2cdf349c658b1f8dee235814e5905`; typed metadata-only forward drift accepted by the publication guard\n\nCloses #5780",
+  "draft": false,
+  "revision": "git-blake3:4a81dc9d74716c030d917508d727177549373406:1f033e42f397505489a3e077d2093bf9fc21280a1fe71dcfb7cc7dc7bcd094ad",
+  "commit_sha": "4a81dc9d74716c030d917508d727177549373406"
+}

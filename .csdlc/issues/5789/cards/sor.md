@@ -1,0 +1,110 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5789
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: pre_phase
+
+## Summary
+
+Made the HTML Observatory default to the configured Runtime v3 API base, keep retained/loopback CSM fallback truth, render live Runtime v3 GET snapshots when WSS is unavailable, and submit signed operator-to-agent commands through the Runtime v3 /v1/control browser endpoint.
+
+## Artifacts
+
+- adl-runtime-kernel/src/control.rs
+- adl-runtime-kernel/tests/control.rs
+- adl-runtime-kernel/tests/openapi_contract.rs
+- docs/api/runtime-v3/v1/openapi.json
+- demos/html-observatory/app.js
+- demos/html-observatory/index.html
+- demos/html-observatory/runtime-v3.config.json
+- demos/html-observatory/README.md
+- adl/tools/test_html_observatory.sh
+- adl/tools/test_v0917_html_observatory_integrated_proof.sh
+- adl/tools/validate_v0917_html_observatory.py
+
+## Execution
+
+- Added browser CORS preflight and CORS/no-store response headers for Runtime v3 /v1/control.
+- Documented and route-tested OPTIONS /v1/control in the Runtime v3 OpenAPI contract.
+- Updated the Observatory browser app/config/UI to use Runtime v3 by default, preserve csmApiBase compatibility, and POST signed adl.runtime.control_command.v1 envelopes to /v1/control.
+- Updated the Observatory README, integrated validator, and focused JS proof to reflect Runtime v3 default read and signed control behavior.
+
+## Validation
+
+[
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_html_observatory.sh"
+    ],
+    "purpose": "Prove the checked-in HTML Observatory defaults to Runtime v3, reads the configured https://localhost:20997 base, checks Runtime v3 events through /v1/observatory, posts signed adl.runtime.control_command.v1 envelopes to /v1/control, and rejects credentialed/wrong-schema inputs.",
+    "outcome": "passed",
+    "evidence_ref": "commentary: PASS: HTML Observatory Runtime v3 default, event check, and signed command POST contract"
+  },
+  {
+    "command": [
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target",
+      "bash",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+    ],
+    "purpose": "Validate checked-in HTML/CSS/JS/README/config, retained Observatory evidence, Runtime v3 browser config, shared localhost certificate proof, Runtime v3 public read freshness, and Observatory WSS public-read/write-login behavior.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5789/shared-localhost-certificate/fingerprints.log"
+  },
+  {
+    "command": [
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target",
+      "cargo test --manifest-path adl-runtime-kernel/Cargo.toml observatory_cors_allows_only_configured_origins_and_reports_canonical_port --test control -- --nocapture",
+      "cargo test --manifest-path adl-runtime-kernel/Cargo.toml openapi_paths_match_current_runtime_v3_axum_route_inventory --test openapi_contract -- --nocapture"
+    ],
+    "purpose": "Prove configured-origin CORS and no-store behavior for Runtime v3 browser POST/OPTIONS /v1/control, signed command execution/error surfaces, forbidden-origin rejection, and OpenAPI documentation parity with the production Axum route inventory.",
+    "outcome": "passed",
+    "evidence_ref": "commentary: both focused Rust commands passed with CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target"
+  },
+  {
+    "command": [
+      "bash adl/tools/test_html_observatory.sh",
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target bash adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+    ],
+    "purpose": "Prove Runtime v3 event checks now return a UI-normalizable event array, preserve signed /v1/control proof, and keep the integrated Observatory proof passing after the review fix.",
+    "outcome": "passed",
+    "evidence_ref": "commentary: both commands passed after flattening Runtime v3 event-check shape"
+  },
+  {
+    "command": [
+      "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml -- --check",
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",
+      "bash adl/tools/test_html_observatory.sh",
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target cargo test --manifest-path adl-runtime-kernel/Cargo.toml observatory_cors_allows_only_configured_origins_and_reports_canonical_port --test control -- --nocapture",
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target cargo test --manifest-path adl-runtime-kernel/Cargo.toml openapi_paths_match_current_runtime_v3_axum_route_inventory --test openapi_contract -- --nocapture",
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target bash adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+    ],
+    "purpose": "Prove the rustfmt-only repair resolves the failed GitHub adl-rust-fmt-clippy lane while preserving Runtime v3 Observatory browser contract, CORS/OpenAPI route parity, and integrated localhost proof.",
+    "outcome": "passed",
+    "evidence_ref": "commentary: all six commands passed locally after cargo fmt; generated localhost certificate proof byproducts were restored before review so the branch remained clean aside from intended source/lifecycle changes"
+  }
+]
+
+## Integration
+
+pr_open
+
+## Publication
+
+Publication: ready
+
+Merge: not_merged
+
+## Closeout
+
+not_started
+
+## Follow Ups
+
+- none

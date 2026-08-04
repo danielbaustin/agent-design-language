@@ -1,0 +1,62 @@
+{
+  "issue": 5653,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5653/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5653/diagram.mmd",
+  "design_reviewer": "codex:5653-preparation-review",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5653-readme-refresh",
+    "owner": "codex:5653-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1784850000,
+    "expires_unix_seconds": 1785454800,
+    "heartbeat_unix_seconds": 1784850000,
+    "branch": "codex/5653-readme-refresh",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5653",
+      ".csdlc/locks/5653.lock",
+      ".csdlc/prepared/issues/5653",
+      "README.md"
+    ],
+    "purpose": "Refresh root README status, CI, release posture, and homepage link"
+  },
+  "initial": {
+    "title": "[v0.91.8][docs] Refresh README status, release, CI, and homepage links",
+    "slug": "readme-status-release-homepage-refresh",
+    "version": "v0.91.8",
+    "goal": "Bring the root README up to date with current repository/release truth and link to the ADL homepage.",
+    "required_outcome": "A concise README refresh with truthful v0.91.8 release-tail status, a homepage link, and focused documentation proof.",
+    "declared_scope": [
+      "README.md"
+    ],
+    "acceptance_criteria": [
+      "AC-1: README names the current v0.91.8 release-tail posture without claiming an unpublished release.",
+      "AC-2: README visibly links to https://agent-logic.ai.",
+      "AC-3: CI and coverage badges remain pointed at the canonical main branch.",
+      "AC-4: No stale v0.91.5-only status claim remains in the README.",
+      "AC-5: Focused Markdown/link checks pass and the exact head receives review."
+    ],
+    "authority_boundary": ["README may describe only retained repository evidence; it does not approve a release, cutover, or external publication."],
+    "task_boundary": "Update and validate only the root README.",
+    "deliverables": ["updated README", "design and diagram", "focused Markdown/link proof"],
+    "dependencies": ["current v0.91.8 release-tail and CI evidence"],
+    "repo_inputs": ["README.md", "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md", "docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md"],
+    "non_goals": ["creating a release", "creating a tag", "changing CI", "runtime/product changes", "release approval"],
+    "operator_constraints": ["never write main", "use typed v2 binaries", "no raw gh", "no AWS", "no direct card/state edits"],
+    "steps": [
+      {"id":"S1","action":"Update README status, homepage, and badge context from current evidence","acceptance_ids":["AC-1","AC-2","AC-3","AC-4"],"status":"pending"},
+      {"id":"S2","action":"Run focused Markdown/link proof, exact review, and publish","acceptance_ids":["AC-5"],"status":"pending"}
+    ],
+    "invariants": ["README claims remain evidence-bound", "homepage link is explicit", "CI badge target remains main", "no release approval is inferred"],
+    "risks": ["stale milestone wording", "broken link", "overclaiming release status"],
+    "planning_profile": "small",
+    "stop_conditions": ["source release truth is ambiguous", "homepage link cannot be verified", "focused proof fails"],
+    "validation_lanes": [{"lane":"readme-focused","proof_role":"Markdown structure, link targets, badge branch, and stale-version wording","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":800,"argv":["git","diff","--check"],"parallel_group":"local","defer_reason":null}],
+    "failure_policy": "Fail closed and preserve truthful release boundaries.",
+    "review_prompts": ["Check README status against current release evidence", "Check homepage and badge links", "Check for stale or unsupported release claims"],
+    "review_scope": "root README documentation refresh"
+    ,"plan_summary": "Refresh the root README from current v0.91.8 evidence, add the homepage link, prove links and wording, review the exact head, and publish the documentation fix."
+  }
+}

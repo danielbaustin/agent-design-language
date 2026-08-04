@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5679,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][tools][csdlc-v2] Fix stable owner-binary install manifest",
+    "slug": "recordless-terminal-recovery-5679",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "terminal-evidence",
+          "proof_role": "Validate observed closure evidence",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 100,
+          "argv": [
+            "csdlc-github-issue",
+            "run",
+            "--request",
+            ".csdlc/prepared/issues/5748/github-read-5679.json"
+          ],
+          "parallel_group": "terminal-recovery",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed without exact, internally consistent terminal evidence.",
+      "design_ref": ".csdlc/issues/5679/retained/design.md",
+      "design_digest": "59e6f6569f9ce110ceff9303a7589565202a241551da53b134e6c31ddc3f3584",
+      "diagram_ref": ".csdlc/issues/5679/retained/diagram.mmd",
+      "diagram_digest": "d15c86a393da35543dc572cf0e5d9e23edcfe93e2dc718968d01c6353977ccb9"
+    }
+  }
+}

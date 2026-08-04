@@ -1,0 +1,11 @@
+{
+  "issue": 5648,
+  "card": "srp",
+  "expected_generation": 11,
+  "expected_digest": "49aa708894457741b33454644ea346a293363f48ff2d92c8bc36f9926819bdc6",
+  "claim_id": "claim-5648-operator-active-claim-revoke",
+  "actor": "codex:5648-execution",
+  "reason": "Reconcile exact post-publication head before final publication",
+  "operation": {"operation": "advance_phase", "phase": "implemented"},
+  "fail_after_backup": false
+}

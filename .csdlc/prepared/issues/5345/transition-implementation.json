@@ -1,0 +1,13 @@
+{
+  "issue": 5345,
+  "claim_id": "claim-5345-v0918-wp10-preparation",
+  "expected_owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "expected_generation": 3,
+  "expected_digest": "3f524e10096b566f7b3d5541b9d859a6a6b0ee21cd8c65d5b4eb2c6045e8c585",
+  "now_unix_seconds": 1784752278,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Operator authorized implementation after removing closeout receipts and merged-SHA ancestry from the WP-10 execution blocker.",
+  "expected_purpose": "Prepare #5345 WP-10 completely in its dedicated worktree; product implementation remains prohibited until WP-04 through WP-09 are merged, typed closed_out, receipt-backed, and ancestral",
+  "purpose": "Implement WP-10 thin CLI and authoritative selector in the dedicated worktree; retain dependency state as observational evidence only.",
+  "add_protected_paths": ["adl-v2/crates/adl-cli/src", "adl-v2/crates/adl-cli/tests", "adl-v2/tools"]
+}

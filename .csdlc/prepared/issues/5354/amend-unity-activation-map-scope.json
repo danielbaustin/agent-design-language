@@ -1,0 +1,12 @@
+{
+  "issue": 5354,
+  "claim_id": "claim-5354-v0918-wp15-demo-preparation",
+  "expected_generation": 1,
+  "expected_digest": "3a1f3210e7f993f5d6111c17dc0cc6126555d7a8c13fa8270deb045c9220857a",
+  "now_unix_seconds": 1784785289,
+  "actor": "codex:5354-unity-routing-correction",
+  "reason": "Keep the canonical v0.92 activation map aligned with the corrected WP-15 Unity routing.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "issue": 5357,
+  "card": "spp",
+  "expected_generation": 6,
+  "expected_digest": "e02b1a5e337abdfe1669b9389b580ddf72dcee6d96df9465574a523ee3678bac",
+  "claim_id": "claim-5357-v0918-wp19-review-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Preserve non-overlapping ownership and truthful final-review gating during the canonical documentation sweep.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "invariants",
+    "values": [
+      "#5357 edits only exact canonical review documents and issue-local support paths in its active claim",
+      "#5791 retains sole ownership of its three concurrent release-tail pages until merge; #5357 integrates those pages from main rather than duplicating them",
+      "all tracked documents under docs/milestones/v0.91.8 are included in the external-review digest corpus even when the human manifest groups rather than repeats them",
+      "the first WP-18 review remains historical evidence and cannot approve residual coding; #5791 is the final internal-review authority before WP-19 freeze",
+      "external review remains undispatched and cannot mutate lifecycle state, approve release, or substitute for product proof",
+      "Runtime v2, product changes, dependencies, AWS, credentials, paid services, host paths, private prompts, and raw provider output are forbidden",
+      "one final bounded documentation review occurs after the complete sweep and before the branch is declared ready to freeze"
+    ]
+  },
+  "fail_after_backup": false
+}

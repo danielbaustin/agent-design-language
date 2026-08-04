@@ -30,7 +30,7 @@ Its job is to:
 This skill must remain lightweight.
 
 It must not replace:
-- `workflow-conductor`
+- resolved typed v2 lifecycle binaries
 - `pr-init`
 - `pr-ready`
 - `pr-run`
@@ -172,7 +172,7 @@ missing sprint-management issue first.
    the declared execution mode and serial gates. Current helper state remains
    single-current-issue; parallel execution is achieved by separate issue
    workers/sessions using the SEP as the coordination contract.
-9. Route the selected child issue or lane handoff through `workflow-conductor`.
+9. Route the selected child issue through `csdlc-doctor`, then the typed binary selected by current phase.
 10. When that handoff starts or resumes live child execution, attach the
     issue-bound session-goal requirement as part of the SEP handoff rather than
     as a separate manual reminder.

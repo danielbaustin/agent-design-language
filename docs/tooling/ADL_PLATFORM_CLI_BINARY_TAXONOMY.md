@@ -17,7 +17,7 @@ validation surface.
 ## C-SDLC V2 Authority
 
 Gate 10D2 records `v1_sunset`. The sole current C-SDLC operational authority is
-the independent Rust binary set in `csdlc-v2/`, routed through the nine typed
+the independent Rust binary set in `csdlc-v2/`, routed through the eleven typed
 skills in `csdlc-v2/operator/skills/`.
 
 Current lifecycle owners are:
@@ -29,8 +29,9 @@ Current lifecycle owners are:
 - `csdlc-validate`
 - `csdlc-review`
 - `csdlc-publish`
+- `csdlc-finish`
+- `csdlc-clean`
 - `csdlc-shepherd`
-- `csdlc-closeout`
 
 Resolve the selected generation through `csdlc-install resolve`, then invoke
 the typed owner selected by the matching operator skill. Stable generated v2

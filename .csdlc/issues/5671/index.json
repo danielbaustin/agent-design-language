@@ -1,0 +1,408 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5671,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "dab42acf5c368379d4a37d2f3ddd8412f5146e44a6f0099cd7ae0a27a24d197b",
+  "phase": "closed_out",
+  "generation": 11,
+  "digest": "ba83882918d29ed1378666f10e0efb364821690c2a12df3f98f6d93ecf228d9a",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "codex:5671-subagent-review",
+    "assigned_by": "codex:5671-execution",
+    "revision": "git-blake3:86a1bfbc250954bfede4eec8ea8e1a2d314c07ff:4d4fe30bfe94daa9b40e484fc4897f8837ff1f3114858b35e6b85b688bb73be9",
+    "scope": [
+      "adl/src/provider/profiles.rs",
+      "adl/src/provider/mod.rs",
+      "adl/src/provider/http_family/tests.rs",
+      "adl/src/cli/provider_cmd.rs",
+      "adl/src/cli/usage.rs",
+      "adl/tests/provider_tests/profiles.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "codex:5671-subagent-review",
+    "scope": [
+      "adl/src/provider/profiles.rs",
+      "adl/src/provider/mod.rs",
+      "adl/src/provider/http_family/tests.rs",
+      "adl/src/cli/provider_cmd.rs",
+      "adl/src/cli/usage.rs",
+      "adl/tests/provider_tests/profiles.rs"
+    ],
+    "reviewed_revision": "git-blake3:86a1bfbc250954bfede4eec8ea8e1a2d314c07ff:4d4fe30bfe94daa9b40e484fc4897f8837ff1f3114858b35e6b85b688bb73be9",
+    "findings": [
+      {
+        "id": "R-5671-001",
+        "severity": "p2",
+        "summary": "The initial implementation needed an end-to-end expansion/build assertion and typed scope coverage for the added integration and usage paths.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:86a1bfbc250954bfede4eec8ea8e1a2d314c07ff:4d4fe30bfe94daa9b40e484fc4897f8837ff1f3114858b35e6b85b688bb73be9",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "No live Anthropic credential was available in the approved key-file route, so live Opus review remains unproven; mocked HTTP proof and real local adapter execution pass."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5671,
+    "pull_request": 5673,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5673",
+    "base": "main",
+    "head": "codex/5671-anthropic-opus-5",
+    "revision": "git-blake3:828ab4876818888c067b8ecefcda3ac6330a71fc:5b469ddff8fd9647cd335c7767304fa69ed56224a11282e1b1b66fa373d98e1f",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5673,
+    "head_sha": "828ab4876818888c067b8ecefcda3ac6330a71fc",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89751470869"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89752445627"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89752430575"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750481997"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750481978"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750481968"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750468069"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750482199"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750481982"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750481966"
+      },
+      {
+        "name": "adl-slow-proof (1)",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750482009"
+      },
+      {
+        "name": "adl-slow-proof (2)",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750481986"
+      },
+      {
+        "name": "adl-slow-proof (3)",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750481985"
+      },
+      {
+        "name": "adl-slow-proof (4)",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750481996"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750482184"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750481975"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750482348"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30185899353/job/89750482340"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5673,
+    "disposition": "merged",
+    "observed_sha": "828ab4876818888c067b8ecefcda3ac6330a71fc",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5671.json",
+    "released_branch": "codex/5671-anthropic-opus-5",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5671",
+      ".csdlc/locks/5671.lock",
+      ".csdlc/prepared/issues/5671",
+      "adl/src/cli/provider_cmd.rs",
+      "adl/src/cli/usage.rs",
+      "adl/src/provider/http_family/tests.rs",
+      "adl/src/provider/mod.rs",
+      "adl/src/provider/profiles.rs",
+      "adl/tests/provider_tests/profiles.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5671/retained/design.md",
+  "diagram_path": ".csdlc/issues/5671/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5671-preparation-review",
+      "revision": "ed8ebae320de231a3b843b0cd646af2480f4c53752eb062a4400713e30cc0afc"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "b5dbe74ead50336cac9fae946c43c55a0a090496e1a19d2991155e73268ae257",
+      "rendered_digest": "ebea4d650aaca26229abe222dc682f70ba880618ff6ad962389c052570d031ec",
+      "ast_digest": "609d791c5ec9db9ccb5bff44abce0222ecb3ae1f059b635f2133f8586dd9cfd9"
+    },
+    "stp": {
+      "values_digest": "1a8afd7299ddea32357ba8dcaad18996e3bd58b393d7ba1d97fad73f68496332",
+      "rendered_digest": "8b08658ad1bb340a9b8d3b83d28fca91afdddda26d12c952e0e48a8b206de719",
+      "ast_digest": "f43d4248233a1f4cccc855c5da3c078ce9195c8c2b191f5e7bf650793648a391"
+    },
+    "spp": {
+      "values_digest": "0d2dc6b9ffed517685d301df14f7573064e427ff07c7eb8a3674fd0eee6549e0",
+      "rendered_digest": "0f9e4b0611e68a2f9cfb4bab1dc3130b9f93367586cc025bb0028f2296b16b57",
+      "ast_digest": "37651ce9278c9f96d80500325a63eced1f34581d88514053eef896c8751f3969"
+    },
+    "vpp": {
+      "values_digest": "5a9a4a6fb3fe83125302d177ddeb08b3c0bd259d3a3091a5b5a215f9ddf75ec6",
+      "rendered_digest": "4d0ec428a826b56cd61b173c61813e449c4f30442dca40c8cd6465831101198b",
+      "ast_digest": "8f5db00c52b2d3fa4d5f9bed15dc4438bed8d93b5a03a8c192a6b8e21e09c104"
+    },
+    "srp": {
+      "values_digest": "50bc5c9b70b1c9bb9609acbd8c6b86a449be83381e1bc42ac03bca24d6938a5c",
+      "rendered_digest": "c2a1bade923a28793ee28c80f4e17362e981ee79319ff1236220967e4c419869",
+      "ast_digest": "3e41ef493a8d3385e0f2d9481331deff35c369f0e9641d3a20f554733524ee49"
+    },
+    "sor": {
+      "values_digest": "2a5d227d74cf567eb770e49ffc871d7fcf1dff8d8e6445309c15aff7557aea52",
+      "rendered_digest": "613bb74f36e485e8fc89739b75a0de3f6e7d839238aaa7d9f62a57f8b3e5a70e",
+      "ast_digest": "e896ae11ebc63271e7908bb8a5ad84a827f43da82c6e7785216b249f0640d988"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5671-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5671-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5671-execution",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5671-execution",
+      "reason": "Advance the exact reviewed implementation into the publication phase"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5671-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5671-execution",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5671-execution",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5671-execution",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5671-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:5671-preparation-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5671-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5671-execution",
+      "reason": "Add the focused integration test and setup usage surface to the declared issue scope",
+      "operation": "{\"add_protected_paths\":[\"adl/tests/provider_tests/profiles.rs\",\"adl/src/cli/usage.rs\",\"adl/src/provider/http_family/tests.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5671-execution",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5671-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5671-subagent-review",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5671-execution",
+      "reason": "Advance the exact reviewed implementation into the publication phase",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5671-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5671-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5671-execution",
+      "reason": "record exact existing PR ready-for-review after remote success",
+      "operation": "record_ready_publication"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5671-execution",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5671-execution",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

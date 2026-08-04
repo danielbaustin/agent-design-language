@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5713,
+  "expected_generation": 4,
+  "expected_digest": "bc1c5030c4aaf20078d99202781aa271ebc1aded57fd7536e4a210324af14f2d",
+  "claim_id": "claim-5713-runtime-v3-rcgen-local-tls",
+  "actor": "codex:5713-publication",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5713-runtime-v3-rcgen-local-tls",
+  "title": "[v0.91.8][runtime-v3][tls] Add stable rcgen local TLS bootstrap",
+  "body": "Closes #5713\n\nAdds a repo-native Rust local TLS bootstrap that creates one stable rcgen self-signed identity per configured absolute developer state root and reuses it across ordinary restarts. Replacement commits an immutable certificate/key generation through one atomic current-generation manifest; changed SANs fail closed unless replacement is explicit.\n\nThe lifecycle soak now uses the shared bootstrap. Bootstrap locking uses a crash-releasing OS advisory lock. Failures are structured JSON. Unix keys are created 0600, and native Windows applies a protected current-user-only DACL before any key bytes are written. Managed external PEM material remains read-only.\n\nFocused proof: 13/13 local TLS tests, lifecycle integration 1/1, bootstrap failure-schema unit 1/1, strict all-target Clippy, formatting, and diff hygiene. GPT-5.5 exact-head review completed with zero findings. Native Windows execution remains a named pre-merge integration residual because nessus.local did not resolve during pre-PR validation; the Windows-gated ACL test is included and Linux exact-head CI is running.",
+  "draft": false,
+  "token_file": null
+}

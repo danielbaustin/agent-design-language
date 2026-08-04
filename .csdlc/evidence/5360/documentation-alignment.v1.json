@@ -1,0 +1,72 @@
+{
+  "schema": "adl.wp17.documentation_alignment.v1",
+  "issue": 5360,
+  "wp16_merge": "2e9d2dd7c4260dcf6ec6af954b0eea97554212df",
+  "source_evidence": [
+    "docs/milestones/v0.91.8/evidence/wp16/QUALITY_GATE.md",
+    "docs/milestones/v0.91.8/evidence/wp16/ISSUE_OUTCOME_AUDIT.md"
+  ],
+  "summary": {
+    "updated": 27,
+    "verified_no_edit": 5,
+    "delegated_collision": 2
+  },
+  "updated_paths": [
+    "CHANGELOG.md",
+    "README.md",
+    "REVIEW.md",
+    "docs/README.md",
+    "docs/architecture/adr/README.md",
+    "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+    "docs/milestones/v0.91.8/MILESTONE_CHECKLIST_v0.91.8.md",
+    "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+    "docs/milestones/v0.91.8/README.md",
+    "docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md",
+    "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/RUNTIME_V3_FUNCTIONAL_PARITY_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/ADL_V2_CORE_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/CSDLC_V2_ACCEPTANCE_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/DELETION_AND_CUTOVER_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/README.md",
+    "docs/milestones/v0.91.8/features/RUNTIME_V3_ADAPTER_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/RUNTIME_V3_FUNCTIONAL_PARITY_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.92/README.md",
+    "docs/milestones/v0.92/WBS_v0.92.md",
+    "docs/planning/ADL_FEATURE_LIST.md"
+  ],
+  "verified_no_edit": [
+    "AGENTS.md",
+    "adl/Cargo.lock",
+    "adl/Cargo.toml",
+    "docs/milestones/v0.91.8/evidence/wp16/ISSUE_OUTCOME_AUDIT.md",
+    "docs/milestones/v0.91.8/evidence/wp16/QUALITY_GATE.md"
+  ],
+  "delegated_collisions": [
+    {
+      "path": "docs/milestones/v0.91.8/review/README.md",
+      "owner_issue": 5356
+    },
+    {
+      "path": "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+      "owner_issue": 5765
+    }
+  ],
+  "non_claims": [
+    "v0.91.8 final release is not complete",
+    "WP-18 formal review is not complete",
+    "v0.92 activation and birthday launch are not complete",
+    "typed predecessor closeout is asynchronous and is not execution evidence"
+  ],
+  "validation": [
+    "ruby .csdlc/prepared/issues/5360/check-dependencies.rb",
+    "ruby .csdlc/prepared/issues/5360/run-validation-lane.rb focused-doc-alignment",
+    "ruby .csdlc/prepared/issues/5594/validate_links.rb",
+    "git diff --check"
+  ]
+}

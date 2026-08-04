@@ -1,0 +1,132 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5722,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "e9514f192747112be2638f9e8dd48ab1a1c34b702294fb0cde278ab971217063",
+  "phase": "closed_out",
+  "generation": 1,
+  "digest": "7d14fa9beb1ad828318bb2b6956c7911c7a1f5ebb110dc0aec3475188fd18cf0",
+  "claim": null,
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": {
+    "pull_request": 5760,
+    "disposition": "merged",
+    "observed_sha": "7ef7462392278cb4e3e6d50a3d187a3ceff1126b",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5722.json",
+    "released_branch": "",
+    "released_worktree": "",
+    "released_protected_paths": []
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5722/retained/design.md",
+  "diagram_path": ".csdlc/issues/5722/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5748-terminal-recovery",
+      "revision": "c016f271934a38316b0da79afce92e9095de0bc751b0b760e1ab90e63bf97780"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "568bf1c64d19e7e42165456c4a8224cb0694ea4ff8f8a6a3de5db1a1014a3af2",
+      "rendered_digest": "341c55eb94717e8e42eabb012a1c1837339aaf92383216a251cd1983313576de",
+      "ast_digest": "b7bc869fe267227b91022c41d4e145cf23068f9f2649909763822783545c91ca"
+    },
+    "stp": {
+      "values_digest": "bee0648fe53c0d6cd2aee021354f8833668bfc0c968917545be9229fe4668de0",
+      "rendered_digest": "6718f6c093e0ab6b4ec29b8d1fb5c0f50df15dcb9eee9936628133626f15e647",
+      "ast_digest": "be9269e46b4217dd50fb89b896b0b6b08614a9380f668b51a9da156bf34cc809"
+    },
+    "spp": {
+      "values_digest": "decf3aa504a5c63291f638d16a87f0439edf1d455c51053ee0c95b95f61f6664",
+      "rendered_digest": "ff4701dfde27c8596c2d0aaa0848888e494dfbf66b6edb9aa57e945c8805f3ed",
+      "ast_digest": "8d92f4b12f31afe17a6efe4a9524259fbb9b73f38538fe33871f72e8747f72a8"
+    },
+    "vpp": {
+      "values_digest": "7689bcc8c7ede6101c445618eba549247f6f6c6bb17c7c4fe97ea60744dc2b34",
+      "rendered_digest": "fb9452e3160ab4d4cf7d9f0c5ff5ade965897bd47f102dbd8c60ecf3ba6d657c",
+      "ast_digest": "3035b95eff61b92c7549d37f9e3a3dc27a027632086dd3bebf22544643e0dc84"
+    },
+    "srp": {
+      "values_digest": "9c5a871e110632a4ee259ec5ad0708b76aa64381e1a6208963c95f39f2c94e8e",
+      "rendered_digest": "98843df6351cea711b50f8666360a2603fdce46e09d1a8cc12090ee42b8a8294",
+      "ast_digest": "6439f8f7ca987f7001da28cbe08c489cce77e68a72c4126bd080160ee0989cfe"
+    },
+    "sor": {
+      "values_digest": "2418d3ce34273e18510774b0420026b3f2003d18a4667426710217d70f064213",
+      "rendered_digest": "aa73b43755bd6fab3df3f78b92a951b799a2c3a5ea5d4055aa48eec75aca3b33",
+      "ast_digest": "35629426baa7f46cc670cfa1857d100acf68f9e412017f59eeb947bea508f050"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5722-receipt-repair",
+      "reason": "Normalize malformed recordless terminal receipt to the existing lifecycle transition invariant."
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5722-receipt-repair",
+      "reason": "Normalize malformed recordless terminal receipt to the existing lifecycle transition invariant."
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5722-receipt-repair",
+      "reason": "Normalize malformed recordless terminal receipt to the existing lifecycle transition invariant."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5722-receipt-repair",
+      "reason": "Normalize malformed recordless terminal receipt to the existing lifecycle transition invariant."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5722-receipt-repair",
+      "reason": "Normalize malformed recordless terminal receipt to the existing lifecycle transition invariant."
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5722-receipt-repair",
+      "reason": "Normalize malformed recordless terminal receipt to the existing lifecycle transition invariant."
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5722-receipt-repair",
+      "reason": "Normalize malformed recordless terminal receipt to the existing lifecycle transition invariant."
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5722-receipt-repair",
+      "reason": "Normalize malformed recordless terminal receipt to the existing lifecycle transition invariant."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 1,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Retain exact observed closure after corrective PR #5760 merged with explicit #5722 closing linkage and green required runtime validation; do not reconstruct missing historical lifecycle state.",
+      "operation": "recover_recordless_terminal"
+    }
+  ]
+}

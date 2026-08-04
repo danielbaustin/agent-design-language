@@ -1,0 +1,19 @@
+{
+  "issue": 5360,
+  "card": "spp",
+  "expected_generation": 9,
+  "expected_digest": "bb618a5eb5836870b802258a30d226c1267debc3073cdaf5b0685d2ed7d11da6",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "reason": "Replace preparation-era closeout waits with the active WP-17 execution and merge-gated WP-18 handoff.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {"id":"S1","action":"Verify the WP-16 merge and quality proof, activate the exact collision-free documentation claim, and align typed gates","acceptance_ids":["AC-1","AC-6","AC-8"],"status":"pending"},
+      {"id":"S2","action":"Audit and reconcile the exact claimed documentation paths against current merged evidence while preserving product ownership and non-claims","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-6","AC-8"],"status":"pending"},
+      {"id":"S3","action":"Run focused and complete documentation validation and retain exact repository-relative evidence","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-8"],"status":"pending"},
+      {"id":"S4","action":"Run one bounded exact-revision review, fix findings, publish with Closes #5360, shepherd green CI, merge, verify identity, and release WP-18 immediately; closeout remains asynchronous","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-7","AC-8"],"status":"pending"}
+    ]
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,88 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5778,
+  "expected_generation": 0,
+  "expected_digest": "178d105f817970d1c81947060e9e1a1063039a529693e78f1c39971b64d4ac6c",
+  "claim_id": "claim-5778-derived-terminal-finish",
+  "actor": "codex:5778-implementation",
+  "summary": "Added one idempotent C-SDLC v2 finish command that preserves exact-head gates, derives terminal authority from live GitHub state, and eliminates tracked post-merge closeout writes.",
+  "changes": [
+    "Added typed csdlc-finish request, result, derived-terminal envelope, and operator route.",
+    "Reused the exact-head merge primitive and restricted review approval to the current PR head.",
+    "Added a minimal symlink-safe Git-common terminal cache that logically releases stale claims without becoming canonical lifecycle state.",
+    "Kept legacy csdlc-closeout available only for migration and repair while changing the default workflow to finish."
+  ],
+  "artifacts": [
+    "csdlc-v2/src/finish.rs",
+    "csdlc-v2/src/bin/csdlc-finish.rs",
+    "csdlc-v2/tests/gate_finish.rs",
+    "csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "finish-characterization",
+          "proof_role": "release_gate",
+          "purpose": "Prove derived terminal identity, idempotent retention, no-PR authority, and symlink safety.",
+          "determinism": "deterministic",
+          "resources": {"cpu_units": 2, "memory_mib": 1024, "tokens": 4000},
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "finish-focused",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 3600,
+          "executable": "cargo",
+          "argv": ["test", "--manifest-path", "csdlc-v2/Cargo.toml", "--locked", "--test", "gate_finish"],
+          "evidence": {"max_log_bytes": 1048576, "redact_values": [], "require_relative_paths": true}
+        },
+        {
+          "id": "lifecycle-regression",
+          "proof_role": "release_gate",
+          "purpose": "Preserve legacy lifecycle behavior and prove derived terminal claim release.",
+          "determinism": "deterministic",
+          "resources": {"cpu_units": 2, "memory_mib": 2048, "tokens": 5000},
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "finish-regression",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 3600,
+          "executable": "cargo",
+          "argv": ["test", "--manifest-path", "csdlc-v2/Cargo.toml", "--locked", "--test", "gate7_lifecycle"],
+          "evidence": {"max_log_bytes": 1048576, "redact_values": [], "require_relative_paths": true}
+        },
+        {
+          "id": "finish-quality",
+          "proof_role": "release_gate",
+          "purpose": "Prove warning-free code across every C-SDLC v2 target.",
+          "determinism": "deterministic",
+          "resources": {"cpu_units": 2, "memory_mib": 1024, "tokens": 4000},
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "finish-quality",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 3600,
+          "executable": "cargo",
+          "argv": ["clippy", "--manifest-path", "csdlc-v2/Cargo.toml", "--locked", "--all-targets", "--", "-D", "warnings"],
+          "evidence": {"max_log_bytes": 1048576, "redact_values": [], "require_relative_paths": true}
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": ["finish-characterization", "lifecycle-regression", "finish-quality"],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {"max_parallel": 3, "cpu_units": 6, "memory_mib": 4096, "tokens": 13000},
+    "root": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5778",
+    "evidence_dir": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5778/.csdlc/evidence/5778",
+    "cancellation_file": null
+  }
+}

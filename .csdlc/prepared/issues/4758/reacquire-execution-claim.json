@@ -1,0 +1,25 @@
+{
+  "issue": 4758,
+  "expected_generation": 0,
+  "expected_digest": "699559d04d53bd83469d0513f6ac667226f62a673059a2fca8d79019f863305a",
+  "now_unix_seconds": 1785530311,
+  "actor": "codex:issue-4758-execution",
+  "reason": "Acquire live typed issue-local claim for #4758 launch-readiness execution",
+  "replacement": {
+    "id": "claim-4758-v092-launch-readiness-execution",
+    "owner": "codex:issue-4758-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1785530311,
+    "expires_unix_seconds": 1786135111,
+    "heartbeat_unix_seconds": 1785530311,
+    "branch": "codex/4758-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/4758",
+      ".csdlc/issues/4758",
+      ".csdlc/locks/4758.lock",
+      ".csdlc/prepared/issues/4758"
+    ],
+    "purpose": "Implement and validate #4758 launch-readiness handoff evidence for v0.92 release review consumption"
+  }
+}

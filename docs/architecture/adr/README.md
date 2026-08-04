@@ -1,7 +1,8 @@
 # Architecture Decision Records
 
 This directory stores ADL architecture decision candidates and architecture
-review outputs.
+review outputs. The accepted records remain in `docs/adr/`; this directory is
+provenance and candidate material unless a file explicitly says otherwise.
 
 Accepted ADRs live in `docs/adr/`.
 
@@ -9,7 +10,7 @@ Current tracked candidate file:
 
 - `CANDIDATE_ADRS.md`
 
-Current v0.91.6 release-tail candidate ADR drafts:
+Retained v0.91.6 release-tail candidate ADR drafts:
 
 - `0035-local-polis-ssm-operations-boundary.md`
 - `0036-validation-lane-selector-pvf-test-cost-policy.md`
@@ -35,3 +36,9 @@ Promoted v0.91.2 candidate ADR source files retained for provenance:
 These ADRs are accepted in `docs/adr/`. The copies in this directory preserve
 the original candidate review surface and should not be treated as the active
 accepted records.
+
+Current v0.91.8 accepted ADRs are tracked in
+`docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md` and live under `docs/adr/` as
+ADR 0051 through ADR 0058. Runtime v3 OpenAPI, WSS, TLS, Observatory, and OTel
+details are consequences of ADR 0054 and ADR 0048 unless a future issue records
+an incompatible decision.

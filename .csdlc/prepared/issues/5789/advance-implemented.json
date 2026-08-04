@@ -1,0 +1,13 @@
+{
+  "issue": 5789,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "b907611413feeb7cf71b61ee4b46c8c3535490650fdea2dea8ec9b388b0922d0",
+  "claim_id": "claim-5789-observatory-full-functionality",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Runtime v3 HTML Observatory implementation and focused validation are complete; enter exact-head review before publication.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

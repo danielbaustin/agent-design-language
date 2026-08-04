@@ -1,0 +1,27 @@
+{
+  "issue": 5755,
+  "base_branch": "main",
+  "branch": "codex/5755-runtime-protocol-security",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5755-runtime-protocol-security",
+    "owner": "codex:5755-runtime-protocol-security",
+    "generation": 0,
+    "acquired_unix_seconds": 1785566965,
+    "heartbeat_unix_seconds": 1785566965,
+    "expires_unix_seconds": 1785653365,
+    "branch": "codex/5755-runtime-protocol-security",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5755",
+      ".csdlc/issues/5755",
+      ".csdlc/locks/5755.lock",
+      ".csdlc/prepared/issues/5755",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/protocol_adapters.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ],
+    "purpose": "Resolve #5664 protocol-adapter mTLS and Runtime control body-bound closeout blockers"
+  }
+}

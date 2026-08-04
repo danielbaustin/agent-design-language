@@ -1,0 +1,25 @@
+{
+  "issue": 5678,
+  "base_branch": "main",
+  "branch": "codex/5678-opus-review-runbook",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5678-opus-review-runbook",
+    "owner": "codex:issue-5678-opus-review-runbook",
+    "generation": 0,
+    "acquired_unix_seconds": 1785113059,
+    "expires_unix_seconds": 1785717859,
+    "heartbeat_unix_seconds": 1785113059,
+    "branch": "codex/5678-opus-review-runbook",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5678",
+      ".csdlc/issues/5678",
+      ".csdlc/locks/5678.lock",
+      ".csdlc/prepared/issues/5678",
+      "docs/tooling/OPUS_REVIEW_RUNBOOK.md",
+      "adl/tools/test_opus_review_runbook.sh"
+    ],
+    "purpose": "Repair the Opus review runbook and add a focused interface drift check"
+  }
+}

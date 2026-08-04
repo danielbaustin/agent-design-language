@@ -1,0 +1,14 @@
+flowchart TD
+  I["Closed v0.91.8 issue"] --> R["Issue-local typed receipt recovery"]
+  R --> C{"Valid terminal receipt?"}
+  C -- "no" --> B["Exact reviewed blocker"]
+  B --> E["Typed claim-released exception projection"]
+  E --> X["Fail-closed exception register"]
+  C -- "yes" --> A["#5748 dedicated authority worktree"]
+  A --> M["reconcile-terminal materialization"]
+  M --> P["Tracked record and six cards equal receipt"]
+  P --> H["Full receipt and authored-artifact integrity"]
+  H --> D["Exact-head csdlc-doctor pass"]
+  D --> V["Validated terminal projection"]
+  X --> U["Exact live-universe partition"]
+  V --> U

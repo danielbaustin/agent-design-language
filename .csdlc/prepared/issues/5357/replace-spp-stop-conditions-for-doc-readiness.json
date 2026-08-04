@@ -1,0 +1,23 @@
+{
+  "issue": 5357,
+  "card": "spp",
+  "expected_generation": 8,
+  "expected_digest": "59bb9611cbbd96527bbf9aeba23475cc9df67ab0c07f6bd3dc59932c45719ac5",
+  "claim_id": "claim-5357-v0918-wp19-review-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fail closed on stale review corpus, concurrent ownership, or premature external dispatch.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "#5791 has not merged its final internal second pass after residual coding or its merge is not ancestral to the proposed external-review target",
+      "a canonical v0.91.8 document is missing, stale against current issue truth, structurally invalid, unlinked, or outside the digest corpus",
+      "a requested edit overlaps #5791 or another active claim instead of integrating its merged result from main",
+      "the handoff target SHA, PR, corpus digest, reviewer identity, independence, prompt, provider/model, timing, outcome, or output digest cannot be retained truthfully",
+      "evidence contains secrets, private prompts, credentials, host paths, raw provider payloads, personal data, or unverifiable assertions",
+      "a required proof is deferred or substituted, the exact documentation review is stale or has open findings, or the change requires product behavior, Runtime v2, AWS, paid services, a dependency, or out-of-claim writes",
+      "external review would be dispatched before the operator freezes the exact revision and explicitly starts that lane"
+    ]
+  },
+  "fail_after_backup": false
+}

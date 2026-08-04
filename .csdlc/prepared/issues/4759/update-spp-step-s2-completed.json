@@ -1,0 +1,14 @@
+{
+  "issue": 4759,
+  "card": "spp",
+  "expected_generation": 7,
+  "expected_digest": "a6698f9b1482008cc324b5ae48b7213e7014decb10ff4488e48db453f3010ea3",
+  "claim_id": "claim-4759-v0918-activation-execution-20260731",
+  "actor": "codex:issue-4759-execution",
+  "reason": "Mark protected activation bridge document implementation complete.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S2",
+    "status": "completed"
+  }
+}

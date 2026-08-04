@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5788,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5788-lockfile-preservation",
+  "title": "[v0.91.8][tooling][lockfile] Preserve Cargo.lock during validation",
+  "body": "Closes #5788\n\n## Summary\n- routes owner-binary builds through one dependency-stable Cargo validation boundary\n- requires `--locked` unless an explicit dependency-update mode is selected\n- restores validation-created tracked `Cargo.lock` drift to exact pre-invocation bytes while preserving caller-owned dirty bytes\n- limits the default owner-binary inventory to current operational binaries and removes duplicate nested broad validation\n\n## Validation\n- `bash adl/tools/test_owner_binary_install.sh`\n- `bash adl/tools/test_run_cargo_validation.sh`\n- `bash adl/tools/test_owner_validation_lane.sh`\n- shell syntax and `git diff --check`\n- zero tracked `Cargo.lock` changes\n\n## Review\nExact six-script review passed with zero blockers; all five earlier findings are fixed. `REVIEW.md` and the canonical review handoff are intentionally excluded because they belong to WP-19.",
+  "draft": false,
+  "revision": "git-blake3:59709e41d557b2d0d7e36c1896cc4d0f6156d8d3:aa3f057d33eb0b0db9070b675512b7f7cb4c768a89aac229e13f105151e5538e",
+  "commit_sha": "59709e41d557b2d0d7e36c1896cc4d0f6156d8d3"
+}

@@ -1,0 +1,28 @@
+{
+  "issue": 4762,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "b6dc0a4e89ad83390304ad8fb0034c04106ebe77811b83f8cb847f87d058760a",
+  "claim_id": "claim-4762-birth-witness-receipt-execution",
+  "actor": "codex",
+  "reason": "Record focused #4762 diff hygiene pass.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        ".csdlc/issues/4762",
+        ".csdlc/prepared/issues/4762",
+        ".csdlc/evidence/4762",
+        "docs/milestones/v0.91.8",
+        "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md"
+      ],
+      "purpose": "Confirm touched lifecycle, evidence, package, and handoff docs have no diff hygiene failures.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/4762/implementation-validation/diff-hygiene.log"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5698,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][state] Unify durable kernel state on redb",
+    "slug": "runtime-v3-redb-durable-state",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl-runtime-kernel/Cargo.lock\nadl-runtime-kernel/Cargo.toml\nadl-runtime-kernel/src/assembly.rs\nadl-runtime-kernel/src/durable_state.rs\nadl-runtime-kernel/src/governed_operations.rs\nadl-runtime-kernel/src/lib.rs\nadl-runtime-kernel/tests/assembly.rs\nadl-runtime-kernel/tests/durable_state.rs\nadl-runtime-kernel/tests/governed_operations.rs\nadl-runtime-kernel/tests/guardian_soak.rs\nadl-v2/Cargo.lock",
+      "review_revision": "git-blake3:89e162f79392a520678913cac7af47b6695a8d1a:e4f836330b00072bb8eb33d195876dcaf18298a1ff9b5d31be82123373a83eb5",
+      "reviewer": "provider:gemini-3.1-pro-preview",
+      "review_prompts": [
+        "Verify Runtime v3 checkpoint and lifelog production adapters use redb as the single durable state authority.",
+        "Verify restart restores exact committed bytes and rejects identity, schema, generation, and hash mismatches.",
+        "Verify writer locking, corruption, and interrupted-write behavior fail closed without fallback JSON/JSONL storage.",
+        "Verify scope coordination with #5344 and no tracked main or /private/tmp edits."
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Gemini exact-head CI repair review for 89e162f79392a520678913cac7af47b6695a8d1a returned PASS / no findings. It confirmed the guardian_soak IPv4 loopback repair preserves real socket proof and matches Runtime v3's IPv4-only control-plane contract."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

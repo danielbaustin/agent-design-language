@@ -3,8 +3,8 @@
 ## Series
 
 - series: ADL Podcast Studio
-- episode: Episode 04: Can governed creative production feel alive?
-- slug: `episode-04-governed-creative-production`
+- episode: Episode 01: Can AI Be a Good Teammate?
+- slug: `episode-01-ai-good-teammate`
 
 ## Packet Checklist
 

@@ -1,0 +1,452 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5648,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "7825c6b94e04ddb0cac12bf61e8c50dc765cc55c3a09139c3158bfaeab569bd7",
+  "phase": "closed_out",
+  "generation": 19,
+  "digest": "b72e297ff49b0ec7b1acb88a8ceb859b13dc57c9a0232452daa6cae39b41fc64",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "bounded-subagent-review-5648",
+    "assigned_by": "codex:5648-execution",
+    "revision": "git-blake3:da05119e80b0cb0b6f768cf935ec9e0e10d7055e:a6ca8d1765314aed2615d3b45135cd78a4fdb9006f2ee1b311bdea0dd2b09879",
+    "scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/bin/csdlc-bind.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/tests/gate2.rs",
+      ".csdlc/issues/5648"
+    ]
+  },
+  "review": {
+    "reviewer": "bounded-subagent-review-5648",
+    "scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/bin/csdlc-bind.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/tests/gate2.rs",
+      ".csdlc/issues/5648"
+    ],
+    "reviewed_revision": "git-blake3:da05119e80b0cb0b6f768cf935ec9e0e10d7055e:a6ca8d1765314aed2615d3b45135cd78a4fdb9006f2ee1b311bdea0dd2b09879",
+    "findings": [],
+    "residual_risks": [
+      "The operator authority marker is validated as explicit non-empty provenance; its external authorization remains an operator responsibility."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5648,
+    "pull_request": 5652,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5652",
+    "base": "main",
+    "head": "codex/5648-operator-active-claim-revoke",
+    "revision": "git-blake3:17f1d91781611e8f0d2ed740a58cbfcbd81a05d0:fab9f17dee0bfaf3e972fc1ae7c9c1d8ff73575f7b0ef7755303379f550dc17b",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5652,
+    "head_sha": "17f1d91781611e8f0d2ed740a58cbfcbd81a05d0",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553827261"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553171279"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553124255"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553124372"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553124885"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553124350"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553084911"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553124605"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553124794"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553124637"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553124795"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553124698"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553123662"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553124640"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30114906275/job/89553123608"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5652,
+    "disposition": "merged",
+    "observed_sha": "17f1d91781611e8f0d2ed740a58cbfcbd81a05d0",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5648.json",
+    "released_branch": "codex/5648-operator-active-claim-revoke",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5648",
+      ".csdlc/locks/5648.lock",
+      ".csdlc/prepared/issues/5648",
+      "csdlc-v2/src",
+      "csdlc-v2/tests"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5648/retained/design.md",
+  "diagram_path": ".csdlc/issues/5648/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5648-preparation-review",
+      "revision": "0e446588d03734935d2f8e1cc35060784bd7ff9cfe4e7debb60cdf30c76b3b2b"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "4eddd8885fb0b5043144f01a068c2ffc7c3cad07bfe63e9c4c6a9f22f6ef20aa",
+      "rendered_digest": "e72896d0b7253c68ce09691fd4d7f593f92482b54cba39a0a4dfaaaee8d20ba7",
+      "ast_digest": "5b0b577f8cb5f6796f0fd69b70c1785d14b7cd3b67f86ee38938d6db3aafe7f9"
+    },
+    "stp": {
+      "values_digest": "e20b3ad5290532de06367ddd1269feb3591de4bf1ec8a47dd5b682acb960679a",
+      "rendered_digest": "66e9e6fcfc30f03ee1b717f1b3cbdc8c6369e654d9d147d51aa4c7ca1c40c553",
+      "ast_digest": "928017994783412b64e548d091926e3eb91230cefe901f1dc39d0ce5c44934b6"
+    },
+    "spp": {
+      "values_digest": "bc90a3caac9780486e099f418e82df29e8f55a4992b4fb7e15f42099d3834fcf",
+      "rendered_digest": "09b205e78d714f9319df5f5ee90bf90d1e970b15ff6e41aa982864b19a6b619d",
+      "ast_digest": "175355d5a018d0ba0e0e8d15ea7c3be6226787b8d18c2f28d7400081a896c5f2"
+    },
+    "vpp": {
+      "values_digest": "251c5606d7a5aa47f2d6d343e08bc705dc4ad261004b6e23d9fdc7a39477b5fe",
+      "rendered_digest": "8186432715cc5f9cd2bee0620ad2584bdb13328f8c0ea912ca81758a7963d15b",
+      "ast_digest": "f59537caf752deaf142c7c95fd8c67a8b1fa75b60df2946aa66c40551aee24db"
+    },
+    "srp": {
+      "values_digest": "19aa7fc1fbf510553eba65e14ff0e3ff76c6756c40b96c61d0cca72e187a6d95",
+      "rendered_digest": "f030cc4d1f4ff1b3daf015e748a8e57ff064e4053a9b45feb7da144cb829eded",
+      "ast_digest": "07ea1c3c769f3741c13b17b65d1ff48caa647545f7086e47c5d033750221ddc8"
+    },
+    "sor": {
+      "values_digest": "b09aef9e90c200b35ba9ceb2c69017a703c646dd8fef12f518d34593f0fcf37b",
+      "rendered_digest": "7f8bf2565906b9b2ba61f985110d5ccf41a0a77a3592b72ad644f38d1ec043c9",
+      "ast_digest": "b4c3ce4ce2bd941f5c80a140ae0e75e4ad7c1ce7dd055d36717d987573ec7d27"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5648-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5648-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5648-execution",
+      "reason": "Implementation is complete and focused validation is green"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5648-execution",
+      "reason": "Bounded exact-head review is complete with no findings"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5648-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5648-execution",
+      "reason": "Recover exact review identity after publication metadata commits; implementation scope is unchanged."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5648-execution",
+      "reason": "Final exact-head review is complete with no findings"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5648-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5648-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:5648-preparation-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5648-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5648-execution",
+      "reason": "Record focused typed validation for operator active-claim revoke",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"csdlc-validate\",\"--request\",\".csdlc/prepared/issues/5648/validate-local.json\"],\"purpose\":\"Prove operator CAS revoke, stale guards, formatting, and strict targeted lint\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5648/local contains a local_pass three-lane proof: claim-revoke focused tests, cargo fmt --check, and strict targeted Clippy all passed.\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5648-preparation-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5648-execution",
+      "reason": "Record remediated focused typed validation for operator active-claim revoke",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"csdlc-validate\",\"--request\",\".csdlc/prepared/issues/5648/validate-local.json\"],\"purpose\":\"Prove operator CAS revoke, stale guards, formatting, and strict targeted lint\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5648/local contains a local_pass three-lane proof: claim-revoke focused tests, cargo fmt --check, and strict targeted Clippy all passed.\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:5648-preparation-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:5648-execution",
+      "reason": "Record remediated focused typed validation for operator active-claim revoke",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"csdlc-validate\",\"--request\",\".csdlc/prepared/issues/5648/validate-local.json\"],\"purpose\":\"Prove operator CAS revoke, stale guards, formatting, and strict targeted lint\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5648/local contains a local_pass three-lane proof: claim-revoke focused tests, cargo fmt --check, and strict targeted Clippy all passed.\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex:5648-execution",
+      "reason": "Record implementation of typed operator active-claim revoke",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Added typed operator-authorized active-claim revoke with CAS, expiry guard, audit, schema, CLI route, and focused tests.\",\"changes\":[\"csdlc-v2/src/lifecycle.rs\",\"csdlc-v2/src/bin/csdlc-bind.rs\",\"csdlc-v2/src/schema.rs\",\"csdlc-v2/src/lib.rs\",\"csdlc-v2/tests/gate2.rs\"],\"artifacts\":[\".csdlc/evidence/5648/local\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex:5648-execution",
+      "reason": "Implementation is complete and focused validation is green",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5648-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "bounded-subagent-review-5648",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:5648-execution",
+      "reason": "Bounded exact-head review is complete with no findings",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:5648-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:5648-execution",
+      "reason": "Recover exact review identity after publication metadata commits; implementation scope is unchanged.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5648-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "bounded-subagent-review-5648",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5648-execution",
+      "reason": "Final exact-head review is complete with no findings",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5648-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "issue": 5347,
+  "expected_generation": 0,
+  "expected_digest": "cfb2e369143319e470d647436e869b2758e9a52367e0fd762a399a6ce8a32a19",
+  "claim_id": "claim-5347-v0918-wp13-external-band-deletion-preparation",
+  "reviewer": "subagent:gpt-5.3-codex-spark-bounded-review"
+}

@@ -1,0 +1,8 @@
+{
+  "actor": "codex:5717-execution",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "expected_digest": "f418929d52d00c12e48f21f4602b5d085e644a3810d5652c4f70903d93daacf7",
+  "expected_generation": 4,
+  "issue": 5717,
+  "reason": "Recover stale review/publication truth after the operator approved additional launch-prep gates beyond the already published podcast studio copy PR."
+}

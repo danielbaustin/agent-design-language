@@ -7,7 +7,7 @@
     "title": "Update adl_pr_cycle skill for C-SDLC v2",
     "slug": "adl-pr-cycle-v2-skill",
     "version": "v0.91.8",
-    "generation": 2
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -62,9 +62,9 @@
         "stop before merge without explicit authorization"
       ],
       "replan_triggers": [],
-      "design_ref": "docs/architecture/adl_pr_cycle_v2_skill.md",
+      "design_ref": ".csdlc/issues/5632/retained/design.md",
       "design_digest": "fed7a7b36183bd305af4e66d0f093808967dea7082f5b872cf7969ee3c9cbc1c",
-      "diagram_ref": "docs/architecture/adl_pr_cycle_v2_skill.mmd",
+      "diagram_ref": ".csdlc/issues/5632/retained/diagram.mmd",
       "diagram_digest": "91cddb3902e14c12f23b125a2fbb01e2d2077e04713733e004772750894cba82"
     }
   }

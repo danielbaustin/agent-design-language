@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5501,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5501-v0918-preparation",
+  "title": "[v0.91.8][WP-10A][proof] Retain live distributed Codex workcell evidence",
+  "body": "Closes #5501\n\nRetains exact, tamper-checked evidence for the real WP-10A parallel workcell execution, including two disjoint writable shards, fail-closed overlap refusal, dashboard and convergence outcomes, dependency merge ancestry, and measured lifecycle-window comparison without a numeric speedup claim. GPT-5.5 exact-head review passed with zero blockers. No product code, Runtime v2, AWS, credentials, paid services, or deferred acceptance claims.",
+  "draft": false,
+  "revision": "git-blake3:eda94c8ee79efe8dd6c3e417ced2bcda18ff3ffc:3a6da1c3f86e7594fa3513e93811f830069d35dd78326c79952ca4d2dfb382b3",
+  "commit_sha": "eda94c8ee79efe8dd6c3e417ced2bcda18ff3ffc"
+}

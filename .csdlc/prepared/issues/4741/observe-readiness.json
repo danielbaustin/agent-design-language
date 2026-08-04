@@ -1,0 +1,18 @@
+{
+  "issue": 4741,
+  "expected_generation": 14,
+  "expected_digest": "14bc4281fdf765c770a98dd4cb13db1386f92dac75323d9e74fe500d35011da3",
+  "claim_id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+  "actor": "codex:issue-4741-shepherd",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5651,
+  "required_checks": [
+    "adl-ci",
+    "adl-coverage",
+    "adl-tooling-contracts",
+    "adl-path-policy",
+    "adl-demo-proof"
+  ],
+  "require_review": false,
+  "token_file": null
+}

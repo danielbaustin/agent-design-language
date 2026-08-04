@@ -2,7 +2,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     future::Future,
     io::Write,
-    net::{IpAddr, SocketAddr},
+    net::SocketAddr,
     sync::Arc,
     sync::Mutex,
     time::{Duration, SystemTime, UNIX_EPOCH},
@@ -13,7 +13,7 @@ use axum::{
     body::Bytes,
     extract::{
         ws::{close_code, CloseFrame, Message, WebSocket, WebSocketUpgrade},
-        State,
+        DefaultBodyLimit, State,
     },
     http::{header, HeaderMap, HeaderValue, StatusCode},
     response::{IntoResponse, Response},
@@ -25,25 +25,69 @@ use lru::LruCache;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tracing::Instrument;
+use utoipa_swagger_ui::{Config as SwaggerConfig, SwaggerUi, Url as SwaggerUrl};
 
 use crate::{
-    BootstrapEvent, CanonicalIngress, CheckpointManifest, DomainResult, DomainWork, IngressError,
-    KernelControl, KernelExit, LiveContinuity, ObservabilityHealth, RuntimeRecorder,
-    RuntimeSnapshot, RuntimeTlsInitConfig, WeatherHealthReport,
+    decode_acip_envelope, BootstrapEvent, CanonicalIngress, CheckpointManifest, DomainResult,
+    DomainWork, IngressError, KernelControl, KernelExit, LifecycleState, LiveContinuity,
+    ObservabilityHealth, RuntimeRecorder, RuntimeSnapshot, RuntimeTlsInitConfig,
+    WeatherHealthReport, ACIP_WEBSOCKET_SCHEMA,
 };
 
 pub const CONTROL_COMMAND_SCHEMA: &str = "adl.runtime.control_command.v1";
 pub const CONTROL_RESPONSE_SCHEMA: &str = "adl.runtime.control_response.v1";
 pub const LEGACY_OBSERVATORY_FEED_SCHEMA: &str = "adl.runtime_v3.observatory_feed.v1";
 pub const OBSERVATORY_FEED_SCHEMA: &str = "adl.runtime_v3.observatory_feed.v2";
-pub const DEFAULT_CONTROL_API_PORT: u16 = 20_997;
 pub const MAX_SHUTDOWN_GRACE_MILLIS: u64 = 60_000;
-pub const CONTROL_API_SHUTDOWN_GRACE: Duration = Duration::from_secs(2);
+pub const API_DOCS_PATH: &str = "/v1/docs/";
+pub const OBSERVATORY_API_DOCS_PATH: &str = "/v1/observatory/docs/";
+pub const RUNTIME_OPENAPI_PATH: &str = "/v1/openapi.json";
+pub const OBSERVATORY_OPENAPI_PATH: &str = "/v1/observatory/openapi.json";
+pub const RUNTIME_HEALTH_PATH: &str = "/v1/health";
+pub const RUNTIME_READY_PATH: &str = "/v1/ready";
+pub const RUNTIME_METRICS_PATH: &str = "/v1/metrics";
+pub const ACIP_WS_PATH: &str = "/v1/acip/ws";
 pub const OBSERVATORY_WS_PATH: &str = "/v1/observatory/ws";
 pub const OBSERVATORY_WS_AUTH_SCHEMA: &str = "adl.runtime_v3.observatory_ws_auth.v1";
-pub const MAX_OBSERVATORY_WS_FRAME_BYTES: usize = 64 * 1024;
-const OBSERVATORY_WS_AUTH_TIMEOUT: Duration = Duration::from_secs(5);
-const OBSERVATORY_WS_REFRESH: Duration = Duration::from_secs(1);
+pub const OBSERVATORY_WS_CONTROL_RESULT_SCHEMA: &str =
+    "adl.runtime_v3.observatory_ws_control_result.v1";
+pub const CONTROL_MAX_BODY_BYTES: usize = 64 * 1024;
+const RUNTIME_OPENAPI_DOCUMENT: &str = include_str!("../../docs/api/runtime-v3/v1/openapi.json");
+const OBSERVATORY_OPENAPI_DOCUMENT: &str =
+    include_str!("../../docs/api/runtime-v3/v1/observatory.openapi.json");
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct ControlApiPolicy {
+    pub shutdown_grace: Duration,
+    pub websocket_auth_timeout: Duration,
+    pub websocket_refresh: Duration,
+    pub websocket_max_frame_bytes: usize,
+    pub control_max_body_bytes: usize,
+}
+
+impl ControlApiPolicy {
+    pub fn new(
+        shutdown_grace: Duration,
+        websocket_auth_timeout: Duration,
+        websocket_refresh: Duration,
+        websocket_max_frame_bytes: usize,
+    ) -> Result<Self, ControlApiError> {
+        if shutdown_grace.is_zero()
+            || websocket_auth_timeout.is_zero()
+            || websocket_refresh.is_zero()
+            || websocket_max_frame_bytes == 0
+        {
+            return Err(ControlApiError::MissingPolicy);
+        }
+        Ok(Self {
+            shutdown_grace,
+            websocket_auth_timeout,
+            websocket_refresh,
+            websocket_max_frame_bytes,
+            control_max_body_bytes: CONTROL_MAX_BODY_BYTES,
+        })
+    }
+}
 
 pub fn control_ready_event(
     instance_id: &str,
@@ -263,6 +307,16 @@ struct IdempotencyState {
     admission_open: bool,
 }
 
+struct AcipReplayState {
+    sequences_by_source: LruCache<String, u64>,
+}
+
+struct AcipSequenceReservation {
+    source: String,
+    sequence: u64,
+    previous: Option<u64>,
+}
+
 pub struct ControlService<C> {
     instance_id: String,
     recorder: RuntimeRecorder,
@@ -270,6 +324,7 @@ pub struct ControlService<C> {
     authority: ControlAuthority,
     max_records: usize,
     idempotency: Mutex<IdempotencyState>,
+    acip_replay: Mutex<AcipReplayState>,
     weather: Mutex<Option<ObservedWeather>>,
     weather_stale_after_millis: Mutex<u64>,
     observatory_bearer_digest: Mutex<Option<blake3::Hash>>,
@@ -278,6 +333,7 @@ pub struct ControlService<C> {
     control_addr: Mutex<SocketAddr>,
     public_base_url: Mutex<String>,
     canonical_ingress: Option<CanonicalIngress>,
+    api_policy: Mutex<Option<ControlApiPolicy>>,
 }
 
 impl<C: LifecycleControl + 'static> ControlService<C> {
@@ -294,7 +350,7 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
             lifecycle,
             authority,
             max_records,
-            ["https://localhost:8765".to_owned()],
+            std::iter::empty(),
             AgentPopulationFeed::single(),
         )
     }
@@ -345,15 +401,33 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
                 terminal_action: None,
                 admission_open: true,
             }),
+            acip_replay: Mutex::new(AcipReplayState {
+                sequences_by_source: LruCache::unbounded(),
+            }),
             weather: Mutex::new(None),
             weather_stale_after_millis: Mutex::new(30_000),
             observatory_bearer_digest: Mutex::new(None),
             observatory_allowed_origins,
             agent_population,
-            control_addr: Mutex::new(SocketAddr::from(([127, 0, 0, 1], DEFAULT_CONTROL_API_PORT))),
-            public_base_url: Mutex::new(format!("https://localhost:{DEFAULT_CONTROL_API_PORT}")),
+            control_addr: Mutex::new(SocketAddr::from(([127, 0, 0, 1], 0))),
+            public_base_url: Mutex::new("https://localhost".to_owned()),
             canonical_ingress: None,
+            api_policy: Mutex::new(None),
         }
+    }
+
+    fn set_api_policy(&self, policy: ControlApiPolicy) {
+        *self
+            .api_policy
+            .lock()
+            .expect("control API policy mutex poisoned") = Some(policy);
+    }
+
+    fn api_policy(&self) -> ControlApiPolicy {
+        self.api_policy
+            .lock()
+            .expect("control API policy mutex poisoned")
+            .expect("control API policy validated before router startup")
     }
 
     pub fn with_canonical_ingress(mut self, ingress: CanonicalIngress) -> Self {
@@ -402,27 +476,6 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
             .lock()
             .expect("observatory credential mutex poisoned") = Some(blake3::hash(token.as_bytes()));
         Ok(())
-    }
-
-    fn observatory_authorized(&self, headers: &HeaderMap) -> bool {
-        let Some(expected) = *self
-            .observatory_bearer_digest
-            .lock()
-            .expect("observatory credential mutex poisoned")
-        else {
-            return false;
-        };
-        let Some(token) = headers
-            .get(header::AUTHORIZATION)
-            .and_then(|value| value.to_str().ok())
-            .and_then(|value| value.strip_prefix("Bearer "))
-        else {
-            return false;
-        };
-        constant_time_eq(
-            expected.as_bytes(),
-            blake3::hash(token.as_bytes()).as_bytes(),
-        )
     }
 
     fn observatory_token_authorized(&self, token: &str) -> bool {
@@ -494,9 +547,113 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
         true
     }
 
+    fn reserve_acip_sequence(
+        &self,
+        source: &str,
+        sequence: u64,
+    ) -> Option<AcipSequenceReservation> {
+        if sequence == 0 {
+            return None;
+        }
+        let mut state = self.acip_replay.lock().expect("ACIP replay mutex poisoned");
+        let previous = state.sequences_by_source.get(source).copied();
+        if let Some(previous) = previous {
+            if sequence <= previous {
+                return None;
+            }
+        } else {
+            while state.sequences_by_source.len() >= self.max_records {
+                state.sequences_by_source.pop_lru();
+            }
+        }
+        state.sequences_by_source.put(source.to_owned(), sequence);
+        Some(AcipSequenceReservation {
+            source: source.to_owned(),
+            sequence,
+            previous,
+        })
+    }
+
+    fn rollback_acip_sequence(&self, reservation: AcipSequenceReservation) {
+        let mut state = self.acip_replay.lock().expect("ACIP replay mutex poisoned");
+        if state.sequences_by_source.peek(&reservation.source).copied()
+            != Some(reservation.sequence)
+        {
+            return;
+        }
+        match reservation.previous {
+            Some(previous) => {
+                state.sequences_by_source.put(reservation.source, previous);
+            }
+            None => {
+                state.sequences_by_source.pop(&reservation.source);
+            }
+        }
+    }
+
+    async fn dispatch_acip_payload(&self, payload: &[u8]) -> serde_json::Value {
+        let envelope = match decode_acip_envelope(payload) {
+            Ok(envelope) => envelope,
+            Err(reason) => {
+                return serde_json::json!({
+                    "schema": ACIP_WEBSOCKET_SCHEMA,
+                    "status": "rejected",
+                    "reason": reason,
+                    "sequence_reserved": false
+                });
+            }
+        };
+        let Some(ingress) = &self.canonical_ingress else {
+            return serde_json::json!({
+                "schema": ACIP_WEBSOCKET_SCHEMA,
+                "status": "rejected",
+                "message_id": envelope.message_id,
+                "reason": "canonical_ingress_unavailable",
+                "sequence_reserved": false
+            });
+        };
+        let Some(reservation) =
+            self.reserve_acip_sequence(&envelope.source, envelope.monotonic_sequence)
+        else {
+            return serde_json::json!({
+                "schema": ACIP_WEBSOCKET_SCHEMA,
+                "status": "rejected",
+                "message_id": envelope.message_id,
+                "reason": "monotonic_sequence_must_advance",
+                "sequence_reserved": false
+            });
+        };
+        let work = DomainWork {
+            schema: crate::DOMAIN_WORK_SCHEMA.to_owned(),
+            work_id: envelope.message_id.clone(),
+            kind: envelope.route.clone(),
+            payload: envelope.payload_json.as_bytes().to_vec(),
+        };
+        match ingress.submit(work, envelope.message_id.clone()).await {
+            Ok(result) => serde_json::json!({
+                "schema": ACIP_WEBSOCKET_SCHEMA,
+                "status": "completed",
+                "message_id": envelope.message_id,
+                "accepted_sequence": result.accepted_sequence,
+                "result_hash": result.result_hash,
+                "sequence_reserved": true
+            }),
+            Err(error) => {
+                self.rollback_acip_sequence(reservation);
+                serde_json::json!({
+                    "schema": ACIP_WEBSOCKET_SCHEMA,
+                    "status": "rejected",
+                    "message_id": envelope.message_id,
+                    "reason": error.to_string(),
+                    "sequence_reserved": false
+                })
+            }
+        }
+    }
+
     pub fn observatory_feed(&self) -> ObservatoryFeed {
         let snapshot = self.recorder.snapshot();
-        let observability_ready = !matches!(snapshot.observability, ObservabilityHealth::Pending);
+        let observability_ready = matches!(snapshot.observability, ObservabilityHealth::Ready);
         let continuity_head = snapshot.continuity_head.clone();
         let events = self.recorder.events();
         let weather = self.weather.lock().expect("weather mutex poisoned").clone();
@@ -518,6 +675,7 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
         ObservatoryFeed {
             schema: OBSERVATORY_FEED_SCHEMA.to_owned(),
             runtime_instance_id: self.instance_id.clone(),
+            runtime_process_id: std::process::id(),
             default_runtime_changed: false,
             runtime_selection: "runtime_v3_explicit_opt_in".to_owned(),
             control: ObservatoryControlFeed {
@@ -533,10 +691,13 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
                     .clone(),
                 read_endpoint: "/v1/observatory".to_owned(),
                 websocket_endpoint: OBSERVATORY_WS_PATH.to_owned(),
+                websocket_full_duplex: true,
+                websocket_acip_binary_schema: ACIP_WEBSOCKET_SCHEMA.to_owned(),
                 signed_command_endpoint: "/v1/control".to_owned(),
                 signed_commands_required_for_mutation: true,
-                bearer_token_required_for_read: true,
-                browser_mutation_authority: false,
+                bearer_token_required_for_read: false,
+                login_required_for_mutation: true,
+                browser_mutation_authority: true,
             },
             health: ObservatoryHealthFeed {
                 snapshot,
@@ -560,6 +721,31 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
                 vector_cloudwatch_route: "vector.runtime_v3_cloudwatch_emf".to_owned(),
             },
             events,
+        }
+    }
+
+    pub fn readiness_report(&self) -> RuntimeReadinessReport {
+        let feed = self.observatory_feed();
+        let weather_freshness = feed.weather_freshness.clone();
+        let weather_stale = weather_freshness
+            .as_ref()
+            .is_none_or(|freshness| freshness.stale);
+        let mut degraded_reasons = Vec::new();
+        if !feed.health.observability_ready {
+            degraded_reasons.push("observability_not_ready".to_owned());
+        }
+        if weather_stale {
+            degraded_reasons.push("weather_stale".to_owned());
+        }
+        RuntimeReadinessReport {
+            schema: RUNTIME_READINESS_SCHEMA.to_owned(),
+            ready: degraded_reasons.is_empty(),
+            lifecycle: feed.health.snapshot.lifecycle,
+            observability_ready: feed.health.observability_ready,
+            runtime_instance_id: feed.runtime_instance_id,
+            runtime_process_id: feed.runtime_process_id,
+            weather_freshness,
+            degraded_reasons,
         }
     }
 
@@ -714,9 +900,12 @@ pub struct ObservatoryControlFeed {
     pub public_base_url: String,
     pub read_endpoint: String,
     pub websocket_endpoint: String,
+    pub websocket_full_duplex: bool,
+    pub websocket_acip_binary_schema: String,
     pub signed_command_endpoint: String,
     pub signed_commands_required_for_mutation: bool,
     pub bearer_token_required_for_read: bool,
+    pub login_required_for_mutation: bool,
     pub browser_mutation_authority: bool,
 }
 
@@ -738,6 +927,20 @@ struct ObservedWeather {
 pub struct ObservatoryHealthFeed {
     pub snapshot: RuntimeSnapshot,
     pub observability_ready: bool,
+}
+
+pub const RUNTIME_READINESS_SCHEMA: &str = "adl.runtime_v3.readiness.v1";
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct RuntimeReadinessReport {
+    pub schema: String,
+    pub ready: bool,
+    pub lifecycle: LifecycleState,
+    pub observability_ready: bool,
+    pub runtime_instance_id: String,
+    pub runtime_process_id: u32,
+    pub weather_freshness: Option<ObservatoryWeatherFreshness>,
+    pub degraded_reasons: Vec<String>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -789,6 +992,7 @@ pub struct ObservatoryProofFeed {
 pub struct ObservatoryFeed {
     pub schema: String,
     pub runtime_instance_id: String,
+    pub runtime_process_id: u32,
     pub default_runtime_changed: bool,
     pub runtime_selection: String,
     pub control: ObservatoryControlFeed,
@@ -813,42 +1017,34 @@ pub async fn load_control_tls(
     .map_err(|error| ControlApiError::Tls(error.to_string()))
 }
 
-pub async fn serve_control_api<C: LifecycleControl + 'static>(
-    service: Arc<ControlService<C>>,
-    bind_ip: IpAddr,
-    tls: axum_server::tls_rustls::RustlsConfig,
-) -> Result<(), ControlApiError> {
-    let listener = tokio::net::TcpListener::bind((bind_ip, DEFAULT_CONTROL_API_PORT))
-        .await
-        .map_err(|error| ControlApiError::Bind(error.to_string()))?;
-    serve_control_listener(service, listener, tls).await
-}
-
 pub async fn serve_control_listener<C: LifecycleControl + 'static>(
     service: Arc<ControlService<C>>,
     listener: tokio::net::TcpListener,
     tls: axum_server::tls_rustls::RustlsConfig,
+    api_policy: ControlApiPolicy,
 ) -> Result<(), ControlApiError> {
-    serve_control_listener_until(service, listener, tls, std::future::pending()).await
+    serve_control_listener_until(service, listener, tls, api_policy, std::future::pending()).await
 }
 
 pub async fn serve_control_listener_until<C, F>(
     service: Arc<ControlService<C>>,
     listener: tokio::net::TcpListener,
     tls: axum_server::tls_rustls::RustlsConfig,
+    api_policy: ControlApiPolicy,
     shutdown: F,
 ) -> Result<(), ControlApiError>
 where
     C: LifecycleControl + 'static,
     F: Future<Output = ()> + Send + 'static,
 {
-    serve_control_listener_until_inner(service, listener, tls, None, shutdown).await
+    serve_control_listener_until_inner(service, listener, tls, api_policy, None, shutdown).await
 }
 
 pub async fn serve_control_listener_until_ready<C, F>(
     service: Arc<ControlService<C>>,
     listener: tokio::net::TcpListener,
     tls: axum_server::tls_rustls::RustlsConfig,
+    api_policy: ControlApiPolicy,
     ready: tokio::sync::oneshot::Sender<SocketAddr>,
     shutdown: F,
 ) -> Result<(), ControlApiError>
@@ -856,13 +1052,15 @@ where
     C: LifecycleControl + 'static,
     F: Future<Output = ()> + Send + 'static,
 {
-    serve_control_listener_until_inner(service, listener, tls, Some(ready), shutdown).await
+    serve_control_listener_until_inner(service, listener, tls, api_policy, Some(ready), shutdown)
+        .await
 }
 
 async fn serve_control_listener_until_inner<C, F>(
     service: Arc<ControlService<C>>,
     listener: tokio::net::TcpListener,
     tls: axum_server::tls_rustls::RustlsConfig,
+    api_policy: ControlApiPolicy,
     ready: Option<tokio::sync::oneshot::Sender<SocketAddr>>,
     shutdown: F,
 ) -> Result<(), ControlApiError>
@@ -870,6 +1068,7 @@ where
     C: LifecycleControl + 'static,
     F: Future<Output = ()> + Send + 'static,
 {
+    service.set_api_policy(api_policy);
     let address = listener
         .local_addr()
         .map_err(|error| ControlApiError::Bind(error.to_string()))?;
@@ -877,19 +1076,50 @@ where
     let listener = listener
         .into_std()
         .map_err(|error| ControlApiError::Bind(error.to_string()))?;
+    let swagger_ui = SwaggerUi::new(API_DOCS_PATH).config(
+        SwaggerConfig::new([
+            SwaggerUrl::with_primary("Runtime Core", RUNTIME_OPENAPI_PATH, true),
+            SwaggerUrl::new("Observatory", OBSERVATORY_OPENAPI_PATH),
+        ])
+        .validator_url("none"),
+    );
+    let observatory_swagger_ui = SwaggerUi::new(OBSERVATORY_API_DOCS_PATH).config(
+        SwaggerConfig::new([SwaggerUrl::with_primary(
+            "Observatory",
+            OBSERVATORY_OPENAPI_PATH,
+            true,
+        )])
+        .validator_url("none"),
+    );
     let router = Router::new()
+        .route(RUNTIME_HEALTH_PATH, get(runtime_health_handler::<C>))
+        .route(
+            RUNTIME_READY_PATH,
+            get(runtime_ready_handler::<C>).options(observatory_preflight_handler::<C>),
+        )
+        .route(RUNTIME_METRICS_PATH, get(runtime_metrics_handler::<C>))
+        .route(ACIP_WS_PATH, get(acip_ws_handler::<C>))
+        .route(RUNTIME_OPENAPI_PATH, get(runtime_openapi_handler))
+        .route(OBSERVATORY_OPENAPI_PATH, get(observatory_openapi_handler))
         .route(
             "/v1/observatory",
             get(observatory_feed_handler::<C>).options(observatory_preflight_handler::<C>),
         )
         .route(OBSERVATORY_WS_PATH, get(observatory_ws_handler::<C>))
-        .route("/v1/control", post(control_handler::<C>))
+        .route(
+            "/v1/control",
+            post(control_handler::<C>)
+                .options(control_preflight_handler::<C>)
+                .layer(DefaultBodyLimit::max(api_policy.control_max_body_bytes)),
+        )
+        .merge(swagger_ui)
+        .merge(observatory_swagger_ui)
         .with_state(service);
     let handle = axum_server::Handle::new();
     let shutdown_handle = handle.clone();
     let shutdown_task = tokio::spawn(async move {
         shutdown.await;
-        shutdown_handle.graceful_shutdown(Some(CONTROL_API_SHUTDOWN_GRACE));
+        shutdown_handle.graceful_shutdown(Some(api_policy.shutdown_grace));
     });
     let server = axum_server::from_tcp_rustls(listener, tls)
         .map_err(|error| ControlApiError::Bind(error.to_string()))?
@@ -913,7 +1143,27 @@ where
     result
 }
 
-async fn observatory_feed_handler<C: LifecycleControl + 'static>(
+async fn runtime_openapi_handler() -> impl IntoResponse {
+    (
+        [(header::CONTENT_TYPE, "application/json")],
+        RUNTIME_OPENAPI_DOCUMENT,
+    )
+}
+
+async fn observatory_openapi_handler() -> impl IntoResponse {
+    (
+        [(header::CONTENT_TYPE, "application/json")],
+        OBSERVATORY_OPENAPI_DOCUMENT,
+    )
+}
+
+async fn runtime_health_handler<C: LifecycleControl + 'static>(
+    State(service): State<Arc<ControlService<C>>>,
+) -> Response {
+    Json(service.observatory_feed().health).into_response()
+}
+
+async fn runtime_ready_handler<C: LifecycleControl + 'static>(
     State(service): State<Arc<ControlService<C>>>,
     headers: HeaderMap,
 ) -> Response {
@@ -921,15 +1171,108 @@ async fn observatory_feed_handler<C: LifecycleControl + 'static>(
     if headers.contains_key(header::ORIGIN) && allowed_origin.is_none() {
         return StatusCode::FORBIDDEN.into_response();
     }
-    if !service.observatory_authorized(&headers) {
-        return observatory_json(
-            StatusCode::UNAUTHORIZED,
-            ControlErrorPayload {
-                schema: "adl.runtime.control_error.v1",
-                code: "authentication_failed",
-            },
-            allowed_origin,
-        );
+    let report = service.readiness_report();
+    let status = if report.ready {
+        StatusCode::OK
+    } else {
+        StatusCode::SERVICE_UNAVAILABLE
+    };
+    observatory_json(status, report, allowed_origin)
+}
+
+async fn runtime_metrics_handler<C: LifecycleControl + 'static>(
+    State(service): State<Arc<ControlService<C>>>,
+) -> Response {
+    Json(service.recorder.snapshot().observability_pipeline).into_response()
+}
+
+async fn acip_ws_handler<C: LifecycleControl + 'static>(
+    ws: WebSocketUpgrade,
+    State(service): State<Arc<ControlService<C>>>,
+    headers: HeaderMap,
+) -> Response {
+    let Some(bearer_token) = headers
+        .get(header::AUTHORIZATION)
+        .and_then(|value| value.to_str().ok())
+        .and_then(|value| value.strip_prefix("Bearer "))
+        .filter(|token| service.observatory_token_authorized(token))
+        .map(str::to_owned)
+    else {
+        return StatusCode::UNAUTHORIZED.into_response();
+    };
+    let api_policy = service.api_policy();
+    ws.max_frame_size(api_policy.websocket_max_frame_bytes)
+        .max_message_size(api_policy.websocket_max_frame_bytes)
+        .on_upgrade(move |socket| acip_ws_session(socket, service, bearer_token))
+}
+
+async fn acip_ws_session<C: LifecycleControl + 'static>(
+    mut socket: WebSocket,
+    service: Arc<ControlService<C>>,
+    bearer_token: String,
+) {
+    let authenticated = serde_json::json!({
+        "schema": ACIP_WEBSOCKET_SCHEMA,
+        "event": "authenticated",
+        "path": ACIP_WS_PATH,
+        "bidirectional": true
+    });
+    if socket
+        .send(Message::Text(authenticated.to_string().into()))
+        .await
+        .is_err()
+    {
+        return;
+    }
+
+    while let Some(message) = socket.recv().await {
+        if !service.observatory_token_authorized(&bearer_token) {
+            let _ = socket
+                .send(Message::Close(Some(CloseFrame {
+                    code: close_code::POLICY,
+                    reason: "credential_revoked".into(),
+                })))
+                .await;
+            return;
+        }
+        match message {
+            Ok(Message::Binary(payload)) => {
+                let response = service.dispatch_acip_payload(&payload).await;
+                if socket
+                    .send(Message::Text(response.to_string().into()))
+                    .await
+                    .is_err()
+                {
+                    return;
+                }
+            }
+            Ok(Message::Ping(payload)) => {
+                if socket.send(Message::Pong(payload)).await.is_err() {
+                    return;
+                }
+            }
+            Ok(Message::Pong(_)) => {}
+            Ok(Message::Close(_)) => return,
+            Ok(Message::Text(_)) | Err(_) => {
+                let _ = socket
+                    .send(Message::Close(Some(CloseFrame {
+                        code: close_code::POLICY,
+                        reason: "binary_acip_frame_required".into(),
+                    })))
+                    .await;
+                return;
+            }
+        }
+    }
+}
+
+async fn observatory_feed_handler<C: LifecycleControl + 'static>(
+    State(service): State<Arc<ControlService<C>>>,
+    headers: HeaderMap,
+) -> Response {
+    let allowed_origin = allowed_origin(&service, &headers);
+    if headers.contains_key(header::ORIGIN) && allowed_origin.is_none() {
+        return StatusCode::FORBIDDEN.into_response();
     }
     observatory_json(StatusCode::OK, service.observatory_feed(), allowed_origin)
 }
@@ -939,11 +1282,12 @@ async fn observatory_ws_handler<C: LifecycleControl + 'static>(
     State(service): State<Arc<ControlService<C>>>,
     headers: HeaderMap,
 ) -> Response {
-    if allowed_origin(&service, &headers).is_none() {
+    if headers.contains_key(header::ORIGIN) && allowed_origin(&service, &headers).is_none() {
         return StatusCode::FORBIDDEN.into_response();
     }
-    ws.max_frame_size(MAX_OBSERVATORY_WS_FRAME_BYTES)
-        .max_message_size(MAX_OBSERVATORY_WS_FRAME_BYTES)
+    let api_policy = service.api_policy();
+    ws.max_frame_size(api_policy.websocket_max_frame_bytes)
+        .max_message_size(api_policy.websocket_max_frame_bytes)
         .on_upgrade(move |socket| observatory_ws_session(socket, service))
 }
 
@@ -954,44 +1298,58 @@ struct ObservatoryWsAuth {
     bearer_token: String,
 }
 
+#[derive(Serialize)]
+struct ObservatoryWsControlResult {
+    schema: &'static str,
+    status: &'static str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    command_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    correlation_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    response: Option<ControlResponse>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    error: Option<&'static str>,
+}
+
 async fn observatory_ws_session<C: LifecycleControl + 'static>(
     mut socket: WebSocket,
     service: Arc<ControlService<C>>,
 ) {
-    let authenticated = tokio::time::timeout(OBSERVATORY_WS_AUTH_TIMEOUT, socket.recv()).await;
-    let bearer_token = match authenticated {
-        Ok(Some(Ok(Message::Text(payload)))) if payload.len() <= MAX_OBSERVATORY_WS_FRAME_BYTES => {
-            serde_json::from_str::<ObservatoryWsAuth>(&payload)
-                .ok()
-                .filter(|auth| auth.schema == OBSERVATORY_WS_AUTH_SCHEMA)
-                .and_then(|auth| {
-                    service
-                        .observatory_token_authorized(&auth.bearer_token)
-                        .then_some(auth.bearer_token)
-                })
-        }
-        _ => None,
-    };
-    let Some(bearer_token) = bearer_token else {
-        let _ = socket
-            .send(Message::Close(Some(CloseFrame {
-                code: close_code::POLICY,
-                reason: "authentication_failed".into(),
-            })))
-            .await;
+    let api_policy = service.api_policy();
+    let mut bearer_token: Option<String> = None;
+    let mut refresh = tokio::time::interval(api_policy.websocket_refresh);
+    refresh.tick().await;
+    let Ok(initial_feed) = serde_json::to_string(&service.observatory_feed()) else {
         return;
     };
+    if socket
+        .send(Message::Text(initial_feed.into()))
+        .await
+        .is_err()
+    {
+        return;
+    }
 
-    let mut refresh = tokio::time::interval(OBSERVATORY_WS_REFRESH);
     loop {
         tokio::select! {
             _ = refresh.tick() => {
-                if !service.observatory_token_authorized(&bearer_token) {
-                    let _ = socket.send(Message::Close(Some(CloseFrame {
-                        code: close_code::POLICY,
-                        reason: "credential_revoked".into(),
-                    }))).await;
-                    break;
+                if bearer_token.as_deref().is_some_and(|token| !service.observatory_token_authorized(token)) {
+                    bearer_token = None;
+                    let revoked = ObservatoryWsControlResult {
+                        schema: OBSERVATORY_WS_CONTROL_RESULT_SCHEMA,
+                        status: "rejected",
+                        command_id: None,
+                        correlation_id: None,
+                        response: None,
+                        error: Some("credential_revoked"),
+                    };
+                    let Ok(payload) = serde_json::to_string(&revoked) else {
+                        break;
+                    };
+                    if socket.send(Message::Text(payload.into())).await.is_err() {
+                        break;
+                    }
                 }
                 let Ok(payload) = serde_json::to_string(&service.observatory_feed()) else {
                     break;
@@ -1008,10 +1366,117 @@ async fn observatory_ws_session<C: LifecycleControl + 'static>(
                 }
                 Some(Ok(Message::Pong(_))) => {}
                 Some(Ok(Message::Close(_))) | None => break,
-                Some(Ok(Message::Text(_))) | Some(Ok(Message::Binary(_))) | Some(Err(_)) => {
+                Some(Ok(Message::Text(payload))) => {
+                    if let Ok(auth) = serde_json::from_str::<ObservatoryWsAuth>(&payload) {
+                        let authorized = auth.schema == OBSERVATORY_WS_AUTH_SCHEMA
+                            && service.observatory_token_authorized(&auth.bearer_token);
+                        bearer_token = authorized.then_some(auth.bearer_token);
+                        let result = ObservatoryWsControlResult {
+                            schema: OBSERVATORY_WS_CONTROL_RESULT_SCHEMA,
+                            status: if authorized { "authenticated" } else { "rejected" },
+                            command_id: None,
+                            correlation_id: None,
+                            response: None,
+                            error: (!authorized).then_some("authentication_failed"),
+                        };
+                        let Ok(payload) = serde_json::to_string(&result) else {
+                            break;
+                        };
+                        if socket.send(Message::Text(payload.into())).await.is_err() {
+                            break;
+                        }
+                        continue;
+                    }
+                    if bearer_token
+                        .as_deref()
+                        .is_some_and(|token| !service.observatory_token_authorized(token))
+                    {
+                        bearer_token = None;
+                    }
+                    let command = serde_json::from_str::<SignedControlCommand>(&payload);
+                    let (command_id, correlation_id) = command
+                        .as_ref()
+                        .map(|command| {
+                            (
+                                is_safe_identifier(&command.command_id)
+                                    .then(|| command.command_id.clone()),
+                                is_correlation_id(&command.correlation_id)
+                                    .then(|| command.correlation_id.clone()),
+                            )
+                        })
+                        .unwrap_or((None, None));
+                    let result = if bearer_token.is_none() {
+                        ObservatoryWsControlResult {
+                            schema: OBSERVATORY_WS_CONTROL_RESULT_SCHEMA,
+                            status: "rejected",
+                            command_id,
+                            correlation_id,
+                            response: None,
+                            error: Some("write_authentication_required"),
+                        }
+                    } else {
+                        match command {
+                        Ok(command) => match service.execute(command).await {
+                            Ok(response) => ObservatoryWsControlResult {
+                                schema: OBSERVATORY_WS_CONTROL_RESULT_SCHEMA,
+                                status: "accepted",
+                                command_id,
+                                correlation_id,
+                                response: Some(response),
+                                error: None,
+                            },
+                            Err(error) => ObservatoryWsControlResult {
+                                schema: OBSERVATORY_WS_CONTROL_RESULT_SCHEMA,
+                                status: "rejected",
+                                command_id,
+                                correlation_id,
+                                response: None,
+                                error: Some(control_error_code(&error)),
+                            },
+                        },
+                        Err(_) => ObservatoryWsControlResult {
+                            schema: OBSERVATORY_WS_CONTROL_RESULT_SCHEMA,
+                            status: "rejected",
+                            command_id: None,
+                            correlation_id: None,
+                            response: None,
+                            error: Some("invalid_request"),
+                        },
+                    }};
+                    let Ok(payload) = serde_json::to_string(&result) else {
+                        break;
+                    };
+                    if socket.send(Message::Text(payload.into())).await.is_err() {
+                        break;
+                    }
+                }
+                Some(Ok(Message::Binary(payload))) => {
+                    if bearer_token
+                        .as_deref()
+                        .is_some_and(|token| !service.observatory_token_authorized(token))
+                    {
+                        bearer_token = None;
+                    }
+                    let status = if bearer_token.is_some() {
+                        service.dispatch_acip_payload(&payload).await
+                    } else {
+                        serde_json::json!({
+                            "schema": OBSERVATORY_WS_CONTROL_RESULT_SCHEMA,
+                            "status": "rejected",
+                            "error": "write_authentication_required"
+                        })
+                    };
+                    let Ok(payload) = serde_json::to_string(&status) else {
+                        break;
+                    };
+                    if socket.send(Message::Text(payload.into())).await.is_err() {
+                        break;
+                    }
+                }
+                Some(Err(_)) => {
                     let _ = socket.send(Message::Close(Some(CloseFrame {
                         code: close_code::POLICY,
-                        reason: "read_only_observatory".into(),
+                        reason: "unsupported_websocket_frame".into(),
                     }))).await;
                     break;
                 }
@@ -1048,22 +1513,64 @@ async fn observatory_preflight_handler<C: LifecycleControl + 'static>(
     response
 }
 
+async fn control_preflight_handler<C: LifecycleControl + 'static>(
+    State(service): State<Arc<ControlService<C>>>,
+    headers: HeaderMap,
+) -> Response {
+    let Some(origin) = allowed_origin(&service, &headers) else {
+        return StatusCode::FORBIDDEN.into_response();
+    };
+    let mut response = StatusCode::NO_CONTENT.into_response();
+    response
+        .headers_mut()
+        .insert(header::ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+    response.headers_mut().insert(
+        header::ACCESS_CONTROL_ALLOW_METHODS,
+        HeaderValue::from_static("POST"),
+    );
+    response.headers_mut().insert(
+        header::ACCESS_CONTROL_ALLOW_HEADERS,
+        HeaderValue::from_static("Content-Type, Authorization"),
+    );
+    response
+        .headers_mut()
+        .insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
+    response
+        .headers_mut()
+        .insert(header::VARY, HeaderValue::from_static("Origin"));
+    response
+}
+
 async fn control_handler<C: LifecycleControl + 'static>(
     State(service): State<Arc<ControlService<C>>>,
+    headers: HeaderMap,
     body: Bytes,
 ) -> Response {
+    let allowed_origin = if headers.contains_key(header::ORIGIN) {
+        match allowed_origin(&service, &headers) {
+            Some(origin) => Some(origin),
+            None => return StatusCode::FORBIDDEN.into_response(),
+        }
+    } else {
+        None
+    };
     let command = match serde_json::from_slice::<SignedControlCommand>(&body) {
         Ok(command) => command,
-        Err(_) => return control_error_response(ControlError::Encoding("invalid request".into())),
+        Err(_) => {
+            return control_error_response(
+                ControlError::Encoding("invalid request".into()),
+                allowed_origin,
+            )
+        }
     };
     match service.execute(command).await {
-        Ok(response) => (StatusCode::OK, Json(response)).into_response(),
-        Err(error) => control_error_response(error),
+        Ok(response) => observatory_json(StatusCode::OK, response, allowed_origin),
+        Err(error) => control_error_response(error, allowed_origin),
     }
 }
 
-fn control_error_response(error: ControlError) -> Response {
-    let status = match error {
+fn control_error_response(error: ControlError, allowed_origin: Option<HeaderValue>) -> Response {
+    let status = match &error {
         ControlError::Authentication => StatusCode::UNAUTHORIZED,
         ControlError::Unauthorized => StatusCode::FORBIDDEN,
         ControlError::IdempotencyConflict
@@ -1077,16 +1584,24 @@ fn control_error_response(error: ControlError) -> Response {
     };
     let payload = ControlErrorPayload {
         schema: "adl.runtime.control_error.v1",
-        code: match status {
-            StatusCode::UNAUTHORIZED => "authentication_failed",
-            StatusCode::FORBIDDEN => "unauthorized",
-            StatusCode::CONFLICT => "idempotency_conflict",
-            StatusCode::SERVICE_UNAVAILABLE => "temporarily_unavailable",
-            StatusCode::GONE => "stale_runtime_instance",
-            _ => "invalid_request",
-        },
+        code: control_error_code(&error),
     };
-    cors_json(status, payload, None)
+    observatory_json(status, payload, allowed_origin)
+}
+
+fn control_error_code(error: &ControlError) -> &'static str {
+    match error {
+        ControlError::Authentication => "authentication_failed",
+        ControlError::Unauthorized => "unauthorized",
+        ControlError::IdempotencyConflict
+        | ControlError::InFlight
+        | ControlError::LifecycleAlreadyRequested => "idempotency_conflict",
+        ControlError::AdmissionClosed
+        | ControlError::IdempotencyCapacity
+        | ControlError::Internal => "temporarily_unavailable",
+        ControlError::StaleRuntimeInstance => "stale_runtime_instance",
+        _ => "invalid_request",
+    }
 }
 
 fn allowed_origin<C: LifecycleControl + 'static>(
@@ -1250,6 +1765,8 @@ pub enum ControlError {
 
 #[derive(Debug, Error, Eq, PartialEq)]
 pub enum ControlApiError {
+    #[error("control API policy is missing or contains a zero operational bound")]
+    MissingPolicy,
     #[error("control API bind failed: {0}")]
     Bind(String),
     #[error("control API TLS configuration failed: {0}")]

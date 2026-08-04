@@ -1,0 +1,19 @@
+{
+  "issue": 5648,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "aa2ec99e73ceaa0e1a40e62ff551b8d9e0e7a610e223723b191439b741ebd373",
+  "claim_id": "claim-5648-operator-active-claim-revoke",
+  "actor": "codex:5648-execution",
+  "reason": "Record remediated focused typed validation for operator active-claim revoke",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-validate", "--request", ".csdlc/prepared/issues/5648/validate-local.json"],
+      "purpose": "Prove operator CAS revoke, stale guards, formatting, and strict targeted lint",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5648/local contains a local_pass three-lane proof: claim-revoke focused tests, cargo fmt --check, and strict targeted Clippy all passed."
+    }
+  },
+  "fail_after_backup": false
+}

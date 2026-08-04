@@ -1,0 +1,22 @@
+{
+  "issue": 5344,
+  "expected_generation": 12,
+  "expected_digest": "648fac7c9a5490152dde6d9081dddd666190e619f1c555740e914357328ef20e",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "reviewer": "subagent:019fac48-c04a-70f1-8a0e-fca1cb4af863",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    ".csdlc/issues/5344",
+    ".csdlc/evidence/5344",
+    ".csdlc/prepared/issues/5344",
+    "adl-runtime",
+    "adl-runtime-kernel",
+    "adl-v2/tools/prove-rollback.sh",
+    "adl-v2/tools/run-soak.sh",
+    "docs/milestones/v0.91.8/evidence/wp12",
+    "infra/horust",
+    "infra/runtime-v3/runtime-init.toml",
+    "infra/rustysd",
+    "infra/systemd"
+  ]
+}

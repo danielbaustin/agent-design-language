@@ -1,0 +1,27 @@
+{
+  "issue": 5737,
+  "base_branch": "main",
+  "branch": "codex/5737-csdlc-authority-recovery",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5737-csdlc-authority-recovery",
+    "owner": "codex:5737-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1785532834,
+    "expires_unix_seconds": 1786137634,
+    "heartbeat_unix_seconds": 1785532834,
+    "branch": "codex/5737-csdlc-authority-recovery",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5737",
+      ".csdlc/locks/5737.lock",
+      ".csdlc/prepared/issues/5737",
+      ".csdlc/evidence/5737",
+      ".csdlc/publication/5737.intent.json",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "purpose": "Repair C-SDLC v2 claim authority recovery around unrelated terminal drift, stale inactive projections, and stale dormant design inputs."
+  }
+}

@@ -1,0 +1,419 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5658,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "f0956ae3f1c83909acb21792fa8016035926ce54c66ff3c20504c484a18e4c36",
+  "phase": "closed_out",
+  "generation": 16,
+  "digest": "1ea320ebac52320723a4786ffd6f1533efb4813ee19e966a6d05c8d000ae373f",
+  "claim": null,
+  "review_assignment": null,
+  "review": {
+    "reviewer": "subagent:019f9cb8-4963-7c13-bc36-0f5ac5bbf97a",
+    "scope": [
+      ".csdlc/issues/5658",
+      ".csdlc/prepared/issues/5658",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/tests/gate2.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ],
+    "reviewed_revision": "git-blake3:d29836f671df537b6bb3e18ba4dd34f55119350e:d7bb110820fb473c7c148e5d737de3595d6fc7334b004c47d0f8bdff008aba96",
+    "findings": [],
+    "residual_risks": [
+      "Review did not rerun Rust tests; local owner validation recorded gate2 47 passing tests and gate7_lifecycle 33 passing tests with FastWork target output."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5658,
+    "pull_request": 5674,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5674",
+    "base": "main",
+    "head": "codex/5658-bound-worktree-lifecycle",
+    "revision": "git-blake3:cb7674a5346110fb3ab65166a56683a4b1926ea2:5ad7ba0251e3454e8e6a23d0f36d06bc8dbd3a796776cfd551a0992a68106be4",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5674,
+    "head_sha": "cb7674a5346110fb3ab65166a56683a4b1926ea2",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756830653"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756686383"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669178"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669295"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669396"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/4)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669432"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669444"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756657438"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669446"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669356"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669421"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669457"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669354"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669065"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669429"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30188237000/job/89756669061"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5674,
+    "disposition": "merged",
+    "observed_sha": "cb7674a5346110fb3ab65166a56683a4b1926ea2",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5658.json",
+    "released_branch": "codex/5658-bound-worktree-lifecycle",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5658",
+      ".csdlc/locks/5658.lock",
+      ".csdlc/prepared/issues/5658",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5658/retained/design.md",
+  "diagram_path": ".csdlc/issues/5658/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5658-preparation-review",
+      "revision": "189b48e4d4e95c977ca91cf04fc0d9cb51b22c9fd9273dff485ce5c40ef6481d"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "3777a50a27746fcda00972309cbc12bef9c9a08410d1442027619079037959a3",
+      "rendered_digest": "551ba08dc73004705b04e86ccaa077c8e4bcfcb1069e144cee65074be9fecace",
+      "ast_digest": "bb4f521e7ac0b09e53d10f9b43cc86eed0fff465875c43595db60ac7b70cdf83"
+    },
+    "stp": {
+      "values_digest": "5d5f8c2bd2f661e6ca3518d1defd5e07db82b954f3f8f1673319090eca662c64",
+      "rendered_digest": "5aaeed13c9bd7ab5302de29deab901a15da4cfa9e10a73d7cedb8e418860f594",
+      "ast_digest": "7e3ee6c313328af17261029213091258211585874fa491693c0a0351b553fb6a"
+    },
+    "spp": {
+      "values_digest": "eaad3184c7df9c5cc4452f5a1a7d936e0e1722c9d98d30fd757b5a571aed2b7c",
+      "rendered_digest": "8cad0b77aee8ce43f2911ad18f09e0d73009d6ea236f062798a1b01ca66121be",
+      "ast_digest": "b53618bc6a910d9995a55f64381f096d1f8d1e02cf8a7532d69c4b0bb4f01bf7"
+    },
+    "vpp": {
+      "values_digest": "08c03739460525ec39ce8121bf5a9b6d7edbb92ef5bc1c49a53a152cea3e1bac",
+      "rendered_digest": "d25de42677fdb8f05ece72aa10700cb5de0880ac73a3a456fe462c242c65dd8b",
+      "ast_digest": "28e41fed5e257bb3da93044ee60a07e64994c8b8908b0ea384846efb0854a883"
+    },
+    "srp": {
+      "values_digest": "1141285cc8622ff6c663efed0aff6c4923167d68ac7e94d6095c721d5764a1d7",
+      "rendered_digest": "d01de321cc5c20d45673aa49e7dbfb8f73f0fd9c29c697affd5923bc1296e704",
+      "ast_digest": "907f51f41e7d6c6a266ed5439035ac9228a96e68db6d631e64d0828e77e205f4"
+    },
+    "sor": {
+      "values_digest": "18e7599578b11c85f2d3c1140bb2fddef6b263b962ab6390bc2e827046c3993b",
+      "rendered_digest": "741a9713314953a8981414419c5427a0a2b90e0010b669e44f772e8657966294",
+      "ast_digest": "676470d5ef894977f2517190f13a5922796cb8b2eeee12b365945e15c2dcff62"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5658-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5658-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5658-execution",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5658-execution",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5658-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5658-execution",
+      "reason": "Recover stale reviewed/published truth after CI standalone gate2 fix changed substantive source and tests."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5658-execution",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5658-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5658-execution",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5658-execution",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5658-execution",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5658-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5658-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5658-execution",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5658-execution",
+      "reason": "Record focused validation after pre-PR review hardening fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Verify bound-worktree lifecycle materialization, unregistered target rejection, evidence transfer, symlink fail-closed cleanup, and stale target side-state rejection after pre-PR review fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS on 9481fa2e0 with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; 29 passed\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5658-execution",
+      "reason": "Record final focused validation after stale target CAS-ordering repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Verify final bound-worktree lifecycle hardening, including stale registered target record rejection before prepared/evidence side-state materialization.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS on aa3dce8c8 with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; 30 passed\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5658-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:5658-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:5658-execution",
+      "reason": "Recover stale reviewed/published truth after CI standalone gate2 fix changed substantive source and tests.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5658-execution",
+      "reason": "CI standalone repair updated gate2 bind lifecycle tests for the same protected invariant.",
+      "operation": "{\"add_protected_paths\":[\"csdlc-v2/tests/gate2.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5658-execution",
+      "reason": "Record focused validation after CI standalone gate2 repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Verify CI standalone gate2 expectations now use worktree-owned lifecycle state while gate7 bound-worktree materialization invariants remain green.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS on 47c29e27a with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; gate2 47 passed, gate7_lifecycle 30 passed\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5658-execution",
+      "reason": "Record focused validation after idempotent bind identity check repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Verify CI standalone gate2 behavior and gate7 idempotent bind identity rejection after final review finding repair.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS on d305d501b with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; gate2 47 passed, gate7_lifecycle 31 passed\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:5658-execution",
+      "reason": "Record focused validation after idempotent bind identity check repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Verify CI standalone gate2 behavior and gate7 idempotent bind identity tuple rejection after final review finding repair.\",\"outcome\":\"passed\",\"evidence_ref\":\"local PASS after adding repository, issue, and initialization_digest idempotent-bind identity negative cases with TMPDIR=/Volumes/FastWork/adl-wp-5658/.adl/tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5658/adl/target; gate2 47 passed, gate7_lifecycle 33 passed\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:5658-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:5658-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:5658-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex:5658-execution",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 17,
+      "generation": 14,
+      "actor": "codex:5658-execution",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 18,
+      "generation": 15,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 19,
+      "generation": 16,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

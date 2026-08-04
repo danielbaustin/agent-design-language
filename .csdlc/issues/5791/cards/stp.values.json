@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5791,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-18][review] Run final internal review second pass after residual coding",
+    "slug": "wp18-final-internal-review-second-pass",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Review and route or fix accepted #5791 findings only.",
+      "deliverables": [
+        "Exact-revision review corpus",
+        "Specialist lane notes",
+        "Deduplicated findings register",
+        "Synthesis and validation record",
+        "PR with Closes #5791"
+      ],
+      "acceptance_criteria": [
+        "AC-1 exact current origin/main revision is recorded.",
+        "AC-2 residual coding issue closure and merged PR truth is verified.",
+        "AC-3 review corpus emphasizes issues closed since the prior review.",
+        "AC-4 actual code/test/CI/docs/evidence/lifecycle surfaces are reviewed.",
+        "AC-5 specialist findings are deduplicated and severity ranked.",
+        "AC-6 accepted in-scope findings are fixed or routed truthfully.",
+        "AC-7 exact-head re-review and focused validation are recorded.",
+        "AC-8 PR is published with Closes #5791 and closed out truthfully after merge."
+      ],
+      "dependencies": [
+        "Residual coding issues required by #5791 are closed through merged PRs or truthfully blocked before review."
+      ],
+      "repo_inputs": [
+        "GitHub issue #5791",
+        "v0.91.8 milestone docs and issue wave",
+        "closed issue and merged PR truth since the prior WP-18 review",
+        "current origin/main source tree"
+      ],
+      "non_goals": [
+        "v0.92 implementation",
+        "AWS operations",
+        "root main checkout mutation"
+      ]
+    }
+  }
+}

@@ -1,0 +1,35 @@
+flowchart LR
+  subgraph Existing["Existing accepted boundaries"]
+    O["ObsMem contract: records, citations, retrieval"]
+    C["Chronosense: temporal anchor and continuity ID"]
+    S["AgentSpec.memory: declared configuration"]
+  end
+
+  subgraph Issue4760["#4760 smallest real implementation"]
+    I["Declared memory_palace input"]
+    M["memory_palace.rs: validate, normalize, bound"]
+    T["Topology packet"]
+    W["Working-set packet"]
+    X["Stale-context report"]
+    R["long_lived_agent cycle consumer"]
+    D["decision_request.memory_refs"]
+  end
+
+  O --> I
+  C --> I
+  S --> I
+  I --> M
+  M --> T
+  M --> W
+  M --> X
+  T --> R
+  W --> R
+  X --> R
+  R --> D
+
+  D --> P["Exact-revision implementation and runtime proof"]
+  P --> G{"#5007 evidence gate"}
+  G -->|"all proof present"| A["ADR 0051 may be reviewed for acceptance"]
+  G -->|"missing implementation, integration, or proof"| B["ADR 0051 remains deferred"]
+
+  N["Preparation packet only; no runtime claim"] -.-> Issue4760

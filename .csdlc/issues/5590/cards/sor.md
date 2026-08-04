@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -38,21 +38,30 @@ Implemented secure Runtime v3 local and remote Observatory access through config
 
 ## Validation
 
-[]
+[
+  {
+    "command": [
+      "ADL_RUNTIME_V3_PROOF_ROOT=/Volumes/FastWork/adl-5590 CARGO_HOME=/Volumes/FastWork/adl-5590/cargo-home CARGO_TARGET_DIR=/Volumes/FastWork/adl-5590/runtime-target bash adl/tools/run_runtime_v3_operational_proof.sh"
+    ],
+    "purpose": "Prove the landed Runtime v3 Parity-D path through an external guardian, HTTPS bearer authorization, WSS discovery, operational rollback restoration, and cryptographically restored candidate and prior continuity.",
+    "outcome": "passed",
+    "evidence_ref": "merge:8ba224027a7ebd410aa4596c9edce571758f8a0a:/Volumes/FastWork/adl-5590/operational-proof.*; runtime_v3_operational_proof=pass"
+  }
+]
 
 ## Integration
 
-pr_open
+merged
 
 ## Publication
 
-Publication: ready
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

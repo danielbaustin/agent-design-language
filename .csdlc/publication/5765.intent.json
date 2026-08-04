@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5765,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5765-v092-migration",
+  "title": "[v0.92][planning][github] Schedule Agent Logic account repository migration",
+  "body": "Closes #5765\n\nAdds the bounded planning-only v0.92 scheduling reference for the Agent Logic account repository migration. It preserves the explicit personal asksifu exception and records Gate 0 prerequisites before any execution. This change performs no organization, billing, repository, visibility, permissions, remote, Actions, Pages, DNS, secret, workflow, runner, or AWS mutation.",
+  "draft": true,
+  "revision": "git-blake3:f9f74aebb2ff0332b58cc6bc6b79be8269be9c3f:66cc5ffd4517f63dac8b77bb5a5c10b3de7fda391254963af042b96d03efb166",
+  "commit_sha": "f9f74aebb2ff0332b58cc6bc6b79be8269be9c3f"
+}

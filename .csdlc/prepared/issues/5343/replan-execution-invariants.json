@@ -1,0 +1,25 @@
+{
+  "issue": 5343,
+  "card": "spp",
+  "expected_generation": 5,
+  "expected_digest": "9b7f9101a5b99f07f30b418b428c7443ffa1458da7504eb6737881844c32bd81",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Replace obsolete receipt-blocking preparation invariants with the actual reversible-cutover execution invariants.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "invariants",
+    "values": [
+      "No selector mutation begins before #5344 and #5345 live merged landing commits are ancestral to the exact execution revision and the exact #5344 handoff is accepted; receipts and closeout are audit-only",
+      "#5343 reuses the authoritative #5345 selector transaction and never edits active selector storage directly or implements a second selector",
+      "The selected executable and installation receipt are exact and fresh-install verified before mutation",
+      "Prior selector bytes, digest, v1 executable, and v1 receipt remain intact throughout the fourteen-day rollback window",
+      "Every rejected or interrupted transaction preserves the prior selector bytes",
+      "Rollback restores exact prior selector bytes and executes retained v1 before v2 becomes final again",
+      "Evidence is deterministic, redacted, repo-relative, exact-revision bound, and non-secret",
+      "Runtime v2 and incumbent ADL remain untouched rollback targets and no legacy deletion occurs",
+      "One exact-revision review runs immediately before publication and every actionable finding is fixed"
+    ]
+  },
+  "fail_after_backup": false
+}

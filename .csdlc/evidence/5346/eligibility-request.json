@@ -1,0 +1,10 @@
+{
+  "schema": "adl.wp13.deletion_eligibility_request.v1",
+  "issue": 5346,
+  "baseline_revision": "208fd23c15aa39915f581fe2db491071cb902e4d",
+  "prefixes": [
+    "adl/src/cli/tooling_cmd",
+    "adl/src/cli/tests/pr_cmd_inline"
+  ],
+  "policy": "delete only exact manifest rows; #5347 is disjoint; #5351/#5360 are downstream"
+}

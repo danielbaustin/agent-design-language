@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5558,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_generation": 28,
+  "expected_digest": "46e83a06d7010e286a98e20fa3ca824dd80b81d69c9486b652eee14a585fcb6c",
+  "claim_id": "claim-5558-corrective-1785570394",
+  "actor": "codex:5558-corrective",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5558-v1-route-corrective",
+  "title": "[v0.91.8][WP-20][csdlc-v2] Finish sunset v1 route removal",
+  "body": "Closes #5558\n\n## Summary\n- Remove remaining sunset v1 lifecycle wrappers, callers, workflow, and active guidance.\n- Route release closeout verification and workflow-metric issue reads through typed C-SDLC v2 binaries.\n- Migrate CI validation-manager and path-policy fixtures to active typed-v2 surfaces.\n- Delete the final 2,000 lines of orphaned prompt-editor Rust modules left after Gate 10D2 removed their parent module.\n- Keep the coverage gate fail-closed instead of mapping unreachable source to a synthetic focused lane.\n\n## Validation\n- `bash adl/tools/test_ci_path_policy.sh`: PASS.\n- `bash adl/tools/test_select_validation_lanes.sh`: PASS.\n- `bash adl/tools/test_validation_manager.sh`: PASS.\n- `bash adl/tools/test_check_coverage_impact.sh`: PASS.\n- `bash adl/tools/test_run_pr_fast_test_lane.sh`: PASS.\n- `bash adl/tools/test_csdlc_prompt_editor.sh`: PASS.\n- `git diff --check`: PASS.\n- `csdlc-doctor --repo . --issue 5558`: PASS in reviewed phase.\n\n## Review\n- Independent exact-head GPT-5.5 review passed for substantive commit `85e506c4613502753b895bcace4fe535289138ee` with zero blockers.",
+  "draft": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}

@@ -7,9 +7,9 @@
     "title": "[v0.91.8][csdlc-v2][performance] Collapse routine lifecycle into four commands",
     "slug": "csdlc-four-command-lifecycle",
     "version": "v0.91.8",
-    "generation": 10
+    "generation": 16
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -78,10 +78,10 @@
           "evidence_ref": ".csdlc/evidence/5627/ci-repair.json"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

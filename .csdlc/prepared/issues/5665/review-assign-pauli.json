@@ -1,0 +1,19 @@
+{
+  "schema": "csdlc.review_assignment_request.v1",
+  "issue": 5665,
+  "expected_generation": 3,
+  "expected_digest": "2b03e16ffeff47037e0dab508023cdd65008d59680561e6cb2c0ca04c5804131",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "reviewer": "Pauli",
+  "assigned_by": "codex:issue-5665-slot-1",
+  "scope": [
+    "adl-runtime/src/runtime_api.rs",
+    "adl-runtime/tests/runtime_api_wss.rs",
+    "adl-runtime/Cargo.toml",
+    "adl-runtime/Cargo.lock",
+    "infra/runtime-v3/runtime-api-5665.toml",
+    "docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json",
+    ".csdlc/evidence/5665/runtime-v3-wss-focused.log",
+    ".csdlc/evidence/5665/runtime-v3-strict-clippy.log"
+  ]
+}

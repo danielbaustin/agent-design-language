@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5698,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][state] Unify durable kernel state on redb",
+    "slug": "runtime-v3-redb-durable-state",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make redb the single production durable state authority for Runtime v3 kernel checkpoint and lifelog state.",
+      "required_outcome": "Runtime v3 stores checkpoint bytes and lifelog entries through atomic redb transactions, restores across restart, rejects integrity/schema/corruption failures, and removes production checkpoint.json/lifelog.jsonl persistence.",
+      "declared_scope": [
+        "adl-runtime-kernel local adapter durable state",
+        "redb dependency wiring for adl-runtime-kernel",
+        "focused Runtime v3 state persistence tests",
+        "issue-local evidence under .csdlc/evidence/5698"
+      ],
+      "authority_boundary": [
+        "Use the existing COTS redb crate; do not introduce a second database, ORM, wrapper, or service.",
+        "Coordinate around active WP-12 #5344 exact head ca242a5ab96a43ea1ed1ca6a3fedd61bde2f8b6d; do not touch the #5344 worktree.",
+        "Do not write tracked files on main and do not use /private/tmp."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "never write tracked changes on main",
+        "never use /private/tmp",
+        "use typed C-SDLC v2 lifecycle tools only",
+        "one bounded exact pre-PR review",
+        "post-merge closeout must not block other implementation work"
+      ]
+    }
+  }
+}

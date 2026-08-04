@@ -66,24 +66,10 @@ v0871_demo_run_mock_workflow() {
   local example="$2"
   local step_out="$3"
   local log_file="$4"
-  local repo_root
-  repo_root="$(v0871_demo_repo_root)"
-  local runtime_root="$out_dir/runtime"
-  local runs_root="$runtime_root/runs"
-
   mkdir -p "$out_dir" "$step_out"
-
-  (
-    cd "$repo_root"
-    ADL_RUNTIME_ROOT="$runtime_root" \
-    ADL_RUNS_ROOT="$runs_root" \
-    ADL_OLLAMA_BIN="$repo_root/adl/tools/mock_ollama_v0_4.sh" \
-      bash adl/tools/pr.sh run "$example" \
-        --trace \
-        --allow-unsigned \
-        --out "$step_out" \
-        | tee "$log_file"
-  )
+  printf 'retired: v0.87.1 mock workflow depended on the sunset v1 lifecycle runner (%s)\n' "$example" \
+    | tee "$log_file" >&2
+  return 2
 }
 
 v0871_demo_run_mock_workflow_expect_failure() {
@@ -91,29 +77,7 @@ v0871_demo_run_mock_workflow_expect_failure() {
   local example="$2"
   local step_out="$3"
   local log_file="$4"
-  local repo_root
-  repo_root="$(v0871_demo_repo_root)"
-  local runtime_root="$out_dir/runtime"
-  local runs_root="$runtime_root/runs"
-
   mkdir -p "$out_dir" "$step_out"
-
-  set +e
-  (
-    cd "$repo_root"
-    ADL_RUNTIME_ROOT="$runtime_root" \
-    ADL_RUNS_ROOT="$runs_root" \
-    ADL_OLLAMA_BIN="$repo_root/adl/tools/mock_ollama_v0_4.sh" \
-      bash adl/tools/pr.sh run "$example" \
-        --trace \
-        --allow-unsigned \
-        --out "$step_out"
-  ) >"$log_file" 2>&1
-  local rc=$?
-  set -e
-
-  if [[ $rc -eq 0 ]]; then
-    echo "expected failure for $example" >&2
-    return 1
-  fi
+  printf 'retired: v0.87.1 mock workflow depended on the sunset v1 lifecycle runner (%s)\n' "$example" \
+    >"$log_file"
 }

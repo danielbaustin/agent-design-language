@@ -1,0 +1,12 @@
+{
+  "issue": 5658,
+  "claim_id": "claim-5658-bound-worktree-lifecycle",
+  "expected_generation": 6,
+  "expected_digest": "31955c4ff48b7c246be536a5f8867e26f1c8d69755890d3b4c7ca04685cb855d",
+  "now_unix_seconds": 1785037681,
+  "actor": "codex:5658-execution",
+  "reason": "CI standalone repair updated gate2 bind lifecycle tests for the same protected invariant.",
+  "add_protected_paths": [
+    "csdlc-v2/tests/gate2.rs"
+  ]
+}

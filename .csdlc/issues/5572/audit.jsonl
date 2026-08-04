@@ -1,0 +1,1 @@
+{"sequence":1,"generation":1,"actor":"codex:5748-terminal-recovery","reason":"Recover terminal authority for closed issue #5572 from merged PR #5574. The PR body explicitly used `Closes #5572`; issue-local remediation landed in the PR, while this recovery makes no historical review, publication, readiness, or CI lifecycle claims.","operation":"recover_recordless_terminal"}

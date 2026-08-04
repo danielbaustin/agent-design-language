@@ -1,0 +1,576 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5526,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "aa79cce1287aca59dd56189550419dcb23f760e748a577a219b017f0e3012566",
+  "phase": "closed_out",
+  "generation": 24,
+  "digest": "0d4e8a956737d584569b0040abb9d4f0c6c72f81c5f82338027fa35df4575472",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "codex:review_5632",
+    "assigned_by": "codex:5526-execution",
+    "revision": "git-blake3:ad1466d02a1f0a00d9f15b51c730c3c5b451f994:c3eaac652ab0ba62457ff221d3120501802c7f558864ec4623eb0de343e8e9fc",
+    "scope": [
+      ".csdlc/evidence/5526/implementation/provider-expansion.log",
+      "adl/src/provider/http_family.rs",
+      "adl/src/provider/mod.rs",
+      "adl/src/provider/profiles.rs",
+      "adl/src/provider_substrate.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tests/provider_tests/http_family.rs",
+      "adl/tests/provider_tests/profiles.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "codex:review_5632",
+    "scope": [
+      ".csdlc/evidence/5526/implementation/provider-expansion.log",
+      "adl/src/provider/http_family.rs",
+      "adl/src/provider/mod.rs",
+      "adl/src/provider/profiles.rs",
+      "adl/src/provider_substrate.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tests/provider_tests/http_family.rs",
+      "adl/tests/provider_tests/profiles.rs"
+    ],
+    "reviewed_revision": "git-blake3:ad1466d02a1f0a00d9f15b51c730c3c5b451f994:c3eaac652ab0ba62457ff221d3120501802c7f558864ec4623eb0de343e8e9fc",
+    "findings": [],
+    "residual_risks": [
+      "No live provider calls or credentials were used; hosted endpoint behavior remains deferred to credentialed integration proof."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5526,
+    "pull_request": 5642,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5642",
+    "base": "main",
+    "head": "codex/5526-v0918-provider-expansion",
+    "revision": "git-blake3:ad1466d02a1f0a00d9f15b51c730c3c5b451f994:c3eaac652ab0ba62457ff221d3120501802c7f558864ec4623eb0de343e8e9fc",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5642,
+    "head_sha": "ad1466d02a1f0a00d9f15b51c730c3c5b451f994",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89121740498"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89123909526"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89123876616"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120359989"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120360008"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120359943"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120343145"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120360436"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120359962"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120359966"
+      },
+      {
+        "name": "adl-slow-proof (1)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120360063"
+      },
+      {
+        "name": "adl-slow-proof (2)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120360035"
+      },
+      {
+        "name": "adl-slow-proof (3)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120360026"
+      },
+      {
+        "name": "adl-slow-proof (4)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120360019"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120360714"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120359941"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120360392"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29980217872/job/89120360409"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5642,
+    "disposition": "merged",
+    "observed_sha": "ad1466d02a1f0a00d9f15b51c730c3c5b451f994",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5526.json",
+    "released_branch": "codex/5526-v0918-provider-expansion",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5526/implementation",
+      ".csdlc/issues/5526",
+      ".csdlc/locks/5526.lock",
+      ".csdlc/prepared/issues/5526",
+      "adl/src/cli/provider_cmd.rs",
+      "adl/src/model_identity.rs",
+      "adl/src/provider",
+      "adl/src/provider_adapter.rs",
+      "adl/src/provider_adapter_cli.rs",
+      "adl/src/provider_communication.rs",
+      "adl/src/provider_substrate.rs",
+      "adl/tests/local_ollama_provider_tests.rs",
+      "adl/tests/mock_provider_tests.rs",
+      "adl/tests/provider_tests",
+      "adl/tests/provider_tests.rs",
+      "adl/tests/remote_ollama_provider_tests.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5526/retained/design.md",
+  "diagram_path": ".csdlc/issues/5526/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5526",
+      "revision": "f45c0aac551edc5b0e065f9d923f3425bc74ef7368bb9b0015cc7c1bd765a30b"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "5a2861c14be8d87f1d0b914f463e46d50c1544bd4b0545330231de098edf8f3b",
+      "rendered_digest": "1213092da816153169db6e4d2aff6b6d46221fe900ff59a7574a063ad482ce4b",
+      "ast_digest": "7519a32389dc5c87c915d7d0ff85ce7bd1d486bfa9219391081934a11a831971"
+    },
+    "stp": {
+      "values_digest": "6f30f391a6633918f6e985e799a5b01db83e57d829d0eddeacb6de0586d3097f",
+      "rendered_digest": "86472053f63307ddac09bdac4bdaaa4d2f4feee9f5d8eabad2e39bd4124c10a7",
+      "ast_digest": "a2bf0fbb42c293aac03e58ac1c66e4c2aa869f904bb955447f9aaf884fd87cfb"
+    },
+    "spp": {
+      "values_digest": "68636b278906bdde2c67e3028179fd8ed71c3116d8944cff7e293037bc29d228",
+      "rendered_digest": "55d8fad6f328bf69f3e3aa763be89f68f7aa0c5745020bfeb57f60a40988b058",
+      "ast_digest": "97c987db0abc73343fa2f256b194aa9e66484ba86b4bda994bc3af9097f82838"
+    },
+    "vpp": {
+      "values_digest": "d203134316d2de676c988f8ff4ee8dac22d230801e51d2ab958fe4ed56ff3629",
+      "rendered_digest": "a16e84b8da6e6f64110fc01baea5457e452b839091c42095e5f8490bba7ada7c",
+      "ast_digest": "5d0e3bac4be81d12b0215a71ef3db7341279377d419ae4104c40c308c5463c60"
+    },
+    "srp": {
+      "values_digest": "25629da81001aef88537fa2e9ea6594dff5dca04e3eded40b4789c8e9cc54255",
+      "rendered_digest": "3dc6e8b2b89405af47b8174d6f531b7de16375cd7bd9ad8777a77721b8a0b6c0",
+      "ast_digest": "9f15c7333a58b7f95677e5fb2f114e42adc07879675967e9148ecb3300eb7d1c"
+    },
+    "sor": {
+      "values_digest": "47c6be1de92cff90f27fb4d75f1239de9b84273546d68ced21226df77581eeae",
+      "rendered_digest": "d9db9bd22c4027cb9a6792be5c686a6ba4e870e2a12a595dacbfa64212c9dd1f",
+      "ast_digest": "9aaaecc1c0590b2ea7a0b22ba8c19279c363cde8a258c5c248af7d2d788b6a02"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5526-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5526-preparation",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5526-execution",
+      "reason": "WP-09 adapter foundation is merged and current-main ancestry is verified; begin bounded provider/model implementation."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5526-execution",
+      "reason": "Exact-head assigned review passed with no actionable findings; advance to Reviewed for typed publication."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5526-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5526-execution",
+      "reason": "Current PR head advanced with the required provider coverage mapping and current-main ancestry; recover stale publication review for exact-head re-review."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5526-execution",
+      "reason": "Exact current-main head review passed with no actionable findings; advance to Reviewed for publication update."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5526-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5526-execution",
+      "reason": "Publication metadata advanced the branch after exact review; recover for a narrowed exact-head re-review that excludes lifecycle projection files."
+    },
+    {
+      "sequence": 10,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5526-execution",
+      "reason": "Narrowed exact-head review passed with no actionable findings; advance to Reviewed for publication update."
+    },
+    {
+      "sequence": 11,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:5526-execution",
+      "reason": "The publication update pushed a new exact head; recover review once more so the final remote head is reviewed before reconciliation."
+    },
+    {
+      "sequence": 12,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5526-execution",
+      "reason": "Exact-head assigned review passed with no actionable findings; advance to Reviewed for typed publication."
+    },
+    {
+      "sequence": 13,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5526-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 14,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5526-execution",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 15,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5526-execution",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 16,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5526-execution",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5526-preparation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5526-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "operator:issue-5526",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5526-execution",
+      "reason": "WP-09 provider adapter foundation is merged into origin/main; promote this bound issue into implementation while preserving its explicit provider path boundary.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/evidence/5526/implementation\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5526-execution",
+      "reason": "Focused provider/model expansion lane passed without credentials or live provider calls.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_\"],\"purpose\":\"Prove expanded provider identities, deterministic model identifiers, vendor inference, adapter redaction, and provider regression behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5526/implementation/provider-expansion.log\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5526-execution",
+      "reason": "Record the bounded provider/model expansion implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Added deterministic first-class provider profiles and preserved vendor identity across the shared HTTP transport for current Kimi, MiniMax, hosted Qwen, xAI/Grok, Mistral, Cohere, DeepSeek v4, Z.ai GLM-5, and Gemini 3.1 model lanes.\",\"changes\":[\"Added stable provider profile names, endpoints, and provider model identifiers for each expanded vendor lane.\",\"Extended provider substrate vendor inference so shared transport does not collapse distinct vendor identities.\",\"Added focused registry and substrate tests for deterministic identity and model selection.\",\"Kept credentials, live calls, AWS/Bedrock, and OpenRouter routing out of the deterministic implementation lane.\"],\"artifacts\":[\"adl/src/provider/profiles.rs\",\"adl/src/provider_substrate.rs\",\"adl/src/provider/mod.rs\",\".csdlc/evidence/5526/implementation/provider-expansion.log\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5526-execution",
+      "reason": "WP-09 adapter foundation is merged and current-main ancestry is verified; begin bounded provider/model implementation.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5526-execution",
+      "reason": "Final focused provider validation passed after adapter contract repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"--test\",\"provider_tests\",\"provider_\"],\"purpose\":\"Prove expanded provider identities, deterministic model identifiers, vendor inference, chat adapter request/response shapes, and legacy generic HTTP compatibility.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5526/implementation/provider-expansion.log\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5526-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5526-execution",
+      "reason": "Exact-head assigned review passed with no actionable findings; advance to Reviewed for typed publication.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5526-execution",
+      "reason": "Current PR head advanced with the required provider coverage mapping and current-main ancestry; recover stale publication review for exact-head re-review.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:5526-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:5526-execution",
+      "reason": "Exact current-main head review passed with no actionable findings; advance to Reviewed for publication update.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:5526-execution",
+      "reason": "Publication metadata advanced the branch after exact review; recover for a narrowed exact-head re-review that excludes lifecycle projection files.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex:5526-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:5526-execution",
+      "reason": "Narrowed exact-head review passed with no actionable findings; advance to Reviewed for publication update.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:5526-execution",
+      "reason": "The publication update pushed a new exact head; recover review once more so the final remote head is reviewed before reconciliation.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 16,
+      "actor": "codex:5526-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 18,
+      "actor": "codex:5526-execution",
+      "reason": "Exact-head assigned review passed with no actionable findings; advance to Reviewed for typed publication.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 19,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 27,
+      "generation": 20,
+      "actor": "codex:5526-execution",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 28,
+      "generation": 21,
+      "actor": "codex:5526-execution",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 29,
+      "generation": 22,
+      "actor": "codex:5526-execution",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 30,
+      "generation": 23,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 31,
+      "generation": 24,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

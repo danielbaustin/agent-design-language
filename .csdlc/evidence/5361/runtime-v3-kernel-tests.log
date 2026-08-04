@@ -1,0 +1,560 @@
+   Compiling libc v0.2.186
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling unicode-ident v1.0.24
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v2.0.1
+   Compiling cfg-if v1.0.4
+   Compiling pin-project-lite v0.2.17
+   Compiling bytes v1.12.1
+   Compiling once_cell v1.21.4
+   Compiling typenum v1.20.1
+   Compiling itoa v1.0.18
+   Compiling zeroize v1.9.0
+   Compiling futures-core v0.3.32
+   Compiling log v0.4.33
+   Compiling dunce v1.0.5
+   Compiling memchr v2.8.3
+   Compiling pkg-config v0.3.33
+   Compiling fs_extra v1.3.0
+   Compiling futures-sink v0.3.32
+   Compiling serde_core v1.0.228
+   Compiling futures-io v0.3.32
+   Compiling futures-task v0.3.32
+   Compiling futures-channel v0.3.32
+   Compiling slab v0.4.12
+   Compiling tracing-core v0.1.36
+   Compiling rustls-pki-types v1.15.0
+   Compiling aws-lc-rs v1.17.1
+   Compiling version_check v0.9.5
+   Compiling equivalent v1.0.2
+   Compiling untrusted v0.9.0
+   Compiling zerocopy v0.8.55
+   Compiling getrandom v0.3.4
+   Compiling http v1.4.2
+   Compiling subtle v2.6.1
+   Compiling httparse v1.10.1
+   Compiling generic-array v0.14.7
+   Compiling hashbrown v0.17.1
+   Compiling rustls v0.23.42
+   Compiling semver v1.0.28
+   Compiling tower-service v0.3.3
+   Compiling fnv v1.0.7
+   Compiling atomic-waker v1.1.2
+   Compiling thiserror v2.0.18
+   Compiling smallvec v1.15.2
+   Compiling bitflags v2.13.0
+   Compiling httpdate v1.0.3
+   Compiling rustc_version v0.4.1
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.21
+   Compiling syn v2.0.118
+   Compiling jobserver v0.1.35
+   Compiling errno v0.3.14
+   Compiling socket2 v0.6.4
+   Compiling signal-hook-registry v1.4.8
+   Compiling mio v1.2.1
+   Compiling cpufeatures v0.2.17
+   Compiling cc v1.2.67
+   Compiling hybrid-array v0.4.13
+   Compiling indexmap v2.14.0
+   Compiling http-body v1.0.1
+   Compiling rand_core v0.9.5
+   Compiling serde v1.0.228
+   Compiling getrandom v0.4.3
+   Compiling rustversion v1.0.23
+   Compiling fs-err v3.3.1
+   Compiling curve25519-dalek v5.0.0
+   Compiling webpki-roots v1.0.9
+   Compiling serde_json v1.0.150
+   Compiling base64 v0.22.1
+   Compiling data-encoding v2.11.0
+   Compiling sync_wrapper v1.0.2
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling percent-encoding v2.3.2
+   Compiling tower-layer v0.3.3
+   Compiling digest v0.10.7
+   Compiling form_urlencoded v1.2.2
+   Compiling webpki-roots v0.26.11
+   Compiling sha1 v0.10.7
+   Compiling http-body-util v0.1.3
+   Compiling crypto-common v0.2.2
+   Compiling block-buffer v0.12.1
+   Compiling cpufeatures v0.3.0
+   Compiling objc2-core-foundation v0.3.2
+   Compiling signature v3.0.0
+   Compiling foldhash v0.2.0
+   Compiling allocator-api2 v0.2.21
+   Compiling winnow v1.0.4
+   Compiling thiserror v1.0.69
+   Compiling ryu v1.0.23
+   Compiling mime v0.3.17
+   Compiling ed25519 v3.0.0
+   Compiling arc-swap v1.9.2
+   Compiling hashbrown v0.16.1
+   Compiling matchit v0.8.4
+   Compiling toml_writer v1.1.1+spec-1.1.0
+   Compiling arrayvec v0.7.8
+   Compiling arrayref v0.3.9
+   Compiling winnow v0.7.15
+   Compiling cmake v0.1.58
+   Compiling toml_parser v1.1.2+spec-1.1.0
+   Compiling either v1.16.0
+   Compiling fixedbitset v0.5.7
+   Compiling constant_time_eq v0.4.2
+   Compiling petgraph v0.7.1
+   Compiling uuid v1.23.4
+   Compiling objc2-io-kit v0.3.2
+   Compiling hex v0.4.3
+   Compiling rsntp v4.1.2
+   Compiling deranged v0.5.8
+   Compiling lru v0.16.4
+   Compiling num-conv v0.2.2
+   Compiling rustix v1.1.4
+   Compiling sysinfo v0.38.4
+   Compiling powerfmt v0.2.0
+   Compiling time-core v0.1.9
+   Compiling getrandom v0.2.17
+   Compiling lazy_static v1.5.0
+   Compiling digest v0.11.3
+   Compiling sharded-slab v0.1.7
+   Compiling pem v3.0.6
+   Compiling tracing-log v0.2.0
+   Compiling aws-lc-sys v0.42.0
+   Compiling blake3 v1.8.5
+   Compiling sha2 v0.11.0
+   Compiling ring v0.17.14
+   Compiling serde_spanned v1.1.1
+   Compiling toml_datetime v0.7.5+spec-1.1.0
+   Compiling serde_path_to_error v0.1.20
+   Compiling ed25519-dalek v3.0.0
+   Compiling time v0.3.53
+   Compiling thread_local v1.1.10
+   Compiling nu-ansi-term v0.50.3
+   Compiling fastrand v2.4.1
+   Compiling toml v0.9.12+spec-1.1.0
+   Compiling tracing-subscriber v0.3.23
+   Compiling yasna v0.6.0
+   Compiling tempfile v3.27.0
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling rand v0.9.5
+   Compiling tokio-macros v2.7.0
+   Compiling futures-macro v0.3.32
+   Compiling tracing-attributes v0.1.31
+   Compiling thiserror-impl v2.0.18
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v1.0.69
+   Compiling async-trait v0.1.89
+   Compiling futures-util v0.3.32
+   Compiling tokio v1.52.3
+   Compiling tracing v0.1.44
+   Compiling rcgen v0.14.8
+   Compiling axum-core v0.5.6
+   Compiling futures-executor v0.3.32
+   Compiling futures v0.3.32
+   Compiling serde_urlencoded v0.7.1
+   Compiling tokio-util v0.7.18
+   Compiling tower v0.5.3
+   Compiling h2 v0.4.15
+   Compiling hyper v1.10.1
+   Compiling hyper-util v0.1.20
+   Compiling rustls-webpki v0.103.13
+   Compiling tokio-rustls v0.26.4
+   Compiling tungstenite v0.29.0
+   Compiling axum-server v0.8.0
+   Compiling tokio-tungstenite v0.29.0
+   Compiling axum v0.8.9
+   Compiling adl-runtime-kernel v0.92.0 (/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5361/adl-runtime-kernel)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 24.57s
+     Running unittests src/lib.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/adl_runtime_kernel-d6e986714b791149)
+
+running 3 tests
+test weather::tests::disk_pressure_uses_the_filesystem_containing_continuity_state ... ok
+test ingress::tests::pause_and_submit_admission_are_one_atomic_transition ... ok
+test weather::tests::disk_scope_resolves_a_symlinked_continuity_ancestor ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/adl-runtime-governed-operations.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/adl_runtime_governed_operations-7457f13af9324fba)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/adl-runtime-kernel.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/adl_runtime_kernel-f4f4ecbcec3ab89b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/adl-runtime-shadow-fixture.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/adl_runtime_shadow_fixture-9826f92ff5e03371)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/assembly.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/assembly-3b6b49ade7fcff40)
+
+running 4 tests
+test live_assembly_refuses_a_missing_executor_binding ... ok
+test live_assembly_has_the_frozen_service_inventory ... ok
+test live_assembly_starts_and_qualifies_time ... ok
+test canonical_ingress_dispatches_allowlisted_work_and_commits_only_success ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/cognition.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/cognition-27974cac44995b99)
+
+running 7 tests
+test score_and_policy_thresholds_are_bounded_to_zero_through_one_hundred ... ok
+test review_required_path_requires_bound_review_record_without_claiming_allow ... ok
+test invalid_context_policy_and_unbound_review_fail_closed ... ok
+test curiosity_intelligence_theory_of_mind_uses_contract_boundaries_and_fail_closed_policy ... ok
+test moral_affect_wellbeing_allows_bounded_context_and_refuses_policy_failures ... ok
+test decisions_are_json_safe_and_do_not_embed_provider_or_prompt_payloads ... ok
+test cognition_components_form_typed_supervised_contracts ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/configuration.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/configuration-58c9ac8934edae4e)
+
+running 15 tests
+test threshold_configuration_rejects_invalid_order_and_zero_bounds ... ok
+test vector_boundary_declares_cloudwatch_emf_route_without_kernel_exporter ... ok
+test resource_policy_warns_stops_and_recovers_with_hysteresis ... ok
+test weather_health_report_serializes_stop_policy_and_gpu_non_pass_state ... ok
+test configuration_keeps_runtime_bindings_outside_canonical_projection ... ok
+test configured_registry_fails_closed_for_factory_and_surface_drift ... ok
+test runtime_configuration_rejects_version_shape_identity_and_secrets ... ok
+test runtime_init_rejects_missing_or_reused_tls_paths ... ok
+test runtime_init_rejects_wildcard_duplicate_and_path_origins ... ok
+test runtime_init_rejects_invalid_public_api_base ... ok
+test runtime_init_rejects_invalid_agent_population_bounds ... ok
+test declarative_registry_builds_contract_checked_topology_canonically ... ok
+test runtime_init_file_defines_local_and_remote_access_intent ... ok
+test periodic_weather_monitor_publishes_reports_until_stop_is_required ... ok
+test sysinfo_observer_reports_portable_core_metrics_and_explicit_gpu_absence ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/continuity.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/continuity-f0be56297b10bd93)
+
+running 7 tests
+test replay_rejects_gaps_reordering_and_substitution ... ok
+test checkpoint_and_lifelog_storage_must_be_disjoint ... ok
+test missing_checkpoint_restarts_fresh ... ok
+test graceful_stop_shuts_down_even_when_checkpoint_deadline_expires ... ok
+test incompatible_identity_and_service_schema_refuse_recovery ... ok
+test checkpoint_quiesces_then_serializes_in_bounded_parallel_and_loads ... ok
+test corrupt_snapshot_is_quarantined_and_preserved ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/contracts.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/contracts-370119bbcff76cdf)
+
+running 10 tests
+test optional_capability_may_be_absent ... ok
+test service_contract_shape_rejects_schema_and_empty_identity ... ok
+test service_contract_must_match_component_runtime_surface ... ok
+test duplicate_services_and_local_capabilities_are_rejected ... ok
+test required_capabilities_fail_closed_when_missing_or_incompatible ... ok
+test compatible_capabilities_resolve_independent_of_registration_order ... ok
+test multiple_capability_providers_allow_compatible_selection ... ok
+test parity_baseline_manifest_is_a_captured_inventory_not_a_live_repo_dependency ... ok
+test parity_matrix_is_machine_readable_and_routes_every_capability ... ok
+test runtime_kernel_manifest_has_no_repo_local_path_dependencies ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/control.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/control-c8bb56ccc3f0b5ba)
+
+running 21 tests
+test ready_event_reports_the_bound_ephemeral_port ... ok
+test bootstrap_promotes_once_after_explicit_degraded_readiness ... ok
+test runtime_identity_and_shutdown_bounds_are_owned_by_standard_crates ... ok
+test payload_and_human_observability_use_separate_redacted_channels ... ok
+test observatory_feed_reports_large_agent_population_as_bounded_sample ... ok
+test snapshot_is_revisioned_and_contains_complete_health_state ... ok
+test pressure_admission_gate_refuses_new_commands_until_reopened ... ok
+test signed_shutdown_routes_through_supervisor_and_carries_correlation ... ok
+test pressure_cannot_reopen_after_signed_shutdown_is_enqueued ... ok
+test duplicate_shutdown_executes_once_and_conflicting_reuse_fails ... ok
+test forged_and_unauthorized_commands_never_reach_lifecycle_authority ... ok
+test cancelled_client_does_not_cancel_execution_or_exceed_idempotency_bound ... ok
+test idempotency_refresh_preserves_the_recent_completed_response ... ok
+test tls_configuration_fails_closed_for_missing_and_mismatched_pem_material ... ok
+test graceful_api_shutdown_drains_an_active_control_response ... ok
+test observatory_cors_allows_only_configured_origins_and_reports_canonical_port ... ok
+test axum_adapter_serves_signed_control_payloads ... ok
+test observatory_https_feed_requires_bearer_and_reports_weather_freshness ... ok
+test terminal_serialization_drains_accepted_work_into_checkpoint ... ok
+test signed_ingress_checkpoints_replays_and_is_observatory_visible ... ok
+test tls_shutdown_is_bounded_with_a_stalled_active_response ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.04s
+
+     Running tests/governance.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/governance-7601734a6bb2ff03)
+
+running 11 tests
+test governance_components_form_typed_supervised_contracts ... ok
+test admission_fails_closed_for_missing_authority_stale_policy_and_forgery ... ok
+test checkpoint_observes_in_flight_or_complete_result_without_gap ... ok
+test cancelled_shell_marks_permit_abandoned_without_blocking_checkpoint ... ok
+test allowed_action_crosses_signed_gate_before_nondeterministic_shell ... ok
+test checkpoint_recovery_preserves_replay_revocation_and_result_history ... ok
+test multi_hop_delegation_uses_remaining_depth_not_absolute_depth ... ok
+test resource_exhaustion_and_revocation_preserve_refusal_evidence ... ok
+test appeal_and_operator_intervention_are_signed_and_audited ... ok
+test delegation_is_signed_linked_and_strictly_attenuating ... ok
+test shell_failure_is_quarantined_with_deterministic_result_record ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/governed_operations.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/governed_operations-7fa1f6d40ad2558b)
+
+running 28 tests
+test parity_c_boundary_contract::retained_evidence_excludes_credentials_private_state_and_machine_paths ... ok
+test parity_c_boundary_contract::runtime_v2_aws_and_cross_lane_paths_are_absent ... ok
+test parity_c_live_governance::tampered_request_cannot_masquerade_as_an_appeal ... ok
+test parity_c_private_identity::cross_identity_read_and_write_fail_closed ... ok
+test parity_c_production_credit::degraded_fixture_mock_and_metadata_paths_receive_zero_credit ... ok
+test parity_c_live_governance::denial_revocation_and_quarantine_prevent_actuation ... ok
+test parity_c_delegation_resources::widened_expired_or_replayed_delegation_is_rejected ... ok
+test parity_c_live_governance::signed_appeal_disposition_is_recorded_without_actuation ... ok
+test parity_c_private_identity::provider_or_display_identity_cannot_substitute_for_citizen_identity ... ok
+test parity_c_delegation_resources::delegation_chain_only_attenuates ... ok
+test parity_c_provider_scheduler_tools::shepherd_cannot_grant_or_bypass_authority ... ok
+test parity_c_live_governance::signed_gate_precedes_provider_actuation ... ok
+test parity_c_production_credit::all_owned_components_use_production_or_cots_adapters ... ok
+test parity_c_delegation_resources::pre_dispatch_cancellation_releases_capacity ... ok
+test parity_c_private_identity::restart_preserves_redacted_identity_scoped_state ... ok
+test parity_c_private_identity::private_state_is_partitioned_by_authoritative_identity ... ok
+test parity_c_live_governance::expired_or_replayed_gate_receipt_fails_closed ... ok
+test parity_c_delegation_resources::retry_and_idempotency_bounds_prevent_duplicate_work ... ok
+test parity_c_time_continuity::authenticated_checkpoint_is_the_only_restore_authority ... ok
+test parity_c_time_continuity::shutdown_orders_batch_and_blocks_later_actuation ... ok
+test parity_c_time_continuity::restart_revalidates_revocation_without_duplicate_side_effects ... ok
+test parity_c_time_continuity::shutdown_commits_final_checkpoint_and_isolates_lifelog_failure ... ok
+test parity_c_provider_scheduler_tools::two_agents_execute_governed_provider_and_tool_work ... ok
+test parity_c_time_continuity::unqualified_or_regressing_time_cannot_authorize_actuation ... ok
+test parity_c_time_continuity::lifelog_is_redacted_append_only_and_non_authoritative ... ok
+test parity_c_provider_scheduler_tools::scheduler_dispatch_is_deterministic_and_bounded ... ok
+test parity_c_delegation_resources::in_flight_cancellation_kills_provider_and_releases_capacity ... ok
+test parity_c_provider_scheduler_tools::provider_timeout_auth_quota_and_malformed_output_are_classified ... ok
+
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.19s
+
+     Running tests/guardian_soak.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/guardian_soak-e713081aad081685)
+
+running 13 tests
+test bounded_runtime_v3_guardian_soak ... ignored, bounded 100-cycle Runtime v3 soak; run explicitly for #5175 evidence
+test horust_allowlists_child_environment ... ignored, requires ADL_HORUST_BIN and exercises native environment isolation
+test horust_does_not_restart_configuration_failure ... ignored, requires ADL_HORUST_BIN and exercises native process supervision
+test horust_forwards_sigterm_and_runtime_checkpoints_cleanly ... ignored, requires ADL_HORUST_BIN and binds Runtime v3 control test port
+test horust_qualification_detects_unbounded_restart_budget ... ignored, requires ADL_HORUST_BIN and reproduces upstream Horust issue 318
+test horust_restarts_once_and_restores_continuity ... ignored, requires ADL_HORUST_BIN and exercises native process supervision
+test serve_handles_guardian_sigterm_with_a_clean_checkpointed_exit ... ignored, binds the Runtime v3 control test port
+test packaging_preserves_one_guardian_neutral_child_contract ... ok
+test production_like_soak_rollback_packet_retains_cutover_boundaries ... ok
+test serve_refuses_reused_continuity_and_operation_keys ... ok
+test signed_https_shutdown_checkpoints_and_forgery_cannot_stop_the_process ... ok
+test pressure_checkpoint_failure_keeps_signal_shutdown_responsive ... ok
+test pressure_closes_ingress_serializes_live_work_and_stops_cleanly ... ok
+
+test result: ok. 6 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 0.75s
+
+     Running tests/identity_memory.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/identity_memory-0b515aba4100ba3f)
+
+running 11 tests
+test invalid_private_state_reference_fails_closed ... ok
+test forged_identity_binding_is_rejected_before_memory_append ... ok
+test restore_rejects_checkpoint_signed_by_a_different_trusted_identity ... ok
+test signed_checkpoint_uses_v2_wire_schema_and_legacy_v1_fails_closed ... ok
+test same_continuity_different_citizen_or_runtime_cannot_append ... ok
+test restore_rejects_checkpoint_bound_to_other_citizen ... ok
+test signed_identity_binding_allows_memory_checkpoint_and_redacted_lifelog ... ok
+test checkpoint_lifelog_and_restore_reject_forged_binding ... ok
+test restore_requires_matching_identity_and_head_before_continuing ... ok
+test restored_checkpoint_preserves_summary_across_next_checkpoint ... ok
+test restore_rejects_any_checkpoint_payload_substitution ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/kernel.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/kernel-46cc73d731da9802)
+
+running 15 tests
+test rustysd_unit_declares_external_restart_boundary ... ok
+test topology_rejects_mismatched_port_types ... ok
+test topology_rejects_cycles_before_start ... ok
+test topology_rejects_missing_dependencies_before_start ... ok
+test bounded_reject_channel_reports_saturation ... ok
+test fatal_component_exit_is_observable_by_process_owner ... ok
+test startup_and_shutdown_follow_dependency_order ... ok
+test corrupt_capsule_fails_closed_during_shutdown ... ok
+test continuity_generation_advances_across_fresh_kernel_runs ... ok
+test proof_waits_for_all_items_instead_of_sleeping ... ok
+test guardian_contract_recovers_after_classified_fatal_child_exit ... ok
+test shutdown_deadline_aborts_non_cooperative_component ... ok
+test shutdown_remains_responsive_during_restart_backoff ... ok
+test restart_policy_rebuilds_failed_component ... ok
+test representative_topology_promotes_events_and_clock_authority ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/live_continuity.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/live_continuity-9610ed58f272b54b)
+
+running 8 tests
+test live_snapshot_schema_is_stable ... ok
+test minimum_generation_refuses_rollback_or_missing_state ... ok
+test remote_shutdown_request_cannot_bypass_checkpoint ... ok
+test renamed_checkpoint_cannot_spoof_the_signed_generation ... ok
+test forged_manifest_is_refused ... ok
+test signed_live_checkpoint_round_trips ... ok
+test legacy_generation_can_upgrade_into_a_current_signed_lineage ... ok
+test validly_signed_broken_predecessor_chain_is_refused ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/observatory.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/observatory-e28032916c3a0521)
+
+running 4 tests
+test observatory_websocket_rejects_a_token_after_rotation ... ok
+test observatory_websocket_requires_allowed_origin_and_session_auth ... ok
+test observatory_websocket_rejects_bad_auth_and_client_data ... ok
+test observatory_websocket_revokes_an_authenticated_session_after_rotation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.04s
+
+     Running tests/operations.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/operations-e2e90790fd29649b)
+
+running 9 tests
+test policies_and_missing_dependencies_fail_closed ... ok
+test representative_topology_uses_one_contract_and_lifecycle_model ... ok
+test supervised_component_consumes_its_bounded_inbox ... ok
+test governed_provider_retries_and_deduplicates_without_live_credentials ... ok
+test concurrent_idempotency_is_single_flight_and_conflicts_fail_closed ... ok
+test supervised_shutdown_closes_admission_and_drains_active_work ... ok
+test semaphore_rejects_hidden_unbounded_work ... ok
+test agent_provider_scheduler_topology_admits_work_and_closes_admission_on_shutdown ... ok
+test timeout_and_failure_classes_remain_bounded ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+     Running tests/parity.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/parity-9be28f9d4f1dd287)
+
+running 32 tests
+test footprint_comparison_reports_reduction_without_inventing_timings ... ok
+test governance_freedom_gate_aee_proof_resolves_only_governance_blocker ... ok
+test harness_bounds_and_generation_binding_fail_closed ... ok
+test continuity_replay_recovery_proof_resolves_only_continuity_blocker ... ok
+test acip_a2a_cloud_network_proof_resolves_final_live_black_box_blocker ... ok
+test adaptive_learning_dag_proof_resolves_only_learning_blocker ... ok
+test delegation_resources_proof_resolves_only_delegation_blocker ... ok
+test live_v2_v3_process_backends_execute_one_shared_fixture ... ignored, requires explicit ADL_RUNTIME_V2_BIN and ADL_RUNTIME_V3_BIN
+test final_cutover_decision_keeps_v2_default_after_live_parity_clear ... ok
+test kernel_lifecycle_proof_resolves_only_kernel_lifecycle_blocker ... ok
+test empty_fixture_sets_cannot_prove_cutover_readiness ... ok
+test divergences_are_explicit_and_defects_block_cutover ... ok
+test matching_backend_failures_do_not_prove_equivalence ... ok
+test live_black_box_parity_classification_covers_matrix_without_counting_blockers_as_passed ... ok
+test replay_order_changes_are_defects_not_normalization_noise ... ok
+test observatory_consumes_runtime_v3_only_by_explicit_opt_in ... ok
+test stale_relation_labels_are_defects_instead_of_self_certifying ... ok
+test service_contracts_configuration_proof_resolves_only_service_contracts_blocker ... ok
+test retained_report_covers_matrix_and_refuses_cutover ... ok
+test v3_normalizer_rejects_substituted_state_identity ... ok
+test release_proof_gate_closes_without_authorizing_default_cutover ... ok
+test topology_backpressure_proof_resolves_only_topology_backpressure_blocker ... ok
+test shared_fixtures_compare_canonically_and_in_stable_order ... ok
+test compatibility_facade_rejects_uncontracted_reports ... ok
+test compatibility_facade_forwards_and_rollback_changes_the_live_backend ... ok
+test compatibility_facade_defaults_to_v2_and_rolls_back ... ok
+test every_retained_module_closes_to_a_declared_capability ... ok
+test process_backend_rejects_unsupported_input_before_spawn_and_caps_output ... ok
+test divergent_live_backend_is_classified_as_a_defect ... ok
+test process_backend_kills_descendants_rejects_unsafe_ids_and_cleans_artifacts ... ok
+test process_backend_bounds_fixture_input_and_avoids_duplex_pipe_deadlock ... ok
+test process_backend_timeout_and_oversized_file_leave_no_artifacts ... ok
+
+test result: ok. 31 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/parity_b_live_kernel.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/parity_b_live_kernel-8626d5e4ce78caaf)
+
+running 19 tests
+test runtime_guardian::tests::invalid_configuration_and_spawn_failure_fail_closed ... ok
+test feature_dispositions_require_live_kernel_or_accepted_boundary ... ok
+test runtime_guardian::tests::missing_child_program_is_reported_without_restart ... ok
+test checkpoint_rejects_semantic_tampering_after_valid_encoding ... ok
+test runtime_guardian::tests::runtime_kernel_config_preserves_init_and_capsule_paths ... ok
+test curiosity_and_theory_of_mind_remain_non_authoritative ... ok
+test affect_control_rejects_adversarial_signal_authority ... ok
+test runtime_guardian::tests::injects_configured_environment ... ok
+test runtime_guardian::tests::configuration_exit_does_not_restart ... ok
+test adaptive_learning_consumes_exact_one_shot_mutation_authority ... ok
+test runtime_guardian::tests::captured_output_is_bounded ... ok
+test governed_cognition_cannot_bypass_shutdown_or_freedom_gate ... ok
+test bounded_loop_resume_preserves_budgets_and_effect_identity ... ok
+test runtime_guardian::tests::child_exit_terminates_descendants_that_close_inherited_pipes ... ok
+test runtime_guardian::tests::restart_budget_exhaustion_is_terminal ... ok
+test runtime_guardian::tests::restarts_until_child_exits_successfully_and_captures_output ... ok
+test runtime_guardian::tests::shutdown_forwards_sigterm_and_reaps_child ... ok
+test live_graph_executes_through_guardian_canonical_ingress ... ok
+test runtime_guardian::tests::child_exit_terminates_descendants_and_bounds_inherited_pipe_capture ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s
+
+     Running tests/private_state.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/private_state-0f99e84731b7f03b)
+
+running 7 tests
+test forged_lineage_and_signature_are_rejected ... ok
+test discontinuous_lineage_is_rejected ... ok
+test signed_private_state_projection_hides_raw_payload_and_authorizes_redacted_view ... ok
+test equivocated_same_lineage_position_is_rejected ... ok
+test skipped_sequence_with_current_head_is_rejected ... ok
+test projection_rejects_unaccepted_and_forged_records ... ok
+test unauthorized_reads_raw_export_and_sanctuary_policy_fail_closed ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/reasoning.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/reasoning-354718b6baf8f19b)
+
+running 13 tests
+test graph_execution_uses_edges_and_merge_structure ... ok
+test graph_validation_is_bounded_canonical_and_insertion_independent ... ok
+test malformed_resume_state_cannot_overflow ... ok
+test resume_recomputes_semantics_and_rejects_rehashed_forgery ... ok
+test loop_converges_or_exhausts_at_exact_bounds ... ok
+test mutation_evidence_detects_tampering ... ok
+test loop_enforces_live_cancellation_deadline_and_bounds ... ok
+test reasoning_services_form_a_runnable_typed_topology ... ok
+test mutation_expiry_is_exclusive_and_evidence_requires_signature ... ok
+test mutation_gate_atomically_publishes_one_shot_grants_and_rolls_back ... ok
+test mutation_gate_rejects_expiry_forgery_operation_drift_and_invalid_graph ... ok
+test mutation_state_and_one_shot_evidence_survive_checkpoint_restore ... ok
+test adaptation_store_round_trips_through_checkpoint_coordinator ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/time.rs (/Volumes/FastWork/adl-5361/kernel-test-target/debug/deps/time-938bb88320516d30)
+
+running 9 tests
+test clock_authority_is_initially_degraded ... ok
+test in_flight_cancellation_remains_degraded ... ok
+test sampling_error_remains_degraded ... ok
+test bounded_success_is_authoritative ... ok
+test excessive_round_trip_remains_degraded ... ok
+test excessive_positive_or_negative_offset_remains_degraded ... ok
+test blocking_client_adapter_produces_a_qualifiable_sample ... ok
+test trusted_time_refuses_degraded_state_and_advances_monotonically ... ok
+test timeout_remains_degraded ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests adl_runtime_kernel
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

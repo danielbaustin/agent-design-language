@@ -1,0 +1,9 @@
+{
+  "issue": 5665,
+  "expected_initialization_digest": "de3b5856d4e47ed1ebb369e7783dc3b928af156f44ee05ce3494807c656c9e30",
+  "expected_branch": "codex/5748-terminal-recovery",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5748",
+  "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+  "reason": "Materialize the valid merged #5665 terminal receipt and receipt-authored retained design and diagram in the dedicated #5748 authority projection.",
+  "follow_ups": []
+}

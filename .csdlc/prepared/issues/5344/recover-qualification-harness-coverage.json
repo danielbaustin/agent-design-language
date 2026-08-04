@@ -1,0 +1,8 @@
+{
+  "issue": 5344,
+  "expected_generation": 38,
+  "expected_digest": "000fa4bf6dd6adba9a08afdfe760ab11861be6ad52b326ec874b2380f5867f8d",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact-head CI proved the external lifecycle qualification harness was incorrectly subjected to the in-process production-source line threshold after all authoritative producers passed; recover publication truth for one narrow classification contract fix."
+}

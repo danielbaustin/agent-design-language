@@ -1,0 +1,31 @@
+{
+  "issue": 5701,
+  "expected_generation": 14,
+  "expected_digest": "09c97bcc90e751d4e5ebb8459c266c71fa3d3fcffe73e3a07b3836eeb37f66c2",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "subagent:019faf97-63e1-7a31-ab74-c8e905e82b30",
+  "evidence": {
+    "reviewer": "subagent:019faf97-63e1-7a31-ab74-c8e905e82b30",
+    "scope": [
+      "docs/api/runtime-v3/v1",
+      "adl-runtime-kernel/Cargo.lock",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/guardian_soak.rs",
+      "adl-runtime-kernel/tests/observatory.rs",
+      "adl-runtime-kernel/tests/openapi_contract.rs",
+      "adl-runtime/Cargo.lock",
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/src/acip.rs",
+      "adl-runtime/src/runtime_api.rs",
+      "adl-runtime/tests/runtime_api_wss.rs",
+      "infra/runtime-v3/runtime-api-5665.toml"
+    ],
+    "reviewed_revision": "git-blake3:f6c9d63ecd62a837a951e4106f964f215e7b64e6:b454fb763c1cbf2a46796a1fae04dc1fa4a9c3a830ee8fd1bed847626cded0ac",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

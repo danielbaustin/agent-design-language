@@ -65,13 +65,13 @@ The tracked skill set is:
 - `stp-editor`
 - `test-generator`
 - `use-case-writer`
-- `workflow-conductor`
+- typed v2 lifecycle binaries
 
 ## Workflow Shape
 
 The normal workflow is:
 
-0. `workflow-conductor` when the operator wants one bounded front door that chooses the next skill and resumes from current state
+0. `csdlc-doctor` to determine current state before selecting the typed lifecycle binary
 1. `pr-init`
 2. qualitative card review
 3. `pr-ready`
@@ -92,7 +92,7 @@ Closeout-wait prep lane:
 - while one issue is in `pr_waiting`, `janitor_active`, or
   `merged_needs_closeout`, a separate prep-scout lane may inspect and classify
   the next issue from clean root `main`
-- this is a preparation-only lane routed through `workflow-conductor`, not a
+- this is a preparation-only lane using typed v2 readiness inspection, not a
   second execution lane
 - the lane may use repo-native issue inspection and readiness commands, but it
   must stop before `pr run`, implementation binding, or PR publication
@@ -109,12 +109,9 @@ The first-class issue-lifecycle shepherd contract above those phases lives at:
 
 - `docs/tooling/ISSUE_LIFECYCLE_SHEPHERD_CONTRACT.md`
 
-The owner repo-native command surface for that contract is:
+The typed v2 command surface for that contract is:
 
-- `adl-pr-shepherd <issue> [--json]`
-
-`pr.sh shepherd <issue> [--json]` remains a thin compatibility wrapper that
-delegates to the owner binary.
+- `csdlc-shepherd --input <shepherd-input.json>`
 
 `repo-code-review` is cross-cutting rather than phase-specific.
 `test-generator` is a bounded helper skill for focused tests for a concrete issue, diff, file, or worktree.
@@ -123,7 +120,7 @@ delegates to the owner binary.
 `medium-article-writer` is a bounded helper skill for turning one concrete article brief into a reviewer-friendly Medium packet without publishing.
 `arxiv-paper-writer` is a bounded helper skill for turning one concrete scholarly source packet into a reviewer-friendly arXiv-style manuscript packet without submitting, publishing, or inventing citations.
 `diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection, optional SVG/PNG rendering, and truth boundaries.
-`workflow-conductor` is an orchestration front door rather than a lifecycle phase.
+Typed v2 lifecycle binaries own orchestration phases directly.
 `sprint-conductor` is a sprint orchestrator that sequences one local current
 issue while coordinating broader sprint intent through a declared Sprint
 Execution Packet, then finishes with sprint review and closeout. SEP can record
@@ -142,7 +139,7 @@ proves explicit nested-goal support.
 `issue-splitter` is a bounded issue-scope helper for deciding whether one issue should stay intact, split now, defer splitting, or stop for operator review.
 `issue-watcher` is a bounded wait-window helper for watching one issue, PR, branch, or dependency gate and routing blockers without mutating state.
 The issue-lifecycle shepherd contract defines the shared ownership model above
-`workflow-conductor`, `pr-run`, `pr-finish`, `issue-watcher`, `pr-janitor`,
+typed v2 doctor/bind/review/publish, `issue-watcher`, `pr-janitor`,
 and `pr-closeout` so healthy waiting states and merged-needs-closeout states do
 not disappear into session memory.
 `pr-stack-manager` is a bounded stack-topology helper for ancestry, base alignment, and dependency-order analysis.
@@ -180,21 +177,17 @@ The five card editor skills are helper skills:
 - `sip-editor` for truthful `sip.md` cleanup
 - `sor-editor` for truthful `sor.md` cleanup
 
-For new or fully re-rendered prompt cards, prefer the Rust-owned values
-renderer and structure-schema validator before editing Markdown directly:
+For new or fully re-rendered prompt cards, use typed semantic requests rather
+than editing rendered Markdown directly:
 
 ```bash
-csdlc tooling prompt-template validate-values --kind <kind> --values <kind>.values.yaml
-csdlc tooling prompt-template render --kind <kind> --values <kind>.values.yaml --out <kind>.md
-csdlc tooling prompt-template validate-structure --kind <kind> --input <kind>.md
-csdlc tooling prompt-template validate-schemas
-python3 adl/tools/test_prompt_template_structure_schemas.py
+.adl/bin/csdlc-v2/csdlc-edit --repo <worktree> apply --request <edit-request.json>
+.adl/bin/csdlc-v2/csdlc-validate --root <worktree> finalize --request <finalize-request.json>
 ```
 
-If `csdlc` is not already on `PATH`, use the repo-owned binary at
-`adl/target/debug/csdlc` when present. Rebuild it only when working on the
-binary surface itself or when no trusted repo binary exists. `adl-csdlc`
-remains a compatibility alias, not the preferred new command spelling.
+Resolve the active generation with `.adl/bin/csdlc-v2/csdlc-install resolve`
+before selecting an owner binary. Install only into `.adl/bin/csdlc-v2/`;
+Cargo target directories are build caches, not operational authority.
 
 For docs-only, milestone-truth, or workflow-doc issues, prefer the
 `docs-bounded` fast path described later in this guide instead of reflexively
@@ -312,12 +305,7 @@ fallback.
 Preferred commands:
 
 ```bash
-bash adl/tools/pr.sh issue view <issue-number-or-url> --json
-bash adl/tools/pr.sh issue list --state open|closed|all --limit <n> --json
-bash adl/tools/pr.sh issue search --query "<text>" --state open|closed|all --json
-bash adl/tools/pr.sh issue create --title "<title>" --body-file <path> --label track:roadmap --json
-bash adl/tools/pr.sh issue comment <issue-number-or-url> --body-file <path> --json
-bash adl/tools/pr.sh issue edit <issue-number-or-url> --title "<title>" --body-file <path> --label area:tools --json
+csdlc-github-issue run --request <issue-read-or-mutation-request.json>
 ```
 
 Use typed issue mutation commands for covered issue setup and repair paths.
@@ -336,15 +324,12 @@ Use this surface when:
 
 Pair it with:
 
-- `bash adl/tools/pr.sh doctor <issue> --mode ready --json` for structural
-  execution readiness
-- `bash adl/tools/pr.sh doctor <issue> --mode full --json` for milestone-wave
-  preflight plus readiness
+- `csdlc-doctor --repo <repo> --issue <issue>` for structural execution
+  readiness and drift diagnosis
 
-Do not treat `pr.sh issue ...` as a substitute for lifecycle truth. It is the
-live GitHub inspection surface, while `doctor`, the editor skills, and the
-rest of the lifecycle still own readiness, card truth, PR publication, janitor
-work, and closeout.
+Typed GitHub observation does not replace lifecycle truth. `csdlc-doctor`, the
+editor skills, and the remaining typed lifecycle binaries still own readiness,
+card truth, PR publication, janitor work, and closeout.
 
 ### `issue-watcher`
 
@@ -388,7 +373,7 @@ It must stop before mutating issue, PR, branch, card, or implementation state.
 
 The current automation model is:
 
-- `workflow-conductor` may inspect current issue/workflow state and route to the next correct lifecycle or editor skill without reimplementing that skill
+- `csdlc-doctor` inspects current issue state before the matching typed lifecycle or editor operation runs
 - `pr-init` creates or initializes the issue and root bundle
 - qualitative card review happens separately
 - `pr-ready` is the readiness phase
@@ -428,8 +413,8 @@ Runtime v2 coding starts. The tracked milestone policy note is:
 
 Default policy:
 
-- use `workflow-conductor` as the bounded router when the operator asks for the
-  conductor or when current state needs phase selection
+- resolve the installed generation and use the typed binary for the selected
+  lifecycle phase
 - use the named lifecycle skill for the selected phase rather than ad hoc git
   or PR surgery
 - keep the primary checkout on clean `main`; tracked implementation and repair
@@ -551,8 +536,8 @@ The ADL workflow uses one primary checkout and issue-scoped worktrees.
 Before a session starts or resumes tracked issue work, it should check
 `git status --short --branch` and `git worktree list --porcelain` from the
 primary checkout. If root is on a feature branch or has tracked changes, route
-that as `unsafe_root_checkout_execution`: use `workflow-conductor` and
-repo-native worktree evidence when available, use only the narrowest manual
+that as `unsafe_root_checkout_execution`: use typed v2 doctor/bind evidence
+when available, use only the narrowest manual
 fallback needed to preserve work in an issue worktree, restore the primary
 checkout to clean `main`, and leave a short broadcast note in the relevant
 issue, PR, sprint packet, or closeout record. The durable policy is
@@ -563,11 +548,11 @@ Canonical blocker names:
 - `mismatched_publication_surface`
 - `rebind_to_issue_worktree_required`
 
-## `workflow-conductor`
+## Typed v2 lifecycle routing
 
 ### Purpose
 
-`workflow-conductor` is the lightweight front door for the operational skill family.
+`csdlc-install resolve` plus `csdlc-doctor` are the typed front door for lifecycle routing.
 
 It:
 
@@ -581,7 +566,7 @@ It:
 
 ### When To Use It
 
-Use `workflow-conductor` when:
+Use typed v2 lifecycle routing when:
 
 - the next correct ADL skill is not obvious from the current state
 - the issue may need to resume from partially completed early steps
@@ -615,21 +600,21 @@ routing modes may use any one concrete target identifier from the list above.
 Structured schema:
 
 - `adl/tools/skills/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md`
-- schema id: `workflow_conductor.v1`
+- schema id: typed csdlc-doctor output
 
 ### Example Invocation
 
 ```yaml
-Use $workflow-conductor at <repo-root>/adl/tools/skills/workflow-conductor/SKILL.md with this validated input:
+Run `csdlc-doctor --repo <repo> --issue <issue>` before selecting a typed lifecycle operation.
 
-skill_input_schema: workflow_conductor.v1
+skill_input_schema: csdlc_doctor.v2
 mode: route_issue
 repo_root: <repo-root>
 target:
   issue_number: 1647
-  slug: add-lightweight-workflow-conductor-skill
+  slug: add-lightweight-lifecycle-routing-skill
   version: v0.88
-  source_prompt_path: .adl/v0.88/bodies/issue-1647-add-lightweight-workflow-conductor-skill.md
+  source_prompt_path: .adl/v0.88/bodies/issue-1647-add-lightweight-lifecycle-routing-skill.md
 policy:
   skills_required: true
   card_editor_skills_required: true
@@ -650,11 +635,12 @@ observed_state:
 
 ### Caller Notes
 
-- `workflow-conductor` is deliberately thin
+- typed v2 lifecycle routing is deliberately explicit
 - it should route into `pr-*` or editor skills rather than reimplementing them
 - it is the best place to apply the execution-policy ideas for required skills, card editors, and subagents
 - it should return explicit `continue`, `ask_operator`, or `stop` handoff intent rather than leaving escalation implicit
-- the preferred route/dispatch entrypoint is `python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <validated-json>`
+- the legacy executable route is retired for C-SDLC work; resolve the installed
+  generation and invoke the matching typed v2 binary directly
 
 `ready` and `preflight` are compatibility aliases that may still exist in repo
 surfaces, but doctor JSON is the canonical structured automation surface.
@@ -899,8 +885,8 @@ Structured schema:
 
 ### Preferred Commands
 
-- `adl/tools/pr.sh create`
-- `adl/tools/pr.sh init`
+- `csdlc-github-issue run --request <issue-create-request.json>`
+- `csdlc-init --root <worktree> --request <bootstrap-request.json>`
 
 For `create_and_bootstrap`, the expected machine-safe path is:
 
@@ -1028,9 +1014,7 @@ Structured schema:
 
 Preferred diagnostic order:
 
-- `adl/tools/pr.sh doctor --json`
-- `adl/tools/pr.sh ready`
-- `adl/tools/pr.sh preflight`
+- `csdlc-doctor --repo <repo> --issue <issue>`
 
 Use direct inspection only when the repo-native doctor/readiness surfaces are
 unavailable or unusable.
@@ -1140,10 +1124,8 @@ Structured schema:
 
 Preferred execution order:
 
-- `adl/tools/pr.sh doctor --json`
-- `adl/tools/pr.sh run`
-- `adl/tools/pr.sh ready`
-- `adl/tools/pr.sh preflight`
+- `csdlc-doctor --repo <repo> --issue <issue>`
+- `csdlc-bind --root <worktree> --request <bind-request.json>`
 
 ### Output And Stop Boundary
 
@@ -1218,7 +1200,7 @@ Use `pr-janitor` when:
 - the user wants help with conflicts or review blockers
 - the task is monitoring or narrow blocker remediation
 
-Use `bash adl/tools/pr.sh janitor <issue-or-pr> --json` when a session needs
+Use typed `csdlc-shepherd` and `csdlc-pr-state` requests when a session needs
 the repo-native command surface to classify the PR tail before handing off to
 the `pr-janitor` skill. The command is a compatibility wrapper over the
 shepherd classifier and preserves the no-`gh` transport path.
@@ -1424,7 +1406,7 @@ policy:
 
 - after `pr-janitor` confirms the PR has merged and there are no remaining
   blocker states
-- when workflow-conductor reports `merged_needs_closeout` and routes directly to
+- when typed doctor reports `merged_needs_closeout` and routes directly to
   `pr-closeout`
 - after an intentionally closed PR where the issue still needs final truthful
   local cleanup
@@ -1433,16 +1415,11 @@ policy:
 
 ### Merged-Issue Hygiene
 
-For milestone-level visibility, use:
-
-```bash
-bash adl/tools/closeout_completed_issue_wave.sh --version <milestone> --report-only --report <path>
-```
-
-This produces a local report of closed/completed issues whose local closeout may
-still be pending. Use it as the merged-needs-closeout visibility surface before
-or during release tail work, then run the same helper without `--report-only`
-to apply bounded closeout catch-up when appropriate.
+Close out each settled issue through explicit typed `csdlc-finish` and
+`csdlc-clean cleanup` requests. Milestone or main-sync helpers must not infer
+terminal observations, reuse another issue's authority, or batch lifecycle
+mutations through shell. Use `csdlc-doctor` for issue-local diagnosis and
+retain the typed terminal receipt before considering the issue closed out.
 
 ### Caller Notes
 
@@ -1638,7 +1615,7 @@ python3 adl/tools/skills/issue-folding/scripts/classify_issue_folding.py --task-
 
 ### Typical Handoff
 
-Use `workflow-conductor` for still-actionable issues, `pr-closeout` for
+Use normal issue execution for still-actionable issues, `pr-closeout` for
 evidence-backed foldable outcomes, and operator review when disposition signals
 conflict.
 
@@ -1680,7 +1657,7 @@ python3 adl/tools/skills/issue-splitter/scripts/plan_issue_split.py --task-bundl
 
 ### Typical Handoff
 
-Use `workflow-conductor` when the issue should stay intact,
+Use normal issue execution when the issue should stay intact,
 `finding-to-issue-planner` or approved issue-creation flow for split-now or
 defer outcomes, and operator review when the packet contains conflicting split
 signals.
@@ -2892,7 +2869,7 @@ surfaces:
 | `stp-editor` | `STP_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | STP normalization only |
 | `test-generator` | `TEST_GENERATOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | focused test generation only |
 | `use-case-writer` | `USE_CASE_WRITER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | use-case packet only |
-| `workflow-conductor` | `WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | route or dispatch one bounded subtask |
+| typed v2 lifecycle | `csdlc-doctor` output | typed request contracts | route one bounded lifecycle operation |
 
 The card-editor skills share the contract coverage in
 `adl/tools/test_card_editor_skill_contracts.sh`; they do not each need a

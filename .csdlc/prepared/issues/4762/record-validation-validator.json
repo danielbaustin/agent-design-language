@@ -1,0 +1,21 @@
+{
+  "issue": 4762,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "0d6c06558a8de5c234256d786a2a22d237eb77a56a63851c9e8e47cd94f38cab",
+  "claim_id": "claim-4762-birth-witness-receipt-execution",
+  "actor": "codex",
+  "reason": "Record focused #4762 package validator pass.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/4762/validate_birth_receipt_package.rb"
+      ],
+      "purpose": "Validate required witness/receipt fields, witness coverage, negative cases, source paths, handoff consumers, and forbidden-claim boundaries.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/4762/implementation-validation/birth-witness-receipt-validator.log"
+    }
+  }
+}

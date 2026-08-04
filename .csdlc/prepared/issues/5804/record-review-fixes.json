@@ -1,0 +1,24 @@
+{
+  "issue": 5804,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "5a17a820af4a7f465a70be3899305df16f215946a56930ff99f99c3ba1f0de76",
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record remediation of all three GPT-5.5 review findings.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Fixed the stale open-issue inventory, removed the nonexistent #5342 evidence path, and strengthened the corpus validator to prove its exact claims.",
+    "changes": [
+      "Added open prerequisite issue #5804 to the dated v0.91.8 inventory.",
+      "Removed nonexistent .csdlc/evidence/5342 while retaining the real terminal issue record.",
+      "Required exactly 75 documents and swept every backticked repository path in the implementation manifest.",
+      "Added optional live GitHub comparison and narrowed the offline typed lane to the dated inventory it actually proves."
+    ],
+    "artifacts": [
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      ".csdlc/prepared/issues/5804/validate-review-corpus.rb",
+      ".csdlc/prepared/issues/5804/validation-request.json"
+    ]
+  }
+}

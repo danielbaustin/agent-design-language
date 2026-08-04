@@ -1,0 +1,24 @@
+{
+  "issue": 5702,
+  "base_branch": "main",
+  "branch": "codex/5702-podcast-launch-plan",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5702-podcast-launch-plan",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1785267608,
+    "expires_unix_seconds": 1785354008,
+    "heartbeat_unix_seconds": 1785267608,
+    "branch": "codex/5702-podcast-launch-plan",
+    "worktree": ".",
+    "protected_paths": [
+      ".adl/docs/TBD/PODCAST_STUDIO_NEXT_WEEK_LAUNCH_PLAN_5702.md",
+      ".csdlc/issues/5702",
+      ".csdlc/prepared/issues/5702",
+      ".csdlc/evidence/5702",
+      ".csdlc/locks/5702.lock"
+    ],
+    "purpose": "prepare #5702 podcast launch plan for review"
+  }
+}

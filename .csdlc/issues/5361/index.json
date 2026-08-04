@@ -3,69 +3,209 @@
   "issue": 5361,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "ebdd95a3dd79978c1931a478ce8e543a15106fe5d6856db8975346413279baaa",
-  "phase": "bound",
-  "generation": 4,
-  "digest": "7a5a155b1a96ec395e45861b2b26eec86572a9cd517f074a32d1f83fa167ea79",
-  "claim": {
-    "id": "claim-5361-v0918-runtime-v3-acceptance-readiness",
-    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 4,
-    "acquired_unix_seconds": 1784570111,
-    "expires_unix_seconds": 1785174911,
-    "heartbeat_unix_seconds": 1784570111,
-    "branch": "codex/5361-v0918-runtime-v3-acceptance-readiness",
-    "worktree": ".",
-    "protected_paths": [
+  "phase": "closed_out",
+  "generation": 24,
+  "digest": "f35c882e4f991aa344d7412c00b7906eeb14c1ee067293bb6b64ec44a1c44c3c",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "gpt-5.5:required-pre-pr-review",
+    "assigned_by": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+    "revision": "git-blake3:b9d1e48dea1c25470449effc4e715552a853390c:b94627cc54a90b54511bd20e3f52250e7560d02d473aae78bb5257fa31ec5f44",
+    "scope": [
+      "adl-runtime/src/cav.rs",
+      ".csdlc/evidence/5361",
+      ".csdlc/prepared/issues/5361/validate-acceptance.json",
+      "docs/milestones/v0.91.8/review/runtime_v3_acceptance_5361.v1.json",
+      ".csdlc/issues/5361"
+    ]
+  },
+  "review": {
+    "reviewer": "gpt-5.5:required-pre-pr-review",
+    "scope": [
+      "adl-runtime/src/cav.rs",
+      ".csdlc/evidence/5361",
+      ".csdlc/prepared/issues/5361/validate-acceptance.json",
+      "docs/milestones/v0.91.8/review/runtime_v3_acceptance_5361.v1.json",
+      ".csdlc/issues/5361"
+    ],
+    "reviewed_revision": "git-blake3:b9d1e48dea1c25470449effc4e715552a853390c:b94627cc54a90b54511bd20e3f52250e7560d02d473aae78bb5257fa31ec5f44",
+    "findings": [],
+    "residual_risks": [
+      "The operator-provided background guardian at https://localhost:20997 remained stale/unavailable during acceptance; #5361 records that truth and relies on bounded FastWork Runtime v3 operational proof plus retained dependency evidence instead of promoting the stale process as healthy.",
+      "GitHub PR CI is intentionally not claimed by the pre-publication acceptance register; it remains required for publish, shepherding, merge, and terminal closeout.",
+      "Runtime v3 inventory is a reviewed exception over the 12000-line target while still below the 20000 hard safety ceiling.",
+      "AWS, GPU, and remote-provider execution remain explicit non-claims."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5361,
+    "pull_request": 5650,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5650",
+    "base": "main",
+    "head": "codex/5361-v0918-runtime-v3-acceptance-readiness",
+    "revision": "git-blake3:f7fc71421f4bcf70039b910c9b88b538bb111400:c00c0b7e1a78bbd35d9ee15b364931c63774159dc0c977fb4ecfaa522fe62871",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5650,
+    "head_sha": "f7fc71421f4bcf70039b910c9b88b538bb111400",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252593422"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252282506"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252220019"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252220285"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252220282"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252220523"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252163726"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252220778"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252219747"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252220166"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252220927"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252219976"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252219107"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252220562"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30020625470/job/89252219655"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5650,
+    "disposition": "merged",
+    "observed_sha": "f7fc71421f4bcf70039b910c9b88b538bb111400",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5361.json",
+    "released_branch": "codex/5361-v0918-runtime-v3-acceptance-readiness",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5361",
       ".csdlc/issues/5361",
       ".csdlc/locks/5361.lock",
-      ".csdlc/prepared/issues/5361"
-    ],
-    "purpose": "Prepare and review Runtime v3 acceptance cards and dependency truth without executing acceptance"
+      ".csdlc/prepared/issues/5361",
+      "adl-runtime/src/cav.rs"
+    ]
   },
-  "review_assignment": null,
-  "review": null,
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5361/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5361/diagram.mmd",
+  "design_path": ".csdlc/issues/5361/retained/design.md",
+  "diagram_path": ".csdlc/issues/5361/retained/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-      "revision": "3dea593c006065eb2ddc44090d2b02ee2342dacaa1c12b2f39be905f8bcbc70a"
+      "reviewer": "subagent:019f85f7-c1ec-7493-98b8-5182d395d2e8",
+      "revision": "d08fa0bf8576b19c81e1c37ce5742681d1ba3de8ad4f576a0d79dd9669766ae9"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "87cc1f36611871aae447f4badc308c7ca4a89e151c105837bcd038051a2c87f5",
+      "values_digest": "9c6a165a2b0da7fc361b37ffc0c9fd94539a58f6c35ea0fab20b9e561f76bb86",
       "rendered_digest": "6aa78535f4f63b766b922a584705026557ec56a41ae2ed71d52edfbb1f765e56",
       "ast_digest": "82a351bc376e35f8e07ac2f983acfe4a7491ccf8027c70bbedf4e3047681c29f"
     },
     "stp": {
-      "values_digest": "ffd1baf438bf2fcf0482266019716d1a2ceb64f6b1bd24556a74b5422906fe6e",
-      "rendered_digest": "904d19eaea410e1163274c98b02337d60f6e45a860bdbc58432060a510dd9f66",
-      "ast_digest": "32789fa2d3b96d3baa3f9d7d89e41425b3666fea17e9f1a268fd3106a4885533"
+      "values_digest": "b54f728bfb87c5d9d2eebeccb5a3b89d5741015957e1d01a465875f3abf4b5a9",
+      "rendered_digest": "575ead3c9dea30a617a405d0492883e3a70c13957f12056c7267edd511fcbe41",
+      "ast_digest": "21e0002a8cd85ee18787f9169ad1ba94b8d71499ec9f67be13bd61c08124907a"
     },
     "spp": {
-      "values_digest": "cdc2c2513ffd6d0578d0b80da2f450c023e7927c30197b1270048cb92b790104",
-      "rendered_digest": "8f0bde6c3f63875037dfc08aea675f4f845931fd31358e866d0aa6a94ee0730f",
-      "ast_digest": "647a6690b6597b6664da8380929c4ca268f0d94f3f62654a948651b63223aad0"
+      "values_digest": "bc7fdc9c31973d5795b50e3d2528ce821a1b1dcd4e17d480fa167eff729d77b3",
+      "rendered_digest": "fa920cc0875e345dacbdc2f023b62e78b303a824b15e00136ca6340b1a514e15",
+      "ast_digest": "33cfd8c93995b3532376ad34266f306a0a4a45941af81bd822ab45b30416cf84"
     },
     "vpp": {
-      "values_digest": "a536b74f193812f931307be7454ac3def2afdc7c4ec57ff13d0e94fddf1f6852",
-      "rendered_digest": "0866619e0604852d2d2f5d15add14d2c1ab308cc9aefc9b384c42336b89d83a0",
-      "ast_digest": "676cb69cf347c724bfc419ad8f886f018f84a6ec4031e6334800ef74ae348626"
+      "values_digest": "71a3f92852ae97718e465110a9c393055e3666c524c7e566dd4163dc3041f8ba",
+      "rendered_digest": "76cd28478fb80955f320d82bcc289e61eca529e75d14eb839c2b6a6a6280e2cb",
+      "ast_digest": "358aa116402fdb05cb0708f26ade53ee75bd8bd91507517a031b10813a6cd62e"
     },
     "srp": {
-      "values_digest": "e5d10543c1cbd2045a17a7fbee296c0ec2e812ec39fcf7f05648e590ebe48b9a",
-      "rendered_digest": "92cdc1f6d9376d89afe2df7e0ec34da7687e41d2d82a2767a32a9f28a6880179",
-      "ast_digest": "9ecca93efc33bee80e68473696ec84118423e80de7fd64579e5db479dfb7bab1"
+      "values_digest": "41d945fb582568a3dd3e485ece3db8f43a669efd2022604878f3641b35b96709",
+      "rendered_digest": "1577e683a9a71c8551dccb9aff1503ec9256543b72c02fd3599d51b8bf2c0ec2",
+      "ast_digest": "488002f0e8d98b7f533f135b8ec97241580c7717ae235d1bcca8146b1ee8e596"
     },
     "sor": {
-      "values_digest": "7c9642c5440afbdb600cd5b5b6f2bb8d8522489c8b79d91e78f352afca203dc1",
-      "rendered_digest": "0428fc08418f1f1e2f712fbb9e13743cac67e32b8a22bec5b272266a857a0308",
-      "ast_digest": "ddda70a8fa7e24a260403a21a0e41146e9d94ecf024bf61ecde6879b4477ada7"
+      "values_digest": "46551ca31d73507d10b69f596c096c07e7fcf2eaf173bcd26b5fc99e87e73c4c",
+      "rendered_digest": "cc24e1cd555108e7417612e648ae5aff05cc7ee5beddcc914b25bac36511ec0d",
+      "ast_digest": "96e8f3dfcb2a997e1133a32e8f38d4851ec31882e73ad98d51c5799820d4d029"
     }
   },
   "transitions": [
@@ -82,6 +222,48 @@
       "to": "bound",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "Complete bounded #5361 Runtime v3 acceptance evidence and validation; ready for the required exact-head GPT-5.5 review."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "The required exact-head GPT-5.5 pre-PR review completed with no findings and documented residual truth boundaries; advance #5361 to reviewed for typed publication."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -126,6 +308,174 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Replace generic implementation review wording with the exact preparation review boundary",
       "operation": "{\"field\":\"review_scope\",\"new_value\":\"Review the exact #5361 preparation revision across all six typed cards, the acceptance design, dependency diagram, protected paths, acceptance-register validator, and typed preparation requests. Verify complete bidirectional AC-1 through AC-7 SPP/VPP coverage; correct dependency ordering; explicit Runtime v2 independence, HTTPS-only and address-configuration boundaries, no-AWS boundary, and unsupported-claim boundaries; and confirm that no required parity, consumer, operational, rollback, review, or quality obligation is deferred, weakened, omitted, or treated as fixture-only proof. Confirm this revision remains preparation-only and makes no implementation, acceptance, deployment, publication, or closeout claim.\",\"operation\":\"replan\",\"previous_value\":\"Exact implementation revision before publication.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "subagent:019f85f7-c1ec-7493-98b8-5182d395d2e8",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Align Runtime v3 acceptance dependencies with the canonical v0.91.8 shadow-parity gate",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"merged WP-01 #5594\",\"Runtime v3 architecture authority #5336\",\"Parity-A #5591 before Parity-B #5592, Parity-C #5589, and Parity-D #5590\",\"ADL v2 Runtime adapter #5341\",\"provider and tool adapter owner #5349\",\"exact-revision shadow parity #5350 with every mismatch dispositioned\",\"live multi-agent workcell proof #5501\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Require exact-revision shadow parity in the typed Runtime v3 acceptance criteria",
+      "operation": "{\"operation\":\"replace_acceptance_criteria\",\"values\":[\"AC-1: #5591 completes before #5592, #5589, and #5590, and all four parity packets are reviewed and integrated\",\"AC-2: Runtime v3 executes canonical ingress, continuity, checkpoint/replay/resume, and graceful pressure shutdown at the accepted revision\",\"AC-3: Reasoning graphs, loops, affect-control, adaptive learning, governed operations, and secure access have explicit parity proof or blocker disposition\",\"AC-4: #5341, #5349, #5350, and #5501 prove real Runtime v3 consumers and exact-revision shadow parity without Runtime v2 implementation dependencies\",\"AC-5: Guardian, HTTPS local/remote API, Observatory, telemetry, rollback, and recovery proof passes with no hard-coded address\",\"AC-6: Focused tests, strict lint, CI, line-count, module-growth, dependency, and exact-revision review gates pass\",\"AC-7: Unsupported GPU, remote-provider, or deployment claims remain explicit non-claims and cannot be promoted by this umbrella\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Align typed acceptance deliverables with the complete AC-6 proof contract",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"reviewed Runtime v3 acceptance contract and dependency graph\",\"exact-revision parity and consumer proof register including #5350 shadow parity\",\"guardian, access, Observatory, operations, and rollback evidence\",\"line-count, module-growth, dependency-audit, test-count, CI, and exact-revision review report\",\"truthful acceptance or blocker disposition for #5384 consumption\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fix review findings by separating dependency, access, operations, quality, and owner-test proof roles and preserving current deferrals.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"dependency-and-consumer-register\",\"proof_role\":\"Verify retained exact-revision architecture, Runtime parity, ADL v1/v2 shadow parity, adapter, provider/tool, and live workcell evidence is integrated into the accepted revision\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5361/validate_acceptance_register.rb\",\"--section\",\"dependencies\"],\"parallel_group\":\"acceptance-register\",\"defer_reason\":\"Wait for #5336, #5591, #5592, #5589, #5590, #5341, #5349, #5350, and #5501 to integrate and publish retained proof.\"},{\"lane\":\"secure-access-and-observatory-register\",\"proof_role\":\"Verify retained HTTPS local/remote access, address configuration, Observatory, and telemetry proof at the accepted revision\",\"acceptance_ids\":[\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5361/validate_acceptance_register.rb\",\"--section\",\"access\"],\"parallel_group\":\"acceptance-register\",\"defer_reason\":\"Wait for Parity-D #5590 and its retained secure-access and Observatory evidence.\"},{\"lane\":\"operations-and-rollback-register\",\"proof_role\":\"Verify retained guardian, pressure shutdown, checkpoint/replay/resume, rollback, and recovery evidence at the accepted revision\",\"acceptance_ids\":[\"AC-2\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5361/validate_acceptance_register.rb\",\"--section\",\"operations\"],\"parallel_group\":\"acceptance-register\",\"defer_reason\":\"Wait for Parity-A #5591 and Parity-D #5590 retained operational evidence.\"},{\"lane\":\"quality-and-independence-register\",\"proof_role\":\"Verify Runtime v2 independence, reasoning and learning surfaces, strict lint, line count, module growth, dependency audit, test count, CI, exact-revision review, retained artifacts, and explicit AWS/GPU/remote-provider non-claims\",\"acceptance_ids\":[\"AC-3\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5361/validate_acceptance_register.rb\",\"--section\",\"quality\"],\"parallel_group\":\"acceptance-register\",\"defer_reason\":\"Wait for all parity packets and accepted-revision CI evidence.\"},{\"lane\":\"runtime-v3-kernel\",\"proof_role\":\"Run the isolated Runtime v3 kernel suite for ingress, continuity, cognition, secure access, Observatory, pressure, and rollback behavior\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":1500,\"budget_tokens\":7000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\"],\"parallel_group\":\"runtime-v3-local\",\"defer_reason\":\"Run only after all four parity children integrate into the acceptance candidate.\"},{\"lane\":\"runtime-v3-supervision\",\"proof_role\":\"Run the isolated Runtime v3 supervision and component lifecycle suite\",\"acceptance_ids\":[\"AC-2\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":1500,\"budget_tokens\":7000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime/Cargo.toml\"],\"parallel_group\":\"runtime-v3-local\",\"defer_reason\":\"Run against the integrated Runtime v3 acceptance candidate.\"},{\"lane\":\"guardian-soak\",\"proof_role\":\"Exercise guardian lifecycle, health, telemetry, pressure response, recovery, and graceful shutdown through the owner script\",\"acceptance_ids\":[\"AC-2\",\"AC-5\",\"AC-6\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":1800,\"budget_tokens\":10000,\"argv\":[\"bash\",\"adl/tools/run_runtime_v3_guardian_soak.sh\"],\"parallel_group\":\"runtime-v3-live\",\"defer_reason\":\"Run only after the integrated candidate and init configuration are fixed at an exact revision.\"},{\"lane\":\"runtime-v3-inventory\",\"proof_role\":\"Report Runtime v3 line count, module growth, dependency audit, test count, and exact-revision review evidence\",\"acceptance_ids\":[\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"bash\",\"adl/tools/report_runtime_v3_loc.sh\"],\"parallel_group\":\"runtime-v3-local\",\"defer_reason\":\"Run at the final acceptance candidate revision.\"},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Verify issue-branch patch hygiene at the exact reviewed revision\",\"acceptance_ids\":[\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"local-control\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "Activate the smallest Runtime v3 acceptance evidence scope after every named dependency has a live merged landing and retained audit receipt; receipts remain audit evidence and do not block downstream WP-12.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/evidence/5361\"],\"expected_owner\":\"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d\",\"expected_purpose\":\"Prepare and review Runtime v3 acceptance cards and dependency truth without executing acceptance\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Prepare and review Runtime v3 acceptance cards and dependency truth without executing acceptance\",\"purpose\":\"Execute #5361 Runtime v3 acceptance evidence only on the existing bound worktree: prove dependency ancestry, stable install/deployment, live guardian HTTPS and Observatory health, 10000-agent scale, weather, continuity, rollback, consumer readiness, exact current Runtime v3 parity, and explicit GPU/remote/AWS non-claims; do not edit Runtime v2 or add product features unless a bounded acceptance defect requires it.\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "Strict acceptance Clippy exposed two test-only Runtime v3 CAV initializer defects; add only the bounded file required to fix that acceptance defect.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime/src/cav.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "Record the bounded Runtime v3 acceptance evidence execution after dependency ancestry, FastWork proof, live-guardian probe, strict validation, and exact acceptance register validation completed.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Executed #5361 Runtime v3 acceptance as an evidence-only gate, refreshed the stable v2 install, proved dependency ancestry, ran focused FastWork Runtime v3 validation, recorded the stale background guardian probe, and fixed the only acceptance defect: two test-only CAV initializers that failed strict Clippy.\",\"changes\":[\"Merged current origin/main into the existing #5361 worktree and verified dependency closeout receipts plus live landing ancestry.\",\"Refreshed .adl/bin/csdlc-v2 from the refreshed source and verified the v2 coexistence inventory.\",\"Ran Runtime v3 operational proof for external guardian HTTPS bearer auth, WSS Observatory, rollback restore, and cryptographic continuity restore.\",\"Ran Runtime v3 kernel and supervision tests, strict Clippy, formatting, dependency inventory, LoC/test-count inventory, typed doctor, and acceptance-register validation.\",\"Recorded the operator-provided background guardian at https://localhost:20997 as unavailable because the stored PID was stale and the port refused connection.\",\"Converted two adl-runtime CAV tests from mutation-after-default setup to struct initializers to satisfy strict Clippy without product behavior changes.\"],\"artifacts\":[\"docs/milestones/v0.91.8/review/runtime_v3_acceptance_5361.v1.json\",\".csdlc/evidence/5361\",\".csdlc/prepared/issues/5361/validate-acceptance.json\",\".csdlc/prepared/issues/5361/transition-acceptance-evidence-claim.json\",\".csdlc/prepared/issues/5361/amend-cav-clippy-defect-claim.json\",\"adl-runtime/src/cav.rs\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "Record the complete focused Runtime v3 acceptance validation bundle.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\".adl/bin/csdlc-v2/csdlc-install install --repo . --destination .adl/bin/csdlc-v2\",\".adl/bin/csdlc-v2/csdlc-install verify --repo . --bin-dir .adl/bin/csdlc-v2 --inventory csdlc-v2/operator/coexistence.json\",\"ADL_RUNTIME_V3_PROOF_ROOT=/Volumes/FastWork/adl-5361 CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/runtime-target bash adl/tools/run_runtime_v3_operational_proof.sh\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/kernel-test-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/runtime-test-target cargo test --locked --manifest-path adl-runtime/Cargo.toml\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/kernel-clippy-target cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --all-targets --all-features -- -D warnings\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/runtime-clippy-target cargo clippy --locked --manifest-path adl-runtime/Cargo.toml --all-targets --all-features -- -D warnings\",\"cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --all -- --check\",\"cargo fmt --manifest-path adl-runtime/Cargo.toml --all -- --check\",\"cargo tree --locked --manifest-path adl-runtime-kernel/Cargo.toml\",\"cargo tree --locked --manifest-path adl-runtime/Cargo.toml\",\"bash adl/tools/report_runtime_v3_loc.sh\",\".adl/bin/csdlc-v2/csdlc-validate --root . --request .csdlc/prepared/issues/5361/validate-acceptance.json\",\".adl/bin/csdlc-v2/csdlc-doctor --repo . --issue 5361\",\"git diff --check\"],\"purpose\":\"Prove stable v2 install, dependency ancestry, Runtime v3 HTTPS/Observatory/rollback/continuity operational readiness, 10000-agent configuration and bounded projection, weather/continuity/rollback behavior, consumer/parity register completeness, Runtime v2 independence, strict lint/format/dependency/test/budget proof, explicit AWS/GPU/remote-provider non-claims, and exact acceptance-register validation.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5361\"}}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "Complete bounded #5361 Runtime v3 acceptance evidence and validation; ready for the required exact-head GPT-5.5 review.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "gpt-5.5:required-pre-pr-review",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "The required exact-head GPT-5.5 pre-PR review completed with no findings and documented residual truth boundaries; advance #5361 to reviewed for typed publication.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "record exact existing PR ready-for-review after remote success",
+      "operation": "record_ready_publication"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "materialize retained terminal closeout receipt after post-merge sweep",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "adl-post-merge-closeout",
+      "reason": "post-merge terminal reconciliation sweep",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 29,
+      "generation": 23,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 30,
+      "generation": 24,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

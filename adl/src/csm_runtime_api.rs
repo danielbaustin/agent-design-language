@@ -51,13 +51,37 @@ pub use adl_runtime::runtime_api::{
     CSM_RUNTIME_API_ACIP_SCHEMA, CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA,
     CSM_RUNTIME_API_CAV_SCHEMA, CSM_RUNTIME_API_CHRONOSENSE_SCHEMA,
     CSM_RUNTIME_API_CONSTRUCTABILITY_SCHEMA, CSM_RUNTIME_API_CURIOSITY_SCHEMA,
-    CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA, CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA,
+    CSM_RUNTIME_API_EVENTS_SCHEMA, CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA,
     CSM_RUNTIME_API_HEALTH_SCHEMA, CSM_RUNTIME_API_METRICS_SCHEMA,
     CSM_RUNTIME_API_PERSISTENCE_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA,
     CSM_RUNTIME_API_REASONING_SCHEMA, CSM_RUNTIME_API_SCHEMA, CSM_RUNTIME_API_SHEPHERD_SCHEMA,
     CSM_RUNTIME_API_STATUS_SCHEMA,
 };
 pub use api_gateway_bridge::{prove_api_gateway_bridge, ApiGatewayBridgeOptions};
+
+const CSM_RUNTIME_API_ACIP_WS_PATH: &str = "/v1/acip/ws";
+const CSM_RUNTIME_API_ACIP_WS_LEGACY_ALIAS: &str = "/acip/ws";
+
+const CSM_RUNTIME_API_ENDPOINTS: [&str; 17] = [
+    "/status",
+    "/health",
+    "/ready",
+    "/metrics",
+    "/events",
+    "/chronosense",
+    "/shepherd",
+    "/cav",
+    "/curiosity",
+    "/acip",
+    CSM_RUNTIME_API_ACIP_WS_PATH,
+    CSM_RUNTIME_API_ACIP_WS_LEGACY_ALIAS,
+    "/freedom-gate",
+    "/reasoning",
+    "/api-gateway-bridge",
+    "/constructability",
+    "/persistence",
+];
+
 const CSM_RUNTIME_API_BROWSER_DEMO_PORT: &str = "8765";
 
 #[derive(Debug, Clone)]
@@ -394,7 +418,9 @@ fn runtime_api_response_with_identity(
         "/shepherd" => shepherd_response(&loaded, options),
         "/cav" => cav_response(&loaded, options),
         "/curiosity" => curiosity_response(&loaded, options),
-        "/acip" | "/acip/ws" => acip_response(&loaded, options, endpoint),
+        "/acip" | CSM_RUNTIME_API_ACIP_WS_PATH | CSM_RUNTIME_API_ACIP_WS_LEGACY_ALIAS => {
+            acip_response(&loaded, options, endpoint)
+        }
         "/freedom-gate" => freedom_gate_response(&loaded, options),
         "/reasoning" => reasoning_response(&loaded),
         "/api-gateway-bridge" => api_gateway_bridge_response(&loaded, identity, gateway_identity),
@@ -699,11 +725,16 @@ fn acip_response(
     endpoint: &str,
 ) -> Result<Value> {
     let status = status_response(loaded, options)?;
+    let runtime_api_path = if endpoint == "/acip" {
+        "/acip"
+    } else {
+        CSM_RUNTIME_API_ACIP_WS_PATH
+    };
     let response = json!({
         "schema": CSM_RUNTIME_API_ACIP_SCHEMA,
         "runtime_owner": "csm",
         "agent_instance_id": loaded.spec.agent_instance_id,
-        "runtime_api_path": endpoint,
+        "runtime_api_path": runtime_api_path,
         "component": status["acip_carrier"],
         "auth": {
             "required": true,
@@ -714,7 +745,8 @@ fn acip_response(
             "json_projection": "canonical_serde_jcs_payload_projection",
             "protobuf": "prost_envelope",
             "websocket": "upgrade_path_declared_but_not_activated_in_runtime_api_handler",
-            "websocket_path": "/acip/ws",
+            "websocket_path": CSM_RUNTIME_API_ACIP_WS_PATH,
+            "legacy_websocket_alias": CSM_RUNTIME_API_ACIP_WS_LEGACY_ALIAS,
             "activation_status": "not_activated",
             "activation_policy": "fail_closed_until_runtime_upgrade_handler_is_integrated"
         }
@@ -806,7 +838,7 @@ fn api_gateway_bridge_response(
         "verified_gateway_identity": gateway_identity,
         "required_runtime_routes": api_gateway_bridge_required_runtime_routes(),
         "non_gateway_routes": [{
-            "route": "/acip/ws",
+            "route": CSM_RUNTIME_API_ACIP_WS_PATH,
             "reason": "websocket_upgrade_not_activated",
             "activation_policy": "fail_closed_until_runtime_upgrade_handler_is_integrated"
         }],
@@ -1017,7 +1049,10 @@ fn api_gateway_bridge_required_runtime_routes() -> Vec<&'static str> {
     CSM_RUNTIME_API_ENDPOINTS
         .iter()
         .copied()
-        .filter(|endpoint| *endpoint != "/acip/ws")
+        .filter(|endpoint| {
+            *endpoint != CSM_RUNTIME_API_ACIP_WS_PATH
+                && *endpoint != CSM_RUNTIME_API_ACIP_WS_LEGACY_ALIAS
+        })
         .collect()
 }
 
@@ -2224,7 +2259,11 @@ fn runtime_api_get_response(
     gateway_identity: Option<&VerifiedRuntimeApiGatewayIdentity>,
 ) -> Result<RuntimeApiHttpResponse> {
     headers.push(("vary", "Origin".to_string()));
-    if request.path.split('?').next().unwrap_or(&request.path) == "/acip/ws" {
+    let endpoint = request.path.split('?').next().unwrap_or(&request.path);
+    if matches!(
+        endpoint,
+        CSM_RUNTIME_API_ACIP_WS_PATH | CSM_RUNTIME_API_ACIP_WS_LEGACY_ALIAS
+    ) {
         headers.push(runtime_api_admission_header_from_body(
             options,
             &json!({ "shutdown": { "admission_quiesced": runtime_admission_quiesced(options) } }),
@@ -2240,7 +2279,8 @@ fn runtime_api_get_response(
                 "schema": CSM_RUNTIME_API_ACIP_SCHEMA,
                 "runtime_owner": "csm",
                 "status": "websocket_upgrade_not_activated",
-                "runtime_api_path": "/acip/ws",
+                "runtime_api_path": CSM_RUNTIME_API_ACIP_WS_PATH,
+                "requested_path": endpoint,
                 "upgrade_required": true,
                 "upgrade_handler": "not_activated_in_csm_runtime_api",
                 "transport_contract": "protobuf_frame_contract_available_via_acip_carrier",
@@ -3126,6 +3166,34 @@ memory: {}
     }
 
     #[test]
+    fn runtime_api_advertised_endpoints_resolve_through_local_dispatch() {
+        let root = temp_root("advertised-endpoints");
+        let options = test_options(&root);
+
+        for endpoint in CSM_RUNTIME_API_ENDPOINTS {
+            let response = runtime_api_response(&options, endpoint).unwrap();
+            assert_ne!(
+                response.get("status").and_then(Value::as_str),
+                Some("not_found"),
+                "advertised endpoint {endpoint} must resolve through local CSM dispatch"
+            );
+        }
+
+        let unknown = runtime_api_response(&options, "/definitely-not-mounted").unwrap();
+        assert_eq!(
+            unknown.get("status").and_then(Value::as_str),
+            Some("not_found")
+        );
+        assert_eq!(
+            unknown
+                .get("supported_endpoints")
+                .and_then(Value::as_array)
+                .map(Vec::len),
+            Some(CSM_RUNTIME_API_ENDPOINTS.len())
+        );
+    }
+
+    #[test]
     fn runtime_api_rejects_mutating_admission_while_shutdown_is_quiesced() {
         let root = temp_root("shutdown-quiesced");
         let options = test_options(&root);
@@ -3310,7 +3378,7 @@ memory: {}
         assert!(!response["required_runtime_routes"]
             .as_array()
             .unwrap()
-            .contains(&json!("/acip/ws")));
+            .contains(&json!(CSM_RUNTIME_API_ACIP_WS_PATH)));
         assert_eq!(
             response["non_gateway_routes"][0]["reason"],
             "websocket_upgrade_not_activated"
@@ -3931,7 +3999,7 @@ memory: {}
         );
         assert_eq!(
             status["runtime_stack"]["acip_carrier"]["websocket_path"],
-            "/acip/ws"
+            "/v1/acip/ws"
         );
 
         let acip = runtime_api_response(&options, "/acip").unwrap();
@@ -3939,10 +4007,25 @@ memory: {}
         assert_eq!(acip["component"]["validation"]["status"], "passed");
         assert_eq!(acip["auth"]["required"], true);
 
-        let acip_ws = runtime_api_response(&options, "/acip/ws").unwrap();
+        let acip_ws = runtime_api_response(&options, CSM_RUNTIME_API_ACIP_WS_PATH).unwrap();
         assert_eq!(acip_ws["schema"], CSM_RUNTIME_API_ACIP_SCHEMA);
-        assert_eq!(acip_ws["transport"]["websocket_path"], "/acip/ws");
+        assert_eq!(acip_ws["runtime_api_path"], CSM_RUNTIME_API_ACIP_WS_PATH);
+        assert_eq!(
+            acip_ws["transport"]["websocket_path"],
+            CSM_RUNTIME_API_ACIP_WS_PATH
+        );
+        assert_eq!(
+            acip_ws["transport"]["legacy_websocket_alias"],
+            CSM_RUNTIME_API_ACIP_WS_LEGACY_ALIAS
+        );
         assert_eq!(acip_ws["transport"]["activation_status"], "not_activated");
+
+        let legacy_acip_ws =
+            runtime_api_response(&options, CSM_RUNTIME_API_ACIP_WS_LEGACY_ALIAS).unwrap();
+        assert_eq!(
+            legacy_acip_ws["runtime_api_path"],
+            CSM_RUNTIME_API_ACIP_WS_PATH
+        );
     }
 
     #[test]
@@ -3951,7 +4034,7 @@ memory: {}
         let options = test_options(&root);
         let request = RuntimeApiRequest {
             method: "GET".to_string(),
-            path: "/acip/ws".to_string(),
+            path: CSM_RUNTIME_API_ACIP_WS_PATH.to_string(),
             origin: Some("http://127.0.0.1:8765".to_string()),
             upgrade: false,
             authorization: None,

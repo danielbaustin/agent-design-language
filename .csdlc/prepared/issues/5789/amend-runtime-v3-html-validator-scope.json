@@ -1,0 +1,13 @@
+{
+  "issue": 5789,
+  "claim_id": "claim-5789-observatory-full-functionality",
+  "expected_generation": 2,
+  "expected_digest": "c2fa419ef7ad9a38791472d0b129383fbd9d4197675ac133e977b23444540451",
+  "now_unix_seconds": 1785778822,
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Protect the existing HTML Observatory integrated-proof validator so it can assert the new Runtime v3 default feed and signed /v1/control browser behavior.",
+  "add_protected_paths": [
+    "adl/tools/validate_v0917_html_observatory.py",
+    "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+  ]
+}

@@ -18,7 +18,7 @@ scheduled before external repositories depend on this adapter.
 | 2 | `[v0.91.5][portable-adl] Pilot adapter in cognitive-sdlc-paper` | Add repo-local `AGENTS.md` and `adl_project.json`; prove paper profile startup. | after doctor or with explicit manual review |
 | 3 | `[v0.91.5][portable-adl] Pilot adapter in general-intelligence-paper` | Add repo-local adapter files and paper-profile validation notes. | after first paper pilot |
 | 4 | `[v0.91.5][portable-adl] Pilot adapter in universal-tool-schema` | Prove runtime/spec profile boundaries without making UTS depend on ADL at runtime. | after doctor and paper pilots |
-| 5 | `[v0.91.5][portable-adl] Add portable adapter docs to C-SDLC skills` | Update workflow-conductor, pr lifecycle, and editor skill guidance to discover external project contracts. | after first pilot evidence |
+| 5 | `[v0.91.5][portable-adl] Add portable adapter docs to C-SDLC skills` | Update typed v2 lifecycle and editor skill guidance to discover external project contracts. | after first pilot evidence |
 | 6 | `[v0.91.5][portable-adl] Add CI smoke fixture for adapter templates` | Validate template JSON examples and fail on host-local absolute paths. | after template review |
 
 ## Dependency Notes

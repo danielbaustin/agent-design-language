@@ -1,0 +1,14 @@
+{
+  "issue": 5351,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "c7a6c3663bf5418ec793f0a437465b8e5f49e5413130f462e7eabf35dd007e00",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "reason": "The exact-revision WP-16 focused and integrated quality gate is complete and passing.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

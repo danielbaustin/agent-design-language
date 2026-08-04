@@ -1,0 +1,22 @@
+{
+  "issue": 5344,
+  "expected_generation": 35,
+  "expected_digest": "c9c4eca9310444828651432199f07b1dcb362e81ecd12ce72bc1bdf0eec7866a",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+  "evidence": {
+    "reviewer": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+    "scope": [
+      ".csdlc/issues/5344",
+      ".csdlc/issues/5587",
+      ".csdlc/prepared/issues/5344",
+      "adl-runtime/src/guardian.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/test_check_coverage_impact.sh"
+    ],
+    "reviewed_revision": "git-blake3:6db1d976a1b853d7f42fc15ad68870b02e2ffe0b:ae2f20c67dadfcaeb8006a5a2575309109c2964714adee5d185e2a686755603a",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true
+  }
+}

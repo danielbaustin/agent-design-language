@@ -1,0 +1,13 @@
+{
+  "issue": 5683,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "d9837ae6dc81db7b358d381801492fec9daefea8ea114670a735951835ca1e97",
+  "claim_id": "claim-5683-v0918-unity-observatory-visual-remediation",
+  "actor": "codex:issue-5683-unity-remediation",
+  "reason": "The bounded Unity remediation is committed and its focused contract, alignment, live-editor, visual, and diff validations passed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

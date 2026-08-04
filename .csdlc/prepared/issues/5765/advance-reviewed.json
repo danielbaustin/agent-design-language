@@ -1,0 +1,13 @@
+{
+  "issue": 5765,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "9818eabb8c406328f5ccff2f50a2d9fec5b28c9caa0083725f2b657fc44be9f3",
+  "claim_id": "claim-5765-v092-account-migration-scheduling",
+  "actor": "codex:5765",
+  "reason": "Advance #5765 after exact-head subagent review passed and review evidence was recorded.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

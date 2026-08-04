@@ -1,0 +1,11 @@
+{
+  "issue": 5346,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5346-v0918-wp13-deletion-preparation-current",
+  "expected_generation": 7,
+  "expected_digest": "a90d8f501070c2723b51459dc4976671f4a5a28d031c23623935c08e54b1a3b8",
+  "now_unix_seconds": 1785548739,
+  "actor": "codex:5346-wp13-execution-owner",
+  "operator_authority": "operator correction: do not absorb unrelated stale lock regeneration into #5346",
+  "reason": "Revoke the live claim after a validation probe added adl/Cargo.lock; the deletion did not truthfully change dependency resolution, so the replacement claim must exclude the lockfile."
+}

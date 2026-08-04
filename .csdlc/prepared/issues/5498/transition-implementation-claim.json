@@ -1,0 +1,15 @@
+{
+  "issue": 5498,
+  "claim_id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+  "expected_owner": "codex:issue-5498-preparation",
+  "expected_generation": 8,
+  "expected_digest": "f7067ab01b6ea0eb20737f2187998655a3f439b7ce23be84bbb58a1b60a8d175",
+  "expected_purpose": "Prepare and review WP-10A task and context-handoff adapter contracts only; implementation remains blocked on #5499 and the WP-09 interface gate",
+  "now_unix_seconds": 1784762031,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Activate issue #5498 after live merge, ancestry, and disjoint path confirmation passed for #5499 and #5349.",
+  "purpose": "Implement, validate, review, publish, merge, and close issue #5498 within the isolated task and context-handoff adapter crate boundary.",
+  "add_protected_paths": [
+    "adl-v2/crates/adl-workcell-task-adapter"
+  ]
+}

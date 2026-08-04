@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 4741,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/4741-v0918-wp15-unity-editor-liveness-prep",
+  "title": "[v0.91.8][WP-15][unity][tooling] Make Unity editor liveness and batch proof reliable",
+  "body": "Closes #4741\n\n## Summary\n- select and report `open_editor`, `fresh_batch`, or `skipped_fail_closed` before Unity work\n- validate exact-project ownership with structured repository-approved process status evidence\n- constrain staging and retained evidence to approved writable roots\n- detect semantic import, compile, validation, and terminal progress without an arbitrary total-runtime ceiling\n- fail closed on stale owner metadata, ambiguous liveness, crashes, licensing failures, unsafe paths, and idle progress\n\n## Focused proof\n- Unity liveness wrapper unit fixtures: PASS\n- Observatory contract guardrails: PASS\n- validation-lane selector contract: PASS\n- shell syntax, JSON, and diff hygiene: PASS\n- exact bounded subagent review: PASS with no findings\n\n## Live proof boundary\nThe exact-head live attempt selected `skipped_fail_closed` and returned `owner_binary_provenance_invalid` before Unity launch. The repository-installed `adl` binary provenance does not match the current declared source root. No replacement binary was built or installed, Unity was not launched, and scene validation is not claimed. The retained blocker packet is `.csdlc/evidence/4741/live-staged-proof.json`.\n\nThis issue does not absorb #5332 ILPP diagnosis, #4739 Unity-MCP alignment, scene construction, runtime semantics, asset publication, or investor rendering.",
+  "draft": false,
+  "revision": "git-blake3:3696c827990e088f3610563dffa6dbc80e847c1e:920d687317a45cf1a47e58c1393c228761687986c98305a704d80fb4430fd3d0",
+  "commit_sha": "3696c827990e088f3610563dffa6dbc80e847c1e"
+}

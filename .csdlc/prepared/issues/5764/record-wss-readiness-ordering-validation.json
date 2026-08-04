@@ -1,0 +1,21 @@
+{
+  "issue": 5764,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "7039308f892accabc9ce8a1cde044e5d9487081de48f5eae977e5ee237f06de7",
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Record focused validation for direct Runtime v3 WSS readiness ordering fix.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "node --check demos/html-observatory/app.js",
+        "git diff --check"
+      ],
+      "purpose": "Prove the direct secure-stream readiness ordering repair parses and preserves diff hygiene.",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork terminal output: node --check demos/html-observatory/app.js passed; git diff --check passed"
+    }
+  }
+}

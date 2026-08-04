@@ -9,7 +9,7 @@ SIP -> STP -> SPP -> SRP -> SOR
 ```
 
 It is a template and schema planning surface. Enforcement now belongs to the
-workflow tooling: doctor reports card-stage truth, workflow-conductor routes
+workflow tooling: typed doctor reports card-stage truth and editor skills route
 card defects to editor skills, and sprint-conductor must run sprint-wide card
 preflight before child execution starts.
 

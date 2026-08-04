@@ -1,0 +1,19 @@
+flowchart LR
+    A["Bound #5662 worktree\npublishable Unity source"] -->|sync owned files| B["FastWork Unity project\nlicensed assets remain external"]
+    B --> C["Unity editor\nFlagshipObservatoryStage"]
+    C <--> D["Local Unity-MCP\nproject and endpoint aligned"]
+    C --> E["Hero environment\ncamera, terrain, lighting"]
+    C --> F["Fixed operator shell\nagents, events, evidence, comms"]
+    G["CSM / Polis runtime contract"] --> H{"Truth classifier"}
+    H -->|current and valid| I["Live"]
+    H -->|partial capability| J["Degraded"]
+    H -->|unavailable| K["Disconnected"]
+    H -->|explicit fixture mode| L["Demo"]
+    I --> F
+    J --> F
+    K --> F
+    L --> F
+    E --> M["Play Mode proof\n1920x1080 and 2560x1440"]
+    F --> M
+    M -->|sync owned scene and source| A
+    M --> N["WP-15 #5354 convergence"]

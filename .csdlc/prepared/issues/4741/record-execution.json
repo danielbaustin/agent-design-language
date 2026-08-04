@@ -1,0 +1,31 @@
+{
+  "issue": 4741,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "480ef8a77181eaf01a0a32300ee8ab4619b1d10bab6d8fa5d5afc6691afacf9e",
+  "claim_id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+  "actor": "codex:issue-4741-execution",
+  "reason": "Record the bounded Unity editor-liveness implementation and retained staged proof",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented deterministic Unity proof-mode selection, exact PID-metadata liveness checks, approved staging, semantic progress monitoring, contextual blocker classification, focused selector registration, and one retained staged outcome.",
+    "changes": [
+      "Select and print open_editor, fresh_batch, or skipped_fail_closed before Unity work.",
+      "Use repository-installed adl process status against exact PID metadata and fail closed on ambiguous project locks.",
+      "Stage only under /Volumes/FastWork or issue-local .adl storage and pass the owner binary a repository-relative packet reference.",
+      "Reset liveness only on import, compile, validation, or terminal markers; classify readonly text in temporal context.",
+      "Route generic external startup-classifier outcomes without embedding #5332 signatures or thresholds.",
+      "Register one focused Unity editor-liveness validation lane and add no-Unity regression coverage plus an operator runbook."
+    ],
+    "artifacts": [
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/test_select_validation_lanes.sh",
+      "docs/tooling/unity_observatory_editor_batch_proof.md",
+      ".csdlc/evidence/4741/live-staged-proof.json",
+      ".csdlc/evidence/4741/LIVE_STAGED_PROOF.md"
+    ]
+  },
+  "fail_after_backup": false
+}

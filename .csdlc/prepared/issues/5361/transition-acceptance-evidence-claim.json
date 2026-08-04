@@ -1,0 +1,15 @@
+{
+  "issue": 5361,
+  "claim_id": "claim-5361-v0918-runtime-v3-acceptance-readiness",
+  "expected_owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "expected_generation": 9,
+  "expected_digest": "bb0965ad21cd29958698641db2e39bad096db4ccd2e06ce2615bf75370990ad1",
+  "now_unix_seconds": 1784819001,
+  "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+  "reason": "Activate the smallest Runtime v3 acceptance evidence scope after every named dependency has a live merged landing and retained audit receipt; receipts remain audit evidence and do not block downstream WP-12.",
+  "expected_purpose": "Prepare and review Runtime v3 acceptance cards and dependency truth without executing acceptance",
+  "purpose": "Execute #5361 Runtime v3 acceptance evidence only on the existing bound worktree: prove dependency ancestry, stable install/deployment, live guardian HTTPS and Observatory health, 10000-agent scale, weather, continuity, rollback, consumer readiness, exact current Runtime v3 parity, and explicit GPU/remote/AWS non-claims; do not edit Runtime v2 or add product features unless a bounded acceptance defect requires it.",
+  "add_protected_paths": [
+    ".csdlc/evidence/5361"
+  ]
+}

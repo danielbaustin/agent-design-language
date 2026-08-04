@@ -1,0 +1,16 @@
+{
+  "issue": 5788,
+  "expected_generation": 3,
+  "expected_digest": "101f25868d40521355392452c1b896bdd96c837133e5597dc4b43e08d3ca6275",
+  "claim_id": "claim-5788-lockfile-preservation",
+  "reviewer": "subagent:019fc8ce-d14d-7783-a875-70ad800660a2",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    "adl/tools/install_owner_binaries.sh",
+    "adl/tools/run_cargo_validation.sh",
+    "adl/tools/run_owner_validation_lane.sh",
+    "adl/tools/test_owner_binary_install.sh",
+    "adl/tools/test_owner_validation_lane.sh",
+    "adl/tools/test_run_cargo_validation.sh"
+  ]
+}

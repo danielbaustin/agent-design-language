@@ -1,0 +1,22 @@
+{
+  "actor": "codex:5717-execution",
+  "card": "sor",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "expected_digest": "58ddbe2ffeeeb846dc4360be19d7cd1108dbf9bcefcf76c0e7d143912390159c",
+  "expected_generation": 7,
+  "issue": 5717,
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "zsh",
+        "-c",
+        "for url in http://127.0.0.1:8916/podcast/ http://127.0.0.1:8916/_preview/podcast/ http://127.0.0.1:8916/podcast/feed.xml http://127.0.0.1:8916/podcast/audio/meet-the-ai-coworkers.wav; do curl -s -o /dev/null -w \"$url %{http_code} %{content_type} %{size_download}\\n\" \"$url\"; done"
+      ],
+      "purpose": "Smoke-test the hosted route shape from a local server rooted at `demos/`: production page, hidden preview, RSS feed, and audio enclosure all return 200 with expected content types and byte counts.",
+      "outcome": "passed",
+      "evidence_ref": "commentary: /podcast 200 text/html 29237; /_preview/podcast 200 text/html 29361; /podcast/feed.xml 200 application/xml 1881; audio WAV 200 audio/x-wav 417644"
+    }
+  },
+  "reason": "Record local deploy-shape HTTP smoke validation for `/podcast/` and hidden preview."
+}

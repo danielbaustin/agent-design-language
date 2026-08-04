@@ -1,0 +1,15 @@
+Issue: #5788
+Result: PASS
+
+- bash adl/tools/test_owner_binary_install.sh
+  - owner binary stable install: ok
+- bash adl/tools/test_run_cargo_validation.sh
+  - portable Cargo validation wrapper contract: pass
+- bash adl/tools/test_owner_validation_lane.sh
+  - PASS test_owner_validation_lane
+- bash -n over all six changed shell scripts
+  - pass
+- git diff --check
+  - pass
+- adl/Cargo.lock after validation
+  - byte-identical to HEAD

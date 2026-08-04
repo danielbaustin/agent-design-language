@@ -1,0 +1,29 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "wp18-terminal-gate",
+        "proof_role": "Prove #5356 terminal receipt, reviewed head, merged PR commit, claim release, and ancestry without requiring a stale tracked projection",
+        "purpose": "Verify WP-18 terminal truth before WP-19 exact corpus freeze.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 2000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "execution-gate",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5357/check-dependencies.rb"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {"requested_lanes": ["wp18-terminal-gate"], "allow_network": false, "available_credentials": []},
+  "budget": {"max_parallel": 1, "cpu_units": 1, "memory_mib": 128, "tokens": 2500},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5357/preparation-validation",
+  "cancellation_file": null
+}

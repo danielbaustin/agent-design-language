@@ -1,0 +1,88 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5695,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][tooling] Preserve blocked and unstable PR mergeability states",
+    "slug": "pr-state-mergeability",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Read the current octocrab state mapping, implement an explicit classification table, add focused state coverage, validate the touched crate, obtain exact review, and publish only after review.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Bind issue 5695 with disjoint source and card paths",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Replace wildcard mergeability fallback with explicit pending-state mapping",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Add focused tests for every supported mergeability variant and merge fail-closed behavior",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Run focused validation and exact review before publication",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Only behind denotes stale-base ancestry",
+        "blocked and unstable are pending rather than stale",
+        "Dirty remains conflicted",
+        "Unknown remains waiting",
+        "Merge eligibility still requires required checks and review"
+      ],
+      "risks": [
+        "octocrab may add a new enum variant",
+        "classification tests can omit a state",
+        "pending states can be mistaken for merge eligibility"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "The enum variants cannot be verified from the pinned dependency",
+        "The change requires merge-authority policy changes",
+        "Work would touch provider, Runtime, AWS, or unrelated CI surfaces"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5695/retained/design.md",
+      "design_digest": "24f656bfc0bafcd82c8bc9db001d949366843f0ae5ad148e2fbf03646ccd0f02",
+      "diagram_ref": ".csdlc/issues/5695/retained/diagram.mmd",
+      "diagram_digest": "af0bc26dc9fc7700b2d9a027755e16783c0bccb7b39a10b446cee8d9e161b95d"
+    }
+  }
+}

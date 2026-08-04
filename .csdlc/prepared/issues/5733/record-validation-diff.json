@@ -1,0 +1,19 @@
+{
+  "issue": 5733,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "7d0ec79805e67254402d7f7c87967396786fb1aebd8b249b8962c3148baad68a",
+  "claim_id": "claim-5733-demo-matrix-proof-coverage",
+  "actor": "codex:5733-execution",
+  "reason": "Record diff hygiene validation result.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["git", "diff", "--check"],
+      "purpose": "Prove whitespace hygiene for the bounded documentation, ledger, lifecycle, and validator changes.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5733/diff-check.log"
+    }
+  },
+  "fail_after_backup": false
+}

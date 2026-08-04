@@ -1,0 +1,43 @@
+
+running 4 tests
+test finish_is_the_only_public_merge_authority ... ok
+test publication_and_store_expose_no_terminal_mutation_route ... ok
+test competing_closeout_binary_and_skill_are_absent ... ok
+test historical_phase_and_receipt_shapes_remain_readable_only ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 1 test
+test routine_lifecycle_contract_measures_four_commands_and_two_artifacts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 16 filtered out; finished in 0.31s
+
+PASS test_closeout_completed_issue_wave
+PASS: prepare emits current csdlc-bind command
+PASS: prepare emits ready csdlc-doctor command
+PASS: prepare emits finalize validation command
+PASS: contract text exposes the supported adapter surface
+PASS: contract json exposes the supported adapter surface
+PASS: sunset start action is unavailable
+active command reference scan regression fixtures: ok
+active command reference scan check-only gate: ok
+{
+  "schema": "csdlc.coexistence_report.v2",
+  "pass": true,
+  "default_generation": "v2",
+  "missing_v1_paths": [],
+  "present_forbidden_v1_paths": [],
+  "missing_v2_binaries": [],
+  "skill_count": 11
+}
+   Compiling hyper-rustls v0.27.9
+   Compiling octocrab v0.53.1
+   Compiling csdlc-v2 v0.1.0 (/Volumes/FastWork/adl-wp-5791/csdlc-v2)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.20s
+     Running tests/gate_terminal_authority_deletion.rs (/Volumes/FastWork/adl-builds/5791/csdlc-v2/debug/deps/gate_terminal_authority_deletion-c5ed26971c7bb1d3)
+   Compiling csdlc-v2 v0.1.0 (/Volumes/FastWork/adl-wp-5791/csdlc-v2)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.47s
+     Running tests/gate4.rs (/Volumes/FastWork/adl-builds/5791/csdlc-v2/debug/deps/gate4-4f4d0f50f04ea769)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running `/Volumes/FastWork/adl-builds/5791/csdlc-v2/debug/csdlc-install verify --repo /Volumes/FastWork/adl-wp-5791 --bin-dir /Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2 --inventory csdlc-v2/operator/coexistence.json`

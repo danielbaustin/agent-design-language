@@ -11,7 +11,7 @@ workflow state, issue routing, planning docs, proof surfaces, and downstream
 handoff contracts before the milestone starts.
 
 This skill is ADL-specific. It must respect the root `AGENTS.md` contract:
-route tracked repo work through `workflow-conductor`, never work on `main`, use
+route tracked repo work through resolved typed v2 lifecycle binaries, never work on `main`, use
 versioned prompt templates for cards, and keep validation scoped to the touched
 surface.
 
@@ -31,7 +31,7 @@ For ADL repo changes:
 ## Quick Workflow
 
 1. Read the current milestone docs, issue list, and operator decision.
-2. Route through `workflow-conductor` for issue setup or execution state.
+2. Resolve the installed generation and use `csdlc-init`, `csdlc-doctor`, or `csdlc-bind` for issue setup or execution state.
 3. Create a setup issue if none exists.
 4. Confirm all five prompt cards exist from the active template registry.
 5. Bind execution to a worktree; stop if still on `main`.

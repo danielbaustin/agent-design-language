@@ -1,0 +1,456 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.21s
+     Running unittests src/lib.rs (wp16-target/runtime-v3/debug/deps/adl_runtime_kernel-18e42e9cdb4fcca2)
+
+running 8 tests
+test weather::tests::disk_pressure_uses_the_filesystem_containing_continuity_state ... ok
+test weather::tests::disk_scope_resolves_a_symlinked_continuity_ancestor ... ok
+test ingress::tests::pause_and_submit_admission_are_one_atomic_transition ... ok
+test protocol_adapters::tests::protocol_builder_non_agent_local_adapters_fail_closed ... ok
+test protocol_adapters::tests::protocol_builder_local_agent_rejects_arbitrary_payload_receipts ... ok
+test protocol_adapters::tests::protocol_builder_local_agent_computes_result_without_payload_echo ... ok
+test protocol_adapters::tests::protocol_frame_rejects_mac_valid_future_issued_freshness ... ok
+test protocol_adapters::tests::rustls_mutual_tls_client_requires_verified_identity_proof ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/adl-runtime-governed-operations.rs (wp16-target/runtime-v3/debug/deps/adl_runtime_governed_operations-6c0192b98ee8a4ab)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/adl-runtime-kernel.rs (wp16-target/runtime-v3/debug/deps/adl_runtime_kernel-642516dd11802fda)
+
+running 2 tests
+test tests::control_listener_rebinds_immediately_after_a_connection_closes ... ok
+test tests::control_listener_retries_until_a_live_owner_releases_the_port ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running unittests src/bin/adl-runtime-shadow-fixture.rs (wp16-target/runtime-v3/debug/deps/adl_runtime_shadow_fixture-b24864b36484d85b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/assembly.rs (wp16-target/runtime-v3/debug/deps/assembly-ab59a308a3af9754)
+
+running 9 tests
+test shutdown_grace_aborts_non_cooperative_operation_executor ... ok
+test operation_policy_timeout_does_not_synthesize_adapter_failure ... ok
+test aborted_operation_owner_releases_in_flight_idempotency_key ... ok
+test chronosense_uses_qualified_trusted_time_and_fails_closed_before_it_is_ready ... ok
+test local_production_adapters_execute_real_bounded_behavior ... ok
+test canonical_ingress_dispatches_real_agent_work ... ok
+test unavailable_sntp_does_not_block_kernel_startup_or_erase_bootstrap_time ... ok
+test sntp_recovers_after_startup_without_restarting_the_kernel ... ok
+test agent_scheduler_checkpoint_cancellation_and_storage_are_real ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.82s
+
+     Running tests/cognition.rs (wp16-target/runtime-v3/debug/deps/cognition-990562752aecb399)
+
+running 7 tests
+test score_and_policy_thresholds_are_bounded_to_zero_through_one_hundred ... ok
+test invalid_context_policy_and_unbound_review_fail_closed ... ok
+test moral_affect_wellbeing_allows_bounded_context_and_refuses_policy_failures ... ok
+test review_required_path_requires_bound_review_record_without_claiming_allow ... ok
+test decisions_are_json_safe_and_do_not_embed_provider_or_prompt_payloads ... ok
+test curiosity_intelligence_theory_of_mind_uses_contract_boundaries_and_fail_closed_policy ... ok
+test cognition_components_form_typed_supervised_contracts ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/configuration.rs (wp16-target/runtime-v3/debug/deps/configuration-f25487863f4c4a1f)
+
+running 20 tests
+test cpu_saturation_is_observable_without_restarting_a_healthy_runtime ... ok
+test resource_policy_warns_stops_and_recovers_with_hysteresis ... ok
+test runtime_configuration_rejects_version_shape_identity_and_secrets ... ok
+test configuration_keeps_runtime_bindings_outside_canonical_projection ... ok
+test threshold_configuration_rejects_invalid_order_and_zero_bounds ... ok
+test vector_boundary_declares_cloudwatch_emf_route_without_kernel_exporter ... ok
+test configured_registry_fails_closed_for_factory_and_surface_drift ... ok
+test declarative_registry_builds_contract_checked_topology_canonically ... ok
+test weather_health_report_serializes_stop_policy_and_gpu_non_pass_state ... ok
+test runtime_init_rejects_config_manufactured_agent_population ... ok
+test runtime_init_rejects_missing_or_reused_tls_paths ... ok
+test runtime_init_rejects_ipv6_bind_addresses ... ok
+test runtime_init_file_defines_local_and_remote_access_intent ... ok
+test continuity_identity_excludes_cycle_labels_and_anti_rollback_floor_only ... ok
+test runtime_init_rejects_missing_state_root_and_split_tls_roots ... ok
+test runtime_init_rejects_invalid_public_api_base ... ok
+test runtime_init_rejects_wildcard_duplicate_and_path_origins ... ok
+test periodic_weather_monitor_publishes_reports_until_stop_is_required ... ok
+test runtime_kernel_rejects_demo_and_implicit_demo_startup ... ok
+test sysinfo_observer_reports_portable_core_metrics_and_explicit_gpu_absence ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/continuity.rs (wp16-target/runtime-v3/debug/deps/continuity-0e21865d3686ce69)
+
+running 7 tests
+test replay_rejects_gaps_reordering_and_substitution ... ok
+test checkpoint_and_lifelog_storage_must_be_disjoint ... ok
+test missing_checkpoint_restarts_fresh ... ok
+test graceful_stop_shuts_down_even_when_checkpoint_deadline_expires ... ok
+test incompatible_identity_and_service_schema_refuse_recovery ... ok
+test checkpoint_quiesces_then_serializes_in_bounded_parallel_and_loads ... ok
+test corrupt_snapshot_is_quarantined_and_preserved ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/contracts.rs (wp16-target/runtime-v3/debug/deps/contracts-fc52895f3bf09b0a)
+
+running 10 tests
+test service_contract_must_match_component_runtime_surface ... ok
+test service_contract_shape_rejects_schema_and_empty_identity ... ok
+test optional_capability_may_be_absent ... ok
+test compatible_capabilities_resolve_independent_of_registration_order ... ok
+test multiple_capability_providers_allow_compatible_selection ... ok
+test duplicate_services_and_local_capabilities_are_rejected ... ok
+test required_capabilities_fail_closed_when_missing_or_incompatible ... ok
+test parity_matrix_is_machine_readable_and_routes_every_capability ... ok
+test parity_baseline_manifest_is_a_captured_inventory_not_a_live_repo_dependency ... ok
+test runtime_kernel_manifest_has_no_repo_local_path_dependencies ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/control.rs (wp16-target/runtime-v3/debug/deps/control-03643d14464897cc)
+
+running 22 tests
+test bootstrap_promotes_once_after_explicit_degraded_readiness ... ok
+test ready_event_reports_the_bound_ephemeral_port ... ok
+test runtime_identity_and_shutdown_bounds_are_owned_by_standard_crates ... ok
+test payload_and_human_observability_use_separate_redacted_channels ... ok
+test observatory_feed_reports_large_agent_population_as_bounded_sample ... ok
+test pressure_admission_gate_refuses_new_commands_until_reopened ... ok
+test snapshot_is_revisioned_and_contains_complete_health_state ... ok
+test signed_shutdown_routes_through_supervisor_and_carries_correlation ... ok
+test forged_and_unauthorized_commands_never_reach_lifecycle_authority ... ok
+test pressure_cannot_reopen_after_signed_shutdown_is_enqueued ... ok
+test duplicate_shutdown_executes_once_and_conflicting_reuse_fails ... ok
+test cancelled_client_does_not_cancel_execution_or_exceed_idempotency_bound ... ok
+test idempotency_refresh_preserves_the_recent_completed_response ... ok
+test tls_configuration_fails_closed_for_missing_and_mismatched_pem_material ... ok
+test control_route_rejects_oversized_request_body_before_command_parse ... ok
+test graceful_api_shutdown_drains_an_active_control_response ... ok
+test observatory_cors_allows_only_configured_origins_and_reports_canonical_port ... ok
+test terminal_serialization_drains_accepted_work_into_checkpoint ... ok
+test axum_adapter_serves_signed_control_payloads ... ok
+test observatory_https_reads_are_public_and_report_weather_freshness ... ok
+test signed_ingress_checkpoints_replays_and_is_observatory_visible ... ok
+test tls_shutdown_is_bounded_with_a_stalled_active_response ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.05s
+
+     Running tests/durable_state.rs (wp16-target/runtime-v3/debug/deps/durable_state-0db5130f17be852e)
+
+running 4 tests
+test legacy_flat_persistence_fails_closed_before_database_open ... ok
+test redb_local_checkpoint_persists_restores_and_rejects_identity_drift ... ok
+test governed_state_and_lifelog_survive_restart_without_flat_files ... ok
+test concurrent_writes_advance_sequences_and_head_atomically ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+
+     Running tests/governance.rs (wp16-target/runtime-v3/debug/deps/governance-bde65358db28f299)
+
+running 11 tests
+test governance_components_form_typed_supervised_contracts ... ok
+test admission_fails_closed_for_missing_authority_stale_policy_and_forgery ... ok
+test checkpoint_observes_in_flight_or_complete_result_without_gap ... ok
+test allowed_action_crosses_signed_gate_before_nondeterministic_shell ... ok
+test multi_hop_delegation_uses_remaining_depth_not_absolute_depth ... ok
+test checkpoint_recovery_preserves_replay_revocation_and_result_history ... ok
+test cancelled_shell_marks_permit_abandoned_without_blocking_checkpoint ... ok
+test resource_exhaustion_and_revocation_preserve_refusal_evidence ... ok
+test appeal_and_operator_intervention_are_signed_and_audited ... ok
+test delegation_is_signed_linked_and_strictly_attenuating ... ok
+test shell_failure_is_quarantined_with_deterministic_result_record ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/governed_operations.rs (wp16-target/runtime-v3/debug/deps/governed_operations-39937ded767dc0a1)
+
+running 28 tests
+test parity_c_boundary_contract::retained_evidence_excludes_credentials_private_state_and_machine_paths ... ok
+test parity_c_boundary_contract::runtime_v2_aws_and_cross_lane_paths_are_absent ... ok
+test parity_c_private_identity::provider_or_display_identity_cannot_substitute_for_citizen_identity ... ok
+test parity_c_live_governance::signed_gate_precedes_provider_actuation ... ok
+test parity_c_production_credit::degraded_fixture_mock_and_metadata_paths_receive_zero_credit ... ok
+test parity_c_live_governance::tampered_request_cannot_masquerade_as_an_appeal ... ok
+test parity_c_delegation_resources::widened_expired_or_replayed_delegation_is_rejected ... ok
+test parity_c_live_governance::signed_appeal_disposition_is_recorded_without_actuation ... ok
+test parity_c_live_governance::denial_revocation_and_quarantine_prevent_actuation ... ok
+test parity_c_private_identity::cross_identity_read_and_write_fail_closed ... ok
+test parity_c_delegation_resources::delegation_chain_only_attenuates ... ok
+test parity_c_provider_scheduler_tools::shepherd_cannot_grant_or_bypass_authority ... ok
+test parity_c_delegation_resources::pre_dispatch_cancellation_releases_capacity ... ok
+test parity_c_production_credit::all_owned_components_use_production_or_cots_adapters ... ok
+test parity_c_private_identity::restart_preserves_redacted_identity_scoped_state ... ok
+test parity_c_live_governance::expired_or_replayed_gate_receipt_fails_closed ... ok
+test parity_c_delegation_resources::retry_and_idempotency_bounds_prevent_duplicate_work ... ok
+test parity_c_private_identity::private_state_is_partitioned_by_authoritative_identity ... ok
+test parity_c_time_continuity::authenticated_checkpoint_is_the_only_restore_authority ... ok
+test parity_c_time_continuity::restart_revalidates_revocation_without_duplicate_side_effects ... ok
+test parity_c_time_continuity::shutdown_orders_batch_and_blocks_later_actuation ... ok
+test parity_c_delegation_resources::in_flight_cancellation_kills_provider_and_releases_capacity ... ok
+test parity_c_time_continuity::shutdown_commits_final_checkpoint_and_closes_future_admission ... ok
+test parity_c_time_continuity::unqualified_or_regressing_time_cannot_authorize_actuation ... ok
+test parity_c_provider_scheduler_tools::two_agents_execute_governed_provider_and_tool_work ... ok
+test parity_c_provider_scheduler_tools::scheduler_dispatch_is_deterministic_and_bounded ... ok
+test parity_c_time_continuity::lifelog_is_redacted_append_only_and_non_authoritative ... ok
+test parity_c_provider_scheduler_tools::provider_timeout_auth_quota_and_malformed_output_are_classified ... ok
+
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.26s
+
+     Running tests/guardian_soak.rs (wp16-target/runtime-v3/debug/deps/guardian_soak-2698afef70b30318)
+
+running 7 tests
+test production_like_soak_rollback_packet_retains_cutover_boundaries ... ok
+test serve_requires_init_declared_state_root_before_live_adapters_start ... ok
+test serve_refuses_reused_continuity_and_operation_keys ... ok
+test guardian_lease_loss_checkpoints_and_stops_the_real_kernel ... ok
+test pressure_checkpoint_failure_keeps_signal_shutdown_responsive ... ok
+test signed_https_wss_shutdown_checkpoints_and_forgery_cannot_stop_the_process ... ok
+test pressure_closes_ingress_serializes_live_work_and_stops_cleanly ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.86s
+
+     Running tests/identity_memory.rs (wp16-target/runtime-v3/debug/deps/identity_memory-18839a25093bd992)
+
+running 11 tests
+test forged_identity_binding_is_rejected_before_memory_append ... ok
+test invalid_private_state_reference_fails_closed ... ok
+test restore_rejects_checkpoint_signed_by_a_different_trusted_identity ... ok
+test same_continuity_different_citizen_or_runtime_cannot_append ... ok
+test signed_checkpoint_uses_v2_wire_schema_and_legacy_v1_fails_closed ... ok
+test restore_rejects_checkpoint_bound_to_other_citizen ... ok
+test signed_identity_binding_allows_memory_checkpoint_and_redacted_lifelog ... ok
+test restore_requires_matching_identity_and_head_before_continuing ... ok
+test restored_checkpoint_preserves_summary_across_next_checkpoint ... ok
+test checkpoint_lifelog_and_restore_reject_forged_binding ... ok
+test restore_rejects_any_checkpoint_payload_substitution ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/kernel.rs (wp16-target/runtime-v3/debug/deps/kernel-16f5275416387d37)
+
+running 13 tests
+test topology_rejects_mismatched_port_types ... ok
+test topology_rejects_missing_dependencies_before_start ... ok
+test topology_rejects_cycles_before_start ... ok
+test bounded_reject_channel_reports_saturation ... ok
+test fatal_component_exit_is_observable_by_process_owner ... ok
+test startup_and_shutdown_follow_dependency_order ... ok
+test corrupt_capsule_fails_closed_during_shutdown ... ok
+test continuity_generation_advances_across_fresh_kernel_runs ... ok
+test proof_waits_for_all_items_instead_of_sleeping ... ok
+test shutdown_deadline_aborts_non_cooperative_component ... ok
+test shutdown_remains_responsive_during_restart_backoff ... ok
+test restart_policy_rebuilds_failed_component ... ok
+test representative_topology_promotes_events_and_clock_authority ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/live_continuity.rs (wp16-target/runtime-v3/debug/deps/live_continuity-15cfe9fa4e3fdc55)
+
+running 8 tests
+test live_snapshot_schema_is_stable ... ok
+test minimum_generation_refuses_rollback_or_missing_state ... ok
+test remote_shutdown_request_cannot_bypass_checkpoint ... ok
+test renamed_checkpoint_cannot_spoof_the_signed_generation ... ok
+test forged_manifest_is_refused ... ok
+test validly_signed_broken_predecessor_chain_is_refused ... ok
+test signed_live_checkpoint_round_trips ... ok
+test legacy_generation_can_upgrade_into_a_current_signed_lineage ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/observability.rs (wp16-target/runtime-v3/debug/deps/observability-9f73b38ec8bdf693)
+
+running 21 tests
+test observability_terminate_vector_child_helper ... ok
+test master_log_auditor_accepts_complete_records_regardless_of_physical_order ... ok
+test master_log_auditor_rejects_bad_sequences_errors_and_missing_drain ... ok
+test master_log_auditor_scopes_to_run_window_and_structured_severity ... ok
+test master_log_auditor_accepts_wp12_clean_report_shape ... ok
+test master_log_auditor_accepts_exact_replay_and_rejects_conflicting_sequence_reuse ... ok
+test shell_installer_routes_native_windows_to_powershell_installer ... ok
+test vector_config_renders_windows_safe_forward_slashed_paths ... ok
+test vector_config_declares_durable_master_otlp_and_bounded_buffers ... ok
+test windows_vector_installer_contract_is_pinned_and_verified ... ok
+test pinned_vector_validates_generated_master_log_config ... ok
+test runtime_vector_pipeline_exhausts_configured_startup_retries_truthfully ... ok
+test terminate_vector_child_reports_clean_for_cooperative_shutdown_signal ... ok
+test terminate_vector_child_reports_incomplete_after_bounded_force_kill ... ok
+test runtime_vector_pipeline_accepts_an_already_reaped_vector_during_cleanup ... ok
+test runtime_vector_pipeline_writes_auditable_master_log ... ok
+test runtime_vector_pipeline_propagates_master_log_audit_persistence_failure ... ok
+test runtime_vector_pipeline_recovers_uncheckpointed_crash_sequence_from_ingress ... ok
+test runtime_vector_pipeline_rotates_bounded_spool_before_startup ... ok
+test runtime_vector_pipeline_recovers_in_place_when_vector_child_exits ... ok
+test runtime_vector_pipeline_recovers_sequence_checkpoint_on_restart ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.78s
+
+     Running tests/observatory.rs (wp16-target/runtime-v3/debug/deps/observatory-3f093661dfe9fca7)
+
+running 6 tests
+test failed_acip_dispatch_releases_sequence_for_retry ... ok
+test observatory_websocket_rejects_acip_replay_after_reconnect ... ok
+test observatory_websocket_allows_public_reads_and_requires_login_for_writes ... ok
+test observatory_websocket_rejects_a_token_after_rotation ... ok
+test observatory_websocket_revokes_an_authenticated_session_after_rotation ... ok
+test observatory_websocket_rejects_bad_auth_and_client_data ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.06s
+
+     Running tests/openapi_contract.rs (wp16-target/runtime-v3/debug/deps/openapi_contract-b2b193bf15c6fbf1)
+
+running 6 tests
+test runtime_serves_machine_and_human_readable_openapi_docs ... ok
+test runtime_core_wss_documents_real_bidirectional_acip_boundary ... ok
+test openapi_operations_are_deterministic_client_generation_ready ... ok
+test openapi_paths_match_current_runtime_v3_axum_route_inventory ... ok
+test observatory_wss_documents_real_bidirectional_frame_boundary ... ok
+test runtime_and_observatory_openapi_contracts_are_valid_and_disjoint ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/parity.rs (wp16-target/runtime-v3/debug/deps/parity-c511cba8c99c5b8a)
+
+running 32 tests
+test footprint_comparison_reports_reduction_without_inventing_timings ... ok
+test harness_bounds_and_generation_binding_fail_closed ... ok
+test acip_a2a_cloud_network_proof_resolves_final_live_black_box_blocker ... ok
+test continuity_replay_recovery_proof_resolves_only_continuity_blocker ... ok
+test adaptive_learning_dag_proof_resolves_only_learning_blocker ... ok
+test live_v2_v3_process_backends_execute_one_shared_fixture ... ignored, requires explicit ADL_RUNTIME_V2_BIN and ADL_RUNTIME_V3_BIN
+test kernel_lifecycle_proof_resolves_only_kernel_lifecycle_blocker ... ok
+test governance_freedom_gate_aee_proof_resolves_only_governance_blocker ... ok
+test delegation_resources_proof_resolves_only_delegation_blocker ... ok
+test empty_fixture_sets_cannot_prove_cutover_readiness ... ok
+test final_cutover_decision_keeps_v2_default_after_live_parity_clear ... ok
+test observatory_consumes_runtime_v3_only_by_explicit_opt_in ... ok
+test matching_backend_failures_do_not_prove_equivalence ... ok
+test live_black_box_parity_classification_covers_matrix_without_counting_blockers_as_passed ... ok
+test replay_order_changes_are_defects_not_normalization_noise ... ok
+test divergences_are_explicit_and_defects_block_cutover ... ok
+test service_contracts_configuration_proof_resolves_only_service_contracts_blocker ... ok
+test stale_relation_labels_are_defects_instead_of_self_certifying ... ok
+test retained_report_covers_matrix_and_refuses_cutover ... ok
+test shared_fixtures_compare_canonically_and_in_stable_order ... ok
+test topology_backpressure_proof_resolves_only_topology_backpressure_blocker ... ok
+test release_proof_gate_closes_without_authorizing_default_cutover ... ok
+test v3_normalizer_rejects_substituted_state_identity ... ok
+test compatibility_facade_rejects_uncontracted_reports ... ok
+test compatibility_facade_forwards_and_rollback_changes_the_live_backend ... ok
+test compatibility_facade_defaults_to_v2_and_rolls_back ... ok
+test every_retained_module_closes_to_a_declared_capability ... ok
+test process_backend_rejects_unsupported_input_before_spawn_and_caps_output ... ok
+test divergent_live_backend_is_classified_as_a_defect ... ok
+test process_backend_bounds_fixture_input_and_avoids_duplex_pipe_deadlock ... ok
+test process_backend_kills_descendants_rejects_unsafe_ids_and_cleans_artifacts ... ok
+test process_backend_timeout_and_oversized_file_leave_no_artifacts ... ok
+
+test result: ok. 31 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/parity_b_live_kernel.rs (wp16-target/runtime-v3/debug/deps/parity_b_live_kernel-9dd1c086d98c7c05)
+
+running 26 tests
+test feature_dispositions_require_live_kernel_or_accepted_boundary ... ok
+test runtime_guardian::tests::invalid_configuration_and_spawn_failure_fail_closed ... ok
+test runtime_guardian::tests::missing_child_program_is_reported_without_restart ... ok
+test checkpoint_rejects_semantic_tampering_after_valid_encoding ... ok
+test curiosity_and_theory_of_mind_remain_non_authoritative ... ok
+test affect_control_rejects_adversarial_signal_authority ... ok
+test runtime_guardian::tests::configuration_exit_does_not_restart ... ok
+test runtime_guardian::tests::injects_configured_environment ... ok
+test runtime_guardian::tests::runtime_kernel_config_preserves_single_init_path ... ok
+test governed_cognition_cannot_bypass_shutdown_or_freedom_gate ... ok
+test adaptive_learning_consumes_exact_one_shot_mutation_authority ... ok
+test runtime_guardian::tests::surviving_descendants_make_even_zero_exit_terminal_and_forced ... ok
+test runtime_guardian::tests::captured_output_is_bounded ... ok
+test bounded_loop_resume_preserves_budgets_and_effect_identity ... ok
+test runtime_guardian::tests::restart_budget_exhaustion_is_terminal ... ok
+test runtime_guardian::tests::restarts_until_child_exits_successfully_and_captures_output ... ok
+test runtime_guardian::tests::shutdown_timeout_forces_process_group_before_reap ... ok
+test runtime_guardian::tests::restart_budget_does_not_reset_during_backoff_without_healthy_uptime ... ok
+test runtime_guardian::tests::unauthenticated_uptime_never_resets_restart_budget ... ok
+test runtime_guardian::tests::child_exit_terminates_orphaned_descendants_before_returning ... ok
+test runtime_guardian::tests::clean_shutdown_terminates_descendant_spawned_by_successful_child ... ok
+test runtime_guardian::tests::authenticated_lease_loss_restarts_and_then_exhausts_budget ... ok
+test live_graph_executes_through_guardian_canonical_ingress ... ok
+test runtime_guardian::tests::shutdown_closes_authenticated_lease_and_reaps_child ... ok
+test runtime_guardian::tests::shutdown_sends_sigterm_after_lease_cancellation_before_force ... ok
+test runtime_guardian::tests::restart_budget_resets_after_healthy_window ... ok
+
+test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.77s
+
+     Running tests/private_state.rs (wp16-target/runtime-v3/debug/deps/private_state-1b26092086bfe322)
+
+running 7 tests
+test forged_lineage_and_signature_are_rejected ... ok
+test discontinuous_lineage_is_rejected ... ok
+test signed_private_state_projection_hides_raw_payload_and_authorizes_redacted_view ... ok
+test projection_rejects_unaccepted_and_forged_records ... ok
+test equivocated_same_lineage_position_is_rejected ... ok
+test skipped_sequence_with_current_head_is_rejected ... ok
+test unauthorized_reads_raw_export_and_sanctuary_policy_fail_closed ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/protocol_adapters.rs (wp16-target/runtime-v3/debug/deps/protocol_adapters-c8eea640ced6725f)
+
+running 12 tests
+test endpoint_validation_rejects_plaintext_nonloopback_zero_timeout_and_missing_capability ... ok
+test protocol_frame_freshness_is_mac_bound_and_peer_verifiable ... ok
+test protocol_env_reports_client_key_surface_for_invalid_mtls_key_material ... ok
+test provider_dispatch_uses_real_authenticated_transport_and_caches_replay_result ... ok
+test acip_and_a2a_exchange_authenticated_frames ... ok
+test oversized_non_newline_response_fails_closed ... ok
+test cloud_bridge_capability_and_mtls_boundary_are_explicit ... ok
+test response_tamper_and_concurrent_replay_are_rejected ... ok
+test unauthorized_malformed_timeout_retry_and_shutdown_fail_closed ... ok
+test production_builder_returns_no_partial_executors_when_protocol_config_is_missing ... ok
+test stale_protocol_frame_is_rejected_without_local_replay_state ... ok
+test timeout_after_write_preserves_unknown_outcome_and_blocks_duplicate_side_effects ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/reasoning.rs (wp16-target/runtime-v3/debug/deps/reasoning-10a7193b8b0024b4)
+
+running 13 tests
+test graph_execution_uses_edges_and_merge_structure ... ok
+test graph_validation_is_bounded_canonical_and_insertion_independent ... ok
+test loop_converges_or_exhausts_at_exact_bounds ... ok
+test malformed_resume_state_cannot_overflow ... ok
+test resume_recomputes_semantics_and_rejects_rehashed_forgery ... ok
+test mutation_evidence_detects_tampering ... ok
+test reasoning_services_form_a_runnable_typed_topology ... ok
+test mutation_expiry_is_exclusive_and_evidence_requires_signature ... ok
+test mutation_gate_rejects_expiry_forgery_operation_drift_and_invalid_graph ... ok
+test mutation_gate_atomically_publishes_one_shot_grants_and_rolls_back ... ok
+test loop_enforces_live_cancellation_deadline_and_bounds ... ok
+test mutation_state_and_one_shot_evidence_survive_checkpoint_restore ... ok
+test adaptation_store_round_trips_through_checkpoint_coordinator ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/time.rs (wp16-target/runtime-v3/debug/deps/time-6d8d021d0656ff61)
+
+running 10 tests
+test clock_authority_is_initially_degraded ... ok
+test excessive_round_trip_remains_degraded ... ok
+test host_system_clock_is_an_immediately_qualified_portable_source ... ok
+test sampling_error_remains_degraded ... ok
+test excessive_positive_or_negative_offset_remains_degraded ... ok
+test in_flight_cancellation_remains_degraded ... ok
+test bounded_success_is_authoritative ... ok
+test blocking_client_adapter_produces_a_qualifiable_sample ... ok
+test trusted_time_refuses_degraded_state_and_advances_monotonically ... ok
+test timeout_remains_degraded ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s

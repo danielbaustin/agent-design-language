@@ -1,0 +1,8 @@
+{
+  "action": "issue_create",
+  "repository": "danielbaustin/agent-design-language",
+  "title": "[v0.91.8][csdlc-v2][review] Allow bounded SIP and STP correction during implemented review remediation",
+  "body": "## Problem\n\nExact pre-PR review can find stale SIP authority or STP acceptance wording after an issue reaches `implemented`, but typed `csdlc-edit` rejects the existing semantic replacement operations in that phase. This leaves generated lifecycle truth contradictory unless it is hand-edited, which is forbidden.\n\n## Required fix\n\nPermit bounded typed SIP authority and STP acceptance-criteria correction during `implemented` while an active claim exists. Preserve card ownership, digest/generation/CAS checks, renderer/schema validation, audit recording, and review invalidation.\n\n## Acceptance\n\n- `csdlc-edit` can replace SIP authority and STP acceptance criteria during `implemented`.\n- No generic field editing is enabled in implemented phase.\n- Mutations remain claim-, generation-, and digest-guarded and atomically re-render cards.\n- Reviewed, published, and merge-ready phases remain fail-closed.\n- Focused tests, format, strict Clippy, and exact review pass.\n- PR body includes `Closes #<issue>`.\n",
+  "labels": ["version:v0.91.8", "area:review", "type:bug", "track:roadmap"],
+  "operation_key": "wp16-implemented-sip-stp-review-remediation"
+}

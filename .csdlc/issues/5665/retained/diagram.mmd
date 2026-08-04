@@ -1,0 +1,15 @@
+flowchart TD
+  issue["Issue #5665"] --> api["adl-runtime API"]
+  api --> tls["Rustls TLS listener"]
+  tls --> wss["Authenticated WSS session"]
+  wss --> bidi["Bidirectional frames"]
+  wss --> rotation["Token rotation and revocation"]
+  wss --> shutdown["Graceful shutdown"]
+  api --> health["Observatory health states"]
+  api --> telemetry["Sink-bounded telemetry"]
+  health --> matrix["Feature and adapter proof matrix"]
+  telemetry --> matrix
+  bidi --> matrix
+  rotation --> matrix
+  shutdown --> matrix
+  matrix --> review["Exact pre-PR review"]

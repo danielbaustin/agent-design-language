@@ -1,0 +1,15 @@
+{
+  "schema": "adl.v0918.external_review_corpus.v1",
+  "status": "not_generated",
+  "repository": "danielbaustin/agent-design-language",
+  "base_branch": null,
+  "head_branch": null,
+  "target_sha": null,
+  "wp18_terminal_sha": null,
+  "canonical_handoff": "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+  "canonical_handoff_sha256": null,
+  "record_encoding": "canonical-json-utf8-v1",
+  "entry_count": 0,
+  "object_records_sha256": null,
+  "entries": []
+}

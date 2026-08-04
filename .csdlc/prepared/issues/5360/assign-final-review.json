@@ -1,0 +1,14 @@
+{
+  "issue": 5360,
+  "expected_generation": 13,
+  "expected_digest": "ef650cb167a639b63b83149333e2da4e4d24567da40c45ca67b5855de898016e",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "reviewer": "subagent:godel-019fbd06",
+  "assigned_by": "codex:5360-preparation-owner",
+  "scope": [
+    "CHANGELOG.md",
+    "README.md",
+    "REVIEW.md",
+    "docs"
+  ]
+}

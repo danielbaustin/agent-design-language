@@ -1,0 +1,12 @@
+{
+  "schema": "adl.wp10a.retained-live-proof-review.v1",
+  "reviewer": "validator:5501-retained-live-proof",
+  "review_ref": ".csdlc/prepared/issues/5501/validate-retained-live-proof.rb",
+  "result": "pass",
+  "scope": [
+    ".csdlc/evidence/5501/retained-live-proof.json",
+    ".csdlc/evidence/5501/live-run-manifest.json",
+    ".csdlc/evidence/5501/single-agent-comparison.json"
+  ],
+  "truth_boundary": "This is a deterministic evidence-admission check, not the required GPT-5.5 pre-PR review."
+}

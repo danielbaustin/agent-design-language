@@ -1,0 +1,12 @@
+{
+  "issue": 5764,
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "expected_generation": 10,
+  "expected_digest": "ca81d4bef4ef2d2022325e4774e06ea7abdfcc461f619dbc59efed89be502254",
+  "now_unix_seconds": 1785576935,
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Protect the operator-editable HTML Observatory Runtime v3 endpoint configuration file requested after readiness wiring.",
+  "add_protected_paths": [
+    "demos/html-observatory/runtime-v3.config.json"
+  ]
+}

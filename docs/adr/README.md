@@ -12,6 +12,10 @@ The v0.91.7 ADR set is indexed by
 Chronosense/Memory Palace disposition; it must not be promoted without the
 implementation evidence named by that record.
 
+ADR 0052 through ADR 0058 record the architecture decisions accepted by the
+v0.91.8 clean-room, Runtime v3, C-SDLC v2, reversible-cutover, and Memory
+Palace proof-handoff work.
+
 ## Accepted Records
 
 - `0001-determinism.md`
@@ -60,7 +64,15 @@ implementation evidence named by that record.
 - `0048-runtime-observability-and-otel-boundary.md`
 - `0049-runtime-soak2-pre-v092-readiness-boundary.md`
 - `0050-scheduler-provider-local-agent-delegation-boundary.md`
+- `0052-adl-v2-modular-execution-architecture.md`
+- `0053-portable-signed-records-and-external-trust.md`
+- `0054-runtime-v3-guardian-owned-kernel-and-api-boundary.md`
+- `0055-runtime-v3-unified-redb-state.md`
+- `0056-c-sdlc-v2-sole-lifecycle-authority.md`
+- `0057-reversible-adl-v2-default-and-rollback.md`
+- `0058-memory-palace-context-handoff-architecture.md`
 
 ## Deferred Records
 
-- `0051-chronosense-and-memory-palace-adr-disposition.md`
+- `0051-chronosense-and-memory-palace-adr-disposition.md` consumed by ADR 0058
+  for the Memory Palace decision; retained as the deferred-disposition record.

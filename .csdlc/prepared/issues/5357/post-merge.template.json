@@ -1,0 +1,11 @@
+{
+  "schema": "adl.v0918.external_review_post_merge.v1",
+  "target_sha": null,
+  "merge_sha": null,
+  "corpus_sha256": null,
+  "dispatch_receipt_sha256": null,
+  "review_output_sha256": null,
+  "required_checks": {},
+  "typed_synthesis_recorded": false,
+  "wp20_release_authorized": false
+}

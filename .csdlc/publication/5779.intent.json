@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5779,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5779-standalone-cleanup",
+  "title": "[v0.91.8][csdlc-v2] Add standalone safe cleanup and terminal compatibility",
+  "body": "## Summary\n\n- add standalone typed `csdlc-clean` classification and non-forced worktree removal\n- fail closed for dirty, missing, relocated, primary, symlinked, identity-drifted, and concurrent cleanup\n- add read-only optional-receipt compatibility indexing and fixed-authority validation for the 114-issue v0.91.8 terminal census\n- register `csdlc-v2-clean` as the eleventh authoritative typed operator route\n\n## Validation\n\n- `cargo test --manifest-path csdlc-v2/Cargo.toml --locked`\n- `cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_cleanup` (9 passed)\n- `cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate10a` (16 passed)\n- `cargo clippy --manifest-path csdlc-v2/Cargo.toml --all-targets --locked -- -D warnings`\n- independent exact-head review: PASS, zero findings\n\nCloses #5779",
+  "draft": false,
+  "revision": "git-blake3:77b280acffdb469c4c7ab7c09d68e61ba2bd5fea:0d377eb4d06fc68f7845ac92ea94b221b44a6ec602916c90eec5aeefad8e9a89",
+  "commit_sha": "77b280acffdb469c4c7ab7c09d68e61ba2bd5fea"
+}

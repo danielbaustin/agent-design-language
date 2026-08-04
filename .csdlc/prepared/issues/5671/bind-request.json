@@ -1,0 +1,25 @@
+{
+  "issue": 5671,
+  "base_branch": "main",
+  "branch": "codex/5671-anthropic-opus-5",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5671-anthropic-opus-5",
+    "owner": "codex:5671-execution",
+    "generation": 1,
+    "acquired_unix_seconds": 1784851200,
+    "expires_unix_seconds": 1785456000,
+    "heartbeat_unix_seconds": 1784851200,
+    "branch": "codex/5671-anthropic-opus-5",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5671",
+      ".csdlc/locks/5671.lock",
+      ".csdlc/prepared/issues/5671",
+      "adl/src/provider/profiles.rs",
+      "adl/src/provider/mod.rs",
+      "adl/src/cli/provider_cmd.rs"
+    ],
+    "purpose": "Implement and validate the Claude Opus 5 provider profile and setup route"
+  }
+}

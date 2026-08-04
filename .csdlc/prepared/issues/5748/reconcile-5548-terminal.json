@@ -1,0 +1,9 @@
+{
+  "issue": 5548,
+  "expected_initialization_digest": "dd8bbd7e72fcac523e678ee42361ce5864464fe5c54829e6fd1030feaadedcce",
+  "expected_branch": "codex/5748-terminal-recovery",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5748",
+  "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+  "reason": "Materialize the valid #5548 closed-no-PR superseded receipt in the dedicated #5748 authority projection.",
+  "follow_ups": []
+}

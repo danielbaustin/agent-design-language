@@ -54,8 +54,7 @@ Useful additional inputs:
 
 1. Resolve the concrete issue/branch target.
 2. Confirm the execution output record is present and truthful.
-3. Prefer repo-native finish commands:
-   - `adl/tools/pr.sh finish`
+3. Use typed `csdlc-validate`, `csdlc-review`, and `csdlc-publish` requests.
 4. Validate the declared staged paths and PR metadata.
 5. Publish or update the draft PR surface.
 6. Record the janitor/shepherding handoff for the active issue session:

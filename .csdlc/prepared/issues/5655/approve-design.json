@@ -1,0 +1,7 @@
+{
+  "issue": 5655,
+  "expected_generation": 0,
+  "expected_digest": "dd2e7c7fefadcb7a2be88b1060bb56e2d680c056e5a2d319128115f140a200f1",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "reviewer": "operator:5655"
+}

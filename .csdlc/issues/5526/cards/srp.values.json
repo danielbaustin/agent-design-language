@@ -1,0 +1,35 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5526,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-09][provider] Add Kimi and current agentic model providers",
+    "slug": "v0918-provider-expansion",
+    "version": "v0.91.8",
+    "generation": 24
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/evidence/5526/implementation/provider-expansion.log\nadl/src/provider/http_family.rs\nadl/src/provider/mod.rs\nadl/src/provider/profiles.rs\nadl/src/provider_substrate.rs\nadl/tools/check_coverage_impact.sh\nadl/tests/provider_tests/http_family.rs\nadl/tests/provider_tests/profiles.rs",
+      "review_revision": "git-blake3:ad1466d02a1f0a00d9f15b51c730c3c5b451f994:c3eaac652ab0ba62457ff221d3120501802c7f558864ec4623eb0de343e8e9fc",
+      "reviewer": "codex:review_5632",
+      "review_prompts": [
+        "Are vendor identities distinct even when wire protocol is shared?",
+        "Can any secret, provider credential, or unredacted provider output enter retained evidence?",
+        "Can an alias silently change execution identity after a run is recorded?",
+        "Is discovery bounded and snapshot-backed rather than required for replay?",
+        "Are direct-provider proofs separated from OpenRouter and local-model proofs?",
+        "Does scheduler/model-role selection remain advisory rather than workflow authority?",
+        "Is execution gated by live WP-09 merge plus ancestry rather than receipts?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "No live provider calls or credentials were used; hosted endpoint behavior remains deferred to credentialed integration proof."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

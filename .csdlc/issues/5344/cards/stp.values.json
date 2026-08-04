@@ -1,0 +1,67 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5344,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-12] Run opt-in soak and prove rollback",
+    "slug": "v0918-wp12-opt-in-soak-rollback",
+    "version": "v0.91.8",
+    "generation": 47
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare a durable reviewed execution packet and dependency gate for WP-12; do not run the soak or rollback harness, mutate a selector, implement product behavior, open a PR, publish, cut over, delete code, use AWS/raw gh, or edit Runtime v2.",
+      "deliverables": [
+        "All six current-registry typed cards with exact scope, authority, dependencies, and no-deferral truth",
+        "Reversible soak/rollback design and Mermaid diagram",
+        "Exact #5350/#5361 live-merge, typed-closeout, retained-receipt, and ancestry gate",
+        "Manifest-driven local, CI, Runtime v3, provider-disposition, and demo soak contract",
+        "Successful-selection and failed-selection exact rollback proof contract",
+        "Selector failure-preservation and rollback verification matrix",
+        "COTS decision, protected paths, LoC/module/test/time budgets, PVF classes, and exact-review plan",
+        "Normalized redacted exact-revision report and reviewed handoff gate to #5343"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Product execution starts only when #5350 and #5361 are each GitHub merged, typed closed_out with no active claim, backed by a retained merged terminal receipt, and the receipt merge SHA is ancestral to the exact #5344 revision",
+        "AC-2: One canonically ordered immutable manifest identifies every local, CI, Runtime v3, provider-disposition, demo, negative, and rollback scenario with exact input, command, expected claim class, timeout, and artifact digest",
+        "AC-3: The harness snapshots prior selector bytes, digest, schema, generation, executable digest, and installation receipt, verifies an isolated root, and performs opt-in only through the authoritative locked compare-and-swap selector interface",
+        "AC-4: Successful selection, failed selection, failed soak, stale expectation, invalid or missing receipt, lock contention, interruption, and verification mismatch prove byte-preserving failure or explicit rollback through the same selector transaction",
+        "AC-5: Every path that selects the opt-in generation ends by re-reading and proving exact restoration of the prior selector bytes and digest; restoration failure blocks #5343, WP-13, publication, and closeout",
+        "AC-6: The retained report is deterministic, repo-relative, redacted, exact-revision and exact-tool-version bound, and distinguishes live, local or mock, credential-blocked, not-applicable, pass, fail, and non-claim dispositions without production overclaim",
+        "AC-7: #5344 never changes the default generation, never edits selector storage directly, never edits Runtime v2, and hands off to #5343 only after exact review accepts soak, rollback, compatibility-window, and residual-risk evidence",
+        "AC-8: Preparation, dependency, rollback, soak, budget, CI, and post-merge PVF lanes are executable and complete with no deferred acceptance; orchestration stays within 800 nonblank lines, tests and fixtures within 1,200, modules below 500, and 120/300/1800/3600-second budgets unless exact reviewed variance is recorded"
+      ],
+      "dependencies": [
+        "#5350 WP-11 live merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+        "#5361 Runtime v3 acceptance live merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+        "#5345 authoritative selector and installer public interface available as a read-only dependency on current main",
+        "Reviewed parity classifications and accepted Runtime v3 scenarios available at exact revisions",
+        "Child #5343 remains blocked until #5344 exact evidence is reviewed and accepted"
+      ],
+      "repo_inputs": [
+        "AGENTS.md",
+        "GitHub issue #5344 source prompt",
+        "docs/templates/prompts/current.json",
+        "csdlc-v2/operator/generation-selector.json",
+        "docs/milestones/v0.91.8/DESIGN_v0.91.8.md",
+        "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+        "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+        "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+        "docs/milestones/v0.91.8/features/DELETION_AND_CUTOVER_v0.91.8.md",
+        "future retained closeout receipts and merged revisions for #5350 and #5361",
+        "future reviewed selector interface from #5345 and accepted scenario manifests from #5350/#5361"
+      ],
+      "non_goals": [
+        "Default generation selection or implementation of child #5343",
+        "Selector, installer, language, compiler, engine, records, provider, governed-tool, Runtime, or C-SDLC implementation",
+        "Incumbent ADL or Runtime v2 source changes, deletion, copying, linking, or cleanup",
+        "AWS, cloud provisioning, live credential acquisition, raw provider payload retention, or production-provider claims from mock evidence",
+        "WP-13 deletion, integrated release, milestone closeout, or v0.92 handoff",
+        "Any product implementation, soak execution, selector mutation, publication, PR, or closeout during this preparation task"
+      ]
+    }
+  }
+}

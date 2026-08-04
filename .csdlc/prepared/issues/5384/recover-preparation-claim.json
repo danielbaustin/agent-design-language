@@ -1,0 +1,24 @@
+{
+  "issue": 5384,
+  "expected_claim_id": "claim-5384-v0918-wp14a-preparation-only",
+  "expected_generation": 1,
+  "now_unix_seconds": 1785344832,
+  "replacement": {
+    "id": "claim-5384-v0918-wp14a-preparation-refresh",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 1,
+    "acquired_unix_seconds": 1785344832,
+    "expires_unix_seconds": 1785949632,
+    "heartbeat_unix_seconds": 1785344832,
+    "branch": "codex/5384-v0918-wp14a-preparation-bound",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5384",
+      ".csdlc/locks/5384.lock",
+      ".csdlc/prepared/issues/5384"
+    ],
+    "purpose": "Refresh WP-14A preparation after operator scheduling decision: accept the platform before deferred WP-13 deletion, record the deferral before internal review #5356, and perform no implementation or publication."
+  },
+  "recovery_actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The preparation-only lease expired while WP-12 was executing; recover the same issue-local scope to record the operator-authorized WP-13 deferral and make WP-14A executable."
+}

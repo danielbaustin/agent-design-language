@@ -1,0 +1,263 @@
+{
+  "issue": 5691,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5691/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5691/diagram.mmd",
+  "design_reviewer": "operator:issue-5691-body",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5691-runtime-v3-vector-otel",
+    "owner": "codex:5691-runtime-v3-vector-otel",
+    "generation": 0,
+    "acquired_unix_seconds": 1785120116,
+    "expires_unix_seconds": 1785724916,
+    "heartbeat_unix_seconds": 1785120116,
+    "branch": "codex/5691-runtime-v3-vector-otel",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5691",
+      ".csdlc/locks/5691.lock",
+      ".csdlc/prepared/issues/5691",
+      ".csdlc/evidence/5691",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/observability.rs",
+      "adl-runtime-kernel/src/telemetry.rs",
+      "adl-runtime-kernel/tests/configuration.rs",
+      "adl-runtime-kernel/tests/observability.rs",
+      "adl-runtime-kernel/vector/runtime-v3.yaml"
+    ],
+    "purpose": "Implement Runtime v3 tracing to pinned Vector OTEL/durable master logging parity"
+  },
+  "initial": {
+    "title": "[v0.91.8][runtime-v3][observability] Integrate tracing with Vector durable master logging",
+    "slug": "runtime-v3-vector-otel-master-log",
+    "version": "v0.91.8",
+    "goal": "Make production Runtime v3 emit through Rust tracing into one pinned Vector pipeline with durable master logging and Runtime v2 OTEL parity.",
+    "required_outcome": "Runtime v3 has real Vector-owned durable logs, OTLP logs/traces/metrics export, status/API exposure, failure observability, and a clean-log auditor.",
+    "declared_scope": [
+      "adl-runtime-kernel Runtime v3 observability implementation",
+      "pinned Vector config and validation tests",
+      "issue-local evidence under .csdlc/evidence/5691"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Production Runtime v3 installs tracing once and emits structured events into Vector without silent subscriber absence.",
+      "AC-2: Vector is the only general log writer/router; no custom logging facade, custom rotation, Python wrapper, or duplicate master JSONL writer is introduced.",
+      "AC-3: A canonical append-only master log is produced under an explicit absolute state root with Vector-owned retention and buffering.",
+      "AC-4: Errors carry runtime, guardian, process, lifecycle, component, operation, reason, error chain, revision, trace, span, and parent context.",
+      "AC-5: Secrets are redacted before durable and remote output, including adversarial regression coverage.",
+      "AC-6: Normal shutdown drains; Vector startup/death/restart/export failure is observable and fails closed where appropriate.",
+      "AC-7: Runtime v2 OTEL parity exists for OTLP/HTTP endpoint and timeout config, service resource attrs, trace/span/parent propagation, logs/traces/metrics, status/API exposure, service env propagation, and durable export failures.",
+      "AC-8: Vector exports real OTLP logs, traces, and metrics with bounded batching, retry/backoff, disk buffering, endpoint health checks, and acknowledged local durable output.",
+      "AC-9: Clean-log auditor fails on malformed records, sequence gaps, correlation mismatch, unexplained restart, panic/error/degraded/unavailable markers, and incomplete drain.",
+      "AC-10: WP-12 can consume the Vector master log for lifecycle acceptance without a custom harness log writer."
+    ],
+    "authority_boundary": [
+      "Use existing Rust tracing, tracing-subscriber, Axum/Tokio, and pinned Vector; do not add a parallel logging framework.",
+      "Do not touch the #5344 lifecycle harness path.",
+      "All evidence and generated logs for this issue live under the issue worktree, never /private/tmp."
+    ],
+    "task_boundary": "Implement Runtime v3 observability parity only; no observatory HTML/UI, no legacy deletion, no provider behavior changes.",
+    "deliverables": [
+      "Runtime v3 observability module",
+      "production startup wiring",
+      "Vector config",
+      "status/API exposure",
+      "clean-log auditor",
+      "focused tests and retained evidence",
+      "ready PR"
+    ],
+    "dependencies": [
+      "repo-pinned .adl/bin/vector",
+      "Runtime v2 observability implementation",
+      "Runtime v3 Axum/Tokio control API",
+      "tracing and tracing-subscriber crates"
+    ],
+    "repo_inputs": [
+      "GitHub issue #5691 body",
+      "adl-runtime/src/observability.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/telemetry.rs",
+      "adl-runtime-kernel/vector/runtime-v3.yaml"
+    ],
+    "non_goals": [
+      "observatory HTML/UI work",
+      "Python wrappers or servers",
+      "custom log rotation",
+      "duplicate general JSONL master writer",
+      "fixture-only or degraded acceptance",
+      "legacy runtime deletion"
+    ],
+    "operator_constraints": [
+      "never write tracked changes on main",
+      "never use /private/tmp",
+      "use typed C-SDLC v2 lifecycle tools",
+      "use repo-native GitHub tools and approved token resolver",
+      "one bounded pre-PR review"
+    ],
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Bind #5691 worktree, verify Runtime v2 parity source, and establish protected paths",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-7"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Implement Runtime v3 tracing subscriber, Vector lifecycle, config, redaction, status/API, and auditor",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8",
+          "AC-9",
+          "AC-10"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run real pinned-Vector proof, strict Clippy, exact-head review, fixes, and ready PR",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8",
+          "AC-9",
+          "AC-10"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "Vector owns durable and remote routing",
+      "Runtime stdout/stderr machine/human contracts remain preserved",
+      "pipeline failures are first-class runtime health evidence",
+      "no missing capability is reported as healthy or degraded success",
+      "proof logs are issue-local"
+    ],
+    "risks": [
+      "accidentally recreating a custom logger instead of Vector-owned durability",
+      "OTLP proof becoming fixture-only",
+      "status API overclaiming remote export health",
+      "Windows path or process-lifecycle differences",
+      "scope collision with WP-12 lifecycle harness"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "protected path collision with an active owner",
+      "pinned Vector binary missing or wrong version",
+      "Vector cannot validate the generated config",
+      "real OTLP receiver exchange cannot be proven without widening scope",
+      "strict Clippy or exact-head review finds unresolved production blockers"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "runtime-v3-observability-focused",
+        "proof_role": "Rust unit/integration proof for tracing, Vector config, status, redaction, drain, and auditor",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8",
+          "AC-9",
+          "AC-10"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 1200,
+        "budget_tokens": 10000,
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "adl-runtime-kernel/Cargo.toml",
+          "--target-dir",
+          "target",
+          "--test",
+          "observability"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-clippy",
+        "proof_role": "strict Rust lint proof for touched Runtime v3 crate",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-10"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 1200,
+        "budget_tokens": 6000,
+        "argv": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "adl-runtime-kernel/Cargo.toml",
+          "--target-dir",
+          "target",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      },
+      {
+        "lane": "pinned-vector-proof",
+        "proof_role": "real repo-pinned Vector config validation and local output/OTLP exchange proof",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 1200,
+        "budget_tokens": 6000,
+        "argv": [
+          "/Users/daniel/git/agent-design-language/.adl/bin/vector",
+          "validate",
+          "--config-yaml",
+          "adl-runtime-kernel/vector/runtime-v3.yaml"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on missing Vector, invalid config, remote/export-health overclaim, unredacted secret, incomplete drain, malformed log, or exact-head review finding.",
+    "review_prompts": [
+      "Verify Runtime v3 uses existing tracing plus pinned Vector, not a custom logging facade or duplicate master writer.",
+      "Verify Vector owns durable output, OTLP logs/traces/metrics export, buffering, retry, redaction, drain, and failure observability.",
+      "Verify Runtime v2 OTEL parity and status/API exposure are real, not fixture-only or degraded acceptance.",
+      "Verify all tests and evidence are issue-local and do not touch the #5344 lifecycle harness path."
+    ],
+    "review_scope": "Runtime v3 observability implementation, Vector config, status/API exposure, clean-log auditor, and focused proof evidence.",
+    "plan_summary": "Implement production Runtime v3 tracing-to-Vector observability parity with one pinned Vector pipeline, durable master log, OTLP export proof, redaction, drain/failure observability, and clean-log auditing; review once before publishing."
+  }
+}

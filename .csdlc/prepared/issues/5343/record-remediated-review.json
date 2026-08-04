@@ -1,0 +1,47 @@
+{
+  "schema": "csdlc.review_record_request.v1",
+  "issue": 5343,
+  "expected_generation": 16,
+  "expected_digest": "6bfb2b4fcfd2217ccf6e70e0a0fa6d5039574afa263f0ca11b0a84f669c79c73",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "actor": "subagent:gpt-5.5:Anscombe",
+  "evidence": {
+    "reviewer": "subagent:gpt-5.5:Anscombe",
+    "scope": [
+      ".csdlc/issues/5343",
+      ".csdlc/prepared/issues/5343",
+      "docs/milestones/v0.91.8/evidence/wp12/cutover-5343/report.json",
+      "docs/milestones/v0.91.8/evidence/wp12/cutover-handoff-5344.v1.json",
+      "adl-v2/tools/install-adl-v2.sh",
+      "adl-v2/crates/adl-cli/src/main.rs"
+    ],
+    "reviewed_revision": "git-blake3:26457888a1c13abee54a8db7cd30ba15e25bbbbc:a36a58255d3f58d9583c6716786ca633e80257ddcd7c037e9f1ffbfc74a74af9",
+    "findings": [
+      {
+        "id": "P1-malformed-selector-transaction-not-proven",
+        "severity": "p1",
+        "summary": "The malformed-selector case now executes a real selector transaction against copied active state and verifies both malformed and primary selector bytes remain unchanged.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:26457888a1c13abee54a8db7cd30ba15e25bbbbc:a36a58255d3f58d9583c6716786ca633e80257ddcd7c037e9f1ffbfc74a74af9",
+        "route": null
+      },
+      {
+        "id": "P1-host-specific-default-target-path",
+        "severity": "p1",
+        "summary": "The proof target now defaults portably through issue or Cargo configuration and then the repository-relative target directory.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:26457888a1c13abee54a8db7cd30ba15e25bbbbc:a36a58255d3f58d9583c6716786ca633e80257ddcd7c037e9f1ffbfc74a74af9",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "The reviewer did not independently rerun the mutating transaction fault matrix; the conductor reran it at repair commit 8f5590dcd96fa173a84669b98c814a7d060c6882 and retained the passing exact report."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

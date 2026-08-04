@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: draft
+Status: complete
 
 ## Scope
 
@@ -40,11 +40,11 @@ Every actionable finding requires a terminal disposition.
 ## Residual Risk
 
 - Native unattended credentials remain operator-managed outside the repository; the accepted live proof used the approved authenticated Drive connector.
-- GitHub CI must rerun against the strict-Clippy-clean published head.
+- The recurring Google Drive mirror remains intentionally paused and this terminal closeout does not re-enable it.
 
 ## Review Result
 
-Revision: Some("git-blake3:97a6fe6e10b8d7b89dc13d01cdaac7dc17170050:aef968c237c59533ef426d45107820448b91abfcd88c65f841d4a4e47b984854")
+Revision: Some("git-blake3:67acb4415e0e2ef1bade7328d19ecd26702788c8:69218d03a353410a7c5c5e03cc3d8499bed51feef15b2dda5674a025c53ee949")
 
 Reviewer: Some("codex-subagent:review_5587_exact_head")
 

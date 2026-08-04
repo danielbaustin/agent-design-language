@@ -1,0 +1,15 @@
+{
+  "issue": 4761,
+  "card": "spp",
+  "expected_generation": 11,
+  "expected_digest": "0cb7793c5dc7f78e3125c315f792c7a929587651c5b3a13052397fd28c29d775",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Mark capability-envelope artifact packet step complete.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S2",
+    "status": "completed"
+  },
+  "fail_after_backup": false
+}

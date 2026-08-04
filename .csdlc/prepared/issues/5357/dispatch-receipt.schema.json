@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "adl.v0918.external_review_dispatch.v1",
+  "type": "object",
+  "required": [
+    "schema", "status", "review_performed", "release_approval_claimed", "lifecycle_authority",
+    "target_sha", "base_branch", "head_branch", "base_sha", "head_sha", "corpus_sha256",
+    "handoff_sha256", "prompt_sha256", "prompt_path", "corpus_selector_identity", "prompt_author_identity",
+    "prompt_selector_identity", "reviewer_identity", "provider_selector_identity", "provider",
+    "model", "process_owner_identity", "funder_identity", "retry_controller_identity",
+    "independence_statement", "conflict_disclosures", "dispatch_started_at", "dispatch_completed_at",
+    "provider_outcome", "degradation_state", "attempts", "terminal_attempt", "attempts_sha256", "output_path",
+    "output_bytes", "output_sha256"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"enum": ["ready_to_dispatch", "completed", "failed"]}}},
+      "then": {
+        "properties": {
+          "target_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "head_branch": {"type": "string", "minLength": 1},
+          "base_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "head_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "corpus_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "handoff_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "prompt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "prompt_path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+          "corpus_selector_identity": {"type": "string", "minLength": 1},
+          "prompt_author_identity": {"type": "string", "minLength": 1},
+          "prompt_selector_identity": {"type": "string", "minLength": 1},
+          "reviewer_identity": {"type": "string", "minLength": 1},
+          "provider_selector_identity": {"type": "string", "minLength": 1},
+          "process_owner_identity": {"type": "string", "minLength": 1},
+          "funder_identity": {"type": "string", "minLength": 1},
+          "retry_controller_identity": {"type": "string", "minLength": 1},
+          "provider": {"type": "string", "minLength": 1},
+          "model": {"type": "string", "minLength": 1},
+          "independence_statement": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+    ,{
+      "if": {"properties": {"status": {"const": "completed"}}},
+      "then": {
+        "properties": {
+          "dispatch_started_at": {"type": "string", "minLength": 1},
+          "dispatch_completed_at": {"type": "string", "minLength": 1},
+          "provider_outcome": {"const": "success"},
+          "degradation_state": {"type": "string", "minLength": 1},
+          "attempts_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "output_path": {"const": ".csdlc/evidence/5357/review/output.json"},
+          "output_bytes": {"type": "integer", "minimum": 1},
+          "output_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "attempts": {"type": "array", "minItems": 1}
+          ,"terminal_attempt": {
+            "type": "object",
+            "required": ["attempt_id", "ordinal", "outcome"],
+            "properties": {
+              "attempt_id": {"type": "string", "minLength": 1},
+              "ordinal": {"type": "integer", "minimum": 1},
+              "outcome": {"const": "success"}
+            }
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "schema": {"const": "adl.v0918.external_review_dispatch.v1"},
+    "status": {"enum": ["not_dispatched", "ready_to_dispatch", "completed", "failed"]},
+    "review_performed": {"type": "boolean"},
+    "release_approval_claimed": {"const": false},
+    "lifecycle_authority": {"const": false},
+    "target_sha": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+    "base_branch": {"type": "string", "minLength": 1},
+    "head_branch": {"type": ["string", "null"]},
+    "base_sha": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+    "head_sha": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+    "corpus_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "handoff_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "prompt_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "prompt_path": {"type": ["string", "null"]},
+    "corpus_selector_identity": {"type": ["string", "null"]},
+    "prompt_author_identity": {"type": ["string", "null"]},
+    "prompt_selector_identity": {"type": ["string", "null"]},
+    "reviewer_identity": {"type": ["string", "null"]},
+    "provider_selector_identity": {"type": ["string", "null"]},
+    "provider": {"type": ["string", "null"]},
+    "model": {"type": ["string", "null"]},
+    "process_owner_identity": {"type": ["string", "null"]},
+    "funder_identity": {"type": ["string", "null"]},
+    "retry_controller_identity": {"type": ["string", "null"]},
+    "independence_statement": {"type": ["string", "null"]},
+    "conflict_disclosures": {"type": "array", "items": {"type": "string"}},
+    "dispatch_started_at": {"type": ["string", "null"]},
+    "dispatch_completed_at": {"type": ["string", "null"]},
+    "provider_outcome": {"type": ["string", "null"]},
+    "degradation_state": {"type": ["string", "null"]},
+    "retry_policy": {"const": "append_only_attempts; never overwrite or renumber"},
+    "attempt_required_fields": {
+      "const": ["attempt_id", "ordinal", "started_at", "completed_at", "outcome", "request_sha256", "response_sha256", "error_class"]
+    },
+    "attempts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["attempt_id", "ordinal", "started_at", "completed_at", "outcome", "request_sha256", "response_sha256", "error_class"],
+        "additionalProperties": false,
+        "properties": {
+          "attempt_id": {"type": "string", "minLength": 1},
+          "ordinal": {"type": "integer", "minimum": 1},
+          "started_at": {"type": "string", "minLength": 1},
+          "completed_at": {"type": "string", "minLength": 1},
+          "outcome": {"enum": ["success", "failed", "partial"]},
+          "request_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "response_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+          "error_class": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "terminal_attempt": {"type": ["object", "null"]},
+    "attempts_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "supersedes_receipt_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "supersedes_receipt_path": {"type": ["string", "null"], "pattern": "^\\.csdlc/evidence/5357/dispatch/history/[0-9]+-[0-9a-f]{64}\\.json$"},
+    "output_path": {"type": ["string", "null"]},
+    "output_bytes": {"type": ["integer", "null"], "minimum": 0},
+    "output_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+  }
+}

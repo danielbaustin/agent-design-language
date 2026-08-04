@@ -1,0 +1,22 @@
+{
+  "issue": 5701,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "1740ebed8413769214cef658d090a8a961a8329926740a1358950321bcedeb68",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "reason": "Record the single consolidated proving validation after Gemini remediation and live runtime restart.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test-and-clippy",
+        "runtime-v3-openapi-focused-suite"
+      ],
+      "purpose": "Prove the versioned route inventory, typed OpenAPI contracts, real Observatory and ACIP WSS behavior, strict Rust quality, clean diff, live HTTPS documentation, authenticated health and metrics, and ready Vector observability pipeline.",
+      "outcome": "passed",
+      "evidence_ref": "Kernel control 21/21; OpenAPI contracts 6/6; Observatory WSS 5/5; runtime API docs 2/2; runtime API WSS 2/2; ACIP 5/5; strict kernel Clippy passed; git diff --check passed; live https://localhost:20997 returned 200 for both Swagger UIs and both specs, authenticated health observability_ready=true, authenticated metrics health=ready, and zero ERROR/FATAL master-log events."
+    }
+  }
+}

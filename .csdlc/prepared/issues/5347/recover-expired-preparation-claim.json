@@ -1,0 +1,24 @@
+{
+  "issue": 5347,
+  "expected_claim_id": "claim-5347-v0918-wp13-external-band-deletion-preparation",
+  "expected_generation": 1,
+  "now_unix_seconds": 1785345900,
+  "replacement": {
+    "id": "claim-5347-release-only",
+    "owner": "codex:claim-hygiene",
+    "generation": 1,
+    "acquired_unix_seconds": 1785345900,
+    "expires_unix_seconds": 1785349500,
+    "heartbeat_unix_seconds": 1785345900,
+    "branch": "codex/5347-v0918-wp13-external-band-deletion",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5347",
+      ".csdlc/locks/5347.lock",
+      ".csdlc/prepared/issues/5347"
+    ],
+    "purpose": "Recover expired preparation claim solely for release while WP-13 is deferred"
+  },
+  "recovery_actor": "codex:claim-hygiene",
+  "reason": "WP-13 is deferred until immediately before internal review #5356"
+}

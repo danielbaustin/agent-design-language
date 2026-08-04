@@ -1,0 +1,119 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5332,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][tooling] Classify and fix Unity ILPP GetDomainName loop in observatory batch proof",
+    "slug": "v0918-wp15-unity-ilpp-getdomainname-loop",
+    "version": "v0.91.8",
+    "generation": 20
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 2,
+      "summary": "Extract the ILPP classifier, prove it with deterministic fixtures, reproduce through #4741 safe staging, run a one-variable diagnostic matrix, apply only the isolated root-cause fix, and prove normal batch behavior.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Extract a focused progress-aware ILPP signature classifier and deterministic fixture harness",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-8",
+            "AC-10"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Use #4741 safe staging to reproduce the loop and retain exact non-secret baseline evidence",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-6",
+            "AC-9"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Run the smallest one-variable environment matrix needed to isolate wrapper, mutable state, host or domain identity, or Unity version",
+          "acceptance_ids": [
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S4",
+          "action": "Apply the minimal isolated root-cause fix or record the exact irreducible blocker and owner",
+          "acceptance_ids": [
+            "AC-7",
+            "AC-10"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S5",
+          "action": "Register all issue-owned paths in the validation selector and prove focused lane selection",
+          "acceptance_ids": [
+            "AC-10",
+            "AC-11"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S6",
+          "action": "Run focused fixtures and one safe normal-start regression, then record bounded review and WP-15 outcome truth",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4",
+            "AC-8",
+            "AC-9",
+            "AC-10",
+            "AC-11"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Only complete repeating ILPP signatures classify the loop",
+        "Semantic progress resets non-progress state",
+        "One diagnostic variable changes per matrix cell",
+        "The root-cause fix follows evidence rather than speculation",
+        "Repository binaries and approved staging remain authoritative"
+      ],
+      "risks": [
+        "Repeating ILPP logs can appear live while no semantic progress occurs",
+        "Changing multiple environment variables at once could produce a false root-cause attribution",
+        "A Unity version comparison can introduce unrelated import differences",
+        "The general wrapper overlaps #4741 and must remain narrowly partitioned",
+        "Host and domain evidence can leak machine-specific detail unless bounded"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 43200,
+        "total_tokens": 140000,
+        "validation_seconds": 7200
+      },
+      "stop_conditions": [
+        "#4741 cannot provide a safe staged-project mode",
+        "The loop cannot be reproduced from exact retained evidence or an approved staged run",
+        "Diagnosis requires broad host inspection or secret-bearing environment output",
+        "More than one matrix variable must change in a cell",
+        "The isolated fix belongs to #4739, #4741, Unity scene code, or another owner"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5332/retained/design.md",
+      "design_digest": "85859fde33a4a012111fadaae832d4d62a1ead894e213ecef7acad86708f8e79",
+      "diagram_ref": ".csdlc/issues/5332/retained/diagram.mmd",
+      "diagram_digest": "a62e9d1d8c7696ef0b12e4b5c99282b3a32c59e5bb5e89fdaa2570c26da0733a"
+    }
+  }
+}

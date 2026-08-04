@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5683,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][demo] Remediate flagship Observatory render artifacts and presentation proof",
+    "slug": "v0918-unity-observatory-visual-remediation",
+    "version": "v0.91.8",
+    "generation": 23
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/evidence/5683/LIVE_UNITY_PROOF.md\n.csdlc/evidence/5683/TOOLING_ANOMALIES.md\n.csdlc/evidence/5683/capture_unity_mcp_image.mjs\n.csdlc/evidence/5683/final-full-hd-game-view.png\n.csdlc/evidence/5683/final-qhd-game-view.png\n.csdlc/evidence/5683/raw-environment-full-hd-pass-3.png\n.csdlc/evidence/5683/raw-environment-qhd-pass-3.png\n.csdlc/evidence/5683/record-execution-request.json\n.csdlc/evidence/5683/record-validation-alignment-request.json\n.csdlc/evidence/5683/record-validation-contract-request.json\n.csdlc/evidence/5683/record-validation-diff-request.json\n.csdlc/evidence/5683/record-validation-live-unity-request.json\n.csdlc/issues/5683/audit.jsonl\n.csdlc/issues/5683/cards/sip.md\n.csdlc/issues/5683/cards/sip.values.json\n.csdlc/issues/5683/cards/sor.md\n.csdlc/issues/5683/cards/sor.values.json\n.csdlc/issues/5683/cards/spp.md\n.csdlc/issues/5683/cards/spp.values.json\n.csdlc/issues/5683/cards/srp.md\n.csdlc/issues/5683/cards/srp.values.json\n.csdlc/issues/5683/cards/stp.md\n.csdlc/issues/5683/cards/stp.values.json\n.csdlc/issues/5683/cards/vpp.md\n.csdlc/issues/5683/cards/vpp.values.json\n.csdlc/issues/5683/index.json\n.csdlc/locks/5683.lock\n.csdlc/prepared/issues/5683/advance-implemented.json\n.csdlc/prepared/issues/5683/design.md\n.csdlc/prepared/issues/5683/diagram.mmd\nadl/tools/test_v0916_unity_observatory_contract.sh\ndemos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryFlagshipStageBuilder.cs\ndemos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs",
+      "review_revision": "git-blake3:6a8b2175311f45642e255f4d41af8afd6b1ca630:eb2303a210af1579d18b45a03a6aa232e4050f09678259c6835b24ecddde3e05",
+      "reviewer": "Hooke",
+      "review_prompts": [
+        "Does either target-resolution hero frame retain any corrupted-looking cyan or green geometry, particle, material, or lighting artifact?",
+        "Are the architecture, terrain, camera, and lighting composition coherent and investor-presentable?",
+        "Does the operator shell remain fixed, legible, non-overlapping, and truthful about runtime state?",
+        "Does direct evidence prove the intended Unity project and scene rather than a repository-only approximation?",
+        "Does the proof index link the actual demo evidence rather than lifecycle metadata?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Game View sizing relies on undocumented UnityEditor reflection and may require maintenance after Unity upgrades.",
+        "The static contract test is source-oriented; behavioral confidence depends on the retained live Unity proof.",
+        "The scene remains intentionally sparse because problematic imported geometry was deactivated.",
+        "Runtime presentation remains fixture/contract-based, not proof of live CSM integration."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

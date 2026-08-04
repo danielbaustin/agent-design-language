@@ -1,0 +1,72 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4760,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][memory-palace] Prepare #4760 Memory Palace context-problem handoff",
+    "slug": "v0918-wp14-memory-palace-context-handoff-prep-4760",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Seed typed v2 preparation artifacts and leave execution to a later bound session.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Inspect existing #4760 task context and preserve the single-concern boundary.",
+          "acceptance_ids": [
+            "AC-2"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Generate minimal typed v2 cards, design, and diagram.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run focused csdlc-doctor and report prep-only handoff.",
+          "acceptance_ids": [
+            "AC-3"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Preparation does not implement or publish #4760.",
+        "Later execution must not close with planning-only claims.",
+        "v0.92 birthday claims remain proof-bound."
+      ],
+      "risks": [
+        "Legacy issue version labels may differ from the v0.91.8 preparation wave.",
+        "Later execution may need operator approval for blocker disposition."
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "A live claim collision appears.",
+        "The focused doctor fails on v2 state integrity.",
+        "The task requires implementation or GitHub mutation."
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/4760/retained/design.md",
+      "design_digest": "1c0974d04443fd8c73d72e6faf75bc9a3869ef45024f807cd7e8db982f42924a",
+      "diagram_ref": ".csdlc/issues/4760/retained/diagram.mmd",
+      "diagram_digest": "6824392dbb71e4ec147551d199e821bbebfaf8f84602d9590b666e1856e0b907"
+    }
+  }
+}

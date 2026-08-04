@@ -119,15 +119,16 @@ contracts it depends on.
 
 ## Current Repo Status
 
-Current roadmap planning truth, last verified 2026-07-18:
+Current roadmap planning truth, last verified 2026-08-01:
 - the feature-doc production wave is tracked as issue `#3779` with child
   issues `#3778`, `#3780`, `#3781`, and `#3782`
 - `v0.91.6` is the completed first pre-v0.92 readiness tranche
-- `v0.91.7` is the active closeout tail: WP-01 through WP-17 are closed,
-  including #4644 through merged PR #5539; WP-18, WP-19, WP-20, WP-21A, and WP-23
-  remain open, and closed WP-21/WP-22 are retained planning/review evidence
-- `v0.91.8` is the required reviewed platform-acceptance bridge; `v0.92`
-  consumes its exact-revision handoff rather than v0.91.7 prose directly
+- `v0.91.7` is retained implementation and proof history, not the active
+  closeout tail
+- `v0.91.8` is the active reviewed platform-acceptance bridge: WP-16 merged at
+  `2e9d2dd7c` with its integrated quality gate passing, WP-17 documentation
+  alignment is active, and WP-18 through WP-23 remain serial release-tail work
+- `v0.92` consumes the exact v0.91.8 handoff rather than v0.91.7 prose directly
 - `v0.92` remains the first true identity, continuity, and birthday milestone
 - `v0.95` remains MVP convergence and packaging, not first implementation of
   major cognitive or product systems
@@ -262,7 +263,7 @@ ADL already provides a serious platform baseline:
 | Milestone compression and repo visibility prototypes | Implemented baseline | `v0.90` compression and repo-visibility docs/proofs | Repo-visibility follow-on target: `v0.91.2`; fuller repo-cognition convergence target: `v0.95` |
 | HTML milestone dashboard and compression reporting | MVP-scoped | `docs/milestones/v0.95/features/HTML_MILESTONE_DASHBOARD_AND_COMPRESSION_REPORTING_v0.95.md` plus the milestone-dashboard tooling baseline | Dashboard/compression completion target: `v0.95` |
 | Runtime v2 foundation prototype | Implemented baseline | `v0.90.1` feature contracts, Runtime v2 WPs, integrated demo, and proof packet | Foundation complete; hardened by `v0.90.2` |
-| CSM Observatory visibility and operator-report surfaces | Implemented baseline; Runtime v3 live cutover unproven | visibility packet, static console, operator report, CLI bundle, command packet design, v0.90.2 operator report integration, v0.90.3 redacted projections, multimode UI architecture, inhabited flagship demo, `docs/milestones/v0.91.5/features/DEMO_AND_UNITY_OBSERVATORY_READINESS_v0.91.5.md`, and `docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md` | v0.91.8 #5590 must prove authenticated HTML Observatory consumption through configuration-driven Runtime v3 access; #4739/#4741/#5332 remain WP-14A Unity dispositions |
+| CSM Observatory visibility and operator-report surfaces | Implemented baseline with retained Runtime v3 parity proof | visibility packet, static console, operator report, CLI bundle, command packet design, v0.90.2 operator report integration, v0.90.3 redacted projections, multimode UI architecture, inhabited flagship demo, `docs/milestones/v0.91.5/features/DEMO_AND_UNITY_OBSERVATORY_READINESS_v0.91.5.md`, `docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md`, v0.91.8 #5590, #5701/#5722 source-route hardening, and WP-16 issue-outcome audit | #5590 proves authenticated HTML Observatory consumption through configuration-driven Runtime v3 access; WP-15 #5354 owns Unity proof issues #4739/#4741/#5332 independently of WP-14A; public cloud hosting remains unclaimed |
 | Runtime v2 hardening, recovery, quarantine, and expanded invariants | Implemented baseline | `v0.90.2` implementation docs, proof packets, tests, and demo matrix | Completed baseline by `v0.90.2` |
 | First bounded CSM run | Implemented baseline | `v0.90.2` integrated first-run demo, feature-proof coverage, CSM run packet, Observatory report | Completed baseline by `v0.90.2` |
 | Third-party review and review-quality gates | Implemented baseline | v0.90.1 WP-15A, v0.90.2 review-tail planning, review handoff packets, finding disposition | Release-tail completion target: every milestone through `v0.95` |
@@ -272,9 +273,9 @@ ADL already provides a serious platform baseline:
 | Governed tool calls and capability contracts | Implemented baseline | `docs/milestones/v0.90.5` Governed Tools v1.0 planning, Universal Tool Schema, ADL Capability Contract, and tool-to-capability compiler design | Completed baseline; benchmark and conformance expansion in `v0.91.2` |
 | Cognitive Compression Cost instrumentation | Implemented first pass | CCC v0 fixture extractor, generated comparison report, validation command, metric draft, and milestone-compression planning | Trace-backed metric completion target: `v0.91.1`; reporting completion target: `v0.95` |
 | Web-based code editor integration | MVP-scoped | `docs/milestones/v0.95/features/WEB_BASED_CODE_EDITOR_INTEGRATION_v0.95.md` plus the HTA editor-planning baseline | Editor/operator completion target: `v0.95` |
-| Reasoning graph baseline | Bounded Runtime v2 proof retained; Runtime v3 execution unproven; broader provenance MVP-scoped | `docs/milestones/v0.94/features/REASONING_GRAPH_BASELINE_v0.94.md`, closed #4694-#4697 proof, and v0.91.8 #5592 | #5592 must preserve live graph/loop/adaptation behavior before Runtime v2 deletion; broader reasoning/provenance completion remains v0.94 |
+| Reasoning graph baseline | Bounded Runtime v2 proof retained; Runtime v3 parity proof retained; broader provenance MVP-scoped | `docs/milestones/v0.94/features/REASONING_GRAPH_BASELINE_v0.94.md`, closed #4694-#4697 proof, v0.91.8 #5592, and WP-16 issue-outcome audit | #5592 preserves the bounded live graph/loop/adaptation parity path; broader reasoning/provenance completion remains v0.94 |
 | Signed trace and trace query | MVP-scoped | `docs/milestones/v0.94/features/SIGNED_TRACE_AND_TRACE_QUERY_v0.94.md` | Reasoning/provenance completion target: `v0.94` |
-| Wellbeing, affect, kindness, moral cognition, humor | Implemented Runtime v2 baseline; Runtime v3 affect control unproven | `v0.91` feature docs, Runtime v2 proof surfaces, demo matrix, feature-proof coverage, release evidence, ADR 0016, `docs/milestones/v0.91.7/features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md`, and v0.91.8 #5592 | #5592 must implement or explicitly disposition affect reasoning-control, preserve safe non-claims, and prove adversarial authority isolation before Runtime v2 deletion |
+| Wellbeing, affect, kindness, moral cognition, humor | Implemented Runtime v2 baseline; bounded Runtime v3 parity disposition retained | `v0.91` feature docs, Runtime v2 proof surfaces, demo matrix, feature-proof coverage, release evidence, ADR 0016, `docs/milestones/v0.91.7/features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md`, v0.91.8 #5592, and WP-16 issue-outcome audit | #5592 preserves affect reasoning-control as a bounded Runtime v3 parity surface with safe non-claims; subjective affect, consciousness, suffering, happiness, or unbounded self-improvement remain unclaimed |
 | Secure Agent Communication and Invocation Protocol | Implemented baseline plus active hardening | v0.90.5 ACIP planning plus v0.91 secure local Agent Comms, A2A boundary docs, proof coverage, and ADR 0017 | `v0.91.0` substrate complete; local hardening baseline completes in `v0.91.1` |
 | Inhabited runtime readiness | Implemented baseline | `docs/milestones/v0.91.1` WBS, sprint plan, issue-wave YAML, readiness docs, demo matrix, feature index, and completed WP issue wave | Completed baseline by `v0.91.1` |
 | Runtime/polis architecture alignment | Implemented baseline | `docs/milestones/v0.91.1/features/RUNTIME_POLIS_ARCHITECTURE.md` plus landed docs/runtime alignment from closed `WP-02` / `#2824` | Completed baseline by `v0.91.1` |
@@ -306,7 +307,7 @@ ADL already provides a serious platform baseline:
 | Security readiness and Continuous Adversarial Verification | Retained bounded implementation/proof and review remediation | v0.91.7 WP-12 packets, closed `#4656`-`#4660`, and closed remediation `#5404`/`#5406` | v0.92 may consume only the retained CAV, SSM, access, protocol, and validation claims. Broad release security remains gated by the closeout review chain. |
 | Curiosity Engine and Discovery Substrate | Bounded Runtime v2 cycle implemented/proven | closed `#4692`, `docs/milestones/v0.91.7/features/CURIOSITY_ENGINE_DISCOVERY_SUBSTRATE_v0.91.7.md`, and the WP-10 review packet | One governed discovery cycle is retained; autonomous or unbounded discovery is not claimed. |
 | Constructability Gate for shared ADL reality | Bounded Runtime v2 validator implemented/proven | closed `#4693`, `docs/milestones/v0.91.7/features/CONSTRUCTABILITY_GATE_v0.91.7.md`, and the WP-10 review packet | Construction-event, anchor, admissibility, and fail-closed proof is retained; broader shared-reality authority is not claimed. |
-| Reasoning graph, loop runtime, and `adl.skill.v1` | Bounded Runtime v2 implementation/proof retained; Runtime v3 parity required | closed `#4694`-`#4697`, WP-11 review and cognitive-control evidence packets, follow-ons `#4912`, `#5096`, `#5136`, and v0.91.8 `#5592` | Runtime v3 receives no parity credit from metadata or fixtures; #5592 must prove the live kernel path or block Runtime v2 deletion. Full adaptive-learning and final-standard convergence remain later work. |
+| Reasoning graph, loop runtime, and `adl.skill.v1` | Bounded Runtime v2 implementation/proof retained; Runtime v3 parity proof retained | closed `#4694`-`#4697`, WP-11 review and cognitive-control evidence packets, follow-ons `#4912`, `#5096`, `#5136`, v0.91.8 `#5592`, and WP-16 issue-outcome audit | Runtime v3 receives no parity credit from metadata or fixtures; #5592 supplies the bounded live kernel parity path. Full adaptive-learning and final-standard convergence remain later work. |
 | ACP / cognitive profiles runtime surface | Planned | `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md` | `v0.92` |
 | ACIP binary schema and WebSocket carrier | Planned | `docs/milestones/v0.91.6/features/ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md`, `docs/milestones/v0.91.7/features/ACIP_A2A_PROTOBUF_RESIDUALS_v0.91.7.md`, and `docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md` | `v0.92` binary/schema carrier; `v0.93` security; `v0.94` signed trace |
 | Identity, stable name, and continuity substrate | Planned | `docs/milestones/v0.91.6/features/IDENTITY_CONTINUITY_CAPABILITY_SELECTOR_BRIDGE_v0.91.6.md`, `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md`, and `docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md` | `v0.92` |
@@ -359,7 +360,7 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.91.4` | Completed Cognitive SDLC default-operation and hardening milestone: default-operation lifecycle, validator/doctor/conductor/editor alignment, Software Development Polis actor standing, shard ownership, tracked durable workflow records, signed trace proof, ObsMem handoff, repeatability metrics, validation-tail/proof-latency handling, Parallel Validation Fabric planning, and active-issue migration policy. |
 | `v0.91.5` | Review/tooling/provider/public-record pressure toward v0.92: AEE completion tranche, prompt-template workflow integration, multi-agent and provider reliability proof, public C-SDLC prompt records, and logging/observability follow-on setup. |
 | `v0.91.6` | First required pre-v0.92 readiness tranche: resilience/citizen persistence, logging/tooling proof-loop fixes, public prompt records, provider/model reliability, first ACIP/A2A/security decisions, and feature-doc issue-wave setup. |
-| `v0.91.7` | Active closeout tail after the implementation/demo/quality waves: bounded evidence exists for logging/OTel, goals/metrics, lifecycle tooling, validation/build throughput, scheduler/provider/local agents, Soak #2, signal operations, Observatory/Unity, Curiosity, Constructability, reasoning graph/loops/`adl.skill.v1`, security, guild/CodeFriend boundaries, and ACIP/A2A decisions. WP-17 closed through #4644 / PR #5539; remaining release truth belongs to WP-18, WP-19, WP-20, WP-21A, and WP-23. |
+| `v0.91.7` | Historical implementation and proof tranche: bounded evidence exists for logging/OTel, goals/metrics, lifecycle tooling, validation/build throughput, scheduler/provider/local agents, Soak #2, signal operations, Observatory/Unity, Curiosity, Constructability, reasoning graph/loops/`adl.skill.v1`, security, guild/CodeFriend boundaries, and ACIP/A2A decisions. Its WP-17 closed through #4644 / PR #5539; v0.91.8 owns the current release-truth alignment and handoff. |
 | `v0.91.8` | Required bridge for exact-revision ADL v2, Runtime v3, and C-SDLC v2 platform acceptance, deployment/cutover truth, rollback, and reviewed handoff into v0.92. |
 | `v0.92` | Identity-bearing agent substrate, stable names, cognitive profiles, model/provider capability contracts, continuity across runs, memory grounding, Memory Palace proof slice, witnesses, receipts, and the first true Gödel-agent birthday. |
 | `v0.93` | Constitutional citizenship, rights/duties, social contract, delegation/upstream delegation/IAM, standing/challenge/appeal governance, guilds, relationship model, reputation/trust, shared social memory, ToM/social cognition, security governance, and enterprise security for the ADL polis. |
@@ -508,7 +509,7 @@ practical long-lived runtime supervision:
 The truthful v0.90 story is implemented baseline, with Runtime v2 consuming
 those surfaces rather than replacing them.
 
-## Current Planning Focus: v0.91.7 Through v0.91.8 Before v0.92
+## Current Planning Focus: Finish v0.91.8 Before v0.92
 
 `v0.91.4` is no longer the active planning center in this feature list. Its
 role is the completed Cognitive SDLC default-operation hardening band that the
@@ -518,9 +519,9 @@ The current planning focus is the pre-v0.92 implementation/proof path through
 the required reviewed v0.91.8 bridge:
 
 - consume the completed `v0.91.6` readiness tranche truthfully
-- finish `v0.91.7` as the required implementation and integrated-proof tranche
-- pass v0.91.7 outputs through the reviewed v0.91.8 exact-revision handoff
-  before v0.92 consumes them
+- retain `v0.91.7` as historical implementation and proof input
+- finish the serial `v0.91.8` WP-17 through WP-23 review, remediation,
+  handoff, and release tail before v0.92 consumes the exact result
 - keep v0.92 as the first true identity/continuity/birthday milestone
 - keep v0.95 as convergence and packaging, not first implementation of major
   cognitive systems
@@ -561,14 +562,14 @@ to make the handoff reviewable:
 - first ACIP/A2A/security decisions
 - feature-doc production issue-wave setup
 
-It does not pretend to complete every required pre-v0.92 surface. Anything not
-integrated and proven in v0.91.6 must be completed in v0.91.7 or block v0.92
-with evidence and operator approval.
+It did not complete every required pre-v0.92 surface. Later v0.91.7 and v0.91.8
+work either integrated the remaining outcomes or retained explicit evidence and
+non-claim truth for the serial release tail.
 
 ### v0.91.7 - Required Pre-v0.92 Implementation And Proof Tranche
 
-`v0.91.7` is now in the closeout tail of the last pre-v0.92
-implementation/proof tranche:
+`v0.91.7` is retained as the historical implementation/proof tranche that
+v0.91.8 reviews and aligns before v0.92 consumption:
 
 - Curiosity Engine / Discovery Substrate
 - Constructability Gate

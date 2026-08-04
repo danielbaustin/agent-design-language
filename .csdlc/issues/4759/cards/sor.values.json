@@ -1,0 +1,56 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4759,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][activation] Implement v0.92 activation map from accepted deployed products",
+    "slug": "v0918-wp14-activation-map",
+    "version": "v0.91.8",
+    "generation": 19
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Implemented and validated the #4759 v0.91.8 WP-21 activation bridge/handoff artifact.",
+      "actual_changes": [
+        "Converted docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md from issue-routing text into the activation bridge with exact WP-14A baseline and accepted merge evidence.",
+        "Updated docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md to consume the #4759 bridge and name the downstream #4762 birth-witness handoff.",
+        "Updated docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md to identify the activation bridge boundary and non-claims.",
+        "Updated docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md to consume the v0.91.8 bridge without claiming v0.92 readiness.",
+        "Implemented the v0.91.8 activation map as a v0.92 consumption bridge backed by the accepted WP-14A platform ledger.",
+        "Updated v0.91.8 handoff docs and the v0.92 activation bridge ledger to consume the bridge without v0.92 readiness overclaims.",
+        "Normalized SIP/SPP/SOR execution truth through typed C-SDLC v2 card requests."
+      ],
+      "artifacts": [
+        "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+        "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+        "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+        "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md",
+        "docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md",
+        "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+        "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+        "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+        "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md",
+        ".csdlc/prepared/issues/4759/validate-activation-bridge.sh"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "bash",
+            ".csdlc/prepared/issues/4759/validate-activation-bridge.sh"
+          ],
+          "purpose": "focused docs/card activation bridge validation",
+          "outcome": "passed",
+          "evidence_ref": "activation-bridge-docs.log"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

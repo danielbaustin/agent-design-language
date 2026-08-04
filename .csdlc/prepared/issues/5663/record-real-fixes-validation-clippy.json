@@ -1,0 +1,19 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 22,
+  "expected_digest": "0a8e1eccf7b7613301e13cc7cec20db6d90025290adc3b67f85fe303b43a638b",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record strict Clippy proof after five PR #5669 fixes.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "clippy", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5663/target", "--all-targets", "--", "-D", "warnings"],
+      "purpose": "Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log"
+    }
+  },
+  "fail_after_backup": false
+}

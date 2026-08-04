@@ -1,0 +1,12 @@
+{
+  "issue": 5789,
+  "claim_id": "claim-5789-observatory-full-functionality",
+  "expected_generation": 2,
+  "expected_digest": "d9dc35c05a2a2dd42c8e10f8185af69a55e38b35287fc2ab8ba46c5f6e611285",
+  "now_unix_seconds": 1785778821,
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Protect the Runtime v3 OpenAPI route-inventory test that must track the new browser CORS preflight on /v1/control.",
+  "add_protected_paths": [
+    "adl-runtime-kernel/tests/openapi_contract.rs"
+  ]
+}

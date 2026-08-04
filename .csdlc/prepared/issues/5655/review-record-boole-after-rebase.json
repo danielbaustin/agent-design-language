@@ -1,0 +1,23 @@
+{
+  "issue": 5655,
+  "expected_generation": 13,
+  "expected_digest": "ef737665f9012b74782dd94f97ba88afe37240d5e36eb04b6a00177bd94fdffe",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "evidence": {
+    "reviewer": "Boole",
+    "scope": [
+      "csdlc-v2/src/github.rs",
+      "csdlc-v2/tests/gate_github_actions.rs",
+      ".csdlc/issues/5655/cards/sor.md",
+      ".csdlc/issues/5655/index.json"
+    ],
+    "reviewed_revision": "git-blake3:18798020d78d70b26937084f83edf89084c2567b:de3184f625db90eea82ebbe27516a5687b81433397629ce0f4c8418497d108c9",
+    "findings": [],
+    "residual_risks": [
+      "Review was read-only and did not rerun tests; validation evidence is the implementation owner run recorded in SOR after rebase."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

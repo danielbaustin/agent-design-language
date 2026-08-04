@@ -1,0 +1,26 @@
+{
+  "schema": "csdlc.review_record_request.v1",
+  "issue": 5352,
+  "expected_generation": 7,
+  "expected_digest": "cd1a463dc12cd5cb9514169f62abdd65a69c4d3272e09f0bdab609cc1a3e8a21",
+  "claim_id": "claim-5352-v0918-final-handoff",
+  "actor": "codex:wp21-final-handoff",
+  "evidence": {
+    "reviewer": "Wegener",
+    "scope": [
+      ".csdlc/issues/5352",
+      ".csdlc/evidence/5352",
+      ".csdlc/prepared/issues/5352",
+      "adl/src/csm_runtime_api.rs",
+      "docs/milestones/v0.91.8/handoff"
+    ],
+    "reviewed_revision": "git-blake3:226c8e2a411dbf03378012f0eb5e4d3c14a4b801:791a34139581809797997d21683aca6c5d16cb7cfcafeb908846d3ef74aa31b2",
+    "findings": [],
+    "residual_risks": [
+      "PR #5751 remains on an older head until this exact reviewed revision and its typed review metadata are pushed.",
+      "Any origin/main movement before merge requires an explicit ancestry refresh and current-head review truth."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

@@ -1,0 +1,872 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5701,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "59c6cd2d6e66f553641c5f276d2c1359029dba48b2f90a73191b22148d1a6261",
+  "phase": "closed_out",
+  "generation": 41,
+  "digest": "c71734686293d7dddea5ee0cbdfff1b912b565fdb27d39d64a6b5363c3b79598",
+  "claim": null,
+  "review_assignment": null,
+  "review": {
+    "reviewer": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+    "scope": [
+      "demos/html-observatory",
+      "adl/tools/validate_v0917_html_observatory.py",
+      "adl-runtime-kernel/tests/parity.rs",
+      "adl-runtime/tests/runtime_api_wss.rs",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/test_select_validation_lanes.sh",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+      "docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
+      "docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md",
+      "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/review/V0917_WP15_DEMO_CONVERGENCE_4642.md",
+      "docs/milestones/v0.91.7/review/demo_matrix_4691/4691-birthday-visible-demo-matrix-proof.md",
+      "docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json",
+      "docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.py",
+      "docs/reviews/v0.91.7/remaining-sprints-5403/RUNTIME_V3_LIVE_PARITY_REVIEW_5276.md"
+    ],
+    "reviewed_revision": "git-blake3:db41b249277a91140d4fd67bfc5bf898f4565774:17d3919116b2dcfd1fba8bb4152b670f3b2155c0a3fbbed2bc189c7d9808a9c0",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5701,
+    "pull_request": 5705,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5705",
+    "base": "main",
+    "head": "codex/5701-runtime-v3-openapi-contracts",
+    "revision": "git-blake3:db41b249277a91140d4fd67bfc5bf898f4565774:17d3919116b2dcfd1fba8bb4152b670f3b2155c0a3fbbed2bc189c7d9808a9c0",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5705,
+    "head_sha": "db41b249277a91140d4fd67bfc5bf898f4565774",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90729103830"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728885157"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728841278"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728842060"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728841495"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728841546"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728841598"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728454964"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728840863"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728841428"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728841764"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728841816"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728841536"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728841958"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728841929"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30497135105/job/90728841838"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5705,
+    "disposition": "merged",
+    "observed_sha": "db41b249277a91140d4fd67bfc5bf898f4565774",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5701.json",
+    "released_branch": "codex/5701-terminal-closeout",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5701",
+      ".csdlc/issues/5701",
+      ".csdlc/locks/5701.lock",
+      ".csdlc/prepared/issues/5701"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5701/retained/design.md",
+  "diagram_path": ".csdlc/issues/5701/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5701",
+      "revision": "fb04df48e1a0399f026569c6ac15130b21c809ead6d8a14219a78bc10b617aae"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "aeb60d1ca088c77dc14609aa923bcfe8e2a3dfd32583b102f0190a64c5b50a3a",
+      "rendered_digest": "3aceddc286d3979fc84fc785cf29d7ae9bb96969df26d5bbf560c1f1608f7f49",
+      "ast_digest": "e1e1a0d0a95974007290221e7d26bacfd5c009250f2317d0264a9af15768ec3a"
+    },
+    "stp": {
+      "values_digest": "32c29a460ac8802c29d53987ea875d6bff210b459fa1a32c6468ca71a0654e84",
+      "rendered_digest": "9242ed1b2f88ecdb75d62726bd59ebc8cb96e649e4d8a9c873e4967a0cabe4bc",
+      "ast_digest": "182e7d094d1d4e5362a215a5f3f0fe9a7b6175406570899df2a27d303fc45212"
+    },
+    "spp": {
+      "values_digest": "eea2c033ed043f196a24a98a5f4b9ea9249c457699cf4157f8aec8a747720d7b",
+      "rendered_digest": "98fe92e559831bbae8fd08cff9a8806f298f437111cf9a522f08115df87be20a",
+      "ast_digest": "07f2e8e8e5d80a85b25aa5c682bf3b4a785fdb14a114486575253637f595aa6b"
+    },
+    "vpp": {
+      "values_digest": "6d403d0774e5570c9faccad66879acc89465750a419fa496b8e5ea3297a5c1ae",
+      "rendered_digest": "0d206e8badb7cd300cd216f3516bce24597503ddc22519d76a67f57d32498c83",
+      "ast_digest": "5b8939113e11604bfc9ee3b6f742e39ebe8a4f8e2a02b17de29faad813287648"
+    },
+    "srp": {
+      "values_digest": "c6d37a7a0ac8460e54876d0cfae1a3096dc802c4de06699afbc4cf758030e0e1",
+      "rendered_digest": "a7183f4757c841bf76b5fe938d852ebd15bcf0b57a060aa236539546389d33a5",
+      "ast_digest": "869b63b18490055b3283275219f1425e26072d9733f484ed20de66fa2b80e843"
+    },
+    "sor": {
+      "values_digest": "5941d8f563189ddaec9e8362ce34dc84ef73a8b306de427a598dd893bd82e16d",
+      "rendered_digest": "6e7a0209b4ed3e3b7445ef8a04e6a86058e8cbca8dc5674e74445ba16145075c",
+      "ast_digest": "b06e431b9005e2560e601a42d2fd6f881f905211363228840e910fc5060fdedf"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Gemini exact-head review completed with PASS and no actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Operator expanded #5701 to require real Axum routes for raw OpenAPI JSON and browsable Swagger UI documentation, so the existing reviewed and published truth at 79dad564 is stale before further implementation."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "The final exact-head GPT-5.5 review passed with zero findings after all contract and security-boundary corrections."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Recover exact review and publication truth before integrating current main to resolve PR #5705's real merge conflict."
+    },
+    {
+      "sequence": 10,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "The exact integrated-head GPT-5.5 review passed with zero findings after current-main conflict resolution and full validation."
+    },
+    {
+      "sequence": 11,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 12,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Operator clarified that Runtime v3 read APIs and Observatory read streams are public; authentication is required only for mutations. Recover review and publication truth before correcting the runtime, OpenAPI contract, and client."
+    },
+    {
+      "sequence": 13,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "subagent:019fafbd-db23-7681-a979-4cc0bc68585d",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 14,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 15,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Recover exact review and publication truth after the fresh CI run exposed one stale guardian soak expectation: the test had not consumed the new successful Observatory login acknowledgement before asserting the subsequent forged-command rejection."
+    },
+    {
+      "sequence": 16,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "subagent:019fafbd-db23-7681-a979-4cc0bc68585d",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 17,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 18,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Issue #5718 identified stale v0.91.7 product branding in the live Observatory. Recover exact review and publication truth for the bounded Runtime v3 label correction on the existing path-owning #5701 lane."
+    },
+    {
+      "sequence": 19,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact GPT-5.5 review of the #5718 Runtime v3 Observatory label correction passed with zero findings."
+    },
+    {
+      "sequence": 20,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 21,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Recover exact review and publication truth after moving the unchanged Observatory design to the version-neutral demos/html-observatory public path."
+    },
+    {
+      "sequence": 22,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact GPT-5.5 review confirmed the Observatory design is unchanged, the version-neutral path is coherent, and all actionable findings are resolved."
+    },
+    {
+      "sequence": 23,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 24,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "Recover stale published review and publication truth so #5701 can receive a bounded fresh findings-first lifecycle review of exact merged head db41b249277a91140d4fd67bfc5bf898f4565774 before merged-publication reconciliation and terminal closeout."
+    },
+    {
+      "sequence": 25,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 26,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 27,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 28,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 29,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Gemini exact-head review completed with PASS and no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Operator expanded #5701 to require real Axum routes for raw OpenAPI JSON and browsable Swagger UI documentation, so the existing reviewed and published truth at 79dad564 is stale before further implementation.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Operator expanded #5701 to require real Axum serving of raw OpenAPI JSON and browsable Swagger UI documentation; these paths are the minimal runtime router, dependency lockfile, and direct route-test surface.",
+      "operation": "{\"add_protected_paths\":[\"adl/Cargo.lock\",\"adl-runtime/Cargo.toml\",\"adl-runtime/src/runtime_api.rs\",\"adl-runtime/tests/runtime_api_docs.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 5,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Operator expanded #5701 to require real versioned Axum serving of raw OpenAPI JSON, browsable Swagger UI, authenticated health and metrics, and full-duplex ACIP WSS on the guardian-launched Runtime v3 listener. These are the minimal runtime route, protocol consistency, dependency, direct test, and configuration paths actually changed after #5344 released its terminal claim.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/Cargo.lock\",\"adl-runtime-kernel/Cargo.toml\",\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/tests/control.rs\",\"adl-runtime/Cargo.lock\",\"adl-runtime/Cargo.toml\",\"adl-runtime/src/acip.rs\",\"adl-runtime/src/runtime_api.rs\",\"adl-runtime/tests/runtime_api_docs.rs\",\"adl-runtime/tests/runtime_api_wss.rs\",\"adl/Cargo.lock\",\"infra/runtime-v3/runtime-api-5665.toml\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 6,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Record the completed Runtime v3 OpenAPI and production route implementation after #5344 released its claim.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented complete versioned Core and Observatory OpenAPI contracts and mounted their real authenticated Runtime v3 routes on the guardian-launched Axum/Tokio/Rustls listener.\",\"changes\":[\"Serve embedded Core and Observatory OpenAPI 3.1 documents plus human-readable Swagger UI without a sidecar server or runtime CDN.\",\"Expose authenticated /v1/health and /v1/metrics from live runtime state.\",\"Expose authenticated full-duplex /v1/acip/ws using bounded Protobuf frames, replay sequencing, canonical ingress, and real ACIP adapter dispatch.\",\"Replace opaque payload contracts with bounded typed schemas and align shared code-generation types across both documents.\"],\"artifacts\":[\"docs/api/runtime-v3/v1/openapi.json\",\"docs/api/runtime-v3/v1/observatory.openapi.json\",\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/tests/openapi_contract.rs\",\".adl/local-artifacts/5701-gemini-review/result-final.json\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 7,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Record the single consolidated proving validation after Gemini remediation and live runtime restart.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test-and-clippy\",\"runtime-v3-openapi-focused-suite\"],\"purpose\":\"Prove the versioned route inventory, typed OpenAPI contracts, real Observatory and ACIP WSS behavior, strict Rust quality, clean diff, live HTTPS documentation, authenticated health and metrics, and ready Vector observability pipeline.\",\"outcome\":\"passed\",\"evidence_ref\":\"Kernel control 21/21; OpenAPI contracts 6/6; Observatory WSS 5/5; runtime API docs 2/2; runtime API WSS 2/2; ACIP 5/5; strict kernel Clippy passed; git diff --check passed; live https://localhost:20997 returned 200 for both Swagger UIs and both specs, authenticated health observability_ready=true, authenticated metrics health=ready, and zero ERROR/FATAL master-log events.\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 7,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 7,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Add the two focused Runtime v3 integration-test paths required to prove the exact review remediations: canonical ACIP dispatch from Observatory WSS, failure-safe sequence rollback, and guardian soak parity. The prior #5344 router claim is terminal and released.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/tests/guardian_soak.rs\",\"adl-runtime-kernel/tests/observatory.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 8,
+      "actor": "subagent:019faf71-f57d-7c01-8ccf-8ceec597f8e7",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 9,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Record the consolidated proof after resolving every actionable exact-review finding.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test-and-clippy\",\"runtime-v3-openapi-review-remediation\"],\"purpose\":\"Prove sole production OpenAPI authority, versioned route parity, canonical ACIP dispatch, failure-safe replay sequencing, first-frame Observatory authentication, guardian persistence, and strict Rust quality.\",\"outcome\":\"passed\",\"evidence_ref\":\"Kernel control 21/21; guardian soak 7/7; Observatory WSS 6/6; OpenAPI contracts 6/6; adl-runtime library 134/134; runtime API WSS 2/2; strict all-target kernel Clippy passed; strict all-target adl-runtime Clippy passed; git diff --check passed.\"}}"
+    },
+    {
+      "sequence": 17,
+      "generation": 9,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 9,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 10,
+      "actor": "subagent:019faf8a-5313-7292-8ca5-57feb8f12d7b",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 11,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "The final exact-head GPT-5.5 review passed with zero findings after all contract and security-boundary corrections.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 12,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 22,
+      "generation": 13,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Recover exact review and publication truth before integrating current main to resolve PR #5705's real merge conflict.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 14,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Record current-main integration validation after resolving PR #5705's merge conflict.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test-and-clippy\",\"runtime-v3-openapi-integrated-suite\"],\"purpose\":\"Prove the reviewed Runtime v3 OpenAPI and route behavior after integrating current main and regenerating both dependency lockfiles offline.\",\"outcome\":\"passed\",\"evidence_ref\":\"Kernel control 21/21; guardian soak 7/7; Observatory WSS 6/6; OpenAPI contracts 6/6; adl-runtime library 134/134; runtime API WSS 2/2; strict all-target Clippy passed for both crates; git diff --check passed; rebuilt guardian served both Swagger UIs with HTTP 200 and authenticated health and metrics with HTTP 200 on port 20997.\"}}"
+    },
+    {
+      "sequence": 24,
+      "generation": 14,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 15,
+      "actor": "subagent:019faf97-63e1-7a31-ab74-c8e905e82b30",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 26,
+      "generation": 16,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "The exact integrated-head GPT-5.5 review passed with zero findings after current-main conflict resolution and full validation.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 17,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 28,
+      "generation": 18,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Operator clarified that Runtime v3 read APIs and Observatory read streams are public; authentication is required only for mutations. Recover review and publication truth before correcting the runtime, OpenAPI contract, and client.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 29,
+      "generation": 18,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Operator clarified that all Runtime v3 read APIs and Observatory read streams are public while mutations remain authenticated or signed. These two existing client files are the minimal HTML Observatory surface that must stop requiring a read token and document the public-read, governed-write boundary.",
+      "operation": "{\"add_protected_paths\":[\"demos/v0.91.7/html-observatory/app.js\",\"demos/v0.91.7/html-observatory/README.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 18,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "The existing HTML Observatory proof encoded the removed read-token requirement. Updating the exact validator and focused proof is required to prevent false CI failures and prove public reads with optional authenticated writes.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/test_v0917_html_observatory_integrated_proof.sh\",\"adl/tools/validate_v0917_html_observatory.py\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 31,
+      "generation": 19,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Record the corrected public-read and authenticated-write Observatory validation at commit 3a7621861.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test-and-clippy\",\"runtime-v3-public-observatory-suite\"],\"purpose\":\"Prove anonymous runtime reads, optional WSS write login, signed control enforcement, credential revocation, API contract parity, and the separate HTML Observatory client.\",\"outcome\":\"passed\",\"evidence_ref\":\"Kernel control 21/21; Observatory WSS 6/6 including anonymous reads and authenticated signed write; OpenAPI contracts 6/6; strict all-target Clippy passed; HTML Observatory integrated proof passed; git diff --check passed; live Guardian served anonymous health, metrics, and Observatory HTTP on port 20997; browser showed live secure stream with 55 runtime events.\"}}"
+    },
+    {
+      "sequence": 32,
+      "generation": 19,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "The exact review correctly found that the public-read client lacked a usable operator login and authenticated write surface. The HTML entry point is required to add explicit login, logout, signed-command submission, and status controls.",
+      "operation": "{\"add_protected_paths\":[\"demos/v0.91.7/html-observatory/index.html\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 33,
+      "generation": 20,
+      "actor": "subagent:019fafbd-db23-7681-a979-4cc0bc68585d",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 34,
+      "generation": 21,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 35,
+      "generation": 22,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Recover exact review and publication truth after the fresh CI run exposed one stale guardian soak expectation: the test had not consumed the new successful Observatory login acknowledgement before asserting the subsequent forged-command rejection.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 36,
+      "generation": 23,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Record the focused validation for the Observatory login acknowledgement CI repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test-and-clippy\",\"runtime-v3-observatory-login-ci-repair\"],\"purpose\":\"Prove the guardian soak consumes and validates the successful login acknowledgement before independently checking forged-command rejection and valid signed control behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\"Guardian soak 7/7 passed; exact signed HTTPS/WSS shutdown and forgery test 1/1 passed; strict all-target adl-runtime-kernel Clippy passed; git diff --check passed.\"}}"
+    },
+    {
+      "sequence": 37,
+      "generation": 24,
+      "actor": "subagent:019fafbd-db23-7681-a979-4cc0bc68585d",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 38,
+      "generation": 25,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 39,
+      "generation": 26,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Issue #5718 identified stale v0.91.7 product branding in the live Observatory. Recover exact review and publication truth for the bounded Runtime v3 label correction on the existing path-owning #5701 lane.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 40,
+      "generation": 27,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record focused proof for the Runtime v3 Observatory product-label correction tracked by #5718.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0917_html_observatory_integrated_proof.sh\"],\"purpose\":\"Prove the live Observatory renders Runtime v3 product branding while retaining historical evidence paths and unchanged Runtime v3 API behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\"Focused HTML Observatory integrated proof passed; browser rendered Runtime v3 version chip, Runtime v3 live Observatory eyebrow, and 55 runtime events; git diff --check passed.\"}}"
+    },
+    {
+      "sequence": 41,
+      "generation": 27,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 42,
+      "generation": 28,
+      "actor": "subagent:019fafe0-c5a2-78b3-af0a-352df7715ee1",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 43,
+      "generation": 29,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact GPT-5.5 review of the #5718 Runtime v3 Observatory label correction passed with zero findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 44,
+      "generation": 30,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 45,
+      "generation": 31,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Recover exact review and publication truth after moving the unchanged Observatory design to the version-neutral demos/html-observatory public path.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 46,
+      "generation": 31,
+      "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+      "reason": "Move the unchanged Observatory visual design to a version-neutral public path and update every active code, test, validation, architecture, and historical evidence reference that would otherwise point at a missing file.",
+      "operation": "{\"add_protected_paths\":[\"demos/html-observatory\",\"adl-runtime-kernel/tests/parity.rs\",\"adl-runtime/tests/runtime_api_wss.rs\",\"adl/config/validation_lane_selector.v0.91.6.json\",\"adl/tools/test_select_validation_lanes.sh\",\"docs/architecture/runtime_v3_observatory_consumption_5286.v1.json\",\"docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md\",\"docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md\",\"docs/milestones/v0.91.7/review/V0917_WP15_DEMO_CONVERGENCE_4642.md\",\"docs/milestones/v0.91.7/review/demo_matrix_4691/4691-birthday-visible-demo-matrix-proof.md\",\"docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json\",\"docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.py\",\"docs/reviews/v0.91.7/remaining-sprints-5403/RUNTIME_V3_LIVE_PARITY_REVIEW_5276.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 47,
+      "generation": 31,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 48,
+      "generation": 32,
+      "actor": "subagent:019fafe9-2cac-77d2-8aa9-fcbd0157746d",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 49,
+      "generation": 33,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact GPT-5.5 review confirmed the Observatory design is unchanged, the version-neutral path is coherent, and all actionable findings are resolved.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 50,
+      "generation": 34,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 51,
+      "generation": 34,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Revoke the stale foreign-session claim for GitHub-closed #5701 and merged PR #5705 after confirming no live agent or shared session-ledger owner, so typed terminal closeout can proceed in a dedicated exact-source worktree.",
+      "operation": "{\"claim_id\":\"claim-5701-runtime-v3-openapi-contracts\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5748\",\"previous_owner\":\"codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44\"}"
+    },
+    {
+      "sequence": 52,
+      "generation": 34,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Reacquire #5701 solely for exact merged-PR lifecycle reconciliation and terminal closeout in its dedicated recovery worktree.",
+      "operation": "{\"branch\":\"codex/5701-terminal-closeout\",\"claim_id\":\"claim-5701-5748-terminal-closeout\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5748-terminal-recovery\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5701\",\".csdlc/issues/5701\",\".csdlc/locks/5701.lock\",\".csdlc/prepared/issues/5701\"],\"purpose\":\"Perform typed post-merge lifecycle reconciliation and terminal closeout for GitHub-closed #5701 / merged PR #5705 without product-code changes.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 53,
+      "generation": 34,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Release the bounded #5701 closeout claim after independent exact-head review found unresolved production security and OpenAPI contract blockers; no terminal receipt may be issued until remediation is reviewed and merged.",
+      "operation": "{\"claim_id\":\"claim-5701-5748-terminal-closeout\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5748\",\"previous_owner\":\"codex:5748-terminal-recovery\"}"
+    },
+    {
+      "sequence": 54,
+      "generation": 34,
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "Reacquire #5701 solely for typed terminal closeout after GitHub issue closure and PR #5705 merge, using the dedicated closeout worktree.",
+      "operation": "{\"branch\":\"codex/5701-terminal-closeout\",\"claim_id\":\"claim-5701-terminal-closeout-019fbbff\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5701\",\".csdlc/issues/5701\",\".csdlc/locks/5701.lock\",\".csdlc/prepared/issues/5701\"],\"purpose\":\"Perform typed post-merge lifecycle readiness observation, terminal closeout, and tracked terminal projection for GitHub-closed #5701 / merged PR #5705 without product-code changes.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 55,
+      "generation": 34,
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "Release the temporary #5701 terminal-closeout claim after typed readiness and review guards failed closed on stale publication and stale review evidence for merged PR #5705 head db41b249277a91140d4fd67bfc5bf898f4565774.",
+      "operation": "{\"claim_id\":\"claim-5701-terminal-closeout-019fbbff\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5701-closeout-blocker-claim-release\",\"previous_owner\":\"codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e\"}"
+    },
+    {
+      "sequence": 56,
+      "generation": 34,
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "Reacquire #5701 solely for typed terminal closeout after #5748 v4 claim removed the prior .csdlc/issues/5701 overlap.",
+      "operation": "{\"branch\":\"codex/5701-terminal-closeout\",\"claim_id\":\"claim-5701-terminal-closeout-019fbbff-2\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5701\",\".csdlc/issues/5701\",\".csdlc/locks/5701.lock\",\".csdlc/prepared/issues/5701\"],\"purpose\":\"Perform typed post-merge readiness observation, terminal closeout, and tracked terminal projection for GitHub-closed #5701 / merged PR #5705 without product-code changes or pruning.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 57,
+      "generation": 34,
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "Release the temporary #5701 terminal-closeout claim after typed readiness and merged-publication reconciliation failed closed on stale review/publication evidence for PR #5705 merged head db41b249277a91140d4fd67bfc5bf898f4565774.",
+      "operation": "{\"claim_id\":\"claim-5701-terminal-closeout-019fbbff-2\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5701-closeout-blocker-claim-release\",\"previous_owner\":\"codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e\"}"
+    },
+    {
+      "sequence": 58,
+      "generation": 34,
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "Reacquire #5701 solely for typed terminal closeout after the current #5748 v4 claim cleared the prior .csdlc/issues/5701 overlap.",
+      "operation": "{\"branch\":\"codex/5701-terminal-closeout\",\"claim_id\":\"claim-5701-terminal-closeout-019fbbff-3\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5701\",\".csdlc/issues/5701\",\".csdlc/locks/5701.lock\",\".csdlc/prepared/issues/5701\"],\"purpose\":\"Perform typed post-merge lifecycle review recovery, merged-publication reconciliation, readiness observation, terminal closeout, and tracked terminal projection for GitHub-closed #5701 / merged PR #5705 without product-code changes or pruning.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 59,
+      "generation": 35,
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "Recover stale published review and publication truth so #5701 can receive a bounded fresh findings-first lifecycle review of exact merged head db41b249277a91140d4fd67bfc5bf898f4565774 before merged-publication reconciliation and terminal closeout.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 60,
+      "generation": 36,
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 61,
+      "generation": 37,
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 62,
+      "generation": 38,
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 63,
+      "generation": 39,
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 64,
+      "generation": 40,
+      "actor": "codex:019fbbff-9fb2-72f2-8b81-2f03f6ae2e1e",
+      "reason": "Reconcile #5701 terminal projection after typed closeout retained the merged PR receipt for exact head db41b249277a91140d4fd67bfc5bf898f4565774.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 65,
+      "generation": 41,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the authentic released terminal receipt into the v0.91.8 aggregate inventory.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

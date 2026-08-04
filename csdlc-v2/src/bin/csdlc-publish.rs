@@ -4,11 +4,8 @@ use std::path::{Path, PathBuf};
 use clap::{Parser, Subcommand};
 use csdlc_v2::error::{ErrorCode, V2Error};
 use csdlc_v2::{
-    prepare_publication, prepare_ready_publication, prepare_ready_reconciliation, reconcile_action,
-    record_merged_publication, record_publication, record_ready_publication,
-    record_ready_reconciliation, MergedPublicationReconciliationRequest, PublicationAction,
-    PublicationEvidence, PublicationIntent, PublicationRequest,
-    ReadyPublicationReconciliationRequest, ReadyPublicationRequest, RemotePullRequest, Store,
+    prepare_publication, reconcile_action, record_publication, PublicationAction,
+    PublicationIntent, PublicationRequest, RemotePullRequest, Store,
 };
 use octocrab::models::IssueState;
 use octocrab::params::State;
@@ -28,18 +25,6 @@ enum Command {
         request: PathBuf,
     },
     Status {
-        #[arg(long)]
-        request: PathBuf,
-    },
-    ReconcileMerged {
-        #[arg(long)]
-        request: PathBuf,
-    },
-    ReconcileReady {
-        #[arg(long)]
-        request: PathBuf,
-    },
-    Ready {
         #[arg(long)]
         request: PathBuf,
     },
@@ -66,21 +51,9 @@ async fn run(cli: &Cli) -> csdlc_v2::Result<serde_json::Value> {
     if matches!(cli.command, Command::Schema) {
         return Ok(csdlc_v2::public_schema_bundle());
     }
-    if let Command::ReconcileMerged { request } = &cli.command {
-        return reconcile_merged(&cli.root, request).await;
-    }
-    if let Command::ReconcileReady { request } = &cli.command {
-        return reconcile_ready(&cli.root, request).await;
-    }
-    if let Command::Ready { request } = &cli.command {
-        return mark_ready(&cli.root, request).await;
-    }
     let request_path = match &cli.command {
         Command::Publish { request } | Command::Status { request } => request,
-        Command::ReconcileMerged { .. }
-        | Command::ReconcileReady { .. }
-        | Command::Ready { .. }
-        | Command::Schema => unreachable!(),
+        Command::Schema => unreachable!(),
     };
     let request: PublicationRequest = serde_json::from_slice(&fs::read(request_path)?)?;
     let store = Store::new(&cli.root);
@@ -102,7 +75,12 @@ async fn run(cli: &Cli) -> csdlc_v2::Result<serde_json::Value> {
         .map(|pr| normalize(&intent, pr))
         .transpose()?;
     if let Some(value) = &before {
-        if !value.body.contains(&format!("#{}", intent.issue)) || value.draft != intent.draft {
+        if !csdlc_v2::publication::body_has_github_closing_keyword(
+            &value.body,
+            intent.issue,
+            &intent.repository,
+        ) || value.draft != intent.draft
+        {
             return Err(V2Error::new(
                 ErrorCode::ReconciliationRequired,
                 "existing PR does not match this issue's governed publication mode",
@@ -154,207 +132,6 @@ async fn run(cli: &Cli) -> csdlc_v2::Result<serde_json::Value> {
     Ok(
         serde_json::json!({"schema":"csdlc.publication_result.v1","publication":normalized,"generation":record.generation,"digest":record.digest}),
     )
-}
-
-async fn mark_ready(root: &Path, request_path: &Path) -> csdlc_v2::Result<serde_json::Value> {
-    let request: ReadyPublicationRequest = serde_json::from_slice(&fs::read(request_path)?)?;
-    let store = Store::new(root);
-    let governed = prepare_ready_publication(&store, &request)?;
-    let (owner, repo) = request
-        .repository
-        .split_once('/')
-        .ok_or_else(|| V2Error::new(ErrorCode::InvalidInput, "repository identity is invalid"))?;
-    let token = csdlc_v2::github_token::resolve(request.token_file.as_deref())?;
-    let crab = github_client(token)?;
-    let before = crab
-        .pulls(owner, repo)
-        .get(request.pull_request)
-        .await
-        .map_err(|error| remote(error.to_string()))?;
-    validate_ready_remote(&request, &governed, &before, true)?;
-    let node_id = before.node_id.clone().ok_or_else(|| {
-        V2Error::new(
-            ErrorCode::ReconciliationRequired,
-            "draft PR node id is missing",
-        )
-    })?;
-    let _: serde_json::Value = crab
-        .graphql(&serde_json::json!({
-            "query": "mutation MarkReady($pullRequestId: ID!) { markPullRequestReadyForReview(input: {pullRequestId: $pullRequestId}) { pullRequest { id isDraft } } }",
-            "variables": {"pullRequestId": node_id}
-        }))
-        .await
-        .map_err(|error| remote(error.to_string()))?;
-    let after = crab
-        .pulls(owner, repo)
-        .get(request.pull_request)
-        .await
-        .map_err(|error| remote(error.to_string()))?;
-    validate_ready_remote(&request, &governed, &after, false)?;
-    let observed = ready_observation(&governed, &after)?;
-    let record = record_ready_publication(&store, &request, observed.clone())?;
-    Ok(serde_json::json!({
-        "schema": "csdlc.ready_publication_result.v1",
-        "publication": observed,
-        "generation": record.generation,
-        "digest": record.digest,
-    }))
-}
-
-fn validate_ready_remote(
-    request: &ReadyPublicationRequest,
-    governed: &PublicationEvidence,
-    pull: &octocrab::models::pulls::PullRequest,
-    expected_draft: bool,
-) -> csdlc_v2::Result<()> {
-    let base = pull.base.as_ref().ok_or_else(|| {
-        V2Error::new(
-            ErrorCode::ReconciliationRequired,
-            "remote PR has no base identity",
-        )
-    })?;
-    let head = pull.head.as_ref().ok_or_else(|| {
-        V2Error::new(
-            ErrorCode::ReconciliationRequired,
-            "remote PR has no head identity",
-        )
-    })?;
-    let base_repository = base
-        .repo
-        .as_ref()
-        .and_then(|repo| repo.full_name.as_deref());
-    let head_repository = head
-        .repo
-        .as_ref()
-        .and_then(|repo| repo.full_name.as_deref());
-    if pull.state != Some(IssueState::Open)
-        || pull.number != Some(request.pull_request)
-        || base_repository != Some(request.repository.as_str())
-        || head_repository != Some(request.repository.as_str())
-        || base.ref_field != governed.base
-        || head.ref_field != governed.head
-        || head.sha != request.expected_head_sha
-        || pull.draft != Some(expected_draft)
-        || pull.merged == Some(true)
-    {
-        return Err(V2Error::new(
-            ErrorCode::ReconciliationRequired,
-            "remote PR differs from exact governed draft identity",
-        ));
-    }
-    Ok(())
-}
-
-fn ready_observation(
-    governed: &PublicationEvidence,
-    pull: &octocrab::models::pulls::PullRequest,
-) -> csdlc_v2::Result<PublicationEvidence> {
-    let base = pull
-        .base
-        .as_ref()
-        .ok_or_else(|| V2Error::new(ErrorCode::ReconciliationRequired, "base identity missing"))?;
-    let head = pull
-        .head
-        .as_ref()
-        .ok_or_else(|| V2Error::new(ErrorCode::ReconciliationRequired, "head identity missing"))?;
-    let observed_state = match pull.state {
-        Some(IssueState::Open) if pull.merged != Some(true) => "open",
-        _ => {
-            return Err(V2Error::new(
-                ErrorCode::ReconciliationRequired,
-                "ready publication observation is not open",
-            ))
-        }
-    };
-    Ok(PublicationEvidence {
-        repository: governed.repository.clone(),
-        issue: governed.issue,
-        pull_request: pull
-            .number
-            .ok_or_else(|| V2Error::new(ErrorCode::ReconciliationRequired, "PR number missing"))?,
-        url: pull
-            .html_url
-            .as_ref()
-            .map(ToString::to_string)
-            .unwrap_or_else(|| governed.url.clone()),
-        base: base.ref_field.clone(),
-        head: head.ref_field.clone(),
-        revision: governed.revision.clone(),
-        draft: pull.draft.ok_or_else(|| {
-            V2Error::new(ErrorCode::ReconciliationRequired, "draft state missing")
-        })?,
-        observed_state: observed_state.into(),
-    })
-}
-
-async fn reconcile_merged(root: &Path, request_path: &Path) -> csdlc_v2::Result<serde_json::Value> {
-    let request: MergedPublicationReconciliationRequest =
-        serde_json::from_slice(&fs::read(request_path)?)?;
-    request.validate()?;
-    let store = Store::new(root);
-    let mut preparation = request.publication.clone();
-    preparation.draft = true;
-    let mut intent = prepare_publication(&store, &preparation)?;
-    intent.draft = false;
-    verify_git_remote(root, &request.publication.remote, &intent)?;
-    let token = resolve_token(&request.publication)?;
-    let crab = github_client(token)?;
-    let observed = crab
-        .pulls(owner(&intent)?, repo(&intent)?)
-        .get(request.pull_request)
-        .await
-        .map_err(|error| remote(error.to_string()))?;
-    if observed.merged != Some(true) {
-        return Err(V2Error::new(
-            ErrorCode::ReconciliationRequired,
-            "explicit PR is not merged",
-        ));
-    }
-    let mut normalized = normalize(&intent, &observed)?;
-    normalized.state = "merged".into();
-    csdlc_v2::publication::validate_merged_remote(&intent, &normalized)?;
-    persist_intent(root, &intent)?;
-    let record =
-        record_merged_publication(&store, &request.publication, &intent, normalized.clone())?;
-    Ok(serde_json::json!({
-        "schema": "csdlc.merged_publication_reconciliation_result.v1",
-        "publication": normalized,
-        "generation": record.generation,
-        "digest": record.digest,
-    }))
-}
-
-async fn reconcile_ready(root: &Path, request_path: &Path) -> csdlc_v2::Result<serde_json::Value> {
-    let request: ReadyPublicationReconciliationRequest =
-        serde_json::from_slice(&fs::read(request_path)?)?;
-    let store = Store::new(root);
-    let intent = prepare_ready_reconciliation(&store, &request)?;
-    verify_git_remote(root, &request.publication.remote, &intent)?;
-    let token = resolve_token(&request.publication)?;
-    let crab = github_client(token)?;
-    let observed = crab
-        .pulls(owner(&intent)?, repo(&intent)?)
-        .get(request.pull_request)
-        .await
-        .map_err(|error| remote(error.to_string()))?;
-    if observed.state != Some(IssueState::Open)
-        || observed.merged == Some(true)
-        || observed.draft != Some(false)
-    {
-        return Err(V2Error::new(
-            ErrorCode::ReconciliationRequired,
-            "explicit PR is not open and ready for review",
-        ));
-    }
-    let normalized = normalize(&intent, &observed)?;
-    csdlc_v2::validate_ready_remote(&intent, &normalized, request.pull_request)?;
-    let record = record_ready_reconciliation(&store, &request, &intent, normalized.clone())?;
-    Ok(serde_json::json!({
-        "schema": "csdlc.ready_publication_reconciliation_result.v1",
-        "publication": normalized,
-        "generation": record.generation,
-        "digest": record.digest,
-    }))
 }
 
 fn resolve_token(request: &PublicationRequest) -> csdlc_v2::Result<String> {

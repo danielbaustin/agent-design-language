@@ -1,0 +1,23 @@
+{
+  "issue": 5360,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "18f93394263cf65b6c42fb74c746b56282ebffb0ceb85e22070f0af958e36057",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "reason": "Record exact-head WP-17 documentation validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5360/run-validation-lane.rb",
+        "complete"
+      ],
+      "purpose": "Prove WP-16 merge ancestry and quality truth, exact claimed-path scope, structured document validity, path and secret hygiene, local links, documentation budget, and committed-range diff hygiene.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5360/documentation-alignment.v1.json; complete lane passed at fc9f756303a71694f55b2c5e06ee340a54721d89 with 27 documentation paths; local links and git diff --check passed"
+    }
+  },
+  "fail_after_backup": false
+}

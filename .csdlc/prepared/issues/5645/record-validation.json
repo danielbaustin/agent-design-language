@@ -1,0 +1,10 @@
+{
+  "issue": 5645,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "d60ed3b607b8a85e9521000492b6b1e733590deeb396d541521031f24a4e9d09",
+  "claim_id": "claim-5645-csdlc-merge-command",
+  "actor": "codex:5645-execution",
+  "reason": "Focused merge contract tests, merge idempotence proof, and all csdlc-v2 merge-filtered tests passed.",
+  "operation": {"operation":"record_validation","result":{"command":["cargo","test","--manifest-path","csdlc-v2/Cargo.toml","merge"],"purpose":"Prove typed merge request/result schemas, exact-head drift rejection, required-check gating, and successful green gate classification.","outcome":"passed","evidence_ref":".csdlc/evidence/5645/merge-command.log"}}
+}

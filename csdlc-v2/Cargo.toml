@@ -43,6 +43,18 @@ name = "csdlc-pr-state"
 path = "src/bin/csdlc-pr-state.rs"
 
 [[bin]]
+name = "csdlc-github"
+path = "src/bin/csdlc-github.rs"
+
+[[bin]]
+name = "csdlc-github-issue"
+path = "src/bin/csdlc-github-issue.rs"
+
+[[bin]]
+name = "csdlc-github-pr"
+path = "src/bin/csdlc-github-pr.rs"
+
+[[bin]]
 name = "csdlc-review"
 path = "src/bin/csdlc-review.rs"
 
@@ -51,8 +63,12 @@ name = "csdlc-publish"
 path = "src/bin/csdlc-publish.rs"
 
 [[bin]]
-name = "csdlc-closeout"
-path = "src/bin/csdlc-closeout.rs"
+name = "csdlc-finish"
+path = "src/bin/csdlc-finish.rs"
+
+[[bin]]
+name = "csdlc-clean"
+path = "src/bin/csdlc-clean.rs"
 
 [[bin]]
 name = "csdlc-shadow"
@@ -79,6 +95,7 @@ name = "csdlc-eligibility"
 path = "src/bin/csdlc-eligibility.rs"
 
 [dependencies]
+adl-resilience = { path = "../adl-resilience" }
 blake3 = "1"
 clap = { version = "4.5", features = ["derive"] }
 fs2 = "0.4"

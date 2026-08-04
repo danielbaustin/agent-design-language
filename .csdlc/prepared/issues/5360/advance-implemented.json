@@ -1,0 +1,14 @@
+{
+  "issue": 5360,
+  "card": "sor",
+  "expected_generation": 12,
+  "expected_digest": "6a15c37101912b4a3916251d658e928dc57a1f1472475c509fde1e07c0bba5bc",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "reason": "The exact WP-17 documentation alignment and complete validation are implemented.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

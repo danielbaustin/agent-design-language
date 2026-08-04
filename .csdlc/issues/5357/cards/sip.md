@@ -1,0 +1,48 @@
+# Structured Intent Prompt
+
+Template: 1.0.0
+
+Issue: 5357
+
+Repository: danielbaustin/agent-design-language
+
+Card: sip
+
+Status: ready
+
+## Goal
+
+Prepare and later run an independent exact-revision external review after WP-18 is terminal, using the canonical v0.91.8 third-party-review handoff without renaming or rewriting it.
+
+## Required Outcome
+
+A future immutable exact-revision corpus and dispatch receipt produce findings-first external review output whose evidence, inference, and author-decision content is explicitly separated and safely routable into typed remediation.
+
+## Scope
+
+- issue-local typed lifecycle, preparation, validation, review, and evidence records
+- future read-only exact-revision corpus manifest and content digest derived from the canonical handoff and landed implementation/proof surfaces
+- future dispatch receipt binding reviewer identity, independence statement, prompt digest, corpus digest, target revision, timing, provider outcome, and output digest
+- future findings-first review artifact and typed synthesis without automatic issue creation
+- future exact review, publication, serialized merge, post-merge validation, and closeout
+
+## Authority
+
+- Preparation protects only four exact #5357 issue-local lifecycle and evidence paths and does not edit the canonical handoff
+- WP-18 #5356 owns internal milestone review and must be terminal before external dispatch
+- The external reviewer is a read-only evidence producer and cannot mutate lifecycle state, approve release, create scope, merge, close, or publish
+- Reviewer identity is not equivalent to independence; dispatch records who selected the corpus, prompt, provider, model, and process
+- External findings are evidence inputs until internally synthesized and dispositioned through typed C-SDLC v2
+
+## Assumptions
+
+- none
+
+## Operator Constraints
+
+- Use typed C-SDLC v2 binaries and the current native six-card projection only; keep all tracked work in the bound #5357 worktree and never on main
+- Refresh only the exact canonical review-document paths in the active claim; change no product code, dependency, Runtime v2 surface, AWS state, credential, or paid service
+- Do not collide with active #5791 ownership of README.md, the canonical inventory, or the next-milestone handoff; integrate those exact changes from main after #5791 merges
+- Do not freeze or dispatch external review until #5791 completes the final WP-18 second pass after residual coding and its merge is ancestral to the #5357 target revision
+- Retain repository-relative publication-safe evidence and exclude secrets, private prompts, raw provider output, host paths, and local scratch roots
+- Run one bounded exact-revision documentation review after the complete canonical sweep, fix every actionable finding, validate, commit, push, and stop without dispatch, PR publication, merge, or release claim

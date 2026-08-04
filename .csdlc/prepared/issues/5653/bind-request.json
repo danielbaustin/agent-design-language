@@ -1,0 +1,18 @@
+{
+  "issue": 5653,
+  "base_branch": "main",
+  "branch": "codex/5653-readme-refresh",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5653-readme-refresh",
+    "owner": "codex:5653-execution",
+    "generation": 1,
+    "acquired_unix_seconds": 1784850000,
+    "expires_unix_seconds": 1785454800,
+    "heartbeat_unix_seconds": 1784850000,
+    "branch": "codex/5653-readme-refresh",
+    "worktree": ".",
+    "protected_paths": [".csdlc/issues/5653", ".csdlc/locks/5653.lock", ".csdlc/prepared/issues/5653", "README.md"],
+    "purpose": "Refresh root README status, CI, release posture, and homepage link"
+  }
+}

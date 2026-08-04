@@ -1,0 +1,152 @@
+{
+  "issue": 5804,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5804/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5804/diagram.mmd",
+  "design_reviewer": "operator:daniel",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5804-v0918-external-review-doc-readiness",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1785862420,
+    "expires_unix_seconds": 1786467220,
+    "heartbeat_unix_seconds": 1785862420,
+    "branch": "codex/5804-v0918-external-review-doc-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5804",
+      ".csdlc/issues/5804",
+      ".csdlc/locks/5804.lock",
+      ".csdlc/prepared/issues/5804",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md",
+      "docs/milestones/v0.91.8/review/podcast_launch_5711/README.md"
+    ],
+    "purpose": "Repair the final v0.91.8 external-review documentation packet while leaving WP-19 #5357 open for the actual review."
+  },
+  "initial": {
+    "title": "[v0.91.8][docs][external-review] Repair final handoff packet readiness before WP-19 review",
+    "slug": "external-review-doc-readiness",
+    "version": "v0.91.8",
+    "goal": "Make the v0.91.8 external-review packet complete, current, portable, and reviewable before WP-19 dispatch.",
+    "required_outcome": "The full review corpus validates and the handoff names real implementation/proof entrypoints without stale live-state claims or machine-local requirements.",
+    "declared_scope": [
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md",
+      "docs/milestones/v0.91.8/review/podcast_launch_5711/README.md"
+    ],
+    "authority_boundary": [
+      "Issue #5804 repairs documentation readiness only",
+      "WP-19 #5357 remains open and owns the external review",
+      "No product source or release state is changed"
+    ],
+    "task_boundary": "Populate and validate the packet, obtain one bounded review, and publish a docs-only corrective PR.",
+    "deliverables": [
+      "Concrete implementation and proof manifest",
+      "Current issue-truth corrections",
+      "Portable reviewer commands",
+      "Complete validation and review evidence"
+    ],
+    "acceptance_criteria": [
+      "AC-1: The handoff manifest names concrete tracked implementation, test, and evidence entrypoints",
+      "AC-2: Current issue-state statements match live GitHub truth",
+      "AC-3: The sendable corpus requires no workstation-local root",
+      "AC-4: Corpus structure, links, schemas, paths, redaction, and diff hygiene pass"
+    ],
+    "dependencies": [
+      "Issue #5804 is open",
+      "WP-16, WP-17, and both WP-18 review passes remain merged and ancestral",
+      "WP-19 #5357 remains open"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.91.8/evidence/wp16/",
+      ".csdlc/evidence/5360/documentation-alignment.v1.json",
+      ".csdlc/evidence/5791/focused-5791-validation.log",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md"
+    ],
+    "non_goals": [
+      "No external review execution",
+      "No WP-19 closeout",
+      "No product code changes",
+      "No release approval or v0.92 activation"
+    ],
+    "plan_summary": "Repair six bounded documentation surfaces, validate the complete corpus, perform one pre-PR review, and publish.",
+    "steps": [
+      {"id":"S1","action":"Repair manifest, live issue truth, and portable commands","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3"]},
+      {"id":"S2","action":"Run full corpus validation and bounded review","status":"pending","acceptance_ids":["AC-4"]},
+      {"id":"S3","action":"Publish a docs-only PR that closes #5804 and leaves WP-19 open","status":"pending","acceptance_ids":["AC-4"]}
+    ],
+    "risks": [
+      "A current-truth correction could overwrite a dated historical snapshot",
+      "A manifest entry could point to an absent path",
+      "The handoff could accidentally overclaim review completion"
+    ],
+    "invariants": [
+      "Dated historical evidence remains historical",
+      "External review performed remains false",
+      "Release approval and v0.92 activation remain false",
+      "WP-19 remains open"
+    ],
+    "stop_conditions": [
+      "A required implementation or proof surface is absent",
+      "Live issue truth cannot be verified",
+      "A product-code change becomes necessary"
+    ],
+    "review_prompts": [
+      "Does the manifest cover real landed implementation and proof rather than docs-only placeholders?",
+      "Are live state and historical snapshots distinguished correctly?",
+      "Can an external reviewer use the packet without machine-local paths?"
+    ],
+    "operator_constraints": [
+      "Typed C-SDLC v2",
+      "No tracked main edits",
+      "One bounded pre-PR review",
+      "Do not close #5357"
+    ],
+    "review_scope": "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md\ndocs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md\ndocs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md\ndocs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md\ndocs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md\ndocs/milestones/v0.91.8/review/podcast_launch_5711/README.md",
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "wp19-corpus-contract",
+        "proof_role": "Validate the complete v0.91.8 documentation corpus and handoff structure",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "docs",
+        "budget_seconds": 120,
+        "budget_tokens": 2000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5357/validate-preparation.rb"],
+        "acceptance_ids": ["AC-1","AC-3","AC-4"]
+      },
+      {
+        "lane": "wp19-dependency-contract",
+        "proof_role": "Verify merged predecessor review and quality gates",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "docs",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5357/check-dependencies.rb"],
+        "acceptance_ids": ["AC-2","AC-4"]
+      },
+      {
+        "lane": "diff-hygiene",
+        "proof_role": "Reject whitespace errors",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "docs",
+        "budget_seconds": 30,
+        "budget_tokens": 500,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-4"]
+      }
+    ],
+    "failure_policy": "Fail closed on missing paths, stale current truth, machine-local requirements, broken links, parse failures, or an actionable review finding."
+  }
+}

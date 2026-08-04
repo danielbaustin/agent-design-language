@@ -1,0 +1,7 @@
+{
+  "issue": 5347,
+  "expected_generation": 1,
+  "expected_digest": "075e6047aa3213fe30dd753b4942ac4ede7ab390d0385ae378328e9f262fe0ae",
+  "claim_id": "claim-5347-current-preparation-refresh",
+  "reviewer": "codex:5347-preparation-refresh"
+}

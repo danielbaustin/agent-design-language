@@ -1,0 +1,19 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "bc20d8b954a72468c2bbcb7159b4f6936c25d4694003fa601f717a3a445a6f7b",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record superseding FastWork strict Clippy validation after exact-review fixes.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "clippy", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5663/target", "--all-targets", "--", "-D", "warnings"],
+      "purpose": "Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate after review fixes.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log"
+    }
+  },
+  "fail_after_backup": false
+}

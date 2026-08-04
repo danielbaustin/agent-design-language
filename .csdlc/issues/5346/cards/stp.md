@@ -1,0 +1,72 @@
+# Structured Task Prompt
+
+Template: 1.0.0
+
+Issue: 5346
+
+Repository: danielbaustin/agent-design-language
+
+Card: stp
+
+Status: ready
+
+## Task
+
+Prepare a complete reviewed WP-13 #5346 execution contract only; do not delete or modify product code, open a PR, publish, merge, use AWS/raw gh, edit Runtime v2, or touch root main.
+
+## Deliverables
+
+- All six issue-specific typed cards plus reviewed design and diagram
+- Exact #5344/#5343/#5358/#5361 terminal receipt, claim-release, and ancestry gate
+- Canonical #5346 deletion eligibility manifest schema and #5347 disjointness contract
+- Pinned denominator and separate deleted, retained, and newly added LoC accounting
+- Existing csdlc-eligibility invocation and exact-path deletion plan
+- Protected-path amendment rule, COTS closure, LoC/module/test/time budgets, PVF classes, and no-deferral contract
+- Focused, complete, CI, exact-review, serialized merge, and post-merge validation plan
+
+## Acceptance
+
+1. AC-1: No deletion starts until #5344, #5343, #5358, and #5361 are GitHub merged, typed closed_out, claim-free, backed by retained merged terminal receipts, and each observed merge SHA is ancestral to the exact execution revision
+2. AC-2: A canonical exact-revision #5346 manifest records every incumbent path with Git mode/object ID, baseline physical LoC, disposition, accepted replacement owner/path/proof, rollback evidence, and retained owner/justification
+3. AC-3: #5346 and #5347 manifests are proven disjoint across exact paths, ancestor/descendant prefixes, symlink targets, generated ownership, Cargo workspace membership, and retained ownership before either lane mutates product paths
+4. AC-4: Existing csdlc-eligibility approves the exact manifest, selector, cutover evidence, rollback window, acceptance receipts, and Git revision before the typed claim is amended to exact eligible #5346 paths
+5. AC-5: Deletion uses exact manifest rows only, never broad globs; deleted, retained, and newly added LoC are reported separately against the pinned denominator, with a 90 percent target and an 80 percent fail-closed minimum
+6. AC-6: Every retained path has a named owner and justification; an 80-to-89-percent result has explicit exact reviewed cutover approval; below 80 percent or any unowned retained path cannot complete
+7. AC-7: Post-deletion proof validates workspace manifests, consumers, schemas, fixtures, demos, docs links, stable install, selector rollback, Runtime v3, and C-SDLC v2 boundaries without importing or editing Runtime v2
+8. AC-8: #5346 and #5347 merges and post-merge validation are serialized, exact-revision reviewed, green in required CI, and retain deterministic repo-relative evidence before closeout
+9. AC-9: No new crate/package dependency is added; orchestration stays within 800 nonblank implementation lines, tests/fixtures within 1200, modules below 500, and 120/300/1800/3600-second lane budgets unless exact reviewed variance is recorded
+10. AC-10: Every applicable criterion has deterministic executable proof with no deferred validation, metadata-only completion, stale review, or planning-text deletion authority
+
+## Dependencies
+
+- #5344 WP-12 soak and rollback merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral
+- #5343 WP-12 reviewed selector switch merged, typed closed_out, claim released, retained merged receipt present, rollback-window gate satisfied, and merge SHA ancestral
+- #5358 current C-SDLC v2 acceptance merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral
+- #5361 current Runtime v3 acceptance merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral
+- WP-14A #5384 integrated platform acceptance merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral
+- WP-15 #5354 convergence GitHub closed/completed via merged PR #5731 at merge commit 97427f324c87d97cb1b36c7804c50bf80c9389d8, with that merge SHA ancestral to current origin/main; typed closeout may proceed asynchronously and must not block #5346
+- WP-21 #5352 v0.92 consumption handoff GitHub closed/completed via merged PR #5751 at merge commit 64632f8812dcf4a861902b97b981a72291d81beb, with that merge SHA ancestral to current origin/main; typed closeout may proceed asynchronously and must not block #5346
+- #5347 peer external-band deletion manifest remains disjoint from #5346; #5347 is not absorbed by #5346 and deletion merges remain serialized
+
+## Inputs
+
+- AGENTS.md
+- GitHub issues #5346 and #5347
+- docs/templates/prompts/current.json
+- csdlc-v2/operator/generation-selector.json
+- docs/milestones/v0.91.8/BASELINE_AND_OWNERSHIP_v0.91.8.md
+- docs/milestones/v0.91.8/DESIGN_v0.91.8.md
+- docs/milestones/v0.91.8/WBS_v0.91.8.md
+- docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml
+- docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md
+- docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md
+- docs/milestones/v0.91.8/features/DELETION_AND_CUTOVER_v0.91.8.md
+- future terminal receipts for #5344/#5343/#5358/#5361 and reviewed #5346/#5347 manifests
+
+## Non Goals
+
+- Externally owned incumbent band deletion owned by #5347
+- ADL v2, Runtime v3, C-SDLC v2, provider, governed-tool, cognitive, integration, demo, or proof-tool implementation
+- Soak, rollback, selector switching, default cutover, release, WP-14A acceptance, or v0.92 handoff
+- A new eligibility engine, path classifier, hashing layer, workflow runner, or dependency
+- Any product edit, code deletion, PR, publication, merge, AWS/raw gh use, Runtime v2 edit, or root-main mutation during preparation

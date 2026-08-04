@@ -1,0 +1,23 @@
+{
+  "issue": 5764,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "bc769769d97dd6203a8dbed8a394bf2ac413d23f962762b5b42a681907f245de",
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Record exact-head review fixes for Runtime v3 readiness preflight route documentation and Observatory config artifact truth.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Fixed exact-head review findings for Runtime v3 readiness preflight documentation and Observatory endpoint config artifact truth.",
+    "changes": [
+      "Documented OPTIONS /v1/ready in the Runtime v3 OpenAPI contract.",
+      "Updated the OpenAPI route inventory test to require both GET and OPTIONS for /v1/ready.",
+      "Recorded demos/html-observatory/runtime-v3.config.json as a durable execution artifact."
+    ],
+    "artifacts": [
+      "docs/api/runtime-v3/v1/openapi.json",
+      "adl-runtime-kernel/tests/openapi_contract.rs",
+      "demos/html-observatory/runtime-v3.config.json"
+    ]
+  }
+}

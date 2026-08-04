@@ -25,7 +25,7 @@ milestone:
     - docs/architecture/adr/<candidate>.md
   activation_map_required: true | false
 policy:
-  require_workflow_conductor: true
+  require_typed_v2_lifecycle: true
   require_versioned_prompt_templates: true
   require_bound_worktree: true
   require_full_planning_package: true
@@ -37,7 +37,7 @@ policy:
 
 ## Required Behavior
 
-- Use `workflow-conductor` as the mandatory front door for tracked issue setup
+- Use resolved typed v2 lifecycle binaries as the mandatory front door for tracked issue setup
   and execution routing.
 - Use prompt cards from `docs/templates/prompts/current.json`.
 - Make `SIP`, `STP`, and `SPP` design-time ready before execution begins.

@@ -1,0 +1,212 @@
+{
+  "issue": 5332,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5332/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5332/diagram.mmd",
+  "design_reviewer": "operator:v0918-wp15-unity-preparation",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5332-v0918-wp15-unity-ilpp-exec-prep",
+    "owner": "codex:issue-5332-execution-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1784835366,
+    "expires_unix_seconds": 1785440166,
+    "heartbeat_unix_seconds": 1784835366,
+    "branch": "codex/5332-v0918-wp15-unity-ilpp-exec-prep",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5332",
+      ".csdlc/locks/5332.lock",
+      ".csdlc/prepared/issues/5332",
+      "adl/tools/lib/unity_observatory_batch_classifiers.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+      "docs/tooling/unity_ilpp_getdomainname_diagnosis.md"
+    ],
+    "purpose": "Prepare #5332 for bounded v0.91.8 WP-15 Unity ILPP GetDomainName loop diagnosis and regression execution"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-15][unity][tooling] Classify and fix Unity ILPP GetDomainName loop in observatory batch proof",
+    "slug": "v0918-wp15-unity-ilpp-getdomainname-loop",
+    "version": "v0.91.8",
+    "goal": "Reproduce, isolate, and fix the Unity ILPP GetDomainName retry loop while preserving normal Observatory batch proof behavior.",
+    "required_outcome": "A focused classifier detects the complete ILPP non-progress loop quickly, a controlled matrix identifies the root cause or exact irreducible blocker, and regression proof preserves successful Unity batch validation.",
+    "declared_scope": [
+      "Complete ILPP retry-loop signature classifier",
+      "Progress-aware repetition threshold and reset behavior",
+      "Controlled Unity, host/domain, HOME/TMP/XDG, and wrapper-staging diagnostic matrix",
+      "Focused no-Unity fixtures and one safe staged reproduction",
+      "Root-cause fix limited to the proven owner surface",
+      "Retained diagnosis and regression evidence"
+    ],
+    "authority_boundary": [
+      "#5332 owns ILPP GetDomainName loop classification, diagnosis, and proven root-cause fix",
+      "#4741 owns editor liveness, execution-mode selection, general staging, and watchdog behavior",
+      "#4739 owns Unity-MCP project and endpoint alignment",
+      "No scene generation, fallback geometry, runtime contract semantics, asset publication, investor rendering, or walkthrough capture",
+      "No arbitrary total runtime ceiling, broad process scan, /private/tmp staging, scratch owner binaries, or secret-bearing environment dump"
+    ],
+    "task_boundary": "Implement only the ILPP loop classifier, controlled diagnosis, and proven root-cause repair on the current v0.91.8 base.",
+    "deliverables": [
+      "Reusable ILPP and progress classifier surface",
+      "Focused deterministic classifier fixtures",
+      "Controlled environment-matrix runner or retained command packet",
+      "Minimal proven root-cause fix or exact blocker disposition",
+      "Successful normal-start regression proof",
+      "Operator diagnosis note with ownership routing"
+    ],
+    "acceptance_criteria": [
+      "AC-1: the complete connectivity, gRPC or type-initialization, and GetDomainName -1 signature family is reproducible in one approved staged proof or retained fixture derived from exact evidence",
+      "AC-2: repeated complete signatures without semantic progress classify as ilpp_retry_loop without waiting for an arbitrary total runtime ceiling",
+      "AC-3: import, compile, validator, or terminal progress resets the non-progress classifier and preserves successful batch behavior",
+      "AC-4: readonly-database text remains a separate classifier and is not fatal after verified staged import progress",
+      "AC-5: the controlled matrix distinguishes wrapper staging, mutable HOME TMP XDG isolation, host or domain identity, and Unity version with one variable changed per cell",
+      "AC-6: each matrix cell retains Unity version, canonical staged project, non-secret environment shape, semantic progress markers, signature count, terminal classification, and log reference",
+      "AC-7: the minimal root-cause fix is applied only after the matrix isolates its owner; otherwise the exact current blocker and owner are recorded",
+      "AC-8: focused no-Unity tests cover incomplete signature, complete repeating loop, progress reset, readonly progression, and normal ILPP start",
+      "AC-9: one safe staged regression reaches the existing Observatory validator success marker or records a precise post-ILPP blocker without claiming full demo readiness",
+      "AC-10: the final diff excludes #4739 MCP internals, #4741 general liveness and mode selection, Unity scene code, runtime semantics, asset work, and rendering polish"
+    ],
+    "dependencies": [
+      "#4741 safe fresh_batch mode or equivalent exact staged-project ownership proof",
+      "Configured approved Unity editor path",
+      "Repository-installed ADL owner binaries",
+      "WP-15 #5354 consumes the final proof or exact blocker"
+    ],
+    "repo_inputs": [
+      "GitHub issue #5332",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+      "demos/v0.91.6/unity-observatory/PROOF_PACKET.md",
+      "retained ILPP GetDomainName error family from #4741",
+      "clean #4741 v0.91.8 execution-preparation contract"
+    ],
+    "non_goals": [
+      "Do not redesign Unity proof-mode selection",
+      "Do not repair Unity-MCP endpoint alignment",
+      "Do not modify Unity scene builder or validator semantics",
+      "Do not add asset fallback or investor-facing polish",
+      "Do not build owner binaries or use /private/tmp",
+      "Do not dump complete environment or host process state"
+    ],
+    "plan_summary": "Extract the ILPP classifier, prove it with deterministic fixtures, reproduce through #4741 safe staging, run a one-variable diagnostic matrix, apply only the isolated root-cause fix, and prove normal batch behavior.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Extract a focused progress-aware ILPP signature classifier and deterministic fixture harness",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-8", "AC-10"]
+      },
+      {
+        "id": "S2",
+        "action": "Use #4741 safe staging to reproduce the loop and retain exact non-secret baseline evidence",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-6", "AC-9"]
+      },
+      {
+        "id": "S3",
+        "action": "Run the smallest one-variable environment matrix needed to isolate wrapper, mutable state, host/domain identity, or Unity version",
+        "status": "pending",
+        "acceptance_ids": ["AC-5", "AC-6", "AC-7"]
+      },
+      {
+        "id": "S4",
+        "action": "Apply the minimal isolated root-cause fix or record the exact irreducible blocker and owner",
+        "status": "pending",
+        "acceptance_ids": ["AC-7", "AC-10"]
+      },
+      {
+        "id": "S5",
+        "action": "Run focused fixtures and one safe normal-start regression, then record bounded review and WP-15 outcome truth",
+        "status": "pending",
+        "acceptance_ids": ["AC-3", "AC-4", "AC-8", "AC-9", "AC-10"]
+      }
+    ],
+    "risks": [
+      "Repeating ILPP logs can appear live while no semantic progress occurs",
+      "Changing multiple environment variables at once could produce a false root-cause attribution",
+      "A Unity version comparison can introduce unrelated import differences",
+      "The general wrapper overlaps #4741 and must remain narrowly partitioned",
+      "Host and domain evidence can leak machine-specific detail unless bounded"
+    ],
+    "invariants": [
+      "Only complete repeating ILPP signatures classify the loop",
+      "Semantic progress resets non-progress state",
+      "One diagnostic variable changes per matrix cell",
+      "The root-cause fix follows evidence rather than speculation",
+      "Repository binaries and approved staging remain authoritative"
+    ],
+    "stop_conditions": [
+      "#4741 cannot provide a safe staged-project mode",
+      "The loop cannot be reproduced from exact retained evidence or an approved staged run",
+      "Diagnosis requires broad host inspection or secret-bearing environment output",
+      "More than one matrix variable must change in a cell",
+      "The isolated fix belongs to #4739, #4741, Unity scene code, or another owner"
+    ],
+    "review_prompts": [
+      "Does the classifier require the complete ILPP signature family and reset on real progress?",
+      "Does the matrix vary one cause at a time and retain enough evidence to support attribution?",
+      "Is readonly-database handling independent and progress-aware?",
+      "Does the normal-start regression prove the classifier does not break successful Unity proof?",
+      "Is the final diff limited to #5332 ownership?"
+    ],
+    "operator_constraints": [
+      "Typed C-SDLC v2 lifecycle only",
+      "Work only in the issue-bound v0.91.8 execution-preparation worktree",
+      "Preserve the earlier #5332 preparation branch and dirty #4739/#4741 predecessor worktrees",
+      "Use /Volumes/FastWork or issue-local .adl for staging and repository-installed binaries only",
+      "No arbitrary total runtime ceiling, /private/tmp, broad process scans, raw gh fallback, or secret exposure"
+    ],
+    "review_scope": "adl/tools/lib/unity_observatory_batch_classifiers.sh\nadl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh\nadl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh\ndocs/tooling/unity_ilpp_getdomainname_diagnosis.md\n.csdlc/issues/5332\n.csdlc/prepared/issues/5332",
+    "planning_profile": "large",
+    "validation_lanes": [
+      {
+        "lane": "unity-ilpp-classifier-unit",
+        "proof_role": "Prove complete-signature classification, semantic progress reset, readonly progression, and normal-start behavior without Unity",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-ilpp-static",
+        "budget_seconds": 180,
+        "budget_tokens": 5000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"],
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-8", "AC-10"]
+      },
+      {
+        "lane": "unity-ilpp-staged-reproduction",
+        "proof_role": "Reproduce or clear the ILPP loop in one #4741-approved staged batch mode",
+        "deterministic": false,
+        "resource_profile": "large",
+        "parallel_group": "unity-ilpp-live",
+        "budget_seconds": 900,
+        "budget_tokens": 6000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-6", "AC-9"],
+        "defer_reason": "Run only after #4741 provides exact safe staged-project ownership and the deterministic classifier lane passes."
+      },
+      {
+        "lane": "unity-ilpp-diagnostic-matrix",
+        "proof_role": "Retain one-variable environment comparisons that isolate the ILPP failure owner",
+        "deterministic": false,
+        "resource_profile": "large",
+        "parallel_group": "unity-ilpp-live",
+        "budget_seconds": 1800,
+        "budget_tokens": 8000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"],
+        "acceptance_ids": ["AC-5", "AC-6", "AC-7"],
+        "defer_reason": "Execute only the cells still required after the baseline reproduction; do not run redundant Unity comparisons."
+      },
+      {
+        "lane": "unity-ilpp-diff-hygiene",
+        "proof_role": "Prove bounded text and shell hygiene",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-ilpp-static",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-10"]
+      }
+    ],
+    "failure_policy": "Fail closed on incomplete signature attribution, arbitrary total-runtime ceilings, multi-variable diagnosis, unsafe staging, secret-bearing host evidence, adjacent Unity scope, or unsupported root-cause and readiness claims."
+  }
+}

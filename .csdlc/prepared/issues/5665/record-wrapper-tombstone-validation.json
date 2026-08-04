@@ -1,0 +1,27 @@
+{
+  "schema": "csdlc.edit_request.v1",
+  "issue": 5665,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "4e3a6ecb2b05b0d240423914fa3b395cd245ea9cb71b46164878351368cf0c3f",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "Record focused compile proof for the retired WP-12 wrapper tombstone.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "--bin",
+        "run_wp12_acip_websocket_transport_proof"
+      ],
+      "purpose": "Prove the retired WP-12 wrapper source still compiles as a fail-closed tombstone while removing the duplicate proof generator path.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5665/wp12-wrapper-tombstone-check.log"
+    }
+  }
+}

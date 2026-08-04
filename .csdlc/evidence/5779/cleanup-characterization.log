@@ -1,0 +1,15 @@
+
+running 7 tests
+test removing_a_legacy_receipt_cannot_change_derived_terminal_truth ... ok
+test symlinked_expected_path_is_rejected_without_removal ... ok
+test missing_relocated_and_primary_paths_fail_closed ... ok
+test concurrent_removal_serializes_to_removed_then_already_absent ... ok
+test clean_worktree_classifies_removes_and_repeats_idempotently ... ok
+test dirty_tracked_and_untracked_paths_are_reported_without_removal ... ok
+test tracked_v0918_terminal_census_is_compatible_and_read_only ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.33s
+
+   Compiling csdlc-v2 v0.1.0 (/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5779/csdlc-v2)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.57s
+     Running tests/gate_cleanup.rs (csdlc-v2/target/debug/deps/gate_cleanup-f13319f4ca3a42e7)

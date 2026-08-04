@@ -1,0 +1,14 @@
+{
+  "issue": 5733,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "1e85f55bf9da2c68b8c379e1b3c8d1cbfde6216a7e51d1d0a019b6820a654734",
+  "claim_id": "claim-5733-demo-matrix-proof-coverage",
+  "actor": "codex:5733-execution",
+  "reason": "Implementation and focused validation are complete.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

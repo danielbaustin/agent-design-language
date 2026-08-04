@@ -39,8 +39,10 @@ execution:
   parallelism_policy: "parallel_across_distinct_issues_only"
   workflow_role: "finish"
   preferred_commands:
-    - "adl/tools/pr.sh finish"
-  preferred_path: "repo_native_finish_surface"
+    - "csdlc-validate --root <worktree> finalize --request <finalize-request.json>"
+    - "csdlc-review record --request <review-request.json>"
+    - "csdlc-publish publish --request <publication-request.json>"
+  preferred_path: "typed_v2_finalize_review_publish"
   invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
 boundaries:
   writes_limited_to:

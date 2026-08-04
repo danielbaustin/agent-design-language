@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5727,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5727-csdlc-claim-reacquire",
+  "title": "[v0.91.8][csdlc-v2][claims] Make released bound claims safely reacquirable",
+  "body": "## Outcome\n\nAdds a typed `csdlc-bind --reacquire-request` path for deliberately released or expired nonterminal claims without lifecycle rewind.\n\n## Safety\n\n- compare-and-swap generation and digest guards\n- actual branch/worktree validation\n- one Git-common lock and cross-worktree live-claim inventory\n- shared exclusion for init, bind, scope amendment/transition, reacquisition, and expired recovery\n- dormant doctor classification without weakening mutation claim checks\n\n## Proof\n\n- Gate 2: 52/52\n- Gate 7 lifecycle: 37/37\n- clippy: pass\n- fmt: pass\n- real #5354 dormant bound record reacquired with phase and audit history preserved; new doctor reports pass\n- independent exact-head review: no actionable findings\n\nCloses #5727",
+  "draft": false,
+  "revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+  "commit_sha": "8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d"
+}

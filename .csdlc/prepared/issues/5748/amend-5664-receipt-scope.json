@@ -1,0 +1,12 @@
+{
+  "issue": 5748,
+  "claim_id": "claim-5748-terminal-recovery-v4",
+  "expected_generation": 25,
+  "expected_digest": "32104944e4ec53a6f16c1042c3328de093291fb648d353db213d4bf3a4f6da18",
+  "now_unix_seconds": 1785572653,
+  "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+  "reason": "Authorize normal transport of the authenticated and source-pruned issue 5664 terminal receipt into the v0.91.8 aggregate projection.",
+  "add_protected_paths": [
+    ".csdlc/prepared/issues/5664"
+  ]
+}

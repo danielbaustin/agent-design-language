@@ -1,0 +1,15 @@
+flowchart TD
+    A["WP-16 #5351"] --> B{"Merged + exact-head quality proof + ancestry"}
+    B -->|"No"| C["Preparation retained; execution blocked"]
+    B -->|"Yes"| D["Fresh collision check and typed path amendment"]
+    D --> E["Inventory exact documentation claims"]
+    E --> F["Classify proven / planned / blocked / deferred / superseded / non-claim"]
+    F --> G["Reconcile exact protected documentation paths"]
+    G --> H["Focused structured and claim-boundary validation"]
+    H --> I["Exact-revision bounded review"]
+    I --> J{"All required proof passes"}
+    J -->|"No"| K["Route blocker to owning product or issue"]
+    J -->|"Yes"| L["Typed publication and serialized merge"]
+    L --> M["Post-merge exact proof"]
+    M --> N["Release WP-18 #5356"]
+    M -.-> O["Asynchronous typed closeout"]

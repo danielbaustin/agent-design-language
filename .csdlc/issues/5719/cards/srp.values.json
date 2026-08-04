@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5719,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][ci][coverage] Avoid duplicate hosted coverage on podcast/demo page PRs",
+    "slug": "v0-91-8-ci-coverage-avoid-duplicate-hosted-coverage-on-podcast-demo-page-prs",
+    "version": "v0.91.8",
+    "generation": 8
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5719\n.csdlc/evidence/5719\n.csdlc/prepared/issues/5719\nadl/config/validation_lane_selector.v0.91.6.json\nadl/tools/ci_path_policy.sh\nadl/tools/test_ci_path_policy.sh",
+      "review_revision": "git-blake3:b0f71eabb06945d5a7ad6147d7178586e3db86da:a6218709a4daeb864cd8deaf812e424aa9342260d5592dd722049a4ef0dd5be0",
+      "reviewer": "Heisenberg",
+      "review_prompts": [
+        "Does the policy narrowly target static podcast/demo page and launch packet UI paths?",
+        "Can a code-bearing Rust/runtime/provider/tooling path still trigger its required coverage lane?",
+        "Does the workflow keep the stable aggregator while avoiding duplicate hosted producers?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Review was read-only and confirmed the selector/path-policy contract at exact HEAD b0f71eabb; hosted CI behavior remains deferred to the published PR checks."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

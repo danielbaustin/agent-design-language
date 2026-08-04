@@ -156,10 +156,10 @@ fn detect_default_git_ref() -> String {
 }
 
 fn remote_git_source_preflight(git_ref: &str) -> Result<()> {
-    if let Some(status) = local_git_stdout(&["status", "--porcelain", "--untracked-files=all"]) {
+    if let Some(status) = local_git_stdout(&["status", "--porcelain", "--untracked-files=no"]) {
         if !status.is_empty() {
             bail!(
-                "remote validation uses a remote git checkout and cannot include local uncommitted or untracked changes; clean, commit, and push the worktree before running live AWS validation"
+                "remote validation uses a remote git checkout and cannot include local tracked changes; commit and push the worktree before running live AWS validation"
             );
         }
     }

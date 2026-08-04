@@ -1,0 +1,271 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5356,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "985f2d88dea5a9f7164345b6b28a387b044da7df10b101cc5fdcf659a3794886",
+  "phase": "published",
+  "generation": 4,
+  "digest": "b32eeacb1655308164618d5970e5b148e986de5f1225ce287021396b7058c5a2",
+  "claim": {
+    "id": "claim-5356-v0918-wp18-review-execution-20260802",
+    "owner": "codex:current-session-wp18-review",
+    "generation": 4,
+    "acquired_unix_seconds": 1785696556,
+    "expires_unix_seconds": 1785782956,
+    "heartbeat_unix_seconds": 1785696556,
+    "branch": "codex/5356-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5356",
+      ".csdlc/issues/5356",
+      ".csdlc/locks/5356.lock",
+      ".csdlc/prepared/issues/5356",
+      "adl-runtime/src/runtime_api.rs",
+      "adl-runtime/tests/runtime_api_wss.rs",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/README.md",
+      "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/README.md",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_5356.md",
+      "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md",
+      "docs/reviews/v0.91.8/internal-review-5356"
+    ],
+    "purpose": "Execute WP-18 #5356 internal milestone review for v0.91.8, retain the exact-revision review packet and findings register, then resolve in-scope findings through typed claim amendments before publication."
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "subagent:Chandrasekhar:019fc3f8-e848-79b2-9873-5386381a8ee5",
+    "scope": [
+      ".csdlc/evidence/5356",
+      ".csdlc/issues/5356",
+      ".csdlc/prepared/issues/5356",
+      "adl-runtime/src/runtime_api.rs",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/README.md",
+      "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/README.md",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_5356.md",
+      "docs/reviews/v0.91.8/internal-review-5356"
+    ],
+    "reviewed_revision": "git-blake3:9d5c0b5f73243cf332df41236164d822c0c7c264:77800cd46764ab76eeb2ebf3a99b3fc7524f6e9d2f9160391ae115f24479a920",
+    "findings": [
+      {
+        "id": "IR-5356-001",
+        "severity": "p1",
+        "summary": "#5360 squash-merge terminal truth was not accepted by the WP-18 dependency gate.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:9d5c0b5f73243cf332df41236164d822c0c7c264:77800cd46764ab76eeb2ebf3a99b3fc7524f6e9d2f9160391ae115f24479a920",
+        "route": null
+      },
+      {
+        "id": "IR-5356-002",
+        "severity": "p2",
+        "summary": "Current release-tail docs still presented WP-17 as active after terminal closure.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:9d5c0b5f73243cf332df41236164d822c0c7c264:77800cd46764ab76eeb2ebf3a99b3fc7524f6e9d2f9160391ae115f24479a920",
+        "route": null
+      },
+      {
+        "id": "IR-5356-003",
+        "severity": "p1",
+        "summary": "The mandatory WP-18 validation lane still hard-failed as an unimplemented stub.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:9d5c0b5f73243cf332df41236164d822c0c7c264:77800cd46764ab76eeb2ebf3a99b3fc7524f6e9d2f9160391ae115f24479a920",
+        "route": null
+      },
+      {
+        "id": "IR-5356-004",
+        "severity": "p2",
+        "summary": "Runtime API contract metadata advertised routes that were not served.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:9d5c0b5f73243cf332df41236164d822c0c7c264:77800cd46764ab76eeb2ebf3a99b3fc7524f6e9d2f9160391ae115f24479a920",
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5356,
+    "pull_request": 5781,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5781",
+    "base": "main",
+    "head": "codex/5356-v0918-preparation",
+    "revision": "git-blake3:bb253f981232ed91add7479d695c0d3692b87936:baa3618d112c0a123e11a79ec359386daec47e3d84fa8fb221ff328c89df0664",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5356/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5356/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "subagent:codex-cli-5356-preparation-review",
+      "revision": "0d3b9927f587596993405ad5a14380207149769ebeb497b1acd89e63ff98e6b8"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "6cab07a340282b33cd9e73488c91c0842e47f7fb8a2519be65056dd2acaf79a6",
+      "rendered_digest": "6c28ea55257d351844001997851940cd4a3be4e482ebcb9f93313a5480eeb17e",
+      "ast_digest": "3d10f2d5a80f4e4425df35b4295597f5019fc3e046e61c786488ba45580506e5"
+    },
+    "stp": {
+      "values_digest": "7a95153c00110da663003fc07559057cb8c8023b3f49c704c200ab4726ad3306",
+      "rendered_digest": "db7fcbce3c6f231d444dfc31580409ac6aeac20f6fed2126e7cd1970063da996",
+      "ast_digest": "0110c4c27ff5251ef6fe556b020e03990af9d9c7d5fa2f9b821e13d94b0b84db"
+    },
+    "spp": {
+      "values_digest": "3b562986742c98466bdc6f2cc81a3d3169634fc107074a0a3970d22dacd9a172",
+      "rendered_digest": "6505062889afdd74b54bf6c4a4ff6bc2cac718eeda0a4d5c9442cf4e942c2d34",
+      "ast_digest": "ef2ec245699390d0699676f3effddad259748f054c6409335926e8c3e2186bd9"
+    },
+    "vpp": {
+      "values_digest": "3bac56f4b6cb7c7a85bb84fb2b4509389816fa9b7f7d7de4753437096c8baf85",
+      "rendered_digest": "b7e71038a79896ef91d5c8df32bf8192ddbfa30c98703c0a9cf4f85bf330f92c",
+      "ast_digest": "21e3f71c8a20ac2e555732a46e165e5db300b5d5a97655d6868c082cae4e175a"
+    },
+    "srp": {
+      "values_digest": "dcf1ce67f4a781a01775ca905d6034d40b612c32da1774f027b1a0ebbd346af4",
+      "rendered_digest": "441b13aa1a5956f7810c299a33cc1a9ddcf920f9d0a338c9f584a47f907142e4",
+      "ast_digest": "dcf7302a0ff455b765eeb691e72db7008e2e7d098ca41d83f6b20563cad33eeb"
+    },
+    "sor": {
+      "values_digest": "f7819ea63f6ce99a9a3bbb7793e416bfb2bd39880c848d09b22fcc19dccae43d",
+      "rendered_digest": "3f6a7617dedc4146c9ef79c68676160bab3065eb3abdec54c6bded25df0c8ba4",
+      "ast_digest": "dbb3bb65d9572629279ac015e287a1e9ee9ca05ae0fcb99efcf15b6432b95958"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5356-preparation-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5356-preparation-owner",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:current-session-wp18-review",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:current-session-wp18-review",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:current-session-wp18-review",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5356-preparation-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5356-preparation-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5356-preparation-owner",
+      "reason": "Retain the operator-selected external-volume constraint without machine-local path authority",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"Read root AGENTS.md and canonical v0.91.8 planning/review handoff before preparation\",\"Typed C-SDLC v2 only; no tracked root-main work, raw gh, AWS, Runtime v2, provider credentials, or paid service\",\"Use the operator-selected external build volume for the dedicated issue worktree and generated validation output; retain only repo-relative evidence paths\",\"Render all six cards through the current native v2 registry path and validate them\",\"Require WP-17 #5360 actual merge, typed closed_out, claim release, retained terminal receipt, and ancestry before review execution\",\"Run bounded preparation review, fix every actionable finding, typed validate/bind/doctor, commit, push, and stop without publication\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Recover expired preparation claim and bind the bounded WP-18 internal review plan document scope",
+      "operation": "{\"previous_owner\":\"codex:5356-preparation-owner\",\"observed_expiry_unix_seconds\":1785273786,\"recovery_actor\":\"codex:019f3d65-2216-7832-804a-26339473b27d\",\"reason\":\"Recover expired preparation claim and bind the bounded WP-18 internal review plan document scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:current-session-wp18-review",
+      "reason": "Operator authorized WP-18 review execution; recover expired preparation claim before typed transition.",
+      "operation": "{\"previous_owner\":\"codex:019f3d65-2216-7832-804a-26339473b27d\",\"observed_expiry_unix_seconds\":1785433650,\"recovery_actor\":\"codex:current-session-wp18-review\",\"reason\":\"Operator authorized WP-18 review execution; recover expired preparation claim before typed transition.\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 1,
+      "actor": "codex:current-session-wp18-review",
+      "reason": "WP-17 #5360 is live-closed with retained typed closeout receipt; begin WP-18 internal review execution and retained findings packet.",
+      "operation": "{\"add_protected_paths\":[\"docs/reviews/v0.91.8/internal-review-5356\",\"docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_5356.md\"],\"expected_owner\":\"codex:current-session-wp18-review\",\"expected_purpose\":\"Prepare the WP-18 #5356 internal review plan only; do not execute the internal review until WP-17 #5360 is merged, typed closed_out, receipt-backed, claim-free, and ancestral\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Prepare the WP-18 #5356 internal review plan only; do not execute the internal review until WP-17 #5360 is merged, typed closed_out, receipt-backed, claim-free, and ancestral\",\"purpose\":\"Execute WP-18 #5356 internal milestone review for v0.91.8, retain the exact-revision review packet and findings register, then resolve in-scope findings through typed claim amendments before publication.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 1,
+      "actor": "codex:current-session-wp18-review",
+      "reason": "Resolve WP-18 internal-review current-truth findings in v0.91.8 release-tail entrypoint docs.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.8/README.md\",\"docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md\",\"docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md\",\"docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md\",\"docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 1,
+      "actor": "codex:current-session-wp18-review",
+      "reason": "Resolve WP-18 internal-review Runtime API advertised-endpoint finding.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime/src/runtime_api.rs\",\"adl-runtime/tests/runtime_api_wss.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 2,
+      "actor": "codex:current-session-wp18-review",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 10,
+      "generation": 3,
+      "actor": "codex:current-session-wp18-review",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 4,
+      "actor": "codex:current-session-wp18-review",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

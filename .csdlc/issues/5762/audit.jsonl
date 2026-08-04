@@ -1,0 +1,10 @@
+{"sequence":1,"generation":0,"actor":"codex","reason":"initialize issue record and all six cards","operation":"bootstrap"}
+{"sequence":2,"generation":0,"actor":"codex","reason":"bind branch/worktree and activate claim","operation":"bind"}
+{"sequence":3,"generation":1,"actor":"codex","reason":"atomically record execution, validation, and implemented phase","operation":"finalize_implementation"}
+{"sequence":4,"generation":1,"actor":"codex","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":5,"generation":2,"actor":"codex","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
+{"sequence":6,"generation":3,"actor":"codex","reason":"Independent exact-head review passed with no actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":7,"generation":4,"actor":"codex","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":8,"generation":5,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":9,"generation":6,"actor":"codex","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":10,"generation":7,"actor":"codex:019fb617-d22b-7252-975c-402d7d7aec46","reason":"Materialize the retained #5762 terminal receipt in the dedicated v0.91.8 aggregate closeout projection.","operation":"reconcile_terminal"}

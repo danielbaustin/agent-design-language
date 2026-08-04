@@ -1,0 +1,18 @@
+{
+  "issue": 5695,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "a615c4ab2e2607e90a0306a7bc5cbf80b5ab1c3ebcac0d0870286ffaf9d1c9fd",
+  "claim_id": "claim-5695-pr-state-mergeability",
+  "actor": "codex:issue-5695-pr-state-mergeability",
+  "reason": "Record focused mergeability classification tests.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "-p", "csdlc-v2", "github::tests"],
+      "purpose": "Exercise every supported mergeability variant and preserve fail-closed pending classification.",
+      "outcome": "passed",
+      "evidence_ref": "local:cargo-test-github-tests:3-passed"
+    }
+  }
+}

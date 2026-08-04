@@ -1,0 +1,24 @@
+{
+  "issue": 5354,
+  "expected_claim_id": "claim-5354-v0918-wp15-demo-preparation",
+  "expected_generation": 1,
+  "now_unix_seconds": 1785346023,
+  "replacement": {
+    "id": "claim-5354-wp14a-reconciliation-release-only",
+    "owner": "codex:wp14a-preparation",
+    "generation": 1,
+    "acquired_unix_seconds": 1785346023,
+    "expires_unix_seconds": 1785349623,
+    "heartbeat_unix_seconds": 1785346023,
+    "branch": "codex/5354-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5354",
+      ".csdlc/locks/5354.lock",
+      ".csdlc/prepared/issues/5354"
+    ],
+    "purpose": "Reconcile the stale WP-15 projection solely to release pre-start ownership"
+  },
+  "recovery_actor": "codex:wp14a-preparation",
+  "reason": "Operator confirmed WP-15 has not started and must not own shared planning paths"
+}

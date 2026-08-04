@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5346,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5346-v0918-wp13-final-adl-deletion",
+  "title": "[v0.91.8][WP-13][deletion] Delete final replaced ADL CLI tooling",
+  "body": "Closes #5346\n\nDeletes the exact reviewed legacy ADL CLI tooling and inline PR-command test surfaces after their replacements landed. The deletion manifest remains disjoint from #5347's external-band manifest, with exact path, prefix, symlink, and Cargo-membership overlap all proven zero.\n\nAccounting for substantive deletion commit e9035ceffac9ea79f914371c33081f07861a2a2c:\n- additions: 1,880\n- deletions: 46,502\n- net: -44,622\n\nValidation:\n- focused complete-post-deletion lane passed\n- typed C-SDLC v2 doctor passed\n- git diff --check passed\n- direct GPT-5.5 exact-head rereview passed with zero findings at 4df33add8bb3c1fb44a63f7db7fdbbcc8173acdd\n\nMerge ordering: #5347 must merge before this PR. This PR may publish and complete CI now, but must not merge first.",
+  "draft": false,
+  "revision": "git-blake3:562d41e3ac6807c51fe27414a28287f3fb4b70cf:315f35a59643d22d4672569a5bf433c0903c6e662704f54f58aa707ff20b3173",
+  "commit_sha": "562d41e3ac6807c51fe27414a28287f3fb4b70cf"
+}

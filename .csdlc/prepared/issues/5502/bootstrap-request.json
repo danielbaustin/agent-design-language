@@ -1,0 +1,139 @@
+{
+  "issue": 5502,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5502/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5502/diagram.mmd",
+  "design_reviewer": "codex:5502-preparation-review",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5502-v0918-output-convergence-preparation",
+    "owner": "codex:5502-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784662362,
+    "expires_unix_seconds": 1785267162,
+    "heartbeat_unix_seconds": 1784662362,
+    "branch": "codex/5502-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5502",
+      ".csdlc/locks/5502.lock",
+      ".csdlc/prepared/issues/5502",
+      ".csdlc/evidence/5502"
+    ],
+    "purpose": "Prepare #5502 output convergence and deterministic replanning contracts only; no product implementation until #5499 and #5498 are live GitHub merged and ancestral. Typed closeout, receipts, and claim release are audit-only readiness signals."
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-10A][multi-agent] Implement output convergence and deterministic replanning",
+    "slug": "v0918-wp10a-output-convergence-deterministic-replanning",
+    "version": "v0.91.8",
+    "goal": "Prepare a small pure component that validates bounded task outputs and deterministically emits an integration plan, replan record, or blocked decision without acquiring merge or lifecycle authority.",
+    "required_outcome": "After #5499 and #5498 are terminal, exact assignment-bound outputs can be converged or rejected deterministically while partial success and residual blockers remain visible.",
+    "declared_scope": [
+      "issue-local typed lifecycle, preparation, validation, review, and evidence records",
+      "future isolated adl-v2/crates/adl-workcell-convergence component after dependency admission",
+      "typed output identity, authority, overlap, integration-plan, replan, blocked, and projection contracts",
+      "determinism, security, COTS, budget, PVF, CI, review, and post-merge proof"
+    ],
+    "authority_boundary": [
+      "#5499 owns issue-graph planning and assignment order",
+      "#5498 owns task transport and bounded context/output delivery",
+      "#5502 owns pure output convergence and deterministic replanning decisions only",
+      "#5500 owns read-only dashboard rendering and #5501 owns live workcell proof",
+      "review, publication, merge, and closeout remain independently serialized"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries and current-registry semantic card operations only",
+      "Keep root main untouched; all tracked #5502 work stays in /Volumes/FastWork/adl-wp-5502",
+      "Preparation only: no product implementation, PR, publication, merge, Runtime v2, AWS, raw gh, credentials, provider calls, or network execution",
+      "Do not implement until #5499 and #5498 are live GitHub merged and their merge revisions are ancestors of the #5502 execution base; typed closeout, receipts, and claim release are audit-only signals and MUST NOT block execution readiness",
+      "Use /Volumes/FastWork for generated validation output",
+      "Do not add preparation review churn; the required review gate is immediately before PR publication"
+    ],
+    "task_boundary": "Prepare all six cards, design, diagram, exact gates, COTS, budgets, PVF, and review evidence; do not claim or edit product paths.",
+    "deliverables": [
+      "all six issue-specific current-registry typed cards",
+      "convergence/replanning design and Mermaid diagram",
+      "exact preparation-only protected paths",
+      "executable live merge/ancestry dependency, preparation, and future validation contracts",
+      "COTS, LoC/module/test/time budgets and PVF classification",
+      "preparation evidence without adding a second review before the required pre-PR review gate"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Outputs bind exactly to task, issue, claim, branch, worktree, source revision, declared paths, artifacts, validation, and review evidence; missing, stale, forged, overlapping, or out-of-scope values fail closed",
+      "AC-2: Integration order follows the admitted #5499 dependencies and interface freezes; changed assumptions emit a typed deterministic replan or blocked record and never silently expand scope",
+      "AC-3: Review, publication, merge, post-merge validation, and closeout remain serialized and independently authorized; #5502 has no task, GitHub, filesystem, network, or lifecycle mutation capability",
+      "AC-4: Partial success and residual blockers remain present in a canonical read-only projection suitable for #5500 and #5501, with stable ordering and content-derived decision identity",
+      "AC-5: Implementation stays within 2,500 product LoC, 2,500 test/fixture LoC, fewer than 100 focused tests, modules below 500 LoC, 120-second focused and 600-second complete validation, and only reviewed COTS"
+    ],
+    "dependencies": [
+      "parent WP-10A umbrella #5497",
+      "issue-graph-to-live-task conductor #5499 live GitHub merged and merge revision ancestral to #5502 execution base",
+      "bounded Codex task/context adapter #5498 live GitHub merged and merge revision ancestral to #5502 execution base",
+      "typed closeout receipts and claim release for #5499 and #5498 remain audit-only signals and MUST NOT block execution readiness",
+      "live proof #5501 consumes the completed #5502 decision contract"
+    ],
+    "repo_inputs": [
+      "AGENTS.md",
+      "GitHub issue #5502 and its dependency comment",
+      "docs/templates/prompts/current.json",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+      "future #5499 and #5498 public contracts plus audit-only closeout receipts when present"
+    ],
+    "non_goals": [
+      "product implementation during preparation",
+      "task creation/transport, conductor planning, dashboard rendering, or live workcell proof",
+      "automatic review approval, publication, GitHub mutation, merge, or closeout",
+      "a second lifecycle database, scheduler, workflow engine, or orchestration framework",
+      "Runtime v2 edits, AWS, provider calls, credentials, hidden network, or private transcript retention"
+    ],
+    "plan_summary": "Render and validate six cards; freeze the pure convergence boundary, exact #5499/#5498 live merge plus ancestry gates, preparation-only ownership, COTS, budgets, PVF, deterministic security invariants, and future validation; commit and push preparation only without adding preparation review churn.",
+    "steps": [
+      {"id":"S1","action":"Complete six cards, design, diagram, dependency and preparation validators, exact protected paths, COTS, budgets, PVF, focused preparation validation, commit, and push without product work or preparation review churn","status":"pending","acceptance_ids":["AC-1","AC-3","AC-5"]},
+      {"id":"S2","action":"Wait fail-closed for #5499 and #5498 live GitHub merged revisions to become ancestors of the #5502 execution base; keep typed closeout, receipts, and claim release audit-only","status":"pending","acceptance_ids":["AC-1","AC-2"]},
+      {"id":"S3","action":"Implement the pure convergence component and complete deterministic identity, overlap, partial-success, replan, blocked, and authority tests","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5"]},
+      {"id":"S4","action":"Run full proof, exact-revision pre-PR review, typed publication, serialized merge, post-merge validation, closeout, and #5501 handoff","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5"]}
+    ],
+    "invariants": [
+      "no product work before #5499 and #5498 terminal gates",
+      "preparation claim protects only issue-local lifecycle and evidence paths",
+      "outputs are exact assignment-bound, canonical, and revision-continuous",
+      "changed assumptions produce typed replan or blocked records",
+      "no hidden task, filesystem, network, GitHub, merge, or lifecycle authority",
+      "partial successes and blockers are never erased",
+      "all applicable acceptance and PVF lanes complete without deferral"
+    ],
+    "risks": [
+      "generated summaries could hide conflicting outputs or residual blockers",
+      "stale or forged evidence could be accepted under a valid task identity",
+      "path overlap or dependency drift could produce unsafe integration order",
+      "replanning could silently widen scope or loop nondeterministically",
+      "the component could regrow into a scheduler or second lifecycle store",
+      "summary-only evidence could overclaim review, validation, or merge authority"
+    ],
+    "planning_profile": "medium",
+    "stop_conditions": [
+      "#5499 or #5498 lacks a live GitHub merged revision ancestral to the #5502 execution base",
+      "an intended product path overlaps an active typed claim",
+      "output identity, authority, or ordering cannot be proven deterministically",
+      "implementation requires hidden mutation, a state store, scheduler, network, credentials, AWS, or Runtime v2",
+      "a budget or required acceptance/PVF proof would be deferred"
+    ],
+    "validation_lanes": [
+      {"lane":"preparation-contract","proof_role":"Prove six-card, design, diagram, live dependency rule, scope, COTS, budget, PVF, and no-product-change preparation truth","deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":2500,"argv":["ruby",".csdlc/prepared/issues/5502/validate-preparation.rb"],"parallel_group":"preparation","acceptance_ids":["AC-1","AC-3","AC-5"]},
+      {"lane":"dependency-live-merge-ancestry","proof_role":"Fail closed until #5499 and #5498 have live GitHub merged revisions that are ancestors of the #5502 execution base; typed closeout, receipts, and claim release are audit-only","deterministic":true,"resource_profile":"small","budget_seconds":60,"budget_tokens":1000,"argv":["ruby",".csdlc/prepared/issues/5502/check-dependencies.rb"],"parallel_group":"execution-gate","acceptance_ids":["AC-1","AC-2"],"defer_reason":"Run when implementation is requested; it must fail closed until both dependencies are live merged and ancestral"},
+      {"lane":"convergence-contract","proof_role":"Run offline deterministic identity, overlap, ordering, partial-success, replan, blocked, and non-authority tests","deterministic":true,"resource_profile":"medium","budget_seconds":120,"budget_tokens":4000,"argv":["ruby",".csdlc/prepared/issues/5502/run-validation-lane.rb","convergence-contract"],"parallel_group":"implementation","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5"],"defer_reason":"Mandatory after live merged ancestral dependencies and implementation; not selected during preparation"},
+      {"lane":"post-merge-exact","proof_role":"Re-run dependency ancestry, deterministic contracts, budgets, exact revision identity, CI, and #5501 handoff after authorized merge","deterministic":true,"resource_profile":"large","budget_seconds":600,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5502/run-validation-lane.rb","post-merge-exact"],"parallel_group":"post-merge","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5"],"defer_reason":"Mandatory after authorized merge and before closeout"}
+    ],
+    "failure_policy": "Fail closed without implementation, publication, merge, closeout, or #5501 handoff on incomplete dependencies, claim collision, stale/forged/overlapping/out-of-scope output, changed assumptions without typed replan, hidden authority, nondeterminism, deferred proof, red CI, stale review, or budget breach.",
+    "review_prompts": [
+      "Can any missing, stale, forged, overlapping, out-of-scope, or revision-discontinuous output bypass convergence rejection?",
+      "Can changed assumptions or partial success be hidden, reordered nondeterministically, or converted into silent scope expansion?",
+      "Does the component retain pure decision authority and avoid task, filesystem, network, GitHub, review, merge, and closeout mutation?",
+      "Are dependency, COTS, protected-path, LoC/test/module/time, PVF, no-deferral, CI, exact-review, and post-merge contracts complete?"
+    ],
+    "review_scope": ".csdlc/issues/5502\n.csdlc/locks/5502.lock\n.csdlc/prepared/issues/5502\n.csdlc/evidence/5502"
+  }
+}

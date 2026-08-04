@@ -1,6 +1,7 @@
 # Deletion and Cutover
 
-Deletion and default switch are planned through WP-12 and WP-13.
+Deletion and default switch were executed through WP-12 and WP-13 for the
+bounded v0.91.8 bridge.
 
 Required inputs:
 
@@ -13,4 +14,8 @@ Required inputs:
 - deletion eligibility manifest;
 - post-deletion validation.
 
-No code deletion is approved by this planning package.
+The retained WP-13 validation is
+`docs/milestones/v0.91.8/evidence/wp13/5346-post-deletion-validation.v1.json`.
+It records `status: pass` and 46,358 deleted lines against the 46,358-line
+pinned denominator. This document does not approve additional deletion beyond
+that retained evidence.

@@ -1,0 +1,13 @@
+{
+  "issue": 5354,
+  "card": "srp",
+  "expected_generation": 12,
+  "expected_digest": "0c355495c5805b77ceab4d1f8585a26bb64d24a9e374f169aff0f21bb9a239fb",
+  "claim_id": "claim-5354-v0918-wp15-reacquired",
+  "actor": "codex:5354-wp15-owner",
+  "reason": "The exact-head gpt-5.5 rereview finding is fixed, typed review evidence is recorded, and focused live convergence validation remains passing.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

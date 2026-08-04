@@ -1,0 +1,2 @@
+INFO #5558 branch head 033b28cffa6bdf191b1d013aa5a730ce7b10d9df is not ancestral; PR #5749 merge commit is the publication gate
+PASS dependency_ancestry mode=final required=12 baseline=c34f0c9412495039a6374f7ce88fa39e34bb5042

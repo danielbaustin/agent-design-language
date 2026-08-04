@@ -1,0 +1,16 @@
+{
+  "issue": 5350,
+  "claim_id": "claim-5350-v0918-wp11-shadow-parity-preparation",
+  "expected_owner": "codex:5350-preparation-owner",
+  "expected_generation": 3,
+  "expected_digest": "7c263bd7769d0ca5179da3119cf783068e1f58039d9f6796d3f64dffb6c2b817",
+  "now_unix_seconds": 1784789485,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Activate WP-11 after every direct predecessor implementation landed on current main; closeout receipts remain audit observations and do not block execution.",
+  "expected_purpose": "Prepare complete #5350 exact-revision shadow-parity cards and design; execution remains prohibited until every direct predecessor has a live merged landing commit ancestral to the comparison revision; receipts and typed closeout are audit observations only",
+  "purpose": "Implement, validate, review once, publish, merge, and close WP-11 exact-revision ADL v1/v2 shadow parity plus read-only Runtime v3 and WP-10A evidence overlays.",
+  "add_protected_paths": [
+    ".csdlc/evidence/5350",
+    "adl-characterization"
+  ]
+}

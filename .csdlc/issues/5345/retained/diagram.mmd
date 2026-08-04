@@ -1,0 +1,15 @@
+flowchart TD
+  D["WP-04 through WP-09 merged, typed closed_out, receipt-backed, and ancestral"] --> C["Thin adl-v2 CLI"]
+  C --> L["WP-04 language validate and schema"]
+  C --> P["WP-05 compiler plan"]
+  C --> E["WP-06 engine run"]
+  C --> R["WP-07 inspect sign verify"]
+  C --> A["WP-08 and WP-09 adapters"]
+  C --> S["Generation selector library"]
+  I["Tracked stable installer"] --> S
+  S --> V["Verify binary digest and install receipt"]
+  V --> T["Lock plus atomic compare-and-swap transaction"]
+  T --> Q["Deterministic selector receipt"]
+  Q --> X["#5343 reviewed default cutover"]
+  Q --> Y["#5344 soak and rollback proof"]
+  Z["Runtime, provider transport, lifecycle governance, cutover authority"] -. "outside WP-10" .-> C

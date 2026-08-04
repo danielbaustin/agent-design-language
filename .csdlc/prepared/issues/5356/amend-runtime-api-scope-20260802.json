@@ -1,0 +1,13 @@
+{
+  "issue": 5356,
+  "claim_id": "claim-5356-v0918-wp18-review-execution-20260802",
+  "expected_generation": 1,
+  "expected_digest": "a2650253eaa50e873f36b6b4029362f8a2d62a25e993a50f7ee5a45c8ed405ec",
+  "now_unix_seconds": 1785697291,
+  "actor": "codex:current-session-wp18-review",
+  "reason": "Resolve WP-18 internal-review Runtime API advertised-endpoint finding.",
+  "add_protected_paths": [
+    "adl-runtime/src/runtime_api.rs",
+    "adl-runtime/tests/runtime_api_wss.rs"
+  ]
+}

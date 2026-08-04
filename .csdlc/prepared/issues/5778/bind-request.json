@@ -1,0 +1,42 @@
+{
+  "issue": 5778,
+  "base_branch": "main",
+  "branch": "codex/5778-derived-terminal-finish",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5778-derived-terminal-finish",
+    "owner": "codex:5778-implementation",
+    "generation": 0,
+    "acquired_unix_seconds": 1785696508,
+    "expires_unix_seconds": 1786301308,
+    "heartbeat_unix_seconds": 1785696508,
+    "branch": "codex/5778-derived-terminal-finish",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5778",
+      ".csdlc/issues/5655",
+      ".csdlc/issues/5684",
+      ".csdlc/issues/5778",
+      ".csdlc/locks/5778.lock",
+      ".csdlc/prepared/issues/5778",
+      ".csdlc/publication/5778.intent.json",
+      "csdlc-v2/Cargo.lock",
+      "csdlc-v2/Cargo.toml",
+      "csdlc-v2/operator/coexistence.json",
+      "csdlc-v2/operator/skills.json",
+      "csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md",
+      "csdlc-v2/src/bin/csdlc-finish.rs",
+      "csdlc-v2/src/finish.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/model.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate_finish.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      "docs/default_workflow.md",
+      "docs/tooling/OWNER_BINARY_INSTALLATION.md"
+    ],
+    "purpose": "Implement #5778 derived terminal truth and one idempotent finish command without a second closeout PR."
+  }
+}

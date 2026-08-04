@@ -7,9 +7,9 @@
     "title": "[v0.91.8][csdlc-v2][prune] Resolve issue-local terminal worktree topology safely",
     "slug": "csdlc-prune-topology",
     "version": "v0.91.8",
-    "generation": 22
+    "generation": 29
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

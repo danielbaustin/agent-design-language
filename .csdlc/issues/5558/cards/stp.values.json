@@ -1,0 +1,43 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5558,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Remove sunset pr.sh guidance from owner lane",
+    "slug": "remove-sunset-pr-sh-guidance",
+    "version": "v0.91.8",
+    "generation": 39
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Correct only active live guidance, executable compatibility surfaces, and owner-lane validation policy.",
+      "deliverables": [
+        "Updated live guidance and compatibility tests",
+        "Removed editor start route",
+        "Owner lane Gate 10A proof"
+      ],
+      "acceptance_criteria": [
+        "AC-1: owner lane does not require sunset v1 lifecycle commands",
+        "AC-2: live guidance resolves through csdlc-install and typed v2 binaries or skills",
+        "AC-3: active tests and guidance do not teach adl/tools/pr.sh run",
+        "AC-4: focused guidance tests and full C-SDLC owner lane pass without AWS"
+      ],
+      "dependencies": [
+        "Gate 10D2 final v1_sunset authority"
+      ],
+      "repo_inputs": [
+        "AGENTS.md",
+        "csdlc-v2/operator/generation-selector.json",
+        ".csdlc/prepared/issues/5748/fail-closed-exceptions.md"
+      ],
+      "non_goals": [
+        "Changing historical evidence",
+        "Changing Runtime v3 behavior",
+        "Using AWS validation"
+      ]
+    }
+  }
+}

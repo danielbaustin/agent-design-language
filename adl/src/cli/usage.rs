@@ -59,13 +59,6 @@ pub fn usage() -> &'static str {
   adl runtime-v3 select [--runtime v2|v3] [--json]
   adl scheduler plan --input <bundle.json> [--out <path>] [--json]
   adl provider setup <family> [--model <provider_model_id>] [--out <dir>] [--force]
-  adl pr create --title <title> [--slug <slug>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>]
-  adl pr init <issue> [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>]
-  adl pr repair-issue-body <issue> [--slug <slug>] [--title <title>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>] [--force]
-  adl pr run <issue> [--prefix <prefix>] [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
-  adl pr doctor <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--allow-open-pr-wave] [--json]
-  adl pr finish <issue> --title <title> [--body <text>] [--paths <csv>] [-f|--input <path>] [--output-card <path>] [--no-checks] [--no-close] [--ready] [--merge] [--no-open]
-  adl pr closeout <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
   adl godel run --run-id <id> --workflow-id <id> --failure-code <code> --failure-summary <text> [--evidence-ref <path> ...] [--runs-dir <dir>]
   adl godel inspect --run-id <id> [--runs-dir <dir>]
   adl godel evaluate --failure-code <code> --experiment-result <ok|blocked> --score-delta <int>
@@ -74,7 +67,6 @@ pub fn usage() -> &'static str {
   adl sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
   adl instrument <graph|replay|replay-bundle|diff-plan|diff-trace|trace-schema|validate-trace-v1|provider-substrate|provider-substrate-schema> ...
   adl learn export --format <jsonl|bundle-v1|trace-bundle-v2> [--runs-dir <dir>] [--run-id <id> ...] --out <path>
-  adl tooling <card-prompt|code-review|csdlc-prompt-editor|generate-wp-issue-wave|lint-prompt-spec|prompt-template|srp-sor-update|validate-structured-prompt|review-card-surface|review-runtime-surface|verify-review-output-provenance|verify-repo-review-contract> ...
   adl verify <adl.yaml> [--key <public_key_path>]
 
 Options:
@@ -153,6 +145,7 @@ Examples:
   adl scheduler plan --input adl/tests/fixtures/scheduler/economics_inputs_v1.json --out artifacts/examples/scheduler-plan.json
   adl provider setup chatgpt
   adl provider setup claude
+  adl provider setup claude-opus-5
   adl provider setup openrouter
   adl provider setup bedrock
   adl provider setup z_ai
@@ -175,11 +168,6 @@ Examples:
   adl learn export --format bundle-v1 --runs-dir .adl/runs --out artifacts/examples/learning-bundle
   adl learn export --format trace-bundle-v2 --runs-dir .adl/runs --out artifacts/examples/trace-bundle
   adl learn export --format trace-bundle-v2 --runs-dir .adl/trace-archive --out artifacts/examples/archived-trace-bundle
-  adl tooling lint-prompt-spec --issue 761
-  adl tooling card-prompt --issue 761 --out artifacts/examples/issue-761.prompt.md
-  adl tooling csdlc-prompt-editor --emit-model-js docs/tooling/csdlc-prompt-editor/editor_model.js --render-samples artifacts/examples/csdlc-prompt-samples
-  adl tooling code-review --out artifacts/reviews/pr-review --backend fixture --visibility packet-only
-  adl tooling code-review --out artifacts/reviews/file-review --backend ollama --file adl/src/lib.rs --allow-live-ollama
   adl verify artifacts/examples/signed.adl.yaml --key ./.keys/ed25519-public.b64"
 }
 

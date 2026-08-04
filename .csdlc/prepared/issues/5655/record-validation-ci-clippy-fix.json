@@ -1,0 +1,29 @@
+{
+  "issue": 5655,
+  "card": "sor",
+  "expected_generation": 17,
+  "expected_digest": "028e4708d6ce2b828024cd40ad7025e7e676d76262e8dc23e2d4ef6e37d564b9",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "reason": "Record #5655 strict Clippy CI repair validation after recovering stale publication truth.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "purpose": "Prove the CI-reported strict Clippy blockers in csdlc-v2/src/github.rs are fixed before re-review and republication.",
+      "outcome": "passed",
+      "evidence_ref": "Strict Clippy passed after collapsing the issue_create guard and returning normalize_issue directly. Focused gate_github_actions passed 2/2; full csdlc-v2 suite passed including gate_github_actions 2/2 and Doc-tests csdlc_v2 1/1. TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp; CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target."
+    }
+  },
+  "fail_after_backup": false
+}

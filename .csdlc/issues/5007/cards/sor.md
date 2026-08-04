@@ -1,0 +1,162 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5007
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: complete
+
+## Summary
+
+Accepted the bounded Memory Palace context handoff architecture from #4760 ready PR #5740 proof without claiming merge or closeout.
+
+## Artifacts
+
+- .csdlc/issues/5007/cards/sip.md
+- .csdlc/issues/5007/cards/stp.md
+- .csdlc/issues/5007/cards/spp.md
+- .csdlc/issues/5007/cards/vpp.md
+- .csdlc/issues/5007/cards/srp.md
+- .csdlc/issues/5007/cards/sor.md
+- .csdlc/prepared/issues/5007/design.md
+- .csdlc/prepared/issues/5007/diagram.mmd
+- .csdlc/evidence/5007/preparation/gpt-5.5-preparation-review.md
+- docs/adr/0058-memory-palace-context-handoff-architecture.md
+- .csdlc/evidence/5007/proof-to-claim-table.md
+- docs/adr/README.md
+- docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md
+
+## Execution
+
+- Merged `origin/main` 51bc5ae51b57c19dbab693af1c5a45142995f4e5 into `codex/5007-v0918-wp14-preparation`.
+- Completed six issue-specific #5007 cards and refreshed the issue-local preparation design/diagram.
+- Retained bounded GPT-5.5 preparation review evidence and fixed the preparation-scope finding.
+- Added ADR 0058 for the Memory Palace context handoff architecture, grounded in #4760 PR #5740 head 94156d55d0a1f4bfda7ce32ac136437520325906.
+- Added an issue-local #5007 proof-to-claim table mapping ADR claims to #4760 implementation, runtime, validation, and review evidence.
+- Updated the ADR index and v0.91.8 ADR plan to list ADR 0058 while preserving ADR 0051 as the consumed deferred-disposition record.
+
+## Validation
+
+[
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "--",
+      ".csdlc/issues/5007",
+      ".csdlc/prepared/issues/5007",
+      ".csdlc/evidence/5007/preparation"
+    ],
+    "purpose": "Focused #5007 preparation diff hygiene; excludes unrelated whitespace inherited from integrated origin/main.",
+    "outcome": "passed",
+    "evidence_ref": "command output: no issues"
+  },
+  {
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--bin",
+      "csdlc-doctor",
+      "--",
+      "--repo",
+      ".",
+      "--issue",
+      "5007"
+    ],
+    "purpose": "C-SDLC v2 projection/readiness check reached generation 1 and reported only the expected expired preparation claim; execution-time claim reacquisition remains deferred by operator instruction.",
+    "outcome": "blocked",
+    "evidence_ref": "doctor report: status=block, finding=claim_not_live, next_operation=reacquire_claim"
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "#4760|51bc5ae51b57c19dbab693af1c5a45142995f4e5|0058-memory-palace|gpt-5.5|no-deferral|COTS|PVF|/private/tmp|stale claim|typed closeout",
+      ".csdlc/issues/5007",
+      ".csdlc/prepared/issues/5007",
+      ".csdlc/evidence/5007/preparation"
+    ],
+    "purpose": "Focused dependency-gate and boundary text check for #4760, exact main integration, intended path, GPT-5.5 review, COTS, PVF, no-deferral, no `/private/tmp`, stale-claim, and typed-closeout boundaries.",
+    "outcome": "passed",
+    "evidence_ref": "command output: matched required preparation boundaries"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "--",
+      ".csdlc/issues/5007",
+      ".csdlc/evidence/5007",
+      "docs/adr/0058-memory-palace-context-handoff-architecture.md",
+      "docs/adr/README.md",
+      "docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md"
+    ],
+    "purpose": "Run focused git diff hygiene for the #5007 documentation and lifecycle evidence paths.",
+    "outcome": "passed",
+    "evidence_ref": "memory-palace-adr-diff-hygiene.log"
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "0058-memory-palace-context-handoff-architecture|ADR 0058|0051.*consumed|not a claim that #5740 has merged",
+      "docs/adr/README.md",
+      "docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md"
+    ],
+    "purpose": "Run focused index and plan consistency checks.",
+    "outcome": "passed",
+    "evidence_ref": "memory-palace-adr-index-plan.log"
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "Status: Accepted|ready/non-draft|Merge: not_merged|does not claim PR #5740 is merged|does not claim #4760 is closed|does not claim Memory Palace is present on `main`|ObsMem|Chronosense|long-lived-agent|proof-to-claim",
+      "docs/adr/0058-memory-palace-context-handoff-architecture.md",
+      ".csdlc/evidence/5007/proof-to-claim-table.md"
+    ],
+    "purpose": "Run source-grounding and overclaim-prevention text checks for ADR 0058 and the proof table.",
+    "outcome": "passed",
+    "evidence_ref": "memory-palace-adr-proof-boundary.log"
+  },
+  {
+    "command": [
+      "gh",
+      "pr",
+      "checks",
+      "5743",
+      "--required"
+    ],
+    "purpose": "Observe the exact required GitHub integration checks for merged PR #5743.",
+    "outcome": "passed",
+    "evidence_ref": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808"
+  }
+]
+
+## Integration
+
+merged
+
+## Publication
+
+Publication: closed
+
+Merge: merged
+
+## Closeout
+
+complete
+
+## Follow Ups
+
+- Future execution must acquire a fresh typed claim instead of relying on the stale preparation claim.
+- Future execution must verify #4760 actual completed implementation proof before drafting the accepted ADR.

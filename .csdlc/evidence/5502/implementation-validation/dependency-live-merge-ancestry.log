@@ -1,0 +1,28 @@
+{
+  "status": "ready",
+  "origin_main": "7d6095acd0da8fe9e1a622387a229a02ecd824dc",
+  "dependencies": [
+    {
+      "issue": 5499,
+      "branch": "origin/codex/5499-v0918-wp10a-conductor",
+      "branch_sha": "26a08cf896693c03fdf8dcc503e734bad56e61dc",
+      "live_merge_sha": "26a08cf896693c03fdf8dcc503e734bad56e61dc",
+      "branch_tip_ancestral_to_origin_main": true,
+      "typed_closeout_phase": "receipt_absent",
+      "typed_projection_phase": "published",
+      "typed_projection_claim_active": true
+    },
+    {
+      "issue": 5498,
+      "branch": "origin/codex/5498-v0918-wp10a-task-context-adapter",
+      "branch_sha": "96359ed5bc008c63632e76a72eb1f2f77bfd9dd1",
+      "live_merge_sha": "96359ed5bc008c63632e76a72eb1f2f77bfd9dd1",
+      "branch_tip_ancestral_to_origin_main": true,
+      "typed_closeout_phase": "closed_out",
+      "typed_closeout_disposition": "merged",
+      "typed_closeout_observed_sha": "96359ed5bc008c63632e76a72eb1f2f77bfd9dd1",
+      "typed_projection_phase": "published",
+      "typed_projection_claim_active": true
+    }
+  ]
+}

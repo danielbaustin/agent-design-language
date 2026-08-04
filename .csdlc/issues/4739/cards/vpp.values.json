@@ -1,0 +1,131 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4739,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][tooling] Align Unity-MCP live project and port proof for deployed observatory",
+    "slug": "v0918-wp15-unity-mcp-live-project-endpoint-alignment",
+    "version": "v0.91.8",
+    "generation": 32
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "unity-mcp-alignment-unit",
+          "proof_role": "Execute the dedicated no-Unity parser, mismatch, redaction, and read-only failure fixtures",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-6",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 180,
+          "budget_tokens": 4000,
+          "argv": [
+            "bash",
+            "adl/tools/test_v0916_unity_mcp_alignment_unit.sh"
+          ],
+          "parallel_group": "unity-mcp-static",
+          "defer_reason": null
+        },
+        {
+          "lane": "unity-mcp-alignment-contract",
+          "proof_role": "Prove repository shell contract and focused static integration for the alignment surface",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 3000,
+          "argv": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_contract.sh"
+          ],
+          "parallel_group": "unity-mcp-static",
+          "defer_reason": null
+        },
+        {
+          "lane": "unity-mcp-selector-registration",
+          "proof_role": "Prove issue-owned paths select the focused non-Unity MCP alignment lane",
+          "acceptance_ids": [
+            "AC-8",
+            "AC-9"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 180,
+          "budget_tokens": 3000,
+          "argv": [
+            "bash",
+            "adl/tools/test_select_validation_lanes.sh"
+          ],
+          "parallel_group": "unity-mcp-static",
+          "defer_reason": null
+        },
+        {
+          "lane": "unity-mcp-diff-hygiene",
+          "proof_role": "Prove bounded text and script hygiene for the issue-owned diff",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "unity-mcp-static",
+          "defer_reason": null
+        },
+        {
+          "lane": "unity-mcp-live-read-only",
+          "proof_role": "Execute the repository-owned probe against the intended project and retain exact read-only alignment or blocker truth",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-4",
+            "AC-5",
+            "AC-7"
+          ],
+          "deterministic": false,
+          "resource_profile": "small",
+          "budget_seconds": 180,
+          "budget_tokens": 3000,
+          "argv": [
+            "bash",
+            "-c",
+            "test -n \"${ADL_UNITY_PROJECT_PATH:-}\" && bash adl/tools/probe_unity_mcp_observatory_alignment.sh --project \"$ADL_UNITY_PROJECT_PATH\""
+          ],
+          "parallel_group": "unity-mcp-live",
+          "defer_reason": "Set ADL_UNITY_PROJECT_PATH to the intended canonical project and run only when that Unity project is available; the repository-relative probe path remains fixed and reviewable."
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on project or endpoint ambiguity, fixed-port assumptions, cloud fallback, missing read-only proof, secret exposure, broad process scans, adjacent Unity scope, or unsupported readiness claims.",
+      "design_ref": ".csdlc/issues/4739/retained/design.md",
+      "design_digest": "5511b37ed47d164d33691da1055f9b9cef543282aa8b71ad5fe1b6a0a6d5e53d",
+      "diagram_ref": ".csdlc/issues/4739/retained/diagram.mmd",
+      "diagram_digest": "373d365216f9d2ec61854af04d607cf6ef43a5cd3bad817090384490332b9346"
+    }
+  }
+}

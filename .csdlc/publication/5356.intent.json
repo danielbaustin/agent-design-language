@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5356,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5356-v0918-preparation",
+  "title": "[v0.91.8][WP-18] Run internal milestone review",
+  "body": "## Summary\n\nCloses #5356.\n\nThis PR executes the v0.91.8 WP-18 internal milestone review, retains the review packet, resolves the retained in-scope findings, and records typed C-SDLC review truth.\n\n## Findings Resolved\n\n- IR-5356-001: WP-17/#5360 squash-merge terminal truth is accepted only with retained closed_out evidence plus same-tree landed main ancestry.\n- IR-5356-002: v0.91.8 release-tail entrypoints now show WP-18 as active after closed WP-17.\n- IR-5356-003: WP-18 validation lanes now execute and emit structured JSON instead of failing as a preparation stub.\n- IR-5356-004: Runtime API advertised endpoints now match served routes, with focused contract proof.\n\n## Validation\n\n- Full local WP-18 lane pass at 9d5c0b5f73243cf332df41236164d822c0c7c264: freeze-corpus, code, security, tests, docs, architecture, evidence, synthesis, review-quality, complete, post-merge-exact.\n- csdlc-doctor passed at implemented and reviewed phases.\n- Final read-only exact-head review returned CLEAN for 9d5c0b5f73243cf332df41236164d822c0c7c264.\n- Publication review guard accepted current head bb253f981232ed91add7479d695c0d3692b87936 as metadata-only lifecycle drift after typed review recording.\n\nNo AWS operations were performed. WP-19 external review and release approval are not claimed.",
+  "draft": false,
+  "revision": "git-blake3:bb253f981232ed91add7479d695c0d3692b87936:baa3618d112c0a123e11a79ec359386daec47e3d84fa8fb221ff328c89df0664",
+  "commit_sha": "bb253f981232ed91add7479d695c0d3692b87936"
+}

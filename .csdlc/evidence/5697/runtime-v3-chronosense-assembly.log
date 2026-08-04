@@ -1,0 +1,13 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/assembly.rs (adl-runtime-kernel/target/debug/deps/assembly-d7e61ab269925d27)
+
+running 7 tests
+test shutdown_grace_aborts_non_cooperative_operation_executor ... ok
+test chronosense_uses_qualified_trusted_time_and_fails_closed_before_it_is_ready ... ok
+test local_production_adapters_execute_real_bounded_behavior ... ok
+test operation_policy_timeout_does_not_synthesize_adapter_failure ... ok
+test aborted_operation_owner_releases_in_flight_idempotency_key ... ok
+test canonical_ingress_dispatches_real_agent_work ... ok
+test agent_scheduler_checkpoint_cancellation_and_storage_are_real ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s

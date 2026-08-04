@@ -1,0 +1,7 @@
+{
+  "issue": 4741,
+  "expected_generation": 2,
+  "expected_digest": "49e2638bd4e4ccb5695932bf58206c8c8a1d2e7b6a2b25bdb8a8a5e5aefb20fa",
+  "claim_id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+  "reviewer": "operator:v0918-wp15-unity-specialist-recheck"
+}

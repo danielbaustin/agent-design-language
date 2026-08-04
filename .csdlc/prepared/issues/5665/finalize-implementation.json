@@ -1,0 +1,114 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5665,
+  "expected_generation": 0,
+  "expected_digest": "1e54f5a768dd047ce7b7812f798ab67e65ddb0c7e93dd3b4229402a4a68fae04",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "actor": "codex:issue-5665-slot-1",
+  "summary": "Completed an API-only Runtime v3 Rustls WSS proof surface with authenticated upgrade, bidirectional frames, rotation/revocation rechecks, shutdown acknowledgement, health-state distinctions, sink-bounded telemetry, port 20997 init truth, and a feature/adapter matrix.",
+  "changes": [
+    "Added Axum/Rustls Runtime API helpers in adl-runtime for /health, /metrics, and /acip/ws.",
+    "Reused the existing RuntimeApiCredentialStore for WSS handshake authentication and live revocation checks.",
+    "Added Runtime API health-state, telemetry sink-capability, and feature-matrix contracts.",
+    "Added a real TLS/WSS integration test that exercises auth failure, successful bidirectional frames, credential rotation overlap, revocation closeout, and shutdown acknowledgement.",
+    "Added the clean-checkout Runtime API init file for port 20997 and the #5665 feature/adapter matrix artifact.",
+    "Recorded the blocked obsolete-wrapper deletion attempt: #5587 still protects adl/Cargo.toml."
+  ],
+  "artifacts": [
+    "adl-runtime/src/runtime_api.rs",
+    "adl-runtime/tests/runtime_api_wss.rs",
+    "infra/runtime-v3/runtime-api-5665.toml",
+    "docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json",
+    ".csdlc/prepared/issues/5665/amend-obsolete-wp12-wrapper-scope.json"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "runtime-v3-wss-focused",
+          "proof_role": "Focused Rust test proof for real WSS auth, bidirectional frames, rotation, revocation, shutdown, health states, telemetry limits, and matrix truth.",
+          "purpose": "Prove #5665 Runtime API WSS and Observatory truth without URL-only, fixture-only, metadata-only, Python, AWS, or degraded proof.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 2,
+            "memory_mib": 4096,
+            "tokens": 3000
+          },
+          "credentials": [],
+          "network": "loopback",
+          "dependencies": [],
+          "parallel_group": "runtime-v3-wss",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 600,
+          "executable": "cargo",
+          "argv": [
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime/Cargo.toml"
+          ],
+          "evidence": {
+            "max_log_bytes": 200000,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        },
+        {
+          "id": "runtime-v3-strict-clippy",
+          "proof_role": "Strict Clippy proof for the touched adl-runtime crate.",
+          "purpose": "Prove the #5665 Runtime API implementation is warning-clean under strict Clippy.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 2,
+            "memory_mib": 4096,
+            "tokens": 2500
+          },
+          "credentials": [],
+          "network": "loopback",
+          "dependencies": [
+            "runtime-v3-wss-focused"
+          ],
+          "parallel_group": "runtime-v3-wss",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 600,
+          "executable": "cargo",
+          "argv": [
+            "clippy",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime/Cargo.toml",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "evidence": {
+            "max_log_bytes": 200000,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": [
+        "runtime-v3-wss-focused",
+        "runtime-v3-strict-clippy"
+      ],
+      "allow_network": true,
+      "available_credentials": []
+    },
+    "budget": {
+      "max_parallel": 1,
+      "cpu_units": 2,
+      "memory_mib": 4096,
+      "tokens": 6000
+    },
+    "root": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5665",
+    "evidence_dir": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5665/.csdlc/evidence/5665",
+    "cancellation_file": null
+  }
+}

@@ -74,7 +74,7 @@
       "prompt_ref": "embedded:watcher_state_v1",
       "started_at": "2026-06-19T05:35:31+00:00",
       "elapsed_ms": 2475,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-opus-4-8__watcher_state_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-opus-4-8__watcher_state_v1.md",
       "normalized_result": {
         "status": "action_required",
         "sections": [
@@ -87,8 +87,8 @@
       "score": "pass_with_limits",
       "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
       "safe_role_recommendation": "conductor_provider_candidate_with_limits",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-opus-4-8__watcher_state_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-opus-4-8__watcher_state_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-opus-4-8__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-opus-4-8__watcher_state_v1.jsonl",
       "output_digest": "sha256:4809be984449"
     },
     {
@@ -97,7 +97,7 @@
       "prompt_ref": "embedded:card_validator_v1",
       "started_at": "2026-06-19T05:35:33+00:00",
       "elapsed_ms": 3752,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-opus-4-8__card_validator_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-opus-4-8__card_validator_v1.md",
       "normalized_result": {
         "severity": "P1"
       },
@@ -105,8 +105,8 @@
       "score": "pass",
       "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
       "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-opus-4-8__card_validator_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-opus-4-8__card_validator_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-opus-4-8__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-opus-4-8__card_validator_v1.jsonl",
       "output_digest": "sha256:cd82087d8f41"
     },
     {
@@ -115,7 +115,7 @@
       "prompt_ref": "embedded:review_findings_v1",
       "started_at": "2026-06-19T05:35:37+00:00",
       "elapsed_ms": 4147,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-opus-4-8__review_findings_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-opus-4-8__review_findings_v1.md",
       "normalized_result": {
         "severity": "P3"
       },
@@ -123,8 +123,8 @@
       "score": "pass",
       "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
       "safe_role_recommendation": "reviewer_provider_candidate",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-opus-4-8__review_findings_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-opus-4-8__review_findings_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-opus-4-8__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-opus-4-8__review_findings_v1.jsonl",
       "output_digest": "sha256:de01bf2eac92"
     },
     {
@@ -133,7 +133,7 @@
       "prompt_ref": "embedded:bounded_planner_v1",
       "started_at": "2026-06-19T05:35:41+00:00",
       "elapsed_ms": 4100,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-opus-4-8__bounded_planner_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-opus-4-8__bounded_planner_v1.md",
       "normalized_result": {
         "reason": "missing_headings",
         "sections": [
@@ -146,8 +146,8 @@
       "score": "fail_format",
       "reviewer_judgment": "planner output missed the required headings",
       "safe_role_recommendation": "do_not_use_for_planning",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-opus-4-8__bounded_planner_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-opus-4-8__bounded_planner_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-opus-4-8__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-opus-4-8__bounded_planner_v1.jsonl",
       "output_digest": "sha256:fcfcc5e27693"
     },
     {
@@ -156,7 +156,7 @@
       "prompt_ref": "embedded:closeout_checker_v1",
       "started_at": "2026-06-19T05:35:45+00:00",
       "elapsed_ms": 2971,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-opus-4-8__closeout_checker_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-opus-4-8__closeout_checker_v1.md",
       "normalized_result": {
         "decision": "needs_remediation"
       },
@@ -164,8 +164,8 @@
       "score": "pass",
       "reviewer_judgment": "closeout output correctly withheld closure until merge/proof evidence exists",
       "safe_role_recommendation": "tester_provider_candidate_with_limits",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-opus-4-8__closeout_checker_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-opus-4-8__closeout_checker_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-opus-4-8__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-opus-4-8__closeout_checker_v1.jsonl",
       "output_digest": "sha256:da033dda62c8"
     },
     {
@@ -174,7 +174,7 @@
       "prompt_ref": "embedded:watcher_state_v1",
       "started_at": "2026-06-19T05:35:48+00:00",
       "elapsed_ms": 3539,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-sonnet-4-6__watcher_state_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-sonnet-4-6__watcher_state_v1.md",
       "normalized_result": {
         "status": "pending",
         "sections": [
@@ -187,8 +187,8 @@
       "score": "pass_with_limits",
       "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
       "safe_role_recommendation": "conductor_provider_candidate_with_limits",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-sonnet-4-6__watcher_state_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-sonnet-4-6__watcher_state_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-sonnet-4-6__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-sonnet-4-6__watcher_state_v1.jsonl",
       "output_digest": "sha256:3de372beda8a"
     },
     {
@@ -197,7 +197,7 @@
       "prompt_ref": "embedded:card_validator_v1",
       "started_at": "2026-06-19T05:35:52+00:00",
       "elapsed_ms": 3082,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-sonnet-4-6__card_validator_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-sonnet-4-6__card_validator_v1.md",
       "normalized_result": {
         "severity": "P1"
       },
@@ -205,8 +205,8 @@
       "score": "pass",
       "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
       "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-sonnet-4-6__card_validator_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-sonnet-4-6__card_validator_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-sonnet-4-6__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-sonnet-4-6__card_validator_v1.jsonl",
       "output_digest": "sha256:939e2412ab9d"
     },
     {
@@ -215,7 +215,7 @@
       "prompt_ref": "embedded:review_findings_v1",
       "started_at": "2026-06-19T05:35:55+00:00",
       "elapsed_ms": 5627,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-sonnet-4-6__review_findings_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-sonnet-4-6__review_findings_v1.md",
       "normalized_result": {
         "severity": "P2"
       },
@@ -223,8 +223,8 @@
       "score": "pass",
       "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
       "safe_role_recommendation": "reviewer_provider_candidate",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-sonnet-4-6__review_findings_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-sonnet-4-6__review_findings_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-sonnet-4-6__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-sonnet-4-6__review_findings_v1.jsonl",
       "output_digest": "sha256:8669b2d9d56b"
     },
     {
@@ -233,7 +233,7 @@
       "prompt_ref": "embedded:bounded_planner_v1",
       "started_at": "2026-06-19T05:36:01+00:00",
       "elapsed_ms": 5848,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-sonnet-4-6__bounded_planner_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-sonnet-4-6__bounded_planner_v1.md",
       "normalized_result": {
         "plan_steps": 4
       },
@@ -241,8 +241,8 @@
       "score": "pass",
       "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
       "safe_role_recommendation": "architect_provider_candidate_with_limits",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-sonnet-4-6__bounded_planner_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-sonnet-4-6__bounded_planner_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-sonnet-4-6__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-sonnet-4-6__bounded_planner_v1.jsonl",
       "output_digest": "sha256:2611692cf559"
     },
     {
@@ -251,7 +251,7 @@
       "prompt_ref": "embedded:closeout_checker_v1",
       "started_at": "2026-06-19T05:36:07+00:00",
       "elapsed_ms": 3210,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-sonnet-4-6__closeout_checker_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-sonnet-4-6__closeout_checker_v1.md",
       "normalized_result": {
         "decision": "needs_remediation"
       },
@@ -259,8 +259,8 @@
       "score": "pass",
       "reviewer_judgment": "closeout output correctly withheld closure until merge/proof evidence exists",
       "safe_role_recommendation": "tester_provider_candidate_with_limits",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-sonnet-4-6__closeout_checker_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-sonnet-4-6__closeout_checker_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-sonnet-4-6__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-sonnet-4-6__closeout_checker_v1.jsonl",
       "output_digest": "sha256:79b6a068514f"
     },
     {
@@ -269,7 +269,7 @@
       "prompt_ref": "embedded:watcher_state_v1",
       "started_at": "2026-06-19T05:36:10+00:00",
       "elapsed_ms": 1433,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-haiku-4-5__watcher_state_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-haiku-4-5__watcher_state_v1.md",
       "normalized_result": {
         "status": "pending",
         "sections": [
@@ -282,8 +282,8 @@
       "score": "pass_with_limits",
       "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
       "safe_role_recommendation": "conductor_provider_candidate_with_limits",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-haiku-4-5__watcher_state_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-haiku-4-5__watcher_state_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-haiku-4-5__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-haiku-4-5__watcher_state_v1.jsonl",
       "output_digest": "sha256:dec54f98574a"
     },
     {
@@ -292,7 +292,7 @@
       "prompt_ref": "embedded:card_validator_v1",
       "started_at": "2026-06-19T05:36:11+00:00",
       "elapsed_ms": 1897,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-haiku-4-5__card_validator_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-haiku-4-5__card_validator_v1.md",
       "normalized_result": {
         "severity": "P1"
       },
@@ -300,8 +300,8 @@
       "score": "pass",
       "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
       "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-haiku-4-5__card_validator_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-haiku-4-5__card_validator_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-haiku-4-5__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-haiku-4-5__card_validator_v1.jsonl",
       "output_digest": "sha256:ed19ac917c93"
     },
     {
@@ -310,7 +310,7 @@
       "prompt_ref": "embedded:review_findings_v1",
       "started_at": "2026-06-19T05:36:13+00:00",
       "elapsed_ms": 2875,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-haiku-4-5__review_findings_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-haiku-4-5__review_findings_v1.md",
       "normalized_result": {
         "severity": "P2"
       },
@@ -318,8 +318,8 @@
       "score": "pass",
       "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
       "safe_role_recommendation": "reviewer_provider_candidate",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-haiku-4-5__review_findings_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-haiku-4-5__review_findings_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-haiku-4-5__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-haiku-4-5__review_findings_v1.jsonl",
       "output_digest": "sha256:a3b4ede1b74a"
     },
     {
@@ -328,7 +328,7 @@
       "prompt_ref": "embedded:bounded_planner_v1",
       "started_at": "2026-06-19T05:36:16+00:00",
       "elapsed_ms": 3003,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-haiku-4-5__bounded_planner_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-haiku-4-5__bounded_planner_v1.md",
       "normalized_result": {
         "plan_steps": 4
       },
@@ -336,8 +336,8 @@
       "score": "pass",
       "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
       "safe_role_recommendation": "architect_provider_candidate_with_limits",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-haiku-4-5__bounded_planner_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-haiku-4-5__bounded_planner_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-haiku-4-5__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-haiku-4-5__bounded_planner_v1.jsonl",
       "output_digest": "sha256:c0ad8e4a84f9"
     },
     {
@@ -346,7 +346,7 @@
       "prompt_ref": "embedded:closeout_checker_v1",
       "started_at": "2026-06-19T05:36:19+00:00",
       "elapsed_ms": 1699,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic:claude-haiku-4-5__closeout_checker_v1.md",
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_outputs/anthropic__claude-haiku-4-5__closeout_checker_v1.md",
       "normalized_result": {
         "decision": "blocked"
       },
@@ -354,8 +354,8 @@
       "score": "pass_with_limits",
       "reviewer_judgment": "closeout output remained conservative even if it missed one specific supplied gap",
       "safe_role_recommendation": "tester_provider_candidate_with_limits",
-      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic:claude-haiku-4-5__closeout_checker_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic:claude-haiku-4-5__closeout_checker_v1.jsonl",
+      "result_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_results/anthropic__claude-haiku-4-5__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/anthropic_current_models_adl_demo_key/lane_logs/anthropic__claude-haiku-4-5__closeout_checker_v1.jsonl",
       "output_digest": "sha256:d84ec303483b"
     }
   ],

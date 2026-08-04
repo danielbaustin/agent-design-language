@@ -1,0 +1,20 @@
+{
+  "issue": 5384,
+  "card": "sip",
+  "expected_generation": 2,
+  "expected_digest": "47954f87aa3b763c408c2fb770cdbcd681cce49f90bcac62473d38ac4a2f28a5",
+  "claim_id": "claim-5384-v0918-wp14a-preparation-refresh",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the operator decision to prepare WP-14A now and defer WP-13 deletion until immediately before #5356.",
+  "operation": {
+    "operation": "replace_operator_constraints",
+    "values": [
+      "Use typed C-SDLC v2 lifecycle operations in the existing issue worktree; never write on main.",
+      "Prepare only: do not implement, publish, merge, or close #5384 in this step.",
+      "WP-13 deletion #5346/#5347 is deferred and does not block WP-14A.",
+      "Internal review #5356 must wait for the deferred deletion wave and focused post-deletion validation.",
+      "Use one bounded Gemini review before the eventual PR.",
+      "Reuse retained exact proof instead of rerunning expensive soak or lifecycle tests without cause."
+    ]
+  }
+}

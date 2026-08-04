@@ -1,0 +1,26 @@
+{
+  "issue": 5343,
+  "expected_claim_id": "claim-5343-v0918-wp12-reversible-default-switch-preparation",
+  "expected_generation": 3,
+  "now_unix_seconds": 1785314375,
+  "replacement": {
+    "id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 3,
+    "acquired_unix_seconds": 1785314375,
+    "expires_unix_seconds": 1785919175,
+    "heartbeat_unix_seconds": 1785314375,
+    "branch": "codex/5343-v0918-wp12-reversible-default-switch",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5343",
+      ".csdlc/issues/5343",
+      ".csdlc/locks/5343.lock",
+      ".csdlc/prepared/issues/5343",
+      "docs/milestones/v0.91.8/evidence/wp12/cutover-5343"
+    ],
+    "purpose": "Execute #5343 reversible ADL default switch through the merged authoritative selector: prove fresh ADL v2 installation, real incumbent v1 execution and exact restoration, final v2 selection, failure preservation, and a 14-day rollback window without legacy deletion or Runtime v2 edits"
+  },
+  "recovery_actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The preparation-only lease expired after both live dependency landings became ancestral; recover the same bounded issue worktree for the authorized WP-12 cutover execution."
+}

@@ -54,8 +54,8 @@ Modules:\n\
 Boundaries:\n\
   - csm is the runtime owner and executes the permanent daemon loop.\n\
   - csmctl is the operator/admin control plane for that runtime.\n\
-  - adl remains ADL language authoring, compilation, validation, and workflow tooling.\n\
-  - C-SDLC issue execution remains with adl/tools/pr.sh and adl-csdlc compatibility surfaces."
+  - adl remains ADL language authoring, compilation, validation, and runtime workflow tooling.\n\
+  - C-SDLC issue execution resolves through csdlc-install and the independent typed v2 binaries."
 }
 
 fn real_api(args: &[String]) -> Result<()> {
@@ -442,7 +442,8 @@ safety:
         assert!(usage.contains("csm is the runtime owner"));
         assert!(usage.contains("adl remains ADL language"));
         assert!(!usage.contains("adl compile"));
-        assert!(!usage.contains("adl pr run"));
+        assert!(usage.contains("csdlc-install"));
+        assert!(usage.contains("independent typed v2 binaries"));
     }
 
     #[test]

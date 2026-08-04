@@ -1,0 +1,43 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "current-registry-six-card-integrity",
+        "proof_role": "typed_current_registry_six_card_integrity",
+        "purpose": "Resolve the active registry, native projection, six card/value pairs, and typed doctor state.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 2000},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "preparation",
+        "release_gate": "required", "execution": "local", "timeout_seconds": 120,
+        "executable": "ruby", "argv": [".csdlc/prepared/issues/5356/validate-cards.rb"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "preparation-contract",
+        "proof_role": "complete_internal_review_preparation_contract",
+        "purpose": "Validate exact issue-local scope, corpus and specialist matrices, budgets, dependency gate shape, no-product-change truth, and preparation stop boundary.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 3000},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "preparation",
+        "release_gate": "required", "execution": "local", "timeout_seconds": 120,
+        "executable": "ruby", "argv": [".csdlc/prepared/issues/5356/validate-preparation.rb"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "preparation-diff-hygiene",
+        "proof_role": "issue_local_preparation_diff_hygiene",
+        "purpose": "Reject whitespace errors in the issue-local preparation packet.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 1000},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "preparation",
+        "release_gate": "required", "execution": "local", "timeout_seconds": 120,
+        "executable": "git", "argv": ["diff", "--check"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {"requested_lanes": ["current-registry-six-card-integrity", "preparation-contract", "preparation-diff-hygiene"], "allow_network": false, "available_credentials": []},
+  "budget": {"max_parallel": 3, "cpu_units": 3, "memory_mib": 768, "tokens": 6000},
+  "root": ".", "evidence_dir": ".csdlc/evidence/5356/preparation-validation", "cancellation_file": null
+}

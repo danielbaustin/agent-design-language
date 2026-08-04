@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5675,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][provider] Route Kimi and MiniMax through adl-provider-adapter",
+    "slug": "provider-adapter-kimi-minimax-routes",
+    "version": "v0.91.8",
+    "generation": 21
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl/src/provider_adapter.rs\nadl/src/provider/profiles.rs",
+      "review_revision": "git-blake3:92fed26e1ff2031a57d80a014fbef77542da55d8:ec2eef569becd5f45193c2450055559f61aff9585114fd2aaeb989728357f85b",
+      "reviewer": "codex:5675-5759-corrective-review",
+      "review_prompts": [
+        "Check Kimi and MiniMax endpoint and auth contracts",
+        "Check bounded token and retry behavior",
+        "Check MiniMax success-status error envelopes and credential redaction"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "PR #5759 is the governed corrective evidence for the MiniMax billing-classification scope repair that also closes #5675.",
+        "The fresh review scope is limited to the original #5675 provider adapter/profile surface at the exact PR #5759 head."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

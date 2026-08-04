@@ -1,0 +1,13 @@
+{
+  "issue": 5354,
+  "claim_id": "claim-5354-v0918-wp15-demo-preparation",
+  "expected_generation": 1,
+  "expected_digest": "dcf68db28b72c02321622dbdcc78be70443c4e83edf33a1c7557acd5932cff4d",
+  "now_unix_seconds": 1784789000,
+  "actor": "codex:5354-wp14-decomposition",
+  "reason": "Resolve the final review findings in active C-SDLC acceptance and parallel-execution planning truth.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/CSDLC_V2_ACCEPTANCE_v0.91.8.md"
+  ]
+}

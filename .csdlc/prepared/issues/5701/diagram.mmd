@@ -1,0 +1,10 @@
+flowchart TD
+  A["Runtime v3 Axum router"] --> B["Runtime Core API v1"]
+  A --> C["Observatory API v1"]
+  B --> D["docs/api/runtime-v3/v1/openapi.json"]
+  C --> E["docs/api/runtime-v3/v1/observatory.openapi.json"]
+  D --> F["client generation smoke"]
+  E --> F
+  G["route inventory test"] --> D
+  G --> E
+  H["#5344 protected router/config paths"] -. "typed transfer or release required before serving-route edits" .-> A

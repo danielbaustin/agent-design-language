@@ -1,0 +1,10 @@
+{
+  "issue": 5645,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "a92b0891b3d50d740b720d55a4b1e620390594d41cbaa953ca94362b71c1ed9e",
+  "claim_id": "claim-5645-csdlc-merge-command",
+  "actor": "codex:5645-execution",
+  "reason": "Begin bounded implementation of the typed csdlc-merge command in the bound worktree.",
+  "operation": {"operation":"advance_phase","phase":"implemented"}
+}

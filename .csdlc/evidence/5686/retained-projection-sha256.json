@@ -1,0 +1,27 @@
+{
+  "schema": "adl.csdlc_retained_projection_sha256.v1",
+  "issue": 5662,
+  "source_revisions": [
+    "6487f1ef8d97549c5ccf092946d93a7aa67c60de",
+    "d95b4b0c5ebcc4c4fa95d8dccf19558296c53c6c"
+  ],
+  "files": {
+    ".csdlc/issues/5662/audit.jsonl": "eacb6f3c92483f8bb220fdf413cb8b296d85a2ea304112bc0a6e251d263eed47",
+    ".csdlc/issues/5662/cards/sip.md": "13c3e5b1e045fcadb3350198eff1e6fed4639c5df858ded685a299a9ee39b86d",
+    ".csdlc/issues/5662/cards/sip.values.json": "0b48f7bb1070916e90afd37c1dea60f6391d868a0a2dbb1b7036748fdd9f9da7",
+    ".csdlc/issues/5662/cards/sor.md": "3de546dfcd3066c7b7ceebd4de93bd570e9b0af68eddb94753d761ea8f2d7b3b",
+    ".csdlc/issues/5662/cards/sor.values.json": "42a8a1c2515bcbbe8ebc95043e7968aa48bf0d7bbae0b5a733dbc4edfe89ef59",
+    ".csdlc/issues/5662/cards/spp.md": "10635977f332c32e8aea81c818c2c34470b734e901c9cb98def20ece311740f9",
+    ".csdlc/issues/5662/cards/spp.values.json": "9f1d44e91fd472082bb7b1ffa3e02bd3a4d1ec6d5efcbedd7eb8aa090f78d7d1",
+    ".csdlc/issues/5662/cards/srp.md": "0914c285f49944b1bb71f43d7f5329f6ef4acac4edd7b08d844cdc28c76611f9",
+    ".csdlc/issues/5662/cards/srp.values.json": "b6dd0670231dc1be0be22ac87ac46ece7625281c54c780d36677fd5ba827ce75",
+    ".csdlc/issues/5662/cards/stp.md": "d01a0214f03348b5c855f2bff93103e554e10ae48c3bb5420f67accf22b50ab6",
+    ".csdlc/issues/5662/cards/stp.values.json": "a3a1de3bdbc71cfe9428a3175deb46f2e0f785811431dff75e0c9baf2638cd91",
+    ".csdlc/issues/5662/cards/vpp.md": "e529fe9556847f7faaf9ab31b29c97637ca40528a947de3e8fc4b07da81aeb4a",
+    ".csdlc/issues/5662/cards/vpp.values.json": "ec7b915eaf39148f1a8c045e46430dd8e1c1697bf65057cd19267b772d8dad90",
+    ".csdlc/issues/5662/index.json": "6060eca693d5260db64686c181dbf682c9e2ef5cdeb5fb2b9a6287cfa515c799",
+    ".csdlc/issues/5662/retained/design.md": "7cf788785be25bf3f65cbbd523ef38e5bfe100962b843e523af1c7a66c049155",
+    ".csdlc/issues/5662/retained/diagram.mmd": "279b4d54787d5b7c78f616e9e18135cb575090529780bfde277a8ed6f274abc6",
+    ".csdlc/publication/5662.intent.json": "b21a196882e15eca929662040409b97736652619a4bf715d2dec187da313ef31"
+  }
+}

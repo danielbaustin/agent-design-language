@@ -1,0 +1,12 @@
+{
+  "issue": 5764,
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "expected_generation": 1,
+  "expected_digest": "cbecd47640d59773851af05e1d77363412e87e558e6fe763dc2f6a6e5784e996",
+  "now_unix_seconds": 1785574800,
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Add observability test harness vector resolver repair discovered by full runtime-kernel validation.",
+  "add_protected_paths": [
+    "adl-runtime-kernel/tests/observability.rs"
+  ]
+}

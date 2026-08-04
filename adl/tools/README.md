@@ -6,7 +6,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 
 ## What Is Here
 
-- `pr.sh`: canonical issue init/ready/run/finish workflow helper.
+- `.adl/bin/csdlc-v2/`: installed typed C-SDLC v2 owner binaries for issue lifecycle work.
 - `demo_v0871_operator_surface.sh`: canonical `v0.87.1` operator-surface proof wrapper for runtime bring-up and artifact inspection.
 - `demo_v0871_runtime_state.sh`: canonical `v0.87.1` runtime-state proof wrapper for paused-vs-completed persistence inspection.
 - `demo_v0871_suite.sh`: canonical `v0.87.1` WP-13 demo-suite entrypoint for the implemented provider, operator, runtime-state, review-surface, and multi-agent proof surfaces.
@@ -19,13 +19,10 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `archive_run_artifacts.sh`: dry-run/apply helper that inventories local run roots, copies unique run artifacts into `.adl/trace-archive/milestones/<milestone>/runs/`, and can move archived active `.adl/runs` entries into `.adl/trace-archive/source-roots/`.
 - `release_ceremony.sh`: canonical release-tail preflight and ceremony wrapper for milestone tag and GitHub Release execution, safe by default and only mutating release state when explicit flags are passed.
 - `demo_v089_quality_gate.sh`: canonical `v0.89` D11 quality-gate walkthrough that aggregates the bounded local gate and proof-package checks into one reviewer-facing manifest.
-- `adl tooling ...`: Rust-owned tooling surface for prompt/card/review validation helpers, with legacy wrapper scripts preserved at the historical `adl/tools/*` paths.
+- `csdlc-edit` and `csdlc-validate` own typed card edits and validation.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
 - `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks, including the repo-code-review skill contract guard.
-- `check_issue_metadata_parity.sh`: canonical metadata parity audit for GitHub issue title/labels plus local `.adl` body/STP metadata identity.
 - `check_repo_quality_staleness.py`: focused reviewer-facing docs and tracked-junk audit for the current milestone package and root repo status surfaces.
-- `closeout_completed_issue_wave.sh`: bounded local catch-up helper that runs `pr closeout` across closed/completed issue bundles for a milestone version so local-only `.adl` truth can converge after merge or main sync; `--dry-run` or `--report-only` emits the merged-needs-closeout candidate set without mutation.
-- `check_milestone_closed_issue_sor_truth.sh`: milestone closed-issue bundle truth gate for local-only `.adl` task bundles; verifies canonical `stp.md`, `sip.md`, and final `sor.md` truth for closed/completed issues.
 - `enforce_coverage_gates.sh`: deterministic coverage threshold enforcement (workspace + per-file).
 - `clean_coverage_artifacts.sh`: removes local generated coverage summaries and loose LLVM profile shards after coverage/report runs.
 - `report_large_rust_modules.sh`: non-blocking Rust source-and-test module size report for maintainability review.
@@ -73,14 +70,15 @@ python3 adl/tools/validate_multi_agent_transcript.py artifacts/v0871/multi_agent
 # run the current v0.87.1 milestone demo-suite proof package
 bash adl/tools/demo_v0871_suite.sh
 
-# bootstrap the local root task bundle for an existing issue
-bash ./adl/tools/pr.sh init <issue_num> --slug <slug>
+# resolve the sole active C-SDLC generation
+.adl/bin/csdlc-v2/csdlc-install resolve --repo . --issue <issue_num>
 
-# inspect readiness and workflow drift through the canonical doctor surface
-bash ./adl/tools/pr.sh doctor <issue_num> --slug <slug> --mode full --json
+# initialize and inspect readiness through typed request contracts
+.adl/bin/csdlc-v2/csdlc-init --root <worktree> --request <bootstrap-request.json>
+.adl/bin/csdlc-v2/csdlc-doctor --repo <repo> --issue <issue_num>
 
 # bind execution context at the last responsible moment
-bash ./adl/tools/pr.sh run <issue_num> --slug <slug>
+.adl/bin/csdlc-v2/csdlc-bind --root <worktree> --request <bind-request.json>
 
 # inspect worktree status/fate across managed, stale, orphan, and Codex-ephemeral namespaces
 ./adl/tools/worktree_doctor.sh
@@ -118,9 +116,6 @@ bash ./adl/tools/pr.sh run <issue_num> --slug <slug>
 # build the bounded v0.89 D11 quality-gate walkthrough package
 bash adl/tools/demo_v089_quality_gate.sh
 
-# audit GitHub/local issue metadata parity for one milestone package
-./adl/tools/check_issue_metadata_parity.sh --version v0.88
-
 # audit root + milestone reviewer-facing docs for current-milestone staleness
 python3 ./adl/tools/check_repo_quality_staleness.py --milestone v0.91.6
 
@@ -133,14 +128,14 @@ cd ./adl/ && bash tools/enforce_coverage_gates.sh coverage-summary.json
 # report large Rust source and test modules without failing the build
 ./adl/tools/report_large_rust_modules.sh
 
-# generate deterministic execution prompt from an input card
-adl-csdlc tooling card-prompt --issue <issue_num> --out /tmp/prompt.txt
+# edit and validate prompt cards through typed requests
+.adl/bin/csdlc-v2/csdlc-edit --repo <worktree> apply --request <edit-request.json>
+.adl/bin/csdlc-v2/csdlc-validate --root <worktree> finalize --request <finalize-request.json>
 
-# fresh checkout fallback when adl-csdlc is not yet on PATH
-cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- tooling card-prompt --issue <issue_num> --out /tmp/prompt.txt
-
-# finish issue and open/update PR
-bash ./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>"
+# finalize, review, and publish through typed requests
+.adl/bin/csdlc-v2/csdlc-validate --root <worktree> finalize --request <finalize-request.json>
+.adl/bin/csdlc-v2/csdlc-review record --request <review-request.json>
+.adl/bin/csdlc-v2/csdlc-publish publish --request <publication-request.json>
 ```
 
 ## Compatibility / Maintenance Surfaces
@@ -148,11 +143,7 @@ bash ./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>"
 The repo still carries a few compatibility and maintenance entrypoints, but they
 are not the preferred public workflow:
 
-- `pr ready` and `pr preflight` remain deprecated aliases over `pr doctor`
-- `pr start` remains a narrow compatibility alias over the same Rust-backed
-  execution-context binding path as `pr run`
-- `pr card`, `pr output`, `pr cards`, `pr open`, and `pr status` remain
-  maintenance-oriented helpers rather than the taught workflow surface
+- v1 lifecycle aliases are removed and must not be used for issue work
 - `codex_pr.sh` and `codexw.sh` are retired fail-closed wrappers kept only to
   print migration guidance; do not use them for new work
 
@@ -161,8 +152,7 @@ are not the preferred public workflow:
 - Root project entrypoint: `../../README.md`
 - Runtime/CLI usage: `../README.md`
 - Operational skills guide: `skills/docs/OPERATIONAL_SKILLS_GUIDE.md`
-  - includes concrete usage patterns for `pr-init`, `pr-ready`, `pr-run`,
-    `pr-janitor`, `pr-finish`, `pr-closeout`, and the helper card editors
+  - includes concrete typed v2 lifecycle and helper card-editor usage patterns
   - includes the full skill documentation matrix, install/resync guidance, and
     deployed-copy verification recipe for `$CODEX_HOME/skills`
   - when touching `stp.md`, `sip.md`, or `sor.md`, use the matching editor

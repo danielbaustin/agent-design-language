@@ -1,0 +1,20 @@
+{
+  "issue": 5764,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "d9a0f8efb5b97569d9ce6d7d5f89212710a9e3663830b6149173ee196facbb12",
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Record exact-head review fix for direct Runtime v3 WSS readiness ordering.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Fixed direct Runtime v3 secure-stream connect ordering so the browser caches /v1/ready before rendering Observatory WebSocket frames.",
+    "changes": [
+      "Make connectLive asynchronous and await Runtime v3 readiness before opening the WSS connection.",
+      "Preserve degraded or pending readiness cache before the first stream frame can render."
+    ],
+    "artifacts": [
+      "demos/html-observatory/app.js"
+    ]
+  }
+}

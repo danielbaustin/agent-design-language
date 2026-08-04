@@ -66,6 +66,7 @@ pub mod learning_export;
 pub mod learning_guardrails;
 pub mod local_gemma_model_evaluation;
 pub mod long_lived_agent;
+pub mod memory_palace;
 pub mod model_identity;
 pub mod model_proposal_benchmark;
 pub mod observability;

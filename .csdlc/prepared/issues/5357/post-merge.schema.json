@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "adl.v0918.external_review_post_merge.v1",
+  "type": "object",
+  "required": ["schema", "target_sha", "merge_sha", "corpus_sha256", "dispatch_receipt_sha256", "review_output_sha256", "required_checks", "typed_synthesis_recorded", "wp20_release_authorized"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "adl.v0918.external_review_post_merge.v1"},
+    "target_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "merge_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "corpus_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "dispatch_receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "review_output_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "required_checks": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"const": "success"}
+    },
+    "typed_synthesis_recorded": {"const": true},
+    "wp20_release_authorized": {"const": false}
+  }
+}

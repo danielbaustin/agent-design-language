@@ -13,10 +13,18 @@ mkdir -p "$OUT_DIR"
 cd "$ROOT_DIR"
 
 echo "Running v0.87.1 operator-surface demo..."
+GIT_COMMON_DIR="$(git rev-parse --path-format=absolute --git-common-dir)"
+PRIMARY_ROOT="$(dirname "$GIT_COMMON_DIR")"
+RUNTIME_BIN="${ADL_RUNTIME_BIN:-$PRIMARY_ROOT/.adl/bin/adl-runtime}"
+if [[ ! -x "$RUNTIME_BIN" ]]; then
+  echo "ERROR: adl-runtime is not installed at $RUNTIME_BIN; run adl/tools/install_owner_binaries.sh first" >&2
+  exit 2
+fi
 ADL_RUNTIME_ROOT="$RUNTIME_ROOT" \
 ADL_RUNS_ROOT="$RUNS_ROOT" \
 ADL_OLLAMA_BIN="$ROOT_DIR/adl/tools/mock_ollama_v0_4.sh" \
-  bash adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml \
+  "$RUNTIME_BIN" run adl/examples/v0-4-demo-deterministic-replay.adl.yaml \
+    --run \
     --trace \
     --allow-unsigned \
     --out "$STEP_OUT" \
@@ -31,7 +39,8 @@ Canonical operator command:
 ADL_RUNTIME_ROOT=artifacts/v0871/operator_surface/runtime \\
 ADL_RUNS_ROOT=artifacts/v0871/operator_surface/runtime/runs \\
 ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh \\
-bash adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml \\
+.adl/bin/adl-runtime run adl/examples/v0-4-demo-deterministic-replay.adl.yaml \\
+  --run \\
   --trace \\
   --allow-unsigned \\
   --out artifacts/v0871/operator_surface/out

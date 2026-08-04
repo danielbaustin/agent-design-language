@@ -1,0 +1,19 @@
+{
+  "issue": 5737,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "7092593ecf6d62843ca593471c8b825fbc4eddd5999136c30abaced53d788d73",
+  "claim_id": "claim-5737-csdlc-authority-recovery",
+  "actor": "codex:5737-execution",
+  "reason": "Record strict C-SDLC v2 Clippy validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "clippy", "--locked", "--manifest-path", "csdlc-v2/Cargo.toml", "--all-targets", "--", "-D", "warnings"],
+      "purpose": "Prove the simplified claim implementation remains warning-free across all targets.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5737/clippy.log"
+    }
+  },
+  "fail_after_backup": false
+}

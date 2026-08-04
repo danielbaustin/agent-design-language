@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5755,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5755-runtime-protocol-security",
+  "title": "[v0.91.8][runtime-v3][protocols] Resolve #5664 terminal closeout security blockers",
+  "body": "## Summary\n\n- Enforces an explicit bounded request body limit on the runtime v3 `/v1/control` route.\n- Requires runtime v3 rustls protocol adapters to use client certificate authentication and records a bounded client certificate identity.\n- Hardens the public mTLS construction path so callers cannot forge a `RustlsMutualTlsClient` using a no-client-auth config.\n- Adds focused negative and integration tests for oversized control bodies, missing mTLS client auth, successful mTLS identity observation, invalid key/certificate diagnostics, and forged public mTLS construction.\n\n## Validation\n\n- `CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5755-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml rustls_mutual_tls_client_requires_verified_identity_proof`\n- `CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5755-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test protocol_adapters`\n- `CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5755-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test control --test protocol_adapters`\n- `cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check`\n- `git diff --check`\n- exact-current bounded subagent review: CLEAN P0-P3 at `92d56e853ce67c48bc79fa8fe7734f72098e44bf`\n\nCloses #5755\nUnblocks #5664 terminal closeout reconciliation.",
+  "draft": false,
+  "revision": "git-blake3:8e655ce10468234ac19d7b5a5081bd498b6aa116:52b7b1854ed1c1540dcaa8d89f1004aaf90814230b4d2cae857a8b04d38ac0ea",
+  "commit_sha": "8e655ce10468234ac19d7b5a5081bd498b6aa116"
+}

@@ -1,0 +1,14 @@
+{
+  "issue": 4759,
+  "card": "spp",
+  "expected_generation": 11,
+  "expected_digest": "ed6cf373ab0f042b1220c8bde757c02189008a5f548358cd9b020a270c87adea",
+  "claim_id": "claim-4759-v0918-activation-execution-20260731",
+  "actor": "codex:issue-4759-execution",
+  "reason": "Mark review and publication handoff step in progress.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S4",
+    "status": "in_progress"
+  }
+}

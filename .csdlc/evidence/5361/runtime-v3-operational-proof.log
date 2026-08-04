@@ -1,0 +1,11 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+runtime_v3_selector=active selector=/Volumes/FastWork/adl-5361/operational-proof.mEYPOu/candidate-selector pid=5870 instance=/Volumes/FastWork/adl-5361/operational-proof.mEYPOu/state/instances/activation.sbicPR
+runtime_v3_selector=active selector=/Volumes/FastWork/adl-5361/operational-proof.mEYPOu/prior-selector pid=6063 instance=/Volumes/FastWork/adl-5361/operational-proof.mEYPOu/state/instances/activation.l8u0i2
+operational_selector_transition candidate=/Volumes/FastWork/adl-5361/operational-proof.mEYPOu/candidate-selector prior=/Volumes/FastWork/adl-5361/operational-proof.mEYPOu/prior-selector health=restored
+runtime_v3_selector=stopped
+runtime_v3_selector=active selector=/Volumes/FastWork/adl-5361/operational-proof.mEYPOu/candidate-selector pid=6249 instance=/Volumes/FastWork/adl-5361/operational-proof.mEYPOu/state/instances/activation.rf4wpp
+runtime_v3_selector=stopped
+runtime_v3_selector=active selector=/Volumes/FastWork/adl-5361/operational-proof.mEYPOu/prior-selector pid=6361 instance=/Volumes/FastWork/adl-5361/operational-proof.mEYPOu/state/instances/activation.jidCoS
+runtime_v3_selector=stopped
+runtime_v3_operational_proof=pass guardian=external transport=https auth=bearer websocket=wss rollback=restored continuity=cryptographically_restored

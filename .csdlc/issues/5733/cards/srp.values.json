@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5733,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][demo-matrix] Reconcile demo matrix and feature-proof coverage",
+    "slug": "v0918-demo-matrix-proof-coverage",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md\ndocs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md\ndocs/milestones/v0.91.8/review/wp15_demo_matrix_5733",
+      "review_revision": "git-blake3:6c943ed2fa215883ef73c504d3a0fe70571a3f1e:073044a9d63cc2e5614e827a8f983e50c75f5abef560476371b869085a1dea6c",
+      "reviewer": "subagent:Leibniz:019fba63-7f7d-7f02-a8cb-d2c694b22e6e",
+      "review_prompts": [
+        "Check that every matrix and feature-proof row has a truthful owner and evidence or explicit disposition.",
+        "Check that #5354 evidence is consumed without rerunning or overstating integrated convergence.",
+        "Check that demo, retained proof, blocker, non-claim, and deferred categories are not conflated.",
+        "Check that the validator is deterministic and not brittle beyond the bounded matrix contract."
+      ],
+      "findings": [],
+      "residual_risk": [
+        "The validator move keeps #5733 in docs/review scope and does not add runtime or tooling behavior; local path-policy proof and GitHub CI confirm broad Rust, coverage, demo, and tooling lanes are skipped for the corrected head."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

@@ -1,0 +1,252 @@
+{
+  "issue": 5698,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5698/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5698/diagram.mmd",
+  "design_reviewer": "operator:issue-5698-body",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5698-runtime-v3-redb-state",
+    "owner": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+    "generation": 0,
+    "acquired_unix_seconds": 1785260636,
+    "expires_unix_seconds": 1785865436,
+    "heartbeat_unix_seconds": 1785260636,
+    "branch": "codex/5698-runtime-v3-redb-state",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5698",
+      ".csdlc/locks/5698.lock",
+      ".csdlc/prepared/issues/5698",
+      ".csdlc/evidence/5698"
+    ],
+    "purpose": "Prepare and coordinate #5698 redb durable state work; product implementation is blocked until active WP-12 #5344 releases or transfers overlapping Runtime v3 paths"
+  },
+  "initial": {
+    "title": "[v0.91.8][runtime-v3][state] Unify durable kernel state on redb",
+    "slug": "runtime-v3-redb-durable-state",
+    "version": "v0.91.8",
+    "goal": "Make redb the single production durable state authority for Runtime v3 kernel checkpoint and lifelog state.",
+    "required_outcome": "Runtime v3 stores checkpoint bytes and lifelog entries through atomic redb transactions, restores across restart, rejects integrity/schema/corruption failures, and removes production checkpoint.json/lifelog.jsonl persistence.",
+    "declared_scope": [
+      "adl-runtime-kernel local adapter durable state",
+      "redb dependency wiring for adl-runtime-kernel",
+      "focused Runtime v3 state persistence tests",
+      "issue-local evidence under .csdlc/evidence/5698"
+    ],
+    "acceptance_criteria": [
+      "AC-1: A real Runtime v3 process stores checkpoint state through redb, restarts, and restores the exact persisted bytes and generation.",
+      "AC-2: Lifelog append uses the same redb database and a documented atomic transaction boundary.",
+      "AC-3: Principal, runtime identity, schema, generation, and hash mismatches fail closed.",
+      "AC-4: A second live writer for the same state root is rejected without corrupting the first writer.",
+      "AC-5: Crash/restart and interrupted-write tests recover from the last committed transaction only.",
+      "AC-6: Corrupt or unsupported database/schema state returns an explicit fatal error and never falls back to JSON/JSONL files.",
+      "AC-7: The old production checkpoint.json and lifelog.jsonl paths are deleted or restricted to non-production migration tests after parity proof.",
+      "AC-8: Focused macOS/Linux/native-Windows-capable tests use real filesystem state and do not use fixtures, wrappers, nested builds, or /private/tmp.",
+      "AC-9: One exact pre-PR review confirms one durable state authority and no hidden flat-file fallback."
+    ],
+    "authority_boundary": [
+      "Use the existing COTS redb crate; do not introduce a second database, ORM, wrapper, or service.",
+      "Coordinate around active WP-12 #5344 exact head ca242a5ab96a43ea1ed1ca6a3fedd61bde2f8b6d; do not touch the #5344 worktree.",
+      "Do not write tracked files on main and do not use /private/tmp."
+    ],
+    "task_boundary": "Runtime v3 durable local state only; no Provider/ACIP/A2A/Cloud Bridge transport behavior, no Runtime v2 deletion, and no WP-12 launch harness changes beyond preserving compatibility.",
+    "deliverables": [
+      "redb durable state module",
+      "checkpoint/lifelog adapter wiring",
+      "restart, corruption, identity, and writer-lock tests",
+      "strict Clippy and diff hygiene proof",
+      "ready PR with Closes #5698"
+    ],
+    "dependencies": [
+      "WP-12 #5344 exact head ca242a5a for current Runtime v3 launch simplification",
+      "redb COTS crate already used by adl-runtime backpressure",
+      "Runtime v3 local adapter execution surface"
+    ],
+    "repo_inputs": [
+      "GitHub issue #5698 body",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime/src/backpressure.rs"
+    ],
+    "non_goals": [
+      "scheduler redesign",
+      "Runtime v2 deletion",
+      "remote database",
+      "SQL service",
+      "fixture-only durability",
+      "receipt-only storage",
+      "degraded fallback"
+    ],
+    "operator_constraints": [
+      "never write tracked changes on main",
+      "never use /private/tmp",
+      "use typed C-SDLC v2 lifecycle tools only",
+      "one bounded exact pre-PR review",
+      "post-merge closeout must not block other implementation work"
+    ],
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Bind #5698 worktree and prove path ownership against active #5344",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-8"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Implement redb durable state module and wire checkpoint/lifelog adapters",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-5",
+          "AC-6",
+          "AC-7"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run focused proof, exact review, fixes, publication, and PR shepherding",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8",
+          "AC-9"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "redb is the single production durable state authority for kernel checkpoint and lifelog state",
+      "no flat-file fallback after redb adoption",
+      "transactions are atomic and restart-safe",
+      "state root is explicit and absolute",
+      "issue evidence remains under the #5698 worktree"
+    ],
+    "risks": [
+      "path collision with active WP-12 #5344 protected files",
+      "schema migration overreach",
+      "tests accidentally proving helper APIs rather than production adapters",
+      "Windows file-lock and database-open semantics"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "active #5344 claim remains unreleased for required Runtime v3 product paths",
+      "typed claim collision with another active owner",
+      "redb cannot be added without forbidden dependency churn",
+      "production adapter cannot be wired without widening beyond declared paths",
+      "focused persistence proof or exact review finds unresolved blockers"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "runtime-v3-redb-state-focused",
+        "proof_role": "real checkpoint/lifelog redb restart, transaction, identity, corruption, and writer-lock proof",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8",
+          "AC-9"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 10000,
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "adl-runtime-kernel/Cargo.toml",
+          "--target-dir",
+          "target",
+          "--test",
+          "durable_state"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-assembly-focused",
+        "proof_role": "adapter-level proof that checkpoint/lifelog production calls use redb state",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-7"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 8000,
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "adl-runtime-kernel/Cargo.toml",
+          "--target-dir",
+          "target",
+          "--test",
+          "assembly"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-clippy",
+        "proof_role": "strict lint proof for touched Runtime v3 crate",
+        "acceptance_ids": [
+          "AC-8"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 6000,
+        "argv": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "adl-runtime-kernel/Cargo.toml",
+          "--target-dir",
+          "target",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on claim collision, partial transaction, corrupt state, unsupported schema, identity mismatch, hidden flat-file fallback, /private/tmp use, or exact review finding.",
+    "review_prompts": [
+      "Verify Runtime v3 checkpoint and lifelog production adapters use redb as the single durable state authority.",
+      "Verify restart restores exact committed bytes and rejects identity, schema, generation, and hash mismatches.",
+      "Verify writer locking, corruption, and interrupted-write behavior fail closed without fallback JSON/JSONL storage.",
+      "Verify scope coordination with #5344 and no tracked main or /private/tmp edits."
+    ],
+    "review_scope": "Runtime v3 redb durable state module, checkpoint/lifelog adapter wiring, tests, and retained proof evidence.",
+    "plan_summary": "Replace Runtime v3 kernel checkpoint and lifelog flat-file persistence with one redb-backed durable state authority, prove restart/corruption/identity/writer-lock behavior, run one exact review, and publish a ready PR.",
+    "evidence_expectations": [
+      "exact commit SHAs for #5344 base and #5698 head",
+      "focused test and Clippy logs under .csdlc/evidence/5698",
+      "LoC delta over touched persistence files",
+      "pre-PR exact review result"
+    ]
+  }
+}

@@ -46,7 +46,7 @@ Out of scope:
 | --- | --- | --- |
 | WP-14 #4641 | Closed on 2026-07-18 | GitHub issue state; PR #5493 and terminal closeout PR #5496 are merged |
 | WP-09 #4636 | Closed on 2026-07-11 | `docs/milestones/v0.91.7/review/V0917_WP09_OBSERVATORY_DEMOS_BIRTHDAY_VISIBLE_PROOF_4636.md` |
-| HTML proof #4690 | Closed on 2026-07-07 | `demos/v0.91.7/html-observatory/README.md`; retained validator command |
+| HTML proof #4690 | Closed on 2026-07-07 | `demos/html-observatory/README.md`; retained validator command |
 | Demo matrix proof #4691 | Closed on 2026-07-11 | `docs/milestones/v0.91.7/review/demo_matrix_4691/4691-birthday-visible-demo-matrix-proof.md` |
 | Unity integrated proof #4689 | Closed on 2026-07-11 | `docs/milestones/v0.91.7/review/unity_observatory_4689/4689-unity-observatory-integrated-proof.md` |
 | Runtime v3 Observatory proof #5286 | Closed on 2026-07-13 | `docs/architecture/runtime_v3_observatory_consumption_5286.v1.json` |

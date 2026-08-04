@@ -1,6 +1,6 @@
 [package]
 name = "adl"
-version = "0.91.7"
+version = "0.91.8"
 edition = "2021"
 default-run = "adl"
 license = "MIT OR Apache-2.0"
@@ -53,10 +53,6 @@ path = "src/bin/demo_adl_gws_native_drive_sync.rs"
 [[bin]]
 name = "adl-gws-context-mirror"
 path = "src/bin/demo_adl_gws_context_mirror.rs"
-
-[[bin]]
-name = "run_wp12_acip_websocket_transport_proof"
-path = "src/bin/run_wp12_acip_websocket_transport_proof.rs"
 
 [features]
 # Heavy runtime_v2 proof-materialization and CLI proof-smoke tests stay out of

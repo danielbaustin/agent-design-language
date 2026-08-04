@@ -1,0 +1,22 @@
+{
+  "issue": 5701,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "b3d10afe147416e48d9058c364696af9465800796dad7093d7208c4092bbebd5",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "reason": "Record current-main integration validation after resolving PR #5705's merge conflict.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test-and-clippy",
+        "runtime-v3-openapi-integrated-suite"
+      ],
+      "purpose": "Prove the reviewed Runtime v3 OpenAPI and route behavior after integrating current main and regenerating both dependency lockfiles offline.",
+      "outcome": "passed",
+      "evidence_ref": "Kernel control 21/21; guardian soak 7/7; Observatory WSS 6/6; OpenAPI contracts 6/6; adl-runtime library 134/134; runtime API WSS 2/2; strict all-target Clippy passed for both crates; git diff --check passed; rebuilt guardian served both Swagger UIs with HTTP 200 and authenticated health and metrics with HTTP 200 on port 20997."
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "issue": 5698,
+  "claim_id": "claim-5698-runtime-v3-redb-state",
+  "expected_generation": 7,
+  "expected_digest": "dd3cff0ca12adbfefd91d441f2e277cfb193a23fd7c021383ab2563832a520b9",
+  "now_unix_seconds": 1785348688,
+  "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+  "reason": "Exact-head hosted Runtime v3 fast CI exposed a guardian_soak startup portability defect: localhost may resolve to IPv6 on Ubuntu while Runtime v3 intentionally supports IPv4 only. Include the narrow test path needed for the bounded CI repair.",
+  "add_protected_paths": [
+    "adl-runtime-kernel/tests/guardian_soak.rs"
+  ]
+}

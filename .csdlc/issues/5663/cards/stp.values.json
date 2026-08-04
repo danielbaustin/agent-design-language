@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5663,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][adapters] Implement durable local Runtime v3 adapters",
+    "slug": "runtime-v3-durable-local-adapters",
+    "version": "v0.91.8",
+    "generation": 40
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement the durable local adapter behavior in the assembly surface without widening into external transports or claimed launch/Observatory paths.",
+      "deliverables": [
+        "Durable local adapter implementation in production assembly",
+        "Focused assembly tests for success, failure, timeout, cancellation, idempotency, restart, shutdown, checkpoint restore, and lifelog redaction where applicable to the owned surface",
+        "Before/after physical LoC measurement showing net reduction",
+        "Strict Clippy evidence and exact pre-PR review evidence"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Agent, Shepherd, Scheduler, Chronosense, CheckpointStore, and Lifelog no longer return only generic accepted receipts in production",
+        "AC-2: malformed, timed-out, cancelled, saturated, duplicate, restart, and shutdown paths are explicit and tested in the owned assembly surface",
+        "AC-3: CheckpointStore writes atomically and restore rejects missing or corrupt checkpoint state",
+        "AC-4: Lifelog appends redacted non-authoritative JSONL entries and cannot leak raw secret-like payloads",
+        "AC-5: Provider, ACIP, A2A, Cloud Bridge, AWS, and WP-12 cutover remain untouched",
+        "AC-6: before/after physical LoC measurement records a net reduction",
+        "AC-7: focused tests and strict Clippy pass under FastWork target storage",
+        "AC-8: exact pre-PR review passes before publication"
+      ],
+      "dependencies": [
+        "PR #5659 merge commit d751ecea0fa6c638d7897087913ab3968b772874 is ancestral to current origin/main",
+        "Existing Runtime v3 assembly and operation executor contracts"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5663",
+        "adl-runtime-kernel/src/assembly.rs",
+        "adl-runtime-kernel/tests/assembly.rs",
+        "adl-runtime-kernel/src/operations.rs as read-only contract context",
+        "infra/runtime-v3/runtime-init.toml as read-only launch context"
+      ],
+      "non_goals": [
+        "No Provider, ACIP, A2A, or Cloud Bridge transport implementation",
+        "No AWS",
+        "No WP-12 soak or cutover",
+        "No launch binary, config, control, Observatory, governed_operations.rs, or operations.rs edits under this initial protected path set"
+      ]
+    }
+  }
+}

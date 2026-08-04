@@ -1,0 +1,34 @@
+{
+  "issue": 5361,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "4c65407960c12c842db1e7db6befbb5594455500bcfbfaad3334a8ac23003637",
+  "claim_id": "claim-5361-v0918-runtime-v3-acceptance-readiness",
+  "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+  "reason": "Record the complete focused Runtime v3 acceptance validation bundle.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        ".adl/bin/csdlc-v2/csdlc-install install --repo . --destination .adl/bin/csdlc-v2",
+        ".adl/bin/csdlc-v2/csdlc-install verify --repo . --bin-dir .adl/bin/csdlc-v2 --inventory csdlc-v2/operator/coexistence.json",
+        "ADL_RUNTIME_V3_PROOF_ROOT=/Volumes/FastWork/adl-5361 CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/runtime-target bash adl/tools/run_runtime_v3_operational_proof.sh",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/kernel-test-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/runtime-test-target cargo test --locked --manifest-path adl-runtime/Cargo.toml",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/kernel-clippy-target cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --all-targets --all-features -- -D warnings",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/runtime-clippy-target cargo clippy --locked --manifest-path adl-runtime/Cargo.toml --all-targets --all-features -- -D warnings",
+        "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --all -- --check",
+        "cargo fmt --manifest-path adl-runtime/Cargo.toml --all -- --check",
+        "cargo tree --locked --manifest-path adl-runtime-kernel/Cargo.toml",
+        "cargo tree --locked --manifest-path adl-runtime/Cargo.toml",
+        "bash adl/tools/report_runtime_v3_loc.sh",
+        ".adl/bin/csdlc-v2/csdlc-validate --root . --request .csdlc/prepared/issues/5361/validate-acceptance.json",
+        ".adl/bin/csdlc-v2/csdlc-doctor --repo . --issue 5361",
+        "git diff --check"
+      ],
+      "purpose": "Prove stable v2 install, dependency ancestry, Runtime v3 HTTPS/Observatory/rollback/continuity operational readiness, 10000-agent configuration and bounded projection, weather/continuity/rollback behavior, consumer/parity register completeness, Runtime v2 independence, strict lint/format/dependency/test/budget proof, explicit AWS/GPU/remote-provider non-claims, and exact acceptance-register validation.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5361"
+    }
+  }
+}

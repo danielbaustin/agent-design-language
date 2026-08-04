@@ -1,0 +1,1428 @@
+{
+  "schema": "adl.characterization.shadow-report.v1",
+  "candidate_revision": "a1436b7a24773e7cafb3b530245a16a77b99a54d",
+  "candidate_binary_sha256": "a684063f99b178738364fe13412ab7c9d5ee6252062d9b3d6a47f2d8664cb6fd",
+  "candidate_lock_sha256": "568424eaf1a00698d981aee1cd7bb4fb15fa1bc84957dc78613513f95de87951",
+  "candidate_install_receipt_sha256": "826ca833b8a6cdd1cacf2398d36d0b6d6ace3f9f54b71802beb91c1869132bbd",
+  "candidate_selector_generation": "adl-v2",
+  "candidate_selector_sha256": "236e9873d0be4c578bbb7761b9df7228c4f3bb06cef28bcdf5bad98e4d3cec73",
+  "corpus_bundle_sha256": "5c42a61fab6cbfaebf8a77ebeb3fcc6ab7ae71beb086ee011a2fb525ad4cb63b",
+  "case_count": 25,
+  "behavior_count": 23,
+  "equivalence_group_count": 2,
+  "difference_group_count": 1,
+  "disposition_counts": {
+    "approved_intentional_difference": 25
+  },
+  "rows": [
+    {
+      "case_id": "cli-help",
+      "behaviors": [
+        "cli-help",
+        "repeated-byte-stability"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "c41501c50f4e524e6cc3835647b9d9e9bede311ec6d0e4fe6138fa46f3d5b2d6",
+      "candidate_normalized_sha256": "954974e9b1e88718c4e04de64c84daa61e57e5bbeb14a3d6bb223558f8beb87c",
+      "candidate_commands": [
+        {
+          "step_id": "help",
+          "declared_args": [
+            "--help"
+          ],
+          "expanded_args": [
+            "--help"
+          ],
+          "exit_code": 0,
+          "captured_stdout_sha256": "ffee66dec02674099b6b23854c6bb9ab359ccf1431a595834dc6596b463071a5",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "ffee66dec02674099b6b23854c6bb9ab359ccf1431a595834dc6596b463071a5",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "Thin ADL v2 owner CLI\n\nUsage: adl-v2 <COMMAND>\n\nCommands:\n  validate  \n  schema    \n  plan      \n  run       \n  inspect   \n  sign      \n  verify    \n  select    \n  rollback  \n  help      Print this message or the help of the given subcommand(s)\n\nOptions:\n  -h, --help     Print help\n  -V, --version  Print version\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5345,
+        "authority": "adl-v2/crates/adl-cli/src/main.rs",
+        "rationale": "ADL v2 deliberately uses an explicit subcommand CLI and versioned JSON envelopes.",
+        "replacement_proof": "adl-v2/crates/adl-cli/tests/cli.rs",
+        "risk": "Operators must use the v2 command contract rather than legacy positional flags.",
+        "reviewer": "WP-10 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected if a consumer has not migrated its command shape."
+      }
+    },
+    {
+      "case_id": "cli-version",
+      "behaviors": [
+        "cli-version"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "d88360aa980110cdfc44f41f450ecded8d220f8e775f5d88a5546bef10707f61",
+      "candidate_normalized_sha256": "4a1a86d86d2b2827874d8d60aba57f0c5832233d24a81c936f812c2ab36936d4",
+      "candidate_commands": [
+        {
+          "step_id": "version",
+          "declared_args": [
+            "--version"
+          ],
+          "expanded_args": [
+            "--version"
+          ],
+          "exit_code": 0,
+          "captured_stdout_sha256": "3284566952e2951612b5a2d6e79a769cd791780da2de65f981627857238ffecc",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "3284566952e2951612b5a2d6e79a769cd791780da2de65f981627857238ffecc",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "adl-v2 0.1.0\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5345,
+        "authority": "adl-v2/crates/adl-cli/src/main.rs",
+        "rationale": "ADL v2 deliberately uses an explicit subcommand CLI and versioned JSON envelopes.",
+        "replacement_proof": "adl-v2/crates/adl-cli/tests/cli.rs",
+        "risk": "Operators must use the v2 command contract rather than legacy positional flags.",
+        "reviewer": "WP-10 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected if a consumer has not migrated its command shape."
+      }
+    },
+    {
+      "case_id": "six-primitives-plan",
+      "behaviors": [
+        "six-primitives-plan"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "78728f8843ef39e18c950a0e09fcaba33e96c659035be2e35100ba46fc280a00",
+      "candidate_normalized_sha256": "85229874ad41160ee042e34333119019e8755a2e79303d4650e3c7de5ee0a26b",
+      "candidate_commands": [
+        {
+          "step_id": "plan",
+          "declared_args": [
+            "plan",
+            "{ROOT}/fixtures/six-primitives.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "plan",
+            "<ROOT>/fixtures/six-primitives.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 0,
+          "captured_stdout_sha256": "a63b415e51d8c845b25320d0abe02543f661517637d8a6edf32557649479b0f6",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "a63b415e51d8c845b25320d0abe02543f661517637d8a6edf32557649479b0f6",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"schema\":\"adl.plan.v1\",\"ok\":true,\"result\":{\"contract\":\"adl.execution-plan.v1\",\"source_digest\":\"14f426ede35e73b19e6532b478950eb92ed3b17510f89ba9ac9fbcc2fb5fae65\",\"run\":{\"identity\":\"run-main\",\"name\":\"six-primitives\",\"inputs\":{\"topic\":\"characterization\"},\"placement_target\":\"local\"},\"workflow\":{\"identity\":\"main\",\"kind\":\"sequential\"},\"nodes\":[{\"id\":\"node_v1_b7a3c6b648211b7c36c2a563c52505a69783ead5d48ce1cfca6473e410243e27\",\"step_id\":\"summarize.topic\",\"task_ref\":\"summarize\",\"agent_ref\":\"planner\",\"provider_ref\":\"local\",\"model\":\"test-model\",\"tools\":[\"docs\"],\"ports\":{\"inputs\":[\"topic\"],\"outputs\":[]},\"prompt\":{\"system\":\"You summarize deterministically.\",\"user\":\"Summarize {{topic}}.\"},\"inputs\":{\"topic\":\"characterization\"},\"provenance\":{\"document_version\":\"0.5\",\"workflow_identity\":\"main\",\"semantic_path\":\"$.run.workflow.steps.summarize.topic\",\"task_ref\":\"summarize\",\"agent_ref\":\"planner\",\"provider_ref\":\"local\"}}],\"edges\":[]}}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5338,
+        "authority": "adl-v2/crates/adl-compiler/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 replaces human plan, graph, and prompt projections with one typed execution-plan JSON envelope.",
+        "replacement_proof": "adl-v2/crates/adl-compiler/tests/characterization_parity.rs",
+        "risk": "Consumers must read the typed plan schema instead of scraping legacy text.",
+        "reviewer": "WP-05 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for legacy text projection consumers."
+      }
+    },
+    {
+      "case_id": "graph-json",
+      "behaviors": [
+        "graph-json"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "03d03768f9c00cf9137af80b778d78e8882ae973ecf705bb21db894111b60605",
+      "candidate_normalized_sha256": "9c0c0d5616a927a7c61ff093706546c11272d882386f708a0e8a10fc875c1f30",
+      "candidate_commands": [
+        {
+          "step_id": "graph",
+          "declared_args": [
+            "plan",
+            "{ROOT}/fixtures/six-primitives.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "plan",
+            "<ROOT>/fixtures/six-primitives.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 0,
+          "captured_stdout_sha256": "a63b415e51d8c845b25320d0abe02543f661517637d8a6edf32557649479b0f6",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "a63b415e51d8c845b25320d0abe02543f661517637d8a6edf32557649479b0f6",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"schema\":\"adl.plan.v1\",\"ok\":true,\"result\":{\"contract\":\"adl.execution-plan.v1\",\"source_digest\":\"14f426ede35e73b19e6532b478950eb92ed3b17510f89ba9ac9fbcc2fb5fae65\",\"run\":{\"identity\":\"run-main\",\"name\":\"six-primitives\",\"inputs\":{\"topic\":\"characterization\"},\"placement_target\":\"local\"},\"workflow\":{\"identity\":\"main\",\"kind\":\"sequential\"},\"nodes\":[{\"id\":\"node_v1_b7a3c6b648211b7c36c2a563c52505a69783ead5d48ce1cfca6473e410243e27\",\"step_id\":\"summarize.topic\",\"task_ref\":\"summarize\",\"agent_ref\":\"planner\",\"provider_ref\":\"local\",\"model\":\"test-model\",\"tools\":[\"docs\"],\"ports\":{\"inputs\":[\"topic\"],\"outputs\":[]},\"prompt\":{\"system\":\"You summarize deterministically.\",\"user\":\"Summarize {{topic}}.\"},\"inputs\":{\"topic\":\"characterization\"},\"provenance\":{\"document_version\":\"0.5\",\"workflow_identity\":\"main\",\"semantic_path\":\"$.run.workflow.steps.summarize.topic\",\"task_ref\":\"summarize\",\"agent_ref\":\"planner\",\"provider_ref\":\"local\"}}],\"edges\":[]}}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5338,
+        "authority": "adl-v2/crates/adl-compiler/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 replaces human plan, graph, and prompt projections with one typed execution-plan JSON envelope.",
+        "replacement_proof": "adl-v2/crates/adl-compiler/tests/characterization_parity.rs",
+        "risk": "Consumers must read the typed plan schema instead of scraping legacy text.",
+        "reviewer": "WP-05 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for legacy text projection consumers."
+      }
+    },
+    {
+      "case_id": "prompt-projection",
+      "behaviors": [
+        "prompt-projection"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "b0988b1fcb9dd3ae8fc76e81e19c6ad1173e1d1591f5842ee2a99e007ca1d298",
+      "candidate_normalized_sha256": "c8d7d272edc6745f5ce7390d94089e6cdf56ea6a99948b52dc3002b6c2df8bba",
+      "candidate_commands": [
+        {
+          "step_id": "prompts",
+          "declared_args": [
+            "plan",
+            "{ROOT}/fixtures/six-primitives.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "plan",
+            "<ROOT>/fixtures/six-primitives.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 0,
+          "captured_stdout_sha256": "a63b415e51d8c845b25320d0abe02543f661517637d8a6edf32557649479b0f6",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "a63b415e51d8c845b25320d0abe02543f661517637d8a6edf32557649479b0f6",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"schema\":\"adl.plan.v1\",\"ok\":true,\"result\":{\"contract\":\"adl.execution-plan.v1\",\"source_digest\":\"14f426ede35e73b19e6532b478950eb92ed3b17510f89ba9ac9fbcc2fb5fae65\",\"run\":{\"identity\":\"run-main\",\"name\":\"six-primitives\",\"inputs\":{\"topic\":\"characterization\"},\"placement_target\":\"local\"},\"workflow\":{\"identity\":\"main\",\"kind\":\"sequential\"},\"nodes\":[{\"id\":\"node_v1_b7a3c6b648211b7c36c2a563c52505a69783ead5d48ce1cfca6473e410243e27\",\"step_id\":\"summarize.topic\",\"task_ref\":\"summarize\",\"agent_ref\":\"planner\",\"provider_ref\":\"local\",\"model\":\"test-model\",\"tools\":[\"docs\"],\"ports\":{\"inputs\":[\"topic\"],\"outputs\":[]},\"prompt\":{\"system\":\"You summarize deterministically.\",\"user\":\"Summarize {{topic}}.\"},\"inputs\":{\"topic\":\"characterization\"},\"provenance\":{\"document_version\":\"0.5\",\"workflow_identity\":\"main\",\"semantic_path\":\"$.run.workflow.steps.summarize.topic\",\"task_ref\":\"summarize\",\"agent_ref\":\"planner\",\"provider_ref\":\"local\"}}],\"edges\":[]}}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5338,
+        "authority": "adl-v2/crates/adl-compiler/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 replaces human plan, graph, and prompt projections with one typed execution-plan JSON envelope.",
+        "replacement_proof": "adl-v2/crates/adl-compiler/tests/characterization_parity.rs",
+        "risk": "Consumers must read the typed plan schema instead of scraping legacy text.",
+        "reviewer": "WP-05 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for legacy text projection consumers."
+      }
+    },
+    {
+      "case_id": "fork-join-ordering",
+      "behaviors": [
+        "fork-join-ordering"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "f87a31c9907276d1d770f0dc4c45b667f1f4bcf5e10efce454569a3cbc3798ed",
+      "candidate_normalized_sha256": "b3c57885c477104a65bfb5b901e95e29e6522d68e69956f7eae03fa9668ee677",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/fork-join.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/fork-join.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "a0db36ff7e3fb0000c72b3eed80d68ba9728991aca0cf6094b64a929759d8f1d",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "a0db36ff7e3fb0000c72b3eed80d68ba9728991aca0cf6094b64a929759d8f1d",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"unknown_field\\\",\\\"path\\\":\\\"$\\\",\\\"message\\\":\\\"unknown field `patterns`, expected one of `version`, `providers`, `tools`, `agents`, `tasks`, `workflows`, `run`\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "Legacy top-level pattern syntax is explicitly rejected rather than silently reinterpreted.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Legacy pattern documents require an explicit migration before v2 execution.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for unmigrated pattern documents."
+      }
+    },
+    {
+      "case_id": "map-order-a",
+      "behaviors": [
+        "map-reorder-equivalence"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "70f56c6a96b3acb0ffa60ba4a58d97f45be7c87a2f6055e496d5eb5203be7652",
+      "candidate_normalized_sha256": "1df0bd84256c45f97881d8a5217abd66e2f9fc8a136e6de864a217a8b7c2f97d",
+      "candidate_commands": [
+        {
+          "step_id": "plan",
+          "declared_args": [
+            "plan",
+            "{ROOT}/fixtures/map-a.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "plan",
+            "<ROOT>/fixtures/map-a.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 0,
+          "captured_stdout_sha256": "784d8fd6a7adf11a28ddc0e8c5f2c633b9ee202457881121245cfc62e3ed341b",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "784d8fd6a7adf11a28ddc0e8c5f2c633b9ee202457881121245cfc62e3ed341b",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"schema\":\"adl.plan.v1\",\"ok\":true,\"result\":{\"contract\":\"adl.execution-plan.v1\",\"source_digest\":\"84bd14eea5490806ce8b7c39e056fe9bd73c8e33c7099cc520e2f5e7551759e5\",\"run\":{\"identity\":\"map-order\",\"name\":\"map-order\",\"inputs\":{}},\"workflow\":{\"identity\":\"inline:map-order\",\"kind\":\"sequential\"},\"nodes\":[{\"id\":\"node_v1_01812b89b07e6ce0c9b79576d9444e2149a7d0aa15aa191a05799acbae7b77f8\",\"step_id\":\"one\",\"task_ref\":\"one\",\"agent_ref\":\"worker\",\"provider_ref\":\"alpha\",\"model\":\"test\",\"tools\":[],\"ports\":{\"inputs\":[],\"outputs\":[]},\"prompt\":{\"user\":\"one\"},\"inputs\":{},\"provenance\":{\"document_version\":\"0.5\",\"workflow_identity\":\"inline:map-order\",\"semantic_path\":\"$.run.workflow.steps.one\",\"task_ref\":\"one\",\"agent_ref\":\"worker\",\"provider_ref\":\"alpha\"}}],\"edges\":[]}}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5338,
+        "authority": "adl-v2/crates/adl-compiler/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 replaces human plan, graph, and prompt projections with one typed execution-plan JSON envelope.",
+        "replacement_proof": "adl-v2/crates/adl-compiler/tests/characterization_parity.rs",
+        "risk": "Consumers must read the typed plan schema instead of scraping legacy text.",
+        "reviewer": "WP-05 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for legacy text projection consumers."
+      }
+    },
+    {
+      "case_id": "map-order-b",
+      "behaviors": [
+        "map-reorder-equivalence"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "082724e799066f3b1be3e1f99cbf7cd009c6bd7b9dd56eb2c80af823e29ec69c",
+      "candidate_normalized_sha256": "b892c899cc333907b479c434bc59613d5559ef82a7bebe152829b1fe0e427e9e",
+      "candidate_commands": [
+        {
+          "step_id": "plan",
+          "declared_args": [
+            "plan",
+            "{ROOT}/fixtures/map-b.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "plan",
+            "<ROOT>/fixtures/map-b.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 0,
+          "captured_stdout_sha256": "784d8fd6a7adf11a28ddc0e8c5f2c633b9ee202457881121245cfc62e3ed341b",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "784d8fd6a7adf11a28ddc0e8c5f2c633b9ee202457881121245cfc62e3ed341b",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"schema\":\"adl.plan.v1\",\"ok\":true,\"result\":{\"contract\":\"adl.execution-plan.v1\",\"source_digest\":\"84bd14eea5490806ce8b7c39e056fe9bd73c8e33c7099cc520e2f5e7551759e5\",\"run\":{\"identity\":\"map-order\",\"name\":\"map-order\",\"inputs\":{}},\"workflow\":{\"identity\":\"inline:map-order\",\"kind\":\"sequential\"},\"nodes\":[{\"id\":\"node_v1_01812b89b07e6ce0c9b79576d9444e2149a7d0aa15aa191a05799acbae7b77f8\",\"step_id\":\"one\",\"task_ref\":\"one\",\"agent_ref\":\"worker\",\"provider_ref\":\"alpha\",\"model\":\"test\",\"tools\":[],\"ports\":{\"inputs\":[],\"outputs\":[]},\"prompt\":{\"user\":\"one\"},\"inputs\":{},\"provenance\":{\"document_version\":\"0.5\",\"workflow_identity\":\"inline:map-order\",\"semantic_path\":\"$.run.workflow.steps.one\",\"task_ref\":\"one\",\"agent_ref\":\"worker\",\"provider_ref\":\"alpha\"}}],\"edges\":[]}}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5338,
+        "authority": "adl-v2/crates/adl-compiler/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 replaces human plan, graph, and prompt projections with one typed execution-plan JSON envelope.",
+        "replacement_proof": "adl-v2/crates/adl-compiler/tests/characterization_parity.rs",
+        "risk": "Consumers must read the typed plan schema instead of scraping legacy text.",
+        "reviewer": "WP-05 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for legacy text projection consumers."
+      }
+    },
+    {
+      "case_id": "branch-order-a",
+      "behaviors": [
+        "branch-reorder-equivalence"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "3ce7bea63071fc79ee274aa6ea4de7cdf5a8a77b272ae6b42bcc2c688f146c08",
+      "candidate_normalized_sha256": "4f8cee70b53a6f31047dd98b4fc8e41a4edb0396aca6ed5597432e79a29d1c5e",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/branch-a.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/branch-a.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "a0db36ff7e3fb0000c72b3eed80d68ba9728991aca0cf6094b64a929759d8f1d",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "a0db36ff7e3fb0000c72b3eed80d68ba9728991aca0cf6094b64a929759d8f1d",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"unknown_field\\\",\\\"path\\\":\\\"$\\\",\\\"message\\\":\\\"unknown field `patterns`, expected one of `version`, `providers`, `tools`, `agents`, `tasks`, `workflows`, `run`\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "Legacy top-level pattern syntax is explicitly rejected rather than silently reinterpreted.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Legacy pattern documents require an explicit migration before v2 execution.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for unmigrated pattern documents."
+      }
+    },
+    {
+      "case_id": "branch-order-b",
+      "behaviors": [
+        "branch-reorder-equivalence"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "9108f00323b8fc8afacbf8f78ce2d11e3da5a579b5e3afd33c260210137df853",
+      "candidate_normalized_sha256": "dd35f7252ed1a8069a1bd1ea9d02a5984a373730843ace81acd20c65d5dcf627",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/branch-b.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/branch-b.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "a0db36ff7e3fb0000c72b3eed80d68ba9728991aca0cf6094b64a929759d8f1d",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "a0db36ff7e3fb0000c72b3eed80d68ba9728991aca0cf6094b64a929759d8f1d",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"unknown_field\\\",\\\"path\\\":\\\"$\\\",\\\"message\\\":\\\"unknown field `patterns`, expected one of `version`, `providers`, `tools`, `agents`, `tasks`, `workflows`, `run`\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "Legacy top-level pattern syntax is explicitly rejected rather than silently reinterpreted.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Legacy pattern documents require an explicit migration before v2 execution.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for unmigrated pattern documents."
+      }
+    },
+    {
+      "case_id": "sequential-order-a",
+      "behaviors": [
+        "sequential-reorder-difference"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "f202a737b3767cc3af2fe92d9470a4c0bddb8692cb0ad5b12e1608264b61fd7b",
+      "candidate_normalized_sha256": "332288b016eaa07e6ac209c2d039470c6e81d99fc6b0e00456d7bed75991dcaa",
+      "candidate_commands": [
+        {
+          "step_id": "plan",
+          "declared_args": [
+            "plan",
+            "{ROOT}/fixtures/sequential-a.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "plan",
+            "<ROOT>/fixtures/sequential-a.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 0,
+          "captured_stdout_sha256": "775d1f37a1d2fa90878402b2d9bbabfdbc43cdc95ed5a80908b62e1c86e09e3d",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "775d1f37a1d2fa90878402b2d9bbabfdbc43cdc95ed5a80908b62e1c86e09e3d",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"schema\":\"adl.plan.v1\",\"ok\":true,\"result\":{\"contract\":\"adl.execution-plan.v1\",\"source_digest\":\"663acee085ec5f85dc4df28f22a72ea2787a9550881311ba9138b6fa31b1a4c0\",\"run\":{\"identity\":\"sequential-order\",\"name\":\"sequential-order\",\"inputs\":{}},\"workflow\":{\"identity\":\"inline:sequential-order\",\"kind\":\"sequential\"},\"nodes\":[{\"id\":\"node_v1_ba26474031c777251e41457f68cdd6ffaf968fe8b528f86cc2cfb5900b26e95b\",\"step_id\":\"first\",\"task_ref\":\"first\",\"agent_ref\":\"worker\",\"provider_ref\":\"local\",\"model\":\"test\",\"tools\":[],\"ports\":{\"inputs\":[],\"outputs\":[]},\"prompt\":{\"user\":\"first\"},\"inputs\":{},\"provenance\":{\"document_version\":\"0.5\",\"workflow_identity\":\"inline:sequential-order\",\"semantic_path\":\"$.run.workflow.steps.first\",\"task_ref\":\"first\",\"agent_ref\":\"worker\",\"provider_ref\":\"local\"}},{\"id\":\"node_v1_752faac176b72c601e5eee4b6e920db53e6d8bda6766b02f14cb1cbc3d233e3f\",\"step_id\":\"second\",\"task_ref\":\"second\",\"agent_ref\":\"worker\",\"provider_ref\":\"local\",\"model\":\"test\",\"tools\":[],\"ports\":{\"inputs\":[],\"outputs\":[]},\"prompt\":{\"user\":\"second\"},\"inputs\":{},\"provenance\":{\"document_version\":\"0.5\",\"workflow_identity\":\"inline:sequential-order\",\"semantic_path\":\"$.run.workflow.steps.second\",\"task_ref\":\"second\",\"agent_ref\":\"worker\",\"provider_ref\":\"local\"}}],\"edges\":[{\"from\":\"node_v1_ba26474031c777251e41457f68cdd6ffaf968fe8b528f86cc2cfb5900b26e95b\",\"to\":\"node_v1_752faac176b72c601e5eee4b6e920db53e6d8bda6766b02f14cb1cbc3d233e3f\",\"kind\":\"sequential\"}]}}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5338,
+        "authority": "adl-v2/crates/adl-compiler/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 replaces human plan, graph, and prompt projections with one typed execution-plan JSON envelope.",
+        "replacement_proof": "adl-v2/crates/adl-compiler/tests/characterization_parity.rs",
+        "risk": "Consumers must read the typed plan schema instead of scraping legacy text.",
+        "reviewer": "WP-05 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for legacy text projection consumers."
+      }
+    },
+    {
+      "case_id": "sequential-order-b",
+      "behaviors": [
+        "sequential-reorder-difference"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "59eec3eb56c8f84db1e03e1c7f8ff6c677d18e16a40c77ba05e32858f819f1d6",
+      "candidate_normalized_sha256": "63d318cec3fdfe8b39f2007dead5f98ccf1be2a9f4e3aeafdd3c9cc1d34a8e32",
+      "candidate_commands": [
+        {
+          "step_id": "plan",
+          "declared_args": [
+            "plan",
+            "{ROOT}/fixtures/sequential-b.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "plan",
+            "<ROOT>/fixtures/sequential-b.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 0,
+          "captured_stdout_sha256": "b92e173f0f34eee85b94af5408bdf60ae6aa84b43666a377a563f6c13a032670",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "b92e173f0f34eee85b94af5408bdf60ae6aa84b43666a377a563f6c13a032670",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"schema\":\"adl.plan.v1\",\"ok\":true,\"result\":{\"contract\":\"adl.execution-plan.v1\",\"source_digest\":\"f6a03cb307f65df0278b460c79696e415c2bc517e738c22b0a5dc7457cb6c2f4\",\"run\":{\"identity\":\"sequential-order\",\"name\":\"sequential-order\",\"inputs\":{}},\"workflow\":{\"identity\":\"inline:sequential-order\",\"kind\":\"sequential\"},\"nodes\":[{\"id\":\"node_v1_752faac176b72c601e5eee4b6e920db53e6d8bda6766b02f14cb1cbc3d233e3f\",\"step_id\":\"second\",\"task_ref\":\"second\",\"agent_ref\":\"worker\",\"provider_ref\":\"local\",\"model\":\"test\",\"tools\":[],\"ports\":{\"inputs\":[],\"outputs\":[]},\"prompt\":{\"user\":\"second\"},\"inputs\":{},\"provenance\":{\"document_version\":\"0.5\",\"workflow_identity\":\"inline:sequential-order\",\"semantic_path\":\"$.run.workflow.steps.second\",\"task_ref\":\"second\",\"agent_ref\":\"worker\",\"provider_ref\":\"local\"}},{\"id\":\"node_v1_ba26474031c777251e41457f68cdd6ffaf968fe8b528f86cc2cfb5900b26e95b\",\"step_id\":\"first\",\"task_ref\":\"first\",\"agent_ref\":\"worker\",\"provider_ref\":\"local\",\"model\":\"test\",\"tools\":[],\"ports\":{\"inputs\":[],\"outputs\":[]},\"prompt\":{\"user\":\"first\"},\"inputs\":{},\"provenance\":{\"document_version\":\"0.5\",\"workflow_identity\":\"inline:sequential-order\",\"semantic_path\":\"$.run.workflow.steps.first\",\"task_ref\":\"first\",\"agent_ref\":\"worker\",\"provider_ref\":\"local\"}}],\"edges\":[{\"from\":\"node_v1_752faac176b72c601e5eee4b6e920db53e6d8bda6766b02f14cb1cbc3d233e3f\",\"to\":\"node_v1_ba26474031c777251e41457f68cdd6ffaf968fe8b528f86cc2cfb5900b26e95b\",\"kind\":\"sequential\"}]}}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5338,
+        "authority": "adl-v2/crates/adl-compiler/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 replaces human plan, graph, and prompt projections with one typed execution-plan JSON envelope.",
+        "replacement_proof": "adl-v2/crates/adl-compiler/tests/characterization_parity.rs",
+        "risk": "Consumers must read the typed plan schema instead of scraping legacy text.",
+        "reviewer": "WP-05 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for legacy text projection consumers."
+      }
+    },
+    {
+      "case_id": "invalid-argument",
+      "behaviors": [
+        "invalid-argument"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "785804b8ded0fc2801dacd0281b73fa66065f946e1c68f9f1a278e612789614a",
+      "candidate_normalized_sha256": "60398063c9d66796aa29958b1cb0a95fcacbb0759c397cbdb597f8434b0c251f",
+      "candidate_commands": [
+        {
+          "step_id": "invalid",
+          "declared_args": [
+            "--definitely-invalid"
+          ],
+          "expanded_args": [
+            "--definitely-invalid"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "captured_stderr_sha256": "324c45267fbb33a28c8ff7af43bb868f6655bc9beb9032088314ffed1a203452",
+          "portable_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stderr_sha256": "324c45267fbb33a28c8ff7af43bb868f6655bc9beb9032088314ffed1a203452",
+          "stdout": "",
+          "stderr": "error: unexpected argument '--definitely-invalid' found\n\nUsage: adl-v2 <COMMAND>\n\nFor more information, try '--help'.\n"
+        }
+      ],
+      "decision": {
+        "owner_issue": 5345,
+        "authority": "adl-v2/crates/adl-cli/src/main.rs",
+        "rationale": "ADL v2 deliberately uses an explicit subcommand CLI and versioned JSON envelopes.",
+        "replacement_proof": "adl-v2/crates/adl-cli/tests/cli.rs",
+        "risk": "Operators must use the v2 command contract rather than legacy positional flags.",
+        "reviewer": "WP-10 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected if a consumer has not migrated its command shape."
+      }
+    },
+    {
+      "case_id": "malformed-yaml",
+      "behaviors": [
+        "malformed-yaml"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "4ef2d075bf2c8a095c9dee364eaa2e59d35287df0a3f873cae0fda9f0dba3baa",
+      "candidate_normalized_sha256": "715008d3f5355b4250793839fd72cd4f4a4b294c40c238fa433bba69ac077299",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/malformed.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/malformed.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "98c73141140c1866a8cbb1dcd9bdf3e458370f88df4537c1c608b439acd2e9a3",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "98c73141140c1866a8cbb1dcd9bdf3e458370f88df4537c1c608b439acd2e9a3",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"syntax\\\",\\\"path\\\":\\\"$\\\",\\\"message\\\":\\\"did not find expected ',' or ']' at line 3 column 1, while parsing a flow sequence at line 2 column 12\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 preserves fail-closed rejection semantics with structured diagnostics and exit code 2.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Consumers must parse structured error envelopes rather than legacy stderr prose.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for consumers coupled to legacy diagnostics."
+      }
+    },
+    {
+      "case_id": "schema-error",
+      "behaviors": [
+        "schema-error"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "49adf31b4bdd4d297d1e511974e751aa725f3099ed377a9839c02655952cc991",
+      "candidate_normalized_sha256": "116b08e7546b2d7211f589e9cdef8d6fdd1febc12b3f2d58c959cc03131b0465",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/schema-unknown.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/schema-unknown.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "915b5bc7d3bfc7209ccc7ebfd0fc09ac452580950e43f07064dd3ba69c38f6a4",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "915b5bc7d3bfc7209ccc7ebfd0fc09ac452580950e43f07064dd3ba69c38f6a4",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"unknown_field\\\",\\\"path\\\":\\\"$\\\",\\\"message\\\":\\\"unknown field `unknown_top_level`, expected one of `version`, `providers`, `tools`, `agents`, `tasks`, `workflows`, `run`\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 preserves fail-closed rejection semantics with structured diagnostics and exit code 2.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Consumers must parse structured error envelopes rather than legacy stderr prose.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for consumers coupled to legacy diagnostics."
+      }
+    },
+    {
+      "case_id": "unknown-provider",
+      "behaviors": [
+        "unknown-provider-reference"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "1a3b05cc26d7936bda4d95224e745e8b9141e4a6e3316adc5acd9277150ff9ea",
+      "candidate_normalized_sha256": "1676144ef930ebfe268db78424296f5f3e2ade97664b07facb95de33508be496",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/unknown-provider.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/unknown-provider.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "39b1f6fdcf3665b0ca982cb362deb779302d7a9a43c9b124333ff27bdd29dc12",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "39b1f6fdcf3665b0ca982cb362deb779302d7a9a43c9b124333ff27bdd29dc12",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"unknown_provider\\\",\\\"path\\\":\\\"$.agents.worker.provider\\\",\\\"message\\\":\\\"references unknown provider `missing`\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 preserves fail-closed rejection semantics with structured diagnostics and exit code 2.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Consumers must parse structured error envelopes rather than legacy stderr prose.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for consumers coupled to legacy diagnostics."
+      }
+    },
+    {
+      "case_id": "unknown-agent",
+      "behaviors": [
+        "unknown-agent-reference"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "6eb75da0dedae3b784ae7bad949fa3bb718343b3f5009915a59a6057945bfa0d",
+      "candidate_normalized_sha256": "61b31f6bf593a41055fdacff48d499b3ddfb6c5a7bfcebeb66a7aa631f81d5d5",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/unknown-agent.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/unknown-agent.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "896abff9fa0ec45616bd82aee25a36cd6ddc4f5a9cffd64413de8c173251d10f",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "896abff9fa0ec45616bd82aee25a36cd6ddc4f5a9cffd64413de8c173251d10f",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"unknown_agent\\\",\\\"path\\\":\\\"$.run.workflow.steps[0].agent\\\",\\\"message\\\":\\\"references unknown agent `missing`\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 preserves fail-closed rejection semantics with structured diagnostics and exit code 2.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Consumers must parse structured error envelopes rather than legacy stderr prose.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for consumers coupled to legacy diagnostics."
+      }
+    },
+    {
+      "case_id": "unknown-task",
+      "behaviors": [
+        "unknown-task-reference"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "31fbfd8c6c6e95e78a96ecf8a9b25ef1f90cc829fd2a7b7b508497f94cef1170",
+      "candidate_normalized_sha256": "77e32b01265a70509cc40807e8fa512d906d42faca2a48cd1d7b6926a8f07f8d",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/unknown-task.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/unknown-task.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "d3bd61b5606730423809d399c79b44a5804415922fe4365c7b2b7cfb57cda322",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "d3bd61b5606730423809d399c79b44a5804415922fe4365c7b2b7cfb57cda322",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"unknown_task\\\",\\\"path\\\":\\\"$.run.workflow.steps[0].task\\\",\\\"message\\\":\\\"references unknown task `missing`\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 preserves fail-closed rejection semantics with structured diagnostics and exit code 2.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Consumers must parse structured error envelopes rather than legacy stderr prose.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for consumers coupled to legacy diagnostics."
+      }
+    },
+    {
+      "case_id": "unknown-tool",
+      "behaviors": [
+        "unknown-tool-reference"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "1279de76e6167525b04e818c9e81c43972837cb69337957c07420524e7319ae9",
+      "candidate_normalized_sha256": "a9d6d145d804e5e825395f94fb9c11b1b38040239f10bfbd32ae7a406faebe66",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/unknown-tool.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/unknown-tool.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "6325f3952e9005331aabe32c8c729aa0dc2f4180810c1085c7601b9bbc632555",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "6325f3952e9005331aabe32c8c729aa0dc2f4180810c1085c7601b9bbc632555",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"unknown_tool\\\",\\\"path\\\":\\\"$.agents.worker.tools\\\",\\\"message\\\":\\\"references unknown tool `missing`\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 preserves fail-closed rejection semantics with structured diagnostics and exit code 2.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Consumers must parse structured error envelopes rather than legacy stderr prose.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for consumers coupled to legacy diagnostics."
+      }
+    },
+    {
+      "case_id": "unknown-workflow",
+      "behaviors": [
+        "unknown-workflow-reference"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "2db9bf6496ebb954c9c26d647bc6c95d48d5fa125094d44ee78d0baf2c4dee63",
+      "candidate_normalized_sha256": "440f0e73d5f9e351eecc89628bea8c32357b6868c4310e1e38baab52566bf6bf",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/unknown-workflow.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/unknown-workflow.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "900b35f6b434afc7a5eeee43c614d543a4c9b7e0d0d9dd09d12a41d89422a1eb",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "900b35f6b434afc7a5eeee43c614d543a4c9b7e0d0d9dd09d12a41d89422a1eb",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"unknown_workflow\\\",\\\"path\\\":\\\"$.run.workflow_ref\\\",\\\"message\\\":\\\"references unknown workflow `missing`\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 preserves fail-closed rejection semantics with structured diagnostics and exit code 2.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Consumers must parse structured error envelopes rather than legacy stderr prose.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for consumers coupled to legacy diagnostics."
+      }
+    },
+    {
+      "case_id": "unsupported-run-field",
+      "behaviors": [
+        "unsupported-run-field"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "2a02b4f63893e4373b5f4f75cf47fdd42a51b0aaf4fa956becf18afbe81e46b4",
+      "candidate_normalized_sha256": "c082556c24a25ce5ac0fcde7801764e11ed77a54330c24eadf68e1fe0e47dfe6",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/unsupported-run-field.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/unsupported-run-field.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "3a92221c10886c2cae7b6a42b9ee2a5aa7d308ec87813c11c3c9a4cdc31a8063",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "3a92221c10886c2cae7b6a42b9ee2a5aa7d308ec87813c11c3c9a4cdc31a8063",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"unknown_field\\\",\\\"path\\\":\\\"$\\\",\\\"message\\\":\\\"unknown field `agent_ref`, expected one of `id`, `name`, `workflow_ref`, `workflow`, `inputs`, `placement`\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 preserves fail-closed rejection semantics with structured diagnostics and exit code 2.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Consumers must parse structured error envelopes rather than legacy stderr prose.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for consumers coupled to legacy diagnostics."
+      }
+    },
+    {
+      "case_id": "missing-state",
+      "behaviors": [
+        "missing-state-reference"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "868a8592133650ed1400361071873a4832e442e8c3d8fca7f5a966c158251d13",
+      "candidate_normalized_sha256": "1441ce725d7a0ad5540fa1a37309dabffb97db9488566482f33b39697efa5a1c",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/state-missing.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/state-missing.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "7f95f58d8704aa8d4e145e01ad7a5319d69485e4cffd71b5ed46aad5ec9993cd",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "7f95f58d8704aa8d4e145e01ad7a5319d69485e4cffd71b5ed46aad5ec9993cd",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"unknown_state\\\",\\\"path\\\":\\\"$.run.workflow.steps[0].inputs\\\",\\\"message\\\":\\\"references unknown saved state `missing`\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 preserves fail-closed rejection semantics with structured diagnostics and exit code 2.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Consumers must parse structured error envelopes rather than legacy stderr prose.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for consumers coupled to legacy diagnostics."
+      }
+    },
+    {
+      "case_id": "dependency-cycle",
+      "behaviors": [
+        "dependency-cycle"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "bb9b048504e5382e533284cabdef6c75c72e54a9d863248ceea3f25743bbef2e",
+      "candidate_normalized_sha256": "5fc01fef72defd85df563be11764ca9c90f9e157871febc77e2823cf2c582175",
+      "candidate_commands": [
+        {
+          "step_id": "validate",
+          "declared_args": [
+            "validate",
+            "{ROOT}/fixtures/cycle.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "validate",
+            "<ROOT>/fixtures/cycle.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "e9f18edae44783dc7a29f69f0f4621d91b5da000b271c5a06371178e0bac3115",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "e9f18edae44783dc7a29f69f0f4621d91b5da000b271c5a06371178e0bac3115",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"[{\\\"code\\\":\\\"dependency_cycle\\\",\\\"path\\\":\\\"$.run.workflow\\\",\\\"message\\\":\\\"workflow contains a dependency cycle\\\"}]\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5339,
+        "authority": "adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md",
+        "rationale": "ADL v2 preserves fail-closed rejection semantics with structured diagnostics and exit code 2.",
+        "replacement_proof": "adl-v2/crates/adl-language/tests/characterization_parity.rs",
+        "risk": "Consumers must parse structured error envelopes rather than legacy stderr prose.",
+        "reviewer": "WP-04 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for consumers coupled to legacy diagnostics."
+      }
+    },
+    {
+      "case_id": "local-mock-run",
+      "behaviors": [
+        "local-mock-run"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "09e60f91863182e4de66516334713d12671f71e92b3e6dd96449c468a44306f2",
+      "candidate_normalized_sha256": "437f7679d4c96802aa54ca2e780affcb230cbc2752f15e6b182bd6e30ba574bc",
+      "candidate_commands": [
+        {
+          "step_id": "run",
+          "declared_args": [
+            "run",
+            "{ROOT}/fixtures/mock-run.adl.yaml",
+            "--yaml"
+          ],
+          "expanded_args": [
+            "run",
+            "<ROOT>/fixtures/mock-run.adl.yaml",
+            "--yaml"
+          ],
+          "exit_code": 0,
+          "captured_stdout_sha256": "f02858857dd6f73382ba2ea151edb17b4dd19fcbc4ec35fd88712e2f2408e599",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "f02858857dd6f73382ba2ea151edb17b4dd19fcbc4ec35fd88712e2f2408e599",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"schema\":\"adl.run.v1\",\"ok\":true,\"result\":{\"contract\":\"adl.engine.v1\",\"plan\":{\"contract\":\"adl.execution-plan.v1\",\"edges\":[],\"nodes\":[{\"agent_ref\":\"writer\",\"id\":\"node_v1_4436bc0b959d47127049f8cf67efd8b0e1c35e5ea86299b9253fde4c068d72ce\",\"inputs\":{},\"model\":\"echo-v1\",\"ports\":{\"inputs\":[],\"outputs\":[\"result\"]},\"prompt\":{\"user\":\"CHARACTERIZATION_MOCK_OK\"},\"provenance\":{\"agent_ref\":\"writer\",\"document_version\":\"0.5\",\"provider_ref\":\"local_mock\",\"semantic_path\":\"$.run.workflow.steps.emit\",\"task_ref\":\"emit\",\"workflow_identity\":\"inline:characterization-mock\"},\"provider_ref\":\"local_mock\",\"save_as\":\"result\",\"step_id\":\"emit\",\"task_ref\":\"emit\",\"tools\":[]}],\"run\":{\"identity\":\"characterization-mock\",\"inputs\":{},\"name\":\"characterization-mock\"},\"source_digest\":\"0843fa8fdc608c07c61a5cb83238a735a10cc634779266fd3e505011b8785229\",\"workflow\":{\"identity\":\"inline:characterization-mock\",\"kind\":\"sequential\"}},\"snapshot\":{\"attempts_consumed\":0,\"checkpoint_contract\":\"adl.engine-checkpoint.v1\",\"consumed_completion_digests\":{},\"edge_ids\":[],\"engine_contract\":\"adl.engine.v1\",\"event_count\":0,\"limits\":{\"max_attempts_per_node\":8,\"max_cancellations_per_turn\":10000,\"max_checkpoint_bytes\":33554432,\"max_completion_bytes\":16777216,\"max_completions_per_turn\":1000,\"max_dependency_edges\":100000,\"max_events\":1000000,\"max_in_flight\":64,\"max_logical_turns\":1000000,\"max_output_bytes\":16777216,\"max_plan_bytes\":16777216,\"max_plan_nodes\":10000,\"max_policy_bytes\":16777216,\"max_ready_nodes\":1000,\"max_request_bytes\":1048576,\"max_total_attempts\":100000,\"max_turn_input_bytes\":33554432},\"logical_tick\":0,\"logical_turns\":0,\"next_event_sequence\":0,\"next_request_sequence\":0,\"node_ids\":[\"node_v1_4436bc0b959d47127049f8cf67efd8b0e1c35e5ea86299b9253fde4c068d72ce\"],\"nodes\":{\"node_v1_4436bc0b959d47127049f8cf67efd8b0e1c35e5ea86299b9253fde4c068d72ce\":{\"attempts\":0,\"state\":\"pending\"}},\"output_bytes\":0,\"plan_contract\":\"adl.execution-plan.v1\",\"plan_digest\":\"846732c8839618e4e99ee0b8ecdf031efd95244a1ee4d1aca3bf1497d2191518\",\"plan_source_digest\":\"0843fa8fdc608c07c61a5cb83238a735a10cc634779266fd3e505011b8785229\",\"policy_digest\":\"f9d38f76344706fc1e3295912816f508921a4652bb5451e8a10c707e0350a728\",\"turn_journal\":[]},\"status\":\"ready\"}}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5340,
+        "authority": "adl-v2/crates/adl-engine/README.md",
+        "rationale": "ADL v2 run returns the deterministic engine contract and snapshot instead of a legacy local-mock summary.",
+        "replacement_proof": "adl-v2/crates/adl-engine/tests/compiler_fixture_mapping.rs",
+        "risk": "Consumers must migrate from summary text to the engine result envelope.",
+        "reviewer": "WP-06 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for legacy run-summary consumers."
+      }
+    },
+    {
+      "case_id": "ed25519-sign-verify-tamper",
+      "behaviors": [
+        "ed25519-sign-verify-tamper"
+      ],
+      "disposition": "approved_intentional_difference",
+      "incumbent_observation_count": 3,
+      "candidate_observation_count": 3,
+      "incumbent_normalized_sha256": "9ed55cabccc6d126e26a7b587c6ab4b10dd41207ab445e075fefa1fa76596774",
+      "candidate_normalized_sha256": "173cd1ddaed4031c3e2942a271da61bed7690ee8e7a911e6630cb431daa337d4",
+      "candidate_commands": [
+        {
+          "step_id": "sign",
+          "declared_args": [
+            "sign",
+            "{ROOT}/../v2/event-record.json",
+            "--key-id",
+            "characterization-fixed",
+            "--key-hex",
+            "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a"
+          ],
+          "expanded_args": [
+            "sign",
+            "<ROOT>/../v2/event-record.json",
+            "--key-id",
+            "characterization-fixed",
+            "--key-hex",
+            "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a"
+          ],
+          "exit_code": 0,
+          "captured_stdout_sha256": "a07daca6f3913208892ff13cbcaeeedf43d87da3a4a23bbcaee981d35add06db",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "a07daca6f3913208892ff13cbcaeeedf43d87da3a4a23bbcaee981d35add06db",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"schema\":\"adl.sign.v1\",\"ok\":true,\"result\":{\"profile_version\":1,\"record_kind\":\"event\",\"contract_version\":\"adl.records.v1\",\"key_id\":\"characterization-fixed\",\"payload_digest\":\"83eb2fc727156cfb2d8a019133e1a710be9a490b0552192d71cd531b8db79d83\",\"payload\":{\"kind\":\"event\",\"record\":{\"header\":{\"contract_version\":\"adl.records.v1\",\"record_id\":\"shadow-record-1\",\"subject_id\":\"shadow-agent-1\",\"sequence\":1,\"logical_timestamp\":10,\"metadata\":{\"source\":\"wp-11\"}},\"name\":\"shadow.completed\",\"detail\":\"ok\"}},\"signature\":\"62b9ed780a5b1874d907ede30f6016bbc2d7077e62e5ea24996e859873aca9c22dd06ea7b6d8e964c1689679dc1e59ea9a84c400a65b50245c39bfb0fae9480e\"}}\n",
+          "stderr": ""
+        },
+        {
+          "step_id": "verify",
+          "declared_args": [
+            "verify",
+            "{WORK}/signed.json",
+            "--public-key-hex",
+            "197f6b23e16c8532c6abc838facd5ea789be0c76b2920334039bfa8b3d368d61",
+            "--logical-time",
+            "10"
+          ],
+          "expanded_args": [
+            "verify",
+            "<WORK>/signed.json",
+            "--public-key-hex",
+            "197f6b23e16c8532c6abc838facd5ea789be0c76b2920334039bfa8b3d368d61",
+            "--logical-time",
+            "10"
+          ],
+          "exit_code": 0,
+          "captured_stdout_sha256": "f54b765f12236500f1917d8256174ea84ba1d5350e5314a546225fc39e81179d",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "f54b765f12236500f1917d8256174ea84ba1d5350e5314a546225fc39e81179d",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"schema\":\"adl.verify.v1\",\"ok\":true,\"result\":{\"payload_digest\":\"83eb2fc727156cfb2d8a019133e1a710be9a490b0552192d71cd531b8db79d83\",\"record_kind\":\"event\"}}\n",
+          "stderr": ""
+        },
+        {
+          "step_id": "tamper",
+          "declared_args": [
+            "verify",
+            "{WORK}/signed.json",
+            "--public-key-hex",
+            "197f6b23e16c8532c6abc838facd5ea789be0c76b2920334039bfa8b3d368d61",
+            "--logical-time",
+            "10"
+          ],
+          "expanded_args": [
+            "verify",
+            "<WORK>/signed.json",
+            "--public-key-hex",
+            "197f6b23e16c8532c6abc838facd5ea789be0c76b2920334039bfa8b3d368d61",
+            "--logical-time",
+            "10"
+          ],
+          "exit_code": 2,
+          "captured_stdout_sha256": "88933b6a7bd32b93fda804f0c5f886197514deb8c67ae6674d43ee6c904caf93",
+          "captured_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "portable_stdout_sha256": "88933b6a7bd32b93fda804f0c5f886197514deb8c67ae6674d43ee6c904caf93",
+          "portable_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "{\"error\":\"InvalidEnvelope: payload digest mismatch\",\"ok\":false,\"schema\":\"adl.error.v1\"}\n",
+          "stderr": ""
+        }
+      ],
+      "decision": {
+        "owner_issue": 5345,
+        "authority": "adl-v2/crates/adl-records/README.md",
+        "rationale": "ADL v2 signs typed records with hexadecimal keys and verifies the inner signed envelope.",
+        "replacement_proof": "adl-v2/crates/adl-records/tests/tamper_channel.rs",
+        "risk": "Document-level legacy signatures are not interchangeable with typed record envelopes.",
+        "reviewer": "WP-10 exact-revision review",
+        "rollback_impact": "Keep the v1 executable selected for legacy signed-document workflows."
+      }
+    }
+  ],
+  "behaviors": [
+    {
+      "behavior": "cli-help",
+      "cases": [
+        "cli-help"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "cli-version",
+      "cases": [
+        "cli-version"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "six-primitives-plan",
+      "cases": [
+        "six-primitives-plan"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "graph-json",
+      "cases": [
+        "graph-json"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "prompt-projection",
+      "cases": [
+        "prompt-projection"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "fork-join-ordering",
+      "cases": [
+        "fork-join-ordering"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "map-reorder-equivalence",
+      "cases": [
+        "map-order-a",
+        "map-order-b"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "branch-reorder-equivalence",
+      "cases": [
+        "branch-order-a",
+        "branch-order-b"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "sequential-reorder-difference",
+      "cases": [
+        "sequential-order-a",
+        "sequential-order-b"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "invalid-argument",
+      "cases": [
+        "invalid-argument"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "malformed-yaml",
+      "cases": [
+        "malformed-yaml"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "schema-error",
+      "cases": [
+        "schema-error"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "unknown-provider-reference",
+      "cases": [
+        "unknown-provider"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "unknown-agent-reference",
+      "cases": [
+        "unknown-agent"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "unknown-task-reference",
+      "cases": [
+        "unknown-task"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "unknown-tool-reference",
+      "cases": [
+        "unknown-tool"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "unknown-workflow-reference",
+      "cases": [
+        "unknown-workflow"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "unsupported-run-field",
+      "cases": [
+        "unsupported-run-field"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "missing-state-reference",
+      "cases": [
+        "missing-state"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "dependency-cycle",
+      "cases": [
+        "dependency-cycle"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "repeated-byte-stability",
+      "cases": [
+        "cli-help"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "local-mock-run",
+      "cases": [
+        "local-mock-run"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "behavior": "ed25519-sign-verify-tamper",
+      "cases": [
+        "ed25519-sign-verify-tamper"
+      ],
+      "status": "approved_intentional_difference"
+    }
+  ],
+  "groups": [
+    {
+      "id": "map-declaration-order",
+      "kind": "equivalence",
+      "cases": [
+        "map-order-a",
+        "map-order-b"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "id": "branch-declaration-order",
+      "kind": "equivalence",
+      "cases": [
+        "branch-order-a",
+        "branch-order-b"
+      ],
+      "status": "approved_intentional_difference"
+    },
+    {
+      "id": "sequential-step-order",
+      "kind": "difference",
+      "cases": [
+        "sequential-order-a",
+        "sequential-order-b"
+      ],
+      "status": "approved_intentional_difference"
+    }
+  ],
+  "runtime_overlay": [
+    {
+      "issue": 5589,
+      "groups": [
+        6,
+        7,
+        8
+      ],
+      "disposition": "merged",
+      "observed_sha": "0f22baf5d4b2fdef485164aa4c83002fdb520a3e",
+      "integrated_sha": "0f22baf5d4b2fdef485164aa4c83002fdb520a3e",
+      "receipt_sha256": "e1921dcbc667c7fde0ae09e553ba10ba128fa89ca6f1feed598e06b0cea3ec49",
+      "reviewed_revision": "git-blake3:1103b3b784f570d651a54f5e9ced80960b978d48:4bf9e5c9c336295939b5d4199b835c97bc060503d93c801887ca1ef848270a47",
+      "reviewer": "subagent:review_5589_exact",
+      "evidence_sha256": null,
+      "status": "pass"
+    },
+    {
+      "issue": 5590,
+      "groups": [
+        9,
+        10
+      ],
+      "disposition": "merged",
+      "observed_sha": "a79ab1b395b7331e4b6288d19effdb5fc392e39a",
+      "integrated_sha": "a79ab1b395b7331e4b6288d19effdb5fc392e39a",
+      "receipt_sha256": "faadb2086b2a33ffebb05e0ca66bcf99d1e098a9db6366380f8a5ce41b70cf66",
+      "reviewed_revision": "git-blake3:1e24b7dd7131cda8fc92ca51e96084f1a723a3e1:7aa622c6bf751f95de6f80fffc44ee827f9cb45d2f2b59e129263048440d1424",
+      "reviewer": "subagent:019f8692-79df-7fe0-98bd-8d42df9b5f1a",
+      "evidence_sha256": null,
+      "status": "pass"
+    },
+    {
+      "issue": 5591,
+      "groups": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "disposition": "merged",
+      "observed_sha": "59b61985c9964e56d83272efa7035f12be462fd7",
+      "integrated_sha": "59b61985c9964e56d83272efa7035f12be462fd7",
+      "receipt_sha256": "8c8e1d38d1d9c370d90dda70e3b97cae0ee2aeee15bb7e1352e08c729ab1df3e",
+      "reviewed_revision": "git-blake3:469a18c11a849450cacc4f69d439c0cedd09c2d7:9337215d67c352e9f65f505e8f9323687bae48d1ee3dff9a29648624e4a826a9",
+      "reviewer": "subagent:review_5591_coverage_fix",
+      "evidence_sha256": null,
+      "status": "pass"
+    },
+    {
+      "issue": 5592,
+      "groups": [
+        5
+      ],
+      "disposition": "merged",
+      "observed_sha": "dbd461697755c048f9b9bbb7eb1a3ca66b0c3e56",
+      "integrated_sha": "dbd461697755c048f9b9bbb7eb1a3ca66b0c3e56",
+      "receipt_sha256": "7e1ef145c65317bd6a08be3fa3270c23d3933e64008d852c568a8513c05286b3",
+      "reviewed_revision": "git-blake3:73bd5d04cb5f10d9e64586f80ff434b7d77fa52e:2962f8ca10a796dde9cf3cef7bdb4cd0b07915dc64cf59c8af4aa43f9548200b",
+      "reviewer": "subagent:review_5592_integrated_exact",
+      "evidence_sha256": null,
+      "status": "pass"
+    }
+  ],
+  "adapter_overlay": [
+    {
+      "issue": 5341,
+      "groups": [],
+      "disposition": "merged",
+      "observed_sha": "c2c381cdd1393d1074e06f786320e81ac66a305f",
+      "integrated_sha": "713f9cb6e5b7f7b7674e601ce4f088134aa3c0a0",
+      "receipt_sha256": "e3abe31e231e59b68f79feb5992fcc9d842232d5c2dd160257a926faedf239c2",
+      "reviewed_revision": "git-blake3:59e7c88fbc27d309d57be735c24db16425b335dc:fa76a592896f8b867a82a605f57e6fa8bc7b43978a518a54b7b83057c76a68d4",
+      "reviewer": "subagent:019f8b6b-26c2-7a12-800e-e93282e34d9b",
+      "evidence_sha256": null,
+      "status": "pass"
+    },
+    {
+      "issue": 5349,
+      "groups": [],
+      "disposition": "merged",
+      "observed_sha": "a9c974a84093cf13990d9cbe0b5827d7445bc3ce",
+      "integrated_sha": "a9c974a84093cf13990d9cbe0b5827d7445bc3ce",
+      "receipt_sha256": "a06078745c8d81ae7e9333b58868f5c48aa652d9ecd560bbc7034a842924a4c9",
+      "reviewed_revision": "git-blake3:706ef96511fbdeba8f57cae096c41d0551d070fc:50404c66b91a5924a065f7c2401dbddee58c04c87c9a9fbf5b75b77acaa14ff5",
+      "reviewer": "subagent:wp09_review",
+      "evidence_sha256": null,
+      "status": "pass"
+    }
+  ],
+  "wp10a_overlay": [
+    {
+      "issue": 5497,
+      "groups": [],
+      "disposition": "closed_no_pr",
+      "observed_sha": null,
+      "integrated_sha": null,
+      "receipt_sha256": "12ea335524fd51ef97aa43fb845c31e294cf01f47d133df5b327138aba061e95",
+      "reviewed_revision": "git-blake3:3b4f0e86ab226be9ab3550d55c0c20c0410511bd:166a4f316ffa2b58e6be048f222f775a980b33a91ad22deb61ef70b1cc6d3be6",
+      "reviewer": "codex:wp10a-umbrella-closeout",
+      "evidence_sha256": null,
+      "status": "pass"
+    },
+    {
+      "issue": 5501,
+      "groups": [],
+      "disposition": "merged",
+      "observed_sha": "9ff6a0a2f808a2f6207ad8de245c60f646706912",
+      "integrated_sha": "9ff6a0a2f808a2f6207ad8de245c60f646706912",
+      "receipt_sha256": "e0fcc62c523a98aee4df7a24b5eef83c1ad11776cb2a4dcf1e085f79d9f9a239",
+      "reviewed_revision": "git-blake3:aeb7822d2c2eff54cb3ad1e3bda0d3c513d3f53b:e1abe21209ebfbbc2cd8c7866a79d32510928fc28dd0976c6650a7154425a3e8",
+      "reviewer": "gpt-5.5:required-pre-pr-review",
+      "evidence_sha256": "33b04aaf652782b7ffc72d5c5232b915376fc74eece0bcd195fa5b31c48005c6",
+      "status": "pass"
+    }
+  ],
+  "status": "pass"
+}

@@ -1,0 +1,12 @@
+{
+  "issue": 5354,
+  "claim_id": "claim-5354-v0918-wp15-reacquired",
+  "expected_generation": 1,
+  "expected_digest": "0fce5193a5044c62978e5d4e63320894ce2515e18ca3e3e5bd9463d209b51b08",
+  "now_unix_seconds": 1785518595,
+  "actor": "codex:5354-wp15-owner",
+  "reason": "The first clean convergence build proved that the accepted ADL v2 dependency lock omits already-declared main-branch dependencies and fails under --locked. Add only the lockfile so WP-15 can restore reproducible clean builds.",
+  "add_protected_paths": [
+    "adl-v2/Cargo.lock"
+  ]
+}

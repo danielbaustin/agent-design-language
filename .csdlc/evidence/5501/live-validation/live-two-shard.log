@@ -1,0 +1,9 @@
+{
+  "status": "pass",
+  "retained_shards": [
+    5500,
+    5502
+  ],
+  "negative_case": "PathOverlap",
+  "baseline": "comparison_only_not_executed_as_substitute"
+}

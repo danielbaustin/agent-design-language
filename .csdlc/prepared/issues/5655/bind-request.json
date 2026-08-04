@@ -1,0 +1,24 @@
+{
+  "issue": 5655,
+  "base_branch": "main",
+  "branch": "codex/5655-csdlc-github-actions",
+  "worktree": ".worktrees/adl-wp-5655",
+  "claim": {
+    "id": "claim-5655-csdlc-github-actions",
+    "owner": "codex:issue-5655-slot-1",
+    "generation": 1,
+    "acquired_unix_seconds": 1784920947,
+    "expires_unix_seconds": 1785525747,
+    "heartbeat_unix_seconds": 1784920947,
+    "branch": "codex/5655-csdlc-github-actions",
+    "worktree": ".worktrees/adl-wp-5655",
+    "protected_paths": [
+      ".csdlc/evidence/5655",
+      ".csdlc/issues/5655",
+      ".csdlc/locks/5655.lock",
+      ".csdlc/prepared/issues/5655",
+      "csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md"
+    ],
+    "purpose": "Implement one Rust-only, idempotent GitHub action surface for C-SDLC v2"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "issue": 5351,
+  "card": "srp",
+  "expected_generation": 19,
+  "expected_digest": "50c596ee70a1bf3c6f0e0d41475f3837361bea94b03d4bce05a69885b906d6e0",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "reason": "The assigned exact-revision WP-16 review is complete with no actionable findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

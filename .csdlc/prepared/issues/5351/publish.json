@@ -1,0 +1,15 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5351,
+  "expected_generation": 20,
+  "expected_digest": "93e833022dc12b45daaeb1ae1a4ff7906161ffd0d46fa923acf14e01c8580c18",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5351-v0918-preparation",
+  "title": "[v0.91.8][WP-16] Run integrated platform quality gate",
+  "body": "Closes #5351\n\nRuns the v0.91.8 integrated platform quality gate and retains exact, repository-relative release evidence.\n\nResults:\n- 67 milestone issues audited: 34 working-code outcomes, 21 useful durable results, 12 partial or explicitly bounded outcomes, and 0 unacceptable outcomes.\n- ADL v2 all-target tests: 170 passed, 0 failed.\n- Runtime v3 all-target tests: 299 passed, 0 failed, 1 declared ignore.\n- C-SDLC v2 all-target tests: 277 passed, 0 failed.\n- Focused, integrated-platform, and complete validation lanes passed at exact substantive revision a02b9cb31c7d79f09175ef57f9557f37b2067c22.\n- Routed blockers #5762, #5763, and #5770 were repaired and merged before the final gate.\n\nReview:\n- Exact-revision gpt-5.5 review completed with zero actionable findings.\n- Retained evidence passes host-path, redaction, and diff hygiene checks.\n\nWP-17 is released immediately after this PR merges. Typed closeout is asynchronous and nonblocking.",
+  "draft": false
+}

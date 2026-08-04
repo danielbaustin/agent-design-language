@@ -1,0 +1,121 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5664,
+  "expected_generation": 0,
+  "expected_digest": "88e55d59ad655566078d42fab71c4b3e2d20ad12ab049cf5c681f33414a2931e",
+  "claim_id": "claim-5664-runtime-v3-protocol-adapters",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "summary": "Implemented the disjoint Provider, ACIP, A2A, and Cloud Bridge protocol adapter slice with authenticated request and response frames, atomic replay rejection, and fail-closed protocol production builder behavior.",
+  "changes": [
+    "Added real Tokio/Rustls protocol adapters for Provider, ACIP, A2A, and Cloud Bridge.",
+    "MAC-bound protocol responses to the original request frame and added tamper regression coverage.",
+    "Made replay reservation atomic for concurrent direct adapter execution while preserving bounded retry behavior.",
+    "Made the protocol production builder return no partial executors when required protocol configuration is missing."
+  ],
+  "artifacts": [
+    "adl-runtime-kernel/Cargo.toml",
+    "adl-runtime-kernel/src/lib.rs",
+    "adl-runtime-kernel/src/protocol_adapters.rs",
+    "adl-runtime-kernel/tests/protocol_adapters.rs"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "protocol-adapter-tests",
+          "proof_role": "Focused black-box protocol adapter proof",
+          "purpose": "Prove Provider, ACIP, A2A, and Cloud Bridge protocol behavior including Rustls, response MAC tamper rejection, concurrent replay rejection, timeout, retry, shutdown, and fail-closed config handling.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 2,
+            "memory_mib": 2048,
+            "tokens": 3000
+          },
+          "credentials": [],
+          "network": "loopback",
+          "dependencies": [],
+          "parallel_group": "protocol",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 600,
+          "executable": "/usr/bin/env",
+          "argv": [
+            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5664-protocol-target",
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--test",
+            "protocol_adapters"
+          ],
+          "evidence": {
+            "max_log_bytes": 131072,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        },
+        {
+          "id": "protocol-adapter-clippy",
+          "proof_role": "Strict Rust lint proof for protocol adapter slice",
+          "purpose": "Prove the touched runtime kernel lib, runtime binary, and protocol adapter test compile warning-free.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 2,
+            "memory_mib": 2048,
+            "tokens": 3000
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [
+            "protocol-adapter-tests"
+          ],
+          "parallel_group": "protocol",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 600,
+          "executable": "/usr/bin/env",
+          "argv": [
+            "CARGO_TARGET_DIR=/Volumes/FastWork/adl-5664-protocol-clippy-target",
+            "cargo",
+            "clippy",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--lib",
+            "--bin",
+            "adl-runtime-kernel",
+            "--test",
+            "protocol_adapters",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "evidence": {
+            "max_log_bytes": 131072,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": [
+        "protocol-adapter-tests",
+        "protocol-adapter-clippy"
+      ],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {
+      "max_parallel": 1,
+      "cpu_units": 2,
+      "memory_mib": 2048,
+      "tokens": 6000
+    },
+    "root": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5664",
+    "evidence_dir": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5664/.csdlc/evidence/5664",
+    "cancellation_file": null
+  }
+}

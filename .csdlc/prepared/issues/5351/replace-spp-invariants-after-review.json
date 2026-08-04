@@ -1,0 +1,23 @@
+{
+  "issue": 5351,
+  "card": "spp",
+  "expected_generation": 11,
+  "expected_digest": "edba31d231cd0c8f45a5f9910664e33945788ec71c61a7abd97bf9db3d743a64",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "reason": "Remove the stale closeout gate while retaining exact quality and evidence invariants.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "invariants",
+    "values": [
+      "#5351 owns only its issue-local lifecycle, prepared, evidence, and WP-16 quality-report paths",
+      "only pass satisfies a required quality row; missing, blocked, failed, or deferred proof cannot be promoted",
+      "the gate composes existing tools and never becomes another product or lifecycle authority",
+      "Runtime v2, credentials, host-absolute retained paths, hard-coded addresses, and secret-bearing output are forbidden",
+      "focused and integrated packets remain pinned to one exact execution revision",
+      "WP-17 is released immediately after #5351 merges with passing exact-head integrated proof",
+      "typed closeout is asynchronous bookkeeping and never blocks WP-17"
+    ]
+  },
+  "fail_after_backup": false
+}

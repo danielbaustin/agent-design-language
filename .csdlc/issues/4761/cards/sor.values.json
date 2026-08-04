@@ -1,0 +1,63 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4761,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][capability-envelope] Prepare #4761 v0.92 capability envelope",
+    "slug": "v0918-wp14-capability-envelope-prep-4761",
+    "version": "v0.91.8",
+    "generation": 21
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Implemented the #4761 pre-v0.92 capability envelope as a retained evidence packet with source inventory, explicit unsupported-claim register, fail-closed validator, and v0.91.8/v0.92 consumer pointers.",
+      "actual_changes": [
+        ".csdlc/evidence/4761/capability-envelope/envelope.v1.json",
+        ".csdlc/evidence/4761/capability-envelope/inputs.v1.json",
+        ".csdlc/evidence/4761/capability-envelope/non-claims.v1.md",
+        ".csdlc/evidence/4761/capability-envelope/validate_capability_envelope.rb",
+        ".csdlc/evidence/4761/capability-envelope/validation.v1.log",
+        "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+        "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+        "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md"
+      ],
+      "artifacts": [
+        ".csdlc/evidence/4761/capability-envelope/envelope.v1.json",
+        ".csdlc/evidence/4761/capability-envelope/inputs.v1.json",
+        ".csdlc/evidence/4761/capability-envelope/non-claims.v1.md",
+        ".csdlc/evidence/4761/capability-envelope/validation.v1.log",
+        ".csdlc/evidence/4761/capability-envelope/proof-logs/capability-envelope-validator.log",
+        ".csdlc/evidence/4761/capability-envelope/proof-logs/diff-hygiene.log"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "ruby",
+            ".csdlc/evidence/4761/capability-envelope/validate_capability_envelope.rb"
+          ],
+          "purpose": "Validate the #4761 capability envelope, retained source inventory, v0.91.8/v0.92 consumer surfaces, digest integrity, and explicit unsupported-claim register.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/4761/capability-envelope/proof-logs/capability-envelope-validator.log"
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "purpose": "Reject whitespace errors in the #4761 capability-envelope artifacts, lifecycle records, and consumer documents.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/4761/capability-envelope/proof-logs/diff-hygiene.log"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

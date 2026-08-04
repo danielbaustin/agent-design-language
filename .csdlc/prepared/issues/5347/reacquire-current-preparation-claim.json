@@ -1,0 +1,26 @@
+{
+  "issue": 5347,
+  "expected_generation": 1,
+  "expected_digest": "ddde0898b2b6ba29b966f3d24681b70fa19647bff6b0369d52c0e9f247605362",
+  "now_unix_seconds": 1785542068,
+  "replacement": {
+    "id": "claim-5347-current-preparation-refresh",
+    "owner": "codex:5347-preparation-refresh",
+    "generation": 1,
+    "acquired_unix_seconds": 1785542068,
+    "expires_unix_seconds": 1785549268,
+    "heartbeat_unix_seconds": 1785542068,
+    "branch": "codex/5347-v0918-wp13-external-band-deletion",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5347",
+      ".csdlc/locks/5347.lock",
+      ".csdlc/prepared/issues/5347",
+      ".csdlc/evidence/5347",
+      "docs/milestones/v0.91.8/evidence/wp13-external-bands"
+    ],
+    "purpose": "Refresh #5347 WP-13 external-band deletion preparation only at current origin/main truth; no product path, deletion, PR, publication, push, merge, or closeout authority"
+  },
+  "actor": "codex:5347-preparation-refresh",
+  "reason": "Continue operator-requested #5347 preparation after current origin/main integration while preserving deletion and publication stop boundaries"
+}

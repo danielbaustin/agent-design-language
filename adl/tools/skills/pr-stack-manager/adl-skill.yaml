@@ -101,7 +101,7 @@ execution:
     - "git log --oneline --decorate --graph"
     - "adl-csdlc/octocrab PR view: number,baseRefName,headRefName,state,title"
     - "python3 adl/tools/skills/pr-stack-manager/scripts/analyze_pr_stack.py <stack-packet>"
-    - "adl/tools/pr.sh doctor --json"
+    - "csdlc-doctor --repo <repo> --issue <issue>"
   preferred_path: "target_issue_stack_then_local_and_remote_stack_surfaces"
   repair_policy: "plan_only_by_default_then_apply_only_when_explicitly_safe"
   invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"

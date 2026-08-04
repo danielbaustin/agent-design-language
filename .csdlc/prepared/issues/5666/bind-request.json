@@ -1,0 +1,26 @@
+{
+  "issue": 5666,
+  "base_branch": "main",
+  "branch": "codex/5666-throughput-fast-lane",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5666-throughput-fast-lane",
+    "owner": "codex:issue-5666-slot-1",
+    "generation": 1,
+    "acquired_unix_seconds": 1785024000,
+    "expires_unix_seconds": 1785628800,
+    "heartbeat_unix_seconds": 1785024000,
+    "branch": "codex/5666-throughput-fast-lane",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5666",
+      ".csdlc/issues/5666",
+      ".csdlc/locks/5666.lock",
+      ".csdlc/prepared/issues/5666",
+      "docs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md",
+      "docs/tooling/VALIDATION_PLATFORM_ROUTING.md",
+      "adl/tools/test_developer_throughput_fast_lane.sh"
+    ],
+    "purpose": "Add a proportional fast-lane policy and focused contract proof for small ADL fixes"
+  }
+}

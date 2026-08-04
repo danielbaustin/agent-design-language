@@ -1,0 +1,27 @@
+{
+  "issue": 5346,
+  "expected_generation": 0,
+  "expected_digest": "e2c38851ca817f333ededc944bef4a04180d541a00043c3f8e0d7263a987d245",
+  "now_unix_seconds": 1785542063,
+  "actor": "codex:5346-preparation-refresh",
+  "reason": "Reacquire dormant preparation-only claim for operator-requested #5346 WP-13 preparation refresh; no deletion, product implementation, PR, publication, merge, push, or closeout.",
+  "replacement": {
+    "id": "claim-5346-v0918-wp13-deletion-preparation-current",
+    "owner": "codex:5346-preparation-refresh",
+    "generation": 0,
+    "acquired_unix_seconds": 1785542063,
+    "expires_unix_seconds": 1786146863,
+    "heartbeat_unix_seconds": 1785542063,
+    "branch": "codex/5346-v0918-wp13-final-adl-deletion",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5346",
+      ".csdlc/locks/5346.lock",
+      ".csdlc/prepared/issues/5346",
+      ".csdlc/evidence/5346",
+      "docs/milestones/v0.91.8/evidence/wp13/5346-deletion-eligibility.v1.json",
+      "docs/milestones/v0.91.8/evidence/wp13/5346-post-deletion-validation.v1.json"
+    ],
+    "purpose": "Refresh #5346 WP-13 preparation only; no source path may be claimed or deleted until #5347, WP-14A #5384, WP-15 #5354, WP-16 #5351, WP-17 #5360, #5344, #5343, #5358, and #5361 gates are terminal, receipt-backed, claim-free, ancestral where applicable, rollback-valid, and disjoint."
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "issue": 5344,
+  "card": "sor",
+  "expected_generation": 29,
+  "expected_digest": "f989dde0a124e6b9999ac2e7b9b3fe15b443be5a6519d7abcc2f0bba28d94d42",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the repeated authenticated healthy-window proof after bounding the local lease-listener startup retry.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "adl-runtime/Cargo.toml",
+        "guardian::tests::restart_budget_resets_after_healthy_window",
+        "--",
+        "--exact",
+        "(repeated 20 times)"
+      ],
+      "purpose": "Prove the Guardian restart-budget test is deterministic and no longer spends a runtime attempt on a local listener startup race.",
+      "outcome": "passed",
+      "evidence_ref": "adl-runtime/src/guardian.rs"
+    }
+  }
+}

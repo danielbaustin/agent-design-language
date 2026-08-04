@@ -1,0 +1,24 @@
+{
+  "schema": "adl.v0918.wp16.issue_outcome_audit.v1",
+  "issue": 5351,
+  "status": "pass",
+  "total": 67,
+  "counts": {
+    "working_code": 34,
+    "useful_durable_result": 21,
+    "partial_or_ambiguous": 12,
+    "no_acceptable_outcome": 0
+  },
+  "working_code": [4739, 4741, 4760, 5332, 5338, 5339, 5340, 5341, 5342, 5343, 5344, 5345, 5346, 5347, 5349, 5438, 5470, 5498, 5499, 5500, 5502, 5526, 5527, 5540, 5541, 5558, 5563, 5566, 5569, 5572, 5589, 5590, 5591, 5592],
+  "useful_durable_result": [4641, 4758, 4759, 4761, 4762, 4763, 5007, 5107, 5335, 5336, 5337, 5350, 5352, 5354, 5358, 5361, 5383, 5384, 5497, 5501, 5594],
+  "partial_or_ambiguous": [5348, 5351, 5355, 5356, 5357, 5359, 5360, 5362, 5363, 5548, 5587, 5595],
+  "no_acceptable_outcome": [],
+  "release_blockers": [],
+  "closeout_drift_non_product": [4759, 4760, 4763, 5007, 5342, 5346, 5347, 5352, 5499],
+  "ambiguous_completed": [5548, 5587],
+  "policy": {
+    "absence_is_not_failure": true,
+    "closed_is_not_automatic_success": true,
+    "planning_and_review_outputs_may_be_useful_when_scope_faithful": true
+  }
+}

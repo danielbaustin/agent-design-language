@@ -1,0 +1,7 @@
+{
+  "issue": 4758,
+  "expected_generation": 0,
+  "expected_digest": "b6d8fd8cc19caaa2ef96b20a7a2b74dee0d4543f14e4537d09fa520e37419de3",
+  "claim_id": "claim-4758-v092-launch-readiness-execution",
+  "reviewer": "codex:wp21-conductor"
+}

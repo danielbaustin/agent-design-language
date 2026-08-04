@@ -1,0 +1,170 @@
+{
+  "schema": "adl.gap_analysis_report.v1",
+  "run_id": "5351-wp16-preparation-gap-analysis",
+  "status": "resolved",
+  "resolution": {
+    "terminal_projection_repair_pr": 5761,
+    "terminal_projection_merge": "57d115741f32b945217ee3cb14188b41ebde9b3f",
+    "dependency_gate_semantics": "receipt exact PR head plus ancestral squash-merge commit",
+    "superseded_by": [
+      ".csdlc/evidence/5351/focused-quality.json",
+      ".csdlc/evidence/5351/integrated-platform.json"
+    ]
+  },
+  "scope": {
+    "mode": "compare_issue_to_implementation",
+    "issue": 5351,
+    "worktree_head": "cb3a233dd5a686f9568ce23b76810a26384aab03",
+    "stop_boundary": "comparison only; no quality execution, product fixes, PR, publication, merge, or closeout; a clean preparation branch push is allowed"
+  },
+  "expected_baseline": [
+    "#5351 issue body requires the canonical WP-16 integrated quality gate after WP-14 deployment acceptance and WP-15 demo convergence.",
+    "#5351 acceptance requires WP-14 and WP-15 complete, focused and integrated proving lanes at exact revisions, no hidden failures, and blocker routing before WP-17.",
+    "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml records WP-16 #5351 depends on WP-15 and gates WP-17 #5360.",
+    "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md records #5351 as the integrated release gate and says planning alone does not satisfy a gate.",
+    "#5351 prepared cards require product contracts, stable deployments, rollback, deletion, demos, docs, exact revision matrix, proving lanes, blocker routing, budgets, COTS, and post-merge handoff proof."
+  ],
+  "observed_evidence": [
+    ".csdlc/issues/5351/index.json: #5351 phase bound, generation 1, active preparation claim.",
+    ".csdlc/evidence/5384/platform-acceptance-ledger.v1.json: WP-14A status pass and retained platform inputs.",
+    ".csdlc/issues/5384/index.json: #5384 phase closed_out, generation 16, no active claim.",
+    ".csdlc/evidence/5354/convergence-proof.v1.json: WP-15 convergence proof status pass.",
+    "PR #5731 merged #5354 implementation at 97427f324c87d97cb1b36c7804c50bf80c9389d8.",
+    "PR #5747 merged demo-matrix reconciliation at ab4e9e2217c152df47b1754b66b01febb4a59549.",
+    "csdlc-v2/closeout/5354.json: retained receipt reports #5354 closed_out, generation 23, no claim, PR #5731, and observed SHA e8c63268429b0162671e7f1bfae5f560171d7099.",
+    ".csdlc/issues/5354/index.json: #5354 still phase reviewed with active claim claim-5354-v0918-wp15-reacquired and differs from the retained receipt."
+  ],
+  "findings": [
+    {
+      "id": "GA-5351-001",
+      "gap_type": "closeout_drift",
+      "severity": "P1",
+      "title": "Current typed WP-15 record differs from retained closeout receipt",
+      "expected": "#5351 execution begins only after current #5354 typed state is closed_out, claim-free, retained-receipt-backed, and ancestral to the #5351 execution revision.",
+      "observed": "GitHub #5354 is closed and PR #5731 merged, and a retained closeout receipt exists, but local typed #5354 remains reviewed with an active claim and differs from the retained receipt.",
+      "evidence": [
+        ".csdlc/issues/5354/index.json",
+        "csdlc-v2/closeout/5354.json",
+        ".csdlc/evidence/5354/convergence-proof.v1.json",
+        "PR #5731"
+      ],
+      "uncertainty": "None for local typed state; closeout has not been reconciled into this worktree current typed record.",
+      "recommended_follow_up": "Run the appropriate typed #5354 closeout/reconciliation path outside #5351 before WP-16 quality execution.",
+      "source_artifact": ".csdlc/issues/5354/index.json",
+      "bucket": "release_blockers"
+    },
+    {
+      "id": "GA-5351-005",
+      "gap_type": "closeout_drift",
+      "severity": "P1",
+      "title": "Retained #5354 receipt uses a non-ancestral PR-head SHA",
+      "expected": "The retained #5354 receipt records an observed merge SHA that is ancestral to the exact #5351 execution head.",
+      "observed": "csdlc-v2/closeout/5354.json records e8c63268429b0162671e7f1bfae5f560171d7099, which is not ancestral to this head after the squash merge; PR #5731's merge commit is 97427f324c87d97cb1b36c7804c50bf80c9389d8.",
+      "evidence": [
+        "csdlc-v2/closeout/5354.json",
+        "git merge-base --is-ancestor",
+        "PR #5731"
+      ],
+      "uncertainty": "None for ancestry in this checkout; the correct repair path may be receipt semantics repair or dependency-gate interpretation repair.",
+      "recommended_follow_up": "Reconcile #5354 terminal receipt semantics so #5351 can test ancestry against the actual integrated merge commit.",
+      "source_artifact": "csdlc-v2/closeout/5354.json",
+      "bucket": "release_blockers"
+    },
+    {
+      "id": "GA-5351-002",
+      "gap_type": "test_gap",
+      "severity": "P1",
+      "title": "WP-16 quality packet has not been executed",
+      "expected": "Focused and integrated proving lanes are recorded at exact revisions with required row outcomes.",
+      "observed": "#5351 contains preparation lanes and future lane stubs only; no integrated quality gate has been run, by operator instruction.",
+      "evidence": [
+        ".csdlc/issues/5351/cards/vpp.md",
+        ".csdlc/prepared/issues/5351/run-validation-lane.rb",
+        ".csdlc/prepared/issues/5351/validation-request.json"
+      ],
+      "uncertainty": "None.",
+      "recommended_follow_up": "After #5354 typed closeout is available, amend the #5351 claim with exact reviewed paths and run declared focused and integrated lanes.",
+      "source_artifact": ".csdlc/issues/5351/cards/vpp.md",
+      "bucket": "release_blockers"
+    },
+    {
+      "id": "GA-5351-003",
+      "gap_type": "missing_evidence",
+      "severity": "P2",
+      "title": "Deletion gate remains a required non-deferrable row",
+      "expected": "WP-16 packet records deletion eligibility and post-deletion validation status without deferral.",
+      "observed": "#5384 ledger says deletion is not authorized and WP-13 deletion remains deferred; #5351 has not produced the quality row that classifies this for WP-16.",
+      "evidence": [
+        ".csdlc/evidence/5384/platform-acceptance-ledger.v1.json",
+        "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md"
+      ],
+      "uncertainty": "The row may become blocked or not_applicable depending on the exact WP-16 execution decision, but it cannot be silently skipped.",
+      "recommended_follow_up": "Make deletion eligibility an explicit WP-16 row and route any non-pass result to WP-13 owners before WP-17.",
+      "source_artifact": ".csdlc/evidence/5384/platform-acceptance-ledger.v1.json",
+      "bucket": "durable_proof_gaps"
+    },
+    {
+      "id": "GA-5351-004",
+      "gap_type": "scope_ambiguity",
+      "severity": "P2",
+      "title": "WP-17 handoff predicate is not yet satisfied",
+      "expected": "Blockers route before WP-17 documentation alignment begins.",
+      "observed": "WP-17 #5360 depends on WP-16 in the wave, but #5351 is not merged and does not yet have passing exact-head integrated proof on its mergeable publication revision.",
+      "evidence": [
+        "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+        ".csdlc/issues/5351/index.json"
+      ],
+      "uncertainty": "None for handoff being unavailable; downstream timing remains operator-owned.",
+      "recommended_follow_up": "Retain #5360 as blocked until #5351 has merged with passing exact-head integrated proof; perform typed closeout asynchronously.",
+      "source_artifact": "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "bucket": "routed_work"
+    }
+  ],
+  "gap_buckets": {
+    "release_blockers": [
+      "GA-5351-001",
+      "GA-5351-002",
+      "GA-5351-005"
+    ],
+    "durable_proof_gaps": [
+      "GA-5351-003"
+    ],
+    "routed_work": [
+      "GA-5351-004"
+    ],
+    "stale_release_readiness_docs": [],
+    "non_blocking_quality_concerns": []
+  },
+  "missing_evidence": [
+    "current #5354 typed record matching retained csdlc-v2/closeout/5354.json",
+    "#5354 retained receipt with an ancestral observed merge SHA",
+    "#5351 focused quality lane result",
+    "#5351 integrated platform lane result",
+    "#5351 complete and post-merge exact proof"
+  ],
+  "uncertainty": [
+    "The report does not assert that #5354 closeout receipt is absent; it asserts that the current local typed record differs from the retained receipt and that the retained observed SHA is non-ancestral in this squash-merge topology."
+  ],
+  "recommended_follow_up": [
+    "Reconcile #5354 through typed closeout until the local record matches the retained receipt and is closed_out, claim-free, and receipt-backed.",
+    "Repair or clarify #5354 receipt ancestry semantics so the gate can validate the actual PR #5731 merge commit rather than a non-ancestral PR head.",
+    "Re-run #5351 preparation validation after #5354 terminal truth is current.",
+    "Only then amend #5351 with exact reviewed quality-gate paths and run focused, integrated, complete, and post-merge lanes.",
+    "Keep WP-17 #5360 blocked until #5351 is merged with passing exact-head integrated proof; do not block the handoff on asynchronous typed closeout."
+  ],
+  "artifact_routing": {
+    "markdown": ".csdlc/prepared/issues/5351/WP16_GAP_ANALYSIS.md",
+    "json": ".csdlc/prepared/issues/5351/WP16_GAP_ANALYSIS.json",
+    "quality_gate_update_allowed": false,
+    "separate_gap_review_allowed": true
+  },
+  "stop_boundary": {
+    "fixed_gaps": false,
+    "created_issues": false,
+    "created_prs": false,
+    "approved_closeout": false,
+    "approved_release": false,
+    "mutated_repository": false,
+    "mutation_scope": "requested issue-local gap artifact only"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "issue": 5719,
+  "expected_generation": 1,
+  "expected_digest": "84e3c398057b359d7afc1c85049137aaecf4cf9bbd8907c8a763ed5b744b5146",
+  "claim_id": "claim-5719-ci-coverage-page-policy",
+  "reviewer": "Heisenberg",
+  "assigned_by": "codex:5719-execution",
+  "scope": [
+    ".csdlc/issues/5719",
+    ".csdlc/evidence/5719",
+    ".csdlc/prepared/issues/5719",
+    "adl/config/validation_lane_selector.v0.91.6.json",
+    "adl/tools/ci_path_policy.sh",
+    "adl/tools/test_ci_path_policy.sh"
+  ]
+}

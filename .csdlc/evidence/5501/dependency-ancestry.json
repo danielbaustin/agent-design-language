@@ -1,0 +1,53 @@
+{
+  "schema": "adl.wp10a.dependency-ancestry.v1",
+  "issue": 5501,
+  "execution_head": "1d84d3fba125fa3aff84fe4b33ae258773beda57",
+  "origin_main": "fa49c2d0f32147547f0aafdca8bfbc841c49258a",
+  "rule": "live_merge_plus_ancestry",
+  "audit_only": [
+    "typed_closeout_receipts",
+    "retained_lifecycle_projection",
+    "claim_release_projection"
+  ],
+  "dependencies": [
+    {
+      "issue": 5499,
+      "component": "workcell_conductor",
+      "pull_request": 5638,
+      "head": "26a08cf896693c03fdf8dcc503e734bad56e61dc",
+      "merge": "d8f02c5b77099552c376436acd695f2bf8922de6",
+      "ancestral_to_execution_head": true
+    },
+    {
+      "issue": 5498,
+      "component": "codex_task_adapter",
+      "pull_request": 5639,
+      "head": "96359ed5bc008c63632e76a72eb1f2f77bfd9dd1",
+      "merge": "7d6095acd0da8fe9e1a622387a229a02ecd824dc",
+      "ancestral_to_execution_head": true
+    },
+    {
+      "issue": 5502,
+      "component": "output_convergence",
+      "pull_request": 5641,
+      "head": "3b900210cd30ee381c860a624499d1e4d8aea0d8",
+      "merge": "1cbbf4eb5531814f7b4f0fdc9edeaa1df78410cd",
+      "ancestral_to_execution_head": true
+    },
+    {
+      "issue": 5500,
+      "component": "workcell_dashboard",
+      "pull_request": 5640,
+      "head": "a24992cfaecfb6adaa2f82ea1b780dd7d1cc6803",
+      "merge": "fa49c2d0f32147547f0aafdca8bfbc841c49258a",
+      "ancestral_to_execution_head": true
+    }
+  ],
+  "verification": {
+    "command": [
+      "ruby",
+      ".csdlc/prepared/issues/5501/check-dependencies.rb"
+    ],
+    "result": "passed"
+  }
+}

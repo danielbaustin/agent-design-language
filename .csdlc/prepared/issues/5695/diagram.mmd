@@ -1,0 +1,12 @@
+flowchart LR
+  G["GitHub PR state"] --> N["Normalize mergeability"]
+  N --> B["behind -> stale_base"]
+  N --> D["dirty -> conflicted"]
+  N --> W["blocked / unstable / unknown -> waiting"]
+  N --> C["clean / has_hooks -> clean"]
+  B --> M["csdlc-merge fails closed"]
+  D --> M
+  W --> M
+  C --> R["Required checks and review gate"]
+  R -->|pass| E["Merge eligible"]
+  R -->|pending/fail| M

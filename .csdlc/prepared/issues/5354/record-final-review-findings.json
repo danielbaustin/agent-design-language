@@ -1,0 +1,56 @@
+{
+  "issue": 5354,
+  "expected_generation": 5,
+  "expected_digest": "bc60856d1478cacc2b381b4952e28759b96c80be9efdfbaf2e7e6680a35a47d9",
+  "claim_id": "claim-5354-v0918-wp15-reacquired",
+  "actor": "subagent:019fb93e-1084-7ab0-b3a3-c8b618d045c8",
+  "evidence": {
+    "reviewer": "subagent:019fb93e-1084-7ab0-b3a3-c8b618d045c8",
+    "scope": [
+      ".csdlc/evidence/5354",
+      ".csdlc/issues/5354",
+      ".csdlc/prepared/issues/5354",
+      "adl-v2/Cargo.lock",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md"
+    ],
+    "reviewed_revision": "git-blake3:318a4c4b522d0d43d19ff42ea603cd13011a2846:e6a5c5f82776a64056001f3897205805b2c0d238d8b83aa85a54a730c9548d05",
+    "findings": [
+      {
+        "id": "F-5354-1",
+        "severity": "p1",
+        "summary": "The retained convergence packet does not bind its proof revision to the assigned review surface or a fail-closed metadata-only tail.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5354-2",
+        "severity": "p1",
+        "summary": "The claimed live full-duplex WSS proof uses a local test and HTTPS metadata instead of a real live WSS exchange.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5354-3",
+        "severity": "p2",
+        "summary": "The retained matrix lane accepts stale or substituted packet evidence after substantive changes.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Broad Rust suites and binary rebuilds were intentionally not repeated because the focused exact proof reused the unchanged stable binaries."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

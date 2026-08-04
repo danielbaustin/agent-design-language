@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 INSTALL_SRC="$ROOT_DIR/adl/tools/install_owner_binaries.sh"
 RESOLUTION_SRC="$ROOT_DIR/adl/tools/owner_binary_resolution.sh"
+VALIDATION_SRC="$ROOT_DIR/adl/tools/run_cargo_validation.sh"
 BASH_BIN="$(command -v bash)"
 
 tmpdir="$(mktemp -d)"
@@ -22,6 +23,7 @@ source_bin_dir="$tmpdir/source-bins"
 mkdir -p "$repo/adl/tools" "$repo/adl/src" "$source_bin_dir"
 cp "$INSTALL_SRC" "$repo/adl/tools/install_owner_binaries.sh"
 cp "$RESOLUTION_SRC" "$repo/adl/tools/owner_binary_resolution.sh"
+cp "$VALIDATION_SRC" "$repo/adl/tools/run_cargo_validation.sh"
 chmod +x "$repo/adl/tools/install_owner_binaries.sh"
 cat >"$repo/adl/Cargo.toml" <<'EOF_CARGO'
 [package]
@@ -30,6 +32,7 @@ version = "0.0.0"
 edition = "2021"
 EOF_CARGO
 printf 'pub fn seed() {}\n' >"$repo/adl/src/lib.rs"
+printf '# fixture lock\n' >"$repo/adl/Cargo.lock"
 printf 'fn main() {}\n' >"$repo/adl/tools/adl_provider_adapter.rs"
 cat >"$source_bin_dir/adl-pr-closeout" <<'EOF_BIN'
 #!/usr/bin/env bash
@@ -42,7 +45,7 @@ chmod +x "$source_bin_dir/adl-pr-closeout"
   git init -q
   git config user.name "Test User"
   git config user.email "test@example.com"
-  git add adl/Cargo.toml adl/src/lib.rs adl/tools/adl_provider_adapter.rs adl/tools/install_owner_binaries.sh adl/tools/owner_binary_resolution.sh
+  git add adl/Cargo.toml adl/Cargo.lock adl/src/lib.rs adl/tools/adl_provider_adapter.rs adl/tools/install_owner_binaries.sh adl/tools/owner_binary_resolution.sh adl/tools/run_cargo_validation.sh
   git commit -q -m "init"
 )
 
@@ -210,17 +213,16 @@ mkdir -p "$default_repo/adl/tools" "$default_repo/adl/src" "$default_source_bin_
 cp "$INSTALL_SRC" "$default_repo/adl/tools/install_owner_binaries.sh"
 cp "$RESOLUTION_SRC" "$default_repo/adl/tools/owner_binary_resolution.sh"
 chmod +x "$default_repo/adl/tools/install_owner_binaries.sh"
+cat >"$default_repo/adl/tools/install_vector_component.sh" <<'EOF_VECTOR'
+#!/usr/bin/env bash
+exit 0
+EOF_VECTOR
+chmod +x "$default_repo/adl/tools/install_vector_component.sh"
 cp "$repo/adl/Cargo.toml" "$default_repo/adl/Cargo.toml"
 printf 'pub fn default_seed() {}\n' >"$default_repo/adl/src/lib.rs"
 default_bins=(
-  adl csdlc adl-csdlc adl-runtime adl-review csm
-  adl-validate-structured-prompt adl-lint-prompt-spec adl-prompt-template
-  adl-pr-create adl-pr-init adl-pr-repair-issue-body
-  adl-pr-run adl-pr-doctor adl-pr-ready adl-pr-preflight
-  adl-pr-finish adl-pr-validation adl-pr-inventory
-  adl-pr-shepherd adl-pr-closing-linkage adl-issue adl-pr-closeout
-  adl-session adl-process adl-remote adl-aws-remote-validation
-  adl-provider-adapter
+  adl adl-runtime csm csmctl adl-review adl-process adl-remote
+  adl-aws-remote-validation adl-provider-adapter
 )
 for bin in "${default_bins[@]}"; do
   cat >"$default_source_bin_dir/$bin" <<EOF_BIN
@@ -249,9 +251,14 @@ incomplete_source_bins="$tmpdir/incomplete-default-source-bins"
 mkdir -p "$incomplete_repo/adl/tools" "$incomplete_repo/adl/src" "$incomplete_source_bins"
 cp "$INSTALL_SRC" "$incomplete_repo/adl/tools/install_owner_binaries.sh"
 chmod +x "$incomplete_repo/adl/tools/install_owner_binaries.sh"
+cat >"$incomplete_repo/adl/tools/install_vector_component.sh" <<'EOF_VECTOR'
+#!/usr/bin/env bash
+exit 0
+EOF_VECTOR
+chmod +x "$incomplete_repo/adl/tools/install_vector_component.sh"
 cp "$repo/adl/Cargo.toml" "$incomplete_repo/adl/Cargo.toml"
 printf 'pub fn incomplete_default_seed() {}\n' >"$incomplete_repo/adl/src/lib.rs"
-for bin in adl adl-pr-validation adl-pr-shepherd csm adl-remote adl-aws-remote-validation adl-provider-adapter; do
+for bin in adl csm csmctl adl-remote adl-aws-remote-validation adl-provider-adapter; do
   cat >"$incomplete_source_bins/$bin" <<EOF_BIN
 #!/usr/bin/env bash
 printf '$bin:%s\n' "\$*"
@@ -273,7 +280,7 @@ set -e
   cat "$default_install_log" >&2
   exit 1
 }
-for bin in adl adl-pr-validation adl-pr-shepherd csm adl-remote adl-aws-remote-validation adl-provider-adapter; do
+for bin in adl csm csmctl adl-remote adl-aws-remote-validation adl-provider-adapter; do
   [[ -x "$incomplete_repo/.adl/bin/$bin" ]] || {
     echo "assertion failed: default no-build install did not install current owner binary $bin" >&2
     cat "$default_install_log" >&2
@@ -312,5 +319,64 @@ grep -Fq "install_owner_binaries: missing built source binary" "$explicit_missin
   cat "$explicit_missing_log" >&2
   exit 1
 }
+
+fake_cargo_dir="$tmpdir/fake-cargo-bin"
+owner_build_root="$tmpdir/owner-build"
+mkdir -p "$fake_cargo_dir" "$owner_build_root"
+cat >"$fake_cargo_dir/cargo" <<'EOF_CARGO'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >>"$FAKE_CARGO_LOG"
+printf 'invocation-created lock drift\n' >"$TEST_LOCK_PATH"
+echo "error: no bin target named removed-owner-target" >&2
+exit "${FAKE_CARGO_STATUS:-101}"
+EOF_CARGO
+chmod +x "$fake_cargo_dir/cargo"
+
+assert_lock_restored_after_build() {
+  local expected_file="$1"
+  local fake_status="$2"
+  local output_file="$3"
+  set +e
+  (
+    cd "$repo"
+    PATH="$fake_cargo_dir:$PATH" \
+      TEST_LOCK_PATH="$repo/adl/Cargo.lock" \
+      FAKE_CARGO_LOG="$tmpdir/fake-cargo.log" \
+      FAKE_CARGO_STATUS="$fake_status" \
+      ADL_OWNER_BUILD_ROOT="$owner_build_root" \
+      "$BASH_BIN" adl/tools/install_owner_binaries.sh --bin adl >"$output_file" 2>&1
+  )
+  local status=$?
+  set -e
+  [[ "$status" -ne 0 ]] || {
+    echo "assertion failed: lock-mutating build unexpectedly passed" >&2
+    cat "$output_file" >&2
+    exit 1
+  }
+  cmp -s "$expected_file" "$repo/adl/Cargo.lock" || {
+    echo "assertion failed: build did not restore exact pre-invocation Cargo.lock bytes" >&2
+    exit 1
+  }
+  grep -Fq "Cargo validation restored invocation-created lockfile drift: adl/Cargo.lock" "$output_file" || {
+    echo "assertion failed: lock drift was not reported with its exact path" >&2
+    cat "$output_file" >&2
+    exit 1
+  }
+}
+
+cp "$repo/adl/Cargo.lock" "$tmpdir/clean-lock.before"
+assert_lock_restored_after_build "$tmpdir/clean-lock.before" 101 "$tmpdir/removed-target.log"
+grep -Fq -- '--locked' "$tmpdir/fake-cargo.log" || {
+  echo "assertion failed: owner installer cargo build omitted --locked" >&2
+  exit 1
+}
+grep -Fq -- '--bin adl' "$tmpdir/fake-cargo.log" || {
+  echo "assertion failed: focused owner installer did not request the selected current target" >&2
+  exit 1
+}
+
+printf 'user-owned pre-existing lock bytes\n' >"$repo/adl/Cargo.lock"
+cp "$repo/adl/Cargo.lock" "$tmpdir/user-lock.before"
+assert_lock_restored_after_build "$tmpdir/user-lock.before" 0 "$tmpdir/dependency-drift.log"
 
 echo "owner binary stable install: ok"

@@ -1,0 +1,15 @@
+{
+  "issue": 5345,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "1916f0b8831067c812bbf7a04913f637db4b0c2062eb107b0eb37d0c737851bb",
+  "claim_id": "claim-5345-v0918-wp10-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Mark durable preparation complete after design approval, bind, scope amendment, executable validation repair, and clean bounded re-review.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S1",
+    "status": "completed"
+  },
+  "fail_after_backup": false
+}

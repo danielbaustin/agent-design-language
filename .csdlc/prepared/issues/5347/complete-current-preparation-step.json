@@ -1,0 +1,14 @@
+{
+  "issue": 5347,
+  "expected_generation": 6,
+  "expected_digest": "32b9ec83e5b8690175e30963cf6d3595e328058304eafe445388585832485d7f",
+  "claim_id": "claim-5347-current-preparation-refresh",
+  "card": "spp",
+  "actor": "codex:5347-preparation-refresh",
+  "reason": "Mark the current preparation-only refresh complete after focused typed validation passed; leave all execution, deletion, publication, push, merge, and closeout steps pending.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S1",
+    "status": "completed"
+  }
+}

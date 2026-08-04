@@ -1,0 +1,22 @@
+{
+  "issue": 4741,
+  "card": "sor",
+  "expected_generation": 16,
+  "expected_digest": "c49b4294e93b6ab534973455bb7d687d924ffb76540b98316b1c24fd654399d0",
+  "claim_id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+  "actor": "codex:issue-4741-shepherd",
+  "reason": "Classify the authoritative fail-closed packet as passing evidence for the declared safe-mode wrapper outcome while retaining the Unity non-claim",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
+      ],
+      "purpose": "Prove one real safe-mode Unity attempt records exact progress and terminal truth without an arbitrary total ceiling.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/4741/live-staged-proof.json is the authoritative exact-head result and explicitly supersedes the earlier passed entry with this same command and purpose identity: revision 2fb6fa86fee8b96457e0c179646a0c5109861e4a returned skipped_fail_closed / owner_binary_provenance_invalid before Unity launch."
+    }
+  },
+  "fail_after_backup": false
+}

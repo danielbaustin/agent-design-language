@@ -1,0 +1,9 @@
+{
+  "issue": 5678,
+  "expected_generation": 1,
+  "expected_digest": "fb16e52d70a6c6b5e17e62a282577695101ba7c3f629ad2086f2e5a5c58a97f3",
+  "claim_id": "claim-5678-opus-review-runbook",
+  "reviewer": "codex-subagent:review-5678-runbook",
+  "assigned_by": "codex:issue-5678-opus-review-runbook",
+  "scope": ["docs/tooling/OPUS_REVIEW_RUNBOOK.md", "adl/tools/test_opus_review_runbook.sh"]
+}

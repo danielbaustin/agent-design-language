@@ -15,10 +15,10 @@ source_path="${repo_root}/docs/tooling/adl_pr_cycle_skill.md"
 [[ -f "${installed}" ]]
 cmp -s "${source_path}" "${installed}"
 bash "${repo_root}/adl/tools/validate_skill_frontmatter.sh" "${installed}"
-grep -Fq 'preflight -> issue_ready -> init -> start -> codex -> run_if_required -> finish -> report' "${installed}"
-grep -Fq '.worktrees/adl-wp-<issue_num>' "${installed}"
-grep -Fq 'bash ./adl/tools/pr.sh init <issue_num> --slug <slug> [--version <version>]' "${installed}"
-grep -Fq 'bash adl/tools/test_five_command_regression_suite.sh' "${installed}"
+grep -Fq 'preflight -> init -> bind -> design/plan -> implement -> validate -> review' "${installed}"
+grep -Fq 'bound worktree path' "${installed}"
+grep -Fq 'Submit a typed bootstrap request to `csdlc-init`' "${installed}"
+grep -Fq 'Use `csdlc-edit` and' "${installed}"
 
 malformed_source="${tmpdir}/bad_adl_pr_cycle_skill.md"
 cat >"${malformed_source}" <<'EOF'

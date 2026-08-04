@@ -1,0 +1,29 @@
+{
+  "issue": 5733,
+  "base_branch": "main",
+  "branch": "codex/5733-demo-matrix-proof-coverage",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5733-demo-matrix-proof-coverage",
+    "owner": "codex:5733-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1785536500,
+    "expires_unix_seconds": 1786141300,
+    "heartbeat_unix_seconds": 1785536500,
+    "branch": "codex/5733-demo-matrix-proof-coverage",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5733",
+      ".csdlc/locks/5733.lock",
+      ".csdlc/prepared/issues/5733",
+      ".csdlc/evidence/5733",
+      ".csdlc/publication/5733.intent.json",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/wp15_demo_matrix_5733",
+      "adl/tools/validate_v0918_demo_matrix.py"
+    ],
+    "purpose": "Reconcile v0.91.8 demo matrix and feature-proof coverage with current issue/proof truth without rerunning owned demos."
+  }
+}
+

@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5791,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-18][review] Run final internal review second pass after residual coding",
+    "slug": "wp18-final-internal-review-second-pass",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Completed WP-18 second-pass review packet and fixed active stale C-SDLC closeout command references.",
+      "actual_changes": [
+        "Updated active docs/helpers/tests from deleted csdlc-closeout/csdlc-merge paths to csdlc-finish and csdlc-clean cleanup.",
+        "Broadened terminal authority deletion guard to cover active helper/docs surfaces and gate4 lifecycle contract.",
+        "Added the #5791 internal review packet with findings, validation, and routed terminal reconciliation risk."
+      ],
+      "artifacts": [
+        "docs/reviews/v0.91.8/internal-review-5791",
+        "csdlc-v2/tests/gate_terminal_authority_deletion.rs",
+        "csdlc-v2/tests/gate4.rs"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "bash",
+            ".adl/local-artifacts/5791-review/finalize-focused-validation.sh"
+          ],
+          "purpose": "Focused #5791 terminal command authority and adapter validation.",
+          "outcome": "passed",
+          "evidence_ref": "focused-5791-validation.log"
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "ready",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

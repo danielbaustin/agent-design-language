@@ -1,0 +1,13 @@
+{
+  "issue": 5354,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "3b7a65bfc182eda6960fb0da9311a99c35d2cff3a7a11c2e2398150b85360852",
+  "claim_id": "claim-5354-v0918-wp15-reacquired",
+  "actor": "codex:5354-wp15-owner",
+  "reason": "The bounded implementation and complete exact integrated convergence lane pass all WP-15 acceptance criteria required before final review.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

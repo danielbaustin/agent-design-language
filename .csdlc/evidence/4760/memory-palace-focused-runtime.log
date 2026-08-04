@@ -1,0 +1,396 @@
+
+running 5 tests
+test memory_palace::tests::memory_palace_rejects_missing_citation_hash ... ok
+test memory_palace::tests::memory_palace_rejects_stale_context ... ok
+test memory_palace::tests::memory_palace_rejects_private_paths_and_temporal_mismatch ... ok
+test memory_palace::tests::memory_palace_records_working_set_overflow_without_consuming_extra_items ... ok
+test memory_palace::tests::memory_palace_packet_is_deterministic_after_canonical_ordering ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 1925 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 222 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 51 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 25 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 77 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 2 tests
+test memory_palace_fixture_builds_deterministic_obs_mem_handoff ... ok
+test long_lived_agent_cycle_consumes_memory_palace_context_ref ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 49 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Locking 68 packages to latest compatible versions
+      Adding adl-resilience v0.1.0 (/Volumes/FastWork/adl-wp-4760/adl-resilience)
+      Adding adl-runtime-kernel v0.92.0 (/Volumes/FastWork/adl-wp-4760/adl-runtime-kernel)
+      Adding adler2 v2.0.1
+      Adding allocator-api2 v0.2.21
+      Adding arbitrary v1.4.2
+      Adding arrayref v0.3.9
+      Adding arrayvec v0.7.8
+      Adding asn1-rs v0.7.2
+      Adding asn1-rs-derive v0.6.0
+      Adding asn1-rs-impl v0.2.0
+      Adding bit-vec v0.9.1
+      Adding blake3 v1.8.5
+      Adding block-buffer v0.12.1
+      Adding const-oid v0.10.2
+      Adding constant_time_eq v0.4.2
+      Adding cpufeatures v0.3.0
+      Adding crypto-common v0.2.2
+      Adding curve25519-dalek v5.0.0
+      Adding der-parser v10.0.0
+      Adding derive_arbitrary v1.4.2
+      Adding digest v0.11.3
+      Adding ed25519 v3.0.0
+      Adding ed25519-dalek v3.0.0
+      Adding fiat-crypto v0.3.0
+      Adding fixedbitset v0.5.7
+      Adding flate2 v1.1.9
+      Adding foldhash v0.2.0
+      Adding hybrid-array v0.4.14
+    Updating js-sys v0.3.85 -> v0.3.103
+      Adding lru v0.16.4
+      Adding mime_guess v2.0.5
+      Adding miniz_oxide v0.8.9
+      Adding oid-registry v0.8.1
+      Adding petgraph v0.7.1
+      Adding rcgen v0.14.8
+      Adding rust-embed v8.12.0
+      Adding rust-embed-impl v8.12.0
+      Adding rust-embed-utils v8.12.0
+      Adding rusticata-macros v4.1.0
+      Adding same-file v1.0.6
+      Adding serde_spanned v1.1.1
+      Adding sha2 v0.11.0
+      Adding signature v3.0.0
+      Adding simd-adler32 v0.3.10
+      Adding toml v0.9.12+spec-1.1.0
+      Adding toml_datetime v0.7.5+spec-1.1.0
+      Adding toml_parser v1.1.3+spec-1.1.0
+      Adding toml_writer v1.1.2+spec-1.1.0
+    Updating typenum v1.19.0 -> v1.20.1
+      Adding utoipa v5.5.0
+      Adding utoipa-gen v5.5.0
+      Adding utoipa-swagger-ui v9.0.2
+      Adding utoipa-swagger-ui-vendored v0.1.2
+      Adding walkdir v2.5.0
+    Updating wasm-bindgen v0.2.108 -> v0.2.126
+    Updating wasm-bindgen-futures v0.4.58 -> v0.4.76
+    Updating wasm-bindgen-macro v0.2.108 -> v0.2.126
+    Updating wasm-bindgen-macro-support v0.2.108 -> v0.2.126
+    Updating wasm-bindgen-shared v0.2.108 -> v0.2.126
+    Updating web-sys v0.3.85 -> v0.3.103
+      Adding winapi-util v0.1.11
+      Adding winnow v0.7.15
+      Adding winnow v1.0.4
+      Adding x509-parser v0.18.1
+      Adding yasna v0.6.0
+      Adding zip v3.0.0
+      Adding zlib-rs v0.6.6
+      Adding zopfli v0.8.3
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.41s
+     Running unittests src/lib.rs (adl/target/debug/deps/adl-7b08880f6c1368de)
+     Running unittests src/main.rs (adl/target/debug/deps/adl-3b138cebe9b39e2a)
+     Running unittests src/bin/adl_aws_remote_validation.rs (adl/target/debug/deps/adl_aws_remote_validation-533e09bad0e2a096)
+     Running unittests src/bin/demo_adl_gws_context_mirror.rs (adl/target/debug/deps/adl_gws_context_mirror-6f6548c7accbd191)
+     Running unittests src/bin/adl_process.rs (adl/target/debug/deps/adl_process-68cdd63b3eba680d)
+     Running unittests tools/adl_provider_adapter.rs (adl/target/debug/deps/adl_provider_adapter-132cf3bf8dd19b24)
+     Running unittests src/bin/adl_remote.rs (adl/target/debug/deps/adl_remote-db678331416246fc)
+     Running unittests src/bin/adl_review.rs (adl/target/debug/deps/adl_review-2eadc662bf10d96a)
+     Running unittests src/bin/adl_runtime.rs (adl/target/debug/deps/adl_runtime-6d9c98781371d4b2)
+     Running unittests src/bin/csm.rs (adl/target/debug/deps/csm-4a53e40ad3358ad1)
+     Running unittests src/bin/csmctl.rs (adl/target/debug/deps/csmctl-3f342d4f962fc7f7)
+     Running unittests src/bin/demo_adl_gws_native_drive_sync.rs (adl/target/debug/deps/demo_adl_gws_native_drive_sync-ac4bc2461ca5d6e0)
+     Running unittests src/bin/demo_v086_candidate_selection.rs (adl/target/debug/deps/demo_v086_candidate_selection-0741c289388763ba)
+     Running unittests src/bin/demo_v086_fast_slow.rs (adl/target/debug/deps/demo_v086_fast_slow-1d94dcf38d8182c1)
+     Running unittests src/bin/demo_v086_freedom_gate.rs (adl/target/debug/deps/demo_v086_freedom_gate-1abbe0d8986c31ab)
+     Running unittests src/bin/demo_v086_review_surface.rs (adl/target/debug/deps/demo_v086_review_surface-ecf117190f90cf24)
+     Running unittests src/bin/demo_v0905_local_gemma_model_evaluation.rs (adl/target/debug/deps/demo_v0905_local_gemma_model_evaluation-5b34ce2423c6f1a7)
+     Running unittests src/bin/demo_v0905_model_proposal_benchmark.rs (adl/target/debug/deps/demo_v0905_model_proposal_benchmark-8b2ccb4fb57136ba)
+     Running unittests src/bin/demo_v0911_capability_aptitude_testing.rs (adl/target/debug/deps/demo_v0911_capability_aptitude_testing-63f9f5853a1ba468)
+     Running unittests src/bin/demo_v0912_gws_live_capability_execution_surface.rs (adl/target/debug/deps/demo_v0912_gws_live_capability_execution_surface-6ad38eeabcb208db)
+     Running unittests src/bin/demo_v0912_gws_live_content_card_roundtrip.rs (adl/target/debug/deps/demo_v0912_gws_live_content_card_roundtrip-d95867438bdb0aee)
+     Running unittests src/bin/demo_v0912_gws_live_safety_package.rs (adl/target/debug/deps/demo_v0912_gws_live_safety_package-9addd8a47dfa22bd)
+     Running unittests src/bin/demo_v0912_provider_native_tool_call_comparison.rs (adl/target/debug/deps/demo_v0912_provider_native_tool_call_comparison-272675bc537a9261)
+     Running unittests src/bin/demo_v0912_rust_native_gws_adapter_boundary.rs (adl/target/debug/deps/demo_v0912_rust_native_gws_adapter_boundary-c72b23b4037805f1)
+     Running unittests src/bin/demo_v0912_speculative_decoding_prototype.rs (adl/target/debug/deps/demo_v0912_speculative_decoding_prototype-1af95b5bcde10509)
+     Running unittests src/bin/demo_v0912_uts_acc_multi_model_benchmark.rs (adl/target/debug/deps/demo_v0912_uts_acc_multi_model_benchmark-563d5038c10eb6e7)
+     Running unittests src/bin/demo_v0917_dspark_speculative_decoding_evaluation.rs (adl/target/debug/deps/demo_v0917_dspark_speculative_decoding_evaluation-9dd5dfd0363c0b90)
+     Running unittests src/bin/run_v0916_acip_aee_memory_integration.rs (adl/target/debug/deps/run_v0916_acip_aee_memory_integration-1bc19033dadd3a83)
+     Running unittests src/bin/run_v0916_integrated_runtime_soak.rs (adl/target/debug/deps/run_v0916_integrated_runtime_soak-695079734493f306)
+     Running unittests src/bin/run_v0916_runtime_failure_injection.rs (adl/target/debug/deps/run_v0916_runtime_failure_injection-a5865ddb040d4331)
+     Running unittests src/bin/run_v0917_integrated_resilience_failure_injection.rs (adl/target/debug/deps/run_v0917_integrated_resilience_failure_injection-f7696b236cb983d4)
+     Running unittests src/bin/run_wp08_acip_sns_live_proof.rs (adl/target/debug/deps/run_wp08_acip_sns_live_proof-ab0520a9351b5541)
+     Running unittests src/bin/run_wp12_acip_websocket_transport_proof.rs (adl/target/debug/deps/run_wp12_acip_websocket_transport_proof-d57821e67763b3c6)
+     Running tests/adl_tests.rs (adl/target/debug/deps/adl_tests-185ae611480ee41d)
+     Running tests/cli_smoke.rs (adl/target/debug/deps/cli_smoke-1e20d1fa331afcb4)
+     Running tests/demo_tests.rs (adl/target/debug/deps/demo_tests-dcc438e2b9f7fc24)
+     Running tests/execute_tests.rs (adl/target/debug/deps/execute_tests-9a97d2da59c9e882)
+     Running tests/file_inputs.rs (adl/target/debug/deps/file_inputs-ea821515a9d4f2e0)
+     Running tests/helpers.rs (adl/target/debug/deps/helpers-8bf599dacb6def2e)
+     Running tests/instrument_tests.rs (adl/target/debug/deps/instrument_tests-14afdd690d7949c7)
+     Running tests/local_gemma_model_evaluation_demo_tests.rs (adl/target/debug/deps/local_gemma_model_evaluation_demo_tests-2d5233b95f1d6ab8)
+     Running tests/local_ollama_provider_tests.rs (adl/target/debug/deps/local_ollama_provider_tests-22e423277cbc3719)
+     Running tests/memory_palace_tests.rs (adl/target/debug/deps/memory_palace_tests-e58517d2b6b7d370)
+     Running tests/mock_provider_tests.rs (adl/target/debug/deps/mock_provider_tests-d84b6a23d3798819)
+     Running tests/model_proposal_benchmark_demo_tests.rs (adl/target/debug/deps/model_proposal_benchmark_demo_tests-ebe4c95fe6dbde82)
+     Running tests/obsmem_validation_tests.rs (adl/target/debug/deps/obsmem_validation_tests-75bb63e77b340806)
+     Running tests/provider_tests.rs (adl/target/debug/deps/provider_tests-5e478e234432676b)
+     Running tests/remote_ollama_provider_tests.rs (adl/target/debug/deps/remote_ollama_provider_tests-5763c77feedbee25)
+     Running tests/resolve_tests.rs (adl/target/debug/deps/resolve_tests-1f6c2e8f03b25c11)
+     Running tests/schema_tests.rs (adl/target/debug/deps/schema_tests-9b596bb0c0d4f5f1)
+     Running tests/signing_tests.rs (adl/target/debug/deps/signing_tests-4194c3ff1db3a50f)
+     Running tests/trace_tests.rs (adl/target/debug/deps/trace_tests-62d3473149aed60a)
+     Running tests/uts_acc_multi_model_benchmark_demo_tests.rs (adl/target/debug/deps/uts_acc_multi_model_benchmark_demo_tests-66fafbf31b04d49e)
+Restored transient Cargo.lock refresh after offline focused validation.

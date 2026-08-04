@@ -1,0 +1,28 @@
+{
+  "issue": 5764,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "15d41fd8d7eb67a7bae1221a3fe62d5f71540d625687d39c368f66657d98c2b3",
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Record focused and full Runtime v3 validation after pre-PR review fixes.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test control readiness",
+        "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test control observatory_https_reads_are_public_and_report_weather_freshness",
+        "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test openapi_contract",
+        "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test observability",
+        "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml",
+        "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
+        "node --check demos/html-observatory/app.js",
+        "python3 -m json.tool docs/api/runtime-v3/v1/openapi.json",
+        "git diff --check"
+      ],
+      "purpose": "Prove Runtime v3 /v1/ready semantics, fail-closed missing/stale weather readiness, OpenAPI/route inventory truth, Observatory browser readiness consumption, stable Vector binary test configuration, full runtime-kernel behavior, formatting, JSON, JavaScript syntax, and diff hygiene.",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork terminal output: focused readiness, HTTPS readiness, openapi_contract, observability, and full adl-runtime-kernel passed; full runtime-kernel reported 306 passed and 1 explicit ignored live parity test; rustfmt check, node --check, json.tool, and git diff --check passed"
+    }
+  }
+}

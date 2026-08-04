@@ -1,0 +1,22 @@
+flowchart TD
+  P["#5346 typed preparation"] --> C["Six cards + reviewed design"]
+  D1["#5344 soak/rollback closed_out"] --> G["Exact terminal dependency gate"]
+  D2["#5343 selector switch closed_out"] --> G
+  D3["#5358 C-SDLC v2 acceptance closed_out"] --> G
+  D4["#5361 Runtime v3 acceptance closed_out"] --> G
+  D5["WP-14A #5384 closed_out"] --> G
+  D6["WP-15 #5354 closed_out"] --> G
+  D7["WP-16 #5351 closed_out"] --> G
+  D8["WP-17 #5360 closed_out"] --> G
+  M46["#5346 core eligibility manifest"] --> X["Disjointness proof"]
+  M47["#5347 external-band manifest"] --> X
+  C --> W["Read-only wait"]
+  G --> E["csdlc-eligibility exact approval"]
+  X --> E
+  E --> A["Amend claim to exact eligible paths"]
+  A --> R["Delete only manifest rows"]
+  R --> V["Focused + complete validation"]
+  V --> Q["Exact bounded review"]
+  Q --> S["Serialized merge + post-merge proof"]
+  W -. "dependencies incomplete" .-> B["Stop without deletion"]
+  X -. "overlap fails closed" .-> B

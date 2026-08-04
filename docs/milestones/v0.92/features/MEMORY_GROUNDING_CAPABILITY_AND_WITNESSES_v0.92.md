@@ -64,6 +64,21 @@ name limits and authority context rather than imply unlimited capacity.
 - Governed tool evidence where applicable.
 - Birthday review packet.
 
+## Implemented Capability Envelope Input
+
+Issue `#4761` supplies the pre-`v0.92` capability envelope input at
+`.csdlc/evidence/4761/capability-envelope/envelope.v1.json`, with exact source
+inventory in `.csdlc/evidence/4761/capability-envelope/inputs.v1.json`,
+fail-closed validation in
+`.csdlc/evidence/4761/capability-envelope/validation.v1.log`, and unsupported
+claims in `.csdlc/evidence/4761/capability-envelope/non-claims.v1.md`.
+
+Birthday packets may consume that envelope as the provider, model, tool, skill,
+authority, and limit context surface. They must not treat the envelope as
+birthday execution, Memory Palace completion, credentialed remote-provider
+deployment, production citizenship, governance completion, or raw private-state
+authority.
+
 ## Validation
 
 Validation should include required memory-reference fields, redaction checks,

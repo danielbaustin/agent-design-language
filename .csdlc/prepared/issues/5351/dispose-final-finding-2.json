@@ -1,0 +1,14 @@
+{
+  "issue": 5351,
+  "card": "srp",
+  "expected_generation": 17,
+  "expected_digest": "a60b01bbb94fbb129b568ac7aa147acb2043b06e4b0d11cb5da7b003cdad13e8",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "reason": "SIP, STP, SPP, design, and gap-analysis handoff truth now release WP-17 on merge plus passing exact-head proof while closeout remains asynchronous.",
+  "operation": {
+    "operation": "dispose_finding",
+    "finding_id": "F-5351-2",
+    "disposition": "fixed"
+  }
+}

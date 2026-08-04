@@ -143,11 +143,11 @@ fn detect_default_git_ref() -> String {
 
 fn remote_git_source_preflight_in_dir(git_ref: &str, cwd: Option<&Path>) -> Result<()> {
     if let Some(status) =
-        local_git_stdout_in_dir(&["status", "--porcelain", "--untracked-files=all"], cwd)
+        local_git_stdout_in_dir(&["status", "--porcelain", "--untracked-files=no"], cwd)
     {
         if !status.is_empty() {
             bail!(
-                "remote validation uses a remote git checkout and cannot include local uncommitted or untracked changes; clean, commit, and push the worktree before running live AWS validation"
+                "remote validation uses a remote git checkout and cannot include local tracked changes; commit and push the worktree before running live AWS validation"
             );
         }
     }
@@ -1224,9 +1224,11 @@ mod tests {
         assert!(remote_git_source_preflight_in_dir("refs/tags/live-proof", Some(&repo)).is_ok());
         assert!(remote_git_source_preflight_in_dir("missing-branch", Some(&repo)).is_err());
         fs::write(repo.join("DIRTY.txt"), "dirty\n").expect("write dirty marker");
+        assert!(remote_git_source_preflight_in_dir("codex/4603-test", Some(&repo)).is_ok());
+        fs::write(repo.join("README.md"), "tracked change\n").expect("modify tracked file");
         let dirty = remote_git_source_preflight_in_dir("codex/4603-test", Some(&repo));
         assert!(dirty.is_err());
         let dirty_text = dirty.expect_err("dirty error").to_string();
-        assert!(dirty_text.contains("cannot include local uncommitted or untracked changes"));
+        assert!(dirty_text.contains("cannot include local tracked changes"));
     }
 }

@@ -1,0 +1,10 @@
+COMMAND cargo check --locked --manifest-path adl/Cargo.toml --bin run_wp12_acip_websocket_transport_proof
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.78s
+COMMAND cargo check --locked --manifest-path adl/Cargo.toml --bin run_v0916_acip_aee_memory_integration
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.53s
+COMMAND cargo check --locked --manifest-path adl/Cargo.toml --bin run_v0916_integrated_runtime_soak
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.33s
+COMMAND cargo check --locked --manifest-path adl/Cargo.toml --bin run_v0916_runtime_failure_injection
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.23s
+COMMAND cargo check --locked --manifest-path adl/Cargo.toml --bin run_v0917_integrated_resilience_failure_injection
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.15s

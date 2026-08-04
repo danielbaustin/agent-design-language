@@ -1,0 +1,13 @@
+{
+  "issue": 5499,
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "expected_generation": 17,
+  "expected_digest": "6f10215b771f5ab667e10ab66197acffc37e30109f945fc65a664bffee559edf",
+  "now_unix_seconds": 1784761200,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Bounded CI topology repair for PR #5638: add the adl-v2 workspace manifest and lock so the existing workcell conductor package is an explicit workspace member.",
+  "add_protected_paths": [
+    "adl-v2/Cargo.toml",
+    "adl-v2/Cargo.lock"
+  ]
+}

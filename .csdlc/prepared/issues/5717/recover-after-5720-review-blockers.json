@@ -1,0 +1,8 @@
+{
+  "issue": 5717,
+  "expected_generation": 17,
+  "expected_digest": "d66d5d71f23bc9409858e5d916d99407c48596b28b9de0054f78753e45cf69c2",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "actor": "codex:5717-execution",
+  "reason": "Recover #5717 from stale published review after PR #5720 exact-head review found in-scope validation and review-scope blockers."
+}

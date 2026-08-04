@@ -1,0 +1,423 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5352,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "0b1b443e0ef68c9229695e3260f7340ef3b40df59112c8adb75d065cd81caf9a",
+  "phase": "closed_out",
+  "generation": 13,
+  "digest": "16f88792e7514a540b9a0a5b9d1f30fe56e724d860b4450d56159ca23c254795",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "Wegener",
+    "assigned_by": "codex:wp21-final-handoff",
+    "revision": "git-blake3:226c8e2a411dbf03378012f0eb5e4d3c14a4b801:791a34139581809797997d21683aca6c5d16cb7cfcafeb908846d3ef74aa31b2",
+    "scope": [
+      ".csdlc/issues/5352",
+      ".csdlc/evidence/5352",
+      ".csdlc/prepared/issues/5352",
+      "adl/src/csm_runtime_api.rs",
+      "docs/milestones/v0.91.8/handoff"
+    ]
+  },
+  "review": {
+    "reviewer": "Wegener",
+    "scope": [
+      ".csdlc/issues/5352",
+      ".csdlc/evidence/5352",
+      ".csdlc/prepared/issues/5352",
+      "adl/src/csm_runtime_api.rs",
+      "docs/milestones/v0.91.8/handoff"
+    ],
+    "reviewed_revision": "git-blake3:226c8e2a411dbf03378012f0eb5e4d3c14a4b801:791a34139581809797997d21683aca6c5d16cb7cfcafeb908846d3ef74aa31b2",
+    "findings": [],
+    "residual_risks": [
+      "PR #5751 remains on an older head until this exact reviewed revision and its typed review metadata are pushed.",
+      "Any origin/main movement before merge requires an explicit ancestry refresh and current-head review truth."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5352,
+    "pull_request": 5751,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5751",
+    "base": "main",
+    "head": "codex/5352-v0918-final-handoff",
+    "revision": "git-blake3:6105fc7377aede7d1d2d98ee03d6a9cfdb975048:004ba008163957aed97c4b4a2c3dd168278654ca9aabd036ab0eafa8dd3ffffe",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5751,
+    "head_sha": "6105fc7377aede7d1d2d98ee03d6a9cfdb975048",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91308001032"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306759073"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306730335"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306730464"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306730461"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306730439"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306729910"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306703200"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306730490"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306729921"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306729896"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306730597"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306730512"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306729909"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306730487"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30677162730/job/91306730263"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5751,
+    "disposition": "merged",
+    "observed_sha": "6105fc7377aede7d1d2d98ee03d6a9cfdb975048",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5352.json",
+    "released_branch": "codex/5352-v0918-final-handoff",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5352",
+      ".csdlc/issues/5352",
+      ".csdlc/locks/5352.lock",
+      ".csdlc/prepared/issues/5352",
+      "adl/src/csm_runtime_api.rs",
+      "docs/milestones/v0.91.8/handoff"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5352/retained/design.md",
+  "diagram_path": ".csdlc/issues/5352/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:wp21-final-handoff",
+      "revision": "979d5962c723a24d585de30d4a05ffa704378445110598e9dfe22357deb58844"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "f154c328634cc052f28d5640019417d2b9057c011dd7e61e8f9d01ec482412e0",
+      "rendered_digest": "da0857c34330916535e0d2e0b6e6e5141fcc3a99744dacceff36b5f36cf66b14",
+      "ast_digest": "000dd5efbe071cb9735c35c906e3e0f2f914632abce4ade963152e8a1e54395f"
+    },
+    "stp": {
+      "values_digest": "6bb0c0ae47b88e9a4dd7006a20c6bc9d654c34097ded6a2d1966b95e12861f37",
+      "rendered_digest": "eecfee175e430006c55681541ddc2b7f56b50899b3426816de28ee22a762d314",
+      "ast_digest": "a349cc9f1f98892d2e68ad155ff795a80c79fd0b954c821313ff4d29a0bf5875"
+    },
+    "spp": {
+      "values_digest": "407bb9dbc0678428073d2f14ab1b87bf6e8a683afb0b31d247c48e00fb750abf",
+      "rendered_digest": "ccaa0f3fa30c917db2a39049494ecf56f79b651038e9a92070f19990497bbb0a",
+      "ast_digest": "cef1ca71c1260b5ac595626304e8f354d7c551cb584bc7fe16970ab19eaa84b6"
+    },
+    "vpp": {
+      "values_digest": "f33696d1a8f8faa7dd33c1f7d920098fdf3160ba10c69da49fd775d6f3193408",
+      "rendered_digest": "2ecd2e3b2a259b7d39e211992de10843273c293851c1db77ef9c1b67a58c6e36",
+      "ast_digest": "dfb0871426d3eb5483c525fc95c09b404220a14b4c4c67b8e866fc2de8774742"
+    },
+    "srp": {
+      "values_digest": "350fd1bb2c4a4db5ff9e1b2d56912d2355ac434eb84791451554bcc10d77424e",
+      "rendered_digest": "5ff2ab987c535634d067cc5e6d6285c81b6e22f0af746088e60eed599f2ef27f",
+      "ast_digest": "e6b0ce0beb63efdf56bff71ef49ebf10787a32b4fa795e9724aa0782659a78c3"
+    },
+    "sor": {
+      "values_digest": "7365cbc61e343032a1deb9b023de3c56378e492af0023dff0d43dc0970e47f38",
+      "rendered_digest": "c8d5092dc612ddadc4ada8d69571bb0cd4cc07a77520541409a5deac7459d153",
+      "ast_digest": "3bfb907bc68211102467a1afdbec0a4f8afa641dc2abd61863c45a37faadc0e2"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:wp21-final-handoff",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:wp21-final-handoff",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:wp21-final-handoff",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:wp21-final-handoff",
+      "reason": "The exact reviewed head b1ec4f120 passed with zero blockers after all actionable findings were fixed; the sprint-wide review remains an explicit pre-merge gate."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:wp21-final-handoff",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:wp21-final-handoff",
+      "reason": "Recover published review truth to remediate the required full WP-21 sprint review findings before merge."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:wp21-final-handoff",
+      "reason": "The full findings-first WP-21 sprint review passed exact revision 226c8e2a4 with zero P1, P2, or P3 findings after all current blockers were remediated."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:wp21-final-handoff",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:wp21-final-handoff",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "subagent:/root/closeout_missing_records",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "subagent:/root/closeout_missing_records",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "The exact reviewed head b1ec4f120 passed with zero blockers after all actionable findings were fixed; the sprint-wide review remains an explicit pre-merge gate.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "Recover published review truth to remediate the required full WP-21 sprint review findings before merge.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "Repair the sprint review's ACIP canonical-route mismatch without widening into unrelated runtime work.",
+      "operation": "{\"add_protected_paths\":[\"adl/src/csm_runtime_api.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "Record focused proof for the sprint review's canonical ACIP route remediation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--offline\",\"--manifest-path\",\"adl/Cargo.toml\",\"csm_runtime_api::tests::runtime_api_surfaces_acip_carrier_component_and_routes\",\"--\",\"--exact\"],\"purpose\":\"Prove the canonical /v1/acip/ws route and explicit /acip/ws compatibility alias agree with the Runtime v3 ACIP carrier contract.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5352/acip-route-tests.log\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 7,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "The full findings-first WP-21 sprint review passed exact revision 226c8e2a4 with zero P1, P2, or P3 findings after all current blockers were remediated.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:wp21-final-handoff",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "subagent:/root/closeout_missing_records",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "subagent:/root/closeout_missing_records",
+      "reason": "Materialize the receipt-backed #5352 terminal projection in the #5748 aggregate closeout worktree",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

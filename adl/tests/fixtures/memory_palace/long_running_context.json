@@ -1,0 +1,66 @@
+{
+  "schema": "adl.memory_palace_input.v1",
+  "required_continuity_id": "continuity-v092-handoff",
+  "expected_citation_hashes": {
+    "runs/run-context-a/trace.json": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "runs/run-context-b/trace.json": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "records": [
+    {
+      "id": "context-b",
+      "run_id": "run-context-b",
+      "workflow_id": "wp21-memory-palace",
+      "tags": [
+        "memory-palace",
+        "chronosense"
+      ],
+      "payload": "Chronosense continuity anchor preserves the handoff ordering for the next long-running context boundary.",
+      "score": "0.94",
+      "citations": [
+        {
+          "path": "runs/run-context-b/trace.json",
+          "hash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      ],
+      "trace_event_refs": [],
+      "temporal_anchor": {
+        "t_created_epoch_ms": 4102444800000,
+        "t_observed_epoch_ms": 4102444800100,
+        "t_effective_epoch_ms": 4102444800100,
+        "continuity_id": "continuity-v092-handoff",
+        "event_sequence": 2
+      },
+      "review_findings": [],
+      "residual_risks": [],
+      "follow_on_refs": []
+    },
+    {
+      "id": "context-a",
+      "run_id": "run-context-a",
+      "workflow_id": "wp21-memory-palace",
+      "tags": [
+        "memory-palace",
+        "obsmem"
+      ],
+      "payload": "ObsMem supplies cited durable records; Memory Palace selects a bounded context packet without becoming the store.",
+      "score": "0.98",
+      "citations": [
+        {
+          "path": "runs/run-context-a/trace.json",
+          "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "trace_event_refs": [],
+      "temporal_anchor": {
+        "t_created_epoch_ms": 4102444800000,
+        "t_observed_epoch_ms": 4102444800000,
+        "t_effective_epoch_ms": 4102444800000,
+        "continuity_id": "continuity-v092-handoff",
+        "event_sequence": 1
+      },
+      "review_findings": [],
+      "residual_risks": [],
+      "follow_on_refs": []
+    }
+  ]
+}

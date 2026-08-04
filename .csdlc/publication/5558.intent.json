@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5558,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5558-v1-route-corrective",
+  "title": "[v0.91.8][WP-20][csdlc-v2] Finish sunset v1 route removal",
+  "body": "Closes #5558\n\n## Summary\n- Removes the remaining sunset v1 lifecycle wrappers, live callers, obsolete workflow, and active guidance.\n- Deletes 2,000 lines of orphaned prompt-editor Rust modules left after their parent module was retired.\n- Removes the retired child-module coverage and PR-fast mappings so changed-source gates cannot route dead source into zero-match tests.\n\n## Validation\n- `bash adl/tools/test_check_coverage_impact.sh`: PASS for the orphan-removal change.\n- `bash adl/tools/test_run_pr_fast_test_lane.sh`: PASS.\n- `bash adl/tools/test_csdlc_prompt_editor.sh`: PASS.\n- `git diff --check`: PASS.\n- `csdlc-doctor --repo . --issue 5558`: PASS in reviewed phase.\n\n## Review\n- Independent exact-head review APPROVED substantive commit `4c77a1968bf71d310ccf37c6b340ec00eeb69da6` with no actionable findings.\n- Commit `058d7eb97` contains only typed review/lifecycle projection updates over the reviewed implementation.",
+  "draft": false,
+  "revision": "git-blake3:058d7eb97414bb7ad06d10afab2adaac2cc8ab74:9888d3ab0f4d6789c3b5485d6986141957a1e09780df69f708e156f2f358bd51",
+  "commit_sha": "058d7eb97414bb7ad06d10afab2adaac2cc8ab74"
+}

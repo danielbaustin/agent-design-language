@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5360,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-17] Align documentation and release truth before formal review",
+    "slug": "v0918-wp17-documentation-release-truth-alignment",
+    "version": "v0.91.8",
+    "generation": 19
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "CHANGELOG.md\nREADME.md\nREVIEW.md\ndocs",
+      "review_revision": "git-blake3:c1cd0a309c33279dc21c7338668f0e0a836675d5:380c18d6ddba37ddf5101e34fd438f463db047b3d234b3fc656e0335d86d8e50",
+      "reviewer": "subagent:godel-019fbd06",
+      "review_prompts": [
+        "Can aggregate prose, a screenshot, old milestone packet, component result, or missing evidence be mistaken for exact proven release truth?",
+        "Is #5351 merge/completion, typed closed_out, claim release, retained receipt, and ancestry gating exact and impossible to bypass?",
+        "Are preparation paths and the future shared-document path manifest exact, collision-aware, and unable to grant product authority?",
+        "Do classification, product ownership, structured parsing, COTS, budgets, PVF, redaction, review, CI, serialized merge, post-merge proof, and WP-18 release contracts cover every required failure mode?",
+        "Does preparation produce exactly zero product and shared-document changes while retaining all future implementation dependencies as fail-closed gates?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "The WP-18 review README and v0.92 issue-wave YAML remain delegated to their existing owners and were intentionally excluded from this issue."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

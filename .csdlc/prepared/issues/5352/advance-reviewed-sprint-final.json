@@ -1,0 +1,14 @@
+{
+  "issue": 5352,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "bf6fda0f6e34a44ab6b5748ad55c750d77d04277a76417a3e7f89c5f7077026c",
+  "claim_id": "claim-5352-v0918-final-handoff",
+  "actor": "codex:wp21-final-handoff",
+  "reason": "The full findings-first WP-21 sprint review passed exact revision 226c8e2a4 with zero P1, P2, or P3 findings after all current blockers were remediated.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5572,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][review][validation] Repair #4645 committed-diff proof",
+    "slug": "recordless-terminal-recovery-5572",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Record observed closure without reconstructing unavailable lifecycle history.",
+      "deliverables": [
+        "terminal projection",
+        "retained terminal receipt"
+      ],
+      "acceptance_criteria": [
+        "issue is observed closed",
+        "terminal evidence is internally consistent"
+      ],
+      "dependencies": [
+        "exact merged PR evidence"
+      ],
+      "repo_inputs": [
+        "github-issue:5572",
+        "pull_request:5574 head:bc19a880c9f13d2cae37a0be2e7484993f92f5b1 merge:771dd35823be885d53200eb9f2d047c1c1f0f7e0",
+        "github-body-blake3:0b55b3d6497c7d30b0b4249f19271b538b3e43eaa5a40df1deff9d81581797fb"
+      ],
+      "non_goals": [
+        "No historical implementation, review, publication, readiness, or CI lifecycle is reconstructed by this terminal recovery."
+      ]
+    }
+  }
+}

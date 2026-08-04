@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5653,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][docs] Refresh README status, release, CI, and homepage links",
+    "slug": "readme-status-release-homepage-refresh",
+    "version": "v0.91.8",
+    "generation": 16
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Updated the root README milestone badge and status to v0.91.8 release-tail truth, added the ADL homepage link, and documented that later milestones are not hosted releases.",
+      "actual_changes": [
+        "README.md"
+      ],
+      "artifacts": [
+        ".csdlc/evidence/5653/readme-focused.txt"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "purpose": "Prove README wording, homepage link, badge branch, and documentation whitespace/link boundary",
+          "outcome": "passed",
+          "evidence_ref": "Focused README assertions and git diff check passed; https://agent-logic.ai returned HTTP 200."
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "purpose": "Verify published-release links, homepage link, canonical main badges, and documentation whitespace",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5653/readme-focused.txt"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

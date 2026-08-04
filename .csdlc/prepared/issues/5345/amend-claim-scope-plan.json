@@ -1,0 +1,14 @@
+{
+  "schema": "adl.v0918.wp10_claim_amendment_plan.v1",
+  "issue": 5345,
+  "claim_id": "claim-5345-v0918-wp10-preparation",
+  "timing": "first_typed_mutation_after_bind",
+  "cas_source": "read current generation and digest after csdlc-bind succeeds",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Claim the shared adl-v2 workspace manifest and lockfile required to add and pin the WP-10 CLI crate.",
+  "add_protected_paths": [
+    "adl-v2/Cargo.toml",
+    "adl-v2/Cargo.lock"
+  ],
+  "stop_condition": "No product mutation may occur before the live-CAS typed amendment succeeds and final preparation review verifies the resulting claim."
+}

@@ -1,0 +1,64 @@
+{
+  "issue": 5804,
+  "expected_generation": 7,
+  "expected_digest": "0a726ce3d24819a120c96a3429370b11b49ed1347266125d2690b9bf76528f7f",
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "actor": "subagent:gpt-5.5-review-5804",
+  "evidence": {
+    "reviewer": "subagent:gpt-5.5-review-5804",
+    "scope": [
+      ".csdlc/issues/5357",
+      ".csdlc/issues/5804",
+      ".csdlc/evidence/5804",
+      ".csdlc/prepared/issues/5594/feature_decisions_5594.rb",
+      ".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb",
+      ".csdlc/prepared/issues/5804",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md",
+      "docs/milestones/v0.91.8/review/podcast_launch_5711/README.md"
+    ],
+    "reviewed_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+    "findings": [
+      {
+        "id": "F-5804-1",
+        "severity": "p1",
+        "summary": "The handoff omitted open prerequisite issue #5804 from its dated live issue inventory.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+        "route": null
+      },
+      {
+        "id": "F-5804-2",
+        "severity": "p1",
+        "summary": "The implementation manifest named nonexistent .csdlc/evidence/5342.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+        "route": null
+      },
+      {
+        "id": "F-5804-3",
+        "severity": "p2",
+        "summary": "The validator accepted an inexact corpus count and checked only selected manifest paths.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "The actual independent external review remains intentionally unperformed and owned by open WP-19 issue #5357.",
+      "The dated live issue inventory must be refreshed again immediately before the external packet is sent."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

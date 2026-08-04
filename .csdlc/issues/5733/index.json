@@ -1,0 +1,436 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5733,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "3164de19aa73e2b392aff34c090596e5ecb394e75067229a7898d36d8047b6fc",
+  "phase": "closed_out",
+  "generation": 15,
+  "digest": "b2ba0d21488f9dd487754ef986e6ac6bd11bc5dc436414a3dcc324c1a8b43863",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:Leibniz:019fba63-7f7d-7f02-a8cb-d2c694b22e6e",
+    "assigned_by": "codex:5733-execution",
+    "revision": "git-blake3:6c943ed2fa215883ef73c504d3a0fe70571a3f1e:073044a9d63cc2e5614e827a8f983e50c75f5abef560476371b869085a1dea6c",
+    "scope": [
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/wp15_demo_matrix_5733"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:Leibniz:019fba63-7f7d-7f02-a8cb-d2c694b22e6e",
+    "scope": [
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/wp15_demo_matrix_5733"
+    ],
+    "reviewed_revision": "git-blake3:6c943ed2fa215883ef73c504d3a0fe70571a3f1e:073044a9d63cc2e5614e827a8f983e50c75f5abef560476371b869085a1dea6c",
+    "findings": [],
+    "residual_risks": [
+      "The validator move keeps #5733 in docs/review scope and does not add runtime or tooling behavior; local path-policy proof and GitHub CI confirm broad Rust, coverage, demo, and tooling lanes are skipped for the corrected head."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5733,
+    "pull_request": 5747,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5747",
+    "base": "main",
+    "head": "codex/5733-demo-matrix-proof-coverage",
+    "revision": "git-blake3:7593093c4d5ebf4b339e31aca1ce5ade1a049141:369b7adc0a0f86b2cd563cce0911813520d257b21fa86d789128c2faf02ff086",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5747,
+    "head_sha": "7593093c4d5ebf4b339e31aca1ce5ade1a049141",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904485"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290938724"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904500"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904886"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904595"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904920"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904573"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290876030"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290905027"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904694"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904670"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904607"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904915"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904568"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904906"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671792272/job/91290904713"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5747,
+    "disposition": "merged",
+    "observed_sha": "7593093c4d5ebf4b339e31aca1ce5ade1a049141",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5733.json",
+    "released_branch": "codex/5733-demo-matrix-proof-coverage",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5733",
+      ".csdlc/locks/5733.lock",
+      ".csdlc/publication/5733.intent.json"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5733/retained/design.md",
+  "diagram_path": ".csdlc/issues/5733/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5748-terminal-recovery",
+      "revision": "4a39d5d6528d1b55101c556ba67b9da1a532e3a1ddbb76504fd4793727059621"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "45280262230c5a9adec573922f3ac4cd55b582714a9923dae0de1fada28363ae",
+      "rendered_digest": "82f06819984e0c30f378e374427e4606493502375e4a02094df0d945215bf170",
+      "ast_digest": "587ab82b2b0b68393e3275328dedd8c1c3afcbb625c9e3ef35f2a60745bccf13"
+    },
+    "stp": {
+      "values_digest": "59562a3d654ac0558a95656fe599bc1e57adedfd5a7c1a592f6fb20239798667",
+      "rendered_digest": "eab4c5eb45ebc3dfd7e5eadebbc1904a8ea2dc5f1d7d09359774ef64fa49dd4a",
+      "ast_digest": "871f4e895ceaa28fdf6a1a3e71d5abcccab7121df0c38c66b70783d5e5e16209"
+    },
+    "spp": {
+      "values_digest": "846bdbf5bde92028b53595f416155a9d3812825328113a8125bfb7d977b25d89",
+      "rendered_digest": "101e1c98743d1949f1f3a7016289d8ae40b84f639aec7e415c46be2796e7c0c0",
+      "ast_digest": "0c4a24b7087b5575d2cb6b057c31e3db4490b4a2376a459adc56488edc816637"
+    },
+    "vpp": {
+      "values_digest": "d81960aa96d71f54bad40a0e0016bd504d9851a11a22b9afb94372ab826af985",
+      "rendered_digest": "8d2169f36eb2cddcc947c7bc1c84e6b5c76acd5e884f76af3b120a6be043dc51",
+      "ast_digest": "d92a59eed86fd31d2cf9b72afbc6caf023351f0036705cce3747a02a112da214"
+    },
+    "srp": {
+      "values_digest": "28129cbbb64e1e3a1c1aae31bc335a16f93e05179c8fdc74e725c6819f494386",
+      "rendered_digest": "a419b186d64e5b2386b36ae4b3c47023d279b2cd41b5f7818195f390fbf29aef",
+      "ast_digest": "71b67d2326af141de042cd52611cb8d4aaad0e0c89cf27665ca99ed23061643e"
+    },
+    "sor": {
+      "values_digest": "114e63249414c2f91aeb91e69820967a64d9ca52b29212a2ddeff8c5d4f9b3f4",
+      "rendered_digest": "8ddc51233d96cb98ec68f9046114ea2cc1f550b24b25968a0ef45bf705d36414",
+      "ast_digest": "9c0f85c908037c99de2dc859a5cf0fb1a69ba760eac2d4328b2a44bc2b7963ea"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5733-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5733-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5733-execution",
+      "reason": "Implementation and focused validation are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5733-execution",
+      "reason": "The assigned exact-commit review is complete with no actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5733-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5733-execution",
+      "reason": "Recover stale review/publication after moving the #5733 validator into the docs review packet so the PR remains docs-only and skips broad coverage."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5733-execution",
+      "reason": "The bounded exact-head review confirmed the docs-local validator move keeps #5733 docs-only with no findings."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5733-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5733-terminal-closeout",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5733-terminal-closeout",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5733-terminal-closeout",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5733-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5733-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5733-execution",
+      "reason": "Record bounded matrix and feature-proof reconciliation implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Reconciled the v0.91.8 demo matrix and feature-proof coverage with current owner, evidence, and non-claim truth; added a deterministic validator and reconciliation ledger.\",\"changes\":[\"docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md\",\"docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md\",\"docs/milestones/v0.91.8/review/wp15_demo_matrix_5733/RECONCILIATION_LEDGER_v1.md\",\"adl/tools/validate_v0918_demo_matrix.py\"],\"artifacts\":[\".csdlc/evidence/5733/v0918-demo-matrix-validator.log\",\".csdlc/evidence/5733/diff-check.log\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5733-execution",
+      "reason": "Record focused v0.91.8 demo matrix validator result.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"python3\",\"adl/tools/validate_v0918_demo_matrix.py\"],\"purpose\":\"Prove owner, evidence, disposition, status, non-claim, and #5354 consumption coverage for the v0.91.8 demo and feature-proof matrices.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5733/v0918-demo-matrix-validator.log\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5733-execution",
+      "reason": "Record diff hygiene validation result.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove whitespace hygiene for the bounded documentation, ledger, lifecycle, and validator changes.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5733/diff-check.log\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5733-execution",
+      "reason": "Implementation and focused validation are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5733-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5733-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5733-execution",
+      "reason": "The assigned exact-commit review is complete with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5733-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5733-execution",
+      "reason": "Recover stale review/publication after moving the #5733 validator into the docs review packet so the PR remains docs-only and skips broad coverage.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5733-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5733-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5733-execution",
+      "reason": "The bounded exact-head review confirmed the docs-local validator move keeps #5733 docs-only with no findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5733-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "Issue #5733 is closed, PR #5747 is merged green at its exact head, the checkout is clean, no live agent owns it, and the normal typed closed-issue release compare-and-swap failed; revoke only the stale claim so #5354 can acquire its exact declared proof paths.",
+      "operation": "{\"claim_id\":\"claim-5733-demo-matrix-proof-coverage\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:release-merged-5733-for-5354-closeout\",\"previous_owner\":\"codex:5733-execution\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 11,
+      "actor": "codex:5733-terminal-closeout",
+      "reason": "Reacquire a narrow typed C-SDLC v2 terminal closeout claim after issue #5733 is closed and PR #5747 is merged.",
+      "operation": "{\"branch\":\"codex/5733-demo-matrix-proof-coverage\",\"claim_id\":\"claim-5733-terminal-closeout\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5733-terminal-closeout\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5733\",\".csdlc/locks/5733.lock\",\".csdlc/publication/5733.intent.json\"],\"purpose\":\"Record readiness and terminal closeout truth for merged PR #5747 without reopening implementation scope.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex:5733-terminal-closeout",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex:5733-terminal-closeout",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the authentic released terminal receipt into the v0.91.8 aggregate inventory.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "typed terminal design repair authorized by issue 5748",
+      "operation": "repair_terminal_design"
+    }
+  ]
+}

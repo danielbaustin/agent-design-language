@@ -208,7 +208,7 @@ Migration rules:
 - `validate` command rejects absolute registered template paths.
 - `validate` command does not mark review or approval.
 - `planning-doc-editor` skill exists and has a clear stop boundary.
-- `workflow-conductor` routes planning-doc defects to `planning-doc-editor`.
+- Typed doctor evidence routes planning-doc defects to `planning-doc-editor`.
 - Card-editor routing remains unchanged.
 
 ## Review Checklist

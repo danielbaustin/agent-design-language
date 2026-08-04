@@ -1,0 +1,106 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5352,
+  "expected_generation": 0,
+  "expected_digest": "c43b55629ba23c3f54ac2fd98aceefeaaef920622b9884be24873936c1fa27e7",
+  "claim_id": "claim-5352-v0918-final-handoff",
+  "actor": "codex:wp21-final-handoff",
+  "summary": "Finalized the truthful WP-21 exact-revision v0.92 consumption handoff on current origin/main after all eight child issues and WP-20 predecessor #5558 merged and closed.",
+  "changes": [
+    "Recorded the exact platform, WP-20, and eight-child WP-21 issue/PR/head/merge matrix.",
+    "Pinned validation to the exact handoff baseline instead of a moving symbolic ref.",
+    "Added row-bound handoff validation that rejects substituted issue, PR, head, or merge identities.",
+    "Recorded explicit v0.92 birthday, Adaptive Learning, production-readiness, AWS, Unity, and closeout non-claims."
+  ],
+  "artifacts": [
+    "docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md",
+    ".csdlc/prepared/issues/5352/validate_handoff.rb",
+    ".csdlc/prepared/issues/5352/validate_dependency_ancestry.rb",
+    ".csdlc/prepared/issues/5352/validate_implemented.rb",
+    ".csdlc/evidence/5352"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "handoff-document-contract",
+          "proof_role": "exact-row-bound-handoff-contract",
+          "purpose": "Validate baseline identity, row-bound revision matrix, schemas, links, rollback boundaries, and non-claims",
+          "determinism": "deterministic",
+          "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 1000},
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "wp21-focused",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 120,
+          "executable": "ruby",
+          "argv": [".csdlc/prepared/issues/5352/validate_handoff.rb", "--final"],
+          "evidence": {"max_log_bytes": 8192, "redact_values": [], "require_relative_paths": true}
+        },
+        {
+          "id": "dependency-ancestry",
+          "proof_role": "exact-recorded-baseline-ancestry",
+          "purpose": "Prove every accepted merge is ancestral to the exact baseline recorded by the handoff",
+          "determinism": "deterministic",
+          "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 1000},
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "wp21-focused",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 120,
+          "executable": "ruby",
+          "argv": [".csdlc/prepared/issues/5352/validate_dependency_ancestry.rb", "--final"],
+          "evidence": {"max_log_bytes": 8192, "redact_values": [], "require_relative_paths": true}
+        },
+        {
+          "id": "implemented-packet",
+          "proof_role": "current-lifecycle-packet-truth",
+          "purpose": "Reject stale preparation baselines, claims, paths, or lifecycle wording",
+          "determinism": "deterministic",
+          "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 1000},
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "wp21-focused",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 120,
+          "executable": "ruby",
+          "argv": [".csdlc/prepared/issues/5352/validate_implemented.rb"],
+          "evidence": {"max_log_bytes": 8192, "redact_values": [], "require_relative_paths": true}
+        },
+        {
+          "id": "diff-hygiene",
+          "proof_role": "publication-diff-hygiene",
+          "purpose": "Reject whitespace errors in the current worktree",
+          "determinism": "deterministic",
+          "resources": {"cpu_units": 1, "memory_mib": 64, "tokens": 500},
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "wp21-focused",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 60,
+          "executable": "git",
+          "argv": ["diff", "--check"],
+          "evidence": {"max_log_bytes": 8192, "redact_values": [], "require_relative_paths": true}
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": ["handoff-document-contract", "dependency-ancestry", "implemented-packet", "diff-hygiene"],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {"max_parallel": 4, "cpu_units": 4, "memory_mib": 448, "tokens": 3500},
+    "root": "/Volumes/FastWork/adl-wp-5352-final",
+    "evidence_dir": "/Volumes/FastWork/adl-wp-5352-final/.csdlc/evidence/5352",
+    "cancellation_file": null
+  }
+}

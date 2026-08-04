@@ -1,0 +1,83 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5335,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "88c4c7befd7b17486851dc332a51dc18904265300bd6bc0be0858331f9f3bf59",
+  "phase": "closed_out",
+  "generation": 1,
+  "digest": "34fca8fe7e9d874ef10b464acf7159f4de9a288f1cd5dc1a8b7bb596ddd7d0bd",
+  "claim": null,
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": {
+    "pull_request": null,
+    "disposition": "closed_no_pr",
+    "observed_sha": null,
+    "observed_state": "closed_no_pr",
+    "receipt_path": "csdlc-v2/closeout/5335.json",
+    "released_branch": "",
+    "released_worktree": "",
+    "released_protected_paths": []
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5335/retained/design.md",
+  "diagram_path": ".csdlc/issues/5335/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5748-terminal-recovery",
+      "revision": "0592064c4fa98cacd7a850b835df0162772d296f4e820793c1f94a51cba222ea"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "d4e48c88e61f70e30d0870a44f1a93b7af1ab7cafc512ed426d737a2a606fa7e",
+      "rendered_digest": "5ed7da358c617bfb01719ad1db2255929708ea97c1ed0ea47881ba41ad912284",
+      "ast_digest": "068a9f4cc23504fe96a7cebfa3aa980193e12bb53eec4ce2467d6bde020ee9ec"
+    },
+    "stp": {
+      "values_digest": "aed030faa6fa1e78e39d70e532aa9e7ed4ae25ed216082d9fe1767e30eb52371",
+      "rendered_digest": "9c3dca6f2da4b1535c3ed7344d1165f2dbf94b06546f33ecdcf1cb9f4f4d2271",
+      "ast_digest": "92c030e82c12ed38f2e06d9b2cb7c1c6595598a9e917fc3c4355686342062b81"
+    },
+    "spp": {
+      "values_digest": "9e5bef1a6a2defaeaea6d455b9f2621237d2bca56aa944995959e5aa39042058",
+      "rendered_digest": "8087585449db70a13ff8df01c6124aad6685bc75cf3fb8e63b1d4ba86d33290d",
+      "ast_digest": "6d5c8c035d20256e9c83c43544d8d12d8800aade1290c7419a24a5656583807f"
+    },
+    "vpp": {
+      "values_digest": "3dc355a36880daeec0fa203f3496815d703122a5af5b3ac9807b5d98458ccebf",
+      "rendered_digest": "768c99f58aab91c96ad2a736c78a0dee4e83723ab3f832496015e3e917733417",
+      "ast_digest": "083131ee160964813a2af417f49f04372bc1e59b78d5296f7fd41a41d23bd860"
+    },
+    "srp": {
+      "values_digest": "346ba6491959d07f723110d2247f64880117cef4ca57c30be518b71c1e370658",
+      "rendered_digest": "3a0ae3da1438c0b30109ea6a803d9e9c47426657ff078b1ce5ad73fcc468fa79",
+      "ast_digest": "61309187ae2171524f1d25ecb8e97383377d34a42ad5f0241d26be1f13c8835f"
+    },
+    "sor": {
+      "values_digest": "ffb25e4441e95ef25e47a583471c086805aebf1f3fa230a9b3c102177e0883b4",
+      "rendered_digest": "6b58cfa4f32e7ec8a047c21fb486b6c7be99d3b594e79613245023534b0d2094",
+      "ast_digest": "31d59a8ffc8b939656d72e092bdbff0922afaa70c25728c95f1fb95c11f7b4a2"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "closed_out",
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Record #5335 as superseded by #5383, matching the operator's durable routing comments and observed closed GitHub state; do not reconstruct missing historical lifecycle state."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 1,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Record #5335 as superseded by #5383, matching the operator's durable routing comments and observed closed GitHub state; do not reconstruct missing historical lifecycle state.",
+      "operation": "recover_recordless_terminal"
+    }
+  ]
+}

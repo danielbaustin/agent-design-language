@@ -24,7 +24,8 @@ If a directory contains its own `CONTRIBUTING.md`, it must defer to this file.
 
 Source-of-truth quick links:
 - `docs/codex_playbook.md`
-- `adl/tools/pr.sh`
+- `AGENTS.md`
+- `csdlc-v2/operator/skills/`
 
 Workflow loop:
 
@@ -37,16 +38,18 @@ Card semantics:
 - Templates live under `docs/templates/` (versioned).
 - Tasks can be non-code; the same card-based trace applies.
 
-Fast path (copy/paste):
+Lifecycle entrypoints:
 
 ```bash
-adl/tools/pr.sh start <issue>
-# edit input card
-# implement changes
-adl/tools/pr.sh finish <issue> --title "<short description>" \
-  -f .adl/cards/####/input_####.md \
-  --output-card .adl/cards/####/output_####.md
+.adl/bin/csdlc-v2/csdlc-install resolve --repo . --issue <issue>
+.adl/bin/csdlc-v2/csdlc-init --root <worktree> --request <bootstrap-request.json>
+.adl/bin/csdlc-v2/csdlc-doctor --repo <repo> --issue <issue>
+.adl/bin/csdlc-v2/csdlc-bind --root <worktree> --request <bind-request.json>
 ```
+
+Continue through the typed `csdlc-validate`, `csdlc-review`, and
+`csdlc-publish` skills and request contracts. Tracked edits begin only after
+binding and creation of the issue-bound session goal.
 
 ---
 

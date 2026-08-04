@@ -1,0 +1,49 @@
+# Structured Intent Prompt
+
+Template: 1.0.0
+
+Issue: 5664
+
+Repository: danielbaustin/agent-design-language
+
+Card: sip
+
+Status: ready
+
+## Goal
+
+Implement the four external-facing Runtime v3 adapter contracts as real bounded Rust/Tokio integrations.
+
+## Required Outcome
+
+Provider, ACIP, A2A, and Cloud Bridge adapters perform real authenticated request/response or bidirectional message exchange with bounded timeout, cancellation, retry, replay rejection, shutdown, Rustls-ready transport configuration, and deterministic black-box proof without AWS or plaintext credentials.
+
+## Scope
+
+- Provider dispatch adapter
+- ACIP bidirectional exchange adapter
+- A2A authenticated message exchange adapter
+- Cloud Bridge capability forwarding adapter
+- Tokio transport, Rustls configuration boundary, authentication, retry, cancellation, replay rejection, shutdown, and black-box tests
+
+## Authority
+
+- #5659 merged into main satisfies the #5657 ancestry dependency for this lane; #5657 typed closeout is parallel post-merge work
+- #5657 retains launch, Guardian, config, control, observatory, guardian_soak, and runtime-init protected paths
+- #5663 owns durable local Runtime v3 adapters and does not own external protocol transports
+- #5665 owns Runtime API/WSS/Observatory feature proof paths and remains disjoint
+- AWS provisioning, AWS execution, Runtime v2 edits, cutover, and default-switch work are excluded
+
+## Assumptions
+
+- none
+
+## Operator Constraints
+
+- Use only typed C-SDLC v2 lifecycle operations and the issue-bound worktree
+- Do not edit main
+- Do not touch #5657, #5663, or #5665 protected paths
+- No receipt-only or degraded production substitute
+- No plaintext credentials or credential material in tracked artifacts
+- Reuse existing COTS dependencies and Runtime v3 primitives
+- Measure before/after physical LoC and require net reduction where superseded paths are deleted

@@ -1,0 +1,421 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5691,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "93fb8bb9549834cea33762de65cc0a71e0bd13731185901887c0a135b00c7866",
+  "phase": "closed_out",
+  "generation": 11,
+  "digest": "79a607d679f2857943f70b253f619eba1e311c0be510b7d1e0e4dbef0fb41f98",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "external:claude-opus-5",
+    "assigned_by": "codex:5691-runtime-v3-vector-otel",
+    "revision": "git-blake3:f8db82cf74df419555fc17c0eda8a3fc8ae5bdda:64e286ab11aed5e204e01d5558674d8911ea13499eb5388a8dffc258c76a4c9d",
+    "scope": [
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/observability.rs",
+      "adl-runtime-kernel/src/telemetry.rs",
+      "adl-runtime-kernel/tests/configuration.rs",
+      "adl-runtime-kernel/tests/observability.rs",
+      "adl-runtime-kernel/vector/runtime-v3.yaml",
+      "adl/tools/install_vector_component.ps1",
+      "adl/tools/install_vector_component.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "external:claude-opus-5",
+    "scope": [
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/observability.rs",
+      "adl-runtime-kernel/src/telemetry.rs",
+      "adl-runtime-kernel/tests/configuration.rs",
+      "adl-runtime-kernel/tests/observability.rs",
+      "adl-runtime-kernel/vector/runtime-v3.yaml",
+      "adl/tools/install_vector_component.ps1",
+      "adl/tools/install_vector_component.sh"
+    ],
+    "reviewed_revision": "git-blake3:f8db82cf74df419555fc17c0eda8a3fc8ae5bdda:64e286ab11aed5e204e01d5558674d8911ea13499eb5388a8dffc258c76a4c9d",
+    "findings": [],
+    "residual_risks": [
+      "Final Opus confirmation was intentionally bounded to the two prior P1 remediation findings and ended with REVIEW_COMPLETE; prior monolithic/slice attempts were non-proving and are not recorded as PASS.",
+      "10K launch/soak/platform acceptance is explicitly deferred until after #5691 integration and real Vector master-log/auditor proof, per operator gate.",
+      "Publication may still require resolving the active #5664 claim on adl-runtime-kernel/Cargo.toml; this is a lifecycle ownership conflict, not a product review finding."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5691,
+    "pull_request": 5694,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5694",
+    "base": "main",
+    "head": "codex/5691-runtime-v3-vector-otel",
+    "revision": "git-blake3:639cbffe8dfada254031edf350049e33724447e1:e4c09594f69cfbfd2fb4b717520139f93070a2a3f8052a576c876d5e2228373a",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5694,
+    "head_sha": "639cbffe8dfada254031edf350049e33724447e1",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89887895260"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89891537979"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89889360777"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886439725"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886440393"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (1/2)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886439726"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (2/2)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886439723"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886439697"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886418783"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886440246"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886439684"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886439689"
+      },
+      {
+        "name": "adl-slow-proof (1)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886439708"
+      },
+      {
+        "name": "adl-slow-proof (2)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886439713"
+      },
+      {
+        "name": "adl-slow-proof (3)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886439730"
+      },
+      {
+        "name": "adl-slow-proof (4)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886439701"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886440364"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886439717"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886440200"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30236910883/job/89886439964"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5694,
+    "disposition": "merged",
+    "observed_sha": "639cbffe8dfada254031edf350049e33724447e1",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5691.json",
+    "released_branch": "codex/5691-runtime-v3-vector-otel",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5691",
+      ".csdlc/issues/5691",
+      ".csdlc/locks/5691.lock",
+      ".csdlc/prepared/issues/5691",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/observability.rs",
+      "adl-runtime-kernel/src/telemetry.rs",
+      "adl-runtime-kernel/tests/configuration.rs",
+      "adl-runtime-kernel/tests/observability.rs",
+      "adl-runtime-kernel/vector/runtime-v3.yaml",
+      "adl/tools/install_vector_component.ps1",
+      "adl/tools/install_vector_component.sh"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5691/retained/design.md",
+  "diagram_path": ".csdlc/issues/5691/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5691-body",
+      "revision": "13f250b1e7c82f3bb0aa7d0dc41f77547639292508eb8c680e48813e8af58002"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "c73b687aefa56f46eedca3e482bd11650b83d26ff71f761dddc309515735120c",
+      "rendered_digest": "cb4894b03fdb8c47ee365e92f8af8072c7559724a8743d0f285bc69ff33b62d8",
+      "ast_digest": "060d409f6da985c7a45f86ff7d00791a6b2c1ccdbe1af6c4d30f78c1bdc0146b"
+    },
+    "stp": {
+      "values_digest": "36958876d9c51aa9d7e203e6b2211984ba910f76c8da5dfc50c9bc1d8e672870",
+      "rendered_digest": "753b35fbc984d857b17d7ed116d50e25489343ebd4d1da05f2781624da1d7429",
+      "ast_digest": "a88710b807d9cecd2a03f561f83fa91ee48a3410facb654b6d1ea2eacef1316a"
+    },
+    "spp": {
+      "values_digest": "e7c1c9bb4693bf4868c6c3f378c3170a6ae5fe57d59136051760cf1e139576b4",
+      "rendered_digest": "11bc7b9e558863af3a42524147b3067da8980060439951953ca495aafc995e99",
+      "ast_digest": "069e7b8de03eae5fa54c88313dec12c611c520826984c179b806441a3a725104"
+    },
+    "vpp": {
+      "values_digest": "31211fc1561bd677f30017ed3e23ae5273b2b24dfb82e6b89252a5e8bac5927a",
+      "rendered_digest": "12e310633093e280864f8e8c1f52ca7f016875bf7bb8aea8d01f6766ead9d5dd",
+      "ast_digest": "73b99aba7fabe17b8850e72afa3ec45a065d5456627964d9c697fc66625e1acc"
+    },
+    "srp": {
+      "values_digest": "7b9394915e2afcd2a3334d2d4e7fddd30dfe9312fd92363610ae65f0af30ccbe",
+      "rendered_digest": "e18823f5fc68824b85a97a864986ee7670158dea422b80d580d5013fe15ae069",
+      "ast_digest": "2bffe6b4512a9f5b8fd85a2fe68e0fbaedb6e57899aa879e919eae30998f61f9"
+    },
+    "sor": {
+      "values_digest": "1f0abfb708104d91cadbb61f528d9e2277a2c6f43c6bc84e43424c67ddd35dc6",
+      "rendered_digest": "7d56ce92f38425af240be31f165e9673fe2cf32a0dc42944ced8959bfba19fb7",
+      "ast_digest": "49088240bfead7af16252b5a1f164f394d772a887901eaf6f8d008e03f08137e"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "Advance #5691 after the production Runtime v3 Vector observability implementation and focused proof bundle."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "Advance #5691 after clean exact-head Claude Opus 5 review with REVIEW_COMPLETE and no actionable P1/P2 findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "Add repo-native macOS/Linux/Windows pinned Vector provisioning paths required by #5691 Runtime v3 master-log acceptance without touching Runtime code outside the existing issue scope.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/install_vector_component.sh\",\"adl/tools/install_vector_component.ps1\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "Record the bounded Runtime v3 Vector-backed observability implementation before exact-head review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented production Runtime v3 tracing through the existing tracing facade into one pinned Vector pipeline, with durable canonical master JSONL, auditor schema for WP-12, startup signal ordering, fail-closed Vector child liveness supervision, span correlation through tracing-subscriber, redaction, bounded buffering/drain behavior, OTLP configuration, and repo-native macOS/Linux/Windows Vector provisioning.\",\"changes\":[\"Registered the OS shutdown receiver before control API readiness is exposed and reused it in the serve loop.\",\"Started one long-lived Vector child from an explicit repo-provisioned binary path and exposed fail-closed liveness snapshots.\",\"Replaced the hand-rolled tracing subscriber with tracing-subscriber Registry plus a runtime logging layer.\",\"Added canonical master log records and adl.runtime.master_log_audit.v1 report parsing for WP-12 consumption.\",\"Added native Windows Vector 0.56.0 provisioning with official SHA-256 verification.\"],\"artifacts\":[\"commit f8db82cf74df419555fc17c0eda8a3fc8ae5bdda\",\".csdlc/evidence/5691/vector-provisioning.md\",\".csdlc/evidence/5691/opus-review/final-confirmation.result.json\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/observability.rs\",\"adl-runtime-kernel/src/telemetry.rs\",\"adl-runtime-kernel/tests/observability.rs\",\"adl-runtime-kernel/vector/runtime-v3.yaml\",\"adl/tools/install_vector_component.ps1\",\"adl/tools/install_vector_component.sh\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "Record the focused #5691 Vector-backed Runtime v3 observability proof bundle before exact-head review.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"<issue-worktree>/target\",\"--test\",\"observability\"],\"purpose\":\"Focused Runtime v3 Vector master-log, auditor, startup signal, fail-closed supervision, tracing correlation, provisioning, and hygiene proof for #5691\",\"outcome\":\"passed\",\"evidence_ref\":\"local proof bundle at f8db82cf: observability 9/9 passed with real pinned Vector; configuration 15/15 passed; strict all-target Clippy passed; guardian_soak 7/7 declared ignored passed; cargo fmt --check passed; git diff --check passed; Opus final confirmation result final_status=ok and REVIEW_COMPLETE with no actionable P1/P2.\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "Advance #5691 after the production Runtime v3 Vector observability implementation and focused proof bundle.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "Advance #5691 after clean exact-head Claude Opus 5 review with REVIEW_COMPLETE and no actionable P1/P2 findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5691-runtime-v3-vector-otel",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

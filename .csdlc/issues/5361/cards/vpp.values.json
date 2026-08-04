@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-14] Fully accept and deploy Runtime v3",
     "slug": "v0-91-8-wp-14-runtime-v3-acceptance",
     "version": "v0.91.8",
-    "generation": 4
+    "generation": 24
   },
   "status": "ready",
   "content": {
@@ -17,7 +17,7 @@
       "lanes": [
         {
           "lane": "dependency-and-consumer-register",
-          "proof_role": "Verify retained exact-revision architecture, parity, adapter, provider/tool, and live workcell evidence is integrated into the accepted revision",
+          "proof_role": "Verify retained exact-revision architecture, Runtime parity, ADL v1/v2 shadow parity, adapter, provider/tool, and live workcell evidence is integrated into the accepted revision",
           "acceptance_ids": [
             "AC-1",
             "AC-4",
@@ -34,7 +34,7 @@
             "dependencies"
           ],
           "parallel_group": "acceptance-register",
-          "defer_reason": "Wait for #5336, #5591, #5592, #5589, #5590, #5341, #5349, and #5501 to integrate and publish retained proof."
+          "defer_reason": "Wait for #5336, #5591, #5592, #5589, #5590, #5341, #5349, #5350, and #5501 to integrate and publish retained proof."
         },
         {
           "lane": "secure-access-and-observatory-register",
@@ -79,7 +79,7 @@
         },
         {
           "lane": "quality-and-independence-register",
-          "proof_role": "Verify Runtime v2 independence, reasoning and learning surfaces, strict lint, test count, CI, retained artifacts, and explicit AWS/GPU/remote-provider non-claims",
+          "proof_role": "Verify Runtime v2 independence, reasoning and learning surfaces, strict lint, line count, module growth, dependency audit, test count, CI, exact-revision review, retained artifacts, and explicit AWS/GPU/remote-provider non-claims",
           "acceptance_ids": [
             "AC-3",
             "AC-6",
@@ -162,7 +162,7 @@
         },
         {
           "lane": "runtime-v3-inventory",
-          "proof_role": "Report Runtime v3 source size, test count, and module-growth budget",
+          "proof_role": "Report Runtime v3 line count, module growth, dependency audit, test count, and exact-revision review evidence",
           "acceptance_ids": [
             "AC-6"
           ],
@@ -199,10 +199,10 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on missing parity, consumer, guardian, secure-access, Observatory, rollback, exact-revision, independence, or retained-state proof; preserve unsupported remote and GPU outcomes as non-claims.",
-      "design_ref": ".csdlc/prepared/issues/5361/design.md",
-      "design_digest": "3dea593c006065eb2ddc44090d2b02ee2342dacaa1c12b2f39be905f8bcbc70a",
-      "diagram_ref": ".csdlc/prepared/issues/5361/diagram.mmd",
-      "diagram_digest": "6042adc38f598dcd2021d4d976966cba0d5bd598546bd9e1bfc2ac38b061ca75"
+      "design_ref": ".csdlc/issues/5361/retained/design.md",
+      "design_digest": "d08fa0bf8576b19c81e1c37ce5742681d1ba3de8ad4f576a0d79dd9669766ae9",
+      "diagram_ref": ".csdlc/issues/5361/retained/diagram.mmd",
+      "diagram_digest": "fa237e363a2ed2c019739aa77614da75e76d29eca30d5dfe446d51c3710903e7"
     }
   }
 }

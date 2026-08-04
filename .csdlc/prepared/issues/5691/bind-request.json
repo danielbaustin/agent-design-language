@@ -1,0 +1,30 @@
+{
+  "issue": 5691,
+  "base_branch": "origin/main",
+  "branch": "codex/5691-runtime-v3-vector-otel",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5691-runtime-v3-vector-otel",
+    "owner": "codex:5691-runtime-v3-vector-otel",
+    "generation": 0,
+    "acquired_unix_seconds": 1785120116,
+    "expires_unix_seconds": 1785724916,
+    "heartbeat_unix_seconds": 1785120116,
+    "branch": "codex/5691-runtime-v3-vector-otel",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5691",
+      ".csdlc/locks/5691.lock",
+      ".csdlc/prepared/issues/5691",
+      ".csdlc/evidence/5691",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/observability.rs",
+      "adl-runtime-kernel/src/telemetry.rs",
+      "adl-runtime-kernel/tests/configuration.rs",
+      "adl-runtime-kernel/tests/observability.rs",
+      "adl-runtime-kernel/vector/runtime-v3.yaml"
+    ],
+    "purpose": "Implement Runtime v3 tracing to pinned Vector OTEL/durable master logging parity"
+  }
+}

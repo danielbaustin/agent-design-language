@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5384,
+  "expected_generation": 12,
+  "expected_digest": "71b8dbf3d4bce976ecb2e7da753b3de2d63f9fe79d5369285b02ad9bc0698f14",
+  "claim_id": "claim-5384-v0918-wp14a-preparation-refresh",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5384-v0918-wp14a-preparation-bound",
+  "title": "[v0.91.8][WP-14A] Accept the integrated three-product platform",
+  "body": "Closes #5384\n\nAccepts C-SDLC v2, Runtime v3, and ADL v2 as one exact-revision v0.91.8 platform baseline. The compact ledger pins the four accepted issue, PR head, and squash-merge identities; the repo-native executable gate verifies closed issues, merged PRs, successful required checks, and baseline ancestry.\n\nFocused proof passed without rerunning predecessor endurance suites: retained evidence hashes match, C-SDLC resolves to v2, the stable typed operator manifest is complete, typed doctor passes, and diff hygiene is clean. Gemini 3.1 Pro reviewed exact commit 71e3b70b8f7fd3f0ffca2c020eb78599fd115658 and returned PASS with zero blockers.\n\nWP-13 deletion remains deferred until immediately before #5356, deletion remains unauthorized during the active rollback window, and this issue makes no Unity, Memory Palace, v0.92 execution, AWS deployment, GPU, or credentialed remote-provider acceptance claim. Compatibility binaries still report 0.91.7; this acceptance packet preserves that truth rather than relabeling it.",
+  "draft": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}

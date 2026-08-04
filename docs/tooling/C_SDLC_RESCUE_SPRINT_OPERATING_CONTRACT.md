@@ -13,13 +13,13 @@ lane by accident.
 
 ## Current Contract
 
-- Start every tracked issue through `workflow-conductor` and the repo-native
-  `adl/tools/pr.sh` lifecycle.
+- Start every tracked issue through the typed C-SDLC v2 skills and binaries,
+  after confirming `csdlc-install resolve` selects `v2`.
 - Keep the root checkout clean on `main`. Use root for inspection, doctor, and
   issue binding only.
-- Before `pr run`, create or confirm the session-ledger claim required by
-  `pr doctor`.
-- After `pr run` binds the issue, create the issue-bound goal before editing.
+- Before `csdlc-bind`, create or confirm the typed claim required by
+  `csdlc-doctor`.
+- After `csdlc-bind` binds the issue, create the issue-bound goal before editing.
 - Make tracked implementation, janitor, finish, and closeout edits only in the
   issue worktree.
 - Keep `SIP`, `STP`, `SPP`, `VPP`, `SRP`, and `SOR` truthful. Design-time
@@ -49,8 +49,8 @@ lane by accident.
 
 ## Wait-State Routing
 
-Use `adl/tools/pr.sh watch <issue-or-pr> --json` when an issue or PR enters a
-wait state. Preserve the watcher packet or a concise summary in the issue
+Use the typed `csdlc-shepherd` route when an issue or PR enters a wait state.
+Preserve the watcher packet or a concise summary in the issue
 record, sprint packet, SRP, SOR, or closeout artifact.
 
 Current routing keys come from the watch packet's top-level classification:
@@ -85,12 +85,12 @@ Use a prep scout when all of these are true:
 - the candidate issue is concrete.
 
 The prep scout may inspect issues, cards, worktrees, PR state, and session
-ledger claims. It may run `pr.sh doctor --mode ready --json`. It must stop with
+ledger claims. It may run typed `csdlc-doctor` readiness. It must stop with
 one of: `ready`, `blocked`, `collision`, or `needs_operator`.
 
 The promotion rule is explicit: once the operator or conductor selects the
-candidate for execution, leave prep-scout mode and use the normal session claim
-plus `pr.sh run <issue>` path.
+candidate for execution, leave prep-scout mode and use the normal typed claim
+plus `csdlc-bind` request path.
 
 ## Scheduler Boundary
 
@@ -178,7 +178,7 @@ not run.
 This contract does not:
 
 - authorize tracked work on `main`;
-- replace `workflow-conductor`, issue cards, or PR closeout;
+- replace typed v2 lifecycle routing, issue cards, or PR closeout;
 - turn watcher or prep-scout roles into implementers;
 - claim the scheduler is autonomous;
 - claim every old skill document is already perfect;

@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5773,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][review] Allow bounded SIP and STP correction during implemented review remediation",
+    "slug": "recordless-terminal-recovery-5773",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Record observed closure without reconstructing unavailable lifecycle history.",
+      "deliverables": [
+        "terminal projection",
+        "retained terminal receipt"
+      ],
+      "acceptance_criteria": [
+        "issue is observed closed",
+        "terminal evidence is internally consistent"
+      ],
+      "dependencies": [
+        "exact merged PR evidence"
+      ],
+      "repo_inputs": [
+        "github-issue:5773",
+        "pull_request:5774 head:009ad82b5845efa4bb4f968d468b388576fc34b5 merge:5ef3f27ae1a031d0676d9fe93eb1868f7bb82e9a",
+        "github-body-blake3:e3b85f34d13d23eae2bce59b6cd2ce2ab5343e04567a52dfe529552edf571cdf"
+      ],
+      "non_goals": [
+        "No historical implementation, review, publication, readiness, or CI lifecycle is reconstructed by this terminal recovery."
+      ]
+    }
+  }
+}

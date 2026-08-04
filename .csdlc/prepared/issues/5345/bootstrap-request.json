@@ -1,0 +1,167 @@
+{
+  "issue": 5345,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5345/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5345/diagram.mmd",
+  "design_reviewer": "codex:5345-preparation-review",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5345-v0918-wp10-preparation",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784659701,
+    "expires_unix_seconds": 1785264501,
+    "heartbeat_unix_seconds": 1784659701,
+    "branch": "codex/5345-v0918-wp10-thin-cli-selector",
+    "worktree": ".worktrees/adl-wp-5345",
+    "protected_paths": [
+      ".csdlc/issues/5345",
+      ".csdlc/locks/5345.lock",
+      ".csdlc/prepared/issues/5345",
+      ".csdlc/evidence/5345",
+      "adl-v2/crates/adl-cli",
+      "adl-v2/tools/install-adl-v2.sh"
+    ],
+    "purpose": "Prepare #5345 WP-10 completely in its dedicated worktree; product implementation remains prohibited until WP-04 through WP-09 are merged, typed closed_out, receipt-backed, and ancestral"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-10] Implement thin ADL CLI and authoritative selector",
+    "slug": "v0918-wp10-thin-adl-cli-authoritative-selector",
+    "version": "v0.91.8",
+    "goal": "Implement a small ADL v2 owner CLI that delegates validate, schema, plan, run, inspect, sign, and verify to reviewed WP-04 through WP-09 libraries, plus an authoritative atomic generation selector and stable installer with explicit verified rollback.",
+    "required_outcome": "The independent adl-cli crate and installer provide deterministic JSON command envelopes, stable exit behavior, exact-digest installation and explicit compare-and-swap generation selection and rollback without duplicating language, compiler, engine, records, Runtime, provider, governed-tool, or lifecycle authority.",
+    "declared_scope": [
+      "adl-v2/crates/adl-cli typed command tree and thin upstream adapters",
+      "generation selector record, lock, compare-and-swap transaction, deterministic receipt, inspect, select, and explicit rollback primitives",
+      "adl-v2/tools/install-adl-v2.sh stable exact-digest installation and receipt contract",
+      "machine-readable stdout and diagnostic/observability stderr separation",
+      "offline command, selector, installer, interruption, concurrency, rollback, dependency, budget, and stable-install proof",
+      "issue-local lifecycle, design, diagram, validation, review, and evidence records"
+    ],
+    "authority_boundary": [
+      "Issue #5345 owns only adl-v2/crates/adl-cli, adl-v2/tools/install-adl-v2.sh, and issue-local C-SDLC records",
+      "WP-04 through WP-09 public APIs, schemas, execution plans, effects, records, and adapters are read-only dependencies and are not reimplemented",
+      "The CLI selects no generation implicitly, performs no undeclared network or credential access, and owns no runtime administration or C-SDLC command",
+      "The selector verifies exact installed executable and receipt identity before one atomic compare-and-swap mutation; rollback is an explicit transaction, never silent fallback",
+      "Issue #5343 owns default cutover and issue #5344 owns soak and rollback acceptance; WP-10 supplies primitives but grants no cutover authority",
+      "Runtime v2 and incumbent ADL are behavioral evidence only and must not be imported, copied, linked, or modified"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries and semantic card operations only",
+      "Keep the primary checkout clean on main; all tracked #5345 work stays in the dedicated issue worktree",
+      "Do not use raw gh, AWS, credentials, live providers, Runtime v2, or product implementation during preparation",
+      "Do not implement until #5339, #5338, #5340, #5342, #5341, and #5349 are each GitHub merged, typed closed_out, receipt-backed, and ancestral to the implementation revision",
+      "Use /Volumes/FastWork for every Cargo artifact, cache, and temporary build surface",
+      "Install accepted operational binaries outside Cargo target directories",
+      "Run bounded preparation review now and mandatory exact-revision code review before publication",
+      "Preparation may be committed and pushed, but no PR may be opened and no publication may occur in this preparation-only task"
+    ],
+    "task_boundary": "Complete durable preparation and dependency watch for WP-10; do not implement product code, publish, open a PR, perform cutover/soak/deletion, or absorb Runtime, provider, governed-tool, C-SDLC, or release work.",
+    "deliverables": [
+      "Thin typed CLI for validate, schema, plan, run, inspect, sign, and verify",
+      "Authoritative generation selector library with inspect, exact verification, compare-and-swap selection, and explicit rollback",
+      "Stable installer with exact executable digest, receipt, executable permissions, and idempotence proof",
+      "JSON stdout, stderr diagnostic, stable exit-code, and no-implicit-network command contract",
+      "Selector failure-preservation, concurrency, interruption, stale-writer, and rollback matrix",
+      "Pinned COTS decision and forbidden-dependency proof",
+      "Implementation/test LoC, module-growth, dependency, test-count, validation-time, CI, and exact-revision review evidence"
+    ],
+    "acceptance_criteria": [
+      "AC-1: validate, schema, plan, run, inspect, sign, and verify use one typed clap command tree and delegate to the reviewed WP-04 through WP-09 interfaces without duplicate domain semantics",
+      "AC-2: Every command emits a stable JSON success or failure envelope on stdout, diagnostics and observability on stderr, and a documented stable exit code without implicit network, credential, generation, or selector mutation",
+      "AC-3: The installer places an exact verified executable outside Cargo output, records a deterministic non-secret installation receipt, preserves executable permissions, and is idempotent in an isolated root",
+      "AC-4: The selector verifies generation, executable digest, and installation receipt, then performs one locked atomic compare-and-swap write and re-read verification with a deterministic receipt",
+      "AC-5: Initial selection, stale expectation, concurrent contention, invalid digest, missing receipt, unsupported schema, interrupted write, lock failure, and re-read mismatch are deterministic; every failure preserves prior selector bytes",
+      "AC-6: Rollback is explicit and verifies the recorded previous generation and receipt through the same transaction; no implicit fallback, default cutover, soak, or release authority is introduced",
+      "AC-7: Product implementation starts only after #5339, #5338, #5340, #5342, #5341, and #5349 are each merged, typed closed_out, receipt-backed, and ancestral to the exact implementation revision",
+      "AC-8: The default dependency graph is limited to reviewed upstream ADL v2 crates plus clap 4.6.1, serde 1.0.228, serde_json 1.0.150, tempfile 3.27.0, fs2 0.4.3, and sha2 0.10.9; no HTTP, cloud, database, async-runtime, terminal-UI, plugin, incumbent ADL, Runtime, or C-SDLC dependency enters the CLI/selector graph",
+      "AC-9: WP-10 stays at or below 2500 Rust implementation lines and 2500 test/fixture lines, selector transaction code stays below 800 implementation lines absent reviewed variance, modules stay below 1000 lines, and focused/quality/full proof stays within 120/120/600 seconds",
+      "AC-10: Every applicable acceptance criterion has focused deterministic offline proof, strict Clippy, dependency and module-growth audit, test-count and CI evidence, exact-revision review, and no deferred implementation or validation claim"
+    ],
+    "dependencies": [
+      "#5339 WP-04 merged, typed closed_out, retained merged receipt, and ancestral",
+      "#5338 WP-05 merged, typed closed_out, retained merged receipt, and ancestral",
+      "#5340 WP-06 merged, typed closed_out, retained merged receipt, and ancestral",
+      "#5342 WP-07 merged, typed closed_out, retained merged receipt, and ancestral",
+      "#5341 WP-08 merged, typed closed_out, retained merged receipt, and ancestral",
+      "#5349 WP-09 merged, typed closed_out, retained merged receipt, and ancestral",
+      "Reviewed public APIs and exact lock closure for WP-04 through WP-09 available on current origin/main"
+    ],
+    "repo_inputs": [
+      "AGENTS.md",
+      "GitHub issue #5345 source prompt",
+      "docs/templates/prompts/current.json",
+      "csdlc-v2/operator/generation-selector.json",
+      "docs/milestones/v0.91.8/DESIGN_v0.91.8.md",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/ADL_V2_CORE_v0.91.8.md",
+      "future landed public APIs, fixtures, manifests, and lock closure from #5339, #5338, #5340, #5342, #5341, and #5349"
+    ],
+    "non_goals": [
+      "Language parsing, schema, semantic validation, or canonicalization",
+      "Compiler graph expansion or ExecutionPlan construction",
+      "Engine scheduling, retry, joins, checkpoint/resume, provider/tool effect semantics, or operational supervision",
+      "Portable record or signing implementation beyond invoking the WP-07 API",
+      "Runtime v3, provider transport, governed-tool implementation, C-SDLC commands, observatory, cloud, database, or AWS work",
+      "Default cutover, soak, rollback acceptance, parity, deletion, release, or Runtime v2 changes"
+    ],
+    "plan_summary": "Freeze the thin command boundary, selector/installer transaction and rollback contract, exact dependency gate, COTS closure, protected paths, LoC/test/module/time budgets, PVF classes, no-deferral matrix, and rollback during preparation; bind and review the packet; wait for all six upstream WPs to merge and close out; then implement, prove, review, publish, merge, post-merge validate, and close out without widening authority.",
+    "steps": [
+      {"id":"S1","action":"Complete all six typed cards, design, diagram, exact dependency and protected-path gates, COTS, budgets, PVF, no-deferral, rollback, preparation validation, bind, bounded review, durable commit, and push without product implementation","acceptance_ids":["AC-7","AC-8","AC-9","AC-10"],"status":"in_progress"},
+      {"id":"S2","action":"Maintain a read-only dependency watch and begin implementation only after all six upstream issues are merged, typed closed_out, receipt-backed, and ancestral","acceptance_ids":["AC-7","AC-10"],"status":"pending"},
+      {"id":"S3","action":"Implement the thin typed CLI, stable installer, authoritative selector, atomic selection transaction, deterministic receipts, and explicit verified rollback primitives","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6"],"status":"pending"},
+      {"id":"S4","action":"Run the complete offline command, selector, installer, interruption, concurrency, rollback, dependency, module, LoC, test-count, and time proof matrix and fix every finding","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-8","AC-9","AC-10"],"status":"pending"},
+      {"id":"S5","action":"Obtain exact-revision review, publish through typed v2, shepherd green required checks, merge only under authorization, run detached post-merge proof, close out, retain the terminal receipt, and release the claim","acceptance_ids":["AC-7","AC-8","AC-9","AC-10"],"status":"pending"}
+    ],
+    "invariants": [
+      "The CLI remains an adapter and never becomes a second implementation of upstream ADL semantics",
+      "No command implicitly performs network access, reads credentials, selects a generation, or mutates selector state",
+      "Every selector mutation verifies exact installation identity, holds an exclusive lock, uses compare-and-swap, persists atomically, and re-reads before success",
+      "Every selector failure preserves the previous record byte-for-byte",
+      "Rollback is explicit, verified, receipt-bearing, and uses the same atomic transaction as selection",
+      "Default cutover, soak, rollback acceptance, Runtime, provider, governed-tool, and lifecycle authority remain outside WP-10",
+      "Runtime v2 and incumbent ADL remain untouched behavioral evidence",
+      "No implementation begins before every upstream dependency is terminal and ancestral"
+    ],
+    "risks": [
+      "A convenient command handler can silently duplicate parser, compiler, engine, signing, provider, or Runtime behavior",
+      "Selector state can be corrupted or rolled back incorrectly under stale writers, lock contention, interruption, or partial persistence",
+      "Installer and selector receipts can drift from the installed executable or expose machine-local paths",
+      "A default or fallback can accidentally grant cutover authority before #5343/#5344 review",
+      "Cross-platform filesystem semantics can weaken atomicity, permissions, or lock guarantees",
+      "Dependency convenience can regrow the CLI or import network, async, cloud, Runtime, or lifecycle authority",
+      "The landed WP-04 through WP-09 APIs or lock closure may differ from this provisional adapter contract",
+      "Budget targets can pressure proof quality unless variance is explicitly reviewed instead of hidden"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "Any upstream dependency is not merged, typed closed_out, receipt-backed, or ancestral when product implementation would begin",
+      "The landed upstream API or lock closure differs materially from the reviewed thin-adapter contract",
+      "Any command requires duplicate domain logic or undeclared network, credential, selector, Runtime, or lifecycle authority",
+      "Selector mutation cannot preserve exact prior bytes on every failure or cannot remain atomic and compare-and-swap protected",
+      "Rollback cannot verify the previous installed generation through the same transaction",
+      "A proposed dependency escapes the reviewed COTS and upstream ADL v2 closure",
+      "Implementation, test, module, or validation-time variance lacks exact evidence-backed review",
+      "Required acceptance or validation would be deferred, skipped, or replaced by metadata-only proof"
+    ],
+    "validation_lanes": [
+      {"lane":"preparation-contract","proof_role":"Prove six typed cards, reviewed design/diagram, exact dependency and protected-path gates, selector/rollback invariants, COTS, budgets, PVF, no-deferral, and root safety","acceptance_ids":["AC-7","AC-8","AC-9","AC-10"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":3000,"argv":["ruby",".csdlc/prepared/issues/5345/validate-preparation.rb"],"parallel_group":"preparation","defer_reason":null},
+      {"lane":"cli-focused","proof_role":"Prove all command success, malformed input, upstream error, stable JSON stdout/stderr separation, exit codes, and delegation boundaries","acceptance_ids":["AC-1","AC-2"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":5000,"argv":["bash",".csdlc/prepared/issues/5345/validate-cli.sh","focused"],"parallel_group":"cli-local","defer_reason":"Execute only after every upstream dependency gate is terminal and product implementation exists"},
+      {"lane":"cli-quality","proof_role":"Prove formatting, strict Clippy, forbidden source/dependency absence, and thin module boundaries","acceptance_ids":["AC-1","AC-8","AC-9"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":3000,"argv":["bash",".csdlc/prepared/issues/5345/validate-cli.sh","quality"],"parallel_group":"cli-local","defer_reason":"Execute only after every upstream dependency gate is terminal and product implementation exists"},
+      {"lane":"selector-installer","proof_role":"Prove exact install identity, idempotence, atomic selection, stale/concurrent/interrupted failure preservation, explicit verified rollback, and deterministic receipts","acceptance_ids":["AC-3","AC-4","AC-5","AC-6"],"deterministic":true,"resource_profile":"medium","budget_seconds":300,"budget_tokens":7000,"argv":["bash",".csdlc/prepared/issues/5345/validate-cli.sh","install-selector"],"parallel_group":"selector","defer_reason":"Execute only after every upstream dependency gate is terminal and product implementation exists"},
+      {"lane":"cli-budgets","proof_role":"Enforce receipt/ancestry gate, exact COTS and forbidden dependencies, implementation/test/module LoC, test count, complete offline proof, and 600-second ceiling","acceptance_ids":["AC-7","AC-8","AC-9","AC-10"],"deterministic":true,"resource_profile":"medium","budget_seconds":600,"budget_tokens":5000,"argv":["bash",".csdlc/prepared/issues/5345/validate-cli.sh","budgets"],"parallel_group":"cli-budget","defer_reason":"Execute at the exact implementation revision with measured dependency, LoC, test-count, module-growth, and duration evidence"},
+      {"lane":"post-merge-exact","proof_role":"Validate the exact integrated tree, stable installer, selector and rollback transaction, dependency/LoC/test/time budgets, and exact revision identity before typed closeout","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8","AC-9","AC-10"],"deterministic":true,"resource_profile":"medium","budget_seconds":600,"budget_tokens":10000,"argv":["bash",".csdlc/prepared/issues/5345/validate-cli.sh","budgets"],"parallel_group":"post-merge","defer_reason":"Execute only after authorized merge and typed merged-state reconciliation; mandatory before closeout"}
+    ],
+    "failure_policy": "Fail closed without implementation, publication, merge, or closeout on an incomplete dependency gate, duplicate command authority, implicit network or selector behavior, invalid installation identity, non-atomic selector mutation, prior-state damage, unverified rollback, host-path or secret disclosure, forbidden dependency, unsupported LoC/module/test/time variance, deferred acceptance, stale review, red CI, or absent post-merge proof.",
+    "review_prompts": [
+      "Does every command remain a typed adapter over exactly one reviewed WP-04 through WP-09 boundary without duplicate domain logic?",
+      "Can any argument, environment value, malformed receipt, stale writer, lock race, symlink, path traversal, interruption, or re-read mismatch bypass exact installation verification or alter prior selector bytes?",
+      "Is rollback explicit, compare-and-swap protected, exact-receipt verified, and free of implicit fallback or cutover authority?",
+      "Are machine-readable stdout, diagnostic stderr, stable exit codes, no-network/no-credential behavior, and host-path/secret redaction proven for every command?",
+      "Are COTS, dependency exclusions, LoC/test/module/time budgets, PVF classification, no-deferral, CI, and exact-revision review complete and executable?"
+    ],
+    "review_scope": ".csdlc/issues/5345\n.csdlc/locks/5345.lock\n.csdlc/prepared/issues/5345\n.csdlc/evidence/5345\nadl-v2/crates/adl-cli\nadl-v2/tools/install-adl-v2.sh"
+  }
+}

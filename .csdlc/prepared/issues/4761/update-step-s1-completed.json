@@ -1,0 +1,15 @@
+{
+  "issue": 4761,
+  "card": "spp",
+  "expected_generation": 10,
+  "expected_digest": "d26aeb6abd6a99b4b2bffbf0de0c05bedb834d756be8e211835f4229accd2bf1",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Mark in-place binding step complete after typed bind and implementation.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S1",
+    "status": "completed"
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,14 @@
+{
+  "issue": 5733,
+  "expected_generation": 4,
+  "expected_digest": "a77e68546983d7da43fa244af12f4e789135d1a255c9c56e3d8a76bffd1fd9c9",
+  "claim_id": "claim-5733-demo-matrix-proof-coverage",
+  "reviewer": "subagent:Tesla:019fba53-992b-7722-9fd0-bc90a039799a",
+  "assigned_by": "codex:5733-execution",
+  "scope": [
+    "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+    "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+    "docs/milestones/v0.91.8/review/wp15_demo_matrix_5733/RECONCILIATION_LEDGER_v1.md",
+    "adl/tools/validate_v0918_demo_matrix.py"
+  ]
+}

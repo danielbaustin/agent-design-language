@@ -2,3 +2,11 @@
 {"sequence":2,"generation":0,"actor":"codex","reason":"bind branch/worktree and activate claim","operation":"bind"}
 {"sequence":3,"generation":1,"actor":"codex","reason":"reapprove changed issue design","operation":"approve_design"}
 {"sequence":4,"generation":2,"actor":"codex","reason":"atomically record execution, validation, and implemented phase","operation":"finalize_implementation"}
+{"sequence":5,"generation":3,"actor":"codex","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
+{"sequence":6,"generation":4,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":7,"generation":5,"actor":"codex:issue-5666-closeout-reconcile","reason":"Recover stale publication truth: GitHub issue #5632 is closed and operator reports there is no usable PR #5634 to close or merge.","operation":"recover_review"}
+{"sequence":8,"generation":6,"actor":"codex:issue-5666-closeout-reconcile","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
+{"sequence":9,"generation":7,"actor":"codex:issue-5666-closeout-reconcile","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":10,"generation":8,"actor":"codex:v0918-terminal-reconcile-wave","reason":"Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.","operation":"reconcile_terminal"}
+{"sequence":11,"generation":9,"actor":"codex:5748-terminal-recovery","reason":"Restore the retained #5632 terminal receipt projection before applying the typed merged-disposition correction.","operation":"reconcile_terminal"}
+{"sequence":12,"generation":10,"actor":"codex:5748-terminal-recovery","reason":"Correct the historical no-PR classification: merged PR #5634 exists at exact head 92fde26a2ca073e204459fce1bb5e88d7c895528.","operation":"repair_terminal_disposition"}

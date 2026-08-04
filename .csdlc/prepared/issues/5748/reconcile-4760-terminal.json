@@ -1,0 +1,9 @@
+{
+  "issue": 4760,
+  "expected_initialization_digest": "5122de3f552f7d3e67507008600e4a269906e2987e6e22a18e536921df718948",
+  "expected_branch": "codex/5748-terminal-recovery",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5748",
+  "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+  "reason": "Materialize the valid merged #4760 PR #5740 terminal receipt in the dedicated #5748 authority projection.",
+  "follow_ups": []
+}

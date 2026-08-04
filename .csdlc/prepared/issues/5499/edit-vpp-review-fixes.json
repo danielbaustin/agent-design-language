@@ -1,0 +1,63 @@
+{
+  "issue": 5499,
+  "card": "vpp",
+  "expected_generation": 1,
+  "expected_digest": "a562ae007380310f0303b6dbeaec48d1db86afa81fd9e7b255d69e961cdb5d8c",
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "actor": "codex:issue-5499-preparation",
+  "reason": "Fix bounded preparation review findings for deferred offline conductor proof and exact-range diff hygiene",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "preparation-contract",
+        "proof_role": "Prove six-card, design, diagram, dependency, scope, COTS, budget, and no-product-change preparation truth",
+        "acceptance_ids": ["AC-1", "AC-4", "AC-6", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 2000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5499/validate-preparation.rb"],
+        "parallel_group": "local-control",
+        "defer_reason": null
+      },
+      {
+        "lane": "dependency-gate",
+        "proof_role": "Fail closed until #5340, #5341, #5342, and final WP-09 gate #5349 have merged typed closeout receipts ancestral to HEAD",
+        "acceptance_ids": ["AC-1", "AC-6"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5499/check-dependencies.rb"],
+        "parallel_group": "local-control",
+        "defer_reason": null
+      },
+      {
+        "lane": "conductor-contract",
+        "proof_role": "Run offline focused all-target conductor tests and strict Clippy from FastWork after the dependency gate opens",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 180,
+        "budget_tokens": 4000,
+        "argv": ["bash", ".csdlc/prepared/issues/5499/validate-conductor.sh"],
+        "parallel_group": "conductor-local",
+        "defer_reason": "Preparation only: do not select until #5340, #5341, #5342, and final WP-09 gate #5349 are merged, typed closed_out, receipt-backed, and ancestral, and the product manifest exists"
+      },
+      {
+        "lane": "diff-hygiene",
+        "proof_role": "Verify the exact committed issue-branch patch from its recorded base through HEAD",
+        "acceptance_ids": ["AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["bash", ".csdlc/prepared/issues/5499/check-preparation-diff.sh"],
+        "parallel_group": "local-control",
+        "defer_reason": null
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

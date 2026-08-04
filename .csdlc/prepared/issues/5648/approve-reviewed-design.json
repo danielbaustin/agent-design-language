@@ -1,0 +1,7 @@
+{
+  "issue": 5648,
+  "expected_generation": 4,
+  "expected_digest": "8bbd490ff8eb478cd85dd450a7a48f878b2d98d17559180b1d8a389314a2cbc0",
+  "claim_id": "claim-5648-operator-active-claim-revoke",
+  "reviewer": "codex:5648-preparation-review"
+}

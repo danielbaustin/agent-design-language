@@ -1,0 +1,22 @@
+{
+  "issue": 5789,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "49f2e1ea96b6ed7c7983508569ef81af8780945e1f761bf3ca6173038bac932a",
+  "claim_id": "claim-5789-observatory-full-functionality",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record focused Runtime v3 Rust proof for browser control CORS and OpenAPI route inventory.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target",
+        "cargo test --manifest-path adl-runtime-kernel/Cargo.toml observatory_cors_allows_only_configured_origins_and_reports_canonical_port --test control -- --nocapture",
+        "cargo test --manifest-path adl-runtime-kernel/Cargo.toml openapi_paths_match_current_runtime_v3_axum_route_inventory --test openapi_contract -- --nocapture"
+      ],
+      "purpose": "Prove configured-origin CORS and no-store behavior for Runtime v3 browser POST/OPTIONS /v1/control, signed command execution/error surfaces, forbidden-origin rejection, and OpenAPI documentation parity with the production Axum route inventory.",
+      "outcome": "passed",
+      "evidence_ref": "commentary: both focused Rust commands passed with CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target"
+    }
+  }
+}

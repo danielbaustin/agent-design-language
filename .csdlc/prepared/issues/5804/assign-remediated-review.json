@@ -1,0 +1,23 @@
+{
+  "issue": 5804,
+  "expected_generation": 7,
+  "expected_digest": "eb6801ef7819312fd4dd162515c79606845768e6c490a0ab7550b5ff1d30c479",
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "reviewer": "subagent:gpt-5.5-review-5804",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    ".csdlc/issues/5357",
+    ".csdlc/issues/5804",
+    ".csdlc/evidence/5804",
+    ".csdlc/prepared/issues/5594/feature_decisions_5594.rb",
+    ".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb",
+    ".csdlc/prepared/issues/5804",
+    "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+    "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+    "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+    "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json",
+    "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md",
+    "docs/milestones/v0.91.8/review/podcast_launch_5711/README.md"
+  ]
+}

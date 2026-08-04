@@ -1,0 +1,11 @@
+{
+  "issue": 5701,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "expected_generation": 34,
+  "expected_digest": "cd78ae6ce9392293e3f1b9539a2d1462ddde354e454d558e59f56e3fb79cdd3b",
+  "now_unix_seconds": 1785525308,
+  "actor": "codex:5717-execution",
+  "operator_authority": "operator-directed review-blocker recovery for closed issue #5701 / merged PR #5705",
+  "reason": "Release stale active claim from closed/merged #5701 so #5717 can truthfully protect shared validation selector paths required by PR #5720 review fixes."
+}

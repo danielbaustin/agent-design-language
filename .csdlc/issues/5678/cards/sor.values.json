@@ -1,0 +1,54 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5678,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][provider][docs] Keep Opus review runbook aligned with adapter CLI",
+    "slug": "opus-review-runbook-cli-alignment",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Repair the tracked Opus review runbook and add a source-backed structured CLI drift check.",
+      "actual_changes": [
+        "Replace stale flag-form invocation with --request/--out/--log JSON invocation",
+        "Document exact-head review evidence and provider identity truth boundaries",
+        "Add jq-backed runbook contract test and current adapter help verification"
+      ],
+      "artifacts": [
+        "docs/tooling/OPUS_REVIEW_RUNBOOK.md",
+        "adl/tools/test_opus_review_runbook.sh"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_opus_review_runbook.sh"
+          ],
+          "purpose": "Run the focused runbook contract suite",
+          "outcome": "passed",
+          "evidence_ref": "opus-runbook-contract.log"
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "purpose": "Run whitespace validation",
+          "outcome": "passed",
+          "evidence_ref": "opus-runbook-diff-hygiene.log"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

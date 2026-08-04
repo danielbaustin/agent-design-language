@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.ready_publication_request.v1",
+  "issue": 5717,
+  "expected_generation": 16,
+  "expected_digest": "56b948178bd052115477677b51da58b157347d93fa7116bc053cf333b306d750",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "actor": "codex:5717-execution",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5720,
+  "expected_head_sha": "39809c0f50e428698a8aa02f7acebabfaa8a9e66",
+  "token_file": "/Users/daniel/keys/github.token"
+}

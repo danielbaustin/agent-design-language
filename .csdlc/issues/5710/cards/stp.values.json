@@ -1,0 +1,56 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5710,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Repair terminal closeout and safe-prune recovery for closed issues",
+    "slug": "csdlc-v2-closeout-safe-prune-recovery",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement and prove the smallest typed recovery surface that closes the identified terminal reconciliation and dirty-prune gaps, then run the live v0.91.8 sweep after merge.",
+      "deliverables": [
+        "Typed closeout reconciliation request/result contract",
+        "Typed prune-preparation classification and cleanup contract",
+        "Closed-issue lifecycle repair classifier",
+        "Focused deterministic tests",
+        "Tracked recovery proof packet and post-merge sweep report"
+      ],
+      "acceptance_criteria": [
+        "AC-1: #5691-style recorded-head versus merged-head drift is accepted only with exact repository, PR, branch, and ancestry proof",
+        "AC-2: unrelated or ambiguous terminal revisions fail closed",
+        "AC-3: safe cleanup removes only explicit generated categories or byte-equivalent retained evidence",
+        "AC-4: tracked lifecycle drift, source files, and unknown paths are never silently removed",
+        "AC-5: the operation is repeatable and existing validate-prune/prune gates remain authoritative",
+        "AC-6: closed earlier-phase issues receive a truthful next-typed-action classification without inferred transitions",
+        "AC-7: focused tests and exact-head review pass",
+        "AC-8: the live v0.91.8 sweep reports reconciled, pruned, and blocked issues separately"
+      ],
+      "dependencies": [
+        "Current C-SDLC v2 closeout receipt and prune implementation",
+        "Existing closed v0.91.8 issue/worktree inventory",
+        "Live merged PR truth from the typed GitHub owner binary"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5710",
+        "csdlc-v2/src/bin/csdlc-closeout.rs",
+        "csdlc-v2/src/lifecycle.rs",
+        "csdlc-v2/src/git.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs",
+        "Issue #5691 and PR #5694 reconciliation evidence",
+        "Closed v0.91.8 worktree dirty-state inventory"
+      ],
+      "non_goals": [
+        "No force removal of dirty worktrees",
+        "No v1 wrapper restoration",
+        "No broad repository cleanup",
+        "No inferred review, publication, readiness, or terminal success"
+      ]
+    }
+  }
+}

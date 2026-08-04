@@ -1,0 +1,60 @@
+{
+  "schema": "adl.v0918.internal_review_corpus.v1",
+  "issue": 5356,
+  "product_changes": 0,
+  "dependency_issue": 5360,
+  "identity_required": ["repository", "base", "head", "commit_sha", "corpus_sha256", "wp17_receipt_sha256"],
+  "tracked_roots": [
+    "README.md",
+    "AGENTS.md",
+    "docs/milestones/v0.91.8",
+    "docs/planning/ADL_FEATURE_LIST.md",
+    "adl-v2",
+    "adl-runtime",
+    "adl-runtime-kernel",
+    "csdlc-v2",
+    "infra/runtime-v3"
+  ],
+  "canonical_documents": [
+    "docs/milestones/v0.91.8/README.md",
+    "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+    "docs/milestones/v0.91.8/SPRINT_v0.91.8.md",
+    "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+    "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+    "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+    "docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md",
+    "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+    "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+    "docs/milestones/v0.91.8/MILESTONE_CHECKLIST_v0.91.8.md",
+    "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md",
+    "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+    "docs/milestones/v0.91.8/review/README.md",
+    "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+    "docs/planning/ADL_FEATURE_LIST.md"
+  ],
+  "owner_groups": {
+    "adl_v2": [5336, 5337, 5339, 5338, 5340, 5342, 5341, 5349, 5345],
+    "distributed_workcell": [5497, 5499, 5498, 5500, 5502, 5501],
+    "runtime_v3": [5361, 5591, 5592, 5589, 5590],
+    "csdlc_v2": [5358, 5540, 5541, 5548, 5558],
+    "acceptance_cutover": [5350, 5344, 5343, 5346, 5347, 5384],
+    "wp14a_children": [5352, 4758, 4759, 4760, 4761, 4762, 4763, 5007, 4739, 4741, 5332, 5107],
+    "release_tail_predecessors": [5354, 5351, 5360]
+  },
+  "required_evidence_classes": [
+    "landed_source_and_manifests",
+    "focused_and_integrated_tests",
+    "ci_and_coverage_results",
+    "deployment_and_operations_proof",
+    "observatory_and_secure_access_proof",
+    "rollback_cutover_and_deletion_proof",
+    "typed_lifecycle_records_and_terminal_receipts",
+    "issue_pr_and_dependency_graph_truth",
+    "feature_demo_quality_and_release_claims",
+    "redaction_provenance_and_publication_safety"
+  ],
+  "forbidden_authority": ["untracked_local_artifact", "host_absolute_path", "private_prompt", "credential", "Runtime_v2", "AWS"]
+}

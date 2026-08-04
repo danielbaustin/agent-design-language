@@ -16,7 +16,7 @@ This document clarifies the existing workflow rules in:
 - `docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md`
 - `docs/onboarding.md`
 - `adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md`
-- the `workflow-conductor` and `pr-run` skill contracts
+- the typed v2 doctor/bind contracts
 
 If this document conflicts with `AGENTS.md`, `AGENTS.md` wins until both files
 are updated together.
@@ -70,9 +70,9 @@ Prep-scout exception:
 - if a candidate would require mutation before it can be called ready and there
   is no proven prep-only repo-native bind surface, stop as `needs_operator` and
   record the tooling gap instead of improvising a manual fallback
-- if the candidate issue is promoted into execution, leave prep-scout mode and
-  use the normal session claim plus `adl/tools/pr.sh run <issue>` path before
-  any tracked edits occur
+- if the candidate issue is promoted into execution, leave prep-scout mode,
+  resolve `v2` with `csdlc-install`, and use the typed `csdlc-bind` request
+  before any tracked edits occur
 
 ## Required Startup Check
 
@@ -90,9 +90,9 @@ Expected root state:
 ```
 
 If the primary checkout is not on `main`, has tracked changes, or is occupied by
-an issue branch, stop before implementation. Route the recovery through
-`workflow-conductor` and repo-native `pr run` or `pr doctor` evidence when the
-issue/worktree can be identified. Use only the narrowest manual fallback needed
+an issue branch, stop before implementation. Route the recovery through typed
+`csdlc-doctor` and `csdlc-bind` evidence when the issue/worktree can be
+identified. Use only the narrowest manual fallback needed
 to preserve work in an issue worktree, restore the primary checkout to clean
 `main`, and record what moved where.
 
@@ -222,10 +222,10 @@ When another session appears to own an issue or worktree:
 1. Do not start duplicate implementation work.
 2. Inspect the issue, PR, branch, and worktree state.
 3. If the state is healthy, leave it alone or watch it.
-4. If the state is stale or broken, record the evidence and route through
-   `workflow-conductor`, `pr-janitor`, or `pr-closeout` as appropriate.
-5. If root is occupied by that work, route through `workflow-conductor` and
-   repo-native worktree evidence first. Use manual preservation only as a
+4. If the state is stale or broken, record the evidence and use the typed
+   doctor, shepherd, or closeout binary as appropriate.
+5. If root is occupied by that work, use typed v2 doctor/bind evidence first.
+   Use manual preservation only as a
    bounded fallback to move the work into an issue worktree before restoring
    root to clean `main`.
 
@@ -252,7 +252,7 @@ workflow.
 
 This policy does not:
 
-- replace `workflow-conductor`
+- replace typed v2 lifecycle routing
 - replace issue cards or closeout truth
 - permit tracked work on `main`
 - make chat memory authoritative

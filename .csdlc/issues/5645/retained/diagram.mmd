@@ -1,0 +1,11 @@
+flowchart LR
+  R["Bound merge request"] --> S["Canonical state + claim"]
+  S --> G{"merge_ready?"}
+  G -- no --> F["Typed fail-closed error"]
+  G -- yes --> P["Fetch exact PR and checks"]
+  P --> V{"head, review, checks, mergeability match?"}
+  V -- no --> F
+  V -- yes --> M["GitHub merge with expected SHA"]
+  M --> O["Merge result + exact merge SHA"]
+  O --> Q["reconcile-merged"]
+  Q --> C["closeout"]

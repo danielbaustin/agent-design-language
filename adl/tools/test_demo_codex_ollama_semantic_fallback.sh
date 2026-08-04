@@ -56,7 +56,7 @@ grep -Fq 'Refine the STP to provide clearer deliverables and validation scope.' 
   exit 1
 }
 
-bash "$ROOT_DIR/adl/tools/validate_structured_prompt.sh" --type stp --input "$STP_PATH" >/dev/null
-bash "$ROOT_DIR/adl/tools/validate_structured_prompt.sh" --type sip --phase bootstrap --input "$SIP_PATH" >/dev/null
+"$ROOT_DIR/.adl/bin/adl-validate-structured-prompt" --type stp --input "$STP_PATH" >/dev/null
+"$ROOT_DIR/.adl/bin/adl-validate-structured-prompt" --type sip --phase bootstrap --input "$SIP_PATH" >/dev/null
 
 echo "demo_codex_ollama_operational_skills semantic fallback: ok"

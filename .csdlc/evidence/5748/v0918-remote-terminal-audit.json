@@ -1,0 +1,3858 @@
+{
+  "schema": "adl.v0918.remote_terminal_audit.v1",
+  "repository": "danielbaustin/agent-design-language",
+  "label": "version:v0.91.8",
+  "observed_at": "2026-08-02T00:30:25Z",
+  "source": "GitHub closed issues and merged PRs joined to retained typed terminal projections",
+  "issues": [
+    {
+      "number": 4739,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-24T20:41:41Z",
+      "title": "[v0.91.8][WP-15][unity][tooling] Align Unity-MCP live project and port proof for deployed observatory",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/4739",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5661,
+        "observed_sha": "7411c86b899ae209448b3c4374959e2cb4b84c5c",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/4739.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5661,
+        "linked_issue": 4739,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5661",
+        "head_ref": "codex/4739-v0918-wp15-unity-mcp-alignment-prep",
+        "head_sha": "7411c86b899ae209448b3c4374959e2cb4b84c5c",
+        "merged": true,
+        "merge_commit_sha": "e02e138409771c9321341bf599cd1c2cd0ecaef1"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 4741,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-24T17:45:03Z",
+      "title": "[v0.91.8][WP-15][unity][tooling] Make Unity editor liveness and batch proof reliable for deployed observatory",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/4741",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5651,
+        "observed_sha": "34831bab95f87ab6e2beb729130499850a051a4f",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/4741.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5651,
+        "linked_issue": 4741,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5651",
+        "head_ref": "codex/4741-v0918-wp15-unity-editor-liveness-prep",
+        "head_sha": "34831bab95f87ab6e2beb729130499850a051a4f",
+        "merged": true,
+        "merge_commit_sha": "491f9570289f3355b86a2ee13736695fd56bd870"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 4758,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T21:42:46Z",
+      "title": "[v0.91.8][WP-21][launch] Implement launch readiness package after platform deployment",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/4758",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5739,
+        "observed_sha": "c9b5c625ccfb17b1a75fd3a1a93f4810baf4a3e2",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/4758.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5739,
+        "linked_issue": 4758,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5739",
+        "head_ref": "codex/4758-v0918-preparation",
+        "head_sha": "c9b5c625ccfb17b1a75fd3a1a93f4810baf4a3e2",
+        "merged": true,
+        "merge_commit_sha": "038f718c377549db21df3a1eb08402867beb2cd5"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 4759,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T21:42:35Z",
+      "title": "[v0.91.8][WP-21][activation] Implement v0.92 activation map from accepted deployed products",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/4759",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5738,
+        "observed_sha": "32957a21a3fc3fc8a8efb3c3c6ad198db9b0ddd7",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/4759.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5738,
+        "linked_issue": 4759,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5738",
+        "head_ref": "codex/4759-v0918-preparation",
+        "head_sha": "32957a21a3fc3fc8a8efb3c3c6ad198db9b0ddd7",
+        "merged": true,
+        "merge_commit_sha": "471db0c35dc34c2497682993378948481bdfa213"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 4760,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T22:45:58Z",
+      "title": "[v0.91.8][WP-21][memory-palace] Implement Memory Palace context handoff",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/4760",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5740,
+        "observed_sha": "9719252262913351144a20adf0affb7ed4b5480d",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/4760.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5740,
+        "linked_issue": 4760,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5740",
+        "head_ref": "codex/4760-v0918-wp14-preparation",
+        "head_sha": "9719252262913351144a20adf0affb7ed4b5480d",
+        "merged": true,
+        "merge_commit_sha": "d3dbfb31ba4bd53f4166ee5e09da2a8b9f89968e"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 4761,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T21:43:44Z",
+      "title": "[v0.91.8][WP-21][capability-envelope] Implement v0.92 capability envelope",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/4761",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5741,
+        "observed_sha": "8c3ef0336570238d26eab0fd49a9a2ff9c1a0c09",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/4761.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5741,
+        "linked_issue": 4761,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5741",
+        "head_ref": "codex/4761-v0918-wp14-preparation",
+        "head_sha": "8c3ef0336570238d26eab0fd49a9a2ff9c1a0c09",
+        "merged": true,
+        "merge_commit_sha": "97d4036e0b5c21786d13cd1301b33038d95e3b98"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 4762,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T21:53:33Z",
+      "title": "[v0.91.8][WP-21][birth-witnesses] Implement birth witnesses and receipt package",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/4762",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5744,
+        "observed_sha": "d736baca1c82c6ca9b770678ff2c04ce44458fc9",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/4762.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5744,
+        "linked_issue": 4762,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5744",
+        "head_ref": "codex/4762-v0918-wp14-preparation",
+        "head_sha": "d736baca1c82c6ca9b770678ff2c04ce44458fc9",
+        "merged": true,
+        "merge_commit_sha": "021be8e33b486d9b66886ff299c20607ed8a071a"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 4763,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T22:08:19Z",
+      "title": "[v0.91.8][WP-21][birthday-docs] Implement first-birthday docs and external launch surfaces",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/4763",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5734,
+        "observed_sha": "313268e09b8d9906f61b0e12ac05cce4deea1e3c",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/4763.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5734,
+        "linked_issue": 4763,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5734",
+        "head_ref": "codex/4763-v0918-wp14-preparation",
+        "head_sha": "313268e09b8d9906f61b0e12ac05cce4deea1e3c",
+        "merged": true,
+        "merge_commit_sha": "d2b19b3aba092aff871b315d60590731e730cb4a"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5007,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T22:59:58Z",
+      "title": "[v0.91.8][WP-21][ADR] Accept Memory Palace architecture after complete platform proof",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5007",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5743,
+        "observed_sha": "426d0a53fb2b7b0be571b236ca5d0a248b32e1f8",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5007.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5743,
+        "linked_issue": 5007,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5743",
+        "head_ref": "codex/5007-v0918-wp14-preparation",
+        "head_sha": "426d0a53fb2b7b0be571b236ca5d0a248b32e1f8",
+        "merged": true,
+        "merge_commit_sha": "1bd6f73b1c449ffd132ad9a34c739e16c39186c2"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5107,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T21:49:26Z",
+      "title": "[v0.91.8][WP-21][planning] Queue Adaptive Learning DAG work after loop runtime and platform deployment",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5107",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5742,
+        "observed_sha": "8bf36c9d214a54212e7c483fb29872e9be9e92b3",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5107.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5742,
+        "linked_issue": 5107,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5742",
+        "head_ref": "codex/5107-v092-adaptive-learning-dag-queue",
+        "head_sha": "8bf36c9d214a54212e7c483fb29872e9be9e92b3",
+        "merged": true,
+        "merge_commit_sha": "b77d020c5c5274e7b64b6ef8f36eed888f34fb4c"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5332,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-24T19:26:14Z",
+      "title": "[v0.91.8][WP-15][unity][tooling] Classify and fix Unity ILPP GetDomainName loop in observatory batch proof",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5332",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5656,
+        "observed_sha": "0176aead8a012b0b74fa12443f7833bc71f00ca6",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5332.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5656,
+        "linked_issue": 5332,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5656",
+        "head_ref": "codex/5332-v0918-wp15-unity-ilpp-exec-prep",
+        "head_sha": "0176aead8a012b0b74fa12443f7833bc71f00ca6",
+        "merged": true,
+        "merge_commit_sha": "89fb6847a2a78effd66b73607681f463077ea018"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5335,
+      "state": "CLOSED",
+      "state_reason": "NOT_PLANNED",
+      "closed_at": "2026-07-15T18:33:41Z",
+      "title": "[v0.91.7][planning] Create v0.91.8 ADL Core Rearchitecture milestone and sprint",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5335",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "closed_no_pr",
+        "pull_request": null,
+        "observed_sha": null,
+        "observed_state": "closed_no_pr",
+        "receipt_path": "csdlc-v2/closeout/5335.json"
+      },
+      "remote": null,
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5336,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-21T06:26:28Z",
+      "title": "[v0.91.8][WP-02] Pin incumbent baseline and approve clean-room architecture",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5336",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5599,
+        "observed_sha": "cf506e3f0ce8e9d6eb3deabf66c586fb9d0b4bdc",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5336.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5599,
+        "linked_issue": 5336,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5599",
+        "head_ref": "codex/5336-v0918-runtime-parity-plan",
+        "head_sha": "cf506e3f0ce8e9d6eb3deabf66c586fb9d0b4bdc",
+        "merged": true,
+        "merge_commit_sha": "73f9e572b3afab23ff6387af423b021f263054ef"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5337,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-21T19:01:58Z",
+      "title": "[v0.91.8][WP-03] Build normalized characterization and determinism corpus",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5337",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5607,
+        "observed_sha": "73665c0571d417dedf689f3afeb009df7cbeea1f",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5337.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5607,
+        "linked_issue": 5337,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5607",
+        "head_ref": "codex/5337-v0918-wp03-preparation",
+        "head_sha": "73665c0571d417dedf689f3afeb009df7cbeea1f",
+        "merged": true,
+        "merge_commit_sha": "c9013d9c33e6c4d029e031e5199a56db88c91206"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5338,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-21T20:57:43Z",
+      "title": "[v0.91.8][WP-05] Implement pure deterministic ADL compiler",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5338",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5617,
+        "observed_sha": "2c0cdd4522e6d7a062595706249894be3e16b2b3",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5338.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5617,
+        "linked_issue": 5338,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5617",
+        "head_ref": "codex/5338-v0918-wp05-deterministic-compiler",
+        "head_sha": "2c0cdd4522e6d7a062595706249894be3e16b2b3",
+        "merged": true,
+        "merge_commit_sha": "fbf96beac1cb61c85bf7889e9c08729916c0796b"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5339,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-21T19:54:44Z",
+      "title": "[v0.91.8][WP-04] Implement clean-room six-primitives language core",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5339",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5612,
+        "observed_sha": "ba604e5f0ee16af901a4d8d7cb801c323500828d",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5339.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5612,
+        "linked_issue": 5339,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5612",
+        "head_ref": "codex/5339-v0918-wp04-language-core",
+        "head_sha": "ba604e5f0ee16af901a4d8d7cb801c323500828d",
+        "merged": true,
+        "merge_commit_sha": "860aa9f18946a2cd9407b610d5c00d44ddc89053"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5340,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-21T23:30:24Z",
+      "title": "[v0.91.8][WP-06] Implement portable bounded execution engine",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5340",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5623,
+        "observed_sha": "f38f662acb3988ef0704a54da055b14812c898d9",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5340.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5623,
+        "linked_issue": 5340,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5623",
+        "head_ref": "codex/5340-v0918-wp06-portable-engine",
+        "head_sha": "f38f662acb3988ef0704a54da055b14812c898d9",
+        "merged": true,
+        "merge_commit_sha": "19601faec54a53e8bab90af484f745bc4972f116"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5341,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T20:22:26Z",
+      "title": "[v0.91.8][WP-08] Implement Runtime v3 adapter",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5341",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5635,
+        "observed_sha": "c2c381cdd1393d1074e06f786320e81ac66a305f",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5341.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5635,
+        "linked_issue": 5341,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5635",
+        "head_ref": "codex/5341-v0918-runtime-v3-adapter",
+        "head_sha": "c2c381cdd1393d1074e06f786320e81ac66a305f",
+        "merged": true,
+        "merge_commit_sha": "713f9cb6e5b7f7b7674e601ce4f088134aa3c0a0"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5342,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T18:14:54Z",
+      "title": "[v0.91.8][WP-07] Implement portable records signing and trust contracts",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5342",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5628,
+        "observed_sha": "5f48b0854cd36f64bef38ed0d09a09d84fa2e158",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5342.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5628,
+        "linked_issue": 5342,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5628",
+        "head_ref": "codex/5342-v0918-wp07-records-signing",
+        "head_sha": "5f48b0854cd36f64bef38ed0d09a09d84fa2e158",
+        "merged": true,
+        "merge_commit_sha": "34186ad77c84f50fe5e4ae097cfce14314b0e983"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5343,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-29T09:19:46Z",
+      "title": "[v0.91.8][WP-12][cutover] Execute reviewed reversible ADL default switch",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5343",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5704,
+        "observed_sha": "e4bbc988cad682cbb2ff8d24085e1a99bccec1ce",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5343.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5704,
+        "linked_issue": 5343,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5704",
+        "head_ref": "codex/5343-v0918-wp12-reversible-default-switch",
+        "head_sha": "e4bbc988cad682cbb2ff8d24085e1a99bccec1ce",
+        "merged": true,
+        "merge_commit_sha": "e1b6a34e4763a79d1c40c641e64c0c061a0aa96c"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5344,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-29T08:38:47Z",
+      "title": "[v0.91.8][WP-12] Run opt-in soak and prove rollback",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5344",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5703,
+        "observed_sha": "141dfa20ccc3753060687259ad933397331df9c7",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5344.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5703,
+        "linked_issue": 5344,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5703",
+        "head_ref": "codex/5344-v0918-wp12-soak-rollback",
+        "head_sha": "141dfa20ccc3753060687259ad933397331df9c7",
+        "merged": true,
+        "merge_commit_sha": "d4825d4be9ed14ed6060dd33cbdafe5eaa5efcd2"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5345,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-23T06:39:47Z",
+      "title": "[v0.91.8][WP-10] Implement thin ADL CLI and authoritative selector",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5345",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5637,
+        "observed_sha": "4b4e36570f91483c4f263588f1f59970c2d125b4",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5345.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5637,
+        "linked_issue": 5345,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5637",
+        "head_ref": "codex/5345-v0918-wp10-thin-cli-selector",
+        "head_sha": "4b4e36570f91483c4f263588f1f59970c2d125b4",
+        "merged": true,
+        "merge_commit_sha": "64a07191e7b748afe19a3e3d2d8b3ff43c2921c3"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5346,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T04:49:58Z",
+      "title": "[v0.91.8][WP-13][deletion] Delete final replaced ADL language compiler engine and CLI",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5346",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5752,
+        "observed_sha": "7b1ef84bc8a4966c0c454ae4d87fd973537a856d",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5346.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5752,
+        "linked_issue": 5346,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5752",
+        "head_ref": "codex/5346-v0918-wp13-final-adl-deletion",
+        "head_sha": "7b1ef84bc8a4966c0c454ae4d87fd973537a856d",
+        "merged": true,
+        "merge_commit_sha": "ccca46abceb117150efbc3b69248fba611d90fff"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5347,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T04:47:32Z",
+      "title": "[v0.91.8][WP-13][deletion] Delete externally owned incumbent ADL bands",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5347",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5753,
+        "observed_sha": "9f144003669ef859e280c3de5cd8abac24a855b5",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5347.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5753,
+        "linked_issue": 5347,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5753",
+        "head_ref": "codex/5347-v0918-wp13-external-band-deletion",
+        "head_sha": "9f144003669ef859e280c3de5cd8abac24a855b5",
+        "merged": true,
+        "merge_commit_sha": "c2eb71ef25d53470037950444fdddf3b06c284ee"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5349,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T20:37:38Z",
+      "title": "[v0.91.8][WP-09] Implement provider and governed-tool adapters",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5349",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5636,
+        "observed_sha": "a9c974a84093cf13990d9cbe0b5827d7445bc3ce",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5349.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5636,
+        "linked_issue": 5349,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5636",
+        "head_ref": "codex/5349-v0918-wp09-provider-tool-adapters",
+        "head_sha": "a9c974a84093cf13990d9cbe0b5827d7445bc3ce",
+        "merged": true,
+        "merge_commit_sha": "79c7dccf12540863f6c038e1fd7ef45e2357a55e"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5350,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-23T08:20:26Z",
+      "title": "[v0.91.8][WP-11] Run exact-revision normalized shadow parity",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5350",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5649,
+        "observed_sha": "e392ddb66f01722fb2b40ac0bc9eeae3d56c67b5",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5350.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5649,
+        "linked_issue": 5350,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5649",
+        "head_ref": "codex/5350-v0918-wp11-shadow-parity",
+        "head_sha": "e392ddb66f01722fb2b40ac0bc9eeae3d56c67b5",
+        "merged": true,
+        "merge_commit_sha": "32fb2be4e111483a46d69ad2b5b60dd91e75ef0c"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5351,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T10:47:58Z",
+      "title": "[v0.91.8][WP-16] Run integrated platform quality gate",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5351",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5775,
+        "observed_sha": "50f74e83c758f6442dc0d42f3344996e847660a5",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5351.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5775,
+        "linked_issue": 5351,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5775",
+        "head_ref": "codex/5351-v0918-preparation",
+        "head_sha": "50f74e83c758f6442dc0d42f3344996e847660a5",
+        "merged": true,
+        "merge_commit_sha": "2e9d2dd7c4260dcf6ec6af954b0eea97554212df"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5352,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T01:19:57Z",
+      "title": "[v0.91.8][WP-21][handoff] Finalize exact-revision v0.92 consumption handoff",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5352",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5751,
+        "observed_sha": "6105fc7377aede7d1d2d98ee03d6a9cfdb975048",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5352.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5751,
+        "linked_issue": 5352,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5751",
+        "head_ref": "codex/5352-v0918-final-handoff",
+        "head_sha": "6105fc7377aede7d1d2d98ee03d6a9cfdb975048",
+        "merged": true,
+        "merge_commit_sha": "64632f8812dcf4a861902b97b981a72291d81beb"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5354,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T20:23:51Z",
+      "title": "[v0.91.8][WP-15] Converge integrated ADL Runtime and C-SDLC demos",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5354",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5731,
+        "observed_sha": "e8c63268429b0162671e7f1bfae5f560171d7099",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5354.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5731,
+        "linked_issue": 5354,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5731",
+        "head_ref": "codex/5354-v0918-wp15-ready",
+        "head_sha": "e8c63268429b0162671e7f1bfae5f560171d7099",
+        "merged": true,
+        "merge_commit_sha": "97427f324c87d97cb1b36c7804c50bf80c9389d8"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5358,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-21T04:06:53Z",
+      "title": "[v0.91.8][WP-14] Fully accept and deploy C-SDLC v2",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5358",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5606,
+        "observed_sha": "e048230245b1ad101c8056678123a2747faa4b60",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5358.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5606,
+        "linked_issue": 5358,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5606",
+        "head_ref": "codex/5358-v0918-csdlc-v2-acceptance-prep",
+        "head_sha": "e048230245b1ad101c8056678123a2747faa4b60",
+        "merged": true,
+        "merge_commit_sha": "fc75f4fc697262f89f99461679a406be0b4b3775"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5360,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T17:18:46Z",
+      "title": "[v0.91.8][WP-17] Align documentation and release truth before formal review",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5360",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5776,
+        "observed_sha": "3d4321e832a8931b5611cf59dbb566462e564836",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5360.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5776,
+        "linked_issue": 5360,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5776",
+        "head_ref": "codex/5360-v0918-preparation",
+        "head_sha": "3d4321e832a8931b5611cf59dbb566462e564836",
+        "merged": true,
+        "merge_commit_sha": "dc7fd24c5b145bcb9cb28c7d3b9ca7079d7fb653"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5361,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-23T15:31:20Z",
+      "title": "[v0.91.8][WP-14] Fully accept and deploy Runtime v3",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5361",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5650,
+        "observed_sha": "f7fc71421f4bcf70039b910c9b88b538bb111400",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5361.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5650,
+        "linked_issue": 5361,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5650",
+        "head_ref": "codex/5361-v0918-runtime-v3-acceptance-readiness",
+        "head_sha": "f7fc71421f4bcf70039b910c9b88b538bb111400",
+        "merged": true,
+        "merge_commit_sha": "f7258b07e9da414bfee518f0c89a76071bc03ee8"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5384,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-30T22:26:14Z",
+      "title": "[v0.91.8][WP-14A] Integrated platform acceptance and deployment",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5384",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5726,
+        "observed_sha": "c35c0a896d3a5ef5c9289886dbef232639dc9e98",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5384.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5726,
+        "linked_issue": 5384,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5726",
+        "head_ref": "codex/5384-v0918-wp14a-preparation-bound",
+        "head_sha": "c35c0a896d3a5ef5c9289886dbef232639dc9e98",
+        "merged": true,
+        "merge_commit_sha": "72fbf30c74a5193ea41f042c76c5986a48e59d6c"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5438,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-18T05:54:43Z",
+      "title": "[v0.91.8][csdlc-v2][records] Support typed terminal SOR follow-up reconciliation",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5438",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5462,
+        "observed_sha": "3782e33787bf6674daf9f17144745dfe1562a888",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5438.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5462,
+        "linked_issue": 5438,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5462",
+        "head_ref": "codex/5438-terminal-sor-reconcile",
+        "head_sha": "3782e33787bf6674daf9f17144745dfe1562a888",
+        "merged": true,
+        "merge_commit_sha": "2d39673a827a44d479feca8b671c80b80279bb39"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5470,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-18T07:31:53Z",
+      "title": "[v0.91.8][csdlc-v2][durability] Make terminal projection and receipt crash-consistent",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5470",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5486,
+        "observed_sha": "e5fe0766c79b4ed27f6615b2668c64039c31c023",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5470.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5486,
+        "linked_issue": 5470,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5486",
+        "head_ref": "codex/5470-terminal-durability",
+        "head_sha": "e5fe0766c79b4ed27f6615b2668c64039c31c023",
+        "merged": true,
+        "merge_commit_sha": "58e0a23b2b60a814ffae38e3343cb52930df99a2"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5497,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-23T05:31:02Z",
+      "title": "[v0.91.8][WP-10A][multi-agent] Implement end-to-end distributed C-SDLC workcell",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5497",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "closed_no_pr",
+        "pull_request": null,
+        "observed_sha": null,
+        "observed_state": "closed_no_pr",
+        "receipt_path": "csdlc-v2/closeout/5497.json"
+      },
+      "remote": null,
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5498,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T23:48:32Z",
+      "title": "[v0.91.8][WP-10A][multi-agent] Implement bounded Codex task and context-handoff adapter",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5498",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5639,
+        "observed_sha": "96359ed5bc008c63632e76a72eb1f2f77bfd9dd1",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5498.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5639,
+        "linked_issue": 5498,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5639",
+        "head_ref": "codex/5498-v0918-wp10a-task-context-adapter",
+        "head_sha": "96359ed5bc008c63632e76a72eb1f2f77bfd9dd1",
+        "merged": true,
+        "merge_commit_sha": "7d6095acd0da8fe9e1a622387a229a02ecd824dc"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5499,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T23:02:46Z",
+      "title": "[v0.91.8][WP-10A][multi-agent] Implement issue-graph-to-live-task conductor",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5499",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5638,
+        "observed_sha": "26a08cf896693c03fdf8dcc503e734bad56e61dc",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5499.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5638,
+        "linked_issue": 5499,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5638",
+        "head_ref": "codex/5499-v0918-wp10a-conductor",
+        "head_sha": "26a08cf896693c03fdf8dcc503e734bad56e61dc",
+        "merged": true,
+        "merge_commit_sha": "d8f02c5b77099552c376436acd695f2bf8922de6"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5500,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-23T04:24:14Z",
+      "title": "[v0.91.8][WP-10A][multi-agent][dashboard] Restore live workcell operator view",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5500",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5640,
+        "observed_sha": "a24992cfaecfb6adaa2f82ea1b780dd7d1cc6803",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5500.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5640,
+        "linked_issue": 5500,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5640",
+        "head_ref": "codex/5500-v0918-wp10a-dashboard",
+        "head_sha": "a24992cfaecfb6adaa2f82ea1b780dd7d1cc6803",
+        "merged": true,
+        "merge_commit_sha": "fa49c2d0f32147547f0aafdca8bfbc841c49258a"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5501,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-23T05:06:27Z",
+      "title": "[v0.91.8][WP-10A][multi-agent][proof] Run live distributed Codex workcell end to end",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5501",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5643,
+        "observed_sha": "9ff6a0a2f808a2f6207ad8de245c60f646706912",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5501.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5643,
+        "linked_issue": 5501,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5643",
+        "head_ref": "codex/5501-v0918-preparation",
+        "head_sha": "9ff6a0a2f808a2f6207ad8de245c60f646706912",
+        "merged": true,
+        "merge_commit_sha": "079f767a450e154265bc2c35deb1973c46332f50"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5502,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-23T00:34:00Z",
+      "title": "[v0.91.8][WP-10A][multi-agent] Implement output convergence and deterministic replanning",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5502",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5641,
+        "observed_sha": "3b900210cd30ee381c860a624499d1e4d8aea0d8",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5502.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5641,
+        "linked_issue": 5502,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5641",
+        "head_ref": "codex/5502-v0918-preparation",
+        "head_sha": "3b900210cd30ee381c860a624499d1e4d8aea0d8",
+        "merged": true,
+        "merge_commit_sha": "1cbbf4eb5531814f7b4f0fdc9edeaa1df78410cd"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5526,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-23T05:16:44Z",
+      "title": "[v0.91.8][WP-09][provider] Add Kimi and current agentic model providers",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5526",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5642,
+        "observed_sha": "ad1466d02a1f0a00d9f15b51c730c3c5b451f994",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5526.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5642,
+        "linked_issue": 5526,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5642",
+        "head_ref": "codex/5526-v0918-provider-expansion",
+        "head_sha": "ad1466d02a1f0a00d9f15b51c730c3c5b451f994",
+        "merged": true,
+        "merge_commit_sha": "9b90fa36a2cb52d99aad19d607ff07f1bc4f1d6b"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5527,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-19T00:25:49Z",
+      "title": "[v0.91.8][csdlc-v2][closeout] Normalize SOR artifact refs during terminal reconciliation",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5527",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5550,
+        "observed_sha": "c696e2787103a3d0c919661a0fd13c92c9acb26b",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5527.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5550,
+        "linked_issue": 5527,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5550",
+        "head_ref": "codex/5527-terminal-sor-artifact-repair",
+        "head_sha": "c696e2787103a3d0c919661a0fd13c92c9acb26b",
+        "merged": true,
+        "merge_commit_sha": "c33cd6658b26d663eed3123003c2ebd16a0c0b06"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5540,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-19T01:20:14Z",
+      "title": "[v0.91.8][csdlc-v2][closeout] Recover terminal lifecycle truth for #5455",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5540",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5560,
+        "observed_sha": "4dcee7813d078ece7e31010465ef1530b102712b",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5540.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5560,
+        "linked_issue": 5540,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5560",
+        "head_ref": "codex/5455-stale-owner-provenance",
+        "head_sha": "4dcee7813d078ece7e31010465ef1530b102712b",
+        "merged": true,
+        "merge_commit_sha": "7e26f6f911b55a0d0ad1c6135e6ed658c8afe3a4"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5541,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-19T02:27:06Z",
+      "title": "[v0.91.8][csdlc-v2][closeout] Recover #5306 direct merged PR #5331 terminal evidence",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5541",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5568,
+        "observed_sha": "8e206363ee75f5517862a03d8cc5dc07efa4128a",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5541.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5568,
+        "linked_issue": 5541,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5568",
+        "head_ref": "codex/5541-gate10d2-authority-docs",
+        "head_sha": "8e206363ee75f5517862a03d8cc5dc07efa4128a",
+        "merged": true,
+        "merge_commit_sha": "9624dac20c157dc3cdb0524cc3c6a64aba49e09a"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5548,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T22:41:36Z",
+      "title": "[v0.91.8][WP-20][csdlc-v2][tests] Initialize Gate 2 temp roots before terminal recovery",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5548",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "closed_no_pr",
+        "pull_request": null,
+        "observed_sha": null,
+        "observed_state": "closed_no_pr",
+        "receipt_path": "csdlc-v2/closeout/5548.json"
+      },
+      "remote": null,
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5558,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T23:48:49Z",
+      "title": "[v0.91.8][WP-20][csdlc-v2][validation] Remove sunset pr.sh guidance from owner lane",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5558",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5769,
+        "observed_sha": "6136a1c73f3d1584f6609a19123844345b797fca",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5558.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5769,
+        "linked_issue": 5558,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5769",
+        "head_ref": "codex/5558-v1-route-corrective",
+        "head_sha": "6136a1c73f3d1584f6609a19123844345b797fca",
+        "merged": true,
+        "merge_commit_sha": "a5df18f19a4c651eb6594e5690e294c7b7929261"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5563,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-19T01:38:50Z",
+      "title": "[v0.91.8][csdlc-v2][closeout] Recover stale approved design in initialized records",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5563",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5565,
+        "observed_sha": "41db01bd38534bd4b3c95139773ecfa9c2d6e1f9",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5563.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5565,
+        "linked_issue": 5563,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5565",
+        "head_ref": "codex/5563-initialized-design-recovery",
+        "head_sha": "41db01bd38534bd4b3c95139773ecfa9c2d6e1f9",
+        "merged": true,
+        "merge_commit_sha": "dc894cfd6d4e4774527d36a10b235d312be6f6e7"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5566,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-19T01:57:09Z",
+      "title": "[v0.91.8][csdlc-v2][bind] Activate an exact reserved claim from its existing issue worktree",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5566",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5567,
+        "observed_sha": "5f40f6cceac6c44518818bf06ad3ee190c8b83a9",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5566.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5567,
+        "linked_issue": 5566,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5567",
+        "head_ref": "codex/5566-existing-worktree-bind",
+        "head_sha": "5f40f6cceac6c44518818bf06ad3ee190c8b83a9",
+        "merged": true,
+        "merge_commit_sha": "212a7bb4f34b1c0ab7a66d94dd4dfe6317cbdfb6"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5569,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-19T02:45:52Z",
+      "title": "[v0.91.8][csdlc-v2][closeout] Repair #5547 terminal plan-step truth",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5569",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5570,
+        "observed_sha": "3106dcdde0d3f89bcacb2d1c2dee954a48127881",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5569.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5570,
+        "linked_issue": 5569,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5570",
+        "head_ref": "codex/5547-closeout-audit",
+        "head_sha": "3106dcdde0d3f89bcacb2d1c2dee954a48127881",
+        "merged": true,
+        "merge_commit_sha": "1adb842f8d71506e9eb95de132761cf96eeea55b"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5572,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-19T20:09:20Z",
+      "title": "[v0.91.8][review][validation] Repair #4645 committed-diff proof",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5572",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5574,
+        "observed_sha": "bc19a880c9f13d2cae37a0be2e7484993f92f5b1",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5572.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5574,
+        "linked_issue": 5572,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5574",
+        "head_ref": "codex/4645-v0917-internal-review",
+        "head_sha": "bc19a880c9f13d2cae37a0be2e7484993f92f5b1",
+        "merged": true,
+        "merge_commit_sha": "771dd35823be885d53200eb9f2d047c1c1f0f7e0"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5587,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T15:09:01Z",
+      "title": "[v0.91.8][google-workspace][automation] Make ADL Drive context mirror work end to end",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5587",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5626,
+        "observed_sha": "67acb4415e0e2ef1bade7328d19ecd26702788c8",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5587.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5626,
+        "linked_issue": 5587,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5626",
+        "head_ref": "codex/5587-google-drive-context-mirror",
+        "head_sha": "67acb4415e0e2ef1bade7328d19ecd26702788c8",
+        "merged": true,
+        "merge_commit_sha": "4d041967558dfe8486c6a724d70adf4979ea7e94"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5589,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T13:53:39Z",
+      "title": "[v0.91.8][WP-14][runtime-v3][parity-c] Replace degraded governed operations adapters",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5589",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5620,
+        "observed_sha": "0f22baf5d4b2fdef485164aa4c83002fdb520a3e",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5589.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5620,
+        "linked_issue": 5589,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5620",
+        "head_ref": "codex/5589-runtime-v3-parity-c",
+        "head_sha": "0f22baf5d4b2fdef485164aa4c83002fdb520a3e",
+        "merged": true,
+        "merge_commit_sha": "027c69def33dad770b493db2a0f36ad0bdd15fd0"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5590,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T14:39:40Z",
+      "title": "[v0.91.8][WP-14][runtime-v3][parity-d] Prove secure access, Observatory, guardian, and rollback",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5590",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5621,
+        "observed_sha": "a79ab1b395b7331e4b6288d19effdb5fc392e39a",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5590.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5621,
+        "linked_issue": 5590,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5621",
+        "head_ref": "codex/5590-runtime-v3-parity-d",
+        "head_sha": "a79ab1b395b7331e4b6288d19effdb5fc392e39a",
+        "merged": true,
+        "merge_commit_sha": "8ba224027a7ebd410aa4596c9edce571758f8a0a"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5591,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-21T19:30:53Z",
+      "title": "[v0.91.8][WP-14][runtime-v3][parity-a] Make kernel, continuity, and domain ingress live",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5591",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5608,
+        "observed_sha": "59b61985c9964e56d83272efa7035f12be462fd7",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5591.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5608,
+        "linked_issue": 5591,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5608",
+        "head_ref": "codex/5591-runtime-v3-parity-a-preparation",
+        "head_sha": "59b61985c9964e56d83272efa7035f12be462fd7",
+        "merged": true,
+        "merge_commit_sha": "c4efcb09cb01de2df10c0de8ece960d523a419dc"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5592,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-21T20:57:05Z",
+      "title": "[v0.91.8][WP-14][runtime-v3][parity-b] Make reasoning, adaptive learning, and governed cognition live",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5592",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5618,
+        "observed_sha": "dbd461697755c048f9b9bbb7eb1a3ca66b0c3e56",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5592.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5618,
+        "linked_issue": 5592,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5618",
+        "head_ref": "codex/5592-runtime-v3-parity-b",
+        "head_sha": "dbd461697755c048f9b9bbb7eb1a3ca66b0c3e56",
+        "merged": true,
+        "merge_commit_sha": "0d9a810d8ac76a7b469b0675fd08648b526bff16"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5594,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-20T17:43:44Z",
+      "title": "[v0.91.8][WP-01][readiness] Reconcile plans, sprint umbrellas, and parallel execution",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5594",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5596,
+        "observed_sha": "086eebf9811c96f073e21306741c652f05939ee0",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5594.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5596,
+        "linked_issue": 5594,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5596",
+        "head_ref": "codex/5594-v0918-wp01-readiness",
+        "head_sha": "086eebf9811c96f073e21306741c652f05939ee0",
+        "merged": true,
+        "merge_commit_sha": "19c2b6e2ad18bddc75db9231643a54b2a446ce72"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5597,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-20T19:40:14Z",
+      "title": "[v0.91.8][WP-14][csdlc-v2] Make typed card generation registry-aware and preparation-safe",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5597",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5598,
+        "observed_sha": "dce4f1f5cf795ff90c8a47c5a8b5d29f74adade6",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5597.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5598,
+        "linked_issue": 5597,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5598",
+        "head_ref": "codex/5597-generation-aware-preparation-safe",
+        "head_sha": "dce4f1f5cf795ff90c8a47c5a8b5d29f74adade6",
+        "merged": true,
+        "merge_commit_sha": "aac8eaa7dffaa904ed1dfb0ec17fbf667c1ef9f0"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5600,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-20T21:55:08Z",
+      "title": "[v0.91.8][csdlc-v2][bug] Support complete typed preparation-to-implementation replanning",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5600",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5601,
+        "observed_sha": "ea6e59494895fcbb43b406d0b322e12a04616167",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5600.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5601,
+        "linked_issue": 5600,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5601",
+        "head_ref": "codex/5600-complete-typed-replanning",
+        "head_sha": "ea6e59494895fcbb43b406d0b322e12a04616167",
+        "merged": true,
+        "merge_commit_sha": "2a6727a7b157bdfb5ee75cc4c26e5cbfac8776db"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5602,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-20T22:14:22Z",
+      "title": "[v0.91.8][CI] Prevent partition-local llvm-cov report crashes from failing hosted coverage",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5602",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5604,
+        "observed_sha": "6c6b512286cca4833fd19e35b9377b3994d76b5b",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5602.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5604,
+        "linked_issue": 5602,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5604",
+        "head_ref": "codex/5602-hosted-coverage-no-report",
+        "head_sha": "6c6b512286cca4833fd19e35b9377b3994d76b5b",
+        "merged": true,
+        "merge_commit_sha": "6d0f6115632a06619544b8ad4792792e741f1f31"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5605,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T19:45:40Z",
+      "title": "[v0.91.8][podcast][planning] Revive AI agent podcast weekly cadence",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5605",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5633,
+        "observed_sha": "62ec268dd361ff48bf0c4a16e78607a9ff37036d",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5605.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5633,
+        "linked_issue": 5605,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5633",
+        "head_ref": "codex/5605-v0-91-8-podcast-revive-ai-agent-podcast-weekly-cadence",
+        "head_sha": "62ec268dd361ff48bf0c4a16e78607a9ff37036d",
+        "merged": true,
+        "merge_commit_sha": "49efcde07796bd50d357464bc54db18223460fee"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5610,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-21T18:03:45Z",
+      "title": "[v0.91.8][CI][coverage] Normalize safe in-repo coverage paths without weakening traversal rejection",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5610",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5611,
+        "observed_sha": "ceea12f37a23c3d8b897c3fdae64a3d25102ec82",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5610.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5611,
+        "linked_issue": 5610,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5611",
+        "head_ref": "codex/5610-coverage-path-normalization",
+        "head_sha": "ceea12f37a23c3d8b897c3fdae64a3d25102ec82",
+        "merged": true,
+        "merge_commit_sha": "6d33d8e44e8e4e5991cae741ab162ad9bde363a6"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5613,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-21T21:15:14Z",
+      "title": "[v0.91.8][csdlc-v2][closeout] Reconcile stranded terminal projections atomically",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5613",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5619,
+        "observed_sha": "cd5c9dfeb2c073b71a9add1139afd0f729bee4a6",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5613.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5619,
+        "linked_issue": 5613,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5619",
+        "head_ref": "codex/5613-terminal-projection-repair",
+        "head_sha": "cd5c9dfeb2c073b71a9add1139afd0f729bee4a6",
+        "merged": true,
+        "merge_commit_sha": "09c0bd1784216dbce1ad4cdebfe2d453af6e3d9d"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5615,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T13:48:36Z",
+      "title": "[v0.91.8][ci][tooling] Route C-SDLC proof and FastWork builds correctly",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5615",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5622,
+        "observed_sha": "7fd0cd063c40e7a0dc181e1546f1963a4c4cfbef",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5615.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5622,
+        "linked_issue": 5615,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5622",
+        "head_ref": "codex/5615-csdlc-ci-fastwork-routing",
+        "head_sha": "7fd0cd063c40e7a0dc181e1546f1963a4c4cfbef",
+        "merged": true,
+        "merge_commit_sha": "497ce5891b9da0861e4c4dcfdf2b003c9861b070"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5624,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T17:19:56Z",
+      "title": "[v0.91.8][csdlc-v2][prune] Resolve issue-local terminal worktree topology safely",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5624",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5625,
+        "observed_sha": "4fe3e1ea5eab93c1842fa05106d62b3fa0b7a986",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5624.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5625,
+        "linked_issue": 5624,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5625",
+        "head_ref": "codex/5624-csdlc-prune-topology",
+        "head_sha": "4fe3e1ea5eab93c1842fa05106d62b3fa0b7a986",
+        "merged": true,
+        "merge_commit_sha": "63328b73311dde48d11791ddc405b32e87459d4e"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5627,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T17:42:31Z",
+      "title": "[v0.91.8][csdlc-v2][performance] Collapse routine lifecycle into four commands",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5627",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5629,
+        "observed_sha": "063fcc5dc05e3e4da284def0d32994817b9f7f6a",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5627.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5629,
+        "linked_issue": 5627,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5629",
+        "head_ref": "codex/5627-csdlc-four-command-lifecycle",
+        "head_sha": "063fcc5dc05e3e4da284def0d32994817b9f7f6a",
+        "merged": true,
+        "merge_commit_sha": "beb11c4c74cc1bf3de1e372dbb797cdade5f89aa"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5632,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-22T20:04:59Z",
+      "title": "[v0.91.8][tools][skills] Update adl_pr_cycle skill for C-SDLC v2",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5632",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5634,
+        "observed_sha": "92fde26a2ca073e204459fce1bb5e88d7c895528",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5632.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5634,
+        "linked_issue": 5632,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5634",
+        "head_ref": "codex/5632-adl-pr-cycle-v2",
+        "head_sha": "92fde26a2ca073e204459fce1bb5e88d7c895528",
+        "merged": true,
+        "merge_commit_sha": "4d68d4b1f4f70c15223ebdf71d59c9010e5e3d4c"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5645,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-23T05:52:34Z",
+      "title": "[v0.91.8][csdlc-v2][tools] Add typed fail-closed csdlc-merge command",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5645",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5646,
+        "observed_sha": "dd1972aa2c544a3f8ad51dde2e7611fcc0c5fc26",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5645.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5646,
+        "linked_issue": 5645,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5646",
+        "head_ref": "codex/csdlc-merge-command-impl",
+        "head_sha": "dd1972aa2c544a3f8ad51dde2e7611fcc0c5fc26",
+        "merged": true,
+        "merge_commit_sha": "efc8f9a5380e16c886f7d63aa0e08d254917d682"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5648,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-24T18:04:54Z",
+      "title": "[v0.91.8][csdlc-v2][tools] Add explicit operator active-claim revoke",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5648",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5652,
+        "observed_sha": "17f1d91781611e8f0d2ed740a58cbfcbd81a05d0",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5648.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5652,
+        "linked_issue": 5648,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5652",
+        "head_ref": "codex/5648-operator-active-claim-revoke",
+        "head_sha": "17f1d91781611e8f0d2ed740a58cbfcbd81a05d0",
+        "merged": true,
+        "merge_commit_sha": "5c59937353da70b245da10b84910e012df5dce9e"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5653,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-24T20:17:42Z",
+      "title": "[v0.91.8][docs] Refresh README status, release, CI, and homepage links",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5653",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5654,
+        "observed_sha": "5594107c5537035f969b5d7527562ed7d52c6239",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5653.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5654,
+        "linked_issue": 5653,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5654",
+        "head_ref": "codex/5653-readme-refresh",
+        "head_sha": "5594107c5537035f969b5d7527562ed7d52c6239",
+        "merged": true,
+        "merge_commit_sha": "1facdf2096958442441ecb078140db1bf03c4b46"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5657,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T01:46:37Z",
+      "title": "[v0.91.8][runtime-v3][launch] Simplify and harden local Runtime v3 launch path",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5657",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5659,
+        "observed_sha": "faf0c62c231e4db1ad7a582cc5a7a57b085a310b",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5657.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5659,
+        "linked_issue": 5657,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5659",
+        "head_ref": "codex/5657-runtime-v3-launch-recovery",
+        "head_sha": "faf0c62c231e4db1ad7a582cc5a7a57b085a310b",
+        "merged": true,
+        "merge_commit_sha": "d751ecea0fa6c638d7897087913ab3968b772874"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5658,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-26T04:47:31Z",
+      "title": "[v0.91.8][csdlc-v2][tooling] Keep all issue lifecycle writes in the bound worktree",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5658",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5674,
+        "observed_sha": "cb7674a5346110fb3ab65166a56683a4b1926ea2",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5658.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5674,
+        "linked_issue": 5658,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5674",
+        "head_ref": "codex/5658-bound-worktree-lifecycle",
+        "head_sha": "cb7674a5346110fb3ab65166a56683a4b1926ea2",
+        "merged": true,
+        "merge_commit_sha": "79830286d9a16a6edc37f45764c02374a4319cc9"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5662,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T00:12:31Z",
+      "title": "[v0.91.8][WP-15][unity][demo] Polish flagship Polis Observatory visual and runtime presentation",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5662",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5677,
+        "observed_sha": "ac3278e8b0a7e98783ca6d6e1333358e84f3c01a",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5662.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5677,
+        "linked_issue": 5662,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5677",
+        "head_ref": "codex/5662-v0918-unity-observatory-polish",
+        "head_sha": "ac3278e8b0a7e98783ca6d6e1333358e84f3c01a",
+        "merged": true,
+        "merge_commit_sha": "835e669f04b89ce0eb1385bdb0465c86c443111d"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5663,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T01:38:27Z",
+      "title": "[v0.91.8][runtime-v3][adapters] Implement durable local Runtime v3 adapters",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5663",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5669,
+        "observed_sha": "fb04c9fa29c528c06a7b3c76e5f6560b7700d43e",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5663.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5669,
+        "linked_issue": 5663,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5669",
+        "head_ref": "codex/5663-runtime-v3-durable-local-adapters",
+        "head_sha": "fb04c9fa29c528c06a7b3c76e5f6560b7700d43e",
+        "merged": true,
+        "merge_commit_sha": "735b2131004f7d299836ce98d226fe3c2ec8593c"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5664,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T01:38:29Z",
+      "title": "[v0.91.8][runtime-v3][protocols] Implement real Provider, ACIP, A2A, and Cloud Bridge adapters",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5664",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5680,
+        "observed_sha": "16e6594dae2f76e41ebf432c9ea477523e685247",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5664.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5680,
+        "linked_issue": 5664,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5680",
+        "head_ref": "codex/5664-runtime-v3-protocol-adapters",
+        "head_sha": "16e6594dae2f76e41ebf432c9ea477523e685247",
+        "merged": true,
+        "merge_commit_sha": "a858b2a0ac353967c612d13e1d69f7f8b1e97500"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5665,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-25T16:48:59Z",
+      "title": "[v0.91.8][runtime-v3][observatory] Complete authenticated WSS and feature proofs",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5665",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5667,
+        "observed_sha": "741071a9e5c721bad613b63bc899d9825fa84641",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5665.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5667,
+        "linked_issue": 5665,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5667",
+        "head_ref": "codex/5665-runtime-v3-wss-feature-proofs",
+        "head_sha": "741071a9e5c721bad613b63bc899d9825fa84641",
+        "merged": true,
+        "merge_commit_sha": "13c1e8811974f9a94773f9bcfee3d869eb104db0"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5666,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-25T17:26:01Z",
+      "title": "[v0.91.8][tools][ci] Add proportional fast lane for small fixes",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5666",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5668,
+        "observed_sha": "15dc921db1f594c1ff8f2ccf35b6bef851ac64c7",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5666.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5668,
+        "linked_issue": 5666,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5668",
+        "head_ref": "codex/5666-throughput-fast-lane",
+        "head_sha": "15dc921db1f594c1ff8f2ccf35b6bef851ac64c7",
+        "merged": true,
+        "merge_commit_sha": "6fb2539d9d84cb917f5968c2350cb68b00497612"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5670,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-26T03:23:52Z",
+      "title": "[v0.91.8][ci][coverage] Parallelize hosted coverage with shard producers and aggregation gate",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5670",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5672,
+        "observed_sha": "26f6f00b95d0eca61db7ce12e0759c948ca9be3a",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5670.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5672,
+        "linked_issue": 5670,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5672",
+        "head_ref": "codex/5670-coverage-shard-fanout",
+        "head_sha": "26f6f00b95d0eca61db7ce12e0759c948ca9be3a",
+        "merged": true,
+        "merge_commit_sha": "458e70ad588ece43c6532e2155bc53e0b42a6110"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5671,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-26T03:45:35Z",
+      "title": "[v0.91.8][provider] Add Anthropic Claude Opus 5 provider profile",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5671",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5673,
+        "observed_sha": "828ab4876818888c067b8ecefcda3ac6330a71fc",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5671.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5673,
+        "linked_issue": 5671,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5673",
+        "head_ref": "codex/5671-anthropic-opus-5",
+        "head_sha": "828ab4876818888c067b8ecefcda3ac6330a71fc",
+        "merged": true,
+        "merge_commit_sha": "7606de57c61104a61df49de479008225c0a1eee0"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5675,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T01:39:26Z",
+      "title": "[v0.91.8][provider] Route Kimi and MiniMax through adl-provider-adapter",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5675",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5759,
+        "observed_sha": "92fed26e1ff2031a57d80a014fbef77542da55d8",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5675.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5759,
+        "linked_issue": 5675,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5759",
+        "head_ref": "codex/5756-minimax-billing-classification",
+        "head_sha": "92fed26e1ff2031a57d80a014fbef77542da55d8",
+        "merged": true,
+        "merge_commit_sha": "ad030e883573034d0b769c02ab3929266d21bb26"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5678,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T01:18:57Z",
+      "title": "[v0.91.8][provider][docs] Keep Opus review runbook aligned with adapter CLI",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5678",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5685,
+        "observed_sha": "90165c6ee1f4bed18820731efd7326dbab4a6669",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5678.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5685,
+        "linked_issue": 5678,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5685",
+        "head_ref": "codex/5678-opus-review-runbook",
+        "head_sha": "90165c6ee1f4bed18820731efd7326dbab4a6669",
+        "merged": true,
+        "merge_commit_sha": "16b08fd70004a9ad4119c66437bcb53f43aeb140"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5679,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T00:48:02Z",
+      "title": "[v0.91.8][tools][csdlc-v2] Fix stable owner-binary install manifest",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5679",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5682,
+        "observed_sha": "165473130facaf7c78868ff57c86a0e20597a973",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5679.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5682,
+        "linked_issue": 5679,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5682",
+        "head_ref": "codex/csdlc-install-manifest-fix",
+        "head_sha": "165473130facaf7c78868ff57c86a0e20597a973",
+        "merged": true,
+        "merge_commit_sha": "8e89bed30473f1e24d32a0e6536c82f5ca665cee"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5683,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T05:03:48Z",
+      "title": "[v0.91.8][WP-15][unity][demo] Remediate flagship Observatory render artifacts and presentation proof",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5683",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5693,
+        "observed_sha": "cc19f5a187e73cf6110958b05bd347b6855bf92f",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5683.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5693,
+        "linked_issue": 5683,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5693",
+        "head_ref": "codex/5683-v0918-unity-observatory-visual-remediation",
+        "head_sha": "cc19f5a187e73cf6110958b05bd347b6855bf92f",
+        "merged": true,
+        "merge_commit_sha": "75246bfd76935f567809fedd52e92b2cd80c679e"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5686,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T02:31:59Z",
+      "title": "[v0.91.8][csdlc-v2][records] Publish #5662 terminal projection to main",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5686",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5690,
+        "observed_sha": "be419727aa76472c189263c5e69d92df5cd2c488",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5686.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5690,
+        "linked_issue": 5686,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5690",
+        "head_ref": "codex/5686-publish-5662-terminal-projection",
+        "head_sha": "be419727aa76472c189263c5e69d92df5cd2c488",
+        "merged": true,
+        "merge_commit_sha": "4cf18183e569f7ff2a9d92cc469e7777dc0825df"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5687,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T02:16:19Z",
+      "title": "[v0.91.8][runtime-v3][review] Complete bounded Opus 5 review of Runtime v3",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5687",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5689,
+        "observed_sha": "5ec42edceafc9e49a2712e7f31398f93cd77c9c9",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5687.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5689,
+        "linked_issue": 5687,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5689",
+        "head_ref": "codex/5687-runtime-launch-remediation",
+        "head_sha": "5ec42edceafc9e49a2712e7f31398f93cd77c9c9",
+        "merged": true,
+        "merge_commit_sha": "72a6e99495e6fe33759eb6b105fd21ca2a68a22f"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5691,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T17:18:52Z",
+      "title": "[v0.91.8][runtime-v3][observability] Integrate tracing with Vector durable master logging",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5691",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5694,
+        "observed_sha": "639cbffe8dfada254031edf350049e33724447e1",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5691.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5694,
+        "linked_issue": 5691,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5694",
+        "head_ref": "codex/5691-runtime-v3-vector-otel",
+        "head_sha": "639cbffe8dfada254031edf350049e33724447e1",
+        "merged": true,
+        "merge_commit_sha": "e7cab4ab61e9e2db56dea3d3a1d2cd0adba343d4"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5695,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T18:48:47Z",
+      "title": "[v0.91.8][csdlc-v2][tooling] Preserve blocked and unstable PR mergeability states",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5695",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5700,
+        "observed_sha": "fad9aaa4e7c706d734848e95c53743e294f7dc22",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5695.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5700,
+        "linked_issue": 5695,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5700",
+        "head_ref": "codex/5695-pr-state-mergeability",
+        "head_sha": "fad9aaa4e7c706d734848e95c53743e294f7dc22",
+        "merged": true,
+        "merge_commit_sha": "26464ab54f81714478973556a9f56d3c77c6c203"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5697,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-27T18:36:46Z",
+      "title": "[v0.91.8][runtime-v3][time] Make Chronosense consume trusted_time at startup",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5697",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5699,
+        "observed_sha": "93dc2793cdca052abd58a7e5aaffd6a5f5b1dca1",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5697.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5699,
+        "linked_issue": 5697,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5699",
+        "head_ref": "codex/5697-chronosense-trusted-time",
+        "head_sha": "93dc2793cdca052abd58a7e5aaffd6a5f5b1dca1",
+        "merged": true,
+        "merge_commit_sha": "5e1ad7b9ed890c757eeb0b8395ab467dce679295"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5698,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-29T18:31:43Z",
+      "title": "[v0.91.8][runtime-v3][state] Unify durable kernel state on redb",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5698",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5707,
+        "observed_sha": "23fd17288b4b3383ed4a2cf9288fc7499244b338",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5698.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5707,
+        "linked_issue": 5698,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5707",
+        "head_ref": "codex/5698-runtime-v3-redb-state",
+        "head_sha": "23fd17288b4b3383ed4a2cf9288fc7499244b338",
+        "merged": true,
+        "merge_commit_sha": "892c87bb95e0e40b4e392ce844077f897d7360f3"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5701,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-29T22:56:08Z",
+      "title": "[v0.91.8][runtime-v3][api] Define the complete versioned Runtime and Observatory OpenAPI contracts",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5701",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5705,
+        "observed_sha": "db41b249277a91140d4fd67bfc5bf898f4565774",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5701.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5705,
+        "linked_issue": 5701,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5705",
+        "head_ref": "codex/5701-runtime-v3-openapi-contracts",
+        "head_sha": "db41b249277a91140d4fd67bfc5bf898f4565774",
+        "merged": true,
+        "merge_commit_sha": "647e68f00aa339ca7c2fa3c7636fe59f9ffa163e"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5702,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-29T17:38:37Z",
+      "title": "[v0.91.8][podcast] Launch weekly AI Agent Podcast with flawless audio, RSS, guests, and site design",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5702",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5706,
+        "observed_sha": "52b0096b4af7e143f024826b7e313da1cdf10ff2",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5702.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5706,
+        "linked_issue": 5702,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5706",
+        "head_ref": "codex/5702-podcast-launch-plan",
+        "head_sha": "52b0096b4af7e143f024826b7e313da1cdf10ff2",
+        "merged": true,
+        "merge_commit_sha": "c903b84a591ce780e54039715057f542c7118451"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5708,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-29T19:15:10Z",
+      "title": "[v0.91.8][podcast][ui] Redesign Podcast Studio with Agent Logic MagicUI style",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5708",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5709,
+        "observed_sha": "af5bdea3770f6a42d729f9e32cff4a62433e191e",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5708.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5709,
+        "linked_issue": 5708,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5709",
+        "head_ref": "codex/5708-podcast-studio-magicui",
+        "head_sha": "af5bdea3770f6a42d729f9e32cff4a62433e191e",
+        "merged": true,
+        "merge_commit_sha": "94870cdc556acac1d9a6efe90206fb98a9b7a5cd"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5710,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-29T19:10:50Z",
+      "title": "[v0.91.8][csdlc-v2][closeout] Repair terminal closeout and safe-prune recovery for closed issues",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5710",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5712,
+        "observed_sha": "f040c21b6b1583c3709427781f5913c633bf7c62",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5710.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5712,
+        "linked_issue": 5710,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5712",
+        "head_ref": "codex/5710-csdlc-v2-closeout-safe-prune-recovery",
+        "head_sha": "f040c21b6b1583c3709427781f5913c633bf7c62",
+        "merged": true,
+        "merge_commit_sha": "cf62fecd603680c01ee65c10652d6ef2c970f5f8"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5711,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-29T20:35:01Z",
+      "title": "[v0.91.8][podcast][launch] Ship weekly podcast with audio, RSS, guests, and public route",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5711",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5714,
+        "observed_sha": "854b7829e89c0e6bd8eada8d28cd62ecbf057648",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5711.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5714,
+        "linked_issue": 5711,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5714",
+        "head_ref": "codex/5711-podcast-audio-rss",
+        "head_sha": "854b7829e89c0e6bd8eada8d28cd62ecbf057648",
+        "merged": true,
+        "merge_commit_sha": "5499055f1a6ec51716cda51469275f4a6dcfd7cd"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5713,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T06:05:48Z",
+      "title": "[v0.91.8][runtime-v3][tls] Add stable rcgen local TLS bootstrap",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5713",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5754,
+        "observed_sha": "e56a5f1115d432407c4b89ef2e51040da26cf3fd",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5713.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5754,
+        "linked_issue": 5713,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5754",
+        "head_ref": "codex/5713-runtime-v3-rcgen-local-tls",
+        "head_sha": "e56a5f1115d432407c4b89ef2e51040da26cf3fd",
+        "merged": true,
+        "merge_commit_sha": "85f0aa3d1f6b442acb61ada97fb3a5a73b50a444"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5715,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-29T22:29:04Z",
+      "title": "[v0.91.8][podcast][ui] Update podcast studio from operator-provided page design",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5715",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5716,
+        "observed_sha": "0751a74a211ac7f0041f981437c3eb96486ad850",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5715.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5716,
+        "linked_issue": 5715,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5716",
+        "head_ref": "codex/5715-podcast-studio-design-integration",
+        "head_sha": "0751a74a211ac7f0041f981437c3eb96486ad850",
+        "merged": true,
+        "merge_commit_sha": "aa64bca602a0050cb51e91ab0ea8df012110d82e"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5717,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T20:13:15Z",
+      "title": "[v0.91.8][podcast][ui] Update podcast studio copy from integrated design",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5717",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5720,
+        "observed_sha": "feed452c05edbaf86a0b043a65359b40e63d6c8d",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5717.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5720,
+        "linked_issue": 5717,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5720",
+        "head_ref": "codex/5717-podcast-studio-copy",
+        "head_sha": "feed452c05edbaf86a0b043a65359b40e63d6c8d",
+        "merged": true,
+        "merge_commit_sha": "c65eabd3d05dd1f6dfb05425baa44362b62967d2"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5718,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-29T22:56:08Z",
+      "title": "[v0.91.8][runtime-v3][observatory] Replace stale v0.91.7 product branding",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5718",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5705,
+        "observed_sha": "db41b249277a91140d4fd67bfc5bf898f4565774",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5718.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5705,
+        "linked_issue": 5718,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5705",
+        "head_ref": "codex/5701-runtime-v3-openapi-contracts",
+        "head_sha": "db41b249277a91140d4fd67bfc5bf898f4565774",
+        "merged": true,
+        "merge_commit_sha": "647e68f00aa339ca7c2fa3c7636fe59f9ffa163e"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5719,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-29T22:55:21Z",
+      "title": "[v0.91.8][ci][coverage] Avoid duplicate hosted coverage on podcast/demo page PRs",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5719",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5721,
+        "observed_sha": "e37fca96d6e023e53e0af317bfead9654aba8e12",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5719.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5721,
+        "linked_issue": 5719,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5721",
+        "head_ref": "codex/5719-ci-coverage-page-policy",
+        "head_sha": "e37fca96d6e023e53e0af317bfead9654aba8e12",
+        "merged": true,
+        "merge_commit_sha": "799f8eca6f1fe204d8e6db841506af3bfe71b3b6"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5722,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-30T01:24:24Z",
+      "title": "[v0.91.8][runtime-v3][observatory] Harden trusted HTTPS and live controls",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5722",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5760,
+        "observed_sha": "7ef7462392278cb4e3e6d50a3d187a3ceff1126b",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5722.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5760,
+        "linked_issue": 5722,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5760",
+        "head_ref": "codex/5757-observatory-corrective",
+        "head_sha": "7ef7462392278cb4e3e6d50a3d187a3ceff1126b",
+        "merged": true,
+        "merge_commit_sha": "89c41f98cbe5f31f507f5edef83301f392af2513"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5727,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T17:24:54Z",
+      "title": "[v0.91.8][csdlc-v2][claims] Make released bound claims safely reacquirable",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5727",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5730,
+        "observed_sha": "693667d5e13e3b0ead95c935c796e696f629c104",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5727.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5730,
+        "linked_issue": 5727,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5730",
+        "head_ref": "codex/5727-csdlc-claim-reacquire",
+        "head_sha": "693667d5e13e3b0ead95c935c796e696f629c104",
+        "merged": true,
+        "merge_commit_sha": "42a6340bc442e704b40c7b01249c45f6b1c92449"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5728,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T17:52:50Z",
+      "title": "[v0.91.8][architecture][ADR] Record accepted milestone architecture decisions",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5728",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5729,
+        "observed_sha": "f62e36f1a70cae3adee71c715a3f5456df08f917",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5728.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5729,
+        "linked_issue": 5728,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5729",
+        "head_ref": "codex/5728-v0918-adr-set",
+        "head_sha": "f62e36f1a70cae3adee71c715a3f5456df08f917",
+        "merged": true,
+        "merge_commit_sha": "59897878c837671f696690c58531f6fabd34b3db"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5733,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T23:06:13Z",
+      "title": "[v0.91.8][WP-15][demo-matrix] Reconcile demo matrix and feature-proof coverage",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5733",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5747,
+        "observed_sha": "7593093c4d5ebf4b339e31aca1ce5ade1a049141",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5733.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5747,
+        "linked_issue": 5733,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5747",
+        "head_ref": "codex/5733-demo-matrix-proof-coverage",
+        "head_sha": "7593093c4d5ebf4b339e31aca1ce5ade1a049141",
+        "merged": true,
+        "merge_commit_sha": "ab4e9e2217c152df47b1754b66b01febb4a59549"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5735,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T21:16:45Z",
+      "title": "[v0.91.8][docs][publication] Reconcile current Medium article launch list",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5735",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5736,
+        "observed_sha": "305269157b0c1a7d18e8f6948e67f5bd1c17ec89",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5735.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5736,
+        "linked_issue": 5735,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5736",
+        "head_ref": "codex/5735-medium-article-list-reconcile",
+        "head_sha": "305269157b0c1a7d18e8f6948e67f5bd1c17ec89",
+        "merged": true,
+        "merge_commit_sha": "4516a45714e3f7c05e43f215d08f3521eab94beb"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5737,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T22:09:18Z",
+      "title": "[v0.91.8][csdlc-v2] Make claim recovery independent of unrelated terminal drift and stale design inputs",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5737",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5745,
+        "observed_sha": "86c2d7ae8f25cc890d6e8d892b3539a663d902f6",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5737.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5745,
+        "linked_issue": 5737,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5745",
+        "head_ref": "codex/5737-csdlc-authority-recovery",
+        "head_sha": "86c2d7ae8f25cc890d6e8d892b3539a663d902f6",
+        "merged": true,
+        "merge_commit_sha": "4b1dfc136fd66850f5ad4296401a529bfedeca7d"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5746,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-07-31T23:24:15Z",
+      "title": "[v0.91.8][csdlc-v2][closeout] Materialize retained terminal projections",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5746",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5750,
+        "observed_sha": "697527ddb37a06738ce47a3a3cbd9d07d22ac724",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5746.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5750,
+        "linked_issue": 5746,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5750",
+        "head_ref": "codex/5746-v0918-terminal-reconcile-wave",
+        "head_sha": "697527ddb37a06738ce47a3a3cbd9d07d22ac724",
+        "merged": true,
+        "merge_commit_sha": "039014b1d396d97e6cb2670d44611ebeef03c671"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5755,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T07:34:06Z",
+      "title": "[v0.91.8][runtime-v3][protocols] Resolve #5664 terminal closeout security blockers",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5755",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5758,
+        "observed_sha": "9dcca3fb3fd8e1fbbc766f62207eb2e0c7af43d9",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5755.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5758,
+        "linked_issue": 5755,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5758",
+        "head_ref": "codex/5755-runtime-protocol-security",
+        "head_sha": "9dcca3fb3fd8e1fbbc766f62207eb2e0c7af43d9",
+        "merged": true,
+        "merge_commit_sha": "5981ebae2993fced948aa85895234b4efab8f7c5"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5756,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T07:41:24Z",
+      "title": "[v0.91.8][runtime-v3][providers] Scope MiniMax billing classification to MiniMax responses",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5756",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5759,
+        "observed_sha": "92fed26e1ff2031a57d80a014fbef77542da55d8",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5756.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5759,
+        "linked_issue": 5756,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5759",
+        "head_ref": "codex/5756-minimax-billing-classification",
+        "head_sha": "92fed26e1ff2031a57d80a014fbef77542da55d8",
+        "merged": true,
+        "merge_commit_sha": "ad030e883573034d0b769c02ab3929266d21bb26"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5757,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T07:41:52Z",
+      "title": "[v0.91.8][observatory][security] Fix trusted-origin, rerender race, and shared-certificate proof",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5757",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5760,
+        "observed_sha": "7ef7462392278cb4e3e6d50a3d187a3ceff1126b",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5757.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5760,
+        "linked_issue": 5757,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5760",
+        "head_ref": "codex/5757-observatory-corrective",
+        "head_sha": "7ef7462392278cb4e3e6d50a3d187a3ceff1126b",
+        "merged": true,
+        "merge_commit_sha": "89c41f98cbe5f31f507f5edef83301f392af2513"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5762,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T09:29:25Z",
+      "title": "[v0.91.8][csdlc-v2][tests] Make terminal repair fixtures independent of live issue claims",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5762",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5768,
+        "observed_sha": "4a44e4a6b6feb64cfe566cb97e04aa0d888c57f5",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5762.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5768,
+        "linked_issue": 5762,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5768",
+        "head_ref": "codex/5762-terminal-sor-validation-fixtures",
+        "head_sha": "4a44e4a6b6feb64cfe566cb97e04aa0d888c57f5",
+        "merged": true,
+        "merge_commit_sha": "e825bd86a8c810a8937dc8bef67ef99c45b464df"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5763,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T09:21:25Z",
+      "title": "[v0.91.8][docs][quality] Reconcile canonical feature crosswalk digest after WP-14 decomposition",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5763",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5767,
+        "observed_sha": "9dce9c69c32fc8870f2e3c9b9ab6f8dd1dab38ff",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5763.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5767,
+        "linked_issue": 5763,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5767",
+        "head_ref": "codex/5763-feature-crosswalk-digest",
+        "head_sha": "9dce9c69c32fc8870f2e3c9b9ab6f8dd1dab38ff",
+        "merged": true,
+        "merge_commit_sha": "76a60596600f25abce6a1ea30c0c1591ef91d78c"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5764,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T10:39:59Z",
+      "title": "[v0.91.8][runtime-v3][observatory] Repair overnight readiness probes and weather freshness truth",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5764",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5771,
+        "observed_sha": "863846c47c3404c6e4513d8ae2eb3dbcd6278817",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5764.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5771,
+        "linked_issue": 5764,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5771",
+        "head_ref": "codex/5764-runtime-observatory-readiness",
+        "head_sha": "863846c47c3404c6e4513d8ae2eb3dbcd6278817",
+        "merged": true,
+        "merge_commit_sha": "136d7d2241e1f1e1de01ee7eb7571c6c02283060"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5770,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T10:07:19Z",
+      "title": "[v0.91.8][csdlc-v2][review] Allow bounded SPP correction during implemented review remediation",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5770",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5772,
+        "observed_sha": "ecfe785f8d387777276ebb0b1c6ae4fac62091ee",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5770.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5772,
+        "linked_issue": 5770,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5772",
+        "head_ref": "codex/5770-implemented-spp-review-remediation",
+        "head_sha": "ecfe785f8d387777276ebb0b1c6ae4fac62091ee",
+        "merged": true,
+        "merge_commit_sha": "defd0a8c4381af7c842996ee0df3ee0be0355267"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    },
+    {
+      "number": 5773,
+      "state": "CLOSED",
+      "state_reason": "COMPLETED",
+      "closed_at": "2026-08-01T10:31:39Z",
+      "title": "[v0.91.8][csdlc-v2][review] Allow bounded SIP and STP correction during implemented review remediation",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5773",
+      "terminal": {
+        "phase": "closed_out",
+        "claim_free": true,
+        "disposition": "merged",
+        "pull_request": 5774,
+        "observed_sha": "009ad82b5845efa4bb4f968d468b388576fc34b5",
+        "observed_state": "merged",
+        "receipt_path": "csdlc-v2/closeout/5773.json"
+      },
+      "remote": {
+        "schema": "csdlc.github_pr_state.v1",
+        "pull_request": 5774,
+        "linked_issue": 5773,
+        "url": "https://github.com/danielbaustin/agent-design-language/pull/5774",
+        "head_ref": "codex/5773-implemented-sip-stp-review-remediation",
+        "head_sha": "009ad82b5845efa4bb4f968d468b388576fc34b5",
+        "merged": true,
+        "merge_commit_sha": "5ef3f27ae1a031d0676d9fe93eb1868f7bb82e9a"
+      },
+      "checks": {
+        "projection_terminal": true,
+        "remote_disposition_valid": true,
+        "linked_issue_matches": true,
+        "observed_head_matches": true,
+        "no_pr_consistent": true
+      }
+    }
+  ]
+}

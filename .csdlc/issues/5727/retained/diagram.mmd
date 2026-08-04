@@ -1,0 +1,8 @@
+flowchart LR
+    D["Dormant nonterminal record<br/>claim = null"] --> R["Typed reacquire request"]
+    R --> C{"CAS generation and digest<br/>plus claim validation"}
+    C -->|invalid or stale| F["Fail closed"]
+    C -->|valid| O{"Overlapping live claim?"}
+    O -->|yes| F
+    O -->|no| A["Append audit event"]
+    A --> N["Same lifecycle phase<br/>new live claim and generation"]

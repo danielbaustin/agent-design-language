@@ -1,0 +1,133 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5697,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][time] Make Chronosense consume trusted_time at startup",
+    "slug": "chronosense-trusted-time",
+    "version": "v0.91.8",
+    "generation": 12
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "runtime-v3-chronosense-assembly",
+          "proof_role": "Prove Chronosense trusted_time wiring, fail-closed behavior, and startup order",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--test",
+            "assembly"
+          ],
+          "parallel_group": "runtime-v3-chronosense",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-chronosense-governed-operations",
+          "proof_role": "Prove governed operation call sites share the live RuntimeRecorder-backed trusted time",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--test",
+            "governed_operations"
+          ],
+          "parallel_group": "runtime-v3-chronosense",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-chronosense-clippy",
+          "proof_role": "Prove strict lint cleanliness for the touched Runtime v3 kernel crate",
+          "acceptance_ids": [
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "clippy",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "parallel_group": "runtime-v3-chronosense",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-chronosense-exact-review",
+          "proof_role": "Record one exact-head review before ready publication",
+          "acceptance_ids": [
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 2000,
+          "argv": [
+            "csdlc-review",
+            "record"
+          ],
+          "parallel_group": "runtime-v3-chronosense",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-chronosense-ready-publication",
+          "proof_role": "Publish one ready PR whose body closes issue #5697",
+          "acceptance_ids": [
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 1000,
+          "argv": [
+            "csdlc-publish",
+            "publish"
+          ],
+          "parallel_group": "runtime-v3-chronosense",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on claim collision, stale generation, #5663 lifecycle mutation, skipped proof, or stale/missing exact-head review.",
+      "design_ref": ".csdlc/issues/5697/retained/design.md",
+      "design_digest": "6798ab94db24ce72d708314bf7922548f26bdc12bbc63822d8d9cbdf1e3088bb",
+      "diagram_ref": ".csdlc/issues/5697/retained/diagram.mmd",
+      "diagram_digest": "43ef573630aa020d95c730f5c03b8337c97723c19239f8abcacac169fc6945b8"
+    }
+  }
+}

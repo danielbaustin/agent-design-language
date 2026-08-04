@@ -1,0 +1,7 @@
+{
+  "issue": 5499,
+  "expected_generation": 0,
+  "expected_digest": "e5251fdefd601aae7127019cc5bfca4bd209c593dccb561f457abdf49b35fb9c",
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "reviewer": "subagent:019f8612-1b9a-7cf0-9ac1-016f112ea7f6"
+}

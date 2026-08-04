@@ -1,0 +1,8 @@
+{
+  "issue": 5653,
+  "expected_generation": 7,
+  "expected_digest": "c4f74558194a7508185d3a17651e900b309b66e6d3412cde3b38d12b10700815",
+  "claim_id": "claim-5653-readme-refresh",
+  "actor": "codex:5653-execution",
+  "reason": "Release-truth documentation changed after draft publication; recover stale review and publication truth for exact-head re-review."
+}

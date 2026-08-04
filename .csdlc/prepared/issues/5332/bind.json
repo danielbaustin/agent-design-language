@@ -1,0 +1,26 @@
+{
+  "issue": 5332,
+  "base_branch": "main",
+  "branch": "codex/5332-v0918-wp15-unity-ilpp-exec-prep",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5332-v0918-wp15-unity-ilpp-exec-prep",
+    "owner": "codex:issue-5332-execution-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1784835366,
+    "expires_unix_seconds": 1785440166,
+    "heartbeat_unix_seconds": 1784835366,
+    "branch": "codex/5332-v0918-wp15-unity-ilpp-exec-prep",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5332",
+      ".csdlc/locks/5332.lock",
+      ".csdlc/prepared/issues/5332",
+      "adl/tools/lib/unity_observatory_batch_classifiers.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+      "docs/tooling/unity_ilpp_getdomainname_diagnosis.md"
+    ],
+    "purpose": "Prepare #5332 for bounded v0.91.8 WP-15 Unity ILPP GetDomainName loop diagnosis and regression execution"
+  }
+}

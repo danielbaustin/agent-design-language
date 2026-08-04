@@ -1,0 +1,15 @@
+{
+  "issue": 5498,
+  "expected_generation": 9,
+  "expected_digest": "4245197de098fec3833f802d3371d20daa6053671da47f8c709e0a131977e95a",
+  "claim_id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+  "reviewer": "subagent:019f8c25-5bb5-7db2-965d-f9ccaa25f006",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    "adl-v2/Cargo.toml",
+    "adl-v2/Cargo.lock",
+    "adl-v2/crates/adl-workcell-task-adapter",
+    ".csdlc/issues/5498",
+    ".csdlc/prepared/issues/5498"
+  ]
+}

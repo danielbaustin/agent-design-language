@@ -1,0 +1,233 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5779,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "bae1820ec9800727997a8bf005c346633d0bf8ad69c777c8d88fd4b0eb7780fd",
+  "phase": "published",
+  "generation": 6,
+  "digest": "14eb6ffccaa23d25a854032f828ec3eb2ac6d51241cb1c41923b1109fe0119d7",
+  "claim": {
+    "id": "claim-5779-standalone-cleanup",
+    "owner": "codex:5779-implementation",
+    "generation": 6,
+    "acquired_unix_seconds": 1785777237,
+    "expires_unix_seconds": 1786382037,
+    "heartbeat_unix_seconds": 1785777237,
+    "branch": "codex/5779-standalone-cleanup",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5779",
+      ".csdlc/issues/5779",
+      ".csdlc/locks/5779.lock",
+      ".csdlc/prepared/issues/5779",
+      ".csdlc/publication/5779.intent.json",
+      "AGENTS.md",
+      "csdlc-v2/AGENTS.md",
+      "csdlc-v2/Cargo.toml",
+      "csdlc-v2/operator/coexistence.json",
+      "csdlc-v2/operator/skills.json",
+      "csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md",
+      "csdlc-v2/src/bin/csdlc-clean.rs",
+      "csdlc-v2/src/cleanup.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/operator.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/tests/gate10a.rs",
+      "csdlc-v2/tests/gate_cleanup.rs",
+      "docs/default_workflow.md",
+      "docs/tooling/OWNER_BINARY_INSTALLATION.md"
+    ],
+    "purpose": "Implement #5779 standalone safe cleanup and legacy terminal compatibility parity without coupling cleanup to delivery truth."
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "subagent:review_5779_exact_head",
+    "scope": [
+      "AGENTS.md",
+      "csdlc-v2/AGENTS.md",
+      "csdlc-v2/Cargo.toml",
+      "csdlc-v2/operator/coexistence.json",
+      "csdlc-v2/operator/skills.json",
+      "csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md",
+      "csdlc-v2/src/bin/csdlc-clean.rs",
+      "csdlc-v2/src/cleanup.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/operator.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/tests/gate10a.rs",
+      "csdlc-v2/tests/gate_cleanup.rs",
+      "docs/default_workflow.md",
+      "docs/tooling/OWNER_BINARY_INSTALLATION.md"
+    ],
+    "reviewed_revision": "git-blake3:c865d78ff97b1aefb29f099e5a4fae8ffd131974:a8610ab682f9d0d7242b56d8351d77cbe60e711a68e9a0b89cfd2fc0d1fd2b06",
+    "findings": [],
+    "residual_risks": [
+      "The final re-review reran the nine-test cleanup gate and diff checks; the complete crate and full Gate 10A suite were proven earlier in this issue sequence, while the final source delta was covered by focused cleanup, Gate 10A, and strict Clippy proof."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5779,
+    "pull_request": 5794,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5794",
+    "base": "main",
+    "head": "codex/5779-standalone-cleanup",
+    "revision": "git-blake3:77b280acffdb469c4c7ab7c09d68e61ba2bd5fea:0d377eb4d06fc68f7845ac92ea94b221b44a6ec602916c90eec5aeefad8e9a89",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5779/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5779/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5779-design-review",
+      "revision": "286b1824e9e5fe467106ef630ef1e8710cc2c257ddabb969b220c923a9aef91a"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "c81e9afbfe13b9627df2cbbd72670c75f8890587fb35ddad90b7d13d7f658fe8",
+      "rendered_digest": "d45fb645f9316a081503439a57e8444c6b9198e25818c7396a8408ae7a029255",
+      "ast_digest": "a3a916cbed570f34deac1f444d77c3e4f3a681b277536a399562d5cf6ee8b875"
+    },
+    "stp": {
+      "values_digest": "40caaff7e90489dd9f947423e6cab7b2a4e5f4d3b5827cad3afaf6b068ee9437",
+      "rendered_digest": "87b49d1ff26fabf538f50dcaa9d827d02dba2451120411e67247e649f54a85e8",
+      "ast_digest": "7c79711cb415d4459b95730844fc61c82d4db886df09637412e554044911da3e"
+    },
+    "spp": {
+      "values_digest": "c11475eb459bf5ab4ca57a4e92abe2820355e84a654e2fd8df5febda6c65ff42",
+      "rendered_digest": "28c30a494aed9c8aa96984dcffd97934ae8d09cdf600917cce0e8dbd058ee4ef",
+      "ast_digest": "c3b80f82c10dbc48b69a4dda222c5ae05d030db649fad4d1f6efa3663acf011c"
+    },
+    "vpp": {
+      "values_digest": "9d3f579c989c346bd4427532a3077f7b865e46c543011920e23e5676a10af5da",
+      "rendered_digest": "c1a6b7d5da7e9707bb76fdf328641950e30c53e6051dc7b269cadc6b7ff31f7d",
+      "ast_digest": "f338253c077ad7e3be7afda671ae6f98a2ab0cbc718bc4d10be2ef6c8fa5293a"
+    },
+    "srp": {
+      "values_digest": "e5954b6dad9602fda1fdbe59e3300444b302799cdd40e6b27c29c7ab1f840557",
+      "rendered_digest": "c011529a10dc19b1cfc81d2553deb57aeacf38568e6d773d6696a21756365096",
+      "ast_digest": "a5ac67ea7daae3ca36fa28b3dd82859dfa70af04578a757b9318e4ae26a1a0ef"
+    },
+    "sor": {
+      "values_digest": "2af3b4596e97741c1150bca8813771922be42291492bbb7cb406f951b8c18814",
+      "rendered_digest": "ef7ab07c021ce3ca6362267cb0146b9d98ed037690c4f51894c81106d112233d",
+      "ast_digest": "d09522186d50dd838a9eb70d84365e46f325ce3ce9743678be68ec7d711e7d50"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5779-implementation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5779-implementation",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5779-implementation",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5779-implementation",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5779-implementation",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5779-implementation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:5779-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5779-implementation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5779-implementation",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5779-implementation",
+      "reason": "Independent exact-head review found the new typed cleanup route must update the operator manifest invariant and its Gate 10A coverage.",
+      "operation": "{\"add_protected_paths\":[\"csdlc-v2/src/operator.rs\",\"csdlc-v2/tests/gate10a.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5779-implementation",
+      "reason": "Registering the eleventh typed operator route requires correcting both active agent contracts that still declare ten routes.",
+      "operation": "{\"add_protected_paths\":[\"AGENTS.md\",\"csdlc-v2/AGENTS.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5779-implementation",
+      "reason": "Refresh execution truth after resolving all three independent exact-head review findings.",
+      "operation": "{\"operation\":\"replace_execution\",\"summary\":\"Added reviewed standalone safe C-SDLC v2 worktree cleanup and read-only v0.91.8 terminal compatibility validation, with exact census identity and symlink-confinement guarantees.\",\"changes\":[\"Added typed classify and non-forced remove operations bound to the exact registered canonical issue worktree.\",\"Made dirty, missing, relocated, primary, symlinked, identity-drifted, and concurrent cleanup fail closed without destructive fallback.\",\"Bound v0.91.8 validation to the expected audit identity and independent same-set 114-issue closed universe.\",\"Made worktree, issue-projection, and cleanup-lock ancestor traversal symlink-safe.\",\"Registered csdlc-v2-clean as the eleventh authoritative typed operator route and updated active contracts and Gate 10A coverage.\"],\"artifacts\":[\"csdlc-v2/src/cleanup.rs\",\"csdlc-v2/src/bin/csdlc-clean.rs\",\"csdlc-v2/tests/gate_cleanup.rs\",\"csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md\",\"csdlc-v2/src/operator.rs\",\"csdlc-v2/tests/gate10a.rs\",\".csdlc/evidence/5779/review-remediation.md\"],\"validation\":[{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--locked\",\"--test\",\"gate_cleanup\"],\"purpose\":\"Prove exact cleanup behavior, ancestor symlink confinement, concurrent serialization, receipt independence, and fail-closed census identity and set parity.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5779/review-remediation.md\"},{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--locked\",\"--test\",\"gate10a\"],\"purpose\":\"Prove the eleventh typed route, owner binary installation, coexistence, and active operator guidance invariants.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5779/review-remediation.md\"},{\"command\":[\"cargo\",\"clippy\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all-targets\",\"--locked\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Prove warning-free C-SDLC v2 code across all targets after review remediation.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5779/review-remediation.md\"}]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5779-implementation",
+      "reason": "Refresh execution truth after pinning the independent terminal census authority and rejecting coordinated caller-supplied drift.",
+      "operation": "{\"operation\":\"replace_execution\",\"summary\":\"Added reviewed standalone safe C-SDLC v2 worktree cleanup and read-only v0.91.8 terminal compatibility validation, with exact census identity and symlink-confinement guarantees.\",\"changes\":[\"Added typed classify and non-forced remove operations bound to the exact registered canonical issue worktree.\",\"Made dirty, missing, relocated, primary, symlinked, identity-drifted, and concurrent cleanup fail closed without destructive fallback.\",\"Bound v0.91.8 validation to the expected audit identity and the fixed repository-tracked 114-issue closed universe, including coordinated-drift rejection.\",\"Made worktree, issue-projection, and cleanup-lock ancestor traversal symlink-safe.\",\"Registered csdlc-v2-clean as the eleventh authoritative typed operator route and updated active contracts and Gate 10A coverage.\"],\"artifacts\":[\"csdlc-v2/src/cleanup.rs\",\"csdlc-v2/src/bin/csdlc-clean.rs\",\"csdlc-v2/tests/gate_cleanup.rs\",\"csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md\",\"csdlc-v2/src/operator.rs\",\"csdlc-v2/tests/gate10a.rs\",\".csdlc/evidence/5779/review-remediation.md\"],\"validation\":[{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--locked\",\"--test\",\"gate_cleanup\"],\"purpose\":\"Prove exact cleanup behavior, ancestor symlink confinement, concurrent serialization, receipt independence, and fail-closed census identity and set parity.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5779/review-remediation.md\"},{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--locked\",\"--test\",\"gate10a\"],\"purpose\":\"Prove the eleventh typed route, owner binary installation, coexistence, and active operator guidance invariants.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5779/review-remediation.md\"},{\"command\":[\"cargo\",\"clippy\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all-targets\",\"--locked\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Prove warning-free C-SDLC v2 code across all targets after review remediation.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5779/review-remediation.md\"}]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5779-implementation",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5779-implementation",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

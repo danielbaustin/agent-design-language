@@ -1,0 +1,23 @@
+{
+  "issue": 5351,
+  "base_branch": "main",
+  "branch": "codex/5351-v0918-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5351-v0918-wp16-quality-gate-preparation",
+    "owner": "codex:5351-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784665489,
+    "expires_unix_seconds": 1785270289,
+    "heartbeat_unix_seconds": 1784665489,
+    "branch": "codex/5351-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5351",
+      ".csdlc/locks/5351.lock",
+      ".csdlc/prepared/issues/5351",
+      ".csdlc/evidence/5351"
+    ],
+    "purpose": "Prepare and review #5351 WP-16 integrated platform quality-gate contracts only; no execution or product work until WP-15 #5354 is merged, typed closed_out, receipt-backed, claim-free, and ancestral"
+  }
+}

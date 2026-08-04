@@ -1,0 +1,16 @@
+flowchart LR
+  A["Active #5613 authority claim"] --> C{"Exact authority and target CAS"}
+  R["Retained target receipt"] --> C
+  T["Closed-out claim-free target"] --> C
+  O["Exact old SOR validation result"] --> M{"Exactly one match"}
+  C --> M
+  N["Portable replacement result"] --> V{"Replacement valid"}
+  M --> V
+  V --> J["Terminal transaction journal"]
+  J --> P["Regenerate SOR and index"]
+  P --> Q["Regenerate retained receipt"]
+  Q --> S["Preserve closed_out identity and disposition"]
+  C -->|"stale or unauthorized"| F["Fail closed without mutation"]
+  M -->|"zero or ambiguous"| F
+  V -->|"malformed or machine-local"| F
+  J -->|"interrupted"| B["Restore prior record, cards, and receipt bytes"]

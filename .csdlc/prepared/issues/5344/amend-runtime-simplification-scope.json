@@ -1,0 +1,25 @@
+{
+  "issue": 5344,
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-preparation",
+  "expected_generation": 4,
+  "expected_digest": "77e3d56d6dd46d7b04fd7a4a776a856687d8c6f3390d77a5727ca097cd34fc8c",
+  "now_unix_seconds": 1785193022,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Own the exact Guardian-only Runtime v3 simplification, init-driven configuration, independent ACIP codec, shared real-launch proof helper, and removal of superseded external launchers required by the accepted WP-12 repair plan.",
+  "add_protected_paths": [
+    "adl-runtime-kernel/src/acip.rs",
+    "adl-runtime-kernel/src/assembly.rs",
+    "adl-runtime-kernel/src/config.rs",
+    "adl-runtime-kernel/src/lib.rs",
+    "adl-runtime-kernel/src/observability.rs",
+    "adl-runtime-kernel/tests/kernel.rs",
+    "adl-runtime-kernel/tests/observability.rs",
+    "adl-runtime-kernel/tests/observatory.rs",
+    "adl-runtime-kernel/tests/support/runtime_init.rs",
+    "adl-runtime/src/bin/adl-runtime-guardian.rs",
+    "infra/horust",
+    "infra/runtime-v3/runtime-init.toml",
+    "infra/rustysd",
+    "infra/systemd"
+  ]
+}

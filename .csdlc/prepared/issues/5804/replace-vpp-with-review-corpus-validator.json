@@ -1,0 +1,50 @@
+{
+  "issue": 5804,
+  "card": "vpp",
+  "expected_generation": 0,
+  "expected_digest": "c79e2ba43dea3463d7e2fc72e5a9d9bef956d082ba06629682d845ff7c66d4dc",
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Make the issue-local 75-document corpus validator the typed proof authority for the prerequisite repair.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "review-corpus-contract",
+        "proof_role": "Validate the exact 75-document v0.91.8 corpus, every concrete implementation-manifest path, dated open-issue inventory, portable paths, local links, structured files, 122-row feature crosswalk, WP-18 ancestry, and fail-closed undispatched handoff state",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 3000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5804/validate-review-corpus.rb"],
+        "parallel_group": "docs",
+        "defer_reason": null
+      },
+      {
+        "lane": "wp19-dependency-contract",
+        "proof_role": "Verify merged WP-18 first and final review passes are ancestors of the corrective target",
+        "acceptance_ids": ["AC-2", "AC-4"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5357/check-dependencies.rb"],
+        "parallel_group": "docs",
+        "defer_reason": null
+      },
+      {
+        "lane": "diff-hygiene",
+        "proof_role": "Reject whitespace errors in the corrective change",
+        "acceptance_ids": ["AC-4"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 30,
+        "budget_tokens": 500,
+        "argv": ["git", "diff", "--check"],
+        "parallel_group": "docs",
+        "defer_reason": null
+      }
+    ]
+  }
+}

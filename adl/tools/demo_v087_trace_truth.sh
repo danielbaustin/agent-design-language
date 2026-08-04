@@ -13,7 +13,8 @@ cd "$ROOT_DIR"
 
 echo "Running v0.87 trace-truth demo..."
 ADL_OLLAMA_BIN="$ROOT_DIR/adl/tools/mock_ollama_v0_4.sh" \
-  bash adl/tools/pr.sh run adl/examples/v0-6-hitl-no-pause.adl.yaml \
+  adl-runtime run adl/examples/v0-6-hitl-no-pause.adl.yaml \
+    --run \
     --trace \
     --allow-unsigned \
     --out "$STEP_OUT" \

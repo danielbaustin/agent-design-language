@@ -1,0 +1,36 @@
+{
+  "issue": 5778,
+  "expected_generation": 8,
+  "expected_digest": "040917436041109e38502fed5028bf29178829de249a98cd717ce5a95cd4acc9",
+  "claim_id": "claim-5778-derived-terminal-finish",
+  "actor": "codex:5778-implementation",
+  "reason": "Record the exact current-main formatter remediation tracked by #5783 after typed post-publication review recovery.",
+  "card": "sor",
+  "operation": {
+    "operation": "replace_execution",
+    "summary": "Preserved the reviewed finish implementation and repaired the current-main Runtime API formatting regression tracked by #5783.",
+    "changes": [
+      "Merged current main so local validation matches GitHub's pull-request merge tree.",
+      "Applied current stable rustfmt to the Runtime API endpoint inventory introduced by #5781.",
+      "Retained the #5778 finish implementation unchanged while routing the separate defect through #5783."
+    ],
+    "artifacts": [
+      "adl-runtime/src/runtime_api.rs",
+      ".csdlc/evidence/5778/post-finalize-remediation.md"
+    ],
+    "validation": [
+      {
+        "command": ["cargo", "+stable", "fmt", "--all", "--", "--check"],
+        "purpose": "Reproduce and prove the repository formatter gate on the exact current-main merge tree from the adl workspace.",
+        "outcome": "passed",
+        "evidence_ref": ".csdlc/evidence/5778/post-finalize-remediation.md"
+      },
+      {
+        "command": ["cargo", "test", "--manifest-path", "../adl-runtime/Cargo.toml", "runtime_api_contract_advertises_only_served_routes", "--locked"],
+        "purpose": "Confirm the formatted endpoint inventory retains the Runtime API contract introduced by #5781.",
+        "outcome": "passed",
+        "evidence_ref": ".csdlc/evidence/5778/post-finalize-remediation.md"
+      }
+    ]
+  }
+}

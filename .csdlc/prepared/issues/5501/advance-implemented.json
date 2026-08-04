@@ -1,0 +1,13 @@
+{
+  "issue": 5501,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "ccfffdaeed65c7fde0ff23cdbcd7281ec7a87852cdb915c5e706418dd5aed984",
+  "claim_id": "claim-5501-v0918-live-workcell-proof-preparation",
+  "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+  "reason": "Retained #5501 live proof packet and local validation are complete for required GPT-5.5 pre-PR review.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

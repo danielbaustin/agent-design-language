@@ -1,0 +1,8 @@
+{
+  "issue": 5648,
+  "expected_generation": 11,
+  "expected_digest": "49aa708894457741b33454644ea346a293363f48ff2d92c8bc36f9926819bdc6",
+  "claim_id": "claim-5648-operator-active-claim-revoke",
+  "actor": "codex:5648-execution",
+  "reason": "Recover exact review identity after publication metadata commits; implementation scope is unchanged."
+}

@@ -1,0 +1,22 @@
+{
+  "issue": 4741,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "6b9459ea3cbc1723905dcf50051b8ac6d3ee6c9959ef7af014d763380c173e58",
+  "claim_id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+  "actor": "codex:issue-4741-execution",
+  "reason": "Block the exact three-field identity of the stale pre-commit live validation using C-SDLC v2 latest-result semantics",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
+      ],
+      "purpose": "Prove one real safe-mode Unity attempt records exact progress and terminal truth without an arbitrary total ceiling.",
+      "outcome": "blocked",
+      "evidence_ref": ".csdlc/evidence/4741/live-staged-proof.json records fresh_batch on Unity 6000.5.1f1, readonly followed by import and compilation progress, semantic fingerprint 1:1:1:0, and expected fail-closed exit 124 terminal_outcome=semantic_progress_idle after 300 idle seconds. Unity validation was not reached and is not claimed."
+    }
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,21 @@
+{
+  "issue": 5351,
+  "card": "sip",
+  "expected_generation": 13,
+  "expected_digest": "b7a6f79fdfd9b493ebebd14f8731f78129542195b2059fd73adeab5bebd1dc3e",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "reason": "Align SIP authority with merge-gated WP-17 release and asynchronous closeout.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "authority_boundary",
+    "values": [
+      "Preparation protects only #5351 issue-local lifecycle and evidence paths",
+      "WP-15 #5354 owns demo convergence and must be terminal before #5351 execution",
+      "Each product owner retains repair authority; #5351 observes and routes failures but does not absorb unrelated fixes",
+      "WP-17 #5360 is released when #5351 merges with passing exact-head integrated proof; typed closeout is asynchronous and nonblocking",
+      "Future non-issue-local paths require a typed reviewed collision-free claim amendment after #5354 terminal"
+    ]
+  },
+  "fail_after_backup": false
+}

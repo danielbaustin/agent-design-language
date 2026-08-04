@@ -46,8 +46,8 @@
       "surface": "html_observatory",
       "classification": "proven",
       "evidence": [
-        "demos/v0.91.7/html-observatory/README.md",
-        "demos/v0.91.7/html-observatory/index.html",
+        "demos/html-observatory/README.md",
+        "demos/html-observatory/index.html",
         "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
       ],
       "current_issue_truth": [
@@ -86,7 +86,7 @@
       "classification": "proved_explicit_opt_in",
       "evidence": [
         "docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
-        "demos/v0.91.7/html-observatory/README.md"
+        "demos/html-observatory/README.md"
       ],
       "current_issue_truth": [
         {

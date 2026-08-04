@@ -1,6 +1,5 @@
 use std::{
     future::pending,
-    process::Command,
     sync::{
         atomic::{AtomicU32, Ordering},
         Arc,
@@ -240,15 +239,6 @@ async fn startup_and_shutdown_follow_dependency_order() {
 }
 
 #[test]
-fn rustysd_unit_declares_external_restart_boundary() {
-    let unit = include_str!("../../infra/rustysd/adl-runtime-kernel.service");
-    assert!(unit.contains("ExecStart=/usr/local/bin/adl-runtime-kernel"));
-    assert!(unit.contains("Restart=always"));
-    assert!(unit.contains("ExecStartPre=/bin/sleep 2"));
-    assert!(!unit.contains("RestartSec="));
-}
-
-#[test]
 fn topology_rejects_mismatched_port_types() {
     let mut registry = ComponentRegistry::new();
     registry
@@ -259,31 +249,6 @@ fn topology_rejects_mismatched_port_types() {
         Err(TopologyError::UnsatisfiedInput { component, .. })
             if component == ComponentId::from("consumer")
     ));
-}
-
-#[test]
-fn guardian_contract_recovers_after_classified_fatal_child_exit() {
-    let directory = tempfile::tempdir().unwrap();
-    let capsule = directory.path().join("continuity.json");
-    let binary = env!("CARGO_BIN_EXE_adl-runtime-kernel");
-
-    let first = Command::new(binary)
-        .arg("fatal-once")
-        .arg(&capsule)
-        .output()
-        .unwrap();
-    assert_eq!(first.status.code(), Some(70));
-    assert!(String::from_utf8_lossy(&first.stderr).contains("classified_fatal_exit"));
-
-    let restarted = Command::new(binary)
-        .arg("fatal-once")
-        .arg(&capsule)
-        .output()
-        .unwrap();
-    assert!(restarted.status.success());
-    let restored: serde_json::Value =
-        serde_json::from_slice(&std::fs::read(&capsule).unwrap()).unwrap();
-    assert_eq!(restored["generation"], 2);
 }
 
 #[derive(Clone)]

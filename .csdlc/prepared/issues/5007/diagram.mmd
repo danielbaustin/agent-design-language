@@ -1,0 +1,13 @@
+flowchart TD
+  A["ADR 0051 deferred Memory Palace obligation"] --> B["#5007 preparation packet"]
+  M["origin/main 51bc5ae51b57c19dbab693af1c5a45142995f4e5 integrated"] --> B
+  B --> C{"Execution gate"}
+  P["#4760 actual completed Memory Palace implementation proof"] --> C
+  C -- "proof absent" --> X["Block execution; do not draft accepted ADR"]
+  C -- "proof complete" --> D["Draft accepted Memory Palace ADR candidate"]
+  D --> E["Proof-to-claim table"]
+  T["#4765 Chronosense + #4768 temporal index + #4771 continuity proof"] --> E
+  O["ObsMem boundary evidence"] --> E
+  E --> F["Update docs/adr/README.md and ADR_PLAN"]
+  F --> G["Update v0.91.8/v0.92 handoff references only where proof supports claims"]
+  G --> H["Bounded exact-revision review before PR/publication"]

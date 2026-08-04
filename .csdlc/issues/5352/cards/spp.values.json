@@ -1,0 +1,86 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5352,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21][handoff] Finalize exact-revision v0.92 consumption handoff",
+    "slug": "v0918-wp21-v092-consumption-handoff",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Initialize truthful final lifecycle state on current main, validate the exact ledger and ancestry, complete one exact pre-PR review, publish, run the full WP-21 sprint review, fix findings, and merge #5352.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Initialize truthful final lifecycle state and exact-revision ledger on current main",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Run focused validation and retain current evidence",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run one exact pre-PR GPT-5.5 review and fix all findings",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Publish, run full WP-21 sprint review, remediate findings, and merge",
+          "acceptance_ids": [
+            "AC-6",
+            "AC-7"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "recorded baseline equals origin/main at validation time",
+        "table identity is row-bound rather than token-presence proof",
+        "receipts are audit-only and non-blocking",
+        "review and publication claims remain exact-revision",
+        "no tracked main writes"
+      ],
+      "risks": [
+        "origin/main may advance and require one explicit baseline refresh before publication",
+        "launch planning may be mistaken for an observed birthday",
+        "metadata-only lifecycle commits must not invalidate substantive review truth"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "recorded baseline differs from origin/main",
+        "any table row or ancestry binding fails",
+        "focused validation or exact review has an unresolved finding",
+        "publication omits Closes #5352 or includes out-of-scope paths"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5352/retained/design.md",
+      "design_digest": "979d5962c723a24d585de30d4a05ffa704378445110598e9dfe22357deb58844",
+      "diagram_ref": ".csdlc/issues/5352/retained/diagram.mmd",
+      "diagram_digest": "e73fc95bfbe3027fee5c3881ffeca9bedb5cd23fac306cdec9f2f24970deb06a"
+    }
+  }
+}

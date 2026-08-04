@@ -1,0 +1,23 @@
+{
+  "issue": 5347,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "32a8d9de80f33019e1cd765e05de5d6475d00e7ad6f5926fb08b43c780759524",
+  "claim_id": "claim-5347-external-band-deletion",
+  "actor": "codex:5347-execution-owner",
+  "reason": "Record final focused execution validation after restoring incidental Cargo.lock churn and reacquiring the exact deletion-only claim.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5347/run-validation-lane.rb",
+        "execution"
+      ],
+      "purpose": "Final proof that #5347 deletes only manifest-listed obsolete external demo/proof binaries, preserves retained current binaries, has no Cargo.lock churn, does not depend on WP-16 or #5346 terminal closeout, remains disjoint from #5346 reserved core deletion paths, and removes 1476 net lines.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5347/execution-validation/external-band-deletion-final.log"
+    }
+  },
+  "fail_after_backup": false
+}

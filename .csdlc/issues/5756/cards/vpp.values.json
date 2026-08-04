@@ -1,0 +1,108 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5756,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][providers] Scope MiniMax billing classification to MiniMax responses",
+    "slug": "minimax-billing-classification",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "provider-minimax-tests",
+          "proof_role": "Focused MiniMax adapter regressions for structured 1008 billing classification on success and non-success HTTP responses.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 240,
+          "budget_tokens": 1000,
+          "argv": [
+            "cargo",
+            "test",
+            "--offline",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "provider_adapter::tests::minimax",
+            "--lib"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "provider-non-minimax-tests",
+          "proof_role": "Focused OpenAI, Anthropic, DeepSeek, and generic hosted provider regressions for bare 1008 non-billing classification.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 240,
+          "budget_tokens": 1000,
+          "argv": [
+            "cargo",
+            "test",
+            "--offline",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "provider_adapter::tests::non_minimax",
+            "--lib"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "strict-clippy",
+          "proof_role": "Strict lint proof for the touched provider adapter crate surface.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 600,
+          "budget_tokens": 1000,
+          "argv": [
+            "cargo",
+            "clippy",
+            "--offline",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed, preserve request/evidence artifacts, and report the typed blocker without widening scope.",
+      "design_ref": ".csdlc/issues/5756/retained/design.md",
+      "design_digest": "04dd4283135d39f64ebee68fb19ace701493ed28cd054a78f6ed644ba3512572",
+      "diagram_ref": ".csdlc/issues/5756/retained/diagram.mmd",
+      "diagram_digest": "2acda9f282313d94ba9cb5617b7ba1d2189b4ca19767d3596146563aa349f6ad"
+    }
+  }
+}

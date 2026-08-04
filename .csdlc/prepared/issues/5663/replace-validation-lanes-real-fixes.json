@@ -1,0 +1,75 @@
+{
+  "issue": 5663,
+  "card": "vpp",
+  "expected_generation": 18,
+  "expected_digest": "2ba66a487fbbc7b593657729f3e68dabcd972684effe04f2c9e480956641c556",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Replace validation lanes after fixing all five PR #5669 exact-review findings with real adapter behavior and deleting the superseded fixture-only operations test target.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "runtime-v3-local-adapters-assembly",
+        "proof_role": "Prove real Agent execution, scheduler retirement/reuse, checkpoint byte persistence/restore with integrity and identity checks, live cancellation, safe configured storage locking, production assembly wiring, ingress dispatch, and fail-closed external transports.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7", "AC-8"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 840,
+        "budget_tokens": 4000,
+        "argv": ["cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5663/target", "--test", "assembly"],
+        "parallel_group": "runtime-v3-local-adapters",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-local-adapters-governed",
+        "proof_role": "Prove governed Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, provider, and shutdown behavior remains green after local adapter correction.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": ["cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5663/target", "--test", "governed_operations"],
+        "parallel_group": "runtime-v3-local-adapters",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-local-adapters-clippy",
+        "proof_role": "Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate.",
+        "acceptance_ids": ["AC-7", "AC-8"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": ["cargo", "clippy", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5663/target", "--all-targets", "--", "-D", "warnings"],
+        "parallel_group": "runtime-v3-local-adapters",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-local-adapters-loc",
+        "proof_role": "Retain physical LoC measurement for touched source and test paths; before 3796, after 3728, net -68.",
+        "acceptance_ids": ["AC-8"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--numstat", "origin/main", "--", "adl-runtime-kernel/src/assembly.rs", "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs", "adl-runtime-kernel/src/governed_operations.rs", "adl-runtime-kernel/src/operations.rs", "adl-runtime-kernel/tests/assembly.rs", "adl-runtime-kernel/tests/operations.rs"],
+        "parallel_group": "runtime-v3-local-adapters",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-local-adapters-diff-check",
+        "proof_role": "Prove tracked diff whitespace hygiene after regenerating evidence logs.",
+        "acceptance_ids": ["AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--check"],
+        "parallel_group": "runtime-v3-local-adapters",
+        "defer_reason": null
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

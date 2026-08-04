@@ -1,0 +1,13 @@
+{
+  "issue": 5384,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "8c2b1fdca00b04648434b5d63501a521ae4a6e7af70a7acd5483e193b0c8e5f1",
+  "claim_id": "claim-5384-v0918-wp14a-preparation-refresh",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The thin WP-14A acceptance packet is implemented and focused validation passes.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

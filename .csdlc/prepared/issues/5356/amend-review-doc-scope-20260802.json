@@ -1,0 +1,16 @@
+{
+  "issue": 5356,
+  "claim_id": "claim-5356-v0918-wp18-review-execution-20260802",
+  "expected_generation": 1,
+  "expected_digest": "10930cf112214429c62ed87fdf4fe2097e417c8b5fdeaa99c9294284d3adca9b",
+  "now_unix_seconds": 1785697071,
+  "actor": "codex:current-session-wp18-review",
+  "reason": "Resolve WP-18 internal-review current-truth findings in v0.91.8 release-tail entrypoint docs.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/README.md",
+    "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+    "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+    "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md"
+  ]
+}

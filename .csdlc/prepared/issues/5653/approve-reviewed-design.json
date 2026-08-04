@@ -1,0 +1,7 @@
+{
+  "issue": 5653,
+  "expected_generation": 0,
+  "expected_digest": "e4c63c3306dea88e952fb5a6903363acb6b4af5609111c03b528d9a3ef9158ec",
+  "claim_id": "claim-5653-readme-refresh",
+  "reviewer": "codex:5653-preparation-review"
+}

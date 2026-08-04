@@ -1,0 +1,25 @@
+{
+  "issue": 5345,
+  "base_branch": "main",
+  "branch": "codex/5345-v0918-wp10-thin-cli-selector",
+  "worktree": ".worktrees/adl-wp-5345",
+  "claim": {
+    "id": "claim-5345-v0918-wp10-preparation",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 1,
+    "acquired_unix_seconds": 1784659701,
+    "expires_unix_seconds": 1785264501,
+    "heartbeat_unix_seconds": 1784659701,
+    "branch": "codex/5345-v0918-wp10-thin-cli-selector",
+    "worktree": ".worktrees/adl-wp-5345",
+    "protected_paths": [
+      ".csdlc/issues/5345",
+      ".csdlc/locks/5345.lock",
+      ".csdlc/prepared/issues/5345",
+      ".csdlc/evidence/5345",
+      "adl-v2/crates/adl-cli",
+      "adl-v2/tools/install-adl-v2.sh"
+    ],
+    "purpose": "Prepare #5345 WP-10 completely in its dedicated worktree; product implementation remains prohibited until WP-04 through WP-09 are merged, typed closed_out, receipt-backed, and ancestral"
+  }
+}

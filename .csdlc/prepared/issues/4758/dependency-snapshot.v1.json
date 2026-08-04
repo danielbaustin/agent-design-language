@@ -1,0 +1,45 @@
+{
+  "schema": "adl.launch_readiness.dependency_snapshot.v1",
+  "issue": 4758,
+  "observed_local_date": "2026-07-31",
+  "observations": [
+    {
+      "issue": 5384,
+      "state": "CLOSED",
+      "closed_at": "2026-07-30T22:26:14Z",
+      "role": "WP-14A integrated platform acceptance and deployment"
+    },
+    {
+      "issue": 5363,
+      "state": "OPEN",
+      "closed_at": null,
+      "role": "WP-20 release preflight remediation"
+    },
+    {
+      "issue": 5362,
+      "state": "OPEN",
+      "closed_at": null,
+      "role": "WP-21 parent routing owner"
+    },
+    {
+      "issue": 5352,
+      "state": "OPEN",
+      "closed_at": null,
+      "role": "WP-21 exact-revision v0.92 consumption handoff"
+    },
+    {
+      "issue": 4763,
+      "state": "OPEN",
+      "closed_at": null,
+      "role": "WP-21 first-birthday docs and external launch surfaces"
+    }
+  ],
+  "commands": [
+    "gh issue view 5384 --json number,title,state,url,closedAt,labels",
+    "gh issue view 5363 --json number,title,state,url,closedAt,labels",
+    "gh issue view 5362 --json number,title,state,url,closedAt,labels",
+    "gh issue view 5352 --json number,title,state,url,closedAt,labels",
+    "gh issue view 4763 --json number,title,state,url,closedAt,labels",
+    "git merge-base --is-ancestor 11151e0beab02b1667f6505b7f8992bfd47d2f8f origin/main"
+  ]
+}

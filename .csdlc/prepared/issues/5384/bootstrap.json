@@ -1,0 +1,192 @@
+{
+  "issue": 5384,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5384/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5384/diagram.mmd",
+  "design_reviewer": "pending:bounded-preparation-subagent",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5384-v0918-wp14a-preparation-only",
+    "owner": "codex:5384-preparation-only",
+    "generation": 0,
+    "acquired_unix_seconds": 1784673029,
+    "expires_unix_seconds": 1785277829,
+    "heartbeat_unix_seconds": 1784673029,
+    "branch": "codex/5384-v0918-wp14a-preparation-bound",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5384",
+      ".csdlc/locks/5384.lock",
+      ".csdlc/prepared/issues/5384"
+    ],
+    "purpose": "Prepare and review #5384 lifecycle cards and issue-local gates only; product, Runtime, documentation, deployment, publication, and implementation writes remain unauthorized until every declared predecessor is merged, typed closed_out, receipted, and ancestral to current origin/main"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-14A] Integrated platform acceptance deployment and v0.92 birthday handoff",
+    "slug": "v0918-wp14a-integrated-platform-acceptance-preparation",
+    "version": "v0.91.8",
+    "goal": "Prepare a complete, reviewed, fail-closed execution packet for WP-14A without beginning implementation or acceptance work.",
+    "required_outcome": "All six current native typed cards, issue-specific design and diagram, COTS, budget, PVF, protected-path, and dependency gates are durable and reviewed; implementation remains impossible under the preparation claim.",
+    "declared_scope": [
+      "typed C-SDLC v2 issue projection for #5384",
+      "issue-local preparation requests, design, diagram, dependency manifest, and gate checker",
+      "bounded exact preparation review and typed design approval",
+      "preparation-only claim binding with no product paths"
+    ],
+    "authority_boundary": [
+      "Issue #5384 and its routing comments define WP-14A scope",
+      "Checked-in v0.91.8 WBS, issue wave, and platform acceptance feature define dependency topology",
+      "Typed C-SDLC v2 projections and shared-Git receipts define lifecycle truth",
+      "Current origin/main ancestry defines integration truth",
+      "This operator instruction approves preparation and binding only, not implementation, publication, merge, deployment, or predecessor waiver"
+    ],
+    "operator_constraints": [
+      "Use typed C-SDLC v2 lifecycle operations only",
+      "Keep root main untouched and perform all writes in the current bound issue worktree represented by .",
+      "Do not implement product, Runtime, C-SDLC, documentation, test, workflow, deployment, or handoff scope",
+      "Do not create or publish a PR and do not advance publication or closeout",
+      "Do not use AWS, Runtime v2, raw gh, credentials, or fake approvals",
+      "Do not promote until every declared predecessor is merged, typed closed_out, receipted, and ancestral to refreshed origin/main"
+    ],
+    "review_scope": "Bounded preparation review of only .csdlc/issues/5384, .csdlc/prepared/issues/5384, and .csdlc/locks/5384.lock for card truth, design completeness, dependency topology, PVF/COTS/budget contracts, and inability to authorize product work.",
+    "task_boundary": "Prepare, validate, review, approve, bind, commit, and push issue-local lifecycle artifacts only; do not implement any WP-14A deliverable.",
+    "deliverables": [
+      "six current native typed C-SDLC cards",
+      "issue-specific preparation design and dependency diagram",
+      "declarative complete predecessor gate and deterministic receipt/ancestry checker",
+      "COTS/reuse and bounded budget decisions",
+      "PVF-classified validation plan",
+      "reviewed preparation-only protected-path claim"
+    ],
+    "acceptance_criteria": [
+      "AC-1: SIP, STP, SPP, VPP, SRP, and SOR render through current typed C-SDLC v2 native generation and validate",
+      "AC-2: Design and diagram enumerate scope, evidence flow, COTS/reuse, budget, non-claims, promotion boundary, and downstream release-tail order",
+      "AC-3: Every declared direct, child, nested, and routed predecessor is listed with merged, typed closed_out, receipt, and origin/main ancestry requirements",
+      "AC-4: The active claim protects only #5384 issue, request, and lock paths and cannot authorize product or shared-document edits",
+      "AC-5: Validation lanes are PVF-classified with proof role, determinism, resource profile, budgets, acceptance mapping, and required/deferred status encoded by proof_role and defer_reason",
+      "AC-6: A bounded preparation subagent reviews the complete diff and all actionable findings are fixed before typed design approval and bind",
+      "AC-7: The preparation branch is committed and pushed with no PR or publication and root main remains untouched"
+    ],
+    "dependencies": [
+      "WP-13 #5346 and #5347",
+      "acceptance gates #5358 and #5361",
+      "WP-14 children #5352, #4758-#4763, #5007, #4739, #4741, #5332, and #5107",
+      "WP-10A #5497 and children #5498-#5502",
+      "Runtime v3 nested inputs #5591, #5592, #5589, #5590, and #5526",
+      "independently owned acceptance inventory inputs #5540, #5541, #5558, and #5548",
+      "all dependencies require merged state, typed closed_out projection, shared-Git receipt, and observed SHA ancestry on current origin/main before implementation promotion"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md",
+      "docs/templates/prompts/current.json",
+      ".csdlc issues and shared-Git csdlc-v2 closeout receipts",
+      "live GitHub issue and PR truth through an approved connector"
+    ],
+    "non_goals": [
+      "WP-14A implementation, acceptance execution, deployment, or handoff execution",
+      "product, Runtime, C-SDLC implementation, test, workflow, or shared milestone-document changes",
+      "predecessor repair, waiver, closeout, merge, or claim takeover",
+      "PR creation, typed publication, merge, or issue closeout",
+      "AWS, Runtime v2, raw gh, provider execution, or credential access",
+      "identity, consciousness, birthday, production-provider, or v0.92 readiness claims"
+    ],
+    "plan_summary": "Render and validate the six typed cards, retain a complete issue-local evidence-consumer design, obtain bounded preparation review, approve the design through typed v2, bind only the three lifecycle paths, and push the preparation branch while all implementation steps remain gated.",
+    "steps": [
+      {"id": "S1", "action": "Render and validate all six current native typed cards plus issue-specific design and diagram", "status": "pending", "acceptance_ids": ["AC-1", "AC-2"]},
+      {"id": "S2", "action": "Validate COTS, budget, PVF, protected-path, and complete predecessor promotion gates", "status": "pending", "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-5"]},
+      {"id": "S3", "action": "Run bounded preparation subagent review and repair every actionable finding", "status": "pending", "acceptance_ids": ["AC-6"]},
+      {"id": "S4", "action": "Approve and bind the preparation-only claim, commit and push without publication", "status": "pending", "acceptance_ids": ["AC-4", "AC-7"]},
+      {"id": "S5", "action": "After a future separately authorized promotion gate passes, execute integrated WP-14A acceptance and handoff", "status": "pending", "acceptance_ids": ["AC-3"]}
+    ],
+    "risks": [
+      "stale issue prose or a closed GitHub issue can be mistaken for typed terminal truth",
+      "a broad preparation claim could accidentally authorize product work",
+      "nested Runtime and workcell inputs can be omitted from the direct WP-14A child list",
+      "planning estimates can be misreported as execution evidence",
+      "a predecessor closed without merged ancestry cannot satisfy the operator's strict promotion rule"
+    ],
+    "invariants": [
+      "no tracked root-main writes",
+      "no product or shared-document paths in the preparation claim",
+      "no implementation until every predecessor gate fact passes at one refreshed origin/main revision",
+      "no manual edits to rendered cards or lifecycle state",
+      "no fake approvals, waivers, inferred terminal state, or prose-only evidence",
+      "no PR, publication, AWS, Runtime v2, or raw gh"
+    ],
+    "stop_conditions": [
+      "any request requires a path outside the three protected preparation paths",
+      "any declared predecessor lacks merged, typed closed_out, receipt, or ancestry proof",
+      "current-template identity or structure validation fails",
+      "bounded review reports an actionable finding that cannot be fixed within preparation scope",
+      "another claim, branch, or worktree collides with #5384"
+    ],
+    "review_prompts": [
+      "Does the packet capture every predecessor named by the live issue, routing comment, canonical wave, and nested Runtime/workcell topology?",
+      "Can this claim authorize any product, Runtime, shared documentation, workflow, test, deployment, or publication write?",
+      "Are COTS, budget, PVF, and promotion requirements concrete and internally consistent?",
+      "Do all six cards remain truthful that preparation is complete while implementation has not started?",
+      "Would any missing receipt, terminal phase, merge disposition, or ancestry fact fail closed?"
+    ],
+    "planning_profile": "large",
+    "validation_lanes": [
+      {
+        "lane": "typed-card-contracts",
+        "proof_role": "Required preparation gate for six-card current-native identity, structure, schema, digest, and canonical lifecycle consistency",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "local-preparation",
+        "budget_seconds": 300,
+        "budget_tokens": 2000,
+        "argv": [".adl/bin/csdlc-v2/csdlc-doctor", "--repo", ".", "--issue", "5384"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-5"]
+      },
+      {
+        "lane": "dependency-terminal-gate",
+        "proof_role": "Required promotion gate for complete predecessor typed closed_out receipts, merged disposition, and observed-SHA ancestry; live issue and PR state is separately refreshed through the approved connector",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "local-preparation",
+        "budget_seconds": 300,
+        "budget_tokens": 2000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5384/validate_dependency_gate.rb"],
+        "acceptance_ids": ["AC-3", "AC-5"]
+      },
+      {
+        "lane": "preparation-scope",
+        "proof_role": "Required preparation gate confirming that tracked and untracked changes remain inside the three authorized #5384 lifecycle paths",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "local-preparation",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5384/validate_preparation_scope.rb"],
+        "acceptance_ids": ["AC-4", "AC-5", "AC-7"]
+      },
+      {
+        "lane": "diff-hygiene",
+        "proof_role": "Required preparation gate for whitespace and patch hygiene",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "local-preparation",
+        "budget_seconds": 60,
+        "budget_tokens": 500,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-1", "AC-7"]
+      },
+      {
+        "lane": "exact-preparation-review",
+        "proof_role": "Required preparation gate for bounded independent review of cards, design, diagram, gates, and protected-path authority before typed approval and bind",
+        "deterministic": false,
+        "resource_profile": "medium",
+        "parallel_group": "review",
+        "budget_seconds": 600,
+        "budget_tokens": 6000,
+        "argv": ["codex", "exec", "--sandbox", "read-only"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"]
+      }
+    ],
+    "failure_policy": "Fail closed on missing current-template proof, incomplete dependency topology, absent merged/closed_out/receipt/ancestry evidence, protected-path widening, stale live truth, unsupported claims, unresolved review findings, or any request to implement, publish, merge, use AWS, use Runtime v2, or invoke raw gh."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "issue": 5344,
+  "expected_generation": 20,
+  "expected_digest": "ad785f8c26f59f27393878b5be2ec7f171144c13b5dfd900e2f503143d7f6636",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover the bounded follow-up review so the accepted intermediate stale SRP prompt defect can be corrected through the typed post-recovery operation before final exact-head review."
+}

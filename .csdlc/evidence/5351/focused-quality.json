@@ -1,0 +1,153 @@
+{
+  "schema": "adl.v0918.wp16.integrated_quality_gate.v1",
+  "issue": 5351,
+  "lane": "focused-quality",
+  "status": "pass",
+  "revision": "a02b9cb31c7d79f09175ef57f9557f37b2067c22",
+  "revision_matrix": {
+    "wp14a_acceptance": "11151e0beab02b1667f6505b7f8992bfd47d2f8f",
+    "wp15_convergence_merge": "97427f324c87d97cb1b36c7804c50bf80c9389d8",
+    "wp15_demo_reconciliation_merge": "ab4e9e2217c152df47b1754b66b01febb4a59549",
+    "wp16_execution": "a02b9cb31c7d79f09175ef57f9557f37b2067c22"
+  },
+  "generated_at": "2026-08-01T10:09:36Z",
+  "rows": [
+    {
+      "name": "wp15-terminal-gate",
+      "status": "pass",
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5351/check-dependencies.rb"
+      ],
+      "evidence": ".csdlc/evidence/5351/wp15-terminal-gate.log"
+    },
+    {
+      "name": ".csdlc/evidence/5384/platform-acceptance-ledger.v1.json",
+      "status": "pass",
+      "schema": "adl.wp14a.platform_acceptance_ledger.v1"
+    },
+    {
+      "name": ".csdlc/evidence/5354/convergence-proof.v1.json",
+      "status": "pass",
+      "schema": "adl.v0918.wp15.convergence_proof.v1"
+    },
+    {
+      "name": "docs/milestones/v0.91.8/evidence/wp13/5346-post-deletion-validation.v1.json",
+      "status": "pass",
+      "schema": "adl.wp13.post_deletion_validation.v1"
+    },
+    {
+      "name": "issue-outcome-audit",
+      "status": "pass",
+      "total": 67
+    },
+    {
+      "name": "feature-crosswalk",
+      "status": "pass",
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb"
+      ],
+      "evidence": ".csdlc/evidence/5351/feature-crosswalk.log"
+    },
+    {
+      "name": "structured-planning",
+      "status": "pass",
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5594/validate_structured_planning.rb"
+      ],
+      "evidence": ".csdlc/evidence/5351/structured-planning.log"
+    },
+    {
+      "name": "milestone-links",
+      "status": "pass",
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5594/validate_links.rb"
+      ],
+      "evidence": ".csdlc/evidence/5351/milestone-links.log"
+    },
+    {
+      "name": "diff-hygiene",
+      "status": "pass",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "evidence": ".csdlc/evidence/5351/diff-hygiene.log"
+    },
+    {
+      "name": "docs-yaml-and-evidence-contract",
+      "status": "pass"
+    }
+  ],
+  "quality_rows": [
+    {
+      "gate": "product_contracts",
+      "status": "pass",
+      "evidence": [
+        ".csdlc/evidence/5384/platform-acceptance-ledger.v1.json",
+        ".csdlc/evidence/5351/integrated-platform.json"
+      ]
+    },
+    {
+      "gate": "stable_deployments",
+      "status": "pass",
+      "evidence": [
+        ".csdlc/evidence/5384/platform-acceptance-ledger.v1.json"
+      ]
+    },
+    {
+      "gate": "rollback",
+      "status": "pass",
+      "evidence": [
+        "docs/milestones/v0.91.8/evidence/wp12/cutover-5343/report.json"
+      ]
+    },
+    {
+      "gate": "deletion",
+      "status": "pass",
+      "evidence": [
+        "docs/milestones/v0.91.8/evidence/wp13/5346-post-deletion-validation.v1.json"
+      ]
+    },
+    {
+      "gate": "demo_convergence",
+      "status": "pass",
+      "evidence": [
+        ".csdlc/evidence/5354/convergence-proof.v1.json",
+        "docs/milestones/v0.91.8/review/wp15_demo_matrix_5733/RECONCILIATION_LEDGER_v1.md"
+      ]
+    },
+    {
+      "gate": "documentation",
+      "status": "pass",
+      "evidence": [
+        ".csdlc/evidence/5351/feature-crosswalk.log",
+        ".csdlc/evidence/5351/milestone-links.log"
+      ]
+    },
+    {
+      "gate": "budget_cots_redaction_path_hygiene",
+      "status": "pass",
+      "evidence": [
+        ".csdlc/evidence/5351/diff-hygiene.log",
+        ".csdlc/evidence/5351/integrated-platform.json"
+      ]
+    },
+    {
+      "gate": "issue_outcomes",
+      "status": "pass",
+      "evidence": [
+        "docs/milestones/v0.91.8/evidence/wp16/issue-outcome-audit.v1.json"
+      ]
+    }
+  ],
+  "required_failures": [
+
+  ],
+  "release_claim": "quality_gate_pass_only",
+  "wp17_handoff": "pending_wp16_merge"
+}

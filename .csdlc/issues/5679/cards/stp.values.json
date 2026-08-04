@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5679,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][tools][csdlc-v2] Fix stable owner-binary install manifest",
+    "slug": "recordless-terminal-recovery-5679",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Record observed closure without reconstructing unavailable lifecycle history.",
+      "deliverables": [
+        "terminal projection",
+        "retained terminal receipt"
+      ],
+      "acceptance_criteria": [
+        "issue is observed closed",
+        "terminal evidence is internally consistent"
+      ],
+      "dependencies": [
+        "exact merged PR evidence"
+      ],
+      "repo_inputs": [
+        "github-issue:5679",
+        "pull_request:5682 head:165473130facaf7c78868ff57c86a0e20597a973 merge:8e89bed30473f1e24d32a0e6536c82f5ca665cee",
+        "github-body-blake3:ceda8f806885b6b0cd04b0586a8a90ca4b973b044e975f0674ed73968b5aa40e"
+      ],
+      "non_goals": [
+        "No historical implementation, review, publication, readiness, or CI lifecycle is reconstructed by this terminal recovery."
+      ]
+    }
+  }
+}

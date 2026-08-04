@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5770,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][review] Allow bounded SPP correction during implemented review remediation",
+    "slug": "recordless-terminal-recovery-5770",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Retain exact observed closure for issue #5770 through merged corrective PR #5772 without reconstructing unavailable lifecycle history.",
+      "actual_changes": [
+        "Typed recordless terminal recovery projection only."
+      ],
+      "artifacts": [
+        ".csdlc/issues/5770/retained/design.md",
+        ".csdlc/issues/5770/retained/diagram.mmd"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "csdlc-closeout",
+            "recover-recordless",
+            "--issue",
+            "5770",
+            "--pr",
+            "5772"
+          ],
+          "purpose": "Authenticate the closed issue, exact closing linkage, merged head, and merge commit through typed GitHub observation.",
+          "outcome": "passed",
+          "evidence_ref": "typed-github:issue-5770:pr-5772"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

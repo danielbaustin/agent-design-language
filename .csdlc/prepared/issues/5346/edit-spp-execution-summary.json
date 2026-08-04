@@ -1,0 +1,15 @@
+{
+  "issue": 5346,
+  "card": "spp",
+  "expected_generation": 3,
+  "expected_digest": "f0a46940f0c377888b23e5473a7e4dc99bc34ca425a9bf12193295acbea8f665",
+  "claim_id": "claim-5346-v0918-wp13-deletion-preparation-current",
+  "actor": "codex:5346-wp13-execution-owner",
+  "reason": "Move #5346 from stale preparation-only gating into the operator-authorized WP-13 execution sequence while keeping #5347 disjoint and downstream WP-16/WP-17 nonblocking.",
+  "operation": {
+    "operation": "replan",
+    "field": "plan_summary",
+    "value": "Execute WP-13 #5346 now under the corrected sequence: WP-21 is complete, #5351 WP-16 and #5360 WP-17 are downstream and nonblocking, #5347 remains a disjoint peer deletion lane with serialized merge ordering, and current origin/main is integrated only in the issue worktree. Repair the issue-local dependency and manifest checks, claim only exact #5346 deletion paths, delete only reviewed manifest rows, run focused proving validation, obtain one bounded GPT-5.5 pre-PR review, fix all findings, and publish a ready PR with Closes #5346. Typed closeout is explicitly asynchronous and must not block this implementation lane."
+  },
+  "fail_after_backup": false
+}

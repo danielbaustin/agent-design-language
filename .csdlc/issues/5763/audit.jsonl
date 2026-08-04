@@ -1,0 +1,11 @@
+{"sequence":1,"generation":0,"actor":"codex:issue-5763-feature-crosswalk-digest","reason":"initialize issue record and all six cards","operation":"bootstrap"}
+{"sequence":2,"generation":0,"actor":"codex:issue-5763-feature-crosswalk-digest","reason":"bind branch/worktree and activate claim","operation":"bind"}
+{"sequence":3,"generation":0,"actor":"codex:issue-5763-feature-crosswalk-digest","reason":"Include the second stale digest value, the validate_feature_crosswalk.rb expected_digest constant, without weakening the guard or widening docs scope.","operation":"{\"add_protected_paths\":[\".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb\"],\"operation\":\"amend_claim_scope\"}"}
+{"sequence":4,"generation":1,"actor":"codex:issue-5763-feature-crosswalk-digest","reason":"atomically record execution, validation, and implemented phase","operation":"finalize_implementation"}
+{"sequence":5,"generation":1,"actor":"codex:5763-post-merge-closeout","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":6,"generation":2,"actor":"codex:5763-post-merge-independent-review","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
+{"sequence":7,"generation":3,"actor":"codex:5763-post-merge-closeout","reason":"Advance after independent exact-head review passed with no findings; PR #5767 squash merge 76a605966 has the exact reviewed tree and all required checks passed.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":8,"generation":4,"actor":"codex:5763-post-merge-closeout","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":9,"generation":5,"actor":"codex:5763-post-merge-closeout","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":10,"generation":6,"actor":"codex:5763-post-merge-closeout","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":11,"generation":7,"actor":"codex:019fb617-d22b-7252-975c-402d7d7aec46","reason":"Materialize the retained #5763 terminal receipt in the dedicated v0.91.8 aggregate closeout projection.","operation":"reconcile_terminal"}

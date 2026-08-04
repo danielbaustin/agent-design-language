@@ -7,8 +7,17 @@
 - Review lane: formal milestone third-party review
 - Initial preparation: closed v0.91.7 WP-21A / `#5489`
 - Current readiness reconciliation: v0.91.8 WP-01 / `#5594`
+- Integrated quality gate: v0.91.8 WP-16 / `#5351`, merged at
+  `2e9d2dd7c4260dcf6ec6af954b0eea97554212df`
+- Documentation alignment: v0.91.8 WP-17 / `#5360`, closed
+- Internal review: v0.91.8 WP-18 / `#5356`, closed through PR `#5781` at
+  reviewed head `ba4caa3da1f0f0358ce71bf64de0e8909c37ff28` and merge commit
+  `9e5745cdaad6f0753b22f1ef3ea7843573352c0d`
+- Final internal second pass: v0.91.8 WP-18 / `#5791`, reviewed at
+  `70f4e76509de219ccff6ffb534f9199d74eaece2` and merged through PR `#5799`
+  at `1b1ba9990bee81cf74ea449f09c52373aeb7e16c`
 - Release-tail revalidation owner: v0.91.8 WP-21A / `#5355`
-- Packet status: `prepared_not_sent`
+- Packet status: `ready_to_freeze_not_sent`
 - Review performed: false
 - Release approval claimed: false
 - v0.92 activation claimed: false
@@ -22,7 +31,7 @@ GitHub truth:
 | Gate | Required state before send |
 | --- | --- |
 | Exact target revision | Fill `Repository`, `PR`, `base`, `head`, and exact commit SHA in the Target Revision section. If any source changes after that SHA, fail closed and refresh this handoff. |
-| Predecessor gates | WP-17 documentation alignment and WP-18 internal review must be complete/current, or carry explicit operator-approved blocker disposition. WP-19 / `#5357` is the formal external-review owner and should be open or in progress when this packet is sent. WP-20 through WP-23 remain downstream and must not be treated as prerequisites unless later live truth says otherwise. |
+| Predecessor gates | WP-16 quality-gate evidence must remain ancestral to the target revision. WP-17 documentation alignment and the first WP-18 review must remain closed. Final WP-18 second-pass issue `#5791` must be merged after all residual coding, and that merge must be ancestral to the target revision. WP-19 / `#5357` is the formal external-review owner and should be open or in progress when this packet is sent. WP-20 through WP-23 remain downstream and must not be treated as prerequisites unless later live truth says otherwise. |
 | Source packet | Every path in the Source And Evidence Manifest must exist at the target revision. |
 | Implementation and proof packet | For send-time review, landed WP-02 through WP-16 implementation, tests, deployment/observatory/runtime/C-SDLC/ADL surfaces, and proof packets must be enumerated in the Implementation And Proof Manifest below from closed issue evidence. Fail closed if owner surfaces or proof packets are missing. |
 | Live issue truth | Issue and PR state must match [../WP_ISSUE_WAVE_v0.91.8.yaml](../WP_ISSUE_WAVE_v0.91.8.yaml) and [../WP_EXECUTION_READINESS_v0.91.8.md](../WP_EXECUTION_READINESS_v0.91.8.md). |
@@ -101,8 +110,13 @@ stale and the handoff must be refreshed before send.
 
 This handoff gives an external reviewer a bounded packet for `v0.91.8`, the
 bridge prerequisite for `v0.92`. The reviewer should evaluate whether ADL has
-prepared a credible, evidence-bound plan to accept ADL v2, Runtime v3, and
-C-SDLC v2 at exact revisions before `v0.92` consumes the platform.
+prepared a credible, evidence-bound packet to accept ADL v2, Runtime v3, and
+C-SDLC v2 at exact revisions before `v0.92` consumes the platform. The latest
+integrated quality source is WP-16 at
+`2e9d2dd7c4260dcf6ec6af954b0eea97554212df`; WP-17 closed the documentation
+alignment to that merged evidence. WP-18 closed its first review through PR
+`#5781` and its final second pass through PR `#5799`. WP-19 `#5357` may now
+freeze the packet, but the formal external review has not been sent.
 
 This is not a release handoff and not a review result. It prepares the formal
 third-party review surface only.
@@ -160,12 +174,19 @@ Do not review as completed implementation:
 
 - v0.91.8 product code that has not landed at the target revision;
 - v0.92 birthday implementation;
+- formal milestone review, remediation, or release ceremony work unless those
+  exact packets are present at the target revision;
 - deployment or release ceremony actions;
 - external shadow-review outputs not synthesized into tracked issue records;
 - hidden `.adl/local-artifacts` material unless explicitly copied into a
   publication-safe tracked packet.
 
 ## Source And Evidence Manifest
+
+The digest procedure includes every tracked path under
+`docs/milestones/v0.91.8/`. The lists below are navigation and risk-oriented
+entrypoints; they do not exclude any other tracked milestone document from the
+review corpus.
 
 ### Canonical v0.91.8 planning surfaces
 
@@ -181,6 +202,10 @@ Do not review as completed implementation:
 - [../WP_ISSUE_WAVE_v0.91.8.yaml](../WP_ISSUE_WAVE_v0.91.8.yaml)
 - [../WP_EXECUTION_READINESS_v0.91.8.md](../WP_EXECUTION_READINESS_v0.91.8.md)
 - [../CANONICAL_DOC_INVENTORY_v0.91.8.md](../CANONICAL_DOC_INVENTORY_v0.91.8.md)
+- [../BASELINE_AND_OWNERSHIP_v0.91.8.md](../BASELINE_AND_OWNERSHIP_v0.91.8.md)
+- [../baseline_and_ownership_v0.91.8.json](../baseline_and_ownership_v0.91.8.json)
+- [../RUNTIME_V3_FUNCTIONAL_PARITY_PLAN_v0.91.8.md](../RUNTIME_V3_FUNCTIONAL_PARITY_PLAN_v0.91.8.md)
+- [../runtime_v3_functional_parity_plan_v0.91.8.json](../runtime_v3_functional_parity_plan_v0.91.8.json)
 - [V0918_WP01_EXECUTION_READINESS_5594.md](V0918_WP01_EXECUTION_READINESS_5594.md)
 
 ### Feature, proof, and quality surfaces
@@ -188,6 +213,8 @@ Do not review as completed implementation:
 - [../features/README.md](../features/README.md)
 - [../features/ADL_V2_CORE_v0.91.8.md](../features/ADL_V2_CORE_v0.91.8.md)
 - [../features/RUNTIME_V3_ADAPTER_v0.91.8.md](../features/RUNTIME_V3_ADAPTER_v0.91.8.md)
+- [../features/RUNTIME_V3_FUNCTIONAL_PARITY_v0.91.8.md](../features/RUNTIME_V3_FUNCTIONAL_PARITY_v0.91.8.md)
+- [../features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md](../features/AI_AGENT_PODCAST_STUDIO_v0.91.8.md)
 - [../features/CSDLC_V2_ACCEPTANCE_v0.91.8.md](../features/CSDLC_V2_ACCEPTANCE_v0.91.8.md)
 - [../features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md](../features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md)
 - [../features/DELETION_AND_CUTOVER_v0.91.8.md](../features/DELETION_AND_CUTOVER_v0.91.8.md)
@@ -203,12 +230,18 @@ Do not review as completed implementation:
 ### Review, release, and handoff surfaces
 
 - [README.md](README.md)
+- [V0918_INTERNAL_REVIEW_PLAN_5356.md](V0918_INTERNAL_REVIEW_PLAN_5356.md)
+- [V0918_INTERNAL_REVIEW_5356.md](V0918_INTERNAL_REVIEW_5356.md)
+- [V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md](V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md)
+- [runtime_v3_acceptance_5361.v1.json](runtime_v3_acceptance_5361.v1.json)
 - [THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md](THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md)
 - [../ADR_PLAN_v0.91.8.md](../ADR_PLAN_v0.91.8.md)
 - [../RELEASE_PLAN_v0.91.8.md](../RELEASE_PLAN_v0.91.8.md)
 - [../RELEASE_NOTES_v0.91.8.md](../RELEASE_NOTES_v0.91.8.md)
 - [../NEXT_MILESTONE_HANDOFF_v0.91.8.md](../NEXT_MILESTONE_HANDOFF_v0.91.8.md)
 - [../V092_ACTIVATION_TEST_MAP_v0.91.8.md](../V092_ACTIVATION_TEST_MAP_v0.91.8.md)
+- [../handoff/WP21_SPRINT_REVIEW_5352.md](../handoff/WP21_SPRINT_REVIEW_5352.md)
+- [../handoff/issue-5352-v092-consumption-handoff.md](../handoff/issue-5352-v092-consumption-handoff.md)
 
 ### Setup and predecessor truth
 
@@ -223,37 +256,52 @@ Do not review as completed implementation:
 
 ### Implementation And Proof Manifest
 
-This section is intentionally fail-closed at preparation time. The formal
-send-time packet must be populated from closed WP-02 through WP-16 issue
-evidence at the exact target revision. Do not send the review with a docs-only
-packet.
+This section is anchored by merged WP-16 evidence at
+`2e9d2dd7c4260dcf6ec6af954b0eea97554212df`. WP-16 records 67 audited issues, 34
+working-code outcomes, 21 useful durable results, 12 partial or ambiguous
+release-tail/umbrella/lifecycle-drift items, 0 unacceptable outcomes, and 0
+release blockers. The paths below are the concrete implementation and proof
+entrypoints at the review revision; directory entries include their tracked
+descendants.
 
-Before send, enumerate landed paths and proof packets for each applicable
-owner surface:
+| Surface | Landed implementation and tests | Review evidence and issue truth |
+| --- | --- | --- |
+| ADL v2 language, compiler, engine, records, adapters, and CLI | `adl-v2/crates/adl-language/`, `adl-v2/crates/adl-compiler/`, `adl-v2/crates/adl-engine/`, `adl-v2/crates/adl-records/`, `adl-v2/crates/adl-adapters/`, `adl-v2/crates/adl-runtime-v3-adapter/`, and `adl-v2/crates/adl-cli/` | `.csdlc/evidence/5339/implementation-validation/`, `.csdlc/evidence/5340/engine-focused/`, `.csdlc/evidence/5341/`, and `.csdlc/evidence/5354/convergence-proof.v1.json`; terminal issue records under `.csdlc/issues/5338/` through `.csdlc/issues/5342/` |
+| C-SDLC v2 typed lifecycle | `csdlc-v2/src/`, `csdlc-v2/tests/`, and `csdlc-v2/operator/skills/` | `.csdlc/evidence/5351/csdlc-v2-all-targets.log`; issue records `.csdlc/issues/5358/`, `.csdlc/issues/5540/`, `.csdlc/issues/5541/`, `.csdlc/issues/5548/`, `.csdlc/issues/5558/`, `.csdlc/issues/5737/`, `.csdlc/issues/5778/`, `.csdlc/issues/5779/`, and `.csdlc/issues/5780/` record acceptance and corrective truth |
+| Runtime v3 kernel, guardian, protocols, state, and Observatory API | `adl-runtime-kernel/src/`, `adl-runtime-kernel/tests/`, `adl-runtime/src/`, `adl-runtime/tests/`, `infra/runtime-v3/`, and `demos/html-observatory/` | `.csdlc/evidence/5361/`, [runtime_v3_acceptance_5361.v1.json](runtime_v3_acceptance_5361.v1.json), `.csdlc/evidence/5698/`, `.csdlc/evidence/5701/`, `.csdlc/evidence/5713/`, and issue records `.csdlc/issues/5589/`, `.csdlc/issues/5590/`, `.csdlc/issues/5591/`, `.csdlc/issues/5592/`, `.csdlc/issues/5722/` |
+| Distributed C-SDLC workcell | `adl-v2/crates/adl-workcell-conductor/`, `adl-v2/crates/adl-workcell-task-adapter/`, and `adl-v2/crates/adl-workcell-convergence/` | `.csdlc/evidence/5501/retained-live-proof.json`, `.csdlc/evidence/5501/live-run-manifest.json`, and the WP-10A issue records named by [../WP_ISSUE_WAVE_v0.91.8.yaml](../WP_ISSUE_WAVE_v0.91.8.yaml) |
+| Platform acceptance, deployment, Observatory, soak, rollback, and deletion | `adl-v2/tools/run-soak.sh`, `adl-v2/tools/prove-rollback.sh`, `infra/runtime-v3/`, and `demos/html-observatory/` | [V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md](V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md), `.csdlc/evidence/5384/platform-acceptance-ledger.v1.json`, `.csdlc/evidence/5344/`, [../evidence/wp12/](../evidence/wp12/), [../evidence/wp13/](../evidence/wp13/), and [../evidence/wp13-external-bands/](../evidence/wp13-external-bands/) |
+| Integrated convergence, quality, documentation, and review | Integration proof is retained in `.csdlc/evidence/5354/convergence-proof.v1.json`; this row does not add a separate implementation surface | [../evidence/wp16/ISSUE_OUTCOME_AUDIT.md](../evidence/wp16/ISSUE_OUTCOME_AUDIT.md), [../evidence/wp16/QUALITY_GATE.md](../evidence/wp16/QUALITY_GATE.md), [V0918_INTERNAL_REVIEW_5356.md](V0918_INTERNAL_REVIEW_5356.md), `.csdlc/evidence/5360/documentation-alignment.v1.json`, `.csdlc/evidence/5791/focused-5791-validation.log`, and [../handoff/WP21_SPRINT_REVIEW_5352.md](../handoff/WP21_SPRINT_REVIEW_5352.md) |
 
-| Surface | Send-time requirement |
-| --- | --- |
-| ADL v2 core and owner binaries | List landed source, tests, generated/stable binary provenance, owner validation records, and issue closeout evidence for WP-02 through WP-08 as applicable. |
-| C-SDLC v2 acceptance | List landed typed-command source/tests, lifecycle proof packets, validation receipts, and open/closed acceptance-defect disposition including `#5540`, `#5541`, `#5548`, and `#5558`. |
-| Runtime v3 adapter and distributed workcells | List landed runtime/task-adapter source, tests, acceptance proof, workcell/output-contract proof, and dependent issue evidence including WP-10A plus `#5591`, `#5592`, `#5589`, and `#5590` closure truth. |
-| Platform acceptance, deployment, observatory, and rollback/cutover | List landed scripts/config/docs/tests/proof packets for acceptance, soak, deployment/observatory, rollback, deletion, and cutover gates. |
-| Review/remediation/release tail | List landed review packets, remediation proof, release-plan evidence, handoff evidence, and closeout records through the exact send revision. |
+This manifest is an entrypoint inventory, not a claim that every descendant is
+independently reviewed or that downstream WP-20 through WP-23 work is complete.
+If any listed path is absent at the exact target revision, return `blocked` or
+`deferred` rather than inferring completion from planning text.
 
-If a row cannot be populated with landed code/test/proof evidence, return
-`blocked` or `deferred` and record the missing owner surface instead of asking
-the reviewer to infer completion from planning docs.
+### WP-16 Quality-Gate Evidence
+
+- [../evidence/wp16/ISSUE_OUTCOME_AUDIT.md](../evidence/wp16/ISSUE_OUTCOME_AUDIT.md)
+- [../evidence/wp16/QUALITY_GATE.md](../evidence/wp16/QUALITY_GATE.md)
+- [../evidence/wp16/issue-outcome-audit.v1.json](../evidence/wp16/issue-outcome-audit.v1.json)
 
 ## Live Issue, PR, And Validation Truth
 
 Before send, refresh:
 
 - all v0.91.8 issue states named by [../WP_ISSUE_WAVE_v0.91.8.yaml](../WP_ISSUE_WAVE_v0.91.8.yaml);
+- final internal second-pass issue `#5791` and its merged review packet are
+  ancestral to the target revision;
 - PR state for the target review packet;
 - #5408 remains closed and PR #5419 remains merged;
 - #4906 retained blocker state is not accidentally marked resolved;
 - WP-19 / `#5357` owns the formal external-review send and WP-20 through WP-23
   remain downstream unless live issue truth changes;
 - focused validation from [../CANONICAL_DOC_INVENTORY_v0.91.8.md](../CANONICAL_DOC_INVENTORY_v0.91.8.md).
+
+Live GitHub truth refreshed on 2026-08-04: the open `version:v0.91.8` issues are
+`#5348`, `#5355`, `#5357`, `#5359`, `#5362`, `#5363`, sprint umbrella
+`#5595`, and prerequisite repair `#5804`. All other issue inputs named by the implementation manifest are closed
+or retained historical evidence unless a later live refresh says otherwise.
 
 ## Required Review Questions
 
@@ -328,7 +376,7 @@ Allowed review outcomes:
 
 This handoff does not claim:
 
-- third-party review has run;
+- third-party review has been dispatched or completed;
 - v0.91.8 implementation, release, or deployment is complete;
 - v0.92 birthday readiness is achieved;
 - per-issue external shadow reviews equal formal milestone review;
@@ -340,6 +388,8 @@ This handoff does not claim:
 Before send, run or record an equivalent fresh validation:
 
 ```sh
+ruby .csdlc/prepared/issues/5357/validate-preparation.rb
+ruby .csdlc/prepared/issues/5357/check-dependencies.rb
 git diff --check
 ruby -e 'require "yaml"; YAML.safe_load(File.read("docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml"), aliases: true)'
 rg "CANONICAL_DOC_INVENTORY_v0.91.8.md" docs/milestones/v0.91.8/README.md

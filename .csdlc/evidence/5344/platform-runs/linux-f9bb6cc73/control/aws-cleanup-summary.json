@@ -1,0 +1,10 @@
+{
+  "schema": "adl.wp12.linux_cleanup_summary.v1",
+  "instance_id": "i-05d126bfa5b1f804a",
+  "instance_state": "terminated",
+  "security_group_id": "sg-0ae98b3c1bebcc427",
+  "security_group_deleted": true,
+  "preserved_cache_volume_id": "vol-0934411b84ad4209b",
+  "preserved_cache_volume_state": "available",
+  "preserved_cache_volume_size_gb": 1000
+}

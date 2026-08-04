@@ -1,0 +1,14 @@
+{
+  "issue": 5344,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "f7c88d0cc84e3ee7a8c9bf76c265336850061dfa02345a1a1ba9a0b61d82bdb6",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Refresh preparation plan wording so execution is gated by live merge plus ancestry and review is deferred until pre-PR.",
+  "operation": {
+    "operation": "replan",
+    "field": "plan_summary",
+    "value": "Render and validate all six cards; freeze the reversible selector transaction, exact dependency gate, scenario manifest, evidence schema, protected paths, COTS, budgets, PVF, no-deferral, cutover, and rollback invariants; commit and push preparation only without preparation-review churn; wait for #5350 and #5361 live merged landing commits ancestral to the exact execution revision; treat receipts and typed closeout as audit-only observations; then execute the complete exact-revision soak/rollback lifecycle and run the single bounded review just before PR without widening authority."
+  }
+}

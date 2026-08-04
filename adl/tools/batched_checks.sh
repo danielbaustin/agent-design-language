@@ -32,8 +32,7 @@ run_step() {
 }
 
 echo "• Running tooling sanity checks (batched)…"
-bash -n "$ROOT/adl/tools/pr.sh"
-bash "$ROOT/adl/tools/pr.sh" --help >/dev/null 2>&1
+run_step "C-SDLC v2 installer" "$ROOT/csdlc-v2/target/debug/csdlc-install" --help
 run_step "repo-code-review contract check" bash "$ROOT/adl/tools/test_repo_code_review_skill_contracts.sh"
 run_step "repo-packet-builder contract check" bash "$ROOT/adl/tools/test_repo_packet_builder_skill_contracts.sh"
 run_step "redaction-and-evidence-auditor contract check" bash "$ROOT/adl/tools/test_redaction_and_evidence_auditor_skill_contracts.sh"

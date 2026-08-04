@@ -1,0 +1,27 @@
+{
+  "issue": 5354,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "85e8811211d613043f86f2aacf67d2d1e97683a1a4df041f957f0076b3bfb9f2",
+  "claim_id": "claim-5354-v0918-wp15-reacquired",
+  "actor": "codex:5354-wp15-owner",
+  "reason": "Record the bounded WP-15 convergence implementation at the integrated exact revision.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented a compact real convergence runner and retained packet spanning ADL v2 compilation and execution, Runtime v3 canonical ingress and live TLS/WSS observation, installed C-SDLC v2, accepted Unity proof, and explicit non-claims.",
+    "changes": [
+      "Add one executable convergence validation runner with dependency, live integration, claim-boundary, and complete lanes",
+      "Retain a redaction-safe convergence packet with exact revisions, commands, identities, outcomes, and digests",
+      "Update the v0.91.8 demo and feature-proof matrices to cite the retained packet and bound Unity claims",
+      "Repair the existing ADL v2 lockfile so the already-declared dependency graph builds reproducibly under --locked",
+      "Keep typed closeout asynchronous and non-blocking after GitHub merge"
+    ],
+    "artifacts": [
+      ".csdlc/evidence/5354/convergence-proof.v1.json",
+      ".csdlc/prepared/issues/5354/run-validation-lane.rb",
+      "adl-v2/Cargo.lock",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md"
+    ]
+  }
+}

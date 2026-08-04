@@ -1,0 +1,7 @@
+{
+  "issue": 5357,
+  "expected_generation": 0,
+  "expected_digest": "630c07256c5fb2becd1d07761634aa58312a08c128f42c7b941a5f7a95fc2f16",
+  "claim_id": "claim-5357-v0918-wp19-external-review-preparation",
+  "reviewer": "subagent:5357-preparation-review"
+}

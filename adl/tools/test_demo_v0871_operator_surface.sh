@@ -57,7 +57,7 @@ grep -Fq '"overall_status": "succeeded"' "$STATUS_FILE" || {
   echo "assertion failed: run_status.json missing succeeded status" >&2
   exit 1
 }
-grep -Fq 'bash adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml' "$README_FILE" || {
+grep -Fq '.adl/bin/adl-runtime run adl/examples/v0-4-demo-deterministic-replay.adl.yaml' "$README_FILE" || {
   echo "assertion failed: README missing canonical operator command" >&2
   exit 1
 }

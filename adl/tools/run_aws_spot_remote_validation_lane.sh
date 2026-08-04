@@ -371,13 +371,19 @@ fi
 if [[ -z "$LANE_BIN" ]]; then
   if [[ -x "$ROOT/tools/aws_remote_validation/target/debug/adl-aws-remote-validation" ]]; then
     LANE_BIN="$ROOT/tools/aws_remote_validation/target/debug/adl-aws-remote-validation"
-  elif [[ -x "${PRIMARY_ROOT:-$ROOT}/.adl/bin/adl-aws-remote-validation" ]]; then
-    LANE_BIN="${PRIMARY_ROOT:-$ROOT}/.adl/bin/adl-aws-remote-validation"
-  elif [[ -x "$ROOT/adl/target/debug/adl-aws-remote-validation" ]]; then
-    LANE_BIN="$ROOT/adl/target/debug/adl-aws-remote-validation"
   else
     LANE_BIN="$ROOT/tools/aws_remote_validation/target/debug/adl-aws-remote-validation"
   fi
+fi
+
+if [[ ! -x "$LANE_BIN" ]]; then
+  echo "run_aws_spot_remote_validation_lane: dedicated remote-validation binary is missing: $LANE_BIN" >&2
+  echo "build it with: cargo build --locked --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation" >&2
+  exit 2
+fi
+if ! "$LANE_BIN" --help 2>&1 | grep -F -- "--spot-only" >/dev/null; then
+  echo "run_aws_spot_remote_validation_lane: selected binary does not implement the required Spot contract: $LANE_BIN" >&2
+  exit 2
 fi
 
 check_account() {

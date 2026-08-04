@@ -1,7 +1,7 @@
 # Best Lines
 
-- A five-minute sprint only matters if it can preserve surprise, taste, and truth at the same time.
-- The active gates are still too post-hoc, the validation path is too heavy, and too much of the packet is authored after the work rather than emitted as part of the work.
-- Bureaucracy is not the enemy; dead language is.
-- When the artifact tells the story cleanly, governance starts to feel less like drag and more like stagecraft.
-- The show feels alive when the artifact still has a soul after the process has finished touching it.
+- A good AI teammate reduces confusion, improves decisions, and helps the human team become more capable.
+- A bad AI teammate makes more tabs, more cleanup, and more uncertainty.
+- For AI, humility is not a personality flourish. It is a reliability feature.
+- The first useful question is not 'How smart is it?' It is 'What kind of work relationship does it create?'
+- Judge AI by the quality of the collaboration it creates.

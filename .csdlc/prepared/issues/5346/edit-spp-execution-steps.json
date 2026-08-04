@@ -1,0 +1,45 @@
+{
+  "issue": 5346,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "d54b0bfd2a3f0f9cb3a36531f52d1c10328e6568368c319151ff653dbcfb0f8d",
+  "claim_id": "claim-5346-v0918-wp13-deletion-preparation-current",
+  "actor": "codex:5346-wp13-execution-owner",
+  "reason": "Replace stale preparation-only steps with the current WP-13 execution path.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Repair #5346 dependency and claim truth through supported typed v2 operations: remove downstream WP-16/#5351 and WP-17/#5360 prerequisites, accept completed #5354/#5352 GitHub merge/closure as nonblocking upstream truth, and keep #5347 as a disjoint peer lane with serialized merge ordering",
+        "acceptance_ids": ["AC-1", "AC-3", "AC-8", "AC-10"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Create exact #5346 deletion eligibility evidence and amend the active claim only to the reviewed #5346 product paths, excluding #5347 external bands and Runtime v2",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-5", "AC-6"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Delete only the exact #5346 manifest rows and record deleted, retained, and newly added LoC separately against the pinned denominator",
+        "acceptance_ids": ["AC-2", "AC-5", "AC-6", "AC-9"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Run focused proving validation, typed doctor, diff hygiene, and one bounded GPT-5.5 pre-PR review; fix every actionable finding before publication",
+        "acceptance_ids": ["AC-7", "AC-9", "AC-10"],
+        "status": "pending"
+      },
+      {
+        "id": "S5",
+        "action": "Publish a ready PR through typed v2 with Closes #5346, verify actual PR base/head, and shepherd required CI to merge readiness without doing typed closeout in this session",
+        "acceptance_ids": ["AC-7", "AC-8", "AC-10"],
+        "status": "pending"
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

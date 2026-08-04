@@ -1,0 +1,10 @@
+{
+  "issue": 5788,
+  "claim_id": "claim-5788-lockfile-preservation",
+  "expected_generation": 3,
+  "expected_digest": "67eed19c17392bae23cbc51ecc9007d063789edf817f6f4b3603ee3462add3b0",
+  "now_unix_seconds": 1785779765,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Retain the focused validation summary referenced by the typed SOR.",
+  "add_protected_paths": [".csdlc/evidence/5788"]
+}

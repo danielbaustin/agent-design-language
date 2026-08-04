@@ -22,6 +22,10 @@ case "$(uname -s)-$(uname -m)" in
     ARCHIVE_ARCH="x86_64-unknown-linux-musl"
     ARCHIVE_SHA256="8c114c5e9fd9646516f014d5d837690447cf0d4f43ba4a3746713bc0612b039b"
     ;;
+  MINGW*|MSYS*|CYGWIN*)
+    echo "install_vector_component: use adl/tools/install_vector_component.ps1 for native Windows Vector provisioning" >&2
+    exit 2
+    ;;
   *)
     echo "install_vector_component: unsupported platform $(uname -s)-$(uname -m)" >&2
     exit 2

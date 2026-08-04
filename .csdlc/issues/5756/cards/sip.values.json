@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5756,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][providers] Scope MiniMax billing classification to MiniMax responses",
+    "slug": "minimax-billing-classification",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Scope MiniMax billing classification so bare 1008 substrings in other hosted provider non-2xx responses do not become ProviderBillingBlocked.",
+      "required_outcome": "MiniMax code 1008 remains non-retryable ProviderBillingBlocked, while OpenAI, Anthropic, DeepSeek, and generic provider bodies containing 1008 retain their normal provider-specific classification and retry behavior.",
+      "declared_scope": [
+        "adl/src/provider_adapter.rs shared hosted HTTP failure classification",
+        "focused provider adapter regression tests"
+      ],
+      "authority_boundary": [
+        "typed C-SDLC v2 binaries own lifecycle state",
+        "no AWS use",
+        "no /private/tmp",
+        "no #5748 inspection or dependency"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "work only in /Volumes/FastWork/adl-wp-5756",
+        "do not write tracked files on primary main",
+        "publish a ready PR with Closes #5756",
+        "do not block on asynchronous closeout"
+      ]
+    }
+  }
+}

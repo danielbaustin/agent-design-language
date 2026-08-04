@@ -1,0 +1,16 @@
+{
+  "issue": 5648,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "f8ba8d4abe394314f7c65c96f076c49b752fc7ed0ebe8fe424c372c81b3a8bd4",
+  "claim_id": "claim-5648-operator-active-claim-revoke",
+  "actor": "codex:5648-execution",
+  "reason": "Record implementation of typed operator active-claim revoke",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Added typed operator-authorized active-claim revoke with CAS, expiry guard, audit, schema, CLI route, and focused tests.",
+    "changes": ["csdlc-v2/src/lifecycle.rs", "csdlc-v2/src/bin/csdlc-bind.rs", "csdlc-v2/src/schema.rs", "csdlc-v2/src/lib.rs", "csdlc-v2/tests/gate2.rs"],
+    "artifacts": [".csdlc/evidence/5648/local"]
+  },
+  "fail_after_backup": false
+}

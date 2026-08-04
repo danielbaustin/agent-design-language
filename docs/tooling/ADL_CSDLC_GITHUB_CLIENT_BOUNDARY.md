@@ -1,80 +1,87 @@
 # ADL C-SDLC GitHub Client Boundary
 
-This document records the v0.91.5 ownership boundary for GitHub issue and PR
-metadata operations during the octocrab migration.
+This document records the current C-SDLC v2 ownership boundary for GitHub issue
+and pull-request operations.
 
 ## Canonical Entry Points
 
-- `adl/tools/pr.sh` remains the canonical agent-facing workflow wrapper during
-  migration.
-- `adl-csdlc` is the Rust-owned C-SDLC compatibility binary.
-- Old `adl pr ...` compatibility paths and `adl-csdlc issue ...` paths route
-  through the same PR control-plane implementation.
+GitHub work for C-SDLC v2 is owned by repo-native Rust binaries and the shared
+token resolver. Do not use the ChatGPT GitHub connector, raw `gh`, legacy
+wrappers, shell/Python lifecycle mutation, or AWS for covered lifecycle writes.
+
+The current command surface is split by responsibility:
+
+- `csdlc-github-issue` owns GitHub issue lifecycle actions:
+  `issue_create`, `issue_update`, `issue_comment`, `issue_close`, and
+  `issue_read`.
+- `csdlc-github-pr` owns GitHub PR observation through `pr_state`.
+- `csdlc-pr-state` remains the dedicated low-level PR-state observer used by
+  other v2 binaries.
+- `csdlc-finish` is the sole exact-head merge and derived-terminal authority.
+- `csdlc-github` remains a compatibility facade while callers migrate to the
+  narrower owner binaries.
+
+Every issue/comment mutation must carry an `operation_key`. The GitHub command
+surface renders it as a stable marker, reads back remote state, and fails closed
+on missing, duplicated, or mismatched reconciliation.
 
 ## Shared Client Ownership
 
-GitHub issue and PR metadata interpretation is owned by the shared PR
-control-plane client layer in:
+Shared GitHub behavior belongs in the C-SDLC v2 GitHub library code, not in
+individual command wrappers:
 
-- `adl/src/cli/pr_cmd/github_client.rs`
-- `adl/src/cli/pr_cmd/github.rs`
+- token-source selection through the shared resolver
+- marker rendering and exact-marker checks
+- issue readback and idempotent mutation reconciliation
+- PR state normalization and readiness classification
+- retry/backoff behavior through the shared `adl-resilience` crate where a
+  bounded retry policy is appropriate
 
-The shared layer owns:
+The GitHub app connector is read-only for this repository and is not a write
+fallback. The operator-approved token file may be supplied through
+`token_file`/`ADL_GITHUB_TOKEN_FILE`; token contents must never be printed,
+copied, persisted into tracked artifacts, or committed.
 
-- GitHub client mode selection through `ADL_GITHUB_CLIENT`.
-- Token-source selection using `GITHUB_TOKEN` before `GH_TOKEN`.
-- Fail-closed policy for `auto`, `octocrab`, and unsupported `gh` fallback mode.
-- Fail-closed shell fallback disablement through
-  `ADL_GITHUB_DISABLE_GH_FALLBACK`.
-- Live octocrab transport for covered C-SDLC issue and PR workflow operations.
-- Operation-level `github_octocrab` start/completed/failed logs for covered
-  live GitHub requests.
-- Issue metadata parity planning.
-- PR wave filtering.
-- PR closing-linkage interpretation.
+## Install Contract
 
-## Current Command Surface
+The v2 install/coexistence manifests must require every operational GitHub
+owner binary:
 
-The typed issue inspection surface is currently exposed through:
+- `csdlc-github`
+- `csdlc-github-issue`
+- `csdlc-github-pr`
+- `csdlc-pr-state`
+- `csdlc-finish`
 
-- `adl/tools/pr.sh issue list`
-- `adl/tools/pr.sh issue search`
-- `adl/tools/pr.sh issue view`
-
-The typed issue mutation surface is currently exposed through:
-
-- `adl/tools/pr.sh issue create`
-- `adl/tools/pr.sh issue comment`
-- `adl/tools/pr.sh issue edit` or an equivalent title/body/label update path
-
-Direct `gh issue create/comment/edit` use is not the desired sprint setup path
-for covered operations. If a future helper still shells out directly, treat that
-as helper migration debt rather than a new command-boundary gap.
+`csdlc-install install` must build and install the reviewed binary set into the
+dedicated `.adl/bin/csdlc-v2/` generation directory. `csdlc-install verify`
+must fail closed when any required binary is missing, non-executable, symlinked,
+or built from stale provenance.
 
 ## Migration Rules
 
-- Do not duplicate GitHub issue or PR metadata interpretation in `adl-csdlc`.
-- Do not bypass `adl/tools/pr.sh` as the taught operator entrypoint.
-- Do not silently use `gh` fallback for covered C-SDLC issue/PR workflow
-  operations.
-- Do not silently use `gh` when `ADL_GITHUB_CLIENT=octocrab` explicitly selects
-  octocrab.
-- Unsupported GitHub workflow operations must fail closed until they have a
-  real octocrab implementation.
-- Do not introduce GitHub App authentication in this migration slice.
-- Do not rename public workflow commands in this migration slice.
+- Prefer `csdlc-github-issue` for issue actions.
+- Prefer `csdlc-github-pr state --request <request.json>` or `csdlc-pr-state`
+  for PR observation.
+- Keep `csdlc-github run --request <request.json>` only as compatibility during
+  migration.
+- Do not add new issue actions to `csdlc-github-pr`.
+- Do not add new PR actions to `csdlc-github-issue`.
+- Do not route publication or terminal operations through connector actions;
+  keep publication under `csdlc-publish` and exact-head merge plus derived
+  terminal retention under `csdlc-finish`.
+- Unsupported GitHub workflow operations must fail closed until a repo-native
+  Rust implementation exists.
 
 ## Proof Hooks
 
-The focused ownership checks live in the Rust CLI tests:
+Focused proof for this boundary lives in:
 
-- `csdlc_dispatch_exposes_help_and_version_without_runtime_dispatch`
-- `csdlc_issue_run_maps_to_existing_pr_start_command`
-- `csdlc_github_client_boundary_doc_records_shared_ownership`
-- `live_gh_policy_guard_blocks_disabled_fallback_before_spawn`
-- `live_github_policy_blocks_explicit_gh_fallback_before_spawn`
-- token-backed `ADL_GITHUB_CLIENT=octocrab` doctor smoke, which should show
-  `github_octocrab` operation events and complete without invoking `gh`
+- `cargo test --manifest-path csdlc-v2/Cargo.toml --test gate_github_actions`
+- `cargo test --manifest-path csdlc-v2/Cargo.toml --test gate10a`
+- `csdlc-install install --repo <repo> --destination <repo>/.adl/bin/csdlc-v2`
+- `csdlc-install verify --repo <repo> --bin-dir <repo>/.adl/bin/csdlc-v2 --inventory csdlc-v2/operator/coexistence.json`
 
-These checks prove that `adl-csdlc` remains a compatibility surface over the
-shared PR control-plane path instead of becoming a second GitHub workflow truth.
+These checks prove that issue and PR actions are split, marker reconciliation is
+exact, and the stable installed binary set cannot omit required GitHub owner
+binaries.

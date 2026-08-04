@@ -1,7 +1,8 @@
 # Runtime v3 Functional Parity Plan
 
-Status: planned. This document does not prove implementation or authorize
-cutover, deletion, deployment, or v0.92 activation.
+Status: accepted execution ledger. This document records the parity plan and
+its bounded v0.91.8 outcome. It does not by itself authorize further cutover,
+deployment, deletion, or v0.92 activation beyond the exact evidence cited here.
 
 ## Why This Exists
 
@@ -13,7 +14,9 @@ useful design evidence, but they do not prove that a configured Runtime v3
 process can accept and execute representative domain work across all planned
 features.
 
-v0.91.8 must close that gap before selector cutover or Runtime v2 deletion.
+v0.91.8 closed the bounded parity gap through #5591, #5592, #5589, #5590,
+#5361, and the integrated WP-16 quality gate. Later consumers must cite the
+retained evidence rather than treating this planning text as proof.
 
 ## Canonical Runtime And Budget
 
@@ -59,9 +62,10 @@ A capability counts toward cutover only when all of these are true:
 | D | #5590 | ACIP/A2A/cloud boundary; secure local/remote access; Observatory; weather/telemetry; guardian/soak/rollback | Secure operable runtime and live HTML Observatory proof |
 
 The global writable-actor cap remains four. Lanes B, C, and D consume Lane A's
-reviewed ingress/service-contract revision; they may prepare cards and review
-fixtures while Lane A executes, then implement concurrently on disjoint
-protected paths after the interface freeze.
+reviewed ingress/service-contract revision. That dependency order is now
+retained as completed execution evidence: WP-16 classifies #5591, #5592, #5589,
+and #5590 as working-code outcomes, while keeping broader v0.92 adaptive
+learning and public cloud claims out of scope.
 
 ## Ten Proof Groups
 
@@ -78,10 +82,18 @@ protected paths after the interface freeze.
 | 9. ACIP/A2A/cloud network boundary | fixture-only | Authenticated secure local/remote contract, no hard-coded IPs, credential-free external-route boundary | #5590 |
 | 10. Observatory, guardian, soak, and rollback | opt-in/retained | HTML Observatory consumes real runtime state; guardian, pressure stop, restart, soak, and selector rollback pass | #5590 |
 
+WP-16 retained the integrated Runtime v3 proof as a release input:
+`docs/milestones/v0.91.8/evidence/wp16/QUALITY_GATE.md` records the Runtime v3
+locked all-target suite as `pass`, and
+`docs/milestones/v0.91.8/evidence/wp16/ISSUE_OUTCOME_AUDIT.md` records
+#5589, #5590, #5591, and #5592 as working code. The release-tail evidence still
+separates runtime parity from v0.92 feature expansion, public cloud hosting,
+subjective affect claims, and distributed relocation.
+
 ## Feature Preservation Overlay
 
-Before WP-11, every implemented row in `docs/planning/ADL_FEATURE_LIST.md` and
-every v0.91.7 feature document must be classified as exactly one of:
+Every implemented row in `docs/planning/ADL_FEATURE_LIST.md` and every v0.91.7
+feature document must remain classified as exactly one of:
 
 - `live_runtime_v3`: production behavior executes through canonical ingress;
 - `owned_outside_runtime`: the feature is implemented by ADL v2, C-SDLC v2,
@@ -98,17 +110,17 @@ feature that is not explicitly deferred or boundary-only.
 
 ## Dependency Gate
 
-1. #5336 approves the pinned source-tree baseline, architecture, ownership
+1. #5336 approved the pinned source-tree baseline, architecture, ownership
    boundary, budget method, and this ledger.
-2. #5591 freezes canonical ingress and service contracts.
-3. #5592, #5589, and #5590 implement concurrently on disjoint surfaces.
-4. #5341 connects ADL v2 plans/events to the reviewed Runtime v3 ingress;
+2. #5591 froze canonical ingress and service contracts.
+3. #5592, #5589, and #5590 implemented on disjoint surfaces after #5591.
+4. #5341 connected ADL v2 plans/events to the reviewed Runtime v3 ingress;
    #5349 aligns provider/governed-tool ports.
-5. WP-11 #5350 runs exact-revision live parity across ADL v2 and all ten Runtime
+5. WP-11 #5350 ran exact-revision parity across ADL v2 and the Runtime
    v3 proof groups.
-6. Runtime v3 acceptance #5361 closes only after all four lanes and WP-11 pass.
-7. WP-12 soak and reversible cutover require closed #5361 acceptance.
-8. WP-13 deletion follows cutover and current C-SDLC v2 acceptance.
+6. Runtime v3 acceptance #5361 consumed the four parity lanes and WP-11.
+7. WP-12 soak and reversible cutover consumed closed #5361 acceptance.
+8. WP-13 deletion followed cutover and current C-SDLC v2 acceptance.
 
 ## Non-Claims
 

@@ -1,4 +1,4 @@
-use ::adl::provider::{expand_provider_profiles, provider_profile_names};
+use ::adl::provider::{build_provider, expand_provider_profiles, provider_profile_names};
 
 use super::support::adl_doc_from_yaml;
 
@@ -79,6 +79,39 @@ run:
     assert!(
         err.to_string()
             .contains("profile and explicit provider identity fields together"),
+        "{err:#}"
+    );
+}
+
+#[test]
+fn expand_provider_profiles_rejects_vendor_identity_override() {
+    let doc = adl_doc_from_yaml(
+        r#"
+version: "0.5"
+providers:
+  kimi_primary:
+    profile: "kimi:k2.5"
+    config:
+      vendor: "openai"
+agents:
+  a1:
+    provider: "kimi_primary"
+    model: "kimi-k2.5"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#,
+    );
+    let err = expand_provider_profiles(&doc).expect_err("profile vendor override must fail");
+    assert!(
+        err.to_string().contains("conflicts with profile vendor"),
         "{err:#}"
     );
 }
@@ -432,6 +465,48 @@ run:
             .and_then(|v| v.as_str()),
         Some("ANTHROPIC_API_KEY")
     );
+}
+
+#[test]
+fn expand_provider_profiles_builds_claude_opus_5_anthropic_provider() {
+    let doc = adl_doc_from_yaml(
+        r#"
+version: "0.5"
+providers:
+  opus:
+    profile: "claude:claude-opus-5"
+agents:
+  reviewer:
+    provider: "opus"
+    model: "claude-opus-5"
+tasks:
+  review:
+    prompt:
+      user: "review"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - agent: "reviewer"
+        task: "review"
+"#,
+    );
+    let expanded = expand_provider_profiles(&doc).expect("profile expansion should succeed");
+    let provider = &expanded.providers["opus"];
+    assert_eq!(provider.kind, "anthropic");
+    assert_eq!(provider.default_model.as_deref(), Some("claude-opus-5"));
+    assert_eq!(
+        provider
+            .config
+            .get("provider_model_id")
+            .and_then(|v| v.as_str()),
+        Some("claude-opus-5")
+    );
+    assert_eq!(
+        provider.config.get("endpoint").and_then(|v| v.as_str()),
+        Some("https://api.anthropic.com/v1/messages")
+    );
+    build_provider(provider, None).expect("expanded profile should build Anthropic provider");
 }
 
 #[test]

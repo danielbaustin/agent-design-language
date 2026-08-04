@@ -1,0 +1,12 @@
+{
+  "issue": 5778,
+  "claim_id": "claim-5778-derived-terminal-finish",
+  "expected_generation": 8,
+  "expected_digest": "38aee54f60e908122e5113c83d6cf19cd34e5d06ef2a5d1156ccab19fa430b3f",
+  "now_unix_seconds": 1785700739,
+  "actor": "codex:5778-implementation",
+  "reason": "Include the separately tracked #5783 one-line formatting repair required to make #5778's current-main merge tree pass CI.",
+  "add_protected_paths": [
+    "adl-runtime/src/runtime_api.rs"
+  ]
+}

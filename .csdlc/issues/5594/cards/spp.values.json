@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-01][readiness] Reconcile plans, sprint umbrellas, and parallel execution",
     "slug": "v0-91-8-wp-01-execution-readiness",
     "version": "v0.91.8",
-    "generation": 36
+    "generation": 45
   },
   "status": "ready",
   "content": {
@@ -89,9 +89,9 @@
         "sprint ownership cannot be made non-overlapping without operator decision"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/5594/design.md",
+      "design_ref": ".csdlc/issues/5594/retained/design.md",
       "design_digest": "ea5c7237efa120a65e9c075e95cc04809e86b95104cbc4ef61df5012229cb513",
-      "diagram_ref": ".csdlc/prepared/issues/5594/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5594/retained/diagram.mmd",
       "diagram_digest": "30964b8fae8c816e39be22d095395d5fc322e3fc200c4ed35e4fb8a75a59316a"
     }
   }

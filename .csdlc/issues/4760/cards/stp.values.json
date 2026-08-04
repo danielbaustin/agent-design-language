@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4760,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][memory-palace] Prepare #4760 Memory Palace context-problem handoff",
+    "slug": "v0918-wp14-memory-palace-context-handoff-prep-4760",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Preparation only: seed v2 cards, concise design and diagram, then run focused doctor.",
+      "deliverables": [
+        "Minimal six-card v2 packet for #4760.",
+        "Concise design and Mermaid diagram.",
+        "Focused csdlc-doctor result."
+      ],
+      "acceptance_criteria": [
+        "AC1: All six v2 cards exist for #4760.",
+        "AC2: Design and diagram identify the later execution boundary without implementation.",
+        "AC3: Focused v2 doctor is run and recorded in the handoff report."
+      ],
+      "dependencies": [
+        "Existing .adl/v0.91.7 task bundle for #4760.",
+        "origin/main at 79c7dccf12540863f6c038e1fd7ef45e2357a55e."
+      ],
+      "repo_inputs": [
+        ".adl/v0.91.7/tasks/issue-4760__v0-91-7-wp-14-memory-palace-define-memory-palace-context-problem-handoff/stp.md",
+        "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+        "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+        "docs/milestones/v0.91.7/README.md"
+      ],
+      "non_goals": [
+        "Do not implement Memory Palace behavior.",
+        "Do not start v0.92 implementation.",
+        "Do not claim product/runtime readiness without retained integrated evidence."
+      ]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "issue": 5701,
+  "expected_generation": 31,
+  "expected_digest": "f98d6a108d462ae56214890c56b4a7650990d8e7bdc55ae4cbe8d6063af3e13c",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "now_unix_seconds": 1785362950,
+  "add_protected_paths": [
+    "demos/html-observatory",
+    "adl-runtime-kernel/tests/parity.rs",
+    "adl-runtime/tests/runtime_api_wss.rs",
+    "adl/config/validation_lane_selector.v0.91.6.json",
+    "adl/tools/test_select_validation_lanes.sh",
+    "docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
+    "docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md",
+    "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
+    "docs/milestones/v0.91.7/review/V0917_WP15_DEMO_CONVERGENCE_4642.md",
+    "docs/milestones/v0.91.7/review/demo_matrix_4691/4691-birthday-visible-demo-matrix-proof.md",
+    "docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json",
+    "docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.py",
+    "docs/reviews/v0.91.7/remaining-sprints-5403/RUNTIME_V3_LIVE_PARITY_REVIEW_5276.md"
+  ],
+  "reason": "Move the unchanged Observatory visual design to a version-neutral public path and update every active code, test, validation, architecture, and historical evidence reference that would otherwise point at a missing file."
+}

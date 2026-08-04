@@ -1,0 +1,129 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5778,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Derive terminal truth and finish in one idempotent command",
+    "slug": "derived-terminal-finish",
+    "version": "v0.91.8",
+    "generation": 25
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Completed the idempotent C-SDLC v2 finish path, retained the current-main formatter repair, made the rehome-authority proof deterministic for #5784, and repaired #5785 so a normally published record can finish through metadata-only publication head drift without weakening live remote gates.",
+      "actual_changes": [
+        "Held the canonical per-issue lifecycle authority lock across record validation, GitHub reads, merge, post-merge re-observation, and terminal cache retention.",
+        "Derived minimal terminal authority from exact live GitHub state and logically released stale claims without tracked post-merge closeout commits.",
+        "Reduced exact-head GitHub review state using only decisive review events so later comment-only reviews cannot erase authority.",
+        "Applied current stable rustfmt to the Runtime API endpoint inventory defect tracked by #5783.",
+        "Replaced the scheduling race with an explicitly injected test observer that completes source mutation before revalidation resumes while the concurrent typed writer remains lock-blocked; the operational entrypoint supplies only a no-op observer.",
+        "Replaced the legacy MergeReady-only finish authority check with finish-native canonical identity and a non-expired owned claim bound to the canonical generation, branch, and worktree while retaining exact live remote checks and review gates.",
+        "Required the local checkout to be clean at the exact requested head, strictly validated clean-revision envelopes, and accepted publication metadata advancement only for .csdlc-only descendants whose review evidence exactly matches the publication commit and whose reviewed scope remains unchanged; all drift fails closed."
+      ],
+      "artifacts": [
+        "csdlc-v2/src/finish.rs",
+        "csdlc-v2/src/bin/csdlc-finish.rs",
+        "csdlc-v2/src/github.rs",
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/lifecycle.rs",
+        "csdlc-v2/tests/gate_finish.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs",
+        "csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md",
+        "adl-runtime/src/runtime_api.rs",
+        ".csdlc/evidence/5778/post-finalize-remediation.md"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "+stable",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--locked",
+            "--test",
+            "gate_finish"
+          ],
+          "purpose": "Prove Published finish authority and clean metadata-only publication lineage while rejecting dirty or wrong heads, malformed revisions, changed review scope, substantive drift, and stale claim generations.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5778/post-finalize-remediation.md"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--locked",
+            "--lib",
+            "--test",
+            "gate_finish",
+            "--test",
+            "gate7_lifecycle",
+            "--test",
+            "gate10a",
+            "--test",
+            "gate10b",
+            "--test",
+            "gate_github_actions"
+          ],
+          "purpose": "Prove finish serialization, exact-head review reduction, derived terminal behavior, lifecycle compatibility, installation, and GitHub behavior.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5778/post-finalize-remediation.md"
+        },
+        {
+          "command": [
+            "cargo",
+            "+stable",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--locked",
+            "--test",
+            "gate9"
+          ],
+          "purpose": "Re-run the complete Gate 9 soak surface containing the exact CI failure after installing deterministic injected post-materialization ordering.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5778/post-finalize-remediation.md"
+        },
+        {
+          "command": [
+            "cargo",
+            "clippy",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--locked",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "purpose": "Prove warning-free C-SDLC v2 production and test targets after the deterministic observer repair.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5778/post-finalize-remediation.md"
+        },
+        {
+          "command": [
+            "cargo",
+            "+stable",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "purpose": "Prove the Runtime API formatter repair on the current-main merge tree.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5778/post-finalize-remediation.md"
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "ready",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "issue":5653,
+  "expected_generation":9,
+  "expected_digest":"ac9d13627c6bbb113f8202a33792338755e42b2960fc5a1e2c766635870fc9a6",
+  "claim_id":"claim-5653-readme-refresh",
+  "actor":"codex:5653-execution",
+  "reviewer":"bounded-subagent-review-5653",
+  "assigned_by":"codex:5653-execution",
+  "scope":["README.md","docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",".csdlc/issues/5653"],
+  "reason":"Review exact release-truth documentation and refreshed proof before updating publication."
+}

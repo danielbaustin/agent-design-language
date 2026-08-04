@@ -42,7 +42,7 @@ The deterministic enforcement path should be:
 1. `pr create` / `pr init` seed complete design-time cards where possible.
 2. `pr doctor` reports card-stage truth and blocks execution when design-time
    cards are generic, incomplete, or stale.
-3. `workflow-conductor` routes card defects to the matching editor skill rather
+3. Typed doctor evidence routes card defects to the matching editor skill rather
    than improvising fixes.
 4. `sprint-conductor` runs sprint-wide structured prompt and design-time card
    preflight before the first child issue starts.
@@ -258,7 +258,7 @@ Required tooling changes before relying on this process:
   complete cards.
 - validator or doctor output should expose a `design_time_complete` status for
   `SIP`, `STP`, `SPP`, and pre-review `SRP`.
-- `workflow-conductor` should route generic or incomplete design-time cards to
+- Typed doctor evidence should route generic or incomplete design-time cards to
   the matching editor skill before allowing execution or publication to
   continue.
 - `sprint-conductor` should run a sprint-wide design-time card preflight before
@@ -275,7 +275,7 @@ Required tooling changes before relying on this process:
   cards.
 
 The first enforcement slice is issue `#3267`, which wires this rule into doctor,
-workflow-conductor, sprint-conductor, and editor-skill contracts. Any remaining
+typed v2 lifecycle, sprint-conductor, and editor-skill contracts. Any remaining
 tooling gaps should be routed as bounded follow-on issues, but they are not
 optional. The design-time card-completion rule should not become a trusted
 v0.91.3/v0.91.4 operating practice until the conductor, sprint conductor, and

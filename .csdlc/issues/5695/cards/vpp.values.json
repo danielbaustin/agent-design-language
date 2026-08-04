@@ -1,0 +1,88 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5695,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][tooling] Preserve blocked and unstable PR mergeability states",
+    "slug": "pr-state-mergeability",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "github-pr-state-classification",
+          "proof_role": "Exercise explicit mergeability-state classification and fail-closed merge predicates",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1200,
+          "argv": [
+            "cargo",
+            "test",
+            "-p",
+            "csdlc-v2",
+            "github::tests"
+          ],
+          "parallel_group": "rust",
+          "defer_reason": null
+        },
+        {
+          "lane": "github-pr-state-format",
+          "proof_role": "Verify formatting and strict lint for the touched Rust source",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1200,
+          "argv": [
+            "cargo",
+            "fmt",
+            "--check"
+          ],
+          "parallel_group": "rust",
+          "defer_reason": null
+        },
+        {
+          "lane": "github-pr-state-diff-hygiene",
+          "proof_role": "Verify the bounded diff has no whitespace corruption",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 200,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "rust",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on unclassified variants, stale-base misclassification, merge-gate weakening, scope drift, or failed focused validation.",
+      "design_ref": ".csdlc/issues/5695/retained/design.md",
+      "design_digest": "24f656bfc0bafcd82c8bc9db001d949366843f0ae5ad148e2fbf03646ccd0f02",
+      "diagram_ref": ".csdlc/issues/5695/retained/diagram.mmd",
+      "diagram_digest": "af0bc26dc9fc7700b2d9a027755e16783c0bccb7b39a10b446cee8d9e161b95d"
+    }
+  }
+}

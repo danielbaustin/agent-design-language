@@ -7,9 +7,9 @@
     "title": "[v0.91.8][CI][coverage] Normalize safe in-repo coverage paths without weakening traversal rejection",
     "slug": "coverage-path-normalization",
     "version": "v0.91.8",
-    "generation": 23
+    "generation": 28
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

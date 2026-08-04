@@ -1,0 +1,14 @@
+flowchart LR
+  Kernel["Runtime v3 operation envelope"] --> Provider["Provider adapter"]
+  Kernel --> ACIP["ACIP adapter"]
+  Kernel --> A2A["A2A adapter"]
+  Kernel --> Bridge["Cloud Bridge adapter"]
+  Provider --> Transport["Tokio framed transport"]
+  ACIP --> Transport
+  A2A --> Transport
+  Bridge --> Transport
+  Transport --> Rustls["Rustls config boundary"]
+  Transport --> Peer["Authenticated local black-box peer"]
+  Peer --> Transport
+  Transport --> Result["OperationResult or fail-closed OperationError"]
+

@@ -1,0 +1,14 @@
+{
+  "issue": 5737,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "347b6b9fbfa53ca878ea12b325f56de2e80b42dc351ac4e85d30ba6d34e7758d",
+  "claim_id": "claim-5737-csdlc-authority-recovery",
+  "actor": "codex:5737-execution",
+  "reason": "Implementation and focused validation are complete.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

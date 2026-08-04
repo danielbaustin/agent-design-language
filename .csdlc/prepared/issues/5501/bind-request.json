@@ -1,0 +1,23 @@
+{
+  "issue": 5501,
+  "base_branch": "main",
+  "branch": "codex/5501-v0918-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5501-v0918-live-workcell-proof-preparation",
+    "owner": "codex:5501-preparation-owner",
+    "generation": 1,
+    "acquired_unix_seconds": 1784663431,
+    "expires_unix_seconds": 1785268231,
+    "heartbeat_unix_seconds": 1784663431,
+    "branch": "codex/5501-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5501",
+      ".csdlc/locks/5501.lock",
+      ".csdlc/prepared/issues/5501",
+      ".csdlc/evidence/5501"
+    ],
+    "purpose": "Prepare #5501 live distributed Codex workcell proof contracts only; no execution or product work until #5349, #5499, #5498, #5500, and #5502 have live merged heads ancestral to execution revision; typed closeout and retained receipts are audit-only"
+  }
+}

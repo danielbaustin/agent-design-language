@@ -1,0 +1,120 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5344,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-12] Run opt-in soak and prove rollback",
+    "slug": "v0918-wp12-opt-in-soak-rollback",
+    "version": "v0.91.8",
+    "generation": 47
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Render and validate all six cards; freeze the reversible selector transaction, exact dependency gate, scenario manifest, evidence schema, protected paths, COTS, budgets, PVF, no-deferral, cutover, and rollback invariants; obtain bounded preparation review and fix findings; commit and push preparation only; wait for #5350 and #5361 terminal receipts and ancestry; then execute the complete exact-revision soak/rollback lifecycle without widening authority.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Complete all six typed cards, design, Mermaid diagram, protected paths, COTS, budgets, PVF, no-deferral, selector rollback invariants, preparation validation, bounded review/fixes, durable commit, and push without execution",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-7",
+            "AC-8"
+          ],
+          "status": "in_progress"
+        },
+        {
+          "id": "S2",
+          "action": "Maintain a read-only dependency watch and begin execution only when #5350 and #5361 satisfy live merge, typed closed_out, retained receipt, claim release, and ancestry gates",
+          "acceptance_ids": [
+            "AC-1"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Implement the bounded manifest-driven soak and rollback harnesses without editing selector implementation, default state, Runtime v2, or dependency-owned code",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-7",
+            "AC-8"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Run every local, CI, Runtime v3, provider-disposition, demo, negative, rollback, evidence-integrity, budget, and no-deferral lane at the exact revision and fix all findings",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-8"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S5",
+          "action": "Obtain exact-revision review, publish through typed v2, shepherd required checks, merge only under authorization, run post-merge proof, close out, retain the terminal receipt, release the claim, and hand accepted evidence to #5343",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "No execution begins before both dependency issues are live merged, typed closed_out, receipt-backed, claim-free, and ancestral",
+        "Only an isolated opt-in selector root may be mutated and the default selector is never changed by #5344",
+        "Every selector mutation uses the authoritative locked compare-and-swap interface; direct storage edits are forbidden",
+        "Prior selector bytes and digest are captured before mutation and restored exactly after every selected soak path",
+        "Every failure preserves prior bytes or enters explicit verified rollback; no implicit fallback is allowed",
+        "Rollback failure blocks #5343, WP-13 deletion, publication, and closeout",
+        "Evidence is deterministic, redacted, repo-relative, exact-revision bound, and claim-classified",
+        "Runtime v2 remains untouched rollback evidence and is never an edit or dependency target",
+        "All applicable acceptance and PVF lanes complete without deferral before publication"
+      ],
+      "risks": [
+        "A soak harness can accidentally become a second selector, workflow engine, or runtime supervisor",
+        "A test root can resolve to a production or default selector path and mutate operator state",
+        "Partial selector writes, stale expectations, interruption, or lock races can make rollback non-exact",
+        "Long-running scenarios can produce nondeterministic, machine-local, secret-bearing, or non-replayable evidence",
+        "Mock or credential-blocked provider evidence can be misrepresented as production readiness",
+        "A passing happy-path soak can hide failed-selection or failed-soak rollback defects",
+        "Child #5343 or WP-13 can begin from metadata instead of reviewed exact evidence",
+        "Harness and fixture growth can recreate maintenance burden unless LoC/module/time budgets remain enforced"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 86400,
+        "total_tokens": 240000,
+        "validation_seconds": 21600
+      },
+      "stop_conditions": [
+        "Any #5350 or #5361 live merge, typed closed_out, retained receipt, claim release, or ancestry predicate is absent or contradictory",
+        "Any intended protected path collides with an active typed claim",
+        "The authoritative selector cannot use an isolated root or requires direct storage editing",
+        "Exact prior selector bytes or digest cannot be retained and verified after rollback",
+        "A scenario requires AWS, raw credentials, hidden network, Runtime v2 edits, or production-state mutation",
+        "The scenario manifest, evidence, or claim classification is non-deterministic, secret-bearing, host-bound, or incomplete",
+        "Any acceptance or validation item would be deferred, skipped, or replaced with metadata-only proof",
+        "A LoC, module, test, dependency, or duration budget exceeds its limit without exact reviewed variance"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5344/retained/design.md",
+      "design_digest": "ba41275d1864a94d21f41ff3a4d28f1c4880a26c5d0b314ff92adbbf4ae890e8",
+      "diagram_ref": ".csdlc/issues/5344/retained/diagram.mmd",
+      "diagram_digest": "ed3d918290bcfc86feb2a9b7e4cebb0fb7cc263796cf80d18dcc361025c9dc77"
+    }
+  }
+}

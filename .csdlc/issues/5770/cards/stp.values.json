@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5770,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][review] Allow bounded SPP correction during implemented review remediation",
+    "slug": "recordless-terminal-recovery-5770",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Record observed closure without reconstructing unavailable lifecycle history.",
+      "deliverables": [
+        "terminal projection",
+        "retained terminal receipt"
+      ],
+      "acceptance_criteria": [
+        "issue is observed closed",
+        "terminal evidence is internally consistent"
+      ],
+      "dependencies": [
+        "exact merged PR evidence"
+      ],
+      "repo_inputs": [
+        "github-issue:5770",
+        "pull_request:5772 head:ecfe785f8d387777276ebb0b1c6ae4fac62091ee merge:defd0a8c4381af7c842996ee0df3ee0be0355267",
+        "github-body-blake3:07cb4b855a14fdc6500e8ab86a2e3ba603261231f5ecac192ea4791b5e9f137b"
+      ],
+      "non_goals": [
+        "No historical implementation, review, publication, readiness, or CI lifecycle is reconstructed by this terminal recovery."
+      ]
+    }
+  }
+}

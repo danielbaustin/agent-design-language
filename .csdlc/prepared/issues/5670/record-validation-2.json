@@ -1,0 +1,21 @@
+{
+  "issue": 5670,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "257c3d36a9bb0b7cb8682bb1e2250879a0a339fe2e4005bdb81ab5cb4b45b1a6",
+  "claim_id": "claim-5670-coverage-shard-fanout",
+  "actor": "codex:issue-5670-slot-1",
+  "reason": "Record focused validation 2 for hosted coverage sharding.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_ci_runtime_contracts.sh"
+      ],
+      "purpose": "Prove CI topology contracts for separate PR-fast and full shard producers, hosted aggregation, provenance, artifacts, and required toolchain setup.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5670/test_ci_runtime_contracts.log"
+    }
+  }
+}

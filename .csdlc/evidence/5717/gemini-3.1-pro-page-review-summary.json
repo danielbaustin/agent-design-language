@@ -1,0 +1,11 @@
+{
+  "schema": "adl.gemini_review_summary.v1",
+  "issue": 5717,
+  "reviewer": "gemini-3.1-pro-preview",
+  "reviewed_revision": "64b747a9cd9601e2c6444930c38a5dc32f99397b",
+  "base_revision": "0751a74a211ac7f0041f981437c3eb96486ad850",
+  "status": "completed",
+  "latency_ms": 11958,
+  "raw_local_artifact": ".adl/local-artifacts/5717-gemini-review/gemini-3.1-pro-review-raw.json",
+  "response_markdown": "# Verdict\nCLEAN\n\n# Findings\nCLEAN\n\n# Evidence Checked\n- **Logo Usage:** Verified the `<img src=\"./uploads/agent-logic-logo.svg\">` is properly placed in both the header and the footer, replacing any old inline artifacts.\n- **Page Name & Typography:** Confirmed title is \"Synthetic Minds Podcast\" and the word \"Minds\" is appropriately styled with the requested blue color using `oklch(55% 0.2 265)`.\n- **Copy Updates:** Verified hero section copy includes \"Special guests join us occasionally.\" \n- **Episode List:** Checked JavaScript state initializing episodes 1 through 10 with the \"Proposed\" date rather than fake historical dates.\n- **Action Links:** Checked \"Subscribe on your favorite app\" linking to `../feed.xml` and \"Contact the studio\" linking to `mailto:podcast@agent-logic.ai`.\n- **Footer Cleanup:** Ensured the bare email address was removed from the footer.\n- **FAQ Adjustments:** Verified FAQ header capitalization and the explicitly answered question confirming no video.\n- **Audio Integration:** Verified `<audio>` elements map to `../audio/meet-the-ai-coworkers.wav`.\n\n# Residual Risks\n- The podcast audio and feed point to relative paths (`../audio/meet-the-ai-coworkers.wav` and `../feed.xml`). As long as the deployment maintains this parent-child directory structure, everything will operate smoothly. Local link audit indicates this is secure."
+}

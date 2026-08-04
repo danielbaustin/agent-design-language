@@ -148,6 +148,18 @@ fn template_for_family(family: &str) -> Result<&'static ProviderSetupTemplate> {
             endpoint_hint: Some("https://api.example.invalid/v1/complete"),
             notes: "Use this when you want the first-class Claude family surface. Keep the endpoint pointed at an ADL-compatible completion endpoint and supply your Anthropic credential through the generated env file.",
         },
+        "claude-opus-5" => &ProviderSetupTemplate {
+            family: "claude-opus-5",
+            profile: Some("claude:claude-opus-5"),
+            kind: None,
+            env_var: "ANTHROPIC_API_KEY",
+            provider_id: "claude_opus_5_primary",
+            agent_id: "claude_opus_5_agent",
+            model_ref: "claude-opus-5",
+            provider_model_id: "claude-opus-5",
+            endpoint_hint: Some("https://api.anthropic.com/v1/messages"),
+            notes: "Use this for the first-class Claude Opus 5 profile. The profile selects the Rust-native Anthropic Messages adapter and the canonical claude-opus-5 model; supply your Anthropic credential through the generated env file.",
+        },
         "openai" => &ProviderSetupTemplate {
             family: "openai",
             profile: None,
@@ -246,7 +258,7 @@ fn template_for_family(family: &str) -> Result<&'static ProviderSetupTemplate> {
         },
         other => {
             return Err(anyhow!(
-                "unsupported provider setup family '{other}' (supported: chatgpt, claude, openai, anthropic, gemini, deepseek, openrouter, bedrock, z_ai, http)"
+                "unsupported provider setup family '{other}' (supported: chatgpt, claude, claude-opus-5, openai, anthropic, gemini, deepseek, openrouter, bedrock, z_ai, http)"
             ))
         }
     };
@@ -476,6 +488,26 @@ mod tests {
     }
 
     #[test]
+    fn provider_setup_writes_expected_bundle_for_claude_opus_5() {
+        let repo = temp_repo("claude-opus-5");
+        real_provider_in_repo(&["setup".to_string(), "claude-opus-5".to_string()], &repo)
+            .expect("claude opus 5 setup should succeed");
+
+        let out = repo.join(".adl/provider-setup/claude-opus-5");
+        let provider_text =
+            fs::read_to_string(out.join("provider.adl.yaml")).expect("provider yaml");
+        let env_text = fs::read_to_string(out.join("env.example")).expect("env example");
+        let readme = fs::read_to_string(out.join("README.md")).expect("readme");
+
+        assert!(provider_text.contains("profile: \"claude:claude-opus-5\""));
+        assert!(provider_text.contains("model: \"claude-opus-5\""));
+        assert!(provider_text.contains("provider: \"claude_opus_5_primary\""));
+        assert!(provider_text.contains("env: ANTHROPIC_API_KEY"));
+        assert!(env_text.contains("ANTHROPIC_API_KEY=replace-me"));
+        assert!(readme.contains("Rust-native Anthropic Messages adapter"));
+    }
+
+    #[test]
     fn provider_setup_writes_bedrock_account_pin_material() {
         let repo = temp_repo("bedrock");
         real_provider_in_repo(&["setup".to_string(), "bedrock".to_string()], &repo)
@@ -628,6 +660,11 @@ mod tests {
             (
                 "claude",
                 "profile: \"claude:claude-3-7-sonnet\"",
+                "ANTHROPIC_API_KEY",
+            ),
+            (
+                "claude-opus-5",
+                "profile: \"claude:claude-opus-5\"",
                 "ANTHROPIC_API_KEY",
             ),
             ("openai", "type: \"openai\"", "OPENAI_API_KEY"),

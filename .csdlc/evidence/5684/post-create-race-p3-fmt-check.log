@@ -1,0 +1,1 @@
+command: /usr/bin/env CARGO_TARGET_DIR=/Volumes/FastWork/cargo-targets/adl-csdlc-install-manifest cargo fmt --manifest-path csdlc-v2/Cargo.toml --all -- --check

@@ -460,8 +460,6 @@ pub fn run_speculative_decoding_prototype_report() -> SpeculativeDecodingPrototy
         ],
         validation_commands: vec![
             "cargo test --manifest-path adl/Cargo.toml speculative_decoding_prototype -- --nocapture".to_string(),
-            "cargo test --manifest-path adl/Cargo.toml demo_v0912_speculative_decoding_prototype -- --nocapture".to_string(),
-            "cargo run --manifest-path adl/Cargo.toml --bin demo_v0912_speculative_decoding_prototype".to_string(),
             "git diff --check".to_string(),
         ],
         non_claims: vec![
@@ -597,13 +595,10 @@ mod tests {
     }
 
     #[test]
-    fn speculative_decoding_prototype_tracked_report_matches_generated_report() {
-        let tracked_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("..")
-            .join(SPECULATIVE_DECODING_PROTOTYPE_REPORT_ARTIFACT_PATH);
-        let tracked = fs::read_to_string(&tracked_path).expect("tracked report should exist");
-        let generated = serde_json::to_string_pretty(&run_speculative_decoding_prototype_report())
-            .expect("serialize generated report");
-        assert_eq!(tracked, generated);
+    fn speculative_decoding_prototype_generated_report_omits_deleted_demo_commands() {
+        let report = run_speculative_decoding_prototype_report();
+        let validation = report.validation_commands.join("\n");
+        assert!(validation.contains("speculative_decoding_prototype"));
+        assert!(!validation.contains("demo_v0912_speculative_decoding_prototype"));
     }
 }

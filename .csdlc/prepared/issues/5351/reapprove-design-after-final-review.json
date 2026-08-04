@@ -1,0 +1,7 @@
+{
+  "issue": 5351,
+  "expected_generation": 15,
+  "expected_digest": "81a8e579039f172364199b1a612cba4197c346cfb0297c76ed68122597e03cce",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "reviewer": "codex:5351-final-review-remediation"
+}

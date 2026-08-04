@@ -1,0 +1,166 @@
+{
+  "issue": 5347,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5347/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5347/diagram.mmd",
+  "design_reviewer": "codex:5347-preparation-review",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5347-v0918-wp13-external-band-deletion-preparation",
+    "owner": "codex:current-session-5347",
+    "generation": 0,
+    "acquired_unix_seconds": 1784662079,
+    "expires_unix_seconds": 1785266879,
+    "heartbeat_unix_seconds": 1784662079,
+    "branch": "codex/5347-v0918-wp13-external-band-deletion",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5347",
+      ".csdlc/locks/5347.lock",
+      ".csdlc/prepared/issues/5347",
+      ".csdlc/evidence/5347",
+      "docs/milestones/v0.91.8/evidence/wp13-external-bands"
+    ],
+    "purpose": "Prepare and review #5347 external-band deletion contracts only; no product path or deletion authority until #5346 and every acceptance/cutover dependency are merged, typed closed_out, receipt-backed, claim-free, ancestral, and the issue-graph cycle is reconciled"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-13][deletion] Delete externally owned incumbent ADL bands",
+    "slug": "v0918-wp13-external-band-deletion",
+    "version": "v0.91.8",
+    "goal": "Prepare an exact, reviewed, disjoint manifest for deleting only incumbent ADL files whose accepted authority has moved outside the ADL v2 language/compiler/engine/CLI core.",
+    "required_outcome": "After every terminal acceptance and cutover gate, #5346 deletion eligibility, and the live dependency graph are reconciled, a canonical manifest can prove each externally owned deletion candidate has an accepted replacement owner and evidence while every retained file has explicit authority and rationale.",
+    "declared_scope": [
+      "issue-local C-SDLC lifecycle, preparation, review, validation, and evidence records",
+      "docs/milestones/v0.91.8/evidence/wp13-external-bands future manifest and proof packet",
+      "future exact file paths admitted only by reviewed manifest and typed claim amendment",
+      "dependency, ancestry, receipt, owner, reachability, disjointness, COTS, budget, PVF, rollback, and no-deferral gates"
+    ],
+    "authority_boundary": [
+      "#5347 owns only externally owned incumbent deletion candidates individually admitted by an exact reviewed manifest",
+      "#5346 exclusively owns final incumbent language/compiler/engine/CLI deletion and its manifest paths",
+      "ADL v2, Runtime v3, C-SDLC v2, selector, soak, cutover, acceptance, and release implementations are read-only dependencies",
+      "Preparation protects only issue-local and evidence paths; no product path is claimed or deletion-authorized",
+      "Runtime v2 is not edited by this issue and cannot be deleted from metadata-only parity claims",
+      "No AWS, raw gh, credential access, production mutation, publication, PR, merge, or release authority is in scope"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries and semantic card operations only",
+      "Keep the primary checkout clean on main and all tracked #5347 work in the dedicated FastWork worktree",
+      "Preparation only: do not delete code, implement product changes, open a PR, publish, merge, use AWS/raw gh, edit Runtime v2, or touch root main",
+      "Do not execute until #5346, #5344, #5343, #5358, and #5361 are merged, typed closed_out, claim-free, receipt-backed, and ancestral",
+      "Treat the current #5346/#5347 dependency cycle as a stop condition until authoritative issue-graph reconciliation",
+      "Freeze canonical manifests and prove zero path overlap before typed claim expansion or deletion",
+      "Use /Volumes/FastWork for generated validation and build output",
+      "Run bounded preparation review, fix every actionable finding, commit and push, and stop"
+    ],
+    "task_boundary": "Prepare a durable reviewed execution packet for #5347 only; no deletion, product implementation, product-path claim, PR, publication, merge, AWS/raw gh, Runtime v2 edit, or root-main mutation.",
+    "deliverables": [
+      "All six current-registry typed cards with exact scope, authority, dependencies, and no-deferral truth",
+      "External-band deletion design and Mermaid diagram",
+      "Exact terminal #5346, #5344, #5343, #5358, and #5361 receipt/ancestry gate",
+      "Canonical per-file deletion and retention manifest contract",
+      "Machine-checkable zero-overlap proof against the exact #5346 manifest",
+      "Authority-rooted reachability, replacement-owner, proof, and retained-rationale requirements",
+      "Preparation-only protected paths and later typed exact-path claim-amendment rule",
+      "COTS decision, LoC/test/time budgets, PVF lanes, rollback contract, and bounded review"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Execution starts only when #5346, #5344, #5343, #5358, and #5361 are GitHub merged, typed closed_out with claims released, backed by valid retained merged receipts, ancestral to the candidate revision, and the #5346/#5347 dependency cycle is authoritatively reconciled",
+      "AC-2: A canonically ordered immutable manifest binds each candidate to normalized repo-relative path, baseline object identity, measured lines, capability, authority-rooted reachability, accepted replacement owner, exact revision, terminal receipt, proof references, disposition, and manifest digest",
+      "AC-3: The #5347 manifest has zero canonical path overlap with the exact reviewed #5346 language/compiler/engine/CLI manifest; ambiguous or mixed-owner files fail closed as blocked and no directory prefix grants authority",
+      "AC-4: Every delete_external row has accepted replacement behavior and negative proof; every retained row names owner, consumer, rationale, proof role, and sunset condition; missing or stale evidence blocks deletion",
+      "AC-5: Product paths are added only by typed claim amendment after manifest freeze, disjointness proof, dependency proof, and review; deletion touches exactly tracked manifest files and rejects traversal, symlink escape, duplicates, submodules, generated output, and untracked files",
+      "AC-6: Focused owner tests, characterization/parity, security/determinism negatives, selector rollback, current CI, consumer reachability, and post-deletion validation pass at exact revisions with deterministic redacted repo-relative evidence and no deferred acceptance",
+      "AC-7: Runtime v2, ADL v2, Runtime v3, C-SDLC v2, #5346 core paths, selector/cutover state, and historical non-executable evidence remain outside #5347 mutation authority",
+      "AC-8: The later implementation reuses Git, typed C-SDLC v2, existing characterization/parity tools, and standard JSON parsing; manifest/gate code stays within 500 nonblank lines, tests/fixtures within 800 lines and fewer than 50 tests, retained evidence within 1,200 lines, focused gates within 120/300 seconds, complete proof within 3,600 seconds, and net source change is negative with separate accounting"
+    ],
+    "dependencies": [
+      "#5346 final-core deletion eligibility merged and typed closed_out with released claim, valid retained merged receipt, ancestral merge SHA, and reviewed exact deletion manifest",
+      "#5344 soak/rollback and #5343 reversible selector switch merged and typed closed_out with released claims, valid retained merged receipts, and ancestral merge SHAs",
+      "#5358 C-SDLC v2 acceptance and #5361 Runtime v3 acceptance merged and typed closed_out with released claims, valid retained merged receipts, and ancestral merge SHAs",
+      "Authoritative issue graph reconciles the current cycle where live #5346 depends on #5347 while operator sequencing requires terminal #5346 before #5347",
+      "WP-02 pinned baseline and ownership packet remains valid at the candidate revision or is explicitly refreshed and reviewed"
+    ],
+    "repo_inputs": [
+      "AGENTS.md",
+      "GitHub issues #5347 and #5346 source prompts",
+      "docs/templates/prompts/current.json",
+      "csdlc-v2/operator/generation-selector.json",
+      "docs/milestones/v0.91.8/BASELINE_AND_OWNERSHIP_v0.91.8.md",
+      "docs/milestones/v0.91.8/baseline_and_ownership_v0.91.8.json",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/DELETION_AND_CUTOVER_v0.91.8.md",
+      ".adl/docs/TBD/ADL_REPOSITORY_CODE_REDUCTION_PLAN_v0.91.8.md",
+      "future retained terminal receipts and exact manifests for #5346, #5344, #5343, #5358, and #5361"
+    ],
+    "non_goals": [
+      "Deleting any code or claiming any product path during preparation",
+      "Final language, compiler, engine, CLI, compatibility, or ADL v2 deletion owned by #5346",
+      "Runtime v2, Runtime v3, C-SDLC v2, selector, soak, cutover, acceptance, release, or provider implementation",
+      "AWS, cloud provisioning, raw gh, credential acquisition, production mutation, or live provider execution",
+      "PR creation, publication, merge, closeout, or issue-graph mutation during preparation",
+      "Treating code movement, generated copies, archived executables, historical references, metadata, or line targets as replacement proof"
+    ],
+    "plan_summary": "Render and validate all six cards; freeze manifest schema, exact dependency and cycle gate, owner/reachability proof, disjointness boundary, protected paths, COTS, budgets, PVF, rollback, and no-deferral rules; obtain bounded preparation review and fix findings; commit and push preparation only; remain read-only until every terminal gate and issue-graph predicate passes.",
+    "steps": [
+      {"id":"S1","action":"Complete all six typed cards, design, diagram, preparation executables, protected paths, COTS, budgets, PVF, bounded review/fixes, commit, and push without product work","acceptance_ids":["AC-1","AC-7","AC-8"],"status":"in_progress"},
+      {"id":"S2","action":"Maintain a read-only dependency watch and reject execution until all terminal receipts, ancestry checks, and the #5346/#5347 cycle reconciliation pass","acceptance_ids":["AC-1"],"status":"pending"},
+      {"id":"S3","action":"Freeze and review exact #5346 and #5347 manifests, prove canonical disjointness, then amend the typed claim with only exact eligible product paths","acceptance_ids":["AC-2","AC-3","AC-4","AC-5"],"status":"pending"},
+      {"id":"S4","action":"Delete only exact delete_external rows and run every owner, parity, security, rollback, CI, reachability, budget, and evidence-integrity proof without deferral","acceptance_ids":["AC-4","AC-5","AC-6","AC-7","AC-8"],"status":"pending"},
+      {"id":"S5","action":"Obtain exact review, publish through typed v2, serialize merge after #5346, run post-merge proof, close out, retain receipt, and release claims","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"status":"pending"}
+    ],
+    "invariants": [
+      "No execution or product-path claim begins before every terminal dependency, receipt, claim-release, ancestry, and issue-graph predicate passes",
+      "#5347 and #5346 manifests have zero canonical path overlap",
+      "Only individually manifested tracked files may be deletion candidates; directory-prefix authority is forbidden",
+      "Unknown reachability, mixed ownership, missing replacement proof, stale receipts, or manifest drift produce blocked rows",
+      "Runtime v2 and all accepted replacement owner implementations remain untouched",
+      "Historical evidence can reference deleted tools without retaining executable authority",
+      "Evidence is deterministic, redacted, repo-relative, exact-revision bound, and claim-classified",
+      "Deletion and post-deletion merges are serialized and rollback is an exact Git revert",
+      "All applicable acceptance and PVF lanes complete without deferral before publication"
+    ],
+    "risks": [
+      "The live #5346/#5347 dependency cycle can make execution impossible or invite an unsafe bypass",
+      "A coarse directory manifest can overlap #5346 or delete mixed-owner behavior",
+      "Historical textual references can be mistaken for current executable authority",
+      "Metadata-only replacement claims can remove the last live implementation, especially Runtime v2 behavior",
+      "Canonical path aliases, traversal, symlinks, submodules, or generated files can defeat disjointness checks",
+      "Deleting white-box tests before replacement contracts are accepted can hide behavior loss",
+      "Line-reduction pressure can erase retained evidence or encourage code movement instead of deletion",
+      "Parallel deletion branches can be individually valid but unsafe when merged without serial revalidation"
+    ],
+    "planning_profile": "migration",
+    "stop_conditions": [
+      "Any #5346, #5344, #5343, #5358, or #5361 merge, typed closed_out, receipt, claim-release, or ancestry predicate is absent or contradictory",
+      "The #5346/#5347 live dependency cycle has not been authoritatively reconciled",
+      "The exact #5346 manifest is missing, stale, unreviewed, or overlaps a #5347 candidate",
+      "Any candidate lacks accepted replacement owner, exact revision, receipt, behavior proof, or authority-rooted reachability evidence",
+      "Any path is absolute, escaping, duplicated, symlinked outside root, untracked, generated, submodule-owned, or outside a typed exact-path claim",
+      "Any operation would edit Runtime v2, replacement products, selector/cutover state, historical evidence, root main, or another claim",
+      "Any acceptance or validation item would be deferred, skipped, overclaimed, or replaced with metadata-only proof",
+      "A LoC, test, dependency, duration, evidence, or net-negative budget fails without exact reviewed variance"
+    ],
+    "validation_lanes": [
+      {"lane":"preparation-contract","proof_role":"Prove six cards, design/diagram, exact scope, cycle and terminal gates, disjoint manifest boundary, protected paths, COTS, budgets, PVF, rollback, and no-deferral truth","acceptance_ids":["AC-1","AC-3","AC-7","AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":3000,"argv":["ruby",".csdlc/prepared/issues/5347/validate-preparation.rb"],"parallel_group":"preparation","defer_reason":null},
+      {"lane":"dependency-terminal-gate","proof_role":"Fail closed unless #5346 and every acceptance/cutover dependency are merged, typed closed_out, receipt-backed, claim-free, ancestral, and the cycle is reconciled","acceptance_ids":["AC-1"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":2000,"argv":["ruby",".csdlc/prepared/issues/5347/check-dependencies.rb"],"parallel_group":"execution-gate","defer_reason":"Run at execution admission; expected to fail until all terminal gates and graph reconciliation exist"},
+      {"lane":"manifest-disjointness","proof_role":"Validate canonical paths, owner/replacement rows, retained rationales, exact receipts, zero #5346 overlap, digest binding, and exact typed product-path claim coverage","acceptance_ids":["AC-2","AC-3","AC-4","AC-5"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":3000,"argv":["ruby",".csdlc/prepared/issues/5347/run-validation-lane.rb","manifest-disjointness"],"parallel_group":"eligibility","defer_reason":"Mandatory after exact manifests exist and before any deletion or product-path claim amendment"},
+      {"lane":"owner-and-consumer-proof","proof_role":"Run focused accepted-owner tests, characterization/parity, security/determinism negatives, selector rollback, and authoritative consumer reachability proof","acceptance_ids":["AC-4","AC-6","AC-7"],"deterministic":true,"resource_profile":"medium","budget_seconds":300,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5347/run-validation-lane.rb","owner-and-consumer-proof"],"parallel_group":"proof","defer_reason":"Mandatory at exact deletion revision after dependency and manifest gates pass"},
+      {"lane":"deletion-budgets-and-evidence","proof_role":"Enforce net-negative source change, separate line accounting, COTS closure, LoC/test/time limits, manifest digest, deterministic evidence, redaction, repo-relative paths, and no-deferral","acceptance_ids":["AC-2","AC-6","AC-8"],"deterministic":true,"resource_profile":"medium","budget_seconds":300,"budget_tokens":5000,"argv":["ruby",".csdlc/prepared/issues/5347/run-validation-lane.rb","deletion-budgets-and-evidence"],"parallel_group":"evidence","defer_reason":"Mandatory at exact deletion revision before publication"},
+      {"lane":"post-deletion-exact","proof_role":"Re-run dependency ancestry, manifest disjointness, owner/consumer tests, parity, security, rollback, CI, reachability, budgets, evidence integrity, and revision identity after serialized merge","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"deterministic":true,"resource_profile":"large","budget_seconds":3600,"budget_tokens":12000,"argv":["ruby",".csdlc/prepared/issues/5347/run-validation-lane.rb","post-deletion-exact"],"parallel_group":"post-merge","defer_reason":"Execute only after authorized serialized merge and typed merged-state reconciliation; mandatory before closeout"}
+    ],
+    "failure_policy": "Fail closed without product-path claim, deletion, publication, merge, or closeout on an unresolved #5346/#5347 cycle, incomplete terminal dependency, stale or missing receipt, non-ancestral revision, manifest overlap or drift, unknown ownership/reachability, missing replacement proof, escaping or untracked path, claim collision, Runtime v2 or replacement-owner edit, authoritative consumer reference, test/parity/security/rollback/CI failure, nondeterministic or secret-bearing evidence, budget violation, deferred acceptance, or absent post-merge proof.",
+    "review_prompts": [
+      "Does the packet preserve the operator-mandated terminal #5346 gate while truthfully exposing the current #5346/#5347 dependency cycle?",
+      "Can any alias, traversal, symlink, submodule, generated path, directory prefix, or stale manifest create overlap or deletion authority outside the exact typed claim?",
+      "Does every delete_external row require an accepted owner, exact revision, terminal receipt, behavior proof, and authority-rooted reachability evidence?",
+      "Are retained files and historical evidence given explicit owners, consumers, rationales, proof roles, and sunset conditions?",
+      "Do Runtime v2 and #5346 language/compiler/engine/CLI paths remain outside #5347 authority?",
+      "Are COTS, budgets, net-negative accounting, PVF classification, rollback, serialized integration, no-deferral, exact review, and post-merge proof complete?"
+    ],
+    "review_scope": ".csdlc/issues/5347\n.csdlc/locks/5347.lock\n.csdlc/prepared/issues/5347\n.csdlc/evidence/5347\ndocs/milestones/v0.91.8/evidence/wp13-external-bands"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "issue": 5737,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "59da1941f47b59cc1faf1d0becfeab9f30764cfae7cf143530262d7fb58fcb83",
+  "claim_id": "claim-5737-csdlc-authority-recovery",
+  "actor": "codex:5737-execution",
+  "reason": "Record the bounded active-claim authority simplification.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Claim scans now consider only claims matching active checkouts, defer terminal receipt checks until a real path overlap, and repair dormant typed projections during authority reacquisition.",
+    "changes": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "artifacts": [
+      ".csdlc/evidence/5737/gate2.log",
+      ".csdlc/evidence/5737/clippy.log"
+    ]
+  },
+  "fail_after_backup": false
+}

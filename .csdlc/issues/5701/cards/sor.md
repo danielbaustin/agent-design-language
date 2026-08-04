@@ -1,0 +1,155 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5701
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: complete
+
+## Summary
+
+Implemented complete versioned Core and Observatory OpenAPI contracts and mounted their real authenticated Runtime v3 routes on the guardian-launched Axum/Tokio/Rustls listener.
+
+## Artifacts
+
+- docs/api/runtime-v3/v1/openapi.json
+- docs/api/runtime-v3/v1/observatory.openapi.json
+- docs/api/runtime-v3/v1/API_VERSIONING.md
+- adl-runtime-kernel/tests/openapi_contract.rs
+- commit 645d66a5f
+- docs/api/runtime-v3/v1/openapi.json
+- docs/api/runtime-v3/v1/observatory.openapi.json
+- adl-runtime-kernel/src/control.rs
+- adl-runtime-kernel/tests/openapi_contract.rs
+- .adl/local-artifacts/5701-gemini-review/result-final.json
+
+## Execution
+
+- Added docs/api/runtime-v3/v1/openapi.json for the signed Runtime Core control endpoint
+- Added docs/api/runtime-v3/v1/observatory.openapi.json for the authenticated Observatory snapshot and WSS endpoint
+- Added docs/api/runtime-v3/v1/API_VERSIONING.md with independent Runtime Core and Observatory API versioning rules
+- Added adl-runtime-kernel/tests/openapi_contract.rs to parse contracts, resolve local refs, reject phantom route claims, and check WSS frame documentation
+- Serve embedded Core and Observatory OpenAPI 3.1 documents plus human-readable Swagger UI without a sidecar server or runtime CDN.
+- Expose authenticated /v1/health and /v1/metrics from live runtime state.
+- Expose authenticated full-duplex /v1/acip/ws using bounded Protobuf frames, replay sequencing, canonical ingress, and real ACIP adapter dispatch.
+- Replace opaque payload contracts with bounded typed schemas and align shared code-generation types across both documents.
+
+## Validation
+
+[
+  {
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml",
+      "--target-dir",
+      "/Volumes/FastWork/adl-wp-5701/target",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "purpose": "Focused #5701 lint validation",
+    "outcome": "passed",
+    "evidence_ref": "runtime-v3-openapi-clippy.log"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml",
+      "--target-dir",
+      "/Volumes/FastWork/adl-wp-5701/target",
+      "--test",
+      "openapi_contract"
+    ],
+    "purpose": "Focused #5701 contract validation",
+    "outcome": "passed",
+    "evidence_ref": "runtime-v3-openapi-contract.log"
+  },
+  {
+    "command": [
+      "cargo",
+      "test-and-clippy",
+      "runtime-v3-openapi-focused-suite"
+    ],
+    "purpose": "Prove the versioned route inventory, typed OpenAPI contracts, real Observatory and ACIP WSS behavior, strict Rust quality, clean diff, live HTTPS documentation, authenticated health and metrics, and ready Vector observability pipeline.",
+    "outcome": "passed",
+    "evidence_ref": "Kernel control 21/21; OpenAPI contracts 6/6; Observatory WSS 5/5; runtime API docs 2/2; runtime API WSS 2/2; ACIP 5/5; strict kernel Clippy passed; git diff --check passed; live https://localhost:20997 returned 200 for both Swagger UIs and both specs, authenticated health observability_ready=true, authenticated metrics health=ready, and zero ERROR/FATAL master-log events."
+  },
+  {
+    "command": [
+      "cargo",
+      "test-and-clippy",
+      "runtime-v3-openapi-review-remediation"
+    ],
+    "purpose": "Prove sole production OpenAPI authority, versioned route parity, canonical ACIP dispatch, failure-safe replay sequencing, first-frame Observatory authentication, guardian persistence, and strict Rust quality.",
+    "outcome": "passed",
+    "evidence_ref": "Kernel control 21/21; guardian soak 7/7; Observatory WSS 6/6; OpenAPI contracts 6/6; adl-runtime library 134/134; runtime API WSS 2/2; strict all-target kernel Clippy passed; strict all-target adl-runtime Clippy passed; git diff --check passed."
+  },
+  {
+    "command": [
+      "cargo",
+      "test-and-clippy",
+      "runtime-v3-openapi-integrated-suite"
+    ],
+    "purpose": "Prove the reviewed Runtime v3 OpenAPI and route behavior after integrating current main and regenerating both dependency lockfiles offline.",
+    "outcome": "passed",
+    "evidence_ref": "Kernel control 21/21; guardian soak 7/7; Observatory WSS 6/6; OpenAPI contracts 6/6; adl-runtime library 134/134; runtime API WSS 2/2; strict all-target Clippy passed for both crates; git diff --check passed; rebuilt guardian served both Swagger UIs with HTTP 200 and authenticated health and metrics with HTTP 200 on port 20997."
+  },
+  {
+    "command": [
+      "cargo",
+      "test-and-clippy",
+      "runtime-v3-public-observatory-suite"
+    ],
+    "purpose": "Prove anonymous runtime reads, optional WSS write login, signed control enforcement, credential revocation, API contract parity, and the separate HTML Observatory client.",
+    "outcome": "passed",
+    "evidence_ref": "Kernel control 21/21; Observatory WSS 6/6 including anonymous reads and authenticated signed write; OpenAPI contracts 6/6; strict all-target Clippy passed; HTML Observatory integrated proof passed; git diff --check passed; live Guardian served anonymous health, metrics, and Observatory HTTP on port 20997; browser showed live secure stream with 55 runtime events."
+  },
+  {
+    "command": [
+      "cargo",
+      "test-and-clippy",
+      "runtime-v3-observatory-login-ci-repair"
+    ],
+    "purpose": "Prove the guardian soak consumes and validates the successful login acknowledgement before independently checking forged-command rejection and valid signed control behavior.",
+    "outcome": "passed",
+    "evidence_ref": "Guardian soak 7/7 passed; exact signed HTTPS/WSS shutdown and forgery test 1/1 passed; strict all-target adl-runtime-kernel Clippy passed; git diff --check passed."
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+    ],
+    "purpose": "Prove the live Observatory renders Runtime v3 product branding while retaining historical evidence paths and unchanged Runtime v3 API behavior.",
+    "outcome": "passed",
+    "evidence_ref": "Focused HTML Observatory integrated proof passed; browser rendered Runtime v3 version chip, Runtime v3 live Observatory eyebrow, and 55 runtime events; git diff --check passed."
+  }
+]
+
+## Integration
+
+merged
+
+## Publication
+
+Publication: closed
+
+Merge: merged
+
+## Closeout
+
+complete
+
+## Follow Ups
+
+- none

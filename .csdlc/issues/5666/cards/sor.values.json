@@ -1,0 +1,55 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5666,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][tools][ci] Add proportional fast lane for small fixes",
+    "slug": "v0-91-8-tools-ci-throughput-fast-lane",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Implemented a proportional developer throughput fast-lane policy, linked it from validation platform routing, and added focused contract proof for the required invariants.",
+      "actual_changes": [
+        "Added docs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md with proportional issue classes, FastWork-required behavior, changed-state-only PR watching, escalation rules, and non-claims.",
+        "Linked the fast-lane policy from docs/tooling/VALIDATION_PLATFORM_ROUTING.md.",
+        "Added adl/tools/test_developer_throughput_fast_lane.sh to prove required policy language and routing linkage."
+      ],
+      "artifacts": [
+        "docs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md",
+        "docs/tooling/VALIDATION_PLATFORM_ROUTING.md",
+        "adl/tools/test_developer_throughput_fast_lane.sh"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "purpose": "Verify changed files have no whitespace or patch hygiene errors.",
+          "outcome": "passed",
+          "evidence_ref": "diff-hygiene.log"
+        },
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_developer_throughput_fast_lane.sh"
+          ],
+          "purpose": "Prove the throughput fast-lane policy, selector reference, no-local-fallback rule, changed-state watching rule, and routing link exist.",
+          "outcome": "passed",
+          "evidence_ref": "throughput-fast-lane-contract.log"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

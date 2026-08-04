@@ -1,0 +1,22 @@
+{
+  "issue": 5499,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "ba530fce5b669c585f2e0702948df9cfc7ef6d50bb5702f2b51ca2996c0e4b28",
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded pure conductor implementation is complete at commit 84672c667.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented a pure deterministic ADL v2 conductor that validates typed lifecycle snapshots, checks dependency graphs and path ownership, enforces WIP limits, and emits canonical assignments while retaining serialized lifecycle gates.",
+    "changes": [
+      "Added the isolated adl-workcell-conductor crate with the four reviewed COTS dependencies",
+      "Added fail-closed validation for cards, claims, dependencies, lanes, paths, authority fields, and WIP limits",
+      "Added deterministic wave planning and content-derived BLAKE3 correlation identifiers",
+      "Added focused positive and adversarial contract tests"
+    ],
+    "artifacts": [
+      "adl-v2/crates/adl-workcell-conductor"
+    ]
+  }
+}

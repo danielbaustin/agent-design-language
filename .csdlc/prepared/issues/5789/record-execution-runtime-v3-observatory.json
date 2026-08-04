@@ -1,0 +1,32 @@
+{
+  "issue": 5789,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "3ef5afb5ce821ca6724e4933e416d234b50698df7a56c8cdad193dd32a8d4ea9",
+  "claim_id": "claim-5789-observatory-full-functionality",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record the Runtime v3 HTML Observatory implementation before focused validation and exact-head review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Made the HTML Observatory default to the configured Runtime v3 API base, keep retained/loopback CSM fallback truth, render live Runtime v3 GET snapshots when WSS is unavailable, and submit signed operator-to-agent commands through the Runtime v3 /v1/control browser endpoint.",
+    "changes": [
+      "Added browser CORS preflight and CORS/no-store response headers for Runtime v3 /v1/control.",
+      "Documented and route-tested OPTIONS /v1/control in the Runtime v3 OpenAPI contract.",
+      "Updated the Observatory browser app/config/UI to use Runtime v3 by default, preserve csmApiBase compatibility, and POST signed adl.runtime.control_command.v1 envelopes to /v1/control.",
+      "Updated the Observatory README, integrated validator, and focused JS proof to reflect Runtime v3 default read and signed control behavior."
+    ],
+    "artifacts": [
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/openapi_contract.rs",
+      "docs/api/runtime-v3/v1/openapi.json",
+      "demos/html-observatory/app.js",
+      "demos/html-observatory/index.html",
+      "demos/html-observatory/runtime-v3.config.json",
+      "demos/html-observatory/README.md",
+      "adl/tools/test_html_observatory.sh",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+      "adl/tools/validate_v0917_html_observatory.py"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 4760,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/4760-v0918-wp14-preparation",
+  "title": "[v0.91.8][WP-21] Implement Memory Palace context handoff",
+  "body": "Closes #4760\n\n## Summary\n\nImplements the bounded Memory Palace MVP handoff for long-lived agents. The new `memory_palace` module consumes declared ObsMem-shaped records, preserves Chronosense-compatible temporal anchors and continuity ids, builds deterministic topology/working-set/stale-context packets, and fails closed on missing provenance, private/absolute references, continuity mismatch, stale context, and future effective anchors.\n\nThe long-lived-agent cycle path now emits `memory_palace_context.json` when configured, includes it in `decision_request.memory_refs`, sanitizes it with the public artifact set, and records the packet reference in `cycle_manifest.json`. Unconfigured agents keep the prior empty `memory_refs` behavior.\n\n## Validation\n\n- `.csdlc/prepared/issues/4760/validate_memory_palace.sh`: PASS; runs `cargo test --offline --manifest-path adl/Cargo.toml memory_palace -- --nocapture` and restores transient Cargo.lock refresh from the branch's stale lockfile graph.\n- `git diff --check`: PASS.\n- Typed `csdlc-validate finalize`: PASS; recorded generation 2 implemented state and retained `.csdlc/evidence/4760/` logs.\n\n## Review\n\n- Exact-head review recorded by `csdlc-review record`: PASS at `git-blake3:80a098937899ff4602d0c91d46ac61cff9453486:628d6c613ad1fd065e76e02aa17283ff76c3bf4ecf21f522267bbfbf90514daf`.\n- Review artifact: `.csdlc/prepared/issues/4760/final-head-review-1.md`.\n- Open findings: none.\n\n## Notes\n\n`cargo test --locked` is not claimed here because this branch's checked-in `adl/Cargo.lock` is stale for the current manifest graph before #4760's dependency-neutral change. The focused proof uses the issue-local offline wrapper and leaves `Cargo.lock` unmodified.",
+  "draft": false,
+  "revision": "git-blake3:96ac514193e6270571c62f38e6f9f76730deb16a:0fdce97c5e80bba991ef366cdd571444d5c35657d313919aed9110c8cafc45a0",
+  "commit_sha": "96ac514193e6270571c62f38e6f9f76730deb16a"
+}

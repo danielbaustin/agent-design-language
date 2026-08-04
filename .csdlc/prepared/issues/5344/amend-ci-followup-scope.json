@@ -1,0 +1,13 @@
+{
+  "issue": 5344,
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "expected_generation": 26,
+  "expected_digest": "9e0db3a94f783485f4b32001ec82d5aeb693df305665cce74652ba070322cfa9",
+  "now_unix_seconds": 1785306259,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Repair the two exact CI regressions exposed by PR #5703: a stale guardian inventory assertion and a startup race in the authenticated healthy-window test.",
+  "add_protected_paths": [
+    "adl/tools/check_coverage_impact.sh",
+    "adl/tools/test_check_coverage_impact.sh"
+  ]
+}

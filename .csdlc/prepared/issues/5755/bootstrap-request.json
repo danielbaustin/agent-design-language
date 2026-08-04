@@ -1,0 +1,217 @@
+{
+  "issue": 5755,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5755/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5755/diagram.mmd",
+  "design_reviewer": "codex:5755-bootstrap",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5755-runtime-protocol-security",
+    "owner": "codex:5755-runtime-protocol-security",
+    "generation": 0,
+    "acquired_unix_seconds": 1785566559,
+    "heartbeat_unix_seconds": 1785566559,
+    "expires_unix_seconds": 1785652959,
+    "branch": "codex/5755-runtime-protocol-security",
+    "worktree": "../../../../../Volumes/FastWork/adl-wp-5755",
+    "protected_paths": [
+      ".csdlc/evidence/5755",
+      ".csdlc/issues/5755",
+      ".csdlc/locks/5755.lock",
+      ".csdlc/prepared/issues/5755",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/protocol_adapters.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ],
+    "purpose": "Resolve #5664 protocol-adapter mTLS and Runtime control body-bound closeout blockers"
+  },
+  "initial": {
+    "version": "v0.91.8",
+    "slug": "runtime-v3-protocol-security-closeout-blockers",
+    "title": "[v0.91.8][runtime-v3][protocols] Resolve #5664 terminal closeout security blockers",
+    "goal": "Fix the two accepted #5664 terminal-closeout security blockers so #5664 can be closed out truthfully.",
+    "required_outcome": "Runtime v3 protocol adapters have a current authenticated TLS client-identity boundary or equivalent, Runtime control rejects oversized inbound bodies at the route boundary, and focused tests prove both negative paths.",
+    "task_boundary": "Bounded Runtime v3 security repair for #5755 only; no AWS and no broad Runtime v3 implementation.",
+    "plan_summary": "Add the smallest protocol-adapter client-auth/equivalent boundary and explicit Runtime control body limit, then validate with focused protocol/control tests and exact-head review.",
+    "planning_profile": "medium",
+    "declared_scope": [
+      "adl-runtime-kernel/src/protocol_adapters.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      ".csdlc/evidence/5755"
+    ],
+    "repo_inputs": [
+      "GitHub issue #5755",
+      "GitHub issue #5664 audit sequence 12",
+      "PR #5680 merged head 16e6594dae2f76e41ebf432c9ea477523e685247"
+    ],
+    "dependencies": [
+      "#5664 terminal closeout remains blocked until this issue is fixed or re-dispositioned"
+    ],
+    "deliverables": [
+      "Protocol adapter authenticated TLS client identity or explicit equivalent security boundary",
+      "Runtime control explicit request body bound",
+      "Focused negative tests for missing client identity/equivalent and oversized control input",
+      "Exact-head review and truthful C-SDLC records"
+    ],
+    "acceptance_criteria": [
+      "Networked protocol adapter security no longer relies on no-client-auth TLS for the production boundary.",
+      "Runtime control route rejects oversized request bodies before unbounded JSON parsing.",
+      "Focused tests cover the fixed security boundaries and fail-closed negative cases.",
+      "No AWS work or credential exposure.",
+      "PR body closes #5755 and references #5664 closeout unblock truth."
+    ],
+    "invariants": [
+      "No plaintext credentials or credential material in tracked artifacts.",
+      "No terminal closeout for #5664 until exact-head review confirms these blockers are resolved.",
+      "Keep changes bounded to Runtime v3 protocol/control security."
+    ],
+    "authority_boundary": [
+      "Issue #5755 owns the repair.",
+      "Issue #5664 terminal closeout consumes the result after merge.",
+      "No AWS or external infrastructure authority."
+    ],
+    "non_goals": [
+      "Do not redesign Runtime v3 protocols.",
+      "Do not perform AWS provisioning or cloud experiments.",
+      "Do not close #5664 by ignoring accepted security defects."
+    ],
+    "operator_constraints": [
+      "use /Volumes/FastWork",
+      "no AWS",
+      "no tracked product edits on main"
+    ],
+    "failure_policy": "Fail closed if either security blocker remains unproven or exact-head review is stale.",
+    "risks": [
+      "mTLS changes can over-widen protocol API surface if not kept minimal.",
+      "Body-limit tests must prove the route boundary, not only helper parsing."
+    ],
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Patch protocol adapter security boundary and tests.",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-3"
+        ]
+      },
+      {
+        "id": "S2",
+        "action": "Patch Runtime control body bound and oversized-body tests.",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3"
+        ]
+      },
+      {
+        "id": "S3",
+        "action": "Run focused validation, exact-head review, publish and shepherd PR.",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ]
+      }
+    ],
+    "validation_lanes": [
+      {
+        "lane": "runtime-v3-protocol-adapters",
+        "proof_role": "Prove protocol adapter authenticated TLS/equivalent negative and positive paths.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-3"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "adl-runtime-kernel/Cargo.toml",
+          "--test",
+          "protocol_adapters"
+        ],
+        "parallel_group": "runtime-v3-security",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-control-body-limit",
+        "proof_role": "Prove oversized Runtime control requests are rejected at the route boundary.",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 600,
+        "budget_tokens": 3000,
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "adl-runtime-kernel/Cargo.toml",
+          "--test",
+          "control"
+        ],
+        "parallel_group": "runtime-v3-security",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-security-diff-check",
+        "proof_role": "Prove textual diff hygiene for Runtime v3 security repair.",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-4"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "parallel_group": "runtime-v3-security",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-security-exact-review",
+        "proof_role": "Record exact-head review for #5755 before publication and #5664 closeout consumption.",
+        "acceptance_ids": [
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 300,
+        "budget_tokens": 2000,
+        "argv": [
+          ".adl/bin/csdlc-v2/csdlc-review",
+          "record"
+        ],
+        "parallel_group": "runtime-v3-security",
+        "defer_reason": null
+      }
+    ],
+    "review_scope": "Exact-head review of protocol adapter security, Runtime control body-bound behavior, and focused tests.",
+    "review_prompts": [
+      "Does the protocol adapter security repair close the accepted #5664 mTLS/client-auth or equivalent boundary without overclaiming?",
+      "Does the Runtime control route reject oversized request bodies before unbounded JSON parsing?",
+      "Are tests focused and sufficient for the two accepted blockers?"
+    ],
+    "stop_conditions": [
+      "Stop if the repair requires AWS or external infrastructure.",
+      "Stop if typed lifecycle cannot bind #5755 without hand editing generated state.",
+      "Stop if exact-head review finds an unresolved P1/P2 security blocker."
+    ]
+  }
+}

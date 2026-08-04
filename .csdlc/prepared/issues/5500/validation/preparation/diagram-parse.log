@@ -1,0 +1,1 @@
+{"status":"blocked","parser":"mermaid-cli","diagram":".csdlc/prepared/issues/5500/diagram.mmd","reason":"optional render lane could not launch Puppeteer Chrome in this sandbox; required preparation validation excludes this optional lane"}

@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5438,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][records] Support typed terminal SOR follow-up reconciliation",
+    "slug": "recordless-terminal-recovery-5438",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Record observed closure without reconstructing unavailable lifecycle history.",
+      "deliverables": [
+        "terminal projection",
+        "retained terminal receipt"
+      ],
+      "acceptance_criteria": [
+        "issue is observed closed",
+        "terminal evidence is internally consistent"
+      ],
+      "dependencies": [
+        "exact merged PR evidence"
+      ],
+      "repo_inputs": [
+        "github-issue:5438",
+        "pull_request:5462 head:3782e33787bf6674daf9f17144745dfe1562a888 merge:2d39673a827a44d479feca8b671c80b80279bb39",
+        "github-body-blake3:bd01753c640facabbe718f03dfeab9ecd98fbe3068dbb520784ae7ab5f4dce30"
+      ],
+      "non_goals": [
+        "No historical implementation, review, publication, readiness, or CI lifecycle is reconstructed by this terminal recovery."
+      ]
+    }
+  }
+}

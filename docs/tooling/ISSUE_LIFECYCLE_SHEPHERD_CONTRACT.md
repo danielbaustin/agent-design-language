@@ -31,12 +31,11 @@ The owner repo-native entrypoint for this contract is:
 
 - `adl-pr-shepherd <issue-number-or-url> [--json]`
 
-The compatibility shell wrapper remains available at:
+The former v1 shell shepherd and janitor entrypoints are retired. Resolve the
+current generation with `csdlc-install resolve`, then use the matching typed
+v2 shepherd or closeout binary.
 
-- `adl/tools/pr.sh shepherd <issue-number-or-url> [--json]`
-- `adl/tools/pr.sh janitor <issue-number-or-url> [--json]`
-
-`pr.sh janitor` is a compatibility entrypoint for PR-tail blocker triage. It
+The retired janitor entrypoint previously performed PR-tail blocker triage. It
 delegates to the same owner shepherd classifier as `pr.sh shepherd`, then uses
 the returned `tail_owner` and `next_skill` fields to decide whether the next
 bounded skill handoff is `pr-janitor`, `issue-watcher`, `pr-closeout`, or human
@@ -56,7 +55,7 @@ It must not claim authority to:
 - merge a PR
 - close an issue
 - override human review findings
-- bypass editor-skill or workflow-conductor policy
+- bypass editor-skill or typed v2 lifecycle policy
 - convert blocked state into success by narration
 
 Human review, merge authority, and final GitHub closure remain explicit
@@ -68,7 +67,7 @@ The canonical issue-lifecycle shepherd states are:
 
 1. `pre_run`
    - The issue exists and is being routed or readied.
-   - Typical owner: `workflow-conductor` or `pr-ready`.
+   - Typical owner: typed `csdlc-doctor` or `pr-ready`.
 2. `execution_bound`
    - The issue has a bound branch/worktree and an active issue goal.
    - Typical owner: `pr-run`.
@@ -100,7 +99,7 @@ The canonical issue-lifecycle shepherd states are:
    - The lifecycle cannot continue truthfully until a concrete blocker is
      resolved, for example missing bootstrap, card-local readiness defects, or
      ambiguous live state.
-   - Typical owner: `workflow-conductor` or the currently active lifecycle
+   - Typical owner: typed `csdlc-doctor` or the currently active lifecycle
      skill surfacing the blocker.
 
 ## Canonical Transition Rules
@@ -148,7 +147,7 @@ Every lifecycle-shepherd handoff should preserve:
 
 Acceptable durable evidence surfaces include:
 
-- workflow-conductor routing artifacts
+- typed v2 routing artifacts
 - PR finish result/output artifacts
 - issue-watcher results
 - PR janitor results
@@ -202,7 +201,7 @@ this common block:
 lifecycle_shepherd:
   active: true | false
   state: pre_run | execution_bound | publication_ready | pr_waiting | janitor_active | merged_needs_closeout | closed_no_pr | settled | blocked
-  owner_skill: workflow-conductor | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | human_review | none
+  owner_skill: pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | human_review | none
   next_skill: pr-init | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | human_review | none
   closeout_required: true | false
   authority_boundary:
@@ -223,7 +222,7 @@ Rules:
 
 ## Relationship To Existing Skills
 
-- `workflow-conductor` owns routing into the next bounded skill.
+- `csdlc-doctor` provides routing truth for the next bounded typed operation.
 - `pr-run` owns bind and bounded implementation execution.
 - `pr-finish` owns publication handoff into PR-tail shepherding.
 - `pr-finish` also attaches the post-merge closeout watcher unless the

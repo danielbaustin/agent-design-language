@@ -1,0 +1,79 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5548,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][csdlc-v2][tests] Initialize Gate 2 temp roots before terminal recovery",
+    "slug": "gate2-temp-root-init",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Retried typed execution claim reacquisition with the stable C-SDLC v2 binary, reproduced current Gate 2 behavior, and found no additional Rust fix required: current source already initializes the Gate 2 temporary roots enough for the suite to reach and pass its intended assertions while retaining real Git common-directory and terminal receipt invariants.",
+      "actual_changes": [
+        ".csdlc/issues/5548",
+        ".csdlc/prepared/issues/5548",
+        ".csdlc/evidence/5548"
+      ],
+      "artifacts": [
+        ".csdlc/evidence/5548/gate2.log",
+        ".csdlc/evidence/5548/csdlc-v2-all-tests.log",
+        ".csdlc/evidence/5548/strict-clippy.log",
+        ".csdlc/evidence/5548/fmt.log"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate2"
+          ],
+          "purpose": "Prove the Gate 2 temporary-root fixture path reaches its intended assertions and preserves claim/common-directory guard behavior.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5548/gate2.log"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml"
+          ],
+          "purpose": "Prove the complete C-SDLC v2 test surface remains green after #5548 execution-state reconciliation.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5548/csdlc-v2-all-tests.log"
+        },
+        {
+          "command": [
+            "cargo",
+            "clippy",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "purpose": "Prove C-SDLC v2 remains warning-free across all targets.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5548/strict-clippy.log"
+        }
+      ],
+      "integration_state": "closed_no_pr",
+      "publication_state": "closed",
+      "merge_state": "closed_unmerged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5766,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5766-csm-runtime-endpoint-inventory",
+  "title": "[v0.91.8][runtime][api] Reconcile CSM runtime endpoint inventory",
+  "body": "Closes #5766\n\n## Summary\n- reconciles the mounted Runtime v3 CSM API advertised endpoint list with the actual Axum route constants\n- keeps `/v1/ready` out of the mounted CSM API inventory while preserving the broader local CSM dispatch `/ready` surface\n- adds focused local dispatch and runtime API coverage for advertised endpoints, auth handling, telemetry filtering, feature-matrix truth, and helper payload contracts\n\n## Validation\n- `csdlc-validate --root /Volumes/FastWork/adl-wp-5766 finalize --request .csdlc/prepared/issues/5766/finalize-implementation.json`\n- `CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5766/target cargo test --locked --manifest-path adl-runtime/Cargo.toml runtime_api`\n- `CARGO_INCREMENTAL=0 CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5766/target cargo llvm-cov nextest --locked --manifest-path adl-runtime/Cargo.toml --status-level all --final-status-level slow --no-report`\n- `bash adl/tools/check_coverage_impact.sh --base b0132900abe37301becf129926a20fcbbd9ccd9e --head 75a78b883058a7251a1302b43d51cf60ad5ebce3 --summary adl/target/coverage-impact-summary-combined.json`\n- `git diff --check`\n- `csdlc-doctor --repo /Volumes/FastWork/adl-wp-5766 --issue 5766`\n\n## Review\n- exact-head subagent review CLEAN at `75a78b883058a7251a1302b43d51cf60ad5ebce3`\n- reviewed scoped revision: `git-blake3:75a78b883058a7251a1302b43d51cf60ad5ebce3:a7a81cf04e2213d8a4650641bd750effe96675b9432f25f75656d49e93577aef`\n- findings: none\n\nNo AWS was used.\n",
+  "draft": false,
+  "revision": "git-blake3:75a78b883058a7251a1302b43d51cf60ad5ebce3:a7a81cf04e2213d8a4650641bd750effe96675b9432f25f75656d49e93577aef",
+  "commit_sha": "75a78b883058a7251a1302b43d51cf60ad5ebce3"
+}

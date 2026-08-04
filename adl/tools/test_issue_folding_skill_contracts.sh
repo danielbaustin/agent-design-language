@@ -113,7 +113,7 @@ actionable_json = json.loads((actionable_report / "issue_folding_report.json").r
 assert actionable_json["status"] == "actionable"
 assert actionable_json["classification"] == "actionable"
 assert actionable_json["closure_outcome"] is None
-assert actionable_json["recommended_handoff"] == "workflow-conductor"
+assert actionable_json["recommended_handoff"] == "normal_issue_execution"
 
 blocked_json = json.loads((blocked_report / "issue_folding_report.json").read_text())
 assert blocked_json["status"] == "blocked"

@@ -1,0 +1,507 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5343,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "7ae22a9c8742977941bf696bfe2123d8d59ab3b7711264cfe5220a16802c44e6",
+  "phase": "closed_out",
+  "generation": 24,
+  "digest": "fd211d79e62ec310c630880ce21d3ca133a781c092bc2a3cb0b079611b0a264d",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:gpt-5.5:Anscombe",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:26457888a1c13abee54a8db7cd30ba15e25bbbbc:a36a58255d3f58d9583c6716786ca633e80257ddcd7c037e9f1ffbfc74a74af9",
+    "scope": [
+      ".csdlc/issues/5343",
+      ".csdlc/prepared/issues/5343",
+      "docs/milestones/v0.91.8/evidence/wp12/cutover-5343/report.json",
+      "docs/milestones/v0.91.8/evidence/wp12/cutover-handoff-5344.v1.json",
+      "adl-v2/tools/install-adl-v2.sh",
+      "adl-v2/crates/adl-cli/src/main.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:gpt-5.5:Anscombe",
+    "scope": [
+      ".csdlc/issues/5343",
+      ".csdlc/prepared/issues/5343",
+      "docs/milestones/v0.91.8/evidence/wp12/cutover-5343/report.json",
+      "docs/milestones/v0.91.8/evidence/wp12/cutover-handoff-5344.v1.json",
+      "adl-v2/tools/install-adl-v2.sh",
+      "adl-v2/crates/adl-cli/src/main.rs"
+    ],
+    "reviewed_revision": "git-blake3:26457888a1c13abee54a8db7cd30ba15e25bbbbc:a36a58255d3f58d9583c6716786ca633e80257ddcd7c037e9f1ffbfc74a74af9",
+    "findings": [
+      {
+        "id": "P1-malformed-selector-transaction-not-proven",
+        "severity": "p1",
+        "summary": "The malformed-selector case now executes a real selector transaction against copied active state and verifies both malformed and primary selector bytes remain unchanged.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:26457888a1c13abee54a8db7cd30ba15e25bbbbc:a36a58255d3f58d9583c6716786ca633e80257ddcd7c037e9f1ffbfc74a74af9",
+        "route": null
+      },
+      {
+        "id": "P1-host-specific-default-target-path",
+        "severity": "p1",
+        "summary": "The proof target now defaults portably through issue or Cargo configuration and then the repository-relative target directory.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:26457888a1c13abee54a8db7cd30ba15e25bbbbc:a36a58255d3f58d9583c6716786ca633e80257ddcd7c037e9f1ffbfc74a74af9",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "The reviewer did not independently rerun the mutating transaction fault matrix; the conductor reran it at repair commit 8f5590dcd96fa173a84669b98c814a7d060c6882 and retained the passing exact report."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5343,
+    "pull_request": 5704,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5704",
+    "base": "main",
+    "head": "codex/5343-v0918-wp12-reversible-default-switch",
+    "revision": "git-blake3:e4bbc988cad682cbb2ff8d24085e1a99bccec1ce:52f7a5788fa1121709198fece997b3472f6d6dad9365deb92aa7835a1f576052",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5704,
+    "head_sha": "e4bbc988cad682cbb2ff8d24085e1a99bccec1ce",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533022046"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533083418"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533021935"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533022346"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533022526"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533021902"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533022919"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90532531161"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533022361"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533022962"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533022410"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533022154"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533022263"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533022459"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533022466"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30438702947/job/90533022536"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5704,
+    "disposition": "merged",
+    "observed_sha": "e4bbc988cad682cbb2ff8d24085e1a99bccec1ce",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5343.json",
+    "released_branch": "codex/5343-v0918-wp12-reversible-default-switch",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5343",
+      ".csdlc/issues/5343",
+      ".csdlc/locks/5343.lock",
+      ".csdlc/prepared/issues/5343",
+      "docs/milestones/v0.91.8/evidence/wp12/cutover-5343"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5343/retained/design.md",
+  "diagram_path": ".csdlc/issues/5343/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:approved-live-merge-and-nonblocking-closeout",
+      "revision": "4be441ce171b50aad73aad5f6140fa5d0b9653ef83b10329870b13a818b7c91d"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "e1c549938d2ac2b9fa38454b82a5f23e13a19fc67686da4d14cc45d7808145c3",
+      "rendered_digest": "56e9f6179e9157659276d6bcf35efb8f016bba7c7822b2b0d797679cd31adf6b",
+      "ast_digest": "4bed42107b13c69d3d7d4cb8f18e052c2f7c26199f6173d1dc3260de1fe9a993"
+    },
+    "stp": {
+      "values_digest": "a1a7c27662bc0c241c6dccab83f287ab21bccec1bfa91f6eec3339bc29e0808d",
+      "rendered_digest": "2603a355245577778350785ca55e828e84a8d35adeb0eb9f05104b02c8c6526c",
+      "ast_digest": "af5271338c52d97d190cb14ef68d417dc5c34afcf8b72c635a7f9459680efb65"
+    },
+    "spp": {
+      "values_digest": "4d21019daebae94d66c9d04c79664440abe2e59343a5dc4d115d1e70b0fb8b26",
+      "rendered_digest": "efb1757fcdad2a17bff72cc7e57b4461bba1d2448b9c7d9f4899a99f5dbfbeed",
+      "ast_digest": "5577bef511e1279517cdb1552b99f40d8ac521c12259d335b59a6fb1c1f7d684"
+    },
+    "vpp": {
+      "values_digest": "762f52df082baa43087973ee727b285fc2c6d6cc74ec7b2d8fce73cdd25add6f",
+      "rendered_digest": "2239196d1b979a155b7b2214765bd8bfc6868d9df44af42b511c4c2e70efe11e",
+      "ast_digest": "9230774b0f3139e952232006d5f22945d8e89714ab2e1f547da37a437240f23f"
+    },
+    "srp": {
+      "values_digest": "cd9b1d80570780ca35986c34dfaa74a78069463f8b23664a0754ed8bb2ffc263",
+      "rendered_digest": "08a92ab6b2033a99303f8c30910369381a7b63aaeb309a803f1868df180b14d0",
+      "ast_digest": "b5a09010560bcd5a4fc915587019ffeef84a9d926384bbe25eab78e7b27d5b63"
+    },
+    "sor": {
+      "values_digest": "a3ee8e625e716cbf5ba4fb7df8730f6ccaa757fc9f78a072572c8848d8ca7a6e",
+      "rendered_digest": "ed60402d53b33ef4f727b6713328318e6d451f3065025788a3f4e3bc02f7d702",
+      "ast_digest": "6cbe8c66623540c8e62868f5e67f218d3b6aa69cb3a5a99801b3a513c6111ac9"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5343-preparation-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5343-preparation-owner",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The complete reversible cutover implementation and exact-substantive-head validation are retained and passing."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Advance the clean exact remediation review with both P1 findings fixed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5343-preparation-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "external:deepseek:deepseek-chat",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5343-preparation-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5343-preparation-owner",
+      "reason": "Refresh execution dependency gate wording so live merge plus ancestry is blocking and receipts/typed closeout are audit observations.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/issues/5343\"],\"expected_owner\":\"codex:5343-preparation-owner\",\"expected_purpose\":\"Prepare and review #5343 reversible default-switch contracts only; no selector transaction or implementation until #5344 is merged, typed closed_out, receipt-backed, claim-free, ancestral, and accepted\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Prepare and review #5343 reversible default-switch contracts only; no selector transaction or implementation until #5344 is merged, typed closed_out, receipt-backed, claim-free, ancestral, and accepted\",\"purpose\":\"Prepare and review #5343 reversible default-switch contracts only; no selector transaction or implementation until #5344 and #5345 each have a live merged landing commit ancestral to the exact execution revision; receipts and typed closeout are audit observations only\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "external:deepseek:deepseek-chat",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5343-preparation-owner",
+      "reason": "Refresh preparation plan wording so execution is gated by live merge plus ancestry and review is deferred until pre-PR.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Render and validate all six cards; freeze exact #5344/#5345 dependency gates, selector transaction, fresh-install identity, explicit-v1 rollback window, evidence schema, ownership, protected paths, COTS, budgets, PVF, and no-deferral invariants; commit and push preparation only without preparation-review churn; remain blocked until #5344 and #5345 each have live merged landing commits ancestral to the exact execution revision; treat receipts and typed closeout as audit-only observations; then execute the full reviewed lifecycle and run the single bounded review just before PR without widening scope.\",\"operation\":\"replan\",\"previous_value\":\"Render and validate all six cards; freeze exact #5344/#5345 dependency gates, selector transaction, fresh-install identity, explicit-v1 rollback window, evidence schema, ownership, protected paths, COTS, budgets, PVF, and no-deferral invariants; obtain bounded preparation review and fix findings; commit and push preparation only; remain blocked until #5344 is merged and typed closed_out; then execute the full reviewed lifecycle without widening scope.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The preparation-only lease expired after both live dependency landings became ancestral; recover the same bounded issue worktree for the authorized WP-12 cutover execution.",
+      "operation": "{\"previous_owner\":\"codex:5343-preparation-owner\",\"observed_expiry_unix_seconds\":1785265808,\"recovery_actor\":\"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d\",\"reason\":\"The preparation-only lease expired after both live dependency landings became ancestral; recover the same bounded issue worktree for the authorized WP-12 cutover execution.\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "operator:approved-live-merge-and-nonblocking-closeout",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Align the execution plan with the accepted live merge, ancestry, and handoff gates while keeping receipts audit-only.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Verify the live #5344 and #5345 merged landing commits are ancestral to the exact execution revision and accept the exact #5344 cutover handoff; observe lifecycle receipts only as audit metadata\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Fresh-install ADL v2 into an isolated issue evidence root, retain a byte-identical installed v1 executable, and verify both installation identities before mutation\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-8\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Exercise malformed input, receipt, digest, compare-and-swap, lock interruption, and persistence failures while proving the prior selector remains byte-identical\",\"acceptance_ids\":[\"AC-4\",\"AC-5\",\"AC-8\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Select and execute v2, roll back exact prior bytes and execute v1, then select and execute v2 as final default with a fourteen-day no-deletion rollback window\",\"acceptance_ids\":[\"AC-3\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-9\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Run one exact-revision review, publish through typed v2, shepherd required checks, merge, verify the integrated cutover evidence, and leave closeout nonblocking\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Replace obsolete receipt-blocking preparation invariants with the actual reversible-cutover execution invariants.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"No selector mutation begins before #5344 and #5345 live merged landing commits are ancestral to the exact execution revision and the exact #5344 handoff is accepted; receipts and closeout are audit-only\",\"#5343 reuses the authoritative #5345 selector transaction and never edits active selector storage directly or implements a second selector\",\"The selected executable and installation receipt are exact and fresh-install verified before mutation\",\"Prior selector bytes, digest, v1 executable, and v1 receipt remain intact throughout the fourteen-day rollback window\",\"Every rejected or interrupted transaction preserves the prior selector bytes\",\"Rollback restores exact prior selector bytes and executes retained v1 before v2 becomes final again\",\"Evidence is deterministic, redacted, repo-relative, exact-revision bound, and non-secret\",\"Runtime v2 and incumbent ADL remain untouched rollback targets and no legacy deletion occurs\",\"One exact-revision review runs immediately before publication and every actionable finding is fixed\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Keep execution fail-closed on cutover integrity rather than unrelated closeout paperwork.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"A required live merged landing is not ancestral to the exact execution revision or the accepted #5344 handoff is contradictory\",\"Any intended protected path collides with an active typed claim\",\"The selector requires direct active-storage editing, implicit fallback, hidden network, credentials, AWS, Runtime v2 edits, or production-state mutation\",\"Exact prior selector bytes, digest, v1 executable, or receipt cannot be retained and verified\",\"Any rejected or interrupted transaction changes prior selector bytes\",\"Rollback does not restore exact prior bytes or retained v1 cannot execute after rollback\",\"The fourteen-day rollback window is absent or authorizes legacy deletion\",\"Evidence is secret-bearing, host-bound, incomplete, or not bound to the exact implementation revision\",\"Exact-revision review has an unresolved actionable finding\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Live merged dependency ancestry and the accepted #5344 handoff are verified.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fresh ADL v2 installation and byte-identical retained v1 executable identities are verified.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "All malformed, stale, contended, interrupted, and persistence failure cases preserved exact prior selector bytes.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "ADL v2 executed, exact prior selector bytes were restored, retained v1 executed after rollback, and v2 was reselected with a fourteen-day no-deletion window.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Align validation with the executed live-merge gate and one-pass cutover proof; retain only the post-merge lane as future work.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"preparation-contract\",\"proof_role\":\"Prove six typed cards, design, protected paths, transaction and rollback invariants, COTS, budgets, and root safety\",\"acceptance_ids\":[\"AC-1\",\"AC-8\",\"AC-9\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5343/validate-preparation.rb\"],\"parallel_group\":\"preparation\",\"defer_reason\":null},{\"lane\":\"dependency-merge-gate\",\"proof_role\":\"Prove #5344 and #5345 live merged landing commits are ancestral to the exact execution revision and the exact #5344 handoff is accepted; receipts are audit-only\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5343/check-dependencies.rb\"],\"parallel_group\":\"execution-gate\",\"defer_reason\":null},{\"lane\":\"transaction-fault-matrix\",\"proof_role\":\"Execute one fresh-install cutover proof covering identity, compare-and-swap, exact rollback, v1 and v2 execution, and every failure-preservation class\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5343/run-validation-lane.rb\",\"transaction-fault-matrix\"],\"parallel_group\":\"transaction\",\"defer_reason\":null},{\"lane\":\"fresh-install-override\",\"proof_role\":\"Validate the retained report proves fresh v2 installation, final v2 selection, and retained v1\",\"acceptance_ids\":[\"AC-3\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5343/run-validation-lane.rb\",\"fresh-install-override\"],\"parallel_group\":\"report-validation\",\"defer_reason\":null},{\"lane\":\"rollback-window-evidence\",\"proof_role\":\"Validate exact prior-byte restoration, post-rollback v1 execution, fourteen-day retention, and no deletion authority\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5343/run-validation-lane.rb\",\"rollback-window-evidence\"],\"parallel_group\":\"report-validation\",\"defer_reason\":null},{\"lane\":\"cutover-budgets\",\"proof_role\":\"Enforce bounded orchestration, no Runtime v2 edits, no product implementation duplication, and no legacy deletion\",\"acceptance_ids\":[\"AC-7\",\"AC-8\",\"AC-9\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5343/run-validation-lane.rb\",\"cutover-budgets\"],\"parallel_group\":\"budgets\",\"defer_reason\":null},{\"lane\":\"post-merge-exact\",\"proof_role\":\"Verify merged ancestry and rerun exact report, dependency, identity, rollback-window, budget, and no-deletion checks before WP-12 completion\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":5000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5343/run-validation-lane.rb\",\"post-merge-exact\"],\"parallel_group\":\"post-merge\",\"defer_reason\":\"Run immediately after authorized merge; it does not block PR publication\"}]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the exact substantive reversible default-switch implementation and proof.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Executed the reviewed ADL v2 selector from a fresh isolated installation, proved failure preservation, restored and executed incumbent v1 exactly, then selected v2 as final while retaining v1 for a fourteen-day no-deletion rollback window.\",\"changes\":[\"Replaced receipt-blocking dependency checks with live merged landing ancestry and accepted handoff verification\",\"Added one bounded cutover proof using the authoritative ADL v2 selector implementation\",\"Proved malformed generation, missing receipt, wrong digest, stale compare-and-swap, malformed selector, lock interruption, and persistence failure preserve prior bytes\",\"Executed v2, restored exact prior selector bytes, executed byte-identical v1 0.91.7, and reselected v2 as final default\",\"Retained a fourteen-day rollback window without Runtime v2 edits or legacy deletion\"],\"artifacts\":[\"commit 05ac125bc377a09bce4bdbbd571c5572b231805a\",\".csdlc/prepared/issues/5343/run-cutover-proof.sh\",\".csdlc/prepared/issues/5343/run-validation-lane.rb\",\".csdlc/prepared/issues/5343/check-dependencies.rb\",\"docs/milestones/v0.91.8/evidence/wp12/cutover-5343/report.json\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the complete exact-substantive-head cutover validation result.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby\",\".csdlc/prepared/issues/5343/run-validation-lane.rb\",\"transaction-fault-matrix\"],\"purpose\":\"Prove live dependency ancestry, fresh v2 installation and execution, byte-identical v1 retention and post-rollback execution, exact selector restoration, failure preservation, final v2 selection, bounded orchestration, and no legacy deletion.\",\"outcome\":\"passed\",\"evidence_ref\":\"docs/milestones/v0.91.8/evidence/wp12/cutover-5343/report.json records status pass at substantive revision 05ac125bc377a09bce4bdbbd571c5572b231805a; fresh-install-override, rollback-window-evidence, cutover-budgets, typed doctor, and git diff --check also passed.\"}}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The complete reversible cutover implementation and exact-substantive-head validation are retained and passing.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "subagent:gpt-5.5:Anscombe",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Advance the clean exact remediation review with both P1 findings fixed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record exact existing PR ready-for-review after remote success",
+      "operation": "record_ready_publication"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 29,
+      "generation": 23,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 30,
+      "generation": 24,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

@@ -91,11 +91,9 @@ If there is no concrete target, stop and report `blocked` with the missing targe
 ## Quick Start
 
 1. Resolve the concrete target context.
-2. Prefer the canonical doctor path first:
-   - `adl/tools/pr.sh doctor --json`
-3. Use compatibility aliases only when the canonical doctor surface is unavailable:
-   - `adl/tools/pr.sh ready`
-   - `adl/tools/pr.sh preflight`
+2. Use the canonical typed doctor path first:
+   - `csdlc-doctor --repo <repo> --issue <issue>`
+3. Do not fall back to removed compatibility aliases.
 4. Use direct inspection only as a last resort.
 5. Inspect the relevant workflow surfaces:
    - issue/task identity
@@ -215,15 +213,11 @@ Unsafe parallel examples:
 ## Preferred Commands
 
 Canonical machine surface:
-- `adl/tools/pr.sh doctor --json`
-
-Compatibility aliases:
-- `adl/tools/pr.sh ready`
-- `adl/tools/pr.sh preflight`
+- `csdlc-doctor --repo <repo> --issue <issue>`
 
 Command-order rule:
 - prefer `doctor --json` first when the surface exists
-- if the shell compatibility surface exists, prefer `adl/tools/pr.sh ready` before falling back to direct inspection
+- do not use removed shell compatibility surfaces
 - do not skip to manual inspection merely because a built `adl` binary is absent
 - use direct inspection only when the repo-native doctor/readiness/preflight paths are unavailable or fail to produce a usable result
 

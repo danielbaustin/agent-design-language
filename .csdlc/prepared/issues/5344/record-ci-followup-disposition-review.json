@@ -1,0 +1,45 @@
+{
+  "issue": 5344,
+  "expected_generation": 31,
+  "expected_digest": "642dfacc26c3bbb720eac69f493608ec6197ae9a5f0c1f5b82021d016e70697a",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+  "evidence": {
+    "reviewer": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+    "scope": [
+      ".csdlc/issues/5344",
+      ".csdlc/issues/5587",
+      ".csdlc/prepared/issues/5344",
+      "adl-runtime/src/guardian.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/test_check_coverage_impact.sh"
+    ],
+    "reviewed_revision": "git-blake3:f9947b3d8bb0ee11e81837bd9aad22ced744f43f:ae04f2c0111d33084eab43c3cb11282d541113a7cfb9a2ce169cc257b2140a32",
+    "findings": [
+      {
+        "id": "F-5344-CI-FOLLOWUP-1",
+        "severity": "p1",
+        "summary": "The coverage contract still required a second deleted guardian CLI test, so the full tooling contract exited 1.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:f9947b3d8bb0ee11e81837bd9aad22ced744f43f:ae04f2c0111d33084eab43c3cb11282d541113a7cfb9a2ce169cc257b2140a32",
+        "route": null
+      },
+      {
+        "id": "F-5344-CI-FOLLOWUP-2",
+        "severity": "p1",
+        "summary": "The SRP prompts still describe the earlier path-policy review until typed reviewed-state recovery permits their correction.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "accepted_risk",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Intermediate only: recover reviewed truth immediately, replace the stale SRP prompts through the typed correction operation, and require a final clean exact review before publication."
+    ],
+    "completed": true
+  }
+}

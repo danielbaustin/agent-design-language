@@ -1,0 +1,10 @@
+flowchart LR
+  P["Intended Unity project"] --> S["Project-specific MCP status"]
+  S --> I{"Project and endpoint agree?"}
+  I -- "no" --> F["FAIL_CLOSED"]
+  I -- "yes" --> L["Permission-safe endpoint liveness"]
+  L --> R["Read-only MCP tool call"]
+  R --> E["Redacted retained proof"]
+  E --> O["WP-15 Observatory proof consumer"]
+  B["#4741 editor and batch liveness"] -. "separate owner" .-> L
+  D["#5332 ILPP loop"] -. "separate owner" .-> B

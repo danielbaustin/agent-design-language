@@ -17,15 +17,17 @@ export ADL_RUNTIME_ROOT="$RUNTIME_ROOT"
 export ADL_RUNS_ROOT="$RUNS_ROOT"
 export ADL_OLLAMA_BIN="$ROOT_DIR/adl/tools/mock_ollama_v0_4.sh"
 
-bash "$ROOT_DIR/adl/tools/pr.sh" run \
+adl-runtime run \
   adl/examples/v0-6-hitl-pause-resume.adl.yaml \
+  --run \
   --trace \
   --allow-unsigned \
   --out "$PAUSE_OUT" \
   >"$OUT_DIR/paused_run_log.txt" 2>&1
 
-bash "$ROOT_DIR/adl/tools/pr.sh" run \
+adl-runtime run \
   adl/examples/v0-6-hitl-no-pause.adl.yaml \
+  --run \
   --trace \
   --allow-unsigned \
   --out "$COMPLETE_OUT" \
@@ -38,10 +40,10 @@ Canonical commands:
 
 \`\`\`bash
 ADL_RUNTIME_ROOT="$RUNTIME_ROOT" ADL_RUNS_ROOT="$RUNS_ROOT" ADL_OLLAMA_BIN="$ROOT_DIR/adl/tools/mock_ollama_v0_4.sh" \\
-  bash adl/tools/pr.sh run adl/examples/v0-6-hitl-pause-resume.adl.yaml --trace --allow-unsigned --out "$PAUSE_OUT"
+  adl-runtime run adl/examples/v0-6-hitl-pause-resume.adl.yaml --run --trace --allow-unsigned --out "$PAUSE_OUT"
 
 ADL_RUNTIME_ROOT="$RUNTIME_ROOT" ADL_RUNS_ROOT="$RUNS_ROOT" ADL_OLLAMA_BIN="$ROOT_DIR/adl/tools/mock_ollama_v0_4.sh" \\
-  bash adl/tools/pr.sh run adl/examples/v0-6-hitl-no-pause.adl.yaml --trace --allow-unsigned --out "$COMPLETE_OUT"
+  adl-runtime run adl/examples/v0-6-hitl-no-pause.adl.yaml --run --trace --allow-unsigned --out "$COMPLETE_OUT"
 \`\`\`
 
 Primary proof surfaces:

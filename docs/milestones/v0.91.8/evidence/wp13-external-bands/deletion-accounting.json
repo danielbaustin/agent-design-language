@@ -1,0 +1,60 @@
+{
+  "schema": "adl.wp13.external_band_deletion_accounting.v1",
+  "issue": 5347,
+  "deleted_file_count": 20,
+  "removed_lines": 1472,
+  "cargo_toml_removed_lines": 4,
+  "net_removed_lines": 1476,
+  "execution_dependencies": [
+    5343,
+    5344,
+    5358,
+    5361
+  ],
+  "retained_current_binaries": [
+    "adl/src/bin/demo_adl_gws_context_mirror.rs",
+    "adl/src/bin/demo_adl_gws_native_drive_sync.rs",
+    "adl/src/bin/run_wp08_acip_sns_live_proof.rs"
+  ],
+  "review_finding_cleanup": {
+    "base_revision": "215563f4af520eb72f9aa8708ac567cdf23a0c8a",
+    "deleted_file_count": 10,
+    "modified_file_count": 13,
+    "deleted_files": [
+      "adl/tests/local_gemma_model_evaluation_demo_tests.rs",
+      "adl/tests/model_proposal_benchmark_demo_tests.rs",
+      "adl/tests/uts_acc_multi_model_benchmark_demo_tests.rs",
+      "adl/tools/demo_v086_candidate_selection.sh",
+      "adl/tools/demo_v086_fast_slow.sh",
+      "adl/tools/demo_v086_freedom_gate.sh",
+      "adl/tools/demo_v086_review_surface.sh",
+      "adl/tools/demo_v0912_speculative_decoding_showcase.sh",
+      "adl/tools/test_v086_demo_review_surface.sh",
+      "adl/tools/test_v0916_unity_observatory_soak_integration.sh"
+    ],
+    "modified_files": [
+      "adl/src/capability_aptitude_testing.rs",
+      "adl/src/demo/v086_review_surface.rs",
+      "adl/src/dspark_speculative_decoding_evaluation.rs",
+      "adl/src/speculative_decoding_prototype.rs",
+      "adl/tests/demo_tests.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "adl/tools/test_select_validation_lanes.sh",
+      "adl/tools/test_wp17a_demo_follow_ons.sh",
+      "adl/tools/uts_benchmark_runner.py",
+      "adl/tools/validate_v0917_soak2_4682_status.sh"
+    ],
+    "removed_lines": 839,
+    "added_lines": 14,
+    "net_removed_lines": 825,
+    "validation_lane": ".csdlc/prepared/issues/5347/run-validation-lane.rb",
+    "validation_lane_added_lines": 132,
+    "validation_lane_removed_lines": 1,
+    "validation_lane_net_added_lines": 131,
+    "total_net_removed_lines_including_validation_lane": 694
+  },
+  "residual_validation_note": "adl/Cargo.lock is stale on current main for adl/Cargo.toml and is not changed by this issue because deleting one bin target does not change dependency resolution."
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5502,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5502-v0918-preparation",
+  "title": "[v0.91.8][WP-10A] Implement output convergence and deterministic replanning",
+  "body": "Closes #5502.\n\n## Summary\n- add the pure adl-workcell-convergence crate for deterministic output convergence and replanning decisions\n- validate exact assignment/output binding, source revision continuity, path scope, active-claim overlap, partial success, residual blockers, and read-only authority\n- wire the #5502 validation lane to the focused convergence contract and budget checks\n\n## Validation\n- ruby .csdlc/prepared/issues/5502/run-validation-lane.rb convergence-contract\n- ruby .csdlc/prepared/issues/5502/run-validation-lane.rb budgets\n- cargo fmt --manifest-path adl-v2/Cargo.toml -p adl-workcell-convergence\n- cargo clippy --manifest-path adl-v2/Cargo.toml -p adl-workcell-convergence --all-targets -- -D warnings\n- git diff --check\n\n## Review\n- exact-head GPT-5.5 review passed with no actionable findings",
+  "draft": false,
+  "revision": "git-blake3:fc9cfa5040eb819bfb0dc6248c6b7a6ac3dcc97c:a40147c772c2218c305bdae8b569cd9b11e0507f296b9bf6989dd68d89452a42",
+  "commit_sha": "fc9cfa5040eb819bfb0dc6248c6b7a6ac3dcc97c"
+}

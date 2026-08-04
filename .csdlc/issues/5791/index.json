@@ -1,0 +1,463 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5791,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "ea470dd9f99634977909a2bd68cfd3f66cfb924e95fe17b2616ec51caa4cb3cb",
+  "phase": "published",
+  "generation": 13,
+  "digest": "4c9fab02e2b6f06e84dfb7eb8936d1e16dc0364feed8c73ca4e85c48ce4f7b6a",
+  "claim": {
+    "id": "claim-5791-wp18-final-internal-review-second-pass",
+    "owner": "codex:5791-review",
+    "generation": 13,
+    "acquired_unix_seconds": 1785801653,
+    "expires_unix_seconds": 1785830453,
+    "heartbeat_unix_seconds": 1785801653,
+    "branch": "codex/5791-wp18-final-review-second-pass",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5791",
+      ".csdlc/issues/5791",
+      ".csdlc/locks/5791.lock",
+      ".csdlc/prepared/issues/5791",
+      ".github/workflows/ci.yaml",
+      "README.md",
+      "adl-runtime/Cargo.lock",
+      "adl-runtime/Cargo.toml",
+      "adl/Cargo.lock",
+      "adl/Cargo.toml",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/attach_post_merge_closeout.sh",
+      "adl/tools/editor_action.sh",
+      "adl/tools/fix_git_main_sync_preserve_local_adl.sh",
+      "adl/tools/generate_active_command_reference_scan.py",
+      "adl/tools/run_cargo_validation.sh",
+      "adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md",
+      "adl/tools/test_closeout_completed_issue_wave.sh",
+      "adl/tools/test_run_cargo_validation.sh",
+      "csdlc-v2/src/review.rs",
+      "csdlc-v2/tests/gate4.rs",
+      "csdlc-v2/tests/gate5.rs",
+      "csdlc-v2/tests/gate_terminal_authority_deletion.rs",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/reviews/v0.91.8/internal-review-5791",
+      "docs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md",
+      "docs/tooling/editor/command_adapter.md",
+      "tools/aws_remote_validation/Cargo.lock",
+      "tools/aws_remote_validation/Cargo.toml"
+    ],
+    "purpose": "Run #5791 WP-18 final internal review second pass."
+  },
+  "review_assignment": {
+    "reviewer": "codex-stale-wp17-doc-truth-review",
+    "assigned_by": "codex:5791-review",
+    "revision": "git-blake3:b99de0df70874a14bb9ea9b10170bdd8d1a447b7:5285d13cab55c9847db6c33b078cc5faeb9294ff915997a72d43cce394d7250b",
+    "scope": [
+      "README.md",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "adl/Cargo.toml",
+      "adl/Cargo.lock",
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/Cargo.lock",
+      "tools/aws_remote_validation/Cargo.toml",
+      "tools/aws_remote_validation/Cargo.lock"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-stale-wp17-doc-truth-review",
+    "scope": [
+      "README.md",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "adl/Cargo.toml",
+      "adl/Cargo.lock",
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/Cargo.lock",
+      "tools/aws_remote_validation/Cargo.toml",
+      "tools/aws_remote_validation/Cargo.lock"
+    ],
+    "reviewed_revision": "git-blake3:b99de0df70874a14bb9ea9b10170bdd8d1a447b7:5285d13cab55c9847db6c33b078cc5faeb9294ff915997a72d43cce394d7250b",
+    "findings": [
+      {
+        "id": "IR5791-07",
+        "severity": "p1",
+        "summary": "WP-17 update-list truth left current release-tail docs saying WP-17 was active and root README reporting crate version 0.91.7.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:b99de0df70874a14bb9ea9b10170bdd8d1a447b7:5285d13cab55c9847db6c33b078cc5faeb9294ff915997a72d43cce394d7250b",
+        "route": null
+      },
+      {
+        "id": "IR5791-08",
+        "severity": "p2",
+        "summary": "REVIEW.md still says WP-17 documentation truth alignment is active, but typed claim ownership blocks #5791 from editing REVIEW.md because #5357 owns that path.",
+        "actionable": true,
+        "in_scope": false,
+        "disposition": "out_of_scope",
+        "fix_revision": null,
+        "route": "#5357 protected REVIEW.md; do not edit in #5791"
+      }
+    ],
+    "residual_risks": [
+      "REVIEW.md remains a known stale current-truth line under #5357 ownership and must be corrected by the owning issue/worktree.",
+      "#5801 tracks broader CI/lifecycle simplification separately."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5791,
+    "pull_request": 5799,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5799",
+    "base": "main",
+    "head": "codex/5791-wp18-final-review-second-pass",
+    "revision": "git-blake3:b99de0df70874a14bb9ea9b10170bdd8d1a447b7:5285d13cab55c9847db6c33b078cc5faeb9294ff915997a72d43cce394d7250b",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".adl/local-artifacts/5791-bootstrap/design.md",
+  "diagram_path": ".adl/local-artifacts/5791-bootstrap/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5791-design-review",
+      "revision": "dc6e935fef0e5809fb3a7ca88b8ada8d7b589a98772303e767c3ef8ec2a518b6"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "2862c263982785330902904f4e254a9bdd023aba29eaec21af51a7315eb65096",
+      "rendered_digest": "db7d8c4866a047150bbf16b86078d5511be83f3be909e09f629b2ea0a3ecd76e",
+      "ast_digest": "a0a98b88001bfaa813d9aa4f8e470e8f0badbba595920d9f5da09f22e8af06f2"
+    },
+    "stp": {
+      "values_digest": "3753f172f460e91ca47033cadd2947b8f84bfa32a47211ee563279241ec7cbfc",
+      "rendered_digest": "d6b23b788d0dc50b5b4e0ef0be9c258d68ee775db5b16f71720f4e08d9436ee4",
+      "ast_digest": "49f757aaffeaf4448cb0ecf18eedf8b8c90314fcf362313209d7f663719d97a8"
+    },
+    "spp": {
+      "values_digest": "c81d870a9c2f38ba77dec487f2f03848e4fda01185526632d06388372e35dec7",
+      "rendered_digest": "341ae9efdf018bf6b01ca0de5dfb5c1a36f5c339119825ef4285a444a81297b9",
+      "ast_digest": "3714d026fc940f360a1257792ee820a97049895f52980e2d6e1a6696fa9a4303"
+    },
+    "vpp": {
+      "values_digest": "6c6aea3b94588224ab6c1b9426041e6502586b5dac0d5f6bb17a1ce5342c11bf",
+      "rendered_digest": "d99e8fa0195fc2cf10cc89f1b7a0323d19dabeffe956a41e853b04a36afceca8",
+      "ast_digest": "d30a04d78506f152f0b77d3d0b7367cd1f5e2ecdafa3385c00b7574ff909bb40"
+    },
+    "srp": {
+      "values_digest": "aa00748ec4c6e17774d592f200ec57be92f36cd2fdbff0831b8e466667e339e1",
+      "rendered_digest": "3397c1a31f99ed1277d5abc1032d2d69f66307a227f384b02c634eeb9cd7b1c8",
+      "ast_digest": "7e475d97ccfea2469e3c2d230e0c02ef54ad75ad898c873c62c4e296e0300b8f"
+    },
+    "sor": {
+      "values_digest": "36936f3a1b64122e3d1402a8efa0c3b540e3d4b280497999676c41b78eb12a7a",
+      "rendered_digest": "0c9e80514d2e9c98672a176ee875650006dfc4e7016012fd4b6ac2ceb30aa1a2",
+      "ast_digest": "bbef43e8b61984fde1bf2a5dab9440322d48c0e8704afb566ac9e910ef8980ba"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5791-review",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5791-review",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5791-review",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5791-review",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5791-review",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5791-review",
+      "reason": "PR #5799 exact-head CI failed in csdlc-v2-standalone because the workflow fmt step omitted --locked while run_cargo_validation requires explicit lock posture; recover published review truth for a bounded CI workflow repair and exact-head rereview."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5791-review",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5791-review",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5791-review",
+      "reason": "PR #5799 exact-head coverage aggregate exposed active Rust package manifests still reporting 0.91.7 during the v0.91.8 review tail; recover publication for a bounded version-truth fix."
+    },
+    {
+      "sequence": 10,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5791-review",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 11,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5791-review",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 12,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5791-review",
+      "reason": "PR #5799 exact-head review found stale WP-17-active and package-version truth in current release-tail documentation; recover publication for a bounded doc-truth fix."
+    },
+    {
+      "sequence": 13,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5791-review",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 14,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5791-review",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5791-review",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5791-review",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5791-review",
+      "reason": "WP-18 exact-head review found current docs and helper surfaces still referencing deleted C-SDLC closeout binaries; amend scope before repairing them and broadening the regression guard.",
+      "operation": "{\"add_protected_paths\":[\"docs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md\",\"docs/tooling/editor/command_adapter.md\",\"adl/tools/attach_post_merge_closeout.sh\",\"adl/tools/fix_git_main_sync_preserve_local_adl.sh\",\"adl/tools/generate_active_command_reference_scan.py\",\"adl/tools/editor_action.sh\",\"adl/tools/test_closeout_completed_issue_wave.sh\",\"adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md\",\"csdlc-v2/tests/gate_terminal_authority_deletion.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 0,
+      "actor": "codex:5791-review",
+      "reason": "Bounded subagent review found csdlc-v2/tests/gate4.rs still encoding the deleted closeout command in an active lifecycle contract test.",
+      "operation": "{\"add_protected_paths\":[\"csdlc-v2/tests/gate4.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5791-review",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5791-review",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5791-review",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5791-review",
+      "reason": "PR #5799 exact-head CI failed in csdlc-v2-standalone because the workflow fmt step omitted --locked while run_cargo_validation requires explicit lock posture; recover published review truth for a bounded CI workflow repair and exact-head rereview.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 4,
+      "actor": "codex:5791-review",
+      "reason": "PR #5799 exact-head CI failed because the csdlc-v2-standalone workflow fmt step omitted --locked while run_cargo_validation requires explicit lock posture; amend scope before repairing the workflow.",
+      "operation": "{\"add_protected_paths\":[\".github/workflows/ci.yaml\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 4,
+      "actor": "codex:5791-review",
+      "reason": "The validation lane selector carries the same unlocked csdlc-v2 cargo fmt command as the failed CI workflow; amend scope before keeping selector and workflow command truth aligned.",
+      "operation": "{\"add_protected_paths\":[\"adl/config/validation_lane_selector.v0.91.6.json\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 4,
+      "actor": "codex:5791-review",
+      "reason": "The CI failure is caused by run_cargo_validation.sh requiring --locked for cargo fmt even though cargo fmt does not accept that flag; amend scope before repairing the wrapper policy.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/run_cargo_validation.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 4,
+      "actor": "codex:5791-review",
+      "reason": "Add focused regression coverage for the cargo validation wrapper rule that cargo fmt is lock-guarded but cannot use --locked, while other cargo commands remain rejected without --locked.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/test_run_cargo_validation.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 4,
+      "actor": "codex:5791-review",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 5,
+      "actor": "codex:5791-review",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 5,
+      "actor": "codex:5791-review",
+      "reason": "Typed CI recovery exposed that assigned review evidence records a passing review but leaves the issue in implemented phase, blocking publication; amend scope before fixing assigned-review phase advancement.",
+      "operation": "{\"add_protected_paths\":[\"csdlc-v2/src/review.rs\",\"csdlc-v2/tests/gate5.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 5,
+      "actor": "codex:5791-review",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 6,
+      "actor": "codex:5791-review",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 7,
+      "actor": "codex:5791-review",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 19,
+      "generation": 8,
+      "actor": "codex:5791-review",
+      "reason": "PR #5799 exact-head coverage aggregate exposed active Rust package manifests still reporting 0.91.7 during the v0.91.8 review tail; recover publication for a bounded version-truth fix.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 8,
+      "actor": "codex:5791-review",
+      "reason": "The v0.91.8 WP-18 review tail exposed active Rust package manifests and lockfiles still reporting 0.91.7; protect the package metadata before the bounded version-truth fix.",
+      "operation": "{\"add_protected_paths\":[\"adl/Cargo.toml\",\"adl/Cargo.lock\",\"adl-runtime/Cargo.toml\",\"adl-runtime/Cargo.lock\",\"tools/aws_remote_validation/Cargo.toml\",\"tools/aws_remote_validation/Cargo.lock\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 8,
+      "actor": "codex:5791-review",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 9,
+      "actor": "codex:5791-review",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 10,
+      "actor": "codex:5791-review",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 24,
+      "generation": 11,
+      "actor": "codex:5791-review",
+      "reason": "PR #5799 exact-head review found stale WP-17-active and package-version truth in current release-tail documentation; recover publication for a bounded doc-truth fix.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 11,
+      "actor": "codex:5791-review",
+      "reason": "The WP-18 second-pass review found stale WP-17-active and package-version truth in current release-tail documentation; protect the non-colliding documentation surfaces before repair.",
+      "operation": "{\"add_protected_paths\":[\"README.md\",\"docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md\",\"docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 11,
+      "actor": "codex:5791-review",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 12,
+      "actor": "codex:5791-review",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 13,
+      "actor": "codex:5791-review",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

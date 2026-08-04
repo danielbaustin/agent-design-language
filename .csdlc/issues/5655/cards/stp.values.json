@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5655,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][tooling] Add repo-native Rust GitHub actions",
+    "slug": "v0-91-8-csdlc-v2-github-actions",
+    "version": "v0.91.8",
+    "generation": 22
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement, validate, review, publish, merge, and close the bounded Rust GitHub action surface.",
+      "deliverables": [
+        "csdlc-github Rust binary",
+        "typed request/result schemas",
+        "reconciled issue mutations",
+        "focused tests and operator contract"
+      ],
+      "acceptance_criteria": [
+        "AC-1: issue create is idempotent and reconciles exact repository/title/body identity using a durable operation key",
+        "AC-2: issue update, labels, assignees, comments, and close are typed, validated, and reconciled",
+        "AC-3: permission, identity, stale-request, ambiguous-outcome, and mismatch failures are fail-closed",
+        "AC-4: focused Rust tests cover every mutation and no external connector is required"
+      ],
+      "dependencies": [
+        "existing csdlc-v2 publication, merge, closeout, and token resolver code",
+        "GitHub issue #5655"
+      ],
+      "repo_inputs": [
+        "csdlc-v2/src/github.rs",
+        "csdlc-v2/src/github_token.rs",
+        "csdlc-v2/src/bin/csdlc-publish.rs",
+        "csdlc-v2/src/bin/csdlc-merge.rs",
+        "csdlc-v2/src/bin/csdlc-closeout.rs"
+      ],
+      "non_goals": [
+        "Runtime or AWS work",
+        "GitHub connector integration",
+        "legacy wrapper restoration",
+        "changes to closed issue records"
+      ]
+    }
+  }
+}

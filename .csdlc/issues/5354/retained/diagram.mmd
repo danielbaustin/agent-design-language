@@ -1,0 +1,14 @@
+flowchart TD
+    P["WP-15 preparation only"] --> G{"WP-14A #5384 terminal gate"}
+    G -->|"open, missing receipt, active claim, or non-ancestral"| S["Stop: no product paths, demo, or claims"]
+    G -->|"merged + typed closed_out + receipt + ancestry"| A["Amend typed claim to exact demo/evidence paths"]
+    A --> L["ADL v2: validate and compile canonical plan"]
+    L --> R["Runtime v3: execute through accepted adapter and canonical ingress"]
+    R --> O["Secure observation and deterministic result/checkpoint evidence"]
+    O --> C["C-SDLC v2: typed lifecycle boundary proof"]
+    C --> M["Integrated demo packet and claim-boundary matrix"]
+    M --> V["Complete validation and exact-revision review"]
+    V --> I["Serialized publication, CI, authorized merge, post-merge proof, closeout"]
+
+    X["Unsupported or unproven claim"] --> B["Explicit blocker, non-claim, deferred, or not-applicable disposition"]
+    B --> M

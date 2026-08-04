@@ -238,7 +238,7 @@ Usage:\n\
   adl-runtime --version\n\n\
 Notes:\n\
   adl <adl.yaml> remains available as a compatibility shortcut during migration.\n\
-  C-SDLC issue work belongs to adl/tools/pr.sh run <issue>; adl-runtime run expects an ADL workflow YAML path."
+  C-SDLC issue work resolves through csdlc-install and the independent typed v2 binaries; adl-runtime run expects an ADL workflow YAML path."
 }
 
 #[allow(dead_code)]
@@ -285,7 +285,7 @@ fn dispatch_runtime_args(args: &[String]) -> Result<()> {
         Some("sign") => real_sign(&args[1..]),
         Some("verify") => real_verify(&args[1..]),
         Some("pr") | Some("tooling") => Err(anyhow::anyhow!(
-            "adl-runtime does not own C-SDLC workflow commands. Use adl/tools/pr.sh run <issue> for issue work or adl-csdlc for C-SDLC compatibility surfaces."
+            "adl-runtime does not own C-SDLC workflow commands. Resolve the final generation with csdlc-install, then use the independent typed v2 binaries."
         )),
         Some(other) => Err(anyhow::anyhow!(
             "unknown adl-runtime command '{other}'. Expected run, resume, agent, artifact, scheduler, csm, demo, godel, identity, instrument, learn, provider, runtime-v2, runtime-v3, keygen, sign, verify, help, or --version."
@@ -359,7 +359,7 @@ fn real_runtime_run(args: &[String]) -> Result<()> {
     };
     if looks_like_issue_ref(operand) {
         return Err(anyhow::anyhow!(
-            "adl-runtime run expects an ADL workflow YAML path, got issue id '{operand}'. C-SDLC issue work belongs to adl/tools/pr.sh run <issue>."
+            "adl-runtime run expects an ADL workflow YAML path, got issue id '{operand}'. C-SDLC issue work resolves through csdlc-install and the independent typed v2 binaries."
         ));
     }
     run_workflow(args)
@@ -377,8 +377,8 @@ Usage:\n\
   adl-review --help\n\
   adl-review --version\n\n\
 Notes:\n\
-  adl tooling code-review and related review commands remain available as compatibility shims during migration.\n\
-  C-SDLC issue work belongs to adl/tools/pr.sh run <issue>; runtime workflow YAML belongs to adl-runtime run <adl.yaml>."
+  Legacy review/tooling multiplexers are removed; use the current direct owner binaries.\n\
+  C-SDLC issue work resolves through csdlc-install and the independent typed v2 binaries; runtime workflow YAML belongs to adl-runtime run <adl.yaml>."
 }
 
 #[allow(dead_code)]
@@ -419,7 +419,7 @@ fn dispatch_review_args(args: &[String]) -> Result<()> {
                 .and_then(|mapped| real_tooling(&mapped))
         }
         Some("pr") | Some("issue") | Some("tooling") => Err(anyhow::anyhow!(
-            "adl-review owns review tooling only. Use adl/tools/pr.sh run <issue> or adl-csdlc for C-SDLC issue work."
+            "adl-review owns review tooling only. Resolve the final generation with csdlc-install, then use the independent typed v2 binaries for C-SDLC issue work."
         )),
         Some("run") | Some("resume") | Some("agent") | Some("artifact") | Some("csm")
         | Some("demo") | Some("godel") | Some("identity") | Some("instrument") | Some("learn")
@@ -466,17 +466,11 @@ pub(crate) fn csdlc_usage_for(binary_name: &str) -> String {
     format!(
         "{title}\n\n\
 Usage:\n\
-  {binary_name} pr <create|init|start|doctor|ready|preflight|finish|closeout> ...\n\
-  {binary_name} issue <create|init|run|doctor|finish|closeout> ...\n\
-  {binary_name} issue run <issue> [--slug <slug>] [--version <v>]\n\
-  {binary_name} tooling <card-prompt|csdlc-prompt-editor|generate-wp-issue-wave|lint-prompt-spec|prompt-template|srp-sor-update|validate-structured-prompt|...> ...\n\
   {binary_name} --help\n\
   {binary_name} --version\n\n\
 Notes:\n\
-  adl/tools/pr.sh remains the canonical agent-facing issue wrapper during migration.\n\
-  csdlc is the canonical C-SDLC binary; adl-csdlc remains a compatibility alias.\n\
-  GitHub issue/PR metadata interpretation is owned by the shared pr control-plane client layer.\n\
-  {binary_name} issue run expects a numeric issue id. Runtime workflow YAML belongs to adl-runtime run <adl.yaml>."
+  The v1 lifecycle surface is removed. Resolve the final generation with csdlc-install and use the independent typed v2 binaries.\n\
+  This compatibility binary has no operational lifecycle or tooling commands. Runtime workflow YAML belongs to adl-runtime run <adl.yaml>."
     )
 }
 
@@ -516,12 +510,14 @@ fn dispatch_csdlc_args_for(binary_name: &'static str, args: &[String]) -> Result
         Some("pr") | Some("issue") => Err(anyhow::anyhow!(
             "{binary_name} v1 lifecycle commands were removed; use the independent C-SDLC v2 binaries"
         )),
-        Some("tooling") => real_tooling(&args[1..]),
+        Some("tooling") => Err(anyhow::anyhow!(
+            "{binary_name} tooling was removed; use the current direct owner binaries"
+        )),
         Some("run") => Err(anyhow::anyhow!(
-            "{binary_name} does not run ADL workflow YAML. Use adl-runtime run <adl.yaml> for runtime workflows or {binary_name} issue run <issue> for C-SDLC issue execution."
+            "{binary_name} does not run ADL workflow YAML. Use adl-runtime run <adl.yaml> for runtime workflows; resolve C-SDLC issue execution through csdlc-install and the typed v2 binaries."
         )),
         Some(other) => Err(anyhow::anyhow!(
-            "unknown {binary_name} command '{other}'. Expected pr, issue, tooling, help, or --version."
+            "unknown {binary_name} command '{other}'. Expected help or --version."
         )),
         None => Err(anyhow::anyhow!(
             "{binary_name} requires a command. Run `{binary_name} --help` for usage."

@@ -1,0 +1,9 @@
+{
+  "schema": "csdlc.coexistence_report.v2",
+  "pass": true,
+  "default_generation": "v2",
+  "missing_v1_paths": [],
+  "present_forbidden_v1_paths": [],
+  "missing_v2_binaries": [],
+  "skill_count": 9
+}

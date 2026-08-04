@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5572,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][review][validation] Repair #4645 committed-diff proof",
+    "slug": "recordless-terminal-recovery-5572",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "terminal-evidence",
+          "proof_role": "Validate observed closure evidence",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 100,
+          "argv": [
+            "csdlc-github-issue",
+            "run",
+            "--request",
+            ".csdlc/prepared/issues/5748/github-read-5572.json"
+          ],
+          "parallel_group": "terminal-recovery",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed without exact, internally consistent terminal evidence.",
+      "design_ref": ".csdlc/issues/5572/retained/design.md",
+      "design_digest": "084e7597d06a8ae2df0bc401ae171efd1d3ae9ac1503ecb41373acd19fb9e9f1",
+      "diagram_ref": ".csdlc/issues/5572/retained/diagram.mmd",
+      "diagram_digest": "54d5a2f7714d00c433ffeb6078c4d7ea4c31df9881740a16e52bd908cd63f148"
+    }
+  }
+}

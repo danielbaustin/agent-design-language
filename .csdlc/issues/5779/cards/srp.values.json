@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5779,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Decouple safe cleanup and migrate legacy terminal receipts",
+    "slug": "standalone-cleanup",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "AGENTS.md\ncsdlc-v2/AGENTS.md\ncsdlc-v2/Cargo.toml\ncsdlc-v2/operator/coexistence.json\ncsdlc-v2/operator/skills.json\ncsdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md\ncsdlc-v2/src/bin/csdlc-clean.rs\ncsdlc-v2/src/cleanup.rs\ncsdlc-v2/src/lib.rs\ncsdlc-v2/src/operator.rs\ncsdlc-v2/src/schema.rs\ncsdlc-v2/tests/gate10a.rs\ncsdlc-v2/tests/gate_cleanup.rs\ndocs/default_workflow.md\ndocs/tooling/OWNER_BINARY_INSTALLATION.md",
+      "review_revision": "git-blake3:c865d78ff97b1aefb29f099e5a4fae8ffd131974:a8610ab682f9d0d7242b56d8351d77cbe60e711a68e9a0b89cfd2fc0d1fd2b06",
+      "reviewer": "subagent:review_5779_exact_head",
+      "review_prompts": [
+        "Can cleanup ever delete a dirty or mismatched worktree?",
+        "Can cleanup state affect delivery or terminal resolution?",
+        "Are legacy receipts compatibility-only and immutable?",
+        "Are missing, relocated, and concurrent cases deterministic and idempotent?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "The final re-review reran the nine-test cleanup gate and diff checks; the complete crate and full Gate 10A suite were proven earlier in this issue sequence, while the final source delta was covered by focused cleanup, Gate 10A, and strict Clippy proof."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "csdlc.cleanroom_install_verification.v1",
+  "issue": 5780,
+  "source_revision": "8c28264e727c7b43f76d19804be3202463e052c8",
+  "install_command": [
+    "csdlc-install",
+    "install",
+    "--repo",
+    ".",
+    "--destination",
+    ".adl/cleanroom-5780-8c28264/csdlc-v2"
+  ],
+  "verify_command": [
+    "csdlc-install",
+    "verify",
+    "--repo",
+    ".",
+    "--bin-dir",
+    ".adl/cleanroom-5780-8c28264/csdlc-v2",
+    "--inventory",
+    "csdlc-v2/operator/coexistence.json"
+  ],
+  "installed_binary_count": 21,
+  "skill_count": 11,
+  "default_generation": "v2",
+  "missing_v2_binaries": [],
+  "present_forbidden_v1_paths": [],
+  "pass": true
+}

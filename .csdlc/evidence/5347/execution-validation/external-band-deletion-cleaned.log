@@ -1,0 +1,4 @@
+{"schema":"adl.wp13.external_band_validation.v1","issue":5347,"lane":"execution","status":"pass","deleted_files":20,"removed_lines":1476}
+{"schema":"adl.wp13.external_band_validation.v1","issue":5347,"lane":"validate-contracts","status":"pass","deleted_files":20,"removed_lines":1476}
+git diff --name-only -- adl/Cargo.lock: no output
+git diff --check: pass

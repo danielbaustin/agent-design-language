@@ -1,0 +1,10 @@
+flowchart LR
+  R["Typed revoke request"] --> C{"CAS: issue + generation + digest + claim"}
+  C -- fail --> F["Typed error; record unchanged"]
+  C -- pass --> A{"Operator authority + reason"}
+  A -- fail --> F
+  A -- pass --> L["Issue lock"]
+  L --> U["Clear matching claim and protected-path ownership"]
+  U --> J["Append audit evidence and recompute digest"]
+  J --> O["Atomic record replacement"]
+  O --> N["Next bind may claim issue"]

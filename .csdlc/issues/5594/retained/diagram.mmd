@@ -1,0 +1,13 @@
+flowchart TD
+  A["#5594 WP-01 live truth"] --> B["Canonical docs inventory"]
+  A --> C["Issue and sprint umbrella inventory"]
+  A --> D["Cards, design, and validation readiness"]
+  B --> E["Reconciliation matrix"]
+  C --> E
+  D --> E
+  E --> F["Dependency-safe execution waves"]
+  F --> G["Four writable sessions maximum"]
+  F --> H["Read-only shadow reviewers"]
+  G --> I["Single integration queue"]
+  H --> I
+  I --> J["Reviewed WP-01 readiness gate"]

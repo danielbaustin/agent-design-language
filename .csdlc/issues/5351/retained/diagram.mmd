@@ -1,0 +1,16 @@
+flowchart TD
+    A["WP-14A #5384 typed closed_out ledger"] --> B["WP-15 #5354 GitHub merged truth"]
+    B --> C["WP-15 demo-matrix reconciliation #5747"]
+    C --> D{"Typed #5354 closed_out, claim-free, receipted, ancestral?"}
+    D -- "No" --> X["Prepared only: retain blocker, no quality execution"]
+    D -- "Yes" --> E["Resolve exact accepted platform revisions"]
+    E --> F["Focused product, deployment, rollback, deletion, demo, docs gates"]
+    F --> G["Integrated ADL v2 + Runtime v3 + C-SDLC v2 gate"]
+    G --> H["Exact revision matrix, budgets, COTS, redaction, blockers"]
+    H --> I{"Every required row passes?"}
+    I -- "No" --> J["Retain blocker and route to owning issue"]
+    I -- "Yes" --> K["Exact-revision review"]
+    K --> L["Typed publication and green CI"]
+    L --> M["Authorized serial merge"]
+    M --> N["Post-merge exact proof and typed closeout"]
+    N --> O["Release WP-17 documentation alignment"]

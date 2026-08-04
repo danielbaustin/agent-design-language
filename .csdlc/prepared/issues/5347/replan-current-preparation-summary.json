@@ -1,0 +1,15 @@
+{
+  "issue": 5347,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "2ada14efc52e4a78c789ea4e60ac889ccdb869dd387da308d103e809a8b700a0",
+  "claim_id": "claim-5347-current-preparation-refresh",
+  "actor": "codex:5347-preparation-refresh",
+  "reason": "Remove stale push/publication wording from #5347 preparation summary.",
+  "operation": {
+    "operation": "replan",
+    "field": "plan_summary",
+    "value": "Refresh and validate the #5347 preparation-only packet on the local FastWork branch: current-truth ledger, external-band owner evidence, retained-file authority, deletion-manifest contract, protected paths, dependency gates, focused validation lanes, rollback/no-deferral boundaries, and explicit non-overlap with #5346. Stop with no product deletion, product-path claim, PR, publication, push, merge, or closeout."
+  },
+  "fail_after_backup": false
+}

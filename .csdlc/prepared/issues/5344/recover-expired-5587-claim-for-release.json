@@ -1,0 +1,31 @@
+{
+  "issue": 5587,
+  "expected_claim_id": "claim-5587-google-drive-context-mirror",
+  "expected_generation": 17,
+  "now_unix_seconds": 1785306259,
+  "replacement": {
+    "id": "claim-5587-closed-release-recovery",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 17,
+    "acquired_unix_seconds": 1785306259,
+    "expires_unix_seconds": 1785313459,
+    "heartbeat_unix_seconds": 1785306259,
+    "branch": "codex/5344-v0918-wp12-soak-rollback",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/Cargo.toml",
+      "adl/src/adl_gws_context_mirror.rs",
+      "adl/src/adl_gws_drive_sync.rs",
+      "adl/src/adl_gws_native.rs",
+      "adl/src/bin/demo_adl_gws_context_mirror.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md"
+    ],
+    "purpose": "Reconcile the already merged and GitHub-closed #5587 solely through the typed closed-issue claim-release path; do not run or re-enable the paused Drive mirror"
+  },
+  "recovery_actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The original #5587 claim expired after PR #5626 merged and issue #5587 closed; recover it briefly and exactly so typed closed-issue release can clear stale protected-path ownership."
+}

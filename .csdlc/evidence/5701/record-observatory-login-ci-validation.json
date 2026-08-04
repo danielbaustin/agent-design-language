@@ -1,0 +1,22 @@
+{
+  "issue": 5701,
+  "card": "sor",
+  "expected_generation": 22,
+  "expected_digest": "924cc60bf93f7ff5ef2fe6cd291f3b0786bb3379241bc58acce64578299a596c",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "reason": "Record the focused validation for the Observatory login acknowledgement CI repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test-and-clippy",
+        "runtime-v3-observatory-login-ci-repair"
+      ],
+      "purpose": "Prove the guardian soak consumes and validates the successful login acknowledgement before independently checking forged-command rejection and valid signed control behavior.",
+      "outcome": "passed",
+      "evidence_ref": "Guardian soak 7/7 passed; exact signed HTTPS/WSS shutdown and forgery test 1/1 passed; strict all-target adl-runtime-kernel Clippy passed; git diff --check passed."
+    }
+  }
+}

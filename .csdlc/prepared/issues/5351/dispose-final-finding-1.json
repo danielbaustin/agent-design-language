@@ -1,0 +1,14 @@
+{
+  "issue": 5351,
+  "card": "srp",
+  "expected_generation": 16,
+  "expected_digest": "e0c8c8a9839fa43d0f40910fc0338c3273a1143c82c5c0583eb6b7df08e0951c",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "reason": "Retained logs and evidence now pass diff and host-path hygiene checks.",
+  "operation": {
+    "operation": "dispose_finding",
+    "finding_id": "F-5351-1",
+    "disposition": "fixed"
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5662,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][demo] Polish flagship Polis Observatory visual and runtime presentation",
+    "slug": "v0918-wp15-flagship-polis-observatory-polish",
+    "version": "v0.91.8",
+    "generation": 56
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Align the intended live project, establish a visual baseline, polish spatial composition and lighting, refine the fixed runtime shell, exercise supported interactions, then retain direct dual-resolution Play Mode proof and synchronize only repository-owned source.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Re-prove intended project, active MCP endpoint, loaded flagship scene, and clean editor state; capture the current baseline",
+          "acceptance_ids": [
+            "AC-8",
+            "AC-10"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Correct hero camera, terrain and platform continuity, spatial hierarchy, and exposed staging defects through Unity-MCP or editor tooling",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-8"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Tune lighting, emission, environment, and material readability for a controlled cinematic presentation",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-8"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S4",
+          "action": "Refine the fixed operator shell, icons, truth modes, and supported runtime interactions",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S5",
+          "action": "Capture direct 1920x1080 and 2560x1440 Play Mode proof, synchronize only repository-owned source, and run focused validation",
+          "acceptance_ids": [
+            "AC-8",
+            "AC-9",
+            "AC-10"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S6",
+          "action": "Run bounded pre-publication review, resolve findings, and retain truthful WP-15 handoff evidence",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8",
+            "AC-9",
+            "AC-10"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "The intended project and loaded scene are proven before mutation or claims",
+        "Licensed assets remain external and untracked",
+        "Runtime truth is explicit and fixture data is never labeled live",
+        "The first Play Mode frame reads as the Observatory",
+        "The dashboard is fixed and only bounded internal windows scroll",
+        "No player or replacement owner binary is built",
+        "Tooling anomalies become durable issue evidence"
+      ],
+      "risks": [
+        "Licensed prefab and material dependencies may not serialize portably into the tracked scene",
+        "Live editor and MCP endpoint may drift between project instances",
+        "The current camera and platform arrangement can expose large voids at wide aspect ratios",
+        "Runtime contracts may not yet expose every desired governance, evidence, or communication field",
+        "UI Toolkit scaling can become illegible or overlapping across target resolutions",
+        "Visual tuning can mask runtime truth unless state labeling remains fail closed"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 43200,
+        "total_tokens": 140000,
+        "validation_seconds": 7200
+      },
+      "stop_conditions": [
+        "The live Unity editor is attached to a different project than the intended FastWork Observatory",
+        "MCP project identity cannot be proven or mutations target an ambiguous endpoint",
+        "Unity reports compile errors that prevent safe scene mutation",
+        "A required change would copy or publish licensed asset payloads",
+        "Runtime communication requires an unsupported or secret-bearing direct AWS operation",
+        "The work would need to absorb WP-14A or unrelated release-tail scope"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5662/retained/design.md",
+      "design_digest": "839b1c7ffdd1889782e2acdaad102275bc1cb3963a0648b61ae9ee547281b94e",
+      "diagram_ref": ".csdlc/issues/5662/retained/diagram.mmd",
+      "diagram_digest": "3a6decd7e0c4c19e795f4da0eeba9215d86eebcec4539209107430ab060fc72d"
+    }
+  }
+}

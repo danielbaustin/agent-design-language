@@ -1,0 +1,55 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5733,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][demo-matrix] Reconcile demo matrix and feature-proof coverage",
+    "slug": "v0918-demo-matrix-proof-coverage",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Reconciled the v0.91.8 demo matrix and feature-proof coverage with current owner, evidence, and non-claim truth; added a deterministic validator and reconciliation ledger.",
+      "actual_changes": [
+        "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+        "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+        "docs/milestones/v0.91.8/review/wp15_demo_matrix_5733/RECONCILIATION_LEDGER_v1.md",
+        "adl/tools/validate_v0918_demo_matrix.py"
+      ],
+      "artifacts": [
+        ".csdlc/evidence/5733/v0918-demo-matrix-validator.log",
+        ".csdlc/evidence/5733/diff-check.log"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "python3",
+            "adl/tools/validate_v0918_demo_matrix.py"
+          ],
+          "purpose": "Prove owner, evidence, disposition, status, non-claim, and #5354 consumption coverage for the v0.91.8 demo and feature-proof matrices.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5733/v0918-demo-matrix-validator.log"
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "purpose": "Prove whitespace hygiene for the bounded documentation, ledger, lifecycle, and validator changes.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5733/diff-check.log"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

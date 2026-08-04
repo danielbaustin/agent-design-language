@@ -1,0 +1,12 @@
+{
+  "issue": 5344,
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-preparation",
+  "expected_generation": 4,
+  "expected_digest": "7f1a936acd4559bba3bb5de933ab5a8eb57fe412ddea87fb1e1575f6fa56c0b0",
+  "now_unix_seconds": 1785118491,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Add the cross-platform Rust-only 10000-cycle Guardian-owned Runtime v3 lifecycle proof required for WP-12 acceptance",
+  "add_protected_paths": [
+    "adl-runtime/src/bin/adl-runtime-lifecycle-soak.rs"
+  ]
+}

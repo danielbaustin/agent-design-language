@@ -1,0 +1,13 @@
+{
+  "issue": 5701,
+  "expected_generation": 18,
+  "expected_digest": "f821ba446a33c9d0c98e4ba66f4c072646c88eda4d198848b111dbfa5707a879",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "now_unix_seconds": 1785358692,
+  "add_protected_paths": [
+    "demos/v0.91.7/html-observatory/app.js",
+    "demos/v0.91.7/html-observatory/README.md"
+  ],
+  "reason": "Operator clarified that all Runtime v3 read APIs and Observatory read streams are public while mutations remain authenticated or signed. These two existing client files are the minimal HTML Observatory surface that must stop requiring a read token and document the public-read, governed-write boundary."
+}

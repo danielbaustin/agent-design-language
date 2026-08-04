@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5762,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][tests] Make terminal repair fixtures independent of live issue claims",
+    "slug": "terminal-sor-validation-fixtures",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make the C-SDLC v2 terminal SOR validation repair tests independent of mutable tracked issue active-claim state.",
+      "required_outcome": "The three terminal SOR validation repair tests synthesize deterministic issue-local repair authority in their temporary repository and pass when the terminal target is closed_out and claim-free.",
+      "declared_scope": [
+        "csdlc-v2/src/store.rs test fixture construction",
+        "issue-local lifecycle and evidence for #5762"
+      ],
+      "authority_boundary": [
+        "typed C-SDLC v2 binaries own lifecycle state",
+        "no production lifecycle semantic change",
+        "no dependency on /private/tmp",
+        "no dependency on #5613 retaining an active claim"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "work only in /Volumes/FastWork/adl-wp-5762",
+        "do not write tracked files on primary main",
+        "publish a ready PR with Closes #5762",
+        "do not block on post-merge typed closeout"
+      ]
+    }
+  }
+}

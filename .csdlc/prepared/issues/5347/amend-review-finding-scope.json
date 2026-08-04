@@ -1,0 +1,26 @@
+{
+  "issue": 5347,
+  "claim_id": "claim-5347-external-band-deletion",
+  "expected_generation": 14,
+  "expected_digest": "2256bb0951473dd5492f0132c17c52c8bca44deafb23f86659853ecc6a413911",
+  "now_unix_seconds": 1785550900,
+  "actor": "codex:5347-replacement-sole-writer",
+  "reason": "Direct GPT-5.5 pre-PR review found surviving tests and shell tooling that still reference #5347-deleted obsolete external demo/proof binaries; amend scope narrowly to remove or repair those stale references and strengthen recurrence validation.",
+  "add_protected_paths": [
+    "adl/tests/demo_tests.rs",
+    "adl/tests/local_gemma_model_evaluation_demo_tests.rs",
+    "adl/tests/model_proposal_benchmark_demo_tests.rs",
+    "adl/tests/uts_acc_multi_model_benchmark_demo_tests.rs",
+    "adl/tools/check_coverage_impact.sh",
+    "adl/tools/demo_v086_candidate_selection.sh",
+    "adl/tools/demo_v086_fast_slow.sh",
+    "adl/tools/demo_v086_freedom_gate.sh",
+    "adl/tools/demo_v086_review_surface.sh",
+    "adl/tools/demo_v0912_speculative_decoding_showcase.sh",
+    "adl/tools/run_pr_fast_test_lane.sh",
+    "adl/tools/test_check_coverage_impact.sh",
+    "adl/tools/test_run_pr_fast_test_lane.sh",
+    "adl/tools/test_v086_demo_review_surface.sh",
+    "adl/tools/test_wp17a_demo_follow_ons.sh"
+  ]
+}

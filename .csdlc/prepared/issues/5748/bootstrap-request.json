@@ -1,0 +1,148 @@
+{
+  "issue": 5748,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5748/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5748/diagram.mmd",
+  "design_reviewer": "operator:issue-5748-body",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5748-terminal-recovery",
+    "owner": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+    "generation": 0,
+    "acquired_unix_seconds": 1785539141,
+    "expires_unix_seconds": 1786143941,
+    "heartbeat_unix_seconds": 1785539141,
+    "branch": "codex/5748-terminal-recovery",
+    "worktree": ".worktrees/adl-wp-5748",
+    "protected_paths": [
+      ".csdlc/issues/5748",
+      ".csdlc/locks/5748.lock",
+      ".csdlc/prepared/issues/5748",
+      ".csdlc/evidence/5748"
+    ],
+    "purpose": "Coordinate receipt-backed terminal recovery for the remaining closed v0.91.8 issue inventory without touching product code or #5746"
+  },
+  "initial": {
+    "title": "[v0.91.8][csdlc-v2][closeout] Recover remaining closed-issue terminal truth",
+    "slug": "remaining-closed-issue-terminal-recovery",
+    "version": "v0.91.8",
+    "goal": "Recover truthful typed terminal state for every closed v0.91.8 issue excluded from the clean #5746 projection wave.",
+    "required_outcome": "Every inventoried issue has remote disposition, retained receipt, tracked closed_out projection, released claim, and retained artifacts in exact agreement.",
+    "declared_scope": [
+      "typed receipt recovery in issue-local worktrees",
+      "receipt-backed terminal projection materialization in the dedicated #5748 worktree",
+      "special disposition and retained-artifact repairs explicitly named by issue #5748",
+      "issue-local evidence under .csdlc/evidence/5748"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Every inventoried issue has remote state, disposition, PR or no-PR reason, terminal receipt, tracked projection, and claim release in agreement.",
+      "AC-2: Every resulting projection passes csdlc-doctor and exact receipt equality.",
+      "AC-3: Missing-record or false-terminal recovery uses only a current typed deterministic route.",
+      "AC-4: No dirty or foreign-owned worktree content is discarded.",
+      "AC-5: No stale review, missing proof, missing closing linkage, or mismatched terminal PR is inferred away.",
+      "AC-6: Final reporting includes every inventoried issue with no silent omissions.",
+      "AC-7: No AWS, force-prune, raw GitHub, v1 wrapper, or import route is used."
+    ],
+    "authority_boundary": [
+      "Issue-local worktrees own receipt creation and repair; #5748 materializes only validated retained authority.",
+      "Generated cards, index records, and terminal receipts change only through typed C-SDLC v2 operations.",
+      "Do not touch #5746 or write tracked changes on main."
+    ],
+    "task_boundary": "C-SDLC v2 terminal truth recovery for the issue #5748 inventory only; no product-scope widening or unrelated lifecycle cleanup.",
+    "deliverables": [
+      "receipt-backed closed_out projections for the #5748 inventory",
+      "typed repair outcomes for special disposition and retained-artifact cases",
+      "doctor, receipt-equality, retained-artifact, and diff-hygiene proof",
+      "explicit blocker and prune report"
+    ],
+    "dependencies": [
+      "closed remote issue disposition for every inventory item",
+      "valid issue-local terminal receipts or an explicit typed repair route",
+      "current origin/main as the reconciliation base"
+    ],
+    "repo_inputs": [
+      "GitHub issue #5748 body",
+      "Git-common csdlc-v2 closeout receipts",
+      ".csdlc/issues/<issue> typed projections",
+      "csdlc-v2 closeout and doctor binaries"
+    ],
+    "non_goals": [
+      "product implementation",
+      "manual receipt or generated-card edits",
+      "sunset v1 or csdlc-import recovery",
+      "AWS or Spot execution",
+      "force-pruning dirty or foreign-owned worktrees"
+    ],
+    "operator_constraints": [
+      "never write tracked changes on main",
+      "never touch #5746",
+      "use typed C-SDLC v2 only",
+      "preserve dirty worktrees",
+      "no AWS or raw GitHub commands"
+    ],
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Inventory remote disposition, local projection, worktree ownership, and retained receipt state for every target",
+        "acceptance_ids": ["AC-1", "AC-4", "AC-5", "AC-6"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Create or repair terminal receipts only through issue-local typed routes, including the named special cases",
+        "acceptance_ids": ["AC-1", "AC-3", "AC-4", "AC-5", "AC-7"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Materialize validated receipts in the #5748 authority worktree and prove doctor, receipt, artifact, and diff hygiene",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-6", "AC-7"],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "retained receipt identity is the terminal authority",
+      "tracked projections remain claim-free and closed_out after reconciliation",
+      "remote PR or no-PR disposition is never inferred away",
+      "dirty and foreign-owned work remains intact",
+      "all generated lifecycle mutation is typed and atomic"
+    ],
+    "risks": [
+      "receipt identity can conflict with stale tracked projection truth",
+      "false closed_no_pr disposition may lack a supported typed correction route",
+      "retained authored-artifact paths can be non-portable or inconsistent",
+      "active issue claims can collide with aggregate projection ownership"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "typed receipt identity conflict",
+      "missing supported repair route",
+      "dirty or foreign-owned worktree would need destructive cleanup",
+      "remote disposition cannot be verified",
+      "doctor or receipt equality fails after typed reconciliation"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "terminal-doctor-and-receipt-parity",
+        "proof_role": "Prove closed_out claim-free projections and exact retained receipt equality",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 600,
+        "budget_tokens": 6000,
+        "argv": ["git", "diff", "--check"],
+        "parallel_group": "local",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on missing receipt, stale identity, unsupported disposition correction, dirty-worktree conflict, doctor failure, receipt mismatch, or any forbidden route.",
+    "review_prompts": [
+      "Does each tracked projection exactly preserve its retained receipt identity and terminal disposition?",
+      "Are false or special dispositions repaired through an explicit typed route rather than inferred?",
+      "Do retained design and diagram artifacts remain portable and receipt-consistent?",
+      "Did the sweep preserve dirty worktrees and exclude #5746, AWS, raw GitHub, v1, and import routes?"
+    ],
+    "review_scope": "Issue #5748 terminal projections, retained receipts, special-case repair evidence, and validation report.",
+    "plan_summary": "Collect issue-local terminal receipts, repair special cases through typed authority, materialize exact receipt-backed projections in a dedicated worktree, and prove terminal and artifact consistency."
+  }
+}

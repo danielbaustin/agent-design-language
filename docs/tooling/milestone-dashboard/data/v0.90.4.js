@@ -109,6 +109,145 @@ window.milestoneData = {
       note: "If this snapshot is older than 24 hours, the dashboard should be treated as stale until refreshed."
     }
   ],
+  workcellOperator: {
+    schema: "adl.workcell.operator.snapshot.v1",
+    label: "WP-10A distributed C-SDLC workcell",
+    status: "live",
+    source: "typed C-SDLC v2 retained snapshot plus optional Runtime v3 Observatory read feed",
+    revision: "issue-5500-after-5498-5349-live-merge",
+    observedAt: "2026-07-22T00:00:00Z",
+    maxAgeHours: 24,
+    readOnlyBoundary:
+      "Operator visibility only; C-SDLC v2, GitHub, and Runtime v3 remain the authority surfaces.",
+    runtime: {
+      mode: "opt-in",
+      requiredProtocol: "https:",
+      feedPath: "/v1/observatory",
+      tokenStorageKey: "adl.runtimeV3.observatoryToken",
+      maxPayloadBytes: 65536,
+      timeoutMs: 4500,
+      allowedOrigins: [],
+      fallback:
+        "Use retained workcell snapshot until an operator supplies an allowed HTTPS Runtime v3 Observatory base and session token."
+    },
+    metrics: [
+      {
+        label: "Lifecycle authority",
+        value: "C-SDLC v2",
+        state: "retained",
+        source: ".csdlc/issues/5500"
+      },
+      {
+        label: "Dependency gate",
+        value: "#5498 and #5349 live",
+        state: "live",
+        source: "origin/main ancestry proof"
+      },
+      {
+        label: "Runtime feed",
+        value: "Opt-in read feed",
+        state: "unknown",
+        source: "Runtime v3 /v1/observatory"
+      },
+      {
+        label: "Mutation surface",
+        value: "None",
+        state: "non-authoritative",
+        source: "dashboard boundary"
+      }
+    ],
+    dependencies: [
+      {
+        label: "#5498 task/context adapter",
+        state: "live",
+        revision: "7d6095acd0da8fe9e1a622387a229a02ecd824dc",
+        source: "Merge PR #5639 on origin/main",
+        freshness: "ancestral to #5500 execution base"
+      },
+      {
+        label: "#5349 governed-tool interface freeze",
+        state: "live",
+        revision: "79c7dccf12540863f6c038e1fd7ef45e2357a55e",
+        source: "Merge PR #5636 on origin/main",
+        freshness: "ancestral to #5500 execution base"
+      },
+      {
+        label: "#5502 convergence and replanning",
+        state: "non-authoritative",
+        revision: "disjoint",
+        source: "not owned by this view",
+        freshness: "shown only as a boundary"
+      }
+    ],
+    agents: [
+      {
+        label: "Conductor",
+        role: "coordinates typed task admission",
+        state: "retained",
+        source: "WP-10A conductor records",
+        freshness: "snapshot"
+      },
+      {
+        label: "Task adapter",
+        role: "normalizes Codex task context and output contracts",
+        state: "live",
+        source: "#5498 merged adapter",
+        freshness: "origin/main"
+      },
+      {
+        label: "Dashboard observer",
+        role: "renders retained and live observation posture",
+        state: "live",
+        source: "#5500 dashboard",
+        freshness: "current issue branch"
+      },
+      {
+        label: "Runtime Observatory",
+        role: "optional read-only topology and health feed",
+        state: "unknown",
+        source: "Runtime v3 /v1/observatory",
+        freshness: "operator opt-in"
+      }
+    ],
+    authority: [
+      {
+        label: "Typed lifecycle state",
+        state: "retained",
+        source: ".csdlc/issues/5500 and owner binaries",
+        freshness: "dashboard does not mutate it"
+      },
+      {
+        label: "PR and check state",
+        state: "unknown",
+        source: "GitHub remains authority",
+        freshness: "missing evidence stays unknown"
+      },
+      {
+        label: "Runtime topology",
+        state: "unknown",
+        source: "Runtime v3 Observatory read feed",
+        freshness: "live feed can only annotate runtime health"
+      },
+      {
+        label: "Closeout and merge",
+        state: "non-authoritative",
+        source: "typed publish/shepherd/closeout only",
+        freshness: "no browser controls"
+      }
+    ],
+    blockers: [
+      {
+        label: "Missing live Runtime feed",
+        state: "unknown",
+        note: "The retained snapshot remains visible, but live topology is not green without an authenticated HTTPS feed."
+      },
+      {
+        label: "Mutation requests",
+        state: "blocked",
+        note: "Any task creation, cancellation, merge, or closeout action belongs outside this browser surface."
+      }
+    ]
+  },
   nextActions: [
     "Execute WP-03 #2422 contract schema so the contract-market lane has a canonical parent artifact before bid and selection logic widen.",
     "Keep WP-04 through WP-07 behind schema and authority acceptance instead of widening into runner or demo work early.",

@@ -3,6 +3,8 @@
 //! This crate is intentionally limited to runtime-owned contracts that can be
 //! built without ADL compiler or C-SDLC control-plane crates.
 
+pub use adl_resilience as shared_resilience;
+
 pub mod acip;
 pub mod backpressure;
 pub mod cav;
@@ -12,6 +14,7 @@ pub mod curiosity;
 pub mod determinism;
 pub mod freedom_gate;
 pub mod guardian;
+pub mod local_tls;
 pub mod networking;
 pub mod observability;
 pub mod reasoning_runtime;

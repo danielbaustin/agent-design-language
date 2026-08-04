@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5722,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][observatory] Harden trusted HTTPS and live controls",
+    "slug": "recordless-terminal-recovery-5722",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5722/",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does the receipt preserve explicit non-claims about unavailable lifecycle history?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "No historical implementation, review, publication, readiness, or CI lifecycle is reconstructed by this terminal recovery."
+      ],
+      "review_result": "pre_review"
+    }
+  }
+}

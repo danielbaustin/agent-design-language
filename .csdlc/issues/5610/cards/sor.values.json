@@ -7,9 +7,9 @@
     "title": "[v0.91.8][CI][coverage] Normalize safe in-repo coverage paths without weakening traversal rejection",
     "slug": "coverage-path-normalization",
     "version": "v0.91.8",
-    "generation": 23
+    "generation": 28
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -63,10 +63,10 @@
           "evidence_ref": "FastWork: synthetic merger regressions passed; exact run 29813137619 artifacts merged with agent_cmd.rs instantiations 246/61/185; py_compile, test_ci_runtime_contracts, test_run_authoritative_coverage_lane, test_coverage_authority_contract, and git diff --check passed."
         }
       ],
-      "integration_state": "worktree_only",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

@@ -1,0 +1,71 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "preparation-contract",
+        "proof_role": "six_card_design_scope_and_gate_integrity",
+        "purpose": "Verify the six-card packet, design and diagram, bounded authority, protected paths, budgets, COTS, PVF, no-deferral, and rollback invariants.",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 128,
+          "tokens": 2000
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5344/validate-preparation.rb"],
+        "evidence": {
+          "max_log_bytes": 65536,
+          "redact_values": [],
+          "require_relative_paths": true
+        }
+      },
+      {
+        "id": "diff-hygiene",
+        "proof_role": "preparation_diff_hygiene",
+        "purpose": "Reject whitespace errors in the preparation packet.",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 64,
+          "tokens": 500
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "git",
+        "argv": ["diff", "--check"],
+        "evidence": {
+          "max_log_bytes": 65536,
+          "redact_values": [],
+          "require_relative_paths": true
+        }
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["preparation-contract", "diff-hygiene"],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {
+    "max_parallel": 2,
+    "cpu_units": 2,
+    "memory_mib": 256,
+    "tokens": 2500
+  },
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5344/preparation-validation",
+  "cancellation_file": null
+}

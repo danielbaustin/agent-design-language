@@ -304,9 +304,11 @@ pub fn resource_state(
     let cpu = sample.cpu_basis_points.value;
     let missing_core_evidence = disk.is_none() || memory.is_none() || cpu.is_none();
 
+    // Disk and memory exhaustion threaten continuity. CPU saturation does not:
+    // stopping and restarting under CPU load amplifies pressure, so it remains
+    // observable as a warning while the Runtime keeps serving.
     if disk.is_some_and(|value| value <= config.disk_stop_free_bytes)
         || memory.is_some_and(|value| value >= config.memory_stop_used_basis_points)
-        || cpu.is_some_and(|value| value >= config.cpu_stop_basis_points)
     {
         return ResourceState::StopRequired;
     }

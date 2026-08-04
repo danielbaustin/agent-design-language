@@ -1,0 +1,341 @@
+schema: adl.characterization.shadow-manifest.v1
+candidate_revision: a1436b7a24773e7cafb3b530245a16a77b99a54d
+candidate_binary_sha256: a684063f99b178738364fe13412ab7c9d5ee6252062d9b3d6a47f2d8664cb6fd
+candidate_lock_sha256: 568424eaf1a00698d981aee1cd7bb4fb15fa1bc84957dc78613513f95de87951
+candidate_install_receipt_sha256: 826ca833b8a6cdd1cacf2398d36d0b6d6ace3f9f54b71802beb91c1869132bbd
+candidate_selector_generation: adl-v2
+candidate_selector_sha256: 236e9873d0be4c578bbb7761b9df7228c4f3bb06cef28bcdf5bad98e4d3cec73
+
+decisions:
+  cli-contract:
+    owner_issue: 5345
+    authority: adl-v2/crates/adl-cli/src/main.rs
+    rationale: ADL v2 deliberately uses an explicit subcommand CLI and versioned JSON envelopes.
+    replacement_proof: adl-v2/crates/adl-cli/tests/cli.rs
+    risk: Operators must use the v2 command contract rather than legacy positional flags.
+    reviewer: WP-10 exact-revision review
+    rollback_impact: Keep the v1 executable selected if a consumer has not migrated its command shape.
+  plan-contract:
+    owner_issue: 5338
+    authority: adl-v2/crates/adl-compiler/CHARACTERIZATION_PARITY.md
+    rationale: ADL v2 replaces human plan, graph, and prompt projections with one typed execution-plan JSON envelope.
+    replacement_proof: adl-v2/crates/adl-compiler/tests/characterization_parity.rs
+    risk: Consumers must read the typed plan schema instead of scraping legacy text.
+    reviewer: WP-05 exact-revision review
+    rollback_impact: Keep the v1 executable selected for legacy text projection consumers.
+  legacy-pattern:
+    owner_issue: 5339
+    authority: adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md
+    rationale: Legacy top-level pattern syntax is explicitly rejected rather than silently reinterpreted.
+    replacement_proof: adl-v2/crates/adl-language/tests/characterization_parity.rs
+    risk: Legacy pattern documents require an explicit migration before v2 execution.
+    reviewer: WP-04 exact-revision review
+    rollback_impact: Keep the v1 executable selected for unmigrated pattern documents.
+  diagnostic-contract:
+    owner_issue: 5339
+    authority: adl-v2/crates/adl-language/CHARACTERIZATION_PARITY.md
+    rationale: ADL v2 preserves fail-closed rejection semantics with structured diagnostics and exit code 2.
+    replacement_proof: adl-v2/crates/adl-language/tests/characterization_parity.rs
+    risk: Consumers must parse structured error envelopes rather than legacy stderr prose.
+    reviewer: WP-04 exact-revision review
+    rollback_impact: Keep the v1 executable selected for consumers coupled to legacy diagnostics.
+  engine-contract:
+    owner_issue: 5340
+    authority: adl-v2/crates/adl-engine/README.md
+    rationale: ADL v2 run returns the deterministic engine contract and snapshot instead of a legacy local-mock summary.
+    replacement_proof: adl-v2/crates/adl-engine/tests/compiler_fixture_mapping.rs
+    risk: Consumers must migrate from summary text to the engine result envelope.
+    reviewer: WP-06 exact-revision review
+    rollback_impact: Keep the v1 executable selected for legacy run-summary consumers.
+  records-contract:
+    owner_issue: 5345
+    authority: adl-v2/crates/adl-records/README.md
+    rationale: ADL v2 signs typed records with hexadecimal keys and verifies the inner signed envelope.
+    replacement_proof: adl-v2/crates/adl-records/tests/tamper_channel.rs
+    risk: Document-level legacy signatures are not interchangeable with typed record envelopes.
+    reviewer: WP-10 exact-revision review
+    rollback_impact: Keep the v1 executable selected for legacy signed-document workflows.
+
+cases:
+  - id: cli-help
+    disposition: approved_intentional_difference
+    decision_ref: cli-contract
+    steps:
+      - id: help
+        args: [--help]
+        expected_exit: 0
+        stdout_contains: ["Thin ADL v2 owner CLI", "Usage: adl-v2"]
+
+  - id: cli-version
+    disposition: approved_intentional_difference
+    decision_ref: cli-contract
+    steps:
+      - id: version
+        args: [--version]
+        expected_exit: 0
+        stdout_contains: ["adl-v2 0.1.0"]
+
+  - id: six-primitives-plan
+    disposition: approved_intentional_difference
+    decision_ref: plan-contract
+    normalization: [{kind: canonical_json, step: plan, stream: stdout}]
+    steps:
+      - id: plan
+        args: [plan, "{ROOT}/fixtures/six-primitives.adl.yaml", --yaml]
+        expected_exit: 0
+        stdout_contains: ['"schema":"adl.plan.v1"', '"step_id":"summarize.topic"']
+
+  - id: graph-json
+    disposition: approved_intentional_difference
+    decision_ref: plan-contract
+    normalization: [{kind: canonical_json, step: graph, stream: stdout}]
+    steps:
+      - id: graph
+        args: [plan, "{ROOT}/fixtures/six-primitives.adl.yaml", --yaml]
+        expected_exit: 0
+        stdout_contains: ['"kind":"sequential"', '"nodes"']
+
+  - id: prompt-projection
+    disposition: approved_intentional_difference
+    decision_ref: plan-contract
+    normalization: [{kind: canonical_json, step: prompts, stream: stdout}]
+    steps:
+      - id: prompts
+        args: [plan, "{ROOT}/fixtures/six-primitives.adl.yaml", --yaml]
+        expected_exit: 0
+        stdout_contains: ['"prompt"', '"You summarize deterministically."']
+
+  - id: fork-join-ordering
+    disposition: approved_intentional_difference
+    decision_ref: legacy-pattern
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/fork-join.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["unknown_field", "patterns"]
+
+  - id: map-order-a
+    disposition: approved_intentional_difference
+    decision_ref: plan-contract
+    normalization: [{kind: canonical_json, step: plan, stream: stdout}]
+    steps:
+      - id: plan
+        args: [plan, "{ROOT}/fixtures/map-a.adl.yaml", --yaml]
+        expected_exit: 0
+        stdout_contains: ['"schema":"adl.plan.v1"', '"provider_ref":"alpha"']
+
+  - id: map-order-b
+    disposition: approved_intentional_difference
+    decision_ref: plan-contract
+    normalization: [{kind: canonical_json, step: plan, stream: stdout}]
+    steps:
+      - id: plan
+        args: [plan, "{ROOT}/fixtures/map-b.adl.yaml", --yaml]
+        expected_exit: 0
+        stdout_contains: ['"schema":"adl.plan.v1"', '"provider_ref":"alpha"']
+
+  - id: branch-order-a
+    disposition: approved_intentional_difference
+    decision_ref: legacy-pattern
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/branch-a.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["unknown_field", "patterns"]
+
+  - id: branch-order-b
+    disposition: approved_intentional_difference
+    decision_ref: legacy-pattern
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/branch-b.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["unknown_field", "patterns"]
+
+  - id: sequential-order-a
+    disposition: approved_intentional_difference
+    decision_ref: plan-contract
+    normalization: [{kind: canonical_json, step: plan, stream: stdout}]
+    steps:
+      - id: plan
+        args: [plan, "{ROOT}/fixtures/sequential-a.adl.yaml", --yaml]
+        expected_exit: 0
+        stdout_contains: ['"step_id":"first"', '"step_id":"second"']
+
+  - id: sequential-order-b
+    disposition: approved_intentional_difference
+    decision_ref: plan-contract
+    normalization: [{kind: canonical_json, step: plan, stream: stdout}]
+    steps:
+      - id: plan
+        args: [plan, "{ROOT}/fixtures/sequential-b.adl.yaml", --yaml]
+        expected_exit: 0
+        stdout_contains: ['"step_id":"first"', '"step_id":"second"']
+
+  - id: invalid-argument
+    disposition: approved_intentional_difference
+    decision_ref: cli-contract
+    steps:
+      - id: invalid
+        args: [--definitely-invalid]
+        expected_exit: 2
+        stderr_contains: ["unexpected argument"]
+
+  - id: malformed-yaml
+    disposition: approved_intentional_difference
+    decision_ref: diagnostic-contract
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/malformed.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["syntax", "did not find expected"]
+
+  - id: schema-error
+    disposition: approved_intentional_difference
+    decision_ref: diagnostic-contract
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/schema-unknown.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["unknown_field", "unknown_top_level"]
+
+  - id: unknown-provider
+    disposition: approved_intentional_difference
+    decision_ref: diagnostic-contract
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/unknown-provider.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["unknown_provider", "missing"]
+
+  - id: unknown-agent
+    disposition: approved_intentional_difference
+    decision_ref: diagnostic-contract
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/unknown-agent.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["unknown_agent", "missing"]
+
+  - id: unknown-task
+    disposition: approved_intentional_difference
+    decision_ref: diagnostic-contract
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/unknown-task.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["unknown_task", "missing"]
+
+  - id: unknown-tool
+    disposition: approved_intentional_difference
+    decision_ref: diagnostic-contract
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/unknown-tool.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["unknown_tool", "missing"]
+
+  - id: unknown-workflow
+    disposition: approved_intentional_difference
+    decision_ref: diagnostic-contract
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/unknown-workflow.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["unknown_workflow", "missing"]
+
+  - id: unsupported-run-field
+    disposition: approved_intentional_difference
+    decision_ref: diagnostic-contract
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/unsupported-run-field.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["unknown_field", "agent_ref"]
+
+  - id: missing-state
+    disposition: approved_intentional_difference
+    decision_ref: diagnostic-contract
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/state-missing.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["unknown_state", "missing"]
+
+  - id: dependency-cycle
+    disposition: approved_intentional_difference
+    decision_ref: diagnostic-contract
+    normalization: [{kind: canonical_json, step: validate, stream: stdout}]
+    steps:
+      - id: validate
+        args: [validate, "{ROOT}/fixtures/cycle.adl.yaml", --yaml]
+        expected_exit: 2
+        stdout_contains: ["dependency_cycle", "dependency cycle"]
+
+  - id: local-mock-run
+    disposition: approved_intentional_difference
+    decision_ref: engine-contract
+    normalization: [{kind: canonical_json, step: run, stream: stdout}]
+    steps:
+      - id: run
+        args: [run, "{ROOT}/fixtures/mock-run.adl.yaml", --yaml]
+        expected_exit: 0
+        stdout_contains: ['"schema":"adl.run.v1"', '"contract":"adl.engine.v1"', '"status":"ready"']
+
+  - id: ed25519-sign-verify-tamper
+    disposition: approved_intentional_difference
+    decision_ref: records-contract
+    normalization:
+      - {kind: canonical_json, step: sign, stream: stdout}
+      - {kind: canonical_json, step: verify, stream: stdout}
+      - {kind: canonical_json, step: tamper, stream: stdout}
+    steps:
+      - id: sign
+        args:
+          - sign
+          - "{ROOT}/../v2/event-record.json"
+          - --key-id
+          - characterization-fixed
+          - --key-hex
+          - 2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a
+        expected_exit: 0
+        stdout_contains: ['"schema":"adl.sign.v1"', '"record_kind":"event"']
+        capture_stdout_to: "{WORK}/signed.json"
+        capture_stdout_json_field: result
+      - id: verify
+        args:
+          - verify
+          - "{WORK}/signed.json"
+          - --public-key-hex
+          - 197f6b23e16c8532c6abc838facd5ea789be0c76b2920334039bfa8b3d368d61
+          - --logical-time
+          - "10"
+        expected_exit: 0
+        stdout_contains: ['"schema":"adl.verify.v1"', '"record_kind":"event"']
+      - id: tamper
+        args:
+          - verify
+          - "{WORK}/signed.json"
+          - --public-key-hex
+          - 197f6b23e16c8532c6abc838facd5ea789be0c76b2920334039bfa8b3d368d61
+          - --logical-time
+          - "10"
+        expected_exit: 2
+        stdout_contains: ["payload digest mismatch"]
+        pre_actions:
+          - kind: replace_text
+            path: "{WORK}/signed.json"
+            from: '"detail":"ok"'
+            to: '"detail":"tampered"'

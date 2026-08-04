@@ -1,0 +1,19 @@
+{
+  "issue": 5351,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "162b634b32a622371ea4ef6447a5252d2b526f6cdd84d5164f70084ec7bb5ea3",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "reason": "Record the integrated WP-16 platform lane.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["ruby", ".csdlc/prepared/issues/5351/run-validation-lane.rb", "integrated-platform"],
+      "purpose": "Run locked all-target ADL v2, Runtime v3, and C-SDLC v2 suites on one exact integrated revision.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5351/integrated-platform.json"
+    }
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "csdlc.review_record_request.v1",
+  "issue": 5352,
+  "expected_generation": 2,
+  "expected_digest": "33e16680a7cf7dbaa3290a222cf33f860fa399e5345e6ff546b8e37ff3bad430",
+  "claim_id": "claim-5352-v0918-final-handoff",
+  "actor": "codex:wp21-final-handoff",
+  "evidence": {
+    "reviewer": "Wegener",
+    "scope": [
+      ".csdlc/issues/5352",
+      ".csdlc/evidence/5352",
+      ".csdlc/prepared/issues/5352",
+      "docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md"
+    ],
+    "reviewed_revision": "git-blake3:b1ec4f120fa1fd7091525631813b2066bdb5d788:b29f2dbde281900eeb0a786b90c36d550adc3ff2b361dd3b8528f0ffe247196c",
+    "findings": [],
+    "residual_risks": [
+      "The required sprint-wide WP-21 review remains a separate pre-merge gate and is not claimed by this issue-local exact-head review.",
+      "Any origin/main movement before merge requires explicit ancestry refresh and current-head review truth."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "issue": 5655,
+  "expected_generation": 8,
+  "expected_digest": "bcf02199de2e83e245231bbb6f06cc6984e854327c0fa1fb63b57c7b7733fc3e",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "reviewer": "Boole",
+  "assigned_by": "codex:issue-5655-slot-1",
+  "scope": [
+    "csdlc-v2/src/github.rs",
+    "csdlc-v2/tests/gate_github_actions.rs",
+    ".csdlc/issues/5655/cards/sor.md",
+    ".csdlc/issues/5655/index.json"
+  ]
+}

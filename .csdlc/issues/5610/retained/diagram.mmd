@@ -1,0 +1,6 @@
+flowchart LR
+  R["Raw llvm-cov filename"] --> N["Platform-independent lexical normalization"]
+  N --> O{"Canonical owned source root?"}
+  O -->|yes| M["Merge with unchanged coverage gates"]
+  O -->|escape| F["Fail closed"]
+  O -->|unowned| I["Ignore dependency file"]

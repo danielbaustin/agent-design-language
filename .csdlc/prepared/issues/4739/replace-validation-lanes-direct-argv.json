@@ -1,0 +1,70 @@
+{
+  "issue": 4739,
+  "card": "vpp",
+  "expected_generation": 2,
+  "expected_digest": "c1cc16e209996cda4fb01431b4d924dea922916a0b34709bc248a0d3c45be0cb",
+  "claim_id": "claim-4739-v0918-wp15-unity-mcp-alignment-prep",
+  "actor": "codex:issue-4739-preparation",
+  "reason": "Use exact repository-relative unit and probe commands required by specialist recheck",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "unity-mcp-alignment-unit",
+        "proof_role": "Execute the dedicated no-Unity parser, mismatch, redaction, and read-only failure fixtures",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-mcp-static",
+        "budget_seconds": 180,
+        "budget_tokens": 4000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_mcp_alignment_unit.sh"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-6", "AC-8"]
+      },
+      {
+        "lane": "unity-mcp-alignment-contract",
+        "proof_role": "Prove repository shell contract and focused static integration for the alignment surface",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-mcp-static",
+        "budget_seconds": 120,
+        "budget_tokens": 3000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_contract.sh"],
+        "acceptance_ids": ["AC-1", "AC-3", "AC-4", "AC-5", "AC-6", "AC-8"]
+      },
+      {
+        "lane": "unity-mcp-selector-registration",
+        "proof_role": "Prove issue-owned paths select the focused non-Unity MCP alignment lane",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-mcp-static",
+        "budget_seconds": 180,
+        "budget_tokens": 3000,
+        "argv": ["bash", "adl/tools/test_select_validation_lanes.sh"],
+        "acceptance_ids": ["AC-8", "AC-9"]
+      },
+      {
+        "lane": "unity-mcp-diff-hygiene",
+        "proof_role": "Prove bounded text and script hygiene for the issue-owned diff",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-mcp-static",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-4", "AC-8"]
+      },
+      {
+        "lane": "unity-mcp-live-read-only",
+        "proof_role": "Execute the repository-owned probe against the intended project and retain exact read-only alignment or blocker truth",
+        "deterministic": false,
+        "resource_profile": "small",
+        "parallel_group": "unity-mcp-live",
+        "budget_seconds": 180,
+        "budget_tokens": 3000,
+        "argv": ["bash", "-c", "test -n \"${ADL_UNITY_PROJECT_PATH:-}\" && bash adl/tools/probe_unity_mcp_observatory_alignment.sh --project \"$ADL_UNITY_PROJECT_PATH\""],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-4", "AC-5", "AC-7"],
+        "defer_reason": "Set ADL_UNITY_PROJECT_PATH to the intended canonical project and run only when that Unity project is available; the repository-relative probe path remains fixed and reviewable."
+      }
+    ]
+  }
+}

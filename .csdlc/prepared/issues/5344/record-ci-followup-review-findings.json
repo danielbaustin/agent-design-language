@@ -1,0 +1,43 @@
+{
+  "issue": 5344,
+  "expected_generation": 26,
+  "expected_digest": "33c20326133e846ba57c5744ac4b9db0046f5cc6170105bdb33bc315e3d2e2f9",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+  "evidence": {
+    "reviewer": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+    "scope": [
+      ".csdlc/issues/5344",
+      ".csdlc/issues/5587",
+      ".csdlc/prepared/issues/5344",
+      "adl-runtime/src/guardian.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/test_check_coverage_impact.sh"
+    ],
+    "reviewed_revision": "git-blake3:497b530553fc905e2d91b7e5397d82ec306dec4c:510594b56e9394c365ee1d3c6442cd6d84e2db83069eb2b1dc5509f987d1e6a3",
+    "findings": [
+      {
+        "id": "F-5344-CI-FOLLOWUP-1",
+        "severity": "p1",
+        "summary": "The coverage contract still required a second deleted guardian CLI test, so the full tooling contract exited 1.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5344-CI-FOLLOWUP-2",
+        "severity": "p1",
+        "summary": "The SRP and SOR still described the earlier path-policy repair and omitted the guardian, coverage-contract, and closed #5587 claim-release proof.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true
+  }
+}

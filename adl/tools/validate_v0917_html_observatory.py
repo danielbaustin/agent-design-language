@@ -32,7 +32,8 @@ CSM_HEALTH_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4
 CSM_READY_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/ready.json"
 CSM_METRICS_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/metrics.json"
 CSM_EVENTS_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/events.json"
-RUNTIME_V3_OBSERVATORY_ENDPOINT = "https://runtime-gateway-host/v1/observatory"
+RUNTIME_V3_CONFIG_REF = "./runtime-v3.config.json"
+RUNTIME_V3_OBSERVATORY_ENDPOINT = "https://localhost:20997/v1/observatory"
 
 
 def fail(message: str) -> None:
@@ -50,6 +51,11 @@ def read_json(path: Path) -> dict[str, Any]:
 def assert_contains(label: str, haystack: str, needle: str) -> None:
     if needle not in haystack:
         fail(f"{label} missing {needle!r}")
+
+
+def assert_not_contains(label: str, haystack: str, needle: str) -> None:
+    if needle in haystack:
+        fail(f"{label} contains forbidden text {needle!r}")
 
 
 def run_js_view_model(
@@ -170,13 +176,26 @@ def run_js_view_model(
             {{ sequence: 1, monotonic_millis: 5, component: "runtime_api", event: "components_ready", correlation_id: null }}
           ]
         }});
+        const runtimeV3Readiness = JSON.stringify({{
+          schema: "adl.runtime_v3.readiness.v1",
+          ready: true,
+          degraded_reasons: [],
+          observability_ready: true,
+          weather_freshness: {{
+            observed_at_unix_millis: 1789000000,
+            age_millis: 250,
+            stale_after_millis: 2000,
+            stale: false
+          }}
+        }});
         const livePayloads = new Map([
           ["http://localhost:49210/status", retainedFiles.get(retainedRefs.statusRef)],
           ["http://localhost:49210/health", retainedFiles.get(retainedRefs.healthRef)],
           ["http://localhost:49210/ready", retainedFiles.get(retainedRefs.readyRef)],
           ["http://localhost:49210/metrics", retainedFiles.get(retainedRefs.metricsRef)],
           ["http://localhost:49210/events", retainedFiles.get(retainedRefs.eventsRef)],
-          ["https://runtime-gateway-host/v1/observatory", runtimeV3Feed]
+          ["https://localhost:20997/v1/observatory", runtimeV3Feed],
+          ["https://localhost:20997/v1/ready", runtimeV3Readiness]
         ]);
         const textWrites = [];
         const datasetWrites = [];
@@ -192,6 +211,7 @@ def run_js_view_model(
             href: "",
             setAttribute: (name, value) => {{ node[name] = value; }},
             removeAttribute: (name) => {{ delete node[name]; }},
+            addEventListener: (name, callback) => {{ node[`on${{name}}`] = callback; }},
             ...extra
           }};
           elements.set(id, node);
@@ -214,6 +234,7 @@ def run_js_view_model(
           "hero-map-mode",
           "hero-event-title",
           "statusbar-mode",
+          "statusbar-websocket",
           "statusbar-updated",
           "statusbar-indicator",
           "agent-count",
@@ -248,8 +269,16 @@ def run_js_view_model(
           "dashboard-focus-link",
           "compact-comms-proof",
           "export-proof",
-          "prepare-envelope"
-        ].forEach((id) => element(id, {{ addEventListener: () => {{}} }}));
+          "prepare-envelope",
+          "operator-write-token",
+          "operator-login",
+          "operator-logout",
+          "operator-auth-status",
+          "signed-control-command",
+          "send-signed-command",
+          "operator-control-result",
+          "top-mode-select"
+        ].forEach((id) => element(id));
         elements.get("dashboard-live-api-base").value = "";
         const dashboardLinks = [
           {{ dataset: {{ dashboardLink: "runtime" }}, setAttribute: () => {{}}, removeAttribute: () => {{}}, addEventListener: () => {{}} }},
@@ -266,22 +295,67 @@ def run_js_view_model(
           csmReadyRef: retainedRefs.readyRef,
           csmMetricsRef: retainedRefs.metricsRef,
           csmEventsRef: retainedRefs.eventsRef
-        }} }};
+        }}, setAttribute: (name, value) => {{ observatoryElement[name] = value; }} }};
         const mockDocument = {{
           getElementById: (id) => elements.get(id) || null,
           querySelector: (selector) => selector === ".observatory" ? observatoryElement : null,
           querySelectorAll: (selector) => selector === "[data-dashboard-link]" ? dashboardLinks : []
         }};
-        const mockFetch = async (ref, options = {{}}) => {{
+        let fetchMode = "immediate";
+        const pendingFetches = [];
+        function responseFor(ref) {{
           const key = String(ref);
-          if (key.endsWith("/v1/observatory") && options.headers?.Authorization !== "Bearer validator-observatory-token-0001") {{
-            return {{ ok: false, status: 401, text: async () => "", json: async () => {{ throw new Error("unauthorized"); }} }};
-          }}
           const body = retainedFiles.get(key) || livePayloads.get(key);
           return body == null
             ? {{ ok: false, status: 404, text: async () => "", json: async () => {{ throw new Error("missing mock payload"); }} }}
             : {{ ok: true, status: 200, text: async () => body, json: async () => JSON.parse(body) }};
+        }}
+        const mockFetch = async (ref) => {{
+          if (fetchMode === "defer") {{
+            return new Promise((resolve) => pendingFetches.push({{ ref, resolve }}));
+          }}
+          return responseFor(ref);
         }};
+        const resolvePendingFetches = () => {{
+          while (pendingFetches.length) {{
+            const pending = pendingFetches.shift();
+            pending.resolve(responseFor(pending.ref));
+          }}
+        }};
+        const sessionValues = new Map();
+        class MockWebSocket {{
+          static CONNECTING = 0;
+          static OPEN = 1;
+          static CLOSING = 2;
+          static CLOSED = 3;
+          static instances = [];
+          constructor(url) {{
+            this.url = String(url);
+            this.readyState = MockWebSocket.CONNECTING;
+            this.sent = [];
+            this.listeners = {{}};
+            MockWebSocket.instances.push(this);
+          }}
+          addEventListener(name, callback) {{
+            this.listeners[name] = this.listeners[name] || [];
+            this.listeners[name].push(callback);
+          }}
+          send(value) {{
+            this.sent.push(String(value));
+          }}
+          close(code = 1000, reason = "") {{
+            this.readyState = MockWebSocket.CLOSED;
+            this.emit("close", {{ code, reason }});
+          }}
+          emit(name, event = {{}}) {{
+            if (name === "open") {{
+              this.readyState = MockWebSocket.OPEN;
+            }}
+            for (const callback of this.listeners[name] || []) {{
+              callback(event);
+            }}
+          }}
+        }}
         const mockLocation = {{ search: "?csmApiBase=http://localhost:49210" }};
         const context = {{
           console,
@@ -297,8 +371,11 @@ def run_js_view_model(
           }},
           clearInterval: () => {{}},
           sessionStorage: {{
-            getItem: (key) => key === "adl.runtimeV3.observatoryToken" ? "validator-observatory-token-0001" : null
+            getItem: (key) => sessionValues.get(String(key)) || null,
+            setItem: (key, value) => sessionValues.set(String(key), String(value)),
+            removeItem: (key) => sessionValues.delete(String(key))
           }},
+          WebSocket: MockWebSocket,
           globalThis: {{}}
         }};
         context.globalThis = context;
@@ -363,12 +440,61 @@ def run_js_view_model(
         const retainedFetchPanopticon = context.AdlHtmlObservatory.buildPanopticonViewModel(retainedSnapshot, packet);
         const liveSnapshot = await context.AdlHtmlObservatory.fetchRuntimeSnapshot("http://localhost:49210");
         const liveFetchPanopticon = context.AdlHtmlObservatory.buildPanopticonViewModel(liveSnapshot, packet);
-        mockLocation.search = "?runtime=v3&runtimeApiBase=https://runtime-gateway-host";
-        const runtimeV3Snapshot = await context.AdlHtmlObservatory.fetchRuntimeSnapshot("https://runtime-gateway-host");
+        mockLocation.search = "?runtime=v3&runtimeApiBase=https://localhost:20997";
+        const runtimeV3Snapshot = await context.AdlHtmlObservatory.fetchRuntimeSnapshot("https://localhost:20997");
         const runtimeV3Panopticon = context.AdlHtmlObservatory.buildPanopticonViewModel(runtimeV3Snapshot, packet);
         mockLocation.search = "?csmApiBase=http://localhost:49210";
         context.AdlHtmlObservatory.bindLivePanopticon(packet);
         await new Promise((resolve) => setImmediate(resolve));
+        const initialLiveBinding = {{
+          base: elements.get("dashboard-live-api-base").value,
+          retainedIntervalCount: timers.filter((timer) => timer.name === "refreshRetained").length,
+          liveIntervalCount: timers.filter((timer) => timer.name === "refreshLive").length,
+          runtimeStatus: elements.get("dashboard-live-test-status").textContent,
+          statusbarMode: elements.get("statusbar-mode").textContent
+        }};
+        elements.get("dashboard-live-api-base").value = "";
+        fetchMode = "defer";
+        elements.get("refresh-live").onclick();
+        elements.get("stop-live").onclick();
+        resolvePendingFetches();
+        await new Promise((resolve) => setImmediate(resolve));
+        const retainedRace = {{
+          status: elements.get("live-status").textContent,
+          runtimeStatus: elements.get("dashboard-live-test-status").textContent,
+          connectionState: observatoryElement["data-live-connection"]
+        }};
+        fetchMode = "immediate";
+        mockLocation.search = "?runtime=v3&runtimeApiBase=https://localhost:20997";
+        elements.get("dashboard-live-api-base").value = "https://localhost:20997";
+        elements.get("operator-write-token").value = "operator-write-token-5757";
+        await elements.get("dashboard-connect-live").onclick();
+        const socket = MockWebSocket.instances[MockWebSocket.instances.length - 1];
+        socket.emit("open");
+        elements.get("operator-login").onclick();
+        const trustedWss = {{
+          endpoint: socket.url,
+          authFrame: socket.sent.find((frame) => frame.includes("observatory_ws_auth")) || ""
+        }};
+        elements.get("stop-live").onclick();
+        socket.emit("message", {{ data: runtimeV3Feed }});
+        await new Promise((resolve) => setImmediate(resolve));
+        const wssRace = {{
+          status: elements.get("live-status").textContent,
+          runtimeStatus: elements.get("dashboard-live-test-status").textContent,
+          websocketStatus: elements.get("statusbar-websocket").textContent
+        }};
+        const socketCountBeforeRejected = MockWebSocket.instances.length;
+        let rejectedUntrustedWss = false;
+        try {{
+          context.AdlHtmlObservatory.connectRuntimeV3ObservatoryWebSocket(
+            "https://example.com?runtimeApiBase=https://localhost:20997",
+            () => {{}},
+            () => {{}}
+          );
+        }} catch (_error) {{
+          rejectedUntrustedWss = true;
+        }}
         const blockedCloudwatchViewModel = context.AdlHtmlObservatory.buildIntegrationViewModel({{
           serviceManifest,
           apiText,
@@ -398,7 +524,12 @@ def run_js_view_model(
           operatorEnvelope,
           loopbackPolicy: {{
             localhostHttp: context.AdlHtmlObservatory.isLoopbackApiBase("http://localhost:49210"),
+            runtimeTrustedLocalhost: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://localhost:20997"),
             runtimeRemoteHttps: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://runtime-gateway-host"),
+            runtimeWrongPort: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://localhost:8765"),
+            runtimeUrlCredentials: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://operator:token@localhost:20997"),
+            runtimeUrlQuery: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://localhost:20997?runtimeApiBase=https://example.com"),
+            runtimePath: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://localhost:20997/collect"),
             runtimeHttp: context.AdlHtmlObservatory.isRuntimeV3ApiBase("http://localhost:20997"),
             remoteHttp: context.AdlHtmlObservatory.isLoopbackApiBase("https://example.com"),
             malformed: context.AdlHtmlObservatory.isLoopbackApiBase("not a url")
@@ -460,11 +591,21 @@ def run_js_view_model(
             heroEventCount: String(retainedFetchPanopticon.events.length)
           }},
           liveBinding: {{
-            base: elements.get("dashboard-live-api-base").value,
-            retainedIntervalCount: timers.filter((timer) => timer.name === "refreshRetained").length,
-            liveIntervalCount: timers.filter((timer) => timer.name === "refreshLive").length,
-            runtimeStatus: elements.get("dashboard-live-test-status").textContent,
-            statusbarMode: elements.get("statusbar-mode").textContent
+            ...initialLiveBinding
+          }},
+          asyncRace: {{
+            retainedStopStatus: retainedRace.status,
+            retainedStopRuntimeStatus: retainedRace.runtimeStatus,
+            retainedStopConnectionState: retainedRace.connectionState,
+            wssStopStatus: wssRace.status,
+            wssStopRuntimeStatus: wssRace.runtimeStatus,
+            wssStopWebsocketStatus: wssRace.websocketStatus
+          }},
+          trustedWss: {{
+            endpoint: trustedWss.endpoint,
+            authFrameSent: trustedWss.authFrame.includes("operator-write-token-5757"),
+            rejectedUntrustedWss,
+            rejectedUntrustedCreatedSocket: MockWebSocket.instances.length !== socketCountBeforeRejected
           }}
         }}));
         }})().catch((error) => {{
@@ -506,6 +647,7 @@ def main() -> int:
     parser.add_argument("--csm-ready", type=Path, required=True)
     parser.add_argument("--csm-metrics", type=Path, required=True)
     parser.add_argument("--csm-events", type=Path, required=True)
+    parser.add_argument("--runtime-v3-config", type=Path, required=True)
     args = parser.parse_args()
 
     html = args.html.read_text(encoding="utf-8")
@@ -519,6 +661,7 @@ def main() -> int:
     cloudwatch_events = read_json(args.cloudwatch_events)
     acip_sns = read_json(args.acip_sns)
     sns_resource = read_json(args.sns_resource)
+    runtime_v3_config = read_json(args.runtime_v3_config)
     smoke = run_js_view_model(
         args.js,
         args.packet,
@@ -550,7 +693,8 @@ def main() -> int:
     assert_contains("HTML retained CSM metrics ref", html, f'data-csm-metrics-ref="{CSM_METRICS_REF}"')
     assert_contains("HTML retained CSM events ref", html, f'data-csm-events-ref="{CSM_EVENTS_REF}"')
     assert_contains("HTML title", html, "ADL HTML Observatory - Runtime Proof")
-    assert_contains("HTML integrated proof copy", html, "HTML Observatory integrated proof")
+    assert_contains("HTML live Observatory copy", html, "Runtime v3 / live Observatory")
+    assert_not_contains("HTML obsolete visible version chip", html, '<span class="version-chip">v0.91.7</span>')
     assert_contains("HTML inline icon sprite", html, 'class="icon-sprite"')
     assert_contains("HTML pulse icon", html, 'href="#icon-pulse"')
     assert_contains("HTML packet icon", html, 'href="#icon-packet"')
@@ -576,7 +720,8 @@ def main() -> int:
     assert_contains("HTML dashboard real runtime refresh", html, 'id="dashboard-refresh-live"')
     assert_contains("HTML dashboard real runtime stop", html, 'id="dashboard-stop-live"')
     assert_contains("HTML Runtime v3 opt-in port", html, "20997")
-    assert_contains("HTML Runtime v3 explicit opt-in query", html, "runtime=v3&runtimeApiBase=https://runtime-gateway-host")
+    assert_contains("HTML Runtime v3 default config", html, "runtime-v3.config.json")
+    assert_contains("HTML Runtime v3 control endpoint", html, "/v1/control")
     assert_contains("HTML dashboard communication inspector", html, 'id="hero-communication-status"')
     assert_contains("HTML dashboard status bar", html, 'class="dashboard-statusbar"')
     assert_contains("HTML topbar capture time field", html, "Capture Time")
@@ -618,7 +763,8 @@ def main() -> int:
     assert_contains("HTML CSM API section", html, "CSM local control plane")
     assert_contains("HTML CloudWatch section", html, "CloudWatch heartbeat")
     assert_contains("HTML AWS linkages section", html, "AWS runtime linkages")
-    assert_contains("HTML communication section", html, "ACIP event channel")
+    assert_contains("HTML communication section", html, "Runtime command channel")
+    assert_contains("HTML Runtime v3 signed command result", html, "Paste a signed command to submit through Runtime v3 /v1/control")
     assert_contains("HTML communication input", html, 'id="runtime-api-base"')
     assert_contains("HTML communication proof list", html, 'id="communication-proof-list"')
     if '<option value="cloudwatch">CloudWatch heartbeat</option>' in html:
@@ -655,15 +801,44 @@ def main() -> int:
     assert_contains("JS events endpoint check", js, "checkEventsEndpoint")
     assert_contains("JS runtime snapshot polling", js, "fetchRuntimeSnapshot")
     assert_contains("JS Runtime v3 observatory feed polling", js, "fetchRuntimeV3ObservatorySnapshot")
-    assert_contains("JS Runtime v3 observatory endpoint", js, 'RUNTIME_V3_OBSERVATORY_ENDPOINT = "/v1/observatory"')
+    assert_contains("JS Runtime v3 config fallback", js, f'root?.dataset.runtimeV3ConfigRef || "{RUNTIME_V3_CONFIG_REF}"')
+    if runtime_v3_config.get("schema") != "adl.html_observatory.runtime_v3_config.v1":
+      fail("Runtime v3 Observatory config schema mismatch")
+    if runtime_v3_config.get("api_base") != "https://localhost:20997":
+      fail("Runtime v3 Observatory config must declare the trusted https://localhost:20997 API base")
+    if runtime_v3_config.get("observatory_endpoint") != "/v1/observatory":
+      fail("Runtime v3 Observatory config must declare /v1/observatory")
+    if runtime_v3_config.get("readiness_endpoint") != "/v1/ready":
+      fail("Runtime v3 Observatory config must declare /v1/ready")
+    if runtime_v3_config.get("observatory_websocket_endpoint") != "/v1/observatory/ws":
+      fail("Runtime v3 Observatory config must declare /v1/observatory/ws")
+    if runtime_v3_config.get("signed_command_endpoint") != "/v1/control":
+      fail("Runtime v3 Observatory config must declare /v1/control for signed commands")
     assert_contains("JS Runtime v3 observatory schema", js, 'RUNTIME_V3_OBSERVATORY_SCHEMA = "adl.runtime_v3.observatory_feed.v2"')
-    assert_contains("JS Runtime v3 bearer authentication", js, "Authorization: `Bearer ${readToken}`")
+    assert_contains("JS trusted Runtime v3 origin normalizer", js, "normalizeTrustedRuntimeV3ApiBase")
+    assert_contains("JS trusted Runtime v3 localhost port", js, 'parsed.port !== "20997"')
+    assert_contains("JS trusted Runtime v3 root path", js, 'parsed.pathname !== "/"')
+    assert_contains("JS shared live generation guard", js, "isCurrentLiveGeneration")
+    assert_contains("JS retained generation guard", js, "refreshRetained = async (extraErrors = {}, requestGeneration = nextLiveGeneration())")
+    assert_not_contains("JS public Runtime v3 reads omit bearer authentication", js, "Authorization: `Bearer ${readToken}`")
+    assert_contains("JS Runtime v3 write login", js, "authenticateRuntimeV3ObservatorySocket")
+    assert_contains("JS Runtime v3 signed command POST", js, "submitRuntimeV3SignedControlCommand")
+    assert_contains("JS Runtime v3 login result handling", js, 'frame.status === "authenticated"')
+    assert_contains("JS Runtime v3 signed command send", js, 'liveSocket.send(JSON.stringify(command))')
+    assert_contains("HTML Runtime v3 write login", html, 'id="operator-login"')
+    assert_contains("HTML Runtime v3 signed command input", html, 'id="signed-control-command"')
     assert_contains("JS Runtime v3 weather staleness", js, "weather_stale_after_millis")
     assert_contains("JS Runtime v3 explicit opt-in selection", js, "runtime_v3_explicit_opt_in")
     assert_contains("JS runtime query base bootstrap", js, "getQueryApiBase")
     assert_contains("JS runtime auto-connect gate", js, "shouldAutoConnectLive")
     assert_contains("JS dashboard runtime status mirror", js, 'setText("dashboard-live-test-status"')
-    assert_contains("JS v0.91.7 display version", js, 'OBSERVATORY_VERSION = "v0.91.7"')
+    assert_contains("JS Runtime v3 display version", js, 'OBSERVATORY_VERSION = "Runtime v3"')
+    assert_contains("HTML Runtime v3 version chip", html, '<span class="version-chip">Runtime v3</span>')
+    assert_contains(
+        "HTML Runtime v3 live Observatory eyebrow",
+        html,
+        "Runtime v3 / live Observatory / CSM polis control room",
+    )
     assert_contains("JS display claim boundary normalization", js, "displayClaimBoundary")
     assert_contains("JS display packet label normalization", js, "displayPacketId")
     assert_contains("JS retained runtime mirror polling", js, "fetchRetainedRuntimeSnapshot")
@@ -692,6 +867,14 @@ def main() -> int:
     assert_contains("JS source-driven gauges", js, 'setText("hero-gauge-agents"')
     assert_contains("JS source-driven event title", js, 'setText("hero-event-title"')
     assert_contains("JS source-driven statusbar", js, 'setText("statusbar-mode"')
+    assert_contains("HTML WebSocket lifecycle statusbar", html, 'id="statusbar-websocket"')
+    assert_contains("JS WebSocket lifecycle statusbar", js, 'setText("statusbar-websocket"')
+    for websocket_state in ("connecting", "connected", "disconnected", "stopped"):
+      assert_contains(
+          f"JS WebSocket {websocket_state} status",
+          js,
+          f'setText("statusbar-websocket", "{websocket_state}")',
+      )
     assert_contains("JS statusbar current update timestamp", js, 'setText("statusbar-updated", vm.mode === "live" ? formatTimestampLabel(vm.fetchedAt) : formatCurrentTimestampLabel())')
     assert_contains("JS statusbar state indicator", js, 'setDataset("statusbar-indicator"')
 
@@ -810,8 +993,10 @@ def main() -> int:
     loopback_policy = smoke["loopbackPolicy"]
     if not loopback_policy["localhostHttp"]:
       fail(f"loopback CSM API bases were not accepted: {loopback_policy!r}")
-    if not loopback_policy["runtimeRemoteHttps"]:
-      fail(f"configured Runtime v3 remote API base was not accepted: {loopback_policy!r}")
+    if not loopback_policy["runtimeTrustedLocalhost"]:
+      fail(f"trusted Runtime v3 localhost API base was not accepted: {loopback_policy!r}")
+    if loopback_policy["runtimeRemoteHttps"] or loopback_policy["runtimeWrongPort"] or loopback_policy["runtimeUrlCredentials"] or loopback_policy["runtimeUrlQuery"] or loopback_policy["runtimePath"]:
+      fail(f"untrusted Runtime v3 API base was accepted before bearer/WSS use: {loopback_policy!r}")
     if loopback_policy["runtimeHttp"]:
       fail(f"non-HTTPS Runtime v3 API base was accepted: {loopback_policy!r}")
     if loopback_policy["remoteHttp"] or loopback_policy["malformed"]:
@@ -881,6 +1066,26 @@ def main() -> int:
       fail(f"live binding did not preserve proved loopback status: {live_binding!r}")
     if live_binding.get("statusbarMode") != "Live Loopback":
       fail(f"live binding did not preserve statusbar live mode: {live_binding!r}")
+    async_race = smoke["asyncRace"]
+    if async_race.get("retainedStopStatus") != "polling stopped":
+      fail(f"late retained completion overwrote Stop state: {async_race!r}")
+    if async_race.get("retainedStopRuntimeStatus") != "polling stopped":
+      fail(f"late retained completion overwrote Stop runtime status: {async_race!r}")
+    if async_race.get("retainedStopConnectionState") != "stopped":
+      fail(f"Stop did not remain browser-visible after retained completion: {async_race!r}")
+    if async_race.get("wssStopStatus") != "polling stopped":
+      fail(f"late WSS completion overwrote Stop state: {async_race!r}")
+    if async_race.get("wssStopRuntimeStatus") != "polling stopped":
+      fail(f"late WSS completion overwrote Stop runtime status: {async_race!r}")
+    if async_race.get("wssStopWebsocketStatus") != "stopped":
+      fail(f"late WSS completion overwrote stopped WebSocket status: {async_race!r}")
+    trusted_wss = smoke["trustedWss"]
+    if trusted_wss.get("endpoint") != "wss://localhost:20997/v1/observatory/ws":
+      fail(f"trusted WSS endpoint was not localhost:20997: {trusted_wss!r}")
+    if trusted_wss.get("authFrameSent") is not True:
+      fail(f"operator token was not sent after trusted localhost WSS open: {trusted_wss!r}")
+    if trusted_wss.get("rejectedUntrustedWss") is not True or trusted_wss.get("rejectedUntrustedCreatedSocket") is not False:
+      fail(f"untrusted WSS was not rejected before WebSocket/token use: {trusted_wss!r}")
     runtime_v3_panopticon = smoke["runtimeV3Panopticon"]
     if runtime_v3_panopticon.get("mode") != "live":
       fail(f"Runtime v3 observatory feed did not preserve live mode: {runtime_v3_panopticon!r}")

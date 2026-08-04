@@ -1,0 +1,25 @@
+flowchart LR
+  C["#5337 merged corpus: 25 cases / 23 behaviors / 75 v1 observations"] --> V1["Pinned ADL v1 revision + executable SHA-256"]
+  W["WP-10 #5345 merged and typed closed_out"] --> V2["Pinned ADL v2 revision + executable SHA-256 + selector identity"]
+  A["WP-10A #5497 + live #5501 terminal evidence"] --> O["WP-10A evidence overlay"]
+  P["#5591 #5592 #5589 #5590 + #5341 #5349 terminal evidence"] --> R["Runtime v3 ten-group evidence overlay"]
+  V1 --> I["Verify identities, corpus bundle, envelopes, portable hashes"]
+  V2 --> I
+  I --> X["Execute identical approved corpus under denied network and cleared environment"]
+  X --> N["Apply only #5337-declared normalization"]
+  N --> M{"Per-case comparison"}
+  M --> E["exact_match"]
+  M --> Q["normalized_match"]
+  M --> D["approved_intentional_difference with reviewed owner proof"]
+  M --> B["regression_blocker / unsupported_blocker / evidence_invalid"]
+  E --> S["Recompute case, behavior, equivalence and difference-group totals"]
+  Q --> S
+  D --> S
+  B --> F["Fail closed: no acceptance, soak, cutover, or deletion"]
+  S --> O
+  O --> R
+  R --> G{"Zero unclassified rows and all overlays pass?"}
+  G -->|"yes"| K["Exact-revision WP-11 parity packet for #5361"]
+  G -->|"no"| F
+  K -. "does not switch defaults" .-> Z["WP-12 remains separately authorized"]
+  T["Runtime v2 source, AWS, providers, product edits"] -. "excluded" .-> F

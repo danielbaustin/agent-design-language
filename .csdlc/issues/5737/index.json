@@ -1,0 +1,373 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5737,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "8389c08811378222f293ccc0d9046c6ca438c358e387a9db2258defe952f0fd5",
+  "phase": "closed_out",
+  "generation": 11,
+  "digest": "14884c5c8119b4932600b35497a58fe0ecb6e199dea49802562964b1071b8e47",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "codex:gpt-5.5-claim-authority-review",
+    "assigned_by": "codex:5737-execution",
+    "revision": "git-blake3:4079e840d35a287eefbc637718cc6c1dafa4af77:65c11bb45e0642a62bce15abd24f4eb99769ae107ea9359cd9bb2792cdf19182",
+    "scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs",
+      ".csdlc/evidence/5737"
+    ]
+  },
+  "review": {
+    "reviewer": "codex:gpt-5.5-claim-authority-review",
+    "scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs",
+      ".csdlc/evidence/5737"
+    ],
+    "reviewed_revision": "git-blake3:4079e840d35a287eefbc637718cc6c1dafa4af77:65c11bb45e0642a62bce15abd24f4eb99769ae107ea9359cd9bb2792cdf19182",
+    "findings": [],
+    "residual_risks": [
+      "Only claims matching a registered active checkout have collision authority; stale tracked projections remain retained evidence but no longer reserve paths."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5737,
+    "pull_request": 5745,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5745",
+    "base": "main",
+    "head": "codex/5737-csdlc-authority-recovery",
+    "revision": "git-blake3:86c2d7ae8f25cc890d6e8d892b3539a663d902f6:ccb7d7dd7515653dcb604dafafe9d443335581aaa6b54f92ee2eb45676cbc9e9",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5745,
+    "head_sha": "86c2d7ae8f25cc890d6e8d892b3539a663d902f6",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91282018367"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281505429"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281436998"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281437167"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281437159"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281437163"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281437451"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281393901"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281437113"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281437336"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281437158"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281437070"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281437250"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281436672"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281437369"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30668645861/job/91281436685"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5745,
+    "disposition": "merged",
+    "observed_sha": "86c2d7ae8f25cc890d6e8d892b3539a663d902f6",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5737.json",
+    "released_branch": "codex/5737-csdlc-authority-recovery",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5737",
+      ".csdlc/locks/5737.lock",
+      ".csdlc/prepared/issues/5737",
+      ".csdlc/evidence/5737",
+      ".csdlc/publication/5737.intent.json",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5737/retained/design.md",
+  "diagram_path": ".csdlc/issues/5737/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5737-preflight",
+      "revision": "6e29a4e399b52ccf6d9ae550bcc31a1706b048447f35e8b0eb2515120ecbeb68"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "7f51a8cc904918abce6d63b0c890a361c810a1c0d31bf0947cff3c2fed484c8a",
+      "rendered_digest": "1e6109b6a0691d18a348c552bc76c0b71ffb34bc9d07d47aa59577fd96c805d4",
+      "ast_digest": "89bc5b6c3a8c65de169b9514f44d96e0051c5be3ff294e9b9cac89f0f71b3847"
+    },
+    "stp": {
+      "values_digest": "4360cbf074a836c64041a61c791e11c927aaa95c5d085514ba3076a5ce1fd278",
+      "rendered_digest": "3e675683d5950627268ae73f4b1bd46c6673497e36dac186c80ce8a8a20ad65d",
+      "ast_digest": "4d5ace43e52d7731963d5412ac1065ecb316db7ace71472429734ed9acba31bd"
+    },
+    "spp": {
+      "values_digest": "1b0a6abb0dd25c86640de6a3f214baddaf4fb2a62606e34b2ae4f854caf4e53c",
+      "rendered_digest": "e6475d640b40a378a6ef04e19915881a8f3ccf3b335df08d87908597aa9d61ad",
+      "ast_digest": "5c149a0da98ade59e3486549df5803ef4306da86a0f91fb4bcd38379a4a781ac"
+    },
+    "vpp": {
+      "values_digest": "3907d57a1d9f6db5320f1bebae1d64621c18970344e87c8a08c748415bfcfacf",
+      "rendered_digest": "87708664e68498090173fcad31c5784b59c8e14174ab5d4ea0538e906464dd1a",
+      "ast_digest": "e2185f73ba4e74001b6c574eee70b2aef6bb95ad300f76a3dc86b0e1f38dab9a"
+    },
+    "srp": {
+      "values_digest": "31c823c99cc635405cea8be110f7f8e9a04fea8d2bebfcc519528087487ecbf6",
+      "rendered_digest": "abab2f57bef1baf9462efb211e214c114dca7eabdba7b1a41b558fe366ca09df",
+      "ast_digest": "66bfa49a4148f3ef05ae8d85dae6febd570d991b6e9e8674320ca4c4f8b17113"
+    },
+    "sor": {
+      "values_digest": "6fa72053da6105517f5b3cabca878362389213919bf7bfb86a86537a98322acd",
+      "rendered_digest": "c515e5c30687cfa86abe279a9af7b52664df0cf182535b8b478994a10c8b0f98",
+      "ast_digest": "b185c151819176d0bd2bbed6ab46d5cc2232bd1830df99d7d3e9b17961bdd9c9"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5737-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5737-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5737-execution",
+      "reason": "Implementation and focused validation are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5737-execution",
+      "reason": "The assigned exact-head review is complete with no safety blockers."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5737-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5737-execution",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5737-execution",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5737-execution",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5737-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5737-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5737-execution",
+      "reason": "Record the bounded active-claim authority simplification.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Claim scans now consider only claims matching active checkouts, defer terminal receipt checks until a real path overlap, and repair dormant typed projections during authority reacquisition.\",\"changes\":[\"csdlc-v2/src/lifecycle.rs\",\"csdlc-v2/src/store.rs\",\"csdlc-v2/tests/gate2.rs\"],\"artifacts\":[\".csdlc/evidence/5737/gate2.log\",\".csdlc/evidence/5737/clippy.log\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5737-execution",
+      "reason": "Record complete Gate 2 validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\"],\"purpose\":\"Prove active claim collision safety, stale projection filtering, and authority reacquisition.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5737/gate2.log\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5737-execution",
+      "reason": "Record strict C-SDLC v2 Clippy validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Prove the simplified claim implementation remains warning-free across all targets.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5737/clippy.log\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5737-execution",
+      "reason": "Implementation and focused validation are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5737-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5737-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5737-execution",
+      "reason": "The assigned exact-head review is complete with no safety blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5737-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5737-execution",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:5737-execution",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

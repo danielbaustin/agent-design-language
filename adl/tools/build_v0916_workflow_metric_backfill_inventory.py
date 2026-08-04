@@ -10,6 +10,7 @@ import re
 import subprocess
 import sys
 import argparse
+import tempfile
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -49,6 +50,89 @@ def run(cmd: list[str], cwd: Path) -> str:
         env=os.environ.copy(),
     )
     return result.stdout
+
+
+def resolve_repository(repo_root: Path) -> str:
+    configured = os.environ.get("ADL_GITHUB_REPO", "").strip()
+    if configured:
+        return configured
+    remote = run(["git", "remote", "get-url", "origin"], cwd=repo_root).strip()
+    match = re.search(r"github\.com[:/](.+)$", remote)
+    if not match:
+        raise RuntimeError(
+            "cannot infer GitHub repository from origin; set ADL_GITHUB_REPO"
+        )
+    repository = match.group(1).removesuffix(".git").strip("/")
+    if repository.count("/") != 1:
+        raise RuntimeError(f"invalid GitHub repository inferred from origin: {repository}")
+    return repository
+
+
+def resolve_github_issue_command(repo_root: Path) -> list[str]:
+    configured = os.environ.get("ADL_CSDLC_GITHUB_ISSUE_CMD", "").strip()
+    if configured:
+        command = Path(configured)
+        if not command.is_file():
+            raise RuntimeError(
+                f"ADL_CSDLC_GITHUB_ISSUE_CMD is not a file: {configured}"
+            )
+        return [str(command)]
+    installed = repo_root / ".adl" / "bin" / "csdlc-v2" / "csdlc-github-issue"
+    if installed.is_file():
+        return [str(installed)]
+    raise RuntimeError(
+        "typed csdlc-github-issue is not installed under .adl/bin/csdlc-v2; "
+        "run csdlc-install before generating the inventory"
+    )
+
+
+def read_issue(
+    repo_root: Path,
+    repository: str,
+    issue_number: int,
+    command: list[str],
+) -> dict[str, object]:
+    common_git_dir = Path(
+        run(["git", "rev-parse", "--git-common-dir"], cwd=repo_root).strip()
+    )
+    if not common_git_dir.is_absolute():
+        common_git_dir = repo_root / common_git_dir
+    request_root = common_git_dir / "csdlc-v2" / "requests"
+    request_root.mkdir(parents=True, exist_ok=True)
+    request = {
+        "repository": repository,
+        "action": "issue_read",
+        "issue": issue_number,
+    }
+    request_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            prefix=f"workflow-metric-{issue_number}-",
+            suffix=".json",
+            dir=request_root,
+            delete=False,
+        ) as handle:
+            json.dump(request, handle)
+            handle.write("\n")
+            request_path = Path(handle.name)
+        result = json.loads(
+            run([*command, "run", "--request", str(request_path)], cwd=repo_root)
+        )
+    finally:
+        if request_path is not None:
+            request_path.unlink(missing_ok=True)
+    if (
+        result.get("schema") != "csdlc.github_action_result.v1"
+        or result.get("action") != "issue_read"
+        or result.get("reconciled") is not True
+    ):
+        raise RuntimeError("csdlc-github-issue returned an unexpected or unreconciled result")
+    issue = result.get("issue")
+    if not isinstance(issue, dict) or issue.get("number") != issue_number:
+        raise RuntimeError("csdlc-github-issue returned mismatched issue identity")
+    return issue
 
 
 def parse_iso8601(value: str) -> datetime | None:
@@ -136,8 +220,8 @@ def actual_elapsed_metric(metric_fields: dict[str, str], exec_fields: dict[str, 
 
 
 def github_cycle_metric(issue_record: dict[str, object]) -> MetricValue:
-    created_at = issue_record.get("createdAt")
-    closed_at = issue_record.get("closedAt")
+    created_at = issue_record.get("created_at")
+    closed_at = issue_record.get("closed_at")
     state = str(issue_record.get("state", "unknown")).lower()
     if isinstance(created_at, str) and isinstance(closed_at, str):
         delta = seconds_between(created_at, closed_at)
@@ -145,24 +229,24 @@ def github_cycle_metric(issue_record: dict[str, object]) -> MetricValue:
             return MetricValue(
                 delta,
                 "derived",
-                "github_issue_created_closed",
+                "csdlc_github_issue_created_closed",
                 "high",
-                "Derived from repo-native GitHub issue createdAt and closedAt timestamps.",
+                "Derived from typed C-SDLC GitHub issue created_at and closed_at timestamps.",
             )
     if state != "closed":
         return MetricValue(
             "unknown",
             "unknown",
-            "github_issue_state_open",
+            "csdlc_github_issue_state_open",
             "low",
             "Issue is still open, so closed-cycle duration is not yet available.",
         )
     return MetricValue(
         "unknown",
         "unknown",
-        "github_issue_timestamp_incomplete",
+        "csdlc_github_issue_timestamp_incomplete",
         "low",
-        "Repo-native GitHub issue timestamps were incomplete for cycle-time reconstruction.",
+        "Typed C-SDLC GitHub issue timestamps were incomplete for cycle-time reconstruction.",
     )
 
 
@@ -256,6 +340,8 @@ def title_from_body(body_path: Path) -> str:
 def collect_rows(repo_root: Path, primary_root: Path, limit: int | None) -> list[dict[str, str]]:
     tasks_root = primary_root / ".adl" / "v0.91.6" / "tasks"
     rows: list[dict[str, str]] = []
+    repository = resolve_repository(repo_root)
+    github_issue_command = resolve_github_issue_command(repo_root)
     task_dirs = sorted(tasks_root.glob(TASK_DIR_PATTERN), key=lambda path: int(path.name.split("__", 1)[0].split("-")[1]))
     if limit is not None:
         task_dirs = task_dirs[:limit]
@@ -270,18 +356,12 @@ def collect_rows(repo_root: Path, primary_root: Path, limit: int | None) -> list
         slug = task_dir.name.split("__", 1)[1]
         sor_path = task_dir / "sor.md"
         body_path = primary_root / ".adl" / "v0.91.6" / "bodies" / f"issue-{issue_number}-{slug}.md"
-        issue_json = run(
-            [
-                "bash",
-                "adl/tools/pr.sh",
-                "issue",
-                "view",
-                issue_number,
-                "--json",
-            ],
-            cwd=repo_root,
+        issue_record = read_issue(
+            repo_root,
+            repository,
+            int(issue_number),
+            github_issue_command,
         )
-        issue_record = json.loads(issue_json)
         sor_text = read_text(sor_path)
         metric_fields, exec_fields = parse_sor_fields(sor_text)
         actual_elapsed = actual_elapsed_metric(metric_fields, exec_fields)
@@ -309,8 +389,8 @@ def collect_rows(repo_root: Path, primary_root: Path, limit: int | None) -> list
             "slug": slug,
             "title": str(issue_record.get("title") or title_from_body(body_path)),
             "issue_state": str(issue_record.get("state", "unknown")),
-            "issue_created_at": str(issue_record.get("createdAt") or "unknown"),
-            "issue_closed_at": str(issue_record.get("closedAt") or "unknown"),
+            "issue_created_at": str(issue_record.get("created_at") or "unknown"),
+            "issue_closed_at": str(issue_record.get("closed_at") or "unknown"),
             "actual_session_elapsed_seconds": actual_elapsed.value,
             "actual_session_elapsed_status": actual_elapsed.status,
             "actual_session_elapsed_source": actual_elapsed.source,
@@ -451,7 +531,7 @@ def write_markdown(
         "",
         "- Surveyed set: issue-local task bundles present under the primary checkout local corpus `/.adl/v0.91.6/tasks/issue-*`.",
         "- Exclusions: sprint umbrellas, sprint review packets, and non-issue artifacts outside the issue-task corpus.",
-        "- Issue metadata source: repo-native `adl/tools/pr.sh issue view <issue> --json`.",
+        "- Issue metadata source: typed `csdlc-github-issue run --request <issue-read-request.json>` results.",
         "- Issue-local metrics source: `sor.md` Issue Metrics Truth section, with fallback to SOR execution start/end timestamps for elapsed-time derivation when explicit elapsed seconds are absent.",
         "- Missing-data rule: values remain `unknown` or `not_collected`; they are never inferred from diff size, elapsed chat time, or subjective effort.",
         "",
@@ -518,7 +598,7 @@ def write_markdown(
             "## Notes",
             "",
             "- `actual_session_elapsed_seconds` records issue-local execution time when explicit SOR metrics exist, otherwise a derived execution-window value when SOR start/end timestamps exist.",
-            "- `github_cycle_time_seconds` records reconstructed GitHub issue calendar duration only when repo-native `createdAt` and `closedAt` are both available.",
+            "- `github_cycle_time_seconds` records reconstructed GitHub issue calendar duration only when typed `created_at` and `closed_at` values are both available.",
             "- `actual_total_tokens` stays explicit only when issue-local evidence recorded it truthfully.",
             "",
             "_Generated from the bound issue worktree using the primary checkout local-state corpus as the survey root._",

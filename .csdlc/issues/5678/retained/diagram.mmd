@@ -1,0 +1,6 @@
+flowchart LR
+  A[Exact reviewed diff] --> B[JSON request]
+  B --> C[adl-provider-adapter]
+  C --> D[JSON result]
+  D --> E[Typed csdlc-review record]
+  E --> F[Publication guard]

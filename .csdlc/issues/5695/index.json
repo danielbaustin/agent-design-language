@@ -1,0 +1,398 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5695,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "4cd0d8a97a8b7d3afd28be679d16291fe95cd477e824555b1d506ac0a4e9d96e",
+  "phase": "closed_out",
+  "generation": 15,
+  "digest": "42033fcac67391e790a017cec7a8ba08801609a27c4ac8c266d9a4d4c571446f",
+  "claim": null,
+  "review_assignment": null,
+  "review": {
+    "reviewer": "codex-subagent:review-5695",
+    "scope": [
+      "csdlc-v2/src/github.rs",
+      "csdlc-v2/src/merge.rs"
+    ],
+    "reviewed_revision": "git-blake3:ac0df9138d3b80d48d8480bf7761bd581da787bb:91b31c0fb64a9065135b6e8b340b714e18a66bea661a18a31bbcb8cdc956406c",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5695,
+    "pull_request": 5700,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5700",
+    "base": "main",
+    "head": "codex/5695-pr-state-mergeability",
+    "revision": "git-blake3:fad9aaa4e7c706d734848e95c53743e294f7dc22:1716c85b1fa7a2c51727c92e6bd5294fc24559dd49e5e3d2d1c85b3f896fb186",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5700,
+    "head_sha": "fad9aaa4e7c706d734848e95c53743e294f7dc22",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90074519617"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073760024"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073702112"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073702360"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073702607"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073702487"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073702255"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073656649"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073702125"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073702247"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073702691"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073702367"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073702469"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073701444"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073702386"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294939139/job/90073701502"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5700,
+    "disposition": "merged",
+    "observed_sha": "fad9aaa4e7c706d734848e95c53743e294f7dc22",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5695.json",
+    "released_branch": "codex/5695-pr-state-mergeability",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5695",
+      ".csdlc/issues/5695",
+      ".csdlc/locks/5695.lock",
+      ".csdlc/prepared/issues/5695",
+      "csdlc-v2/src/github.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5695/retained/design.md",
+  "diagram_path": ".csdlc/issues/5695/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5695",
+      "revision": "24f656bfc0bafcd82c8bc9db001d949366843f0ae5ad148e2fbf03646ccd0f02"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "cfc7d077b0a6892bb22e1b0406e2e438d351a0b7a51fbe9525953ab9d1d1f001",
+      "rendered_digest": "0bd0312dca36c5465c44956f51706ee27ae9e44398b13a02fdc224bfd78569e9",
+      "ast_digest": "0c2a59857e860bd7ae0a8f611e082de8977429525241bf0a59390ed38b9d5cda"
+    },
+    "stp": {
+      "values_digest": "156e7e6bf384caae8845d20c0260c9749fd0e5c13717ec12989f1dc542190760",
+      "rendered_digest": "603c196dd25a2209c96aa42dc5a7dd77296cb6ccb73635059fd9a50cc3446f96",
+      "ast_digest": "74971ba8475b35d5b1657bbb4eb873ba81a338d32a79423fc040773507b4c585"
+    },
+    "spp": {
+      "values_digest": "cb4d1e4e6f8aef87e40b80c8336a2d645bf188b44e0139983dd2e09fc6c7de7b",
+      "rendered_digest": "2c50b152c9ae3610e2e20d87edb93306ef043ef2bf597f5b80c784d491a005ca",
+      "ast_digest": "3de832ae527c1341c1f0714be7db035c942208910bad5cddad2d8f6339cca605"
+    },
+    "vpp": {
+      "values_digest": "4f0857560daa06a3cf0f0910c301655a3da0b054f83653b7f1d446c94b26c1ed",
+      "rendered_digest": "547167c8493a6804575f177986a314efa93885f01742017feca2a2bf95874d86",
+      "ast_digest": "aa5f65485152b2d7b2006c23582929534e4bf12627de990549c9a417391aadb4"
+    },
+    "srp": {
+      "values_digest": "6d363e8206294be44b9186aa2c813c41e300db475c8e6d2e8579d69d789a0055",
+      "rendered_digest": "0d7dd7a99c6fa9cf3d9a20cd4b75d878d1973d2ff7fb8ff5715eb89db162e2d8",
+      "ast_digest": "7c49293fc68caaf2d9f145b89573452e97cc5b4dac31431de6877ccb7f68713c"
+    },
+    "sor": {
+      "values_digest": "4fffeea6e53f7f00bd19bedc214024108d815c1fae9d8e134609cb784427f520",
+      "rendered_digest": "9fb000357677fde9197ba4751e52424e02dcc8fcd1fd9ce5791b16093c329224",
+      "ast_digest": "ed43e330ce4dcf3c4a25bcc7c3ea7259297b6a9a1b9b5f46ace2126dfd0ad0fe"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Bounded implementation and focused validation passed; advance to reviewable implementation phase."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Rebase changed the substantive revision; recover stale publication and review truth before recording the new exact-head review."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Record bounded implementation before review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implement explicit GitHub mergeability-state normalization and preserve fail-closed pending behavior.\",\"changes\":[\"Map Behind, Blocked, Clean, Dirty, Draft, HasHooks, Unstable, and Unknown explicitly\",\"Classify blocked, unstable, draft, and unknown as waiting; behind as stale_base; dirty as conflicted\",\"Add focused coverage for all supported mergeability variants and classification behavior\"],\"artifacts\":[\"csdlc-v2/src/github.rs\",\".csdlc/issues/5695/cards/sor.md\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Record focused formatting validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"fmt\",\"--check\"],\"purpose\":\"Verify formatting for the bounded Rust change.\",\"outcome\":\"passed\",\"evidence_ref\":\"local:cargo-fmt-check:passed\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Record focused mergeability classification tests.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"-p\",\"csdlc-v2\",\"github::tests\"],\"purpose\":\"Exercise every supported mergeability variant and preserve fail-closed pending classification.\",\"outcome\":\"passed\",\"evidence_ref\":\"local:cargo-test-github-tests:3-passed\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Record strict lint validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"-p\",\"csdlc-v2\",\"--lib\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Verify strict lint for the touched Rust library.\",\"outcome\":\"passed\",\"evidence_ref\":\"local:cargo-clippy-csdlc-v2-lib:passed\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Record the exact-head review repair before re-review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Preserve HasHooks as the clean merge target accepted by csdlc-merge.\",\"changes\":[\"Normalize HasHooks to clean to preserve merge-gate compatibility\",\"Add a regression test proving the normalized HasHooks packet is accepted by validate_remote\"],\"artifacts\":[\"csdlc-v2/src/github.rs\",\"csdlc-v2/src/merge.rs\",\".csdlc/issues/5695/cards/sor.md\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Bounded implementation and focused validation passed; advance to reviewable implementation phase.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 11,
+      "generation": 9,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "Rebase changed the substantive revision; recover stale publication and review truth before recording the new exact-head review.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 10,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 11,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 14,
+      "generation": 12,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 15,
+      "generation": 13,
+      "actor": "codex:issue-5695-pr-state-mergeability",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 16,
+      "generation": 14,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 17,
+      "generation": 15,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

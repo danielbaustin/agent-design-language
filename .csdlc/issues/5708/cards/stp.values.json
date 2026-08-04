@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5708,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast][ui] Redesign Podcast Studio with Agent Logic MagicUI style",
+    "slug": "v0-91-8-podcast-ui-redesign-podcast-studio-agent-logic-style",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Recover lifecycle truth for the existing bounded Podcast Studio redesign merge only.",
+      "deliverables": [
+        "Exact committed-patch validation evidence",
+        "Bounded exact-head review evidence",
+        "Merged PR reconciliation",
+        "Retained terminal receipt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: The exact implementation head and merged PR are recorded.",
+        "AC-2: The focused deterministic Podcast Studio packet test passes and the committed patch has no whitespace errors.",
+        "AC-3: A bounded review confirms generator/rendered agreement and public-launch non-claims.",
+        "AC-4: Terminal evidence is retained without changing product content."
+      ],
+      "dependencies": [
+        "Closed issue #5708",
+        "Merged PR #5709"
+      ],
+      "repo_inputs": [
+        "adl/tools/generate_podcast_studio_v2_packet.py",
+        "adl/tools/validate_podcast_studio_v2_packet.py",
+        "demos/v0.91.3/adl_podcast_studio_v2_episode_card.html",
+        "docs/milestones/v0.91.3/review/podcast_studio_v2"
+      ],
+      "non_goals": [
+        "Changing documentation content",
+        "Launching a public podcast route, RSS feed, or final audio",
+        "Publishing another PR"
+      ]
+    }
+  }
+}

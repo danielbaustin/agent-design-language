@@ -56,7 +56,7 @@ done
 }
 
 package_version() {
-  cargo metadata --quiet --no-deps --format-version 1 --manifest-path "$MANIFEST" |
+  cargo metadata --quiet --locked --no-deps --format-version 1 --manifest-path "$MANIFEST" |
     python3 -c 'import json,sys; print(json.load(sys.stdin)["packages"][0]["version"])'
 }
 
@@ -80,28 +80,12 @@ run_command() {
 
 build_owner_bins() {
   [[ "$BUILD" == "1" ]] || return 0
-  run_command "cargo build owner binaries" \
-    cargo build --quiet --manifest-path "$MANIFEST" \
-      --bin adl --bin csdlc --bin adl-csdlc --bin adl-runtime --bin adl-review \
-      --bin csm \
-      --bin adl-pr-create --bin adl-pr-init --bin adl-pr-repair-issue-body \
-      --bin adl-pr-run --bin adl-pr-doctor --bin adl-pr-ready \
-      --bin adl-pr-preflight --bin adl-pr-finish --bin adl-pr-validation \
-      --bin adl-pr-inventory --bin adl-pr-shepherd --bin adl-pr-closing-linkage \
-      --bin adl-issue \
-      --bin adl-pr-closeout \
-      --bin adl-session --bin adl-process \
-      --bin adl-prompt-template --bin adl-validate-structured-prompt \
-      --bin adl-lint-prompt-spec --bin adl-remote \
-      --bin adl-aws-remote-validation --bin adl-provider-adapter
+  run_command "install stable owner binaries" \
+    bash adl/tools/install_owner_binaries.sh
   if [[ "$PRINT_PLAN" == "1" ]]; then
     return 0
   fi
-  run_command "install stable owner binaries" \
-    bash adl/tools/install_owner_binaries.sh --no-build
   export ADL_BIN="${ADL_OWNER_BIN_DIR:-$ROOT_DIR/.adl/bin}/adl"
-  export ADL_CSDLC_BIN="${ADL_OWNER_BIN_DIR:-$ROOT_DIR/.adl/bin}/csdlc"
-  export ADL_CSDLC_COMPAT_BIN="${ADL_OWNER_BIN_DIR:-$ROOT_DIR/.adl/bin}/adl-csdlc"
   export ADL_RUNTIME_BIN="${ADL_OWNER_BIN_DIR:-$ROOT_DIR/.adl/bin}/adl-runtime"
   export ADL_REVIEW_BIN="${ADL_OWNER_BIN_DIR:-$ROOT_DIR/.adl/bin}/adl-review"
   export ADL_CSM_BIN="${ADL_OWNER_BIN_DIR:-$ROOT_DIR/.adl/bin}/csm"
@@ -110,24 +94,50 @@ build_owner_bins() {
 }
 
 run_csdlc_lane() {
+  run_command "C-SDLC Gate 10A final-authority proof" \
+    cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate10a
   run_command "C-SDLC owner command guidance" \
     bash adl/tools/test_cli_owner_command_guidance.sh
   run_command "C-SDLC wrapper migration contract" \
     bash adl/tools/test_cli_wrapper_migration_contract.sh
-  run_command "C-SDLC run ambiguity policy" \
-    bash adl/tools/test_pr_run_ambiguity_policy.sh
-  run_command "C-SDLC PR small-binary delegation" \
-    bash adl/tools/test_pr_small_binary_delegation.sh
-  run_command "C-SDLC PR PATH-binary delegation" \
-    bash adl/tools/test_pr_delegate_prefers_path_binary.sh
-  run_command "C-SDLC PR delegate cargo fallback liveness" \
-    bash adl/tools/test_pr_delegate_cargo_fallback_liveness.sh
-  run_command "C-SDLC prompt-template wrappers avoid implicit cargo" \
-    bash adl/tools/test_prompt_template_wrappers_no_implicit_cargo.sh
-  run_command "C-SDLC prompt-template workflow integration" \
-    bash adl/tools/test_prompt_template_workflow_integration.sh
-  run_command "C-SDLC PR locked Cargo fallback" \
-    bash adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh
+  run_command "C-SDLC editor adapter guidance" \
+    bash adl/tools/test_editor_action.sh
+  run_command "C-SDLC active command reference scan" \
+    bash adl/tools/test_generate_active_command_reference_scan.sh
+  run_command "C-SDLC typed workflow-metric backfill" \
+    python3 adl/tools/test_build_v0916_workflow_metric_backfill_inventory.py
+  run_command "C-SDLC retired prompt-wrapper contracts" \
+    bash adl/tools/test_card_prompt.sh
+  run_command "C-SDLC retired prompt-lint wrapper contract" \
+    bash adl/tools/test_prompt_spec_lint.sh
+  run_command "C-SDLC workflow guardrails" \
+    bash adl/tools/test_workflow_guardrails.sh
+  run_command "C-SDLC structured-prompt typed authority" \
+    bash adl/tools/test_structured_prompt_validation.sh
+  run_command "C-SDLC card-editor repair typed authority" \
+    bash adl/tools/test_card_editor_repair_examples.sh
+  run_command "C-SDLC installed skill retirement contracts" \
+    bash adl/tools/test_install_adl_pr_cycle_skill.sh
+  run_command "C-SDLC operational skill installation" \
+    bash adl/tools/test_install_adl_operational_skills.sh
+  run_command "C-SDLC issue-folding typed handoff" \
+    bash adl/tools/test_issue_folding_skill_contracts.sh
+  run_command "C-SDLC issue-splitter typed handoff" \
+    bash adl/tools/test_issue_splitter_skill_contracts.sh
+  run_command "C-SDLC lifecycle shepherd contract" \
+    bash adl/tools/test_issue_lifecycle_shepherd_contract.sh
+  run_command "C-SDLC retired prompt-editor surface" \
+    bash adl/tools/test_csdlc_prompt_editor.sh
+  run_command "C-SDLC retired review-card surface" \
+    bash adl/tools/test_review_card_surface.sh
+  run_command "C-SDLC retired closeout-wave helper" \
+    bash adl/tools/test_closeout_completed_issue_wave.sh
+  run_command "C-SDLC retired milestone SOR helper" \
+    bash adl/tools/test_check_milestone_closed_issue_sor_truth.sh
+  run_command "C-SDLC typed issue metadata parity" \
+    bash adl/tools/test_check_issue_metadata_parity.sh
+  run_command "C-SDLC prompt-template structure schemas" \
+    python3 adl/tools/test_prompt_template_structure_schemas.py
   run_command "C-SDLC control-plane observability contract" \
     bash adl/tools/test_control_plane_observability.sh
 }
@@ -145,13 +155,6 @@ run_review_lane() {
   run_command "review compatibility boundary" \
     bash adl/tools/test_adl_review_compatibility.sh
 }
-
-if [[ "$PRINT_PLAN" != "1" ]]; then
-  ADL_RUST_WARM_CACHE_SOURCE_TARGET="${ADL_OWNER_VALIDATION_WARM_SOURCE_TARGET:-}" \
-  ADL_RUST_WARM_CACHE_DEST_TARGET="${CARGO_TARGET_DIR:-$ROOT_DIR/adl/target}" \
-  ADL_RUST_WARM_CACHE_OUTPUT="${ADL_OWNER_VALIDATION_WARM_CACHE_OUTPUT:-$ROOT_DIR/adl/owner-validation-warm-cache.json}" \
-    bash "$ROOT_DIR/adl/tools/rust_validation_warm_cache.sh"
-fi
 
 build_owner_bins
 

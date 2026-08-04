@@ -1,0 +1,26 @@
+.csdlc/evidence/5007/proof-to-claim-table.md:13:| Memory Palace consumes ObsMem-shaped records. | `MemoryPalaceInput.records: Vec<MemoryRecord>` and citation validation against `MemoryCitation`. | ObsMem remains the underlying record/citation substrate. |
+.csdlc/evidence/5007/proof-to-claim-table.md:14:| Chronosense continuity and temporal anchors are consumed. | `MemoryTemporalAnchor`, `required_continuity_id`, stale/future temporal rejection, continuity mismatch rejection. | Memory Palace validates and carries anchors; it does not own time. |
+.csdlc/evidence/5007/proof-to-claim-table.md:15:| The long-lived-agent runtime consumes the handoff packet. | `long_lived_agent_cycle_consumes_memory_palace_context_ref`; `decision_request.memory_refs`; `cycle_manifest.artifacts.memory_palace_context`. | One bounded long-lived-agent consumer path. |
+.csdlc/evidence/5007/proof-to-claim-table.md:16:| Negative and boundary behavior fails closed. | Focused runtime log shows missing citation hash, stale context, private path/temporal mismatch, overflow, deterministic packet, fixture handoff, and long-lived-agent tests passing. | MVP fail-closed validation; broader retrieval policy remains future work. |
+docs/adr/0058-memory-palace-context-handoff-architecture.md:3:- Status: Accepted
+docs/adr/0058-memory-palace-context-handoff-architecture.md:10:  - PR #5740, merged Memory Palace proof head `9719252262913351144a20adf0affb7ed4b5480d`
+docs/adr/0058-memory-palace-context-handoff-architecture.md:12:  - GitHub issue #4760 observed closed after PR #5740 merged
+docs/adr/0058-memory-palace-context-handoff-architecture.md:27:retrieval boundaries, negative behavior, and long-lived-agent runtime
+docs/adr/0058-memory-palace-context-handoff-architecture.md:39:between ObsMem-shaped memory records and the long-lived-agent runtime decision
+docs/adr/0058-memory-palace-context-handoff-architecture.md:51:- emitting `memory_palace_context.json` for the long-lived-agent cycle path and
+docs/adr/0058-memory-palace-context-handoff-architecture.md:54:ObsMem owns the underlying memory-record shape and citation/temporal-anchor
+docs/adr/0058-memory-palace-context-handoff-architecture.md:55:fields consumed by Memory Palace. Memory Palace does not replace ObsMem storage,
+docs/adr/0058-memory-palace-context-handoff-architecture.md:58:Chronosense owns temporal semantics and anchor validation. Memory Palace consumes
+docs/adr/0058-memory-palace-context-handoff-architecture.md:59:Chronosense-compatible effective times and continuity identifiers to reject stale
+docs/adr/0058-memory-palace-context-handoff-architecture.md:63:The long-lived-agent runtime owns cycle execution and artifact retention. Its
+docs/adr/0058-memory-palace-context-handoff-architecture.md:74:| Memory Palace consumes ObsMem-shaped records rather than replacing ObsMem. | `MemoryPalaceInput.records: Vec<MemoryRecord>`, citation validation, and fixture-driven tests. | ObsMem remains the record/citation substrate. |
+docs/adr/0058-memory-palace-context-handoff-architecture.md:75:| Chronosense-compatible continuity and temporal boundaries are enforced. | `MemoryTemporalAnchor` validation, `required_continuity_id`, stale/future temporal rejection, and focused negative tests. | Memory Palace consumes temporal anchors; it does not become the time authority. |
+docs/adr/0058-memory-palace-context-handoff-architecture.md:76:| Runtime handoff is consumed by the long-lived-agent path. | `long_lived_agent_cycle_consumes_memory_palace_context_ref`, `decision_request.memory_refs`, and `cycle_manifest.artifacts.memory_palace_context`. | The accepted path is one long-lived-agent cycle consumer hook, not a universal runtime migration. |
+docs/adr/0058-memory-palace-context-handoff-architecture.md:80:`.csdlc/evidence/5007/proof-to-claim-table.md`.
+docs/adr/0058-memory-palace-context-handoff-architecture.md:102:### Treat Memory Palace As ObsMem Storage
+docs/adr/0058-memory-palace-context-handoff-architecture.md:104:Rejected. The proof consumes ObsMem-shaped records and citations but does not
+docs/adr/0058-memory-palace-context-handoff-architecture.md:105:replace ObsMem as the durable memory substrate.
+docs/adr/0058-memory-palace-context-handoff-architecture.md:107:### Treat Memory Palace As Chronosense
+docs/adr/0058-memory-palace-context-handoff-architecture.md:122:- This ADR does not add new runtime code beyond the merged #4760 implementation.
+docs/adr/0058-memory-palace-context-handoff-architecture.md:123:- This ADR does not perform or claim typed C-SDLC closeout for #5007.
+docs/adr/0058-memory-palace-context-handoff-architecture.md:127:  handoff packet and long-lived-agent consumer path proven by #4760.

@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5788,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][tooling][lockfile] Prevent validation and binary installation from rewriting tracked Cargo.lock files",
+    "slug": "lockfile-preservation",
+    "version": "v0.91.8",
+    "generation": 8
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make repository-native owner builds and validation lock-preserving and current-target-only.",
+      "required_outcome": "Failed or successful owner build paths leave the caller's exact Cargo.lock state unchanged unless dependency mutation is explicitly requested.",
+      "declared_scope": [
+        "adl/tools/install_owner_binaries.sh",
+        "adl/tools/run_owner_validation_lane.sh",
+        "adl/tools/test_owner_binary_install.sh",
+        "adl/tools/test_owner_validation_lane.sh"
+      ],
+      "authority_boundary": [
+        "Issue #5788 owns only repository lock-preservation and current owner-binary inventory",
+        "No dependency upgrade or lockfile content change is authorized",
+        "No tracked work occurs on main"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 only",
+        "No tracked main edits",
+        "One pre-PR subagent review"
+      ]
+    }
+  }
+}

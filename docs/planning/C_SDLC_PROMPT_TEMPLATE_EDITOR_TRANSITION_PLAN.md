@@ -300,7 +300,7 @@ The transition succeeds when:
 - agents stop hand-rolling cards and instead fill template instances
 - humans can review cards through the browser editor without reading all
   generated Markdown by default
-- doctor, workflow-conductor, sprint-conductor, and editor skills agree about
+- typed doctor, sprint-conductor, and editor skills agree about
   card readiness
 - durable prompt records are tracked and inspectable
 - SRP/SOR truth feeds review, closeout, trace, and ObsMem without overclaiming

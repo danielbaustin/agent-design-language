@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5722,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][observatory] Harden trusted HTTPS and live controls",
+    "slug": "recordless-terminal-recovery-5722",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Retain exact observed closure after corrective PR #5760 merged with explicit #5722 closing linkage and green required runtime validation; do not reconstruct missing historical lifecycle state.",
+      "actual_changes": [
+        "Typed recordless terminal recovery projection only."
+      ],
+      "artifacts": [
+        ".csdlc/issues/5722/retained/design.md",
+        ".csdlc/issues/5722/retained/diagram.mmd"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "csdlc-github-pr",
+            "state",
+            "--request",
+            "5760-pr-state.json"
+          ],
+          "purpose": "Observe corrective PR #5760 exact merged head, closing linkage, and required runtime checks through the typed GitHub surface.",
+          "outcome": "passed",
+          "evidence_ref": "https://github.com/danielbaustin/agent-design-language/actions/runs/30690094020"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

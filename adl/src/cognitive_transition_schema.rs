@@ -185,9 +185,9 @@ pub fn wp02_cognitive_transition_manifest_valid_fixture() -> CognitiveTransition
                 responsibility: "approves scope and sprint progression".to_string(),
             },
             CognitiveTransitionActorRoleRef {
-                actor_id: "adl.workflow_conductor".to_string(),
+                actor_id: "csdlc.doctor".to_string(),
                 role: "lifecycle_router".to_string(),
-                responsibility: "routes lifecycle stage changes through bounded skills".to_string(),
+                responsibility: "reports typed lifecycle state for bounded operations".to_string(),
             },
             CognitiveTransitionActorRoleRef {
                 actor_id: "codex.issue_3200".to_string(),

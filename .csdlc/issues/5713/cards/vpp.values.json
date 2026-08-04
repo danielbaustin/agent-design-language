@@ -1,0 +1,131 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5713,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][tls] Add stable rcgen local TLS bootstrap",
+    "slug": "runtime-v3-rcgen-local-tls",
+    "version": "v0.91.8",
+    "generation": 14
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "runtime-v3-local-tls-focused",
+          "proof_role": "Prove rcgen local self-signed TLS bootstrap, reuse, replacement, and external preservation",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8",
+            "AC-9"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 5000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl-runtime/Cargo.toml",
+            "--test",
+            "local_tls"
+          ],
+          "parallel_group": "runtime-v3-local-tls",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-local-tls-fmt",
+          "proof_role": "Prove Runtime v3 kernel formatting stays clean",
+          "acceptance_ids": [
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 1000,
+          "argv": [
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "adl-runtime/Cargo.toml",
+            "--all",
+            "--check"
+          ],
+          "parallel_group": "runtime-v3-local-tls",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-local-tls-diff-check",
+          "proof_role": "Prove tracked text changes have clean whitespace",
+          "acceptance_ids": [
+            "AC-8",
+            "AC-10"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "runtime-v3-local-tls",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-local-tls-exact-review",
+          "proof_role": "Record one exact GPT-5.5 pre-PR review before ready publication",
+          "acceptance_ids": [
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "csdlc-review",
+            "record"
+          ],
+          "parallel_group": "runtime-v3-local-tls",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-local-tls-ready-publication",
+          "proof_role": "Publish one ready PR whose body closes issue #5713",
+          "acceptance_ids": [
+            "AC-10"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 1000,
+          "argv": [
+            "csdlc-publish",
+            "publish"
+          ],
+          "parallel_group": "runtime-v3-local-tls",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on claim collision, stale generation, implicit production local TLS, private-key leakage, failed focused proof, unavailable exact GPT-5.5 review, or stale/missing review before publication.",
+      "design_ref": ".csdlc/issues/5713/retained/design.md",
+      "design_digest": "d626e42ed3b513388440e66f1786d5249d021bea11a547050c3d152dd10f310d",
+      "diagram_ref": ".csdlc/issues/5713/retained/diagram.mmd",
+      "diagram_digest": "d7b04cc84f7bd1c53dbdbcc6e45b74368527a228dd07d227ffac9f8eff7fcc0a"
+    }
+  }
+}

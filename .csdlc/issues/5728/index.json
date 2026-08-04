@@ -1,0 +1,349 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5728,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "1f206dffb8c87f6c95e7c98a2838af5de859dc58673f4b6d662a69612ca25910",
+  "phase": "closed_out",
+  "generation": 7,
+  "digest": "b389473daa56458d1a69f295820b855cbcff553f2e0e51bf430ef2299846c35b",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "codex-subagent:closeout-missing-records",
+    "assigned_by": "codex-subagent:closeout-missing-records",
+    "revision": "git-blake3:f62e36f1a70cae3adee71c715a3f5456df08f917:71d9a622e06dbc0e8a560f8d8c25919573275e11f7f88593e88e4c91c0f511bf",
+    "scope": [
+      "docs/adr/0052-adl-v2-modular-execution-architecture.md",
+      "docs/adr/0053-portable-signed-records-and-external-trust.md",
+      "docs/adr/0054-runtime-v3-guardian-owned-kernel-and-api-boundary.md",
+      "docs/adr/0055-runtime-v3-unified-redb-state.md",
+      "docs/adr/0056-c-sdlc-v2-sole-lifecycle-authority.md",
+      "docs/adr/0057-reversible-adl-v2-default-and-rollback.md",
+      "docs/adr/README.md",
+      "docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-subagent:closeout-missing-records",
+    "scope": [
+      "docs/adr/0052-adl-v2-modular-execution-architecture.md",
+      "docs/adr/0053-portable-signed-records-and-external-trust.md",
+      "docs/adr/0054-runtime-v3-guardian-owned-kernel-and-api-boundary.md",
+      "docs/adr/0055-runtime-v3-unified-redb-state.md",
+      "docs/adr/0056-c-sdlc-v2-sole-lifecycle-authority.md",
+      "docs/adr/0057-reversible-adl-v2-default-and-rollback.md",
+      "docs/adr/README.md",
+      "docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md"
+    ],
+    "reviewed_revision": "git-blake3:f62e36f1a70cae3adee71c715a3f5456df08f917:71d9a622e06dbc0e8a560f8d8c25919573275e11f7f88593e88e4c91c0f511bf",
+    "findings": [],
+    "residual_risks": [
+      "The bounded recovery review verified the required ADR sections and exact final head after merge.",
+      "Memory Palace remains deferred under ADR 0051; no implementation claim is made by this documentation set."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5728,
+    "pull_request": 5729,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5729",
+    "base": "main",
+    "head": "codex/5728-v0918-adr-set",
+    "revision": "git-blake3:f62e36f1a70cae3adee71c715a3f5456df08f917:71d9a622e06dbc0e8a560f8d8c25919573275e11f7f88593e88e4c91c0f511bf",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5729,
+    "head_sha": "f62e36f1a70cae3adee71c715a3f5456df08f917",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226524542"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226622683"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226524619"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226525524"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226525154"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226525233"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226524764"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91225978868"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226525188"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226525304"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226525193"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226525007"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226525075"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226524891"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226525116"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30651618304/job/91226524815"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5729,
+    "disposition": "merged",
+    "observed_sha": "f62e36f1a70cae3adee71c715a3f5456df08f917",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5728.json",
+    "released_branch": "codex/5728-v0918-adr-set",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5728",
+      ".csdlc/locks/5728.lock",
+      ".csdlc/prepared/issues/5728"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5728/retained/design.md",
+  "diagram_path": ".csdlc/issues/5728/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-subagent:closeout-missing-records",
+      "revision": "e2b4bd34fc5f9d671ef95c54396d862cf36fc6ae280a14fe9abd0f8be33f18a8"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "6d93c92bc73efa4956f37ebad4603e126152e89d927c81566876046a5e980d3b",
+      "rendered_digest": "7076e380cdcd51e52bc73a917236ea90070a9970fa6bc1ed29f180add1c49910",
+      "ast_digest": "1d8089b317f4f3082d96c99ee68959dd2a764423edbb1b73c029d2f59ee28162"
+    },
+    "stp": {
+      "values_digest": "54da918f06b2198aed455d61ae398f211eef958f8485a69ae48ddee8713b5f3c",
+      "rendered_digest": "c18c7c6115427406f1a506939f853aa3bc320e0698102fe04f25d12443d4fa57",
+      "ast_digest": "0b66c99439a945786f8f44d1bd1bc7f3879c8ed577349513dad633756dc55b3a"
+    },
+    "spp": {
+      "values_digest": "c28c8ee095ac5158834df7e3f327ecf4e434433590943c523952830f1f563358",
+      "rendered_digest": "1ac3f8ed408548c428255843dd27009dabe3165051b0b1d86cdbd7a77130290b",
+      "ast_digest": "9f77ad6eb25e139f7fdd4b93235aee17124f20b94e0e095a485f00843c8ef022"
+    },
+    "vpp": {
+      "values_digest": "12a225099d8bc21e4884032fc6f01c9e72b2ea777445fc95e5f2a8f7ad552f10",
+      "rendered_digest": "b40614b4eef475606420239c925d52b57b907f3508cc3a53edde369b9b796c24",
+      "ast_digest": "f21ac4287b1187ead14ae3913aab3cf8c1bcdaa576c2ae744def8a27dab9200c"
+    },
+    "srp": {
+      "values_digest": "6e7ddfb6a4c635ac574802992d2186084426351b3e9aab6d4f71411ac518cdff",
+      "rendered_digest": "d3f1c1652a764380aa07c69779eb4c2bfd20b20fe0ace94dc807b24613c86259",
+      "ast_digest": "74c770843267e05e7031da72c816758259699a5e95f3a335ed552024a2ccd5b0"
+    },
+    "sor": {
+      "values_digest": "b1cc4b8b32dcf2fd1d07e75e4ccbe762a9c73238b4a8999fd7c49a70a128f2c1",
+      "rendered_digest": "96cd97f2ad4a8254c735da04d4896c4f083c5badf5cbaee49b5f6c062cd7b01d",
+      "ast_digest": "77a1dea1afc0c708314366128b98f2f6f7f15eb5eb5fd6b08a7d2d269bc81dc5"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "Bounded exact-head ADR review completed with no actionable findings and deferred-work non-claims preserved."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "Bounded exact-head ADR review completed with no actionable findings and deferred-work non-claims preserved.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex-subagent:closeout-missing-records",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize lane A's valid #5728 terminal receipt in the dedicated #5748 authority projection.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

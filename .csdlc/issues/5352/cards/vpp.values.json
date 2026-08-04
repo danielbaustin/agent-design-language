@@ -1,0 +1,89 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5352,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21][handoff] Finalize exact-revision v0.92 consumption handoff",
+    "slug": "v0918-wp21-v092-consumption-handoff",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "handoff-document-contract",
+          "proof_role": "Exact row-bound handoff contract",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5352/validate_handoff.rb",
+            "--final"
+          ],
+          "parallel_group": "wp21-focused",
+          "defer_reason": null
+        },
+        {
+          "lane": "dependency-ancestry",
+          "proof_role": "Recorded-baseline exact merge ancestry",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5352/validate_dependency_ancestry.rb",
+            "--final"
+          ],
+          "parallel_group": "wp21-focused",
+          "defer_reason": null
+        },
+        {
+          "lane": "implemented-packet",
+          "proof_role": "Current implemented lifecycle packet truth",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5352/validate_implemented.rb"
+          ],
+          "parallel_group": "wp21-focused",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on baseline drift, substituted row identity, missing ancestry, stale lifecycle proof, unresolved review findings, or out-of-scope publication.",
+      "design_ref": ".csdlc/issues/5352/retained/design.md",
+      "design_digest": "979d5962c723a24d585de30d4a05ffa704378445110598e9dfe22357deb58844",
+      "diagram_ref": ".csdlc/issues/5352/retained/diagram.mmd",
+      "diagram_digest": "e73fc95bfbe3027fee5c3881ffeca9bedb5cd23fac306cdec9f2f24970deb06a"
+    }
+  }
+}

@@ -1,0 +1,433 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5727,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "509845bfe734b0de7a7c7042e53facd5b5621f2de91962a4cf7b974b83a3388b",
+  "phase": "closed_out",
+  "generation": 16,
+  "digest": "6cc3f8c1c9eb64cd71ab6923b228aa210b0e7a17faf2259f9a940c6c4a0d1e0d",
+  "claim": null,
+  "review_assignment": null,
+  "review": {
+    "reviewer": "codex-subagent:/root/review_5727",
+    "scope": [
+      "csdlc-v2/src/bin/csdlc-bind.rs",
+      "csdlc-v2/src/doctor.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "reviewed_revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+    "findings": [
+      {
+        "id": "5727-review-p1-cross-worktree-reacquire",
+        "severity": "p1",
+        "summary": "Reacquisition initially used checkout-local collision authority.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+        "route": null
+      },
+      {
+        "id": "5727-review-p1-recover-bypass",
+        "severity": "p1",
+        "summary": "Expired recovery initially bypassed shared collision authority.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+        "route": null
+      },
+      {
+        "id": "5727-review-p1-wrong-checkout-recovery",
+        "severity": "p1",
+        "summary": "Expired recovery initially did not validate the actual checkout identity.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:8f74f48e75af861c517e6c8e67d1e4c9f6e6ff3d:ecf8559558a51c5f4cc0088ec66151963b29d245d5959192a1f9055db5a8aeaf",
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5727,
+    "pull_request": 5730,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5730",
+    "base": "main",
+    "head": "codex/5727-csdlc-claim-reacquire",
+    "revision": "git-blake3:693667d5e13e3b0ead95c935c796e696f629c104:92fdbaebe9013d4ebe24d7b596d480228b552598dc7d166672c1d38218be4651",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5730,
+    "head_sha": "693667d5e13e3b0ead95c935c796e696f629c104",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065902171"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065446801"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065414058"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065414310"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065414099"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065414212"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065414134"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065130273"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065414035"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065414172"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065414223"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065414165"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065414384"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065413697"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065414061"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30601513823/job/91065413714"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5730,
+    "disposition": "merged",
+    "observed_sha": "693667d5e13e3b0ead95c935c796e696f629c104",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5727.json",
+    "released_branch": "codex/5727-csdlc-claim-reacquire",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5727",
+      ".csdlc/locks/5727.lock",
+      ".csdlc/prepared/issues/5727",
+      "csdlc-v2/src/bin/csdlc-bind.rs",
+      "csdlc-v2/src/doctor.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs",
+      "csdlc-v2/tests/gate7_lifecycle.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5727/retained/design.md",
+  "diagram_path": ".csdlc/issues/5727/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5727-owner",
+      "revision": "8ffd654085218d958d779afc8dcd90d6ea629e3fe67444e5d58bd231017b8b6b"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "5f02a5c9b4527b8f42fc5a1d666b89710b67a7e7002ce78c05180b52d7a5cb4c",
+      "rendered_digest": "174f5e79b1b305dd7a6931b96915f11e767b72f561aa25ae3c22f9267e574213",
+      "ast_digest": "0a1a13d1a514ba58f90267a6985edea018115f7a9bae65531219474693e55272"
+    },
+    "stp": {
+      "values_digest": "2fe4e2f5a7deceee18c26609dcf32a7417e04d15cc072fb74d55a164d246bfb9",
+      "rendered_digest": "3cdc7a6a2a6d33869b4669e3393d5ff6ff719e2eb59ba9a05e430ad50c330fc8",
+      "ast_digest": "932c22e642456d4250c690c4dd0ea728658f7175a5de1a349150cd63292a4bdd"
+    },
+    "spp": {
+      "values_digest": "156eed396b3760c84b64b8a921e32c663754ab41d03207874a4b69b0fe4ccde9",
+      "rendered_digest": "59390b480d22b2b1246431f743039a8704f48a2c27383e5e63d24e4fb7949a3b",
+      "ast_digest": "0f97adda2295dd2d2ecac4520d7a5d8f489e692cd4a1eee166f69cb8c9c0c7df"
+    },
+    "vpp": {
+      "values_digest": "3b2baf5f7f208d6c0649e4c0d3d1f5cefa4802267a147e50acc7422e99999207",
+      "rendered_digest": "721e989e712e7f3dde760640a8cde5fa69172795492aae7a66979241e1a37dfb",
+      "ast_digest": "b73f03d001ccfe6ccc530a412658958b28de1deec8166bff67e6d69c8a549cb5"
+    },
+    "srp": {
+      "values_digest": "a2de7d1c4da0c90790104eaf695af12f0dbb4b99374bda124b0be352f478c15a",
+      "rendered_digest": "94d0a35f989c657a6e12f12ad54668b8ab7555382616687a1e441f76f4267b39",
+      "ast_digest": "649dfa7531c0efd0fb34b2de3195d1541539a95870b6233eb482e75740a217ef"
+    },
+    "sor": {
+      "values_digest": "8dd542f7f468f15dc4b70bd215a26745dbfea97ef89dc1fe11688e5db4b4ae8f",
+      "rendered_digest": "1b7f1c19b2c7e6384a919c6b5241885d947280a3e85ad497eb0065af1208648e",
+      "ast_digest": "07cefaea83253b332ebe566c2514fccfb5f9d04b150bed32bfac7c3fa30a567d"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5727-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5727-owner",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5727-owner",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5727-owner",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5727-owner",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5727-owner",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5727-owner",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5727-owner",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5727-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5727-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5727-owner",
+      "reason": "Include the public export, schema, and doctor surfaces required by the accepted typed reacquisition contract",
+      "operation": "{\"add_protected_paths\":[\"csdlc-v2/src/doctor.rs\",\"csdlc-v2/src/lib.rs\",\"csdlc-v2/src/schema.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5727-owner",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5727-owner",
+      "reason": "Record the bounded fix for the independent P1 cross-worktree collision finding.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented typed safe claim reacquisition with Git-common serialization and repository-wide worktree collision authority.\",\"changes\":[\"Moved claim collision serialization to a Git-common lock shared by every worktree.\",\"Made collision checks inspect canonical issue records across all registered worktrees.\",\"Added a concurrent two-worktree regression proving only one overlapping writer can reacquire.\"],\"artifacts\":[\".csdlc/evidence/5727/gate2.log\",\".csdlc/evidence/5727/gate7.log\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5727-owner",
+      "reason": "Record current Gate 2 proof after the cross-worktree collision fix.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\"],\"purpose\":\"Prove typed lifecycle, reacquisition, shared cross-worktree exclusion, schema, CAS, collision, and CLI behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/gate2.log\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5727-owner",
+      "reason": "Record current Gate 7 lifecycle integration proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate7_lifecycle\"],\"purpose\":\"Prove lifecycle integration and worktree binding behavior remain intact.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/gate7.log\"}}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5727-owner",
+      "reason": "Record current warning-free Rust proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Prove changed Rust surfaces are warning-free across all targets.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/clippy.log\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5727-owner",
+      "reason": "Record current canonical Rust formatting proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"fmt\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all\",\"--\",\"--check\"],\"purpose\":\"Prove Rust formatting is canonical.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/fmt.log\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5727-owner",
+      "reason": "Record the bounded fix for the remaining expired-recovery review finding.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented typed safe claim replacement with one Git-common collision authority across reacquisition and expired recovery.\",\"changes\":[\"Routed legacy expired-claim recovery through the Git-common lock and cross-worktree live-claim inventory.\",\"Required expired recovery to preserve its existing branch/worktree binding and validate complete replacement scope.\",\"Added concurrent two-worktree recovery proof that only one overlapping writer can be established.\"],\"artifacts\":[\".csdlc/evidence/5727/gate2.log\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5727-owner",
+      "reason": "Record final Gate 2 proof covering every claim replacement route.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\"],\"purpose\":\"Prove every typed claim replacement route shares cross-worktree exclusion, schema, CAS, collision, and CLI behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/gate2.log\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:5727-owner",
+      "reason": "Record the final active-checkout recovery guard from independent review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented typed safe claim replacement with actual-checkout and cross-worktree exclusivity.\",\"changes\":[\"Unified actual branch/worktree validation for reacquisition and expired recovery.\",\"Prevented recovery through stale same-issue records in main or unrelated worktrees.\",\"Added a wrong-root fail-closed regression before positive expired recovery.\"],\"artifacts\":[\".csdlc/evidence/5727/gate2.log\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:5727-owner",
+      "reason": "Record final Gate 2 proof for actual-checkout and cross-worktree claim exclusivity.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/usr/bin/env\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\"],\"purpose\":\"Prove every claim replacement route enforces active-checkout and cross-worktree exclusion, schema, CAS, collision, and CLI behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5727/gate2.log\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:5727-owner",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:5727-owner",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex:5727-owner",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 17,
+      "generation": 14,
+      "actor": "codex:5727-owner",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 18,
+      "generation": 15,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 19,
+      "generation": 16,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

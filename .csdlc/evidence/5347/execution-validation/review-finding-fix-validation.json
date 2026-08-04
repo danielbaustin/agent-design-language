@@ -1,0 +1,53 @@
+{
+  "schema": "adl.csdlc.review_finding_fix_validation.v1",
+  "issue": 5347,
+  "base_substantive_head": "215563f4af520eb72f9aa8708ac567cdf23a0c8a",
+  "scope": "Direct GPT-5.5 pre-PR findings against surviving stale references to #5347-deleted obsolete external demo/proof binaries.",
+  "typed_claim_amendments": [
+    ".csdlc/prepared/issues/5347/amend-review-finding-scope.json",
+    ".csdlc/prepared/issues/5347/amend-review-finding-live-reference-scope.json",
+    ".csdlc/prepared/issues/5347/amend-review-finding-library-validation-scope.json"
+  ],
+  "validations": [
+    {
+      "command": "ruby .csdlc/prepared/issues/5347/run-validation-lane.rb validate-contracts",
+      "outcome": "passed",
+      "notes": "Manifest, deletion, #5346 coordination, accounting, and deleted-binary live-reference scan passed without compiling."
+    },
+    {
+      "command": "ruby .csdlc/prepared/issues/5347/run-validation-lane.rb execution",
+      "outcome": "passed",
+      "notes": "Execution lane passed, including cargo test --manifest-path adl/Cargo.toml --test demo_tests --no-run and surviving integration-test compilation through cargo test --manifest-path adl/Cargo.toml --tests --no-run."
+    },
+    {
+      "command": "TMPDIR=/Volumes/FastWork/adl-wp-5347/adl/target/tmp bash adl/tools/test_run_pr_fast_test_lane.sh",
+      "outcome": "passed"
+    },
+    {
+      "command": "TMPDIR=/Volumes/FastWork/adl-wp-5347/adl/target/tmp bash adl/tools/test_check_coverage_impact.sh",
+      "outcome": "passed"
+    },
+    {
+      "command": "TMPDIR=/Volumes/FastWork/adl-wp-5347/adl/target/tmp bash adl/tools/test_select_validation_lanes.sh",
+      "outcome": "passed"
+    },
+    {
+      "command": "TMPDIR=/Volumes/FastWork/adl-wp-5347/adl/target/tmp bash adl/tools/test_wp17a_demo_follow_ons.sh",
+      "outcome": "passed"
+    },
+    {
+      "command": "git diff --check",
+      "outcome": "passed"
+    }
+  ],
+  "accounting": {
+    "original_external_band_net_removed_lines": 1476,
+    "review_cleanup_net_removed_lines": 825,
+    "validation_lane_net_added_lines": 131,
+    "review_cleanup_total_net_removed_lines_including_validation_lane": 694
+  },
+  "non_claims": [
+    "No #5346-owned path was edited.",
+    "No PR publication is claimed before direct GPT-5.5 rereview."
+  ]
+}

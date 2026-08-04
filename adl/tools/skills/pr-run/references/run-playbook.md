@@ -53,9 +53,8 @@ Default stance:
 - stop on a blocked preflight gate unless the caller explicitly wants to run under override
 
 Preferred diagnostic order:
-1. `adl/tools/pr.sh doctor --json`
-2. `adl/tools/pr.sh ready`
-3. `adl/tools/pr.sh preflight`
+1. `csdlc-doctor --repo <repo> --issue <issue>`
+2. `csdlc-bind --root <worktree> --request <bind-request.json>`
 
 ## Binding Checklist
 

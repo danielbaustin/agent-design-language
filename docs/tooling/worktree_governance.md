@@ -93,8 +93,10 @@ The pruning flow is intentionally conservative:
 - it prunes stale git worktree registrations
 - it does not silently delete orphan directories, dirty worktrees, Codex-ephemeral worktrees, legacy external clones, or repo-local scratch directories unless those broader scopes are explicitly requested
 
-## Interaction with `pr.sh`
+## Interaction with typed C-SDLC v2 binding
 
-`pr.sh start` should create managed execution clones in the canonical namespace under `.worktrees/`.
+`csdlc-bind` creates or confirms managed execution worktrees in the canonical
+namespace under `.worktrees/` from a typed bind request.
 
-If the repository is being exercised in a temporary test checkout outside the normal namespace, `pr.sh` may still fall back to an explicit `ADL_WORKTREE_ROOT` override so tests remain hermetic.
+Temporary test checkouts should use explicit typed fixtures so binding tests
+remain hermetic without reviving a v1 wrapper route.

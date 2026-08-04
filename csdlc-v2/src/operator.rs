@@ -14,6 +14,8 @@ pub struct SkillManifest {
     pub schema: String,
     pub generation: String,
     pub generation_selector: String,
+    #[serde(default)]
+    pub operational_binaries: Vec<String>,
     pub skills: Vec<SkillRoute>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -80,11 +82,11 @@ impl SkillManifest {
         if self.schema != "csdlc.operator_skills.v1"
             || self.generation != "v2"
             || self.generation_selector != "csdlc-v2/operator/generation-selector.json"
-            || self.skills.len() != 9
+            || self.skills.len() != 11
         {
             return Err(V2Error::new(
                 ErrorCode::InvalidManifest,
-                "operator manifest must declare nine v2 skills bound to the tracked generation selector",
+                "operator manifest must declare eleven v2 skills bound to the tracked generation selector",
             ));
         }
         let mut names = BTreeSet::new();
@@ -108,6 +110,14 @@ impl SkillManifest {
                 }
             }
         }
+        for binary in &self.operational_binaries {
+            if !binary.starts_with("csdlc-") || binary.contains('/') {
+                return Err(V2Error::new(
+                    ErrorCode::InvalidManifest,
+                    "all operational executables must be simple typed C-SDLC binary names",
+                ));
+            }
+        }
         Ok(())
     }
 
@@ -118,6 +128,7 @@ impl SkillManifest {
                 std::iter::once(route.binary.as_str())
                     .chain(route.auxiliary_binaries.iter().map(String::as_str))
             })
+            .chain(self.operational_binaries.iter().map(String::as_str))
             .collect()
     }
 
@@ -312,10 +323,10 @@ pub fn build_and_install_binaries(repo: &Path, destination: &Path) -> Result<Ins
         ));
     }
     let before = crate::git::run(repo, &["rev-parse", "HEAD"])?;
-    if !csdlc_sources_are_clean(repo)? {
+    if !owner_binary_sources_are_clean(repo)? {
         return Err(V2Error::new(
             ErrorCode::ValidationFailed,
-            "refusing to stamp owner binaries from dirty csdlc-v2 sources",
+            "refusing to stamp owner binaries from dirty C-SDLC owner sources",
         ));
     }
     if destination.is_dir() {
@@ -346,10 +357,10 @@ pub fn build_and_install_binaries(repo: &Path, destination: &Path) -> Result<Ins
         ));
     }
     let after = crate::git::run(repo, &["rev-parse", "HEAD"])?;
-    if before.stdout != after.stdout || !csdlc_sources_are_clean(repo)? {
+    if before.stdout != after.stdout || !owner_binary_sources_are_clean(repo)? {
         return Err(V2Error::new(
             ErrorCode::ValidationFailed,
-            "csdlc-v2 source revision changed or became dirty during the build",
+            "C-SDLC owner source revision changed or became dirty during the build",
         ));
     }
     install_binaries_with_revision(
@@ -401,7 +412,7 @@ pub fn validate_external_cargo_target(repo: &Path, target: &Path) -> Result<Path
     Ok(canonical_target)
 }
 
-fn csdlc_sources_are_clean(repo: &Path) -> Result<bool> {
+fn owner_binary_sources_are_clean(repo: &Path) -> Result<bool> {
     let status = crate::git::run(
         repo,
         &[
@@ -410,6 +421,7 @@ fn csdlc_sources_are_clean(repo: &Path) -> Result<bool> {
             "--untracked-files=all",
             "--",
             "csdlc-v2",
+            "adl-resilience",
         ],
     )?;
     Ok(status.stdout.trim().is_empty())

@@ -39,7 +39,7 @@ Use `records-hygiene` when:
 Do not use this skill for:
 
 - speculative issue edits without any bounded target
-- broad workflow orchestration that should stay with `workflow-conductor`
+- broad workflow orchestration that should stay with typed v2 lifecycle binaries
 - broad one-off documentation cleanup outside the bound task bundle
 - open-ended truth inference that requires human arbitration
 

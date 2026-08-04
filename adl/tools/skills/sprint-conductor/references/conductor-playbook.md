@@ -62,7 +62,7 @@ Optional:
      time
    - in `hybrid`, use the SEP to identify ready lane work until a named serial
      gate blocks progress
-7. Route the selected child issue or lane handoff through `workflow-conductor`.
+7. Route the selected child issue through `csdlc-doctor`, then the typed binary selected by current phase.
 8. When the route starts or resumes live child execution, attach the
    issue-bound session-goal requirement in the same handoff:
    - create the goal after bind/readiness succeeds and before implementation
@@ -142,7 +142,7 @@ Preferred ordinary issue artifact helper:
 
 ## Editor-Skill Rule
 
-If `workflow-conductor` selects:
+If typed v2 readiness selects:
 - `stp-editor`
 - `sip-editor`
 - `spp-editor`

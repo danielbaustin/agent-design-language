@@ -1,0 +1,15 @@
+{
+  "issue": 5351,
+  "expected_generation": 3,
+  "expected_digest": "595a3c431f5c120db436b91003e831b9273fe1d8654b9b5609f0a3981e18180e",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "expected_owner": "codex:5351-preparation-owner",
+  "expected_purpose": "Prepare and review #5351 WP-16 integrated platform quality-gate contracts only; no execution or product work until WP-15 #5354 is typed closed_out, receipt-backed, claim-free, and ancestral",
+  "actor": "codex:5351-wp16-execution-owner",
+  "reason": "WP-15 is merged, closed_out, receipt-backed, claim-free, and ancestral; execute the operator-authorized WP-16 integrated quality gate without widening beyond issue-local quality evidence.",
+  "now_unix_seconds": 1785574163,
+  "purpose": "Execute #5351 WP-16 integrated platform quality gate, retain issue-by-issue outcome truth and focused/integrated exact-revision evidence, route genuine blockers, and publish a reviewed issue-local quality packet; no product implementation changes.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/evidence/wp16"
+  ]
+}

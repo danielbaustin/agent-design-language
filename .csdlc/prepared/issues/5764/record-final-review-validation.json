@@ -1,0 +1,23 @@
+{
+  "issue": 5764,
+  "card": "sor",
+  "expected_generation": 12,
+  "expected_digest": "8f7e51c8788b3cfc892bdcdc2bd7892f012a6d28c5ea95e7569b46816bdc0b87",
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Record focused validation for exact-head review fixes.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test openapi_contract openapi_paths_match_current_runtime_v3_axum_route_inventory",
+        "python3 -m json.tool docs/api/runtime-v3/v1/openapi.json >/dev/null",
+        "node --check demos/html-observatory/app.js",
+        "git diff --check origin/main...HEAD"
+      ],
+      "purpose": "Prove the Runtime v3 /v1/ready preflight route is documented in the OpenAPI inventory, OpenAPI JSON remains parseable, Observatory JavaScript remains parseable, and the exact diff has no whitespace errors.",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork terminal output: openapi route inventory regression passed; python3 json.tool, node --check, and git diff --check passed"
+    }
+  }
+}

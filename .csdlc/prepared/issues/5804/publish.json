@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5804,
+  "expected_generation": 9,
+  "expected_digest": "734a22b94c2a2cff424ab08f65388e51c51f825d9f98a4d69a4968844931eda8",
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5804-v0918-external-review-doc-readiness",
+  "title": "[v0.91.8][docs] Repair external-review packet readiness",
+  "body": "Closes #5804\n\n## Summary\n- replaces placeholder handoff guidance with concrete source, test, and evidence entrypoints\n- refreshes current issue, parity, demo, activation, and 122-row feature-crosswalk truth\n- removes machine-local paths from reusable review commands\n- releases the obsolete #5357 docs-repair claim while leaving WP-19 open for the actual external review\n\n## Validation\n- typed C-SDLC v2 validation: review-corpus-contract, wp19-dependency-contract, and diff-hygiene passed\n- exact 75-document Markdown/YAML/JSON corpus validation passed\n- all 55 implementation-manifest repository paths exist\n- all local links and the 122-row feature crosswalk passed\n- live GitHub open v0.91.8 issue inventory matched the handoff\n\n## Review\n- GPT-5.5 exact-revision review at git-blake3:5304aa6dd250e8b375349508e794fcde83611d33:85297d653c503f51bc8ee879444c0f98b5c520d0fc3800c2982cb7037170cf2c\n- three findings fixed; final rereview PASS with zero blockers\n\nWP-19 issue #5357 remains open and owns the actual independent external review. This PR performs only the prerequisite packet repair.",
+  "draft": false,
+  "token_file": null
+}

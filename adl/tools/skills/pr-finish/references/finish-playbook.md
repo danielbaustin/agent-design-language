@@ -15,7 +15,7 @@ explicit closure settles and `pr-closeout` can run truthfully.
 - resolve the target issue/branch/worktree
 - confirm the output record is present and no longer a bootstrap stub
 - confirm the staged paths are explicit and issue-scoped
-- prefer `adl/tools/pr.sh finish`
+- use typed `csdlc-validate`, `csdlc-review`, and `csdlc-publish` requests
 - record exactly what validation ran
 - record the shepherding handoff rather than treating draft PR publication as a
   natural stop state

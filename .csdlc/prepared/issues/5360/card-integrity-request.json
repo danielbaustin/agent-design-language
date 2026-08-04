@@ -1,0 +1,33 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "current-registry-card-integrity",
+        "proof_role": "post_approval_pre_bind_typed_card_projection_integrity",
+        "purpose": "After typed design approval and before bind, verify all six owner-generated card pairs against active native registry shape and require typed doctor to report no finding.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 2000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "pre_approval",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5360/validate-card-integrity.rb"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["current-registry-card-integrity"],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {"max_parallel": 1, "cpu_units": 1, "memory_mib": 128, "tokens": 2000},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5360/card-integrity",
+  "cancellation_file": null
+}

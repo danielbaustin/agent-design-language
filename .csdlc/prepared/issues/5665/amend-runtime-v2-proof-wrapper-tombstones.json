@@ -1,0 +1,15 @@
+{
+  "issue": 5665,
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "expected_generation": 8,
+  "expected_digest": "0609f1f204c98669a8cb7ed7cba780d601c743bd351e7249e79a04610bfd8712",
+  "now_unix_seconds": 1784936021,
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "retire obsolete Runtime v2 retained-proof generator wrappers after #5665 replaces URL/fixture/degraded WSS evidence with real Runtime v3 API WSS proof",
+  "add_protected_paths": [
+    "adl/src/bin/run_v0916_acip_aee_memory_integration.rs",
+    "adl/src/bin/run_v0916_integrated_runtime_soak.rs",
+    "adl/src/bin/run_v0916_runtime_failure_injection.rs",
+    "adl/src/bin/run_v0917_integrated_resilience_failure_injection.rs"
+  ]
+}

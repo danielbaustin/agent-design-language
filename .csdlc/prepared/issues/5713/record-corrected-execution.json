@@ -1,0 +1,28 @@
+{
+  "issue": 5713,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "cc2b1c958ce07eb49ab23e9fc469030e37792ac93c70325afe4f483826f4a4da",
+  "claim_id": "claim-5713-runtime-v3-rcgen-local-tls",
+  "actor": "codex:5713-review-remediation",
+  "reason": "Refresh exact implementation truth after the bounded TLS review fixes.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented stable state-root-scoped rcgen local TLS identity reuse, generation-manifest replacement, SAN validation, crash-releasing advisory locking, structured bootstrap failures, lifecycle-soak integration, and restrictive private-key handling on Unix and native Windows.",
+    "changes": [
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/Cargo.lock",
+      "adl-runtime/src/lib.rs",
+      "adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs",
+      "adl-runtime/src/bin/adl-runtime-lifecycle-soak.rs",
+      "adl-runtime/src/local_tls.rs",
+      "adl-runtime/tests/local_tls.rs",
+      "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md"
+    ],
+    "artifacts": [
+      ".csdlc/evidence/5713/local-tls-validation.md",
+      ".csdlc/evidence/5713/runtime-v3-local-tls-focused.log"
+    ]
+  },
+  "fail_after_backup": false
+}

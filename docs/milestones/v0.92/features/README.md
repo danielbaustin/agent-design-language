@@ -43,9 +43,14 @@ scope, validation, risks, and future-work boundary.
 ## Overview
 
 The package covers birthday, identity/continuity, memory/capability/witnesses,
-ACP/cognitive profiles, ACIP binary/schema-catalog transport readiness,
-cross-polis continuity planning, and the first-birthday demo/governance
-handoff.
+ACP/cognitive profiles, Adaptive Learning DAG planning, ACIP
+binary/schema-catalog transport readiness, cross-polis continuity planning, and
+the first-birthday demo/governance handoff.
+
+The tracked external-launch surface under `../external_launch/` supplies
+claim-bounded public copy, reviewer FAQ, and publication-gate language for
+WP-14 without asserting that the birthday event or publication approval is
+complete.
 
 ## Design
 
@@ -70,6 +75,7 @@ The package must not claim implementation completion before v0.92 work lands.
 - [../README.md](../README.md)
 - [../WBS_v0.92.md](../WBS_v0.92.md)
 - [../WP_ISSUE_WAVE_v0.92.yaml](../WP_ISSUE_WAVE_v0.92.yaml)
+- [../external_launch/README.md](../external_launch/README.md)
 - `#3377`
 - [../../v0.91.5/V092_ACTIVATION_TEST_MAP_v0.91.5.md](../../v0.91.5/V092_ACTIVATION_TEST_MAP_v0.91.5.md)
 
@@ -102,6 +108,7 @@ visible as launch-readiness sources.
 ## Feature Documents
 
 - [ACP_COGNITIVE_PROFILES_v0.92.md](ACP_COGNITIVE_PROFILES_v0.92.md)
+- [ADAPTIVE_LEARNING_DAG_v0.92.md](ADAPTIVE_LEARNING_DAG_v0.92.md)
 - [ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md](ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md)
 - [CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md](CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md)
 - [FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md](FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md)
@@ -119,6 +126,7 @@ visible as launch-readiness sources.
 | WP-05, WP-06, WP-09 | [MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md](MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md) |
 | WP-05, WP-10, WP-16 | [MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md](MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md) |
 | WP-07 | [ACP_COGNITIVE_PROFILES_v0.92.md](ACP_COGNITIVE_PROFILES_v0.92.md) |
+| WP-07A | [ADAPTIVE_LEARNING_DAG_v0.92.md](ADAPTIVE_LEARNING_DAG_v0.92.md) |
 | WP-08 | [ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md](ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md) |
 | WP-11 | [CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md](CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md) |
 | WP-12, WP-13, WP-14 | [FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md](FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md) |

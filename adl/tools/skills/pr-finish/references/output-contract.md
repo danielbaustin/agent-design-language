@@ -31,7 +31,7 @@ handoff_state:
   lifecycle_shepherd:
     active: true | false
     state: pre_run | execution_bound | publication_ready | pr_waiting | janitor_active | merged_needs_closeout | closed_no_pr | settled | blocked
-    owner_skill: workflow-conductor | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | human_review | none
+    owner_skill: pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | human_review | none
     next_skill: pr-init | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | human_review | none
     closeout_required: true | false
     authority_boundary:

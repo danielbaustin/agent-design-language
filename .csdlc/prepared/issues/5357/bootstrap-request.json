@@ -1,0 +1,148 @@
+{
+  "issue": 5357,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5357/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5357/diagram.mmd",
+  "design_reviewer": "pending:bounded-preparation-review",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5357-v0918-wp19-external-review-preparation",
+    "owner": "codex:5357-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784669355,
+    "expires_unix_seconds": 1785274155,
+    "heartbeat_unix_seconds": 1784669355,
+    "branch": "codex/5357-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5357",
+      ".csdlc/locks/5357.lock",
+      ".csdlc/prepared/issues/5357",
+      ".csdlc/evidence/5357"
+    ],
+    "purpose": "Prepare and review #5357 WP-19 external-review contracts only; do not dispatch review or modify the canonical handoff; no execution until WP-18 #5356 is merged, typed closed_out, claim-free, receipt-backed, and ancestral"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-19] Run independent external milestone review",
+    "slug": "v0918-wp19-independent-external-review",
+    "version": "v0.91.8",
+    "goal": "Prepare and later run an independent exact-revision external review after WP-18 is terminal, using the canonical v0.91.8 third-party-review handoff without renaming or rewriting it.",
+    "required_outcome": "A future immutable exact-revision corpus and dispatch receipt produce findings-first external review output whose evidence, inference, and author-decision content is explicitly separated and safely routable into typed remediation.",
+    "declared_scope": [
+      "issue-local typed lifecycle, preparation, validation, review, and evidence records",
+      "future read-only exact-revision corpus manifest and content digest derived from the canonical handoff and landed implementation/proof surfaces",
+      "future dispatch receipt binding reviewer identity, independence statement, prompt digest, corpus digest, target revision, timing, provider outcome, and output digest",
+      "future findings-first review artifact and typed synthesis without automatic issue creation",
+      "future exact review, publication, serialized merge, post-merge validation, and closeout"
+    ],
+    "authority_boundary": [
+      "Preparation protects only four exact #5357 issue-local lifecycle and evidence paths and does not edit the canonical handoff",
+      "WP-18 #5356 owns internal milestone review and must be terminal before external dispatch",
+      "The external reviewer is a read-only evidence producer and cannot mutate lifecycle state, approve release, create scope, merge, close, or publish",
+      "Reviewer identity is not equivalent to independence; dispatch records who selected the corpus, prompt, provider, model, and process",
+      "External findings are evidence inputs until internally synthesized and dispositioned through typed C-SDLC v2"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries and the current-registry native six-card projection only",
+      "Keep root main untouched; all tracked preparation stays in the dedicated /Volumes/FastWork #5357 worktree",
+      "Preparation only: no external review dispatch, product or canonical-handoff edit, PR, publication, merge, closeout, Runtime v2, AWS, raw gh, credentials, paid service, or hidden network authority",
+      "Do not execute until #5356 is merged, typed closed_out, claim-free, retained-receipt-backed, and its observed merge SHA is ancestral to the exact #5357 execution revision",
+      "Reuse docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md under its canonical filename without attaching an issue number or rewriting it during preparation",
+      "Retain repository-relative, publication-safe evidence only; exclude secrets, private prompts, raw credentials, host paths, unredacted provider output, and local scratch roots",
+      "Run bounded preparation review, fix every actionable finding, typed design approval, validate, bind, doctor, commit and push, then stop"
+    ],
+    "task_boundary": "Prepare six cards, reviewed design/diagram, exact WP-18 dependency gate, immutable corpus and dispatch contracts, reviewer identity/independence boundary, findings schema, budgets, PVF, rollback, and redaction rules; do not send the review or edit product/shared documents.",
+    "deliverables": [
+      "all six current-registry issue-specific typed cards",
+      "reviewed external-review preparation design and Mermaid diagram",
+      "exact preparation-only protected paths and executable WP-18 terminal gate",
+      "immutable exact-revision corpus-manifest and dispatch-receipt templates with fail-closed validators",
+      "reviewer identity, independence, authority, and conflict-disclosure contract",
+      "findings-first output schema separating observed evidence, inference, residual risk, and open author decisions",
+      "COTS, LoC, assertion, time, token, PVF, no-deferral, rollback, and publication/redaction boundaries",
+      "bounded preparation review with all actionable findings fixed"
+    ],
+    "acceptance_criteria": [
+      "AC-1: No external dispatch starts until #5356 is GitHub merged, typed closed_out, claim-free, backed by a retained merged terminal receipt, and its observed merge SHA is ancestral to the exact #5357 execution revision",
+      "AC-2: The canonical handoff remains at docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md and is consumed without issue-number renaming or preparation-time rewrite",
+      "AC-3: The future corpus manifest binds sorted tracked mode, type, hash, and repository-relative path records plus target/base/head identities; any missing, untracked, changed, duplicate, self-referential, or non-ancestral input fails closed",
+      "AC-4: The future dispatch receipt binds corpus digest, handoff digest, exact prompt digest, reviewer/provider/model identity, independence and conflict disclosures, dispatch and completion times, outcome, and output digest without granting reviewer authority",
+      "AC-5: Review output is findings-first in P0-P3 order and separately labels observed evidence, inference, residual risk, and open author decisions with exact file/line or issue/PR support",
+      "AC-6: Secrets, private prompts, credentials, raw provider payloads, host paths, local scratch roots, personal data, and unverifiable external assertions are excluded or redacted; redaction never changes finding meaning silently",
+      "AC-7: Preparation changes zero product/shared-document files and adds no dependency; issue-local authored preparation remains within 1800 nonblank lines, 500 per module, fewer than 160 assertions, and 120/300/900-second lane budgets unless exactly reviewed",
+      "AC-8: Required dependency, corpus, dispatch, output-schema, redaction, complete, exact-review, CI, authorized serialized merge, post-merge, and typed-closeout gates pass without deferral or substitution before WP-20 receives findings"
+    ],
+    "dependencies": [
+      "WP-18 #5356 merged, typed closed_out, claim-free, retained-receipt-backed, and ancestral to the exact #5357 execution revision"
+    ],
+    "repo_inputs": [
+      "AGENTS.md",
+      "GitHub issues #5357 and #5356",
+      "docs/templates/prompts/current.json",
+      "csdlc-v2/operator/generation-selector.json",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/SPRINT_v0.91.8.md",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "future retained #5356 terminal receipt and internal-review register"
+    ],
+    "non_goals": [
+      "WP-18 internal review, WP-20 remediation, release approval, deployment, release ceremony, or v0.92 activation",
+      "product, runtime, provider, CI, infrastructure, canonical planning, or canonical handoff modification during preparation",
+      "external review dispatch, model call, paid provider use, credential access, or reviewer selection during preparation",
+      "automatic issue creation, finding acceptance, remediation authority, release approval, or lifecycle mutation by the reviewer",
+      "Runtime v2 use or edits, AWS, raw gh, hidden network authority, hard-coded addresses, private transcript retention, PR, publication, merge, or closeout during preparation"
+    ],
+    "plan_summary": "Render and validate six cards; freeze exact #5356 terminal gating, issue-local ownership, canonical handoff identity, corpus/receipt schemas, reviewer boundaries, findings synthesis, COTS, budgets, PVF, redaction and rollback; obtain bounded review and fixes; typed approve/bind/doctor; commit and push preparation only.",
+    "steps": [
+      {"id":"S1","action":"Complete six cards, design, diagram, exact paths, dependency gate, corpus and dispatch templates, COTS, budgets, PVF, bounded review and fixes, typed approval/bind/doctor, commit and push preparation","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"status":"in_progress"},
+      {"id":"S2","action":"Wait fail-closed until #5356 is merged, typed closed_out, claim-free, receipt-backed, and ancestral","acceptance_ids":["AC-1"],"status":"pending"},
+      {"id":"S3","action":"Freeze exact landed corpus, run redaction and dispatch preflight, obtain operator-selected independent reviewer, dispatch once, and retain immutable receipt and findings-first result","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-6","AC-7"],"status":"pending"},
+      {"id":"S4","action":"Synthesize findings through typed review, publish exact evidence, shepherd green CI and authorized serialized merge, run post-merge proof, close out, and release WP-20","acceptance_ids":["AC-5","AC-6","AC-8"],"status":"pending"}
+    ],
+    "invariants": [
+      "preparation owns only four exact #5357 issue-local lifecycle and evidence paths",
+      "the canonical handoff filename and content remain unchanged during preparation",
+      "no dispatch occurs before complete #5356 terminal proof and exact corpus freeze",
+      "reviewer identity, process independence, evidence, inference, and author decisions remain distinct",
+      "review output cannot mutate lifecycle state or approve release",
+      "Runtime v2, AWS, credentials, host paths, private prompts, product changes, shared-document changes, and new dependencies are forbidden during preparation"
+    ],
+    "risks": [
+      "a model selected and prompted by the project could be mislabeled independent",
+      "corpus or implementation proof could drift after dispatch",
+      "a self-hashing or mutable receipt could make review identity unverifiable",
+      "reviewer assertions could be mistaken for observed code evidence",
+      "redaction could remove context or leak sensitive data",
+      "findings could trigger scope sprawl or one-issue-per-finding churn"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "#5356 lacks merge, typed closed_out, claim release, retained receipt, or ancestry",
+      "the canonical handoff is renamed, rewritten during preparation, stale, or not at its canonical path",
+      "corpus or receipt identity is mutable, incomplete, self-referential, non-reproducible, or contains untracked/host-local inputs",
+      "reviewer identity, independence, conflict, prompt, model/provider, timing, outcome, or output digest cannot be retained truthfully",
+      "retained evidence contains secrets, private prompts, credentials, host paths, raw provider payloads, or personal data",
+      "a required proof is deferred, review is stale, scope collides, budget is exceeded without exact review, or product/shared-document work is required"
+    ],
+    "validation_lanes": [
+      {"lane":"preparation-contract","proof_role":"Prove six cards, reviewed design/diagram, canonical handoff identity, exact preparation scope, schemas, budgets, PVF, zero product/shared-document changes, and typed doctor truth","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":4000,"argv":["ruby",".csdlc/prepared/issues/5357/validate-preparation.rb"],"parallel_group":"preparation","defer_reason":null},
+      {"lane":"wp18-terminal-gate","proof_role":"Fail closed until #5356 is merged, typed closed_out, claim-free, receipt-backed, and ancestral","acceptance_ids":["AC-1"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":2000,"argv":["ruby",".csdlc/prepared/issues/5357/check-dependencies.rb"],"parallel_group":"execution-gate","defer_reason":"Mandatory before corpus freeze or dispatch; expected to fail while WP-18 is nonterminal"},
+      {"lane":"corpus-dispatch-preflight","proof_role":"Build and verify immutable exact-revision corpus and dispatch receipt while enforcing identity, independence, redaction, and non-self-inclusion","acceptance_ids":["AC-2","AC-3","AC-4","AC-6","AC-7"],"deterministic":true,"resource_profile":"medium","budget_seconds":300,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5357/run-validation-lane.rb","corpus-dispatch-preflight"],"parallel_group":"review","defer_reason":"Mandatory after #5356 terminal proof and exact corpus freeze; forbidden during preparation"},
+      {"lane":"review-output-contract","proof_role":"Validate findings-first severity order, exact evidence, evidence/inference/author-decision separation, residual risk, and typed synthesis mapping","acceptance_ids":["AC-5","AC-6","AC-8"],"deterministic":true,"resource_profile":"medium","budget_seconds":300,"budget_tokens":5000,"argv":["ruby",".csdlc/prepared/issues/5357/run-validation-lane.rb","review-output-contract"],"parallel_group":"review","defer_reason":"Mandatory after reviewer output exists; forbidden during preparation"},
+      {"lane":"complete","proof_role":"Run dependency, identity, corpus, dispatch, output, redaction, budget, no-deferral, exact-review, and publication preflight","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"deterministic":true,"resource_profile":"large","budget_seconds":900,"budget_tokens":9000,"argv":["ruby",".csdlc/prepared/issues/5357/run-validation-lane.rb","complete"],"parallel_group":"pre-publication","defer_reason":"Mandatory at the exact reviewed result revision before publication"},
+      {"lane":"post-merge-exact","proof_role":"Re-run target ancestry, corpus/receipt/output digests, redaction, typed synthesis, CI and WP-20 release predicate after authorized merge","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"deterministic":true,"resource_profile":"large","budget_seconds":900,"budget_tokens":9000,"argv":["ruby",".csdlc/prepared/issues/5357/run-validation-lane.rb","post-merge-exact"],"parallel_group":"post-merge","defer_reason":"Mandatory after authorized serialized merge and before typed closeout"}
+    ],
+    "failure_policy": "Fail closed without dispatch, finding acceptance, publication, merge, WP-20 release, or closeout on incomplete #5356 terminal truth, handoff mutation, claim collision, stale/non-ancestral target, mutable or incomplete corpus/receipt identity, undisclosed reviewer control, malformed output, evidence/inference confusion, secret or host-bound data, new dependency, budget breach, deferred gate, stale review, red CI, or absent post-merge proof.",
+    "review_prompts": [
+      "Can the reviewer, model, prompt, provider, or dispatch process be described as independent more strongly than the retained control evidence supports?",
+      "Can any corpus, digest, receipt, or result be changed, substituted, self-included, or detached from the exact target revision without rejection?",
+      "Does every finding distinguish observed evidence from inference and open author decision, with exact severity, impact, remediation, and residual risk?",
+      "Can secrets, private prompts, credentials, host paths, raw provider data, or personal data enter retained or publishable evidence?",
+      "Are COTS, budgets, PVF, no-deferral, rollback, typed synthesis, serialized integration, post-merge proof, and WP-20 release complete and fail-closed?"
+    ],
+    "review_scope": ".csdlc/issues/5357\n.csdlc/locks/5357.lock\n.csdlc/prepared/issues/5357\n.csdlc/evidence/5357"
+  }
+}

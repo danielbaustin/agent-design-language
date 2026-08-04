@@ -1,0 +1,22 @@
+{
+  "issue": 5351,
+  "card": "spp",
+  "expected_generation": 12,
+  "expected_digest": "c320c80ec814bfd0ce6764809449fa0f09c1144e39e0f9648211c761d397beef",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "reason": "Align stop conditions with merge-gated WP-17 release and asynchronous closeout.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "accepted platform revisions or stable interfaces cannot be resolved exactly",
+      "any required result is failed, missing, stale, deferred, secret-bearing, host-bound, or unsupported",
+      "execution requires Runtime v2, AWS, credentials, paid services, hidden network authority, hard-coded addresses, or out-of-claim writes",
+      "the quality harness duplicates product or COTS behavior, adds a dependency, exceeds budget without exact review, or collides with another active claim",
+      "exact-revision review has an unresolved actionable finding",
+      "WP-17 would begin before #5351 merges with passing exact-head integrated proof"
+    ]
+  },
+  "fail_after_backup": false
+}

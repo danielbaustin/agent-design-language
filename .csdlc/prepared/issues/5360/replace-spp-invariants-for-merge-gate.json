@@ -1,0 +1,22 @@
+{
+  "issue": 5360,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "da669cf4bba725b70581c3b7fc62e424397d4c42feb3ccf76e397c302ca18a31",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "reason": "Remove obsolete closeout serialization while preserving exact documentation truth.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "invariants",
+    "values": [
+      "#5360 owns only its issue-local lifecycle, evidence, and exact collision-free documentation paths",
+      "WP-16 merge plus passing exact-head proof releases WP-17; predecessor closeout is asynchronous",
+      "unsupported, stale, missing, deferred, or contradictory evidence cannot become a proven release claim",
+      "documentation reconciliation preserves separate product ownership and never becomes runtime, deployment, review, publication, merge, or closeout authority",
+      "Runtime v2, credentials, host-absolute retained paths, hard-coded addresses, product changes, and new dependencies are forbidden",
+      "#5360 merge releases WP-18 immediately; typed closeout is asynchronous bookkeeping and nonblocking"
+    ]
+  },
+  "fail_after_backup": false
+}

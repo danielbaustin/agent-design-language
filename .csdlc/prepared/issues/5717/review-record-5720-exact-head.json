@@ -1,0 +1,38 @@
+{
+  "issue": 5717,
+  "expected_generation": 18,
+  "expected_digest": "d720479af4395806bae836db3eeb7b503491a1ecf03457229553a8d2ac43d4d9",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "actor": "codex:5717-execution",
+  "evidence": {
+    "reviewer": "codex-subagent:019fb9a0-c459-76b0-8ceb-018b065a72db",
+    "scope": [
+      ".csdlc/issues/5701",
+      ".csdlc/issues/5717",
+      ".csdlc/prepared/issues/5717",
+      ".github/workflows/ci.yaml",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/generate_podcast_launch_packet.py",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_podcast_launch_packet.sh",
+      "adl/tools/test_select_validation_lanes.sh",
+      "adl/tools/test_validation_manager.sh",
+      "adl/tools/validate_podcast_launch_packet.py",
+      "demos/_preview/podcast/index.html",
+      "demos/podcast/LAUNCH_READINESS.md",
+      "demos/podcast/episodes/meet-the-ai-coworkers/index.html",
+      "demos/podcast/feed.xml",
+      "demos/podcast/index.html"
+    ],
+    "reviewed_revision": "git-blake3:b61738969b6fda30924b429577a3da5b282dce1d:a58ff4fbe945f16979350d0588ed4fb33cb2ef68a677b8fa0458d5f0a437d821",
+    "findings": [],
+    "residual_risks": [
+      "Public launch still requires final human review after PR publication, production hosting cutover under /podcast/, mailbox verification for podcast@agent-logic.ai, directory account submission approval, and final episode-content approval.",
+      "The typed #5717 protected scope could not be amended for adl/config/validation_lane_selector.v0.91.6.json and adl/tools/test_select_validation_lanes.sh because origin/main still carries a stale active claim from closed issue #5701; #5701 claim revocation was recorded in this worktree and the exact-head review covered those paths explicitly."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

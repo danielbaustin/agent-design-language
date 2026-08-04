@@ -1,0 +1,26 @@
+{
+  "issue": 5664,
+  "base_branch": "main",
+  "branch": "codex/5664-runtime-v3-protocol-adapters",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5664-runtime-v3-protocol-adapters",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784998013,
+    "expires_unix_seconds": 1785602813,
+    "heartbeat_unix_seconds": 1784998013,
+    "branch": "codex/5664-runtime-v3-protocol-adapters",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5664",
+      ".csdlc/issues/5664",
+      ".csdlc/locks/5664.lock",
+      ".csdlc/prepared/issues/5664",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/src/protocol_adapters.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ],
+    "purpose": "Implement real Runtime v3 Provider, ACIP, A2A, and Cloud Bridge protocol adapters with bounded Tokio/Rustls-ready transport proof"
+  }
+}

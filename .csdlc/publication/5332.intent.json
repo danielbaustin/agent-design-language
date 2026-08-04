@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5332,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5332-v0918-wp15-unity-ilpp-exec-prep",
+  "title": "[v0.91.8][WP-15][unity][tooling] Classify and fix Unity ILPP GetDomainName loop",
+  "body": "Closes #5332\n\nDiagnoses the Unity 6000.5.1f1 ILPP retry loop as restricted-lane getdomainname denial, adds a fail-closed host-capability preflight and progress-aware classifier, and introduces a controlled evidence-rich diagnostic matrix with focused regression coverage.\n\nFocused proof passes for the wrapper, matrix, selector, and contract guardrails. An operator-approved host run crossed ILPP and completed the existing staged shell-plus-flagship validator with 43 prefab instances, 79 game objects, 4 cameras, and 7 lights. Licensed Unity assets and generated Library state remain on FastWork and are not committed.\n\nExact-head review passed with no actionable findings. This PR proves the tooling diagnosis and staged validator path; it does not claim investor-ready shell layout, runtime integration, rendering polish, or complete demo readiness.",
+  "draft": false,
+  "revision": "git-blake3:eefb02467c548a6cd61c5b2a0f0f40b6e11c6656:77da5e6f1f009e3762669d0ebe5725f9ad23b807952efa2d5c1db8bd335d95ae",
+  "commit_sha": "eefb02467c548a6cd61c5b2a0f0f40b6e11c6656"
+}

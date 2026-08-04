@@ -24,7 +24,7 @@ It must not replace:
 - `srp-editor`
 - `sor-editor`
 - `documentation-specialist`
-- `workflow-conductor`
+- the resolved typed v2 lifecycle binary
 
 ## Entry Conditions
 
@@ -184,7 +184,7 @@ Do not:
 ## Handoffs
 
 Use:
-- `workflow-conductor` when routing state is unclear
+- `csdlc-doctor` when routing state is unclear
 - `documentation-specialist` for broad docs authoring or prose polish
 - `stp-editor`, `sip-editor`, `spp-editor`, `srp-editor`, or `sor-editor` for
   card-local defects

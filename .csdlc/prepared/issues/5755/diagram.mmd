@@ -1,0 +1,10 @@
+flowchart TD
+  A["#5664 closeout blocker"] --> B["#5755 bounded repair"]
+  B --> C["Protocol adapter client identity"]
+  B --> D["Runtime control body limit"]
+  C --> E["Focused protocol tests"]
+  D --> F["Focused control tests"]
+  E --> G["Exact-head review"]
+  F --> G
+  G --> H["Publish #5755"]
+  H --> I["Resume #5664 terminal closeout"]

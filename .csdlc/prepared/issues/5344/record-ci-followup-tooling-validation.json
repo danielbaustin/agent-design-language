@@ -1,0 +1,21 @@
+{
+  "issue": 5344,
+  "card": "sor",
+  "expected_generation": 28,
+  "expected_digest": "b77bf48a0ffa4e99c067fd0d85662f68c401840ca72f02f4c4b5ad7f6ae3ae18",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the complete tooling-contract proof after removing both deleted guardian inventory assertions.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_check_coverage_impact.sh"
+      ],
+      "purpose": "Prove the Runtime v3 coverage mapper selects the live guardian and guardian_cli inventory and the complete tooling contract reaches its explicit PASS marker.",
+      "outcome": "passed",
+      "evidence_ref": "adl/tools/test_check_coverage_impact.sh"
+    }
+  }
+}

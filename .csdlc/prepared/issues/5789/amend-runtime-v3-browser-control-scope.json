@@ -1,0 +1,15 @@
+{
+  "issue": 5789,
+  "claim_id": "claim-5789-observatory-full-functionality",
+  "expected_generation": 2,
+  "expected_digest": "b8e3b51643b08d1fb4e376881758b53e9c0a7128de8d70a47a25c230e9f78b10",
+  "now_unix_seconds": 1785778500,
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Protect the Runtime v3 control route, focused runtime tests, and API contracts required to make browser operator-to-agent communication actually work from the HTML Observatory.",
+  "add_protected_paths": [
+    "adl-runtime-kernel/src/control.rs",
+    "adl-runtime-kernel/tests/control.rs",
+    "docs/api/runtime-v3/v1/openapi.json",
+    "docs/api/runtime-v3/v1/observatory.openapi.json"
+  ]
+}

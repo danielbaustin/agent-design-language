@@ -1,0 +1,21 @@
+{
+  "issue": 5357,
+  "card": "stp",
+  "expected_generation": 3,
+  "expected_digest": "3c341872a4726d53d766d256b8fc5edfc662794d592b179e3d147f3d25407a78",
+  "claim_id": "claim-5357-v0918-wp19-review-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Make the final WP-18 second pass and merged canonical-doc integration explicit prerequisites for external-review freeze.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "WP-16 #5351 quality-gate merge remains ancestral",
+      "WP-17 #5360 documentation alignment remains closed",
+      "WP-18 first-pass #5356 remains merged through PR #5781",
+      "WP-18 final second-pass #5791 is merged after residual coding and ancestral to the exact #5357 freeze revision",
+      "the #5357 branch integrates the #5791-owned README, canonical inventory, next-milestone handoff, and final review packet from current main before corpus freeze"
+    ]
+  },
+  "fail_after_backup": false
+}

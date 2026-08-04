@@ -1,0 +1,13 @@
+{
+  "issue": 5733,
+  "expected_generation": 8,
+  "expected_digest": "7982b64d424aeda09ccdd34bfaab127b2adb084648c6fa44ffb7e090e0549e73",
+  "claim_id": "claim-5733-demo-matrix-proof-coverage",
+  "reviewer": "subagent:Leibniz:019fba63-7f7d-7f02-a8cb-d2c694b22e6e",
+  "assigned_by": "codex:5733-execution",
+  "scope": [
+    "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+    "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+    "docs/milestones/v0.91.8/review/wp15_demo_matrix_5733"
+  ]
+}

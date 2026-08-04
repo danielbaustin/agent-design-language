@@ -1,0 +1,125 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5332
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: complete
+
+## Summary
+
+Implement and prove fail-closed Unity ILPP diagnosis plus a successful staged Observatory shell-and-flagship validation.
+
+## Artifacts
+
+- docs/tooling/unity_ilpp_getdomainname_diagnosis.md
+- adl/tools/lib/unity_observatory_batch_classifiers.sh
+- adl/tools/run_v0918_unity_ilpp_diagnostic_matrix.sh
+- adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh
+- .adl/runs/unity-5332-assets/staged-wrapper-result.txt
+- .adl/runs/unity-5332-assets/staged-wrapper-full.log
+- /Volumes/FastWork/adl-unity-observatory/operator-provisioned-5332/unity-observatory
+- docs/tooling/unity_ilpp_getdomainname_diagnosis.md
+- .adl/runs/unity-5332-assets/staged-wrapper-result.txt
+- .adl/runs/unity-5332-assets/staged-wrapper-full.log
+
+## Execution
+
+- Added a progress-aware ILPP classifier that requires the complete retry, gRPC, CookieContainer, and GetDomainName signature after the latest semantic progress marker
+- Added a production-safe host-identity preflight and durable wrapper result contract while preserving existing Unity editor liveness and Observatory contract behavior
+- Added a canonical-path-confined three-cell diagnostic matrix with exact per-cell evidence and deterministic regression coverage
+- Registered the new issue-owned diagnostic paths without replacing the existing #4741 liveness lane
+- Reconstructed the operator-provisioned licensed-asset project on FastWork without committing or redistributing third-party assets
+- Captured stable owner-binary, missing csdlc-merge installation, and GitHub integration 403 tooling defects on #5332 because the connected writer could not create a separate issue
+- Add progress-aware complete-signature ILPP classification
+- Add production-safe host-identity preflight and durable wrapper results
+- Add controlled matrix runner and exact per-cell regression proof
+- Preserve existing Unity liveness and contract lane behavior
+- Retain successful staged Unity 6000.5.1f1 shell-plus-flagship validation
+
+## Validation
+
+[
+  {
+    "command": [
+      "grep",
+      "-Fq",
+      "prefabInstances=43; gameObjects=79; cameras=4; lights=7",
+      ".adl/runs/unity-5332-assets/staged-wrapper-full.log"
+    ],
+    "purpose": "Check the durable flagship stage validation marker and counts.",
+    "outcome": "passed",
+    "evidence_ref": "unity-flagship-counts.log"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh"
+    ],
+    "purpose": "Run the focused matrix regression suite.",
+    "outcome": "passed",
+    "evidence_ref": "unity-ilpp-matrix-unit.log"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_select_validation_lanes.sh"
+    ],
+    "purpose": "Run the validation lane selector suite.",
+    "outcome": "passed",
+    "evidence_ref": "unity-ilpp-selector.log"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"
+    ],
+    "purpose": "Run the focused wrapper and classifier unit suite.",
+    "outcome": "passed",
+    "evidence_ref": "unity-ilpp-wrapper-unit.log"
+  },
+  {
+    "command": [
+      "grep",
+      "-Fq",
+      "Unity Observatory batch validation passed for the shell and flagship environment.",
+      ".adl/runs/unity-5332-assets/staged-wrapper-full.log"
+    ],
+    "purpose": "Check the durable Unity validator marker.",
+    "outcome": "passed",
+    "evidence_ref": "unity-staged-validator-result.log"
+  },
+  {
+    "command": [
+      "grep",
+      "-Fq",
+      "terminal_outcome=passed",
+      ".adl/runs/unity-5332-assets/staged-wrapper-result.txt"
+    ],
+    "purpose": "Check the durable wrapper result contract.",
+    "outcome": "passed",
+    "evidence_ref": "unity-staged-wrapper-result.log"
+  }
+]
+
+## Integration
+
+merged
+
+## Publication
+
+Publication: closed
+
+Merge: merged
+
+## Closeout
+
+complete
+
+## Follow Ups
+
+- none

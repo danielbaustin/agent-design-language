@@ -1,0 +1,22 @@
+{
+  "issue": 5360,
+  "card": "sip",
+  "expected_generation": 7,
+  "expected_digest": "5d00a65c50fe29879bfdab587ac030f5eef0f66fe814b919468f54d2b3c25a4b",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "reason": "Remove host-specific preparation constraints and record the active merge-gated execution boundary.",
+  "operation": {
+    "operation": "replace_operator_constraints",
+    "values": [
+      "Use installed typed C-SDLC v2 binaries and the current registry native six-card projection only",
+      "Keep root main untouched; all tracked work stays in the dedicated bound #5360 worktree",
+      "Edit only the exact collision-free documentation paths in the active claim; do not change product code, Runtime v2, AWS, credentials, paid services, or hidden network authority",
+      "WP-16 merge 2e9d2dd7c4260dcf6ec6af954b0eea97554212df and passing quality evidence are ancestral; typed predecessor closeout is asynchronous",
+      "Use structured parsers and existing owner tools for structured formats; retain repository-relative evidence references only",
+      "Use existing repository tools and COTS; add no dependency or duplicate runtime, workflow, release, deployment, telemetry, signing, or evidence system",
+      "Run focused validation, one bounded exact-revision review, fix findings, publish with Closes #5360, merge on green checks, and release WP-18 immediately"
+    ]
+  },
+  "fail_after_backup": false
+}

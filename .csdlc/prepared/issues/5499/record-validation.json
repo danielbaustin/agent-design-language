@@ -1,0 +1,18 @@
+{
+  "issue": 5499,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "39bb6e8ef3b69d3b1ef03f1d852d2b29c0eef3deb96216b0f01adffbb6a50e54",
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Focused offline validation, strict Clippy, format, budgets, and dependency proof pass on FastWork.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", ".csdlc/prepared/issues/5499/validate-conductor.sh"],
+      "purpose": "Prove the pure conductor contract and all #5499 acceptance criteria offline",
+      "outcome": "passed",
+      "evidence_ref": "local:5499-fastwork-10-tests-strict-clippy-601-impl-loc-218-test-loc-under-5s"
+    }
+  }
+}

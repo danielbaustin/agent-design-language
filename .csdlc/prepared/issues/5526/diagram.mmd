@@ -1,0 +1,14 @@
+flowchart TD
+  issue["Issue #5526 provider expansion"] --> gate["Execution gate: live #5349 WP-09 merge plus ancestry"]
+  gate --> identities["Distinct provider identities"]
+  gate --> refresh["Existing provider model refreshes"]
+  identities --> transport["Shared transport only when vendor-compatible"]
+  refresh --> selection["Pinned and snapshotted model selection"]
+  transport --> fixtures["Deterministic positive and negative fixtures"]
+  selection --> fixtures
+  fixtures --> validation["Focused schema, mock, redaction, and alias-drift validation"]
+  validation --> review["One exact pre-PR review"]
+  review --> publication["Future PR only after implementation and review"]
+  receipts["Closeout receipts"] -. "audit evidence only" .-> gate
+  credentials["Operator credentials"] -. "live smoke optional and bounded" .-> validation
+  credentials -. "never retained or logged" .-> identities

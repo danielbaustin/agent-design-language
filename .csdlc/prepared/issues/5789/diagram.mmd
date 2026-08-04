@@ -1,0 +1,12 @@
+flowchart TD
+  Operator["Operator in HTML Observatory"] --> UI["demos/html-observatory"]
+  UI --> Ready["GET /v1/ready"]
+  UI --> Feed["GET /v1/observatory"]
+  UI --> Stream["WSS /v1/observatory/ws"]
+  UI --> Write["Authenticated operator-to-agent command"]
+  Feed --> Render["Live readiness, agents, events, liveness"]
+  Stream --> Render
+  Write --> Receipt["Delivery receipt or fail-closed rejection"]
+  Receipt --> Render
+  UI --> Retained["Historical retained evidence fallback"]
+  Retained --> Render

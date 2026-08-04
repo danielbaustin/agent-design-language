@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5658,
+  "expected_generation": 11,
+  "expected_digest": "b7d61caa809ac773d1370f269b0e710b05436801bbb06f85bcd75c0b510a15fa",
+  "claim_id": "claim-5658-bound-worktree-lifecycle",
+  "actor": "codex:5658-execution",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5658-bound-worktree-lifecycle",
+  "title": "[v0.91.8][csdlc-v2][tooling] Keep lifecycle writes in bound worktree",
+  "body": "Closes #5658\n\nKeeps typed C-SDLC v2 bind lifecycle writes rooted in the declared issue worktree instead of advancing primary-main issue state during non-local bind. The bind path now materializes issue records, prepared artifacts, evidence roots, and locks into the registered target Git worktree before committing the bound transition there.\n\nHardening included the pre-PR review findings: unregistered target directories fail closed, symlinked lifecycle state is rejected, created-worktree failures are compensated, evidence is copied with issue state, stale existing target lifecycle/prepared/evidence state fails closed before side-state mutation, gate2 standalone expectations use worktree-owned lifecycle state, and idempotent rebind verifies the target issue/repository/initialization_digest tuple before returning success.\n\nFocused validation:\n- `cargo test --manifest-path csdlc-v2/Cargo.toml --test gate2 --test gate7_lifecycle` passed locally on FastWork with gate2 47 passed and gate7_lifecycle 33 passed.\n- `git diff --check origin/main...HEAD` passed.\n- `csdlc-doctor --repo . --issue 5658` passed at reviewed generation 10 before publication and at published generation 11 after publication.\n\nPre-PR review: bounded subagent review is clean for the substantive source/test revision `d29836f671df537b6bb3e18ba4dd34f55119350e`; current publication head `5e859cb42bc245a6e466505005fc7ea15af3c5e8` adds typed publication metadata only.",
+  "draft": false,
+  "remote": "origin",
+  "token_file": null
+}

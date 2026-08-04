@@ -1,0 +1,27 @@
+{
+  "issue": 5357,
+  "expected_generation": 1,
+  "expected_digest": "ad5f5db5d8bf610536d6549b3051122f31bb4e6882067c01d3bee7cffeda4ada",
+  "now_unix_seconds": 1785783165,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "WP-18 #5356 is merged, typed closed_out, claim-free, receipt-backed, and ancestral; reacquire the expired preparation claim to make the WP-19 review entrypoint and handoff current without dispatching the external review.",
+  "replacement": {
+    "id": "claim-5357-v0918-wp19-review-readiness",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 1,
+    "acquired_unix_seconds": 1785783165,
+    "expires_unix_seconds": 1786387965,
+    "heartbeat_unix_seconds": 1785783165,
+    "branch": "codex/5357-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5357",
+      ".csdlc/issues/5357",
+      ".csdlc/locks/5357.lock",
+      ".csdlc/prepared/issues/5357",
+      "REVIEW.md",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md"
+    ],
+    "purpose": "Prepare #5357 WP-19 for exact-revision external review by refreshing REVIEW.md and the canonical handoff, freezing and validating the source corpus, and retaining issue-local readiness evidence; do not dispatch a paid review, publish, merge, or claim release approval."
+  }
+}

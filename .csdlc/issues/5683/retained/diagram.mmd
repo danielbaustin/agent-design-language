@@ -1,0 +1,15 @@
+flowchart LR
+    A["Bound #5683 worktree\nrepository-owned Unity source"] -->|sync owned files| B["FastWork Unity project\nlicensed assets remain external"]
+    B --> C["Unity editor\nFlagshipObservatoryStage"]
+    C <--> D["Local Unity-MCP\nproject identity and endpoint proved"]
+    C --> E["Baseline capture\n1920x1080"]
+    E --> F["Frustum inventory\nrenderers, particles, lights, helpers"]
+    F --> G["Bounded isolation captures"]
+    G --> H["Remove or retune artifact source"]
+    H --> I["Composition pass\ncamera, terrain, architecture, lighting"]
+    J["Runtime v3 truth classifier\npreserved from #5662"] --> K["Fixed operator shell"]
+    I --> L["Play Mode proof\n1920x1080 and 2560x1440"]
+    K --> L
+    L --> M["Visual inspection and focused validation"]
+    M -->|sync owned source only| A
+    M --> N["Proof index\nimages plus implementation PR"]

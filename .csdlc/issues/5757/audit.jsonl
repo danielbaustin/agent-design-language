@@ -1,0 +1,15 @@
+{"sequence":1,"generation":0,"actor":"codex","reason":"initialize issue record and all six cards","operation":"bootstrap"}
+{"sequence":2,"generation":0,"actor":"codex","reason":"bind branch/worktree and activate claim","operation":"bind"}
+{"sequence":3,"generation":0,"actor":"codex","reason":"include focused validator and Runtime v3 WSS/TLS proof tests in #5757 claim scope","operation":"{\"add_protected_paths\":[\"adl/tools/validate_v0917_html_observatory.py\",\"adl-runtime-kernel/tests/observatory.rs\"],\"operation\":\"amend_claim_scope\"}"}
+{"sequence":4,"generation":1,"actor":"codex","reason":"atomically record execution, validation, and implemented phase","operation":"finalize_implementation"}
+{"sequence":5,"generation":2,"actor":"codex","reason":"reapprove changed issue design","operation":"approve_design"}
+{"sequence":6,"generation":2,"actor":"codex","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":7,"generation":3,"actor":"codex","reason":"atomically record assigned review evidence and SRP projection","operation":"record_review"}
+{"sequence":8,"generation":4,"actor":"codex","reason":"advance after bounded pre-PR review evidence passed","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":9,"generation":5,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":10,"generation":6,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness_reconcile_metadata_only_published_revision"}
+{"sequence":11,"generation":7,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":12,"generation":8,"actor":"codex","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":13,"generation":9,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":14,"generation":10,"actor":"codex","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":15,"generation":11,"actor":"codex:019fb617-d22b-7252-975c-402d7d7aec46","reason":"Materialize the retained terminal receipt for v0.91.8 corrective issue 5757 in the dedicated aggregate closeout projection.","operation":"reconcile_terminal"}

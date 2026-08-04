@@ -1,0 +1,80 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "preparation-contract",
+        "proof_role": "six_card_design_scope_gate_and_manifest_boundary_integrity",
+        "purpose": "Verify the six-card packet, design and diagram, terminal/cycle gate, disjoint manifest boundary, protected paths, COTS, budgets, PVF, rollback, and no-deferral truth.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 2500},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5347/validate-preparation.rb"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "future-lane-contract",
+        "proof_role": "future_execution_lane_completeness",
+        "purpose": "Verify every dependency, manifest, owner, budget, and post-deletion lane is present, mandatory, and covers AC-1 through AC-10.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 1000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5347/run-validation-lane.rb", "validate-contracts"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "blocked-execution-admission",
+        "proof_role": "current_future_artifact_and_dependency_fail_closed_proof",
+        "purpose": "Run every execution-admission gate and pass only when each remains blocked by missing terminal dependencies or future deletion proof artifacts.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 1000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 300,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5347/validate-blocked-state.rb"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "diff-hygiene",
+        "proof_role": "preparation_diff_hygiene",
+        "purpose": "Reject whitespace errors in the preparation packet.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 64, "tokens": 500},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "git",
+        "argv": ["diff", "--check"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {"requested_lanes": ["preparation-contract", "future-lane-contract", "blocked-execution-admission", "diff-hygiene"], "allow_network": false, "available_credentials": []},
+  "budget": {"max_parallel": 4, "cpu_units": 4, "memory_mib": 640, "tokens": 5000},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5347/preparation-validation",
+  "cancellation_file": null
+}

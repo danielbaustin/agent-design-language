@@ -1,0 +1,31 @@
+{
+  "issue": 5665,
+  "base_branch": "main",
+  "branch": "codex/5665-runtime-v3-wss-feature-proofs",
+  "worktree": ".worktrees/adl-wp-5665",
+  "claim": {
+    "id": "claim-5665-runtime-v3-wss-feature-proofs",
+    "owner": "codex:issue-5665-slot-1",
+    "generation": 0,
+    "acquired_unix_seconds": 1784935430,
+    "expires_unix_seconds": 1785540230,
+    "heartbeat_unix_seconds": 1784935430,
+    "branch": "codex/5665-runtime-v3-wss-feature-proofs",
+    "worktree": ".worktrees/adl-wp-5665",
+    "protected_paths": [
+      ".csdlc/evidence/5665",
+      ".csdlc/issues/5665",
+      ".csdlc/locks/5665.lock",
+      ".csdlc/prepared/issues/5665",
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/src/runtime_api.rs",
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/observability.rs",
+      "adl-runtime/src/shutdown.rs",
+      "adl-runtime/tests/runtime_api_wss.rs",
+      "infra/runtime-v3/runtime-api-5665.toml",
+      "docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json"
+    ],
+    "purpose": "Complete authenticated Runtime v3 WSS and feature proof matrix without HTML Observatory redesign"
+  }
+}

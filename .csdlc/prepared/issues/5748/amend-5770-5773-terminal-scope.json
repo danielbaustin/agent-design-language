@@ -1,0 +1,13 @@
+{
+  "issue": 5748,
+  "claim_id": "claim-5748-terminal-recovery-without-csdlc-v2",
+  "expected_generation": 25,
+  "expected_digest": "8b5f6150df1191593ef32164ac8dca5288f05d33706b2812df1810d30f22f8fc",
+  "now_unix_seconds": 1785616404,
+  "actor": "codex:019fbc07-3030-7150-a235-a6f0a8937350",
+  "reason": "Authorize typed recordless terminal recovery of closed corrective issues 5770 and 5773 from exact merged PR evidence.",
+  "add_protected_paths": [
+    ".csdlc/issues/5770",
+    ".csdlc/issues/5773"
+  ]
+}

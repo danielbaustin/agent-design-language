@@ -205,7 +205,7 @@ def design_time_defect(card_name: str, text: str) -> str | None:
         if not validation_commands:
             return 'VPP missing validation commands section content'
         if contains_any(validation_commands, [
-            'Use `workflow-conductor` and the active prompt-template renderer/schema path.',
+            'Use typed v2 readiness and the active prompt-template renderer/schema path.',
             'Use the session ledger before execution and avoid active claimed worktrees.',
             'Use focused validation, not broad test reflexes, unless touched code requires broader proof.',
         ]):

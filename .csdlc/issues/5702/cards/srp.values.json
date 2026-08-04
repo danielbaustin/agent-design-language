@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5702,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast] Launch weekly AI Agent Podcast with flawless audio, RSS, guests, and site design",
+    "slug": "podcast-launch-audio-rss-guests-site-plan",
+    "version": "v0.91.8",
+    "generation": 18
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".adl/docs/TBD/PODCAST_STUDIO_NEXT_WEEK_LAUNCH_PLAN_5702.md\n.csdlc/evidence/5702/diff-hygiene.log\n.csdlc/evidence/5702/gemini-3.1-pro-review-summary.json\n.csdlc/evidence/5702/podcast-plan-contract.log\n.csdlc/evidence/5702/typed-doctor.log\n.csdlc/issues/5702/audit.jsonl\n.csdlc/issues/5702/cards/sip.md\n.csdlc/issues/5702/cards/sip.values.json\n.csdlc/issues/5702/cards/sor.md\n.csdlc/issues/5702/cards/sor.values.json\n.csdlc/issues/5702/cards/spp.md\n.csdlc/issues/5702/cards/spp.values.json\n.csdlc/issues/5702/cards/srp.md\n.csdlc/issues/5702/cards/srp.values.json\n.csdlc/issues/5702/cards/stp.md\n.csdlc/issues/5702/cards/stp.values.json\n.csdlc/issues/5702/cards/vpp.md\n.csdlc/issues/5702/cards/vpp.values.json\n.csdlc/issues/5702/index.json\n.csdlc/locks/5702.lock\n.csdlc/prepared/issues/5702/bind-current-worktree.json\n.csdlc/prepared/issues/5702/call_gemini_31_review.py\n.csdlc/prepared/issues/5702/complete-spp-s2.json\n.csdlc/prepared/issues/5702/complete-spp-s3.json\n.csdlc/prepared/issues/5702/complete-spp-s4.json\n.csdlc/prepared/issues/5702/design.md\n.csdlc/prepared/issues/5702/diagram.mmd\n.csdlc/prepared/issues/5702/finalize-plan.json\n.csdlc/prepared/issues/5702/reapprove-design-after-gemini-31.json\n.csdlc/prepared/issues/5702/record-gemini-31-summary-artifact.json\n.csdlc/prepared/issues/5702/record-validation-gemini-31-tracked-review.json\n.csdlc/prepared/issues/5702/validate_podcast_launch_plan.py",
+      "review_revision": "git-blake3:862d5d006bd35f00ebf35bc2041e50102a07547e:5e3ecb8dd4e12316169019f9bd88cd4644ba375847e63cd8ad65493d0b3194ac",
+      "reviewer": "Lovelace:019faedd-8ef9-71c2-8296-2165d325bf73",
+      "review_prompts": [
+        "Review whether the plan can realistically get the podcast launch-ready today for a next-week launch while keeping audio and RSS as required launch blockers.",
+        "Review whether the plan properly separates planned work, proof requirements, source-backed facts, and non-claims."
+      ],
+      "findings": [
+        {
+          "id": "5702-review-p1-gemini-disposition-overclaim",
+          "severity": "p1",
+          "summary": "SOR and plan previously overclaimed complete Gemini review incorporation; exact-head re-review confirmed the plan now incorporates or explicitly dispositions the launch-critical Gemini 3.1 Pro items.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:862d5d006bd35f00ebf35bc2041e50102a07547e:5e3ecb8dd4e12316169019f9bd88cd4644ba375847e63cd8ad65493d0b3194ac",
+          "route": null
+        },
+        {
+          "id": "5702-review-p2-path-hygiene",
+          "severity": "p2",
+          "summary": "Tracked packet previously retained machine-local FastWork paths; exact-head re-review found no /Volumes/FastWork, /Users/, file://, or similar machine-local path leakage outside intentional redaction-rule examples.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:862d5d006bd35f00ebf35bc2041e50102a07547e:5e3ecb8dd4e12316169019f9bd88cd4644ba375847e63cd8ad65493d0b3194ac",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "This is a plan-only issue; production audio, RSS, website deployment, guest acceptance, and weekly cadence remain unproven until follow-on implementation issues execute."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

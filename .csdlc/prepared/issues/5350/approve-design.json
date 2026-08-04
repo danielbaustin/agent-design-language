@@ -1,0 +1,7 @@
+{
+  "issue": 5350,
+  "expected_generation": 2,
+  "expected_digest": "d55722669c187f795aadd66dc2415d2768cfb59f81f725edbca4c5eefadc3cf0",
+  "claim_id": "claim-5350-v0918-wp11-shadow-parity-preparation",
+  "reviewer": "subagent:codex-read-only-5350-final-review"
+}

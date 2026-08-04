@@ -1,0 +1,8 @@
+{
+  "issue": 5351,
+  "expected_generation": 9,
+  "expected_digest": "eae1605a366399537cf9cc4dbd7b08d9512c56987651253573ab06129193cf1e",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "reason": "Recover the implemented phase to fix both actionable exact-review findings before publication."
+}

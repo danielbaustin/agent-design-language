@@ -124,54 +124,42 @@
       ],
       "path_selectors": [
         "docs/templates/prompts/**",
-        "adl/tools/owner_binary_resolution.sh",
-        "adl/tools/prompt_template.sh",
-        "adl/tools/validate_structured_prompt.sh",
-        "adl/tools/test_prompt_templates_1_0_0.sh",
-        "adl/tools/test_prompt_template_workflow_integration.sh",
-        "adl/tools/test_prompt_template_wrappers_no_implicit_cargo.sh",
-        "adl/src/bin/adl_prompt_template.rs",
-        "adl/src/bin/adl_validate_structured_prompt.rs",
-        "adl/src/csdlc_prompt_editor/**",
-        "adl/src/csdlc_prompt_editor.rs"
+        "csdlc-v2/src/edit.rs",
+        "csdlc-v2/src/markdown.rs",
+        "csdlc-v2/src/bin/csdlc-edit.rs",
+        "csdlc-v2/src/bin/csdlc-validate.rs"
       ],
       "path_hints": [
         "docs/templates/prompts/**",
-        "adl/tools/owner_binary_resolution.sh",
-        "adl/tools/prompt_template.sh",
-        "adl/tools/validate_structured_prompt.sh",
-        "adl/tools/test_prompt_templates_1_0_0.sh",
-        "adl/tools/test_prompt_template_workflow_integration.sh",
-        "adl/tools/test_prompt_template_wrappers_no_implicit_cargo.sh",
-        "adl/src/bin/adl_prompt_template.rs",
-        "adl/src/bin/adl_validate_structured_prompt.rs",
-        "adl/src/csdlc_prompt_editor/**",
-        "adl/src/csdlc_prompt_editor.rs"
+        "csdlc-v2/src/edit.rs",
+        "csdlc-v2/src/markdown.rs",
+        "csdlc-v2/src/bin/csdlc-edit.rs",
+        "csdlc-v2/src/bin/csdlc-validate.rs"
       ],
-      "command": "bash adl/tools/test_prompt_template_workflow_integration.sh",
-      "run_command": "bash adl/tools/test_prompt_template_workflow_integration.sh",
+      "command": "cargo test --manifest-path csdlc-v2/Cargo.toml --no-run",
+      "run_command": "cargo test --manifest-path csdlc-v2/Cargo.toml",
       "reason": "prompt_template_or_editor_surface_requires_template_contract_checks"
     },
     {
-      "id": "workflow_conductor_contracts",
+      "id": "typed_v2_lifecycle_contracts",
       "lane_class": "cli_workflow",
       "default_surface": "tooling",
       "owner": "csdlc",
-      "proof_role": "workflow_conductor_contract",
+      "proof_role": "typed_v2_lifecycle_contract",
       "requirement_ids": [
-        "workflow_conductor_contracts"
+        "typed_v2_lifecycle_contracts"
       ],
       "path_selectors": [
-        "adl/tools/skills/workflow-conductor/**",
-        "adl/tools/test_workflow_conductor_skill_contracts.sh"
+        "csdlc-v2/operator/skills/**",
+        "csdlc-v2/operator/generation-selector.json"
       ],
       "path_hints": [
-        "adl/tools/skills/workflow-conductor/**",
-        "adl/tools/test_workflow_conductor_skill_contracts.sh"
+        "csdlc-v2/operator/skills/**",
+        "csdlc-v2/operator/generation-selector.json"
       ],
-      "command": "bash adl/tools/test_workflow_conductor_skill_contracts.sh",
-      "run_command": "bash adl/tools/test_workflow_conductor_skill_contracts.sh",
-      "reason": "workflow_conductor_surface_requires_conductor_contract_checks"
+      "command": "cargo test --manifest-path csdlc-v2/Cargo.toml --no-run",
+      "run_command": "cargo test --manifest-path csdlc-v2/Cargo.toml",
+      "reason": "typed_v2_lifecycle_surface_requires_contract_checks"
     },
     {
       "id": "pvf_contracts",
@@ -304,6 +292,33 @@
       "reason": "coverage_impact_surface_requires_coverage_impact_contract_checks"
     },
     {
+      "id": "podcast_launch_packet",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "review",
+      "proof_role": "demo_contract",
+      "requirement_ids": [
+        "podcast_launch_packet"
+      ],
+      "path_selectors": [
+        "adl/tools/generate_podcast_launch_packet.py",
+        "adl/tools/validate_podcast_launch_packet.py",
+        "adl/tools/test_podcast_launch_packet.sh",
+        "demos/podcast/**",
+        "docs/milestones/v0.91.8/review/podcast_launch_5711/**"
+      ],
+      "path_hints": [
+        "adl/tools/generate_podcast_launch_packet.py",
+        "adl/tools/validate_podcast_launch_packet.py",
+        "adl/tools/test_podcast_launch_packet.sh",
+        "demos/podcast/",
+        "docs/milestones/v0.91.8/review/podcast_launch_5711/"
+      ],
+      "command": "bash adl/tools/test_podcast_launch_packet.sh",
+      "run_command": "bash adl/tools/test_podcast_launch_packet.sh",
+      "reason": "podcast_launch_surface_requires_audio_rss_and_studio_packet_validation"
+    },
+    {
       "id": "html_observatory_governed_surface",
       "lane_class": "cli_workflow",
       "default_surface": "tooling",
@@ -335,6 +350,75 @@
       "command": "bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh",
       "run_command": "bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh",
       "reason": "portable_html_observatory_surface_requires_governed_demo_smoke"
+    },
+    {
+      "id": "unity_mcp_alignment",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "review",
+      "proof_role": "demo_contract",
+      "requirement_ids": [
+        "unity_mcp_alignment"
+      ],
+      "path_selectors": [
+        "adl/tools/probe_unity_mcp_observatory_alignment.sh",
+        "adl/tools/test_v0916_unity_mcp_alignment_unit.sh",
+        "docs/tooling/unity_mcp_observatory_alignment.md"
+      ],
+      "path_hints": [
+        "adl/tools/probe_unity_mcp_observatory_alignment.sh",
+        "adl/tools/test_v0916_unity_mcp_alignment_unit.sh",
+        "docs/tooling/unity_mcp_observatory_alignment.md"
+      ],
+      "command": "bash -n adl/tools/probe_unity_mcp_observatory_alignment.sh && bash -n adl/tools/test_v0916_unity_mcp_alignment_unit.sh && bash adl/tools/test_v0916_unity_mcp_alignment_unit.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh",
+      "run_command": "bash -n adl/tools/probe_unity_mcp_observatory_alignment.sh && bash -n adl/tools/test_v0916_unity_mcp_alignment_unit.sh && bash adl/tools/test_v0916_unity_mcp_alignment_unit.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh",
+      "reason": "unity_mcp_alignment_paths_require_project_endpoint_and_read_only_failure_classifier_proof"
+    },
+    {
+      "id": "unity_editor_liveness",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "review",
+      "proof_role": "demo_contract",
+      "requirement_ids": [
+        "unity_editor_liveness"
+      ],
+      "path_selectors": [
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"
+      ],
+      "path_hints": [
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"
+      ],
+      "command": "bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh",
+      "run_command": "bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh",
+      "reason": "unity_editor_liveness_paths_require_focused_mode_and_watchdog_proof"
+    },
+    {
+      "id": "unity_ilpp_diagnostics",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "review",
+      "proof_role": "demo_contract",
+      "requirement_ids": [
+        "unity_ilpp_diagnostics"
+      ],
+      "path_selectors": [
+        "adl/tools/lib/unity_observatory_batch_classifiers.sh",
+        "adl/tools/run_v0918_unity_ilpp_diagnostic_matrix.sh",
+        "adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh",
+        "docs/tooling/unity_ilpp_getdomainname_diagnosis.md"
+      ],
+      "path_hints": [
+        "adl/tools/lib/unity_observatory_batch_classifiers.sh",
+        "adl/tools/run_v0918_unity_ilpp_diagnostic_matrix.sh",
+        "adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh",
+        "docs/tooling/unity_ilpp_getdomainname_diagnosis.md"
+      ],
+      "command": "bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash -n adl/tools/lib/unity_observatory_batch_classifiers.sh && bash -n adl/tools/run_v0918_unity_ilpp_diagnostic_matrix.sh && bash -n adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh",
+      "run_command": "bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash -n adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash -n adl/tools/lib/unity_observatory_batch_classifiers.sh && bash -n adl/tools/run_v0918_unity_ilpp_diagnostic_matrix.sh && bash -n adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh",
+      "reason": "unity_ilpp_paths_require_focused_host_identity_and_progress_classifier_proof"
     },
     {
       "id": "unity_observatory_contract_surface",
@@ -401,6 +485,27 @@
       "reason": "v0917_unity_observatory_integrated_rollup_requires_retained_proof_chain_check"
     },
     {
+      "id": "podcast_static_demo_surface",
+      "lane_class": "docs",
+      "default_surface": "docs",
+      "owner": "site",
+      "proof_role": "demo_contract",
+      "requirement_ids": [
+        "podcast_static_demo_surface"
+      ],
+      "path_selectors": [
+        "demos/podcast/**",
+        "demos/_preview/podcast/**"
+      ],
+      "path_hints": [
+        "demos/podcast/",
+        "demos/_preview/podcast/"
+      ],
+      "command": "git diff --check",
+      "run_command": "git diff --check",
+      "reason": "podcast_static_demo_surface_requires_diff_hygiene_and_demo_smoke"
+    },
+    {
       "id": "html_observatory_v0917_runtime_surface",
       "lane_class": "cli_workflow",
       "default_surface": "tooling",
@@ -412,12 +517,12 @@
       "path_selectors": [
         "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
         "adl/tools/validate_v0917_html_observatory.py",
-        "demos/v0.91.7/html-observatory/**"
+        "demos/html-observatory/**"
       ],
       "path_hints": [
         "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
         "adl/tools/validate_v0917_html_observatory.py",
-        "demos/v0.91.7/html-observatory/"
+        "demos/html-observatory/"
       ],
       "command": "bash adl/tools/test_v0917_html_observatory_integrated_proof.sh",
       "run_command": "bash adl/tools/test_v0917_html_observatory_integrated_proof.sh",
@@ -433,65 +538,33 @@
         "csdlc_owner_lane"
       ],
       "path_selectors": [
-        "adl/src/cli/pr_cmd.rs",
-        "adl/src/cli/pr_cmd/**",
-        "adl/src/cli/pr_cmd_cards.rs",
-        "adl/src/cli/pr_cmd_cards/**",
-        "adl/Cargo.lock",
-        "adl/tools/pr.sh",
-        "adl/tools/pr_cards.sh",
-        "adl/tools/pr_delegate.sh",
-        "adl/tools/pr_usage.sh",
-        "adl/tools/csm_binary_availability.sh",
-        "adl/tools/demo_d11_signed_remote.sh",
-        "adl/tools/demo_smoke_v07_story.sh",
-        "adl/tools/ensure_csm_binary.sh",
+        "csdlc-v2/**",
         "adl/tools/install_owner_binaries.sh",
         "adl/tools/build_v0917_execution_outlier_analysis.py",
         "adl/tools/build_v0916_workflow_metric_backfill_inventory.py",
+        "adl/tools/test_build_v0916_workflow_metric_backfill_inventory.py",
         "adl/tools/validation_inventory.py",
         "adl/tools/validation_inventory.sh",
         "adl/tools/run_owner_validation_lane.sh",
-        "adl/tools/test_control_plane_observability.sh",
-        "adl/tools/test_ensure_csm_binary.sh",
-        "adl/tools/test_five_command_regression_suite.sh",
-        "adl/tools/test_owner_binary_install.sh",
         "adl/tools/test_owner_validation_lane.sh",
         "adl/tools/test_readiness_prep_metrics_non_terminal.sh",
-        "adl/tools/test_validation_inventory.sh",
-        "adl/tools/test_pr_*.sh"
+        "adl/tools/test_validation_inventory.sh"
       ],
       "path_hints": [
-        "adl/src/cli/pr_cmd.rs",
-        "adl/src/cli/pr_cmd/**",
-        "adl/src/cli/pr_cmd_cards.rs",
-        "adl/src/cli/pr_cmd_cards/**",
-        "adl/Cargo.lock",
-        "adl/tools/pr.sh",
-        "adl/tools/pr_cards.sh",
-        "adl/tools/pr_delegate.sh",
-        "adl/tools/pr_usage.sh",
-        "adl/tools/csm_binary_availability.sh",
-        "adl/tools/demo_d11_signed_remote.sh",
-        "adl/tools/demo_smoke_v07_story.sh",
-        "adl/tools/ensure_csm_binary.sh",
+        "csdlc-v2/**",
         "adl/tools/install_owner_binaries.sh",
         "adl/tools/build_v0917_execution_outlier_analysis.py",
         "adl/tools/build_v0916_workflow_metric_backfill_inventory.py",
+        "adl/tools/test_build_v0916_workflow_metric_backfill_inventory.py",
         "adl/tools/validation_inventory.py",
         "adl/tools/validation_inventory.sh",
         "adl/tools/run_owner_validation_lane.sh",
-        "adl/tools/test_control_plane_observability.sh",
-        "adl/tools/test_ensure_csm_binary.sh",
-        "adl/tools/test_five_command_regression_suite.sh",
-        "adl/tools/test_owner_binary_install.sh",
         "adl/tools/test_owner_validation_lane.sh",
         "adl/tools/test_readiness_prep_metrics_non_terminal.sh",
-        "adl/tools/test_validation_inventory.sh",
-        "adl/tools/test_pr_*.sh"
+        "adl/tools/test_validation_inventory.sh"
       ],
-      "command": "bash adl/tools/run_owner_validation_lane.sh csdlc --print-plan",
-      "run_command": "bash adl/tools/run_owner_validation_lane.sh csdlc",
+      "command": "cargo test --manifest-path csdlc-v2/Cargo.toml --no-run",
+      "run_command": "cargo test --manifest-path csdlc-v2/Cargo.toml",
       "reason": "csdlc_owner_surface_requires_csdlc_owner_lane"
     },
     {
@@ -506,12 +579,32 @@
       "path_selectors": [
         "adl-runtime/**",
         "adl/src/bin/adl_runtime.rs",
+        "adl/tools/csm_binary_availability.sh",
+        "adl/tools/demo_d11_signed_remote.sh",
+        "adl/tools/demo_smoke_v07_story.sh",
+        "adl/tools/ensure_csm_binary.sh",
+        "adl/tools/install_owner_binaries.sh",
+        "adl/tools/owner_binary_resolution.sh",
+        "adl/tools/run_owner_validation_lane.sh",
+        "adl/tools/test_ensure_csm_binary.sh",
+        "adl/tools/test_owner_binary_install.sh",
+        "adl/tools/test_owner_validation_lane.sh",
         "adl/tools/install_vector_component.sh",
         "adl/tools/test_adl_runtime_compatibility.sh"
       ],
       "path_hints": [
         "adl-runtime/**",
         "adl/src/bin/adl_runtime.rs",
+        "adl/tools/csm_binary_availability.sh",
+        "adl/tools/demo_d11_signed_remote.sh",
+        "adl/tools/demo_smoke_v07_story.sh",
+        "adl/tools/ensure_csm_binary.sh",
+        "adl/tools/install_owner_binaries.sh",
+        "adl/tools/owner_binary_resolution.sh",
+        "adl/tools/run_owner_validation_lane.sh",
+        "adl/tools/test_ensure_csm_binary.sh",
+        "adl/tools/test_owner_binary_install.sh",
+        "adl/tools/test_owner_validation_lane.sh",
         "adl/tools/install_vector_component.sh",
         "adl/tools/test_adl_runtime_compatibility.sh"
       ],
@@ -1299,6 +1392,7 @@
         "docs/**",
         "*.md",
         ".csdlc/**",
+        "adl/tools/test_opus_review_runbook.sh",
         "adl/tools/validate_v0917_*_status.sh"
       ],
       "path_hints": [

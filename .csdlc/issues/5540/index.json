@@ -1,0 +1,83 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5540,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "32cf716a65d709a24cff509a1ad1948621b209d0be5920d215987e1c6854f01c",
+  "phase": "closed_out",
+  "generation": 1,
+  "digest": "baac6cf5c1372fbce2b24ad10bb80232409caceced09f8ae4305cfa136df4157",
+  "claim": null,
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": {
+    "pull_request": 5560,
+    "disposition": "merged",
+    "observed_sha": "4dcee7813d078ece7e31010465ef1530b102712b",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5540.json",
+    "released_branch": "",
+    "released_worktree": "",
+    "released_protected_paths": []
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5540/retained/design.md",
+  "diagram_path": ".csdlc/issues/5540/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5748-terminal-recovery",
+      "revision": "f121448bb8d7f344168e9ead6fda83f1519f170ae14221b56197d9978518d880"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "130bf6f373edbb4ac9a51deb570ecae22ee5864813c05be5fc19c88a0733baa6",
+      "rendered_digest": "a46a5c52e4a02fc20417b61319390aba53ed628ca4893e9138edc8690c9e3049",
+      "ast_digest": "ba7d181d7daf32d05331af5365908535fb34ff819ae2861fde9287bc262f3679"
+    },
+    "stp": {
+      "values_digest": "cd347ce1d4b062ba1a0bb0d5894ff8f3f942c17bb27a12bff40e68f2306cc254",
+      "rendered_digest": "2b2bd25867b90e321e69dd4d00dbc34459259cc48d4db9ee713bb5ee669c7fa6",
+      "ast_digest": "74d54a5f629a4e34c6dc6b10461a40a5de29203e5c46ebacd14a0dd02aef97aa"
+    },
+    "spp": {
+      "values_digest": "98d4c49be0d838f58171615ea20cd2446a95562c943e903a56272a4d632a6f29",
+      "rendered_digest": "928a723686b5a52a00a1eee7a071c526f448765023e0c56e43ebb4aa7dd92cd6",
+      "ast_digest": "dc3f2e2e1ad63408603a1c6f8c592b32ab292f1a694b8c409c3b89f2dc650a44"
+    },
+    "vpp": {
+      "values_digest": "43ee9acb9c99c5b6159cfde73da3dfa6b304b25bb0005dbfd65d88b4a0f64039",
+      "rendered_digest": "0bf94a6d290aef68858e56befc1724439cb7ea52fa03294a68086593d8a521a5",
+      "ast_digest": "80b4e795dd4b2b07a1e7d23f5c4793baa780b83ae3f8421053e87ebf0acc93b0"
+    },
+    "srp": {
+      "values_digest": "24491075d935082c4bf2de6a414e7f0dbbbf6bee3a5e3bd71d92e267ba1a9778",
+      "rendered_digest": "b00ec219596d5565503d913aba22206716f0cb079a6b834c70a276afe269559f",
+      "ast_digest": "40289b87b6bd1d2e9dd34f89a3c68ea240483e36bc984904ce72507e0e6965ce"
+    },
+    "sor": {
+      "values_digest": "09c7e3ea5af136b70be95dc1927a38563d072e978a30add617b3333d2081102f",
+      "rendered_digest": "9bf082aac2ece11e1b085d3a58a89d7c82edff538605a1c27fba9f16a96ea5f5",
+      "ast_digest": "822b30d78fbaea1fba05e25666b8920de7d75f8a1f0a646e77a4fba1e780150f"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "closed_out",
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Recover terminal authority for closed issue #5540 and retain its explicit #5455 provenance-remediation attribution from exact merged PR #5560 evidence, without reconstructing historical lifecycle facts."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 1,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Recover terminal authority for closed issue #5540 and retain its explicit #5455 provenance-remediation attribution from exact merged PR #5560 evidence, without reconstructing historical lifecycle facts.",
+      "operation": "recover_recordless_terminal"
+    }
+  ]
+}

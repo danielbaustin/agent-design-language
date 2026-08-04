@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5666,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][tools][ci] Add proportional fast lane for small fixes",
+    "slug": "v0-91-8-tools-ci-throughput-fast-lane",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Reduce development latency by making validation, review, PR watching, and lifecycle effort proportional to issue risk.",
+      "required_outcome": "A checked-in fast-lane policy and focused contract proof define how tiny tool/docs/test fixes move quickly without weakening typed C-SDLC v2 authority or exact-head truth.",
+      "declared_scope": [
+        "developer throughput fast-lane policy",
+        "validation routing documentation link and policy reference to the validation selector",
+        "small focused shell contract test for policy invariants",
+        "issue-local C-SDLC v2 lifecycle records"
+      ],
+      "authority_boundary": [
+        "typed C-SDLC v2 remains the lifecycle authority",
+        "fast lane changes validation selection and operator behavior, not product/runtime semantics",
+        "GitHub wait states must be changed-state/blocker reporting only"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use FastWork for worktree, temp, and Rust build output",
+        "Do not write on root main",
+        "No AWS execution",
+        "No raw GitHub CLI or connector fallback for issue lifecycle",
+        "Keep the implementation small"
+      ]
+    }
+  }
+}

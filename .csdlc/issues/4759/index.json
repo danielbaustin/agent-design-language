@@ -1,0 +1,476 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4759,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "e14ee014a589057a3380656a449efc0a5ced9da2586edaf061a224c68f935c76",
+  "phase": "closed_out",
+  "generation": 19,
+  "digest": "8eb7e85467fd488041ee626162233a32b439c63abd96907978e82be0f2cfff79",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "codex:bounded-review-4759-activation-bridge",
+    "assigned_by": "codex:issue-4759-execution",
+    "revision": "git-blake3:32957a21a3fc3fc8a8efb3c3c6ad198db9b0ddd7:f5c66411463dc614852b08c3cdb0cb1f462b4663344885b4b0f7043b370366fe",
+    "scope": [
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md",
+      ".csdlc/issues/4759",
+      ".csdlc/prepared/issues/4759",
+      ".csdlc/evidence/4759"
+    ]
+  },
+  "review": {
+    "reviewer": "codex:bounded-review-4759-activation-bridge",
+    "scope": [
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md",
+      ".csdlc/issues/4759",
+      ".csdlc/prepared/issues/4759",
+      ".csdlc/evidence/4759"
+    ],
+    "reviewed_revision": "git-blake3:32957a21a3fc3fc8a8efb3c3c6ad198db9b0ddd7:f5c66411463dc614852b08c3cdb0cb1f462b4663344885b4b0f7043b370366fe",
+    "findings": [
+      {
+        "id": "RV-4759-001",
+        "severity": "p3",
+        "summary": "SIP still retains preparation-era scope and authority bullets, but current SIP goal/outcome/operator constraints, SPP, SOR, and handoff docs carry the execution/publication truth. The typed editor no longer permits SIP field repair after implemented phase, so this is recorded as a non-actionable residual card-history note rather than a publication blocker.",
+        "actionable": false,
+        "in_scope": true,
+        "disposition": "accepted_risk",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "SIP scope/authority retains preparation-era historical text; current execution truth is carried by SIP goal/outcome/operator constraints, SPP, SOR, and the protected docs.",
+      "Publication metadata will be recorded locally by csdlc-publish after the reviewed commit; do not treat this PR as merge or closeout authority."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 4759,
+    "pull_request": 5738,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5738",
+    "base": "main",
+    "head": "codex/4759-v0918-preparation",
+    "revision": "git-blake3:32957a21a3fc3fc8a8efb3c3c6ad198db9b0ddd7:f5c66411463dc614852b08c3cdb0cb1f462b4663344885b4b0f7043b370366fe",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5738,
+    "head_sha": "32957a21a3fc3fc8a8efb3c3c6ad198db9b0ddd7",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275014787"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275084639"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275014782"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275015046"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275014881"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275014984"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275014975"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91274984496"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275014887"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275014995"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275015122"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275015010"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275015347"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275014804"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275014832"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30666595346/job/91275015201"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5738,
+    "disposition": "merged",
+    "observed_sha": "32957a21a3fc3fc8a8efb3c3c6ad198db9b0ddd7",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/4759.json",
+    "released_branch": "codex/4759-v0918-preparation",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/4759",
+      ".csdlc/locks/4759.lock",
+      ".csdlc/prepared/issues/4759",
+      ".csdlc/evidence/4759",
+      ".csdlc/publication/4759.intent.json",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/4759/retained/design.md",
+  "diagram_path": ".csdlc/issues/4759/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:wp14-preparation",
+      "revision": "0301800d9f120cd84ac46ae920c0e1102779abf79d4869117b0ab0daaad8ffca"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "fd781f83b604d28ca2e738ca7e8ea9e81abd17fe10535eb7b462f7e59e659c48",
+      "rendered_digest": "e413a5c315879ec3387bfb95e73d33f0a637e5f61174b429416f566859ae6009",
+      "ast_digest": "3b6f2a53ea74a49c1c99ce286cab1c603ce3b48d754d7c7d7f7cbd4579755df7"
+    },
+    "stp": {
+      "values_digest": "abb5ffb7219c212c0922035cc77db98b348d40cc2fdbfc82cc0f8fcb8377447a",
+      "rendered_digest": "da5e3807a6a4cc215750809d515d84c221dc0ed92b4ea66c83295f7144d6db0d",
+      "ast_digest": "2612d343752df16705146f16b96a5320ea18b97c055cf9e6c6a4e6c8fea6c1f3"
+    },
+    "spp": {
+      "values_digest": "a1a4ed064b78cd11940bd45c6333f0ab04261a6a8c70e605f1bc2e6480175b3f",
+      "rendered_digest": "060e38892d8d28ee95a37b1017cc95962656d0e1c73319f006e227ea903f1984",
+      "ast_digest": "aa9cdf94a1fe9b1b2cb96359ca1db312f3e4192df46581be5000ecf950b7b688"
+    },
+    "vpp": {
+      "values_digest": "94cf6aebbcd381061c263c8a747f10c9c9e611354110286e84cbe335af22d040",
+      "rendered_digest": "a642e441ead5c3991e30bab8a0ba5faaed19bec203ae5875d959f7b2866e8b8c",
+      "ast_digest": "efabeb7939bbeaa8f309fc102c5fd3571e1a32ccca1993814ed9258121d57336"
+    },
+    "srp": {
+      "values_digest": "1ab5592dc05d4891c65412712e5a7017bafa36680c3bfd39f4a2db9c7fd69803",
+      "rendered_digest": "f24ee5b68547c22232aa9d20f31f08feb5f86a5d04a7a8287b209fa2e8ebc8df",
+      "ast_digest": "2ea6d52ff5c1299a2708d9d1997dddaec678bf79aca9b05b297df7a09d26ed79"
+    },
+    "sor": {
+      "values_digest": "941ba0c51b0d4f497a9b7660490dc537ab28d7c6d32df0f64cf7751db82b7697",
+      "rendered_digest": "dc670c5135ce8afc7724c4352ac9d6d41958ba0b767f44e2e6abdeaf209976c3",
+      "ast_digest": "1cfb4027f633ffdfb016dbae5619663f4f8cf01580d64da6c904ea7d292fdbf6"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-4759-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-4759-preparation",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-4759-execution",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-4759-execution",
+      "reason": "Advance #4759 after exact-head review evidence was recorded with no actionable publication blockers."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-4759-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "subagent:/root/review_5727",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "subagent:/root/review_5727",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "subagent:/root/review_5727",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-4759-preparation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-4759-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:claim-hygiene",
+      "reason": "Release preparation-only ownership until issue execution actually starts",
+      "operation": "{\"claim_id\":\"claim-4759-v0918-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:preparation-does-not-own-execution-paths\",\"previous_owner\":\"codex:issue-4759-preparation\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 0,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Reacquire the released preparation issue for the operator-authorized #4759 activation-map implementation run.",
+      "operation": "{\"branch\":\"codex/4759-v0918-preparation\",\"claim_id\":\"claim-4759-v0918-activation-execution-20260731\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:issue-4759-execution\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/4759\",\".csdlc/locks/4759.lock\",\".csdlc/prepared/issues/4759\",\".csdlc/evidence/4759\",\"docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md\",\"docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\"],\"purpose\":\"Implement and publish #4759 by converting the v0.92 activation map into an exact v0.91.8 consumption/handoff artifact backed by accepted product evidence; do not start v0.92 implementation or sibling WP-21 work.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Record #4759 WP-21 activation bridge implementation artifacts before focused validation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented the #4759 v0.91.8 WP-21 activation bridge as a concrete v0.92 consumption/handoff artifact backed by the accepted WP-14A platform ledger.\",\"changes\":[\"Converted docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md from issue-routing text into the activation bridge with exact WP-14A baseline and accepted merge evidence.\",\"Updated docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md to consume the #4759 bridge and name the downstream #4762 birth-witness handoff.\",\"Updated docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md to identify the activation bridge boundary and non-claims.\",\"Updated docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md to consume the v0.91.8 bridge without claiming v0.92 readiness.\"],\"artifacts\":[\"docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md\",\"docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\",\"docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Update SIP from preparation-only intent to the operator-authorized #4759 execution intent.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Implement the v0.91.8 WP-21 activation bridge that maps v0.92 activation inputs to accepted platform evidence, named WP-21 owners, explicit blockers, or non-claims.\",\"operation\":\"replan\",\"previous_value\":\"Prepare a later execution lane for the v0.92 activation map that consumes accepted deployed-product evidence.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Update SIP required outcome to the implemented activation bridge handoff surface.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"A reviewed, validated activation bridge in the v0.91.8 pre-v0.92 path, consumed by the v0.92 bridge ledger and handed to #4762 without claiming v0.92 implementation or birthday readiness.\",\"operation\":\"replan\",\"previous_value\":\"An execution-ready preparation packet for the future integrated activation map, with live dependency gates and non-claim boundaries recorded.\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Replace stale preparation-only operator constraints with the current execution/publication constraints.",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"use typed C-SDLC v2 only\",\"work only in /Volumes/FastWork/adl-wp-4759 on codex/4759-v0918-preparation\",\"stay within the #4759 protected activation bridge and lifecycle paths\",\"do not start v0.92 implementation or sibling WP-21 work\",\"publish a ready PR with Closes #4759 after focused validation and exact-head review\",\"do not merge or close out\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Update SPP summary from preparation-only future work to current #4759 execution truth.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Implement and publish the #4759 WP-21 activation bridge after live #5384 closure, using the accepted WP-14A platform ledger as exact evidence and preserving v0.92 non-claims.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the issue-local packet now; later execution re-checks #5384 live merge and ancestry, then implements and validates the integrated activation map.\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Replace stale future preparation steps with the current activation bridge execution plan.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Confirm live #5384 closure and consume the accepted WP-14A platform ledger as the execution evidence basis\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the v0.91.8 activation bridge inside the protected activation map and handoff docs\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Update lifecycle cards with execution truth through typed C-SDLC v2 requests\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Run focused docs/card validation, obtain exact-head pre-PR review, publish a ready PR, and stop before merge or closeout\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Mark #5384 closure and accepted WP-14A ledger confirmation complete.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Mark protected activation bridge document implementation complete.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Replace stale preparation stop conditions with current validation, review, and publication gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"focused docs/card validation fails\",\"exact-head pre-PR review finds actionable issues that are not fixed\",\"publication would use stale review or ambiguous PR metadata\",\"scope pressure asks #4759 to implement v0.92 runtime, birthday, Memory Palace, Unity, or sibling WP-21 work\",\"operator asks to merge or close out before this no-merge handoff is complete\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:issue-4759-execution",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Mark typed lifecycle execution and validation recording complete after csdlc-validate finalize passed.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Mark review and publication handoff step in progress.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"in_progress\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:issue-4759-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:issue-4759-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:issue-4759-execution",
+      "reason": "Advance #4759 after exact-head review evidence was recorded with no actionable publication blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:issue-4759-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:wp21-conductor",
+      "reason": "Freeze reviewed published PR #5738 and release its writer claim so dependent #4762 can consume and extend the activation-map handoff without waiting for asynchronous merge/closeout.",
+      "operation": "{\"claim_id\":\"claim-4759-v0918-activation-execution-20260731\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:published-head-frozen-transfer-to-dependent-wp21-issue\",\"previous_owner\":\"codex:issue-4759-execution\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 15,
+      "actor": "subagent:/root/review_5727",
+      "reason": "Reacquire exact issue authority solely to reconcile merged PR #5738 and complete typed terminal closeout for #4759.",
+      "operation": "{\"branch\":\"codex/4759-v0918-preparation\",\"claim_id\":\"claim-4759-terminal-closeout-20260731\",\"operation\":\"reacquire_claim\",\"owner\":\"subagent:/root/review_5727\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/4759\",\".csdlc/locks/4759.lock\",\".csdlc/prepared/issues/4759\",\".csdlc/evidence/4759\",\".csdlc/publication/4759.intent.json\",\"docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md\",\"docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\"],\"purpose\":\"Terminal-only closeout of merged PR #5738 for #4759; preserve the reviewed revision, publication identity, accepted proof, and product scope without implementation changes.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 16,
+      "actor": "subagent:/root/review_5727",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "subagent:/root/review_5727",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 25,
+      "generation": 18,
+      "actor": "subagent:/root/review_5727",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 26,
+      "generation": 19,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the valid #4759 terminal receipt in the dedicated #5748 authority projection.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "issue": 5499,
+  "base_branch": "main",
+  "branch": "codex/5499-v0918-wp10a-conductor",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5499-v0918-wp10a-conductor-preparation",
+    "owner": "codex:issue-5499-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1784660260,
+    "expires_unix_seconds": 1785265060,
+    "heartbeat_unix_seconds": 1784660260,
+    "branch": "codex/5499-v0918-wp10a-conductor",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5499",
+      ".csdlc/locks/5499.lock",
+      ".csdlc/prepared/issues/5499"
+    ],
+    "purpose": "Prepare and review WP-10A conductor contracts only; product implementation remains blocked on merged typed closeout for #5349 and direct dependencies"
+  }
+}

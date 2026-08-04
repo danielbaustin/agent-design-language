@@ -1,0 +1,10 @@
+{
+  "issue": 5526,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "5717798a6a95f74551aec782b7c654d9631e5ed398f7ab59dd9fe665d6ac653a",
+  "claim_id": "claim-5526-v0918-provider-expansion-preparation",
+  "actor": "codex:5526-execution",
+  "reason": "Exact current-main head review passed with no actionable findings; advance to Reviewed for publication update.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"}
+}

@@ -1,0 +1,7 @@
+{
+  "issue": 5670,
+  "expected_generation": 0,
+  "expected_digest": "cb0aca11676772c86b321145bf60190294cd1dfcdda688aaf3f798bd81e7b810",
+  "claim_id": "claim-5670-coverage-shard-fanout",
+  "reviewer": "operator:5670"
+}

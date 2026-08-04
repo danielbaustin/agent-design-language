@@ -4,6 +4,7 @@
 | --- | --- |
 | [ADL_V2_CORE_v0.91.8.md](ADL_V2_CORE_v0.91.8.md) | ADL v2 language/compiler/CLI scope |
 | [RUNTIME_V3_ADAPTER_v0.91.8.md](RUNTIME_V3_ADAPTER_v0.91.8.md) | Runtime v3 authority and adapter proof |
+| [RUNTIME_V3_FUNCTIONAL_PARITY_v0.91.8.md](RUNTIME_V3_FUNCTIONAL_PARITY_v0.91.8.md) | Runtime v3 parity lanes and retained working-code proof |
 | [CSDLC_V2_ACCEPTANCE_v0.91.8.md](CSDLC_V2_ACCEPTANCE_v0.91.8.md) | C-SDLC v2 lifecycle acceptance |
 | [PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md](PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md) | WP-14A integrated acceptance gate |
 | [AI_AGENT_PODCAST_STUDIO_v0.91.8.md](AI_AGENT_PODCAST_STUDIO_v0.91.8.md) | AI Agent Podcast Studio weekly launch-readiness plan |

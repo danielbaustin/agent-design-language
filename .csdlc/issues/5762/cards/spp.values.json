@@ -1,0 +1,93 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5762,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][tests] Make terminal repair fixtures independent of live issue claims",
+    "slug": "terminal-sor-validation-fixtures",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Bind #5762, repair the store.rs terminal SOR validation fixture authority setup, validate focused and full C-SDLC v2 lanes, run bounded review, publish a ready PR, and shepherd it green.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Initialize and bind #5762 in the issue worktree.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Repair the terminal SOR validation fixture authority setup.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run focused tests, full locked all-target C-SDLC v2 tests, strict Clippy, and diff hygiene.",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Run bounded gpt-5.5 review, fix findings, publish ready PR, and shepherd checks green.",
+          "acceptance_ids": [
+            "AC-5",
+            "AC-6"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Production terminal repair semantics remain unchanged.",
+        "Temporary test authority is deterministic and issue-local.",
+        "Closed_out targets remain claim-free."
+      ],
+      "risks": [
+        "Fixture copied from live tracked records can drift as issues close out.",
+        "A broad repair could accidentally weaken production active-claim authorization."
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 21600,
+        "total_tokens": 80000,
+        "validation_seconds": 3600
+      },
+      "stop_conditions": [
+        "typed lifecycle claim collision",
+        "focused terminal SOR validation tests fail after fixture repair",
+        "full locked all-target C-SDLC v2 tests fail with an in-scope regression",
+        "bounded review finds actionable issues"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5762/retained/design.md",
+      "design_digest": "ac6d85e2f2ec631133731b7d4f07d0066fc83d19f6b89a7f041cefe20ac3e246",
+      "diagram_ref": ".csdlc/issues/5762/retained/diagram.mmd",
+      "diagram_digest": "88fbc0f5ba880e12b0902ae4574bf587f85c5a26d15d3438c842f36e2d1201c1"
+    }
+  }
+}

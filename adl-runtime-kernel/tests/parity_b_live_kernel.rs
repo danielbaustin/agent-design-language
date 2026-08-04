@@ -14,6 +14,20 @@ use adl_runtime_kernel::{
 };
 use ed25519_dalek::SigningKey;
 
+#[path = "support/runtime_init.rs"]
+mod runtime_init;
+
+#[cfg(unix)]
+extern crate self as adl_resilience;
+
+#[cfg(unix)]
+pub fn capped_exponential_backoff(base_ms: u64, cap_ms: u64, failures: u32) -> Duration {
+    const MAX_BACKOFF_EXPONENT: u32 = 20;
+    let exponent = failures.saturating_sub(1).min(MAX_BACKOFF_EXPONENT);
+    let multiplier = 1_u64.checked_shl(exponent).unwrap_or(u64::MAX);
+    Duration::from_millis(base_ms.saturating_mul(multiplier).min(cap_ms))
+}
+
 #[cfg(unix)]
 #[allow(dead_code)]
 #[path = "../../adl-runtime/src/guardian.rs"]
@@ -138,21 +152,32 @@ async fn live_graph_executes_through_guardian_canonical_ingress() {
     use runtime_guardian::{run_guardian, GuardianConfig, GuardianTerminalState};
 
     let directory = tempfile::tempdir().unwrap();
-    let continuity_root = directory.path().join("continuity");
     let probe = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
     let address = probe.local_addr().unwrap();
     drop(probe);
-    let (init, certificate_der) = write_runtime_init(directory.path(), address);
-    let control_key = SigningKey::from_bytes(&[61; 32]);
-    let operation_key = SigningKey::from_bytes(&[62; 32]);
+    let state_root = directory.path().join("state");
+    std::fs::create_dir_all(&state_root).unwrap();
+    let state_root = state_root.canonicalize().unwrap();
+    let (init, certificate_der) =
+        runtime_init::write_with_certificate_for_state(directory.path(), address, &state_root);
+    let control_key = SigningKey::from_bytes(&[17; 32]);
     let shutdown = tokio_util::sync::CancellationToken::new();
     let mut guardian = GuardianConfig::runtime_kernel(
         env!("CARGO_BIN_EXE_adl-runtime-kernel"),
-        continuity_root.to_string_lossy(),
         init.to_string_lossy(),
     );
     guardian.restart_budget = 0;
-    guardian.env = guardian_environment(&control_key, &operation_key);
+    guardian.backoff_base_ms = 1;
+    guardian.backoff_cap_ms = 10;
+    guardian.healthy_window_ms = 60_000;
+    guardian.child_shutdown_budget_ms = 18_000;
+    guardian.shutdown_grace_ms = 18_500;
+    guardian.lease_auth_timeout_ms = 5_000;
+    guardian.lease_auth_attempts = 3;
+    guardian.capture_max_bytes = 65_536;
+    guardian.capture_drain_grace_ms = 2_000;
+    guardian.configuration_exit_codes = vec![64];
+    guardian.env = guardian_environment();
     let guardian_task = tokio::spawn(run_guardian(guardian, shutdown.clone()));
     let connector = tls_connector(certificate_der);
     let observatory = match wait_for_runtime(
@@ -180,9 +205,9 @@ async fn live_graph_executes_through_guardian_canonical_ingress() {
         "parity-b-forged-submit",
         hash(b"parity-b-forged-correlation")[..32].to_owned(),
         instance_id,
-        "guardian-reviewer",
+        "operator",
         ControlAction::Submit { work: forged_work },
-        "guardian-control",
+        "operator",
         &control_key,
     )
     .unwrap();
@@ -201,9 +226,9 @@ async fn live_graph_executes_through_guardian_canonical_ingress() {
         "parity-b-guardian-submit",
         hash(b"parity-b-guardian-correlation")[..32].to_owned(),
         instance_id,
-        "guardian-reviewer",
+        "operator",
         ControlAction::Submit { work: work.clone() },
-        "guardian-control",
+        "operator",
         &control_key,
     )
     .unwrap();
@@ -231,14 +256,14 @@ async fn live_graph_executes_through_guardian_canonical_ingress() {
         hash(&serde_json::to_vec(&(&work, &expected_operation)).unwrap())
     );
     shutdown.cancel();
-    let outcome = tokio::time::timeout(Duration::from_secs(5), guardian_task)
+    let outcome = tokio::time::timeout(Duration::from_secs(15), guardian_task)
         .await
         .unwrap()
         .unwrap()
         .unwrap();
     assert_eq!(
         outcome.terminal_state,
-        GuardianTerminalState::ShutdownForwarded
+        GuardianTerminalState::ShutdownCheckpointed
     );
 }
 
@@ -599,51 +624,8 @@ fn operation(id: &str, request: &ParityBRequest) -> adl_runtime_kernel::Operatio
 }
 
 #[cfg(unix)]
-fn guardian_environment(
-    control_key: &SigningKey,
-    operation_key: &SigningKey,
-) -> Vec<(String, String)> {
+fn guardian_environment() -> Vec<(String, String)> {
     vec![
-        (
-            "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX".to_owned(),
-            hex::encode(control_key.verifying_key().as_bytes()),
-        ),
-        (
-            "ADL_RUNTIME_CONTROL_KEY_ID".to_owned(),
-            "guardian-control".to_owned(),
-        ),
-        (
-            "ADL_RUNTIME_CONTROL_PRINCIPAL".to_owned(),
-            "guardian-reviewer".to_owned(),
-        ),
-        (
-            "ADL_RUNTIME_CONTINUITY_SIGNING_KEY_HEX".to_owned(),
-            hex::encode([63_u8; 32]),
-        ),
-        (
-            "ADL_RUNTIME_CONTINUITY_KEY_ID".to_owned(),
-            "guardian-continuity".to_owned(),
-        ),
-        (
-            "ADL_RUNTIME_CONTINUITY_MIN_GENERATION".to_owned(),
-            "0".to_owned(),
-        ),
-        (
-            "ADL_RUNTIME_OPERATION_PUBLIC_KEY_HEX".to_owned(),
-            hex::encode(operation_key.verifying_key().as_bytes()),
-        ),
-        (
-            "ADL_RUNTIME_OPERATION_KEY_ID".to_owned(),
-            "guardian-operation".to_owned(),
-        ),
-        (
-            "ADL_RUNTIME_OBSERVATORY_TOKEN".to_owned(),
-            "guardian-observatory-token-00000001".to_owned(),
-        ),
-        (
-            "ADL_RUNTIME_SNTP_SERVER".to_owned(),
-            "127.0.0.1:9".to_owned(),
-        ),
         (
             "ADL_RUNTIME_PARITY_B_POLICY_KEY_ID".to_owned(),
             "policy-review".to_owned(),
@@ -673,32 +655,6 @@ fn guardian_environment(
             hex::encode(SigningKey::from_bytes(&[42; 32]).verifying_key().as_bytes()),
         ),
     ]
-}
-
-#[cfg(unix)]
-fn write_runtime_init(
-    directory: &std::path::Path,
-    address: std::net::SocketAddr,
-) -> (std::path::PathBuf, Vec<u8>) {
-    use rcgen::{generate_simple_self_signed, CertifiedKey};
-    let CertifiedKey { cert, signing_key } =
-        generate_simple_self_signed(["localhost".to_owned()]).unwrap();
-    let certificate = directory.join("cert.pem");
-    let private_key = directory.join("key.pem");
-    std::fs::write(&certificate, cert.pem()).unwrap();
-    std::fs::write(&private_key, signing_key.serialize_pem()).unwrap();
-    let init = directory.join("runtime-init.toml");
-    std::fs::write(
-        &init,
-        format!(
-            "schema = \"adl.runtime_v3.init.v1\"\n[api]\naddress = \"{address}\"\npublic_base_url = \"https://localhost:{}\"\n[api.tls]\ncertificate_chain_path = \"{}\"\nprivate_key_path = \"{}\"\n[observatory]\nallowed_origins = [\"https://localhost:8765\"]\n[agents]\ncount = 1\nsample_limit = 1\n",
-            address.port(),
-            certificate.to_string_lossy().replace('\\', "\\\\").replace('"', "\\\""),
-            private_key.to_string_lossy().replace('\\', "\\\\").replace('"', "\\\"")
-        ),
-    )
-    .unwrap();
-    (init, cert.der().to_vec())
 }
 
 #[cfg(unix)]

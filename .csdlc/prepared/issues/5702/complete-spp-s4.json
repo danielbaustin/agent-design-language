@@ -1,0 +1,14 @@
+{
+  "issue": 5702,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "aa646eacf1e5bf0bb7c9e3e5e805085a8e1283c30fb18da81b371fe3ef3b96f7",
+  "claim_id": "claim-5702-podcast-launch-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "record completed focused validation and operator-review preparation step",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S4",
+    "status": "completed"
+  }
+}

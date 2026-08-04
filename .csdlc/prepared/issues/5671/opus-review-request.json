@@ -1,0 +1,10 @@
+{
+  "model": "claude-opus-5",
+  "max_tokens": 1200,
+  "messages": [
+    {
+      "role": "user",
+      "content": "Review issue #5671 implementation for correctness and scope. The change adds claude:claude-opus-5 as an Anthropic Messages profile with model claude-opus-5, adds provider setup claude-opus-5, and updates focused registry/setup/adapter tests. Existing Claude profiles remain generic HTTP. Identify only actionable defects or missing proof; if none, respond exactly NO_FINDINGS. Do not request a live provider call as a prerequisite."
+    }
+  ]
+}

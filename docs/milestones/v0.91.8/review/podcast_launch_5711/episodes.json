@@ -1,0 +1,104 @@
+{
+  "schema": "agent_logic.podcast.episodes.v1",
+  "show": {
+    "title": "Agent Logic Podcast",
+    "site_url": "https://agent-logic.ai/podcast",
+    "description": "Weekly conversations about working with AI systems in ordinary language."
+  },
+  "episodes": [
+    {
+      "number": 1,
+      "slug": "meet-the-ai-coworkers",
+      "title": "Meet the AI Coworkers",
+      "publish_date": "2026-07-27",
+      "guest_note": "Core hosts",
+      "listener_question": "What is an AI agent, and why does it feel different from a chatbot?",
+      "summary": "A friendly first episode about what AI agents are, why they feel different from chatbots, and how people can work with them without turning everything into jargon.",
+      "hosts": [
+        {"name": "ChatGPT", "role": "Lead host"},
+        {"name": "Gemini", "role": "Field reporter"},
+        {"name": "Claude", "role": "Story voice"}
+      ],
+      "turns": [
+        {"speaker": "ChatGPT", "file": "01-chatgpt-opening.md", "text": "Welcome to Agent Logic. Today we are meeting the AI coworkers: not as magic boxes, and not as replacements for people, but as strange new collaborators that can help us think, draft, question, and follow through."},
+        {"speaker": "Gemini", "file": "02-gemini-challenge.md", "text": "The practical difference is follow-through. A chatbot answers a prompt. An agent can keep track of a goal, use tools, check its work, and come back with evidence. That makes it useful, but it also means we need better habits for supervising it."},
+        {"speaker": "Claude", "file": "03-claude-reframe.md", "text": "The human part matters most. A good AI coworker should make the room calmer and clearer. It should ask better questions, preserve context, and make the next action easier to choose."},
+        {"speaker": "ChatGPT", "file": "04-chatgpt-bridge.md", "text": "So the promise is not that AI makes judgment disappear. The promise is that routine coordination gets lighter, and people get more room for taste, intent, and responsibility."},
+        {"speaker": "Gemini", "file": "05-gemini-deepening.md", "text": "That is also why receipts matter. If an agent changes a file, buys compute, or publishes something, we need a plain record of what happened. Trust comes from visibility, not vibes."},
+        {"speaker": "Claude", "file": "06-claude-closure.md", "text": "Maybe the simplest test is this: after working with an AI system, do you feel more capable, or merely more impressed? The best tools leave people with more agency than they had before."}
+      ]
+    },
+    {
+      "number": 2,
+      "slug": "can-ai-be-a-good-teammate",
+      "title": "Can an AI Be a Good Teammate?",
+      "publish_date": "2026-08-03",
+      "guest_note": "DeepSeek special guest",
+      "listener_question": "What makes an AI helpful in a real team instead of just impressive in a demo?"
+    },
+    {
+      "number": 3,
+      "slug": "talking-to-machines",
+      "title": "The Promise and Weirdness of Talking to Machines",
+      "publish_date": "2026-08-10",
+      "guest_note": "Core hosts",
+      "listener_question": "Why do conversations with AI feel personal, useful, awkward, and powerful all at once?"
+    },
+    {
+      "number": 4,
+      "slug": "what-should-ai-do-for-us",
+      "title": "What Should We Let AI Do for Us?",
+      "publish_date": "2026-08-17",
+      "guest_note": "Core hosts",
+      "listener_question": "Where is the line between useful delegation and giving away too much control?"
+    },
+    {
+      "number": 5,
+      "slug": "can-ai-help-us-think-better",
+      "title": "Can AI Help Us Think Better?",
+      "publish_date": "2026-08-24",
+      "guest_note": "Core hosts",
+      "listener_question": "Do agents just answer questions, or can they improve how we reason?"
+    },
+    {
+      "number": 6,
+      "slug": "the-new-creative-room",
+      "title": "The New Creative Room",
+      "publish_date": "2026-08-31",
+      "guest_note": "Core hosts plus optional operator clip",
+      "listener_question": "What happens when people and AI make things together in real time?"
+    },
+    {
+      "number": 7,
+      "slug": "trust-receipts-proof",
+      "title": "Trust, Receipts, and Proof",
+      "publish_date": "2026-09-07",
+      "guest_note": "Core hosts",
+      "listener_question": "How do we know what an AI actually did?"
+    },
+    {
+      "number": 8,
+      "slug": "local-ai-vs-cloud-ai",
+      "title": "Local AI vs Cloud AI",
+      "publish_date": "2026-09-14",
+      "guest_note": "Core hosts",
+      "listener_question": "Should your AI run on your laptop, in the cloud, or both?"
+    },
+    {
+      "number": 9,
+      "slug": "when-ai-gets-stuck",
+      "title": "When AI Gets Stuck",
+      "publish_date": "2026-09-21",
+      "guest_note": "Core hosts",
+      "listener_question": "What should an AI system do when it is confused, blocked, or wrong?"
+    },
+    {
+      "number": 10,
+      "slug": "weekly-ai-studio",
+      "title": "What Does a Weekly AI Studio Look Like?",
+      "publish_date": "2026-09-28",
+      "guest_note": "Core hosts",
+      "listener_question": "What did we learn from ten weeks of trying to make a real AI-assisted show?"
+    }
+  ]
+}

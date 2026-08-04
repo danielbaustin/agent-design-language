@@ -94,7 +94,7 @@ keep_report = run_case(
 keep_json = json.loads((keep_report / "issue_splitter_report.json").read_text(encoding="utf-8"))
 assert keep_json["status"] == "keep_as_is"
 assert keep_json["classification"] == "keep_as_is"
-assert keep_json["recommended_handoff"] == "workflow-conductor"
+assert keep_json["recommended_handoff"] == "normal_issue_execution"
 assert not keep_json["proposed_follow_ons"]
 
 defer_report = run_case(

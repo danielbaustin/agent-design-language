@@ -1,0 +1,361 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5384,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "4fecd6caf5933cf3222a602ae1033477f116376e15c34477ee930a42928b0422",
+  "phase": "closed_out",
+  "generation": 17,
+  "digest": "e8976d1fa5549b2d9999129f21135d6ec120f307a22610f5146ec001146a6d11",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "provider:gemini-3.1-pro-preview",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:71e3b70b8f7fd3f0ffca2c020eb78599fd115658:86b05589e58cc99d746b1d8af59839c4390f2b0ffae8da0f505438e5d95b0167",
+    "scope": [
+      ".csdlc/prepared/issues/5384/dependency-gate.json",
+      ".csdlc/prepared/issues/5384/validate_dependency_gate.rb",
+      ".csdlc/evidence/5384/platform-acceptance-ledger.v1.json",
+      "docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md"
+    ]
+  },
+  "review": {
+    "reviewer": "provider:gemini-3.1-pro-preview",
+    "scope": [
+      ".csdlc/prepared/issues/5384/dependency-gate.json",
+      ".csdlc/prepared/issues/5384/validate_dependency_gate.rb",
+      ".csdlc/evidence/5384/platform-acceptance-ledger.v1.json",
+      "docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md"
+    ],
+    "reviewed_revision": "git-blake3:71e3b70b8f7fd3f0ffca2c020eb78599fd115658:86b05589e58cc99d746b1d8af59839c4390f2b0ffae8da0f505438e5d95b0167",
+    "findings": [],
+    "residual_risks": [
+      "Compatibility binaries still report 0.91.7; WP-14A preserves that branding truth and does not relabel it.",
+      "WP-13 deletion remains deferred and deletion_authorized remains false until its separately scheduled gate before issue 5356.",
+      "Stale typed projections for already merged dependencies remain lifecycle reconciliation residuals and are not treated as product-acceptance blockers."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5384,
+    "pull_request": 5726,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5726",
+    "base": "main",
+    "head": "codex/5384-v0918-wp14a-preparation-bound",
+    "revision": "git-blake3:c35c0a896d3a5ef5c9289886dbef232639dc9e98:32f549e0d8568e8b65652a3c8b114cd00b376186d573426c0a1f851bac6edb0e",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5726,
+    "head_sha": "c35c0a896d3a5ef5c9289886dbef232639dc9e98",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30586793697"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30586793697"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30586793697"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5726,
+    "disposition": "merged",
+    "observed_sha": "c35c0a896d3a5ef5c9289886dbef232639dc9e98",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5384.json",
+    "released_branch": "codex/5384-v0918-wp14a-preparation-bound",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5384",
+      ".csdlc/issues/5384",
+      ".csdlc/locks/5384.lock",
+      ".csdlc/prepared/issues/5384",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5384/retained/design.md",
+  "diagram_path": ".csdlc/issues/5384/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:daniel-wp13-deferral",
+      "revision": "d8d4bdae34791af754e1c9ba389c5181b7063a8b53fbce53af792354854ff4d8"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "f86b7f629c1517dee694464dfbe8bf81cfffa49a8e9f5a43a7eb13249deb53fe",
+      "rendered_digest": "286d3f757711730b1576727865b6094c4a9723237780972df4df82e2ce888ed1",
+      "ast_digest": "0ab3807a6424fd84604e4ba65823be473599f8fda23d5d5bb4864e0ac11d74bf"
+    },
+    "stp": {
+      "values_digest": "2fe7255733a80da59d917172e3ddc28030b8cc811e264c89517e71834ccaaf41",
+      "rendered_digest": "8a07ade9800ae6179c5c8b7de90f9fee225025f78bfde617bfa891ba6831feba",
+      "ast_digest": "6b4725d3cd8e3289ee8d21e4d89134235b8618668d4526ebd19228593380dedb"
+    },
+    "spp": {
+      "values_digest": "4006fde0a8d6010eef065c760dbf6bfe8d6015beca06a3030c7b428e8b0480a1",
+      "rendered_digest": "2cd97ffa78baccdaa2d7ce09c7a7df022b2a9219cc67bf23e4eb82f49fc5b899",
+      "ast_digest": "c39364b0446703de7df9680652f66e52b9c6ef15f21aaaf10f59003434be1b3b"
+    },
+    "vpp": {
+      "values_digest": "c30e083e3a2c9df19948cb342935e1d85476397c8e26403fbaf62871f4361932",
+      "rendered_digest": "2567cb05382e07c756b65f1f86afb9042279ac2bcf2ecad6218c7de633ca26dc",
+      "ast_digest": "8642f1cd751e38c81c3af3a23146343fa1e851232ab172056afff38f3d5f1598"
+    },
+    "srp": {
+      "values_digest": "e9ca060a08ffb8cc7fbceb725594735171facc5b437aa62b00e1d7ebeb46b149",
+      "rendered_digest": "3be18be97eeed824f3f4b930a3c65f6914a3ed8b3a79652a6d832affda60f252",
+      "ast_digest": "14bf95fbb03a406131cef9b57ec7b439d63ab0d777413dfcd92d9a76336b33c1"
+    },
+    "sor": {
+      "values_digest": "dc9c8791c31a4af265a70b6990599017f1f794291bd6596a7094f34431e4d67e",
+      "rendered_digest": "a053754f68e3d877c692f686b8dce3629122328e6e87f6c703ada6b49f9cb1bb",
+      "ast_digest": "1917f1c89f5665914ccebf879c039378b0ce775a46b02b28b017377c64dad9e4"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5384-preparation-only",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5384-preparation-only",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The thin WP-14A acceptance packet is implemented and focused validation passes."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Gemini 3.1 Pro reviewed the exact WP-14A acceptance revision and returned PASS with zero blockers."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5384-preparation-only",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "subagent:019f86f0-22ca-7682-a340-7ae5c89e5c82:git-blob-a41df3a3e967dd5e00961da7d353f1fb0f282ae6",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5384-preparation-only",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The preparation-only lease expired while WP-12 was executing; recover the same issue-local scope to record the operator-authorized WP-13 deferral and make WP-14A executable.",
+      "operation": "{\"previous_owner\":\"codex:5384-preparation-only\",\"observed_expiry_unix_seconds\":1785277829,\"recovery_actor\":\"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d\",\"reason\":\"The preparation-only lease expired while WP-12 was executing; recover the same issue-local scope to record the operator-authorized WP-13 deferral and make WP-14A executable.\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "operator:daniel-wp13-deferral",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the operator decision to prepare WP-14A now and defer WP-13 deletion until immediately before #5356.",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"Use typed C-SDLC v2 lifecycle operations in the existing issue worktree; never write on main.\",\"Prepare only: do not implement, publish, merge, or close #5384 in this step.\",\"WP-13 deletion #5346/#5347 is deferred and does not block WP-14A.\",\"Internal review #5356 must wait for the deferred deletion wave and focused post-deletion validation.\",\"Use one bounded Gemini review before the eventual PR.\",\"Reuse retained exact proof instead of rerunning expensive soak or lifecycle tests without cause.\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Replace the obsolete grab-bag predecessor graph with the four direct accepted platform inputs.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"C-SDLC v2 acceptance #5358\",\"Runtime v3 acceptance #5361\",\"ADL v2 soak and rollback proof #5344\",\"ADL v2 reversible default switch #5343\",\"WP-13 deletion #5346/#5347 is deferred and non-blocking for WP-14A; it becomes a hard gate immediately before internal review #5356\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Simplify WP-14A to a direct four-input acceptance gate and record the deferred deletion boundary.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: The six typed cards, design, and diagram describe the same thin WP-14A acceptance boundary.\",\"AC-2: Live GitHub truth confirms #5358, #5361, #5344, and #5343 are closed before execution.\",\"AC-3: Preparation remains issue-local and cannot authorize platform implementation or publication.\",\"AC-4: WP-13 #5346/#5347 is explicitly non-blocking for WP-14A and becomes mandatory immediately before #5356.\",\"AC-5: Execution reuses retained proof, runs only focused fresh-consumer checks, and receives one bounded Gemini review before PR publication.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Normalize the issue-local cards, design, diagram, and direct-input manifest to the operator-approved schedule.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Verify the four direct input issues are closed and record the exact baseline for later acceptance execution.\",\"acceptance_ids\":[\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Prepare the focused three-product fresh-consumer validation and compact acceptance ledger.\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"On separate execution authorization, run focused acceptance, obtain one Gemini review, and publish the WP-14A PR.\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"typed-record\",\"proof_role\":\"Confirm the #5384 typed projection is structurally valid.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":500,\"argv\":[\".adl/bin/csdlc-v2/csdlc-doctor\",\"--issue\",\"5384\"],\"parallel_group\":\"preparation\",\"defer_reason\":null},{\"lane\":\"direct-inputs\",\"proof_role\":\"Confirm the four direct acceptance inputs are closed and the WP-13 deferral is encoded.\",\"acceptance_ids\":[\"AC-2\",\"AC-4\"],\"deterministic\":false,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":500,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5384/validate_dependency_gate.rb\"],\"parallel_group\":\"preparation\",\"defer_reason\":null},{\"lane\":\"preparation-scope\",\"proof_role\":\"Confirm preparation writes remain inside #5384 issue-local paths.\",\"acceptance_ids\":[\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":300,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5384/validate_preparation_scope.rb\"],\"parallel_group\":\"preparation\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Confirm patch whitespace hygiene.\",\"acceptance_ids\":[\"AC-1\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":100,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"preparation\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Replace the obsolete dependency-graph review with one focused Gemini acceptance review.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Do the exact accepted ADL v2, Runtime v3, and C-SDLC v2 revisions form one coherent deployable platform baseline?\",\"Do the focused fresh-consumer checks exercise real operational entrypoints without rerunning unnecessary soak proof?\",\"Are rollback, recovery, and residual-risk claims supported by retained exact evidence?\",\"Is WP-13 deletion clearly deferred until immediately before #5356 and absent from WP-14A blocking logic?\",\"Does the PR remain a compact acceptance packet without absorbing Unity, tooling remediation, Memory Palace, or v0.92 work?\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Set the single future review boundary to exact platform acceptance evidence.",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"One bounded Gemini review of the exact WP-14A acceptance revision: direct-input revision identity, focused fresh-consumer proof, retained rollback/recovery evidence, residual-risk truth, deferred WP-13 scheduling, and non-absorption of downstream tracks.\",\"operation\":\"replan\",\"previous_value\":\"Bounded preparation review of only .csdlc/issues/5384, .csdlc/prepared/issues/5384, and .csdlc/locks/5384.lock for card truth, design completeness, dependency topology, PVF/COTS/budget contracts, and inability to authorize product work.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the operator-authorized WP-13 deferral and WP-14A activation consistently in the bounded canonical v0.91.8 planning surfaces.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.8/WBS_v0.91.8.md\",\"docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml\",\"docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md\",\"docs/milestones/v0.91.8/features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Begin operator-authorized WP-14A execution on current main after all four direct inputs closed and merged.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/evidence/5384\",\"docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md\"],\"expected_owner\":\"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d\",\"expected_purpose\":\"Refresh WP-14A preparation after operator scheduling decision: accept the platform before deferred WP-13 deletion, record the deferral before internal review #5356, and perform no implementation or publication.\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Refresh WP-14A preparation after operator scheduling decision: accept the platform before deferred WP-13 deletion, record the deferral before internal review #5356, and perform no implementation or publication.\",\"purpose\":\"Execute WP-14A as a thin exact-revision platform acceptance gate: verify the four merged inputs, run focused fresh-consumer checks, index retained rollback and operations evidence, obtain one Gemini review, and publish without absorbing deferred WP-13 or downstream work.\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the bounded WP-14A platform acceptance implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Added a compact exact-revision platform acceptance ledger, repo-native executable dependency gate, retained operations and rollback evidence index, and explicit accepted-feature and non-claim boundaries.\",\"changes\":[\"Pinned the four accepted issue, PR head, and squash-merge identities.\",\"Replaced raw GitHub CLI dependency checks with repo-native ADL issue and PR validation binaries.\",\"Required every accepted merge to be ancestral to the accepted current-main baseline.\",\"Indexed retained C-SDLC v2, Runtime v3, ADL v2 soak, rollback, and cutover proof without rerunning expensive predecessor suites.\"],\"artifacts\":[\".csdlc/prepared/issues/5384/dependency-gate.json\",\".csdlc/prepared/issues/5384/validate_dependency_gate.rb\",\".csdlc/evidence/5384/platform-acceptance-ledger.v1.json\",\"docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Record the focused WP-14A exact-input, retained-evidence, stable-generation, doctor, and diff validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby\",\".csdlc/prepared/issues/5384/validate_dependency_gate.rb\"],\"purpose\":\"Prove all four direct inputs are closed and merged with green required checks, their accepted commits are present in the baseline, retained evidence hashes match, C-SDLC resolves to v2, typed doctor passes, and the patch is hygienic.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5384/platform-acceptance-ledger.v1.json\"}}"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The thin WP-14A acceptance packet is implemented and focused validation passes.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 11,
+      "actor": "provider:gemini-3.1-pro-preview",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Gemini 3.1 Pro reviewed the exact WP-14A acceptance revision and returned PASS with zero blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

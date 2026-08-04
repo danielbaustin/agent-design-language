@@ -489,15 +489,14 @@ impl FreedomGate {
                 {
                     return Err(RefusalReason::InvalidDelegation)
                 }
-                Some(parent) => {
+                Some(parent)
                     if grant.parent_grant_hash.as_deref() != parent.hash().ok().as_deref()
                         || self.keys.authority_principals.get(&grant.signing_key_id)
                             != Some(&parent.principal)
                         || grant.max_units > parent.max_units
-                        || grant.max_delegation_depth >= parent.max_delegation_depth
-                    {
-                        return Err(RefusalReason::InvalidDelegation);
-                    }
+                        || grant.max_delegation_depth >= parent.max_delegation_depth =>
+                {
+                    return Err(RefusalReason::InvalidDelegation);
                 }
                 _ => {}
             }

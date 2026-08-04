@@ -1,0 +1,23 @@
+flowchart TD
+    P["WP-18 preparation only"] --> G{"WP-17 #5360 terminal gate"}
+    G -->|"missing merge, closed_out, receipt, release, or ancestry"| S["Stop: no review execution or publication"]
+    G -->|"terminal and ancestral"| C["Freeze exact repository, base, head, commit, corpus, and receipt digests"]
+    C --> M["Validate complete tracked review corpus"]
+    M --> F["Fan out six read-only specialist lanes"]
+    F --> L1["Code"]
+    F --> L2["Security"]
+    F --> L3["Tests"]
+    F --> L4["Docs"]
+    F --> L5["Architecture"]
+    F --> L6["Evidence"]
+    L1 --> Y["Findings-first synthesis"]
+    L2 --> Y
+    L3 --> Y
+    L4 --> Y
+    L5 --> Y
+    L6 --> Y
+    Y --> Q["Review-quality, identity, redaction, and provenance gate"]
+    Q --> T["Typed SRP review truth and internal-review packet"]
+    T --> I["Serialized publication, CI, authorized merge, post-merge proof, closeout"]
+    I --> E["WP-19 third-party review may begin"]
+    X["P0/P1, incomplete corpus, stale identity, skipped lane, or unsupported claim"] --> S

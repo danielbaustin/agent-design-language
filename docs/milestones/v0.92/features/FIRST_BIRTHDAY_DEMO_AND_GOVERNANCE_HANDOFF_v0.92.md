@@ -42,6 +42,7 @@ Key capabilities:
 - run a first-birthday proof demo
 - run not-a-birthday negative cases
 - assemble the birthday review packet
+- assemble claim-bounded launch copy from the tracked external-launch surface
 - map identity evidence to v0.93 governance inputs
 
 ## Design
@@ -57,7 +58,7 @@ Key capabilities:
 - Inputs: feature contracts, schemas, fixtures, birthday record, witnesses,
   receipts, validation logs, and review findings.
 - Outputs: demo artifacts, negative-case report, review packet, proof coverage
-  map, and v0.93 handoff.
+  map, external launch copy, publication-gate checklist, and v0.93 handoff.
 - Interfaces: demo commands, review packet docs, release evidence.
 - Invariants: demo output must cite evidence; governance remains downstream.
 
@@ -67,6 +68,10 @@ Key capabilities:
 - Demo artifact directory or packet.
 - Negative-case report.
 - Birthday review packet.
+- External launch copy packet:
+  `docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md`.
+- Reviewer FAQ and claim-boundary checklist:
+  `docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md`.
 - Governance handoff map.
 
 ## Execution Flow
@@ -75,7 +80,9 @@ Key capabilities:
 2. Run the flagship birthday demo.
 3. Run negative cases.
 4. Assemble review packet and proof coverage.
-5. Produce v0.93 governance handoff map.
+5. Assemble external launch copy from the tracked #4763 surface.
+6. Reject final publication if #4762 accepted witness/receipt proof is absent.
+7. Produce v0.93 governance handoff map.
 
 ## Determinism and Constraints
 
@@ -83,6 +90,7 @@ Key capabilities:
 - Negative cases must fail closed.
 - Handoff must not claim v0.93 governance is complete.
 - Demo language must distinguish evidence, interpretation, and future claims.
+- Launch language must distinguish prepared docs from accepted birthday proof.
 
 ## Integration Points
 
@@ -90,6 +98,7 @@ Key capabilities:
 | --- | --- | --- |
 | Demo Matrix | write | Records demo commands, proof surfaces, and status. |
 | Release Evidence | write | Supplies birthday proof artifacts for closeout. |
+| External Launch Surface | read/write | Supplies public copy, reviewer FAQ, and publication gates without authorizing publication. |
 | Governance Planning | handoff | Supplies identity evidence for v0.93. |
 | Review Packet | write | Packages the milestone proof for internal and external review. |
 
@@ -116,7 +125,7 @@ Key capabilities:
 ### Tests
 
 - Test surfaces: demo runner or fixture validation, negative suite, link and
-  claim-boundary checks.
+  claim-boundary checks, and launch-copy publication-gate checks.
 
 ### Review / Proof Surface
 
@@ -131,6 +140,8 @@ Key capabilities:
 - Negative suite proves startup, wake, snapshot, admission, and copied state
   are not birth.
 - Birthday review packet is complete and evidence-bound.
+- Launch copy remains publishable only after #4762 accepted witness/receipt
+  proof is cited.
 - v0.93 handoff maps identity evidence without claiming governance completion.
 
 ## Risks

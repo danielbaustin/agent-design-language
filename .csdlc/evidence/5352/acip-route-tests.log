@@ -1,0 +1,3 @@
+PASS csm_runtime_api::tests::runtime_api_surfaces_acip_carrier_component_and_routes (1 passed)
+PASS csm_runtime_api::tests::runtime_api_acip_websocket_path_fails_closed_until_upgrade_handler_exists (1 passed)
+NOTE tests used cargo --offline because the tracked adl/Cargo.lock predates merged Runtime v3 path dependencies; Cargo's mechanical 761-line lock refresh was discarded and is not part of #5352.

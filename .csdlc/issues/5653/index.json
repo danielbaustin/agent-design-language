@@ -1,0 +1,431 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5653,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "f93988ed395e1db7da2af464587de5654c71f80272e6421ecc4db7ea96396b24",
+  "phase": "closed_out",
+  "generation": 16,
+  "digest": "cdbe029c45136bfb1d9006f0f66a4f7e61d07f157be06030184924bbe47025f7",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "bounded-subagent-review-5653",
+    "assigned_by": "codex:5653-execution",
+    "revision": "git-blake3:5e7edfb35d16c2c6da9201654a911c5157430ca6:29e1ef67c402c766516a2ed0fae5adfad89f8e02a13b9504b4bcfd6963c84ce7",
+    "scope": [
+      "README.md",
+      "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
+      ".csdlc/issues/5653"
+    ]
+  },
+  "review": {
+    "reviewer": "bounded-subagent-review-5653",
+    "scope": [
+      "README.md",
+      "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
+      ".csdlc/issues/5653"
+    ],
+    "reviewed_revision": "git-blake3:5e7edfb35d16c2c6da9201654a911c5157430ca6:29e1ef67c402c766516a2ed0fae5adfad89f8e02a13b9504b4bcfd6963c84ce7",
+    "findings": [],
+    "residual_risks": [
+      "The main ci badge reflects the independent latest main workflow; this documentation change does not alter CI behavior."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5653,
+    "pull_request": 5654,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5654",
+    "base": "main",
+    "head": "codex/5653-readme-refresh",
+    "revision": "git-blake3:5594107c5537035f969b5d7527562ed7d52c6239:b036f57d2ce47dbb2dde7c2be1046d0baf19efc01b0c698b86f3441329d26a65",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5654,
+    "head_sha": "5594107c5537035f969b5d7527562ed7d52c6239",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565845220"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565627834"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565576720"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565576870"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565577570"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565577122"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565538354"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565576844"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565577142"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565576884"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565577180"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565576967"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565576215"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565577452"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30118317224/job/89565576905"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5654,
+    "disposition": "merged",
+    "observed_sha": "5594107c5537035f969b5d7527562ed7d52c6239",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5653.json",
+    "released_branch": "codex/5653-readme-refresh",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5653",
+      ".csdlc/locks/5653.lock",
+      ".csdlc/prepared/issues/5653",
+      "README.md"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5653/retained/design.md",
+  "diagram_path": ".csdlc/issues/5653/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5653-preparation-review",
+      "revision": "841a852b8267d543686c4241d13eb74bbb2d0678cf6ba1d537bfeb80fa7af0f5"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "2d9866fb0f565de19dbb5e7ec3e467dc75d0af646b08319e291e0078fd0b74d2",
+      "rendered_digest": "08c5cc81d85386e4830f55879804707ac47a4a4a3aed9f8a50712bb06df1d431",
+      "ast_digest": "d5b072e2ec5bd5ccfefa6d229adc847d756093c0b2943cfd00b89e6086fede45"
+    },
+    "stp": {
+      "values_digest": "a19e6d0145bf01f6f8d5bdb5a85b58c3e46ea2380b36d35cc47246f7cd6ef1db",
+      "rendered_digest": "c5478426342378c63ea804905ce0fc88cd59607a062ebba7061dd009cae92249",
+      "ast_digest": "8164e8ea8fdcd7dab7c10bbe503b78abe50915f0412b91d7ffe740cb54471207"
+    },
+    "spp": {
+      "values_digest": "cf908fd204567b1b0f4e482661d05335335377076bc494fcb3250ca18e34b0e0",
+      "rendered_digest": "80e89e76d2e072bb279a50e91b76d89dce35a2728329dfba759b96332042e11d",
+      "ast_digest": "22dffa6d09c53741ac499548f195810e8e062f0db11ab7c9ccaa3f245073a83e"
+    },
+    "vpp": {
+      "values_digest": "68dd783fb1161da6cf1e5c2bf6d4405c66879df77554d59f6a66b2b83ac7af44",
+      "rendered_digest": "0ba91b5a4327aa7c9d9009a3bc440d3b775484fa9d6d3c62b41d2a1c45117fbb",
+      "ast_digest": "31016910b9f614484164817e7e8328dd1f4aa302d7192da493b72f25b7b83684"
+    },
+    "srp": {
+      "values_digest": "c05da8a327b1f910d710f3547d4da10337bab2a3559a6420677781ec784078cc",
+      "rendered_digest": "4f8153260f5f5e0f023281bb1804e264d3267c2433a323bff38357f710ef861c",
+      "ast_digest": "595b7fe71b2f8bfcffdcade5cd49c39839308d372fe664a21f825f9b95248163"
+    },
+    "sor": {
+      "values_digest": "46cd13da91cc414b3823ee04b6e4b95c3fd896e45cc1ff743f7a384066dfe019",
+      "rendered_digest": "7334c0213076119b863169cc6b3263ab1df1dc5fd4a38fc63f8094fe3e9c4159",
+      "ast_digest": "ea025d935489a3afcea52714d78b5c2ecdf9576bfc622efc5643c7c8aaa2cf25"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5653-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5653-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5653-execution",
+      "reason": "README implementation is complete and focused proof is green"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5653-execution",
+      "reason": "Exact-head bounded review completed with no actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5653-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5653-execution",
+      "reason": "Release-truth documentation changed after draft publication; recover stale review and publication truth for exact-head re-review."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5653-execution",
+      "reason": "Exact release-truth review completed with no actionable findings."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5653-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5653-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:5653-preparation-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5653-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5653-execution",
+      "reason": "Record focused README and homepage validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove README wording, homepage link, badge branch, and documentation whitespace/link boundary\",\"outcome\":\"passed\",\"evidence_ref\":\"Focused README assertions and git diff check passed; https://agent-logic.ai returned HTTP 200.\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5653-execution",
+      "reason": "Record README status and homepage implementation",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Updated the root README milestone badge and status to v0.91.8 release-tail truth, added the ADL homepage link, and documented that later milestones are not hosted releases.\",\"changes\":[\"README.md\"],\"artifacts\":[\".csdlc/evidence/5653/readme-focused.txt\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5653-execution",
+      "reason": "README implementation is complete and focused proof is green",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5653-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5653-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "bounded-subagent-review-5653",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5653-execution",
+      "reason": "Exact-head bounded review completed with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5653-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5653-execution",
+      "reason": "Release-truth documentation changed after draft publication; recover stale review and publication truth for exact-head re-review.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5653-execution",
+      "reason": "Revalidate README and release-note truth after publishing v0.91.7.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Verify published-release links, homepage link, canonical main badges, and documentation whitespace\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5653/readme-focused.txt\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:5653-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "bounded-subagent-review-5653",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:5653-execution",
+      "reason": "Exact release-truth review completed with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:5653-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

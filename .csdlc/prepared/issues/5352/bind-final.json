@@ -1,0 +1,24 @@
+{
+  "issue": 5352,
+  "base_branch": "main",
+  "branch": "codex/5352-v0918-final-handoff",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5352-v0918-final-handoff",
+    "owner": "codex:wp21-final-handoff",
+    "generation": 0,
+    "acquired_unix_seconds": 1785543526,
+    "expires_unix_seconds": 1786148326,
+    "heartbeat_unix_seconds": 1785543526,
+    "branch": "codex/5352-v0918-final-handoff",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5352",
+      ".csdlc/issues/5352",
+      ".csdlc/locks/5352.lock",
+      ".csdlc/prepared/issues/5352",
+      "docs/milestones/v0.91.8/handoff"
+    ],
+    "purpose": "Finalize, validate, review, publish, and integrate the WP-21 exact-revision v0.92 consumption handoff"
+  }
+}
