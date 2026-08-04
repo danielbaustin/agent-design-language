@@ -5,7 +5,7 @@
   "initialization_digest": "ea470dd9f99634977909a2bd68cfd3f66cfb924e95fe17b2616ec51caa4cb3cb",
   "phase": "implemented",
   "generation": 5,
-  "digest": "107975601b6ccafa73628f980a53c8f753afecb7c2f527925d53cf19381c21f8",
+  "digest": "269368cdaaa9233f6ffacf615f6c0cc269b129ad3f31fca234062fa427182b3d",
   "claim": {
     "id": "claim-5791-wp18-final-internal-review-second-pass",
     "owner": "codex:5791-review",
@@ -30,7 +30,9 @@
       "adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md",
       "adl/tools/test_closeout_completed_issue_wave.sh",
       "adl/tools/test_run_cargo_validation.sh",
+      "csdlc-v2/src/review.rs",
       "csdlc-v2/tests/gate4.rs",
+      "csdlc-v2/tests/gate5.rs",
       "csdlc-v2/tests/gate_terminal_authority_deletion.rs",
       "docs/reviews/v0.91.8/internal-review-5791",
       "docs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md",
@@ -264,6 +266,13 @@
       "actor": "codex:5791-review",
       "reason": "atomically record assigned review evidence and SRP projection",
       "operation": "record_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 5,
+      "actor": "codex:5791-review",
+      "reason": "Typed CI recovery exposed that assigned review evidence records a passing review but leaves the issue in implemented phase, blocking publication; amend scope before fixing assigned-review phase advancement.",
+      "operation": "{\"add_protected_paths\":[\"csdlc-v2/src/review.rs\",\"csdlc-v2/tests/gate5.rs\"],\"operation\":\"amend_claim_scope\"}"
     }
   ]
 }

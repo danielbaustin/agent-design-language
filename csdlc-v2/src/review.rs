@@ -123,7 +123,6 @@ pub fn record_review(store: &Store, request: ReviewRecordRequest) -> Result<Issu
             "review recording requires implemented phase",
         ));
     }
-    let direct = record.review_assignment.is_none();
     if let Some(assignment) = record.review_assignment.as_ref() {
         validate_evidence(assignment, &request.evidence)?;
     } else {
@@ -149,7 +148,7 @@ pub fn record_review(store: &Store, request: ReviewRecordRequest) -> Result<Issu
         claim_id: request.claim_id,
         evidence: request.evidence,
         result,
-        advance_reviewed: direct,
+        advance_reviewed: true,
     })
 }
 
