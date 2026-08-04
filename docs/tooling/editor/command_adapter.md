@@ -33,6 +33,8 @@ The supported adapter surface is intentionally copy-only:
   - `csdlc-validate --root <worktree> finalize --request <finalize-request.json>`
   - `csdlc-review record --request <review-request.json>`
   - `csdlc-publish publish --request <publication-request.json>`
+  - `csdlc-finish --root <worktree> --request <finish-request.json>`
+  - `csdlc-clean cleanup --root <worktree> --request <cleanup-request.json>`
 - adapter mode:
   - browser-prepared, human-run command handoff
 
@@ -52,7 +54,8 @@ The browser/editor may not claim direct browser invocation of:
 - `csdlc-review`
 - `csdlc-publish`
 - `csdlc-shepherd`
-- `csdlc-closeout`
+- `csdlc-finish`
+- `csdlc-clean`
 
 Those commands exist in the repo control plane and related operational skills. They are not browser-direct actions.
 
@@ -78,7 +81,8 @@ That means:
 | `csdlc-review record` | yes | no | copy-only prepared handoff |
 | `csdlc-publish publish` | yes | no | copy-only prepared handoff |
 | `csdlc-shepherd` | yes | no | out of browser scope |
-| `csdlc-closeout` | yes | no | asynchronous closeout scope |
+| `csdlc-finish` | yes | no | terminal observation handoff |
+| `csdlc-clean cleanup` | yes | no | post-terminal cleanup handoff |
 
 ## Proof Surface
 

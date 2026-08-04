@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5791,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-18][review] Run final internal review second pass after residual coding",
+    "slug": "wp18-final-internal-review-second-pass",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Run the final WP-18 internal review second pass for v0.91.8 on the exact current revision.",
+      "required_outcome": "A tracked review packet records exact-revision issue truth, closed-since-prior-review emphasis, actual code/test/CI/docs/evidence review, deduplicated findings, remediation/routing truth, validation, and publication readiness for #5791.",
+      "declared_scope": [
+        "v0.91.8 final WP-18 internal review second pass",
+        "issues closed since the prior WP-18 review",
+        "actual code, test, CI, docs, lifecycle, and release evidence surfaces"
+      ],
+      "authority_boundary": [
+        "Issue #5791 owns review artifacts and in-scope remediation routing.",
+        "The review may not start v0.92 implementation.",
+        "The root main checkout remains inspection-only."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use FastWork for the issue worktree and build output.",
+        "Do not mutate the root main checkout.",
+        "Do not use AWS.",
+        "Use review skills and typed C-SDLC v2 lifecycle.",
+        "Review actual code, not only docs or issue narrative.",
+        "PR must include Closes #5791."
+      ]
+    }
+  }
+}

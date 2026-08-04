@@ -1,0 +1,53 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5791,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-18][review] Run final internal review second pass after residual coding",
+    "slug": "wp18-final-internal-review-second-pass",
+    "version": "v0.91.8",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "review_artifact_validation",
+          "proof_role": "focused review artifact whitespace validation",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "review",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "fail_closed_on_stale_revision_or_missing_issue_truth",
+      "design_ref": ".adl/local-artifacts/5791-bootstrap/design.md",
+      "design_digest": "dc6e935fef0e5809fb3a7ca88b8ada8d7b589a98772303e767c3ef8ec2a518b6",
+      "diagram_ref": ".adl/local-artifacts/5791-bootstrap/diagram.mmd",
+      "diagram_digest": "34b7221b8b44934caedcf76d8806a42d5e863201c149efff01d014b5942fdf68"
+    }
+  }
+}

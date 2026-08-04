@@ -1,0 +1,129 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5791,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "ea470dd9f99634977909a2bd68cfd3f66cfb924e95fe17b2616ec51caa4cb3cb",
+  "phase": "bound",
+  "generation": 0,
+  "digest": "7da5ecbf430991a24bd95b72e3c1119281586324f4f75971acd9ceeff1b425c3",
+  "claim": {
+    "id": "claim-5791-wp18-final-internal-review-second-pass",
+    "owner": "codex:5791-review",
+    "generation": 0,
+    "acquired_unix_seconds": 1785801653,
+    "expires_unix_seconds": 1785830453,
+    "heartbeat_unix_seconds": 1785801653,
+    "branch": "codex/5791-wp18-final-review-second-pass",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5791",
+      ".csdlc/issues/5791",
+      ".csdlc/locks/5791.lock",
+      ".csdlc/prepared/issues/5791",
+      "adl/tools/attach_post_merge_closeout.sh",
+      "adl/tools/editor_action.sh",
+      "adl/tools/fix_git_main_sync_preserve_local_adl.sh",
+      "adl/tools/generate_active_command_reference_scan.py",
+      "adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md",
+      "adl/tools/test_closeout_completed_issue_wave.sh",
+      "csdlc-v2/tests/gate4.rs",
+      "csdlc-v2/tests/gate_terminal_authority_deletion.rs",
+      "docs/reviews/v0.91.8/internal-review-5791",
+      "docs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md",
+      "docs/tooling/editor/command_adapter.md"
+    ],
+    "purpose": "Run #5791 WP-18 final internal review second pass."
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".adl/local-artifacts/5791-bootstrap/design.md",
+  "diagram_path": ".adl/local-artifacts/5791-bootstrap/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5791-design-review",
+      "revision": "dc6e935fef0e5809fb3a7ca88b8ada8d7b589a98772303e767c3ef8ec2a518b6"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "194c8d23b2d1d84a6040b932c47f280f2ee49efa7e6f47a2918dfa157dab2bf6",
+      "rendered_digest": "db7d8c4866a047150bbf16b86078d5511be83f3be909e09f629b2ea0a3ecd76e",
+      "ast_digest": "a0a98b88001bfaa813d9aa4f8e470e8f0badbba595920d9f5da09f22e8af06f2"
+    },
+    "stp": {
+      "values_digest": "c37ffb694c4841579dc9b45b54dbde76770289aece9e49978d47cf32d427541d",
+      "rendered_digest": "d6b23b788d0dc50b5b4e0ef0be9c258d68ee775db5b16f71720f4e08d9436ee4",
+      "ast_digest": "49f757aaffeaf4448cb0ecf18eedf8b8c90314fcf362313209d7f663719d97a8"
+    },
+    "spp": {
+      "values_digest": "36b05c045db608537543467940fbceb61886144d84c3dc7a98fce2422c85b913",
+      "rendered_digest": "341ae9efdf018bf6b01ca0de5dfb5c1a36f5c339119825ef4285a444a81297b9",
+      "ast_digest": "3714d026fc940f360a1257792ee820a97049895f52980e2d6e1a6696fa9a4303"
+    },
+    "vpp": {
+      "values_digest": "c77a4fd29ebcafa5101ada338fda80f762d5eb47940b8c83c0e767e615dc62c8",
+      "rendered_digest": "d99e8fa0195fc2cf10cc89f1b7a0323d19dabeffe956a41e853b04a36afceca8",
+      "ast_digest": "d30a04d78506f152f0b77d3d0b7367cd1f5e2ecdafa3385c00b7574ff909bb40"
+    },
+    "srp": {
+      "values_digest": "0a61ee656e776cec771ec1c6321f933d9d71a75c530c2e18c6d019eb9d815823",
+      "rendered_digest": "41075bdf15e228fc0ea6d4525eef614014598bf5a8a5ed1b906d1ac568f1d334",
+      "ast_digest": "fbad2e9829a98e5b8b24f3030330db5435719c8f0077884a0db6b01475040ab4"
+    },
+    "sor": {
+      "values_digest": "9b7bf2570834d2458c8ec891512bbda8cfe0d5aec6f89db07fcd0b35ec8f621b",
+      "rendered_digest": "408e99fc3c80a162fe8a8c24fca73a0c7e896261b1f69374426bcfcd8f84d57b",
+      "ast_digest": "c2b3072a6b866d92ae73484487b7b443974c164d42f0df896a4764ca2c70860b"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5791-review",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5791-review",
+      "reason": "verified Git worktree binding"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5791-review",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5791-review",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5791-review",
+      "reason": "WP-18 exact-head review found current docs and helper surfaces still referencing deleted C-SDLC closeout binaries; amend scope before repairing them and broadening the regression guard.",
+      "operation": "{\"add_protected_paths\":[\"docs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md\",\"docs/tooling/editor/command_adapter.md\",\"adl/tools/attach_post_merge_closeout.sh\",\"adl/tools/fix_git_main_sync_preserve_local_adl.sh\",\"adl/tools/generate_active_command_reference_scan.py\",\"adl/tools/editor_action.sh\",\"adl/tools/test_closeout_completed_issue_wave.sh\",\"adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md\",\"csdlc-v2/tests/gate_terminal_authority_deletion.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 0,
+      "actor": "codex:5791-review",
+      "reason": "Bounded subagent review found csdlc-v2/tests/gate4.rs still encoding the deleted closeout command in an active lifecycle contract test.",
+      "operation": "{\"add_protected_paths\":[\"csdlc-v2/tests/gate4.rs\"],\"operation\":\"amend_claim_scope\"}"
+    }
+  ]
+}

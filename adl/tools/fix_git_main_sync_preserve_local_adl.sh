@@ -115,4 +115,4 @@ capture_local_adl_cards
 git -C "$repo_root" fetch origin main
 git -C "$repo_root" merge --ff-only origin/main
 restore_missing_local_adl_cards
-echo "fix-git: main sync complete; run explicit typed csdlc-closeout requests for terminal issue closeout" >&2
+echo "fix-git: main sync complete; run explicit typed csdlc-finish and csdlc-clean cleanup requests for terminal issue closeout" >&2

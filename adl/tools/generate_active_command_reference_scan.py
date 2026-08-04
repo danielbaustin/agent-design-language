@@ -159,7 +159,7 @@ COMMAND_FAMILIES = (
     CommandFamily(
         key="retired_closeout_helpers",
         label="retired closeout/milestone helper",
-        preferred_owner="csdlc-doctor + csdlc-closeout typed requests",
+        preferred_owner="csdlc-doctor + csdlc-finish/csdlc-clean typed requests",
         required_action="forbid if active or unknown; preserve only if historical",
         pattern=r"(?<!test_)(?:closeout_completed_issue_wave|check_milestone_closed_issue_sor_truth|check_issue_metadata_parity)\.sh\b",
     ),

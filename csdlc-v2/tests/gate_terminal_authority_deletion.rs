@@ -27,6 +27,23 @@ fn competing_closeout_binary_and_skill_are_absent() {
         fs::read_to_string(root.join("docs/tooling/OWNER_BINARY_INSTALLATION.md")).unwrap();
     let github_boundary =
         fs::read_to_string(root.join("docs/tooling/ADL_CSDLC_GITHUB_CLIENT_BOUNDARY.md")).unwrap();
+    let pr_tail_playbook =
+        fs::read_to_string(root.join("docs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md"))
+            .unwrap();
+    let editor_adapter =
+        fs::read_to_string(root.join("docs/tooling/editor/command_adapter.md")).unwrap();
+    let attach_post_merge =
+        fs::read_to_string(root.join("adl/tools/attach_post_merge_closeout.sh")).unwrap();
+    let main_sync =
+        fs::read_to_string(root.join("adl/tools/fix_git_main_sync_preserve_local_adl.sh")).unwrap();
+    let active_command_scan =
+        fs::read_to_string(root.join("adl/tools/generate_active_command_reference_scan.py"))
+            .unwrap();
+    let editor_action = fs::read_to_string(root.join("adl/tools/editor_action.sh")).unwrap();
+    let operational_skills =
+        fs::read_to_string(root.join("adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md"))
+            .unwrap();
+    let gate4 = fs::read_to_string(root.join("csdlc-v2/tests/gate4.rs")).unwrap();
     for surface in [
         cargo,
         skills,
@@ -34,6 +51,14 @@ fn competing_closeout_binary_and_skill_are_absent() {
         agent_contract,
         install_docs,
         github_boundary,
+        pr_tail_playbook,
+        editor_adapter,
+        attach_post_merge,
+        main_sync,
+        active_command_scan,
+        editor_action,
+        operational_skills,
+        gate4,
     ] {
         assert!(!surface.contains("csdlc-closeout"));
         assert!(!surface.contains("csdlc-merge"));

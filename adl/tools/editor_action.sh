@@ -44,7 +44,8 @@ unsupported_browser_direct_actions:
   - csdlc-review
   - csdlc-publish
   - csdlc-shepherd
-  - csdlc-closeout
+  - csdlc-finish
+  - csdlc-clean
 notes:
   - Browser/editor surfaces may prepare or copy lifecycle commands, but must not claim direct browser execution.
   - The current taught path resolves through csdlc-install and typed csdlc-* binaries under .adl/bin/csdlc-v2.
@@ -89,7 +90,8 @@ emit_contract_json() {
     "csdlc-review",
     "csdlc-publish",
     "csdlc-shepherd",
-    "csdlc-closeout"
+    "csdlc-finish",
+    "csdlc-clean"
   ],
   "notes": [
     "Browser/editor surfaces may prepare or copy lifecycle commands, but must not claim direct browser execution.",

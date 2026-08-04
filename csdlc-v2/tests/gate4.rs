@@ -262,7 +262,8 @@ fn routine_lifecycle_contract_measures_four_commands_and_two_artifacts() {
         "csdlc-validate finalize",
         "csdlc-review record",
         "csdlc-publish publish",
-        "csdlc-closeout closeout",
+        "csdlc-finish",
+        "csdlc-clean cleanup",
     ];
     let replaced_routine_commands = [
         "csdlc-validate execute",
@@ -273,16 +274,17 @@ fn routine_lifecycle_contract_measures_four_commands_and_two_artifacts() {
         "csdlc-publish publish draft",
         "csdlc-publish ready",
         "csdlc-publish reconcile-merged",
-        "csdlc-closeout closeout",
+        "csdlc-finish",
+        "csdlc-clean cleanup",
     ];
     let durable_post_product_artifacts = [
         ".csdlc/publication/5627.intent.json",
-        ".git/csdlc-v2/closeout/5627.json",
+        ".git/csdlc-v2/derived-terminal/5627.json",
     ];
     let request = shared_request_path(temp.path(), 5627).expect("shared request path");
 
-    assert_eq!(routine_commands.len(), 4);
-    assert_eq!(replaced_routine_commands.len(), 9);
+    assert_eq!(routine_commands.len(), 5);
+    assert_eq!(replaced_routine_commands.len(), 10);
     assert!(durable_post_product_artifacts.len() <= 2);
     assert!(request.ends_with(".git/csdlc-v2/requests/5627.json"));
     assert!(!durable_post_product_artifacts

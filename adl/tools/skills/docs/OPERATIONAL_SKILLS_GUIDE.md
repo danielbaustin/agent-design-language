@@ -1415,11 +1415,11 @@ policy:
 
 ### Merged-Issue Hygiene
 
-Close out each settled issue through one explicit typed `csdlc-closeout`
-request. Milestone or main-sync helpers must not infer terminal observations,
-reuse another issue's authority, or batch lifecycle mutations through shell.
-Use `csdlc-doctor` for issue-local diagnosis and retain the typed terminal
-receipt before considering the issue closed out.
+Close out each settled issue through explicit typed `csdlc-finish` and
+`csdlc-clean cleanup` requests. Milestone or main-sync helpers must not infer
+terminal observations, reuse another issue's authority, or batch lifecycle
+mutations through shell. Use `csdlc-doctor` for issue-local diagnosis and
+retain the typed terminal receipt before considering the issue closed out.
 
 ### Caller Notes
 
