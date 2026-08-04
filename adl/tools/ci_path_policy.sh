@@ -1081,6 +1081,31 @@ manager_profile_is_csdlc_owner_pr_fast_escalation() {
   return 0
 }
 
+manager_profile_has_focused_pr_fast_lane() {
+  [ "$validation_profile_status" = "escalation_required" ] || return 1
+  [ "$validation_profile_escalation_required" = true ] || return 1
+  case ",$validation_profile_escalation_lanes," in
+    *,rust_pr_fast,*) ;;
+    *) return 1 ;;
+  esac
+  validation_profile_includes_lane "aws_remote_validation_tooling" \
+    || validation_profile_includes_lane "ci_path_policy_contracts" \
+    || return 1
+}
+
+mark_validation_manager_focused_pr_fast_validation() {
+  mark_pr_fast_rust_validation
+  if validation_profile_includes_lane "csdlc_v2_standalone"; then
+    csdlc_v2_standalone_required=true
+  fi
+  if validation_profile_includes_lane "ci_path_policy_contracts" \
+    || validation_profile_includes_lane "aws_remote_validation_tooling" \
+    || validation_profile_includes_lane "csdlc_v2_standalone"; then
+    ci_contracts_required=true
+  fi
+  reason="${validation_profile_primary_reason:-validation_manager_focused_pr_fast_escalation_runs_focused_validation}"
+}
+
 is_bounded_runtime_v3_csm_bridge_change() {
   local saw_runtime_v3=false
   local saw_csm=false
@@ -1473,6 +1498,10 @@ apply_validation_manager_routing() {
       mark_pr_fast_rust_validation
       demo_smoke_required=false
       reason="validation_manager_csdlc_owner_pr_fast_escalation_runs_focused_validation"
+      return 0
+    fi
+    if manager_profile_has_focused_pr_fast_lane; then
+      mark_validation_manager_focused_pr_fast_validation
       return 0
     fi
     fail_closed=true

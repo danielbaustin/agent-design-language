@@ -1727,6 +1727,69 @@ PY
   assert_has "$aws_remote_validation_bounded_pr_fast_output" "coverage_authority=focused_nextest_pr_fast"
   assert_has "$aws_remote_validation_bounded_pr_fast_output" "reason=bounded_pr_fast_coverage_policy_change_keeps_pr_fast_rust_validation"
 
+  git checkout -q -b focused-escalation-with-unmapped-surface "$base_sha"
+  mkdir -p .csdlc/evidence/5791 \
+    .csdlc/issues/5791/cards \
+    .csdlc/locks \
+    .csdlc/publication \
+    adl-runtime \
+    adl/tools/skills/docs \
+    csdlc-v2/src \
+    csdlc-v2/tests \
+    docs/milestones/v0.91.8 \
+    docs/reviews/v0.91.8/internal-review-5791 \
+    docs/tooling/editor \
+    tools/aws_remote_validation
+  printf '# focused validation log\n' > .csdlc/evidence/5791/focused-5791-validation.log
+  printf '{}\n' > .csdlc/issues/5791/index.json
+  printf '{}\n' > .csdlc/issues/5791/audit.jsonl
+  printf '# card\n' > .csdlc/issues/5791/cards/sip.md
+  printf '{}\n' > .csdlc/issues/5791/cards/sip.values.json
+  printf '{}\n' > .csdlc/locks/5791.lock
+  printf '{}\n' > .csdlc/publication/5791.intent.json
+  printf '# README\n' > README.md
+  printf '[package]\nname = "adl-runtime"\nversion = "0.1.0"\nedition = "2021"\n' > adl-runtime/Cargo.toml
+  printf '# lock\n' > adl-runtime/Cargo.lock
+  printf '[package]\nname = "adl"\nversion = "0.91.8"\nedition = "2021"\n' > adl/Cargo.toml
+  printf '# lock\n' > adl/Cargo.lock
+  printf '#!/usr/bin/env bash\ncargo "$@"\n' > adl/tools/run_cargo_validation.sh
+  printf '#!/usr/bin/env bash\nbash adl/tools/run_cargo_validation.sh\n' > adl/tools/test_run_cargo_validation.sh
+  printf '# skill guide\n' > adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md
+  printf 'pub fn review() {}\n' > csdlc-v2/src/review.rs
+  printf '#[test]\nfn gate4() {}\n' > csdlc-v2/tests/gate4.rs
+  printf '# inventory\n' > docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md
+  printf '# review\n' > docs/reviews/v0.91.8/internal-review-5791/README.md
+  printf '# playbook\n' > docs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md
+  printf '# adapter\n' > docs/tooling/editor/command_adapter.md
+  printf '[package]\nname = "adl-aws-remote-validation"\nversion = "0.1.0"\nedition = "2021"\n' > tools/aws_remote_validation/Cargo.toml
+  printf '# lock\n' > tools/aws_remote_validation/Cargo.lock
+  git add .csdlc README.md adl-runtime adl/Cargo.toml adl/Cargo.lock \
+    adl/tools/run_cargo_validation.sh \
+    adl/tools/test_run_cargo_validation.sh \
+    adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md \
+    csdlc-v2/src/review.rs \
+    csdlc-v2/tests/gate4.rs \
+    docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md \
+    docs/reviews/v0.91.8/internal-review-5791/README.md \
+    docs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md \
+    docs/tooling/editor/command_adapter.md \
+    tools/aws_remote_validation
+  git commit -q -m focused-escalation-with-unmapped-surface
+  focused_escalation_with_unmapped_head="$(git rev-parse HEAD)"
+
+  focused_escalation_with_unmapped_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$focused_escalation_with_unmapped_head" --ref "refs/pull/1/merge")"
+  assert_has "$focused_escalation_with_unmapped_output" "rust_required=true"
+  assert_has "$focused_escalation_with_unmapped_output" "coverage_required=false"
+  assert_has "$focused_escalation_with_unmapped_output" "full_coverage_required=false"
+  assert_has "$focused_escalation_with_unmapped_output" "ci_contracts_required=true"
+  assert_has "$focused_escalation_with_unmapped_output" "csdlc_v2_standalone_required=true"
+  assert_has "$focused_escalation_with_unmapped_output" "fail_closed=false"
+  assert_has "$focused_escalation_with_unmapped_output" "coverage_lane=deferred_pr_fast"
+  assert_has "$focused_escalation_with_unmapped_output" "coverage_authority=focused_nextest_pr_fast"
+  assert_has "$focused_escalation_with_unmapped_output" "reason=aws_remote_validation_tool_surface_requires_focused_tooling_regression_checks"
+  assert_has "$focused_escalation_with_unmapped_output" "validation_profile_status=escalation_required"
+  assert_has "$focused_escalation_with_unmapped_output" "validation_profile_escalation_lanes=rust_pr_fast,unmapped_change_surface"
+
   git checkout -q -b wp08-cloudfront-policy-mixed-focused "$base_sha"
   mkdir -p adl/config adl/src/cli adl/tools csdlc-v2/src/bin csdlc-v2/tests docs/milestones/v0.91.7/review/runtime/wp08_cloudfront_4915 docs/tooling
   printf '# validation selector cloudfront policy fixture\n' > adl/config/validation_lane_selector.v0.91.6.json
