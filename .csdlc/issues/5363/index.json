@@ -4,15 +4,15 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "c2f8d9e79f0da319534884d82aacc23a5270691c6389119d93c096763fd020e2",
   "phase": "bound",
-  "generation": 0,
-  "digest": "d59d848b5bd70b67d1bce64045f10b8de30619efd412d96d3f8bb22e166d69a9",
+  "generation": 2,
+  "digest": "97b80c893c582701960a0e3e10aaef7765ec832d84b58a549d5cb67869a972a6",
   "claim": {
     "id": "claim-5363-v0918-preparation",
     "owner": "codex:5363-preparation-owner",
-    "generation": 0,
-    "acquired_unix_seconds": 1784754875,
-    "expires_unix_seconds": 1785359675,
-    "heartbeat_unix_seconds": 1784754875,
+    "generation": 2,
+    "acquired_unix_seconds": 1785865288,
+    "expires_unix_seconds": 1786470088,
+    "heartbeat_unix_seconds": 1785865288,
     "branch": "codex/5363-v0918-preparation",
     "worktree": ".",
     "protected_paths": [
@@ -21,7 +21,7 @@
       ".csdlc/prepared/issues/5363",
       ".csdlc/evidence/5363"
     ],
-    "purpose": "Prepare #5363 WP-20 release-tail remediation and preflight only; no implementation until WP-19 #5357 is live-merged and ancestral"
+    "purpose": "Prepare #5363 WP-20 release-tail remediation and preflight only; no implementation until WP-19 #5357 is live-merged and ancestral; verify #5548/#5558 merged evidence instead of treating them as open work"
   },
   "review_assignment": null,
   "review": null,
@@ -34,37 +34,37 @@
   "design_review": {
     "approved": {
       "reviewer": "operator-policy:release-tail-preparation",
-      "revision": "dccf65698eb9db306de735bdb37c53c6a1a6fe7282a5127476a99cc6a78c0db0"
+      "revision": "3e6bc78728cc429f73aa595e368db31eebde14b7ebe493740f348777d5932248"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "a6f9e2625c30d4b6afc2e342c685c78e27aaa0a20583c8977a16b248df82e382",
+      "values_digest": "3f566517d13b6c342f027eb3b3e555f4f881ca4a8e08f688ee814e952ffa499f",
       "rendered_digest": "c2278612542c28830e083f7ab85c195b63baaff327244e5297566b01e7b83f54",
       "ast_digest": "b426477fcacb83d017b2d285d3c383f186e13d4a79a8e1a4522405c25fb5699d"
     },
     "stp": {
-      "values_digest": "be895a604285b2a98bc4bfedab03ce207f5ef5c5971e464c2bf4bbfe1785b5d6",
-      "rendered_digest": "88c3899d412aed87d69a1a8d8c9d691ef5c6681ca5fcdd3fd6fde250413e09dd",
-      "ast_digest": "67cb5d1baac09b15a19c80b4ac3c16d409d0e34a72fbf0ab342d60d599d85bbe"
+      "values_digest": "e6ffeb56c5fced7370e60e4cb7c41bbe3357050774f9f428d0f4039bdb55c946",
+      "rendered_digest": "ae892126833ca4a2d0b63d0ea9fe74912e20afb8991a21b0a4f3676e6796049c",
+      "ast_digest": "d88ec0eed4f6d8c0140554da34ef1be5120f4a9cbb76401f42b80bb945e209a2"
     },
     "spp": {
-      "values_digest": "e85241369f2da97102e674fe3f38b983550795604861ceaf57059389dc641ce1",
-      "rendered_digest": "31c8c93efe3ab763bb517c5a39de9b4055de39b1282846df1f925a5f83e24252",
-      "ast_digest": "2a9011ffdfcc52c8a8cf5f748ddb853cbdca07902745bee828077214ead1d133"
+      "values_digest": "300c4d03497a4ec2ea1ef2adf8bee82a55f6caf9db60e0c4ff7d3ce0a1fd313b",
+      "rendered_digest": "e24b5dc8f0280d491491e28244e8eab0ebbc580ff24bd1426a858978be350820",
+      "ast_digest": "44a0d66887a32b023cd3c560fac136e3808d2645eee44af909c65677e92b7bfe"
     },
     "vpp": {
-      "values_digest": "46e1fb1840285d272f8742be626810fe5e83b774d1da4b6de3bb616df202713b",
-      "rendered_digest": "a5f8f07134113a6cc1db3184f7120667db2ab32b3f2eabea7f17c4cb7e9913c1",
-      "ast_digest": "a839deb1d10c5ae397b1e7abd5b60f2a4083d89a389d09987f08b1bd04099b5c"
+      "values_digest": "c6a30b0871eb0d4e4359dfb23e938e5f857716cf878d25efbb14d065e6a401cd",
+      "rendered_digest": "bbb1396f4a11b24e76ab50fea873752a6a2048548c0758c41fb13e836f7b1221",
+      "ast_digest": "ac167c9f39969844180516091bf0bb892386effd80e60ee5b408141782411dd0"
     },
     "srp": {
-      "values_digest": "2d16976b06122238015e6ccfd46582ed7040a7d29bc0ffb3ef8f679216347d14",
+      "values_digest": "2ce5159482a1424f6ae85652c21a712c24f13de749da921f6318ea228239d96c",
       "rendered_digest": "3005007eafc54cd54e0181d70c000a06df4d88299e7a50b4a208520726154fca",
       "ast_digest": "fc8d91684f12bad15327b0d7d839a359fb33c90ac295f6baed4855bf9c7319b3"
     },
     "sor": {
-      "values_digest": "040e1ea7ef0e3f438de5392603f551452ae7dcd55848a58930064068185592a4",
+      "values_digest": "ecd53a0ebbe1eafb48e18b98f01e7d0c5d6c3bc7394eef5ff0741823d5cd999d",
       "rendered_digest": "68fca7af275e5ea46eb6b418009d7743e2fa7dd596aaefbc4c85ca846cd8fe20",
       "ast_digest": "24f76f46e4d0874efabfd0a6f017c7b48c95d8b6da77c2c5a20ace0f94fd900f"
     }
@@ -99,6 +99,27 @@
       "actor": "codex:5363-preparation-owner",
       "reason": "bind branch/worktree and activate claim",
       "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5363-preparation-owner",
+      "reason": "Reacquire expired issue-local preparation claim before typed card preparation.",
+      "operation": "{\"previous_owner\":\"codex:5363-preparation-owner\",\"observed_expiry_unix_seconds\":1785359675,\"recovery_actor\":\"codex:5363-preparation-owner\",\"reason\":\"Reacquire expired issue-local preparation claim before typed card preparation.\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "operator-policy:release-tail-preparation",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5363-preparation-owner",
+      "reason": "Replace generic WP-20 acceptance with executable predecessor, completed-child evidence, and validation gates.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: #5363 remains a preparation-only C-SDLC v2 packet with design, diagram, and six cards regenerated or updated through typed v2 routes.\",\"AC-2: future WP-20 execution is blocked until WP-19 #5357 has a live merged revision on origin/main and that merge SHA is an ancestor of the exact #5363 execution base.\",\"AC-3: completed child #5548 is verified as CLOSED/COMPLETED and its causal merged PR #5598 commit aac8eaa7dffaa904ed1dfb0ec17fbf667c1ef9f0 is ancestral to current origin/main before execution.\",\"AC-4: completed child #5558 is verified as CLOSED/COMPLETED and closing PR commits c34f0c9412495039a6374f7ce88fa39e34bb5042 (#5749) and a5df18f19a4c651eb6594e5690e294c7b7929261 (#5769) are ancestral to current origin/main before execution.\",\"AC-5: future remediation inventories accepted WP-18/WP-19 findings, fixes only accepted scope, and records unresolved, unsupported, or separately owned items as blockers or routed non-goals.\",\"AC-6: future preflight runs focused checks for each accepted fix class plus the integrated v0.91.8 release preflight, then obtains exact-revision review before any publication or WP-21 admission.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Refresh live issue #5363, current origin/main, and v0.91.8 release-tail sequence before execution.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Verify WP-19 #5357 live merge state and prove the observed merge SHA is ancestral to the exact #5363 execution base.\",\"acceptance_ids\":[\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Verify completed child evidence for #5548 and #5558 against current origin/main ancestry instead of treating either child as open implementation.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Inventory accepted internal and external review findings from WP-18/WP-19 and classify each as accepted fix, routed non-goal, blocker, or unsupported claim.\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Apply only accepted remediation scope and run focused validation for each fix class.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S6\",\"action\":\"Run integrated release preflight, record exact blockers or pass evidence, and obtain exact-revision review before any PR or WP-21 handoff.\",\"acceptance_ids\":[\"AC-6\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"typed-doctor-5363\",\"proof_role\":\"Validate canonical typed C-SDLC v2 state for the #5363 preparation packet.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":1000,\"argv\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5363\"],\"parallel_group\":\"release-tail-preparation\",\"defer_reason\":null},{\"lane\":\"completed-child-5548-ancestry\",\"proof_role\":\"Prove #5548 completed causal source commit from PR #5598 remains on current origin/main.\",\"acceptance_ids\":[\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":10,\"budget_tokens\":500,\"argv\":[\"git\",\"merge-base\",\"--is-ancestor\",\"aac8eaa7dffaa904ed1dfb0ec17fbf667c1ef9f0\",\"origin/main\"],\"parallel_group\":\"release-tail-preparation\",\"defer_reason\":null},{\"lane\":\"completed-child-5558-pr5749-ancestry\",\"proof_role\":\"Prove #5558 closing PR #5749 merge commit remains on current origin/main.\",\"acceptance_ids\":[\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":10,\"budget_tokens\":500,\"argv\":[\"git\",\"merge-base\",\"--is-ancestor\",\"c34f0c9412495039a6374f7ce88fa39e34bb5042\",\"origin/main\"],\"parallel_group\":\"release-tail-preparation\",\"defer_reason\":null},{\"lane\":\"completed-child-5558-pr5769-ancestry\",\"proof_role\":\"Prove #5558 closing PR #5769 merge commit remains on current origin/main.\",\"acceptance_ids\":[\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":10,\"budget_tokens\":500,\"argv\":[\"git\",\"merge-base\",\"--is-ancestor\",\"a5df18f19a4c651eb6594e5690e294c7b7929261\",\"origin/main\"],\"parallel_group\":\"release-tail-preparation\",\"defer_reason\":null},{\"lane\":\"accepted-finding-focused-hygiene\",\"proof_role\":\"For future execution, prove accepted remediation scope has no whitespace/path hygiene defect before broader preflight.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"release-tail-execution\",\"defer_reason\":\"Run during future execution after accepted findings and changed paths are known.\"},{\"lane\":\"integrated-owner-release-preflight\",\"proof_role\":\"For future execution, run the integrated owner validation lane after focused accepted-finding checks pass.\",\"acceptance_ids\":[\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":300,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/run_owner_validation_lane.sh\",\"all\"],\"parallel_group\":\"release-tail-execution\",\"defer_reason\":\"Run only during future WP-20 execution after WP-19 ancestry and accepted-finding scope are current.\"}]}"
     }
   ]
 }

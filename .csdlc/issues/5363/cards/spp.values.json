@@ -7,18 +7,18 @@
     "title": "[v0.91.8][WP-20] Remediate review findings and run release preflight",
     "slug": "v0918-wp20-remediation-release-preflight",
     "version": "v0.91.8",
-    "generation": 0
+    "generation": 2
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
+      "plan_revision": 2,
       "summary": "Prepare now; execute only after #5357 is live-merged and ancestral.",
       "steps": [
         {
           "id": "S1",
-          "action": "Verify typed preparation packet and #5357 live merge plus ancestry",
+          "action": "Refresh live issue #5363, current origin/main, and v0.91.8 release-tail sequence before execution.",
           "acceptance_ids": [
             "AC-1",
             "AC-2"
@@ -27,26 +27,43 @@
         },
         {
           "id": "S2",
-          "action": "Inventory accepted findings and fix only accepted scope",
+          "action": "Verify WP-19 #5357 live merge state and prove the observed merge SHA is ancestral to the exact #5363 execution base.",
           "acceptance_ids": [
-            "AC-3"
+            "AC-2"
           ],
           "status": "pending"
         },
         {
           "id": "S3",
-          "action": "Run focused and integrated preflight proof",
+          "action": "Verify completed child evidence for #5548 and #5558 against current origin/main ancestry instead of treating either child as open implementation.",
           "acceptance_ids": [
-            "AC-3"
+            "AC-3",
+            "AC-4"
           ],
           "status": "pending"
         },
         {
           "id": "S4",
-          "action": "Record exact blockers or release WP-21 without preparation-scope mutations",
+          "action": "Inventory accepted internal and external review findings from WP-18/WP-19 and classify each as accepted fix, routed non-goal, blocker, or unsupported claim.",
           "acceptance_ids": [
-            "AC-1",
-            "AC-4"
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S5",
+          "action": "Apply only accepted remediation scope and run focused validation for each fix class.",
+          "acceptance_ids": [
+            "AC-5",
+            "AC-6"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S6",
+          "action": "Run integrated release preflight, record exact blockers or pass evidence, and obtain exact-revision review before any PR or WP-21 handoff.",
+          "acceptance_ids": [
+            "AC-6"
           ],
           "status": "pending"
         }
@@ -76,9 +93,9 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5363/design.md",
-      "design_digest": "dccf65698eb9db306de735bdb37c53c6a1a6fe7282a5127476a99cc6a78c0db0",
+      "design_digest": "3e6bc78728cc429f73aa595e368db31eebde14b7ebe493740f348777d5932248",
       "diagram_ref": ".csdlc/prepared/issues/5363/diagram.mmd",
-      "diagram_digest": "55f29bf52d9d8e66b22df7f27bc3958d08e6c19bd7a88b6da409a852e1e58290"
+      "diagram_digest": "b326f87f19713b9a93c895460d9eaae69f1e46971f92f5c10e17fce34cb488c5"
     }
   }
 }

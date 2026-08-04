@@ -1,0 +1,7 @@
+{
+  "issue": 5363,
+  "expected_generation": 0,
+  "expected_digest": "f4a8e7afe9624b2e30d86f51d73fa028b7178ebb7c26ffc619b50fbd7e37d064",
+  "claim_id": "claim-5363-v0918-preparation",
+  "reviewer": "operator-policy:release-tail-preparation"
+}

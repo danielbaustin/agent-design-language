@@ -1,0 +1,146 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "doctor",
+        "proof_role": "typed-state",
+        "purpose": "Validate canonical typed C-SDLC v2 state for #5363.",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 256,
+          "tokens": 500
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 30,
+        "executable": "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+        "argv": [
+          "--repo",
+          ".",
+          "--issue",
+          "5363"
+        ],
+        "evidence": {
+          "max_log_bytes": 20000,
+          "redact_values": [],
+          "require_relative_paths": false
+        }
+      },
+      {
+        "id": "child-5548-ancestry",
+        "proof_role": "dependency-ancestry",
+        "purpose": "Verify #5548 completed causal PR #5598 commit is on current origin/main.",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 64,
+          "tokens": 100
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 10,
+        "executable": "git",
+        "argv": [
+          "merge-base",
+          "--is-ancestor",
+          "aac8eaa7dffaa904ed1dfb0ec17fbf667c1ef9f0",
+          "origin/main"
+        ],
+        "evidence": {
+          "max_log_bytes": 2000,
+          "redact_values": [],
+          "require_relative_paths": false
+        }
+      },
+      {
+        "id": "child-5558-pr5749-ancestry",
+        "proof_role": "dependency-ancestry",
+        "purpose": "Verify #5558 closing PR #5749 merge commit is on current origin/main.",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 64,
+          "tokens": 100
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 10,
+        "executable": "git",
+        "argv": [
+          "merge-base",
+          "--is-ancestor",
+          "c34f0c9412495039a6374f7ce88fa39e34bb5042",
+          "origin/main"
+        ],
+        "evidence": {
+          "max_log_bytes": 2000,
+          "redact_values": [],
+          "require_relative_paths": false
+        }
+      },
+      {
+        "id": "child-5558-pr5769-ancestry",
+        "proof_role": "dependency-ancestry",
+        "purpose": "Verify #5558 closing PR #5769 merge commit is on current origin/main.",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 64,
+          "tokens": 100
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 10,
+        "executable": "git",
+        "argv": [
+          "merge-base",
+          "--is-ancestor",
+          "a5df18f19a4c651eb6594e5690e294c7b7929261",
+          "origin/main"
+        ],
+        "evidence": {
+          "max_log_bytes": 2000,
+          "redact_values": [],
+          "require_relative_paths": false
+        }
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": [
+      "doctor",
+      "child-5548-ancestry",
+      "child-5558-pr5749-ancestry",
+      "child-5558-pr5769-ancestry"
+    ],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {
+    "max_parallel": 4,
+    "cpu_units": 4,
+    "memory_mib": 512,
+    "tokens": 1000
+  },
+  "root": "/Volumes/FastWork/adl-wp-5363",
+  "evidence_dir": "/Volumes/FastWork/adl-wp-5363/.csdlc/evidence/5363",
+  "cancellation_file": null
+}
