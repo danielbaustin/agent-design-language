@@ -1,0 +1,14 @@
+{
+  "issue": 5363,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "8aba9e575c3656540e6e25ecf70860a6f9dd1d9bb169ff3d05e9c7b22333f926",
+  "claim_id": "claim-5363-v0918-preparation",
+  "actor": "codex:wp20-5363-remediation-owner",
+  "reason": "The bounded WP-20 external-review remediation docs and focused validation are implemented.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

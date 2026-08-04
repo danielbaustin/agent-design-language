@@ -17,8 +17,9 @@
   `70f4e76509de219ccff6ffb534f9199d74eaece2` and merged through PR `#5799`
   at `1b1ba9990bee81cf74ea449f09c52373aeb7e16c`
 - Release-tail revalidation owner: v0.91.8 WP-21A / `#5355`
-- Packet status: `ready_to_freeze_not_sent`
-- Review performed: false
+- Packet status: `blocked_findings_retained`
+- Review performed: blocked findings returned from an unfrozen packet; no
+  approval review has passed
 - Release approval claimed: false
 - v0.92 activation claimed: false
 - AWS operations required: false
@@ -31,7 +32,7 @@ GitHub truth:
 | Gate | Required state before send |
 | --- | --- |
 | Exact target revision | Fill `Repository`, `PR`, `base`, `head`, and exact commit SHA in the Target Revision section. If any source changes after that SHA, fail closed and refresh this handoff. |
-| Predecessor gates | WP-16 quality-gate evidence must remain ancestral to the target revision. WP-17 documentation alignment and the first WP-18 review must remain closed. Final WP-18 second-pass issue `#5791` must be merged after all residual coding, and that merge must be ancestral to the target revision. WP-19 / `#5357` is the formal external-review owner and should be open or in progress when this packet is sent. WP-20 through WP-23 remain downstream and must not be treated as prerequisites unless later live truth says otherwise. |
+| Predecessor gates | WP-16 quality-gate evidence must remain ancestral to the target revision. WP-17 documentation alignment and both WP-18 review passes must remain closed. WP-19 / `#5357` returned blocked findings on 2026-08-04. WP-20 / `#5363` must land remediation before any refreshed approval review. WP-21 through WP-23 remain downstream and must not be treated as prerequisites unless later live truth says otherwise. |
 | Source packet | Every path in the Source And Evidence Manifest must exist at the target revision. |
 | Implementation and proof packet | For send-time review, landed WP-02 through WP-16 implementation, tests, deployment/observatory/runtime/C-SDLC/ADL surfaces, and proof packets must be enumerated in the Implementation And Proof Manifest below from closed issue evidence. Fail closed if owner surfaces or proof packets are missing. |
 | Live issue truth | Issue and PR state must match [../WP_ISSUE_WAVE_v0.91.8.yaml](../WP_ISSUE_WAVE_v0.91.8.yaml) and [../WP_EXECUTION_READINESS_v0.91.8.md](../WP_EXECUTION_READINESS_v0.91.8.md). |
@@ -115,11 +116,14 @@ C-SDLC v2 at exact revisions before `v0.92` consumes the platform. The latest
 integrated quality source is WP-16 at
 `2e9d2dd7c4260dcf6ec6af954b0eea97554212df`; WP-17 closed the documentation
 alignment to that merged evidence. WP-18 closed its first review through PR
-`#5781` and its final second pass through PR `#5799`. WP-19 `#5357` may now
-freeze the packet, but the formal external review has not been sent.
+`#5781` and its final second pass through PR `#5799`. WP-19 `#5357` returned
+blocked findings on 2026-08-04 because the packet was not frozen to an exact
+PR/head SHA/digest. WP-20 `#5363` owns the remediation before any refreshed
+approval review or release closeout.
 
-This is not a release handoff and not a review result. It prepares the formal
-third-party review surface only.
+This is not a release handoff and not release approval. The retained WP-19
+result is a blocked finding packet that must be remediated before a future
+approval review.
 
 ## Reviewer Authority
 
@@ -274,7 +278,7 @@ descendants.
 | Integrated convergence, quality, documentation, and review | Integration proof is retained in `.csdlc/evidence/5354/convergence-proof.v1.json`; this row does not add a separate implementation surface | [../evidence/wp16/ISSUE_OUTCOME_AUDIT.md](../evidence/wp16/ISSUE_OUTCOME_AUDIT.md), [../evidence/wp16/QUALITY_GATE.md](../evidence/wp16/QUALITY_GATE.md), [V0918_INTERNAL_REVIEW_5356.md](V0918_INTERNAL_REVIEW_5356.md), `.csdlc/evidence/5360/documentation-alignment.v1.json`, `.csdlc/evidence/5791/focused-5791-validation.log`, and [../handoff/WP21_SPRINT_REVIEW_5352.md](../handoff/WP21_SPRINT_REVIEW_5352.md) |
 
 This manifest is an entrypoint inventory, not a claim that every descendant is
-independently reviewed or that downstream WP-20 through WP-23 work is complete.
+independently reviewed or that downstream WP-21 through WP-23 work is complete.
 If any listed path is absent at the exact target revision, return `blocked` or
 `deferred` rather than inferring completion from planning text.
 
@@ -294,14 +298,16 @@ Before send, refresh:
 - PR state for the target review packet;
 - #5408 remains closed and PR #5419 remains merged;
 - #4906 retained blocker state is not accidentally marked resolved;
-- WP-19 / `#5357` owns the formal external-review send and WP-20 through WP-23
-  remain downstream unless live issue truth changes;
+- WP-19 / `#5357` returned blocked findings and WP-20 / `#5363` owns their
+  remediation; WP-21 through WP-23 remain downstream unless live issue truth
+  changes;
 - focused validation from [../CANONICAL_DOC_INVENTORY_v0.91.8.md](../CANONICAL_DOC_INVENTORY_v0.91.8.md).
 
 Live GitHub truth refreshed on 2026-08-04: the open `version:v0.91.8` issues are
-`#5348`, `#5355`, `#5357`, `#5359`, `#5362`, `#5363`, sprint umbrella
-`#5595`, and prerequisite repair `#5804`. All other issue inputs named by the implementation manifest are closed
-or retained historical evidence unless a later live refresh says otherwise.
+`#5348`, `#5355`, `#5357`, `#5359`, `#5362`, `#5363`, and sprint umbrella
+`#5595`. Prerequisite repair `#5804` is closed through merged PR `#5805`. All
+other issue inputs named by the implementation manifest are closed or retained
+historical evidence unless a later live refresh says otherwise.
 
 ## Required Review Questions
 
@@ -376,7 +382,7 @@ Allowed review outcomes:
 
 This handoff does not claim:
 
-- third-party review has been dispatched or completed;
+- third-party review has produced release approval or a final pass;
 - v0.91.8 implementation, release, or deployment is complete;
 - v0.92 birthday readiness is achieved;
 - per-issue external shadow reviews equal formal milestone review;

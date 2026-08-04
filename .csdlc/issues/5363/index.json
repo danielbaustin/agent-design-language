@@ -3,25 +3,35 @@
   "issue": 5363,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "c2f8d9e79f0da319534884d82aacc23a5270691c6389119d93c096763fd020e2",
-  "phase": "bound",
-  "generation": 2,
-  "digest": "97b80c893c582701960a0e3e10aaef7765ec832d84b58a549d5cb67869a972a6",
+  "phase": "implemented",
+  "generation": 5,
+  "digest": "7eb7d50776f6ebad8bc6f7d96ae4a3c4ee7e05c042b565daa1b4750ee6a8090c",
   "claim": {
     "id": "claim-5363-v0918-preparation",
     "owner": "codex:5363-preparation-owner",
-    "generation": 2,
+    "generation": 5,
     "acquired_unix_seconds": 1785865288,
     "expires_unix_seconds": 1786470088,
     "heartbeat_unix_seconds": 1785865288,
     "branch": "codex/5363-v0918-preparation",
     "worktree": ".",
     "protected_paths": [
+      ".csdlc/evidence/5363",
       ".csdlc/issues/5363",
       ".csdlc/locks/5363.lock",
       ".csdlc/prepared/issues/5363",
-      ".csdlc/evidence/5363"
+      ".gitattributes",
+      "docs/milestones/v0.91.8/README.md",
+      "docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/DELETION_AND_CUTOVER_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/README.md",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/external_review_5357",
+      "docs/milestones/v0.91.8/review/wp19_closeout_5357",
+      "docs/milestones/v0.91.8/review/wp20_remediation_5363"
     ],
-    "purpose": "Prepare #5363 WP-20 release-tail remediation and preflight only; no implementation until WP-19 #5357 is live-merged and ancestral; verify #5548/#5558 merged evidence instead of treating them as open work"
+    "purpose": "Execute #5363 WP-20 remediation for the operator-supplied blocked WP-19 external-review findings; retain the exact PDF, disposition every finding, correct bounded v0.91.8 documentation truth, and prepare truthful WP-19/WP-20 closeout evidence without claiming release approval."
   },
   "review_assignment": null,
   "review": null,
@@ -39,34 +49,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "3f566517d13b6c342f027eb3b3e555f4f881ca4a8e08f688ee814e952ffa499f",
+      "values_digest": "a28993feaf60f2d60c0bfb0d05ea58e91f1da4b9814cd8766871aec42fc86b4f",
       "rendered_digest": "c2278612542c28830e083f7ab85c195b63baaff327244e5297566b01e7b83f54",
       "ast_digest": "b426477fcacb83d017b2d285d3c383f186e13d4a79a8e1a4522405c25fb5699d"
     },
     "stp": {
-      "values_digest": "e6ffeb56c5fced7370e60e4cb7c41bbe3357050774f9f428d0f4039bdb55c946",
+      "values_digest": "984e4913f03ef943af3453d554ce330e8aaa9c7325b9c5ea2e2ebfecfdc062d0",
       "rendered_digest": "ae892126833ca4a2d0b63d0ea9fe74912e20afb8991a21b0a4f3676e6796049c",
       "ast_digest": "d88ec0eed4f6d8c0140554da34ef1be5120f4a9cbb76401f42b80bb945e209a2"
     },
     "spp": {
-      "values_digest": "300c4d03497a4ec2ea1ef2adf8bee82a55f6caf9db60e0c4ff7d3ce0a1fd313b",
+      "values_digest": "09b4c34bb489f9c9878117ed756b9bb46d0e8eae877a27b5d943c48ad2a489b9",
       "rendered_digest": "e24b5dc8f0280d491491e28244e8eab0ebbc580ff24bd1426a858978be350820",
       "ast_digest": "44a0d66887a32b023cd3c560fac136e3808d2645eee44af909c65677e92b7bfe"
     },
     "vpp": {
-      "values_digest": "c6a30b0871eb0d4e4359dfb23e938e5f857716cf878d25efbb14d065e6a401cd",
+      "values_digest": "e631f0885c8e35a52048385821e805056c4faf03b6c90877482bd3df5b365273",
       "rendered_digest": "bbb1396f4a11b24e76ab50fea873752a6a2048548c0758c41fb13e836f7b1221",
       "ast_digest": "ac167c9f39969844180516091bf0bb892386effd80e60ee5b408141782411dd0"
     },
     "srp": {
-      "values_digest": "2ce5159482a1424f6ae85652c21a712c24f13de749da921f6318ea228239d96c",
+      "values_digest": "fde6c0781db26568f467b17177c7ef5be21d2d05921877ed439ad3d10b7fc182",
       "rendered_digest": "3005007eafc54cd54e0181d70c000a06df4d88299e7a50b4a208520726154fca",
       "ast_digest": "fc8d91684f12bad15327b0d7d839a359fb33c90ac295f6baed4855bf9c7319b3"
     },
     "sor": {
-      "values_digest": "ecd53a0ebbe1eafb48e18b98f01e7d0c5d6c3bc7394eef5ff0741823d5cd999d",
-      "rendered_digest": "68fca7af275e5ea46eb6b418009d7743e2fa7dd596aaefbc4c85ca846cd8fe20",
-      "ast_digest": "24f76f46e4d0874efabfd0a6f017c7b48c95d8b6da77c2c5a20ace0f94fd900f"
+      "values_digest": "7750255391b30a2fb4cfd685ffbbc782da69d6d8f945237f777e41c7865f00dd",
+      "rendered_digest": "85da4808e2d0ab205dd9fdd3dd641f2149c61504c93dac1c85e561b8d758cac9",
+      "ast_digest": "0a6dcae904668ba16c25e3ac33f1134058728461a04a55a74fdf2298ae683a49"
     }
   },
   "transitions": [
@@ -83,6 +93,13 @@
       "to": "bound",
       "actor": "codex:5363-preparation-owner",
       "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:wp20-5363-remediation-owner",
+      "reason": "The bounded WP-20 external-review remediation docs and focused validation are implemented."
     }
   ],
   "audit": [
@@ -120,6 +137,48 @@
       "actor": "codex:5363-preparation-owner",
       "reason": "Replace generic WP-20 acceptance with executable predecessor, completed-child evidence, and validation gates.",
       "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: #5363 remains a preparation-only C-SDLC v2 packet with design, diagram, and six cards regenerated or updated through typed v2 routes.\",\"AC-2: future WP-20 execution is blocked until WP-19 #5357 has a live merged revision on origin/main and that merge SHA is an ancestor of the exact #5363 execution base.\",\"AC-3: completed child #5548 is verified as CLOSED/COMPLETED and its causal merged PR #5598 commit aac8eaa7dffaa904ed1dfb0ec17fbf667c1ef9f0 is ancestral to current origin/main before execution.\",\"AC-4: completed child #5558 is verified as CLOSED/COMPLETED and closing PR commits c34f0c9412495039a6374f7ce88fa39e34bb5042 (#5749) and a5df18f19a4c651eb6594e5690e294c7b7929261 (#5769) are ancestral to current origin/main before execution.\",\"AC-5: future remediation inventories accepted WP-18/WP-19 findings, fixes only accepted scope, and records unresolved, unsupported, or separately owned items as blockers or routed non-goals.\",\"AC-6: future preflight runs focused checks for each accepted fix class plus the integrated v0.91.8 release preflight, then obtains exact-revision review before any publication or WP-21 admission.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Refresh live issue #5363, current origin/main, and v0.91.8 release-tail sequence before execution.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Verify WP-19 #5357 live merge state and prove the observed merge SHA is ancestral to the exact #5363 execution base.\",\"acceptance_ids\":[\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Verify completed child evidence for #5548 and #5558 against current origin/main ancestry instead of treating either child as open implementation.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Inventory accepted internal and external review findings from WP-18/WP-19 and classify each as accepted fix, routed non-goal, blocker, or unsupported claim.\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Apply only accepted remediation scope and run focused validation for each fix class.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S6\",\"action\":\"Run integrated release preflight, record exact blockers or pass evidence, and obtain exact-revision review before any PR or WP-21 handoff.\",\"acceptance_ids\":[\"AC-6\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"typed-doctor-5363\",\"proof_role\":\"Validate canonical typed C-SDLC v2 state for the #5363 preparation packet.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":1000,\"argv\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5363\"],\"parallel_group\":\"release-tail-preparation\",\"defer_reason\":null},{\"lane\":\"completed-child-5548-ancestry\",\"proof_role\":\"Prove #5548 completed causal source commit from PR #5598 remains on current origin/main.\",\"acceptance_ids\":[\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":10,\"budget_tokens\":500,\"argv\":[\"git\",\"merge-base\",\"--is-ancestor\",\"aac8eaa7dffaa904ed1dfb0ec17fbf667c1ef9f0\",\"origin/main\"],\"parallel_group\":\"release-tail-preparation\",\"defer_reason\":null},{\"lane\":\"completed-child-5558-pr5749-ancestry\",\"proof_role\":\"Prove #5558 closing PR #5749 merge commit remains on current origin/main.\",\"acceptance_ids\":[\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":10,\"budget_tokens\":500,\"argv\":[\"git\",\"merge-base\",\"--is-ancestor\",\"c34f0c9412495039a6374f7ce88fa39e34bb5042\",\"origin/main\"],\"parallel_group\":\"release-tail-preparation\",\"defer_reason\":null},{\"lane\":\"completed-child-5558-pr5769-ancestry\",\"proof_role\":\"Prove #5558 closing PR #5769 merge commit remains on current origin/main.\",\"acceptance_ids\":[\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":10,\"budget_tokens\":500,\"argv\":[\"git\",\"merge-base\",\"--is-ancestor\",\"a5df18f19a4c651eb6594e5690e294c7b7929261\",\"origin/main\"],\"parallel_group\":\"release-tail-preparation\",\"defer_reason\":null},{\"lane\":\"accepted-finding-focused-hygiene\",\"proof_role\":\"For future execution, prove accepted remediation scope has no whitespace/path hygiene defect before broader preflight.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"release-tail-execution\",\"defer_reason\":\"Run during future execution after accepted findings and changed paths are known.\"},{\"lane\":\"integrated-owner-release-preflight\",\"proof_role\":\"For future execution, run the integrated owner validation lane after focused accepted-finding checks pass.\",\"acceptance_ids\":[\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":300,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/run_owner_validation_lane.sh\",\"all\"],\"parallel_group\":\"release-tail-execution\",\"defer_reason\":\"Run only during future WP-20 execution after WP-19 ancestry and accepted-finding scope are current.\"}]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:wp20-5363-remediation-owner",
+      "reason": "Operator supplied the WP-19 external review PDF and directed WP-20 to retain the artifact, resolve all findings, and close WP-19/WP-20 truthfully; the current claim must cover the bounded review/remediation documentation paths before edits.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.8/README.md\",\"docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md\",\"docs/milestones/v0.91.8/review/README.md\",\"docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.91.8/review/external_review_5357\",\"docs/milestones/v0.91.8/review/wp20_remediation_5363\",\"docs/milestones/v0.91.8/features/DELETION_AND_CUTOVER_v0.91.8.md\",\"docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 2,
+      "actor": "codex:wp20-5363-remediation-owner",
+      "reason": "Operator supplied ADL_v0.91.8_External_Review_Findings.pdf and directed WP-20 #5363 to resolve all findings and close WP-19/WP-20. The review returned blocked findings rather than approval, so WP-20 must execute bounded documentation remediation while preserving the no-release-approval truth.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.8/review/wp19_closeout_5357\"],\"expected_owner\":\"codex:5363-preparation-owner\",\"expected_purpose\":\"Prepare #5363 WP-20 release-tail remediation and preflight only; no implementation until WP-19 #5357 is live-merged and ancestral; verify #5548/#5558 merged evidence instead of treating them as open work\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Prepare #5363 WP-20 release-tail remediation and preflight only; no implementation until WP-19 #5357 is live-merged and ancestral; verify #5548/#5558 merged evidence instead of treating them as open work\",\"purpose\":\"Execute #5363 WP-20 remediation for the operator-supplied blocked WP-19 external-review findings; retain the exact PDF, disposition every finding, correct bounded v0.91.8 documentation truth, and prepare truthful WP-19/WP-20 closeout evidence without claiming release approval.\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 3,
+      "actor": "codex:wp20-5363-remediation-owner",
+      "reason": "Record WP-20 remediation of the operator-supplied blocked WP-19 external-review findings.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Retained the exact WP-19 external-review PDF, routed all three actionable findings into a findings register, corrected current v0.91.8 review status from unsent to blocked-findings/remediation, replaced the deletion-denominator shorthand with independent eligibility-manifest accounting, and added a bounded boot-path cutover table without claiming release approval or workspace-wide code reduction.\",\"changes\":[\"Stored ADL_v0.91.8_External_Review_Findings.pdf under review/external_review_5357 with the supplied SHA-256 and byte count.\",\"Added external_review_5357 and wp20_remediation_5363 registers that disposition V0918-CHAT-01, V0918-CHAT-02, and V0918-CHAT-03.\",\"Updated v0.91.8 README, release notes, review index, third-party handoff, and v0.92 handoff feature text to reflect blocked WP-19 findings and WP-20 remediation ownership.\",\"Updated deletion/cutover documentation to derive the 46,358-line denominator from the #5346 eligibility manifest and to narrow proof claims to manifest-scoped deletion.\",\"Recorded a per-subsystem boot-path ownership table for Chronosense, reasoning graph, governed cognition, skills/constructability, Shepherd/provider/scheduler/private-state, and observatory/telemetry/rollback surfaces.\"],\"artifacts\":[\"docs/milestones/v0.91.8/review/external_review_5357/ADL_v0.91.8_External_Review_Findings.pdf\",\"docs/milestones/v0.91.8/review/external_review_5357/README.md\",\"docs/milestones/v0.91.8/review/external_review_5357/FINDINGS_REGISTER.md\",\"docs/milestones/v0.91.8/review/wp20_remediation_5363/REMEDIATION_REGISTER_5363.md\",\"docs/milestones/v0.91.8/README.md\",\"docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md\",\"docs/milestones/v0.91.8/features/DELETION_AND_CUTOVER_v0.91.8.md\",\"docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.91.8/review/README.md\",\"docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 4,
+      "actor": "codex:wp20-5363-remediation-owner",
+      "reason": "Record focused validation for WP-20 external-review remediation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"focused-doc-validation\",\"pdf-sha256-and-size\",\"markdown-link-check\",\"wp13-denominator-json-proof\",\"yaml-parse\",\"git-diff-check\",\"csdlc-doctor-5363\"],\"purpose\":\"Prove the retained external-review artifact identity, linked remediation docs, independent deletion denominator, YAML parseability, diff hygiene, and typed lifecycle state for the docs-only WP-20 remediation.\",\"outcome\":\"passed\",\"evidence_ref\":\"PDF SHA-256 b1741fb24d0627ccf3d7875168f54cc9b7c558a186efc267800612a6af2748f5 and 10841 bytes; markdown links ok; eligibility denominator paths=58 loc=46358; post-deletion status=pass retained=0 denominator=46358; WP_ISSUE_WAVE YAML ok; git diff --check clean; csdlc-doctor issue 5363 status=pass phase=bound\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 5,
+      "actor": "codex:wp20-5363-remediation-owner",
+      "reason": "The bounded WP-20 external-review remediation docs and focused validation are implemented.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 5,
+      "actor": "codex:wp20-5363-remediation-owner",
+      "reason": "Retaining the exact external-review PDF requires Git to treat PDF artifacts as binary so diff hygiene does not inspect internal PDF bytes as text.",
+      "operation": "{\"add_protected_paths\":[\".gitattributes\"],\"operation\":\"amend_claim_scope\"}"
     }
   ]
 }

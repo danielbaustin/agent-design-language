@@ -1,0 +1,12 @@
+{
+  "issue": 5363,
+  "claim_id": "claim-5363-v0918-preparation",
+  "expected_generation": 5,
+  "expected_digest": "da43ef22f8dc6971bc5591530f54d17668d6cc3a46be7e9db162c90e78149f4b",
+  "now_unix_seconds": 1785867600,
+  "actor": "codex:wp20-5363-remediation-owner",
+  "reason": "Retaining the exact external-review PDF requires Git to treat PDF artifacts as binary so diff hygiene does not inspect internal PDF bytes as text.",
+  "add_protected_paths": [
+    ".gitattributes"
+  ]
+}

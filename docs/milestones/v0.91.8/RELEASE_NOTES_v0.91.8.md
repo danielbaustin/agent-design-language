@@ -16,9 +16,9 @@ final release notes and do not claim release approval.
 - Exact-revision parity, soak, rollback, deletion, convergence, and integrated
   platform quality evidence are recorded by WP-12 through WP-16.
 - The v0.92 handoff is prepared as a bridge with explicit non-claims: birthday
-  activation, final release, and formal external milestone review are still
-  later work. Both internal review passes are complete; WP-19 external review
-  is ready to freeze but has not been dispatched.
+  activation and final release are still later work. Both internal review
+  passes are complete; WP-19 external review returned blocked findings and
+  WP-20 owns remediation before release approval.
 
 ## WP-16 Evidence Snapshot
 
@@ -33,8 +33,8 @@ final release notes and do not claim release approval.
 ## Not Yet Claimed
 
 - Release approval.
-- Formal external-review completion.
-- Formal third-party milestone review completion.
+- Formal external-review approval.
+- Formal third-party milestone review approval.
 - Production readiness beyond the exact surfaces proven by merged evidence.
 - Birthday readiness.
 - Public demo readiness.

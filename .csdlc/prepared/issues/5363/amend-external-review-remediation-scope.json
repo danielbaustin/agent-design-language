@@ -1,0 +1,19 @@
+{
+  "issue": 5363,
+  "claim_id": "claim-5363-v0918-preparation",
+  "expected_generation": 2,
+  "expected_digest": "97b80c893c582701960a0e3e10aaef7765ec832d84b58a549d5cb67869a972a6",
+  "now_unix_seconds": 1785866290,
+  "actor": "codex:wp20-5363-remediation-owner",
+  "reason": "Operator supplied the WP-19 external review PDF and directed WP-20 to retain the artifact, resolve all findings, and close WP-19/WP-20 truthfully; the current claim must cover the bounded review/remediation documentation paths before edits.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/README.md",
+    "docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md",
+    "docs/milestones/v0.91.8/review/README.md",
+    "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/review/external_review_5357",
+    "docs/milestones/v0.91.8/review/wp20_remediation_5363",
+    "docs/milestones/v0.91.8/features/DELETION_AND_CUTOVER_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md"
+  ]
+}
