@@ -3,13 +3,13 @@
   "issue": 5791,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "ea470dd9f99634977909a2bd68cfd3f66cfb924e95fe17b2616ec51caa4cb3cb",
-  "phase": "implemented",
-  "generation": 1,
-  "digest": "767eaf3c9b2ad5d644e35071c9434d60ba9da9c800a15bc0b6ce0cd4c19cbbab",
+  "phase": "reviewed",
+  "generation": 2,
+  "digest": "34fa330c102a766c1bb5e4b43b4894f46cd3456a588f1c62653faef1337dc625",
   "claim": {
     "id": "claim-5791-wp18-final-internal-review-second-pass",
     "owner": "codex:5791-review",
-    "generation": 1,
+    "generation": 2,
     "acquired_unix_seconds": 1785801653,
     "expires_unix_seconds": 1785830453,
     "heartbeat_unix_seconds": 1785801653,
@@ -35,7 +35,52 @@
     "purpose": "Run #5791 WP-18 final internal review second pass."
   },
   "review_assignment": null,
-  "review": null,
+  "review": {
+    "reviewer": "bounded-subagent-review",
+    "scope": [
+      ".csdlc/issues/5791",
+      ".csdlc/evidence/5791",
+      "adl/tools/attach_post_merge_closeout.sh",
+      "adl/tools/editor_action.sh",
+      "adl/tools/fix_git_main_sync_preserve_local_adl.sh",
+      "adl/tools/generate_active_command_reference_scan.py",
+      "adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md",
+      "adl/tools/test_closeout_completed_issue_wave.sh",
+      "csdlc-v2/tests/gate4.rs",
+      "csdlc-v2/tests/gate_terminal_authority_deletion.rs",
+      "docs/reviews/v0.91.8/internal-review-5791",
+      "docs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md",
+      "docs/tooling/editor/command_adapter.md"
+    ],
+    "reviewed_revision": "git-blake3:6ff4e2ee24db70941830d354e0fdc04ae404d44b:3edfaf643677fc9bc41bffef201c7b782b23c987e05cb57f0d4a17c407305324",
+    "findings": [
+      {
+        "id": "IR5791-01",
+        "severity": "p1",
+        "summary": "Active surfaces referenced deleted closeout commands.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:6ff4e2ee24db70941830d354e0fdc04ae404d44b:3edfaf643677fc9bc41bffef201c7b782b23c987e05cb57f0d4a17c407305324",
+        "route": null
+      },
+      {
+        "id": "IR5791-03",
+        "severity": "p1",
+        "summary": "Review packet initially recorded a stale review head.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:6ff4e2ee24db70941830d354e0fdc04ae404d44b:3edfaf643677fc9bc41bffef201c7b782b23c987e05cb57f0d4a17c407305324",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Terminal reconciliation for newly merged issues was reported complete by the operator while #5791 was in progress; #5791 retains the earlier observation as historical context only."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -50,32 +95,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "19db06cae6d4f68a731164317724348ad04d640cf839e7afd33a9d199f03c100",
+      "values_digest": "5bf591d53a2512a84e66085d056ec1d325ec6527153c7a21ef80ed82f914315d",
       "rendered_digest": "db7d8c4866a047150bbf16b86078d5511be83f3be909e09f629b2ea0a3ecd76e",
       "ast_digest": "a0a98b88001bfaa813d9aa4f8e470e8f0badbba595920d9f5da09f22e8af06f2"
     },
     "stp": {
-      "values_digest": "b57b9348d3b8d2edbb9c3a07d07aaef2b6e361c7754b357bb2fc76d63631c6c2",
+      "values_digest": "c33c293ae0db66696807613ef7d02cd01cd41cb23847e3d4ad50ed93f67054c6",
       "rendered_digest": "d6b23b788d0dc50b5b4e0ef0be9c258d68ee775db5b16f71720f4e08d9436ee4",
       "ast_digest": "49f757aaffeaf4448cb0ecf18eedf8b8c90314fcf362313209d7f663719d97a8"
     },
     "spp": {
-      "values_digest": "c6c55ec5fa2077a1b6abe4220b56944f3dfdebf738fd07b7cd7bb39fb5bd4a31",
+      "values_digest": "54f90467c59060654b06a69c31de9f5ab93bc0ad6f076114b6016583646219fe",
       "rendered_digest": "341ae9efdf018bf6b01ca0de5dfb5c1a36f5c339119825ef4285a444a81297b9",
       "ast_digest": "3714d026fc940f360a1257792ee820a97049895f52980e2d6e1a6696fa9a4303"
     },
     "vpp": {
-      "values_digest": "2be5d1a10de390157ada86fd566cea279a03d8fc861a2d4de4b179239b3291e9",
+      "values_digest": "990dd62ad380a4967fbc439de5fa8cfe8e2e458c5ffc3d4e8afb1cbd65403200",
       "rendered_digest": "d99e8fa0195fc2cf10cc89f1b7a0323d19dabeffe956a41e853b04a36afceca8",
       "ast_digest": "d30a04d78506f152f0b77d3d0b7367cd1f5e2ecdafa3385c00b7574ff909bb40"
     },
     "srp": {
-      "values_digest": "8362d64d43d70ef1bf682958c720ddc15a7f297865975473390f6419de1e651f",
-      "rendered_digest": "41075bdf15e228fc0ea6d4525eef614014598bf5a8a5ed1b906d1ac568f1d334",
-      "ast_digest": "fbad2e9829a98e5b8b24f3030330db5435719c8f0077884a0db6b01475040ab4"
+      "values_digest": "f46ca766da667a8c255602392f81bd5c3ade8fbd37b0a8889cb4b2b7f41e618b",
+      "rendered_digest": "b970953a432a44a33113730f93ed6c1fc620e11131cd94282bf1b5bdf2476613",
+      "ast_digest": "7dbac40908b1412c67d437cb750901efb0b68b5274270b7fffecd6908ecaf725"
     },
     "sor": {
-      "values_digest": "8e927219652644eda7b2fcc7a7390bdf7a7b3cecd847e4b4d8676bf22eb2f1ee",
+      "values_digest": "d70382d3bed64f95a7372e991e96e0b9db2358d896403e0749e3a6cb6441e434",
       "rendered_digest": "f096c30541443298df1c48d60ec29e3e68c8fb4da94c9459435ed3b7c4147c98",
       "ast_digest": "e21c116a4cbfc089e3cf7114156c4dda0c648b70a870f149e8efa682caf08b46"
     }
@@ -101,6 +146,13 @@
       "to": "implemented",
       "actor": "codex:5791-review",
       "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5791-review",
+      "reason": "exact scoped review passed"
     }
   ],
   "audit": [
@@ -138,6 +190,13 @@
       "actor": "codex:5791-review",
       "reason": "atomically record execution, validation, and implemented phase",
       "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5791-review",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
     }
   ]
 }
