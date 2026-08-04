@@ -1,0 +1,7 @@
+{
+  "issue": 5359,
+  "expected_generation": 0,
+  "expected_digest": "9afb1399a08120ecf8115cf10e3959a3b9dd28a65a3e6a6d983ee00a44a8f097",
+  "claim_id": "claim-5359-v0918-prep-recovery-20260804",
+  "reviewer": "codex:5359-preparation-owner"
+}

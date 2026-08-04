@@ -22,10 +22,13 @@ Prepare lifecycle packet only; planning review is future execution work.
 
 ## Acceptance
 
-1. AC-1: preparation packet is generated through typed C-SDLC v2
-2. AC-2: future execution is blocked on #5355 live merge and ancestry
-3. AC-3: receipts are recorded as audit evidence only
-4. AC-4: no implementation, PR, AWS, raw gh, or root-main tracked write occurs
+1. AC-1: #5359 preparation is grounded in the live issue body, current origin/main, and checked-in v0.91.8 release-tail routing.
+2. AC-2: future execution is blocked until WP-21A #5355 is closed by a merged PR and the observed #5355 merge SHA is ancestral to the exact #5359 execution base.
+3. AC-3: future review inventory covers the WP wave, release-tail sequence, next-milestone handoff, activation map, canonical inventory, V092 handoff feature, and the WP-21/WP-21A output packets.
+4. AC-4: the WP-22 output packet classifies blockers, stale assumptions, overclaims, explicit non-claims, and whether WP-23 #5348 may start.
+5. AC-5: execution and preparation avoid main, #5357, PR #5805, #5804, version:v0.92 issues, product implementation, AWS, publication, merge, and closeout surfaces unless separately authorized.
+6. AC-6: validation separates runnable preparation hygiene from deferred future execution proof; skipped, pending, or missing predecessor evidence is a blocker or non-pass.
+7. AC-7: this preparation branch may be committed and pushed, but no WP execution, review publication, PR creation, or closeout occurs in the preparation lane.
 
 ## Dependencies
 

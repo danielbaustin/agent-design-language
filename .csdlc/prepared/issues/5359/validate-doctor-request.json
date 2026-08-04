@@ -1,0 +1,53 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "typed-doctor-prep",
+        "proof_role": "Validate the generated C-SDLC v2 #5359 preparation record and card projections.",
+        "purpose": "preparation hygiene",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 256,
+          "tokens": 1000
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation-hygiene",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 30,
+        "executable": "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+        "argv": [
+          "--repo",
+          "/Volumes/FastWork/adl-wp-5359",
+          "--issue",
+          "5359"
+        ],
+        "evidence": {
+          "max_log_bytes": 20000,
+          "redact_values": [],
+          "require_relative_paths": false
+        }
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": [
+      "typed-doctor-prep"
+    ],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {
+    "max_parallel": 1,
+    "cpu_units": 1,
+    "memory_mib": 256,
+    "tokens": 1000
+  },
+  "root": "/Volumes/FastWork/adl-wp-5359",
+  "evidence_dir": "/Volumes/FastWork/adl-wp-5359/.csdlc/evidence/5359/validate-doctor",
+  "cancellation_file": null
+}

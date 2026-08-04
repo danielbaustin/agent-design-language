@@ -16,14 +16,14 @@ Prepare now; execute only after #5355 is live-merged and ancestral.
 
 ## Plan
 
-Revision 1
+Revision 2
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify typed preparation packet and #5355 live merge plus ancestry",
+    "action": "Recheck live #5359/#5355/#5362 state, origin/main, and the v0.91.8 release-tail sequence before execution; stop if #5355 is not merged and ancestral.",
     "acceptance_ids": [
       "AC-1",
       "AC-2"
@@ -32,7 +32,7 @@ Revision 1
   },
   {
     "id": "S2",
-    "action": "Review v0.92 inputs for blockers and overclaims",
+    "action": "Inventory the exact v0.92 handoff and activation inputs, including the WP-21 and WP-21A outputs after they close.",
     "acceptance_ids": [
       "AC-3"
     ],
@@ -40,18 +40,26 @@ Revision 1
   },
   {
     "id": "S3",
-    "action": "Record dispositions and release-tail handoff truth",
+    "action": "Produce the WP-22 planning review packet with blocker, stale-assumption, overclaim, non-claim, and WP-23 disposition sections.",
     "acceptance_ids": [
-      "AC-3"
+      "AC-4"
     ],
     "status": "pending"
   },
   {
     "id": "S4",
-    "action": "Preserve blockers or release WP-23 without preparation-scope mutations",
+    "action": "Run focused preparation and future execution validation lanes without treating deferred predecessor proof as passed.",
     "acceptance_ids": [
-      "AC-1",
-      "AC-4"
+      "AC-6"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Preserve the forbidden-surface boundary and stop at pushed preparation branch with no PR, publication, execution, or closeout.",
+    "acceptance_ids": [
+      "AC-5",
+      "AC-7"
     ],
     "status": "pending"
   }
@@ -82,13 +90,13 @@ Revision 1
 
 .csdlc/prepared/issues/5359/design.md
 
-Digest: 5619d3b151e28b39156f65b20941bd27f585395588a923d27395d9674c0a884a
+Digest: 7c5fc27776f34c353580c9d3682023c3ccc8ad5869731f5c171c07048cbdc85a
 
 ## Diagram
 
 .csdlc/prepared/issues/5359/diagram.mmd
 
-Digest: a6408f350363eeb048885dacec70599034f331539abc51ed41f0383aac07c794
+Digest: b5f44e22483066f54e4178775ba56b6b2db756a89d50631ff58c85c41bf1bed4
 
 ## Stop Conditions
 

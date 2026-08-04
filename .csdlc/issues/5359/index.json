@@ -4,22 +4,22 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1e45fdeda7d0795b7290a037be238e7e7c8624af5008b8c868d9e3b0a4c50365",
   "phase": "bound",
-  "generation": 0,
-  "digest": "76383e960f581d4fb0578270dd7b68d4cb2d9448cbd720355e83f0d02d64d3a5",
+  "generation": 2,
+  "digest": "f877817c6fb2c8198143fd7cf62b0a8bf5d8d26d5205f7533cebbe8626634a7b",
   "claim": {
-    "id": "claim-5359-v0918-preparation",
+    "id": "claim-5359-v0918-prep-recovery-20260804",
     "owner": "codex:5359-preparation-owner",
-    "generation": 0,
-    "acquired_unix_seconds": 1784754875,
-    "expires_unix_seconds": 1785359675,
-    "heartbeat_unix_seconds": 1784754875,
+    "generation": 2,
+    "acquired_unix_seconds": 1785865465,
+    "expires_unix_seconds": 1786470265,
+    "heartbeat_unix_seconds": 1785865465,
     "branch": "codex/5359-v0918-preparation",
     "worktree": ".",
     "protected_paths": [
+      ".csdlc/evidence/5359",
       ".csdlc/issues/5359",
       ".csdlc/locks/5359.lock",
-      ".csdlc/prepared/issues/5359",
-      ".csdlc/evidence/5359"
+      ".csdlc/prepared/issues/5359"
     ],
     "purpose": "Prepare #5359 WP-22 next-milestone planning review only; no execution until WP-21A #5355 is live-merged and ancestral"
   },
@@ -33,38 +33,38 @@
   "diagram_path": ".csdlc/prepared/issues/5359/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "operator-policy:release-tail-preparation",
-      "revision": "5619d3b151e28b39156f65b20941bd27f585395588a923d27395d9674c0a884a"
+      "reviewer": "codex:5359-preparation-owner",
+      "revision": "7c5fc27776f34c353580c9d3682023c3ccc8ad5869731f5c171c07048cbdc85a"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "f459329fd3931ab656c10ad927ac2ba3657408dc84f62bba03aee1be273a3f19",
+      "values_digest": "61d6c83f8224a97c7178485d3cad4ce61873a20abd32a007cef6d335a14c2dfe",
       "rendered_digest": "b5b05423d638e93763bbb471be206e9a35ec25d30f99900e0f97e789c0d928ab",
       "ast_digest": "3413b735bfe7ddbedd9595dde0373caedd93e4f2d53fe1eb5a2db6c78dd47ef7"
     },
     "stp": {
-      "values_digest": "9adb17e08680b898b9149cab346f8379696d0b54cd98d7c20505509a04f7668f",
-      "rendered_digest": "d24e15df018b49b33018daf35013007e643b6e9fba3aaa20cc389b312e528b8a",
-      "ast_digest": "beee070127aaea0f6fc5986056a2f33a6b367fbccfe472e3f995b1024b6d8faa"
+      "values_digest": "3da839b34f9b548cdda3bfc5396297a39c3286411b7c7b70b0043451eae1492b",
+      "rendered_digest": "3937797b465911bd308eb426767f95dc56706996e6df503190e1ee6779b35fac",
+      "ast_digest": "b747582e66cc2c90acc98e5ba41308bc712746ffbd1c52722d98030be6379bca"
     },
     "spp": {
-      "values_digest": "bb26a5465d2a590b35848ea190c15e489fe0a2e66193b746bd4f0ec31236b6d8",
-      "rendered_digest": "7a6ca14b33ebdc0bef54a0b3ed4ac64ade74d8b8a4db29f41091da62543e7ff7",
-      "ast_digest": "b59804e9a8e8e734a546b4ddfd98df8613fe829087b344a94f4b8b8cf2e29667"
+      "values_digest": "8578da781a56295e08b860253342456d9144140f2a683d33f8c7471a53c71504",
+      "rendered_digest": "2bdca4af580476ad3ffa7d29a2c6bc5ad99786d0ab6166b9a6d108243b34975a",
+      "ast_digest": "4f7b75dc1c355e57066699de04b46d6b59d9995f4da3b78addfbe13ba69f2603"
     },
     "vpp": {
-      "values_digest": "ff41977b54b13538a8b6362da127753dc132bf6f5c43a78cbdd4779fc61713ff",
-      "rendered_digest": "32785de317bed94e48dbe34315d8cdc973e055df2ff9327a8bcd6ad10dc29548",
-      "ast_digest": "4f672c457cb84440b60736f2b120951af781342376806b27f469536e6131c0d8"
+      "values_digest": "3fe3f400c0e537d58917147f12d08e3c9224cf034f9cb4eed0b4dbbf6babd1f9",
+      "rendered_digest": "dd2f2d909186f2aa82fb12b217a8296da132456d9bf8edbd8bb00c472e533b2f",
+      "ast_digest": "1f6005a6a5b89eebd07781a6448047691bae6aa522df37b15b826e74035807f4"
     },
     "srp": {
-      "values_digest": "3e659e160bb67d14791181e843f07b9c26e114a2293658c7406e9b9ce644962f",
+      "values_digest": "83830abe8feef1b7726ff39f4e9356bdeb8e75e100091d16ad9aa0b4091fc013",
       "rendered_digest": "b1d351a312e0ff8b9fff23f64125d3ac5833b85c5ce269bd1ed8e1af44dee26b",
       "ast_digest": "827117fdf0f9dbb73e8baae3ca4a94af3b2f8dca8667853d71c6687538c29165"
     },
     "sor": {
-      "values_digest": "fce00f18981f52a694635256e751a859034eaca84070ba5a1d92afa225c32d8a",
+      "values_digest": "320e97ff72494263edd800a7e8d9ca273acc1d5a9dfbcfd764877c7b40f8444b",
       "rendered_digest": "6bbecc2bfc70b9d64773091bc6ff02eedd173f4f4b1c70bf36a9b5f9e0cfae01",
       "ast_digest": "1210cadd9cb056175c374c361cb17c18f26c99eefdf0aebe99411fbf3c17aec7"
     }
@@ -99,6 +99,27 @@
       "actor": "codex:5359-preparation-owner",
       "reason": "bind branch/worktree and activate claim",
       "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5359-preparation-owner",
+      "reason": "recover expired preparation claim after operator declared sole writer for issue-local preparation branch",
+      "operation": "{\"previous_owner\":\"codex:5359-preparation-owner\",\"observed_expiry_unix_seconds\":1785359675,\"recovery_actor\":\"codex:5359-preparation-owner\",\"reason\":\"recover expired preparation claim after operator declared sole writer for issue-local preparation branch\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5359-preparation-owner",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5359-preparation-owner",
+      "reason": "replace generic WP-22 acceptance plan with issue-specific release-tail dependency and validation plan",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: #5359 preparation is grounded in the live issue body, current origin/main, and checked-in v0.91.8 release-tail routing.\",\"AC-2: future execution is blocked until WP-21A #5355 is closed by a merged PR and the observed #5355 merge SHA is ancestral to the exact #5359 execution base.\",\"AC-3: future review inventory covers the WP wave, release-tail sequence, next-milestone handoff, activation map, canonical inventory, V092 handoff feature, and the WP-21/WP-21A output packets.\",\"AC-4: the WP-22 output packet classifies blockers, stale assumptions, overclaims, explicit non-claims, and whether WP-23 #5348 may start.\",\"AC-5: execution and preparation avoid main, #5357, PR #5805, #5804, version:v0.92 issues, product implementation, AWS, publication, merge, and closeout surfaces unless separately authorized.\",\"AC-6: validation separates runnable preparation hygiene from deferred future execution proof; skipped, pending, or missing predecessor evidence is a blocker or non-pass.\",\"AC-7: this preparation branch may be committed and pushed, but no WP execution, review publication, PR creation, or closeout occurs in the preparation lane.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Recheck live #5359/#5355/#5362 state, origin/main, and the v0.91.8 release-tail sequence before execution; stop if #5355 is not merged and ancestral.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Inventory the exact v0.92 handoff and activation inputs, including the WP-21 and WP-21A outputs after they close.\",\"acceptance_ids\":[\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Produce the WP-22 planning review packet with blocker, stale-assumption, overclaim, non-claim, and WP-23 disposition sections.\",\"acceptance_ids\":[\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Run focused preparation and future execution validation lanes without treating deferred predecessor proof as passed.\",\"acceptance_ids\":[\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Preserve the forbidden-surface boundary and stop at pushed preparation branch with no PR, publication, execution, or closeout.\",\"acceptance_ids\":[\"AC-5\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"typed-doctor-prep\",\"proof_role\":\"Validate the generated C-SDLC v2 #5359 preparation record and card projections.\",\"acceptance_ids\":[\"AC-1\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":1000,\"argv\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5359\"],\"parallel_group\":\"preparation-hygiene\",\"defer_reason\":null},{\"lane\":\"typed-validate-prep\",\"proof_role\":\"Run typed validation over the issue-local preparation packet without finalizing implementation.\",\"acceptance_ids\":[\"AC-1\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate\",\"--root\",\".\"],\"parallel_group\":\"preparation-hygiene\",\"defer_reason\":null},{\"lane\":\"routing-source-hygiene\",\"proof_role\":\"Confirm #5359/WP-22 and #5355/WP-21A routing references remain present in the checked-in v0.91.8 sources and issue-local design.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":1000,\"argv\":[\"rg\",\"-n\",\"5359|WP-22|5355|WP-21A|release-tail\",\"docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml\",\"docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md\",\".csdlc/prepared/issues/5359/design.md\",\".csdlc/prepared/issues/5359/diagram.mmd\"],\"parallel_group\":\"preparation-hygiene\",\"defer_reason\":null},{\"lane\":\"path-scope-hygiene\",\"proof_role\":\"Verify preparation changes remain limited to the protected #5359 surfaces.\",\"acceptance_ids\":[\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\",\"--\",\".csdlc/issues/5359\",\".csdlc/prepared/issues/5359\",\".csdlc/evidence/5359\",\".csdlc/locks/5359.lock\"],\"parallel_group\":\"preparation-hygiene\",\"defer_reason\":null},{\"lane\":\"future-predecessor-live-gate\",\"proof_role\":\"At execution time, verify #5355 closure, closing PR, merge SHA, and ancestry before reviewing v0.92 inputs.\",\"acceptance_ids\":[\"AC-2\",\"AC-6\"],\"deterministic\":false,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"gh\",\"issue\",\"view\",\"5355\",\"--json\",\"state,closedAt,closedByPullRequestsReferences,url\"],\"parallel_group\":\"future-execution-gate\",\"defer_reason\":\"Future execution only; 2026-08-04 live check shows #5355 open with no closing PR references.\"},{\"lane\":\"future-review-packet-hygiene\",\"proof_role\":\"At execution time, verify the WP-22 review packet contains blocker, stale-assumption, overclaim, non-claim, and WP-23 disposition sections.\",\"acceptance_ids\":[\"AC-4\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"rg\",\"-n\",\"blocker|stale assumption|overclaim|non-claim|WP-23\",\".csdlc/evidence/5359\"],\"parallel_group\":\"future-execution-gate\",\"defer_reason\":\"Future execution only; the WP-22 review packet is intentionally not authored during preparation.\"}]}"
     }
   ]
 }
