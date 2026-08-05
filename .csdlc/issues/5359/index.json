@@ -3,13 +3,13 @@
   "issue": 5359,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1e45fdeda7d0795b7290a037be238e7e7c8624af5008b8c868d9e3b0a4c50365",
-  "phase": "published",
-  "generation": 16,
-  "digest": "1c82a2bbbd93273bb99a9f1a4cd39d821c9d9db825502fba413d327fddb3018c",
+  "phase": "implemented",
+  "generation": 17,
+  "digest": "9afaf9ffb9b6d47311e3936db8cd652596e7be491280e58d8f2a17be47dc49ad",
   "claim": {
     "id": "claim-5359-v0918-prep-recovery-20260804",
     "owner": "codex:5359-preparation-owner",
-    "generation": 16,
+    "generation": 17,
     "acquired_unix_seconds": 1785865465,
     "expires_unix_seconds": 1786470265,
     "heartbeat_unix_seconds": 1785865465,
@@ -26,49 +26,9 @@
     ],
     "purpose": "Prepare #5359 WP-22 next-milestone planning review only; no execution until WP-21A #5355 is live-merged and ancestral"
   },
-  "review_assignment": {
-    "reviewer": "subagent:gpt-5.5:Peirce",
-    "assigned_by": "codex:5359-planning-review",
-    "revision": "git-blake3:635515106d991ff036f9bf9c353d730a731c4378:10c2e27ea8ea73db0228049b74e883c08f291d59bcd8c0f8619e0375abcda70f",
-    "scope": [
-      ".csdlc/issues/5359",
-      ".csdlc/evidence/5359",
-      ".csdlc/prepared/issues/5359",
-      "docs/milestones/v0.92/WBS_v0.92.md",
-      "docs/milestones/v0.92/SPRINT_v0.92.md",
-      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
-    ]
-  },
-  "review": {
-    "reviewer": "subagent:gpt-5.5:Peirce",
-    "scope": [
-      ".csdlc/issues/5359",
-      ".csdlc/evidence/5359",
-      ".csdlc/prepared/issues/5359",
-      "docs/milestones/v0.92/WBS_v0.92.md",
-      "docs/milestones/v0.92/SPRINT_v0.92.md",
-      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
-    ],
-    "reviewed_revision": "git-blake3:635515106d991ff036f9bf9c353d730a731c4378:10c2e27ea8ea73db0228049b74e883c08f291d59bcd8c0f8619e0375abcda70f",
-    "findings": [],
-    "residual_risks": [
-      "This planning-only review schedules but does not author, produce, publish, or accept the ten articles or ten podcast episodes.",
-      "Final article claims remain subject to WP-23 release-truth alignment; podcast publication remains subject to editorial, audio, RSS, route, and operator approval gates."
-    ],
-    "completed": true,
-    "non_substantive_proof": null
-  },
-  "publication": {
-    "repository": "danielbaustin/agent-design-language",
-    "issue": 5359,
-    "pull_request": 5811,
-    "url": "https://github.com/danielbaustin/agent-design-language/pull/5811",
-    "base": "main",
-    "head": "codex/5359-v0918-preparation",
-    "revision": "git-blake3:9bf5a87c17b3a3799696faa0363d2fc7ec0eb676:c2480d88d5ceb446bc146ac0f84644abdc1732aea2d3e4b1c4dac4f51362d317",
-    "draft": false,
-    "observed_state": "open"
-  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -82,34 +42,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "7ad43088198165c7d4efb96e7e401e50a9bf750cfc8b9312c47975e42880ebd4",
+      "values_digest": "ae9430e448ce6ecaf51a5a19fac859535c5c75e65c8a81ab16e78460976d6b87",
       "rendered_digest": "b5b05423d638e93763bbb471be206e9a35ec25d30f99900e0f97e789c0d928ab",
       "ast_digest": "3413b735bfe7ddbedd9595dde0373caedd93e4f2d53fe1eb5a2db6c78dd47ef7"
     },
     "stp": {
-      "values_digest": "8d52b393916afecd9caef501e2346c87b52139b112f56e84c240c9de1b8344f0",
+      "values_digest": "fa93caafd9020be4a38f17690b953084e48aa5a855bea2785635c24ac9af9299",
       "rendered_digest": "709a96bb616f3e3591b958f7eda47f81a8c21588ac42b4dc8dd49b03b128b98e",
       "ast_digest": "eebc1238aefc97fda13ea37fca2b8eafd5a65dc00f7c3f140f37d0853f7b58a0"
     },
     "spp": {
-      "values_digest": "e285dfbd0d44d24eb2daf5971c8478de75bc0ff97689987049cc4c3b599d90bb",
+      "values_digest": "490bf57937c3856655263a89b1d103ccf9685dcbb6508096f054b932d3442b59",
       "rendered_digest": "76b9658f0c0cd986e58d96c68590fe5e2645c26b1860704d99f3951c132637e7",
       "ast_digest": "55c93f3f78c5e88784167dbc380ce05eea0bea38176b2468178ec6f7e5adf647"
     },
     "vpp": {
-      "values_digest": "1f3f95ad470df50a4ce9ae938e1992ce6c0f019520087e9b44be5af98376e7dc",
+      "values_digest": "93b292224ef59830d6a572d84a87b9d94e81d81e01785bfbf6f38a7187a0428c",
       "rendered_digest": "ceb39c57a89d83c4a8ac5b88043a6b036b8f4a7bd76643e5262299605778d662",
       "ast_digest": "7b19a1624305e712a92f1ec429ab2c5ec28e3688f72c4bb5b979dcaf9080fc3b"
     },
     "srp": {
-      "values_digest": "36b124c8f105afcdcbe6ecea83fb5e07c4451d039ee8527ffc243b9d2c65aea1",
-      "rendered_digest": "af5c697dc1efad92458bfeb76d764d4a31476ab669f75006440afe7138504513",
-      "ast_digest": "a0c232ca1ac480d856d8fac519ca64f98698ee9b8e0f1d5b65a6f6bce8ebefb4"
+      "values_digest": "fe08b843843583d2207332ecdcc702660a00452d0dc18eb9dcf6560c26e21368",
+      "rendered_digest": "fad9251a61bc087fb7e5770003bd94acb2955929b6b25df24b9dfde14a4766e2",
+      "ast_digest": "1191ce0e7c7e1a7b759ee9070c2a4e0fdf67806c5bee6fba14867de2035eea2b"
     },
     "sor": {
-      "values_digest": "d2931786abf49896dafa905265d287a1c31b46ca604a237f128a913f0791fc48",
-      "rendered_digest": "0d82143a1698fe146d2e005102dedb67def0d0d6f6744792dca9b3c5ba76da10",
-      "ast_digest": "43c82633ead75f73d7610e746e3337769f9279c1d8745f42d901a81f2dfcef37"
+      "values_digest": "4efb5ae5d5ce34a3d9192d8815e70d9fccfa04a2e70afcf309b7f1c90ff4dfb6",
+      "rendered_digest": "e2607825ebce69c854623c837e64e4af3698892e9ee85af452bf9a8d63c7edb7",
+      "ast_digest": "fc1764cde6b253566f273a0d8dd54fa9a831acf7514fb00c0b3aa71e2fed48f7"
     }
   },
   "transitions": [
@@ -168,6 +128,13 @@
       "to": "published",
       "actor": "codex:5359-planning-review",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Current origin/main integration brought the merged WP-21 and WP-21A terminal projections into the WP-22 branch; recover stale review and publication truth for one exact current-main review and same-PR republication."
     }
   ],
   "audit": [
@@ -324,6 +291,13 @@
       "actor": "codex:5359-planning-review",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Current origin/main integration brought the merged WP-21 and WP-21A terminal projections into the WP-22 branch; recover stale review and publication truth for one exact current-main review and same-PR republication.",
+      "operation": "recover_review"
     }
   ]
 }

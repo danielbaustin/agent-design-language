@@ -69,11 +69,11 @@ Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the a
 
 ## Integration
 
-pr_open
+worktree_only
 
 ## Publication
 
-Publication: ready
+Publication: not_published
 
 Merge: not_merged
 

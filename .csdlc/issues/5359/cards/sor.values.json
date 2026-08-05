@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-22] Review next-milestone planning before opening v0.92",
     "slug": "v0918-wp22-next-milestone-planning-review",
     "version": "v0.91.8",
-    "generation": 16
+    "generation": 17
   },
   "status": "pre_phase",
   "content": {
@@ -62,8 +62,8 @@
           "evidence_ref": ".csdlc/evidence/5359/V092_PLANNING_REVIEW.md"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
+      "integration_state": "worktree_only",
+      "publication_state": "not_published",
       "merge_state": "not_merged",
       "closeout_state": "not_started",
       "follow_ups": []
