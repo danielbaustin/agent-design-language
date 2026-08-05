@@ -54,9 +54,11 @@ Withdraw issue-created advertisements and make placement treat missing capabilit
 
 ## Estimate
 
-Budget this bounded child at 8 elapsed hours, 90,000 reasoning tokens, and
-90 minutes of focused validation and review. Replan before widening paths,
-dependencies, proof surface, or rollback authority.
+Budget this bounded capability-advertisement child under the typed medium
+profile: 6 elapsed hours, 80,000 reasoning tokens, and 60 minutes of focused
+validation and review. The work is one signed advertisement contract with
+deterministic acceptance and rejection;
+replan before widening paths, dependencies, proof surface, or rollback authority.
 
 ## Non-Goals
 

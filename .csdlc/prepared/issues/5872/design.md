@@ -54,9 +54,11 @@ Withdraw issue-created observations and force placement to the declared no-data 
 
 ## Estimate
 
-Budget this bounded child at 8 elapsed hours, 90,000 reasoning tokens, and
-90 minutes of focused validation and review. Replan before widening paths,
-dependencies, proof surface, or rollback authority.
+Budget this bounded resource-weather child under the typed medium profile:
+6 elapsed hours, 80,000 reasoning tokens, and 60 minutes of focused validation
+and review. It owns one normalized resource signal and deterministic freshness
+semantics; replan before widening paths, dependencies, proof surface, or rollback
+authority.
 
 ## Non-Goals
 

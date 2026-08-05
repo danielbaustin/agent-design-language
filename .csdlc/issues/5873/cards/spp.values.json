@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.11] Bounded placement decisions",
     "slug": "v0-92-wp-04-11-bounded-placement",
     "version": "v0.92",
-    "generation": 3
+    "generation": 6
   },
   "status": "ready",
   "content": {
@@ -84,7 +84,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5873/design.md",
-      "design_digest": "891f1be42ce8f5ae02e1ee19e18b38c5470e8078f8bf8bca2ffa074feab44ee8",
+      "design_digest": "0918415b042fd514a5bf125cc3e4bac4789d4043cf2b1a079d6b69ecebc42241",
       "diagram_ref": ".csdlc/prepared/issues/5873/diagram.mmd",
       "diagram_digest": "d12c6bcbba3c49db3c0c5366bbfccb2704148ea353385c42e49ac369e7553216"
     }

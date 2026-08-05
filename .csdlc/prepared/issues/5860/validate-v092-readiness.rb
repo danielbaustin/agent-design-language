@@ -17,6 +17,15 @@ LIVE_PREPARATION_COMMANDS = [
   ["ruby", ".csdlc/prepared/issues/5862/validate-implementation-wave.rb", "--preflight"]
 ].freeze
 ALLOWED_DIFF_PREFIXES = [".adl/docs/TBD/", ".csdlc/", "docs/"].freeze
+EXPECTED_ISSUES = [
+  5786, 5795, 5800, 5801, 5812, 5818, 5819, 5820, 5821, 5822,
+  5823, 5824, 5825, 5826, 5827, 5828, 5829, 5830, 5831, 5832,
+  5833, 5834, 5835, 5836, 5837, 5838, 5839, 5840, 5841, 5842,
+  5843, 5844, 5845, 5846, 5847, 5848, 5849, 5850, 5851, 5852,
+  5853, 5862, 5863, 5864, 5865, 5866, 5867, 5868, 5869, 5870,
+  5871, 5872, 5873, 5874, 5875, 5876, 5877, 5878
+].freeze
+EXPECTED_SPRINT_COUNTS = {5858 => 8, 5855 => 6, 5862 => 17, 5857 => 9, 5854 => 7, 5856 => 11}.freeze
 
 FORBIDDEN = {
   "placeholder design" => /Status: design required before Ready\./,
@@ -117,8 +126,11 @@ def sha256(path)
   Digest::SHA256.file(path).hexdigest
 end
 
-def preparation_validator_error(path)
-  return "missing preparation validator #{path}" unless File.file?(path) && !File.zero?(path)
+def preparation_validator_error(path, argv:, behavior_probe: false, planned_output: false)
+  unless File.file?(path) && !File.zero?(path)
+    return nil if planned_output
+    return "missing prerequisite script #{path}"
+  end
 
   command = case File.extname(path)
             when ".rb" then ["ruby", "-c", path]
@@ -126,7 +138,18 @@ def preparation_validator_error(path)
             else return nil
             end
   _stdout, stderr, status = Open3.capture3(*command)
-  status.success? ? nil : "invalid preparation validator #{path}: #{stderr.strip}"
+  return "invalid preparation validator #{path}: #{stderr.strip}" unless status.success?
+  return nil unless behavior_probe
+
+  stdout, probe_stderr, probe_status = Open3.capture3(*argv)
+  return nil if probe_status.success?
+
+  diagnostic = [stdout, probe_stderr].join("\n").strip
+  return "preparation validator rejected its fixture without a diagnostic: #{path}" if diagnostic.empty?
+  programming_errors = /(?:SyntaxError|NoMethodError|NameError|LoadError|undefined method|uninitialized constant)/
+  return "preparation validator crashed instead of failing closed: #{path}" if diagnostic.match?(programming_errors)
+
+  nil
 end
 
 def live_issue_inventory
@@ -163,6 +186,8 @@ end
 
 wave = YAML.safe_load(File.read(WAVE_PATH), aliases: true)
 wp_rows, supporting_rows, issues, sprints = canonical_graph(wave)
+abort "canonical v0.92 execution denominator drift" unless issues == EXPECTED_ISSUES
+abort "canonical v0.92 sprint denominator drift" unless sprints.transform_values(&:length) == EXPECTED_SPRINT_COUNTS
 rows_by_issue = (wp_rows + supporting_rows).each_with_object({}) do |row, memo|
   issue = row["issue"]
   memo[issue] = row if issues.include?(issue)
@@ -180,11 +205,15 @@ end
 
 errors = []
 rows = []
+script_contracts = 0
+behavior_probes = 0
+deferred_execution_scripts = 0
 matrix_path = option_value("--write-matrix")
 write_hash_path = option_value("--write-hash-manifest")
 write_live_path = option_value("--write-live-manifest")
 verify_live = ARGV.include?("--verify-live")
 live_inventory = nil
+live_manifest = {}
 
 diff_stdout, diff_stderr, diff_status = Open3.capture3("git", "diff", "--name-only", "origin/main...HEAD")
 errors << "cannot inspect documentation-only diff boundary: #{diff_stderr.strip}" unless diff_status.success?
@@ -291,6 +320,10 @@ sprints.each do |sprint, sprint_issues|
       errors << "##{issue}: #{card} values issue mismatch" unless parsed.dig("identity", "issue") == issue
       errors << "##{issue}: #{card} values generation mismatch" unless parsed.dig("identity", "generation") == index["generation"]
       errors << "##{issue}: #{card} rendered/value status mismatch" unless parsed["status"] == statuses[card]
+      expected_live_title = live_manifest.dig(issue.to_s, "title")
+      if expected_live_title && parsed.dig("identity", "title") != expected_live_title
+        errors << "##{issue}: #{card} typed identity title differs from the pinned live issue title"
+      end
     rescue JSON::ParserError => e
       errors << "##{issue}: invalid #{card} values JSON: #{e.message}"
     end
@@ -369,8 +402,15 @@ sprints.each do |sprint, sprint_issues|
         argv = lane["argv"]
         errors << "##{issue}: VPP lane #{lane_index + 1} lacks argv" if !argv.is_a?(Array) || argv.empty?
         errors << "##{issue}: VPP lane #{lane_index + 1} contains an empty argv token" if Array(argv).any? { |arg| arg.to_s.strip.empty? }
-        Array(argv).select { |arg| arg.to_s.start_with?(".csdlc/prepared/issues/") }.each do |path|
-          error = preparation_validator_error(path)
+        Array(argv).select { |arg| arg.to_s.match?(/\.(?:rb|sh)\z/) }.each do |path|
+          script_contracts += 1
+          issue_local = path.start_with?(".csdlc/prepared/issues/#{issue}/") || path.start_with?(".csdlc/evidence/#{issue}/")
+          validator_named = File.basename(path).match?(/\A(?:validate|verify|check)[-_]/)
+          planned_output = paths.any? { |owned| path == owned || path.start_with?("#{owned.sub(%r{/\z}, '')}/") }
+          probe = verify_live && issue_local && validator_named && File.file?(path)
+          behavior_probes += 1 if probe
+          deferred_execution_scripts += 1 unless probe
+          error = preparation_validator_error(path, argv: argv, behavior_probe: probe, planned_output: planned_output)
           errors << "##{issue}: #{error}" if error
         end
       end
@@ -432,13 +472,13 @@ if verify_live
   abort "live issue body parity failed: #{stderr.strip}" unless status.success?
 end
 
-puts "v0.92 readiness: PASS (#{rows.length} design-ready issues across #{sprints.length} sprints)"
+puts "v0.92 readiness: PASS (#{rows.length} design-ready issues across #{sprints.length} sprints; #{behavior_probes}/#{script_contracts} script contracts behavior-probed, #{deferred_execution_scripts} deferred to child execution)"
 
 if matrix_path
   lines = [
     "# v0.92 Execution-Issue Readiness Matrix",
     "",
-    "Generated by `.csdlc/prepared/issues/5860/validate-v092-readiness.rb` after full structural, dependency, path, digest-projection, and artifact-integrity validation.",
+    "Generated by `.csdlc/prepared/issues/5860/validate-v092-readiness.rb` after full structural, dependency, path, digest-projection, artifact-integrity, and issue-local validator behavior validation.",
     "",
     "`design_ready` means the issue-specific design and six-card execution packet are complete. It does not claim that dependency gates are terminal or that an execution claim is currently active.",
     "",
@@ -462,6 +502,8 @@ if matrix_path
   end
   lines.concat([
     "Result: **PASS** - #{rows.length} design-ready issues across #{sprints.length} sprint umbrellas.",
+    "",
+    "Validator contract proof: #{behavior_probes} of #{script_contracts} VPP script contracts were behavior-probed during live readiness validation; #{deferred_execution_scripts} implementation or evidence-production scripts remain explicitly deferred to their child execution lanes.",
     "",
     "Artifact integrity is pinned by `#{HASH_MANIFEST_PATH}`. Normal validation never rewrites that manifest.",
     "Live issue title/body/state identity is pinned by `#{LIVE_MANIFEST_PATH}` and checked against GitHub with `--verify-live`."

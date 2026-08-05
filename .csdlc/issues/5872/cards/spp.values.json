@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.10] Signed resource-weather advertisements",
     "slug": "v0-92-wp-04-10-resource-weather-advertisements",
     "version": "v0.92",
-    "generation": 3
+    "generation": 6
   },
   "status": "ready",
   "content": {
@@ -84,7 +84,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5872/design.md",
-      "design_digest": "eacd5676693a571334d4168fdf6ad5953a860ab7afb2e0293b7e0dc97df0311d",
+      "design_digest": "ad0c5fa11085d3f97bb3fe9b64443c9fa36fef0b246af0064d830d4735ced236",
       "diagram_ref": ".csdlc/prepared/issues/5872/diagram.mmd",
       "diagram_digest": "ac2be0cb21c7ff736733e09240c698ad661ad9044587ed37cb1aada428129e5c"
     }

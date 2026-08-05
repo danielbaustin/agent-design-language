@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.12] Snapshot catalog and transfer manifest",
     "slug": "v0-92-wp-04-12-snapshot-catalog-transfer",
     "version": "v0.92",
-    "generation": 3
+    "generation": 6
   },
   "status": "ready",
   "content": {
@@ -66,7 +66,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on stale dependencies, path overlap, zero tests, invalid evidence, insecure fallback, or unresolved review findings.",
       "design_ref": ".csdlc/prepared/issues/5874/design.md",
-      "design_digest": "29e323452d8641b75bee3b79b40cc9d1a4e01e68c9aeaaed0bdda2ab96869cba",
+      "design_digest": "7b05fbe4cea6d63828f6ad01c998b0df252e03013b24a7228f658cd3288db99a",
       "diagram_ref": ".csdlc/prepared/issues/5874/diagram.mmd",
       "diagram_digest": "507b3c8821e811de22357e79f5bc8834f772ca1c01d57a12872ebd4093be2e88"
     }

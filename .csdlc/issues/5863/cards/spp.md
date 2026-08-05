@@ -86,7 +86,7 @@ Revision 2
 
 .csdlc/prepared/issues/5863/design.md
 
-Digest: ff292f50a5fc8c6698deb03c252e944cfba28cc7fa10df59d7e95e282d419871
+Digest: 1c804888b7929ab266e0a34fd5960a8f596e3ad2a15f46fd815cbf7a150f7482
 
 ## Diagram
 

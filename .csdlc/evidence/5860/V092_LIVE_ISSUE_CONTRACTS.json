@@ -4,7 +4,7 @@
   "issues": {
     "5786": {
       "number": 5786,
-      "title": "[v0.92][WP-21][adl-v2][deletion] Retire legacy adl/src after rollback window",
+      "title": "[v0.92][WP-21] Repository-wide code reduction cleanup",
       "body_sha256": "119f42ddc0715197c0808a1fea6d87b6233acbe5cab2e63937d8afe9c885ab4c",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5786"
@@ -25,7 +25,7 @@
     },
     "5801": {
       "number": 5801,
-      "title": "[v0.92][WP-02A][ci] CI and coverage reliability",
+      "title": "[v0.92][WP-02A] CI and coverage reliability",
       "body_sha256": "758dc1ac1103b9f5f64b0bc3c96038789b6d41581431525f3ce1581c97fdb1d6",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5801"
@@ -39,14 +39,14 @@
     },
     "5818": {
       "number": 5818,
-      "title": "[v0.92][WP-01B][docs] Activate v0.92 across canonical docs and version surfaces",
+      "title": "[v0.92][WP-01B] Canonical documentation and version activation",
       "body_sha256": "7c6a81409532318cfe2d79cb4077bb3ad8f8c4d783feec27f6bb1a750c56fcdb",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5818"
     },
     "5819": {
       "number": 5819,
-      "title": "[v0.92][WP-02][operations] Agent Logic GitHub organization repository migration",
+      "title": "[v0.92][WP-02] Agent Logic GitHub organization repository migration",
       "body_sha256": "b4768ed15a6b29e967b158bcd2192dd244ed3b86a8d0aacfa128b4366ae7191d",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5819"

@@ -71,9 +71,12 @@ Remove module registration and distributed launch configuration, fence remote ow
 
 ## Estimate
 
-Budget this bounded child at 8 elapsed hours, 90,000 reasoning tokens, and
-90 minutes of focused validation and review. Replan before widening paths,
-dependencies, proof surface, or rollback authority.
+Budget this bounded integrated native-proof child under the typed medium profile:
+6 elapsed hours, 80,000 reasoning tokens, and 60 minutes of focused validation
+and review. It assembles already-terminal child contracts, runs the declared
+native multi-node and recovery proof, and produces the WP-14 handoff without
+reopening implementation scope; replan before widening paths, dependencies,
+proof surface, or rollback authority.
 
 ## Non-Goals
 

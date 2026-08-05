@@ -79,8 +79,10 @@ Remove the distributed transport feature and restore the prior manifest and lock
 
 ## Estimate
 
-Budget this bounded child at 8 elapsed hours, 90,000 reasoning tokens, and
-90 minutes of focused validation and review. Replan before widening paths,
+Budget this bounded QUIC/TLS transport-adapter child under the typed medium
+profile: 6 elapsed hours, 80,000 reasoning tokens, and 60 minutes of focused
+validation and review. Handshake, framing, authentication, and transport-failure
+proof stay within one adapter boundary; replan before widening paths,
 dependencies, proof surface, or rollback authority.
 
 ## Non-Goals

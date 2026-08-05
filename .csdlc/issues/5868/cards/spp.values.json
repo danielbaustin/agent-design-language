@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.06] Failure detection and partition classification",
     "slug": "v0-92-wp-04-06-failure-partition",
     "version": "v0.92",
-    "generation": 3
+    "generation": 6
   },
   "status": "ready",
   "content": {
@@ -84,7 +84,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5868/design.md",
-      "design_digest": "1c4c61047ef3a7aca46633feec8ecb97eb5ee5abc4db51e7c76eb5dc2a4631a5",
+      "design_digest": "0027dd40eaf0b79092e445d6636bb8aa1638061abe0436a5c448b0e85b0f3f19",
       "diagram_ref": ".csdlc/prepared/issues/5868/diagram.mmd",
       "diagram_digest": "50a1f2189e83967a4a42eb764883cab930c363a79f08f41cb1e48c9cda9b1921"
     }

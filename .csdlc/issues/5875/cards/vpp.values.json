@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.13] Migration state machine",
     "slug": "v0-92-wp-04-13-migration-state-machine",
     "version": "v0.92",
-    "generation": 3
+    "generation": 6
   },
   "status": "ready",
   "content": {
@@ -66,7 +66,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on stale dependencies, path overlap, zero tests, invalid evidence, insecure fallback, or unresolved review findings.",
       "design_ref": ".csdlc/prepared/issues/5875/design.md",
-      "design_digest": "25097e8fff7cdb73f38747acd9fe849d6226d9ce879d8f82254d7270b35cd0d6",
+      "design_digest": "774567dfb35cfe47d15729c1e44344ddc31d2153e01825e7e9bb8e06f0e0bfda",
       "diagram_ref": ".csdlc/prepared/issues/5875/diagram.mmd",
       "diagram_digest": "cce3eba1094ebf7104a4a56009784c3cddac29d5aea119937333219cd7bfaf6d"
     }

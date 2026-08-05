@@ -54,9 +54,11 @@ Expire issue-created leases, restore the last durable epoch, and leave no ambigu
 
 ## Estimate
 
-Budget this bounded child at 8 elapsed hours, 90,000 reasoning tokens, and
-90 minutes of focused validation and review. Replan before widening paths,
-dependencies, proof surface, or rollback authority.
+Budget this bounded epoch-and-lease child under the typed medium profile:
+6 elapsed hours, 80,000 reasoning tokens, and 60 minutes of focused validation
+and review. Lease expiry, renewal, epoch monotonicity, and replay rejection are
+proved inside one temporal contract;
+replan before widening paths, dependencies, proof surface, or rollback authority.
 
 ## Non-Goals
 

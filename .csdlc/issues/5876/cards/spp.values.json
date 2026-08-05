@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.14] Rollback, recovery, and relocation failure",
     "slug": "v0-92-wp-04-14-rollback-recovery-relocation",
     "version": "v0.92",
-    "generation": 3
+    "generation": 6
   },
   "status": "ready",
   "content": {
@@ -84,7 +84,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5876/design.md",
-      "design_digest": "68f50f9d71f4cb1aa01fba7538fb5f01feda1f1864c45e0ed486210e4f027886",
+      "design_digest": "c1a235b96f3482515a5200de8994c094d49f802998c1cf52a5c8bce99755f199",
       "diagram_ref": ".csdlc/prepared/issues/5876/diagram.mmd",
       "diagram_digest": "f14e247760f9faddb6e77001751c05c08c67b6879c04b2ede6a34e177ec688e9"
     }

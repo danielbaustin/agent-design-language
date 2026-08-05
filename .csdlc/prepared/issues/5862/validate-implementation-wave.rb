@@ -9,6 +9,11 @@ require "yaml"
 
 EXPECTED = (1..16).to_h { |number| [format("WP-04.%02d", number), 5862 + number] }.freeze
 SESSION_PROMPT = ".adl/docs/TBD/V092_SPRINT_5862_DISTRIBUTED_GUARDIAN_SESSION_PROMPT.md"
+MEDIUM_ESTIMATES = {
+  "elapsed_seconds" => 21_600,
+  "total_tokens" => 80_000,
+  "validation_seconds" => 3_600
+}.freeze
 SHA = /\A[0-9a-f]{40}\z/
 SHA256 = /\A[0-9a-f]{64}\z/
 PREFLIGHT = ARGV.delete("--preflight")
@@ -40,24 +45,40 @@ end
 
 all_paths = {}
 records = {}
+estimate_sections = []
 EXPECTED.each do |wp, issue|
   index_path = ".csdlc/issues/#{issue}/index.json"
   abort "missing index for #{wp} ##{issue}" unless File.file?(index_path)
   index = JSON.parse(File.read(index_path))
   records[issue] = index
   abort "issue mismatch for #{wp}" unless index["issue"] == issue
-  abort "#{wp} design not approved" unless index.dig("design_review", "approved", "revision").to_s.match?(SHA256)
+  design = File.read(".csdlc/prepared/issues/#{issue}/design.md")
+  approval_digest = index.dig("design_review", "approved", "revision")
+  abort "#{wp} design not approved" unless approval_digest.to_s.match?(SHA256)
   abort "#{wp} preparation claim remains active" unless index["claim"].nil?
   %w[sip stp spp vpp].each do |card|
     values = JSON.parse(File.read(".csdlc/issues/#{issue}/cards/#{card}.values.json"))
     abort "#{wp} #{card} not ready" unless values["status"] == "ready"
   end
-  paths = exact_owned_paths(File.read(".csdlc/prepared/issues/#{issue}/design.md"), wp)
+  spp = JSON.parse(File.read(".csdlc/issues/#{issue}/cards/spp.values.json")).dig("content", "values")
+  vpp = JSON.parse(File.read(".csdlc/issues/#{issue}/cards/vpp.values.json")).dig("content", "values")
+  abort "#{wp} approved design digest is not projected to SPP/VPP" unless spp["design_digest"] == approval_digest && vpp["design_digest"] == approval_digest
+  abort "#{wp} SPP estimate is not the typed medium profile" unless spp["execution_estimates"] == MEDIUM_ESTIMATES
+  abort "#{wp} VPP estimate is not the typed medium profile" unless vpp["planned_validation_seconds"] == 3_600 && vpp["planned_validation_tokens"] == 25_000
+  estimate = design[/## Estimate\n\n(.*?)\n\n## /m, 1]
+  abort "#{wp} lacks an issue-specific Estimate section" unless estimate
+  normalized_estimate = estimate.gsub(/\s+/, " ")
+  abort "#{wp} design estimate does not name the typed medium profile" unless normalized_estimate.include?("typed medium profile")
+  abort "#{wp} design/SPP estimate mismatch" unless normalized_estimate.include?("6 elapsed hours, 80,000 reasoning tokens, and 60 minutes")
+  abort "#{wp} estimate lacks a bounded scope rationale" unless estimate.match?(/scope|boundary|contract|module|fixture|flow|state machine|handoff|owns/i)
+  estimate_sections << estimate
+  paths = exact_owned_paths(design, wp)
   paths.each do |path|
     abort "path collision #{path}: #{all_paths[path]} and #{wp}" if all_paths.key?(path)
     all_paths[path] = wp
   end
 end
+abort "WP-04 estimate rationales were copied rather than reasoned per child" unless estimate_sections.uniq.length == EXPECTED.length
 
 umbrella = JSON.parse(File.read(".csdlc/issues/5862/index.json"))
 gate = File.read(".csdlc/prepared/issues/5821/design.md")

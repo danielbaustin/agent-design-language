@@ -55,9 +55,11 @@ Delete only incomplete issue-created transfers and retain the last valid local s
 
 ## Estimate
 
-Budget this bounded child at 8 elapsed hours, 90,000 reasoning tokens, and
-90 minutes of focused validation and review. Replan before widening paths,
-dependencies, proof surface, or rollback authority.
+Budget this bounded snapshot-catalog child under the typed medium profile:
+6 elapsed hours, 80,000 reasoning tokens, and 60 minutes of focused validation
+and review. Catalog integrity, lineage, compatibility, and corrupt-entry
+rejection stay within the catalog contract and persistence fixtures;
+replan before widening paths, dependencies, proof surface, or rollback authority.
 
 ## Non-Goals
 

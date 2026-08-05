@@ -55,9 +55,11 @@ Fence all uncertain distributed owners and return authority to the last durable 
 
 ## Estimate
 
-Budget this bounded child at 8 elapsed hours, 90,000 reasoning tokens, and
-90 minutes of focused validation and review. Replan before widening paths,
-dependencies, proof surface, or rollback authority.
+Budget this bounded fencing child under the typed medium profile: 6 elapsed
+hours, 80,000 reasoning tokens, and 60 minutes of focused validation and review.
+Split-brain prevention and stale-owner denial stay within the fencing-token
+boundary and its adversarial fixtures;
+replan before widening paths, dependencies, proof surface, or rollback authority.
 
 ## Non-Goals
 

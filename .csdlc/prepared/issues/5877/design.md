@@ -58,9 +58,11 @@ Disable the new projection version and restore the prior API catalog without wea
 
 ## Estimate
 
-Budget this bounded child at 8 elapsed hours, 90,000 reasoning tokens, and
-90 minutes of focused validation and review. Replan before widening paths,
-dependencies, proof surface, or rollback authority.
+Budget this bounded projection-and-API child under the typed medium profile:
+6 elapsed hours, 80,000 reasoning tokens, and 60 minutes of focused validation
+and review. Public projection stability, authorization, and compatibility checks
+remain limited to the declared API and consumer fixtures; replan before widening
+paths, dependencies, proof surface, or rollback authority.
 
 ## Non-Goals
 

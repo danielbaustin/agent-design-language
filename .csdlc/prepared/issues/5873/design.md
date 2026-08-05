@@ -57,9 +57,11 @@ Disable remote placement and retain the current authoritative owner without auto
 
 ## Estimate
 
-Budget this bounded child at 8 elapsed hours, 90,000 reasoning tokens, and
-90 minutes of focused validation and review. Replan before widening paths,
-dependencies, proof surface, or rollback authority.
+Budget this bounded placement child under the typed medium profile: 6 elapsed
+hours, 80,000 reasoning tokens, and 60 minutes of focused validation and review.
+Deterministic ranking, constraint handling, and no-candidate behavior stay within
+one policy module and replay fixture;
+replan before widening paths, dependencies, proof surface, or rollback authority.
 
 ## Non-Goals
 

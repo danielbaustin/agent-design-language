@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.16] Distributed integration, adversarial, and native-platform proof",
     "slug": "v0-92-wp-04-16-integration-adversarial-native-proof",
     "version": "v0.92",
-    "generation": 4
+    "generation": 7
   },
   "status": "ready",
   "content": {
@@ -87,7 +87,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5878/design.md",
-      "design_digest": "0e126090f0d5b1d6447aa5b1074b62747f51f70c51dd63801c380ff7d6c81304",
+      "design_digest": "509558ed6cfbd8dd18ae62b4d197e18490063cbd9d93840b9b25f40e303313ec",
       "diagram_ref": ".csdlc/prepared/issues/5878/diagram.mmd",
       "diagram_digest": "6c8b714c4987361c7d51ad9a3fffcdf0ff3f94a7dd8b7e6ac7d1e392a173caf0"
     }

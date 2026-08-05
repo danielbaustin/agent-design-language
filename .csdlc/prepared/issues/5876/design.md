@@ -54,9 +54,11 @@ Fence both sides on ambiguity and require explicit recovery from the last valida
 
 ## Estimate
 
-Budget this bounded child at 8 elapsed hours, 90,000 reasoning tokens, and
-90 minutes of focused validation and review. Replan before widening paths,
-dependencies, proof surface, or rollback authority.
+Budget this bounded recovery child under the typed medium profile: 6 elapsed
+hours, 80,000 reasoning tokens, and 60 minutes of focused validation and review.
+Restart, replay, partial-state, and invalid-recovery cases stay within the
+recovery controller and deterministic fault fixtures;
+replan before widening paths, dependencies, proof surface, or rollback authority.
 
 ## Non-Goals
 

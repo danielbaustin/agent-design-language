@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b993a3096652d7703aa471c9306f5c1b266c45e2685d26577f06d7a209557a10",
   "phase": "bound",
-  "generation": 3,
-  "digest": "4a04b64e668f4ac1a3c25ca0c65c99227e1da83c60bb62f0828b19011180259f",
+  "generation": 6,
+  "digest": "421c0ae7e2e6144245a4c3649a1d629f997f712c7face75e6ffff36c3ce557a1",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5870/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-runtime-wp04-rollback-design-review",
-      "revision": "04d8f677b9dc9389b83ac79b3dac4ed85dcef3be38cb3fe535e80510ad1f65cd"
+      "reviewer": "codex:5860-wp04-exact-estimate-design-review",
+      "revision": "46eb50d5e004676a7a7faab45ea5b6bbad9362cb67ab3181c6dda5d09dadd7c3"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "cb5997a5223cdc132f7d6e6724f582e9cfccd8a3127d884d2939c6da642ca5ee",
+      "values_digest": "b73350f443e8ffdabaf3e7c37b23ce3e911ebc5b3fe109e71248aaa3585f8b3c",
       "rendered_digest": "d023ccc719851068cb85a5ca6108d65ba76aa5ed32ef724251a8b3434bccda5a",
       "ast_digest": "d3315f3800ac8988772947962fd5dbc49d2c336e7f9878963a14d319520cfccb"
     },
     "stp": {
-      "values_digest": "990cc9cd8451712b43d592e31ba8eceabf7d8b68fbe0ce8872f9c1567f6b206d",
+      "values_digest": "66a9be8ff08bbacf490b941783975f6aec0f9d9b92449e9b1960cc34cdfa6cf3",
       "rendered_digest": "78186be69c35d465617c83a34b9104de6a005c1ef12851b65289d2e39dc2a886",
       "ast_digest": "838f1dd1d68ad5974e65a6063b9affd4be080068ad5cbaa030bc325ea2de5467"
     },
     "spp": {
-      "values_digest": "887ae71861bb9fdac6e6095e2bc8219da6f5c6f4aba7449f289ec1fa14cdadaf",
-      "rendered_digest": "146b9a3129896cee4bbe6138a673be652fc6e00024d6bd31c6983163aef8ff9d",
-      "ast_digest": "caee7e185f4763d90f5050268c88f36ad376fa5cd2d30ac3da3aa8c188124204"
+      "values_digest": "5e69ed6b1e69385b24d514dcd7d1242836f2f41125cf91ef4dea7886f242bbc2",
+      "rendered_digest": "ca541b670cdad0216cc9188a2932abf87575d54015eaa1fdf1d0ea2f3076f88e",
+      "ast_digest": "37980b171ffe3327d7e88b71b538ec778bf5e765335bb16f4dfc38703163f7ea"
     },
     "vpp": {
-      "values_digest": "2c17ee97463b5040ab43fe0163060a7cc92e17e07a4cb3d1ba0289b2723ea535",
+      "values_digest": "dc8234439e0b91735c5de44e2eab613a251f36b9931ece3f3e27242895daf8a9",
       "rendered_digest": "0d328ff741b15d10c2ff7771cceb076e360448e60a42d300c2c11e11108f04e9",
       "ast_digest": "e529805bd83634008b3bd78dca3ee74fdb4d72139b22fab55cba98e735b52f54"
     },
     "srp": {
-      "values_digest": "3146709f49106f3434f1717a332babe514ca769759ca94a87e5f200cceb9a9ab",
+      "values_digest": "9b342558c1c7ab50a8467d71963bf62b9201430785e630e4b9d3cb1b690a3da0",
       "rendered_digest": "a221ecc8dec332d492b6dc996b9e040631af360c5e4a36fb0d6135d9047412ad",
       "ast_digest": "56805114cae04014451215298d5d9e698ff096b87aaecc25ef66a1d9e411a67a"
     },
     "sor": {
-      "values_digest": "df20e0c393b8703eb8e0eaa0bef501c2e856fdeca13f29384471b36a22499f44",
+      "values_digest": "54211ea7f214ce7c4c82ffc07dd24ed255b2ff495bbbcdf7f67e5b35895544ae",
       "rendered_digest": "438f780ba34b8cf10447ab0b4cd4ce4f8ffa306eb1b9d47fbae0076d6a4ed8c7",
       "ast_digest": "097e7f1e5962049cd1ed1b1329a64c69e58275998990a9a2986494008fc1c28b"
     }
@@ -139,6 +139,69 @@
       "actor": "codex:5860-runtime-wp04-rollback-repair",
       "reason": "Release the rollback-section repair claim after typed design reapproval and card regeneration.",
       "operation": "{\"claim_id\":\"claim-5870-v092-rollback-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-rollback-repair\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 3,
+      "actor": "codex:5860-wp04-estimate-repair",
+      "reason": "Acquire issue-local authority to align the approved design with its typed medium planning profile.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5870-v092-estimate-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-wp04-estimate-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5870\",\".csdlc/prepared/issues/5870\",\".csdlc/evidence/5870\"],\"purpose\":\"Align the issue-specific design with typed planning estimates for #5870; no product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 4,
+      "actor": "codex:5860-wp04-estimate-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 13,
+      "generation": 4,
+      "actor": "codex:5860-wp04-estimate-repair",
+      "reason": "Release completed estimate-repair claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5870-v092-estimate-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-wp04-estimate-repair\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 4,
+      "actor": "codex:5860-wp04-estimate-repair",
+      "reason": "Acquire issue-local authority to align the approved design with its typed medium planning profile.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5870-v092-estimate-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-wp04-estimate-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5870\",\".csdlc/prepared/issues/5870\",\".csdlc/evidence/5870\"],\"purpose\":\"Align the issue-specific design with typed planning estimates for #5870; no product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 5,
+      "actor": "codex:5860-wp04-estimate-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 16,
+      "generation": 5,
+      "actor": "codex:5860-wp04-estimate-repair",
+      "reason": "Release completed estimate-repair claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5870-v092-estimate-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-wp04-estimate-repair\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 5,
+      "actor": "codex:5860-wp04-exact-estimate-reapproval",
+      "reason": "Acquire issue-local authority for exact design-digest reapproval.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5870-v092-exact-estimate-reapproval\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-wp04-exact-estimate-reapproval\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5870\",\".csdlc/prepared/issues/5870\",\".csdlc/evidence/5870\"],\"purpose\":\"Reapprove the exact issue-specific estimate design for #5870; no product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 18,
+      "generation": 6,
+      "actor": "codex:5860-wp04-exact-estimate-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 19,
+      "generation": 6,
+      "actor": "codex:5860-wp04-exact-estimate-reapproval",
+      "reason": "Release the exact-design reapproval claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5870-v092-exact-estimate-reapproval\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-wp04-exact-estimate-reapproval\"}"
     }
   ]
 }

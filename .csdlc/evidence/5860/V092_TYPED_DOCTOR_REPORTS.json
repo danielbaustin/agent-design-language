@@ -1,6 +1,18 @@
 {
   "schema": "adl.v092.child-doctor-reports.v1",
   "interpretation": "design-ready handoff; execution remains dependency-gated and requires just-in-time claim reacquisition",
+  "toolchain": {
+    "generation": "v2",
+    "selector": "csdlc-v2/operator/generation-selector.json",
+    "inventory": "csdlc-v2/operator/coexistence.json",
+    "install_source_revision": "git:e0feeb8100888ceeb63ed4012de7a35b6c143475",
+    "installed_source_tree": "5d0e813d575911f350d83d28e9f204861b8e29b0",
+    "candidate_source_tree": "5d0e813d575911f350d83d28e9f204861b8e29b0",
+    "install_receipt_sha256": "ddb3de4cae8a834332b750ec6cfaf697353f8dcc0a49002c3aa392ea4d6767d4",
+    "doctor_binary": ".adl/bin/csdlc-v2/csdlc-doctor",
+    "doctor_binary_sha256": "8f49431cffe0cdf1d0678e6d13e851313c10bda074d31191d58c7696737ca1b5",
+    "doctor_binary_blake3": "b51ed9ca6d698094a6bb67b191d651ca06ebe59c8a09d5b6dba3c64f1903a74d"
+  },
   "reports": [
     {
       "schema": "csdlc.doctor.report.v1",
@@ -637,7 +649,7 @@
       "issue": 5863,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 8,
       "ready": false,
       "findings": [
         {
@@ -652,7 +664,7 @@
       "issue": 5864,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 7,
       "ready": false,
       "findings": [
         {
@@ -667,7 +679,7 @@
       "issue": 5865,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 7,
       "ready": false,
       "findings": [
         {
@@ -682,7 +694,7 @@
       "issue": 5866,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 7,
       "ready": false,
       "findings": [
         {
@@ -697,7 +709,7 @@
       "issue": 5867,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 7,
       "ready": false,
       "findings": [
         {
@@ -712,7 +724,7 @@
       "issue": 5868,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 6,
       "ready": false,
       "findings": [
         {
@@ -727,7 +739,7 @@
       "issue": 5869,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 6,
       "ready": false,
       "findings": [
         {
@@ -742,7 +754,7 @@
       "issue": 5870,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 6,
       "ready": false,
       "findings": [
         {
@@ -757,7 +769,7 @@
       "issue": 5871,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 6,
       "ready": false,
       "findings": [
         {
@@ -772,7 +784,7 @@
       "issue": 5872,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 6,
       "ready": false,
       "findings": [
         {
@@ -787,7 +799,7 @@
       "issue": 5873,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 6,
       "ready": false,
       "findings": [
         {
@@ -802,7 +814,7 @@
       "issue": 5874,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 6,
       "ready": false,
       "findings": [
         {
@@ -817,7 +829,7 @@
       "issue": 5875,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 6,
       "ready": false,
       "findings": [
         {
@@ -832,7 +844,7 @@
       "issue": 5876,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 6,
       "ready": false,
       "findings": [
         {
@@ -847,7 +859,7 @@
       "issue": 5877,
       "status": "block",
       "phase": "bound",
-      "generation": 3,
+      "generation": 6,
       "ready": false,
       "findings": [
         {
@@ -862,7 +874,7 @@
       "issue": 5878,
       "status": "block",
       "phase": "bound",
-      "generation": 4,
+      "generation": 7,
       "ready": false,
       "findings": [
         {

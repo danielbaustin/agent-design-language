@@ -56,9 +56,12 @@ Abort before commit, fence the target, resume the validated source owner, and pr
 
 ## Estimate
 
-Budget this bounded child at 8 elapsed hours, 90,000 reasoning tokens, and
-90 minutes of focused validation and review. Replan before widening paths,
-dependencies, proof surface, or rollback authority.
+Budget this bounded migration-state-machine child under the typed medium profile:
+6 elapsed hours, 80,000 reasoning tokens, and 60 minutes of focused validation
+and review. Multi-stage handoff, idempotency, rollback, and interruption recovery
+are constrained to the declared state machine and deterministic transition
+fixtures; replan before widening paths, dependencies, proof surface, or rollback
+authority.
 
 ## Non-Goals
 
