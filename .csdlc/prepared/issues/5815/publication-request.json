@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5815,
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5815-v092-final-repo-migration-plan",
+  "title": "[v0.92][WP-01A][github] Finalize Agent Logic repository migration plan",
+  "body": "Closes #5815\n\nFinalizes the executable plan for transferring the five approved repositories from danielbaustin to agent-logic. The runbook defines staged transfer order, agent-logic.ai link cutover, destination access and integration checks, rollback, and verification. asksifu remains personal and Horust remains an inactive upstream-contribution fork.\n\nGemini 3.1 Pro reviewed the plan. Its GHCR, Git LFS, Pages/TLS, collaborator/team, secret, OIDC, and App/webhook findings are incorporated and dispositioned in the document.\n\nThis PR is planning-only and performs no repository, organization, DNS, Pages, Actions, package, secret, billing, or AWS mutation.",
+  "actor": "codex:5815",
+  "claim_id": "claim-5815-v092-final-repo-migration-plan",
+  "expected_generation": 4,
+  "expected_digest": "5f3fb3bad2df1ce94d5702c501d5bf0a2308267cb3f04ba6e1ce33fc1677b213",
+  "draft": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}
