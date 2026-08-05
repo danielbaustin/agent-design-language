@@ -718,25 +718,27 @@ pub fn migrate_legacy_preparation(
         ));
     }
     let preparation_dir = issue_preparation_dir(store, request.issue);
-    if preparation_dir.exists() {
-        let snapshot = preparation_dir
-            .join("migration")
-            .join(format!("legacy-{}.json", record.digest));
-        if !snapshot.exists() {
-            return Err(V2Error::new(
-                ErrorCode::ReconciliationRequired,
-                "canonical legacy authority coexists with unrelated preparation state",
-            ));
-        }
-        let retained: crate::IssueRecord = read_json(&snapshot)?;
-        if retained.digest != record.digest {
-            return Err(V2Error::new(
-                ErrorCode::CorruptRecord,
-                "interrupted migration snapshot does not match canonical authority",
-            ));
-        }
+    {
         let _lock = preparation_lock(store, request.issue)?;
-        fs::remove_dir_all(&preparation_dir)?;
+        if preparation_dir.exists() {
+            let snapshot = preparation_dir
+                .join("migration")
+                .join(format!("legacy-{}.json", record.digest));
+            if !snapshot.exists() {
+                return Err(V2Error::new(
+                    ErrorCode::ReconciliationRequired,
+                    "canonical legacy authority coexists with unrelated preparation state",
+                ));
+            }
+            let retained: crate::IssueRecord = read_json(&snapshot)?;
+            if retained.digest != record.digest {
+                return Err(V2Error::new(
+                    ErrorCode::CorruptRecord,
+                    "interrupted migration snapshot does not match canonical authority",
+                ));
+            }
+            fs::remove_dir_all(&preparation_dir)?;
+        }
     }
     if matches!(
         record.phase,
@@ -884,7 +886,6 @@ pub fn migrate_legacy_preparation(
         &issue_preparation_dir(store, record.issue).join("manifest.json"),
         &next,
     )?;
-    drop(_lock);
     if let Err(error) =
         store.remove_unstarted_binding_projection(record.issue, &claim.id, &record.digest)
     {
@@ -929,16 +930,9 @@ pub fn repair_legacy_preparation(
             "quarantine packet is outside the issue migration namespace",
         ));
     }
-    let root = store.root().canonicalize()?;
-    let packet_path = store.root().join(&request.quarantine_path);
-    let canonical_packet = packet_path.canonicalize()?;
-    if !canonical_packet.starts_with(&root) || !canonical_packet.is_file() {
-        return Err(V2Error::new(
-            ErrorCode::UnsafeCheckout,
-            "quarantine packet is not a canonical repository file",
-        ));
-    }
-    let packet: LegacyPreparationQuarantine = read_json(&canonical_packet)?;
+    let packet: LegacyPreparationQuarantine = serde_json::from_slice(
+        &crate::store::read_regular_projection(store.root(), Path::new(&request.quarantine_path))?,
+    )?;
     let mut payload = packet.clone();
     let claimed = std::mem::take(&mut payload.digest);
     if claimed != object_digest(&payload)? || claimed != request.expected_quarantine_digest {
@@ -1439,6 +1433,14 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
     }
     intent.created_artifacts.sort();
     intent.created_artifacts.dedup();
+    update_manifest_state(store, request.issue, PreparationState::Bound)?;
+    if bind.created {
+        update_manifest_state(
+            &Store::new(store.root().join(&worktree)),
+            request.issue,
+            PreparationState::Bound,
+        )?;
+    }
     let materialized_root = if intent.worktree == "." {
         store.root().to_path_buf()
     } else {
@@ -1451,14 +1453,6 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
     intent.digest.clear();
     intent.digest = object_digest(&intent)?;
     write_binding_intent(store, &intent)?;
-    update_manifest_state(store, request.issue, PreparationState::Bound)?;
-    if bind.created {
-        update_manifest_state(
-            &Store::new(store.root().join(&worktree)),
-            request.issue,
-            PreparationState::Bound,
-        )?;
-    }
     Ok(DerivedBindResult {
         schema: "csdlc.derived_bind_result.v1".into(),
         issue: request.issue,
@@ -1813,6 +1807,22 @@ pub fn load_binding_intent(store: &Store, issue: u64) -> Result<Option<BindingIn
                 "binding intent issue namespace mismatch",
             ));
         }
+        if value.schema != INTENT_SCHEMA
+            || value.session_id.trim().is_empty()
+            || value.owner.trim().is_empty()
+            || value.claim_id.trim().is_empty()
+            || value.receipt_digest.trim().is_empty()
+            || value.generation_id.trim().is_empty()
+            || value.base_revision.trim().is_empty()
+            || value.branch.trim().is_empty()
+            || value.worktree.trim().is_empty()
+            || value.expires_unix_seconds < value.acquired_unix_seconds
+        {
+            return Err(V2Error::new(
+                ErrorCode::CorruptRecord,
+                "binding intent has invalid identity or lease fields",
+            ));
+        }
         Ok(Some(value))
     } else {
         Ok(None)
@@ -2068,7 +2078,25 @@ fn binding_intent_path(store: &Store, issue: u64) -> Result<PathBuf> {
         &["rev-parse", "--path-format=absolute", "--git-common-dir"],
     )?
     .stdout;
-    Ok(PathBuf::from(common)
+    let common = PathBuf::from(common);
+    if !common.is_absolute()
+        || common
+            .components()
+            .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
+    {
+        return Err(V2Error::new(
+            ErrorCode::UnsafeCheckout,
+            "Git common directory is not an absolute normalized path",
+        ));
+    }
+    let common = common.canonicalize()?;
+    if !common.is_dir() {
+        return Err(V2Error::new(
+            ErrorCode::UnsafeCheckout,
+            "Git common directory is not a directory",
+        ));
+    }
+    Ok(common
         .join("csdlc-v2/binding-intents")
         .join(format!("{issue}.json")))
 }
@@ -2133,7 +2161,8 @@ fn quarantine_migration(
         digest: String::new(),
     };
     packet.digest = object_digest(&packet)?;
-    atomic_write_json(&store.root().join(&relative), &packet)?;
+    let _lock = preparation_lock(store, record.issue)?;
+    write_immutable_json(&store.root().join(&relative), &packet)?;
     Ok(LegacyPreparationMigrationResult {
         schema: "csdlc.legacy_preparation_migration_result.v1".into(),
         issue: record.issue,
@@ -2426,29 +2455,34 @@ fn atomic_write_json<T: Serialize>(path: &Path, value: &T) -> Result<()> {
 
 fn write_immutable_json<T: Serialize>(path: &Path, value: &T) -> Result<()> {
     let expected = serde_json::to_vec_pretty(value)?;
-    match fs::symlink_metadata(path) {
-        Ok(metadata) => {
-            if metadata.file_type().is_symlink() || !metadata.is_file() {
-                return Err(V2Error::new(
-                    ErrorCode::UnsafeCheckout,
-                    "immutable preparation artifact is not a regular file",
-                ));
-            }
-            let existing = fs::read(path)?;
-            if existing.strip_suffix(b"\n") == Some(expected.as_slice()) {
-                return Ok(());
-            }
-            return Err(V2Error::new(
-                ErrorCode::CorruptRecord,
-                "immutable preparation artifact already exists with different content",
-            ));
-        }
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-        Err(error) => return Err(error.into()),
-    }
     let mut bytes = expected;
     bytes.push(b'\n');
-    atomic_write(path, &bytes)
+    let parent = path
+        .parent()
+        .ok_or_else(|| V2Error::new(ErrorCode::InvalidInput, "path has no parent"))?;
+    create_dir_all_safe(parent)?;
+    let (root, relative) = preparation_root_and_relative(path)?;
+    crate::store::require_canonical_parent_beneath(root, &relative)?;
+    match OpenOptions::new().create_new(true).write(true).open(path) {
+        Ok(mut file) => {
+            file.write_all(&bytes)?;
+            file.sync_all()?;
+            File::open(parent)?.sync_all()?;
+            Ok(())
+        }
+        Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
+            let existing = crate::store::read_regular_projection(root, &relative)?;
+            if existing == bytes {
+                Ok(())
+            } else {
+                Err(V2Error::new(
+                    ErrorCode::CorruptRecord,
+                    "immutable preparation artifact already exists with different content",
+                ))
+            }
+        }
+        Err(error) => Err(error.into()),
+    }
 }
 
 fn preparation_root_and_relative(path: &Path) -> Result<(&Path, PathBuf)> {

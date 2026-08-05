@@ -105,7 +105,7 @@ fn diagnose_internal(store: &Store, issue: u64, include_preparation: bool) -> Do
                         "canonical issue authority coexists with non-bound preparation authority"
                             .into(),
                 });
-                report.next_operation = Some("csdlc-migrate repair".into());
+                report.next_operation = Some("csdlc-migrate run".into());
                 return report;
             }
             Ok(manifest)

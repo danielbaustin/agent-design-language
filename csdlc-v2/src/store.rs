@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use std::fs::{self, File, OpenOptions};
-use std::io::Write;
+use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -2354,7 +2354,35 @@ pub(crate) fn read_regular_projection(root: &Path, relative: &Path) -> Result<Ve
             ),
         ));
     }
-    Ok(fs::read(path)?)
+    let mut options = OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.custom_flags(libc::O_NOFOLLOW);
+    }
+    let mut file = options.open(&path).map_err(|error| {
+        #[cfg(unix)]
+        if error.raw_os_error() == Some(libc::ELOOP) {
+            return V2Error::new(
+                ErrorCode::UnsafeCheckout,
+                format!("authority projection is a symlink: {}", path.display()),
+            );
+        }
+        V2Error::new(ErrorCode::Io, error.to_string())
+    })?;
+    if !file.metadata()?.is_file() {
+        return Err(V2Error::new(
+            ErrorCode::UnsafeCheckout,
+            format!(
+                "authority projection handle is not a regular file: {}",
+                path.display()
+            ),
+        ));
+    }
+    let mut bytes = Vec::new();
+    file.read_to_end(&mut bytes)?;
+    Ok(bytes)
 }
 
 fn read_regular_authored_artifact(root: &Path, relative: &Path) -> Result<Option<Vec<u8>>> {

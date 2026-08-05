@@ -693,10 +693,11 @@ pub(crate) fn validate_validation_lanes(
             } else {
                 root.join(executable)
             };
-            path.is_file()
+            is_runnable_file(&path)
         } else {
             std::env::var_os("PATH").is_some_and(|path| {
-                std::env::split_paths(&path).any(|directory| directory.join(executable).is_file())
+                std::env::split_paths(&path)
+                    .any(|directory| is_runnable_file(&directory.join(executable)))
             })
         };
         if !executable_exists {
@@ -729,6 +730,24 @@ pub(crate) fn validate_validation_lanes(
         }
     }
     Ok(())
+}
+
+fn is_runnable_file(path: &Path) -> bool {
+    let Ok(metadata) = fs::metadata(path) else {
+        return false;
+    };
+    if !metadata.is_file() {
+        return false;
+    }
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        metadata.permissions().mode() & 0o111 != 0
+    }
+    #[cfg(not(unix))]
+    {
+        true
+    }
 }
 
 pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {

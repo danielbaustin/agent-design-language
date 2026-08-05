@@ -3,14 +3,15 @@ use std::fs;
 use csdlc_v2::cards::{digest, PlanStep, ResourceProfile, StepStatus, ValidationLane};
 use csdlc_v2::doctor::DoctorStatus;
 use csdlc_v2::{
-    create_issue_draft, diagnose, initialize_native_json, load_preparation_manifest,
-    migrate_legacy_preparation, release_derived_bind, repair_legacy_preparation, run_derived_bind,
-    run_preparation, run_preparation_batch, seal_preparation, sync_preparation, BatchChildOutcome,
-    BindReleaseRequest, BindingIntent, BootstrapRequest, Claim, DerivedBindRequest, ErrorCode,
-    InitialCardInput, IssueCreateRequest, LegacyPreparationDisposition,
-    LegacyPreparationMigrationRequest, LegacyPreparationRepairDisposition,
-    LegacyPreparationRepairRequest, PlanningProfile, PreparationState, PrepareBatchRequest,
-    PrepareRunRequest, PrepareSealRequest, PrepareSyncRequest, Store,
+    create_issue_draft, diagnose, initialize_native_json, load_binding_intent,
+    load_preparation_manifest, migrate_legacy_preparation, release_derived_bind,
+    repair_legacy_preparation, run_derived_bind, run_preparation, run_preparation_batch,
+    seal_preparation, sync_preparation, BatchChildOutcome, BindReleaseRequest, BindingIntent,
+    BootstrapRequest, Claim, DerivedBindRequest, ErrorCode, InitialCardInput, IssueCreateRequest,
+    LegacyPreparationDisposition, LegacyPreparationMigrationRequest,
+    LegacyPreparationRepairDisposition, LegacyPreparationRepairRequest, PlanningProfile,
+    PreparationState, PrepareBatchRequest, PrepareRunRequest, PrepareSealRequest,
+    PrepareSyncRequest, Store,
 };
 
 fn initial(goal: &str) -> InitialCardInput {
@@ -531,6 +532,17 @@ fn seal_rejects_an_unavailable_validation_executable() {
 
 #[cfg(unix)]
 #[test]
+fn seal_rejects_a_validation_file_without_an_executable_bit() {
+    let (_temp, store) = fixture();
+    let mut request = sync_request(&store, "Reject a non-executable validation lane.");
+    request.initial.validation_lanes[0].argv = vec!["docs/design.md".into()];
+    let result = run_preparation(&store, PrepareRunRequest { sync: request }).unwrap();
+    assert!(result.receipt.is_none());
+    assert_eq!(result.error_code.as_deref(), Some("invalid_input"));
+}
+
+#[cfg(unix)]
+#[test]
 fn sync_rejects_symlinked_design_input() {
     use std::os::unix::fs::symlink;
 
@@ -573,6 +585,57 @@ fn batch_id_is_immutable_across_different_results() {
     let error = run_preparation_batch(&store, changed)
         .expect_err("same batch id cannot overwrite immutable truth");
     assert_eq!(error.code, ErrorCode::CorruptRecord);
+}
+
+#[test]
+fn concurrent_writers_cannot_replace_an_immutable_batch_result() {
+    let (_temp, store) = fixture();
+    let requests = [
+        PrepareBatchRequest {
+            batch_id: "contended-batch".into(),
+            children: vec![batch_child(
+                &store,
+                6311,
+                "contended-left",
+                "Left result.",
+                "src/left",
+                Vec::new(),
+            )],
+        },
+        PrepareBatchRequest {
+            batch_id: "contended-batch".into(),
+            children: vec![batch_child(
+                &store,
+                6312,
+                "contended-right",
+                "Right result.",
+                "src/right",
+                Vec::new(),
+            )],
+        },
+    ];
+    let barrier = std::sync::Arc::new(std::sync::Barrier::new(3));
+    let results = std::thread::scope(|scope| {
+        let handles = requests.map(|request| {
+            let store = store.clone();
+            let barrier = barrier.clone();
+            scope.spawn(move || {
+                barrier.wait();
+                run_preparation_batch(&store, request)
+            })
+        });
+        barrier.wait();
+        handles.map(|handle| handle.join().unwrap())
+    });
+    assert_eq!(results.iter().filter(|result| result.is_ok()).count(), 1);
+    assert_eq!(
+        results
+            .iter()
+            .filter_map(|result| result.as_ref().err())
+            .filter(|error| error.code == ErrorCode::CorruptRecord)
+            .count(),
+        1
+    );
 }
 
 #[test]
@@ -627,6 +690,29 @@ fn migration_releases_preparation_only_claim_and_preserves_snapshot() {
         .unwrap(),
     )
     .expect("legacy init");
+    create_issue_draft(
+        &store,
+        IssueCreateRequest {
+            issue: 7001,
+            repository: "example/repo".into(),
+            title: "Preparation fixture".into(),
+            slug: "legacy-preparation".into(),
+            version: "v0.92".into(),
+        },
+    )
+    .unwrap();
+    let snapshot = temp
+        .path()
+        .join(".csdlc/preparation/issues/7001/migration")
+        .join(format!("legacy-{}.json", record.digest));
+    fs::create_dir_all(snapshot.parent().unwrap()).unwrap();
+    fs::write(&snapshot, serde_json::to_vec_pretty(&record).unwrap()).unwrap();
+    let interrupted = diagnose(&store, 7001);
+    assert_eq!(interrupted.status, DoctorStatus::Corrupt);
+    assert_eq!(
+        interrupted.next_operation.as_deref(),
+        Some("csdlc-migrate run")
+    );
     let result = migrate_legacy_preparation(
         &store,
         LegacyPreparationMigrationRequest {
@@ -720,6 +806,47 @@ fn ambiguous_migration_requires_digest_pinned_typed_repair() {
         LegacyPreparationDisposition::Quarantined
     );
     assert_eq!(quarantine.next_operation, "csdlc-migrate repair");
+
+    let error = migrate_legacy_preparation(
+        &store,
+        LegacyPreparationMigrationRequest {
+            issue: 7002,
+            expected_legacy_digest: record.digest.clone(),
+            actor: "operator".into(),
+            reason: "attempt to replace immutable quarantine evidence".into(),
+            base_revision: "abc123".into(),
+        },
+    )
+    .expect_err("classified migration evidence cannot be replaced");
+    assert_eq!(error.code, ErrorCode::ReconciliationRequired);
+
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::symlink;
+
+        let original = quarantine.snapshot_path.as_ref().unwrap();
+        let alias = ".csdlc/preparation/issues/7002/migration/quarantine-alias.json";
+        symlink(
+            temp.path().join(original).file_name().unwrap(),
+            temp.path().join(alias),
+        )
+        .unwrap();
+        let error = repair_legacy_preparation(
+            &store,
+            LegacyPreparationRepairRequest {
+                issue: 7002,
+                expected_legacy_digest: record.digest.clone(),
+                expected_quarantine_digest: quarantine.resulting_digest.clone().unwrap(),
+                expected_preparation_digest: None,
+                quarantine_path: alias.into(),
+                disposition: LegacyPreparationRepairDisposition::RetainLegacyAuthority,
+                actor: "operator".into(),
+                reason: "reject an aliased quarantine packet".into(),
+            },
+        )
+        .expect_err("symlinked quarantine packet must fail closed");
+        assert_eq!(error.code, ErrorCode::UnsafeCheckout);
+    }
 
     let repair = repair_legacy_preparation(
         &store,
@@ -876,6 +1003,16 @@ fn derived_bind_is_retryable_and_release_removes_only_created_git_artifacts() {
             .join("csdlc-v2/binding-intents/8001.json");
     let mut intent: BindingIntent =
         serde_json::from_slice(&fs::read(&intent_path).unwrap()).unwrap();
+    let original_intent = fs::read(&intent_path).unwrap();
+    intent.owner.clear();
+    intent.digest.clear();
+    intent.digest = digest(&serde_json::to_vec(&intent).unwrap());
+    fs::write(&intent_path, serde_json::to_vec_pretty(&intent).unwrap()).unwrap();
+    let error = load_binding_intent(&store, 8001).expect_err("invalid intent identity must fail");
+    assert_eq!(error.code, ErrorCode::CorruptRecord);
+    fs::write(&intent_path, original_intent).unwrap();
+    let mut intent: BindingIntent =
+        serde_json::from_slice(&fs::read(&intent_path).unwrap()).unwrap();
     // Simulate process loss after Git mutation but before artifact-ledger update.
     intent.created_artifacts.clear();
     intent.digest.clear();
@@ -926,11 +1063,21 @@ fn derived_bind_is_retryable_and_release_removes_only_created_git_artifacts() {
     let mut intent: BindingIntent =
         serde_json::from_slice(&fs::read(&intent_path).unwrap()).unwrap();
     intent.state = csdlc_v2::BindingIntentState::Bound;
+    intent.acquired_unix_seconds = 0;
     intent.expires_unix_seconds = 0;
     intent.digest.clear();
     intent.digest = digest(&serde_json::to_vec(&intent).unwrap());
     fs::write(&intent_path, serde_json::to_vec_pretty(&intent).unwrap()).unwrap();
     write_session_ledger(temp.path(), &[(8001, "replacement-session".into())]);
+    git(
+        temp.path(),
+        &["worktree", "remove", "--force", first.worktree.as_str()],
+    );
+    git(temp.path(), &["branch", "-D", first.branch.as_str()]);
+    intent.state = csdlc_v2::BindingIntentState::Releasing;
+    intent.digest.clear();
+    intent.digest = digest(&serde_json::to_vec(&intent).unwrap());
+    fs::write(&intent_path, serde_json::to_vec_pretty(&intent).unwrap()).unwrap();
     let released = release_derived_bind(
         &store,
         BindReleaseRequest {
@@ -939,7 +1086,7 @@ fn derived_bind_is_retryable_and_release_removes_only_created_git_artifacts() {
             expected_intent_digest: Some(intent.digest),
         },
     )
-    .expect("digest-pinned takeover releases an expired intent");
+    .expect("digest-pinned takeover resumes a partially released expired intent");
     assert!(released.released);
     assert!(!temp.path().join(first.worktree).exists());
     assert_eq!(
