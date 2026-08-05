@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5823,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-06] Remote validation/build runner",
+    "slug": "v0-92-wp-06-remote-validation-build-runner",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "WP-06 issue 5823, its declared implementation paths, and retained proof",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does the implementation satisfy the required outcome with real behavior?",
+        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
+        "Did the change remain within WP-06 scope?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

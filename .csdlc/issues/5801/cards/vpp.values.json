@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5801,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-02A] CI and coverage reliability",
+    "slug": "v0-92-wp-02-ci-and-coverage-reliability",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-02",
+          "proof_role": "CI contracts, failure regressions, and exact-head green required checks",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 3600,
+          "budget_tokens": 25000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5801/design.md",
+      "design_digest": "1b0420b4b96beb25204b112adc3e7914e79b1ae4dc5f26c06a676be75a4fedfe",
+      "diagram_ref": ".csdlc/prepared/issues/5801/diagram.mmd",
+      "diagram_digest": "6f5405e1aee1975ec02b11337005bc4404c4bd458b594093ebf9596c65c59e27"
+    }
+  }
+}

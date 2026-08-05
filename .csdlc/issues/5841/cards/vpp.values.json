@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5841,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-21A] Rust refactoring and maintainability pass",
+    "slug": "v0-92-wp-21a-rust-refactoring-and-maintainability-pass",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-21a",
+          "proof_role": "exact refactoring inventory, focused behavior parity, Clippy and test proof, before/after LoC, and bounded review",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 3600,
+          "budget_tokens": 25000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5841/design.md",
+      "design_digest": "58bd922890d36380a7c5b9662b8b14c893694ec7daa40653b628305dc28e5eb0",
+      "diagram_ref": ".csdlc/prepared/issues/5841/diagram.mmd",
+      "diagram_digest": "ca9c051bf8bd7704f80646219715b93d4eadc37615f60fa0ec30992b3de1e7b3"
+    }
+  }
+}

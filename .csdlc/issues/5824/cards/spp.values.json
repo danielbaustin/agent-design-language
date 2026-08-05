@@ -1,0 +1,74 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5824,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-07] Prompt-card enum typing",
+    "slug": "v0-92-wp-07-prompt-card-enum-typing",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Prepare exact scope, design, paths, and validation plan",
+          "acceptance_ids": [
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement the required outcome and focused proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "No tracked work on main",
+        "No scope absorption across work packages",
+        "Evidence claims remain exact-revision and source-grounded"
+      ],
+      "risks": [
+        "Dependency drift",
+        "Scope overlap",
+        "Insufficient real-behavior proof"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 21600,
+        "total_tokens": 80000,
+        "validation_seconds": 3600
+      },
+      "stop_conditions": [
+        "Protected-path collision",
+        "Contradictory dependency evidence",
+        "Required proof cannot be produced within issue scope"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5824/design.md",
+      "design_digest": "c9a2b7cfae3d97403333f6429b2395bf0dd7899e5b9436a5906f29eca7bc72e7",
+      "diagram_ref": ".csdlc/prepared/issues/5824/diagram.mmd",
+      "diagram_digest": "8e6e403c4e75baa55858f6f77015fddfe34f9f4ba52e80b6862911629b0baeb6"
+    }
+  }
+}

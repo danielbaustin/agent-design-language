@@ -1,0 +1,30 @@
+{
+  "issue": 5817,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "582295542c8e4d8fbd7504fed6e5f5e721e942656e649f5dd024058b9427065b",
+  "claim_id": "claim-5817-v092-wp01",
+  "actor": "codex:5817",
+  "reason": "Record the completed v0.92 activation package before exact review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Activated the canonical v0.92 milestone package, consumed prerequisite truth, requalified historical loop semantics against current Runtime v3, opened the final issue wave, and initialized every child issue with six typed cards.",
+    "changes": [
+      "Reconciled active milestone, sprint, WBS, ADR, demo, feature, quality, handoff, and execution-readiness surfaces",
+      "Opened and verified 37 child issues across 38 unique work packages",
+      "Generated 444 typed child card artifacts with exact wave alignment",
+      "Added complete feature ownership and hard WP-22 completion gates",
+      "Promoted Memory Palace and Adaptive Learning DAG from planning escape hatches to required working Runtime slices",
+      "Requalified #5104 loop semantics against current Runtime v3 source and focused tests"
+    ],
+    "artifacts": [
+      "docs/milestones/v0.92",
+      ".csdlc/issues/5786",
+      ".csdlc/issues/5801",
+      ".csdlc/issues/5818 through .csdlc/issues/5852",
+      ".csdlc/evidence/5817/feature-and-issue-coverage-audit.md",
+      ".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md"
+    ]
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,75 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5828,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice",
+    "slug": "v0-92-wp-11-runtime-implement-first-memory-palace-context-topology-slice",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Prepare exact scope, design, paths, and validation plan",
+          "acceptance_ids": [
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement the required outcome and focused proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "acceptance_ids": [
+            "AC-6"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "No tracked work on main",
+        "No scope absorption across work packages",
+        "Evidence claims remain exact-revision and source-grounded"
+      ],
+      "risks": [
+        "Dependency drift",
+        "Scope overlap",
+        "Insufficient real-behavior proof"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 43200,
+        "total_tokens": 140000,
+        "validation_seconds": 7200
+      },
+      "stop_conditions": [
+        "Protected-path collision",
+        "Contradictory dependency evidence",
+        "Required proof cannot be produced within issue scope"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5828/design.md",
+      "design_digest": "252a09ae442aac6f17105b30c138ee586fe910cb1ae863e38c52ae0ff10befa7",
+      "diagram_ref": ".csdlc/prepared/issues/5828/diagram.mmd",
+      "diagram_digest": "9f9576ad8955259454410bbd22fced868ac0a02c730fb41e59f9b919b7b820a8"
+    }
+  }
+}

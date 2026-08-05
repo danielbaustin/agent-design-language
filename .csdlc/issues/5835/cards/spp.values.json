@@ -1,0 +1,74 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5835,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-17] Migration and cross-polis continuity planning",
+    "slug": "v0-92-wp-17-migration-and-cross-polis-continuity-planning",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Prepare exact scope, design, paths, and validation plan",
+          "acceptance_ids": [
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement the required outcome and focused proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "No tracked work on main",
+        "No scope absorption across work packages",
+        "Evidence claims remain exact-revision and source-grounded"
+      ],
+      "risks": [
+        "Dependency drift",
+        "Scope overlap",
+        "Insufficient real-behavior proof"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Protected-path collision",
+        "Contradictory dependency evidence",
+        "Required proof cannot be produced within issue scope"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5835/design.md",
+      "design_digest": "a4133f0b98d7a52ac173165a63f7c0cc45caa57332fbe5d076eb040fa70a467c",
+      "diagram_ref": ".csdlc/prepared/issues/5835/diagram.mmd",
+      "diagram_digest": "c92f5c34c8a4a3c46a9cbbf48220d216321b967ae235f9e9d9d15bab2b706d41"
+    }
+  }
+}

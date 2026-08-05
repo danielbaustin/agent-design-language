@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5825,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-08] Birthday contract and negative cases",
+    "slug": "v0-92-wp-08-birthday-contract-and-negative-cases",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-08",
+          "proof_role": "contract doc and validation fixture report",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 10000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5825/design.md",
+      "design_digest": "f35ff4071d3302b89ec9e2377805c28c5e5cd1fba23f547c38881485b21694f9",
+      "diagram_ref": ".csdlc/prepared/issues/5825/diagram.mmd",
+      "diagram_digest": "10b00a557a108eaf99aac7ee704480acbc7f20af9b0a64ead413fc2abc7dcb92"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5827,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-10] Continuity across bounded cycles",
+    "slug": "v0-92-wp-10-continuity-across-bounded-cycles",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-10",
+          "proof_role": "continuity fixtures, cycle artifacts, and witness links",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 3600,
+          "budget_tokens": 25000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5827/design.md",
+      "design_digest": "835319cf3a32161665cdec2ddb81db6da8365b15650d95c94f00b63f8de9105e",
+      "diagram_ref": ".csdlc/prepared/issues/5827/diagram.mmd",
+      "diagram_digest": "a05f2b202743ba3c236670070ddf8e0b19f61db3d94ee0ebfbd3837b41dfd026"
+    }
+  }
+}

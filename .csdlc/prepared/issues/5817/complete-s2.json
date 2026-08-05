@@ -1,0 +1,11 @@
+{
+  "issue": 5817,
+  "card": "spp",
+  "expected_generation": 3,
+  "expected_digest": "349c6c56c06c1fea5546f49ffe5c3519d41e8ca7ec51542e99d308cdc794df26",
+  "claim_id": "claim-5817-v092-wp01",
+  "actor": "codex:5817",
+  "reason": "Complete canonical v0.92 reconciliation across milestone, feature, ADR, demo, handoff, quality, and execution-readiness surfaces.",
+  "operation": {"operation": "update_plan_step", "step_id": "S2", "status": "completed"},
+  "fail_after_backup": false
+}

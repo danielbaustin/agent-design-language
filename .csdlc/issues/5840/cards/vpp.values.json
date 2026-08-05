@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5840,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-20] Demo matrix, AEE proof, and proof coverage",
+    "slug": "v0-92-wp-20-demo-matrix-aee-proof-and-proof-coverage",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-20",
+          "proof_role": "demo matrix, AEE evidence, proof coverage document, and artifact index",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 3600,
+          "budget_tokens": 25000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5840/design.md",
+      "design_digest": "496624036b8574a5a3fb0ee63eb55b27417b5c23fbf421582565ce70f1d195d5",
+      "diagram_ref": ".csdlc/prepared/issues/5840/diagram.mmd",
+      "diagram_digest": "306231500f23ed2bf9e37eeb666f371167b01333f715a9008ac35dae520d3bfe"
+    }
+  }
+}

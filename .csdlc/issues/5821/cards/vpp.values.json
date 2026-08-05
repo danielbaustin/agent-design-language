@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5821,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04] Distributed Guardian/polis runtime",
+    "slug": "v0-92-wp-04-distributed-guardian-polis-runtime",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-04",
+          "proof_role": "reviewed architecture, threat model, child issue wave, integrated distributed proof, and relocation failure cases",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 3600,
+          "budget_tokens": 25000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5821/design.md",
+      "design_digest": "b07405493b60b4da27f287713299c91753da920cd54419f61cf944ed64775ec8",
+      "diagram_ref": ".csdlc/prepared/issues/5821/diagram.mmd",
+      "diagram_digest": "8875b91f9d11d43128d8151b5de9115accf9843420f7e84ef3d424fa4ee504ea"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5825,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-08] Birthday contract and negative cases",
+    "slug": "v0-92-wp-08-birthday-contract-and-negative-cases",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Complete WP-08: Birthday contract and negative cases.",
+      "required_outcome": "birth contract, disqualifying cases, and negative fixtures",
+      "declared_scope": [
+        "Issue 5825 implementation paths to be narrowed during preparation",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md"
+      ],
+      "authority_boundary": [
+        "Issue 5825 owns only WP-08: Birthday contract and negative cases",
+        "Adjacent v0.92 work packages retain their own implementation and proof authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Prepare before execution",
+        "Never edit tracked work on main",
+        "Use one bounded pre-PR review",
+        "Do not substitute fixtures, receipts, or prose for required working behavior"
+      ]
+    }
+  }
+}

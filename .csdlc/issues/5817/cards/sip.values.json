@@ -1,0 +1,40 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5817,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-01][planning] Promote canonical docs and open the final issue wave",
+    "slug": "v0-92-wp-01-planning-promote-canonical-docs-and-open-final-issue-wave",
+    "version": "v0.92",
+    "generation": 8
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Convert the reviewed v0.92 candidate planning package into current canonical milestone and executable issue-wave truth.",
+      "required_outcome": "Canonical version and milestone docs agree, prerequisites are evidence-reconciled, the final bounded issue wave is opened without duplicates, and every opened issue has six valid typed cards.",
+      "declared_scope": [
+        "README.md",
+        "docs/README.md",
+        "adl/Cargo.toml",
+        "adl/Cargo.lock",
+        "docs/milestones/v0.92"
+      ],
+      "authority_boundary": [
+        "Issue 5817 owns v0.92 planning activation and issue-wave setup only",
+        "Child issues retain implementation authority",
+        "Issue 5815 owns the reviewed migration plan and WP-02 issue 5819 owns repository-migration execution"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Never write tracked work on main",
+        "Use current repository and GitHub evidence rather than chat recollection",
+        "Open no duplicate issue",
+        "Use one bounded pre-PR review",
+        "Do not execute child WPs"
+      ]
+    }
+  }
+}

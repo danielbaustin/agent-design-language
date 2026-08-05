@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5844,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-24] Ten-article launch series",
+    "slug": "v0-92-wp-24-ten-article-launch-series",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Deliver all ten planned articles complete and ready for editorial review, followed by final release-grounded publication disposition.",
+      "deliverables": [
+        "all ten planned articles complete and ready for editorial review, followed by final release-grounded publication disposition",
+        "ten reviewed article sources, series-arc review, per-article claim scans, links, milestone evidence updates, and publication boundary"
+      ],
+      "acceptance_criteria": [
+        "The declared required outcome is complete at the exact reviewed revision",
+        "Declared dependencies are verified from current evidence",
+        "The named proof surface is reproducible and retained",
+        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
+        "One bounded pre-PR review has no unresolved actionable findings"
+      ],
+      "dependencies": [
+        "WP-02 for parallel drafting",
+        "WP-23 for final release-truth alignment"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md",
+        ".adl/docs/TBD/publication/ADL_MEDIUM_ARTICLE_LIST.md",
+        ".adl/docs/TBD/publication/MEDIUM_ARTICLE_SERIES_PLAN.md",
+        ".adl/docs/TBD/publication/medium_launch_articles/1-WHY-ADL.md"
+      ],
+      "non_goals": [
+        "Adjacent work packages",
+        "Historical evidence rewriting",
+        "Unsupported downstream milestone claims"
+      ]
+    }
+  }
+}

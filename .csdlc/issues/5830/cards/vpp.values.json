@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5830,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-13] ACP / cognitive profiles",
+    "slug": "v0-92-wp-13-acp-cognitive-profiles",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-13",
+          "proof_role": "profile fixtures, update rules, privacy boundary, and validation report",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 10000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5830/design.md",
+      "design_digest": "5627b7f6e8220de3f530f4acfcc40854a0542fa94fc63cf3489627601452eab4",
+      "diagram_ref": ".csdlc/prepared/issues/5830/diagram.mmd",
+      "diagram_digest": "1b3bcd3781d2467c6417f7a4639cf6a7ecf3d35b9d3b07e85140db91f6bc20ae"
+    }
+  }
+}

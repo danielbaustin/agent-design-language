@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5831,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
+    "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-13a",
+          "proof_role": "real adaptive execution, deterministic replay, durable state deltas, governed graph mutation, and required negative cases",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 10000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5831/design.md",
+      "design_digest": "986bb1c7d340128e1243295d45bd916943962c880ba0642207c5be51296e527b",
+      "diagram_ref": ".csdlc/prepared/issues/5831/diagram.mmd",
+      "diagram_digest": "f40afa817703e09d193f792f8221caf122e64f881b6020e0c9e8ea320158c6bc"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5821,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04] Distributed Guardian/polis runtime",
+    "slug": "v0-92-wp-04-distributed-guardian-polis-runtime",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Complete WP-04: Distributed Guardian/polis runtime.",
+      "required_outcome": "architecture and security gate followed by completion of the bounded 16-issue distributed-runtime program within v0.92",
+      "declared_scope": [
+        "Issue 5821 implementation paths to be narrowed during preparation",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md",
+        ".adl/docs/TBD/CSM_RUNTIME_DISTRIBUTED_DESIGN.md",
+        ".adl/docs/TBD/CSM_RUNTIME_DISTRIBUTED_EXECUTION_PLAN.md"
+      ],
+      "authority_boundary": [
+        "Issue 5821 owns only WP-04: Distributed Guardian/polis runtime",
+        "Adjacent v0.92 work packages retain their own implementation and proof authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Prepare before execution",
+        "Never edit tracked work on main",
+        "Use one bounded pre-PR review",
+        "Do not substitute fixtures, receipts, or prose for required working behavior"
+      ]
+    }
+  }
+}

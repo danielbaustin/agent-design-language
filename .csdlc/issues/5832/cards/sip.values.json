@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5832,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-14] ACIP and A2A contract reconciliation",
+    "slug": "v0-92-wp-14-acip-and-a2a-contract-reconciliation",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Complete WP-14: ACIP and A2A contract reconciliation.",
+      "required_outcome": "reconciled versioned protocol family, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS carrier",
+      "declared_scope": [
+        "Issue 5832 implementation paths to be narrowed during preparation",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md",
+        ".adl/docs/TBD/acip/AGENT_COMMUNICATION_AND_INVOCATION_PROTOCOL.md",
+        ".adl/docs/TBD/a2a/ADL_A2A_ADAPTER.md"
+      ],
+      "authority_boundary": [
+        "Issue 5832 owns only WP-14: ACIP and A2A contract reconciliation",
+        "Adjacent v0.92 work packages retain their own implementation and proof authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Prepare before execution",
+        "Never edit tracked work on main",
+        "Use one bounded pre-PR review",
+        "Do not substitute fixtures, receipts, or prose for required working behavior"
+      ]
+    }
+  }
+}

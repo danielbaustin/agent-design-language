@@ -1,0 +1,8 @@
+flowchart LR
+  L["Qualified Runtime v3 loop"] --> E["Evaluation evidence"]
+  E --> S["Durable state delta"]
+  S --> P["Mutation policy"]
+  P --> A["Accepted graph delta"]
+  P --> R["Rejected graph delta"]
+  A --> D["Deterministic replay"]
+  R --> D

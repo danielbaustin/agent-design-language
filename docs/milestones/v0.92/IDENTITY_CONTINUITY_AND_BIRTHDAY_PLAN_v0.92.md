@@ -155,8 +155,9 @@ commitments.
 ## Non-Goals
 
 - No runtime implementation in this planning issue.
-- No opened v0.92 GitHub issue wave yet; the candidate issue-wave preflight is
-  tracked in `WP_ISSUE_WAVE_v0.92.yaml`.
+- The v0.92 GitHub work-package issue wave is open and mapped in
+  `WP_ISSUE_WAVE_v0.92.yaml`; this allocation document remains planning input,
+  not implementation proof.
 - No legal personhood claim.
 - No production citizenship claim.
 - No complete constitutional authority claim.

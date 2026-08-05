@@ -1,0 +1,171 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5817,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "d53be3af2faf3e66031a9d44cf075b231b9bb435cb118d4f77841ff2b8f74db9",
+  "phase": "implemented",
+  "generation": 8,
+  "digest": "4aded2571e1be98ba4d7984d67a3eb3be4d9f117becf34b33840f7dbac32aca0",
+  "claim": {
+    "id": "claim-5817-v092-wp01",
+    "owner": "codex:5817",
+    "generation": 8,
+    "acquired_unix_seconds": 1785910303,
+    "expires_unix_seconds": 1786515103,
+    "heartbeat_unix_seconds": 1785910303,
+    "branch": "codex/5817-v092-wp01",
+    "worktree": ".worktrees/adl-wp-5817",
+    "protected_paths": [
+      "README.md",
+      "docs/README.md",
+      "adl/Cargo.toml",
+      "adl/Cargo.lock",
+      "docs/milestones/v0.92",
+      ".csdlc/issues/5817",
+      ".csdlc/prepared/issues/5817",
+      ".csdlc/evidence/5817"
+    ],
+    "purpose": "Promote canonical v0.92 docs and open the validated issue wave"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5817/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5817/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:daniel-confirmed-wp02",
+      "revision": "354299a3bdd065516fd0ab8c91f4a0f9a1aa60e35971d5c8b00897721e31d739"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "b4cc1916c1de4e71dad9bd23fe1c53b6d65bffe2500cc4ef3ad05939e2bc20ec",
+      "rendered_digest": "4451da75fc9cb7d4886b7877ab335834a02ceb41919e4bb6b6bdea011277826f",
+      "ast_digest": "02838e8a1abbb2d0df6a250cf97f2b8ac4cef2309d3afaa866777d382c2cc66a"
+    },
+    "stp": {
+      "values_digest": "84f4b2bf60a099a2d81a71e74a5c4f21a3894a498d22816f1738aa52a44e546d",
+      "rendered_digest": "1d34155c8cb1a8b4cc3a16462f3e1e76a5a9d7fb5dcad1dc0801011ccb404a78",
+      "ast_digest": "8cd8c20ceed3eeefa51c5392c7b84f4078db985f356ca1b5abab232dcc3cff65"
+    },
+    "spp": {
+      "values_digest": "4f772a65657902cfdd0b6eee4287f7b5729f4128c8f4db3cb604991f7544b112",
+      "rendered_digest": "bf1ba4c2268a9dba7a05452b7849fb8c8404da598b6b4b815a4e6a69350f136e",
+      "ast_digest": "ce85c03a9a720cc590ebf965f1ca3824e060ec9ac59512e8c38ca273c7499d18"
+    },
+    "vpp": {
+      "values_digest": "a2719573bd33f71088f07f76bb79a5abaa9f128c3bfa0a7143c3f6da96a3f3d3",
+      "rendered_digest": "3c62f0de1ecb18589f0dd127a0cd1ee6797933ccade46addb89f18ddb18a1dda",
+      "ast_digest": "842bebc2452684ca47878e23a80d8b31969dd86168b2a3057ddba1dcfdeedcc3"
+    },
+    "srp": {
+      "values_digest": "7acbb49358b27cf0ab726a2dd565af9406c2093a5919af93cd485a9b795a27dd",
+      "rendered_digest": "cd4bb98b48746ccdab2be739406c3e989dc54b4ab3b457c6db777cd32e2b83e0",
+      "ast_digest": "552cdee9ab9df482004176341730bd937def333d5da4e7703b963ded3bb34816"
+    },
+    "sor": {
+      "values_digest": "975307cb07b984d6276d03b7db4ac316e73c4acf7185e15d026635d9b0d14415",
+      "rendered_digest": "73905a2e1071d0985b0f9560af771c38335625257912ce69b9575de9e3fedd44",
+      "ast_digest": "896687d02998df377b9f74e8969030bc8f5de9e87dfda9837fb77c8bd481c3a6"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5817",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5817",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5817",
+      "reason": "The active v0.92 package, final issue wave, complete child cards, prerequisite requalification, and focused proof are ready for one exact pre-PR review."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5817",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5817",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5817",
+      "reason": "correct the final work-package numbering after operator confirmation that repository migration is WP-02",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5817 owns v0.92 planning activation and issue-wave setup only\",\"Child issues retain implementation authority\",\"Issue 5815 owns the reviewed migration plan and WP-02 issue 5819 owns repository-migration execution\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "operator:daniel-confirmed-wp02",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5817",
+      "reason": "Complete prerequisite audit after verifying the v0.91.8 handoff, closed issues 3377 and 5359, AEE evidence, merged PR 5104, and current Runtime v3 loop behavior.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5817",
+      "reason": "Complete canonical v0.92 reconciliation across milestone, feature, ADR, demo, handoff, quality, and execution-readiness surfaces.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:5817",
+      "reason": "Complete issue-wave initialization after validating 38 unique acyclic WPs, opening 37 child issues, and generating 444 typed card artifacts with strengthened real-work contracts.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:5817",
+      "reason": "Record the completed v0.92 activation package before exact review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Activated the canonical v0.92 milestone package, consumed prerequisite truth, requalified historical loop semantics against current Runtime v3, opened the final issue wave, and initialized every child issue with six typed cards.\",\"changes\":[\"Reconciled active milestone, sprint, WBS, ADR, demo, feature, quality, handoff, and execution-readiness surfaces\",\"Opened and verified 37 child issues across 38 unique work packages\",\"Generated 444 typed child card artifacts with exact wave alignment\",\"Added complete feature ownership and hard WP-22 completion gates\",\"Promoted Memory Palace and Adaptive Learning DAG from planning escape hatches to required working Runtime slices\",\"Requalified #5104 loop semantics against current Runtime v3 source and focused tests\"],\"artifacts\":[\"docs/milestones/v0.92\",\".csdlc/issues/5786\",\".csdlc/issues/5801\",\".csdlc/issues/5818 through .csdlc/issues/5852\",\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\",\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex:5817",
+      "reason": "Retain focused package, Runtime v3 prerequisite, doctor, YAML, root-cleanliness, and diff-hygiene proof before review.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby .csdlc/prepared/issues/5817/validate-v092-package.rb\",\"cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5817/target --test reasoning\",\"ruby -e YAML.safe_load(File.read('docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml'), aliases: true)\",\"csdlc-doctor --repo . --issue 5817\",\"git diff --check\",\"git -C /Users/daniel/git/agent-design-language status --short --branch\"],\"purpose\":\"Prove the active v0.92 package: 38 WPs, 37 child issues, 444 card artifacts, 13 Runtime v3 reasoning tests, doctor health, parseability, diff hygiene, and untouched clean main checkout.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex:5817",
+      "reason": "The active v0.92 package, final issue wave, complete child cards, prerequisite requalification, and focused proof are ready for one exact pre-PR review.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    }
+  ]
+}

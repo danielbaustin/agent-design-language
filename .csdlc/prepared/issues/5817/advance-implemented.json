@@ -1,0 +1,11 @@
+{
+  "issue": 5817,
+  "card": "sip",
+  "expected_generation": 7,
+  "expected_digest": "7c43604ed44856f5ea7f386ca2599d4b822e355a505d69a70b864594ea66819c",
+  "claim_id": "claim-5817-v092-wp01",
+  "actor": "codex:5817",
+  "reason": "The active v0.92 package, final issue wave, complete child cards, prerequisite requalification, and focused proof are ready for one exact pre-PR review.",
+  "operation": {"operation": "advance_phase", "phase": "implemented"},
+  "fail_after_backup": false
+}

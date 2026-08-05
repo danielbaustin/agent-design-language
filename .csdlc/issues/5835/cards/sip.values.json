@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5835,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-17] Migration and cross-polis continuity planning",
+    "slug": "v0-92-wp-17-migration-and-cross-polis-continuity-planning",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Complete WP-17: Migration and cross-polis continuity planning.",
+      "required_outcome": "bounded birthday-identity movement semantics and non-goals",
+      "declared_scope": [
+        "Issue 5835 implementation paths to be narrowed during preparation",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md"
+      ],
+      "authority_boundary": [
+        "Issue 5835 owns only WP-17: Migration and cross-polis continuity planning",
+        "Adjacent v0.92 work packages retain their own implementation and proof authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Prepare before execution",
+        "Never edit tracked work on main",
+        "Use one bounded pre-PR review",
+        "Do not substitute fixtures, receipts, or prose for required working behavior"
+      ]
+    }
+  }
+}

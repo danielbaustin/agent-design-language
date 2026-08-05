@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5848,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-27] Review findings remediation",
+    "slug": "v0-92-wp-27-review-findings-remediation",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-27",
+          "proof_role": "finding disposition record",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 10000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5848/design.md",
+      "design_digest": "12a8c97a937e85ff1ddbc6220b4346fa081484323af96736c09f3f840f3bce81",
+      "diagram_ref": ".csdlc/prepared/issues/5848/diagram.mmd",
+      "diagram_digest": "25b8dec2b759e8dfba87fd2c6055a1f6a8063c69efc0115abfc869b27b849aed"
+    }
+  }
+}

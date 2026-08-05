@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5828,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice",
+    "slug": "v0-92-wp-11-runtime-implement-first-memory-palace-context-topology-slice",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Deliver working Memory Palace context topology, bounded working-set materialization, and redaction-safe continuity proof.",
+      "deliverables": [
+        "working Memory Palace context topology, bounded working-set materialization, and redaction-safe continuity proof",
+        "deterministic topology and retrieval tests, witnessed memory references, stale-context negatives, and redaction-safe provenance packet"
+      ],
+      "acceptance_criteria": [
+        "The first Memory Palace slice executes real deterministic context-topology and working-set behavior at the exact reviewed revision",
+        "Declared dependencies are verified from current evidence",
+        "The same declared inputs reproduce the same topology and bounded working set",
+        "Missing references, stale context, provenance mismatch, redaction failure, and unauthorized private-state access are tested negative cases",
+        "No planning-only or blocked disposition substitutes for the first working slice",
+        "One bounded pre-PR review has no unresolved actionable findings"
+      ],
+      "dependencies": [
+        "WP-09",
+        "WP-10"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md"
+      ],
+      "non_goals": [
+        "Adjacent work packages",
+        "Historical evidence rewriting",
+        "Unsupported downstream milestone claims"
+      ]
+    }
+  }
+}

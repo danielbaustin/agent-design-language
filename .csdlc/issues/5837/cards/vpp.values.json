@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5837,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-18A] Observatory/Unity consumer integration",
+    "slug": "v0-92-wp-18a-observatory-unity-consumer-integration",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-18a",
+          "proof_role": "real Observatory and Unity interactions, compatibility matrix, and consumer failure cases",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 3600,
+          "budget_tokens": 25000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5837/design.md",
+      "design_digest": "bab20e749946ab47caaff4f71a51475c223a68a42e68464b4b1153baa9d43137",
+      "diagram_ref": ".csdlc/prepared/issues/5837/diagram.mmd",
+      "diagram_digest": "6e998bbfc4e909d907a0aedb02e0083df704316714c6bf03c5a82c5f8dcf9363"
+    }
+  }
+}

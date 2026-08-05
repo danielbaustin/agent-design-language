@@ -1,0 +1,42 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5843,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-23] Docs and release-truth pass",
+    "slug": "v0-92-wp-23-docs-and-release-truth-pass",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Deliver current canonical docs, release notes, feature list, ADR plan, skills, agent guidance, and milestone docs.",
+      "deliverables": [
+        "current canonical docs, release notes, feature list, ADR plan, skills, agent guidance, and milestone docs",
+        "docs-review packet, ADR candidate packet if needed, and release-truth diff"
+      ],
+      "acceptance_criteria": [
+        "The declared required outcome is complete at the exact reviewed revision",
+        "Declared dependencies are verified from current evidence",
+        "The named proof surface is reproducible and retained",
+        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
+        "One bounded pre-PR review has no unresolved actionable findings"
+      ],
+      "dependencies": [
+        "WP-22"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md"
+      ],
+      "non_goals": [
+        "Adjacent work packages",
+        "Historical evidence rewriting",
+        "Unsupported downstream milestone claims"
+      ]
+    }
+  }
+}

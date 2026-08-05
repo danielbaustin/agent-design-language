@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5844,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-24] Ten-article launch series",
+    "slug": "v0-92-wp-24-ten-article-launch-series",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-24",
+          "proof_role": "ten reviewed article sources, series-arc review, per-article claim scans, links, milestone evidence updates, and publication boundary",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 10000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5844/design.md",
+      "design_digest": "5205e7a8a3e87ce24405848a8e195a116b8d6d5e215a87ffbb02c9066fa57bab",
+      "diagram_ref": ".csdlc/prepared/issues/5844/diagram.mmd",
+      "diagram_digest": "3457a1de375efb2d8f55c6315c01483b076694a42949e3c6343da05264154781"
+    }
+  }
+}

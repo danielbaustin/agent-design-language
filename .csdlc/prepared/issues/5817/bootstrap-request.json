@@ -1,0 +1,161 @@
+{
+  "issue": 5817,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5817/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5817/diagram.mmd",
+  "design_reviewer": "operator:daniel-approved-wp01",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5817-v092-wp01",
+    "owner": "codex:5817",
+    "generation": 0,
+    "acquired_unix_seconds": 1785910303,
+    "expires_unix_seconds": 1786515103,
+    "heartbeat_unix_seconds": 1785910303,
+    "branch": "codex/5817-v092-wp01",
+    "worktree": ".worktrees/adl-wp-5817",
+    "protected_paths": [
+      "README.md",
+      "docs/README.md",
+      "adl/Cargo.toml",
+      "adl/Cargo.lock",
+      "docs/milestones/v0.92",
+      ".csdlc/issues/5817",
+      ".csdlc/prepared/issues/5817",
+      ".csdlc/evidence/5817"
+    ],
+    "purpose": "Promote canonical v0.92 docs and open the validated issue wave"
+  },
+  "initial": {
+    "title": "[v0.92][WP-01][planning] Promote canonical docs and open the final issue wave",
+    "slug": "v0-92-wp-01-planning-promote-canonical-docs-and-open-final-issue-wave",
+    "version": "v0.92",
+    "goal": "Convert the reviewed v0.92 candidate planning package into current canonical milestone and executable issue-wave truth.",
+    "required_outcome": "Canonical version and milestone docs agree, prerequisites are evidence-reconciled, the final bounded issue wave is opened without duplicates, and every opened issue has six valid typed cards.",
+    "declared_scope": [
+      "README.md",
+      "docs/README.md",
+      "adl/Cargo.toml",
+      "adl/Cargo.lock",
+      "docs/milestones/v0.92"
+    ],
+    "authority_boundary": [
+      "Issue 5817 owns v0.92 planning activation and issue-wave setup only",
+      "Child issues retain implementation authority",
+      "Issue 5815 and WP-01A retain repository-migration authority"
+    ],
+    "operator_constraints": [
+      "Never write tracked work on main",
+      "Use current repository and GitHub evidence rather than chat recollection",
+      "Open no duplicate issue",
+      "Use one bounded pre-PR review",
+      "Do not execute child WPs"
+    ],
+    "task_boundary": "Reconcile and activate the v0.92 planning package and child issue wave.",
+    "deliverables": [
+      "Current canonical v0.92 version and milestone docs",
+      "Evidence-reconciled WP dependency graph",
+      "Final opened child issue wave",
+      "Six typed cards per opened issue",
+      "Focused validation and exact review evidence"
+    ],
+    "acceptance_criteria": [
+      "Canonical version and v0.92 planning docs agree",
+      "Every prerequisite is consumed, gap-routed, or explicitly deferred",
+      "Issue #5104 loop-runtime evidence is requalified against current Runtime v3",
+      "The final issue wave is acyclic and contains no duplicate live issues",
+      "Every opened issue has SIP, STP, SPP, VPP, SRP, and SOR cards",
+      "Focused YAML, link, schema, version, dependency, and diff validation passes",
+      "One bounded exact pre-PR review has no actionable findings"
+    ],
+    "dependencies": [
+      "Completed v0.91.8 release and handoff package",
+      "v0.91.8 activation-test map and AEE completion evidence",
+      "Issue 3377 readiness packet",
+      "Issue 5359 WP-22 planning dispositions",
+      "Issue 5104 merged loop-runtime evidence"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.92",
+      "docs/milestones/v0.91.8",
+      ".adl/docs/TBD",
+      "README.md",
+      "docs/README.md",
+      "adl/Cargo.toml",
+      "AGENTS.md"
+    ],
+    "non_goals": [
+      "Child WP implementation",
+      "Repository transfer",
+      "v0.93 governance implementation",
+      "Unsupported birthday or legal-status claims"
+    ],
+    "plan_summary": "Audit prerequisite truth, reconcile canonical v0.92 surfaces, validate the dependency graph, open the issue wave idempotently, generate typed card bundles, and publish after one exact review.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Audit prerequisite and candidate issue-wave truth",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Reconcile canonical version, milestone, feature, ADR, and demo surfaces",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Validate and open the final issue wave with six-card bundles",
+        "acceptance_ids": ["AC-4", "AC-5", "AC-6"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Run one exact pre-PR review and publish",
+        "acceptance_ids": ["AC-7"],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "Primary main checkout remains clean",
+      "No duplicate issue is created",
+      "No child implementation begins",
+      "Every claim is evidence-bound"
+    ],
+    "risks": [
+      "Candidate docs may contain stale pre-release assumptions",
+      "Issue-wave size can amplify duplicate or dependency errors",
+      "Historical loop-runtime proof may not satisfy current Runtime v3 contracts",
+      "Version changes may unintentionally churn Cargo.lock"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "A protected-path collision with an active owner",
+      "A prerequisite cannot be classified from current evidence",
+      "Opening an issue would duplicate a live or completed issue",
+      "The dependency graph is cyclic"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "v092-planning-package",
+        "proof_role": "Validate YAML, Markdown links, canonical versions, dependency acyclicity, typed card structure, scope, and diff hygiene",
+        "deterministic": true,
+        "resource_profile": "medium",
+        "parallel_group": "docs",
+        "budget_seconds": 300,
+        "budget_tokens": 5000,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"]
+      }
+    ],
+    "failure_policy": "Fail closed on contradictory evidence, duplicates, cyclic dependencies, invalid cards, or scope widening; record named gaps instead of completion claims.",
+    "review_prompts": [
+      "Do canonical v0.92 docs and versions agree?",
+      "Are all prerequisite and deferred-source dispositions evidence-grounded?",
+      "Is the opened issue graph complete, nonduplicative, and acyclic?",
+      "Are all child card bundles issue-specific and structurally valid?"
+    ],
+    "review_scope": "Canonical v0.92 activation surfaces, issue-wave evidence, and issue-local lifecycle records."
+  }
+}

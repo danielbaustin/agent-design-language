@@ -1,0 +1,75 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5831,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
+    "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Prepare exact scope, design, paths, and validation plan",
+          "acceptance_ids": [
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement the required outcome and focused proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "acceptance_ids": [
+            "AC-6"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "No tracked work on main",
+        "No scope absorption across work packages",
+        "Evidence claims remain exact-revision and source-grounded"
+      ],
+      "risks": [
+        "Dependency drift",
+        "Scope overlap",
+        "Insufficient real-behavior proof"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 43200,
+        "total_tokens": 140000,
+        "validation_seconds": 7200
+      },
+      "stop_conditions": [
+        "Protected-path collision",
+        "Contradictory dependency evidence",
+        "Required proof cannot be produced within issue scope"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5831/design.md",
+      "design_digest": "986bb1c7d340128e1243295d45bd916943962c880ba0642207c5be51296e527b",
+      "diagram_ref": ".csdlc/prepared/issues/5831/diagram.mmd",
+      "diagram_digest": "f40afa817703e09d193f792f8221caf122e64f881b6020e0c9e8ea320158c6bc"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5828,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice",
+    "slug": "v0-92-wp-11-runtime-implement-first-memory-palace-context-topology-slice",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-11",
+          "proof_role": "deterministic topology and retrieval tests, witnessed memory references, stale-context negatives, and redaction-safe provenance packet",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 10000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5828/design.md",
+      "design_digest": "252a09ae442aac6f17105b30c138ee586fe910cb1ae863e38c52ae0ff10befa7",
+      "diagram_ref": ".csdlc/prepared/issues/5828/diagram.mmd",
+      "diagram_digest": "9f9576ad8955259454410bbd22fced868ac0a02c730fb41e59f9b919b7b820a8"
+    }
+  }
+}

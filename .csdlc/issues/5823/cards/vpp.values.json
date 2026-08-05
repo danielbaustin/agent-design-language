@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5823,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-06] Remote validation/build runner",
+    "slug": "v0-92-wp-06-remote-validation-build-runner",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-06",
+          "proof_role": "local, Linux, macOS, Windows, failure, and no-network fallback proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 3600,
+          "budget_tokens": 25000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5823/design.md",
+      "design_digest": "9a1b49f41788b5327a65c66a8c3b5f60f2434fbc1ce84fbd4148ce2677c51699",
+      "diagram_ref": ".csdlc/prepared/issues/5823/diagram.mmd",
+      "diagram_digest": "3eb05c4430e793d511b69b46a3dec1a684109fa2296feebb82b148b013df8eec"
+    }
+  }
+}

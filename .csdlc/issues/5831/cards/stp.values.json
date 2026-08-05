@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5831,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
+    "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Deliver working evaluation bindings, durable adaptation deltas, governed graph mutation, and replay-safe Adaptive Learning DAG execution.",
+      "deliverables": [
+        "working evaluation bindings, durable adaptation deltas, governed graph mutation, and replay-safe Adaptive Learning DAG execution",
+        "real adaptive execution, deterministic replay, durable state deltas, accepted and rejected mutation paths, and required negative cases"
+      ],
+      "acceptance_criteria": [
+        "The Adaptive Learning DAG executes real Runtime v3 behavior at the exact reviewed revision",
+        "Declared dependencies are verified from current evidence",
+        "Every accepted state or graph change is policy-authorized, durable, and deterministically replayable",
+        "Rejected mutation, forged history, discontinuous resume, invalid binding, unbounded recurrence, and missing evidence are proven negative cases",
+        "No fixture, receipt, demo mode, synthetic result, or planning document substitutes for runtime behavior",
+        "One bounded pre-PR review has no unresolved actionable findings"
+      ],
+      "dependencies": [
+        "WP-01",
+        "WP-13",
+        "issue-5104-merge-evidence",
+        "current Runtime v3 loop qualification"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md",
+        "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
+        ".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md",
+        "adl-runtime-kernel/src/reasoning.rs",
+        "adl-runtime-kernel/tests/reasoning.rs"
+      ],
+      "non_goals": [
+        "Adjacent work packages",
+        "Historical evidence rewriting",
+        "Ungoverned or unconstrained self-modification",
+        "Treating a planning packet as implementation",
+        "Unsupported downstream milestone claims"
+      ]
+    }
+  }
+}

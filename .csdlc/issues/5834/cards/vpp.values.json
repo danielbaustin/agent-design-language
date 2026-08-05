@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5834,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-16] Birthday review packet",
+    "slug": "v0-92-wp-16-birthday-review-packet",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-16",
+          "proof_role": "integrated review packet and claim-boundary scan",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 10000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5834/design.md",
+      "design_digest": "32faee838e6dfc5b8c5eb4121cdc1aabfea55d559069a5bff42d86c2513efba2",
+      "diagram_ref": ".csdlc/prepared/issues/5834/diagram.mmd",
+      "diagram_digest": "4fbf9141c2b5d1090bf07fd82a10d5e1b4ebc70e82ffef84456cb5684d5dd2ec"
+    }
+  }
+}

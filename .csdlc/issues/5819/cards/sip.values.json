@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5819,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-02] Agent Logic GitHub organization repository migration",
+    "slug": "v0-92-wp-01a-agent-logic-github-organization-repository-migration",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Complete WP-02: Agent Logic GitHub organization repository migration.",
+      "required_outcome": "five serially transferred company repositories with danielbaustin/asksifu retained as personal and Horust excluded",
+      "declared_scope": [
+        "Issue 5819 implementation paths to be narrowed during preparation",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md",
+        ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md"
+      ],
+      "authority_boundary": [
+        "Issue 5819 owns only WP-02: Agent Logic GitHub organization repository migration",
+        "Adjacent v0.92 work packages retain their own implementation and proof authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Prepare before execution",
+        "Never edit tracked work on main",
+        "Use one bounded pre-PR review",
+        "Do not substitute fixtures, receipts, or prose for required working behavior"
+      ]
+    }
+  }
+}

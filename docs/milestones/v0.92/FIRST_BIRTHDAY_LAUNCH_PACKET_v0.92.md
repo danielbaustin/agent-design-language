@@ -123,7 +123,7 @@ blocked, deferred, or routed with evidence before any public activation claim.
 
 | Requirement | Current source | Candidate v0.92 owner | Readiness gap |
 | --- | --- | --- | --- |
-| Birthday contract and negative cases | `FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md`, `DEMO_MATRIX_v0.92.md` | WP-02 | Final fixtures and validator expectations. |
+| Birthday contract and negative cases | `FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md`, `DEMO_MATRIX_v0.92.md` | WP-08 | Final fixtures and validator expectations. |
 | Stable name and identity root | `IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md` | WP-03 | Exact record fields, alias policy, and provenance policy. |
 | Continuity across bounded cycles | `IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md` | WP-04 | Minimum cycle count, continuity-grade rules, and failure reasons. |
 | Memory grounding | `MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md` | WP-05 | Redaction-safe packet shape and witness references. |

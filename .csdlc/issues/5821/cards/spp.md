@@ -1,0 +1,92 @@
+# Structured Planning Prompt
+
+Template: 1.0.0
+
+Issue: 5821
+
+Repository: danielbaustin/agent-design-language
+
+Card: spp
+
+Status: ready
+
+## Summary
+
+Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+
+## Plan
+
+Revision 1
+
+## Steps
+
+[
+  {
+    "id": "S1",
+    "action": "Prepare exact scope, design, paths, and validation plan",
+    "acceptance_ids": [
+      "AC-2"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S2",
+    "action": "Implement the required outcome and focused proof",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-3",
+      "AC-4"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S3",
+    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "acceptance_ids": [
+      "AC-5"
+    ],
+    "status": "pending"
+  }
+]
+
+## Invariants
+
+- No tracked work on main
+- No scope absorption across work packages
+- Evidence claims remain exact-revision and source-grounded
+
+## Risks
+
+- Dependency drift
+- Scope overlap
+- Insufficient real-behavior proof
+
+## Estimates
+
+{
+  "elapsed_seconds": 43200,
+  "total_tokens": 140000,
+  "validation_seconds": 7200
+}
+
+## Design
+
+.csdlc/prepared/issues/5821/design.md
+
+Digest: b07405493b60b4da27f287713299c91753da920cd54419f61cf944ed64775ec8
+
+## Diagram
+
+.csdlc/prepared/issues/5821/diagram.mmd
+
+Digest: 8875b91f9d11d43128d8151b5de9115accf9843420f7e84ef3d424fa4ee504ea
+
+## Stop Conditions
+
+- Protected-path collision
+- Contradictory dependency evidence
+- Required proof cannot be produced within issue scope
+
+## Handoff
+
+Proceed only after doctor readiness.

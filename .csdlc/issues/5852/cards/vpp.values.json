@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5852,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-30] Release ceremony",
+    "slug": "v0-92-wp-30-release-ceremony",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-30",
+          "proof_role": "release evidence packet, release notes, and closeout record",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 10000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5852/design.md",
+      "design_digest": "2aba5885b6345c3e9f71cf8f720b8cfb41f26e61b0b9c4bb0a2a0e1058afe1e0",
+      "diagram_ref": ".csdlc/prepared/issues/5852/diagram.mmd",
+      "diagram_digest": "b73328d4b8db56c8793d93c6bb6d4916ced566873a6b035055de8c67779d41c4"
+    }
+  }
+}

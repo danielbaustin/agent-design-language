@@ -1,0 +1,11 @@
+{
+  "issue": 5817,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "3663c5ba9252a38dc0ba2b2960c950a38f87aedc44a0e6a0b65a7bd113ac05b3",
+  "claim_id": "claim-5817-v092-wp01",
+  "actor": "codex:5817",
+  "reason": "Complete prerequisite audit after verifying the v0.91.8 handoff, closed issues 3377 and 5359, AEE evidence, merged PR 5104, and current Runtime v3 loop behavior.",
+  "operation": {"operation": "update_plan_step", "step_id": "S1", "status": "completed"},
+  "fail_after_backup": false
+}

@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5817,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-01][planning] Promote canonical docs and open the final issue wave",
+    "slug": "v0-92-wp-01-planning-promote-canonical-docs-and-open-final-issue-wave",
+    "version": "v0.92",
+    "generation": 8
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Canonical v0.92 activation surfaces, issue-wave evidence, and issue-local lifecycle records.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Do canonical v0.92 docs and versions agree?",
+        "Are all prerequisite and deferred-source dispositions evidence-grounded?",
+        "Is the opened issue graph complete, nonduplicative, and acyclic?",
+        "Are all child card bundles issue-specific and structurally valid?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

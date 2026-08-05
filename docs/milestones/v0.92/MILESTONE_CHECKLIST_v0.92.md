@@ -11,8 +11,8 @@
 
 ## Status
 
-Forward checklist. Items are intentionally unchecked because v0.92 has not
-entered active execution.
+WP-01 planning activation is active. Checked items are limited to evidence
+completed by WP-01; child implementation and release items remain open.
 
 ## Purpose
 
@@ -26,9 +26,10 @@ checks needed for a truthful v0.92 closeout.
 - [ ] `v0.91.5` release-tail closeout, the activation-test map, and the
   `v0.91.6` readiness tranche and `v0.91.7` implementation/proof tranche are consumed.
 - [ ] `#3377` first-birthday readiness packet consumed or blocked with evidence.
-- [ ] WBS converted from candidate allocation into concrete WPs.
-- [ ] Issue wave authored and opened.
-- [ ] Cards reviewed for concrete outputs and non-goals.
+- [x] WBS converted from candidate allocation into concrete WPs.
+- [x] Issue wave authored and opened.
+- [x] Every mapped child issue has initialized typed cards and explicit outputs,
+  proof surfaces, dependencies, and non-goals.
 - [ ] Dependencies on v0.90.3 citizen state and v0.91 moral trace checked.
 - [ ] Dependencies on v0.91.1 memory/identity, ToM, intelligence metrics,
   governed learning, and capability/aptitude evidence checked for ACP profile
@@ -55,11 +56,18 @@ checks needed for a truthful v0.92 closeout.
 
 ## Execution Discipline
 
-- [ ] Every opened issue has `SIP`, `STP`, `SPP`, `SRP`, and `SOR` cards.
+- [x] Every opened issue has `SIP`, `STP`, `SPP`, `VPP`, `SRP`, and `SOR` cards.
 - [ ] `SIP`, `STP`, and `SPP` are design-time ready before execution starts.
 - [ ] `SPP` is updated if execution materially diverges.
 - [ ] `SRP` records actual review findings and dispositions.
 - [ ] `SOR` records actual validation and integration truth.
+- [ ] Every issue delivers its complete declared outcome; no placeholder,
+  scaffold, partial implementation, or intent-only document is accepted as
+  completion.
+- [ ] Documentation and planning outputs are source-grounded, decision-ready,
+  and executable by the owning follow-on without chat reconstruction.
+- [ ] Tooling and cleanup outputs show measured useful value and preserve
+  required behavior with focused regressions.
 
 ## Quality Gates
 
@@ -78,6 +86,12 @@ checks needed for a truthful v0.92 closeout.
   evidence.
 - [ ] Claim-boundary scan finds no legal-personhood, production-citizenship, or
   completed-governance overclaims.
+- [ ] Every feature listed in `features/README.md` has landed exact-revision
+  implementation, validation, review, and integration evidence.
+- [ ] No feature receives completion credit from fixtures, demo mode,
+  receipt-only behavior, synthetic success, or provider substitution.
+- [ ] WP-22 blocks internal review while any v0.92 feature remains merely
+  planned or lacks accepted proof.
 
 ## Review And Release
 
@@ -90,11 +104,14 @@ checks needed for a truthful v0.92 closeout.
 
 ## Release Packaging
 
-- [ ] WP-16 prepared release-truth docs and release-note draft before review.
-- [ ] WP-19 reflected review-finding remediation in release-facing docs where
+- [ ] WP-23 updated release-truth docs, canonical feature status, and release
+  notes from landed evidence before review.
+- [ ] WP-24 delivered all ten review-ready launch articles and WP-24A delivered
+  all ten review-ready podcast packages.
+- [ ] WP-27 reflected review-finding remediation in release-facing docs where
   needed.
-- [ ] WP-22 assembled the release evidence packet.
-- [ ] WP-22 rewrote final release notes from draft planning text to landed
+- [ ] WP-29 assembled the release evidence packet.
+- [ ] WP-29 rewrote final release notes from draft planning text to landed
   behavior.
 - [ ] Review handoff and remediation records are linked.
 - [ ] Birthday evidence packet is included or explicitly linked.

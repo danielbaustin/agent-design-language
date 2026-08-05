@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5819,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-02] Agent Logic GitHub organization repository migration",
+    "slug": "v0-92-wp-01a-agent-logic-github-organization-repository-migration",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-01a",
+          "proof_role": "pre-transfer manifests, per-repository transfer and verification evidence, integration updates, negative asksifu control, and final migration report",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 3600,
+          "budget_tokens": 25000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5819/design.md",
+      "design_digest": "1bda7d724dd7ce9e15a2853d409e8da3d1bbab76fcf3347ef8b73a387484947f",
+      "diagram_ref": ".csdlc/prepared/issues/5819/diagram.mmd",
+      "diagram_digest": "d834fda68f489a52483faf2430ee30db34815f04184ac6f663467fee4ab4356d"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5817,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-01][planning] Promote canonical docs and open the final issue wave",
+    "slug": "v0-92-wp-01-planning-promote-canonical-docs-and-open-final-issue-wave",
+    "version": "v0.92",
+    "generation": 8
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "v092-planning-package",
+          "proof_role": "Validate YAML, Markdown links, canonical versions, dependency acyclicity, typed card structure, scope, and diff hygiene",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 300,
+          "budget_tokens": 5000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "docs",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on contradictory evidence, duplicates, cyclic dependencies, invalid cards, or scope widening; record named gaps instead of completion claims.",
+      "design_ref": ".csdlc/prepared/issues/5817/design.md",
+      "design_digest": "354299a3bdd065516fd0ab8c91f4a0f9a1aa60e35971d5c8b00897721e31d739",
+      "diagram_ref": ".csdlc/prepared/issues/5817/diagram.mmd",
+      "diagram_digest": "5bbfd94b3a5d0d0757ceb1b0d092c1e05feb838b088ef92a1683a267298163c2"
+    }
+  }
+}

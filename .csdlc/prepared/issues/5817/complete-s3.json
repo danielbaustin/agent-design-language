@@ -1,0 +1,11 @@
+{
+  "issue": 5817,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "db04e29f734fa63b9d33e8bb3d2d660c1ca99265933f17a27f897b342b40436f",
+  "claim_id": "claim-5817-v092-wp01",
+  "actor": "codex:5817",
+  "reason": "Complete issue-wave initialization after validating 38 unique acyclic WPs, opening 37 child issues, and generating 444 typed card artifacts with strengthened real-work contracts.",
+  "operation": {"operation": "update_plan_step", "step_id": "S3", "status": "completed"},
+  "fail_after_backup": false
+}

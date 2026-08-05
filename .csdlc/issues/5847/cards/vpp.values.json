@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5847,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-26] External / third-party review",
+    "slug": "v0-92-wp-26-external-third-party-review",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-26",
+          "proof_role": "review handoff and review report",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 10000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5847/design.md",
+      "design_digest": "5933181c50b98d70466083f69138a21a0b6c5413c4153852225baf3f5b9dcad3",
+      "diagram_ref": ".csdlc/prepared/issues/5847/diagram.mmd",
+      "diagram_digest": "94ca666891c69b3048803b84dc5ede061ab8c500837311d8fc6819796e894516"
+    }
+  }
+}

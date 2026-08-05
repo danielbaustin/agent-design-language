@@ -4,7 +4,7 @@
 
 - Feature Name: Adaptive Learning DAG
 - Milestone Target: `v0.92`
-- Status: forward-planning queue
+- Status: issue opened; Runtime v3 loop prerequisite requalified by WP-01
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: architecture, runtime, validation
@@ -12,8 +12,8 @@
 
 ## Purpose
 
-Queue the full adaptive-learning work that follows the historical `v0.91.7`
-reasoning-graph and loop-runtime tranche without creating GitHub issues yet.
+Deliver the full adaptive-learning work that follows the historical `v0.91.7`
+reasoning-graph and loop-runtime tranche through v0.92 WP-13A.
 
 This feature turns the post-`#5104` loop-runtime boundary into the next
 planned runtime sequence:
@@ -26,8 +26,8 @@ Prompt
   -> Adaptive Learning DAG
 ```
 
-The v0.92 planning question is no longer whether loops are only prompt
-conventions. The queued question is how a validated, replayable loop can accept
+The v0.92 implementation question is no longer whether loops are only prompt
+conventions. WP-13A must prove how a validated, replayable loop accepts
 evaluation feedback, update runtime state, and eventually mutate a reasoning
 graph under policy.
 
@@ -38,34 +38,34 @@ bounded recurrent execution over reasoning graphs, including graph/state
 binding, structural validation, termination constraints, deterministic replay,
 resume-prefix continuity, replay-forgery rejection, and canonical ordering.
 
-WP-01 must verify the merged `#5104` evidence before treating those claims as
-repo truth. Until then, this document records a v0.92 queue, not completed
-runtime evidence.
+WP-01 verified the merged `#5104` evidence and requalified its reusable
+semantics against current Runtime v3 source and focused tests. The retained
+decision is recorded in
+`.csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md`.
 
-## Runtime Status To Verify
+## Requalified Runtime Status
 
-After `#5104` is merged and consumed by v0.92 WP-01, the loop-status section
-for the upstream loop/runtime document should be updated only if the merged
-code and tests still satisfy current Runtime v3 contracts for these claims:
+Current Runtime v3 source and focused tests satisfy these reusable loop
+contracts:
 
 - Current Runtime v3 authority accepts bounded loop execution over reasoning
   graphs.
 - Loop definitions bind to reasoning graphs and runtime state.
 - The runtime validates referenced graph nodes and edges.
-- Continuous loops are structurally valid before execution.
+- Loop bounds are structurally validated before execution.
 - Termination limits are enforced.
 - Loop execution emits deterministic replay events.
 - Resumed execution checks prior-state prefix continuity.
 - Forged, substituted, or discontinuous replay histories are rejected.
-- The operator surface exposes the current loop-runtime proof through the
-  Runtime v3 authority path.
+- The supervised Runtime v3 reasoning component executes the loop through the
+  kernel component context and cancellation hierarchy.
 
-If any of those claims are missing or partial, WP-01 must record the gap rather
-than upgrading this feature to implementation truth.
+This requalification establishes the loop prerequisite only. It does not
+upgrade adaptive learning or graph mutation to implementation truth.
 
 ## Scope
 
-In scope for the v0.92 queue:
+In scope for v0.92 WP-13A:
 
 - evaluation and feedback bindings for loop iterations;
 - stateful adaptation records that explain what changed and why;
@@ -91,7 +91,7 @@ Out of scope for v0.92 unless WP-01 explicitly promotes it with evidence:
 
 | Step | Work | Required output |
 | --- | --- | --- |
-| 1 | Loop-runtime consumption | Verified `#5104` merge evidence, runtime-status update, and explicit non-claims. |
+| 1 | Loop-runtime consumption | Completed by WP-01: verified `#5104` merge evidence, current Runtime v3 qualification, and explicit non-claims. |
 | 2 | Evaluation bindings | Schema and fixtures connecting loop iterations to evaluation signals, feedback source, confidence, and proof refs. |
 | 3 | Stateful adaptation | Runtime records for bounded state deltas with before/after state hashes, rationale, and rollback notes. |
 | 4 | Policy-governed graph modification | Mutation proposal schema, policy decision, reviewer visibility, and accepted/rejected graph-delta fixtures. |
@@ -122,13 +122,12 @@ Out of scope for v0.92 unless WP-01 explicitly promotes it with evidence:
 
 ## Validation
 
-WP-01 should validate this queue by checking:
+WP-01 validated the prerequisite by checking:
 
 - the merged loop-runtime command and tests exist;
 - current Runtime v3 loop proofs include negative cases for forged or
   discontinuous replay histories;
-- the adaptive-learning work remains a v0.92 queue until implementation WPs
-  exist;
+- WP-13A owns the opened adaptive-learning implementation issue;
 - no v0.92 birthday claim depends on unproved graph mutation.
 
 Later implementation WPs should add focused tests for evaluation bindings,
@@ -137,9 +136,9 @@ negative cases.
 
 ## Acceptance Criteria
 
-- v0.92 planning names adaptive learning as a queued work package without
-  creating issues early.
-- The queue separates bounded loop runtime from learning-driven graph mutation.
+- v0.92 planning names adaptive learning as WP-13A and preserves its explicit
+  implementation boundary.
+- The implementation separates bounded loop runtime from learning-driven graph mutation.
 - Evaluation, adaptation, graph modification, and Adaptive Learning DAG proof
   are distinct deliverables.
 - Negative tests cover the failure modes that would make adaptive execution
@@ -149,18 +148,18 @@ negative cases.
 
 ## Risks
 
-- Loop-runtime evidence may be overstated before `#5104` is fully merged and
-  reviewed.
+- Current Runtime v3 loop proof may be overstated as adaptive learning unless
+  WP-13A preserves the graph-mutation boundary.
 - Adaptive-learning language may sound like autonomous self-improvement unless
   policy gates and replay proof remain explicit.
 - Graph mutation may widen v0.92 beyond first-birthday scope if WP-01 does not
-  keep it queued and evidence-bound.
+  keep it governed and evidence-bound.
 
 ## Future Work
 
-Future milestones may promote the Adaptive Learning DAG from planning queue to
-runtime implementation, then connect it to v0.94 signed/queryable trace,
-reasoning/provenance graph completion, and longer-lived governance review.
+Future milestones may connect the v0.92 Adaptive Learning DAG implementation
+to v0.94 signed/queryable trace, reasoning/provenance graph completion, and
+longer-lived governance review.
 
 ## Notes
 

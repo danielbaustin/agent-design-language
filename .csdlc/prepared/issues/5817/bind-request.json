@@ -1,0 +1,27 @@
+{
+  "issue": 5817,
+  "base_branch": "main",
+  "branch": "codex/5817-v092-wp01",
+  "worktree": ".worktrees/adl-wp-5817",
+  "claim": {
+    "id": "claim-5817-v092-wp01",
+    "owner": "codex:5817",
+    "generation": 0,
+    "acquired_unix_seconds": 1785910303,
+    "expires_unix_seconds": 1786515103,
+    "heartbeat_unix_seconds": 1785910303,
+    "branch": "codex/5817-v092-wp01",
+    "worktree": ".worktrees/adl-wp-5817",
+    "protected_paths": [
+      "README.md",
+      "docs/README.md",
+      "adl/Cargo.toml",
+      "adl/Cargo.lock",
+      "docs/milestones/v0.92",
+      ".csdlc/issues/5817",
+      ".csdlc/prepared/issues/5817",
+      ".csdlc/evidence/5817"
+    ],
+    "purpose": "Promote canonical v0.92 docs and open the validated issue wave"
+  }
+}

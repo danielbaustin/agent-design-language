@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5786,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-21] Repository-wide code reduction cleanup",
+    "slug": "v0-92-wp-21-repository-wide-code-reduction-cleanup",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-21",
+          "proof_role": "reviewed deletion manifest, parity proof, and retained-surface inventory",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 3600,
+          "budget_tokens": 25000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5786/design.md",
+      "design_digest": "a8bdc7791a07d9dc6cbc50239115bad292609037e01949282a6c0acd75ee174d",
+      "diagram_ref": ".csdlc/prepared/issues/5786/diagram.mmd",
+      "diagram_digest": "7e9fec9389fd1fb70076e8ecfe9717199033c94fc3382022268a3e25d0a8e300"
+    }
+  }
+}

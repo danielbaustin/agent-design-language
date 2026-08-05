@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5820,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-03] Runtime launch and resilience consolidation",
+    "slug": "v0-92-wp-03-runtime-launch-and-resilience-consolidation",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-03",
+          "proof_role": "cross-platform start-stop, recovery, configuration, and clean-log proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 3600,
+          "budget_tokens": 25000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5820/design.md",
+      "design_digest": "f023a50116d29c1825d3d438ff6757ceb377d1249e651a52f991c607a9ef7577",
+      "diagram_ref": ".csdlc/prepared/issues/5820/diagram.mmd",
+      "diagram_digest": "c82615a6a7d7c6c2e2787f53d623d9974e133aa86cae6a662121d5882be8b787"
+    }
+  }
+}

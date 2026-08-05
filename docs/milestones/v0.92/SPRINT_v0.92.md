@@ -2,27 +2,26 @@
 
 ## Metadata
 
-- Sprint: `v0.92-candidate`
+- Sprint: `v0.92`
 - Milestone: `v0.92`
-- Start date: pending v0.92 opening
+- Start date: `2026-08-04`
 - End date: pending v0.92 closeout
 - Owner: ADL maintainers
-- Status: reviewed candidate planning package refreshed by `#5359`
+- Status: active issue wave opened by WP-01 after `#5359` review
 - Related issues: `#3377`, `#3434`, `#5359`, `#5765`
 - Planning template set: `docs/templates/planning/1.0.0`
 
 ## Status
 
-Forward-planning sprint outline. The final sprint and WP sequence will be
-opened during v0.92 WP-01 from
-[WP_ISSUE_WAVE_v0.92.yaml](WP_ISSUE_WAVE_v0.92.yaml) after consuming
-the final v0.91.8 release package, WP-22 TBD dispositions, the activation-test
-map, the AEE completion tranche, and `#3377`.
+Active sprint outline. WP-01 opened the final sprint and WP sequence from
+[WP_ISSUE_WAVE_v0.92.yaml](WP_ISSUE_WAVE_v0.92.yaml) after consuming the final
+v0.91.8 release package, WP-22 TBD dispositions, the activation-test map, the
+AEE completion tranche, and `#3377`.
 
 ## How To Use
 
-Use this document as a candidate sprint envelope for WP-01. It is not the
-final sprint state machine and does not open or close any v0.92 sprint issues.
+Use this document with the opened issue wave as the milestone execution
+envelope. Individual issues and typed records remain execution authority.
 
 ## Sprint Overview
 
@@ -37,9 +36,10 @@ the final issue wave.
 ## Sprint Goals
 
 - Preserve first-birthday scope without absorbing v0.93 governance.
-- Complete the reviewed six-repository Agent Logic GitHub organization
+- Activate v0.92 documentation and version surfaces through WP-01B, then
+  complete the reviewed five-repository Agent Logic GitHub organization
   migration before substantive milestone execution, while retaining
-  `danielbaustin/asksifu` as personal.
+  `danielbaustin/asksifu` as personal and excluding Horust.
 - Write all ten Medium launch articles in parallel as early living drafts,
   bring all ten to editorial-review-ready state, and finalize their claims only
   after the release-truth pass.
@@ -84,7 +84,8 @@ program.
 6. Execute birthday, identity, continuity, memory, capability, ACP,
    adaptive-learning, ACIP/A2A, witness, review-packet, demo, consumer,
    provider-neutral proof, and handoff work in dependency order.
-7. Complete the bounded repository-reduction cleanup.
+7. Complete the bounded repository-reduction cleanup and the behavior-preserving
+   Rust refactoring and maintainability pass.
 8. Run quality, docs and publication finalization, internal review, external review, remediation,
    next-milestone planning, closeout planning, next-milestone review, and
    release ceremony.
@@ -112,7 +113,7 @@ and validation tight rather than one oversized single-threaded queue.
 | 6 | Adaptive learning and ACIP/A2A readiness | Adaptive Learning DAG queue plus reconciled protocol semantics, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS proof. |
 | 7 | Witness and integrated review packet | Birth witness set, receipt, and reviewer packet. |
 | 8 | Demos, consumers, and handoff | First-birthday demo, Observatory/Unity integration, provider-neutral multi-agent proof, governance handoff, and proof matrix. |
-| 9 | Cleanup and release tail | Repository reduction, quality, docs, article and podcast finalization, reviews, remediation, next-milestone planning, closeout planning, and ceremony. |
+| 9 | Cleanup and release tail | Repository reduction, Rust refactoring, quality, docs, article and podcast finalization, reviews, remediation, next-milestone planning, closeout planning, and ceremony. |
 
 ## Dependencies To Check Before WP-01
 
@@ -125,9 +126,10 @@ and validation tight rather than one oversized single-threaded queue.
 - v0.91.1 runtime/polis, memory/identity, ToM, intelligence metric, governed
   learning, and capability/aptitude outputs are stable enough to feed ACP
   profile evidence.
-- v0.91.7 `#5104` loop-runtime evidence is merged and reviewed before v0.92
-  treats loops as validated, replayable runtime objects for adaptive-learning
-  planning.
+- v0.91.7 `#5104` loop-runtime evidence is merged and reviewed. WP-01
+  requalified its bounded-loop semantics against current Runtime v3 source and
+  focused tests; v0.92 may treat bounded loops as validated, replayable Runtime
+  v3 objects without treating adaptive learning or graph mutation as complete.
 - v0.93 governance remains downstream and is not absorbed by birthday work.
 - Memory palace and learning-model sources are used as context, not broad
   implementation commitments.
@@ -188,7 +190,8 @@ evidence packet is internally consistent.
 ## Exit Criteria
 
 - The WBS is converted from candidate areas into concrete WPs.
-- The candidate issue wave is reviewed and either seeded or corrected by WP-01.
+- The opened issue wave is reviewed, mapped to live issue numbers, and supplied
+  with six typed cards per child issue by WP-01.
 - Every scheduled TBD input has one owner WP and every deferred input remains
   explicitly indexed.
 - Every implementation WP has a code, fixture, test, demo, or reviewable docs

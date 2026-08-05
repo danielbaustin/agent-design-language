@@ -4,38 +4,30 @@
 
 - Milestone: `v0.92`
 - Version: `v0.92`
-- Date: `2026-05-27`
+- Date: `2026-08-04`
 - Owner: ADL maintainers
 - Related issues: `#3377`, `#3434`
 - Planning template set: `docs/templates/planning/1.0.0`
 
 ## Status
 
-Current status: forward planning for the later `v0.92` birthday milestone,
-after the planned `v0.91.6` readiness tranche, `v0.91.7`
-implementation/proof tranche, and the new `v0.91.8` platform-acceptance bridge.
-The `v0.91.8` WP-16 quality gate has now merged at
-`2e9d2dd7c4260dcf6ec6af954b0eea97554212df`; v0.92 must consume that exact
-evidence after WP-17 documentation alignment and the remaining v0.91.8 review
-tail are complete.
+Current status: `v0.92` WP-01 planning activation is in progress under issue
+`#5817`. The final work-package issue wave is open, with issue numbers recorded
+in `WP_ISSUE_WAVE_v0.92.yaml`, and each child issue has an initialized typed
+`SIP`, `STP`, `SPP`, `VPP`, `SRP`, and `SOR` bundle. Child implementation has
+not started through this planning issue.
 
-- Planning: candidate package refreshed during `v0.91.4` issue `#3434` and
-  pre-v0.92 dependency added during `#3506`
-- Execution: not started
-- Validation: candidate-docs readiness plus upstream v0.91.8 WP-16 quality-gate
-  evidence as a prerequisite input; no v0.92 implementation validation yet
-- Release readiness: not applicable until `v0.92` executes
+- Planning: active under `#5817`
+- Issue wave: open; 37 child work-package issues are mapped in the wave file
+- Cards: initialized for every mapped child issue; issue owners must complete
+  issue-specific design approval and binding before implementation
+- Execution: WP-01 only; child WPs remain dependency-gated
+- Release readiness: not claimed
 
-v0.92 is not yet an active implementation milestone. It now has a candidate
-issue-wave preflight document for WP-01 seeding, but the GitHub issue wave
-must not be opened until `v0.92` begins. Its boundary was rechecked during the
-`v0.91.4` docs-preparation pass so it stays about identity and birth rather
-than absorbing economics, governed tools, or constitutional citizenship
-prematurely. It now depends on `v0.91.5` release-tail closeout plus the
-`v0.91.6` readiness tranche, `v0.91.7` implementation/proof tranche, merged
-`v0.91.8` WP-16 exact-revision quality-gate evidence, WP-17 documentation
-alignment, and the later reviewed `v0.91.8` exact-revision platform handoff
-before opening.
+The completed v0.91.8 release package, issue `#3377`, planning review `#5359`,
+the activation bridge ledger, AEE evidence, and the reviewed repository
+migration plan are prerequisite inputs. They do not substitute for v0.92
+implementation proof.
 
 ## Purpose
 
@@ -62,13 +54,13 @@ v0.92 should establish:
 - stable name and identity architecture
 - continuity evidence across bounded cycles
 - memory grounding tied to witnessed artifacts
-- Memory Palace context topology as a planned long-running-context proof slice
+- Memory Palace context topology as a required first working long-running-context slice
 - capability envelope at birth
 - ACP / cognitive profiles as a bounded runtime profile surface grounded in
   memory, capability, continuity, ToM, and intelligence evidence
-- Adaptive Learning DAG planning as the queued post-loop-runtime path from
+- Adaptive Learning DAG implementation as the WP-13A post-loop-runtime path from
   evaluation feedback to stateful adaptation and policy-governed reasoning
-  graph modification, without claiming full autonomous learning at birth
+  graph modification, without claiming ungoverned autonomous learning at birth
 - ACIP binary schema, public schema catalog, deterministic JSON projection, and
   optional WebSocket carrier proof as the transport-readiness slice that
   follows the v0.91/v0.91.1 ACIP baseline
@@ -97,9 +89,9 @@ The milestone boundary is identity and birth readiness. v0.92 may consume
 prior citizen-state, moral-trace, runtime, memory, intelligence, and ACIP
 evidence, but it must not redefine those prerequisite surfaces.
 
-This planning packet is not release evidence and does not approve v0.92
-execution. WP-01 must promote, correct, or supersede this candidate package
-when the milestone opens.
+This planning packet is not release evidence. It authorizes only the dependency
+order and issue boundaries recorded by WP-01; each child issue still requires
+its own typed lifecycle, focused proof, and review.
 
 ## Dependency Boundary
 
@@ -160,7 +152,7 @@ The likely `v0.92` tranche is:
 - [IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md](IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md):
   current identity and birthday allocation plan.
 - [WP_ISSUE_WAVE_v0.92.yaml](WP_ISSUE_WAVE_v0.92.yaml):
-  candidate issue-wave seed for WP-01.
+  opened issue wave and dependency map for WP-01.
 - [Runtime v2 And Birthday Boundary Roadmap](../../planning/ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md):
   roadmap boundary for birthday semantics.
 - [V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md](V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md):
@@ -177,9 +169,9 @@ The likely `v0.92` tranche is:
 - Memory Palace context-topology bridge.
 - Capability envelope.
 - ACP / cognitive profiles as a runtime-visible profile contract.
-- Adaptive Learning DAG planning and proof requirements, contingent on verified
-  v0.91.7 loop-runtime evidence and kept separate from the first-birthday
-  claim.
+- Adaptive Learning DAG implementation and proof, built on WP-01's verified
+  Runtime v3 requalification of the historical v0.91.7 loop-runtime contract
+  and kept separate from the first-birthday claim until its own proof lands.
 - ACIP binary schema, public schema catalog, deterministic JSON projection, and
   mock/loopback WebSocket carrier proof.
 - Birth witnesses and receipt.
@@ -219,8 +211,15 @@ The likely `v0.92` tranche is:
 - Decisions: [DECISIONS_v0.92.md](DECISIONS_v0.92.md)
 - Demo matrix: [DEMO_MATRIX_v0.92.md](DEMO_MATRIX_v0.92.md)
 - Milestone checklist: [MILESTONE_CHECKLIST_v0.92.md](MILESTONE_CHECKLIST_v0.92.md)
+- Work-package readiness:
+  [WP_EXECUTION_READINESS_v0.92.md](WP_EXECUTION_READINESS_v0.92.md)
+- Quality gate: [QUALITY_GATE_v0.92.md](QUALITY_GATE_v0.92.md)
+- Feature/proof coverage:
+  [FEATURE_PROOF_COVERAGE_v0.92.md](FEATURE_PROOF_COVERAGE_v0.92.md)
 - Release plan: [RELEASE_PLAN_v0.92.md](RELEASE_PLAN_v0.92.md)
 - Release notes: [RELEASE_NOTES_v0.92.md](RELEASE_NOTES_v0.92.md)
+- v0.93 handoff plan:
+  [NEXT_MILESTONE_HANDOFF_v0.92.md](NEXT_MILESTONE_HANDOFF_v0.92.md)
 - Feature plans: [features/README.md](features/README.md)
 - Activation bridge ledger:
   [V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md](V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md)
@@ -254,14 +253,13 @@ The likely `v0.92` tranche is:
 
 ## Execution Model
 
-Later WP planning should preserve the standard milestone rhythm:
+WP execution should preserve the following milestone rhythm:
 
-- WP-01: promote reviewed milestone docs and issue wave
-- WP-01 must consume the candidate issue wave, `v0.91.5` release-tail
-  closeout, the activation-test map, the `v0.91.6` readiness tranche, the
-  `v0.91.7` implementation/proof tranche, the merged `v0.91.8` WP-16
-  quality-gate evidence, WP-17 documentation alignment, and `#3377` readiness
-  packet rather than reconstructing the birthday plan from chat.
+- WP-01: reconcile milestone truth, open the reviewed issue wave, and initialize
+  all six typed cards per child issue
+- WP-01B: activate v0.92 across canonical docs and version declarations
+- WP-02: execute the reviewed Agent Logic repository migration
+- WP-02A: establish reliable CI and coverage before broad implementation proof
 - feature WPs: implement identity, continuity, memory grounding, capability,
   ACP/cognitive profile, Adaptive Learning DAG queue/proof planning, ACIP
   binary transport-readiness, witness, receipt, and birthday-record surfaces
@@ -269,19 +267,20 @@ Later WP planning should preserve the standard milestone rhythm:
 - quality/review WPs: validate docs, tests, demo evidence, and review packets
 - release WP: close the milestone under the normal ceremony pattern
 
-The exact WP sequence is intentionally deferred until v0.92 planning is active.
+The exact WP sequence and issue mapping are recorded in the WBS and issue-wave
+YAML.
 
 ## Demo and Validation Surface
 
 v0.92 demos should prove birthday behavior, negative cases, continuity,
 memory grounding, capability envelopes, ACP/cognitive-profile evidence,
 adaptive-learning boundary conditions, ACIP schema-public inspectability, and
-governance handoff. The candidate demo plan is tracked in
+governance handoff. The planned demo matrix is tracked in
 [DEMO_MATRIX_v0.92.md](DEMO_MATRIX_v0.92.md).
 
-Validation for this planning package is structural only until v0.92 execution:
-planning-template validation, Markdown link checks, YAML parsing, and
-claim-boundary review.
+Validation for WP-01 is structural: typed card validation, issue-graph checks,
+Markdown/link checks, YAML parsing, and claim-boundary review. Product behavior
+belongs to the child implementation WPs.
 
 ## Success Criteria
 
@@ -301,12 +300,13 @@ v0.92 is ready to execute when:
 
 ## Exit Criteria
 
-This planning package is ready for v0.92 WP-01 when:
+WP-01 is complete when:
 
 - the ten canonical planning docs validate against the active planning
   template set
 - the feature docs validate against the feature-doc template
-- the candidate issue wave parses and preserves the release-tail sequence
+- the opened issue wave parses, matches live issue numbers, and preserves the
+  declared dependency sequence
 - `#3377` is explicitly consumed, routed, or marked as a WP-01 prerequisite
 - the ADR plan identifies v0.92 architecture decisions for WP-01 and review-tail
   follow-through

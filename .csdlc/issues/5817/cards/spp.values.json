@@ -1,0 +1,89 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5817,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-01][planning] Promote canonical docs and open the final issue wave",
+    "slug": "v0-92-wp-01-planning-promote-canonical-docs-and-open-final-issue-wave",
+    "version": "v0.92",
+    "generation": 8
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Audit prerequisite truth, reconcile canonical v0.92 surfaces, validate the dependency graph, open the issue wave idempotently, generate typed card bundles, and publish after one exact review.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Audit prerequisite and candidate issue-wave truth",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Reconcile canonical version, milestone, feature, ADR, and demo surfaces",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Validate and open the final issue wave with six-card bundles",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S4",
+          "action": "Run one exact pre-PR review and publish",
+          "acceptance_ids": [
+            "AC-7"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Primary main checkout remains clean",
+        "No duplicate issue is created",
+        "No child implementation begins",
+        "Every claim is evidence-bound"
+      ],
+      "risks": [
+        "Candidate docs may contain stale pre-release assumptions",
+        "Issue-wave size can amplify duplicate or dependency errors",
+        "Historical loop-runtime proof may not satisfy current Runtime v3 contracts",
+        "Version changes may unintentionally churn Cargo.lock"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 43200,
+        "total_tokens": 140000,
+        "validation_seconds": 7200
+      },
+      "stop_conditions": [
+        "A protected-path collision with an active owner",
+        "A prerequisite cannot be classified from current evidence",
+        "Opening an issue would duplicate a live or completed issue",
+        "The dependency graph is cyclic"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5817/design.md",
+      "design_digest": "354299a3bdd065516fd0ab8c91f4a0f9a1aa60e35971d5c8b00897721e31d739",
+      "diagram_ref": ".csdlc/prepared/issues/5817/diagram.mmd",
+      "diagram_digest": "5bbfd94b3a5d0d0757ceb1b0d092c1e05feb838b088ef92a1683a267298163c2"
+    }
+  }
+}

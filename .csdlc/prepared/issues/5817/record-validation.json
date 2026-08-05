@@ -1,0 +1,25 @@
+{
+  "issue": 5817,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "7a2cf2d194e1c6d9268adc0c2acccc233b6ccc9b8a56cbe0a45877301ead5b28",
+  "claim_id": "claim-5817-v092-wp01",
+  "actor": "codex:5817",
+  "reason": "Retain focused package, Runtime v3 prerequisite, doctor, YAML, root-cleanliness, and diff-hygiene proof before review.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby .csdlc/prepared/issues/5817/validate-v092-package.rb",
+        "cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5817/target --test reasoning",
+        "ruby -e YAML.safe_load(File.read('docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml'), aliases: true)",
+        "csdlc-doctor --repo . --issue 5817",
+        "git diff --check",
+        "git -C /Users/daniel/git/agent-design-language status --short --branch"
+      ],
+      "purpose": "Prove the active v0.92 package: 38 WPs, 37 child issues, 444 card artifacts, 13 Runtime v3 reasoning tests, doctor health, parseability, diff hygiene, and untouched clean main checkout.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5817"
+    }
+  }
+}

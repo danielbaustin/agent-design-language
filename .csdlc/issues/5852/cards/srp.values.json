@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5852,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-30] Release ceremony",
+    "slug": "v0-92-wp-30-release-ceremony",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "WP-30 issue 5852, its declared implementation paths, and retained proof",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does the implementation satisfy the required outcome with real behavior?",
+        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
+        "Did the change remain within WP-30 scope?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

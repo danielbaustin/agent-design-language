@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5851,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-29] Next milestone review pass",
+    "slug": "v0-92-wp-29-next-milestone-review-pass",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-29",
+          "proof_role": "next-milestone review findings and disposition",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 10000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5851/design.md",
+      "design_digest": "621061cd88ad47432d2ba50e04188a3b828cc9984943f9147bca408aacf8ce1b",
+      "diagram_ref": ".csdlc/prepared/issues/5851/diagram.mmd",
+      "diagram_digest": "2e973eee4767365b6ac354bef8b67133d83d7093c0dc05e0250fbf34d683cdfb"
+    }
+  }
+}

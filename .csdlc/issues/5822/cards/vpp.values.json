@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5822,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-05] C-SDLC estimation and cycle-time reduction",
+    "slug": "v0-92-wp-05-c-sdlc-estimation-and-cycle-time-reduction",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-05",
+          "proof_role": "baseline, cycle-time comparison, lifecycle regressions, and operator workflow proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 3600,
+          "budget_tokens": 25000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5822/design.md",
+      "design_digest": "6da047ef7516eb00707c9125371cc42a3fee63ca694ebeebeaffd6e7fb4136d5",
+      "diagram_ref": ".csdlc/prepared/issues/5822/diagram.mmd",
+      "diagram_digest": "ec75281755f137ee31832dba567ddcd23dd7897c9d8421dc8f52cb0703c0c9cb"
+    }
+  }
+}

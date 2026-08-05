@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5819,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-02] Agent Logic GitHub organization repository migration",
+    "slug": "v0-92-wp-01a-agent-logic-github-organization-repository-migration",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Deliver five serially transferred company repositories with danielbaustin/asksifu retained as personal and Horust excluded.",
+      "deliverables": [
+        "five serially transferred company repositories with danielbaustin/asksifu retained as personal and Horust excluded",
+        "pre-transfer manifests including issue and PR assignee membership, per-repository transfer and verification evidence including assignee retention or explicit reassignment, integration updates, negative asksifu control, and final migration report"
+      ],
+      "acceptance_criteria": [
+        "The declared required outcome is complete at the exact reviewed revision",
+        "Declared dependencies are verified from current evidence",
+        "The named proof surface is reproducible and retained",
+        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
+        "One bounded pre-PR review has no unresolved actionable findings"
+      ],
+      "dependencies": [
+        "WP-01",
+        "WP-01B",
+        "issue-5815-plan",
+        "confirmed destination organization and owners",
+        "complete migration inventory",
+        "billing and security readiness"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md",
+        ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md"
+      ],
+      "non_goals": [
+        "Adjacent work packages",
+        "Historical evidence rewriting",
+        "Unsupported downstream milestone claims"
+      ]
+    }
+  }
+}

@@ -6,7 +6,7 @@
 - Version: `v0.92`
 - Date: `2026-05-27`
 - Owner: ADL maintainers
-- Related issues / work packages: `#3377`, `#3434`, candidate WP sequence in `WP_ISSUE_WAVE_v0.92.yaml`
+- Related issues / work packages: `#3377`, `#3434`, active WP sequence in `WP_ISSUE_WAVE_v0.92.yaml`
 - Planning template set: `docs/templates/planning/1.0.0`
 
 ## Status

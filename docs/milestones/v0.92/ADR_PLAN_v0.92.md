@@ -40,7 +40,7 @@ casually.
 
 | Candidate | Proposed title | Primary boundary | Likely source WPs |
 | --- | --- | --- | --- |
-| ADR 0029 | First True Birthday Evidence Boundary | Birth is a reviewable evidence event, not startup, wake, snapshot, admission, copied state, legal personhood, or production citizenship. | WP-02, WP-09, WP-10, WP-12 |
+| ADR 0029 | First True Birthday Evidence Boundary | Birth is a reviewable evidence event, not startup, wake, snapshot, admission, copied state, legal personhood, or production citizenship. | WP-08, WP-09, WP-10, WP-12 |
 | ADR 0030 | Identity, Stable Name, And Continuity Record Boundary | Stable name, identity root, continuity head, memory references, witnesses, and ambiguity markers form the identity/continuity architecture. | WP-03, WP-04, WP-05 |
 | ADR 0031 | ACP Cognitive Profile Evidence Boundary | ACP profiles are evidence-grounded runtime profile records, not reputation, public standing, consciousness proof, rights, or identity itself. | WP-07 |
 | ADR 0032 | ACIP Binary Schema And Public Schema Catalog Boundary | Binary/protobuf ACIP remains inspectable through public schemas and deterministic JSON projection while message-content access remains governed. | WP-08 |

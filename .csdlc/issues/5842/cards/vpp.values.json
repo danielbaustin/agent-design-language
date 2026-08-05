@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5842,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-22] Quality gate",
+    "slug": "v0-92-wp-22-quality-gate",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-wp-22",
+          "proof_role": "quality-gate record, platform proof, and blocker report",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 3600,
+          "budget_tokens": 25000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
+      "design_ref": ".csdlc/prepared/issues/5842/design.md",
+      "design_digest": "9bf8dad87e410d0e345b79c91fae09f2242c9174905519b7e96c7a433e334e79",
+      "diagram_ref": ".csdlc/prepared/issues/5842/diagram.mmd",
+      "diagram_digest": "e2f09b5ec8e1353d7ecbbcbabaccfddc26fa96042cda9b54a4d97c79cbda8e44"
+    }
+  }
+}

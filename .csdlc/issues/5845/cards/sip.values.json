@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5845,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-24A] Podcast Studio first ten episodes",
+    "slug": "v0-92-wp-24a-podcast-studio-first-ten-episodes",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Complete WP-24A: Podcast Studio first ten episodes.",
+      "required_outcome": "all first ten episodes complete as review-ready production packages, not topic or schema placeholders",
+      "declared_scope": [
+        "Issue 5845 implementation paths to be narrowed during preparation",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md",
+        ".adl/docs/TBD/PODCAST_STUDIO_NEXT_WEEK_LAUNCH_PLAN_5702.md"
+      ],
+      "authority_boundary": [
+        "Issue 5845 owns only WP-24A: Podcast Studio first ten episodes",
+        "Adjacent v0.92 work packages retain their own implementation and proof authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Prepare before execution",
+        "Never edit tracked work on main",
+        "Use one bounded pre-PR review",
+        "Do not substitute fixtures, receipts, or prose for required working behavior"
+      ]
+    }
+  }
+}

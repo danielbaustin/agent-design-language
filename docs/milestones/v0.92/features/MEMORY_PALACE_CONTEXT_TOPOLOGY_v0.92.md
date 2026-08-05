@@ -4,7 +4,7 @@
 
 - Feature Name: Memory Palace Context Topology
 - Milestone Target: `v0.92`
-- Status: planned
+- Status: implementation required in WP-11
 - Owner: ADL maintainers
 - Doc Role: primary
 - Supporting Docs:
@@ -15,16 +15,13 @@
 
 ## Template Rules
 
-This is a forward-planning feature document. Runtime, demo, and schema
-sections are planning expectations unless a later implementation issue adds
-proof.
+This is the WP-11 implementation contract. Runtime behavior, schema, negative
+tests, and retained proof are required before the feature is complete.
 
 ## Status
 
-Forward-planning feature contract for `v0.92`.
-
-This document gives Memory Palace a standalone feature home without claiming
-that the runtime implementation is complete.
+Active v0.92 implementation contract. Planning text alone or a blocked
+disposition cannot satisfy WP-11.
 
 ## Purpose
 
@@ -97,8 +94,8 @@ This feature should establish:
   explicit operator context notes.
 - Outputs: topology records, context packets, stale-context warnings, and
   review notes.
-- Interfaces: future schema or artifact packet, future validator, and v0.92
-  issue-wave records.
+- Interfaces: versioned topology and working-set packets, validator, Runtime
+  memory/continuity services, and v0.92 issue-wave records.
 - Invariants: raw private state must not leak; generated summaries must name
   their provenance; stale context must be detectable.
 
@@ -133,30 +130,29 @@ This feature should establish:
 
 ## Validation
 
-- Demo: N/A for this planning doc; implementation issues should define a small
-  resume/context demo.
-- Deterministic / Replay: future proof should rebuild the same context packet
-  from the same declared references.
-- Schema / Artifact Validation: future topology and working-set packets should
-  have schemas or equivalent validators.
-- Tests: future tests should cover stale context, redaction, missing reference,
-  and provenance mismatch cases.
+- Demo: run a bounded resume/context proof over real topology and working-set
+  behavior.
+- Deterministic / Replay: rebuild the same context packet from the same
+  declared references.
+- Schema / Artifact Validation: validate versioned topology and working-set
+  packets.
+- Tests: cover stale context, redaction, missing reference, provenance
+  mismatch, and unauthorized private-state access.
 - Review / Proof Surface: v0.92 review packets should cite this feature doc
   when Memory Palace scope is included or deferred.
 
 ## Non-goals
 
-- full Memory Palace runtime completion in the v0.92 feature-doc refresh
+- later distributed or unbounded Memory Palace expansion
 - raw private-state exposure
 - replacing ObsMem, trace, or memory-grounding contracts
 - approving v0.92 activation before implementation proof exists
 
 ## v0.92 Consumption
 
-`v0.92` may consume this document as the named Memory Palace bridge route and
-as a source for issue-wave planning. Birthday work may reference Memory Palace
-only as a planned context-topology slice unless a later implementation issue
-lands proof.
+`v0.92` consumes this document as WP-11's required first working Memory Palace
+slice. Birthday work may reference Memory Palace only after that issue lands
+real behavior and exact-revision proof.
 
 ## Acceptance Criteria
 
@@ -165,7 +161,7 @@ lands proof.
   local notes.
 - The boundary among ObsMem, memory grounding, working set, context cache, and
   Memory Palace is explicit.
-- The document does not claim the Memory Palace runtime is complete.
+- WP-11 lands the first working deterministic slice and its negative proof.
 
 ## Risks
 
@@ -177,11 +173,9 @@ lands proof.
 
 ## Future Work
 
-Later implementation issues should define the first schema or artifact packet,
-validator, retrieval/update flow, and proof fixtures for long-running context
-continuity.
+Later issues may extend the first slice across distributed polis boundaries or
+larger context topologies after the v0.92 contract is proven.
 
 ## Notes
 
-This document intentionally keeps Memory Palace visible without approving
-implementation completion or activation.
+This document requires useful implementation and proof before completion.

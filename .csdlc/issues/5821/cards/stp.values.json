@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5821,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04] Distributed Guardian/polis runtime",
+    "slug": "v0-92-wp-04-distributed-guardian-polis-runtime",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Deliver architecture and security gate followed by completion of the bounded 16-issue distributed-runtime program within v0.92.",
+      "deliverables": [
+        "architecture and security gate followed by completion of the bounded 16-issue distributed-runtime program within v0.92",
+        "reviewed architecture, threat model, all 16 child issues landed, integrated distributed proof, and relocation failure cases"
+      ],
+      "acceptance_criteria": [
+        "The declared required outcome is complete at the exact reviewed revision",
+        "Declared dependencies are verified from current evidence",
+        "The named proof surface is reproducible and retained",
+        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
+        "One bounded pre-PR review has no unresolved actionable findings"
+      ],
+      "dependencies": [
+        "WP-03"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md",
+        ".adl/docs/TBD/CSM_RUNTIME_DISTRIBUTED_DESIGN.md",
+        ".adl/docs/TBD/CSM_RUNTIME_DISTRIBUTED_EXECUTION_PLAN.md"
+      ],
+      "non_goals": [
+        "Adjacent work packages",
+        "Historical evidence rewriting",
+        "Unsupported downstream milestone claims"
+      ]
+    }
+  }
+}

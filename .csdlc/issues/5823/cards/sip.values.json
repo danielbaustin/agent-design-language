@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5823,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-06] Remote validation/build runner",
+    "slug": "v0-92-wp-06-remote-validation-build-runner",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Complete WP-06: Remote validation/build runner.",
+      "required_outcome": "portable bounded runner with provenance and failover",
+      "declared_scope": [
+        "Issue 5823 implementation paths to be narrowed during preparation",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md",
+        ".adl/docs/TBD/workflow_tooling/planning/REMOTE_BUILD_RUNNER_PILOT_PLAN.md"
+      ],
+      "authority_boundary": [
+        "Issue 5823 owns only WP-06: Remote validation/build runner",
+        "Adjacent v0.92 work packages retain their own implementation and proof authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Prepare before execution",
+        "Never edit tracked work on main",
+        "Use one bounded pre-PR review",
+        "Do not substitute fixtures, receipts, or prose for required working behavior"
+      ]
+    }
+  }
+}

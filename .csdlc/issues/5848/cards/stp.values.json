@@ -1,0 +1,42 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5848,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-27] Review findings remediation",
+    "slug": "v0-92-wp-27-review-findings-remediation",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Deliver finding dispositions and remediation PRs.",
+      "deliverables": [
+        "finding dispositions and remediation PRs",
+        "finding disposition record"
+      ],
+      "acceptance_criteria": [
+        "The declared required outcome is complete at the exact reviewed revision",
+        "Declared dependencies are verified from current evidence",
+        "The named proof surface is reproducible and retained",
+        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
+        "One bounded pre-PR review has no unresolved actionable findings"
+      ],
+      "dependencies": [
+        "WP-26"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md"
+      ],
+      "non_goals": [
+        "Adjacent work packages",
+        "Historical evidence rewriting",
+        "Unsupported downstream milestone claims"
+      ]
+    }
+  }
+}

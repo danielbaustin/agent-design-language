@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5844,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-24] Ten-article launch series",
+    "slug": "v0-92-wp-24-ten-article-launch-series",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Complete WP-24: Ten-article launch series.",
+      "required_outcome": "all ten planned articles complete and ready for editorial review, followed by final release-grounded publication disposition",
+      "declared_scope": [
+        "Issue 5844 implementation paths to be narrowed during preparation",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md",
+        ".adl/docs/TBD/publication/ADL_MEDIUM_ARTICLE_LIST.md",
+        ".adl/docs/TBD/publication/MEDIUM_ARTICLE_SERIES_PLAN.md",
+        ".adl/docs/TBD/publication/medium_launch_articles/1-WHY-ADL.md"
+      ],
+      "authority_boundary": [
+        "Issue 5844 owns only WP-24: Ten-article launch series",
+        "Adjacent v0.92 work packages retain their own implementation and proof authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Prepare before execution",
+        "Never edit tracked work on main",
+        "Use one bounded pre-PR review",
+        "Do not substitute fixtures, receipts, or prose for required working behavior"
+      ]
+    }
+  }
+}

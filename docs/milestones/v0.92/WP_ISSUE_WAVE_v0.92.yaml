@@ -1,18 +1,19 @@
 milestone: v0.92
-status: draft_pre_open
-owner_issue: 3434
+status: cards_initialized
+owner_issue: 5817
 planning_review_issue: 5359
 first_birthday_readiness_issue: 3377
 planning_source: docs/milestones/v0.92
 tracked_package: docs/milestones/v0.92
 notes:
   - v0.92 is the first true Godel-agent birthday milestone on a hardened execution substrate.
-  - This file is a reviewed candidate issue-wave surface, not an opened GitHub issue wave.
+  - This file records the opened GitHub work-package issue wave and its live issue-number mapping.
   - WP-01 updates canonical docs and consumes the final v0.91.8 release package, the activation-test map, AEE completion evidence, issue 3377, and WP-22 planning dispositions before opening the wave.
-  - WP-02 repairs CI and coverage before broad milestone proof receives credit.
+  - WP-02 performs the Agent Logic GitHub organization repository migration before substantive milestone work begins.
+  - WP-02A repairs CI and coverage before broad milestone proof receives credit.
   - Runtime, distributed Guardian/polis, C-SDLC efficiency, remote validation, and prompt-typing tracks may proceed in parallel only where their declared dependencies allow.
-  - WP-01A completes the Agent Logic GitHub organization repository migration before substantive milestone work begins.
-  - WP-24 writes all ten launch articles in parallel after WP-01A and receives final release-truth alignment in WP-23.
+  - WP-01B activates v0.92 across canonical documentation and version surfaces immediately after WP-01 and before substantive implementation.
+  - WP-24 writes all ten launch articles in parallel after WP-02 and receives final release-truth alignment in WP-23.
   - WP-24A produces all first ten Podcast Studio episodes in parallel as complete review-ready packages; topic-only placeholders do not satisfy it.
   - WP-01 must requalify post-5104 loop-runtime merge evidence against current Runtime v3 contracts before consuming loops as validated replayable objects.
   - No v0.92 issue may claim legal personhood, production citizenship, consciousness proof, or completed v0.93 constitutional governance.
@@ -27,7 +28,7 @@ scheduled_planning:
     status: merged_planning_input
     prerequisites:
       - destination organization slug and owners confirmed
-      - live inventory names exactly six migration candidates
+      - live inventory names exactly five migration candidates
       - billing and security owners confirmed
       - danielbaustin/asksifu explicitly retained as personal
     non_claims:
@@ -41,7 +42,7 @@ scheduled_tbd_inputs:
       - .adl/docs/TBD/RUNTIME_V3_LAUNCH_AND_OBSERVATORY_RECOVERY_PLAN.md
       - .adl/docs/TBD/resilience/RUNTIME_V3_LONG_LIVED_AGENT_OS_PLAN.md
   - track: agent_logic_account_repo_migration
-    wp: WP-01A
+    wp: WP-02
     sources:
       - .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md
   - track: distributed_guardian_polis
@@ -127,254 +128,277 @@ card_update_rule:
   - Card edits must use editor skills and typed v2 commands.
   - SOR closeout must match live GitHub issue and PR truth.
 
+delivery_standard:
+  - Every issue must deliver its complete declared outcome at the exact reviewed revision; scaffolding, placeholders, and partial slices do not satisfy the issue unless the issue explicitly defines that bounded slice as the complete outcome.
+  - Runtime, protocol, provider, consumer, migration, and integration issues require real working behavior and real positive and negative proof; fixtures, receipts, demo mode, synthetic success, and substituted providers cannot replace production-path evidence.
+  - Documentation and planning issues must produce source-grounded, decision-ready artifacts with explicit owners, boundaries, dependencies, acceptance criteria, and executable next steps; prose that only restates intent is not useful completion.
+  - Tooling and cleanup issues must show measured operator or maintainability value, preserve required behavior, and retain focused regression proof.
+  - Every issue must test or explicitly disposition applicable failure, security, privacy, portability, recovery, and claim-boundary cases.
+  - One exact-revision pre-PR review must have no unresolved actionable findings, and required CI must be green before merge.
+  - WP-22 must reject any issue whose evidence does not meet this delivery standard.
+
 work_packages:
   - wp: WP-01
-    issue: pending
+    issue: 5817
     title: Canonical docs and issue-wave readiness
     queue: docs
     depends_on: [v0.91.8 release package, activation-test map, AEE completion tranche, issue-3377, issue-5359]
     primary_deliverable: updated canonical docs, reviewed opened issue wave, six-card bundles, and explicit deferred-source index
     proof_surface: milestone docs, canonical version/docs surfaces, feature docs, ADR plan, issue-wave YAML, and card validation
-  - wp: WP-01A
-    issue: pending
+  - wp: WP-01B
+    issue: 5818
+    title: Canonical documentation and version activation
+    queue: docs
+    depends_on: [WP-01]
+    primary_deliverable: v0.92 current-version truth across docs/planning/ADL_FEATURE_LIST.md, canonical docs, READMEs, manifests, Cargo metadata, skills, and runbooks
+    proof_surface: canonical-surface inventory including docs/planning/ADL_FEATURE_LIST.md, link and version parity checks, Cargo metadata, and focused documentation review
+  - wp: WP-02
+    issue: 5819
     title: Agent Logic GitHub organization repository migration
     queue: operations
-    depends_on: [WP-01, confirmed destination organization and owners, complete seven-repository inventory, billing and security readiness]
-    primary_deliverable: six serially transferred company repositories with danielbaustin/asksifu retained as personal
-    proof_surface: pre-transfer manifests, per-repository transfer and verification evidence, integration updates, negative asksifu control, and final migration report
+    depends_on: [WP-01, WP-01B, issue-5815-plan, confirmed destination organization and owners, complete migration inventory, billing and security readiness]
+    primary_deliverable: five serially transferred company repositories with danielbaustin/asksifu retained as personal and Horust excluded
+    proof_surface: pre-transfer manifests including issue and PR assignee membership, per-repository transfer and verification evidence including assignee retention or explicit reassignment, integration updates, negative asksifu control, and final migration report
   - wp: WP-24
-    issue: pending
+    issue: 5844
     title: Ten-article launch series
     queue: publication
-    depends_on: [WP-01A for parallel drafting, WP-23 for final release-truth alignment]
+    depends_on: [WP-02 for parallel drafting, WP-23 for final release-truth alignment]
     primary_deliverable: all ten planned articles complete and ready for editorial review, followed by final release-grounded publication disposition
     proof_surface: ten reviewed article sources, series-arc review, per-article claim scans, links, milestone evidence updates, and publication boundary
   - wp: WP-24A
-    issue: pending
+    issue: 5845
     title: Podcast Studio first ten episodes
     queue: publication_media
-    depends_on: [WP-01A, Podcast Studio v2 proof, Agent Logic route and storage decisions]
+    depends_on: [WP-02, Podcast Studio v2 proof, Agent Logic route and storage decisions]
     primary_deliverable: all first ten episodes complete as review-ready production packages, not topic or schema placeholders
     proof_surface: ten scripts, transcripts, show notes, final audio files and QA reports, guest metadata, artwork and ID3 metadata, RSS-ready enclosure records, redaction checks, and editorial/audio review packets
-  - wp: WP-02
-    issue: pending
+  - wp: WP-02A
+    issue: 5801
     title: CI and coverage reliability
     queue: tooling
-    depends_on: [WP-01A]
+    depends_on: [WP-02]
     primary_deliverable: reliable focused and slow test routing, coverage aggregation, and platform parity
     proof_surface: CI contracts, failure regressions, and exact-head green required checks
   - wp: WP-03
-    issue: pending
+    issue: 5820
     title: Runtime launch and resilience consolidation
     queue: runtime
-    depends_on: [WP-02]
+    depends_on: [WP-02A]
     primary_deliverable: one Guardian-owned launch path with resilient startup, configuration, recovery, and lifecycle behavior
     proof_surface: cross-platform start-stop, recovery, configuration, and clean-log proof
   - wp: WP-04
-    issue: pending
+    issue: 5821
     title: Distributed Guardian/polis runtime
     queue: runtime_security
     depends_on: [WP-03]
-    primary_deliverable: architecture and security gate followed by the bounded 16-issue distributed-runtime program
-    proof_surface: reviewed architecture, threat model, child issue wave, integrated distributed proof, and relocation failure cases
+    primary_deliverable: architecture and security gate followed by completion of the bounded 16-issue distributed-runtime program within v0.92
+    proof_surface: reviewed architecture, threat model, all 16 child issues landed, integrated distributed proof, and relocation failure cases
   - wp: WP-05
-    issue: pending
+    issue: 5822
     title: C-SDLC estimation and cycle-time reduction
     queue: tooling
-    depends_on: [WP-02]
+    depends_on: [WP-02A]
     primary_deliverable: measured estimation, reconnection, and simplified lifecycle path
     proof_surface: baseline, cycle-time comparison, lifecycle regressions, and operator workflow proof
   - wp: WP-06
-    issue: pending
+    issue: 5823
     title: Remote validation/build runner
     queue: tooling
-    depends_on: [WP-02]
+    depends_on: [WP-02A]
     primary_deliverable: portable bounded runner with provenance and failover
     proof_surface: local, Linux, macOS, Windows, failure, and no-network fallback proof
   - wp: WP-07
-    issue: pending
+    issue: 5824
     title: Prompt-card enum typing
     queue: tooling
     depends_on: [WP-01, WP-05]
     primary_deliverable: historical-delivery audit and only the proven remaining enum/schema correction
     proof_surface: schema inventory, typed round trips, negative cases, and no-duplicate-work disposition
   - wp: WP-08
-    issue: pending
+    issue: 5825
     title: Birthday contract and negative cases
     queue: docs_tools
-    depends_on: [WP-01, WP-02]
+    depends_on: [WP-01, WP-02A]
     primary_deliverable: birth contract, disqualifying cases, and negative fixtures
     proof_surface: contract doc and validation fixture report
   - wp: WP-09
-    issue: pending
+    issue: 5826
     title: Stable name and identity architecture
     queue: tools_docs
     depends_on: [WP-08]
     primary_deliverable: stable-name and identity-root contract
     proof_surface: identity record fixtures and schema validation
   - wp: WP-10
-    issue: pending
+    issue: 5827
     title: Continuity across bounded cycles
     queue: tools
     depends_on: [WP-09]
     primary_deliverable: continuity records and bounded-cycle proof
     proof_surface: continuity fixtures, cycle artifacts, and witness links
   - wp: WP-11
-    issue: pending
-    title: Memory grounding and Memory Palace proof slice
-    queue: tools_docs
+    issue: 5828
+    title: Implement the first Memory Palace context-topology slice
+    queue: runtime_tools
     depends_on: [WP-09, WP-10]
-    primary_deliverable: memory-grounding contract, redacted packet, and Memory Palace disposition
-    proof_surface: witnessed memory references, context-topology proof slice, and redaction-safe packet
+    primary_deliverable: working Memory Palace context topology, bounded working-set materialization, and redaction-safe continuity proof
+    proof_surface: deterministic topology and retrieval tests, witnessed memory references, stale-context negatives, and redaction-safe provenance packet
   - wp: WP-12
-    issue: pending
+    issue: 5829
     title: Capability envelope
     queue: tools_docs
     depends_on: [WP-09]
     primary_deliverable: provider, model, tool, skill, authority, and limit envelope
     proof_surface: capability-envelope fixtures and validation report
   - wp: WP-13
-    issue: pending
+    issue: 5830
     title: ACP / cognitive profiles
     queue: tools_docs
     depends_on: [WP-10, WP-11, WP-12]
     primary_deliverable: evidence-grounded cognitive-profile contract
     proof_surface: profile fixtures, update rules, privacy boundary, and validation report
   - wp: WP-13A
-    issue: pending
-    title: Adaptive Learning DAG queue
-    queue: docs_tools
+    issue: 5831
+    title: Implement the Adaptive Learning DAG
+    queue: runtime
     depends_on: [WP-01, WP-13, issue-5104-merge-evidence, current Runtime v3 loop qualification]
-    primary_deliverable: feature contract, status checklist, evaluation and graph-delta queue, and negative-test plan
-    proof_surface: adaptive-learning plan, loop-runtime qualification, replay-continuity negatives, and graph-mutation policy boundary
+    primary_deliverable: working evaluation bindings, durable adaptation deltas, governed graph mutation, and replay-safe Adaptive Learning DAG execution
+    proof_surface: real adaptive execution, deterministic replay, durable state deltas, accepted and rejected mutation paths, and required negative cases
   - wp: WP-14
-    issue: pending
+    issue: 5832
     title: ACIP and A2A contract reconciliation
     queue: runtime_protocols
     depends_on: [WP-04, ACIP substrate, trace and replay baseline]
     primary_deliverable: reconciled versioned protocol family, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS carrier
     proof_surface: contracts, schema catalog, round-trip fixtures, denied-access case, and real WSS exchange
   - wp: WP-15
-    issue: pending
+    issue: 5833
     title: Birth witnesses and receipts
     queue: tools_docs
     depends_on: [WP-09, WP-10, WP-11, WP-12]
     primary_deliverable: witness set and citizen-facing receipt contract
     proof_surface: witness fixtures, receipt fixtures, and validation report
   - wp: WP-16
-    issue: pending
+    issue: 5834
     title: Birthday review packet
     queue: docs_tools
     depends_on: [WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15]
     primary_deliverable: reviewer-facing birthday evidence packet
     proof_surface: integrated review packet and claim-boundary scan
   - wp: WP-17
-    issue: pending
+    issue: 5835
     title: Migration and cross-polis continuity planning
     queue: docs
     depends_on: [WP-09, WP-10, WP-16]
     primary_deliverable: bounded birthday-identity movement semantics and non-goals
     proof_surface: cross-polis continuity feature doc, design note, and boundary against WP-04 infrastructure
   - wp: WP-18
-    issue: pending
+    issue: 5836
     title: First birthday demo
     queue: demo_tools
     depends_on: [WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16]
     primary_deliverable: runnable first-birthday proof demo and negative suite
     proof_surface: demo feature doc, artifacts, negative-case report, and reviewer packet
   - wp: WP-18A
-    issue: pending
+    issue: 5837
     title: Observatory/Unity consumer integration
     queue: consumers
     depends_on: [WP-03, WP-14, WP-18]
     primary_deliverable: separate consumers integrated with the versioned Runtime API and WSS
     proof_surface: real Observatory and Unity interactions, compatibility matrix, and consumer failure cases
   - wp: WP-18B
-    issue: pending
+    issue: 5838
     title: Provider-neutral multi-agent proof
     queue: demo_tools
     depends_on: [WP-14, WP-16, WP-18]
     primary_deliverable: provider-neutral multi-agent proof matrix and artifacts
     proof_surface: real multi-provider runs, protocol traces, negative cases, and no-provider-substitution proof
   - wp: WP-19
-    issue: pending
+    issue: 5839
     title: Birthday-to-governance handoff
     queue: docs
     depends_on: [WP-16, WP-17, v0.93 allocation]
     primary_deliverable: v0.93 governance handoff map
     proof_surface: identity-evidence to governance-consumption mapping and ADR-plan update
   - wp: WP-20
-    issue: pending
+    issue: 5840
     title: Demo matrix, AEE proof, and proof coverage
     queue: demo
     depends_on: [WP-18, WP-18A, WP-18B, WP-19]
     primary_deliverable: demo matrix, AEE proof routing or packet, proof coverage, and validation commands
     proof_surface: demo matrix, AEE evidence, proof coverage document, and artifact index
   - wp: WP-21
-    issue: pending
+    issue: 5786
     title: Repository-wide code reduction cleanup
     queue: cleanup
     depends_on: [WP-20]
     primary_deliverable: behavior-preserving cleanup with exact deletion denominator
     proof_surface: reviewed deletion manifest, parity proof, and retained-surface inventory
+  - wp: WP-21A
+    issue: 5841
+    title: Rust refactoring and maintainability pass
+    queue: cleanup
+    depends_on: [WP-20, WP-21]
+    primary_deliverable: behavior-preserving simplification of active Rust ownership boundaries, duplication, and maintainability hotspots before review
+    proof_surface: exact refactoring inventory, focused behavior parity, Clippy and test proof, before/after LoC, and bounded review
   - wp: WP-22
-    issue: pending
+    issue: 5842
     title: Quality gate
     queue: quality
-    depends_on: [WP-04, WP-05, WP-06, WP-07, WP-13A, WP-20, WP-21]
-    primary_deliverable: quality gate and blocker disposition
-    proof_surface: quality-gate record, platform proof, and blocker report
+    depends_on: [WP-04, WP-05, WP-06, WP-07, WP-13A, WP-20, WP-21, WP-21A]
+    primary_deliverable: quality gate that blocks internal review until every indexed v0.92 feature is landed with accepted exact-revision proof
+    proof_surface: feature-completion matrix, quality-gate record, platform proof, and blocker report
   - wp: WP-23
-    issue: pending
+    issue: 5843
     title: Docs and release-truth pass
     queue: docs
     depends_on: [WP-22]
     primary_deliverable: current canonical docs, release notes, feature list, ADR plan, skills, agent guidance, and milestone docs
     proof_surface: docs-review packet, ADR candidate packet if needed, and release-truth diff
   - wp: WP-25
-    issue: pending
+    issue: 5846
     title: Internal review
     queue: review
     depends_on: [WP-23, WP-24, WP-24A]
     primary_deliverable: internal review report and finding register
     proof_surface: internal review packet
   - wp: WP-26
-    issue: pending
+    issue: 5847
     title: External / third-party review
     queue: review
     depends_on: [WP-25]
     primary_deliverable: external review handoff and received review
     proof_surface: review handoff and review report
   - wp: WP-27
-    issue: pending
+    issue: 5848
     title: Review findings remediation
     queue: review
     depends_on: [WP-26]
     primary_deliverable: finding dispositions and remediation PRs
     proof_surface: finding disposition record
   - wp: WP-28
-    issue: pending
+    issue: 5849
     title: Next milestone planning
     queue: docs
     depends_on: [WP-27]
     primary_deliverable: v0.93 handoff and downstream planning update
     proof_surface: next-milestone handoff document
   - wp: WP-28A
-    issue: pending
+    issue: 5850
     title: Next-milestone closeout plan
     queue: docs
     depends_on: [WP-28]
     primary_deliverable: exact terminal issue, PR, receipt, and ceremony sequence
     proof_surface: reviewed closeout plan and issue universe
   - wp: WP-29
-    issue: pending
+    issue: 5851
     title: Next milestone review pass
     queue: docs
     depends_on: [WP-28A]
     primary_deliverable: review pass over v0.93 planning and closeout readiness
     proof_surface: next-milestone review findings and disposition
   - wp: WP-30
-    issue: pending
+    issue: 5852
     title: Release ceremony
     queue: release
     depends_on: [WP-29]
