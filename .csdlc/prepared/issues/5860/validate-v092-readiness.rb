@@ -10,6 +10,7 @@ WAVE_PATH = "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
 HASH_MANIFEST_PATH = ".csdlc/evidence/5860/V092_READINESS_ARTIFACT_SHA256.json"
 LIVE_MANIFEST_PATH = ".csdlc/evidence/5860/V092_LIVE_ISSUE_CONTRACTS.json"
 OWNERSHIP_VALIDATOR = ".csdlc/prepared/issues/5860/validate-v092-ownership.rb"
+LIVE_BODY_PUBLISHER = ".csdlc/prepared/issues/5860/publish-v092-live-issue-bodies.rb"
 
 FORBIDDEN = {
   "placeholder design" => /Status: design required before Ready\./,
@@ -379,6 +380,11 @@ if File.file?(OWNERSHIP_VALIDATOR)
   abort "ownership validation failed: #{stderr.strip}" unless status.success?
 else
   abort "missing #{OWNERSHIP_VALIDATOR}"
+end
+
+if verify_live
+  _stdout, stderr, status = Open3.capture3("ruby", LIVE_BODY_PUBLISHER)
+  abort "live issue body parity failed: #{stderr.strip}" unless status.success?
 end
 
 puts "v0.92 readiness: PASS (#{rows.length} design-ready issues across #{sprints.length} sprints)"
