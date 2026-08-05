@@ -6,18 +6,10 @@ require "json"
 require "open3"
 require "yaml"
 
-SPRINTS = {
-  5858 => [5818, 5819, 5812, 5801, 5853, 5822, 5823, 5824],
-  5855 => [5800, 5820, 5795, 5821, 5832, 5837],
-  5857 => [5825, 5826, 5827, 5828, 5829, 5830, 5831, 5833, 5834],
-  5854 => [5835, 5836, 5838, 5839, 5840, 5844, 5845],
-  5856 => [5786, 5841, 5842, 5843, 5846, 5847, 5848, 5849, 5850, 5851, 5852]
-}.freeze
-
-ISSUES = SPRINTS.values.flatten.freeze
 WAVE_PATH = "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
 HASH_MANIFEST_PATH = ".csdlc/evidence/5860/V092_READINESS_ARTIFACT_SHA256.json"
 LIVE_MANIFEST_PATH = ".csdlc/evidence/5860/V092_LIVE_ISSUE_CONTRACTS.json"
+OWNERSHIP_VALIDATOR = ".csdlc/prepared/issues/5860/validate-v092-ownership.rb"
 
 FORBIDDEN = {
   "placeholder design" => /Status: design required before Ready\./,
@@ -41,15 +33,63 @@ def repo_path?(value)
   value.match?(%r{\A(?:\.?[A-Za-z0-9_-]+/|Cargo\.(?:toml|lock)\z)})
 end
 
-def protected_paths(design)
-  design.scan(/`([^`]+)`/).flatten.map { |value| value.sub(/[.,;:]\z/, "") }
+def markdown_section(markdown, heading)
+  lines = markdown.lines
+  start = lines.index { |line| line.strip == "## #{heading}" }
+  return nil unless start
+
+  lines[(start + 1)..].take_while { |line| !line.match?(/^##\s+/) }.join
+end
+
+def owned_paths(design)
+  section = markdown_section(design, "Owned Paths")
+  return [] unless section
+
+  section.scan(/`([^`]+)`/).flatten.map { |value| value.sub(/[.,;:]\z/, "") }
     .select { |value| repo_path?(value) }.uniq.sort
+end
+
+
+def canonical_graph(wave)
+  wp_rows = Array(wave["work_packages"])
+  supporting_rows = Array(wave["supporting_issues"])
+  rows = wp_rows + supporting_rows
+  issues = rows.map { |row| row["issue"] if row["issue"].is_a?(Integer) && row["issue"] != 5817 }.compact.uniq.sort
+  wp_to_issue = wp_rows.to_h { |row| [row["wp"], row["issue"]] }
+  issue_to_sprint = {}
+
+  Array(wave["execution_sprints"]).each do |sprint|
+    sprint_issue = sprint.fetch("issue")
+    Array(sprint["members"]).each do |member|
+      token = member.to_s
+      issue = token.match?(/\Aissue-\d+\z/) ? token[/\d+/].to_i : wp_to_issue[token]
+      raise "unknown sprint member #{member.inspect}" unless issue
+      raise "issue ##{issue} appears in multiple sprints" if issue_to_sprint.key?(issue)
+
+      issue_to_sprint[issue] = sprint_issue
+    end
+  end
+
+  # The reviewed WP-04 gate materialized this bounded implementation wave
+  # after the parent sprint packet was authored. It remains in sprint #5855.
+  wp_rows.each do |row|
+    next unless row["wp"].to_s.match?(/\AWP-04(?:-IMP|\.\d+)\z/)
+
+    issue_to_sprint[row.fetch("issue")] = 5855
+  end
+
+  missing = issues - issue_to_sprint.keys
+  raise "canonical issues missing sprint membership: #{missing.join(', ')}" unless missing.empty?
+
+  sprints = issue_to_sprint.group_by { |_issue, sprint| sprint }
+    .transform_values { |pairs| pairs.map(&:first).sort }
+  [wp_rows, supporting_rows, issues, sprints]
 end
 
 def dependency_tokens(values, canonical: false)
   Array(values).flat_map do |value|
     text = value.to_s
-    text.to_enum(:scan, /WP-\d+[A-Z]?|issue(?:-|\s+)#?\d+|#\d+/i).each_with_object([]) do |_matched, tokens|
+    text.to_enum(:scan, /WP-\d+(?:[A-Z]|-IMP|\.\d+)?|issue(?:-|\s+)#?\d+|#\d+/i).each_with_object([]) do |_matched, tokens|
       match = Regexp.last_match
       next if canonical && text[0...match.begin(0)].match?(/before\s+\z/i)
 
@@ -101,20 +141,29 @@ if ARGV.include?("--self-test")
   raise "repo path acceptance failed" unless repo_path?("docs/milestones/v0.92/README.md")
   raise "absolute path rejection failed" if repo_path?("/Users/example/repo/file.md")
   raise "command rejection failed" if repo_path?("cargo test --locked")
-  paths = protected_paths("Use `docs/a.md`, `adl/src/lib.rs`, and `https://example.test/a`.")
-  raise "protected path extraction failed" unless paths == ["adl/src/lib.rs", "docs/a.md"]
+  sample = "## Read-Only Inputs\n\n- `docs/input.md`\n\n## Owned Paths\n\n- `docs/a.md`\n- `adl/src/lib.rs`\n"
+  paths = owned_paths(sample)
+  raise "owned path extraction failed" unless paths == ["adl/src/lib.rs", "docs/a.md"]
   puts "v0.92 readiness validator self-test: PASS"
   exit 0
 end
 
 wave = YAML.safe_load(File.read(WAVE_PATH), aliases: true)
-wp_rows = Array(wave["work_packages"])
-supporting_rows = Array(wave["supporting_issues"])
+wp_rows, supporting_rows, issues, sprints = canonical_graph(wave)
 rows_by_issue = (wp_rows + supporting_rows).each_with_object({}) do |row, memo|
   issue = row["issue"]
-  memo[issue] = row if ISSUES.include?(issue)
+  memo[issue] = row if issues.include?(issue)
 end
 wp_to_issue = wp_rows.to_h { |row| [row["wp"], row["issue"]] }
+wp_dependencies = wp_rows.to_h do |row|
+  [row["wp"], dependency_tokens(row["depends_on"], canonical: true).select { |token| token.start_with?("WP-") }]
+end
+dependency_closure = lambda do |wp, seen = []|
+  return [] if wp.nil? || seen.include?(wp)
+
+  direct = Array(wp_dependencies[wp])
+  direct | direct.flat_map { |dependency| dependency_closure.call(dependency, seen + [wp]) }
+end
 
 errors = []
 rows = []
@@ -123,11 +172,11 @@ write_hash_path = option_value("--write-hash-manifest")
 write_live_path = option_value("--write-live-manifest")
 verify_live = ARGV.include?("--verify-live")
 
-missing_wave = ISSUES - rows_by_issue.keys
+missing_wave = issues - rows_by_issue.keys
 errors.concat(missing_wave.map { |issue| "##{issue}: missing canonical wave row" })
 
 if write_hash_path
-  files = ISSUES.flat_map { |issue| artifact_paths(issue) }.sort
+  files = issues.flat_map { |issue| artifact_paths(issue) }.sort
   missing = files.reject { |path| File.file?(path) && !File.zero?(path) }
   abort "cannot write hash manifest; missing: #{missing.join(', ')}" unless missing.empty?
   payload = {
@@ -142,15 +191,15 @@ if write_live_path
   payload = {
     "schema" => "adl.v092.live-issue-contracts.v1",
     "repository" => "danielbaustin/agent-design-language",
-    "issues" => ISSUES.sort.to_h { |issue| [issue.to_s, live_issue(issue)] }
+    "issues" => issues.sort.to_h { |issue| [issue.to_s, live_issue(issue)] }
   }
   File.write(write_live_path, JSON.pretty_generate(payload) + "\n")
 end
 
 if File.file?(LIVE_MANIFEST_PATH)
   live_manifest = JSON.parse(File.read(LIVE_MANIFEST_PATH)).fetch("issues", {})
-  errors << "live issue manifest does not cover the exact 41-child set" unless live_manifest.keys.sort == ISSUES.map(&:to_s).sort
-  ISSUES.sort.each do |issue|
+  errors << "live issue manifest does not cover the exact #{issues.length}-issue set" unless live_manifest.keys.sort == issues.map(&:to_s).sort
+  issues.sort.each do |issue|
     contract = live_manifest[issue.to_s] || {}
     errors << "##{issue}: live manifest number mismatch" unless contract["number"] == issue
     errors << "##{issue}: live issue is not open" unless contract["state"] == "OPEN"
@@ -158,7 +207,7 @@ if File.file?(LIVE_MANIFEST_PATH)
     errors << "##{issue}: live issue body digest is invalid" unless contract["body_sha256"].to_s.match?(/\A[0-9a-f]{64}\z/)
   end
   if verify_live
-    ISSUES.sort.each do |issue|
+    issues.sort.each do |issue|
       errors << "##{issue}: live GitHub issue drift" unless live_manifest[issue.to_s] == live_issue(issue)
     end
   end
@@ -168,9 +217,9 @@ end
 
 if File.file?(HASH_MANIFEST_PATH)
   manifest = JSON.parse(File.read(HASH_MANIFEST_PATH))
-  expected_files = ISSUES.flat_map { |issue| artifact_paths(issue) }.sort
+  expected_files = issues.flat_map { |issue| artifact_paths(issue) }.sort
   actual_files = manifest.fetch("files", {}).keys.sort
-  errors << "artifact manifest path set differs from the 41-child contract" unless actual_files == expected_files
+  errors << "artifact manifest path set differs from the #{issues.length}-issue contract" unless actual_files == expected_files
   manifest.fetch("files", {}).each do |path, expected|
     if !File.file?(path)
       errors << "artifact manifest references missing #{path}"
@@ -182,8 +231,8 @@ else
   errors << "missing #{HASH_MANIFEST_PATH}; write it explicitly after all issue repairs"
 end
 
-SPRINTS.each do |sprint, issues|
-  issues.each do |issue|
+sprints.each do |sprint, sprint_issues|
+  sprint_issues.each do |issue|
     root = ".csdlc/issues/#{issue}"
     prepared = ".csdlc/prepared/issues/#{issue}"
     index_path = "#{root}/index.json"
@@ -257,9 +306,25 @@ SPRINTS.each do |sprint, issues|
         errors << "##{issue}: canonical dependency #{token} is absent from STP"
       end
     end
+    declared_tokens.each do |token|
+      issue_number = token.start_with?("issue-") ? token[/\d+/].to_i : nil
+      wp_alias = issue_number && wp_to_issue.key(issue_number)
+      dependency_wp = token.start_with?("WP-") ? token : wp_alias
+      next if expected_tokens.include?(token) || (wp_alias && expected_tokens.include?(wp_alias))
+      next if dependency_wp && dependency_closure.call(canonical["wp"] || canonical["owner_wp"]).include?(dependency_wp)
+      next if issue == 5862 && token.match?(/\AWP-04\.\d+\z/)
+      next if issue.between?(5863, 5878) && ["WP-04-IMP", "issue-5862"].include?(token)
+      next if Array(stp["dependencies"]).any? do |entry|
+        entry_tokens = dependency_tokens([entry])
+        entry_tokens.include?(token) && entry.to_s.match?(/(?:\bPR\b|retained|reviewed .*plan|serializ|coordination|mapped to|blocked until|created only after|waits? for|before final)/i)
+      end
+      next if sprints[sprint].include?(issue_number) && Array(stp["dependencies"]).any? { |entry| entry.to_s.match?(/coordination/i) }
 
-    paths = protected_paths(design)
-    errors << "##{issue}: design has no concrete repo-relative protected-path candidates" if paths.empty?
+      errors << "##{issue}: declared dependency #{token} is absent from the canonical wave"
+    end
+
+    paths = owned_paths(design)
+    errors << "##{issue}: design has no exact repo-relative Owned Paths" if paths.empty?
 
     spp = card_values.dig("spp", "content", "values") || {}
     %w[steps invariants risks stop_conditions].each do |field|
@@ -309,7 +374,14 @@ unless errors.empty?
   exit 1
 end
 
-puts "v0.92 readiness: PASS (#{rows.length} design-ready children across #{SPRINTS.length} sprints)"
+if File.file?(OWNERSHIP_VALIDATOR)
+  _stdout, stderr, status = Open3.capture3("ruby", OWNERSHIP_VALIDATOR)
+  abort "ownership validation failed: #{stderr.strip}" unless status.success?
+else
+  abort "missing #{OWNERSHIP_VALIDATOR}"
+end
+
+puts "v0.92 readiness: PASS (#{rows.length} design-ready issues across #{sprints.length} sprints)"
 
 if matrix_path
   lines = [
@@ -338,7 +410,7 @@ if matrix_path
     lines << ""
   end
   lines.concat([
-    "Result: **PASS** - #{rows.length} design-ready children across #{SPRINTS.length} sprint umbrellas.",
+    "Result: **PASS** - #{rows.length} design-ready issues across #{sprints.length} sprint umbrellas.",
     "",
     "Artifact integrity is pinned by `#{HASH_MANIFEST_PATH}`. Normal validation never rewrites that manifest.",
     "Live issue title/body/state identity is pinned by `#{LIVE_MANIFEST_PATH}` and checked against GitHub with `--verify-live`."

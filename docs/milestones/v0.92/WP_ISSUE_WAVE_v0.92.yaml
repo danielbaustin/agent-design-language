@@ -516,7 +516,7 @@ work_packages:
     issue: 5832
     title: ACIP and A2A contract reconciliation
     queue: runtime_protocols
-    depends_on: [WP-04, ACIP substrate, trace and replay baseline]
+    depends_on: [WP-04, WP-04-IMP, ACIP substrate, trace and replay baseline]
     primary_deliverable: reconciled versioned protocol family, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS carrier
     proof_surface: contracts, schema catalog, round-trip fixtures, denied-access case, and real WSS exchange
   - wp: WP-15
@@ -551,7 +551,7 @@ work_packages:
     issue: 5837
     title: Observatory/Unity consumer integration
     queue: consumers
-    depends_on: [WP-03, WP-14, WP-18]
+    depends_on: [WP-03, WP-14, WP-18, issue-5800]
     primary_deliverable: separate consumers integrated with the versioned Runtime API and WSS
     proof_surface: real Observatory and Unity interactions, compatibility matrix, and consumer failure cases
   - wp: WP-18B
