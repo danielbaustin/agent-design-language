@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "adl-resilience"
-version = "0.1.0"
+version = "0.92.0"
 dependencies = [
  "schemars",
  "serde",
@@ -351,7 +351,7 @@ dependencies = [
 
 [[package]]
 name = "csdlc-v2"
-version = "0.1.0"
+version = "0.92.0"
 dependencies = [
  "adl-resilience",
  "blake3",

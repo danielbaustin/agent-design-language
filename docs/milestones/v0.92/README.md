@@ -11,18 +11,20 @@
 
 ## Status
 
-Current status: `v0.92` WP-01 planning activation is in progress under issue
-`#5817`. The final work-package issue wave is open, with issue numbers recorded
-in `WP_ISSUE_WAVE_v0.92.yaml`, and each child issue has an initialized typed
-`SIP`, `STP`, `SPP`, `VPP`, `SRP`, and `SOR` bundle. Child implementation has
-not started through this planning issue.
+Current status: `v0.92` is the active development milestone. WP-01 planning
+issue `#5817` and execution-readiness issue `#5860` are closed. WP-01B `#5818`
+owns canonical documentation and package/workspace version activation. The
+final work-package issue wave is open, with issue numbers recorded in
+`WP_ISSUE_WAVE_v0.92.yaml`; execution remains governed by the dependency graph
+and each issue's own evidence.
 
-- Planning: active under `#5817`
+- Planning: complete under `#5817`
+- Execution readiness: complete under `#5860`
 - Issue wave: open; 58 execution issues across six coordination-only sprint
   umbrellas are mapped in the wave file
-- Cards: initialized for every mapped child issue; issue owners must complete
-  issue-specific design approval and binding before implementation
-- Execution: WP-01 only; child WPs remain dependency-gated
+- Cards: design-time readiness completed for every mapped child issue under
+  `#5860`; implementation and proof remain issue-owned
+- Execution: WP-01B is active; later work packages remain dependency-gated
 - Release readiness: not claimed
 
 The completed v0.91.8 release package, issue `#3377`, planning review `#5359`,

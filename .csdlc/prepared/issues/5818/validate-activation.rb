@@ -64,10 +64,10 @@ rows.each do |row|
   abort "version mismatch #{path}: #{observed.inspect} != #{expected.inspect}" if expected && observed != expected
 end
 
-markdown_paths = rows.filter_map do |row|
+markdown_paths = rows.each_with_object([]) do |row, paths|
   next unless %w[update already_current].include?(row["disposition"])
   path = ROOT.join(row["path"].to_s)
-  path if path.file? && path.extname.downcase == ".md"
+  paths << path if path.file? && path.extname.downcase == ".md"
 end
 markdown_paths.each do |path|
   path.read.scan(/\[[^\]]*\]\(([^)]+)\)/).flatten.each do |raw|
@@ -80,7 +80,7 @@ markdown_paths.each do |path|
   end
 end
 
-historical = %w[docs/milestones/v0.91.8 docs/releases .csdlc/evidence]
+historical = %w[docs/milestones/v0.91.8 docs/releases docs/reviews docs/review-fixes .csdlc/evidence]
 changed = `git diff --name-only origin/main...HEAD -- #{historical.join(' ')}`.lines.map(&:strip).reject(&:empty?)
 unauthorized = changed.reject { |path| path.start_with?(".csdlc/evidence/5818/") }
 abort "historical surface changed: #{unauthorized.join(', ')}" unless unauthorized.empty?
