@@ -3,13 +3,13 @@
   "issue": 5359,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1e45fdeda7d0795b7290a037be238e7e7c8624af5008b8c868d9e3b0a4c50365",
-  "phase": "implemented",
-  "generation": 10,
-  "digest": "3ec9fc166710a4b75267cf06723d334b8d02f6a5d06357675ae881c693d76c46",
+  "phase": "reviewed",
+  "generation": 11,
+  "digest": "ac3e627dc3388691245496b5e3c0bd2b2c3064b8d1810e6b7a3506fff6cde1df",
   "claim": {
     "id": "claim-5359-v0918-prep-recovery-20260804",
     "owner": "codex:5359-preparation-owner",
-    "generation": 10,
+    "generation": 11,
     "acquired_unix_seconds": 1785865465,
     "expires_unix_seconds": 1786470265,
     "heartbeat_unix_seconds": 1785865465,
@@ -26,8 +26,38 @@
     ],
     "purpose": "Prepare #5359 WP-22 next-milestone planning review only; no execution until WP-21A #5355 is live-merged and ancestral"
   },
-  "review_assignment": null,
-  "review": null,
+  "review_assignment": {
+    "reviewer": "subagent:gpt-5.5:Peirce",
+    "assigned_by": "codex:5359-planning-review",
+    "revision": "git-blake3:c25ef00dd75aa2fa55daaa52a2e5ff564b2e7494:8986ff33006890ddf159be1b85972bfdb5d8be5c9607e7d8b9a9ecaa7234f2db",
+    "scope": [
+      ".csdlc/issues/5359",
+      ".csdlc/evidence/5359",
+      ".csdlc/prepared/issues/5359",
+      "docs/milestones/v0.92/WBS_v0.92.md",
+      "docs/milestones/v0.92/SPRINT_v0.92.md",
+      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:gpt-5.5:Peirce",
+    "scope": [
+      ".csdlc/issues/5359",
+      ".csdlc/evidence/5359",
+      ".csdlc/prepared/issues/5359",
+      "docs/milestones/v0.92/WBS_v0.92.md",
+      "docs/milestones/v0.92/SPRINT_v0.92.md",
+      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
+    ],
+    "reviewed_revision": "git-blake3:c25ef00dd75aa2fa55daaa52a2e5ff564b2e7494:8986ff33006890ddf159be1b85972bfdb5d8be5c9607e7d8b9a9ecaa7234f2db",
+    "findings": [],
+    "residual_risks": [
+      "This planning-only review schedules work but does not execute or accept any v0.92 work package.",
+      "The operator-local TBD source contents remain inputs to WP-01 requalification; this review proves their explicit schedule or deferral in the tracked package."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -42,32 +72,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "8335b4e300de33b7a1f86bec9f9854bd5c87926b54d85249e7311d6eb9bde493",
+      "values_digest": "28da360cc1a6d4fdea168a89622466dfe3110f2a3287c2d05741587425026400",
       "rendered_digest": "b5b05423d638e93763bbb471be206e9a35ec25d30f99900e0f97e789c0d928ab",
       "ast_digest": "3413b735bfe7ddbedd9595dde0373caedd93e4f2d53fe1eb5a2db6c78dd47ef7"
     },
     "stp": {
-      "values_digest": "cd97fec10198501960b06340f52df712e56fa622a588542dd43534c5532ee0ff",
+      "values_digest": "38d1ae335b714956ce269e0bf14b80976f0fac6368a252dc44bfa8370d877892",
       "rendered_digest": "709a96bb616f3e3591b958f7eda47f81a8c21588ac42b4dc8dd49b03b128b98e",
       "ast_digest": "eebc1238aefc97fda13ea37fca2b8eafd5a65dc00f7c3f140f37d0853f7b58a0"
     },
     "spp": {
-      "values_digest": "c8cacabea69f53c7c59d31d8410c67e7abb7f99b1b982244c7c8cf29a9b1117b",
+      "values_digest": "260d954c2da07a709c7eb1ff86bd4aadd5af18f0b6aae921b7ebb88bd1cfb052",
       "rendered_digest": "76b9658f0c0cd986e58d96c68590fe5e2645c26b1860704d99f3951c132637e7",
       "ast_digest": "55c93f3f78c5e88784167dbc380ce05eea0bea38176b2468178ec6f7e5adf647"
     },
     "vpp": {
-      "values_digest": "867cafe3f988f59d511d0cd00287f292d9070e66047046522b54a342d391c0a2",
+      "values_digest": "40f98af6df78220d81489b759c121f5acec63b543889066b3e1f04b6bcdc5f5e",
       "rendered_digest": "ceb39c57a89d83c4a8ac5b88043a6b036b8f4a7bd76643e5262299605778d662",
       "ast_digest": "7b19a1624305e712a92f1ec429ab2c5ec28e3688f72c4bb5b979dcaf9080fc3b"
     },
     "srp": {
-      "values_digest": "4b71e1cbfbbf1f93a75c12f01ecc825179acb6cfc56bbc387e0b99b470430456",
-      "rendered_digest": "b1d351a312e0ff8b9fff23f64125d3ac5833b85c5ce269bd1ed8e1af44dee26b",
-      "ast_digest": "827117fdf0f9dbb73e8baae3ca4a94af3b2f8dca8667853d71c6687538c29165"
+      "values_digest": "729e401991dc814ee23d350045cb3d049ce2888e1c0b9a5eb5dc0267022075dc",
+      "rendered_digest": "aea7d361564ca97528e8ed4bbdcdf6a7d81f105c49bd41dd692532269f773b4c",
+      "ast_digest": "aa5e9001c532d5b7d505d612229475424606d7966410812ec82b3387e2a30a2b"
     },
     "sor": {
-      "values_digest": "5a8b8059aa18858fe47d46931c2802344a49b644af5d2bcfdfc4319997ec8a4e",
+      "values_digest": "01e133760f435ebc3af1c348d605efae464c52dff7c746033825d1521d38c770",
       "rendered_digest": "e79b2f781610cb50ea74e946c4805784307bbf71acb0378befea900fda6042d8",
       "ast_digest": "96c505af8f908ff03ccc6febd702641636b4f4747428341e56cdd4cc42f13cba"
     }
@@ -93,6 +123,13 @@
       "to": "implemented",
       "actor": "codex:5359-planning-review",
       "reason": "The WP-22 planning package and source dispositions are implemented and focused validation passes; advance to exact-revision review."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5359-planning-review",
+      "reason": "exact scoped review passed"
     }
   ],
   "audit": [
@@ -193,6 +230,20 @@
       "actor": "codex:5359-planning-review",
       "reason": "Replace the non-replayable compound validation argv with the three independently executed validation commands.",
       "operation": "{\"operation\":\"replace_execution\",\"summary\":\"Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the approved reliability, tooling, migration, protocol, consumer, proof, cleanup, and publication tracks; retained the birthday product spine and full release tail; and recorded explicit technical deferrals and later backlog.\",\"changes\":[\"Expanded the v0.92 WBS to a 35-row candidate sequence with the Agent Logic repository migration before substantive work, an early living article track, parallel reliability/tooling tracks, and a complete review/closeout tail.\",\"Updated the sprint plan with migration, publication setup, proving-substrate, Runtime, workflow, birthday, consumer, cleanup, and release phases.\",\"Updated the issue-wave YAML with exact WP/title parity, scheduled source ownership, deferred source retention, and later backlog.\",\"Added the WP-22 planning review packet with blockers, stale assumptions, overclaims, non-claims, and WP-23 disposition.\",\"Preserved draft_pre_open status and opened no v0.92 execution issues.\"],\"artifacts\":[\"docs/milestones/v0.92/WBS_v0.92.md\",\"docs/milestones/v0.92/SPRINT_v0.92.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\",\".csdlc/prepared/issues/5359/validate-v092-package.rb\"],\"validation\":[{\"command\":[\"ruby\",\"-ryaml\",\".csdlc/prepared/issues/5359/validate-v092-package.rb\"],\"purpose\":\"Prove YAML structure, exact WBS/YAML WP parity, complete TBD source dispositions, and six-card policy.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\"},{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5359\"],\"purpose\":\"Prove typed lifecycle integrity and all six card projections.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5359/index.json\"},{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove the bounded planning changes contain no whitespace errors.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\"}]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:5359-planning-review",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:5359-planning-review",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
     }
   ]
 }
