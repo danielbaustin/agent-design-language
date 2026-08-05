@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5817,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5817-v092-wp01",
+  "title": "[v0.92][WP-01][planning] Promote canonical docs and open the final issue wave",
+  "body": "Closes #5817\n\n## Summary\n- activates the canonical v0.92 milestone package and complete issue wave\n- initializes 41 child and supporting issues plus five coordination-only sprint umbrellas with typed C-SDLC v2 records\n- adds machine and human Sprint Execution Packets with dependency-safe routing\n- adds five copy-ready individual-session prompts under .adl/docs/TBD\n- assigns every feature and retained TBD source to a bounded work package or explicit later disposition\n\n## Validation\n- ruby .csdlc/prepared/issues/5817/validate-v092-package.rb: PASS, 39 WPs, 41 child issues, five sprint umbrellas, 552 card artifacts\n- cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5817/target --test reasoning: PASS, 13/13\n- csdlc-doctor --repo . --issue 5817: PASS\n- git diff --check: PASS\n- primary checkout clean on main\n\n## Review\n- Gemini 3.1 Pro exact-head review: PASS, zero blockers\n- GPT-5.5 exact-head review: PASS, zero blockers\n- prior dependency-lane and README-count findings fixed; the validator now rejects dependency-linked safe-parallel pairs\n\n## Non-Claims\n- WP-01 prepares and publishes planning, issue, card, sprint, and session-start surfaces only\n- child implementation has not started through this issue\n- every child retains its own implementation, proof, review, PR, and terminal authority",
+  "draft": false,
+  "revision": "git-blake3:febccf24b82ac862ae5c54e36c6a251fd2624e0a:9f91a1fe1d7bcc9c03ad4bcb19f220deade88fd9a0617c5b75f5f49bd79cd2e9",
+  "commit_sha": "febccf24b82ac862ae5c54e36c6a251fd2624e0a"
+}
