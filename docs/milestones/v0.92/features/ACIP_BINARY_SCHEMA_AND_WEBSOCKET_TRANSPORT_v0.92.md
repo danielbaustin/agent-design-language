@@ -40,9 +40,9 @@ while preserving inspectability.
 
 ## Coverage / Ownership
 
-v0.92 owns schema, catalog, JSON projection, fixtures, and mock/loopback
-carrier proof. v0.93 owns transport security and key lifecycle. v0.94 owns
-signed/queryable trace completion.
+v0.92 owns schema, catalog, JSON projection, fixtures, and a real authenticated
+full-duplex Runtime carrier exchange. v0.93 owns distributed cross-polis key
+lifecycle and mesh authority. v0.94 owns signed/queryable trace completion.
 
 ## Overview
 
@@ -79,9 +79,9 @@ out-of-order events fail closed.
 
 ## Validation
 
-Validation should include protobuf/JSON round trips, schema-catalog lookup,
-denied-access cases, malformed payloads, sequence checks, and mock WebSocket
-carrier proof.
+Validation must include protobuf/JSON round trips, schema-catalog lookup,
+denied-access cases, malformed payloads, sequence checks, and an authenticated
+full-duplex WebSocket exchange through the real Runtime carrier.
 
 ## Scope
 
@@ -94,10 +94,11 @@ In scope:
 - Deterministic protobuf-to-JSON projection.
 - JSON/protobuf round-trip fixtures for in-scope ACIP messages and invocation
   events.
-- Optional WebSocket carrier for binary ACIP session events.
-- Mock or loopback transport proof before any live-provider proof.
-- Optional server-side OpenAI Realtime WebSocket adapter spike only after the
-  mock/loopback proof is stable.
+- Authenticated full-duplex WebSocket carrier for binary ACIP session events.
+- Real Runtime loopback proof for focused local validation; topology may be
+  local, but the transport cannot be mocked or replaced with a fixture trace.
+- Provider-backed exchange where provider behavior is claimed; no provider
+  substitution or cached response receives credit.
 - Fail-closed behavior for missing, unknown, unavailable, private, deprecated,
   or mismatched schemas.
 
@@ -144,8 +145,10 @@ and trace/audit requirements.
 - Malformed bytes, unknown schema versions, missing schemas, mismatched payload
   types, duplicate events, missing sequence numbers, and out-of-order events
   fail closed.
-- A mock or loopback WebSocket proof carries binary ACIP events without a live
-  provider dependency.
+- A real authenticated full-duplex WebSocket exchange carries binary ACIP
+  events through the Runtime carrier. Loopback topology is acceptable for a
+  focused local test, but a mock transport, fixture trace, or URL-only check
+  receives no release credit.
 - The proof records trace/replay-compatible session event evidence without
   claiming v0.94 signed/queryable trace completion.
 
@@ -205,11 +208,11 @@ Proof expectation:
 - trace evidence records session lifecycle and event ordering without depending
   on hidden provider state
 
-## Demo Candidate
+## Proof Run
 
 Run a boring binary ACIP session:
 
-1. Open a mock WebSocket session.
+1. Open an authenticated WebSocket session against the real Runtime carrier.
 2. Send one binary ACIP message event.
 3. Send one binary invocation-event proposal.
 4. Deny one unauthorized message-content inspection request.

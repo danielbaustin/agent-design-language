@@ -30,8 +30,8 @@ repository migration, then establish reliable CI, Runtime launch/resilience,
 distributed Guardian/polis execution, and efficient workflow tooling. It then
 moves through birthday definition, identity evidence, transport/readability,
 consumer and provider-neutral proofs, cleanup, review, remediation, and
-ceremony. The exact sprint partition should be generated after WP-01 confirms
-the final issue wave.
+ceremony. WP-01 confirmed the final issue wave; the active partition below is
+the execution sequence.
 
 ## Sprint Goals
 

@@ -47,6 +47,15 @@ Activated the canonical v0.92 milestone package, consumed prerequisite truth, re
     "purpose": "Prove the active v0.92 package: 38 WPs, 37 child issues, 444 card artifacts, 13 Runtime v3 reasoning tests, doctor health, parseability, diff hygiene, and untouched clean main checkout.",
     "outcome": "passed",
     "evidence_ref": ".csdlc/evidence/5817"
+  },
+  {
+    "command": [
+      "ruby",
+      ".csdlc/prepared/issues/5817/validate-v092-package.rb"
+    ],
+    "purpose": "Prove YAML and v0.92 identity, Markdown links, typed card schema identity, unique issue mapping, dependency acyclicity, feature coverage, delivery gates, and active-wave wording across the final package.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5817/feature-and-issue-coverage-audit.md"
   }
 ]
 

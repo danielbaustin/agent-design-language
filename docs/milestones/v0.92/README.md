@@ -173,7 +173,7 @@ The likely `v0.92` tranche is:
   Runtime v3 requalification of the historical v0.91.7 loop-runtime contract
   and kept separate from the first-birthday claim until its own proof lands.
 - ACIP binary schema, public schema catalog, deterministic JSON projection, and
-  mock/loopback WebSocket carrier proof.
+  a real authenticated full-duplex WebSocket carrier exchange.
 - Birth witnesses and receipt.
 - Birthday review packet.
 - Negative cases that prove startup, wake, snapshot, admission, and copied
@@ -191,7 +191,7 @@ The likely `v0.92` tranche is:
 - Economics, payments, or markets.
 - Governed-tool substrate implementation.
 - Full memory palace implementation.
-- Production WebSocket or cross-polis transport security.
+- v0.93 cross-polis key lifecycle and mesh-wide transport-security authority.
 - v0.93 ACIP key lifecycle, encryption, signing, rotation, or revocation.
 - v0.94 signed/queryable trace completion.
 - Free-floating cognitive labels that are not grounded in evidence.
@@ -202,7 +202,7 @@ The likely `v0.92` tranche is:
 
 ## Document Map
 
-- Candidate issue wave:
+- Active issue wave:
   [WP_ISSUE_WAVE_v0.92.yaml](WP_ISSUE_WAVE_v0.92.yaml)
 - Vision: [VISION_v0.92.md](VISION_v0.92.md)
 - Design: [DESIGN_v0.92.md](DESIGN_v0.92.md)

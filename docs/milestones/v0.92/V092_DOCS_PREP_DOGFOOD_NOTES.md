@@ -48,9 +48,10 @@ and editor work.
   issue.
 - Added `#3377` as a required first-birthday readiness source across the
   birthday package.
-- Added `WP_ISSUE_WAVE_v0.92.yaml` as a draft pre-open issue-wave seed for
-  v0.92 WP-01.
-- Clarified that the candidate issue wave is not an opened GitHub issue wave.
+- Added `WP_ISSUE_WAVE_v0.92.yaml` as the original draft pre-open issue-wave
+  seed for v0.92 WP-01. WP-01 has since promoted it to the active opened wave.
+- Retained the historical pre-open boundary without presenting it as current
+  milestone state.
 - Reframed local-only ACIP source notes as provenance inputs that WP-01 must
   promote or route as gaps.
 - Normalized the ten canonical v0.92 planning docs against

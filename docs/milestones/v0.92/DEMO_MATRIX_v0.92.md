@@ -50,8 +50,8 @@ requirements once implementation exists.
 | D4 | Memory grounding proof | Birth references witnessed memory artifacts without exposing raw private memory. | Memory-grounding fixture and redacted packet. | Planned candidate |
 | D5 | Capability envelope proof | The birth record declares provider, model, tool, skill, authority, and limit context. | #4761 capability envelope and fail-closed validation report. | Pre-v0.92 envelope input available; demo still planned |
 | D6 | ACP / cognitive profile proof | Birth packet includes a bounded profile record grounded in evidence. | ACP/profile fixture, update rationale, redacted reviewer packet, and validation report. | Planned candidate |
-| D7A | Adaptive Learning DAG boundary proof | v0.92 can consume loop-runtime evidence and queue adaptive learning without claiming unproved graph mutation. | Runtime-status checklist, evaluation/state/graph-delta planning fixtures, and negative replay cases. | Planned candidate |
-| D7 | ACIP binary schema and WebSocket carrier proof | Binary ACIP remains inspectable through public schemas while message contents remain governed. | ACIP `.proto`, schema catalog fixture, JSON projection report, denied-access case, mock WebSocket trace packet. | Planned candidate |
+| D7A | Adaptive Learning DAG execution proof | v0.92 executes evaluated adaptation and policy-governed graph mutation with durable deltas and deterministic replay. | Runtime execution packet, evaluation bindings, accepted and rejected graph deltas, and negative replay cases. | Planned |
+| D7 | ACIP binary schema and WebSocket carrier proof | Binary ACIP remains inspectable through public schemas while message contents remain governed. | ACIP `.proto`, schema catalog fixture, JSON projection report, denied-access case, and authenticated full-duplex Runtime WebSocket trace. | Planned |
 | D8 | Birthday-to-governance handoff | v0.93 governance can consume v0.92 identity evidence without redefining birth. | Handoff packet mapping identity evidence to future governance. | Planned candidate |
 
 ## Coverage Rules
@@ -74,7 +74,9 @@ requirements once implementation exists.
 
 ### D1) First Birthday Rehearsal
 
-The demo should emit a synthetic but structurally complete birthday packet.
+The demo must emit a structurally complete birthday packet produced by the
+integrated Runtime path. A synthetic or fixture packet receives no release
+credit.
 
 Expected proof:
 
@@ -180,7 +182,8 @@ Expected proof:
 - deterministic JSON projection
 - governed message-content access decision
 - denied unauthorized inspection case
-- mock WebSocket session trace packet
+- authenticated full-duplex WebSocket session trace from the real Runtime
+  carrier
 
 ### D8) Birthday-To-Governance Handoff
 

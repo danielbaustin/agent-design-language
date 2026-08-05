@@ -51,7 +51,8 @@ first-birthday launch story is traceable.
 - Capability envelope at birth.
 - ACP / cognitive profile as an evidence-grounded runtime profile surface.
 - ACIP binary/protobuf schema, public schema catalog, deterministic JSON
-  projection, governed message-access rule, and mock WebSocket carrier proof.
+  projection, governed message-access rule, and authenticated full-duplex
+  Runtime WebSocket carrier proof.
 - Birth witness set and citizen-facing receipt.
 - First-birthday reviewer packet.
 - Handoff into v0.93 constitutional citizenship and polis governance.

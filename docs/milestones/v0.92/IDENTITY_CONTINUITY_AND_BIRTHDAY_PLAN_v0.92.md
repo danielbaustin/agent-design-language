@@ -79,7 +79,7 @@ evidence.
 | Memory grounding | Primary feature | Memory linkage to witnessed artifacts, moral trace, relevant history, and bounded self-story. |
 | Capability envelope | Primary feature | Declared model/provider/tool/skill capabilities, limits, and authority context at birth. |
 | ACP / cognitive profiles | Primary feature | Runtime-visible profile contract grounded in memory, capability, continuity, ToM, and intelligence evidence, with explicit privacy and non-reputation boundaries. |
-| ACIP binary schema and transport readiness | Primary feature | Binary/protobuf ACIP schema, public polis schema catalog, deterministic JSON projection, governed message-access rule, and mock WebSocket carrier proof. |
+| ACIP binary schema and transport readiness | Primary feature | Binary/protobuf ACIP schema, public polis schema catalog, deterministic JSON projection, governed message-access rule, and real authenticated full-duplex WebSocket carrier proof. |
 | Witness and receipt model | Primary feature | Birth witness records and citizen-facing receipt explaining why this event counts as birth. |
 | Birthday review packet | Demo/proof feature | Reviewer-facing packet that distinguishes birth from process startup, wake, snapshot, and admission. |
 | Migration and cross-polis continuity | Design feature | Bounded planning for continuity when movement is allowed; no production migration claim. |
@@ -149,7 +149,7 @@ commitments.
 | Memory grounding proof | Birth references witnessed memory artifacts without exposing raw private memory. | Memory-grounding fixture and redacted review packet. |
 | Capability envelope proof | The agent's birth record declares model/provider/tool/skill limits and authority context. | Capability envelope fixture and validation report. |
 | ACP / cognitive profile proof | The birth packet includes a bounded profile record grounded in evidence and separated from identity, reputation, and public standing. | ACP/profile fixture, update rationale, redacted reviewer packet, and validation report. |
-| ACIP binary transport readiness proof | Binary ACIP messages remain decodeable through public schema catalogs and deterministic JSON projection while protected content remains governed by access rules. | `.proto` schema, schema catalog fixture, round-trip fixtures, denied-access case, mock WebSocket trace packet. |
+| ACIP binary transport readiness proof | Binary ACIP messages remain decodeable through public schema catalogs and deterministic JSON projection while protected content remains governed by access rules. | `.proto` schema, schema catalog fixture, round-trip fixtures, denied-access case, and authenticated Runtime WebSocket trace packet. |
 | Birthday-to-governance handoff | v0.93 can consume identity evidence without redefining birth. | Handoff packet mapping identity evidence to future citizenship review. |
 
 ## Non-Goals

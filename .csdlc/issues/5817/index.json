@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d53be3af2faf3e66031a9d44cf075b231b9bb435cb118d4f77841ff2b8f74db9",
   "phase": "implemented",
-  "generation": 8,
-  "digest": "4aded2571e1be98ba4d7984d67a3eb3be4d9f117becf34b33840f7dbac32aca0",
+  "generation": 10,
+  "digest": "1d72be3fe299836dd16d9d84993cbb0a797faf009c376b5c3c6a8f6a96330f2b",
   "claim": {
     "id": "claim-5817-v092-wp01",
     "owner": "codex:5817",
-    "generation": 8,
+    "generation": 10,
     "acquired_unix_seconds": 1785910303,
     "expires_unix_seconds": 1786515103,
     "heartbeat_unix_seconds": 1785910303,
@@ -43,34 +43,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "b4cc1916c1de4e71dad9bd23fe1c53b6d65bffe2500cc4ef3ad05939e2bc20ec",
+      "values_digest": "cf6e23183ca4271777fac03b1c608e63879f398d86687d0acc0f54ef97e6a080",
       "rendered_digest": "4451da75fc9cb7d4886b7877ab335834a02ceb41919e4bb6b6bdea011277826f",
       "ast_digest": "02838e8a1abbb2d0df6a250cf97f2b8ac4cef2309d3afaa866777d382c2cc66a"
     },
     "stp": {
-      "values_digest": "84f4b2bf60a099a2d81a71e74a5c4f21a3894a498d22816f1738aa52a44e546d",
+      "values_digest": "461837f36f377f246fae743ba7e975f74caa164c18fa774749bb37967e2133ec",
       "rendered_digest": "1d34155c8cb1a8b4cc3a16462f3e1e76a5a9d7fb5dcad1dc0801011ccb404a78",
       "ast_digest": "8cd8c20ceed3eeefa51c5392c7b84f4078db985f356ca1b5abab232dcc3cff65"
     },
     "spp": {
-      "values_digest": "4f772a65657902cfdd0b6eee4287f7b5729f4128c8f4db3cb604991f7544b112",
+      "values_digest": "7e4742cf28c1e4c7a75c8492963f7b374c97f7c51d553d0d2b8864494975126c",
       "rendered_digest": "bf1ba4c2268a9dba7a05452b7849fb8c8404da598b6b4b815a4e6a69350f136e",
       "ast_digest": "ce85c03a9a720cc590ebf965f1ca3824e060ec9ac59512e8c38ca273c7499d18"
     },
     "vpp": {
-      "values_digest": "a2719573bd33f71088f07f76bb79a5abaa9f128c3bfa0a7143c3f6da96a3f3d3",
-      "rendered_digest": "3c62f0de1ecb18589f0dd127a0cd1ee6797933ccade46addb89f18ddb18a1dda",
-      "ast_digest": "842bebc2452684ca47878e23a80d8b31969dd86168b2a3057ddba1dcfdeedcc3"
+      "values_digest": "9ab862e20be6b48176ff3500a4806d8cfc48be02f5962adaf34c79e9e3714ddd",
+      "rendered_digest": "a5829d3bb3ae60682e68dac0291b6e0b1c8837a4ecdf8e939322f190250c864d",
+      "ast_digest": "d238138d0646200a06e3f09e2044f86b2424ad75dc0efaef1ca2e1b6ea92fea6"
     },
     "srp": {
-      "values_digest": "7acbb49358b27cf0ab726a2dd565af9406c2093a5919af93cd485a9b795a27dd",
+      "values_digest": "f8ffea5eeac48877f0777b6922149becb8389444074f8665bcae1a9910251a77",
       "rendered_digest": "cd4bb98b48746ccdab2be739406c3e989dc54b4ab3b457c6db777cd32e2b83e0",
       "ast_digest": "552cdee9ab9df482004176341730bd937def333d5da4e7703b963ded3bb34816"
     },
     "sor": {
-      "values_digest": "975307cb07b984d6276d03b7db4ac316e73c4acf7185e15d026635d9b0d14415",
-      "rendered_digest": "73905a2e1071d0985b0f9560af771c38335625257912ce69b9575de9e3fedd44",
-      "ast_digest": "896687d02998df377b9f74e8969030bc8f5de9e87dfda9837fb77c8bd481c3a6"
+      "values_digest": "411bba6e153a507da9536d72344adf8ef362daf56e0601894c0a31b6ff4f5b83",
+      "rendered_digest": "a089f561a0551d9ff44c897a963e454a3fe3eefccb86506abfa14c6902df99f0",
+      "ast_digest": "91fac25e40bd2bc57006fa415969c2e4a0cc9366427ed014144a23d8ad068b85"
     }
   },
   "transitions": [
@@ -166,6 +166,20 @@
       "actor": "codex:5817",
       "reason": "The active v0.92 package, final issue wave, complete child cards, prerequisite requalification, and focused proof are ready for one exact pre-PR review.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 9,
+      "actor": "codex:5817-review-remediation",
+      "reason": "Make the issue-local package validator and Runtime v3 reasoning suite the declared typed proof authority after exact-head review found the VPP command narrower than the acceptance claim.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"v092-planning-package\",\"proof_role\":\"Validate YAML and v0.92 identity, all milestone-local Markdown links, dependency acyclicity, 38 unique WP and issue mappings, 37 initialized child records, 444 typed card artifacts and schema identities, required feature contracts, delivery gates, active-wave wording, and scope alignment.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5817/validate-v092-package.rb\"],\"parallel_group\":\"docs\",\"defer_reason\":null},{\"lane\":\"runtime-v3-loop-requalification\",\"proof_role\":\"Requalify the historical #5104 loop contract against current Runtime v3 bounded execution, replay, cancellation, checkpoint, mutation, and forgery-rejection behavior.\",\"acceptance_ids\":[\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":3000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5817/target\",\"--test\",\"reasoning\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors in the complete WP-01 candidate.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"docs\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 10,
+      "actor": "codex:5817-review-remediation",
+      "reason": "Record the expanded package validator after review remediation aligned retained proof with AC-6.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby\",\".csdlc/prepared/issues/5817/validate-v092-package.rb\"],\"purpose\":\"Prove YAML and v0.92 identity, Markdown links, typed card schema identity, unique issue mapping, dependency acyclicity, feature coverage, delivery gates, and active-wave wording across the final package.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\"}}"
     }
   ]
 }

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "json"
+require "pathname"
 require "set"
 require "yaml"
 
@@ -11,6 +12,7 @@ CARD_NAMES = %w[sip stp spp vpp srp sor].freeze
 
 wave = YAML.safe_load(File.read(WAVE_PATH), aliases: true)
 raise "issue wave is not card-initialized" unless wave.fetch("status") == "cards_initialized"
+raise "issue wave milestone is not v0.92" unless wave.fetch("milestone") == "v0.92"
 
 rows = wave.fetch("work_packages")
 wps = rows.map { |row| row.fetch("wp") }
@@ -62,6 +64,14 @@ child_rows.each do |row|
       path = File.join(issue_root, "cards", name)
       raise "issue #{issue} missing #{name}" unless File.file?(path) && !File.zero?(path)
     end
+
+    values = JSON.parse(File.read(File.join(issue_root, "cards", "#{card}.values.json")))
+    identity = values.fetch("identity")
+    content = values.fetch("content")
+    raise "issue #{issue} #{card} identity mismatch" unless identity.fetch("issue") == issue
+    raise "issue #{issue} #{card} version mismatch" unless identity.fetch("version") == "v0.92"
+    raise "issue #{issue} #{card} kind mismatch" unless content.fetch("card_kind") == card
+    raise "issue #{issue} #{card} values missing" unless content.fetch("values").is_a?(Hash)
   end
 
   stp = JSON.parse(File.read(File.join(issue_root, "cards/stp.values.json")))
@@ -164,5 +174,34 @@ canonical = %w[README.md WBS_v0.92.md SPRINT_v0.92.md WP_ISSUE_WAVE_v0.92.yaml].
 end.join("\n")
 raise "stale unopened-wave language remains" if canonical.include?("not an opened GitHub issue wave")
 raise "stale WP-01A numbering remains" if canonical.include?("WP-01A")
+raise "stale candidate-wave language remains" if canonical.match?(/Candidate (WP Sequence|issue wave)/)
+raise "stale pre-open sprint language remains" if canonical.include?("should be generated after WP-01")
+
+milestone_root = File.join(ROOT, "docs/milestones/v0.92")
+milestone_text = Dir.glob(File.join(milestone_root, "**/*.{md,yaml}")).sort.map { |path| File.read(path) }.join("\n")
+forbidden_proof_credit = [
+  "mock WebSocket",
+  "mock/loopback WebSocket",
+  "synthetic but structurally complete",
+  "mock or loopback WebSocket proof",
+  "mock WebSocket session"
+]
+forbidden_proof_credit.each do |phrase|
+  raise "stale mock or synthetic release credit remains: #{phrase}" if milestone_text.include?(phrase)
+end
+
+Dir.glob(File.join(milestone_root, "**/*.md")).sort.each do |markdown_path|
+  text = File.read(markdown_path)
+  text.scan(/\[[^\]]+\]\(([^)]+)\)/).flatten.each do |raw_target|
+    target = raw_target.strip.delete_prefix("<").delete_suffix(">")
+    next if target.empty? || target.start_with?("#", "http://", "https://", "mailto:")
+
+    relative = target.split("#", 2).first.split("?", 2).first
+    next if relative.empty?
+
+    resolved = File.expand_path(relative, File.dirname(markdown_path))
+    raise "broken Markdown link #{target} in #{Pathname.new(markdown_path).relative_path_from(Pathname.new(ROOT))}" unless File.exist?(resolved)
+  end
+end
 
 puts "v0.92 WP-01 validation passed: #{rows.length} WPs, #{child_rows.length} child issues, #{child_rows.length * CARD_NAMES.length * 2} card artifacts"

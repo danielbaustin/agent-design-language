@@ -28,7 +28,7 @@ v0.92 should harden the execution substrate and develop the identity,
 continuity, and first-birthday layer without stealing work from citizen-state,
 moral-trace, or constitutional-governance milestones.
 
-## Candidate WP Sequence
+## Active WP Sequence
 
 | WP | Work Package | Description | Primary deliverable | Dependencies |
 | --- | --- | --- | --- | --- |

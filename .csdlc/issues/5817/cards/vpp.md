@@ -25,20 +25,60 @@ Diagram: .csdlc/prepared/issues/5817/diagram.mmd
 [
   {
     "lane": "v092-planning-package",
-    "proof_role": "Validate YAML, Markdown links, canonical versions, dependency acyclicity, typed card structure, scope, and diff hygiene",
+    "proof_role": "Validate YAML and v0.92 identity, all milestone-local Markdown links, dependency acyclicity, 38 unique WP and issue mappings, 37 initialized child records, 444 typed card artifacts and schema identities, required feature contracts, delivery gates, active-wave wording, and scope alignment.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
-      "AC-3",
       "AC-4",
       "AC-5",
+      "AC-6"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 3000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5817/validate-v092-package.rb"
+    ],
+    "parallel_group": "docs",
+    "defer_reason": null
+  },
+  {
+    "lane": "runtime-v3-loop-requalification",
+    "proof_role": "Requalify the historical #5104 loop contract against current Runtime v3 bounded execution, replay, cancellation, checkpoint, mutation, and forgery-rejection behavior.",
+    "acceptance_ids": [
+      "AC-3"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 600,
+    "budget_tokens": 3000,
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml",
+      "--target-dir",
+      "/Volumes/FastWork/adl-wp-5817/target",
+      "--test",
+      "reasoning"
+    ],
+    "parallel_group": "runtime",
+    "defer_reason": null
+  },
+  {
+    "lane": "diff-hygiene",
+    "proof_role": "Reject whitespace errors in the complete WP-01 candidate.",
+    "acceptance_ids": [
       "AC-6",
       "AC-7"
     ],
     "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 300,
-    "budget_tokens": 5000,
+    "resource_profile": "small",
+    "budget_seconds": 30,
+    "budget_tokens": 500,
     "argv": [
       "git",
       "diff",
@@ -61,6 +101,8 @@ Tokens: 50000
 
 ## Commands
 
+- `ruby .csdlc/prepared/issues/5817/validate-v092-package.rb`
+- `cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5817/target --test reasoning`
 - `git diff --check`
 
 ## Failure Semantics

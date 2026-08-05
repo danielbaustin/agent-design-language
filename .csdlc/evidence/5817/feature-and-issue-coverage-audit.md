@@ -59,3 +59,24 @@ standalone product features.
 
 This audit proves complete scheduling and contract coverage. It does not claim
 that child implementation has landed.
+
+## Review Remediation Validation
+
+The issue-local validator is the focused documentation authority for this
+package. At the corrected candidate it passed with:
+
+```text
+v0.92 WP-01 validation passed: 38 WPs, 37 child issues, 444 card artifacts
+```
+
+That validator parses the issue-wave YAML; verifies the `v0.92` milestone
+identity; proves unique WP and issue mappings and an acyclic dependency graph;
+checks WBS/wave alignment; parses every child card values file; verifies issue,
+version, card-kind, and values-object identity for all 444 card artifacts;
+checks required source dispositions, feature contracts, completion gates, and
+active-wave wording; and resolves every relative Markdown link under the v0.92
+milestone package.
+
+The current Runtime v3 reasoning requalification also passed `13/13`,
+`git diff --check` passed, and `csdlc-doctor --repo . --issue 5817` reported
+`status: pass`, phase `implemented`, generation `9`, with no findings.

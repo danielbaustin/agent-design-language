@@ -124,18 +124,18 @@ blocked, deferred, or routed with evidence before any public activation claim.
 | Requirement | Current source | Candidate v0.92 owner | Readiness gap |
 | --- | --- | --- | --- |
 | Birthday contract and negative cases | `FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md`, `DEMO_MATRIX_v0.92.md` | WP-08 | Final fixtures and validator expectations. |
-| Stable name and identity root | `IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md` | WP-03 | Exact record fields, alias policy, and provenance policy. |
-| Continuity across bounded cycles | `IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md` | WP-04 | Minimum cycle count, continuity-grade rules, and failure reasons. |
-| Memory grounding | `MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md` | WP-05 | Redaction-safe packet shape and witness references. |
-| Capability envelope | `WBS_v0.92.md`, `DEMO_MATRIX_v0.92.md` | WP-06 | Provider/model/tool/skill/authority/limit field set. |
-| ACP/cognitive profile | `ACP_COGNITIVE_PROFILES_v0.92.md` | WP-07 | Update rules, privacy boundary, and non-reputation checks. |
-| ACIP binary/schema transport readiness | `ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md`; `docs/milestones/v0.91.7/review/security/WP12_ACCESS_ACTIVATION_GATE_4660.md` | WP-08 | Protobuf/JSON projection decision, governed access checklist, mock/loopback carrier boundary, and explicit non-claims for live WebSocket runtime API integration until promoted. |
-| Witnesses and receipt | `MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`; v0.91.8 #4762 handoff package at `docs/milestones/v0.91.8/review/v092_handoff_4762/` | WP-09 | Receipt schema, witness validity checks, retained negative-case dispositions, and explicit `birth_event_status: not_claimed` boundary before the final birth event. |
-| Birthday review packet | `FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md` | WP-10 | One template with evidence, caveats, public claim boundaries, and reviewer questions. |
+| Stable name and identity root | `IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md` | WP-09 | Exact record fields, alias policy, and provenance policy. |
+| Continuity across bounded cycles | `IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md` | WP-10 | Minimum cycle count, continuity-grade rules, and failure reasons. |
+| Memory grounding | `MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md` | WP-11 | Redaction-safe packet shape and witness references. |
+| Capability envelope | `WBS_v0.92.md`, `DEMO_MATRIX_v0.92.md` | WP-12 | Provider/model/tool/skill/authority/limit field set. |
+| ACP/cognitive profile | `ACP_COGNITIVE_PROFILES_v0.92.md` | WP-13 | Update rules, privacy boundary, and non-reputation checks. |
+| ACIP binary/schema transport readiness | `ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md`; `docs/milestones/v0.91.7/review/security/WP12_ACCESS_ACTIVATION_GATE_4660.md` | WP-14 | Protobuf/JSON projection, governed access, and authenticated full-duplex Runtime WebSocket proof. |
+| Witnesses and receipt | `MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`; v0.91.8 #4762 handoff package at `docs/milestones/v0.91.8/review/v092_handoff_4762/` | WP-15 | Receipt schema, witness validity checks, retained negative-case dispositions, and explicit `birth_event_status: not_claimed` boundary before the final birth event. |
+| Birthday review packet | `FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md` | WP-16 | One template with evidence, caveats, public claim boundaries, and reviewer questions. |
 | External launch docs and public copy | `external_launch/README.md`, `external_launch/PUBLIC_LAUNCH_COPY_v0.92.md`, `external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md` | WP-14 | Concrete pending/ready launch copy, reviewer FAQ, publication checklist, and forbidden-claim rules; final launch proof must cite the merged #4762 retained witness/receipt evidence and still pass v0.92 validation and operator publication approval. |
-| Migration and cross-polis continuity | `CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md` | WP-11 | Non-production migration language and continuity handoff shape. |
-| First birthday demo | `DEMO_MATRIX_v0.92.md` | WP-12 | Runnable command, fixtures, artifact list, and replay notes. |
-| Birthday-to-governance handoff | `FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md` | WP-13 | v0.93 consumer fields without v0.93 governance claims. |
+| Migration and cross-polis continuity | `CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md` | WP-17 | Non-production migration language and continuity handoff shape. |
+| First birthday demo | `DEMO_MATRIX_v0.92.md` | WP-18 | Runnable command, real artifacts, negative cases, and replay notes. |
+| Birthday-to-governance handoff | `FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md` | WP-19 | v0.93 consumer fields without v0.93 governance claims. |
 
 ## Issue-Wave Preflight
 
@@ -158,8 +158,9 @@ unstated or unowned activation surface.
 
 ## Demo Rehearsal Runbook Shape
 
-The v0.92 flagship demo should be rehearsed around one synthetic but
-structurally complete birth packet.
+The v0.92 flagship demo must run against one structurally complete birth packet
+produced by the integrated Runtime path. Synthetic or fixture packets receive
+no release credit.
 
 Minimum demo stages:
 
@@ -169,8 +170,8 @@ Minimum demo stages:
 4. Validate memory-grounding references without exposing raw private state.
 5. Validate capability envelope and declared limits.
 6. Validate ACP/cognitive profile evidence and non-reputation boundary.
-7. Validate ACIP schema catalog, JSON projection, and mock/loopback carrier
-   evidence if communication proof is included.
+7. Validate ACIP schema catalog, JSON projection, and authenticated full-duplex
+   Runtime carrier evidence.
 8. Validate witness set and citizen-facing receipt.
 9. Run the not-a-birthday negative suite.
 10. Produce reviewer-facing packet with caveats and public claim boundaries.
@@ -262,8 +263,8 @@ The v0.92 review handoff should ask reviewers to answer:
 - Are ACP/cognitive-profile claims evidence-grounded and separate from
   identity, reputation, public standing, and consciousness claims?
 - Are witnesses and receipts meaningful enough for review?
-- Does ACIP transport readiness remain schema-public and mock/loopback-bounded
-  unless explicitly widened?
+- Does ACIP transport readiness remain schema-public, authenticated, and proven
+  through a real full-duplex Runtime exchange?
 - Are Observatory/Unity surfaces classified as presentation or inspection
   surfaces rather than canonical proof unless evidence says otherwise?
 - Does the packet avoid claiming legal personhood, production citizenship, or

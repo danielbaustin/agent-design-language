@@ -38,7 +38,7 @@ v0.92 should not be released until it has evidence for:
 - ACP / cognitive profile grounded in evidence from memory, capability,
   continuity, ToM, intelligence, and learning surfaces
 - ACIP binary schema, public schema catalog, deterministic JSON projection, and
-  mock/loopback WebSocket carrier proof
+  authenticated full-duplex Runtime WebSocket carrier proof
 - birth witnesses and receipt
 - birthday review packet
 - negative cases for startup, wake, snapshot, admission, and copied state
