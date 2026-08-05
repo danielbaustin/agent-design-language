@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5860,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5860-v092-execution-readiness",
+  "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
+  "body": "Closes #5860\n\nMakes all 58 v0.92 execution issues design-time ready across six sprint umbrellas, including the WP-04 Distributed Guardian implementation sprint. Every child has an approved source-grounded design, complete typed card set, explicit dependencies, exact owned paths, rollback, validation lanes, and a claim-null just-in-time execution handoff. Sidecar #5861 remains explicitly excluded and externally owned.\n\nThe package adds a 58-row readiness matrix, pinned live GitHub issue contracts, 870 artifact hashes, typed doctor evidence, ownership and serialization gates, and fail-closed behavior probes for issue-local validators. It also repairs the Runtime and WP-04 operator prompts and keeps all child implementation deferred to the child sessions.\n\nValidation:\n- `ruby .csdlc/prepared/issues/5860/validate-v092-readiness.rb --verify-live`\n- `ruby .csdlc/prepared/issues/5860/validate-v092-doctors.rb`\n- `ruby .csdlc/prepared/issues/5821/validate-child-wave.rb`\n- `ruby .csdlc/prepared/issues/5862/validate-implementation-wave.rb --preflight`\n- `ruby .csdlc/prepared/issues/5860/validate-v092-ownership.rb`\n- typed v2 finalize and doctor\n- independent exact-head review at `1538ef7389d360e80175ecaa79e570e041621627`: no actionable P0-P3 findings\n\nNon-claims: this PR does not implement any child issue, run the 53 deferred child execution/evidence scripts, or take ownership of #5861.",
+  "draft": false,
+  "revision": "git-blake3:c100b63e6615c3a561e92ca2dce1fafef95f76b5:496f95467a33b9b80938c5a5a8183276097b5c8714c87e4ca0c0749327cbc6f6",
+  "commit_sha": "c100b63e6615c3a561e92ca2dce1fafef95f76b5"
+}
