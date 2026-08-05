@@ -1,0 +1,25 @@
+{
+  "issue": 5818,
+  "expected_generation": 22,
+  "expected_digest": "9c115f23afd6160dbc6ae9464f1a4e774b948c87fb84ef5cd0795ad762f99117",
+  "now_unix_seconds": 1785959200,
+  "actor": "codex:5860-foundation-validator-root-repair",
+  "reason": "Reacquire issue #5818 only to correct repository-root resolution in its owned Foundation validator.",
+  "replacement": {
+    "id": "claim-5818-foundation-validator-root-repair",
+    "owner": "codex:5860-foundation-validator-root-repair",
+    "generation": 22,
+    "acquired_unix_seconds": 1785959200,
+    "expires_unix_seconds": 1786045600,
+    "heartbeat_unix_seconds": 1785959200,
+    "branch": "codex/5860-foundation-readiness-repair",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5818",
+      ".csdlc/issues/5818",
+      ".csdlc/locks/5818.lock",
+      ".csdlc/prepared/issues/5818"
+    ],
+    "purpose": "Correct issue 5818 validator root resolution without product implementation"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "issue": 5824,
+  "card": "vpp",
+  "expected_generation": 20,
+  "expected_digest": "ec6bc43602a27c7ba0eac0625e21dc86cb5ca0acade4b6be87f8d12cdc55140d",
+  "claim_id": "claim-5824-foundation-readiness-repair",
+  "actor": "codex:5860-foundation-readiness-repair",
+  "reason": "Repair the exact-head Foundation validation plan with direct proving lanes.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "enum-inventory-contract",
+        "proof_role": "Derive the exhaustive restricted-type denominator from current C-SDLC v2 source and require one source-grounded disposition plus a no-duplicate-work or finite-gap decision for every entry.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-7",
+          "AC-8"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 300,
+        "budget_tokens": 2000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5824/validate-enum-inventory.rb"
+        ],
+        "parallel_group": "inventory",
+        "defer_reason": null
+      },
+      {
+        "lane": "prompt-card-enum-exact-target",
+        "proof_role": "Run the exact prompt_card_enum_typing integration target for round-trip/schema and invalid-value/legacy behavior; zero tests fail.",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-8"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 1800,
+        "budget_tokens": 8000,
+        "argv": [
+          "cargo",
+          "nextest",
+          "run",
+          "--locked",
+          "--manifest-path",
+          "csdlc-v2/Cargo.toml",
+          "--no-tests=fail",
+          "--test",
+          "prompt_card_enum_typing"
+        ],
+        "parallel_group": "csdlc-v2",
+        "defer_reason": null
+      },
+      {
+        "lane": "diff-hygiene",
+        "proof_role": "Reject whitespace and unintended template or sunset-v1 changes.",
+        "acceptance_ids": [
+          "AC-7",
+          "AC-8"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 30,
+        "budget_tokens": 500,
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "parallel_group": "issue-local",
+        "defer_reason": null
+      }
+    ]
+  }
+}

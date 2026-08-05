@@ -1,0 +1,11 @@
+{
+  "issue": 5853,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5853-foundation-validator-root-repair",
+  "expected_generation": 10,
+  "expected_digest": "4f9b9c7ee800ce012674850c1bdff6f42a91c804b939e0410cb96f10ef736ade",
+  "now_unix_seconds": 1785959600,
+  "actor": "codex:5860-foundation-validator-root-repair",
+  "operator_authority": "operator:daniel-issue-5860-foundation-readiness-repair",
+  "reason": "Release issue #5853 validator-root repair claim after syntax, contract, ownership, and doctor validation; execution must reacquire just-in-time authority."
+}

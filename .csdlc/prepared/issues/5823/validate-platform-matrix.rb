@@ -4,7 +4,7 @@
 require "json"
 require "pathname"
 
-root = Pathname.new(__dir__).join("../../..").cleanpath
+root = Pathname.new(__dir__).join("../../../..").cleanpath
 path = root.join(".csdlc/evidence/5823/platform-matrix.json")
 abort "missing platform matrix" unless path.file? && !path.zero?
 matrix = JSON.parse(path.read)

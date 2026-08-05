@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "7c3bcca3a89242a98791c5d0a2391d199e3e2a088e3fa577d270275ae22c2571",
   "phase": "bound",
-  "generation": 19,
-  "digest": "c4ff60b996f5b2977f3afac511efcba0694ebda0d91abe6985f06c1e449703b8",
+  "generation": 20,
+  "digest": "d278ce0a9dafd6d7d29b1791cd262f504e2c961b4dc0ee91f8c0c7ab72089cec",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "b02940aadd455c1db1f0fc9e61958dc7146848aef024419bd70be4b2ac979400",
+      "values_digest": "87cfc637865364e53e6e4ec91b792dc4a5951cbf5e5aaf597650481b5ad6c32f",
       "rendered_digest": "3a521d5361568d36e6e58f2b1548dbe24b6deedb254c5106942ee132edda129d",
       "ast_digest": "c753f60486959e5674018050c5085ce087467ae6c749eefa4ed399b678129b0c"
     },
     "stp": {
-      "values_digest": "c45575d8cbec1aa0caed6bbddf2b45c6c04a2e8ed6cf55bcae1d05ec7287fbf2",
+      "values_digest": "eb0bdd1fa0353620251fcef712095c379ddfea676ee0e7a22efc86dd99d0907d",
       "rendered_digest": "26a93a4af8877e02ec404514a74bfc23902ac3cbe536343ef04a7cad5dfabb85",
       "ast_digest": "0b73a4514b346098dad1a34949ea16795bc21fbf9f49c10c610ac39d3e5af291"
     },
     "spp": {
-      "values_digest": "5a51476579e56c4adca6423b572ae8e748e41d7870834ad0c429301935dabf7a",
+      "values_digest": "846c8e3fcc5f072dc2efe1fb3de7587d3ac3ffe876984893009f1d62a7f39018",
       "rendered_digest": "9df27477d1e311860308680d587c86cd565469fe53e9c777d500bc8ee8918c13",
       "ast_digest": "408736e4e28cf095528a0c901d001e5abc84b12eda3ee519214576ae600e1f9b"
     },
     "vpp": {
-      "values_digest": "4ae469ec88908116d3296f5e9170d5284500feeef9bc63073d95539241895912",
-      "rendered_digest": "da836235e4132c3231b19e3a43bb58da80fe524ffde87149bfde852a0e6c16d8",
-      "ast_digest": "118ad945dc7a7b16fc4c32a45bcc4f220072cf1884f68f34bc337c1198ac3636"
+      "values_digest": "748d4623f8ddaafb254f6e07dade1fd92944dfc75a91901cda709bddf55b51a5",
+      "rendered_digest": "f3575ec1aa81bced88033fa05b836f86b85ff815cb7f0a9a51acfd3c1dd552f7",
+      "ast_digest": "43d9bc752828207949511072af117a8e31117d673efb4a6f8ae10642ecb75d31"
     },
     "srp": {
-      "values_digest": "719cc3226071767e9d4a50bf55a3b103aac28fea7dfafbab2fc5853c9cf17352",
+      "values_digest": "6862989d6628806da5c7ce1394c4b01d03af51a6bcd62d1cdf56918dd239aaa5",
       "rendered_digest": "d75b392680f254c5218c7ac6d47f1f0dab88c8d5975c5f9dcc312a58048cc045",
       "ast_digest": "fa8a9f100c7618edbbdd6de56dbf5ca70b1f4dfe33d7cccf069ed303d921ba71"
     },
     "sor": {
-      "values_digest": "4cffa6590cda8bbc03b134824885d0de568346db987c94bb31cb1a77a6ff3297",
+      "values_digest": "5bcfa96e68d0c398ea40212a88993d3174544ddb344fbfb45e24ee5f874f4e40",
       "rendered_digest": "918dde528a114bce7b991e20381cf7cd3f7c83daf40a3822786b937728ef41d3",
       "ast_digest": "d44360186e739b1c36a6a1fd09a920ea5520e8b6f6203480950507a0168fb57c"
     }
@@ -265,6 +265,41 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5823-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 19,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Acquire issue #5823 only for the authorized Foundation exact-head readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness-repair\",\"claim_id\":\"claim-5823-foundation-readiness-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5823\",\".csdlc/issues/5823\",\".csdlc/locks/5823.lock\",\".csdlc/prepared/issues/5823\"],\"purpose\":\"Repair issue 5823 Foundation execution-readiness packet without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 20,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Repair the exact-head Foundation validation plan with direct proving lanes.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"portable-runner-contract\",\"proof_role\":\"Compile and run the new portable runner crate's exact contract target, proving its typed request/result, provenance, adapter boundary, artifacts, redaction, timeout, and cleanup semantics.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"tools/remote_validation/Cargo.toml\",\"--test\",\"contract\"],\"parallel_group\":\"runner-contract\",\"defer_reason\":null},{\"lane\":\"aws-adapter-negative\",\"proof_role\":\"Exercise unreachable provider, stale revision, malformed output, timeout, cancellation, redaction, and cleanup failures without a live paid run.\",\"acceptance_ids\":[\"AC-3\",\"AC-5\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_run_aws_spot_remote_validation_lane.sh\"],\"parallel_group\":\"adapter-fixtures\",\"defer_reason\":null},{\"lane\":\"nessus-and-local-fallback\",\"proof_role\":\"Prove the existing owned-runner adapter and same-profile local/no-network fallback contract.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_run_nessus_remote_validation.sh\"],\"parallel_group\":\"adapter-fixtures\",\"defer_reason\":null},{\"lane\":\"native-platform-contract-matrix\",\"proof_role\":\"Require native live Linux and macOS receipts plus live-native or explicitly non-native fixture Windows proof; reject blocked rows.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":1200,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5823/validate-platform-matrix.rb\"],\"parallel_group\":\"platform\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors and support exact-revision review.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 31,
+      "generation": 20,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Release issue #5823 temporary readiness-repair claim after typed regeneration, design approval, and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5823-foundation-readiness-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness-repair\"}"
+    },
+    {
+      "sequence": 32,
+      "generation": 20,
+      "actor": "codex:5860-foundation-validator-root-repair",
+      "reason": "Reacquire issue #5823 only to correct repository-root resolution in its owned Foundation validator.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness-repair\",\"claim_id\":\"claim-5823-foundation-validator-root-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-validator-root-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5823\",\".csdlc/issues/5823\",\".csdlc/locks/5823.lock\",\".csdlc/prepared/issues/5823\"],\"purpose\":\"Correct issue 5823 validator root resolution without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 33,
+      "generation": 20,
+      "actor": "codex:5860-foundation-validator-root-repair",
+      "reason": "Release issue #5823 validator-root repair claim after syntax, contract, ownership, and doctor validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5823-foundation-validator-root-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-validator-root-repair\"}"
     }
   ]
 }

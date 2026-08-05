@@ -1,5 +1,11 @@
 # Issue 5812 Freedom Gate Clippy Repair Design
 
+## Milestone Metadata
+
+This is a bounded supporting issue under WP-02A. It removes an existing Clippy
+blocker needed by the WP-02A CI reliability gate; it is not a separate work
+package and does not widen WP-02A into Freedom Gate feature work.
+
 ## Change Boundary
 
 The only product edit is in `adl/src/csm_freedom_gate.rs`: replace the two

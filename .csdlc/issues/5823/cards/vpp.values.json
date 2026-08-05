@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-06] Remote validation/build runner",
     "slug": "v0-92-wp-06-remote-validation-build-runner",
     "version": "v0.92",
-    "generation": 19
+    "generation": 20
   },
   "status": "ready",
   "content": {
@@ -17,7 +17,7 @@
       "lanes": [
         {
           "lane": "portable-runner-contract",
-          "proof_role": "Prove typed request/result round trips, exact revision and profile binding, adapter selection, artifacts, redaction, timeout, and cleanup semantics.",
+          "proof_role": "Compile and run the new portable runner crate's exact contract target, proving its typed request/result, provenance, adapter boundary, artifacts, redaction, timeout, and cleanup semantics.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -34,7 +34,9 @@
             "test",
             "--locked",
             "--manifest-path",
-            "tools/aws_remote_validation/Cargo.toml"
+            "tools/remote_validation/Cargo.toml",
+            "--test",
+            "contract"
           ],
           "parallel_group": "runner-contract",
           "defer_reason": null

@@ -5,7 +5,7 @@
   "initialization_digest": "30c5e01cd7aaa0c008930afafb3d1c037c58ffe34866399d13f29b55d2f8d503",
   "phase": "bound",
   "generation": 10,
-  "digest": "ccbf84e6b08f5c19bbae11881c3aac80b41f2b452c2022fd5c20a9983393bc9f",
+  "digest": "79b7cd6bad6bef2784ec7d6ec3445b1f6ebd6ff273be675df82cbfca85799b90",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -202,6 +202,34 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5853-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 10,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Acquire issue #5853 only for the authorized Foundation exact-head readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness-repair\",\"claim_id\":\"claim-5853-foundation-readiness-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5853\",\".csdlc/issues/5853\",\".csdlc/locks/5853.lock\",\".csdlc/prepared/issues/5853\"],\"purpose\":\"Repair issue 5853 Foundation execution-readiness packet without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 10,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Release issue #5853 temporary readiness-repair claim after typed regeneration, design approval, and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5853-foundation-readiness-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness-repair\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 10,
+      "actor": "codex:5860-foundation-validator-root-repair",
+      "reason": "Reacquire issue #5853 only to correct repository-root resolution in its owned Foundation validator.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness-repair\",\"claim_id\":\"claim-5853-foundation-validator-root-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-validator-root-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5853\",\".csdlc/issues/5853\",\".csdlc/locks/5853.lock\",\".csdlc/prepared/issues/5853\"],\"purpose\":\"Correct issue 5853 validator root resolution without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 10,
+      "actor": "codex:5860-foundation-validator-root-repair",
+      "reason": "Release issue #5853 validator-root repair claim after syntax, contract, ownership, and doctor validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5853-foundation-validator-root-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-validator-root-repair\"}"
     }
   ]
 }

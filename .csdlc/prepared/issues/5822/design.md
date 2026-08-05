@@ -34,6 +34,8 @@ and excludes the target issue's own future actuals.
 1. Inventory historical predictor behavior and build a joined fixture corpus
    with unavailable, interrupted, multi-session, and schema-drift cases.
 2. Add v2-owned typed schemas and deterministic collection/adaptation logic.
+   Register the new module through `csdlc-v2/src/lib.rs`; an unreferenced source
+   file is not an integrated implementation.
 3. Implement comparable-cohort selection and a robust sparse-data baseline;
    preserve static planning profiles as an explicit fallback.
 4. Add a typed SPP reference/disposition for an accepted advisory forecast.
@@ -68,6 +70,7 @@ cycle-time improvement.
 ## Owned Paths
 
 - `csdlc-v2/src/estimation.rs`
+- `csdlc-v2/src/lib.rs`
 - `csdlc-v2/src/cards.rs`
 - `csdlc-v2/tests/estimation_contracts.rs`
 - `.csdlc/evidence/5822`

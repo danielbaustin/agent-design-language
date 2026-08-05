@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b476d2b9dfcbc719a2efb87fbffe14fcb7df6263bcbaecc1a27a64c5c4c1e798",
   "phase": "bound",
-  "generation": 19,
-  "digest": "a9edd387fd45551577f3820c8d210ab67fbed8e75b4d5a1e7bf426318e588089",
+  "generation": 21,
+  "digest": "5e878904f2bfec588ec5a5e80a02bb1d54e3d0960ed4c51fd510d65d636c8ce0",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5822/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "5b7be1961e8813d6e648a05759c9bd32c44c90ae424ab6a655a9741030110fb3"
+      "reviewer": "codex:5860-foundation-readiness-repair-design-review",
+      "revision": "82eb3dc3ba007174824a8739cd39afc5a34bafa1894534507990f16b74c9a29b"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "8431129da9310f7021b810f5fa5755b02cf9af5545888edce1f795c93bf3d85d",
+      "values_digest": "5aa230e913b3c7348ce2949326830e033b0499d55c5f6dadcee3a07346be561f",
       "rendered_digest": "a2e05d299c61fb87347a0c7e4217da58dcd8ffcdb615f1dc0aac4438c3bebd79",
       "ast_digest": "98e306b57fa7f5865499191708ed16b077317e9e8f9018041ed11757b0f78e2f"
     },
     "stp": {
-      "values_digest": "8c25ec5b395d96ea730ac8e3ec556d512d8f9283a185fba1fa185cc34a0abb52",
+      "values_digest": "5074d4ffb2f9eeddad607bb7a076d8d322f1ab6508dd997e4ce84bf69a452889",
       "rendered_digest": "b5ea1948c8b04f65c7e6fe5a5709ae0c27e3efa3a9f4d68ea4c2a2eb83d64586",
       "ast_digest": "aa359ab54626c9f0787a862efa22ec899c7bf5a73f630127203541e458cb9ada"
     },
     "spp": {
-      "values_digest": "42fd1ce8b868b3723080c5f8b1c3c9cb5aae21fe22d988a53ef2ecc9c6eab3ca",
-      "rendered_digest": "e01e203fcfa0900916cdb9fcd03704e0040922bc46f26522c93a9d086c8f3230",
-      "ast_digest": "c3c5f033b291ec72dbe9f0ed4a9ce14f853d65fc5a70340b1e5946929d21e8ab"
+      "values_digest": "52ba59defec13f346585df7bb84d17fa7adbc18f2947409d27e0b4accddfdba4",
+      "rendered_digest": "97c7188a51d893d6047748bc7ddf235d1fffa32f4eef1bf1327ae4f856af95d1",
+      "ast_digest": "4c41ba5175df012bfbf1ac92a6124be9723e6543840d131152b9496f9540b232"
     },
     "vpp": {
-      "values_digest": "b604943d25271457e5f1a25c02275bc3e1548b753f074c52f7eed7377940bd26",
+      "values_digest": "6d3d3b7813ffa63e4a287448212f14039d07aa508158d8663574d7b1446dae7b",
       "rendered_digest": "b5c9f1109eb92758ae4d584feaed93929e2a63b2c6f3cf2299e2a2263e614f45",
       "ast_digest": "2a57b64e87e65cb60059e4a14343acb120dbd5df9d67f9b69edb0a33d890ff02"
     },
     "srp": {
-      "values_digest": "b3ab595e5d2f45d0fec6497da854e66d1175216e50916ecec7fa87120e1d7dd0",
+      "values_digest": "c943f0683b4d9246ea2ab1de242d908dcb777d56654c4af16ff1ae2d1f9aa945",
       "rendered_digest": "69ab3feab354c989fbe6922f1f8b04f2a39e07b6831180b12f22fbee71eceb58",
       "ast_digest": "6cac5cde4b2319c579dc8d5b66b951bda0ab8ea548ce7d91f55a755f5c0a3a80"
     },
     "sor": {
-      "values_digest": "2622e2274b6ebbc56ea72724f4d446e992a9e0fc0f50cf224d0b38822612c470",
+      "values_digest": "30fc5d0fce6d6c254a325d0fc35c211967adf491aea37f12d5a36ca8fe599cfd",
       "rendered_digest": "350a21346b3268c5d96b108284fe5ca27520ed7417790180d5cb3e56e0754fbe",
       "ast_digest": "ae340b59eeb81d8a04dbd8dd632b73c8a311492d9edc837dc8291b95a4200968"
     }
@@ -265,6 +265,34 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5822-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 19,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Acquire issue #5822 only for the authorized Foundation exact-head readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness-repair\",\"claim_id\":\"claim-5822-foundation-readiness-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5822\",\".csdlc/issues/5822\",\".csdlc/locks/5822.lock\",\".csdlc/prepared/issues/5822\"],\"purpose\":\"Repair issue 5822 Foundation execution-readiness packet without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 20,
+      "actor": "codex:5860-foundation-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 31,
+      "generation": 21,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Align the operative plan with the repaired exact owned-path denominator.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"csdlc-v2/src/estimation.rs\",\"csdlc-v2/src/lib.rs\",\"csdlc-v2/src/cards.rs\",\"csdlc-v2/tests/estimation_contracts.rs\",\".csdlc/evidence/5822\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-csdlc-card-internals-v1\\\",\\\"paths\\\":[\\\"csdlc-v2/src/cards.rs\\\"],\\\"issues\\\":[5822,5824],\\\"order\\\":[5822,5824]}\"]}"
+    },
+    {
+      "sequence": 32,
+      "generation": 21,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Release issue #5822 temporary readiness-repair claim after typed regeneration, design approval, and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5822-foundation-readiness-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness-repair\"}"
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "issue": 5822,
+  "card": "spp",
+  "expected_generation": 20,
+  "expected_digest": "a8b5583860c3b3712dbe3f00aa1edf6813f395bf384611154a7c06bc9fd3deda",
+  "claim_id": "claim-5822-foundation-readiness-repair",
+  "actor": "codex:5860-foundation-readiness-repair",
+  "reason": "Align the operative plan with the repaired exact owned-path denominator.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "affected_areas",
+    "values": [
+      "csdlc-v2/src/estimation.rs",
+      "csdlc-v2/src/lib.rs",
+      "csdlc-v2/src/cards.rs",
+      "csdlc-v2/tests/estimation_contracts.rs",
+      ".csdlc/evidence/5822",
+      "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-csdlc-card-internals-v1\",\"paths\":[\"csdlc-v2/src/cards.rs\"],\"issues\":[5822,5824],\"order\":[5822,5824]}"
+    ]
+  }
+}

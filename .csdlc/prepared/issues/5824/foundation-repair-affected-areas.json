@@ -1,0 +1,22 @@
+{
+  "issue": 5824,
+  "card": "spp",
+  "expected_generation": 21,
+  "expected_digest": "ef71645c673ec72751739234237ebe5039e09522f35e0dafae80659d869db243",
+  "claim_id": "claim-5824-foundation-readiness-repair",
+  "actor": "codex:5860-foundation-readiness-repair",
+  "reason": "Align the operative plan with the repaired exact owned-path denominator.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "affected_areas",
+    "values": [
+      "csdlc-v2/src/cards.rs",
+      "csdlc-v2/src/model.rs",
+      "csdlc-v2/src/schema.rs",
+      "csdlc-v2/tests/prompt_card_enum_typing.rs",
+      ".csdlc/evidence/5824",
+      ".csdlc/prepared/issues/5824/validate-enum-inventory.rb",
+      "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-csdlc-card-internals-v1\",\"paths\":[\"csdlc-v2/src/cards.rs\"],\"issues\":[5822,5824],\"order\":[5822,5824]}"
+    ]
+  }
+}

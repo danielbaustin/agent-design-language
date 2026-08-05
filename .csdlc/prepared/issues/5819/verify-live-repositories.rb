@@ -6,7 +6,7 @@ require "json"
 require "open3"
 require "pathname"
 
-ROOT = Pathname.new(__dir__).join("../../..").cleanpath
+ROOT = Pathname.new(__dir__).join("../../../..").cleanpath
 REPORT = ROOT.join(".csdlc/evidence/5819/migration-report.json")
 REPOS = %w[cognitive-sdlc-paper godel-hadamard-bayes-paper general-intelligence-paper-private universal-tool-schema agent-design-language].freeze
 PACKAGE_TYPES = %w[container docker maven npm nuget rubygems].freeze
@@ -48,23 +48,41 @@ REPOS.each do |name|
 
   repo = gh_json("repos/#{repository}")
   abort "live repository identity mismatch for #{repository}" unless repo["full_name"] == repository
-  abort "live repository lacks default branch for #{repository}" if repo["default_branch"].to_s.empty?
+  default_branch = repo["default_branch"].to_s
+  abort "live repository lacks default branch for #{repository}" if default_branch.empty?
+  commit = gh_json("repos/#{repository}/commits/#{default_branch}")
+  abort "live default HEAD mismatch for #{repository}" unless commit["sha"] == row["exact_head"]
 
-  issues = pages("repos/#{repository}/issues?state=all").reject { |item| item.key?("pull_request") }
+  issue_items = pages("repos/#{repository}/issues?state=all")
+  issues = issue_items.reject { |item| item.key?("pull_request") }
   pulls = pages("repos/#{repository}/pulls?state=all")
   packages = PACKAGE_TYPES.flat_map do |type|
     pages("orgs/agent-logic/packages?package_type=#{type}").select { |pkg| pkg.dig("repository", "full_name") == repository }
   end
+  workflows = gh_json("repos/#{repository}/actions/workflows").fetch("workflows", [])
+  actions_permissions = gh_json("repos/#{repository}/actions/permissions")
+  secrets = gh_json("repos/#{repository}/actions/secrets").fetch("secrets", [])
+  variables = gh_json("repos/#{repository}/actions/variables").fetch("variables", [])
+  installations = gh_json("repos/#{repository}/installations").fetch("installations", [])
+
   live = {
+    "visibility" => repo["visibility"],
+    "history" => {"default_branch" => default_branch, "default_head" => commit["sha"]},
     "issues" => issues.map { |item| {"number" => item["number"], "state" => item["state"], "assignees" => Array(item["assignees"]).map { |a| a["login"] }.sort} },
     "pull_requests" => pulls.map { |item| {"number" => item["number"], "state" => item["state"], "assignees" => Array(item["assignees"]).map { |a| a["login"] }.sort} },
     "assignees" => (issues + pulls).flat_map { |item| Array(item["assignees"]).map { |a| a["login"] } }.uniq.sort,
+    "collaborators" => pages("repos/#{repository}/collaborators?affiliation=all").map { |item| {"login" => item["login"], "permissions" => item["permissions"]} },
+    "teams" => pages("repos/#{repository}/teams").map { |item| {"slug" => item["slug"], "permission" => item["permission"]} },
+    "oidc" => gh_json("repos/#{repository}/actions/oidc/customization/sub", allow_missing: true),
+    "webhooks" => pages("repos/#{repository}/hooks").map { |item| {"id" => item["id"], "active" => item["active"], "events" => item["events"], "type" => item["type"]} },
+    "apps" => installations.map { |item| {"id" => item["id"], "app_id" => item["app_id"], "account" => item.dig("account", "login"), "permissions" => item["permissions"], "events" => item["events"]} },
     "rulesets" => gh_json("repos/#{repository}/rulesets"),
     "releases" => pages("repos/#{repository}/releases").map { |item| {"id" => item["id"], "tag_name" => item["tag_name"], "draft" => item["draft"], "prerelease" => item["prerelease"]} },
-    "actions" => gh_json("repos/#{repository}/actions/workflows").fetch("workflows", []).map { |item| {"id" => item["id"], "path" => item["path"], "state" => item["state"]} },
+    "actions" => {"permissions" => actions_permissions, "workflows" => workflows.map { |item| {"id" => item["id"], "path" => item["path"], "state" => item["state"]} }},
     "pages" => gh_json("repos/#{repository}/pages", allow_missing: true),
     "packages" => packages.map { |item| {"id" => item["id"], "name" => item["name"], "package_type" => item["package_type"]} },
-    "integrations" => {"hooks" => pages("repos/#{repository}/hooks").map { |item| {"id" => item["id"], "active" => item["active"], "events" => item["events"]} }}
+    "secrets" => secrets.map { |item| {"name" => item["name"], "created_at" => item["created_at"], "updated_at" => item["updated_at"]} },
+    "variables" => variables.map { |item| {"name" => item["name"], "created_at" => item["created_at"], "updated_at" => item["updated_at"], "visibility" => item["visibility"]} }
   }
 
   expected = after.fetch("live_snapshot")
@@ -78,9 +96,15 @@ REPOS.each do |name|
   abort "#{repository} LFS receipt digest mismatch" unless Digest::SHA256.file(receipt).hexdigest == lfs.fetch("fsck_receipt_sha256")
 end
 
-%w[danielbaustin/asksifu danielbaustin/Horust].each do |repository|
-  row = gh_json("repos/#{repository}")
-  abort "negative-control identity mismatch" unless row["full_name"] == repository
+controls = report.fetch("negative_controls")
+{"danielbaustin/asksifu" => "asksifu", "danielbaustin/Horust" => "Horust"}.each do |repository, key|
+  live = gh_json("repos/#{repository}")
+  abort "negative-control identity mismatch" unless live["full_name"] == repository
+  expected = controls.fetch(key)
+  abort "negative-control repository id changed" unless live["id"].to_s == expected["repository_id"].to_s
+  branch = live["default_branch"].to_s
+  head = gh_json("repos/#{repository}/commits/#{branch}")["sha"]
+  abort "negative-control HEAD changed" unless head == expected["exact_head"]
 end
 
-puts "WP-02 live verification valid: five repositories across issues, PRs, assignees, rulesets, releases, Actions, Pages, packages, LFS, and integrations"
+puts "WP-02 live verification valid: five repositories, full destination inventory, exact default HEADs, and two live negative controls"

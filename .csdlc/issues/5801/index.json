@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d161c9886615d203d6b83404683281ca21b58925bbbf7d1f8e8339098c2ef07b",
   "phase": "bound",
-  "generation": 21,
-  "digest": "724e2fba024f5e2f3eed3f8e693bbad924fe8261b6492c5dbf290e07b9857a48",
+  "generation": 22,
+  "digest": "5f8d309bc6f4cd4e504c00156eca287d591344555861788531b4dedea42a9f20",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "fe40ca9aaff6f35d78d81ddf47f6c2101e0ddb49c5741802140b339c51e3d664",
+      "values_digest": "e4bebcacc4b664481fcd2ffb0af1ab6634bde7fbf050e004d78a7aeaa9998ee9",
       "rendered_digest": "657fd9d5f272245476015fc6c7996cf3c879bea80c113a649a095df5f2d870c4",
       "ast_digest": "e87314878eb145d12ee48dee595db92db566fa77e4d91fb5746e1e6c546a64e3"
     },
     "stp": {
-      "values_digest": "24957d30518d32d3e80b2d2a6865f00fe9472fa1e1cdea07a8ea300427003045",
+      "values_digest": "5ccadc304bb400d09df2f9994758956273dd0193fc2306e8fa4461a5b37e8976",
       "rendered_digest": "cd253d5e0dc68572b6fbc1c12647c733791548f7ecd4a29e8848f08ef74a542d",
       "ast_digest": "330fbc3bdfd92e63140c9480493d607bb96f4f8ee8699e461ac3c09ef0f3848c"
     },
     "spp": {
-      "values_digest": "8a5fe707f35a3c6b12dbd268da8fe606311bdc668abedd83f6e7f1994ebae220",
+      "values_digest": "0ca34a4b047a8ac0ff34943b5beffa40e6bc6d42a8fd05817533e76f0e86f7a9",
       "rendered_digest": "bffd61060c349f8d04b0f0e628813ad24f354c40ac6265a6da1d7ed7568d9a7d",
       "ast_digest": "cfa3ef8f9c5364017e17f2c853ac61a7f1349c72caaa186827bbd3fc4d050fd7"
     },
     "vpp": {
-      "values_digest": "2ba8f447400dbc24cbcbe295bc52241911048bb035033a478b5d22f93924216f",
-      "rendered_digest": "2b0b0aeeb49bdaafe3516c588ae27185569f3fb8679cb82823ce59d3c9f63fd4",
-      "ast_digest": "01ed0a61216689a270d69f0952f6e403dfdea0d40f9126aac04740152796db1b"
+      "values_digest": "d204d053ec7184bd85783c7eb4b50852df4e8068df5faefe6312131d6260aae5",
+      "rendered_digest": "e230c8ba493474e98071b8948e81811dca472174145bacdb8012a34bf8a5485c",
+      "ast_digest": "72129e279995cfb1f1b916a771c1d8024a2aa59e5aff5656b776a8d9ed44699d"
     },
     "srp": {
-      "values_digest": "683c3373fdbd19ec01086ed0072b612a74179e8ecf5e1fe8b6f052d67cda451d",
+      "values_digest": "b47230d3037ec1966515acd61f8edd05559cf2ffb8868a7acbd2b6bc817823b9",
       "rendered_digest": "bfa2844b186a214901b2166fe826c9f490ac70e1a20c76d3b788e5270b4b388f",
       "ast_digest": "3624c633f28a9bf2de7d0b7eda4c1a63698aaabc372467a25545a996dd8db923"
     },
     "sor": {
-      "values_digest": "8c9cd2a86edd94b1e4d286c9fecb8b8cdb551728a94ae991bc48bf25eb77d10f",
+      "values_digest": "2254e651452da713c3638b24d7dcfa99e4b67ef816d9786609922b04521b0de6",
       "rendered_digest": "014507d61b21b426b14a44883b044863dab9590297ae704f65ce363803f7459b",
       "ast_digest": "2543e6a3a620c7d2ff382d35157473896b403f624ce7f3d53b57df629afcb3b2"
     }
@@ -293,6 +293,41 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5801-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 33,
+      "generation": 21,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Acquire issue #5801 only for the authorized Foundation exact-head readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness-repair\",\"claim_id\":\"claim-5801-foundation-readiness-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5801\",\".csdlc/issues/5801\",\".csdlc/locks/5801.lock\",\".csdlc/prepared/issues/5801\"],\"purpose\":\"Repair issue 5801 Foundation execution-readiness packet without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 34,
+      "generation": 22,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Repair the exact-head Foundation validation plan with direct proving lanes.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"gemini-3-1-pro-review-contract\",\"proof_role\":\"Recompute prompt, response, and topology SHA-256 and bind the topology Git blob to the exact reviewed revision.\",\"acceptance_ids\":[\"AC-1\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5801/validate-gemini-review.rb\"],\"parallel_group\":\"review\",\"defer_reason\":null},{\"lane\":\"ci-path-policy-contract\",\"proof_role\":\"Exercise docs, metadata, tooling, source, runtime, unknown, mixed, and Windows-path classifications.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\"],\"parallel_group\":\"policy\",\"defer_reason\":null},{\"lane\":\"ci-runtime-and-coverage-contract\",\"proof_role\":\"Prove workflow graph, stale-run behavior, one coverage authority, shard provenance, and aggregation semantics.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"parallel_group\":\"policy\",\"defer_reason\":null},{\"lane\":\"coverage-impact-negative\",\"proof_role\":\"Reject unmapped or insufficient source coverage and prevent broad basename fallback.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_check_coverage_impact.sh\"],\"parallel_group\":\"coverage\",\"defer_reason\":null},{\"lane\":\"pr-fast-test-contract-direct\",\"proof_role\":\"Directly execute the owned fast-test lane contract rather than relying on an aggregate wrapper.\",\"acceptance_ids\":[\"AC-3\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":200,\"budget_tokens\":250,\"argv\":[\"bash\",\"adl/tools/test_run_pr_fast_test_lane.sh\"],\"parallel_group\":\"policy\",\"defer_reason\":null},{\"lane\":\"coverage-authority-contract-direct\",\"proof_role\":\"Directly execute the owned single-authority coverage contract and reject duplicate or unbound coverage publication.\",\"acceptance_ids\":[\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":200,\"budget_tokens\":250,\"argv\":[\"bash\",\"adl/tools/test_coverage_authority_contract.sh\"],\"parallel_group\":\"coverage\",\"defer_reason\":null},{\"lane\":\"metadata-lineage-negative\",\"proof_role\":\"Prove metadata-only reuse rejects substantive, renamed, stale-review, or different-head drift.\",\"acceptance_ids\":[\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate_finish\",\"metadata\"],\"parallel_group\":\"lifecycle\",\"defer_reason\":null},{\"lane\":\"exact-head-ci-platform\",\"proof_role\":\"GitHub required checks prove the final exact head while fixtures cover macOS and Windows boundaries.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":1200,\"budget_tokens\":8000,\"argv\":[\"gh\",\"pr\",\"checks\",\"--watch\"],\"parallel_group\":\"github-live\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace and unintended policy churn.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 35,
+      "generation": 22,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Release issue #5801 temporary readiness-repair claim after typed regeneration, design approval, and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5801-foundation-readiness-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness-repair\"}"
+    },
+    {
+      "sequence": 36,
+      "generation": 22,
+      "actor": "codex:5860-foundation-validator-root-repair",
+      "reason": "Reacquire issue #5801 only to correct repository-root resolution in its owned Foundation validator.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness-repair\",\"claim_id\":\"claim-5801-foundation-validator-root-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-validator-root-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5801\",\".csdlc/issues/5801\",\".csdlc/locks/5801.lock\",\".csdlc/prepared/issues/5801\"],\"purpose\":\"Correct issue 5801 validator root resolution without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 37,
+      "generation": 22,
+      "actor": "codex:5860-foundation-validator-root-repair",
+      "reason": "Release issue #5801 validator-root repair claim after syntax, contract, ownership, and doctor validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5801-foundation-validator-root-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-validator-root-repair\"}"
     }
   ]
 }

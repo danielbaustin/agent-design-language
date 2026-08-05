@@ -100,6 +100,44 @@ Diagram: .csdlc/prepared/issues/5801/diagram.mmd
     "defer_reason": null
   },
   {
+    "lane": "pr-fast-test-contract-direct",
+    "proof_role": "Directly execute the owned fast-test lane contract rather than relying on an aggregate wrapper.",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-6",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 200,
+    "budget_tokens": 250,
+    "argv": [
+      "bash",
+      "adl/tools/test_run_pr_fast_test_lane.sh"
+    ],
+    "parallel_group": "policy",
+    "defer_reason": null
+  },
+  {
+    "lane": "coverage-authority-contract-direct",
+    "proof_role": "Directly execute the owned single-authority coverage contract and reject duplicate or unbound coverage publication.",
+    "acceptance_ids": [
+      "AC-4",
+      "AC-6",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 200,
+    "budget_tokens": 250,
+    "argv": [
+      "bash",
+      "adl/tools/test_coverage_authority_contract.sh"
+    ],
+    "parallel_group": "coverage",
+    "defer_reason": null
+  },
+  {
     "lane": "metadata-lineage-negative",
     "proof_role": "Prove metadata-only reuse rejects substantive, renamed, stale-review, or different-head drift.",
     "acceptance_ids": [
@@ -181,6 +219,8 @@ Tokens: 25000
 - `bash adl/tools/test_ci_path_policy.sh`
 - `bash adl/tools/test_ci_runtime_contracts.sh`
 - `bash adl/tools/test_check_coverage_impact.sh`
+- `bash adl/tools/test_run_pr_fast_test_lane.sh`
+- `bash adl/tools/test_coverage_authority_contract.sh`
 - `cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate_finish metadata`
 - `gh pr checks --watch`
 - `git diff --check`

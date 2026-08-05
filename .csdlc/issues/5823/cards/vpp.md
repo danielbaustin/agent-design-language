@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5823/diagram.mmd
 [
   {
     "lane": "portable-runner-contract",
-    "proof_role": "Prove typed request/result round trips, exact revision and profile binding, adapter selection, artifacts, redaction, timeout, and cleanup semantics.",
+    "proof_role": "Compile and run the new portable runner crate's exact contract target, proving its typed request/result, provenance, adapter boundary, artifacts, redaction, timeout, and cleanup semantics.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -42,7 +42,9 @@ Diagram: .csdlc/prepared/issues/5823/diagram.mmd
       "test",
       "--locked",
       "--manifest-path",
-      "tools/aws_remote_validation/Cargo.toml"
+      "tools/remote_validation/Cargo.toml",
+      "--test",
+      "contract"
     ],
     "parallel_group": "runner-contract",
     "defer_reason": null
@@ -138,7 +140,7 @@ Tokens: 25000
 
 ## Commands
 
-- `cargo test --locked --manifest-path tools/aws_remote_validation/Cargo.toml`
+- `cargo test --locked --manifest-path tools/remote_validation/Cargo.toml --test contract`
 - `bash adl/tools/test_run_aws_spot_remote_validation_lane.sh`
 - `bash adl/tools/test_run_nessus_remote_validation.sh`
 - `ruby .csdlc/prepared/issues/5823/validate-platform-matrix.rb`

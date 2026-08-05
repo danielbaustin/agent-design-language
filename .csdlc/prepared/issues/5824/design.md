@@ -49,7 +49,10 @@ Rollback restores the previous internal representation without changing stored
 cards. Proof includes the inventory, enum parse/display/serde round trips,
 schema parity, editor allowed-value parity, Markdown import/render stability,
 invalid-value negatives, and a no-duplicate-work disposition for every audited
-field. The issue is complete only at an exact reviewed revision.
+field. The inventory validator derives the finite enum/type denominator from
+the current `cards.rs` and `model.rs` authorities and requires an exact one-row
+disposition for every derived type, so a hand-selected one-row inventory cannot
+pass. The issue is complete only at an exact reviewed revision.
 ## Owned Paths
 
 - `csdlc-v2/src/cards.rs`
@@ -57,6 +60,7 @@ field. The issue is complete only at an exact reviewed revision.
 - `csdlc-v2/src/schema.rs`
 - `csdlc-v2/tests/prompt_card_enum_typing.rs`
 - `.csdlc/evidence/5824`
+- `.csdlc/prepared/issues/5824/validate-enum-inventory.rb`
 
 ## Read-Only Inputs
 

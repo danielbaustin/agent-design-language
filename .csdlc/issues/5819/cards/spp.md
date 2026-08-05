@@ -80,7 +80,7 @@ Revision 11
 
 .csdlc/prepared/issues/5819/design.md
 
-Digest: 6f8edebe284f8afb2c163434407edbd7ab45e4235e74c0898c46297ec942807d
+Digest: 8b0274aaa86de1e8c88c242584199f5daccec2b96730f9448d844ef33d8f33de
 
 ## Diagram
 

@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "00ffe4f675d8a5fb02d44c4860d3f331ef37cbc03e595286463aa7d700e358d4",
   "phase": "bound",
-  "generation": 10,
-  "digest": "699b610ba2d4c3ab4f417b5704bf86b9423afd2f5dc254c5e47b76601f06160a",
+  "generation": 11,
+  "digest": "46da0dcfc89663a2adfc5443c07ef9f0bc2878f8878fea12455257d734707882",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5812/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "ab7465c7e7d322f5b536bebffcc5c56f1e44dfc9d80340ce30c00dd91c90d5d1"
+      "reviewer": "codex:5860-foundation-readiness-repair-design-review",
+      "revision": "7bbd50aebd6c4750274fe99ba0f88d09b983b534e61f9c5e1daa20dfbcbab802"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "371186caf82810fd30cf1a85102683ece0941f7f9a154fbf5e2ce2b0c22bf0e5",
+      "values_digest": "fc089e30830b1460536c37fc7e60cf4a4b64591fc3ab51a3ce8b92389a5f4443",
       "rendered_digest": "eea1e855587938558d63612a7aac5412155ff5eec16e1408e712fe87f92b744b",
       "ast_digest": "932a85ba546430881677b05014186d8f7960ccaf4bf5f3612e4d834438bf93e6"
     },
     "stp": {
-      "values_digest": "aab0c5a31829869797e0c935cee033dd61af3e15288311937cb8b0f272e019f8",
+      "values_digest": "c54145665242200aaa10f0723094b65ec26aa00bef00646def4232a4bc7f4701",
       "rendered_digest": "f3a23c1b6120ed496b6d61d025b690328bce9c8aecaff2b8301f1f16cbc5e645",
       "ast_digest": "56598d1027a79dae8800d2b6b67d4dd7efadce542b0b2f7d00f6ace7689a7ce2"
     },
     "spp": {
-      "values_digest": "d2f157bba57546f9b8bc2b59e20ddaa3cdc60a92d47c8784f6cced3985b6deab",
-      "rendered_digest": "53327ef631519479b324f1332caa11151593b8348862fa1a010e9c4d86a952f2",
-      "ast_digest": "6d6add3c771f5faa6633c548e3d08b0dcaf940b90254a956d1479a2bbe7f0b7b"
+      "values_digest": "30bd5f3f7375850745ab4a13545524902e6dd7109641df6967757badba352551",
+      "rendered_digest": "a94c8faa57d382d41aeaba8559d844c195f7ee85b0168ead3a1f7f881da54409",
+      "ast_digest": "e1093bb6fecb2d05d2f08f817dd9245fee36f90c37cc96314e8b4331d3e00a7a"
     },
     "vpp": {
-      "values_digest": "d0850af1550251a064a913f0173e4f678d6596c5b389c0ce86c7eae126b03709",
+      "values_digest": "cfb73cb06e5371cc5c6f431bfaba8db32aa7bbced5e3ca8a6fd8fd696f861468",
       "rendered_digest": "9ead02066db46091da00da39d3ac8772242513b030cd9a5260394c105784a516",
       "ast_digest": "ca780d870b4560c2eba631b3a4bff119ce72d719d31a962c799a328d71ff6001"
     },
     "srp": {
-      "values_digest": "b175f011ecb4d116e012adeaa84520056ee2686c96bfbb655438e40eed581024",
+      "values_digest": "e0a7bd2fd73896b41dc3a98dc86a37137f2d55bc9c233c61c2dadd6f3e9dab26",
       "rendered_digest": "c83dd84e8956d3c4cc9283fc8b4302ad937f73f3836aa4561d9d72dda4df14df",
       "ast_digest": "b5a6ecd08df3b59851ae285651c0be23e649888f2d8d4e0d8076ec9dfdca09af"
     },
     "sor": {
-      "values_digest": "0bc3080647ca615836208f8c9b5baa7005c6d46bd0f77f52b5e1778cfebc4409",
+      "values_digest": "4f37d1229dbd712d261f6b81f12d0c2cf6df018416c075103a29be2149e94061",
       "rendered_digest": "4ff0dbcf96ef65210fa23f69dbf49528e3d73a11fc06b0895efbd4bf474a9780",
       "ast_digest": "86e1a36f42bafe12e44ff4801e8c2f186041c38de1baeb98af920e8232c8c94d"
     }
@@ -216,6 +216,27 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5812-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 10,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Acquire issue #5812 only for the authorized Foundation exact-head readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness-repair\",\"claim_id\":\"claim-5812-foundation-readiness-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5812\",\".csdlc/issues/5812\",\".csdlc/locks/5812.lock\",\".csdlc/prepared/issues/5812\"],\"purpose\":\"Repair issue 5812 Foundation execution-readiness packet without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 11,
+      "actor": "codex:5860-foundation-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 24,
+      "generation": 11,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Release issue #5812 temporary readiness-repair claim after typed regeneration, design approval, and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5812-foundation-readiness-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness-repair\"}"
     }
   ]
 }

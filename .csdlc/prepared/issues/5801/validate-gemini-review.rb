@@ -6,7 +6,7 @@ require "pathname"
 require "digest"
 require "shellwords"
 
-root = Pathname.new(__dir__).join("../../..").cleanpath
+root = Pathname.new(__dir__).join("../../../..").cleanpath
 path = root.join(".csdlc/evidence/5801/gemini-3.1-pro-review.json")
 abort "missing Gemini 3.1 Pro review packet" unless path.file? && !path.zero?
 packet = JSON.parse(path.read)

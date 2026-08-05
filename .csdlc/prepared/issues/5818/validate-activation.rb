@@ -5,7 +5,7 @@ require "json"
 require "pathname"
 require "yaml"
 
-ROOT = Pathname.new(__dir__).join("../../..").cleanpath
+ROOT = Pathname.new(__dir__).join("../../../..").cleanpath
 INVENTORY = ROOT.join(".csdlc/evidence/5818/canonical-surface-inventory.json")
 ALLOWED = %w[update already_current historical_preserve not_authoritative].freeze
 REQUIRED_PATHS = [
@@ -14,7 +14,18 @@ REQUIRED_PATHS = [
   "docs/planning/ADL_FEATURE_LIST.md",
   "adl/Cargo.toml",
   "adl/Cargo.lock",
+  "adl-v2/Cargo.toml",
+  "adl-v2/Cargo.lock",
+  "adl-runtime/Cargo.toml",
+  "adl-runtime/Cargo.lock",
+  "adl-runtime-kernel/Cargo.toml",
+  "adl-runtime-kernel/Cargo.lock",
+  "adl-resilience/Cargo.toml",
+  "adl-resilience/Cargo.lock",
+  "adl-characterization/Cargo.toml",
+  "adl-characterization/Cargo.lock",
   "csdlc-v2/Cargo.toml",
+  "csdlc-v2/Cargo.lock",
   "AGENTS.md",
   "REVIEW.md",
   "docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md",

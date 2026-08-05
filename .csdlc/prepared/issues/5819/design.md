@@ -78,13 +78,16 @@ issue-local validator is
 `.csdlc/prepared/issues/5819/validate-migration-evidence.rb`.
 
 Each before/after manifest is retained as a separate SHA-256-bound JSON
-artifact. Both manifests contain actual data for issues, pull requests,
-assignees, rulesets, releases, Actions, Pages, packages, LFS, and integrations.
-The validator recomputes both file digests and every canonical per-surface
-digest. Differences require a digest-bound verified-disposition artifact; a
-boolean preservation assertion is never sufficient. The live verifier queries
-all GitHub API-backed surfaces at the destination and binds LFS to a retained
-`git lfs fsck` receipt.
+artifact. Both manifests contain actual data for repository visibility,
+default-branch history and exact HEAD, issues, pull requests, assignees,
+collaborators, teams, OIDC, webhooks, GitHub Apps, rulesets, releases, Actions,
+Pages, packages, LFS, and secret/variable names and scopes only. The validator
+recomputes both file digests and every canonical per-surface digest. Differences
+require a digest-bound verified-disposition artifact; a boolean preservation
+assertion is never sufficient. Transfer start/completion timestamps must prove
+the declared order is strictly serial. The live verifier queries every GitHub
+API-backed surface at the destination, verifies the live default-branch HEAD,
+and binds LFS to a retained `git lfs fsck` receipt.
 ## Owned Paths
 
 - `.csdlc/evidence/5819`

@@ -16,7 +16,7 @@ Inventory historical estimation evidence, define v2-owned typed joins and adviso
 
 ## Plan
 
-Revision 10
+Revision 11
 
 ## Steps
 
@@ -89,7 +89,7 @@ Revision 10
 
 .csdlc/prepared/issues/5822/design.md
 
-Digest: 5b7be1961e8813d6e648a05759c9bd32c44c90ae424ab6a655a9741030110fb3
+Digest: 82eb3dc3ba007174824a8739cd39afc5a34bafa1894534507990f16b74c9a29b
 
 ## Diagram
 

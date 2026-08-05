@@ -1,0 +1,11 @@
+{
+  "issue": 5822,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5822-foundation-readiness-repair",
+  "expected_generation": 21,
+  "expected_digest": "cfc8ffff8a90f2d28623732aa27e06405e6745bf8e170c0e1ef517b2ddbb76de",
+  "now_unix_seconds": 1785959000,
+  "actor": "codex:5860-foundation-readiness-repair",
+  "operator_authority": "operator:daniel-issue-5860-foundation-readiness-repair",
+  "reason": "Release issue #5822 temporary readiness-repair claim after typed regeneration, design approval, and focused validation; execution must reacquire just-in-time authority."
+}

@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b64ea880252f74a339493a02b2aaa4484361128d76e56588f7fed78d84751c0f",
   "phase": "bound",
-  "generation": 19,
-  "digest": "315ce9e2053418221a39742c2d5a2d012b7e01fbb7898e01403caa19f0199d99",
+  "generation": 22,
+  "digest": "2a03684cf8d3004d3370a58f51717fa7a2c547b13a4b8a109d63ff3a5a8db128",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5824/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "683765d53f82a487bd5f7bc760239da43dca6c552e10fc8a96ec5111543717c5"
+      "reviewer": "codex:5860-foundation-readiness-repair-design-review",
+      "revision": "91992407053e44a669eb7c3c5c67c1e92ecbd482e63d6fffeebc21d12d4922a0"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "1732e4a6222ccdeac652a2657dd203294940f3a0c4ce71ba01719066aed407e5",
+      "values_digest": "289b1ddfa1a6bf40407dc9442bd9a6ab05554dd16c62caf28bee876f05c36012",
       "rendered_digest": "3c078a22e0b186e812947cb68fc69b204388acd828c00652285bc791baa8f916",
       "ast_digest": "7d89a791d94d459f676de8a69ffcba4e938277e73b7c52ea1bd9bf1278ac1425"
     },
     "stp": {
-      "values_digest": "cb0170b50929bd63d79e1d5b22a82a602404b497898fb103bad4dea93cef579c",
+      "values_digest": "e12ee043f1357e3cd1a1e49bfc9e3e426b20ddcd2c51172641b150e64d41befa",
       "rendered_digest": "6528528a1756de9503e1a99cf09f502a1cf248faabd24d06ec601ff05c9a9669",
       "ast_digest": "70910b3e83f3e7eefe8477471848900aa3184bef3ce378d1d2ee4519a6a6a152"
     },
     "spp": {
-      "values_digest": "cdc95bd3c0a6e2898ad6c53733f580093c886ad891892e44184fc62c8d953e1a",
-      "rendered_digest": "8ef2d9eccaa4646e516195dd5cedfcb02708e874899b2fefdcad37bbdd4217e5",
-      "ast_digest": "9d87604692e250462447e904e5d94611a96f238d9d582bbea9756eb9f08e5dfa"
+      "values_digest": "78f24c343676cc70b0dc5e0d0aa2393b14bf5d06ae53bf5f2016e54b6ac745ea",
+      "rendered_digest": "c41f29410568154ad9ff88a9b300a2ccf8e664f37f9e826de723d4237fd8f9b6",
+      "ast_digest": "480923f89dee625a7aa6d431b6cbfbbb06d0803038279840d945fa413f81fb13"
     },
     "vpp": {
-      "values_digest": "819dbcfd03329d12272eddab1ac2d873750cc81eecd9665272e459eb0f8491d7",
-      "rendered_digest": "f5c328a96837d3a1fbe980db18402b8a142abe4b97a5e3bd0ecefcb4a41a474b",
-      "ast_digest": "222290e7f83d8041e1218697d83bc08dc71f9094a6909248d99923c6d315c857"
+      "values_digest": "b83024b7408864b3874fb33516c67ea044807c2e32ca43d61a27482cecd6b248",
+      "rendered_digest": "4ac9d0766255a1d9131bb05a9627d5a5abcdf05cdadf59627ac4f6510176b993",
+      "ast_digest": "e7ff0a57213e2aab2c7845e96aa73049d641f3a10a057c2bf8fa50fd65a52ff4"
     },
     "srp": {
-      "values_digest": "022cc9865ba73428be614dcc15cf51268785d849c8ba8118c7f64d93975c66f5",
+      "values_digest": "ec7d885b9db7cfaf726a242fd887ead7198298f0553d8d7b6f45bc6b4cb24b67",
       "rendered_digest": "330fdc5d203d7c423f7a21a24d362260ea0bc0e37e0cf61a0bcf5aafe738c1d8",
       "ast_digest": "c41f89ee3243519e57315ed19839689b0a975dfc2ad05a3ade9cfe1a61e6b6df"
     },
     "sor": {
-      "values_digest": "79fa92ccdbb5e377186b9ad304462cd5fc9359999fcf5676de5a2704fd100079",
+      "values_digest": "fbf9ffaa8d46dcacf744c0ebdb7c0a8f2ade10bd62f8f4232fa26d17c40717fd",
       "rendered_digest": "a9e82b10a38d86a71ce1ace7f3ba80ddab41b2610f14edee8e48c1c31c9479b2",
       "ast_digest": "c4bf4161b995d734609a8fdd7728933f7382fcd4ff9a2cd2c8918511c0b4ee03"
     }
@@ -265,6 +265,55 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5824-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 19,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Acquire issue #5824 only for the authorized Foundation exact-head readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness-repair\",\"claim_id\":\"claim-5824-foundation-readiness-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5824\",\".csdlc/issues/5824\",\".csdlc/locks/5824.lock\",\".csdlc/prepared/issues/5824\"],\"purpose\":\"Repair issue 5824 Foundation execution-readiness packet without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 20,
+      "actor": "codex:5860-foundation-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 31,
+      "generation": 21,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Repair the exact-head Foundation validation plan with direct proving lanes.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"enum-inventory-contract\",\"proof_role\":\"Derive the exhaustive restricted-type denominator from current C-SDLC v2 source and require one source-grounded disposition plus a no-duplicate-work or finite-gap decision for every entry.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5824/validate-enum-inventory.rb\"],\"parallel_group\":\"inventory\",\"defer_reason\":null},{\"lane\":\"prompt-card-enum-exact-target\",\"proof_role\":\"Run the exact prompt_card_enum_typing integration target for round-trip/schema and invalid-value/legacy behavior; zero tests fail.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\",\"AC-6\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":8000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--no-tests=fail\",\"--test\",\"prompt_card_enum_typing\"],\"parallel_group\":\"csdlc-v2\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace and unintended template or sunset-v1 changes.\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 32,
+      "generation": 22,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Align the operative plan with the repaired exact owned-path denominator.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"csdlc-v2/src/cards.rs\",\"csdlc-v2/src/model.rs\",\"csdlc-v2/src/schema.rs\",\"csdlc-v2/tests/prompt_card_enum_typing.rs\",\".csdlc/evidence/5824\",\".csdlc/prepared/issues/5824/validate-enum-inventory.rb\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-csdlc-card-internals-v1\\\",\\\"paths\\\":[\\\"csdlc-v2/src/cards.rs\\\"],\\\"issues\\\":[5822,5824],\\\"order\\\":[5822,5824]}\"]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 22,
+      "actor": "codex:5860-foundation-readiness-repair",
+      "reason": "Release issue #5824 temporary readiness-repair claim after typed regeneration, design approval, and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5824-foundation-readiness-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness-repair\"}"
+    },
+    {
+      "sequence": 34,
+      "generation": 22,
+      "actor": "codex:5860-foundation-validator-root-repair",
+      "reason": "Reacquire issue #5824 only to correct repository-root resolution in its owned Foundation validator.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness-repair\",\"claim_id\":\"claim-5824-foundation-validator-root-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-validator-root-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5824\",\".csdlc/issues/5824\",\".csdlc/locks/5824.lock\",\".csdlc/prepared/issues/5824\"],\"purpose\":\"Correct issue 5824 validator root resolution without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 22,
+      "actor": "codex:5860-foundation-validator-root-repair",
+      "reason": "Release issue #5824 validator-root repair claim after syntax, contract, ownership, and doctor validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5824-foundation-validator-root-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-validator-root-repair\"}"
     }
   ]
 }

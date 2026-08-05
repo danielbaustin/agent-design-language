@@ -1,0 +1,7 @@
+{
+  "issue": 5824,
+  "expected_generation": 19,
+  "expected_digest": "c87a9efc18b9dfccdabc230e60e9982bf6fbb5e5a048b4bfa03da84290c86267",
+  "claim_id": "claim-5824-foundation-readiness-repair",
+  "reviewer": "codex:5860-foundation-readiness-repair-design-review"
+}

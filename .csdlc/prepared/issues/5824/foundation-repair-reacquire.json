@@ -1,0 +1,25 @@
+{
+  "issue": 5824,
+  "expected_generation": 19,
+  "expected_digest": "315ce9e2053418221a39742c2d5a2d012b7e01fbb7898e01403caa19f0199d99",
+  "now_unix_seconds": 1785956541,
+  "actor": "codex:5860-foundation-readiness-repair",
+  "reason": "Acquire issue #5824 only for the authorized Foundation exact-head readiness repair.",
+  "replacement": {
+    "id": "claim-5824-foundation-readiness-repair",
+    "owner": "codex:5860-foundation-readiness-repair",
+    "generation": 19,
+    "acquired_unix_seconds": 1785956541,
+    "expires_unix_seconds": 1786042941,
+    "heartbeat_unix_seconds": 1785956541,
+    "branch": "codex/5860-foundation-readiness-repair",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5824",
+      ".csdlc/issues/5824",
+      ".csdlc/locks/5824.lock",
+      ".csdlc/prepared/issues/5824"
+    ],
+    "purpose": "Repair issue 5824 Foundation execution-readiness packet without product implementation"
+  }
+}

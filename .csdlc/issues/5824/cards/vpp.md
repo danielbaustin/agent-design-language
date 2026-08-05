@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5824/diagram.mmd
 [
   {
     "lane": "enum-inventory-contract",
-    "proof_role": "Validate complete field ownership and one disposition per restricted current-v2 field.",
+    "proof_role": "Derive the exhaustive restricted-type denominator from current C-SDLC v2 source and require one source-grounded disposition plus a no-duplicate-work or finite-gap decision for every entry.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -39,9 +39,7 @@ Diagram: .csdlc/prepared/issues/5824/diagram.mmd
     "budget_tokens": 2000,
     "argv": [
       "ruby",
-      "-rjson",
-      "-e",
-      "r=JSON.parse(File.read('.csdlc/evidence/5824/enum-inventory.json')); abort('empty') unless r.is_a?(Array)&&!r.empty?; allowed=%w[typed_complete finite_gap intentionally_extensible]; abort('bad row') unless r.all?{|x|x['field'].to_s!=''&&allowed.include?(x['disposition'])&&x['stored_string']&&x['owners'].is_a?(Hash)}; abort('duplicate') unless r.map{|x|x['field']}.uniq.length==r.length"
+      ".csdlc/prepared/issues/5824/validate-enum-inventory.rb"
     ],
     "parallel_group": "inventory",
     "defer_reason": null
@@ -106,7 +104,7 @@ Tokens: 25000
 
 ## Commands
 
-- `ruby -rjson -e r=JSON.parse(File.read('.csdlc/evidence/5824/enum-inventory.json')); abort('empty') unless r.is_a?(Array)&&!r.empty?; allowed=%w[typed_complete finite_gap intentionally_extensible]; abort('bad row') unless r.all?{|x|x['field'].to_s!=''&&allowed.include?(x['disposition'])&&x['stored_string']&&x['owners'].is_a?(Hash)}; abort('duplicate') unless r.map{|x|x['field']}.uniq.length==r.length`
+- `ruby .csdlc/prepared/issues/5824/validate-enum-inventory.rb`
 - `cargo nextest run --locked --manifest-path csdlc-v2/Cargo.toml --no-tests=fail --test prompt_card_enum_typing`
 - `git diff --check`
 
