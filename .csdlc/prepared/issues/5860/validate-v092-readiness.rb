@@ -10,7 +10,13 @@ WAVE_PATH = "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
 HASH_MANIFEST_PATH = ".csdlc/evidence/5860/V092_READINESS_ARTIFACT_SHA256.json"
 LIVE_MANIFEST_PATH = ".csdlc/evidence/5860/V092_LIVE_ISSUE_CONTRACTS.json"
 OWNERSHIP_VALIDATOR = ".csdlc/prepared/issues/5860/validate-v092-ownership.rb"
+DOCTOR_VALIDATOR = ".csdlc/prepared/issues/5860/validate-v092-doctors.rb"
 LIVE_BODY_PUBLISHER = ".csdlc/prepared/issues/5860/publish-v092-live-issue-bodies.rb"
+LIVE_PREPARATION_VALIDATORS = [
+  ".csdlc/prepared/issues/5821/validate-child-wave.rb",
+  ".csdlc/prepared/issues/5862/validate-implementation-wave.rb"
+].freeze
+ALLOWED_DIFF_PREFIXES = [".adl/docs/TBD/", ".csdlc/", "docs/"].freeze
 
 FORBIDDEN = {
   "placeholder design" => /Status: design required before Ready\./,
@@ -69,14 +75,6 @@ def canonical_graph(wave)
 
       issue_to_sprint[issue] = sprint_issue
     end
-  end
-
-  # The reviewed WP-04 gate materialized this bounded implementation wave
-  # after the parent sprint packet was authored. It remains in sprint #5855.
-  wp_rows.each do |row|
-    next unless row["wp"].to_s.match?(/\AWP-04(?:-IMP|\.\d+)\z/)
-
-    issue_to_sprint[row.fetch("issue")] = 5855
   end
 
   missing = issues - issue_to_sprint.keys
@@ -175,6 +173,16 @@ write_hash_path = option_value("--write-hash-manifest")
 write_live_path = option_value("--write-live-manifest")
 verify_live = ARGV.include?("--verify-live")
 live_inventory = nil
+
+diff_stdout, diff_stderr, diff_status = Open3.capture3("git", "diff", "--name-only", "origin/main...HEAD")
+errors << "cannot inspect documentation-only diff boundary: #{diff_stderr.strip}" unless diff_status.success?
+if diff_status.success?
+  changed_paths = diff_stdout.lines.map(&:strip).reject(&:empty?)
+  changed_paths.each do |path|
+    errors << "product or undeclared path changed: #{path}" unless ALLOWED_DIFF_PREFIXES.any? { |prefix| path.start_with?(prefix) }
+    errors << "externally owned #5861 path changed: #{path}" if path.match?(%r{(?:^|/)5861(?:/|\.|$)})
+  end
+end
 
 missing_wave = issues - rows_by_issue.keys
 errors.concat(missing_wave.map { |issue| "##{issue}: missing canonical wave row" })
@@ -331,6 +339,8 @@ sprints.each do |sprint, sprint_issues|
 
     paths = owned_paths(design)
     errors << "##{issue}: design has no exact repo-relative Owned Paths" if paths.empty?
+    rollback = markdown_section(design, "Rollback")
+    errors << "##{issue}: design lacks an explicit nonempty Rollback section" if rollback.to_s.strip.empty?
 
     spp = card_values.dig("spp", "content", "values") || {}
     %w[steps invariants risks stop_conditions].each do |field|
@@ -387,7 +397,20 @@ else
   abort "missing #{OWNERSHIP_VALIDATOR}"
 end
 
+if File.file?(DOCTOR_VALIDATOR)
+  _stdout, stderr, status = Open3.capture3("ruby", DOCTOR_VALIDATOR)
+  abort "typed doctor validation failed: #{stderr.strip}" unless status.success?
+else
+  abort "missing #{DOCTOR_VALIDATOR}"
+end
+
 if verify_live
+  LIVE_PREPARATION_VALIDATORS.each do |validator|
+    abort "missing #{validator}" unless File.file?(validator)
+
+    _stdout, stderr, status = Open3.capture3("ruby", validator)
+    abort "preparation control failed for #{validator}: #{stderr.strip}" unless status.success?
+  end
   _stdout, stderr, status = Open3.capture3("ruby", LIVE_BODY_PUBLISHER)
   abort "live issue body parity failed: #{stderr.strip}" unless status.success?
 end
