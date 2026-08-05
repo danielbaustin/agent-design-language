@@ -2337,7 +2337,7 @@ fn verify_canonical_projection_bytes(
     Ok(())
 }
 
-fn read_regular_projection(root: &Path, relative: &Path) -> Result<Vec<u8>> {
+pub(crate) fn read_regular_projection(root: &Path, relative: &Path) -> Result<Vec<u8>> {
     let path = root.join(relative);
     let metadata = canonical_path_metadata_beneath(root, relative)?.ok_or_else(|| {
         V2Error::new(

@@ -137,7 +137,6 @@ Create `bind-run.json`:
   "session_id": "current-governed-session-id",
   "base_branch": "main",
   "expected_base_revision": "exact-revision-sealed-above",
-  "now_unix_seconds": 1785945600,
   "lease_seconds": 14400
 }
 ```
@@ -158,7 +157,9 @@ routes through the existing typed initialization and bind implementation.
 The request contains no actor, claim ID, branch, worktree, or protected-path
 copy. Those values come from the governed session claim, issue draft, and
 readiness receipt. A missing, expired, duplicate, released, or globally frozen
-session claim fails closed before Git mutation.
+session claim fails closed before Git mutation. Bind uses trusted host time and
+caps its lease to the governed session expiry; callers cannot supply clock
+authority.
 
 Expected result: `state` is `bound`, and the result reports the derived branch,
 worktree, and owner for operator visibility.
@@ -182,9 +183,14 @@ Run:
 
 Release requires the exact session-derived owner and serializes against bind.
 For an unstarted binding it verifies the bound issue projection and rejects
-non-lifecycle worktree changes, then removes the intent-owned worktree, branch,
-and compatibility projection before returning the preparation state to
-`execution_ready`.
+any drift from the exact intent-materialized lifecycle digest, then removes
+only worktree and branch artifacts with durable creation evidence before
+returning the preparation state to `execution_ready`.
+
+If the original session expires while an intent is interrupted, a new governed
+session may repair it by supplying `expected_intent_digest` from doctor output.
+That digest-pinned takeover is accepted only after the old intent lease has
+expired; ordinary release omits the field.
 
 Do not use ordinary release after implementation starts. Route terminal work
 through `csdlc-finish`, then use `csdlc-clean cleanup` for the exact registered

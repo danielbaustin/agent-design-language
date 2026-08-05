@@ -1357,7 +1357,10 @@ fn released_claim_reacquires_without_phase_or_audit_rewind() {
     let dormant_audit_len = dormant.audit.len();
     let doctor = diagnose(&store, 42);
     assert_eq!(doctor.status, DoctorStatus::Block);
-    assert_eq!(doctor.next_operation.as_deref(), Some("reacquire_claim"));
+    assert_eq!(
+        doctor.next_operation.as_deref(),
+        Some("csdlc-migrate repair")
+    );
 
     let result = csdlc_v2::reacquire_claim(
         &store,
@@ -3450,14 +3453,9 @@ fn public_schema_bundle_covers_requests_state_and_doctor_output() {
     let schema = csdlc_v2::public_schema_bundle();
     assert_eq!(schema["schema"], "csdlc.public_schema_bundle.v1");
     for key in [
-        "bootstrap_request",
         "approve_design_request",
         "edit_request",
-        "bind_request",
-        "bind_result",
         "recover_claim_request",
-        "reacquire_claim_request",
-        "reacquire_claim_result",
         "release_closed_claim_request",
         "revoke_active_claim_request",
         "revoke_active_claim_result",

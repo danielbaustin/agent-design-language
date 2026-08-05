@@ -681,7 +681,34 @@ pub(crate) fn validate_validation_lanes(
     lanes: &[crate::cards::ValidationLane],
 ) -> Result<()> {
     for lane in lanes {
-        for command in &lane.argv {
+        let executable = lane.argv.first().ok_or_else(|| {
+            V2Error::new(
+                ErrorCode::InvalidInput,
+                format!("validation lane {} has no executable", lane.lane),
+            )
+        })?;
+        let executable_exists = if executable.contains('/') {
+            let path = if Path::new(executable).is_absolute() {
+                Path::new(executable).to_path_buf()
+            } else {
+                root.join(executable)
+            };
+            path.is_file()
+        } else {
+            std::env::var_os("PATH").is_some_and(|path| {
+                std::env::split_paths(&path).any(|directory| directory.join(executable).is_file())
+            })
+        };
+        if !executable_exists {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                format!(
+                    "validation lane {} names unavailable executable {}",
+                    lane.lane, executable
+                ),
+            ));
+        }
+        for command in lane.argv.iter().skip(1) {
             if !command.contains('/') {
                 continue;
             }

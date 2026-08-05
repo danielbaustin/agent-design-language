@@ -159,6 +159,7 @@ pub struct PrepareBatchRequest {
 pub enum BatchChildOutcome {
     ExecutionReady,
     Prepared,
+    Failed,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -255,7 +256,6 @@ pub struct DerivedBindRequest {
     pub session_id: String,
     pub base_branch: String,
     pub expected_base_revision: String,
-    pub now_unix_seconds: u64,
     pub lease_seconds: u64,
 }
 
@@ -287,6 +287,8 @@ pub struct BindingIntent {
     pub protected_paths: Vec<String>,
     pub state: BindingIntentState,
     pub created_artifacts: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub materialized_lifecycle_digest: Option<String>,
     pub digest: String,
 }
 
@@ -305,6 +307,13 @@ pub struct DerivedBindResult {
 pub struct BindReleaseRequest {
     pub issue: u64,
     pub session_id: String,
+    #[serde(default)]
+    pub expected_intent_digest: Option<String>,
+}
+
+struct GovernedSessionAuthority {
+    owner: String,
+    expires_unix_seconds: u64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -424,8 +433,10 @@ pub fn sync_preparation(store: &Store, request: PrepareSyncRequest) -> Result<Pr
             "successor sync requires the current manifest digest",
         ));
     }
-    let design = fs::read(store.root().join(&request.design_path))?;
-    let diagram = fs::read(store.root().join(&request.diagram_path))?;
+    let design =
+        crate::store::read_regular_projection(store.root(), Path::new(&request.design_path))?;
+    let diagram =
+        crate::store::read_regular_projection(store.root(), Path::new(&request.diagram_path))?;
     let design_digest = digest(&design);
     let diagram_digest = digest(&diagram);
     let sequence = current
@@ -646,7 +657,7 @@ pub fn run_preparation_batch(
             }),
             Err(error) => children.push(BatchChildResult {
                 issue,
-                outcome: BatchChildOutcome::Prepared,
+                outcome: BatchChildOutcome::Failed,
                 generation_id: None,
                 receipt_digest: None,
                 warnings,
@@ -676,7 +687,7 @@ pub fn run_preparation_batch(
         next_operation: next_operation.into(),
     };
     validate_component(&result.batch_id, "batch_id")?;
-    atomic_write_json(
+    write_immutable_json(
         &store
             .root()
             .join(".csdlc/preparation/batches")
@@ -705,6 +716,27 @@ pub fn migrate_legacy_preparation(
             ErrorCode::StaleDigest,
             "legacy issue changed before migration",
         ));
+    }
+    let preparation_dir = issue_preparation_dir(store, request.issue);
+    if preparation_dir.exists() {
+        let snapshot = preparation_dir
+            .join("migration")
+            .join(format!("legacy-{}.json", record.digest));
+        if !snapshot.exists() {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "canonical legacy authority coexists with unrelated preparation state",
+            ));
+        }
+        let retained: crate::IssueRecord = read_json(&snapshot)?;
+        if retained.digest != record.digest {
+            return Err(V2Error::new(
+                ErrorCode::CorruptRecord,
+                "interrupted migration snapshot does not match canonical authority",
+            ));
+        }
+        let _lock = preparation_lock(store, request.issue)?;
+        fs::remove_dir_all(&preparation_dir)?;
     }
     if matches!(
         record.phase,
@@ -757,8 +789,10 @@ pub fn migrate_legacy_preparation(
     }
     let cards = store.load_cards(request.issue)?;
     let initial = initial_from_cards(&cards)?;
-    let design = fs::read(store.root().join(&record.design_path))?;
-    let diagram = fs::read(store.root().join(&record.diagram_path))?;
+    let design =
+        crate::store::read_regular_projection(store.root(), Path::new(&record.design_path))?;
+    let diagram =
+        crate::store::read_regular_projection(store.root(), Path::new(&record.diagram_path))?;
     let design_digest = digest(&design);
     let diagram_digest = digest(&diagram);
     if validate_cross_card(
@@ -836,7 +870,7 @@ pub fn migrate_legacy_preparation(
         ".csdlc/preparation/issues/{}/migration/legacy-{}.json",
         request.issue, record.digest
     );
-    atomic_write_json(&store.root().join(&snapshot_relative), &record)?;
+    write_immutable_json(&store.root().join(&snapshot_relative), &record)?;
     write_generation(store, &generation, &design, &diagram)?;
     let next = manifest(
         record.issue,
@@ -851,7 +885,14 @@ pub fn migrate_legacy_preparation(
         &next,
     )?;
     drop(_lock);
-    store.remove_unstarted_binding_projection(record.issue, &claim.id, &record.digest)?;
+    if let Err(error) =
+        store.remove_unstarted_binding_projection(record.issue, &claim.id, &record.digest)
+    {
+        if issue_preparation_dir(store, request.issue).exists() {
+            fs::remove_dir_all(issue_preparation_dir(store, request.issue))?;
+        }
+        return Err(error);
+    }
     Ok(LegacyPreparationMigrationResult {
         schema: "csdlc.legacy_preparation_migration_result.v1".into(),
         issue: record.issue,
@@ -954,24 +995,23 @@ pub fn repair_legacy_preparation(
         }
     }
 
+    let audit = serde_json::json!({
+        "schema": "csdlc.legacy_preparation_repair_audit.v1",
+        "issue": request.issue,
+        "legacy_digest": request.expected_legacy_digest,
+        "quarantine_digest": request.expected_quarantine_digest,
+        "quarantine_path": request.quarantine_path,
+        "disposition": request.disposition,
+        "actor": request.actor,
+        "reason": request.reason,
+    });
+    let audit_digest = digest(&serde_json::to_vec(&audit)?);
     let audit_path = format!(
         ".csdlc/preparation/issues/{}/migration/repair-{}.json",
         request.issue,
-        &request.expected_quarantine_digest[..16]
+        &audit_digest[..16]
     );
-    atomic_write_json(
-        &store.root().join(&audit_path),
-        &serde_json::json!({
-            "schema": "csdlc.legacy_preparation_repair_audit.v1",
-            "issue": request.issue,
-            "legacy_digest": request.expected_legacy_digest,
-            "quarantine_digest": request.expected_quarantine_digest,
-            "quarantine_path": request.quarantine_path,
-            "disposition": request.disposition,
-            "actor": request.actor,
-            "reason": request.reason,
-        }),
-    )?;
+    write_immutable_json(&store.root().join(&audit_path), &audit)?;
     Ok(LegacyPreparationRepairResult {
         schema: "csdlc.legacy_preparation_repair_result.v1".into(),
         issue: request.issue,
@@ -994,7 +1034,7 @@ fn governed_session_owner(
     issue: u64,
     session_id: &str,
     now_unix_seconds: u64,
-) -> Result<String> {
+) -> Result<GovernedSessionAuthority> {
     let common_dir = PathBuf::from(
         crate::git::run(
             store.root(),
@@ -1009,21 +1049,33 @@ fn governed_session_owner(
         )
     })?;
     let ledger_path = primary_root.join(".adl/session-ledger/ledger.json");
-    let ledger: SessionLedger = read_json(&ledger_path).map_err(|error| {
-        let code = if error.code == ErrorCode::Io {
-            ErrorCode::MissingClaim
-        } else {
-            error.code
-        };
-        V2Error::new(
-            code,
+    if !ledger_path.exists() {
+        return Err(V2Error::new(
+            ErrorCode::MissingClaim,
             format!(
-                "governed session ledger is unavailable at {}: {}",
-                ledger_path.display(),
-                error.message
+                "governed session ledger is unavailable at {}",
+                ledger_path.display()
             ),
-        )
-    })?;
+        ));
+    }
+    let ledger: SessionLedger =
+        read_regular_json(primary_root, Path::new(".adl/session-ledger/ledger.json")).map_err(
+            |error| {
+                let code = if error.code == ErrorCode::Io {
+                    ErrorCode::MissingClaim
+                } else {
+                    error.code
+                };
+                V2Error::new(
+                    code,
+                    format!(
+                        "governed session ledger is unavailable at {}: {}",
+                        ledger_path.display(),
+                        error.message
+                    ),
+                )
+            },
+        )?;
     if ledger.schema != "adl.session_ledger.v1" {
         return Err(V2Error::new(
             ErrorCode::CorruptRecord,
@@ -1083,7 +1135,20 @@ fn governed_session_owner(
             "matching governed session-ledger claim has no owner",
         ));
     }
-    Ok(claim.owner.clone())
+    let expires = time::OffsetDateTime::parse(
+        &claim.expires_at,
+        &time::format_description::well_known::Rfc3339,
+    )
+    .map_err(|error| V2Error::new(ErrorCode::CorruptRecord, error.to_string()))?;
+    Ok(GovernedSessionAuthority {
+        owner: claim.owner.clone(),
+        expires_unix_seconds: u64::try_from(expires.unix_timestamp()).map_err(|_| {
+            V2Error::new(
+                ErrorCode::CorruptRecord,
+                "governed session expiry predates the Unix epoch",
+            )
+        })?,
+    })
 }
 
 fn legacy_claim_has_active_topology_or_session(
@@ -1119,7 +1184,8 @@ fn legacy_claim_has_active_topology_or_session(
     if !ledger_path.exists() {
         return Ok(false);
     }
-    let ledger: SessionLedger = read_json(&ledger_path)?;
+    let ledger: SessionLedger =
+        read_regular_json(primary_root, Path::new(".adl/session-ledger/ledger.json"))?;
     if ledger.schema != "adl.session_ledger.v1" {
         return Err(V2Error::new(
             ErrorCode::CorruptRecord,
@@ -1229,12 +1295,9 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
         ));
     }
     validate_bind_dirty_paths(store.root(), request.issue)?;
-    let derived_owner = governed_session_owner(
-        store,
-        request.issue,
-        &request.session_id,
-        request.now_unix_seconds,
-    )?;
+    let trusted_now = now_seconds()?;
+    let authority = governed_session_owner(store, request.issue, &request.session_id, trusted_now)?;
+    let derived_owner = authority.owner;
     let derived_claim_id = digest(
         format!(
             "{}:{}:{}:{}",
@@ -1277,10 +1340,10 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
             (
                 derived_owner,
                 derived_claim_id,
-                request.now_unix_seconds,
-                request
-                    .now_unix_seconds
-                    .saturating_add(request.lease_seconds),
+                trusted_now,
+                trusted_now
+                    .saturating_add(request.lease_seconds)
+                    .min(authority.expires_unix_seconds),
             )
         };
     let claim = Claim {
@@ -1301,13 +1364,6 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
     let mut intent = if let Some(existing) = existing_intent {
         existing
     } else {
-        let mut created_artifacts = Vec::new();
-        if !branch_preexisting {
-            created_artifacts.push(format!("branch:{branch}"));
-        }
-        if !worktree_preexisting {
-            created_artifacts.push(format!("worktree:{worktree}"));
-        }
         let mut intent = BindingIntent {
             schema: INTENT_SCHEMA.into(),
             issue: request.issue,
@@ -1325,7 +1381,8 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
             worktree_preexisting,
             protected_paths: generation.owned_paths.clone(),
             state: BindingIntentState::Reserved,
-            created_artifacts,
+            created_artifacts: Vec::new(),
+            materialized_lifecycle_digest: None,
             digest: String::new(),
         };
         intent.digest = object_digest(&intent)?;
@@ -1361,25 +1418,6 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
     intent.digest = object_digest(&intent)?;
     write_binding_intent(store, &intent)?;
     drop(_registry);
-    if intent.state != BindingIntentState::Bound
-        && !intent.branch_preexisting
-        && intent.worktree != "."
-    {
-        let listed = crate::git::worktrees(store.root())?;
-        let branch_is_registered = listed
-            .iter()
-            .any(|(listed_branch, _)| listed_branch == &intent.branch);
-        let branch_exists = std::process::Command::new("git")
-            .current_dir(store.root())
-            .args(["show-ref", "--verify", "--quiet"])
-            .arg(format!("refs/heads/{}", intent.branch))
-            .status()
-            .map_err(|error| V2Error::new(ErrorCode::GitFailure, error.to_string()))?
-            .success();
-        if branch_exists && !branch_is_registered {
-            crate::git::run(store.root(), &["branch", "-D", intent.branch.as_str()])?;
-        }
-    }
     let bind = bind_issue(
         store,
         BindRequest {
@@ -1401,6 +1439,15 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
     }
     intent.created_artifacts.sort();
     intent.created_artifacts.dedup();
+    let materialized_root = if intent.worktree == "." {
+        store.root().to_path_buf()
+    } else {
+        store.root().join(&intent.worktree)
+    };
+    intent.materialized_lifecycle_digest = Some(materialized_lifecycle_digest(
+        &materialized_root,
+        request.issue,
+    )?);
     intent.digest.clear();
     intent.digest = object_digest(&intent)?;
     write_binding_intent(store, &intent)?;
@@ -1453,12 +1500,16 @@ pub fn release_derived_bind(
             "binding intent disappeared while release was serialized",
         )
     })?;
-    let current_owner =
-        governed_session_owner(store, request.issue, &request.session_id, now_seconds()?)?;
-    if intent.session_id != request.session_id || intent.owner != current_owner {
+    let trusted_now = now_seconds()?;
+    let current = governed_session_owner(store, request.issue, &request.session_id, trusted_now)?;
+    let same_owner = intent.session_id == request.session_id && intent.owner == current.owner;
+    let governed_takeover = !same_owner
+        && intent.expires_unix_seconds <= trusted_now
+        && request.expected_intent_digest.as_deref() == Some(&intent.digest);
+    if !same_owner && !governed_takeover {
         return Err(V2Error::new(
             ErrorCode::MissingClaim,
-            "current session does not own binding intent",
+            "current session does not own binding intent; expired recovery requires its exact digest",
         ));
     }
     intent.state = BindingIntentState::Releasing;
@@ -1466,17 +1517,25 @@ pub fn release_derived_bind(
     intent.digest = object_digest(&intent)?;
     atomic_write_json(&path, &intent)?;
     let mut removed = Vec::new();
-    let owns_worktree = !intent.worktree_preexisting
-        || intent
-            .created_artifacts
-            .iter()
-            .any(|artifact| artifact == &format!("worktree:{}", intent.worktree));
-    let owns_branch = !intent.branch_preexisting
-        || intent
-            .created_artifacts
-            .iter()
-            .any(|artifact| artifact == &format!("branch:{}", intent.branch));
+    let owns_worktree = intent
+        .created_artifacts
+        .iter()
+        .any(|artifact| artifact == &format!("worktree:{}", intent.worktree));
+    let owns_branch = intent
+        .created_artifacts
+        .iter()
+        .any(|artifact| artifact == &format!("branch:{}", intent.branch));
     let worktrees = crate::git::worktrees(store.root())?;
+    if intent.worktree != "."
+        && !intent.worktree_preexisting
+        && worktrees.iter().any(|(branch, _)| branch == &intent.branch)
+        && !owns_worktree
+    {
+        return Err(V2Error::new(
+            ErrorCode::ReconciliationRequired,
+            "derived worktree exists without durable creation evidence",
+        ));
+    }
     if let Some((branch, registered)) = worktrees
         .iter()
         .find(|(branch, _)| branch == &intent.branch && owns_worktree)
@@ -1516,7 +1575,11 @@ pub fn release_derived_bind(
                 ));
             }
         }
-        validate_release_dirty_paths(&target, request.issue)?;
+        validate_release_dirty_paths(
+            &target,
+            request.issue,
+            intent.materialized_lifecycle_digest.as_deref(),
+        )?;
         crate::git::run(
             store.root(),
             &["worktree", "remove", "--force", registered.as_str()],
@@ -1530,6 +1593,12 @@ pub fn release_derived_bind(
         .status()
         .map_err(|error| V2Error::new(ErrorCode::GitFailure, error.to_string()))?
         .success();
+    if branch_exists && !intent.branch_preexisting && !owns_branch {
+        return Err(V2Error::new(
+            ErrorCode::ReconciliationRequired,
+            "derived branch exists without durable creation evidence",
+        ));
+    }
     if branch_exists && owns_branch {
         let branch_revision =
             crate::git::run(store.root(), &["rev-parse", intent.branch.as_str()])?.stdout;
@@ -1563,32 +1632,94 @@ pub fn release_derived_bind(
     })
 }
 
-fn validate_release_dirty_paths(root: &Path, issue: u64) -> Result<()> {
-    let status = crate::git::run(root, &["status", "--porcelain", "--untracked-files=all"])?;
-    let allowed = [
+fn validate_release_dirty_paths(
+    target_root: &Path,
+    issue: u64,
+    expected_materialized_digest: Option<&str>,
+) -> Result<()> {
+    let status = crate::git::run(
+        target_root,
+        &["status", "--porcelain", "--untracked-files=all"],
+    )?;
+    if status.stdout.trim().is_empty() {
+        return Ok(());
+    }
+    let lifecycle = [
         format!(".csdlc/issues/{issue}/"),
         format!(".csdlc/prepared/issues/{issue}/"),
         format!(".csdlc/evidence/{issue}/"),
         format!(".csdlc/preparation/issues/{issue}/"),
-        ".csdlc/locks/".into(),
-        ".adl/session-ledger/".into(),
     ];
+    let actual = materialized_lifecycle_digest(target_root, issue)?;
+    if expected_materialized_digest != Some(actual.as_str()) {
+        return Err(V2Error::new(
+            ErrorCode::ReconciliationRequired,
+            "bound worktree lifecycle files differ from intent-materialized bytes",
+        ));
+    }
+    let allowed_lock = format!(".csdlc/locks/{issue}.lock");
     let unexpected = status
         .stdout
         .lines()
         .filter_map(|line| {
             let path = line.get(3..)?.split(" -> ").last()?.trim_matches('"');
-            (!allowed.iter().any(|prefix| path.starts_with(prefix))).then(|| path.to_string())
+            (path != allowed_lock && !lifecycle.iter().any(|prefix| path.starts_with(prefix)))
+                .then(|| path.to_string())
         })
         .collect::<Vec<_>>();
     if !unexpected.is_empty() {
         return Err(V2Error::new(
             ErrorCode::UnsafeCheckout,
             format!(
-                "binding worktree contains non-lifecycle changes: {}",
+                "binding worktree contains changes outside exact intent materialization for issue {issue}: {}",
                 unexpected.join(", ")
             ),
         ));
+    }
+    Ok(())
+}
+
+fn materialized_lifecycle_digest(root: &Path, issue: u64) -> Result<String> {
+    let mut entries = Vec::new();
+    for relative in [
+        format!(".csdlc/issues/{issue}"),
+        format!(".csdlc/prepared/issues/{issue}"),
+        format!(".csdlc/evidence/{issue}"),
+        format!(".csdlc/preparation/issues/{issue}"),
+    ] {
+        collect_lifecycle_bytes(root, Path::new(&relative), &mut entries)?;
+    }
+    Ok(digest(&serde_json::to_vec(&entries)?))
+}
+
+fn collect_lifecycle_bytes(
+    root: &Path,
+    relative: &Path,
+    entries: &mut Vec<(String, String)>,
+) -> Result<()> {
+    let path = root.join(relative);
+    let metadata = match fs::symlink_metadata(&path) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(error) => return Err(error.into()),
+    };
+    if metadata.file_type().is_symlink() {
+        return Err(V2Error::new(
+            ErrorCode::UnsafeCheckout,
+            "intent-materialized lifecycle tree contains a symlink",
+        ));
+    }
+    if metadata.is_file() {
+        entries.push((
+            relative.to_string_lossy().to_string(),
+            digest(&fs::read(path)?),
+        ));
+        return Ok(());
+    }
+    let mut children = fs::read_dir(path)?.collect::<std::io::Result<Vec<_>>>()?;
+    children.sort_by_key(std::fs::DirEntry::file_name);
+    for child in children {
+        collect_lifecycle_bytes(root, &relative.join(child.file_name()), entries)?;
     }
     Ok(())
 }
@@ -1767,8 +1898,10 @@ fn validate_generation_for_seal(store: &Store, generation: &PreparedGeneration) 
             "prepared generation semantic digest mismatch",
         ));
     }
-    let design = fs::read(store.root().join(&generation.design_path))?;
-    let diagram = fs::read(store.root().join(&generation.diagram_path))?;
+    let design =
+        crate::store::read_regular_projection(store.root(), Path::new(&generation.design_path))?;
+    let diagram =
+        crate::store::read_regular_projection(store.root(), Path::new(&generation.diagram_path))?;
     if digest(&design) != generation.design_digest || digest(&diagram) != generation.diagram_digest
     {
         return Err(V2Error::new(
@@ -1822,8 +1955,22 @@ fn write_generation(
         ));
     }
     let staging = base.join(format!(".{}.staging", generation.generation_id));
-    if staging.exists() {
-        fs::remove_dir_all(&staging)?;
+    match fs::symlink_metadata(&staging) {
+        Ok(metadata) if metadata.file_type().is_symlink() => {
+            return Err(V2Error::new(
+                ErrorCode::UnsafeCheckout,
+                "generation staging path is a symlink",
+            ));
+        }
+        Ok(metadata) if metadata.is_dir() => fs::remove_dir_all(&staging)?,
+        Ok(_) => {
+            return Err(V2Error::new(
+                ErrorCode::UnsafeCheckout,
+                "generation staging path is not a directory",
+            ));
+        }
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(error) => return Err(error.into()),
     }
     create_dir_all_safe(&staging.join("cards"))?;
     atomic_write_json(&staging.join("generation.json"), generation)?;
@@ -2279,15 +2426,25 @@ fn atomic_write_json<T: Serialize>(path: &Path, value: &T) -> Result<()> {
 
 fn write_immutable_json<T: Serialize>(path: &Path, value: &T) -> Result<()> {
     let expected = serde_json::to_vec_pretty(value)?;
-    if path.exists() {
-        let existing = fs::read(path)?;
-        if existing.strip_suffix(b"\n") == Some(expected.as_slice()) {
-            return Ok(());
+    match fs::symlink_metadata(path) {
+        Ok(metadata) => {
+            if metadata.file_type().is_symlink() || !metadata.is_file() {
+                return Err(V2Error::new(
+                    ErrorCode::UnsafeCheckout,
+                    "immutable preparation artifact is not a regular file",
+                ));
+            }
+            let existing = fs::read(path)?;
+            if existing.strip_suffix(b"\n") == Some(expected.as_slice()) {
+                return Ok(());
+            }
+            return Err(V2Error::new(
+                ErrorCode::CorruptRecord,
+                "immutable preparation artifact already exists with different content",
+            ));
         }
-        return Err(V2Error::new(
-            ErrorCode::CorruptRecord,
-            "immutable preparation artifact already exists with different content",
-        ));
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(error) => return Err(error.into()),
     }
     let mut bytes = expected;
     bytes.push(b'\n');
@@ -2377,5 +2534,26 @@ fn write_bytes(path: &Path, bytes: &[u8]) -> Result<()> {
 }
 
 fn read_json<T: DeserializeOwned>(path: &Path) -> Result<T> {
-    Ok(serde_json::from_slice(&fs::read(path)?)?)
+    let bytes = if let Ok((root, relative)) = preparation_root_and_relative(path) {
+        crate::store::read_regular_projection(root, &relative)?
+    } else {
+        let metadata = fs::symlink_metadata(path)?;
+        if metadata.file_type().is_symlink() || !metadata.is_file() {
+            return Err(V2Error::new(
+                ErrorCode::UnsafeCheckout,
+                format!(
+                    "governed JSON input is not a regular file: {}",
+                    path.display()
+                ),
+            ));
+        }
+        fs::read(path)?
+    };
+    Ok(serde_json::from_slice(&bytes)?)
+}
+
+fn read_regular_json<T: DeserializeOwned>(root: &Path, relative: &Path) -> Result<T> {
+    Ok(serde_json::from_slice(
+        &crate::store::read_regular_projection(root, relative)?,
+    )?)
 }

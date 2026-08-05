@@ -520,6 +520,62 @@ fn dependency_drift_blocks_seal() {
 }
 
 #[test]
+fn seal_rejects_an_unavailable_validation_executable() {
+    let (_temp, store) = fixture();
+    let mut request = sync_request(&store, "Reject a non-proving validation lane.");
+    request.initial.validation_lanes[0].argv = vec!["definitely-not-installed-5861".into()];
+    let result = run_preparation(&store, PrepareRunRequest { sync: request }).unwrap();
+    assert!(result.receipt.is_none());
+    assert_eq!(result.error_code.as_deref(), Some("invalid_input"));
+}
+
+#[cfg(unix)]
+#[test]
+fn sync_rejects_symlinked_design_input() {
+    use std::os::unix::fs::symlink;
+
+    let (temp, store) = fixture();
+    let outside = temp.path().join("outside-design.md");
+    fs::write(&outside, "outside\n").unwrap();
+    fs::remove_file(temp.path().join("docs/design.md")).unwrap();
+    symlink(&outside, temp.path().join("docs/design.md")).unwrap();
+    let error = sync_preparation(&store, sync_request(&store, "Reject symlink input."))
+        .expect_err("symlinked design must fail closed");
+    assert_eq!(error.code, ErrorCode::UnsafeCheckout);
+}
+
+#[test]
+fn batch_id_is_immutable_across_different_results() {
+    let (_temp, store) = fixture();
+    let request = PrepareBatchRequest {
+        batch_id: "immutable-batch".into(),
+        children: vec![batch_child(
+            &store,
+            6301,
+            "immutable-child",
+            "First result.",
+            "src/immutable",
+            Vec::new(),
+        )],
+    };
+    run_preparation_batch(&store, request).unwrap();
+    let changed = PrepareBatchRequest {
+        batch_id: "immutable-batch".into(),
+        children: vec![batch_child(
+            &store,
+            6302,
+            "different-child",
+            "Different result.",
+            "src/different",
+            Vec::new(),
+        )],
+    };
+    let error = run_preparation_batch(&store, changed)
+        .expect_err("same batch id cannot overwrite immutable truth");
+    assert_eq!(error.code, ErrorCode::CorruptRecord);
+}
+
+#[test]
 fn migration_releases_preparation_only_claim_and_preserves_snapshot() {
     let temp = tempfile::tempdir().expect("tempdir");
     git(temp.path(), &["init", "-b", "main"]);
@@ -757,16 +813,11 @@ fn derived_bind_is_retryable_and_release_removes_only_created_git_artifacts() {
     )
     .unwrap();
     assert!(prepared.receipt.is_some());
-    let now = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_secs();
     let request = DerivedBindRequest {
         issue: 8001,
         session_id: "session-8001".into(),
         base_branch: "main".into(),
         expected_base_revision: base_revision,
-        now_unix_seconds: now,
         lease_seconds: 3_600,
     };
     write_session_ledger(temp.path(), &[(8001, "session-8001".into())]);
@@ -831,14 +882,64 @@ fn derived_bind_is_retryable_and_release_removes_only_created_git_artifacts() {
     intent.digest = digest(&serde_json::to_vec(&intent).unwrap());
     fs::write(&intent_path, serde_json::to_vec_pretty(&intent).unwrap()).unwrap();
 
-    let released = release_derived_bind(
+    let error = release_derived_bind(
         &store,
         BindReleaseRequest {
             issue: 8001,
             session_id: "session-8001".into(),
+            expected_intent_digest: None,
         },
     )
-    .expect("release");
+    .expect_err("unproven artifact ownership must fail closed");
+    assert_eq!(error.code, ErrorCode::ReconciliationRequired);
+    assert!(temp.path().join(&first.worktree).exists());
+
+    intent.created_artifacts = vec![
+        format!("branch:{}", first.branch),
+        format!("worktree:{}", first.worktree),
+    ];
+    intent.state = csdlc_v2::BindingIntentState::Bound;
+    intent.digest.clear();
+    intent.digest = digest(&serde_json::to_vec(&intent).unwrap());
+    fs::write(&intent_path, serde_json::to_vec_pretty(&intent).unwrap()).unwrap();
+
+    let materialized_card = temp
+        .path()
+        .join(&first.worktree)
+        .join(".csdlc/preparation/issues/8001/generations")
+        .join(&intent.generation_id)
+        .join("design.snapshot");
+    let original_card = fs::read(&materialized_card).unwrap();
+    fs::write(&materialized_card, "# drifted lifecycle card\n").unwrap();
+    let error = release_derived_bind(
+        &store,
+        BindReleaseRequest {
+            issue: 8001,
+            session_id: "session-8001".into(),
+            expected_intent_digest: None,
+        },
+    )
+    .expect_err("dirty lifecycle drift must fail closed");
+    assert_eq!(error.code, ErrorCode::ReconciliationRequired);
+    fs::write(&materialized_card, original_card).unwrap();
+
+    let mut intent: BindingIntent =
+        serde_json::from_slice(&fs::read(&intent_path).unwrap()).unwrap();
+    intent.state = csdlc_v2::BindingIntentState::Bound;
+    intent.expires_unix_seconds = 0;
+    intent.digest.clear();
+    intent.digest = digest(&serde_json::to_vec(&intent).unwrap());
+    fs::write(&intent_path, serde_json::to_vec_pretty(&intent).unwrap()).unwrap();
+    write_session_ledger(temp.path(), &[(8001, "replacement-session".into())]);
+    let released = release_derived_bind(
+        &store,
+        BindReleaseRequest {
+            issue: 8001,
+            session_id: "replacement-session".into(),
+            expected_intent_digest: Some(intent.digest),
+        },
+    )
+    .expect("digest-pinned takeover releases an expired intent");
     assert!(released.released);
     assert!(!temp.path().join(first.worktree).exists());
     assert_eq!(
@@ -916,10 +1017,6 @@ fn derived_bind_uses_the_existing_issue_worktree_in_place() {
         },
     )
     .unwrap();
-    let now = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_secs();
     write_session_ledger(temp.path(), &[(9001, "session-9001".into())]);
     let result = run_derived_bind(
         &store,
@@ -928,7 +1025,6 @@ fn derived_bind_uses_the_existing_issue_worktree_in_place() {
             session_id: "session-9001".into(),
             base_branch: "main".into(),
             expected_base_revision: base_revision.clone(),
-            now_unix_seconds: now,
             lease_seconds: 3_600,
         },
     )
@@ -960,6 +1056,7 @@ fn derived_bind_uses_the_existing_issue_worktree_in_place() {
         BindReleaseRequest {
             issue: 9001,
             session_id: "session-9001".into(),
+            expected_intent_digest: None,
         },
     )
     .expect("issue-local release");
@@ -1010,10 +1107,6 @@ fn ten_overlapping_binds_have_one_git_winner() {
         .trim()
         .to_string();
     let store = Store::new(temp.path());
-    let now = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_secs();
     let mut requests = Vec::new();
     for offset in 0..10_u64 {
         let issue = 10_000 + offset;
@@ -1055,7 +1148,6 @@ fn ten_overlapping_binds_have_one_git_winner() {
             session_id: format!("session-{issue}"),
             base_branch: "main".into(),
             expected_base_revision: base_revision.clone(),
-            now_unix_seconds: now,
             lease_seconds: 3_600,
         });
     }
