@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5851/diagram.mmd
 [
   {
     "lane": "independent-live-universe",
-    "proof_role": "Independently reconstruct the issue denominator from the wave and reread every GitHub issue/PR/check/review plus typed terminal/claim state; reject upstream-row slicing.",
+    "proof_role": "Independently reconstruct the issue denominator from the wave and reread every GitHub issue/PR/check/review plus typed terminal/claim state; reject upstream-row slicing. [preexec_rejection exit=1 diagnostic_sha256=9f5d21d76b31ce684331da6064f53c458830d54ed7afe254f135b8080a66832f]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -48,7 +48,7 @@ Diagram: .csdlc/prepared/issues/5851/diagram.mmd
   },
   {
     "lane": "handoff-review",
-    "proof_role": "Validate exact-head reviewer identity, findings dispositions, artifact digests, and v0.93 non-activation boundaries.",
+    "proof_role": "Validate exact-head reviewer identity, findings dispositions, artifact digests, and v0.93 non-activation boundaries. [preexec_rejection exit=1 diagnostic_sha256=277dfcf8324b19f5028dda3387ec4673e000557794de264430f4ff9a2d987287]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -71,7 +71,7 @@ Diagram: .csdlc/prepared/issues/5851/diagram.mmd
   },
   {
     "lane": "readiness-negatives",
-    "proof_role": "Run every negative fixture through the actual independent comparison or handoff validator and require digest-bound failure.",
+    "proof_role": "Run every negative fixture through the actual independent comparison or handoff validator and require digest-bound failure. [preexec_rejection exit=1 diagnostic_sha256=13ca224eba10443b1e2f4f81446f6dd6bbaa71e51715513fc3e05fb3b1f4e732]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

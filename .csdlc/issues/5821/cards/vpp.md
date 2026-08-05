@@ -46,7 +46,7 @@ Diagram: .csdlc/prepared/issues/5821/diagram.mmd
   },
   {
     "lane": "architecture-security-review",
-    "proof_role": "Validate required architecture/threat coverage and an independent accepted exact-packet review with recomputed artifact digests.",
+    "proof_role": "Validate required architecture/threat coverage and an independent accepted exact-packet review with recomputed artifact digests. [preexec_rejection exit=1 diagnostic_sha256=bab4c559fb9e19d99506c5e93a5ce3aa7a2610b934cd40213ab52d93467c6f87]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

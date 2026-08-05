@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5847/diagram.mmd
 [
   {
     "lane": "external-packet-identity",
-    "proof_role": "Validate the immutable external packet corpus, digest, target SHA, redaction boundary, and reviewer authority before transfer.",
+    "proof_role": "Validate the immutable external packet corpus, digest, target SHA, redaction boundary, and reviewer authority before transfer. [preexec_rejection exit=1 diagnostic_sha256=973b17cbc0a2ca5924335f6f6750d70c2fe5cd25b7b4d57af5b3935f47a062d3]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -48,7 +48,7 @@ Diagram: .csdlc/prepared/issues/5847/diagram.mmd
   },
   {
     "lane": "external-report-authority",
-    "proof_role": "Validate reviewer identity and authority, report/packet/target digests, complete finding count, full schema/evidence, risk authority, duplicate targets, and dispositions.",
+    "proof_role": "Validate reviewer identity and authority, report/packet/target digests, complete finding count, full schema/evidence, risk authority, duplicate targets, and dispositions. [preexec_rejection exit=1 diagnostic_sha256=973b17cbc0a2ca5924335f6f6750d70c2fe5cd25b7b4d57af5b3935f47a062d3]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

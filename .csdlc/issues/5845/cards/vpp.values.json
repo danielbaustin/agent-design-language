@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-24A] Podcast Studio first ten episodes",
     "slug": "v0-92-wp-24a-podcast-studio-first-ten-episodes",
     "version": "v0.92",
-    "generation": 41
+    "generation": 42
   },
   "status": "ready",
   "content": {
@@ -161,7 +161,7 @@
         },
         {
           "lane": "wp24a-platform-receipt-binding",
-          "proof_role": "Recompute canonical receipt payload, media, and capture SHA-256 bindings and require all four exact platform identities at candidate HEAD.",
+          "proof_role": "Recompute canonical receipt payload, media, and capture SHA-256 bindings and require all four exact platform identities at candidate HEAD. [preexec_rejection exit=1 diagnostic_sha256=e542a9dc375e1f9405365401453003da960d237897980caea6f051a933b599d8]",
           "acceptance_ids": [
             "AC-2",
             "AC-5"

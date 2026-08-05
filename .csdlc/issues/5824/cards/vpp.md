@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5824/diagram.mmd
 [
   {
     "lane": "enum-inventory-contract",
-    "proof_role": "Derive the exhaustive restricted-type denominator from current C-SDLC v2 source and require one source-grounded disposition plus a no-duplicate-work or finite-gap decision for every entry.",
+    "proof_role": "Derive the exhaustive restricted-type denominator from current C-SDLC v2 source and require one source-grounded disposition plus a no-duplicate-work or finite-gap decision for every entry. [preexec_rejection exit=1 diagnostic_sha256=1672959818bed15ac083b3a87719231b3fd1071fd8f191eb14ab920a728195f1]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

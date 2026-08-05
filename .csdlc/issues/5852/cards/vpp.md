@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5852/diagram.mmd
 [
   {
     "lane": "exact-release-manifest",
-    "proof_role": "Bind every release claim to exact reviewed head, ancestral merge, semantic review and terminal evidence, recomputed hashes, notes, checklist, handoff, risks, and non-claims.",
+    "proof_role": "Bind every release claim to exact reviewed head, ancestral merge, semantic review and terminal evidence, recomputed hashes, notes, checklist, handoff, risks, and non-claims. [preexec_rejection exit=1 diagnostic_sha256=63de60c3a947a88dd59f68d66d637490aee0c9c4adc6e2d9945833835ad7e8cc]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -48,7 +48,7 @@ Diagram: .csdlc/prepared/issues/5852/diagram.mmd
   },
   {
     "lane": "ceremony-preflight",
-    "proof_role": "Require every milestone issue terminal and claim-free, rerun the ceremony tests, and run exact-head v0.92 preflight.",
+    "proof_role": "Require every milestone issue terminal and claim-free, rerun the ceremony tests, and run exact-head v0.92 preflight. [preexec_rejection exit=1 diagnostic_sha256=63de60c3a947a88dd59f68d66d637490aee0c9c4adc6e2d9945833835ad7e8cc]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -71,7 +71,7 @@ Diagram: .csdlc/prepared/issues/5852/diagram.mmd
   },
   {
     "lane": "ceremony-negative-rerun",
-    "proof_role": "Rerun the real ceremony test suite and require observed dirty, branch, tag, duplicate, and partial-state rejection with fresh output digest.",
+    "proof_role": "Rerun the real ceremony test suite and require observed dirty, branch, tag, duplicate, and partial-state rejection with fresh output digest. [preexec_rejection exit=1 diagnostic_sha256=63de60c3a947a88dd59f68d66d637490aee0c9c4adc6e2d9945833835ad7e8cc]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -94,7 +94,7 @@ Diagram: .csdlc/prepared/issues/5852/diagram.mmd
   },
   {
     "lane": "live-release-readback",
-    "proof_role": "Prove annotated tag target, GitHub release publication, exact notes, complete assets, ancestry, and terminal claim-free milestone truth.",
+    "proof_role": "Prove annotated tag target, GitHub release publication, exact notes, complete assets, ancestry, and terminal claim-free milestone truth. [preexec_rejection exit=1 diagnostic_sha256=63de60c3a947a88dd59f68d66d637490aee0c9c4adc6e2d9945833835ad7e8cc]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

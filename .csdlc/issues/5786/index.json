@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1b2e09e7400592dbd7115e86ebed6acc75b6ee95fecd960a613e42721e7e5c3b",
   "phase": "bound",
-  "generation": 24,
-  "digest": "63b3030d05815dfbdd66221091efeccd8c2aeaf7d550bbbc687bf75b2011e0a8",
+  "generation": 25,
+  "digest": "36899513f58e0f5ca047aedcea84a9c26fb8aa8de69c12fd1617fcf960612398",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "86566a5ffca20053dec2e02b59f7ccb66dda7f4a9884d7817cdb90e98ad88be5",
+      "values_digest": "a9e933f1bb63c2b6793426c87e97c8708e58f86dc9172c69c4100432bc172603",
       "rendered_digest": "bd3cdce39886df93d1afe9b9c091611544bcb6bb829aa80589745a7f388a1f92",
       "ast_digest": "ecbd0321db583d3b29266f5a975e1d6a392076c11c52b25f579e61146c948d47"
     },
     "stp": {
-      "values_digest": "93c3bbdcf501072d37719a90843da0c6b24806f08fc3bd7981fc9fa86ab813b8",
+      "values_digest": "f32931ce549e14d467629d699c512fb5480e5fd137d36fa61bcc204b10f61da6",
       "rendered_digest": "b45321798014b0562090dbfc78af0b7d448c394de900855c428b908547c70856",
       "ast_digest": "0d07e49fa3af27fa71e573503b788a5643ee9669df345d051f85a2e6d0e417b7"
     },
     "spp": {
-      "values_digest": "c655ce629638dcee0943d7d131e0111a1ea14f460aeb5af176dc1303fcb92c8a",
+      "values_digest": "90468c039ed5b92f922a9946ac181cc5c663437570266b8390053ebf5c972f75",
       "rendered_digest": "2bfd8639c0e5c6232539bb5851999128f191a469eb41432b46b40a9819985f74",
       "ast_digest": "a22c6007a02711b684b3268d87e026affb2e97e11b2058d2c8b0ecfd7c201c05"
     },
     "vpp": {
-      "values_digest": "1ae46a8fc87d944cba2480ca116a8cddb7dec8bf90720ac0f2e962a2ffec5768",
-      "rendered_digest": "3e047875a2d4236c897e2f4e7e1ef8e012b4c431519d5e142a1847ab361d976f",
-      "ast_digest": "0e5340814556c8ed794505d6dc62f06bc3f36ddd808549955f8bbc970625f8bd"
+      "values_digest": "b8dcf04f8141d222a39e8368b0b645f0b4ca6714b05fbccd6d8418d3e22f991c",
+      "rendered_digest": "ba591e8b86931c79195384e53b4b1e732fb845f2d933f40977da9c8201736c00",
+      "ast_digest": "aa4793682d5dea64c33345b280826dc55e2c2470daaf696bb12220848c7df8bf"
     },
     "srp": {
-      "values_digest": "d601e539bd3c7f2cedc09b49e3a6fa91dcf48c66558cf57171e1db2b92b7a28a",
+      "values_digest": "5a0ac68ea2648d821d0466333ab38f7a040649d2b0cb482666d7ee90113676e5",
       "rendered_digest": "28b2540d589edd13515b7744efae57a4d16d247f28cd4e4b144197685b880e34",
       "ast_digest": "978d5682fc3d0518e3c446db239064032dc2866e78825aead2c2ac26b5f7e3cd"
     },
     "sor": {
-      "values_digest": "337a12689a4e0fa565f79ebe355ffc96832fe3b34e664749e99f880e30b0822a",
+      "values_digest": "0da07baacda939b9c039ba5fbba3b9ccd582179643dec0d69d7be49ad67e9c36",
       "rendered_digest": "e7755b231961082e3865c0856f5812fe4ad2d711e1cca17c5cb447e409847a06",
       "ast_digest": "680f19e828ce3990d490537f599b8aba12cfd752d16b83c2082be3107bfa5d0b"
     }
@@ -328,6 +328,27 @@
       "actor": "codex:5860-quality-release-replay",
       "reason": "Release exact-head replay claim after combined design approval, SPP regeneration, 58-issue ownership proof, and zero rollback-gap proof.",
       "operation": "{\"claim_id\":\"claim-5786-v092-quality-replay\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-replay-completion\",\"previous_owner\":\"codex:5860-quality-release-replay\"}"
+    },
+    {
+      "sequence": 38,
+      "generation": 24,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Acquire issue-local authority to declare the exact VPP pre-execution rejection contract.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5786-v092-preexec-contract\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-vpp-preexecution-contracts\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5786\",\".csdlc/prepared/issues/5786\",\".csdlc/evidence/5786\"],\"purpose\":\"Declare the issue-local VPP pre-execution rejection contract without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 39,
+      "generation": 25,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Declare the exact issue-local pre-execution rejection exit class and normalized diagnostic digest.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"pinned-deletion-denominator\",\"proof_role\":\"Reconstruct the immutable pre-change adl/src path, blob, file-count, and LoC denominator from its ancestral Git SHA; require complete dispositions, derived reduction and references, clean install, and native macOS/Linux exact-head proof. [preexec_rejection exit=1 diagnostic_sha256=d956afaaec4fe86f37e70358e697484a58e6fa8e5c34e80fbc23786c38157c50]\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":9000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5786/validate-reduction.rb\"],\"parallel_group\":\"reduction\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact rendered six-card bundle, cross-card references, design approval, digests, statuses, and canonical issue record.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5786\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 40,
+      "generation": 25,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Release issue-local authority after typed VPP contract replacement.",
+      "operation": "{\"claim_id\":\"claim-5786-v092-preexec-contract\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-vpp-preexecution-contracts\"}"
     }
   ]
 }

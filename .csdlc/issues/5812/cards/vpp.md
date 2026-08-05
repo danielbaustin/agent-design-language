@@ -97,7 +97,7 @@ Diagram: .csdlc/prepared/issues/5812/diagram.mmd
   },
   {
     "lane": "exact-path-scope-negative",
-    "proof_role": "Require the two substitutions and reject every unauthorized path.",
+    "proof_role": "Require the two substitutions and reject every unauthorized path. [preexec_rejection exit=1 diagnostic_sha256=b433bfdbd454cf8c9d02034a12c2d27da758de023c13513a43d520664e00ef9e]",
     "acceptance_ids": [
       "AC-6",
       "AC-7"

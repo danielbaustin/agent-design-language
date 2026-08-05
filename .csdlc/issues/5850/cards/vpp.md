@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5850/diagram.mmd
 [
   {
     "lane": "live-closeout-universe",
-    "proof_role": "Rebuild the full issue denominator and reconcile nonempty live GitHub checks/reviews/PR identity with typed phase, SOR, receipt, claim, worktree, and evidence truth.",
+    "proof_role": "Rebuild the full issue denominator and reconcile nonempty live GitHub checks/reviews/PR identity with typed phase, SOR, receipt, claim, worktree, and evidence truth. [preexec_rejection exit=1 diagnostic_sha256=5c85c87de40a7f5dac8aaabc8f0899abec3d0779786282599d12dde488b85982]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -48,7 +48,7 @@ Diagram: .csdlc/prepared/issues/5850/diagram.mmd
   },
   {
     "lane": "closeout-dag",
-    "proof_role": "Require the complete issue and ceremony node universe and prove the closeout DAG is acyclic.",
+    "proof_role": "Require the complete issue and ceremony node universe and prove the closeout DAG is acyclic. [preexec_rejection exit=1 diagnostic_sha256=f2670f8fa894ad6b58f473fbb07582ce13a61ba48f370b509a1a6bb5a91f8ec0]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -71,7 +71,7 @@ Diagram: .csdlc/prepared/issues/5850/diagram.mmd
   },
   {
     "lane": "reconstructed-closeout-negatives",
-    "proof_role": "Start from accepted rows, mutate exactly one declared field, and require the real classifier to produce exactly the expected blocker.",
+    "proof_role": "Start from accepted rows, mutate exactly one declared field, and require the real classifier to produce exactly the expected blocker. [preexec_rejection exit=1 diagnostic_sha256=5c4dc336757c494ab542fb90a64a27c32357fac189b6a24ebdec10097f4047be]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

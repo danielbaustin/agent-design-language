@@ -91,7 +91,7 @@ Diagram: .csdlc/prepared/issues/5878/diagram.mmd
   },
   {
     "lane": "exact-revision-proof-receipt",
-    "proof_role": "Reject self-attestation by recomputing exact-head command logs, artifacts, negative cases, and native receipt digests.",
+    "proof_role": "Reject self-attestation by recomputing exact-head command logs, artifacts, negative cases, and native receipt digests. [preexec_rejection exit=1 diagnostic_sha256=34eb48e9c92d52048105794654f1350509c44ade82aa5b504df449b7efa23cc6]",
     "acceptance_ids": [
       "AC-3",
       "AC-4",

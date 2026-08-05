@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "e7ab200f39f0714ae0aebb76949289e6bd66f4a3b272895650972227f5ad3a79",
   "phase": "bound",
-  "generation": 51,
-  "digest": "2d46d55860d4ea3b418e233775f025550b33afe16b957f7d9099447f0fc1ff9a",
+  "generation": 52,
+  "digest": "653533cc163bbb6ff15ed2fe5ddcfeb6cbac178fa2e96d6503a5fdb0b9abac27",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "fd9d3dc459650ce52851404de3c78922f7a3a98808975b67201c8ec61a382cd3",
+      "values_digest": "e927048805711045f59def842f119f634d9d64d736b0190a41253d66be954437",
       "rendered_digest": "ebf59b2657435fa4e629903ea15c1124838d020d1ae1513caad45f0d27305f71",
       "ast_digest": "47c02f5b5c4ce795d3c9fd3d14ccb9a57f1f44b7f18ac29b2051a969b70a3d53"
     },
     "stp": {
-      "values_digest": "04f796adb3312c1327137d7345914b0cccd821acc96cebf4527fae4ddea2b2c0",
+      "values_digest": "b826698398b19895429ba56f13c480d5ac2bcccd22073394f90a42f71de29a90",
       "rendered_digest": "54ee94bfd886753ce3703f62038afafdf66ba4f2f889edbb20b50a2a414ca4d6",
       "ast_digest": "c70418e11662fa1b5302c94461554c338552e9a9ff0477f19cfd50fe52c56390"
     },
     "spp": {
-      "values_digest": "865f046b070f202e39e533141b8583203acf5121304e506ad0f7d455a2206364",
+      "values_digest": "3cb91fcbbcc606f438d1553232992f4ad204b3dfda6564a293208677527fd439",
       "rendered_digest": "7adaa68d77add63bb964a6f25fe80f2bf048fe04862d93eff75bf7f6a8aba9d6",
       "ast_digest": "c7f7dbbbabb7dda3e929dc1a331e52a341af174bba016226bf7bf23e0a0195a6"
     },
     "vpp": {
-      "values_digest": "ed12513a059f4e612b4455ac88b473cf634e14e836113f3e010a1613bccce1dc",
-      "rendered_digest": "7ad830b9ab59a5861fadd5b8b358e784c6e64aaa166673170427dcfd9f2dedc2",
-      "ast_digest": "8fcabb787d54f15fafdb398f85aa62d3e9c69eba68f811b78bcfd291538a7513"
+      "values_digest": "e40a5b843bd4e4d3f341628f3601b921c4239e25fad692b9ab06fa24573671cb",
+      "rendered_digest": "10831b9b7e08366fbef580e6730b8a2840b33e8672a76b52e7b2b86033478533",
+      "ast_digest": "3567ff9381e42ef0ca7b0e30b9cbb247e1454f565d66d00cffe4cf47f6d1c759"
     },
     "srp": {
-      "values_digest": "927008576282fef62010cc3e6cdb1e879d376165680950af7dbfc9a821b2f8f1",
+      "values_digest": "db866b8f0b45d281ec7e971f04e270be3d4c4ad045b80bbd8c6d522279458e01",
       "rendered_digest": "f4d1b50f223cce6785b4a476d683618378921ceb30e3306785901a4454c0388b",
       "ast_digest": "ad48467373a00ab4134a625bb5c40e297dafeb7fbf5288f5b2ee8ba6761586e6"
     },
     "sor": {
-      "values_digest": "d40d10668581636943ae7c0ba65991611132a553726c970810dd060cc49ec215",
+      "values_digest": "966baba698ce93b3ad1e074e79dc99e556b748cabf4e1d28a77fafba6d388cad",
       "rendered_digest": "08069e5c4ac156b5d0d9ee35747632ff67581e203f0aeeaa7d12f41a60e986e9",
       "ast_digest": "1cef938010dcb5de447f8e1c7722d1462c72d177b4688fbe8c531ab97ef18a7c"
     }
@@ -559,6 +559,27 @@
       "actor": "codex:5860-quality-release-replay",
       "reason": "Release exact-head replay claim after combined design approval, SPP regeneration, 58-issue ownership proof, and zero rollback-gap proof.",
       "operation": "{\"claim_id\":\"claim-5831-v092-quality-replay\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-replay-completion\",\"previous_owner\":\"codex:5860-quality-release-replay\"}"
+    },
+    {
+      "sequence": 71,
+      "generation": 51,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Acquire issue-local authority to declare the exact VPP pre-execution rejection contract.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5831-v092-preexec-contract\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-vpp-preexecution-contracts\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5831\",\".csdlc/prepared/issues/5831\",\".csdlc/evidence/5831\"],\"purpose\":\"Declare the issue-local VPP pre-execution rejection contract without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 72,
+      "generation": 52,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Declare the exact issue-local pre-execution rejection exit class and normalized diagnostic digest.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"adaptive_learning-runtime-v3\",\"proof_role\":\"Run the exact Runtime v3 integration target and fail when the selected target contains no tests.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"adaptive_learning\",\"--no-tests=fail\",\"--status-level\",\"all\"],\"parallel_group\":\"5831-core\",\"defer_reason\":null},{\"lane\":\"adaptive_learning-macos-native-ci-producer\",\"proof_role\":\"Run the issue-local receipt producer on a native GitHub Actions macos runner at exact candidate HEAD and retain the complete nextest log, source manifest, and canonical semantic output.\",\"acceptance_ids\":[\"AC-4\",\"AC-8\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":240,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5831/produce-native-receipt.rb\",\"--platform\",\"macos\",\"--receipt\",\".csdlc/evidence/5831/native-platform/macos.json\",\"--semantic-output\",\".csdlc/evidence/5831/native-platform/macos-semantic.json\"],\"parallel_group\":\"5831-native-produce\",\"defer_reason\":\"Required on a native GitHub Actions macos runner; missing CI proof blocks portability and review readiness.\"},{\"lane\":\"adaptive_learning-linux-native-ci-producer\",\"proof_role\":\"Run the issue-local receipt producer on a native GitHub Actions linux runner at exact candidate HEAD and retain the complete nextest log, source manifest, and canonical semantic output.\",\"acceptance_ids\":[\"AC-4\",\"AC-8\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":240,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5831/produce-native-receipt.rb\",\"--platform\",\"linux\",\"--receipt\",\".csdlc/evidence/5831/native-platform/linux.json\",\"--semantic-output\",\".csdlc/evidence/5831/native-platform/linux-semantic.json\"],\"parallel_group\":\"5831-native-produce\",\"defer_reason\":\"Required on a native GitHub Actions linux runner; missing CI proof blocks portability and review readiness.\"},{\"lane\":\"adaptive_learning-native-ci-receipt-verification\",\"proof_role\":\"Independently recompute producer, source-manifest, command-log, and semantic-output digests; parse a positive test count; verify GitHub Actions provenance; and require macOS/Linux semantic equivalence at exact candidate HEAD. [preexec_rejection exit=1 diagnostic_sha256=0a5aff005083397b6349dca44da4b6011d120bf22f1a940712e7373301d291d1]\",\"acceptance_ids\":[\"AC-4\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1500,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5831/validate-native-receipts.rb\",\".csdlc/evidence/5831/native-platform/macos.json\",\".csdlc/evidence/5831/native-platform/linux.json\"],\"parallel_group\":\"5831-native-verify\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 73,
+      "generation": 52,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Release issue-local authority after typed VPP contract replacement.",
+      "operation": "{\"claim_id\":\"claim-5831-v092-preexec-contract\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-vpp-preexecution-contracts\"}"
     }
   ]
 }

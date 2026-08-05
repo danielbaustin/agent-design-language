@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "da578c6c105b85e210fbcf4ebd934b66822520f26992d895eabfe5df54c3bfdf",
   "phase": "bound",
-  "generation": 21,
-  "digest": "80451901de536f216e4b5f7af31d8f6a6ed0fcaee295df80a2e4d7d97418199d",
+  "generation": 22,
+  "digest": "e5b30bac0170c658f5e04ea52adea0737b4cd06cc55463b10fcfe2ec0e9c7ac7",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "214cb98b159e817b31853092e2e8cc1cf92d5faf0d216a3cd47038ef40f40738",
+      "values_digest": "203e09d3c6962045c7a8b103806b68b31645ee82d7781327ae7d5973323af78e",
       "rendered_digest": "0d38f53c88fd73889ccd81e5ae648210dc56745c38698ce1dac04da95eff590e",
       "ast_digest": "270c69998937df9a754962b6fc95d7bf5b103abe3f72c8918d0d11454b3e01ff"
     },
     "stp": {
-      "values_digest": "9cad2786e9b076cc03f8213df7eacb4dd91f6b00512f3ea4fbd5f4172aa7b4cb",
+      "values_digest": "9aa92cd23e4f48467b21c2c39d06c38c9456069e7848a83721104b572300bf1b",
       "rendered_digest": "7c35f2fd05f7c25e1c723c89baedd954134138134fb23003aba39b806a1eff37",
       "ast_digest": "8767e9d021cfd67b581b13f29e8d9ffbfc3edb69169a3a35aad9591d3ed6b9d5"
     },
     "spp": {
-      "values_digest": "77614178c38aa74e9030e91b37e17d74958cf213f64bb3ef9b4d93ece1a2fc1f",
+      "values_digest": "a3768288f84206683b62eb40e5d9e79f2bc7d39bff5d4c86877a90b6aff7747e",
       "rendered_digest": "6764ac3c1a3d7575286a0d6bda4395cb70c64ecc23a62c4a91d2ea4a0b49559e",
       "ast_digest": "db7fce94bcd87139ac5e8f9320c8df9698e071005a666ff9512321bfebdc4465"
     },
     "vpp": {
-      "values_digest": "c7cb57c28a5c5f09551adb2fbcd357a9196cf16fcace17ecf2c8d3621f8d2d7d",
-      "rendered_digest": "43722b0aa247484db694781228e7adcdfc688c038b8e2351d9b50e1e4c5399ff",
-      "ast_digest": "828280b3e05200a295c573e82ed62406cf8e18fcd1a4b7c6c9c37827b7dcb076"
+      "values_digest": "2f411590e8eda6d4a0bd661d3194b42a2e2939c04d22e616569d4451edde1625",
+      "rendered_digest": "de1e532f27572d2dbc17bcb9648eda5f4bba452303ea902335838c987d46bb04",
+      "ast_digest": "8f022361b81baf49b627865456c8fd6b6bdcc293c305c1541afcf2dd54319d09"
     },
     "srp": {
-      "values_digest": "236bb7805d22144eb61485f16dc34dec869d39eb70f9e5b02f6ff028b79ed6bf",
+      "values_digest": "a3d820606a9b0730f08579b4187d84107341369eea5e2c7b55e226a919c3a3a7",
       "rendered_digest": "9ae9ec9e6e64bf8f4cd69d23bd02e821b0bdd3bffbb8926012f18a4787323ef0",
       "ast_digest": "e6c7d85619558101f14105dac96b0ddcf353619e85c4b0e9827ff2b9d5ebd112"
     },
     "sor": {
-      "values_digest": "94418e44f19df36bab6596c5025be390664a5d9729760a64897d26e2b22804bd",
+      "values_digest": "73c0d46ca0e99dc2cf69f9dabbb45a961939d2210bd299a7bc59547402dbdcc4",
       "rendered_digest": "60299cdb28e592b506644371df86ad1010373fb106ea516fd1e5fa51e5b17946",
       "ast_digest": "c95fded9e9da5c512edbb9c2b414cf8971943b21e00392e269c15241a1e272a5"
     }
@@ -307,6 +307,27 @@
       "actor": "codex:5860-quality-release-replay",
       "reason": "Release exact-head replay claim after combined design approval, SPP regeneration, 58-issue ownership proof, and zero rollback-gap proof.",
       "operation": "{\"claim_id\":\"claim-5843-v092-quality-replay\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-replay-completion\",\"previous_owner\":\"codex:5860-quality-release-replay\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 21,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Acquire issue-local authority to declare the exact VPP pre-execution rejection contract.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5843-v092-preexec-contract\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-vpp-preexecution-contracts\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5843\",\".csdlc/prepared/issues/5843\",\".csdlc/evidence/5843\"],\"purpose\":\"Declare the issue-local VPP pre-execution rejection contract without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 36,
+      "generation": 22,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Declare the exact issue-local pre-execution rejection exit class and normalized diagnostic digest.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"complete-doc-release-universe\",\"proof_role\":\"Reconstruct every tracked changelog, feature, ADR, release, skill, guidance, external-launch, and v0.92 milestone surface; require evidence-bound rows, parsing, links, command output, version ownership, and redaction. [preexec_rejection exit=1 diagnostic_sha256=7b03d62fdc99cf072907826a13e1f73d3eeb1c48a6c3d067ba39e7cb839fb43f]\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5843/validate-doc-release-truth.rb\"],\"parallel_group\":\"docs\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact rendered six-card bundle, cross-card references, design approval, digests, statuses, and canonical issue record.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5843\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 37,
+      "generation": 22,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Release issue-local authority after typed VPP contract replacement.",
+      "operation": "{\"claim_id\":\"claim-5843-v092-preexec-contract\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-vpp-preexecution-contracts\"}"
     }
   ]
 }

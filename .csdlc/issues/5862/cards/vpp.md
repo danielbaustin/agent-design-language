@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5862/diagram.mmd
 [
   {
     "lane": "live-wave-contract",
-    "proof_role": "Verify exact mapping, approved records, null claims, dependency graph, exclusive paths, and the WP-04.16 integration-proof gate.",
+    "proof_role": "Verify exact mapping, approved records, null claims, dependency graph, exclusive paths, and the WP-04.16 integration-proof gate. [preexec_rejection exit=1 diagnostic_sha256=7ea2f96676aebdbb3ccc9d7999cb0cfdd6e9b6a129f1c12067630184805bf385]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

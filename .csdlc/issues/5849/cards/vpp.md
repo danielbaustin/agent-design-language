@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5849/diagram.mmd
 [
   {
     "lane": "complete-v093-handoff",
-    "proof_role": "Read live WP-27 terminal truth, reconstruct every tracked v0.93 candidate document, require evidence, owner, acceptance, and disposition for every row, and reject activation/legal/certification overclaims.",
+    "proof_role": "Read live WP-27 terminal truth, reconstruct every tracked v0.93 candidate document, require evidence, owner, acceptance, and disposition for every row, and reject activation/legal/certification overclaims. [preexec_rejection exit=1 diagnostic_sha256=2126c7b4d4672a83fdb34e64117304012c87a253936880da2182237f7da85cef]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

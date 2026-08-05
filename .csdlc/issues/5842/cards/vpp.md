@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5842/diagram.mmd
 [
   {
     "lane": "semantic-quality-matrix",
-    "proof_role": "Require the exact feature and critical-path denominator; validate issue/PR/review/merge ancestry plus semantic validation, negative, integration, platform, and typed-terminal evidence at the reviewed SHA.",
+    "proof_role": "Require the exact feature and critical-path denominator; validate issue/PR/review/merge ancestry plus semantic validation, negative, integration, platform, and typed-terminal evidence at the reviewed SHA. [preexec_rejection exit=1 diagnostic_sha256=c8553118295145212ff2b53c59e52efe32ae3bd96440a4bbe54a948978d9da9c]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -48,7 +48,7 @@ Diagram: .csdlc/prepared/issues/5842/diagram.mmd
   },
   {
     "lane": "reconstructed-quality-negatives",
-    "proof_role": "Execute forged evidence classes through the real matrix validator and require digest-bound rejection.",
+    "proof_role": "Execute forged evidence classes through the real matrix validator and require digest-bound rejection. [preexec_rejection exit=1 diagnostic_sha256=4c157b5ba213a95a8291346057c269ed2edc4db0f70c71d20c3c49417a430889]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

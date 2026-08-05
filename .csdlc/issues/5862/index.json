@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "ace0422b386ff716b38f088413c8ad4c5b5327b2b75b4a30a3aaead9d1f0e9b7",
   "phase": "bound",
-  "generation": 3,
-  "digest": "8a38497b8151d5c0e5036a131444213e1598dbf3b33f51d4467851aa5a17291a",
+  "generation": 4,
+  "digest": "b65c7681f91dc781df1bbfc90231875013ed557df9e6dbf8ab9c9a26ac31c50b",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "4696b3feac412edfbf65cf600fe948d4033851cfa2cd0043ac542e002510c04a",
+      "values_digest": "49063ad6905cacd2cd9eda7a7a29261a49f6e72b8e8769bd7dc98eb0af9a010c",
       "rendered_digest": "1659797febdc933b530f1368a196711ed66ea4456c875c13deea8a95678711f4",
       "ast_digest": "2e04b89813ae8fa136b83a85d80741252d61c08af3752f8bea23ae29992574ee"
     },
     "stp": {
-      "values_digest": "2da14a5b4f47cb7507570aa3d57bc48677f5675967cad69f05779d814eac51ba",
+      "values_digest": "897df612904dd115dbec8f671dfd73bda18c434615ee12996f334218f6feb86e",
       "rendered_digest": "b243a37f23dd1f746d37ef20bcf0c864552db63cc5b5ba06d1892a415efac102",
       "ast_digest": "3ead70dab1db3029977fd91c6dcbb5181e7930382b105332de3e9cad9ea71873"
     },
     "spp": {
-      "values_digest": "5928b6f89d41a50fea940a0980d7544989d44a8c602682b46a12fc95c7f114b4",
+      "values_digest": "e72669548ae747222624647b62efdfae869de3c80c91d830edd40e3a57ca5d11",
       "rendered_digest": "ce0e6150884ce425225d3404de845c72e24bfe923950c480dd97dec041302924",
       "ast_digest": "9db8640e8c2edf931225a25d8d237390c7bf8f29598e7e6c4ef7e393d21d2060"
     },
     "vpp": {
-      "values_digest": "cd7ea8ebb33dc43b04caa89f181cadb82f716cea304d128098db32b3811e76a9",
-      "rendered_digest": "a31f886483367cfc831b3b591270d231b746badbcb559b6c84bb4c7fe3eea108",
-      "ast_digest": "72b508a356ba3fc1af55e3fc39d888af14b6743aa376b4c18bc2f159e863f592"
+      "values_digest": "a1b8ecfa0c39ee3d1884903f424c919216ea5fa0943c389005fa8781f72db932",
+      "rendered_digest": "0e82158acb0877fcfaa94217aebbd6ac9170e23400efe4a4f6fbe51746353695",
+      "ast_digest": "003748553abf1a08bcaf11ad5083080441250697def60f688435d7654194d5bd"
     },
     "srp": {
-      "values_digest": "cc21257cabb6655b02f4e4a46fcc801ef3476a79c74a97a5e598dfb78b29c234",
+      "values_digest": "07bd8a12d0e8bf8ce3b81ae51ff89443322a668e7e731a3bd411ba73b6ead685",
       "rendered_digest": "bdf9b96b54da2e773b7654edf761a4feba4c9112c35ae850e82eb6d0bfe316d5",
       "ast_digest": "8d59c9b932b16d58922ce5e88be9b3d185e61ac6565063780fe04e72470a219d"
     },
     "sor": {
-      "values_digest": "dd16cec738b390e986174b4dab8f37008af3c731159ff86a97bdaebf62eeec3c",
+      "values_digest": "0bd25202359cf7788e7cfa2807372649c3d328119ff8756419d2ffe97edcb530",
       "rendered_digest": "fbbdf2332e66632be1111ffd91a39dd3ee5d82be0beeca5081302537cac7ae09",
       "ast_digest": "8d98e477dfc605c7488ee8c43fec30a7d9495268a1d1f3ef06f3fe104c2381d3"
     }
@@ -139,6 +139,27 @@
       "actor": "codex:5860-runtime-wp04-repair",
       "reason": "Release completed Runtime/WP-04 execution-readiness repair claim for just-in-time implementation handoff.",
       "operation": "{\"claim_id\":\"claim-5862-v092-runtime-wp04-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-repair\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 3,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Acquire issue-local authority to declare the exact VPP pre-execution rejection contract.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5862-v092-preexec-contract\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-vpp-preexecution-contracts\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5862\",\".csdlc/prepared/issues/5862\",\".csdlc/evidence/5862\"],\"purpose\":\"Declare the issue-local VPP pre-execution rejection contract without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 4,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Declare the exact issue-local pre-execution rejection exit class and normalized diagnostic digest.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"live-wave-contract\",\"proof_role\":\"Verify exact mapping, approved records, null claims, dependency graph, exclusive paths, and the WP-04.16 integration-proof gate. [preexec_rejection exit=1 diagnostic_sha256=7ea2f96676aebdbb3ccc9d7999cb0cfdd6e9b6a129f1c12067630184805bf385]\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":600,\"budget_tokens\":5000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5862/validate-implementation-wave.rb\"],\"parallel_group\":\"planning\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 4,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Release issue-local authority after typed VPP contract replacement.",
+      "operation": "{\"claim_id\":\"claim-5862-v092-preexec-contract\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-vpp-preexecution-contracts\"}"
     }
   ]
 }

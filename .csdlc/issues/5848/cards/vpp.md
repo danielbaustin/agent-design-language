@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5848/diagram.mmd
 [
   {
     "lane": "canonical-remediation-truth",
-    "proof_role": "Reconstruct the complete internal plus external finding universe, validate every disposition and accepted-risk authority, read live remediation PR head/review/check/merge state and typed terminal truth, then rerun all affected quality and release validators.",
+    "proof_role": "Reconstruct the complete internal plus external finding universe, validate every disposition and accepted-risk authority, read live remediation PR head/review/check/merge state and typed terminal truth, then rerun all affected quality and release validators. [preexec_rejection exit=1 diagnostic_sha256=3494d461d63c7bf14aa92b73910e7f93ca56895e9d0eba8d4d60ef191485843b]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

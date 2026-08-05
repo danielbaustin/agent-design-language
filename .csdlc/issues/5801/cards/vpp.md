@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5801/diagram.mmd
 [
   {
     "lane": "gemini-3-1-pro-review-contract",
-    "proof_role": "Recompute prompt, response, and topology SHA-256 and bind the topology Git blob to the exact reviewed revision.",
+    "proof_role": "Recompute prompt, response, and topology SHA-256 and bind the topology Git blob to the exact reviewed revision. [preexec_rejection exit=1 diagnostic_sha256=05da308326c5b5c5a1a9a582dab97af1286a7f18a5a367d64598ee0e29786aed]",
     "acceptance_ids": [
       "AC-1",
       "AC-7"

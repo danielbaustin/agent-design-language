@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-21A] Rust refactoring and maintainability pass",
     "slug": "v0-92-wp-21a-rust-refactoring-and-maintainability-pass",
     "version": "v0.92",
-    "generation": 23
+    "generation": 24
   },
   "status": "ready",
   "content": {
@@ -17,7 +17,7 @@
       "lanes": [
         {
           "lane": "exact-source-refactor-proof",
-          "proof_role": "Restrict edits to the declared control and observability source/tests, require behavior invariants and rollback, run focused tests plus strict fmt/clippy, reject LoC/duplication regression, and bind native macOS/Linux proof to HEAD.",
+          "proof_role": "Restrict edits to the declared control and observability source/tests, require behavior invariants and rollback, run focused tests plus strict fmt/clippy, reject LoC/duplication regression, and bind native macOS/Linux proof to HEAD. [preexec_rejection exit=1 diagnostic_sha256=3abf5e53d59152c48eeffa2d7cfcf34d73e045614de02a2495a9db24ddba04a4]",
           "acceptance_ids": [
             "AC-1",
             "AC-2",

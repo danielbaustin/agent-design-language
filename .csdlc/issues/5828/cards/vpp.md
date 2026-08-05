@@ -58,7 +58,7 @@ Diagram: .csdlc/prepared/issues/5828/diagram.mmd
   },
   {
     "lane": "memory-palace-obsmem-trace-binding",
-    "proof_role": "Recompute the exact ObsMem, Runtime v3 observability/proof, fixture, output, source-SHA, argv, runner, trace, and citation bindings in the integration receipt.",
+    "proof_role": "Recompute the exact ObsMem, Runtime v3 observability/proof, fixture, output, source-SHA, argv, runner, trace, and citation bindings in the integration receipt. [preexec_rejection exit=1 diagnostic_sha256=c3ce76747b2b2ce17fa9746fb2794051041bebcd310d9f4ccc7f7a16dd8c5f6e]",
     "acceptance_ids": [
       "AC-2",
       "AC-4",
@@ -126,7 +126,7 @@ Diagram: .csdlc/prepared/issues/5828/diagram.mmd
   },
   {
     "lane": "memory_palace-native-ci-receipt-verification",
-    "proof_role": "Independently recompute producer, source-manifest, command-log, and semantic-output digests; parse a positive test count; verify GitHub Actions provenance; and require macOS/Linux semantic equivalence at exact candidate HEAD.",
+    "proof_role": "Independently recompute producer, source-manifest, command-log, and semantic-output digests; parse a positive test count; verify GitHub Actions provenance; and require macOS/Linux semantic equivalence at exact candidate HEAD. [preexec_rejection exit=1 diagnostic_sha256=5dff561a38429e71f769ab6ddc31cf4e13684da2496190a046598e1b3cc281db]",
     "acceptance_ids": [
       "AC-4",
       "AC-9"

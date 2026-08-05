@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "69a605466990518758a56adab5fead02f83654418b6259dd24bf8dedd0eea706",
   "phase": "bound",
-  "generation": 16,
-  "digest": "a1acd03dce7607050fe6d856daf1cd0e99916b9eba6497fdb8763a3ab37a327c",
+  "generation": 17,
+  "digest": "f9d164d7ff8337b6d76691a7a342718ea56f482fdbdc6da08416ad84610253ef",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "5d59e8d259fb54cf1b84d5e879b3aedeb79b047d7115494d2ae4b32682f4d547",
+      "values_digest": "f094e34485512281df1898b6a82a59580ec18bbd1bdc002fa47b50a1a19d1537",
       "rendered_digest": "57553018413d1e53730ae046f86e3db6a662e4ca6d427dc6a7d1ad39bc3c4bef",
       "ast_digest": "7716faec8e7b9690b06f9a935565070da003f2dc28b16f2bcd16a6da6a3d5670"
     },
     "stp": {
-      "values_digest": "efe11672c462f460af22ecb2fea087e012af7f613d50a968a461e21969fafa29",
+      "values_digest": "da00c875c0d15a03ef1f4f24bcb2f84055467030ebca4789e28132c6336d1efe",
       "rendered_digest": "62692be2f2662069e59d41462ef02224e8b26ef395cfea37847c9667436cd9d2",
       "ast_digest": "1e7ddef8b46642156aa8a1eaa2e5c3b454b2fd785a6e7d8f1bdb5dd9fb6edc9a"
     },
     "spp": {
-      "values_digest": "cba8afb5439f122694e0978f1a5954b69738185df2b882cf9b738793d4dc5f04",
+      "values_digest": "03af366e7f2f8974e2291cf341983cdb8ab3a1947ca4a4175ad4715c0f1d6121",
       "rendered_digest": "3a84906f0484e462b854917f62e86083d1a35dddb5c9bde2a6eeedead3eb2e4e",
       "ast_digest": "9faa8997170159d51c641ffceacbde635a7225b39cb55be1571fa9e717aeefc0"
     },
     "vpp": {
-      "values_digest": "09431b27ea5280db3404d4593ebb2e4a95ff57bb6db563d2dab34dfdc0c4311e",
-      "rendered_digest": "9486dea5edb59267fe1bc117279784fb90e405d635dd0b284b6a853582dc8ca4",
-      "ast_digest": "2f4635ebe395b111e8d17fbc9f4984f8f92653977142fa0e9e2f5a12ce53aed7"
+      "values_digest": "c45305026c10f194615367790fd68ffd7c3c34992e5f85408e4c12f40a043c17",
+      "rendered_digest": "45d7ebfe5c3e9542d6cfce5fee4960089e982e9f534114cefde36c4c01e31543",
+      "ast_digest": "91012289614e3a9b0d14f774999b06397417d12b95cfeff27c2da6fb4fc1aeb5"
     },
     "srp": {
-      "values_digest": "9604cba40d6ecadc86df8a3fd9d8e16207d2e3ec393ff4024f3d3fd908c3d2a0",
+      "values_digest": "4a090ecd323d159f7311631252aee7141535a3202a1252b003e8510d40ee50f5",
       "rendered_digest": "f7f0ac3dd3482ccdab08d2c40e3a02f052b0221f954239286fffeea33449b185",
       "ast_digest": "645c5acb2dccd328e223318c9039a381a9187d7f74906ab06dc551ec98a402c3"
     },
     "sor": {
-      "values_digest": "2a927fd6f64cad8a09a5402cd502a7fe55123333cfacfe313d996171c2381b34",
+      "values_digest": "009014daa40dd8b345d1f858fdceae51af3f4855755a777b3d870566dc09e922",
       "rendered_digest": "535b23834e603c108923eedc9139539d3c8b58cfe8c56f7f618e0a0caa0ad499",
       "ast_digest": "a36cb1ad0b507a85eb65bb837e1210d9448f98d6983ecc611954df1573648130"
     }
@@ -286,6 +286,27 @@
       "actor": "codex:5860-quality-release-replay",
       "reason": "Release exact-head replay claim after combined design approval, SPP regeneration, 58-issue ownership proof, and zero rollback-gap proof.",
       "operation": "{\"claim_id\":\"claim-5848-v092-quality-replay\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-replay-completion\",\"previous_owner\":\"codex:5860-quality-release-replay\"}"
+    },
+    {
+      "sequence": 32,
+      "generation": 16,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Acquire issue-local authority to declare the exact VPP pre-execution rejection contract.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5848-v092-preexec-contract\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-vpp-preexecution-contracts\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5848\",\".csdlc/prepared/issues/5848\",\".csdlc/evidence/5848\"],\"purpose\":\"Declare the issue-local VPP pre-execution rejection contract without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 33,
+      "generation": 17,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Declare the exact issue-local pre-execution rejection exit class and normalized diagnostic digest.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"canonical-remediation-truth\",\"proof_role\":\"Reconstruct the complete internal plus external finding universe, validate every disposition and accepted-risk authority, read live remediation PR head/review/check/merge state and typed terminal truth, then rerun all affected quality and release validators. [preexec_rejection exit=1 diagnostic_sha256=3494d461d63c7bf14aa92b73910e7f93ca56895e9d0eba8d4d60ef191485843b]\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":960,\"budget_tokens\":8500,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5848/validate-remediation-regressions.rb\"],\"parallel_group\":\"remediation\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact six-card bundle and design approval.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5848\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 34,
+      "generation": 17,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Release issue-local authority after typed VPP contract replacement.",
+      "operation": "{\"claim_id\":\"claim-5848-v092-preexec-contract\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-vpp-preexecution-contracts\"}"
     }
   ]
 }

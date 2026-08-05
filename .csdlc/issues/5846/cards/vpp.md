@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5846/diagram.mmd
 [
   {
     "lane": "complete-internal-review",
-    "proof_role": "Validate the exact packet and all nine declared specialist lanes, reviewer-authored digests, defensible zero findings, full finding schema/evidence, deduplication, disagreements, authority, and dispositions.",
+    "proof_role": "Validate the exact packet and all nine declared specialist lanes, reviewer-authored digests, defensible zero findings, full finding schema/evidence, deduplication, disagreements, authority, and dispositions. [preexec_rejection exit=1 diagnostic_sha256=f4b74ec901baed61117f3ce7945d3e131129bf16f05f070032de68dcdf94923c]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

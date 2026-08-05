@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d161c9886615d203d6b83404683281ca21b58925bbbf7d1f8e8339098c2ef07b",
   "phase": "bound",
-  "generation": 23,
-  "digest": "d765760d37e3a5ba0d46669646d5668ddec754c40ba1c1497eaa0c03323fd524",
+  "generation": 24,
+  "digest": "2696a4fd1e9ab34c331c0fbf538b58a627c641ce4c44d4134c692be2dd1b6eb6",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "9e21fee95b5f44582c4e2bc77ada36ece31b2c563594ee430ff24d2fcdeb5a58",
+      "values_digest": "5f971ed2385e1818ba74c2ce39c3213224d0f8ff79708023dc0eb9c224e191a2",
       "rendered_digest": "657fd9d5f272245476015fc6c7996cf3c879bea80c113a649a095df5f2d870c4",
       "ast_digest": "e87314878eb145d12ee48dee595db92db566fa77e4d91fb5746e1e6c546a64e3"
     },
     "stp": {
-      "values_digest": "d616c37a7aceddbd7a6edcd195a9160ecbe62f724a18421f0eb5bb37bb0bde48",
+      "values_digest": "5594e62109c7910768dbf079becc914e697aa57702fe97261f00f79dc7e83646",
       "rendered_digest": "cd253d5e0dc68572b6fbc1c12647c733791548f7ecd4a29e8848f08ef74a542d",
       "ast_digest": "330fbc3bdfd92e63140c9480493d607bb96f4f8ee8699e461ac3c09ef0f3848c"
     },
     "spp": {
-      "values_digest": "8f971c4b2a9de1e4918b55d96247127e32aef1247a3e6fc254ffae713401eae7",
+      "values_digest": "15644393d2b02c615ff710f3a734bc5c2c0ce1c1cc03b61d14ea18d4fb1ae3b0",
       "rendered_digest": "206f94272d397d3c1f93dd67420145bf1305179e073d9554c6fd379625421380",
       "ast_digest": "ebd45dccac6a38cb9ed744a0bb608d4fa4f8be1cf00530e80a99a54a801619a0"
     },
     "vpp": {
-      "values_digest": "8b69566527d261a7d27dc3aad30ce002c1c14204bfc0170471ce38f3c0ce19b7",
-      "rendered_digest": "e230c8ba493474e98071b8948e81811dca472174145bacdb8012a34bf8a5485c",
-      "ast_digest": "72129e279995cfb1f1b916a771c1d8024a2aa59e5aff5656b776a8d9ed44699d"
+      "values_digest": "24f5f805f1018012b3ffb499959436c854bb3a289533a3cc6609e16d03f55585",
+      "rendered_digest": "d29eb3980e5188ee16325257d0df452f90e013ea2db45f38490b8d97ae15bf38",
+      "ast_digest": "987b98a6b03d501f82ae42c10e2dc9b412907c6eea2cc18e1abf0ee62d57dcd1"
     },
     "srp": {
-      "values_digest": "5fb07644624d268fdf4d69fa30e2a68b0659f450f7d158b32bbcfe7491854c93",
+      "values_digest": "2da2b4778cacba454dffd84b4631453853463a1a6052d4868724f008c8be5866",
       "rendered_digest": "bfa2844b186a214901b2166fe826c9f490ac70e1a20c76d3b788e5270b4b388f",
       "ast_digest": "3624c633f28a9bf2de7d0b7eda4c1a63698aaabc372467a25545a996dd8db923"
     },
     "sor": {
-      "values_digest": "8b51edcd6de1165b762d95112fa71058ed6a299df19a41d214921cd7a220ab1b",
+      "values_digest": "254056075d3f9dc579e6cdc90bb590c452fd3c3477fab7127241758313c787f7",
       "rendered_digest": "014507d61b21b426b14a44883b044863dab9590297ae704f65ce363803f7459b",
       "ast_digest": "2543e6a3a620c7d2ff382d35157473896b403f624ce7f3d53b57df629afcb3b2"
     }
@@ -349,6 +349,27 @@
       "actor": "codex:5860-foundation-rollback-followup",
       "reason": "Release issue #5801 rollback-follow-up claim after typed design reapproval and focused validation; execution must reacquire just-in-time authority.",
       "operation": "{\"claim_id\":\"claim-5801-foundation-rollback-followup\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-rollback-followup\",\"previous_owner\":\"codex:5860-foundation-rollback-followup\"}"
+    },
+    {
+      "sequence": 41,
+      "generation": 23,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Acquire issue-local authority to declare the exact VPP pre-execution rejection contract.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5801-v092-preexec-contract\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-vpp-preexecution-contracts\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5801\",\".csdlc/prepared/issues/5801\",\".csdlc/evidence/5801\"],\"purpose\":\"Declare the issue-local VPP pre-execution rejection contract without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 42,
+      "generation": 24,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Declare the exact issue-local pre-execution rejection exit class and normalized diagnostic digest.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"gemini-3-1-pro-review-contract\",\"proof_role\":\"Recompute prompt, response, and topology SHA-256 and bind the topology Git blob to the exact reviewed revision. [preexec_rejection exit=1 diagnostic_sha256=05da308326c5b5c5a1a9a582dab97af1286a7f18a5a367d64598ee0e29786aed]\",\"acceptance_ids\":[\"AC-1\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5801/validate-gemini-review.rb\"],\"parallel_group\":\"review\",\"defer_reason\":null},{\"lane\":\"ci-path-policy-contract\",\"proof_role\":\"Exercise docs, metadata, tooling, source, runtime, unknown, mixed, and Windows-path classifications.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\"],\"parallel_group\":\"policy\",\"defer_reason\":null},{\"lane\":\"ci-runtime-and-coverage-contract\",\"proof_role\":\"Prove workflow graph, stale-run behavior, one coverage authority, shard provenance, and aggregation semantics.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"parallel_group\":\"policy\",\"defer_reason\":null},{\"lane\":\"coverage-impact-negative\",\"proof_role\":\"Reject unmapped or insufficient source coverage and prevent broad basename fallback.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_check_coverage_impact.sh\"],\"parallel_group\":\"coverage\",\"defer_reason\":null},{\"lane\":\"pr-fast-test-contract-direct\",\"proof_role\":\"Directly execute the owned fast-test lane contract rather than relying on an aggregate wrapper.\",\"acceptance_ids\":[\"AC-3\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":200,\"budget_tokens\":250,\"argv\":[\"bash\",\"adl/tools/test_run_pr_fast_test_lane.sh\"],\"parallel_group\":\"policy\",\"defer_reason\":null},{\"lane\":\"coverage-authority-contract-direct\",\"proof_role\":\"Directly execute the owned single-authority coverage contract and reject duplicate or unbound coverage publication.\",\"acceptance_ids\":[\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":200,\"budget_tokens\":250,\"argv\":[\"bash\",\"adl/tools/test_coverage_authority_contract.sh\"],\"parallel_group\":\"coverage\",\"defer_reason\":null},{\"lane\":\"metadata-lineage-negative\",\"proof_role\":\"Prove metadata-only reuse rejects substantive, renamed, stale-review, or different-head drift.\",\"acceptance_ids\":[\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate_finish\",\"metadata\"],\"parallel_group\":\"lifecycle\",\"defer_reason\":null},{\"lane\":\"exact-head-ci-platform\",\"proof_role\":\"GitHub required checks prove the final exact head while fixtures cover macOS and Windows boundaries.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":1200,\"budget_tokens\":8000,\"argv\":[\"gh\",\"pr\",\"checks\",\"--watch\"],\"parallel_group\":\"github-live\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace and unintended policy churn.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 43,
+      "generation": 24,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Release issue-local authority after typed VPP contract replacement.",
+      "operation": "{\"claim_id\":\"claim-5801-v092-preexec-contract\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-vpp-preexecution-contracts\"}"
     }
   ]
 }

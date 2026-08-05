@@ -74,7 +74,7 @@ Diagram: .csdlc/prepared/issues/5832/diagram.mmd
   },
   {
     "lane": "native-acip-receipts",
-    "proof_role": "Recompute exact-revision macOS, Linux, and native Windows ACIP/WSS receipts with binary/schema/transcript digests and nonzero exchanges/negatives.",
+    "proof_role": "Recompute exact-revision macOS, Linux, and native Windows ACIP/WSS receipts with binary/schema/transcript digests and nonzero exchanges/negatives. [preexec_rejection exit=1 diagnostic_sha256=de72b4d18c37dc62c7f280fdab91fc7844cfa5030f3b65582551714534d8e2dc]",
     "acceptance_ids": [
       "AC-5",
       "AC-6",

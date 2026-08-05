@@ -51,7 +51,7 @@ Diagram: .csdlc/prepared/issues/5876/diagram.mmd
   },
   {
     "lane": "exact-revision-proof-receipt",
-    "proof_role": "Recompute source, command, nonzero test, artifact, negative-case, and native receipt bindings.",
+    "proof_role": "Recompute source, command, nonzero test, artifact, negative-case, and native receipt bindings. [preexec_rejection exit=1 diagnostic_sha256=c988837e0695de30c764e102e70a2536cb9548f27d96fd1a4ca701b503655b3c]",
     "acceptance_ids": [
       "AC-3",
       "AC-4",

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.10] Signed resource-weather advertisements",
     "slug": "v0-92-wp-04-10-resource-weather-advertisements",
     "version": "v0.92",
-    "generation": 6
+    "generation": 7
   },
   "status": "ready",
   "content": {
@@ -43,7 +43,7 @@
         },
         {
           "lane": "exact-revision-proof-receipt",
-          "proof_role": "Recompute source, command, nonzero test, artifact, negative-case, and native receipt bindings.",
+          "proof_role": "Recompute source, command, nonzero test, artifact, negative-case, and native receipt bindings. [preexec_rejection exit=1 diagnostic_sha256=c50f541f8c9f46f586bf1f2ca19366cfe5a23e71b9f64fef0bb3e0fa0c2a0b0f]",
           "acceptance_ids": [
             "AC-3",
             "AC-4",

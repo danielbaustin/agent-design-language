@@ -26,56 +26,7 @@ EXPECTED_ISSUES = [
   5871, 5872, 5873, 5874, 5875, 5876, 5877, 5878
 ].freeze
 EXPECTED_SPRINT_COUNTS = {5858 => 8, 5855 => 6, 5862 => 17, 5857 => 9, 5854 => 7, 5856 => 11}.freeze
-EXPECTED_PREEXEC_REJECTIONS = {
-  5786 => [/\Amissing deletion manifest:/],
-  5801 => [/\Amissing Gemini 3\.1 Pro review packet\z/],
-  5812 => [/\Aout-of-scope paths:/],
-  5818 => [/\Amissing canonical surface inventory\z/],
-  5819 => [/\Amissing migration report\z/],
-  5820 => [%r{\Amissing \.csdlc/evidence/5820/runtime-native-receipts\.json\z}],
-  5821 => [%r{\Amissing docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE\.md\z}],
-  5823 => [/\Amissing platform matrix\z/],
-  5824 => [/\Amissing enum inventory\z/],
-  5825 => [/\Asource contract path is absent: adl-runtime-kernel\/src\/birthday\.rs\z/],
-  5826 => [/\Asource contract path is absent: adl-runtime-kernel\/src\/birthday_identity\.rs\z/],
-  5827 => [/\Asource contract path is absent: adl-runtime-kernel\/src\/birthday_continuity\.rs\z/],
-  5828 => [
-    %r{\Areceipt path does not exist: \.csdlc/evidence/5828/obsmem-trace-integration-receipt\.json\z},
-    /\Asource contract path is absent: adl-runtime-kernel\/src\/memory_palace\.rs\z/
-  ],
-  5829 => [/\Asource contract path is absent: adl-runtime-kernel\/src\/capability_envelope\.rs\z/],
-  5830 => [/\Asource contract path is absent: adl-runtime-kernel\/src\/cognitive_profile\.rs\z/],
-  5831 => [/\Asource contract path is absent: adl-runtime-kernel\/src\/adaptive_learning\.rs\z/],
-  5832 => [%r{\Amissing \.csdlc/evidence/5832/acip-native-receipts\.json\z}],
-  5833 => [/\Asource contract path is absent: adl-runtime-kernel\/src\/birth_witness\.rs\z/],
-  5834 => [%r{\Avalidate-review-packet: missing review packet: docs/milestones/v0\.92/review/FIRST_BIRTHDAY_REVIEW_PACKET_v0\.92\.md\z}],
-  5841 => [%r{\Amissing refactor selection: \.csdlc/evidence/5841/refactor-selection\.json\z}],
-  5842 => [
-    %r{\Amissing feature completion matrix: \.csdlc/evidence/5842/feature-completion-matrix\.json\z},
-    %r{\Amissing quality-gate negative cases: \.csdlc/evidence/5842/negative-cases\.json\z}
-  ],
-  5843 => [%r{\Amissing canonical documentation inventory: \.csdlc/evidence/5843/canonical-doc-inventory\.json\z}],
-  5845 => [/\AFAIL: expected exactly four platform receipts\z/],
-  5846 => [%r{\Amissing internal review packet manifest: docs/reviews/v0\.92/internal-review-5846/packet-manifest\.json\z}],
-  5847 => [%r{\Amissing external review packet manifest: docs/reviews/v0\.92/external-review-5847/packet-manifest\.json\z}],
-  5848 => [%r{\Amissing remediation disposition register: docs/reviews/v0\.92/remediation-5848/disposition-register\.json\z}],
-  5849 => [/\A#5848 is not closed\z/],
-  5850 => [
-    %r{\Amissing closeout issue universe: \.csdlc/evidence/5850/issue-universe\.json\z},
-    %r{\Amissing closeout DAG: \.csdlc/evidence/5850/closeout-dag\.json\z},
-    %r{\Amissing closeout negative cases: \.csdlc/evidence/5850/negative-cases\.json\z}
-  ],
-  5851 => [
-    %r{\Amissing readiness universe comparison: \.csdlc/evidence/5851/universe-comparison\.json\z},
-    %r{\Amissing readiness handoff review: \.csdlc/evidence/5851/handoff-review\.json\z},
-    %r{\Amissing readiness negative cases: \.csdlc/evidence/5851/negative-cases\.json\z}
-  ],
-  5852 => [%r{\Amissing release evidence manifest: \.csdlc/evidence/5852/release-evidence-manifest\.json\z}],
-  5853 => [%r{\Amissing evidence \.csdlc/evidence/5853/eligibility\.json\z}],
-  5862 => [/\Aterminal reconciliation requires the active WP-04-IMP execution claim\z/]
-}.merge((5863..5878).to_h do |issue|
-  [issue, [%r{\Amissing execution proof: \.csdlc/evidence/#{issue}/execution-proof\.json\z}]]
-end).freeze
+PREEXEC_REJECTION = /\[preexec_rejection exit=(\d+) diagnostic_sha256=([0-9a-f]{64})\]\z/
 
 FORBIDDEN = {
   "placeholder design" => /Status: design required before Ready\./,
@@ -176,7 +127,20 @@ def sha256(path)
   Digest::SHA256.file(path).hexdigest
 end
 
-def preparation_validator_error(issue, path, argv:, behavior_probe: false, planned_output: false)
+def preexecution_contract_error(proof_role, exit_code, diagnostic)
+  contract = proof_role.match(PREEXEC_REJECTION)
+  return "missing issue-local pre-execution rejection contract" unless contract
+
+  normalized = diagnostic.gsub(/\s+/, " ").strip
+  expected_exit = Integer(contract[1], 10)
+  expected_digest = contract[2]
+  return "exit class differs from issue-local contract" unless exit_code == expected_exit
+  return "complete normalized diagnostic differs from issue-local contract" unless Digest::SHA256.hexdigest(normalized) == expected_digest
+
+  nil
+end
+
+def preparation_validator_error(path, argv:, proof_role:, behavior_probe: false, planned_output: false)
   unless File.file?(path) && !File.zero?(path)
     return nil if planned_output
     return "missing prerequisite script #{path}"
@@ -212,10 +176,8 @@ def preparation_validator_error(issue, path, argv:, behavior_probe: false, plann
   }ix
   return "preparation validator crashed instead of failing closed: #{path}" if diagnostic.match?(crash_markers)
 
-  first_line = diagnostic.lines.map(&:strip).find { |line| !line.empty? }.to_s
-  expected = EXPECTED_PREEXEC_REJECTIONS.fetch(issue, [])
-  unless expected.any? { |pattern| first_line.match?(pattern) }
-    return "preparation validator produced an undeclared pre-execution rejection: #{path}: #{first_line}"
+  if (contract_error = preexecution_contract_error(proof_role, probe_status.exitstatus, diagnostic))
+    return "preparation validator #{contract_error}: #{path}"
   end
 
   nil
@@ -249,11 +211,13 @@ if ARGV.include?("--self-test")
   sample = "## Read-Only Inputs\n\n- `docs/input.md`\n\n## Owned Paths\n\n- `docs/a.md`\n- `adl/src/lib.rs`\n"
   paths = owned_paths(sample)
   raise "owned path extraction failed" unless paths == ["adl/src/lib.rs", "docs/a.md"]
-  declared = EXPECTED_PREEXEC_REJECTIONS.values.flatten
-  raise "declared rejection positive fixture failed" unless "missing deletion manifest: fixture".match?(EXPECTED_PREEXEC_REJECTIONS.fetch(5786).first)
-  ["Permission denied", "Is a directory", "sh: syntax error near unexpected token"].each do |fault|
-    raise "shell fault matched a declared rejection contract: #{fault}" if declared.any? { |pattern| fault.match?(pattern) }
-  end
+  diagnostic = "missing deletion manifest: fixture"
+  digest = Digest::SHA256.hexdigest(diagnostic)
+  role = "fixture proof [preexec_rejection exit=1 diagnostic_sha256=#{digest}]"
+  raise "issue-local rejection positive fixture failed" if preexecution_contract_error(role, 1, diagnostic)
+  raise "issue-local rejection exit-class negative fixture escaped" unless preexecution_contract_error(role, 126, diagnostic)
+  faulted = "#{diagnostic} bash: /dev/null: Permission denied"
+  raise "trailing shell-fault negative fixture escaped" unless preexecution_contract_error(role, 1, faulted)
   puts "v0.92 readiness validator self-test: PASS"
   exit 0
 end
@@ -484,7 +448,7 @@ sprints.each do |sprint, sprint_issues|
           probe = verify_live && issue_local && validator_named && File.file?(path)
           behavior_probes += 1 if probe
           deferred_execution_scripts += 1 unless probe
-          error = preparation_validator_error(issue, path, argv: argv, behavior_probe: probe, planned_output: planned_output)
+          error = preparation_validator_error(path, argv: argv, proof_role: lane.fetch("proof_role"), behavior_probe: probe, planned_output: planned_output)
           errors << "##{issue}: #{error}" if error
         end
       end
@@ -577,7 +541,7 @@ if matrix_path
   lines.concat([
     "Result: **PASS** - #{rows.length} design-ready issues across #{sprints.length} sprint umbrellas.",
     "",
-    "Validator contract proof: #{behavior_probes} of #{script_contracts} VPP script contracts were invocation/fail-closed probed during live readiness validation; #{deferred_execution_scripts} implementation or evidence-production scripts remain explicitly deferred to their child execution lanes. A probe passes only when the script exits successfully or its first diagnostic matches the issue's explicit pre-execution rejection contract, with no uncaught exception, backtrace, shell execution fault, or signal termination.",
+    "Validator contract proof: #{behavior_probes} of #{script_contracts} VPP script contracts were invocation/fail-closed probed during live readiness validation; #{deferred_execution_scripts} implementation or evidence-production scripts remain explicitly deferred to their child execution lanes. A probe passes only when the script exits successfully or its exit class and complete normalized diagnostic match the issue-local contract embedded in that VPP lane, with no uncaught exception, backtrace, shell execution fault, or signal termination.",
     "",
     "Artifact integrity is pinned by `#{HASH_MANIFEST_PATH}`. Normal validation never rewrites that manifest.",
     "Live issue title/body/state identity is pinned by `#{LIVE_MANIFEST_PATH}` and checked against GitHub with `--verify-live`."

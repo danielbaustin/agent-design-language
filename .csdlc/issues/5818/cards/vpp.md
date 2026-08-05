@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5818/diagram.mmd
 [
   {
     "lane": "activation-evidence-contract",
-    "proof_role": "Require the fixed canonical denominator, parse structured data, resolve links, compare versions, and reject historical changes.",
+    "proof_role": "Require the fixed canonical denominator, parse structured data, resolve links, compare versions, and reject historical changes. [preexec_rejection exit=1 diagnostic_sha256=6c76bac072ebc8d3297daa4c096090a890e7fd94091e9dd60673786ed246db7f]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

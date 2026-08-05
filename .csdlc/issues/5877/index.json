@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "3e3cc9bd0b8e840dd5b7aa7945a30607d3662a9a3db479b8f65a39c6ae889074",
   "phase": "bound",
-  "generation": 6,
-  "digest": "1c698aba20750e26b5ad00a3063e783b215ec022710afdace7241ae5f77faf9d",
+  "generation": 7,
+  "digest": "66746d782fe539770110556b74fac02d9c1550911a9a10621e0f50dbfa4f0541",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "4085bcca6a53ad9a2595c0eb6e521be6cd99835466d941a4c10746c913a7508b",
+      "values_digest": "bf5250ecd3c29f79c8eb211fa7e0d5c1549f50f297e320183c0d05cb47326455",
       "rendered_digest": "ec1f0aab53f16ba14abf50610d72d25dbec3741567bebbbba7a7e1cff55a0ae8",
       "ast_digest": "a6879ceced4f9ea4a3fd4040391ee578667a1631cb9652735610bf00e291f304"
     },
     "stp": {
-      "values_digest": "4b62805c59735605614fdc5626047a1528838a1118c7675afcf62f99402eec82",
+      "values_digest": "ce477e58c16bf01a4d639418205ae189fe4d50f016caafd662945f1227f8c07f",
       "rendered_digest": "d34940b65422e81c5028c1522446d90f063142e2ba483852e3f97d4537e554b5",
       "ast_digest": "30aa7345e21ef36c1b88b9a5ca950e826ed2238e691ef877989bcfcb96d4c7a1"
     },
     "spp": {
-      "values_digest": "c1f9ff986af0da57f2f264abaca0d083bd97fb332da0388987ebf1389ba415f2",
+      "values_digest": "19d2b3575e05e9f10223d939a0a2f45e6ad25e56a4c6e4c5e2aaa267ae5710d8",
       "rendered_digest": "fc16826ee969302f6280ced30a73a6f6705c546fdb99455b97d7380d36d95dba",
       "ast_digest": "f7cddb3ff219570975125f8202b05fa6b8f447f455446d9a5991ebdcc073241a"
     },
     "vpp": {
-      "values_digest": "920d50127084d564a2f54b1f02a973aa52d387c3b2b01e863250ee83accea497",
-      "rendered_digest": "81d0c6552ac9fc5f13cad5ff7b2ef176f702ce2bdf1f74422b215cf4a9cd0a1e",
-      "ast_digest": "3ae578a78faa12f7671c2885d7f9ff79a5ef7d97e468e7d54dc4c6080b6c04be"
+      "values_digest": "693c0221a1fffa18f78813f01d0576c007bed54e30c8868d7355386b2f8638e1",
+      "rendered_digest": "699a92fba2df8906e98c91cd64efb81cf0de5429bb2a2c416810e4b78ab42f88",
+      "ast_digest": "c0e2008b61d96d3d1c28500aa06e5bf358a6e91a7afb8a1501ddd25c5d17809c"
     },
     "srp": {
-      "values_digest": "a8c5979b9e59105374e91480b7e1cae1362a4336fcb4c786a3fc4fbd36822c18",
+      "values_digest": "3936154a95b5b3ae4d76430cfdfb350701c3ba42ab7ffa48e29173e2033bf315",
       "rendered_digest": "632e016ed324020f10355190de8f161fe83401167ebeb0d79008ad80b4497003",
       "ast_digest": "d8c42e29ae69078215aeef632fdfd944c63dbe13f0cd48788c7d5ca756a31d7c"
     },
     "sor": {
-      "values_digest": "cad1f5a0672d6025dac3be1d8c83e9ffb6bd6c28528ebb6e2febe8d58bb2a6e9",
+      "values_digest": "dbefb6b9eb19e77925b5b757f63c2dcea0dc4596e53cca97d078d57778e04009",
       "rendered_digest": "d748235461271f4a4a963e7d0e3f7a446c3285543e147810aeb9768c608a0c40",
       "ast_digest": "74d70ec65af0a3d74dc8423c3c1cf0bf799a14983468ce8e1178405990c629e9"
     }
@@ -202,6 +202,27 @@
       "actor": "codex:5860-wp04-exact-estimate-reapproval",
       "reason": "Release the exact-design reapproval claim for just-in-time implementation handoff.",
       "operation": "{\"claim_id\":\"claim-5877-v092-exact-estimate-reapproval\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-wp04-exact-estimate-reapproval\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 6,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Acquire issue-local authority to declare the exact VPP pre-execution rejection contract.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5877-v092-preexec-contract\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-vpp-preexecution-contracts\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5877\",\".csdlc/prepared/issues/5877\",\".csdlc/evidence/5877\"],\"purpose\":\"Declare the issue-local VPP pre-execution rejection contract without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 7,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Declare the exact issue-local pre-execution rejection exit class and normalized diagnostic digest.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"exact-child-tests\",\"proof_role\":\"Exact nextest target distributed_projection plus OpenAPI validation proves schema parity, redaction, stable identity, ordering, stale state, denied detail, and backward compatibility.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":8000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--test\",\"distributed_projection\",\"--no-tests=fail\"],\"parallel_group\":\"child\",\"defer_reason\":null},{\"lane\":\"exact-revision-proof-receipt\",\"proof_role\":\"Recompute source, command, nonzero test, artifact, negative-case, and native receipt bindings. [preexec_rejection exit=1 diagnostic_sha256=c910bc39219b1f7b467597837b572aecdc324cddfaab06aca75f4887effb13aa]\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5877/validate-proof-receipt.rb\"],\"parallel_group\":\"receipt\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 7,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Release issue-local authority after typed VPP contract replacement.",
+      "operation": "{\"claim_id\":\"claim-5877-v092-preexec-contract\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-vpp-preexecution-contracts\"}"
     }
   ]
 }

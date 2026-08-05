@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5853/diagram.mmd
 [
   {
     "lane": "experiment-evidence-contract",
-    "proof_role": "Validate entry gates, frozen numeric thresholds, finite nonnegative and internally consistent raw samples, recomputed statistics and reliability, parity, threshold-bound decisions, and observation-or-cleanup state.",
+    "proof_role": "Validate entry gates, frozen numeric thresholds, finite nonnegative and internally consistent raw samples, recomputed statistics and reliability, parity, threshold-bound decisions, and observation-or-cleanup state. [preexec_rejection exit=1 diagnostic_sha256=1eb3ccc84301d57160de21ef230e744a5eac8ede13c80e5ab4ef837bfcf8d44f]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

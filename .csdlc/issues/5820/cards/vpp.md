@@ -74,7 +74,7 @@ Diagram: .csdlc/prepared/issues/5820/diagram.mmd
   },
   {
     "lane": "native-guardian-receipts",
-    "proof_role": "Recompute digest-bound macOS, Linux, and native Windows production Guardian lifecycle receipts.",
+    "proof_role": "Recompute digest-bound macOS, Linux, and native Windows production Guardian lifecycle receipts. [preexec_rejection exit=1 diagnostic_sha256=9cc0e36ab16ebe02ba7f57850a2c3bfdb63a6580d30b1e61a6fecd754a75de48]",
     "acceptance_ids": [
       "AC-6",
       "AC-7"

@@ -169,7 +169,7 @@ Diagram: .csdlc/prepared/issues/5845/diagram.mmd
   },
   {
     "lane": "wp24a-platform-receipt-binding",
-    "proof_role": "Recompute canonical receipt payload, media, and capture SHA-256 bindings and require all four exact platform identities at candidate HEAD.",
+    "proof_role": "Recompute canonical receipt payload, media, and capture SHA-256 bindings and require all four exact platform identities at candidate HEAD. [preexec_rejection exit=1 diagnostic_sha256=e542a9dc375e1f9405365401453003da960d237897980caea6f051a933b599d8]",
     "acceptance_ids": [
       "AC-2",
       "AC-5"

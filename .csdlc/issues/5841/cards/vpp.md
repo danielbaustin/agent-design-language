@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5841/diagram.mmd
 [
   {
     "lane": "exact-source-refactor-proof",
-    "proof_role": "Restrict edits to the declared control and observability source/tests, require behavior invariants and rollback, run focused tests plus strict fmt/clippy, reject LoC/duplication regression, and bind native macOS/Linux proof to HEAD.",
+    "proof_role": "Restrict edits to the declared control and observability source/tests, require behavior invariants and rollback, run focused tests plus strict fmt/clippy, reject LoC/duplication regression, and bind native macOS/Linux proof to HEAD. [preexec_rejection exit=1 diagnostic_sha256=3abf5e53d59152c48eeffa2d7cfcf34d73e045614de02a2495a9db24ddba04a4]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

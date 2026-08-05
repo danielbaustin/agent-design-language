@@ -91,7 +91,7 @@ Diagram: .csdlc/prepared/issues/5823/diagram.mmd
   },
   {
     "lane": "native-platform-contract-matrix",
-    "proof_role": "Require native live Linux and macOS receipts plus live-native or explicitly non-native fixture Windows proof; reject blocked rows.",
+    "proof_role": "Require native live Linux and macOS receipts plus live-native or explicitly non-native fixture Windows proof; reject blocked rows. [preexec_rejection exit=1 diagnostic_sha256=74a6d08d90706609bd249a6ccdf542e35b3785ec34a6d0d60aecbdcdb4e57b2a]",
     "acceptance_ids": [
       "AC-6",
       "AC-7",

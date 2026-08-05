@@ -105,7 +105,7 @@ Diagram: .csdlc/prepared/issues/5831/diagram.mmd
   },
   {
     "lane": "adaptive_learning-native-ci-receipt-verification",
-    "proof_role": "Independently recompute producer, source-manifest, command-log, and semantic-output digests; parse a positive test count; verify GitHub Actions provenance; and require macOS/Linux semantic equivalence at exact candidate HEAD.",
+    "proof_role": "Independently recompute producer, source-manifest, command-log, and semantic-output digests; parse a positive test count; verify GitHub Actions provenance; and require macOS/Linux semantic equivalence at exact candidate HEAD. [preexec_rejection exit=1 diagnostic_sha256=0a5aff005083397b6349dca44da4b6011d120bf22f1a940712e7373301d291d1]",
     "acceptance_ids": [
       "AC-4",
       "AC-8"

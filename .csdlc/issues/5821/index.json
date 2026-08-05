@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9376933aa08bd1c1708eacda6c1cb876ff925d7a61596daf9f30c8c4e86f245e",
   "phase": "bound",
-  "generation": 53,
-  "digest": "7f4f448235bf6e9919ece0b37fe248007a00801bc288c162814231ff97880097",
+  "generation": 54,
+  "digest": "3cde127ef789a3e93ebf971ddeb037984a5018b3879af09281064bbafb8f9b2c",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "d2f18aaf3028a67b32078b605f91e2779df98626448a1ec079fb28a2ab0e73ab",
+      "values_digest": "e0a12e866b1b4d1cbc0f517dd2036b93ca97743babb94360ce677635910cc859",
       "rendered_digest": "e0237a5edb0f610637736f1af02104812f6c2a64dd5cb0a573fdaf0b7cb4b576",
       "ast_digest": "7568b8872375bef23c9c4c66b374537ac9ebeb29505ad8dff9a1af878b7241d5"
     },
     "stp": {
-      "values_digest": "8765b4e8374dc4cae2ff8c9adba6bd39cf2d2c226614481ec571e0e00b1bbcaf",
+      "values_digest": "bb8f874133f5ffbea6339806cf153d4a4da80281a69ae6e689ca7867fe95526d",
       "rendered_digest": "1f4b22c692e310d367014ae4ec7a02650db3c9c15a20afac792fe25af3553779",
       "ast_digest": "3813cb1efa14407e1503790a730f37bd93fa39f31314510efd249e8f90b9c2bb"
     },
     "spp": {
-      "values_digest": "0b5fe62dfdefa2c4c15a083b495debe493764881f4756a2ea05c7ce68ad02652",
+      "values_digest": "db7104c0f0f7ada239bdc2e19a8901fe0b06ec4fb942f9302b30fbc2e4840d1c",
       "rendered_digest": "99ef9d0c549e036697dbb8e1681de41e1f19b0f48b03c308bdfd4584df78d8c6",
       "ast_digest": "753ddd50496704f17f1cc1cfd4bda74561fc2ba855d168591ca0ca730a368645"
     },
     "vpp": {
-      "values_digest": "5abc8b3625565c9e87f96e8593828536cde5543326cec719ef37f1baf28512ac",
-      "rendered_digest": "e829989830c7cbf48bac643c15f5d968dfec955136b2a1d6f3fd3404bc0777ce",
-      "ast_digest": "1bc0b8574a93b23a6df19dacc0c86de0d90b714886afec1a0ac5245c368543bc"
+      "values_digest": "8e32ad0bd862322fc0633c80022b66cb5ba38d6891b2bdc772512775d5616a68",
+      "rendered_digest": "c4a101bf61dccfa775a39f3f57212784a572584a057968fefd7c00a7d17a5fb3",
+      "ast_digest": "62ca9ae2d647f97c34a73bc82a63e8100200aae0c5bb818cee88cef924e6bb6b"
     },
     "srp": {
-      "values_digest": "84588cf4773f210884e32fb46b64549a30f543f5dbfe5588cbb4f8a39cf4eb3e",
+      "values_digest": "fe04adcbe854e1f3b3779fd0edc5f2ce3c8e581d39260405fb8d49a40cd165d4",
       "rendered_digest": "26cef715aa56af54b86ef0aba47aadba1c1bf7f3c05d0719853cd6242ca5e0fd",
       "ast_digest": "46f530c75ae60c4d0858fff71941147846698e0d938b9cc3cb2b7f5e1ab07ce0"
     },
     "sor": {
-      "values_digest": "ada368b54822749eb06185ac267285778a074544c870fe6bc479a50445054479",
+      "values_digest": "c58a65b01821a2eced5a7ec030074085d78c3497c4e1b21458062b5f23aeb543",
       "rendered_digest": "e10d878924281817411c3f3ea1f856c4f04bc1a7c1419a67f67224f0db96dd33",
       "ast_digest": "e9f243f2dcd8c5194d9cc00e3bcc0b6d2994a1076c33b349f81126488ff15055"
     }
@@ -559,6 +559,27 @@
       "actor": "codex:5860-runtime-wp04-rollback-repair",
       "reason": "Release the rollback-section repair claim after typed design reapproval and card regeneration.",
       "operation": "{\"claim_id\":\"claim-5821-v092-rollback-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-rollback-repair\"}"
+    },
+    {
+      "sequence": 71,
+      "generation": 53,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Acquire issue-local authority to declare the exact VPP pre-execution rejection contract.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5821-v092-preexec-contract\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-vpp-preexecution-contracts\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5821\",\".csdlc/prepared/issues/5821\",\".csdlc/evidence/5821\"],\"purpose\":\"Declare the issue-local VPP pre-execution rejection contract without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 72,
+      "generation": 54,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Declare the exact issue-local pre-execution rejection exit class and normalized diagnostic digest.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"live-child-wave-ledger\",\"proof_role\":\"Validate #5862 plus exactly #5863-#5878, complete owner/dependency/path/proof/rollback fields, acyclic dependencies, exclusive paths, approved designs, and null claims.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5821/validate-child-wave.rb\"],\"parallel_group\":\"planning-gate\",\"defer_reason\":\"Requires live GitHub read access through the typed v2 issue owner binary.\"},{\"lane\":\"architecture-security-review\",\"proof_role\":\"Validate required architecture/threat coverage and an independent accepted exact-packet review with recomputed artifact digests. [preexec_rejection exit=1 diagnostic_sha256=bab4c559fb9e19d99506c5e93a5ce3aa7a2610b934cd40213ab52d93467c6f87]\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5821/validate-architecture-security-review.rb\"],\"parallel_group\":\"planning-gate\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 73,
+      "generation": 54,
+      "actor": "codex:5860-vpp-preexecution-contracts",
+      "reason": "Release issue-local authority after typed VPP contract replacement.",
+      "operation": "{\"claim_id\":\"claim-5821-v092-preexec-contract\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-vpp-preexecution-contracts\"}"
     }
   ]
 }

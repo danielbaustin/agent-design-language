@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5786/diagram.mmd
 [
   {
     "lane": "pinned-deletion-denominator",
-    "proof_role": "Reconstruct the immutable pre-change adl/src path, blob, file-count, and LoC denominator from its ancestral Git SHA; require complete dispositions, derived reduction and references, clean install, and native macOS/Linux exact-head proof.",
+    "proof_role": "Reconstruct the immutable pre-change adl/src path, blob, file-count, and LoC denominator from its ancestral Git SHA; require complete dispositions, derived reduction and references, clean install, and native macOS/Linux exact-head proof. [preexec_rejection exit=1 diagnostic_sha256=d956afaaec4fe86f37e70358e697484a58e6fa8e5c34e80fbc23786c38157c50]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

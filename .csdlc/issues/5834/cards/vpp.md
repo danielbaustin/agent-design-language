@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5834/diagram.mmd
 [
   {
     "lane": "birthday-review-packet",
-    "proof_role": "Parse the packet manifest/schema, recompute referenced digests, resolve links, and require the exact WP-08 through WP-15 roster including WP-13A and WP-14.",
+    "proof_role": "Parse the packet manifest/schema, recompute referenced digests, resolve links, and require the exact WP-08 through WP-15 roster including WP-13A and WP-14. [preexec_rejection exit=1 diagnostic_sha256=342d4c821b9ac863c110874f50eddf925201e0474dcc4d02afc4477325a2e469]",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
