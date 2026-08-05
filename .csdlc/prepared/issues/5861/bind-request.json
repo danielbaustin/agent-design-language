@@ -1,0 +1,24 @@
+{
+  "issue": 5861,
+  "base_branch": "main",
+  "branch": "codex/5861-v092-csdlc-preparation",
+  "worktree": ".worktrees/adl-wp-5861-preparation",
+  "claim": {
+    "id": "claim-5861-v092-simple-preparation-binding",
+    "owner": "codex:5861",
+    "generation": 2,
+    "acquired_unix_seconds": 1785950070,
+    "expires_unix_seconds": 1786554870,
+    "heartbeat_unix_seconds": 1785950070,
+    "branch": "codex/5861-v092-csdlc-preparation",
+    "worktree": ".worktrees/adl-wp-5861-preparation",
+    "protected_paths": [
+      "csdlc-v2",
+      "docs/architecture/csdlc-v2",
+      ".csdlc/issues/5861",
+      ".csdlc/prepared/issues/5861",
+      ".csdlc/evidence/5861"
+    ],
+    "purpose": "Implement claim-free preparation and recoverable execution binding after explicit operator authorization"
+  }
+}

@@ -3,9 +3,9 @@
   "issue": 5861,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "bd0f74de382b941c962968626ec47c9841184670eb31eb9e17a30d7c0f0f6cee",
-  "phase": "initialized",
+  "phase": "bound",
   "generation": 2,
-  "digest": "bddbe245f94d98aa2b0f7d72f971cf84ed090000dde845d9479b3ab33df21456",
+  "digest": "20cb1f4c37c010ad2dc920dd73d8390c790a773b55ba460f244b057e829299fd",
   "claim": {
     "id": "claim-5861-v092-simple-preparation-binding",
     "owner": "codex:5861",
@@ -70,7 +70,22 @@
       "ast_digest": "477ed35fa8088ce14ece83dda3b63f32ce5ad32ff72f0153962d9e4994eeda0c"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5861",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5861",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -92,6 +107,13 @@
       "actor": "codex:gemini-claude-design-synthesis",
       "reason": "reapprove stale initialized issue design",
       "operation": "approve_design"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5861",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
     }
   ]
 }
