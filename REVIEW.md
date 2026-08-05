@@ -93,16 +93,15 @@ The current review posture is v0.92 active development. Review each v0.92
 outcome against its owning issue and current exact revision; activation of the
 milestone package is not evidence that planned features are complete.
 
-The retained v0.91.8 posture reached WP-19 external-review freeze readiness. WP-16
+The retained v0.91.8 posture completed its review and handoff bridge. WP-16
 merged at `2e9d2dd7c`; its evidence records 67 audited issue outcomes, 0
 unacceptable outcomes, and passing ADL v2, Runtime v3, and C-SDLC v2
 integrated lanes. WP-17 documentation truth alignment is closed. WP-18
 first-pass internal review is closed through PR `#5781`. The final second pass
 closed through PR `#5799`, reviewed head `70f4e765`, and merge commit
-`1b1ba999`. WP-19 issue `#5357` owns the formal external-review handoff. The
-external review has not been dispatched or performed; WP-20 and later
-release-tail remediation, revalidation, handoff, and ceremony gates remain
-downstream.
+`1b1ba999`. WP-19 `#5357`, WP-20 `#5363`, WP-21 `#5362`, handoff `#5352`,
+WP-21A `#5355`, WP-22 `#5359`, and WP-23 `#5348` are closed. Their retained
+artifacts are upstream evidence for v0.92, not proof that v0.92 work is done.
 
 The canonical packet for WP-19 is
 `docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md`.

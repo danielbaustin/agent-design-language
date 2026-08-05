@@ -180,8 +180,10 @@ That means the feature story should be read this way:
 - `v0.91.5` through `v0.91.7` are the pre-v0.92 review, logging, tooling,
   reliability, security, resilience, Curiosity, Constructability, and
   reasoning-graph implementation/proof path
-- `v0.92` through `v0.95` are the planned identity, governance, secure
-  execution, product-proof, and MVP-convergence bands
+- `v0.92` is the active identity, governance, secure-execution, and
+  product-proof development band; its individual outcomes remain planned until
+  their owning issues produce accepted evidence
+- `v0.93` through `v0.95` are planned product-proof and MVP-convergence bands
 
 ## ADL at a Glance
 

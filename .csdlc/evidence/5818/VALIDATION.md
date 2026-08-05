@@ -29,8 +29,10 @@ milestone or release evidence.
 Lockfiles were updated through Cargo from their existing resolutions. The
 standalone package locks changed only local package versions. The root ADL lock
 also incorporated path dependencies already declared by the current ADL and
-Runtime manifests; the resulting locked/offline ADL build passed. No dependency
-version was selected merely to widen this issue's scope.
+Runtime manifests. Re-resolving that previously stale root lock also advanced
+compatible transitive registry packages, including `js-sys`, `typenum`, and the
+`wasm-bindgen` family; the resulting locked/offline ADL build passed. No direct
+dependency constraint was changed merely to widen this issue's scope.
 
 ## Non-Claims
 

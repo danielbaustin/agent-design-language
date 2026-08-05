@@ -171,13 +171,13 @@ Start here:
 
 v0.91.7 is now published as the [ADL v0.91.7 GitHub release](https://github.com/danielbaustin/agent-design-language/releases/tag/v0.91.7)
 and remains the implementation/readiness tranche that fed the v0.91.8 bridge.
-v0.91.8 has advanced through WP-16. The integrated quality gate merged at
+v0.91.8 completed its retained review and handoff bridge. The integrated quality gate merged at
 `2e9d2dd7c` and records 67 audited issue outcomes, 0 unacceptable outcomes,
 and passing ADL v2, Runtime v3, and C-SDLC v2 focused/integrated lanes. The
-bridge is still not release-approved: WP-17 documentation alignment and both
-WP-18 internal reviews are closed; external review, remediation/preflight,
-v0.92 handoff truth, and release
-ceremony remain explicit release-tail work.
+subsequent documentation, internal and external review, remediation,
+revalidation, v0.92 handoff, and release-ceremony issues are closed. These
+retained records supply upstream evidence for v0.92; they do not prove any
+planned v0.92 outcome complete.
 
 Start here:
 
