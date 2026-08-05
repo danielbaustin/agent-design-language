@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "6c7ce7fb4fe22e8f08686d792bda8917ba0ffb8f5c1a83398ffcd14748b28e07",
   "phase": "bound",
-  "generation": 25,
-  "digest": "e90e89d09960a08d260f2e59dc9c0bec2d663c397df9f3f913d93f3f0bfc4faa",
+  "generation": 27,
+  "digest": "86541b81bef6192cdc43e0e3cef80525947072b4d1b06c4798a344a961e7b0d8",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5844/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-demo-publication-repair",
-      "revision": "cc4ee89a1ccf570fb46098e8736c6e31288385e840d9769cbbae761951255b48"
+      "reviewer": "codex:5860-demo-publication-second-pass",
+      "revision": "3de0b93dbc7089562d1f497d34856b408b64151cf42ab76ce52cb64e810e2538"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "6a215eb0761212abddffd7fd8c495b2e9635d06b81dc87d82121ae5c2c82d3b4",
+      "values_digest": "130fc99ec0292cfa35941d9ccd85d80ac3924d5c6ba6c8a031df93cb6b9ed13f",
       "rendered_digest": "76e0528891dd577838830be0d5fbf114956313a530312a5f6a8eb8b3844a1d3f",
       "ast_digest": "68b46129281d359c518769bf62f9bd3b4ccbfd155672434cee81ca1ba72f47fb"
     },
     "stp": {
-      "values_digest": "15077d2a8801f4a9aae8fe9c9846b1f980e9cef4adac0450e9592e60187921fc",
+      "values_digest": "ae5c04ed343ac2c40b551c37d0ff4fdfafd60a27e6989212c1e7098d965b2391",
       "rendered_digest": "84431b7638f979f1a64978416f19224f0df6fde81ab7535773adfe4f3ef1f101",
       "ast_digest": "fb34abfacccd0a27310d4727a4aa84646d5715d8ec5268ecb0621e708bc59ac8"
     },
     "spp": {
-      "values_digest": "fe66795a6fc6fd4df3781b91e6e44aca9f1822f1f9fad3f020e69504db081a45",
-      "rendered_digest": "3e7f5941eb4422b04035b95031357f126c9936674fc2f670feca0796108857f4",
-      "ast_digest": "d9b9947b9101af8cd7ac8f4c8bc77122f33a59463ef26d09e891f2730920ffbe"
+      "values_digest": "dc4cf2143c33385581bc27e4516e3c31b217bdf72f94bbfa7810e340cc4c2acf",
+      "rendered_digest": "b73606c48d962b684d50b27fd6aa65874d07540c3ed9bf1cddcdbe14a6269205",
+      "ast_digest": "c31333f90abc26a06f60af481bb697ee6008725a8a8891fe109e4129ea448ba4"
     },
     "vpp": {
-      "values_digest": "7f0eb32b9427bca4ae633d54d37d99ef42e04d23b5a7e435e30d3d643eb5c4dd",
-      "rendered_digest": "6d3b4fc9d6c378adc58b7b86d1088600461903d91c567660b94e6aca88d51380",
-      "ast_digest": "47c6310fa4b182d344b783943b2dbeac4612d6db1faa14d5924ad42b8c5b0279"
+      "values_digest": "a02fa2828912383f13d38191364009d89bb8427853035352f5027efdb0c6a878",
+      "rendered_digest": "6ef3013f579704e0c84895bdb17903bf1926d738640f3799d65da6f00992fe53",
+      "ast_digest": "7730f2cdd44ae836b24b11ee7d422673cb255b3d0b7b4c8be441e43966f7c567"
     },
     "srp": {
-      "values_digest": "5e9cb3cd29b225d6b913713d7e23bb15429fad3795510fe22c9ca01815ab1bb6",
+      "values_digest": "ebb35f5b7a4e0036f42ab5328a69798d41b017339bfec37a4474705d635a563c",
       "rendered_digest": "47d83d14b67ab7816e2d8e3058beda3334ccb0fc96703d3a0b2dc4692d4da3dd",
       "ast_digest": "40349d873128f131c86c541d2ebb3b78aa9095a847eb428f7f0a349aa42db625"
     },
     "sor": {
-      "values_digest": "6b0b190dfcd4d5a4f3c0f403fb3eee3598a6299e577bb92e36de0c5f2852541d",
+      "values_digest": "214680f83c3da9e17d11b73fa9ffa8081edd125c03eacf762f718948bac968d4",
       "rendered_digest": "eda3b995d480b9efc950b4c4e0cccc9f208e1c9f35da5420f422b05167026b66",
       "ast_digest": "14909c3af4a2013f17b0d2d884dbde9a170bdbf0691f61616b1d27dd75b4248a"
     }
@@ -307,6 +307,34 @@
       "actor": "codex:5860-demo-publication-repair",
       "reason": "Release the temporary WP-24 review-finding repair claim after typed card validation",
       "operation": "{\"claim_id\":\"claim-5844-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5860-demo-publication-repair\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 25,
+      "actor": "codex:5860-demo-publication-second-pass",
+      "reason": "Reacquire the released preparation claim for the bounded WP-24 second-pass readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5844-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-demo-publication-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5844\",\".csdlc/prepared/issues/5844\",\".csdlc/evidence/5844\",\".csdlc/locks/5844.lock\"],\"purpose\":\"second-pass review-finding readiness repair only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 36,
+      "generation": 26,
+      "actor": "codex:5860-demo-publication-second-pass",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 37,
+      "generation": 27,
+      "actor": "codex:5860-demo-publication-second-pass",
+      "reason": "Align machine-readable WP-24 estimates with the approved ten-wave production design.",
+      "operation": "{\"operation\":\"replace_planning_estimates\",\"execution_estimates\":{\"elapsed_seconds\":144000,\"total_tokens\":740000,\"validation_seconds\":18000},\"planned_validation_seconds\":18000,\"planned_validation_tokens\":60000}"
+    },
+    {
+      "sequence": 38,
+      "generation": 27,
+      "actor": "codex:5860-demo-publication-second-pass",
+      "reason": "Release the temporary WP-24 second-pass repair claim after typed card validation",
+      "operation": "{\"claim_id\":\"claim-5844-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5860-demo-publication-second-pass\"}"
     }
   ]
 }

@@ -2,10 +2,10 @@
   "issue": 5844,
   "repository": "danielbaustin/agent-design-language",
   "expected_claim_id": "claim-5844-v092-preparation",
-  "expected_generation": 25,
-  "expected_digest": "33a0bd6ad55ba5a46f2d5eca394ed3154ce671fe4614b3a67f0c66644349c758",
-  "now_unix_seconds": 1785951922,
-  "actor": "codex:5860-demo-publication-repair",
+  "expected_generation": 27,
+  "expected_digest": "f096f2ad644e2aecc260d34796ad1d282ae52cc3c310d1bdc4869391f0e5b247",
+  "now_unix_seconds": 1785953337,
+  "actor": "codex:5860-demo-publication-second-pass",
   "operator_authority": "operator-authorized:5860-preparation-clarification",
-  "reason": "Release the temporary WP-24 review-finding repair claim after typed card validation"
+  "reason": "Release the temporary WP-24 second-pass repair claim after typed card validation"
 }

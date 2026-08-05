@@ -1,0 +1,19 @@
+{
+  "issue": 5845,
+  "expected_generation": 25,
+  "expected_digest": "acd3959fdfcf21282594002c12c2e5286e8e23e840f024def6039263eac0c130",
+  "claim_id": "claim-5845-v092-preparation",
+  "actor": "codex:5860-demo-publication-second-pass",
+  "reason": "Align machine-readable WP-24A estimates with the approved ten-wave production and native-playback design.",
+  "card": "spp",
+  "operation": {
+    "operation": "replace_planning_estimates",
+    "execution_estimates": {
+      "elapsed_seconds": 288000,
+      "total_tokens": 700000,
+      "validation_seconds": 21600
+    },
+    "planned_validation_seconds": 21600,
+    "planned_validation_tokens": 80000
+  }
+}

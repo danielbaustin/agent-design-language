@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-24] Ten-article launch series",
     "slug": "v0-92-wp-24-ten-article-launch-series",
     "version": "v0.92",
-    "generation": 25
+    "generation": 27
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 10,
+      "plan_revision": 11,
       "summary": "Run ten bounded article waves budgeted at 4 hours and 74,000 tokens each (40 agent-hours and 740,000 tokens aggregate), with source research, complete drafting, editorial review, revisions, validation, cross-series review, #5843 reconciliation, and a stop-before-publish disposition; five parallel owners target 12-18 hours wall-clock without reducing any article to an outline.",
       "steps": [
         {
@@ -87,9 +87,9 @@
         "External links or citations may be unavailable"
       ],
       "execution_estimates": {
-        "elapsed_seconds": 7200,
-        "total_tokens": 40000,
-        "validation_seconds": 1200
+        "elapsed_seconds": 144000,
+        "total_tokens": 740000,
+        "validation_seconds": 18000
       },
       "stop_conditions": [
         "#5819 naming/link truth is unresolved",
@@ -102,7 +102,7 @@
         "Publication-review policy changes"
       ],
       "design_ref": ".csdlc/prepared/issues/5844/design.md",
-      "design_digest": "cc4ee89a1ccf570fb46098e8736c6e31288385e840d9769cbbae761951255b48",
+      "design_digest": "3de0b93dbc7089562d1f497d34856b408b64151cf42ab76ce52cb64e810e2538",
       "diagram_ref": ".csdlc/prepared/issues/5844/diagram.mmd",
       "diagram_digest": "fd443e63c054166e3e4c71db483681f52038f49cafe19a5a5353a8cbb24673a1"
     }

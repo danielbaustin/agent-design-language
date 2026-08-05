@@ -16,7 +16,7 @@ Run ten bounded episode waves budgeted at 8 hours and 70,000 tokens each (80 age
 
 ## Plan
 
-Revision 10
+Revision 13
 
 ## Steps
 
@@ -61,18 +61,18 @@ Revision 10
   },
   {
     "id": "S5",
-    "action": "Budget 10 x 30-minute/4,000-token validation waves and prove feed parity, missing-asset rejection, and platform playback",
+    "action": "Implement the three owned playback producers and emit source-bound receipts for macOS, Linux, desktop Chromium, and physical-device iOS Safari",
     "acceptance_ids": [
       "AC-2",
-      "AC-3",
       "AC-5"
     ],
     "status": "pending"
   },
   {
     "id": "S6",
-    "action": "Resolve feed-wide consistency and exact-head editorial/audio review within the 4-6 hour integration reserve, with publication still gated",
+    "action": "Run digest-recomputing receipt validation, resolve feed-wide consistency and exact-head editorial/audio review, and keep publication gated",
     "acceptance_ids": [
+      "AC-3",
       "AC-5"
     ],
     "status": "pending"
@@ -97,16 +97,16 @@ Revision 10
 ## Estimates
 
 {
-  "elapsed_seconds": 7200,
-  "total_tokens": 40000,
-  "validation_seconds": 1200
+  "elapsed_seconds": 288000,
+  "total_tokens": 700000,
+  "validation_seconds": 21600
 }
 
 ## Design
 
 .csdlc/prepared/issues/5845/design.md
 
-Digest: e21f22c0955601f844d6796ed2e3763ac64b019ea236d6fd2734de9e2f53f6a2
+Digest: c1be7df6e178d82e31cb10783e47ac9e7096db34f2aff79ea4e068408cf92553
 
 ## Diagram
 

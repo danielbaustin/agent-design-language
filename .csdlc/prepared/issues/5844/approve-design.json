@@ -1,7 +1,7 @@
 {
   "issue": 5844,
-  "expected_generation": 22,
-  "expected_digest": "babcb0d571b9c20ca6dc8c4e17e3da02ba1acf92c5bc762594488e5c8fb395d1",
+  "expected_generation": 25,
+  "expected_digest": "9d697e3c33060690b0cb26cff32b3731bb52342508dae42a767d2985b9bd2451",
   "claim_id": "claim-5844-v092-preparation",
-  "reviewer": "codex:5860-demo-publication-repair"
+  "reviewer": "codex:5860-demo-publication-second-pass"
 }

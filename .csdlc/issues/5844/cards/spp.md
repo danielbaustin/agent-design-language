@@ -16,7 +16,7 @@ Run ten bounded article waves budgeted at 4 hours and 74,000 tokens each (40 age
 
 ## Plan
 
-Revision 10
+Revision 11
 
 ## Steps
 
@@ -93,16 +93,16 @@ Revision 10
 ## Estimates
 
 {
-  "elapsed_seconds": 7200,
-  "total_tokens": 40000,
-  "validation_seconds": 1200
+  "elapsed_seconds": 144000,
+  "total_tokens": 740000,
+  "validation_seconds": 18000
 }
 
 ## Design
 
 .csdlc/prepared/issues/5844/design.md
 
-Digest: cc4ee89a1ccf570fb46098e8736c6e31288385e840d9769cbbae761951255b48
+Digest: 3de0b93dbc7089562d1f497d34856b408b64151cf42ab76ce52cb64e810e2538
 
 ## Diagram
 

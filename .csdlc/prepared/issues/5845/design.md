@@ -18,7 +18,7 @@ editorial/audio review. Publication and deployment remain separately gated.
 - `adl/tools/validate_podcast_launch_packet.py`
 - existing WAV/feed routes are smoke proof only, not ten final episodes.
 
-## Proposed Artifacts And Protected-Path Candidates
+## Owned Paths
 
 - `demos/podcast/episodes/001-meet-the-ai-coworkers/` through `010-what-does-a-weekly-ai-studio-look-like/`
 - `demos/podcast/audio/`
@@ -27,6 +27,9 @@ editorial/audio review. Publication and deployment remain separately gated.
 - `adl/tools/generate_podcast_launch_packet.py`
 - `adl/tools/validate_podcast_launch_packet.py`
 - `adl/tools/test_podcast_launch_packet.sh`
+- `adl/tools/record_podcast_native_playback.sh`
+- `adl/tools/record_podcast_browser_playback.mjs`
+- `adl/tools/record_podcast_ios_safari_playback.sh`
 - `.csdlc/evidence/5845/`
 
 The Agent Logic public route or storage repository is not claimed until #5819
@@ -51,6 +54,51 @@ credentials.
 4. Generate RSS-ready enclosure records and validate episode-to-feed parity without deploying.
 5. Run audio QA, redaction, missing-asset, guest-consent, metadata, and platform playback checks.
 6. Complete editorial/audio review and exact-head issue review.
+
+## Native Playback Evidence Contract
+
+Implementation must add three bounded evidence producers under the owned
+paths. They are product-validation deliverables, not publication tools:
+
+- macOS and Linux native playback:
+  `bash adl/tools/record_podcast_native_playback.sh --platform <macos|linux> --source-sha <sha> --episode demos/podcast/episodes/001-meet-the-ai-coworkers/episode.mp3 --evidence-dir .csdlc/evidence/5845/platform/<platform>-native`
+- desktop Chromium playback:
+  `node adl/tools/record_podcast_browser_playback.mjs --browser chromium --source-sha <sha> --episode-url <loopback-url> --evidence-dir .csdlc/evidence/5845/platform/desktop-chromium`
+- physical-device iOS Safari playback:
+  `bash adl/tools/record_podcast_ios_safari_playback.sh --source-sha <sha> --device-id-hash <sha256> --episode-url <device-reachable-url> --evidence-dir .csdlc/evidence/5845/platform/ios-safari-device`
+
+Each producer must capture one complete playback of the canonical episode,
+write its capture artifact below the named evidence directory, and emit a
+`receipt.json`. Credentials, raw device identifiers, and externally reachable
+tokens are forbidden. Loopback or device-reachable URLs are evidence inputs,
+not publication claims.
+
+The receipt is an object with `schema`, `payload`, and `payload_sha256`.
+`schema` is `adl.podcast_playback_receipt.v1`. The payload contains:
+
+- `platform_id`: exactly `macos-native`, `linux-native`,
+  `desktop-chromium`, or `ios-safari-device`
+- `source_sha`: the exact 40-hex candidate commit
+- `argv`: the complete producer command, including the expected owned script
+- `runner`: nonempty `kind`, `os`, `os_version`, `architecture`, and
+  privacy-safe `identity`
+- `device`: required nonempty browser/version for desktop Chromium and
+  hashed device/model/OS/Safari identity for iOS; native lanes use `null`
+- `media_path` and `media_sha256`: repo-relative final episode input and its
+  recomputed SHA-256
+- `capture_path` and `capture_sha256`: repo-relative playback capture and its
+  recomputed SHA-256
+- `started_at`, `ended_at`, and `duration_seconds`
+- `result`: `passed`, `playback_started`, `playback_completed`, `audible`, and
+  `controls_operable`, all true
+
+`.csdlc/prepared/issues/5845/validate-platform-playback-receipts.rb` is the
+fail-closed validator. It recomputes the canonical payload digest and both file
+digests, binds every receipt to one requested source SHA, verifies the expected
+producer script and platform flag, requires all four distinct platform IDs,
+rejects paths outside the repository or `.csdlc/evidence/5845/platform/`, and
+rejects missing native runner or browser/device identity. Hand-authored status
+fields without the bound files, command, and digests are not proof.
 
 ## Production Wave Budget
 

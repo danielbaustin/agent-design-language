@@ -1,0 +1,19 @@
+{
+  "issue": 5844,
+  "expected_generation": 26,
+  "expected_digest": "e8f461703aca1b7cf9fd110953d1dc0b53ce32db3f367fc2e160d59640af1878",
+  "claim_id": "claim-5844-v092-preparation",
+  "actor": "codex:5860-demo-publication-second-pass",
+  "reason": "Align machine-readable WP-24 estimates with the approved ten-wave production design.",
+  "card": "spp",
+  "operation": {
+    "operation": "replace_planning_estimates",
+    "execution_estimates": {
+      "elapsed_seconds": 144000,
+      "total_tokens": 740000,
+      "validation_seconds": 18000
+    },
+    "planned_validation_seconds": 18000,
+    "planned_validation_tokens": 60000
+  }
+}

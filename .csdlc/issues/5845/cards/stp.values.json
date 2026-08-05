@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-24A] Podcast Studio first ten episodes",
     "slug": "v0-92-wp-24a-podcast-studio-first-ten-episodes",
     "version": "v0.92",
-    "generation": 24
+    "generation": 28
   },
   "status": "ready",
   "content": {
@@ -26,7 +26,7 @@
         "AC-2: Audio digests, duration, sample rate, channels, loudness, peak, ID3/artwork, listen check, and archive records are internally consistent.",
         "AC-3: Feed/enclosure records match episode specs and reject local paths, drafts, unstable GUIDs, missing bytes, and MIME/duration mismatches.",
         "AC-4: Guest consent, DeepSeek invitation language, source rights, credentials, and redaction remain truthful and privacy-safe.",
-        "AC-5: macOS, Linux, desktop-browser, and iOS Safari evidence is recorded where required, with no deployment or publication claim."
+        "AC-5: Source-SHA-bound macOS, Linux, desktop Chromium, and physical-device iOS Safari receipts pass digest-recomputing validation, with no deployment or publication claim."
       ],
       "dependencies": [
         "#5819 canonical naming/link truth",

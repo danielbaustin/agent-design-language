@@ -28,7 +28,7 @@ Create and validate the ten review-ready production packages using retained Podc
 2. AC-2: Audio digests, duration, sample rate, channels, loudness, peak, ID3/artwork, listen check, and archive records are internally consistent.
 3. AC-3: Feed/enclosure records match episode specs and reject local paths, drafts, unstable GUIDs, missing bytes, and MIME/duration mismatches.
 4. AC-4: Guest consent, DeepSeek invitation language, source rights, credentials, and redaction remain truthful and privacy-safe.
-5. AC-5: macOS, Linux, desktop-browser, and iOS Safari evidence is recorded where required, with no deployment or publication claim.
+5. AC-5: Source-SHA-bound macOS, Linux, desktop Chromium, and physical-device iOS Safari receipts pass digest-recomputing validation, with no deployment or publication claim.
 
 ## Dependencies
 

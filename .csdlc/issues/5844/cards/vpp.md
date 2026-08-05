@@ -88,9 +88,9 @@ Only declared parallel groups may overlap.
 
 ## Budgets
 
-Seconds: 1200
+Seconds: 18000
 
-Tokens: 10000
+Tokens: 60000
 
 ## Commands
 

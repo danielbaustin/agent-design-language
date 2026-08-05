@@ -1,17 +1,17 @@
 {
   "issue": 5844,
-  "expected_generation": 22,
-  "expected_digest": "21bafd52199be22369a85421a8676b59ac23bbd00496ec21d301b11bb01da531",
-  "now_unix_seconds": 1785951545,
-  "actor": "codex:5860-demo-publication-repair",
-  "reason": "Reacquire the released preparation claim to repair reviewed WP-24 readiness estimates.",
+  "expected_generation": 25,
+  "expected_digest": "e90e89d09960a08d260f2e59dc9c0bec2d663c397df9f3f913d93f3f0bfc4faa",
+  "now_unix_seconds": 1785953016,
+  "actor": "codex:5860-demo-publication-second-pass",
+  "reason": "Reacquire the released preparation claim for the bounded WP-24 second-pass readiness repair.",
   "replacement": {
     "id": "claim-5844-v092-preparation",
-    "owner": "codex:5860-demo-publication-repair",
-    "generation": 22,
-    "acquired_unix_seconds": 1785951545,
-    "expires_unix_seconds": 1786037945,
-    "heartbeat_unix_seconds": 1785951545,
+    "owner": "codex:5860-demo-publication-second-pass",
+    "generation": 25,
+    "acquired_unix_seconds": 1785953016,
+    "expires_unix_seconds": 1786039416,
+    "heartbeat_unix_seconds": 1785953016,
     "branch": "codex/5860-v092-execution-readiness",
     "worktree": ".",
     "protected_paths": [
@@ -20,6 +20,6 @@
       ".csdlc/evidence/5844",
       ".csdlc/locks/5844.lock"
     ],
-    "purpose": "review-finding readiness repair only"
+    "purpose": "second-pass review-finding readiness repair only"
   }
 }

@@ -1,0 +1,26 @@
+{
+  "issue": 5845,
+  "expected_generation": 27,
+  "expected_digest": "68186fadef3741a54b8f5f9bebeb3ee341edcaa7ac46e32afbac9d3bc0581f8c",
+  "claim_id": "claim-5845-v092-preparation",
+  "actor": "codex:5860-demo-publication-second-pass",
+  "reason": "Project the exact WP-24A writable paths, including native playback evidence producers, into the typed SPP.",
+  "card": "spp",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "affected_areas",
+    "values": [
+      "demos/podcast/episodes/001-meet-the-ai-coworkers/ through demos/podcast/episodes/010-what-does-a-weekly-ai-studio-look-like/",
+      "demos/podcast/audio/",
+      "demos/podcast/feed.xml",
+      "demos/podcast/LAUNCH_READINESS.md",
+      "adl/tools/generate_podcast_launch_packet.py",
+      "adl/tools/validate_podcast_launch_packet.py",
+      "adl/tools/test_podcast_launch_packet.sh",
+      "adl/tools/record_podcast_native_playback.sh",
+      "adl/tools/record_podcast_browser_playback.mjs",
+      "adl/tools/record_podcast_ios_safari_playback.sh",
+      ".csdlc/evidence/5845/"
+    ]
+  }
+}

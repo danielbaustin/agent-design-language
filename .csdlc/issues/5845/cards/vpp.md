@@ -33,8 +33,8 @@ Diagram: .csdlc/prepared/issues/5845/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 400,
-    "budget_tokens": 4000,
+    "budget_seconds": 900,
+    "budget_tokens": 8000,
     "argv": [
       "env",
       "TMPDIR=.csdlc/evidence/5845/tmp",
@@ -55,8 +55,8 @@ Diagram: .csdlc/prepared/issues/5845/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 400,
-    "budget_tokens": 4000,
+    "budget_seconds": 900,
+    "budget_tokens": 8000,
     "argv": [
       "env",
       "TMPDIR=.csdlc/evidence/5845/tmp",
@@ -68,22 +68,123 @@ Diagram: .csdlc/prepared/issues/5845/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "wp24a-platform-playback",
-    "proof_role": "Record non-synthetic macOS, Linux, desktop-browser, and iOS Safari playback evidence for required episodes.",
+    "lane": "wp24a-macos-playback",
+    "proof_role": "Produce a non-synthetic macOS native playback receipt and capture bound to the exact candidate HEAD.",
     "acceptance_ids": [
       "AC-2",
       "AC-5"
     ],
     "deterministic": false,
     "resource_profile": "medium",
-    "budget_seconds": 400,
-    "budget_tokens": 2000,
+    "budget_seconds": 900,
+    "budget_tokens": 4000,
     "argv": [
-      "python3",
-      ".csdlc/evidence/5845/validate-platform-playback.py"
+      "bash",
+      "adl/tools/record_podcast_native_playback.sh",
+      "--platform",
+      "macos",
+      "--source-sha-from-git-head",
+      "--episode",
+      "demos/podcast/episodes/001-meet-the-ai-coworkers/episode.mp3",
+      "--evidence-dir",
+      ".csdlc/evidence/5845/platform/macos-native"
     ],
-    "parallel_group": "platform",
-    "defer_reason": "Run only where the required operating systems and browser/device targets are available; absence blocks publication readiness."
+    "parallel_group": "platform-native",
+    "defer_reason": "Required on a native macOS runner; unavailable runner blocks review readiness."
+  },
+  {
+    "lane": "wp24a-linux-playback",
+    "proof_role": "Produce a non-synthetic Linux native playback receipt and capture bound to the exact candidate HEAD.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-5"
+    ],
+    "deterministic": false,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 4000,
+    "argv": [
+      "bash",
+      "adl/tools/record_podcast_native_playback.sh",
+      "--platform",
+      "linux",
+      "--source-sha-from-git-head",
+      "--episode",
+      "demos/podcast/episodes/001-meet-the-ai-coworkers/episode.mp3",
+      "--evidence-dir",
+      ".csdlc/evidence/5845/platform/linux-native"
+    ],
+    "parallel_group": "platform-native",
+    "defer_reason": "Required on a native Linux runner; unavailable runner blocks review readiness."
+  },
+  {
+    "lane": "wp24a-desktop-chromium-playback",
+    "proof_role": "Produce a desktop Chromium playback receipt and capture bound to the exact candidate HEAD and loopback episode route.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-5"
+    ],
+    "deterministic": false,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 5000,
+    "argv": [
+      "node",
+      "adl/tools/record_podcast_browser_playback.mjs",
+      "--browser",
+      "chromium",
+      "--source-sha-from-git-head",
+      "--episode-url",
+      "http://127.0.0.1:4173/podcast/episodes/001/episode.mp3",
+      "--evidence-dir",
+      ".csdlc/evidence/5845/platform/desktop-chromium"
+    ],
+    "parallel_group": "platform-browser",
+    "defer_reason": "Required with desktop Chromium and the bounded loopback fixture; absence blocks review readiness."
+  },
+  {
+    "lane": "wp24a-ios-safari-playback",
+    "proof_role": "Produce a physical-device iOS Safari playback receipt and capture using only a hashed device identity, bound to the exact candidate HEAD.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-5"
+    ],
+    "deterministic": false,
+    "resource_profile": "large",
+    "budget_seconds": 1800,
+    "budget_tokens": 8000,
+    "argv": [
+      "bash",
+      "adl/tools/record_podcast_ios_safari_playback.sh",
+      "--source-sha-from-git-head",
+      "--device-id-hash-env",
+      "ADL_IOS_DEVICE_ID_SHA256",
+      "--episode-url",
+      "http://<device-reachable-host>:4173/podcast/episodes/001/episode.mp3",
+      "--evidence-dir",
+      ".csdlc/evidence/5845/platform/ios-safari-device"
+    ],
+    "parallel_group": "platform-browser",
+    "defer_reason": "Required on a physical iOS Safari device; simulator-only or missing device proof blocks review readiness."
+  },
+  {
+    "lane": "wp24a-platform-receipt-binding",
+    "proof_role": "Recompute canonical receipt payload, media, and capture SHA-256 bindings and require all four exact platform identities at candidate HEAD.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-5"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 3000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5845/validate-platform-playback-receipts.rb",
+      "--source-sha-from-git-head"
+    ],
+    "parallel_group": "platform-verify",
+    "defer_reason": null
   }
 ]
 
@@ -93,15 +194,19 @@ Only declared parallel groups may overlap.
 
 ## Budgets
 
-Seconds: 1200
+Seconds: 21600
 
-Tokens: 10000
+Tokens: 80000
 
 ## Commands
 
 - `env TMPDIR=.csdlc/evidence/5845/tmp bash adl/tools/test_podcast_launch_packet.sh --ten-episode-positive`
 - `env TMPDIR=.csdlc/evidence/5845/tmp bash adl/tools/test_podcast_launch_packet.sh --ten-episode-negative`
-- `python3 .csdlc/evidence/5845/validate-platform-playback.py`
+- `bash adl/tools/record_podcast_native_playback.sh --platform macos --source-sha-from-git-head --episode demos/podcast/episodes/001-meet-the-ai-coworkers/episode.mp3 --evidence-dir .csdlc/evidence/5845/platform/macos-native`
+- `bash adl/tools/record_podcast_native_playback.sh --platform linux --source-sha-from-git-head --episode demos/podcast/episodes/001-meet-the-ai-coworkers/episode.mp3 --evidence-dir .csdlc/evidence/5845/platform/linux-native`
+- `node adl/tools/record_podcast_browser_playback.mjs --browser chromium --source-sha-from-git-head --episode-url http://127.0.0.1:4173/podcast/episodes/001/episode.mp3 --evidence-dir .csdlc/evidence/5845/platform/desktop-chromium`
+- `bash adl/tools/record_podcast_ios_safari_playback.sh --source-sha-from-git-head --device-id-hash-env ADL_IOS_DEVICE_ID_SHA256 --episode-url http://<device-reachable-host>:4173/podcast/episodes/001/episode.mp3 --evidence-dir .csdlc/evidence/5845/platform/ios-safari-device`
+- `ruby .csdlc/prepared/issues/5845/validate-platform-playback-receipts.rb --source-sha-from-git-head`
 
 ## Failure Semantics
 

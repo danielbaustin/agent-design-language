@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-24A] Podcast Studio first ten episodes",
     "slug": "v0-92-wp-24a-podcast-studio-first-ten-episodes",
     "version": "v0.92",
-    "generation": 24
+    "generation": 28
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 10,
+      "plan_revision": 13,
       "summary": "Run ten bounded episode waves budgeted at 8 hours and 70,000 tokens each (80 agent-hours and 700,000 tokens aggregate), covering source/script work, audio production, transcript/show notes/artwork/metadata, listen review, revisions, validation, feed-wide consistency, and platform playback; five parallel owners target 20-30 hours wall-clock and stop before deployment or publication.",
       "steps": [
         {
@@ -56,31 +56,34 @@
         },
         {
           "id": "S5",
-          "action": "Budget 10 x 30-minute/4,000-token validation waves and prove feed parity, missing-asset rejection, and platform playback",
+          "action": "Implement the three owned playback producers and emit source-bound receipts for macOS, Linux, desktop Chromium, and physical-device iOS Safari",
           "acceptance_ids": [
             "AC-2",
-            "AC-3",
             "AC-5"
           ],
           "status": "pending"
         },
         {
           "id": "S6",
-          "action": "Resolve feed-wide consistency and exact-head editorial/audio review within the 4-6 hour integration reserve, with publication still gated",
+          "action": "Run digest-recomputing receipt validation, resolve feed-wide consistency and exact-head editorial/audio review, and keep publication gated",
           "acceptance_ids": [
+            "AC-3",
             "AC-5"
           ],
           "status": "pending"
         }
       ],
       "affected_areas": [
-        "demos/podcast/episodes/",
+        "demos/podcast/episodes/001-meet-the-ai-coworkers/ through demos/podcast/episodes/010-what-does-a-weekly-ai-studio-look-like/",
         "demos/podcast/audio/",
         "demos/podcast/feed.xml",
         "demos/podcast/LAUNCH_READINESS.md",
         "adl/tools/generate_podcast_launch_packet.py",
         "adl/tools/validate_podcast_launch_packet.py",
         "adl/tools/test_podcast_launch_packet.sh",
+        "adl/tools/record_podcast_native_playback.sh",
+        "adl/tools/record_podcast_browser_playback.mjs",
+        "adl/tools/record_podcast_ios_safari_playback.sh",
         ".csdlc/evidence/5845/"
       ],
       "invariants": [
@@ -97,9 +100,9 @@
         "Large binary artifacts may exceed repository policy"
       ],
       "execution_estimates": {
-        "elapsed_seconds": 7200,
-        "total_tokens": 40000,
-        "validation_seconds": 1200
+        "elapsed_seconds": 288000,
+        "total_tokens": 700000,
+        "validation_seconds": 21600
       },
       "stop_conditions": [
         "Route/storage or binary-artifact policy is unresolved",
@@ -113,7 +116,7 @@
         "Feed, audio, artwork, or repository-size policy changes"
       ],
       "design_ref": ".csdlc/prepared/issues/5845/design.md",
-      "design_digest": "e21f22c0955601f844d6796ed2e3763ac64b019ea236d6fd2734de9e2f53f6a2",
+      "design_digest": "c1be7df6e178d82e31cb10783e47ac9e7096db34f2aff79ea4e068408cf92553",
       "diagram_ref": ".csdlc/prepared/issues/5845/diagram.mmd",
       "diagram_digest": "f93e767ad01814319f03d67e71121eeca0bbbaf725dbabb2e0997aaf7f37ccce"
     }

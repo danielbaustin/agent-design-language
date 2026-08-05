@@ -16,7 +16,7 @@ gated by #5843 and operator publication authority.
 - `docs/milestones/v0.92/external_launch/`
 - `docs/milestones/v0.92/SPRINT_v0.92.md`
 
-## Proposed Artifacts And Protected-Path Candidates
+## Owned Paths
 
 - `docs/milestones/v0.92/publication/articles/01-what-is-adl/` through `10-whats-next-for-adl/`
 - `docs/milestones/v0.92/publication/articles/SERIES_ARC_AND_CLAIM_MATRIX.md`
