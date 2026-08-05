@@ -12,13 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-WP-15 issue 5833, its declared implementation paths, and retained proof
+Exact-head review of WP-15 candidate binding, witness distinctness and authority, anti-equivocation, deterministic receipt derivation, redaction, premature-claim rejection, and dependencies only.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-15 scope?
+- Do all required witnesses bind one exact candidate/evidence digest with distinct authorized identities and stable anchors?
+- Can duplicate, stale, forged, equivocal, unauthorized, or mismatched witnesses produce consensus or a receipt?
+- Can the receipt expose raw private state or claim birth while status remains not_claimed?
+- Are #5826 through #5830, #4762, and every WP-15 acceptance claim current at exact HEAD?
 
 ## Findings
 

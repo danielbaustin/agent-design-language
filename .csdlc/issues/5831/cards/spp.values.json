@@ -7,53 +7,68 @@
     "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
     "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
     "version": "v0.92",
-    "generation": 1
+    "generation": 21
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
-      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "plan_revision": 8,
+      "summary": "Implement and prove WP-13A's evaluation-to-policy-to-graph DAG, including accepted and rejected paths, deterministic replay, bounded Runtime v3 integration, and rollback history.",
       "steps": [
         {
           "id": "S1",
-          "action": "Prepare exact scope, design, paths, and validation plan",
+          "action": "Verify #5818, #5830, #5104, and Runtime v3 requalification, then inspect exact loop, graph, bridge, and policy contracts.",
           "acceptance_ids": [
-            "AC-2"
+            "AC-2",
+            "AC-3"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "Implement the required outcome and focused proof",
+          "action": "Implement evaluation bindings, adaptation deltas, proposals, policy decisions, accepted/rejected mutation, durable history, and rollback records.",
           "acceptance_ids": [
             "AC-1",
-            "AC-3",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run accepted/rejected focused tests, deterministic/forged-history replay negatives, resource bounds, resume continuity, and branch-built Runtime v3 integration.",
+          "acceptance_ids": [
             "AC-4",
             "AC-5"
           ],
           "status": "pending"
         },
         {
-          "id": "S3",
-          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "id": "S4",
+          "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5831 linkage.",
           "acceptance_ids": [
-            "AC-6"
+            "AC-6",
+            "AC-7"
           ],
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
+        "adl/src/runtime_v2/ adaptive-learning modules and versioned bridges",
+        "adl/src/cli/runtime_v3_cmd.rs only if required",
+        "adl/src/runtime_v2/tests/ and fixtures",
+        ".csdlc/evidence/5831/"
+      ],
       "invariants": [
-        "No tracked work on main",
-        "No scope absorption across work packages",
-        "Evidence claims remain exact-revision and source-grounded"
+        "Missing evidence never becomes feedback and rejected proposals never mutate state or graph.",
+        "Same durable history replays identically with continuous prefix and state hashes.",
+        "Loop bounds, cancellation, policy authority, and rejected proposal history remain intact."
       ],
       "risks": [
-        "Dependency drift",
-        "Scope overlap",
-        "Insufficient real-behavior proof"
+        "Proposal evaluation could mutate state before policy disposition.",
+        "Resume or replay could accept a discontinuous or substituted prefix.",
+        "Rollback could erase rejected history or restore mismatched hashes."
       ],
       "execution_estimates": {
         "elapsed_seconds": 43200,
@@ -61,11 +76,15 @@
         "validation_seconds": 7200
       },
       "stop_conditions": [
-        "Protected-path collision",
-        "Contradictory dependency evidence",
-        "Required proof cannot be produced within issue scope"
+        "Any dependency or Runtime v3 qualification evidence is stale or missing.",
+        "A shared loop/graph schema change lacks explicit versioning.",
+        "Rejected-path, replay, bounds, or rollback proof cannot be produced."
       ],
-      "replan_triggers": [],
+      "replan_triggers": [
+        "Current graph or loop contracts require a versioned compatibility bridge.",
+        "Runtime v3 integration cannot use the narrow command surface.",
+        "Review finds mutation before policy decision or an incomplete durable-history edge."
+      ],
       "design_ref": ".csdlc/prepared/issues/5831/design.md",
       "design_digest": "24460a2aafdbc8f6076f5503f41bb945f313268fb975783efcbdbed3b0baaaf6",
       "diagram_ref": ".csdlc/prepared/issues/5831/diagram.mmd",

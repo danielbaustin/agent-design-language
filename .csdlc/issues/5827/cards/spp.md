@@ -12,38 +12,48 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Implement and prove WP-10 canonical multi-cycle continuity with predecessor binding, deterministic head derivation, and complete discontinuity negatives.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify #5826 terminal receipt and inspect exact lineage and wake-continuity inputs before narrowing protected paths.",
     "acceptance_ids": [
-      "AC-2"
+      "AC-2",
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Implement the continuity record, canonical head derivation, two-cycle chain fixtures, and stable rejection reasons.",
     "acceptance_ids": [
       "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Run deterministic replay, substitution/discontinuity negatives, privacy, and repo-relative portability lanes.",
     "acceptance_ids": [
+      "AC-4",
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5827 linkage.",
+    "acceptance_ids": [
+      "AC-6",
+      "AC-7"
     ],
     "status": "pending"
   }
@@ -51,15 +61,15 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- Each continuity head binds its predecessor, current cycle evidence, and one identity root.
+- Restart, wake, restore, snapshot, or copied state is never sufficient alone.
+- No raw private state or host-specific path enters review evidence.
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Cycle ordering or duplicate acceptance could fork continuity.
+- Copied state could be mistaken for lineage continuity.
+- Shared lineage paths may collide with adjacent implementation.
 
 ## Estimates
 
@@ -83,9 +93,9 @@ Digest: b8e8902ce03c1fd254d2be626f03fb412db939612b74f42de3942fcfd6cdbbb4
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- #5826 lacks terminal receipt-backed proof.
+- A protected Runtime path collides with another claim.
+- Deterministic replay requires altering predecessor evidence.
 
 ## Handoff
 

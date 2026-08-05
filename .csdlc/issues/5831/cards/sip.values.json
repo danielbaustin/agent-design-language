@@ -7,30 +7,35 @@
     "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
     "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
     "version": "v0.92",
-    "generation": 1
+    "generation": 21
   },
   "status": "ready",
   "content": {
     "card_kind": "sip",
     "values": {
-      "goal": "Implement a policy-governed, replayable Adaptive Learning DAG on the qualified Runtime v3 loop substrate.",
-      "required_outcome": "Working Runtime v3 evaluation bindings, durable adaptation deltas, governed graph-change proposals, accepted and rejected mutation paths, and deterministic replay proof",
+      "goal": "Implement WP-13A's evaluated, policy-governed Runtime v3 adaptive-learning DAG with deterministic replay, rejection-before-mutation, and rollback history.",
+      "required_outcome": "Durable evaluation, adaptation delta, graph-change proposal, policy decision, accepted/rejected mutation, replay, and inverse/rollback records linked to exact loop and state evidence.",
       "declared_scope": [
-        "adl-runtime-kernel adaptive reasoning implementation and focused tests",
         "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md"
+        "adl/src/runtime_v2/ narrowly named adaptive-learning modules",
+        "adl/src/cli/runtime_v3_cmd.rs only if branch-built integration requires it",
+        "adl/src/runtime_v2/tests/ and adaptive-learning fixtures",
+        ".csdlc/evidence/5831/"
       ],
       "authority_boundary": [
-        "Issue 5831 owns only WP-13A Adaptive Learning DAG implementation",
-        "Adjacent v0.92 work packages retain their own implementation and proof authority"
+        "Issue 5831 governs evidence-backed graph proposals and cannot authorize unconstrained self-modification or retraining.",
+        "Loop bounds, cancellation, resume continuity, policy, and Runtime v3 remain upstream authorities.",
+        "Rejected proposals and audit history remain durable and cannot be erased by rollback."
       ],
-      "initial_assumptions": [],
+      "initial_assumptions": [
+        "Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.",
+        "Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing."
+      ],
       "operator_constraints": [
-        "Prepare before execution",
-        "Never edit tracked work on main",
-        "Use one bounded pre-PR review",
-        "Do not substitute fixtures, receipts, or prose for required working behavior"
+        "Use typed C-SDLC v2 lifecycle operations in an issue-bound worktree.",
+        "Start product implementation only after a fresh exact claim and current dependency verification.",
+        "Preserve deterministic output, repo-relative references, redaction, and stdout/stderr separation where applicable.",
+        "Run one bounded exact-head review and publish only with the required closing keyword."
       ]
     }
   }

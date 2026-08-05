@@ -7,53 +7,68 @@
     "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice",
     "slug": "v0-92-wp-11-runtime-implement-first-memory-palace-context-topology-slice",
     "version": "v0.92",
-    "generation": 1
+    "generation": 21
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
-      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "plan_revision": 8,
+      "summary": "Extend and prove the existing WP-11 Memory Palace topology with identity/continuity gates, bounded deterministic selection, overflow, provenance, and redaction.",
       "steps": [
         {
           "id": "S1",
-          "action": "Prepare exact scope, design, paths, and validation plan",
+          "action": "Verify #5826, #5827, and ObsMem/trace evidence and inspect the exact existing Memory Palace packet schema before editing.",
           "acceptance_ids": [
-            "AC-2"
+            "AC-2",
+            "AC-3"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "Implement the required outcome and focused proof",
+          "action": "Integrate identity/continuity gates, canonical topology, bounded selection, overflow, provenance, temporal anchors, and fixtures.",
           "acceptance_ids": [
             "AC-1",
-            "AC-3",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run focused integration, deterministic replay, stale/hash/continuity/redaction negatives, and platform portability lanes.",
+          "acceptance_ids": [
             "AC-4",
             "AC-5"
           ],
           "status": "pending"
         },
         {
-          "id": "S3",
-          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "id": "S4",
+          "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5828 linkage.",
           "acceptance_ids": [
-            "AC-6"
+            "AC-6",
+            "AC-7"
           ],
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "adl/src/memory_palace.rs",
+        "adl/src/long_lived_agent.rs",
+        "adl/tests/memory_palace_tests.rs",
+        "adl/tests/fixtures/memory_palace/",
+        ".csdlc/evidence/5828/"
+      ],
       "invariants": [
-        "No tracked work on main",
-        "No scope absorption across work packages",
-        "Evidence claims remain exact-revision and source-grounded"
+        "Same inputs and observation time produce byte-equivalent semantic topology output.",
+        "Selection remains bounded and records overflow instead of silently consuming beyond limits.",
+        "All loaded items pass identity, continuity, provenance, temporal, hash, and redaction gates."
       ],
       "risks": [
-        "Dependency drift",
-        "Scope overlap",
-        "Insufficient real-behavior proof"
+        "Schema drift could break existing Memory Palace packets.",
+        "Selection order or observation time could introduce nondeterminism.",
+        "Context fixtures could disclose private or host-specific paths."
       ],
       "execution_estimates": {
         "elapsed_seconds": 43200,
@@ -61,11 +76,15 @@
         "validation_seconds": 7200
       },
       "stop_conditions": [
-        "Protected-path collision",
-        "Contradictory dependency evidence",
-        "Required proof cannot be produced within issue scope"
+        "Any dependency or ObsMem/trace baseline is not currently proven.",
+        "An existing packet schema must change without an explicit migration.",
+        "The exact files collide with another live protected-path claim."
       ],
-      "replan_triggers": [],
+      "replan_triggers": [
+        "The current packet schema cannot carry identity/continuity bindings compatibly.",
+        "Observed context-time semantics require a new deterministic input.",
+        "Review identifies an unbounded or unauthorized retrieval path."
+      ],
       "design_ref": ".csdlc/prepared/issues/5828/design.md",
       "design_digest": "0999cedc855c8f666c2526d256d8222706fecbe79c0695a4e9dc604f42a6566d",
       "diagram_ref": ".csdlc/prepared/issues/5828/diagram.mmd",

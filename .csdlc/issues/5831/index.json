@@ -3,9 +3,9 @@
   "issue": 5831,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "e7ab200f39f0714ae0aebb76949289e6bd66f4a3b272895650972227f5ad3a79",
-  "phase": "initialized",
-  "generation": 1,
-  "digest": "c5c311465dcadd07857399d19826253ea8c9826404c3d021db5af77b58d1d137",
+  "phase": "bound",
+  "generation": 21,
+  "digest": "8b9479e9b2dfd3baa15d4fcfb96e4ed26f755eb4e8593a36dd3ccb485e69a55a",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,37 +23,52 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "1086cc969c780841da9796108e6eb5da14650bd8ba50f03ee8d95a87f1d4d73a",
-      "rendered_digest": "3be97053fcbc8b9fb30eb94d0054f5bd63c780058f4a7455b04e6d571a1f6205",
-      "ast_digest": "0f2b37f35bd975ce78d92077f9ecab7feda7aec8f929689b873f73dd06ee1a1c"
+      "values_digest": "8fff5515493f4fb6e7c36c2539af1aa89ba85685356f145adbb854ffc6111c35",
+      "rendered_digest": "cf8ee04a2b1621d5e07b2a7c8856a04a536208e0398a202f99e6295359c7c537",
+      "ast_digest": "0e89e7f3e83a83e50344d0d04f047a6b119a3731c98fa84313dbc601974201fb"
     },
     "stp": {
-      "values_digest": "142faf2f4a6d256de3a1e473993b0d738be38685effdddc330b6de483c20c917",
-      "rendered_digest": "ed42a1433f70572f9dbe6e5da32cf1486acaafc1062eac1a62ff38acf2588c56",
-      "ast_digest": "e24c3f096714b8709f65c4bff458fd7ecd2f6110e41165f7504b6459c795e176"
+      "values_digest": "8b3ae4c97a2e50a00117f5f218ebc123505aa22748d695b961de25247fe6c480",
+      "rendered_digest": "677a593a69456f93f2cca8e03e0d81c5d8281848fad6e50d805a21d3f3f06cea",
+      "ast_digest": "16b3481da3804d8e1f96f4b64c8c2db95c50a34b433c0d94194e5181cc9974cc"
     },
     "spp": {
-      "values_digest": "145c7e6607319084f080d9a2a1f8233dd5a0b6b40c33552d4a2ae6ea1345ce13",
-      "rendered_digest": "e8fa65669622096a7a04a0800ca375a46ed78e380e5d16043d94d23197fac99e",
-      "ast_digest": "b87c30552e739974e9d84405c591072cd4344b0ad781b551a0efbef7f759e21c"
+      "values_digest": "9bd4842576bc03ebd4f5f2c2ef21bbc2e188da7d655fdec21da431437489fe93",
+      "rendered_digest": "2297e85e5c51ce2ad13e67d519f493262b37adc36471f3f215dd8effc7bd2356",
+      "ast_digest": "c327892b6f48ec4145bdfd7727d00074b216dd487deac9fe0c21c29f671e12fc"
     },
     "vpp": {
-      "values_digest": "4f98b8c17f669a5160d41749975d30d7e40a7cb430f044db41c6086734e6ec6c",
-      "rendered_digest": "c4950144492357a21af9a383f879d14a8ea14c4653f2e2b6e143eabe00947711",
-      "ast_digest": "e3c2970a7069069f120ccc4e85973a65aafe5700aa0a181bd2b068fa2bbf7014"
+      "values_digest": "057a61a6b8f9794af8c11cb49024c6ad9b7023569e5e01daabaaf2b7617f0c98",
+      "rendered_digest": "164cb9bee1f3a99c16475f2466834cf65ab80c41a1d95c25b0d24e6ece718a52",
+      "ast_digest": "12e1a7d26c321bc5abb352d0e49d2ad3c066bf209890cae162deadecb2f22b2b"
     },
     "srp": {
-      "values_digest": "50617b21c9eba71d51899ffa42c1494f96a9d9ba89070383d7a7cd9f8cfcc0fe",
-      "rendered_digest": "f5b48cc618c0da4c4b216662f99aee42e7cefd0d18357179615819a41dc32c7e",
-      "ast_digest": "79cea507c6377607ea099a98d5afd3dc626918b113e96f3519a32285862fd5d8"
+      "values_digest": "3cbb3edd5117de38d4e681850005e1c2f74e6de892d780f697083c4224ae586d",
+      "rendered_digest": "f4d1b50f223cce6785b4a476d683618378921ceb30e3306785901a4454c0388b",
+      "ast_digest": "ad48467373a00ab4134a625bb5c40e297dafeb7fbf5288f5b2ee8ba6761586e6"
     },
     "sor": {
-      "values_digest": "ff97acb49fd3c762e75b0c4b658ebadd4e2754be480be1d0e8d78e8d50cfdcc4",
+      "values_digest": "b530cdcf2b548ed491f765cd7a1dedc630be0a6f08fe2528a04ccc7c2cfc1714",
       "rendered_digest": "08069e5c4ac156b5d0d9ee35747632ff67581e203f0aeeaa7d12f41a60e986e9",
       "ast_digest": "1cef938010dcb5de447f8e1c7722d1462c72d177b4688fbe8c531ab97ef18a7c"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -89,6 +104,167 @@
       "actor": "codex-5860-birthday-preparation",
       "reason": "Release completed preparation claim so implementation can bind just in time",
       "operation": "{\"claim_id\":\"prep-5860-5831\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 1,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Reacquire released claim for operator-authorized temporary preparation-only binding",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"prep-5860-5831-cards\",\"operation\":\"reacquire_claim\",\"owner\":\"codex-5860-birthday-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5831\",\".csdlc/prepared/issues/5831\",\".csdlc/evidence/5831\",\".csdlc/locks/5831.lock\"],\"purpose\":\"Temporary preparation-only bind for typed card rendering; no product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 1,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 8,
+      "generation": 2,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Implement WP-13A's evaluated, policy-governed Runtime v3 adaptive-learning DAG with deterministic replay, rejection-before-mutation, and rollback history.\",\"operation\":\"replan\",\"previous_value\":\"Implement a policy-governed, replayable Adaptive Learning DAG on the qualified Runtime v3 loop substrate.\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 3,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"Durable evaluation, adaptation delta, graph-change proposal, policy decision, accepted/rejected mutation, replay, and inverse/rollback records linked to exact loop and state evidence.\",\"operation\":\"replan\",\"previous_value\":\"Working Runtime v3 evaluation bindings, durable adaptation deltas, governed graph-change proposals, accepted and rejected mutation paths, and deterministic replay proof\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 4,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Deliver only the WP-13A Runtime v3 adaptive-learning graph path, focused integration, fixtures, negative replay proof, and retained evidence.\",\"operation\":\"replan\",\"previous_value\":\"Deliver working evaluation bindings, durable adaptation deltas, governed graph mutation, and replay-safe Adaptive Learning DAG execution.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 5,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Implement and prove WP-13A's evaluation-to-policy-to-graph DAG, including accepted and rejected paths, deterministic replay, bounded Runtime v3 integration, and rollback history.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 6,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md\",\"adl/src/runtime_v2/ narrowly named adaptive-learning modules\",\"adl/src/cli/runtime_v3_cmd.rs only if branch-built integration requires it\",\"adl/src/runtime_v2/tests/ and adaptive-learning fixtures\",\".csdlc/evidence/5831/\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 7,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5831 governs evidence-backed graph proposals and cannot authorize unconstrained self-modification or retraining.\",\"Loop bounds, cancellation, resume continuity, policy, and Runtime v3 remain upstream authorities.\",\"Rejected proposals and audit history remain durable and cannot be erased by rollback.\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 8,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.\",\"Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 9,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"Use typed C-SDLC v2 lifecycle operations in an issue-bound worktree.\",\"Start product implementation only after a fresh exact claim and current dependency verification.\",\"Preserve deterministic output, repo-relative references, redaction, and stdout/stderr separation where applicable.\",\"Run one bounded exact-head review and publish only with the required closing keyword.\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Evaluation and adaptation-delta contracts\",\"Graph proposal and accepted/rejected policy-decision path\",\"Durable history, deterministic replay, and rollback/inverse record\",\"Focused Runtime v3, negative replay, and bounded-resource evidence\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 11,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-01 / issue #5818 terminal proof\",\"WP-13 / issue #5830 terminal proof\",\"Merged issue #5104 adaptive-learning semantics\",\"Current Runtime v3 prerequisite and loop-runtime requalification\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md\",\"adl/src/runtime_v2/loop_runtime.rs\",\"adl/src/runtime_v2/reasoning_graph.rs\",\"adl/src/runtime_v2/reasoning_runtime_bridge.rs\",\"adl/src/runtime_v2/ governed-learning boundary\",\"adl/src/cli/runtime_v3_cmd.rs\",\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Unconstrained self-modification, autonomous retraining, hidden model-memory mutation, or policy bypass\",\"Production autonomous learning, consciousness, personhood, or v0.94 signed-trace completion\",\"Changing loop, graph, or Runtime schemas without explicit versioning\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"The WP-13A DAG durably links loop event, evaluation, evidence-backed state delta, graph proposal, policy decision, accepted or rejected mutation, replay, and rollback/inverse record.\",\"WP-01/#5818, WP-13/#5830, merged #5104 semantics, and current Runtime v3 requalification are verified before implementation.\",\"Changes remain in narrow adaptive-learning modules, versioned shared schemas, tests/fixtures, optional Runtime v3 command integration, and .csdlc/evidence/5831/.\",\"Same durable inputs replay to identical proposal, policy disposition, state/graph hashes, and retained exact-revision history.\",\"Missing/forged evidence, substituted state, invalid graph binding, discontinuous resume, unbounded recurrence, unauthorized mutation, rejected-proposal mutation, and rollback mismatch fail closed.\",\"One bounded exact-head SRP review records no unresolved actionable findings.\",\"The implementation PR targets the intended base and includes Closes #5831 without claiming completion of downstream Birthday work.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5818, #5830, #5104, and Runtime v3 requalification, then inspect exact loop, graph, bridge, and policy contracts.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement evaluation bindings, adaptation deltas, proposals, policy decisions, accepted/rejected mutation, durable history, and rollback records.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run accepted/rejected focused tests, deterministic/forged-history replay negatives, resource bounds, resume continuity, and branch-built Runtime v3 integration.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5831 linkage.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"adaptive-learning-accepted-rejected\",\"proof_role\":\"Prove accepted and rejected policy paths with durable linked history.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"adaptive_learning_dag\",\"--\",\"--nocapture\"],\"parallel_group\":\"5831-core\",\"defer_reason\":null},{\"lane\":\"adaptive-learning-replay-negative\",\"proof_role\":\"Reject forged history, substituted state, discontinuous resume, unauthorized mutation, and rollback mismatch.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"adaptive_learning_dag_negative\",\"--\",\"--nocapture\"],\"parallel_group\":\"5831-negative\",\"defer_reason\":null},{\"lane\":\"adaptive-learning-runtime-v3\",\"proof_role\":\"Prove branch-built Runtime v3 bounds, cancellation, replay, and integration.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":200,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"adaptive_learning_runtime_v3\",\"--\",\"--nocapture\"],\"parallel_group\":\"5831-negative\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md\",\"adl/src/runtime_v2/ adaptive-learning modules and versioned bridges\",\"adl/src/cli/runtime_v3_cmd.rs only if required\",\"adl/src/runtime_v2/tests/ and fixtures\",\".csdlc/evidence/5831/\"]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Missing evidence never becomes feedback and rejected proposals never mutate state or graph.\",\"Same durable history replays identically with continuous prefix and state hashes.\",\"Loop bounds, cancellation, policy authority, and rejected proposal history remain intact.\"]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Proposal evaluation could mutate state before policy disposition.\",\"Resume or replay could accept a discontinuous or substituted prefix.\",\"Rollback could erase rejected history or restore mismatched hashes.\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Any dependency or Runtime v3 qualification evidence is stale or missing.\",\"A shared loop/graph schema change lacks explicit versioning.\",\"Rejected-path, replay, bounds, or rollback proof cannot be produced.\"]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"Current graph or loop contracts require a versioned compatibility bridge.\",\"Runtime v3 integration cannot use the narrow command surface.\",\"Review finds mutation before policy decision or an incomplete durable-history edge.\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Exact-head review of WP-13A evaluation evidence, proposal/policy ordering, accepted and rejected mutation, deterministic replay/resume, resource bounds, rollback history, and Runtime v3 integration only.\",\"operation\":\"replan\",\"previous_value\":\"WP-13A issue 5831, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Can state or graph mutate before an explicit accepted policy decision, or after a rejected decision?\",\"Does durable history bind loop, evaluation, evidence, state delta, proposal, decision, graph delta, replay, and rollback hashes?\",\"Do forged/substituted history, discontinuous resume, missing evidence, unbounded recurrence, unauthorized mutation, and rollback mismatch fail closed?\",\"Are #5818, #5830, #5104, Runtime v3 qualification, and every acceptance claim current at exact HEAD?\"]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 21,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Release temporary preparation-only claim after typed card validation",
+      "operation": "{\"claim_id\":\"prep-5860-5831-cards\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-temporary-preparation-binding\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
     }
   ]
 }

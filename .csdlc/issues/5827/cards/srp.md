@@ -12,13 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-WP-10 issue 5827, its declared implementation paths, and retained proof
+Exact-head review of WP-10 predecessor binding, continuity-head derivation, cycle ordering, replay determinism, privacy, portability, and dependency proof only.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-10 scope?
+- Can restart, wake, restore, snapshot, copied state, duplicate, or reordered cycles incorrectly establish continuity?
+- Does every head bind one root, predecessor, ordered current evidence, and witness references deterministically?
+- Do substitution, discontinuity, missing evidence, forged witnesses, private paths, and host paths fail closed?
+- Is #5826 terminal evidence current and is every WP-10 acceptance claim proven at exact HEAD?
 
 ## Findings
 

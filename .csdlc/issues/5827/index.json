@@ -3,9 +3,9 @@
   "issue": 5827,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "a13e7b2cafb69b7f88ae5bf1b68f54d9860fcc0d88fdba8c0376532d63b714ad",
-  "phase": "initialized",
-  "generation": 1,
-  "digest": "f653b3bdeffe85b90c24da743e4dc21b0fe8a13899101cba04ffec7e41e217eb",
+  "phase": "bound",
+  "generation": 21,
+  "digest": "83a13a89e6c6076c6e92c0cf7d19b422377763364c5d1babfb4d8e562b70d13e",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,37 +23,52 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "08dbef0c73dc23d15bd7785c904f12a9e9cfd17ec36d87e0820507f1639752f6",
-      "rendered_digest": "77478649aeb227286ea08ad939573742df02c30136ca00b2027decc96a14e5fb",
-      "ast_digest": "245962806deee73820bb808e6d2f158800cd53b511e223f6cd65cfa6776a76f7"
+      "values_digest": "4f89e3815a1312741f92b1db7da88df3c8f66df5e42b9f9d12251d95b6d5037b",
+      "rendered_digest": "e4a1a51f7e84ee9a018637db4f3b766688766121fd21241887d7e591e3c112e7",
+      "ast_digest": "1ff39827477f2930784163cf25f840551e544486e6394ff5d1f1512f0fc3240e"
     },
     "stp": {
-      "values_digest": "8813d020ead9718e322a13866f7d8a63ec6cd16a667ba4e7015b0b4f7948789a",
-      "rendered_digest": "2555f4b4e1a9b2e8bed4cb475600f0d606b304b3151382886ccb5859c8af79cc",
-      "ast_digest": "82823489b718977270272d2757c0dde2a24ba27d8425ab1867277ac0046eae0e"
+      "values_digest": "5369a99adb3f0a437e06404e7a141fee3afafcaab171932e04b28e9274926fa1",
+      "rendered_digest": "2fb92f7177757848f8b3ed4673746e75d6d88710e3fef3ea80a88f073b7db4be",
+      "ast_digest": "4235cb92d9e7368fcf29a8ef36bac3de646fb87ccd26e877c26cf6df59e6abea"
     },
     "spp": {
-      "values_digest": "8b4660222464b8c0e66bd1aa0ea3345c81763d7e1aad2c9b3a267990d2712c68",
-      "rendered_digest": "253472f55d728eab28668fddc2d88871098733fc9799ca5a503ecc5cf710b886",
-      "ast_digest": "b3974fb851c558bc4e184a6ac47054a34262e67d12c5ff6eb36347cedd33e577"
+      "values_digest": "99004020b755b6eb61dc63adc216e0036d8208740d6185cbafd762c0b6202fef",
+      "rendered_digest": "0d6c0e01b0434058a332c96a9f7e4bce8ec26433c35cd44f78ecd76d05f148f0",
+      "ast_digest": "b65e80e06f844fc5192174871d3c591c2c9e36cc6dc189061e41854383fc68cb"
     },
     "vpp": {
-      "values_digest": "440e2351bf7a3be86e389389212e1077f6e197df29ee37a11343c2b99dbc3ba7",
-      "rendered_digest": "3c4148b0975ac3e1c02749044baad2171344f4be389bb35246a3d53bf30b628c",
-      "ast_digest": "b8da2bf100cb8e7e3ccea4b10762362ffed9b2442b49714dac0474304f1d90f6"
+      "values_digest": "4abe47be8c1d8723c5e6003db39a6b561ca627f63dd9fb3c511fbdd3d898e05b",
+      "rendered_digest": "142dc8ba5231a44bb98be52e24f263561d675aeed8ca62a13cff7a88fbaca5dd",
+      "ast_digest": "92b81dccfcf22a5d5955abcc3d8d89f761e7455c6eafb1b9ef4bc1440bc9dcd4"
     },
     "srp": {
-      "values_digest": "3f97931b48ecff1fe60f389d445fdc2fc7256329ce282ac9205470d095abbf70",
-      "rendered_digest": "ffeae164e9d54eb08b1119b28f5269176fa5a2c7db68bdc659f213c9ddf4c4d4",
-      "ast_digest": "fe1d72c5165ff731a8fae2d720066e62f06e248a4e0e38edf52deac6979ca8a4"
+      "values_digest": "b04c3b9d160a49b70051218d6dcaa19d4a9a0b07c5607454c49951d190bc33d1",
+      "rendered_digest": "039b3bfc0e7c8a008d1d2ff066fafff6d4aecaa07c85757c7edd6f2da6746081",
+      "ast_digest": "19608ab935e0231b356bddbaf72d8b212d59fced2bc8098fd8ccd26cab3d59e3"
     },
     "sor": {
-      "values_digest": "54ca4ef5a14adbab073c1a8c1120ef53b8b2e1be32eaba5b9a884c557e7ee5cc",
+      "values_digest": "21376701514e1052c842c29c892e94ba856c0a7e99c7e45b480b3eb60503057d",
       "rendered_digest": "3a69a324072fd6da1c046abb9f997553d34a98b7bdba715993262d95c8f0591b",
       "ast_digest": "58b596fb24fb01930291dc99121bd298ac15b5a6f7ee7e7bca09383eb8132b2c"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -89,6 +104,167 @@
       "actor": "codex-5860-birthday-preparation",
       "reason": "Release completed preparation claim so implementation can bind just in time",
       "operation": "{\"claim_id\":\"prep-5860-5827\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 1,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Reacquire released claim for operator-authorized temporary preparation-only binding",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"prep-5860-5827-cards\",\"operation\":\"reacquire_claim\",\"owner\":\"codex-5860-birthday-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5827\",\".csdlc/prepared/issues/5827\",\".csdlc/evidence/5827\",\".csdlc/locks/5827.lock\"],\"purpose\":\"Temporary preparation-only bind for typed card rendering; no product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 1,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 8,
+      "generation": 2,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Implement WP-10 deterministic continuity across two or more bounded cycles without treating restart, wake, restore, or snapshot as sufficient identity continuity.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-10: Continuity across bounded cycles.\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 3,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"A versioned continuity record and validator linking identity root, predecessor and current cycles, ordered evidence, continuity-head derivation, witnesses, grade or stable rejection reason.\",\"operation\":\"replan\",\"previous_value\":\"continuity records and bounded-cycle proof\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 4,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Deliver only the WP-10 multi-cycle continuity chain, fixtures, validator, and retained replay/negative evidence.\",\"operation\":\"replan\",\"previous_value\":\"Deliver continuity records and bounded-cycle proof.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 5,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Implement and prove WP-10 canonical multi-cycle continuity with predecessor binding, deterministic head derivation, and complete discontinuity negatives.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 6,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\"adl/src/runtime_v2/ narrowly named continuity record and validator\",\"adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/continuity/\",\".csdlc/evidence/5827/\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 7,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5827 owns bounded cycle linkage, not identity-root creation, memory retrieval, migration, or birthday approval.\",\"Prior lineage and wake evidence are inputs and never replacement authority.\",\"Continuity must not expose raw private state or infer metaphysical sameness.\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 8,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every declared dependency is an execution gate to verify from current receipt-backed evidence, not a preparation-time completion claim.\",\"Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 9,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"Use typed C-SDLC v2 lifecycle operations in an issue-bound worktree.\",\"Start product implementation only after a fresh exact claim and current dependency verification.\",\"Preserve deterministic output, repo-relative references, redaction, and stdout/stderr separation where applicable.\",\"Run one bounded exact-head review and publish only with the required closing keyword.\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Versioned continuity-chain schema and canonical head derivation\",\"Two-or-more-cycle valid fixtures and deterministic replay proof\",\"Negative fixtures for substitution, discontinuity, duplicates, reorder, and copied state\",\"Retained focused, negative, and portability report\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 11,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-09 / issue #5826 terminal proof\",\"Current Runtime v2 private-state lineage and wake-continuity evidence\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\"docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md\",\"adl/src/runtime_v2/private_state_witness.rs\",\"adl/src/runtime_v2/memory_identity_architecture.rs\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Memory Palace retrieval, capability profiles, migration, citizenship, or birthday approval\",\"Metaphysical sameness or narrative-only continuity claims\",\"Rewriting predecessor lineage or wake evidence\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"The WP-10 record links at least two bounded cycles to the same identity root and deterministically derives a continuity head or stable rejection reason.\",\"WP-09/#5826 terminal proof and current lineage/wake evidence are verified before implementation begins.\",\"The feature contract, narrowly named Runtime v2 continuity module, tests, fixtures, and evidence stay within declared WP-10 paths.\",\"Identical predecessor and cycle evidence replay to byte-equivalent semantic continuity output retained at exact revision.\",\"Missing predecessor, root substitution, discontinuous or reordered cycles, duplicate cycles, forged witness, copied state, private paths, and host paths fail closed.\",\"One bounded exact-head SRP review records no unresolved actionable findings.\",\"The implementation PR targets the intended base and includes Closes #5827 without claiming completion of downstream Birthday work.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5826 terminal receipt and inspect exact lineage and wake-continuity inputs before narrowing protected paths.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the continuity record, canonical head derivation, two-cycle chain fixtures, and stable rejection reasons.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run deterministic replay, substitution/discontinuity negatives, privacy, and repo-relative portability lanes.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5827 linkage.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"continuity-chain-replay\",\"proof_role\":\"Prove a canonical two-or-more-cycle chain and deterministic head replay.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"continuity_record\",\"--\",\"--nocapture\"],\"parallel_group\":\"5827-core\",\"defer_reason\":null},{\"lane\":\"continuity-discontinuity-negative\",\"proof_role\":\"Reject substitutions, gaps, duplicates, reorderings, forged witnesses, and copied state.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"continuity_record_negative\",\"--\",\"--nocapture\"],\"parallel_group\":\"5827-negative\",\"defer_reason\":null},{\"lane\":\"continuity-portability\",\"proof_role\":\"Prove continuity fixtures and evidence references remain private-safe and repo-relative.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":200,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"continuity_record_portability\",\"--\",\"--nocapture\"],\"parallel_group\":\"5827-negative\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\"adl/src/runtime_v2/ continuity record module\",\"adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/continuity/\",\".csdlc/evidence/5827/\"]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Each continuity head binds its predecessor, current cycle evidence, and one identity root.\",\"Restart, wake, restore, snapshot, or copied state is never sufficient alone.\",\"No raw private state or host-specific path enters review evidence.\"]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Cycle ordering or duplicate acceptance could fork continuity.\",\"Copied state could be mistaken for lineage continuity.\",\"Shared lineage paths may collide with adjacent implementation.\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"#5826 lacks terminal receipt-backed proof.\",\"A protected Runtime path collides with another claim.\",\"Deterministic replay requires altering predecessor evidence.\"]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"The identity-root or lineage schema changes.\",\"The chain requires a versioned bridge to existing wake evidence.\",\"Review identifies an uncovered discontinuity or replay ambiguity.\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Exact-head review of WP-10 predecessor binding, continuity-head derivation, cycle ordering, replay determinism, privacy, portability, and dependency proof only.\",\"operation\":\"replan\",\"previous_value\":\"WP-10 issue 5827, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Can restart, wake, restore, snapshot, copied state, duplicate, or reordered cycles incorrectly establish continuity?\",\"Does every head bind one root, predecessor, ordered current evidence, and witness references deterministically?\",\"Do substitution, discontinuity, missing evidence, forged witnesses, private paths, and host paths fail closed?\",\"Is #5826 terminal evidence current and is every WP-10 acceptance claim proven at exact HEAD?\"]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 21,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Release temporary preparation-only claim after typed card validation",
+      "operation": "{\"claim_id\":\"prep-5860-5827-cards\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-temporary-preparation-binding\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
     }
   ]
 }

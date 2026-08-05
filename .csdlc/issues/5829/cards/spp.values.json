@@ -7,52 +7,68 @@
     "title": "[v0.92][WP-12] Capability envelope",
     "slug": "v0-92-wp-12-capability-envelope",
     "version": "v0.92",
-    "generation": 1
+    "generation": 21
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
-      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "plan_revision": 8,
+      "summary": "Implement and prove WP-12 canonical capability envelopes with explicit providers, tools, skills, grants, denials, limits, provenance, and secret-safe failure handling.",
       "steps": [
         {
           "id": "S1",
-          "action": "Prepare exact scope, design, paths, and validation plan",
+          "action": "Verify #5825, #5826, and #4761 evidence and inspect exact provider/profile surfaces before narrowing paths.",
           "acceptance_ids": [
-            "AC-2"
+            "AC-2",
+            "AC-3"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "Implement the required outcome and focused proof",
+          "action": "Implement the versioned envelope, canonical ordering, explicit grants/denials/limits, validator, and fixtures.",
           "acceptance_ids": [
             "AC-1",
-            "AC-3",
-            "AC-4"
+            "AC-3"
           ],
           "status": "pending"
         },
         {
           "id": "S3",
-          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "action": "Run focused canonicalization, stale/escalation/limit negatives, secret scanning, and path portability lanes.",
           "acceptance_ids": [
+            "AC-4",
             "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5829 linkage.",
+          "acceptance_ids": [
+            "AC-6",
+            "AC-7"
           ],
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
+        "adl/src/ capability-envelope module",
+        "adl/src/provider/ and adl/src/provider_adapter.rs only if required",
+        "adl/tests/fixtures/ capability envelope",
+        ".csdlc/evidence/5829/"
+      ],
       "invariants": [
-        "No tracked work on main",
-        "No scope absorption across work packages",
-        "Evidence claims remain exact-revision and source-grounded"
+        "Capability description never grants authority or proves invocation.",
+        "Canonical ordering makes equivalent envelopes deterministic.",
+        "Credential material, private state, and host-specific paths never enter retained evidence."
       ],
       "risks": [
-        "Dependency drift",
-        "Scope overlap",
-        "Insufficient real-behavior proof"
+        "Stale #4761 claims could be copied as current capability.",
+        "Envelope parsing could treat missing limits as unlimited.",
+        "Provider metadata or fixtures could leak secrets or machine-local paths."
       ],
       "execution_estimates": {
         "elapsed_seconds": 7200,
@@ -60,11 +76,15 @@
         "validation_seconds": 1200
       },
       "stop_conditions": [
-        "Protected-path collision",
-        "Contradictory dependency evidence",
-        "Required proof cannot be produced within issue scope"
+        "#5825, #5826, or #4761 evidence is not verifiable.",
+        "A provider adapter change exceeds the narrow envelope boundary.",
+        "Secret-safe or authority-escalation negatives cannot be proven."
       ],
-      "replan_triggers": [],
+      "replan_triggers": [
+        "#4761 must be explicitly superseded rather than consumed.",
+        "Provider/profile identifiers require a versioned compatibility mapping.",
+        "Review identifies an undeclared authority or resource dimension."
+      ],
       "design_ref": ".csdlc/prepared/issues/5829/design.md",
       "design_digest": "a4a7cfc5283f886defec6b25dc9b3e3fed519d27eef59b892c249efc1e4e7688",
       "diagram_ref": ".csdlc/prepared/issues/5829/diagram.mmd",

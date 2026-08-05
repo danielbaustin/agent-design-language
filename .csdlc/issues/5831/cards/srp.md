@@ -12,13 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-WP-13A issue 5831, its declared implementation paths, and retained proof
+Exact-head review of WP-13A evaluation evidence, proposal/policy ordering, accepted and rejected mutation, deterministic replay/resume, resource bounds, rollback history, and Runtime v3 integration only.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-13A scope?
+- Can state or graph mutate before an explicit accepted policy decision, or after a rejected decision?
+- Does durable history bind loop, evaluation, evidence, state delta, proposal, decision, graph delta, replay, and rollback hashes?
+- Do forged/substituted history, discontinuous resume, missing evidence, unbounded recurrence, unauthorized mutation, and rollback mismatch fail closed?
+- Are #5818, #5830, #5104, Runtime v3 qualification, and every acceptance claim current at exact HEAD?
 
 ## Findings
 

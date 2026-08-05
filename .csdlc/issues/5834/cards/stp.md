@@ -12,39 +12,48 @@ Status: ready
 
 ## Task
 
-Deliver reviewer-facing birthday evidence packet.
+Deliver only the WP-16 integrated reviewer packet, schema/link/digest validator, owned index links, negative fixtures, and retained exact-revision evidence.
 
 ## Deliverables
 
-- reviewer-facing birthday evidence packet
-- integrated review packet and claim-boundary scan
+- Reviewer packet schema and exact revision/digest inventory
+- WP-08 through WP-15 proof links, caveats, questions, and redacted projections
+- Validator and negative fixtures for missing, stale, contradictory, private, and overclaiming inputs
+- Retained completeness, digest/link, and claim-boundary report
 
 ## Acceptance
 
-1. The declared required outcome is complete at the exact reviewed revision
-2. Declared dependencies are verified from current evidence
-3. The named proof surface is reproducible and retained
-4. Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned
-5. One bounded pre-PR review has no unresolved actionable findings
+1. The WP-16 packet inventories one canonical exact revision/digest for every required WP-08 through WP-15 proof, negative report, caveat, reviewer question, redacted projection, and public non-claim.
+2. All issues #5825 through #5833, including #5831 and #5832, satisfy sprint gate 4 terminal and exact-head evidence requirements before assembly.
+3. Changes remain within the feature contract, issue-local packet/schema/validator, WP-16-owned demo-matrix links, and .csdlc/evidence/5834/, excluding shared milestone authority.
+4. Schema, link, digest, uniqueness, and completeness validation is reproducible and retained at the exact reviewed revision.
+5. Missing, stale, contradictory, nonterminal, unreviewed, duplicate-digest, private-path, personhood, citizenship, consciousness, governance, or publication-ready inputs produce named blocked failure.
+6. One bounded exact-head SRP review records no unresolved actionable findings.
+7. The implementation PR targets the intended base and includes Closes #5834 without claiming completion of downstream Birthday work.
 
 ## Dependencies
 
-- WP-08
-- WP-09
-- WP-10
-- WP-11
-- WP-12
-- WP-13
-- WP-14
-- WP-15
+- WP-08 / issue #5825 terminal proof
+- WP-09 / issue #5826 terminal proof
+- WP-10 / issue #5827 terminal proof
+- WP-11 / issue #5828 terminal proof
+- WP-12 / issue #5829 terminal proof
+- WP-13 / issue #5830 terminal proof
+- WP-13A / issue #5831 terminal proof
+- WP-14 / issue #5832 terminal proof
+- WP-15 / issue #5833 terminal proof
+- Birthday sprint gate 4 exact-head evidence
 
 ## Inputs
 
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md
+- docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md
+- .csdlc/prepared/issues/5857/sprint-execution-packet.md
+- .csdlc/prepared/issues/5857/sprint-execution-packet.yaml
+- docs/milestones/v0.92/DEMO_MATRIX_v0.92.md
 
 ## Non Goals
 
-- Adjacent work packages
-- Historical evidence rewriting
-- Unsupported downstream milestone claims
+- Implementing any child work package or manufacturing absent proof
+- Running the flagship demo, public publication, release approval, or external review
+- Editing shared milestone, release, launch, sprint, or v0.93 governance authority

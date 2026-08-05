@@ -7,52 +7,67 @@
     "title": "[v0.92][WP-15] Birth witnesses and receipts",
     "slug": "v0-92-wp-15-birth-witnesses-and-receipts",
     "version": "v0.92",
-    "generation": 1
+    "generation": 21
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
-      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "plan_revision": 8,
+      "summary": "Implement and prove WP-15 exact-candidate witness consensus and deterministic redacted receipts with anti-equivocation, authority, and premature-claim protections.",
       "steps": [
         {
           "id": "S1",
-          "action": "Prepare exact scope, design, paths, and validation plan",
+          "action": "Verify #5826 through #5830 and #4762, then inspect exact private-state witness and birthday candidate contracts.",
           "acceptance_ids": [
-            "AC-2"
+            "AC-2",
+            "AC-3"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "Implement the required outcome and focused proof",
+          "action": "Implement witness-set validation, exact candidate binding, accepted/rejected receipt derivation, caveats, redaction, and fixtures.",
           "acceptance_ids": [
             "AC-1",
-            "AC-3",
-            "AC-4"
+            "AC-3"
           ],
           "status": "pending"
         },
         {
           "id": "S3",
-          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "action": "Run canonical witness/receipt tests plus equivocation, duplicate, stale, forged, authority, privacy, and premature-claim negatives.",
           "acceptance_ids": [
+            "AC-4",
             "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5833 linkage.",
+          "acceptance_ids": [
+            "AC-6",
+            "AC-7"
           ],
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
+        "adl/src/runtime_v2/ witness and receipt modules",
+        "adl/src/runtime_v2/tests/ and witness/receipt fixtures",
+        ".csdlc/evidence/5833/"
+      ],
       "invariants": [
-        "No tracked work on main",
-        "No scope absorption across work packages",
-        "Evidence claims remain exact-revision and source-grounded"
+        "Witnesses bind the exact candidate and evidence digests and are distinct where policy requires.",
+        "Receipts derive only from validated decisions and preserve caveats and rejection reasons.",
+        "Raw private state never enters reviewer or citizen-facing projections."
       ],
       "risks": [
-        "Dependency drift",
-        "Scope overlap",
-        "Insufficient real-behavior proof"
+        "Duplicate or equivocal witnesses could appear as consensus.",
+        "A stale or mismatched candidate digest could receive a valid-looking receipt.",
+        "Receipt prose could leak private evidence or claim birth prematurely."
       ],
       "execution_estimates": {
         "elapsed_seconds": 7200,
@@ -60,11 +75,15 @@
         "validation_seconds": 1200
       },
       "stop_conditions": [
-        "Protected-path collision",
-        "Contradictory dependency evidence",
-        "Required proof cannot be produced within issue scope"
+        "Any sprint-gate dependency or #4762 is not verifiable.",
+        "The candidate digest cannot be bound across all witnesses.",
+        "Privacy, equivocation, authority, or premature-claim negatives cannot fail closed."
       ],
-      "replan_triggers": [],
+      "replan_triggers": [
+        "Witness role/distinctness policy changes.",
+        "Existing integrity references require a versioned adapter.",
+        "Review identifies a receipt field that substitutes for birthday authority."
+      ],
       "design_ref": ".csdlc/prepared/issues/5833/design.md",
       "design_digest": "820499657712f7fe97c21567e3f015c6cdcbc7dfdf5249f6600207693174df8c",
       "diagram_ref": ".csdlc/prepared/issues/5833/diagram.mmd",

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-13] ACP / cognitive profiles",
     "slug": "v0-92-wp-13-acp-cognitive-profiles",
     "version": "v0.92",
-    "generation": 1
+    "generation": 21
   },
   "status": "ready",
   "content": {
@@ -16,25 +16,79 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "focused-wp-13",
-          "proof_role": "profile fixtures, update rules, privacy boundary, and validation report",
+          "lane": "cognitive-profile-canonical",
+          "proof_role": "Prove canonical profile creation, update linkage, and bounded projections.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
             "AC-3",
             "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 500,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "cognitive_profile",
+            "--",
+            "--nocapture"
+          ],
+          "parallel_group": "5830-core",
+          "defer_reason": null
+        },
+        {
+          "lane": "cognitive-profile-privacy-negative",
+          "proof_role": "Reject stale, forbidden, mismatched, unexplained, or private evidence.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4",
             "AC-5"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 1200,
-          "budget_tokens": 10000,
+          "budget_seconds": 500,
+          "budget_tokens": 4000,
           "argv": [
-            "git",
-            "diff",
-            "--check"
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "cognitive_profile_negative",
+            "--",
+            "--nocapture"
           ],
-          "parallel_group": "issue-local",
+          "parallel_group": "5830-negative",
+          "defer_reason": null
+        },
+        {
+          "lane": "cognitive-profile-non-reputation",
+          "proof_role": "Reject diagnosis, reputation, standing, rights, personhood, and consciousness inference.",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 200,
+          "budget_tokens": 2000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "cognitive_profile_claim_boundary",
+            "--",
+            "--nocapture"
+          ],
+          "parallel_group": "5830-negative",
           "defer_reason": null
         }
       ],

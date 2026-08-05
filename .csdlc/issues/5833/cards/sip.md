@@ -12,30 +12,33 @@ Status: ready
 
 ## Goal
 
-Complete WP-15: Birth witnesses and receipts.
+Implement WP-15 exact-candidate birth witnesses and a deterministic citizen-facing receipt without exposing private state or manufacturing birth authority.
 
 ## Required Outcome
 
-witness set and citizen-facing receipt contract
+Versioned witness-set and receipt contracts binding witness identity/role, candidate and evidence digests, decisions, anchors, integrity refs, redaction, caveats, rejection reasons, and claim boundary.
 
 ## Scope
 
-- Issue 5833 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md
+- adl/src/runtime_v2/ narrowly named birth witness and receipt modules
+- adl/src/runtime_v2/tests/ and witness/receipt fixtures
+- .csdlc/evidence/5833/
 
 ## Authority
 
-- Issue 5833 owns only WP-15: Birth witnesses and receipts
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- Issue 5833 validates witness sets and derives receipts; it does not own the birthday decision or public launch.
+- Existing anti-equivocation/private-state witness contracts and #4762 remain input authority.
+- A receipt cannot claim birth while birth_event_status is not_claimed or expose raw private state.
 
 ## Assumptions
 
-- none
+- Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.
+- Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.
 
 ## Operator Constraints
 
-- Prepare before execution
-- Never edit tracked work on main
-- Use one bounded pre-PR review
-- Do not substitute fixtures, receipts, or prose for required working behavior
+- Use typed C-SDLC v2 lifecycle operations in an issue-bound worktree.
+- Start product implementation only after a fresh exact claim and current dependency verification.
+- Preserve deterministic output, repo-relative references, redaction, and stdout/stderr separation where applicable.
+- Run one bounded exact-head review and publish only with the required closing keyword.

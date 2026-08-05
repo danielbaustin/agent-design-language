@@ -24,25 +24,79 @@ Diagram: .csdlc/prepared/issues/5830/diagram.mmd
 
 [
   {
-    "lane": "focused-wp-13",
-    "proof_role": "profile fixtures, update rules, privacy boundary, and validation report",
+    "lane": "cognitive-profile-canonical",
+    "proof_role": "Prove canonical profile creation, update linkage, and bounded projections.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
       "AC-3",
       "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 500,
+    "budget_tokens": 4000,
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "cognitive_profile",
+      "--",
+      "--nocapture"
+    ],
+    "parallel_group": "5830-core",
+    "defer_reason": null
+  },
+  {
+    "lane": "cognitive-profile-privacy-negative",
+    "proof_role": "Reject stale, forbidden, mismatched, unexplained, or private evidence.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-4",
       "AC-5"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 1200,
-    "budget_tokens": 10000,
+    "budget_seconds": 500,
+    "budget_tokens": 4000,
     "argv": [
-      "git",
-      "diff",
-      "--check"
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "cognitive_profile_negative",
+      "--",
+      "--nocapture"
     ],
-    "parallel_group": "issue-local",
+    "parallel_group": "5830-negative",
+    "defer_reason": null
+  },
+  {
+    "lane": "cognitive-profile-non-reputation",
+    "proof_role": "Reject diagnosis, reputation, standing, rights, personhood, and consciousness inference.",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-4",
+      "AC-5"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 200,
+    "budget_tokens": 2000,
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "cognitive_profile_claim_boundary",
+      "--",
+      "--nocapture"
+    ],
+    "parallel_group": "5830-negative",
     "defer_reason": null
   }
 ]
@@ -59,7 +113,9 @@ Tokens: 10000
 
 ## Commands
 
-- `git diff --check`
+- `cargo test --manifest-path adl/Cargo.toml cognitive_profile -- --nocapture`
+- `cargo test --manifest-path adl/Cargo.toml cognitive_profile_negative -- --nocapture`
+- `cargo test --manifest-path adl/Cargo.toml cognitive_profile_claim_boundary -- --nocapture`
 
 ## Failure Semantics
 

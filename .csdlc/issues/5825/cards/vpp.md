@@ -24,25 +24,79 @@ Diagram: .csdlc/prepared/issues/5825/diagram.mmd
 
 [
   {
-    "lane": "focused-wp-08",
-    "proof_role": "contract doc and validation fixture report",
+    "lane": "birthday-contract-and-fixtures",
+    "proof_role": "Prove one valid birth packet plus deterministic canonical decision output.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
       "AC-3",
       "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 500,
+    "budget_tokens": 4000,
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "birthday_contract",
+      "--",
+      "--nocapture"
+    ],
+    "parallel_group": "birthday-core",
+    "defer_reason": null
+  },
+  {
+    "lane": "not-a-birthday-negative-matrix",
+    "proof_role": "Reject lifecycle lookalikes and every required-evidence omission with stable reasons.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-4",
       "AC-5"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 1200,
-    "budget_tokens": 10000,
+    "budget_seconds": 500,
+    "budget_tokens": 4000,
     "argv": [
-      "git",
-      "diff",
-      "--check"
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "birthday_negative",
+      "--",
+      "--nocapture"
     ],
-    "parallel_group": "issue-local",
+    "parallel_group": "birthday-negative",
+    "defer_reason": null
+  },
+  {
+    "lane": "claim-and-path-boundary",
+    "proof_role": "Reject private or host paths and unsupported public claims.",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-4",
+      "AC-5"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 200,
+    "budget_tokens": 2000,
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "birthday_claim_boundary",
+      "--",
+      "--nocapture"
+    ],
+    "parallel_group": "birthday-negative",
     "defer_reason": null
   }
 ]
@@ -59,7 +113,9 @@ Tokens: 10000
 
 ## Commands
 
-- `git diff --check`
+- `cargo test --manifest-path adl/Cargo.toml birthday_contract -- --nocapture`
+- `cargo test --manifest-path adl/Cargo.toml birthday_negative -- --nocapture`
+- `cargo test --manifest-path adl/Cargo.toml birthday_claim_boundary -- --nocapture`
 
 ## Failure Semantics
 

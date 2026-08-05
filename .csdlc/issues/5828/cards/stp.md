@@ -12,34 +12,42 @@ Status: ready
 
 ## Task
 
-Deliver working Memory Palace context topology, bounded working-set materialization, and redaction-safe continuity proof.
+Extend only the existing Memory Palace and long-lived-agent slice, fixtures, tests, feature contract, and retained evidence named by WP-11.
 
 ## Deliverables
 
-- working Memory Palace context topology, bounded working-set materialization, and redaction-safe continuity proof
-- deterministic topology and retrieval tests, witnessed memory references, stale-context negatives, and redaction-safe provenance packet
+- Identity/continuity-bound context-topology integration
+- Bounded deterministic working-set and overflow behavior
+- Stale, hash, continuity, redaction, and unauthorized-access fixtures
+- Retained replay and platform-portability report
 
 ## Acceptance
 
-1. The first Memory Palace slice executes real deterministic context-topology and working-set behavior at the exact reviewed revision
-2. Declared dependencies are verified from current evidence
-3. The same declared inputs reproduce the same topology and bounded working set
-4. Missing references, stale context, provenance mismatch, redaction failure, and unauthorized private-state access are tested negative cases
-5. No planning-only or blocked disposition substitutes for the first working slice
-6. One bounded pre-PR review has no unresolved actionable findings
+1. The WP-11 slice produces a canonical bounded working set and overflow record whose memory/citation hashes bind current identity, continuity, provenance, temporal anchors, and redaction policy.
+2. WP-09/#5826, WP-10/#5827, and the current ObsMem/trace baseline are verified before implementation begins.
+3. Changes remain within the exact Memory Palace, long-lived-agent, test, fixture, feature, and evidence paths and version existing schemas explicitly if needed.
+4. Same inputs and observation time produce byte-equivalent semantic output retained at the exact reviewed revision.
+5. Missing refs, hash mismatch, stale context, continuity mismatch, private or absolute paths, unauthorized private-state access, nondeterministic ordering, and budget overflow fail closed or record bounded overflow.
+6. One bounded exact-head SRP review records no unresolved actionable findings.
+7. The implementation PR targets the intended base and includes Closes #5828 without claiming completion of downstream Birthday work.
 
 ## Dependencies
 
-- WP-09
-- WP-10
+- WP-09 / issue #5826 terminal proof
+- WP-10 / issue #5827 terminal proof
+- Current ObsMem and trace baseline
 
 ## Inputs
 
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- adl/src/memory_palace.rs
+- adl/src/long_lived_agent.rs
+- adl/tests/memory_palace_tests.rs
+- adl/tests/fixtures/memory_palace/long_running_context.json
+- docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md
+- docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md
 
 ## Non Goals
 
-- Adjacent work packages
-- Historical evidence rewriting
-- Unsupported downstream milestone claims
+- Distributed or unbounded Memory Palace, semantic search, or raw private-memory browsing
+- Replacing ObsMem or changing packet schemas without explicit versioning
+- Birthday approval or downstream capability/profile/witness work

@@ -12,13 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-WP-09 issue 5826, its declared implementation paths, and retained proof
+Exact-head review of WP-09 identity-root authority, alias/provenance semantics, deterministic serialization, privacy, path portability, and dependency proof only.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-09 scope?
+- Can any display name, wake, snapshot, copied state, or alias establish or replace identity root authority?
+- Are root derivation, ordering, serialization, and provenance replay-deterministic?
+- Do substituted continuity, collisions, missing origin evidence, private data, and host paths fail closed?
+- Is #5825 terminal evidence current and is every WP-09 acceptance claim proven at exact HEAD?
 
 ## Findings
 

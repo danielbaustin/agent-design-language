@@ -24,25 +24,79 @@ Diagram: .csdlc/prepared/issues/5827/diagram.mmd
 
 [
   {
-    "lane": "focused-wp-10",
-    "proof_role": "continuity fixtures, cycle artifacts, and witness links",
+    "lane": "continuity-chain-replay",
+    "proof_role": "Prove a canonical two-or-more-cycle chain and deterministic head replay.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
       "AC-3",
       "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 500,
+    "budget_tokens": 4000,
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "continuity_record",
+      "--",
+      "--nocapture"
+    ],
+    "parallel_group": "5827-core",
+    "defer_reason": null
+  },
+  {
+    "lane": "continuity-discontinuity-negative",
+    "proof_role": "Reject substitutions, gaps, duplicates, reorderings, forged witnesses, and copied state.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-4",
       "AC-5"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 3600,
-    "budget_tokens": 25000,
+    "budget_seconds": 500,
+    "budget_tokens": 4000,
     "argv": [
-      "git",
-      "diff",
-      "--check"
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "continuity_record_negative",
+      "--",
+      "--nocapture"
     ],
-    "parallel_group": "issue-local",
+    "parallel_group": "5827-negative",
+    "defer_reason": null
+  },
+  {
+    "lane": "continuity-portability",
+    "proof_role": "Prove continuity fixtures and evidence references remain private-safe and repo-relative.",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-4",
+      "AC-5"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 200,
+    "budget_tokens": 2000,
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "continuity_record_portability",
+      "--",
+      "--nocapture"
+    ],
+    "parallel_group": "5827-negative",
     "defer_reason": null
   }
 ]
@@ -59,7 +113,9 @@ Tokens: 25000
 
 ## Commands
 
-- `git diff --check`
+- `cargo test --manifest-path adl/Cargo.toml continuity_record -- --nocapture`
+- `cargo test --manifest-path adl/Cargo.toml continuity_record_negative -- --nocapture`
+- `cargo test --manifest-path adl/Cargo.toml continuity_record_portability -- --nocapture`
 
 ## Failure Semantics
 

@@ -3,9 +3,9 @@
   "issue": 5826,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1bed306513e72500abe5d143e2ec479191780e44a02561af7742f761bc958f89",
-  "phase": "initialized",
-  "generation": 1,
-  "digest": "60fac5672c5deb04cc17493e53a9a32b611375b5a0c941e529ad039de1eb840b",
+  "phase": "bound",
+  "generation": 21,
+  "digest": "49d0012805bd097a35f49b685ccbcc08b8cc24ae6f131508aa090626f8be1a72",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,37 +23,52 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "4ee7b520ddfdb374e7d7cb9210053ac2aaa30652da98f38e0dac70e89a2dd9d8",
-      "rendered_digest": "7b855688435e2c58718b05f12a77fc74b5f6caa3202e1392c41ca34ef23a1315",
-      "ast_digest": "92c8ed17a59d84f6e1f5e0440ead47ed7d52fc78b648bbf525c1a5337fa11d51"
+      "values_digest": "6f0ed87afe1bb58e63d77760907ff3c0fc867ac0619ce5f3142ba5578e4fee76",
+      "rendered_digest": "5dd666330aec0a4d769b394c8bb92954a4db5263ecbbba86e3ad47c0cc9c1f85",
+      "ast_digest": "1167db6f3f423322c1e46039a261b45ccfeacdb7579f0b45308db71b984782db"
     },
     "stp": {
-      "values_digest": "463d3268eed6136cbe64856ce1b498a52178258d3228741b6a0315d6574c9335",
-      "rendered_digest": "ce5ce475bec2298db412ff5e93ac65fbaa3018c3abebcf292089dce61f86933e",
-      "ast_digest": "da44b2219df7a9c17fa4f7dc9e992d2c04181352a49d1d6b16edde8405565c84"
+      "values_digest": "2247c3515fc061888e3391bc9a99163b785ffdc6dc95277994c232c171d70a4a",
+      "rendered_digest": "a20e5c145868c0cdb5cc225769589b5f33025acd5070a5df69efbc8e48c41571",
+      "ast_digest": "a5fae39f455b9ec2698ab4f9b16f2baf57fe701606ab487e5d610d76d4c5c3c6"
     },
     "spp": {
-      "values_digest": "b1fd4236c6ed872248cde1a399e2442d1f9e0333f18ef9751e41c6c71c27a44a",
-      "rendered_digest": "e600375719f2aa1a44193aa2056ad4df0256edd62055cfbb756cb8ce41f52692",
-      "ast_digest": "63fdf92a85d36aeb10d7b3aa59ba75fc2da5fd5825c4db1961c8e229922c7b31"
+      "values_digest": "5ce66414c546142dd2857ce395ce9cdfa5aedef5a735f8a12f86495c2d2fbaa0",
+      "rendered_digest": "113263d13b825008c89026fe2932e48cabaa86cf04a0475820dcca016e0dfab4",
+      "ast_digest": "42d1a83b7c88ca71832aae859b1e5efb01db39515c6cda2a8d66c5b7cfbe5143"
     },
     "vpp": {
-      "values_digest": "38c154ba6510cd73666368d404863da3b65836d1c46817c377fdcc41c0f77885",
-      "rendered_digest": "95b120272ecd9f4d5e846345b070eff8f72287041c33b43f354c11aa7bf8733b",
-      "ast_digest": "c90e1028336e3c227ea88edb7bb5721e319625fb8cd7e859f747f34d45df6c0c"
+      "values_digest": "8533ef878c53c21c12a544acb786359b38623462e238fee8ff36271d58126aa7",
+      "rendered_digest": "e398eab8b43f4c53ee28a6e4df3b59ee99c769123a58c28585622619b522225e",
+      "ast_digest": "21ea9a2623f63e75e89b9f2f91cf626b090678c37f7b0364e5d32128beb86108"
     },
     "srp": {
-      "values_digest": "72468f84288b76e2b5f33f37259ed29e63590409e44499454a4f42d4292f5dca",
-      "rendered_digest": "7eebf29c285cb4bb94199aa27fc06415aca1272b0c0875b25cc47d4ab19f955f",
-      "ast_digest": "ec15f17f5603b677692babb71c59831b1bf227bbf7a42f819c5391033992cd10"
+      "values_digest": "de401c281969bdcdc64231b760eaf2d71aa91c1a857383ddababb19d55a57c77",
+      "rendered_digest": "f0e9b963f02bbd8867ff6ecc4de02958433c3ddfaaf01c327402594a46d267dc",
+      "ast_digest": "65f6b23f51b9fa521a69b132fb0c73f834514dcf3ee2be2ebd378966acae6071"
     },
     "sor": {
-      "values_digest": "75460676d453d73b7b773848a1ca472d9e89df1f1dd57d9c52936dc336ad7d48",
+      "values_digest": "3a7219fabfa661bbe6054f47715fb3d7b2e9b3de46c9b64fa7311721a636be45",
       "rendered_digest": "73285c147df2070352a736b49dc7cc813558574b83098912c14f34893ea55a9a",
       "ast_digest": "bfc21804e100d80c16cdcb8e3e07b883c104866725478b9e1cc69a392af6a002"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -89,6 +104,167 @@
       "actor": "codex-5860-birthday-preparation",
       "reason": "Release completed preparation claim so implementation can bind just in time",
       "operation": "{\"claim_id\":\"prep-5860-5826\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 1,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Reacquire released claim for operator-authorized temporary preparation-only binding",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"prep-5860-5826-cards\",\"operation\":\"reacquire_claim\",\"owner\":\"codex-5860-birthday-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5826\",\".csdlc/prepared/issues/5826\",\".csdlc/evidence/5826\",\".csdlc/locks/5826.lock\"],\"purpose\":\"Temporary preparation-only bind for typed card rendering; no product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 1,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 8,
+      "generation": 2,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Implement the deterministic WP-09 stable-name and identity-root record without equating labels, wake state, or copied state with identity.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-09: Stable name and identity architecture.\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 3,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"A versioned identity record, validator, fixtures, and retained report binding stable name, root, aliases, origin, continuity head, provenance, witness references, and redaction policy.\",\"operation\":\"replan\",\"previous_value\":\"stable-name and identity-root contract\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 4,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Deliver only the WP-09 stable-name and identity-root contract, validation fixtures, and exact-revision evidence.\",\"operation\":\"replan\",\"previous_value\":\"Deliver stable-name and identity-root contract.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 5,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Implement and prove WP-09 canonical identity records with stable labels, immutable root authority, provenance, and redaction-safe negative handling.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 6,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\"adl/src/runtime_v2/ narrowly named identity record and validator\",\"adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/identity/\",\".csdlc/evidence/5826/\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 7,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5826 owns identity-record construction, not continuity proof or birthday approval.\",\"Stable name is a label bound to an identity root and never root authority by itself.\",\"Prior lineage and private-state witness contracts remain authoritative inputs and must not be rewritten.\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 8,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every declared dependency is an execution gate to verify from current receipt-backed evidence, not a preparation-time completion claim.\",\"Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 9,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"Use typed C-SDLC v2 lifecycle operations in an issue-bound worktree.\",\"Start product implementation only after a fresh exact claim and current dependency verification.\",\"Preserve deterministic output, repo-relative references, redaction, and stdout/stderr separation where applicable.\",\"Run one bounded exact-head review and publish only with the required closing keyword.\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Versioned identity-record schema and deterministic root derivation\",\"Canonical valid and alias/provenance fixtures\",\"Negative fixtures for empty roots, collisions, substituted continuity, and disclosure\",\"Retained focused, privacy, and portability report\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 11,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-08 / issue #5825 terminal proof\",\"Current Runtime v2 memory identity and private-state witness lineage\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\"docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md\",\"adl/src/runtime_v2/memory_identity_architecture.rs\",\"adl/src/runtime_v2/private_state_witness.rs\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Multi-cycle continuity, migration, citizenship, reputation, legal personhood, or birthday approval\",\"Using display name, boot admission, wake, snapshot, or copied state as identity proof\",\"Exposing raw private state or rewriting prior lineage evidence\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"The WP-09 record deterministically binds stable name, identity root, aliases, origin evidence, continuity head, provenance, and redaction policy while rejecting ambiguous or substituted identity.\",\"WP-08/#5825 terminal proof and current lineage authority are verified before implementation begins.\",\"The feature contract, narrowly named Runtime v2 identity module, tests, fixtures, and evidence stay within declared WP-09 paths.\",\"Canonical serialization, root derivation, and alias ordering replay identically and are retained at the exact reviewed revision.\",\"Empty roots, alias collision, provenance mismatch, substituted continuity, raw private state, and absolute or path-unsafe references fail closed.\",\"One bounded exact-head SRP review records no unresolved actionable findings.\",\"The implementation PR targets the intended base and includes Closes #5826 without claiming completion of downstream Birthday work.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5825 terminal receipt and inspect the exact identity, lineage, and witness sources before narrowing protected paths.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the versioned identity record, deterministic derivation, canonical serialization, and valid/negative fixtures.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run focused replay, alias/provenance negatives, privacy-redaction, and path-portability lanes and retain exact-revision proof.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5826 linkage.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"identity-record-canonical\",\"proof_role\":\"Prove canonical valid identity records and deterministic root and alias ordering.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"identity_record\",\"--\",\"--nocapture\"],\"parallel_group\":\"5826-core\",\"defer_reason\":null},{\"lane\":\"identity-negative-and-privacy\",\"proof_role\":\"Reject root ambiguity, alias collision, provenance mismatch, substitution, and private disclosure.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"identity_record_negative\",\"--\",\"--nocapture\"],\"parallel_group\":\"5826-negative\",\"defer_reason\":null},{\"lane\":\"identity-path-portability\",\"proof_role\":\"Prove retained identity references are redaction-safe and repo-relative.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":200,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"identity_record_portability\",\"--\",\"--nocapture\"],\"parallel_group\":\"5826-negative\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\"adl/src/runtime_v2/ identity record module\",\"adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/identity/\",\".csdlc/evidence/5826/\"]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Stable name never substitutes for identity root authority.\",\"Canonical identity derivation and serialization are deterministic.\",\"Raw private state is unnecessary for review and cannot enter retained projections.\"]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Alias updates could silently replace root identity.\",\"Continuity references could be accepted without binding prior evidence.\",\"Fixtures or reports could leak private or host-specific paths.\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"#5825 lacks terminal receipt-backed proof.\",\"Exact identity paths collide with another live claim.\",\"Identity requires raw private state or an unversioned shared schema change.\"]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"The continuity-head contract changes before implementation.\",\"Existing lineage APIs require a versioned adapter rather than a narrow record.\",\"Review finds an unmodeled alias or provenance ambiguity.\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Exact-head review of WP-09 identity-root authority, alias/provenance semantics, deterministic serialization, privacy, path portability, and dependency proof only.\",\"operation\":\"replan\",\"previous_value\":\"WP-09 issue 5826, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Can any display name, wake, snapshot, copied state, or alias establish or replace identity root authority?\",\"Are root derivation, ordering, serialization, and provenance replay-deterministic?\",\"Do substituted continuity, collisions, missing origin evidence, private data, and host paths fail closed?\",\"Is #5825 terminal evidence current and is every WP-09 acceptance claim proven at exact HEAD?\"]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 21,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Release temporary preparation-only claim after typed card validation",
+      "operation": "{\"claim_id\":\"prep-5860-5826-cards\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-temporary-preparation-binding\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
     }
   ]
 }

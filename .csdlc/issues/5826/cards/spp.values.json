@@ -7,52 +7,67 @@
     "title": "[v0.92][WP-09] Stable name and identity architecture",
     "slug": "v0-92-wp-09-stable-name-and-identity-architecture",
     "version": "v0.92",
-    "generation": 1
+    "generation": 21
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
-      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "plan_revision": 8,
+      "summary": "Implement and prove WP-09 canonical identity records with stable labels, immutable root authority, provenance, and redaction-safe negative handling.",
       "steps": [
         {
           "id": "S1",
-          "action": "Prepare exact scope, design, paths, and validation plan",
+          "action": "Verify #5825 terminal receipt and inspect the exact identity, lineage, and witness sources before narrowing protected paths.",
           "acceptance_ids": [
-            "AC-2"
+            "AC-2",
+            "AC-3"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "Implement the required outcome and focused proof",
+          "action": "Implement the versioned identity record, deterministic derivation, canonical serialization, and valid/negative fixtures.",
           "acceptance_ids": [
             "AC-1",
-            "AC-3",
-            "AC-4"
+            "AC-3"
           ],
           "status": "pending"
         },
         {
           "id": "S3",
-          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "action": "Run focused replay, alias/provenance negatives, privacy-redaction, and path-portability lanes and retain exact-revision proof.",
           "acceptance_ids": [
+            "AC-4",
             "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5826 linkage.",
+          "acceptance_ids": [
+            "AC-6",
+            "AC-7"
           ],
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md",
+        "adl/src/runtime_v2/ identity record module",
+        "adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/identity/",
+        ".csdlc/evidence/5826/"
+      ],
       "invariants": [
-        "No tracked work on main",
-        "No scope absorption across work packages",
-        "Evidence claims remain exact-revision and source-grounded"
+        "Stable name never substitutes for identity root authority.",
+        "Canonical identity derivation and serialization are deterministic.",
+        "Raw private state is unnecessary for review and cannot enter retained projections."
       ],
       "risks": [
-        "Dependency drift",
-        "Scope overlap",
-        "Insufficient real-behavior proof"
+        "Alias updates could silently replace root identity.",
+        "Continuity references could be accepted without binding prior evidence.",
+        "Fixtures or reports could leak private or host-specific paths."
       ],
       "execution_estimates": {
         "elapsed_seconds": 7200,
@@ -60,11 +75,15 @@
         "validation_seconds": 1200
       },
       "stop_conditions": [
-        "Protected-path collision",
-        "Contradictory dependency evidence",
-        "Required proof cannot be produced within issue scope"
+        "#5825 lacks terminal receipt-backed proof.",
+        "Exact identity paths collide with another live claim.",
+        "Identity requires raw private state or an unversioned shared schema change."
       ],
-      "replan_triggers": [],
+      "replan_triggers": [
+        "The continuity-head contract changes before implementation.",
+        "Existing lineage APIs require a versioned adapter rather than a narrow record.",
+        "Review finds an unmodeled alias or provenance ambiguity."
+      ],
       "design_ref": ".csdlc/prepared/issues/5826/design.md",
       "design_digest": "b0a483031afde1863e678d542f09532437b8dccae20f3f11f39073cf5983eed2",
       "diagram_ref": ".csdlc/prepared/issues/5826/diagram.mmd",

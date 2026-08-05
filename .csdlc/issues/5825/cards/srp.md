@@ -12,13 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-WP-08 issue 5825, its declared implementation paths, and retained proof
+Exact-head review of WP-08 birth-decision semantics, complete disqualifier coverage, deterministic evidence, path/privacy hygiene, and public non-claim boundaries only.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-08 scope?
+- Does any startup, task, wake, restore, snapshot, admission, copied-state, migration, or incomplete packet incorrectly satisfy the birth contract?
+- Are canonicalization, rejection reasons, fixtures, and retained reports deterministic and bound to the reviewed revision?
+- Do all evidence references remain repo-relative and redaction-safe, with no personhood, consciousness, citizenship, governance, migration, or launch overclaim?
+- Are #5818 and #5819 terminal proof and all claimed acceptance criteria evidenced at exact HEAD?
 
 ## Findings
 

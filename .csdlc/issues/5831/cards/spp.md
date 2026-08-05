@@ -12,39 +12,48 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Implement and prove WP-13A's evaluation-to-policy-to-graph DAG, including accepted and rejected paths, deterministic replay, bounded Runtime v3 integration, and rollback history.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify #5818, #5830, #5104, and Runtime v3 requalification, then inspect exact loop, graph, bridge, and policy contracts.",
     "acceptance_ids": [
-      "AC-2"
+      "AC-2",
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Implement evaluation bindings, adaptation deltas, proposals, policy decisions, accepted/rejected mutation, durable history, and rollback records.",
     "acceptance_ids": [
       "AC-1",
-      "AC-3",
+      "AC-3"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S3",
+    "action": "Run accepted/rejected focused tests, deterministic/forged-history replay negatives, resource bounds, resume continuity, and branch-built Runtime v3 integration.",
+    "acceptance_ids": [
       "AC-4",
       "AC-5"
     ],
     "status": "pending"
   },
   {
-    "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "id": "S4",
+    "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5831 linkage.",
     "acceptance_ids": [
-      "AC-6"
+      "AC-6",
+      "AC-7"
     ],
     "status": "pending"
   }
@@ -52,15 +61,15 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- Missing evidence never becomes feedback and rejected proposals never mutate state or graph.
+- Same durable history replays identically with continuous prefix and state hashes.
+- Loop bounds, cancellation, policy authority, and rejected proposal history remain intact.
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Proposal evaluation could mutate state before policy disposition.
+- Resume or replay could accept a discontinuous or substituted prefix.
+- Rollback could erase rejected history or restore mismatched hashes.
 
 ## Estimates
 
@@ -84,9 +93,9 @@ Digest: 4830e2ee5a1da3b7673f5b3ef82de34dad490fdea86817cf0483f37930c2bdc5
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- Any dependency or Runtime v3 qualification evidence is stale or missing.
+- A shared loop/graph schema change lacks explicit versioning.
+- Rejected-path, replay, bounds, or rollback proof cannot be produced.
 
 ## Handoff
 

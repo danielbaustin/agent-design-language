@@ -12,38 +12,48 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Implement and prove WP-12 canonical capability envelopes with explicit providers, tools, skills, grants, denials, limits, provenance, and secret-safe failure handling.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify #5825, #5826, and #4761 evidence and inspect exact provider/profile surfaces before narrowing paths.",
     "acceptance_ids": [
-      "AC-2"
+      "AC-2",
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Implement the versioned envelope, canonical ordering, explicit grants/denials/limits, validator, and fixtures.",
     "acceptance_ids": [
       "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Run focused canonicalization, stale/escalation/limit negatives, secret scanning, and path portability lanes.",
     "acceptance_ids": [
+      "AC-4",
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5829 linkage.",
+    "acceptance_ids": [
+      "AC-6",
+      "AC-7"
     ],
     "status": "pending"
   }
@@ -51,15 +61,15 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- Capability description never grants authority or proves invocation.
+- Canonical ordering makes equivalent envelopes deterministic.
+- Credential material, private state, and host-specific paths never enter retained evidence.
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Stale #4761 claims could be copied as current capability.
+- Envelope parsing could treat missing limits as unlimited.
+- Provider metadata or fixtures could leak secrets or machine-local paths.
 
 ## Estimates
 
@@ -83,9 +93,9 @@ Digest: 78acf0d1432d60e5c4c8b3eba8f887a035f2f55abeee4cc19537b6495dc5de3a
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- #5825, #5826, or #4761 evidence is not verifiable.
+- A provider adapter change exceeds the narrow envelope boundary.
+- Secret-safe or authority-escalation negatives cannot be proven.
 
 ## Handoff
 

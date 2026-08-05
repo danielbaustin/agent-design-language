@@ -12,38 +12,48 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Assemble and prove WP-16's exact-digest reviewer packet with complete child evidence, redacted projections, blocked dispositions, caveats, questions, and public non-claims.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify terminal receipts and exact-head evidence for every WP-08 through WP-15 dependency and narrow issue-local packet paths.",
     "acceptance_ids": [
-      "AC-2"
+      "AC-2",
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Assemble the schema-bound inventory, exact links/digests, caveats, questions, redacted projections, non-claims, and blocked dispositions.",
     "acceptance_ids": [
       "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Run schema/link/digest/uniqueness/completeness proof and missing/stale/contradictory/private/overclaim negative fixtures.",
     "acceptance_ids": [
+      "AC-4",
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5834 linkage.",
+    "acceptance_ids": [
+      "AC-6",
+      "AC-7"
     ],
     "status": "pending"
   }
@@ -51,15 +61,15 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- Each canonical source digest appears once and binds an exact reviewed revision.
+- Missing or contradictory child proof blocks assembly instead of being inferred or narrated away.
+- Private evidence is represented only by approved redacted projections and presentation never replaces proof.
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Stale child revisions could be packaged as current.
+- Duplicate or contradictory sources could obscure canonical authority.
+- Review prose could leak private paths or imply publication, personhood, citizenship, or governance authority.
 
 ## Estimates
 
@@ -83,9 +93,9 @@ Digest: 8a837711a7e5863a846f42a46cd793d3ff77846c6e80cc07d72e14c7665a6224
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- Any required child lacks terminal exact-head evidence.
+- A packet link or digest cannot be validated reproducibly.
+- Assembly requires editing shared milestone or release authority outside WP-16.
 
 ## Handoff
 

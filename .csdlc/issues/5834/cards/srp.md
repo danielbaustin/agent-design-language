@@ -12,13 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-WP-16 issue 5834, its declared implementation paths, and retained proof
+Exact-head review of WP-16 dependency completeness, canonical revision/digest inventory, schema/link validation, redacted projections, blocked dispositions, public non-claims, and protected shared-doc boundaries only.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-16 scope?
+- Does every WP-08 through WP-15 requirement map to one terminal exact-head canonical proof revision and digest?
+- Do missing, stale, contradictory, nonterminal, unreviewed, or duplicate sources yield a named blocked disposition?
+- Are all private inputs approved redacted projections with no personhood, citizenship, consciousness, governance, release, or publication overclaim?
+- Are shared milestone paths untouched and are all WP-16 acceptance claims reproducible at exact HEAD?
 
 ## Findings
 

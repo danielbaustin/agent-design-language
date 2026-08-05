@@ -12,38 +12,48 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Implement and prove WP-13 canonical evidence maps with revision-linked updates, bounded projections, privacy, and explicit non-reputation/personhood boundaries.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify #5827, #5828, #5829 and bounded ToM/intelligence/governed-learning inputs, then narrow exact protected paths.",
     "acceptance_ids": [
-      "AC-2"
+      "AC-2",
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Implement the versioned profile, allowed evidence categories, revision-linked updates, privacy policy, projections, and fixtures.",
     "acceptance_ids": [
       "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Run canonical update replay, stale/forbidden/root-mismatch negatives, privacy projection, and non-reputation claim lanes.",
     "acceptance_ids": [
+      "AC-4",
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5830 linkage.",
+    "acceptance_ids": [
+      "AC-6",
+      "AC-7"
     ],
     "status": "pending"
   }
@@ -51,15 +61,15 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- Every profile field cites an allowed current evidence category and digest.
+- Every update links the prior revision and explains additions and removals.
+- Public projection is strictly narrower than the internal redacted evidence map.
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Free-form labels could escape evidence constraints.
+- Profile updates could drop provenance or revision linkage.
+- Public projection could leak private evidence or imply reputation and rights.
 
 ## Estimates
 
@@ -83,9 +93,9 @@ Digest: 6b9a9b2ae6cf9491279ce9ea531331cc7b98069e510d08bd2aad9422595fef47
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- Any declared dependency or evidence category is not current and verifiable.
+- A requested field cannot cite an allowed evidence source.
+- Privacy or non-reputation negative proof cannot fail closed.
 
 ## Handoff
 

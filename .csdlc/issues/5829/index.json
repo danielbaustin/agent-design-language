@@ -3,9 +3,9 @@
   "issue": 5829,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b71cf251982c58050c04627547b6d183e6c3b14d192c1389d3bdbab8606f3292",
-  "phase": "initialized",
-  "generation": 1,
-  "digest": "481df888e8c50423505771bf484b163a06ce65c0cf8052ead57eef8b311e8c81",
+  "phase": "bound",
+  "generation": 21,
+  "digest": "a0bfc826623b85b7e477d7a7e41f512a3b43ccefa1d760d94763597c2172d4a8",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,37 +23,52 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "9e20206f89f354885ad592a440afbfa2d03949850155d3802b29c95ba306fbd3",
-      "rendered_digest": "82a9a1631b5d7441844e780be2befa055f71881af274db86f56163e0b2c410c3",
-      "ast_digest": "03c150126d5ffd48c54996a2803409ec832985c77daea693d014ecfe4c203213"
+      "values_digest": "a37d21f4ecdaef4cbb74485b9402a2be5f92d99d1dc72e1cea3580da4e6f34b9",
+      "rendered_digest": "a93991b5c096f90a9872b53a960b867ed9b2bb64bbc0d8438eb338410db2946e",
+      "ast_digest": "d786784a06135580c90f8e4ef14664839215059adfb9f65fd7c94391d51b41c2"
     },
     "stp": {
-      "values_digest": "64eaa540993195e7590ba915a2f9952290f316ec8c6a3b9bc8740da9135a3d95",
-      "rendered_digest": "da287e5955fab43dad49580b1b7029f6e176f0bd2c48eea300c89a74d6918d29",
-      "ast_digest": "216be70399b8112c701e01bfd8df90635734e54cfa1c9f90b14d25489af5e79b"
+      "values_digest": "1bf170689aa9ea42bd018e6e4c7e8e10ace83f3f5153b98e043ea314b2cc1a17",
+      "rendered_digest": "799cfca5a5a077d61fac2816a1a6b1dacb120e4561807225d00d7484f39a52dc",
+      "ast_digest": "fd84e62f9222ad51ee4cb1e1539a7e72fd605e2b69afae5f15d9829e65c37da5"
     },
     "spp": {
-      "values_digest": "f2f761f15ec90f194f308ac8e713258edb1f469f9b5e80fa17ee0c932646e083",
-      "rendered_digest": "2d803fb43cce87c901c62df4154971f63ab56cf51789aebcd30590481fc9cd22",
-      "ast_digest": "7cd5ef7de345e17140bdcf789b2fa63c933ab636b11cd6ff0042a85ee00d8906"
+      "values_digest": "164662c667b2f2494d3c3fae22d909d329805f4c336ac7142bcdc54cc47d0267",
+      "rendered_digest": "f2290cb69f26812282419b87343cbcdab575c5135a841fae7d0be016ae1252b8",
+      "ast_digest": "cb318ab6ae10ea112674660534c893443209add7a99280d03c67ab8e8c25808c"
     },
     "vpp": {
-      "values_digest": "54be8fe8f4583cb044be9782b5e8075578baeefa91abf8e872062ef08ffd6ca0",
-      "rendered_digest": "ffc92dfcf882d77ef03db0827d78ea1efdb93b22c0f124932054de64219a12cf",
-      "ast_digest": "7d78c7290017e9413e2133cdcb82f1b236acc403004c67951dc69bb65e2fd94c"
+      "values_digest": "6f2704ddb10a6c6133684eaa053a05c04d48dc005146e3cf701e7299d53da964",
+      "rendered_digest": "506431ee868da1e7be1a7825af0fc07d99d4a648114745e181282f44912dfce4",
+      "ast_digest": "ee5d0bdf3489c3886cf3c8dc75a37382bdd4421b1b3030069d9400ddbd14b44d"
     },
     "srp": {
-      "values_digest": "557dfdb780a46c22fd9ffacc0133bf381dd3e9a31c05a4d1a0f86707f12a88d6",
-      "rendered_digest": "4e850a81919a29eb39b74537cb3a28b40c43fba66da1df938a40e6081f59067a",
-      "ast_digest": "b510a6c9ef3d5e0b6f11ddde7324e940d3aac3193feed959d12b595176699ebd"
+      "values_digest": "fdb2dc83db91945d471ca47865eeca9344c63b97160346bf60dc520ca12578b6",
+      "rendered_digest": "e6e1a97391151d19fad085f398bbda73030215208cf8ac0674304a1ab40ae872",
+      "ast_digest": "20dbe7c3c54c99f572aabb26933bd4d07cb4a1d3199b1d7bcb772ab3b1ca91ed"
     },
     "sor": {
-      "values_digest": "6f02aae42f593d56cb6051f03bd623c882f5deb07da1f038bbe6cdcdab42b6de",
+      "values_digest": "3997f9537e3236f434447a1fd1060eced8458e6e32635b7f2f933efdb34c0017",
       "rendered_digest": "da54e67fc459cdf7ec6dda0ac8e9ca53c1e23d70a238b1dbee9e9fcd5f6688db",
       "ast_digest": "c287e02c30ccc4bca25aaccc60ed0cd16f884134eae9223911ec39db96ceec3b"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -89,6 +104,167 @@
       "actor": "codex-5860-birthday-preparation",
       "reason": "Release completed preparation claim so implementation can bind just in time",
       "operation": "{\"claim_id\":\"prep-5860-5829\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 1,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Reacquire released claim for operator-authorized temporary preparation-only binding",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"prep-5860-5829-cards\",\"operation\":\"reacquire_claim\",\"owner\":\"codex-5860-birthday-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5829\",\".csdlc/prepared/issues/5829\",\".csdlc/evidence/5829\",\".csdlc/locks/5829.lock\"],\"purpose\":\"Temporary preparation-only bind for typed card rendering; no product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 1,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 8,
+      "generation": 2,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Implement WP-12's deterministic birthday-consumable capability envelope without granting authority or exposing credentials.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-12: Capability envelope.\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 3,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"A versioned provider/model/tool/skill/authority/limit envelope, validator, fixtures, and retained report bound to identity root, evidence revision, explicit grants, denials, provenance, and unsupported claims.\",\"operation\":\"replan\",\"previous_value\":\"provider, model, tool, skill, authority, and limit envelope\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 4,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Deliver only the WP-12 capability envelope contract, validation fixtures, and exact-revision evidence while preserving #4761.\",\"operation\":\"replan\",\"previous_value\":\"Deliver provider, model, tool, skill, authority, and limit envelope.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 5,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Implement and prove WP-12 canonical capability envelopes with explicit providers, tools, skills, grants, denials, limits, provenance, and secret-safe failure handling.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 6,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\"adl/src/ narrowly named capability-envelope module and validator\",\"adl/src/provider/ and adl/src/provider_adapter.rs only if a narrow adapter is required\",\"adl/tests/fixtures/ capability-envelope fixtures\",\".csdlc/evidence/5829/\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 7,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5829 describes bounded capability and never grants authority or proves invocation.\",\"Retained #4761 evidence is a versioned input or explicitly superseded, never silently copied.\",\"Provider execution, credentials, deployment, identity construction, and birthday approval remain outside scope.\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 8,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every declared dependency is an execution gate to verify from current receipt-backed evidence, not a preparation-time completion claim.\",\"Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 9,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"Use typed C-SDLC v2 lifecycle operations in an issue-bound worktree.\",\"Start product implementation only after a fresh exact claim and current dependency verification.\",\"Preserve deterministic output, repo-relative references, redaction, and stdout/stderr separation where applicable.\",\"Run one bounded exact-head review and publish only with the required closing keyword.\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Versioned capability-envelope schema and deterministic canonicalization\",\"Complete provider/model/tool/skill/grant/deny/limit fixture\",\"Negative fixtures for stale provenance, escalation, omitted limits, secrets, and host paths\",\"Retained focused, security, and portability report\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 11,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-08 / issue #5825 terminal proof\",\"WP-09 / issue #5826 terminal proof\",\"Retained issue #4761 capability-envelope evidence\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\"adl/src/provider/\",\"adl/src/provider_adapter.rs\",\".csdlc/evidence/4761/capability-envelope/\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Provider execution, credential setup, remote deployment, or unlimited-capacity claims\",\"Granting authority, proving invocation, identity creation, Memory Palace, or birthday approval\",\"Mutating or silently copying retained #4761 evidence\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"The WP-12 envelope deterministically binds identity and evidence revision to explicit provider/model identifiers, tools, skills, grants, denials, resource limits, provenance, and unsupported claims.\",\"WP-08/#5825, WP-09/#5826, and retained #4761 evidence are verified before implementation begins.\",\"The feature contract, narrow envelope module/adapter, tests, fixtures, and evidence stay within declared WP-12 paths and preserve #4761 unchanged.\",\"Equivalent capability inputs serialize canonically and produce reproducible exact-revision validation evidence.\",\"Unknown or stale provider/model evidence, undeclared tools/skills, authority escalation, omitted limits, secret-like content, private paths, and host paths fail closed.\",\"One bounded exact-head SRP review records no unresolved actionable findings.\",\"The implementation PR targets the intended base and includes Closes #5829 without claiming completion of downstream Birthday work.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5825, #5826, and #4761 evidence and inspect exact provider/profile surfaces before narrowing paths.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the versioned envelope, canonical ordering, explicit grants/denials/limits, validator, and fixtures.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run focused canonicalization, stale/escalation/limit negatives, secret scanning, and path portability lanes.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5829 linkage.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"capability-envelope-canonical\",\"proof_role\":\"Prove complete canonical envelopes bound to identity and exact evidence revision.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"capability_envelope\",\"--\",\"--nocapture\"],\"parallel_group\":\"5829-core\",\"defer_reason\":null},{\"lane\":\"capability-authority-and-secret-negative\",\"proof_role\":\"Reject stale provenance, undeclared capability, escalation, missing limits, and secret-like content.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"capability_envelope_negative\",\"--\",\"--nocapture\"],\"parallel_group\":\"5829-negative\",\"defer_reason\":null},{\"lane\":\"capability-path-portability\",\"proof_role\":\"Prove envelope evidence remains credential-free and repo-relative.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":200,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"capability_envelope_portability\",\"--\",\"--nocapture\"],\"parallel_group\":\"5829-negative\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\"adl/src/ capability-envelope module\",\"adl/src/provider/ and adl/src/provider_adapter.rs only if required\",\"adl/tests/fixtures/ capability envelope\",\".csdlc/evidence/5829/\"]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Capability description never grants authority or proves invocation.\",\"Canonical ordering makes equivalent envelopes deterministic.\",\"Credential material, private state, and host-specific paths never enter retained evidence.\"]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Stale #4761 claims could be copied as current capability.\",\"Envelope parsing could treat missing limits as unlimited.\",\"Provider metadata or fixtures could leak secrets or machine-local paths.\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"#5825, #5826, or #4761 evidence is not verifiable.\",\"A provider adapter change exceeds the narrow envelope boundary.\",\"Secret-safe or authority-escalation negatives cannot be proven.\"]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"#4761 must be explicitly superseded rather than consumed.\",\"Provider/profile identifiers require a versioned compatibility mapping.\",\"Review identifies an undeclared authority or resource dimension.\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Exact-head review of WP-12 capability description, canonical ordering, #4761 provenance, authority and limit semantics, secret handling, path portability, and dependency proof only.\",\"operation\":\"replan\",\"previous_value\":\"WP-12 issue 5829, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Can any envelope grant authority, prove invocation, or imply unlimited capacity from missing fields?\",\"Are provider/model/tool/skill identifiers, grants, denials, limits, provenance, and unsupported claims canonical and complete?\",\"Do stale evidence, escalation, secret-like content, private paths, and host paths fail closed without leaking values?\",\"Are #5825, #5826, #4761, and every WP-12 acceptance claim current at exact HEAD?\"]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 21,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Release temporary preparation-only claim after typed card validation",
+      "operation": "{\"claim_id\":\"prep-5860-5829-cards\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-temporary-preparation-binding\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
     }
   ]
 }

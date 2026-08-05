@@ -7,52 +7,67 @@
     "title": "[v0.92][WP-10] Continuity across bounded cycles",
     "slug": "v0-92-wp-10-continuity-across-bounded-cycles",
     "version": "v0.92",
-    "generation": 1
+    "generation": 21
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
-      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "plan_revision": 8,
+      "summary": "Implement and prove WP-10 canonical multi-cycle continuity with predecessor binding, deterministic head derivation, and complete discontinuity negatives.",
       "steps": [
         {
           "id": "S1",
-          "action": "Prepare exact scope, design, paths, and validation plan",
+          "action": "Verify #5826 terminal receipt and inspect exact lineage and wake-continuity inputs before narrowing protected paths.",
           "acceptance_ids": [
-            "AC-2"
+            "AC-2",
+            "AC-3"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "Implement the required outcome and focused proof",
+          "action": "Implement the continuity record, canonical head derivation, two-cycle chain fixtures, and stable rejection reasons.",
           "acceptance_ids": [
             "AC-1",
-            "AC-3",
-            "AC-4"
+            "AC-3"
           ],
           "status": "pending"
         },
         {
           "id": "S3",
-          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "action": "Run deterministic replay, substitution/discontinuity negatives, privacy, and repo-relative portability lanes.",
           "acceptance_ids": [
+            "AC-4",
             "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5827 linkage.",
+          "acceptance_ids": [
+            "AC-6",
+            "AC-7"
           ],
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md",
+        "adl/src/runtime_v2/ continuity record module",
+        "adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/continuity/",
+        ".csdlc/evidence/5827/"
+      ],
       "invariants": [
-        "No tracked work on main",
-        "No scope absorption across work packages",
-        "Evidence claims remain exact-revision and source-grounded"
+        "Each continuity head binds its predecessor, current cycle evidence, and one identity root.",
+        "Restart, wake, restore, snapshot, or copied state is never sufficient alone.",
+        "No raw private state or host-specific path enters review evidence."
       ],
       "risks": [
-        "Dependency drift",
-        "Scope overlap",
-        "Insufficient real-behavior proof"
+        "Cycle ordering or duplicate acceptance could fork continuity.",
+        "Copied state could be mistaken for lineage continuity.",
+        "Shared lineage paths may collide with adjacent implementation."
       ],
       "execution_estimates": {
         "elapsed_seconds": 21600,
@@ -60,11 +75,15 @@
         "validation_seconds": 3600
       },
       "stop_conditions": [
-        "Protected-path collision",
-        "Contradictory dependency evidence",
-        "Required proof cannot be produced within issue scope"
+        "#5826 lacks terminal receipt-backed proof.",
+        "A protected Runtime path collides with another claim.",
+        "Deterministic replay requires altering predecessor evidence."
       ],
-      "replan_triggers": [],
+      "replan_triggers": [
+        "The identity-root or lineage schema changes.",
+        "The chain requires a versioned bridge to existing wake evidence.",
+        "Review identifies an uncovered discontinuity or replay ambiguity."
+      ],
       "design_ref": ".csdlc/prepared/issues/5827/design.md",
       "design_digest": "a28d472d60100fccbd7ba12e39cd6e6a0f2c1574e09372017a01ca90ae40801b",
       "diagram_ref": ".csdlc/prepared/issues/5827/diagram.mmd",

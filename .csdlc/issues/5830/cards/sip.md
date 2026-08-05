@@ -12,30 +12,33 @@ Status: ready
 
 ## Goal
 
-Complete WP-13: ACP / cognitive profiles.
+Implement WP-13 evidence-grounded cognitive profiles as bounded deterministic evidence maps, never free-form personality, diagnosis, reputation, or standing.
 
 ## Required Outcome
 
-evidence-grounded cognitive-profile contract
+A versioned ACP record and update contract binding identity, continuity, allowed evidence digests, actor/reason, revision history, privacy policy, projections, and explicit non-claims.
 
 ## Scope
 
-- Issue 5830 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md
+- adl/src/runtime_v2/ narrowly named cognitive-profile module
+- adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/cognitive_profile/
+- .csdlc/evidence/5830/
 
 ## Authority
 
-- Issue 5830 owns only WP-13: ACP / cognitive profiles
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- Issue 5830 maps allowed evidence and cannot diagnose, assign reputation, standing, rights, personhood, or consciousness.
+- Identity, continuity, memory, capability, Theory-of-Mind, intelligence, and governed-learning evidence remain upstream authority.
+- Public projection must remain strictly narrower than the internal redacted evidence map.
 
 ## Assumptions
 
-- none
+- Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.
+- Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.
 
 ## Operator Constraints
 
-- Prepare before execution
-- Never edit tracked work on main
-- Use one bounded pre-PR review
-- Do not substitute fixtures, receipts, or prose for required working behavior
+- Use typed C-SDLC v2 lifecycle operations in an issue-bound worktree.
+- Start product implementation only after a fresh exact claim and current dependency verification.
+- Preserve deterministic output, repo-relative references, redaction, and stdout/stderr separation where applicable.
+- Run one bounded exact-head review and publish only with the required closing keyword.

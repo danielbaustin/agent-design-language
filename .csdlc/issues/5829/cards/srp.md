@@ -12,13 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-WP-12 issue 5829, its declared implementation paths, and retained proof
+Exact-head review of WP-12 capability description, canonical ordering, #4761 provenance, authority and limit semantics, secret handling, path portability, and dependency proof only.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-12 scope?
+- Can any envelope grant authority, prove invocation, or imply unlimited capacity from missing fields?
+- Are provider/model/tool/skill identifiers, grants, denials, limits, provenance, and unsupported claims canonical and complete?
+- Do stale evidence, escalation, secret-like content, private paths, and host paths fail closed without leaking values?
+- Are #5825, #5826, #4761, and every WP-12 acceptance claim current at exact HEAD?
 
 ## Findings
 

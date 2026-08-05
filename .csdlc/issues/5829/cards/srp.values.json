@@ -7,19 +7,20 @@
     "title": "[v0.92][WP-12] Capability envelope",
     "slug": "v0-92-wp-12-capability-envelope",
     "version": "v0.92",
-    "generation": 1
+    "generation": 21
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "WP-12 issue 5829, its declared implementation paths, and retained proof",
+      "review_scope": "Exact-head review of WP-12 capability description, canonical ordering, #4761 provenance, authority and limit semantics, secret handling, path portability, and dependency proof only.",
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-12 scope?"
+        "Can any envelope grant authority, prove invocation, or imply unlimited capacity from missing fields?",
+        "Are provider/model/tool/skill identifiers, grants, denials, limits, provenance, and unsupported claims canonical and complete?",
+        "Do stale evidence, escalation, secret-like content, private paths, and host paths fail closed without leaking values?",
+        "Are #5825, #5826, #4761, and every WP-12 acceptance claim current at exact HEAD?"
       ],
       "findings": [],
       "residual_risk": [],

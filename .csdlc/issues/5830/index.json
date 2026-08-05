@@ -3,9 +3,9 @@
   "issue": 5830,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d92e8e7b58695fd938ff38397f6cc6e3a2c3fda5ecb26fa32cb1d552e29f74f9",
-  "phase": "initialized",
-  "generation": 1,
-  "digest": "958aea7759e2f71936ae25c342e722eeb6a42d06cc93ce3be4258dbb7db0d425",
+  "phase": "bound",
+  "generation": 21,
+  "digest": "6975c7aaeacbc145044a4815cd1abf27d20512ec3465e382f7919ebf943a12a2",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,37 +23,52 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "5ef8654ba14846641630b71711f6036695a1c2161b20ce58421db1bfb2959da2",
-      "rendered_digest": "e272d187b1c888d5bc803e71e58b24638c3665e46dcf6cbd50ac2fa4d5420d54",
-      "ast_digest": "419db4d3ec070487abf74870f3f41466558f7ef08c3b9d8fa0e4f90e7f3823c7"
+      "values_digest": "11a12a6081ef552c9a8fcd8ca7ae11db170f8ba6474ce28c147d2299a83108b9",
+      "rendered_digest": "85ef2f4acfc01817a0e7f4631fe1729efd50a91c3e179744440a1234a013c508",
+      "ast_digest": "21d46c9d98f5868adfb01f1693c264718819de9b05dde8a1501ac71c66fa8454"
     },
     "stp": {
-      "values_digest": "107c02717239f7533512550e2d353e403219609be1025f22f5d3cc22b79768b9",
-      "rendered_digest": "6dd8ffd02b53f433210b2d321998676b12a21d363e330b678e1edf6e6b6d0bad",
-      "ast_digest": "fa41cbb9f6e56d54e2efde5183c111d6f342e57ce6a52dd41ec6e7830acc195e"
+      "values_digest": "ab136a3cdfc9e2d25a3b7ceb4030f31e998e39dc8157539a01e00fc6edb134d9",
+      "rendered_digest": "6a3ee64b7478d5d8e16a83f4e10bc0d867294371c72e7cfb3cd2e5c2117e0eaa",
+      "ast_digest": "0e3dfbea66487316f80a1f8bd4961b4a48cc18c5a9888698f43198914ca35b82"
     },
     "spp": {
-      "values_digest": "ce23234499f1be44da35e194640757957882672405a0a2ac27402283e4bfc18e",
-      "rendered_digest": "6ccde67d726f2d242f5190100253b1002acc5beec86609d881fff5fe30a82246",
-      "ast_digest": "d8df724cbb20be70fdfe090fe737e1d4068c75a0d1d8faa8235ceabe0f118799"
+      "values_digest": "ce2fb445ceb29f2d7eeec053f913f38837a6c94fcf2421d0df4bb4710d9e8034",
+      "rendered_digest": "c160c9110e35b082df05fed796f142b07df748a5767d4e6b8aabcd909eb50818",
+      "ast_digest": "5b5512eb1a28dde9483b0287d8ebb57beebb5cf17001d1d2ad9bd8c08f152380"
     },
     "vpp": {
-      "values_digest": "2e230d4ca2ce2270265fb11623434141f44478939be69af1cb0f08082980ee28",
-      "rendered_digest": "f5c737b7efbe47d3a65bab98785021f8b5d72258857aaeb32c02557fa876ff90",
-      "ast_digest": "214b891a863dfd50ac83f002ed72d3978fdbd42a3494ea7223d87b58854567d8"
+      "values_digest": "16e24f009f3924eef565ba2f3902bd21016d45ffd30dd09fb90f55c383c94261",
+      "rendered_digest": "01df2a59d304d0147c15e4e469c84f592d7d78d708d804df5641315a553aba3a",
+      "ast_digest": "3544dfa82ad9571aabf23a2603ac01af3741b78634246f9f406de1a9635a86b5"
     },
     "srp": {
-      "values_digest": "d64db084ca043ea2db3829d2a335a804f8b0c3642a960faa9e973138a6ec56e2",
-      "rendered_digest": "e1d33594f7e6560d80a1a2ead7b08e0cb27df2d77b54fc1f7b5d596445b8bd77",
-      "ast_digest": "8f04f62bd84d9256582173074abf84bf1935865cf988de6aa7129118d006853f"
+      "values_digest": "d52c46472e4efc1cfc61e4c4e71b879c6001da5c128ac8f907c1e83f9a07fed9",
+      "rendered_digest": "5cf1d14625cc5c42441e85503a8ba2347ee72f5b8a6c55327ebb7b4d02773ec8",
+      "ast_digest": "a0c0d5d841942e9187eedd87886ba119301e1a7842960f3b8e41ca367ba925ca"
     },
     "sor": {
-      "values_digest": "a7f0ae8cd5cc9fa2ce6d7d37b793958c8a52850452aae2c2b0c22c84f04e9c2e",
+      "values_digest": "76f29aabd174528507f743cfd3710b0486c9bfe6d2c282bca30500541725d2b2",
       "rendered_digest": "8dbf031f6e2f727893acd7c4297a6e74d21ecc2bad913bb38629f4c172994b2e",
       "ast_digest": "80a35a095cda2e9920e7a586f841529fd4f683612c6d4f7f185bba3eddcdef26"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -89,6 +104,167 @@
       "actor": "codex-5860-birthday-preparation",
       "reason": "Release completed preparation claim so implementation can bind just in time",
       "operation": "{\"claim_id\":\"prep-5860-5830\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 1,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Reacquire released claim for operator-authorized temporary preparation-only binding",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"prep-5860-5830-cards\",\"operation\":\"reacquire_claim\",\"owner\":\"codex-5860-birthday-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5830\",\".csdlc/prepared/issues/5830\",\".csdlc/evidence/5830\",\".csdlc/locks/5830.lock\"],\"purpose\":\"Temporary preparation-only bind for typed card rendering; no product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 1,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 8,
+      "generation": 2,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Implement WP-13 evidence-grounded cognitive profiles as bounded deterministic evidence maps, never free-form personality, diagnosis, reputation, or standing.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-13: ACP / cognitive profiles.\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 3,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"A versioned ACP record and update contract binding identity, continuity, allowed evidence digests, actor/reason, revision history, privacy policy, projections, and explicit non-claims.\",\"operation\":\"replan\",\"previous_value\":\"evidence-grounded cognitive-profile contract\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 4,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Deliver only the WP-13 ACP schema, update semantics, fixtures, validator, privacy/negative proof, and retained exact-revision report.\",\"operation\":\"replan\",\"previous_value\":\"Deliver evidence-grounded cognitive-profile contract.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 5,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Implement and prove WP-13 canonical evidence maps with revision-linked updates, bounded projections, privacy, and explicit non-reputation/personhood boundaries.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 6,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md\",\"adl/src/runtime_v2/ narrowly named cognitive-profile module\",\"adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/cognitive_profile/\",\".csdlc/evidence/5830/\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 7,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5830 maps allowed evidence and cannot diagnose, assign reputation, standing, rights, personhood, or consciousness.\",\"Identity, continuity, memory, capability, Theory-of-Mind, intelligence, and governed-learning evidence remain upstream authority.\",\"Public projection must remain strictly narrower than the internal redacted evidence map.\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 8,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.\",\"Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 9,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"Use typed C-SDLC v2 lifecycle operations in an issue-bound worktree.\",\"Start product implementation only after a fresh exact claim and current dependency verification.\",\"Preserve deterministic output, repo-relative references, redaction, and stdout/stderr separation where applicable.\",\"Run one bounded exact-head review and publish only with the required closing keyword.\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Versioned ACP schema and deterministic update/revision contract\",\"Canonical internal and public projection fixtures\",\"Negative fixtures for stale/forbidden evidence, root mismatch, leakage, and unsupported labels\",\"Retained focused, privacy, and non-reputation report\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 11,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-10 / issue #5827 terminal proof\",\"WP-11 / issue #5828 terminal proof\",\"WP-12 / issue #5829 terminal proof\",\"Current v0.91.1 Theory-of-Mind, intelligence, and governed-learning evidence\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md\",\"adl/src/runtime_v2/ Theory-of-Mind and intelligence evidence surfaces\",\"adl/src/runtime_v2/ governed-learning evidence surfaces\",\"docs/milestones/v0.92/WBS_v0.92.md\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Diagnosis, scalar moral verdicts, reputation, public standing, rights, citizenship, personhood, or consciousness\",\"Raw private-state access or public projection of internal evidence\",\"Autonomous or unexplained profile mutation\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"The WP-13 profile deterministically binds identity and continuity to allowed evidence digests, update actor/reason, revision linkage, privacy policy, bounded projections, and explicit non-claims.\",\"WP-10/#5827, WP-11/#5828, WP-12/#5829, and current ToM/intelligence/governed-learning evidence are verified before implementation.\",\"The ACP feature, narrow Runtime v2 module, tests, fixtures, and retained evidence remain within declared WP-13 paths.\",\"Canonical profile creation and revision updates replay identically and retain exact-revision internal and public projection proof.\",\"Stale or forbidden evidence, identity mismatch, unexplained mutation, private-state leakage, unsupported labels, reputation, standing, rights, diagnosis, personhood, and consciousness inferences fail closed.\",\"One bounded exact-head SRP review records no unresolved actionable findings.\",\"The implementation PR targets the intended base and includes Closes #5830 without claiming completion of downstream Birthday work.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5827, #5828, #5829 and bounded ToM/intelligence/governed-learning inputs, then narrow exact protected paths.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the versioned profile, allowed evidence categories, revision-linked updates, privacy policy, projections, and fixtures.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run canonical update replay, stale/forbidden/root-mismatch negatives, privacy projection, and non-reputation claim lanes.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5830 linkage.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"cognitive-profile-canonical\",\"proof_role\":\"Prove canonical profile creation, update linkage, and bounded projections.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"cognitive_profile\",\"--\",\"--nocapture\"],\"parallel_group\":\"5830-core\",\"defer_reason\":null},{\"lane\":\"cognitive-profile-privacy-negative\",\"proof_role\":\"Reject stale, forbidden, mismatched, unexplained, or private evidence.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"cognitive_profile_negative\",\"--\",\"--nocapture\"],\"parallel_group\":\"5830-negative\",\"defer_reason\":null},{\"lane\":\"cognitive-profile-non-reputation\",\"proof_role\":\"Reject diagnosis, reputation, standing, rights, personhood, and consciousness inference.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":200,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"cognitive_profile_claim_boundary\",\"--\",\"--nocapture\"],\"parallel_group\":\"5830-negative\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md\",\"adl/src/runtime_v2/ cognitive-profile module\",\"adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/cognitive_profile/\",\".csdlc/evidence/5830/\"]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Every profile field cites an allowed current evidence category and digest.\",\"Every update links the prior revision and explains additions and removals.\",\"Public projection is strictly narrower than the internal redacted evidence map.\"]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Free-form labels could escape evidence constraints.\",\"Profile updates could drop provenance or revision linkage.\",\"Public projection could leak private evidence or imply reputation and rights.\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Any declared dependency or evidence category is not current and verifiable.\",\"A requested field cannot cite an allowed evidence source.\",\"Privacy or non-reputation negative proof cannot fail closed.\"]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"Allowed source categories change before implementation.\",\"Public projection needs a separately versioned schema.\",\"Review finds a label that functions as diagnosis, standing, reputation, or rights inference.\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Exact-head review of WP-13 evidence categories, revision semantics, identity/continuity binding, private/public projections, unsupported inference rejection, and dependency proof only.\",\"operation\":\"replan\",\"previous_value\":\"WP-13 issue 5830, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Replace generic design-time card content under operator-authorized temporary preparation bind",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does every profile value cite an allowed current evidence digest and preserve identity, continuity, actor, reason, and prior revision linkage?\",\"Can stale, forbidden, mismatched, or private evidence influence any internal or public projection?\",\"Can any label imply diagnosis, reputation, standing, rights, citizenship, personhood, or consciousness?\",\"Are #5827, #5828, #5829, bounded prerequisite evidence, and all acceptance claims current at exact HEAD?\"]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 21,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Release temporary preparation-only claim after typed card validation",
+      "operation": "{\"claim_id\":\"prep-5860-5830-cards\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-temporary-preparation-binding\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
     }
   ]
 }

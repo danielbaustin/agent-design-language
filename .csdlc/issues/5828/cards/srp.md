@@ -12,13 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-WP-11 issue 5828, its declared implementation paths, and retained proof
+Exact-head review of WP-11 topology semantics, bounded selection and overflow, identity/continuity bindings, deterministic replay, redaction, schema compatibility, and platform portability only.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-11 scope?
+- Does every loaded item bind valid identity, continuity, provenance, temporal anchor, hash, and redaction evidence?
+- Are selection and overflow bounded and deterministic for fixed inputs and observation time?
+- Do stale/hash/continuity mismatch, unauthorized state, private paths, and host paths fail closed?
+- Are #5826, #5827, ObsMem/trace proof, schema compatibility, and every acceptance claim current at exact HEAD?
 
 ## Findings
 

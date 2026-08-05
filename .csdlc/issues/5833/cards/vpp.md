@@ -24,25 +24,79 @@ Diagram: .csdlc/prepared/issues/5833/diagram.mmd
 
 [
   {
-    "lane": "focused-wp-15",
-    "proof_role": "witness fixtures, receipt fixtures, and validation report",
+    "lane": "birth-witness-and-receipt",
+    "proof_role": "Prove policy-complete exact-candidate witnesses and deterministic accepted/rejected receipts.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
       "AC-3",
       "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 500,
+    "budget_tokens": 4000,
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "birth_witness_receipt",
+      "--",
+      "--nocapture"
+    ],
+    "parallel_group": "5833-core",
+    "defer_reason": null
+  },
+  {
+    "lane": "witness-equivocation-security-negative",
+    "proof_role": "Reject duplicate, stale, forged, equivocal, unauthorized, and mismatched witnesses.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-4",
       "AC-5"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 1200,
-    "budget_tokens": 10000,
+    "budget_seconds": 500,
+    "budget_tokens": 4000,
     "argv": [
-      "git",
-      "diff",
-      "--check"
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "birth_witness_receipt_negative",
+      "--",
+      "--nocapture"
     ],
-    "parallel_group": "issue-local",
+    "parallel_group": "5833-negative",
+    "defer_reason": null
+  },
+  {
+    "lane": "receipt-privacy-and-claim-boundary",
+    "proof_role": "Reject raw-state leakage and premature birth, citizenship, legal, or governance claims.",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-4",
+      "AC-5"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 200,
+    "budget_tokens": 2000,
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "birth_receipt_claim_boundary",
+      "--",
+      "--nocapture"
+    ],
+    "parallel_group": "5833-negative",
     "defer_reason": null
   }
 ]
@@ -59,7 +113,9 @@ Tokens: 10000
 
 ## Commands
 
-- `git diff --check`
+- `cargo test --manifest-path adl/Cargo.toml birth_witness_receipt -- --nocapture`
+- `cargo test --manifest-path adl/Cargo.toml birth_witness_receipt_negative -- --nocapture`
+- `cargo test --manifest-path adl/Cargo.toml birth_receipt_claim_boundary -- --nocapture`
 
 ## Failure Semantics
 
