@@ -1,0 +1,92 @@
+{
+  "issue": 5850,
+  "card": "vpp",
+  "expected_generation": 9,
+  "expected_digest": "738af9801c1e25d35afb4dc7c4d2de7f8be9f64ecd55542b130b13037a5b875a",
+  "claim_id": "claim-5850-v092-preparation",
+  "actor": "codex:5860-quality-release-second-pass",
+  "reason": "Replace self-attested quality/release validation with derived live and exact-head proof.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "derived-terminal-universe",
+        "proof_role": "Derive the expected v0.92 issue universe from canonical wave authority and compare every row with live GitHub, typed phase, receipt, claim, and registered-worktree truth.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 600,
+        "budget_tokens": 4000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5850/validate-closeout-plan.rb",
+          "universe"
+        ],
+        "parallel_group": "universe",
+        "defer_reason": null
+      },
+      {
+        "lane": "derived-closeout-dag",
+        "proof_role": "Reconstruct and topologically validate the exact finish, claim release, cleanup, WP-29, WP-30, umbrella-closeout, and v0.93-acceptance sequence.",
+        "acceptance_ids": [
+          "AC-4"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 240,
+        "budget_tokens": 1800,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5850/validate-closeout-plan.rb",
+          "dag"
+        ],
+        "parallel_group": "dag",
+        "defer_reason": null
+      },
+      {
+        "lane": "exercised-terminal-negatives",
+        "proof_role": "Mutate the derived row contract for every stale, red, missing-review/receipt, active-claim, dirty, partial, duplicate, unknown, and unowned case and require the gate to block.",
+        "acceptance_ids": [
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 240,
+        "budget_tokens": 1800,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5850/validate-closeout-plan.rb",
+          "negative"
+        ],
+        "parallel_group": "negative",
+        "defer_reason": null
+      },
+      {
+        "lane": "typed-card-doctor",
+        "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-6"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": [
+          "csdlc-doctor",
+          "--repo",
+          ".",
+          "--issue",
+          "5850"
+        ],
+        "parallel_group": "typed-readback",
+        "defer_reason": null
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

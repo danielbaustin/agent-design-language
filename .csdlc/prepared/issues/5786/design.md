@@ -53,6 +53,17 @@ or a reduced build graph without net incumbent deletion is not completion.
 The implementation claim must enumerate exact files; these candidate roots do
 not authorize a broad repository claim.
 
+## Owned Paths
+
+- `.csdlc/evidence/5786/deletion-manifest.json`
+- `.csdlc/evidence/5786/repository-denominator.json`
+- `.csdlc/evidence/5786/platform-proof.json`
+- `.csdlc/evidence/5786/stale-reference-report.json`
+- `.csdlc/prepared/issues/5786/validate-reduction.rb`
+
+Product paths are not owned until the exhaustive denominator selects exact
+files and the execution claim is amended to list them individually.
+
 ## Validation And Failure Policy
 
 Required lanes are: inventory completeness and reverse-reference rejection;

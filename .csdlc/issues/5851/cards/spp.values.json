@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-29] Next milestone review pass",
     "slug": "v0-92-wp-29-next-milestone-review-pass",
     "version": "v0.92",
-    "generation": 8
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -86,7 +86,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5851/design.md",
-      "design_digest": "c628287fc0ab4ff53142c7a872d39595c10f4950fb60dc50d156a59e0f101aad",
+      "design_digest": "826a850ac20b59d23d060dc00eaba813fe60899e89877137ede0d33d6e5367e5",
       "diagram_ref": ".csdlc/prepared/issues/5851/diagram.mmd",
       "diagram_digest": "684da2a4d408951a88dc77fd84f07952b5e795bb91e83392370c723c1b647bee"
     }

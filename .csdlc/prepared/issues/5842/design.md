@@ -51,6 +51,14 @@ date, or authorize WP-25 internal review while any required row is unaccepted.
 Feature implementation paths remain read-only inputs. Any needed repair is a
 blocker routed to its owner, not absorbed into the WP-22 claim.
 
+## Owned Paths
+
+- `.csdlc/evidence/5842/feature-completion-matrix.json`
+- `.csdlc/evidence/5842/negative-cases.json`
+- `.csdlc/evidence/5842/blocker-report.json`
+- `docs/reviews/v0.92/quality-gate-5842`
+- `.csdlc/prepared/issues/5842/validate-quality-gate.rb`
+
 ## Validation And Failure Policy
 
 Required lanes are exact 13-feature index completeness/schema checks, issue/PR/head/

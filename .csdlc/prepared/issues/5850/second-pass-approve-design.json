@@ -1,0 +1,7 @@
+{
+  "issue": 5850,
+  "expected_generation": 8,
+  "expected_digest": "78a98334e11940b0db16023553005ee96e08bc50ac39cf2aaebbe2da876ff6b4",
+  "claim_id": "claim-5850-v092-preparation",
+  "reviewer": "codex:5860-quality-release-second-pass-design-review"
+}

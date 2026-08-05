@@ -4,9 +4,11 @@
 require "digest"
 require "json"
 require "open3"
+require "rbconfig"
+require "yaml"
 
-mode = ARGV.fetch(0)
-expected_features = %w[
+FEATURE_DIR = "docs/milestones/v0.92/features"
+EXPECTED_FEATURES = %w[
   ACP_COGNITIVE_PROFILES_v0.92.md
   ADAPTIVE_LEARNING_DAG_v0.92.md
   ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md
@@ -20,38 +22,75 @@ expected_features = %w[
   PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md
   RUNTIME_LAUNCH_AND_RESILIENCE_v0.92.md
   FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md
-].sort
+].sort.freeze
+EXPECTED_CRITICAL = %w[WP-04 WP-05 WP-06 WP-07 WP-13A WP-20 WP-21 WP-21A].sort.freeze
+EVIDENCE_FIELDS = %w[validation negative integration platform terminal].freeze
 
 def present?(value)
-  value.is_a?(String) ? !value.strip.empty? : !value.nil?
+  value.is_a?(String) && !value.strip.empty?
 end
 
+def git(*argv)
+  out, err, status = Open3.capture3("git", *argv)
+  abort "git #{argv.join(' ')} failed: #{err}" unless status.success?
+  out.strip
+end
+
+def github_pr(number)
+  out, err, status = Open3.capture3("gh", "pr", "view", number.to_s, "--json", "number,headRefOid,mergeCommit,state")
+  abort "cannot read PR ##{number}: #{err}" unless status.success?
+  JSON.parse(out)
+end
+
+def verify_evidence_ref(ref)
+  abort "evidence ref must contain path and sha256" unless ref.is_a?(Hash)
+  path = ref["path"]
+  digest = ref["sha256"]
+  abort "evidence path missing" unless present?(path) && File.file?(path)
+  abort "evidence digest malformed" unless digest.to_s.match?(/\A[0-9a-f]{64}\z/)
+  abort "evidence digest mismatch for #{path}" unless Digest::SHA256.file(path).hexdigest == digest
+end
+
+mode = ARGV.fetch(0)
 case mode
 when "matrix"
   packet = JSON.parse(File.read(ARGV.fetch(1, ".csdlc/evidence/5842/feature-completion-matrix.json")))
+  abort "gate SHA is not HEAD" unless packet["gate_sha"] == git("rev-parse", "HEAD")
   rows = packet["rows"]
-  abort "exactly 13 feature rows required" unless rows.is_a?(Array) && rows.length == expected_features.length
-  abort "feature universe mismatch" unless rows.map { |row| row["feature"] }.sort == expected_features
-  required = %w[feature owner_issue implementation_paths reviewed_head pr merge_sha validation_ref negative_ref integration_ref platform_ref terminal_ref disposition]
+  abort "rows missing" unless rows.is_a?(Array)
+  features = rows.select { |row| row["kind"] == "feature" }
+  critical = rows.select { |row| row["kind"] == "critical_path" }
+  abort "feature universe mismatch" unless features.map { |row| row["id"] }.sort == EXPECTED_FEATURES
+  abort "critical-path universe mismatch" unless critical.map { |row| row["id"] }.sort == EXPECTED_CRITICAL
+  EXPECTED_FEATURES.each { |name| abort "indexed feature missing" unless File.file?(File.join(FEATURE_DIR, name)) }
+
   rows.each do |row|
-    abort "incomplete #{row['feature']} row" unless required.all? { |key| present?(row[key]) }
-    abort "implementation paths missing" unless row["implementation_paths"].is_a?(Array) && !row["implementation_paths"].empty?
-    abort "feature not accepted" unless row["disposition"] == "accepted"
-    %w[validation_ref negative_ref integration_ref platform_ref terminal_ref].each do |key|
-      abort "missing #{key} file" unless File.file?(row[key])
+    %w[id kind owner_issue reviewed_head pr merge_sha disposition].each do |key|
+      abort "#{row['id']} missing #{key}" unless present?(row[key].to_s)
     end
+    paths = row["implementation_paths"]
+    abort "#{row['id']} implementation paths missing" unless paths.is_a?(Array) && !paths.empty?
+    paths.each { |path| abort "#{row['id']} missing implementation path #{path}" unless File.exist?(path) }
+    EVIDENCE_FIELDS.each { |field| verify_evidence_ref(row.fetch("#{field}_evidence")) }
+    abort "#{row['id']} not accepted" unless row["disposition"] == "accepted"
+
+    pr = github_pr(Integer(row["pr"].to_s, 10))
+    abort "#{row['id']} PR not merged" unless pr["state"] == "MERGED"
+    abort "#{row['id']} reviewed head mismatch" unless pr["headRefOid"] == row["reviewed_head"]
+    abort "#{row['id']} merge SHA mismatch" unless pr.dig("mergeCommit", "oid") == row["merge_sha"]
+    abort "#{row['id']} merge not ancestral" unless system("git", "merge-base", "--is-ancestor", row["merge_sha"], packet["gate_sha"])
   end
 when "negative"
   packet = JSON.parse(File.read(ARGV.fetch(1, ".csdlc/evidence/5842/negative-cases.json")))
+  required = %w[fixture receipt_only demo_mode synthetic provider_substitution stale_review missing_ancestry unsupported_platform].sort
   cases = packet["cases"]
-  required_classes = %w[fixture receipt_only demo_mode synthetic provider_substitution stale_review missing_ancestry unsupported_platform].sort
-  abort "negative class universe mismatch" unless cases.is_a?(Array) && cases.map { |row| row["class"] }.sort == required_classes
+  abort "negative class universe mismatch" unless cases.is_a?(Array) && cases.map { |row| row["class"] }.sort == required
   cases.each do |row|
-    argv = row["gate_argv"]
-    abort "negative argv missing" unless argv.is_a?(Array) && !argv.empty?
-    stdout, stderr, status = Open3.capture3(*argv)
+    fixture = row["matrix_path"]
+    abort "negative fixture missing" unless File.file?(fixture)
+    out, err, status = Open3.capture3(RbConfig.ruby, __FILE__, "matrix", fixture)
     abort "negative case escaped: #{row['class']}" if status.success?
-    abort "negative evidence digest mismatch" unless Digest::SHA256.hexdigest(stdout + stderr) == row["observed_sha256"]
+    abort "negative output digest mismatch" unless Digest::SHA256.hexdigest(out + err) == row["observed_sha256"]
   end
 else
   abort "usage: #{$PROGRAM_NAME} matrix|negative [evidence.json]"

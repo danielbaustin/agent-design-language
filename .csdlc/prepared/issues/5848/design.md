@@ -47,6 +47,18 @@ finding fixed from intent alone.
 No broad product root may be claimed. If a finding belongs to another active
 issue or owner, #5848 records and watches that route instead of colliding.
 
+## Owned Paths
+
+- `docs/reviews/v0.92/remediation-5848/dispositions.json`
+- `docs/reviews/v0.92/remediation-5848/regression-manifest.json`
+- `docs/reviews/v0.92/remediation-5848/validation.json`
+- `.csdlc/evidence/5848`
+- `.csdlc/prepared/issues/5848/validate-remediation-regressions.rb`
+
+Remediation source paths are owned only by their separately bound finding
+issues; WP-27 consumes their exact-head evidence and never accepts caller-
+supplied validation commands.
+
 ## Validation And Failure Policy
 
 Required lanes are finding-universe completeness, dedup/provenance checks,

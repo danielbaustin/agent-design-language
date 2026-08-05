@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1c9f6bcd6c882965b4f63206e47bd8f0328eda71e430debcb67eb87b11bcf889",
   "phase": "bound",
-  "generation": 11,
-  "digest": "ba4689cac406a54b433df7399d7a8e99f64d5f6c72d439b027c5b4fcc195323b",
+  "generation": 12,
+  "digest": "d9229fbb2b68cdca461f20c56f949834b9aef4ebf6591ac16bcfff1682881aac",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5841/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-quality-release-readiness-repair-review",
-      "revision": "da1aae684e3702aea1a1b6e18c0797fb0476281afe07a066e83b9ada9a259128"
+      "reviewer": "codex:5860-quality-release-second-pass-design-review",
+      "revision": "496006b4eec4a88d4cdfaedcc42b6ef74950990044da86858c82e0d90b680e22"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "7fc5330df8ff2042cee91b4a949074fcb90b8db7489268d36097906b86a962d6",
+      "values_digest": "7a92568c84ce31350b61098ba142097af87ab6b526a6f6855dcb2de35904f914",
       "rendered_digest": "a4b5991aeb32bf769372931275cac014d70bef5823c2870dbc253c34a04cc7e9",
       "ast_digest": "bef612f877177d3ba8340e98db65414bd62eccd3e3721341b88573402c322268"
     },
     "stp": {
-      "values_digest": "7d53f3d1c440d04eeab757f7a37bba44176c783b989f18110d92d25573ffe059",
+      "values_digest": "1a277db2fdf8247b3e6ac3eb65e82dd8624f8d4766f425a41ca955b58e494f57",
       "rendered_digest": "791664dcb33d545ae82bc73b01ad27cea9bb8014e9fd00b2faa45487136ae351",
       "ast_digest": "ec7ab9c83dd7f77f754fc85a743ddb862a766bba90d90ff62785c4d524b7532d"
     },
     "spp": {
-      "values_digest": "58bf328244193ad004dd01d51a5ffdf60eaf64b0fc5ee37876aabc02028992dc",
-      "rendered_digest": "adc3f8e444c8cfa1c7da16b5ceeab81e08c173ebb1bd8b30c3cb57105c9e2a3b",
-      "ast_digest": "e2affaa56c478d3d536e6f4dd8bdace2965eeb2ce4a7c36485e632347568135a"
+      "values_digest": "17685d8c0ee0d8086f871be4d90bcb1d5a30d535bb81a9f541cb2b6bbf93d677",
+      "rendered_digest": "b3407054d6565cec2527cb7b713f63a936cc617c1153598d7b103b113cdc5883",
+      "ast_digest": "08930cc953a3af1cde5888c94a43856bc626cc11858135c6b0855b14b19d6994"
     },
     "vpp": {
-      "values_digest": "56a7ba2fc7da1c2bf743a63102724d9fef5ca89637efde4576154b0116010041",
+      "values_digest": "fd2ee0c476e7b8b983326a850698ab1b6459c0fbf65592f8b8b2e1abbc27966f",
       "rendered_digest": "0af8b21657de00776ebd07dfa27b1514d65e084e4c0b75840769502223f75319",
       "ast_digest": "b2d3a60e3a6435e138edc4bbf40d9ed9a1c78edc2621e052e91eb2d32e8ccecd"
     },
     "srp": {
-      "values_digest": "f6e1d430b25d42a157ce59d6d9dc95766ecac0ef9ab913dd9721642d3bc43578",
+      "values_digest": "797c7936967ccba437bf1fd95a3ed18811de029ef9be68d0ccd06f4c0ec10cb8",
       "rendered_digest": "168063f7084fabb4b85232a6984b65c5c9c6847542f523e4332c1e923ba9b929",
       "ast_digest": "3df962446f93ea2eb17b19a4103e5d1740e19bbc21b597477a9cd3b0e98f1e7a"
     },
     "sor": {
-      "values_digest": "cf4bc54c146c96245f7960a172f0bb27e655903f173b9fd493d28ba0842bd945",
+      "values_digest": "69c4ba3d50aa03d81de77ecc877bb738901535f47988bb0e651b979df592d6c2",
       "rendered_digest": "b149f4e119ec86b9a5b8d437406e06aaf915a40c49f81056d89cc297486e836c",
       "ast_digest": "3d8ab8e31f9073b645cc9bc1c2899591663bd3f328b2565bac43aec80b91e8ec"
     }
@@ -195,6 +195,27 @@
       "actor": "codex:5860-quality-release-readiness-repair",
       "reason": "Release the temporary repair claim after typed rendering, design reapproval, and bounded readiness validation.",
       "operation": "{\"claim_id\":\"claim-5841-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-readiness-repair-completion\",\"previous_owner\":\"codex:5860-quality-release-readiness-repair\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 11,
+      "actor": "codex:5860-quality-release-second-pass",
+      "reason": "Reacquire the released preparation claim to repair exact-head quality/release readiness findings without implementation or publication.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5841-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5841\",\".csdlc/issues/5841\",\".csdlc/locks/5841.lock\",\".csdlc/prepared/issues/5841\"],\"purpose\":\"Repair issue 5841 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 12,
+      "actor": "codex:5860-quality-release-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 21,
+      "generation": 12,
+      "actor": "codex:5860-quality-release-second-pass",
+      "reason": "Release the second-pass preparation claim after typed rendering, design reapproval, and bounded validation.",
+      "operation": "{\"claim_id\":\"claim-5841-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-release-second-pass-completion\",\"previous_owner\":\"codex:5860-quality-release-second-pass\"}"
     }
   ]
 }

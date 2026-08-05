@@ -2,10 +2,10 @@
   "issue": 5851,
   "repository": "danielbaustin/agent-design-language",
   "expected_claim_id": "claim-5851-v092-preparation",
-  "expected_generation": 8,
-  "expected_digest": "e3fe951e2a4cb987b09109d8f4edf619b3b6bab7b1d21709bce28be482698029",
-  "now_unix_seconds": 1785949654,
-  "actor": "codex:5860-quality-release-readiness",
-  "operator_authority": "operator:daniel-5860-preparation-completion",
-  "reason": "Release the temporary preparation-only binding after exact-digest design approval and typed card rendering so the implementation session can reacquire authority just in time."
+  "expected_generation": 10,
+  "expected_digest": "03e271936a8a0a0cf14617dbca102d7aac054bdef97a1bd44cfff2dac4f4611e",
+  "now_unix_seconds": 1785953465,
+  "actor": "codex:5860-quality-release-second-pass",
+  "operator_authority": "operator:daniel-5860-quality-release-second-pass-completion",
+  "reason": "Release the second-pass preparation claim after typed rendering, design reapproval, and bounded validation."
 }

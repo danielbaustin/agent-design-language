@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-29] Next milestone review pass",
     "slug": "v0-92-wp-29-next-milestone-review-pass",
     "version": "v0.92",
-    "generation": 8
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -16,46 +16,46 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "independent-universe-dag-comparison",
-          "proof_role": "Rebuild and compare the expected issue/PR/receipt/claim/worktree/release universe and dependency DAG.",
+          "lane": "independent-derived-comparison",
+          "proof_role": "Revalidate the WP-28A live universe, rebuild its material fields independently, and require exact row and source-digest equality.",
           "acceptance_ids": [
             "AC-1",
             "AC-2"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 300,
-          "budget_tokens": 3000,
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
           "argv": [
             "ruby",
-            "-e",
-            "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/universe-comparison.json')); abort 'comparison mismatch' unless r['missing'].is_a?(Array) && r['missing'].empty? && r['duplicates'].empty? && r['cycles'].empty? && r['unowned'].empty?"
+            ".csdlc/prepared/issues/5851/validate-readiness-review.rb",
+            "comparison"
           ],
-          "parallel_group": "review",
+          "parallel_group": "comparison",
           "defer_reason": null
         },
         {
-          "lane": "handoff-boundary-review",
-          "proof_role": "Validate v0.93 evidence/blocker/owner/acceptance coverage, candidate status, and governance/security/legal/certification non-claims.",
+          "lane": "digest-bound-handoff-review",
+          "proof_role": "Bind reviewer identity, reviewed HEAD, every reviewed artifact digest, finding disposition, and candidate-only v0.93 claim boundary.",
           "acceptance_ids": [
             "AC-3",
             "AC-5"
           ],
           "deterministic": true,
           "resource_profile": "small",
-          "budget_seconds": 180,
-          "budget_tokens": 1500,
+          "budget_seconds": 240,
+          "budget_tokens": 1800,
           "argv": [
             "ruby",
-            "-e",
-            "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/handoff-review.json')); abort 'handoff review blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?"
+            ".csdlc/prepared/issues/5851/validate-readiness-review.rb",
+            "handoff"
           ],
-          "parallel_group": "review",
+          "parallel_group": "handoff",
           "defer_reason": null
         },
         {
-          "lane": "closeout-ceremony-negative",
-          "proof_role": "Reject missing/stale/red/active-claim/absent-receipt/dirty/partial/duplicate/premature-closeout and activation scenarios.",
+          "lane": "exercised-review-negatives",
+          "proof_role": "Require the full missing, stale, red, active-claim, absent-receipt, dirty, partial, duplicate, premature-closeout, and activation negative universe to produce validator failures.",
           "acceptance_ids": [
             "AC-4",
             "AC-5",
@@ -63,12 +63,12 @@
           ],
           "deterministic": true,
           "resource_profile": "small",
-          "budget_seconds": 180,
-          "budget_tokens": 1500,
+          "budget_seconds": 240,
+          "budget_tokens": 1800,
           "argv": [
             "ruby",
-            "-e",
-            "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/negative-cases.json')); abort 'negative case escaped' unless r['cases'].is_a?(Array) && r['cases'].all? { |x| x['outcome']=='blocked' }"
+            ".csdlc/prepared/issues/5851/validate-readiness-review.rb",
+            "negative"
           ],
           "parallel_group": "negative",
           "defer_reason": null
@@ -99,7 +99,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5851/design.md",
-      "design_digest": "c628287fc0ab4ff53142c7a872d39595c10f4950fb60dc50d156a59e0f101aad",
+      "design_digest": "826a850ac20b59d23d060dc00eaba813fe60899e89877137ede0d33d6e5367e5",
       "diagram_ref": ".csdlc/prepared/issues/5851/diagram.mmd",
       "diagram_digest": "684da2a4d408951a88dc77fd84f07952b5e795bb91e83392370c723c1b647bee"
     }

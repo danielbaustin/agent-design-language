@@ -3,6 +3,7 @@
 
 require "json"
 require "open3"
+require "digest"
 
 ISSUES = [
   5786, 5795, 5800, 5801, 5812, 5818, 5819, 5820, 5821, 5822, 5823,
@@ -35,5 +36,12 @@ payload = {
   "interpretation" => "design-ready handoff; execution remains dependency-gated and requires just-in-time claim reacquisition",
   "reports" => reports
 }
-File.write(OUTPUT, JSON.pretty_generate(payload) + "\n")
+rendered = JSON.pretty_generate(payload) + "\n"
+if ARGV.include?("--write")
+  File.write(OUTPUT, rendered)
+else
+  abort "missing pinned doctor evidence; run with --write explicitly" unless File.file?(OUTPUT)
+  expected = File.read(OUTPUT)
+  abort "typed doctor evidence drift: expected #{Digest::SHA256.hexdigest(expected)}, live #{Digest::SHA256.hexdigest(rendered)}" unless expected == rendered
+end
 puts "v0.92 typed doctors: PASS (#{reports.length} claim-null handoffs)"

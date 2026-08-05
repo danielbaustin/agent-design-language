@@ -49,6 +49,17 @@ candidate/planned boundary. It does not open issues or start v0.93 execution.
 No GitHub issue wave, product source, or shared milestone status is mutated
 without separate authority.
 
+## Owned Paths
+
+- `docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md`
+- `docs/reviews/v0.92/next-milestone-planning-5849`
+- `.csdlc/evidence/5849/v093-prerequisite-map.json`
+- `.csdlc/evidence/5849/claim-boundary-scan.json`
+- `.csdlc/prepared/issues/5849/validate-handoff.rb`
+
+The `docs/milestones/v0.93` candidate corpus is read-only input unless an
+exact candidate file is separately added to the execution claim.
+
 ## Validation And Failure Policy
 
 Required lanes are v0.92 evidence-link and terminal-identity checks, v0.93

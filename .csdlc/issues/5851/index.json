@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1c65d63dcfb7c628b911d1171ec521d35dd85521a1615f401d78c4cada4e556d",
   "phase": "bound",
-  "generation": 8,
-  "digest": "6de2eb7e8fc7d32881827c712d3b59cd57bc44964cafb4f47fcd920ded6e4804",
+  "generation": 10,
+  "digest": "bb68d49b6416a192e810cb54250bf8564f95b425bee16cf6986b3eeedade3347",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5851/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-quality-release-readiness-design-review",
-      "revision": "c628287fc0ab4ff53142c7a872d39595c10f4950fb60dc50d156a59e0f101aad"
+      "reviewer": "codex:5860-quality-release-second-pass-design-review",
+      "revision": "826a850ac20b59d23d060dc00eaba813fe60899e89877137ede0d33d6e5367e5"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "d82741b484d93f8d6daf392214fbf3bee12f2566ae8995153cda1b9a7dec999d",
+      "values_digest": "f5099e1dffadb45d2049d34590676f54a1c1e7fdc97ad4cde01d0792811beb4a",
       "rendered_digest": "ea113d6c683170cbba996358a5c2f6d4e42a4817b3a5097392084e9e8753e9de",
       "ast_digest": "caf532389527629fca22fdc88077b6888859217d801367094adb5de6e3446a49"
     },
     "stp": {
-      "values_digest": "3c7563cff9fffc5d47a7a2efdf0d76248d9e8303604c253eff8baf7a07bff132",
+      "values_digest": "32317aafa8985097c5ee0b396dd2ab0f67eb1db5e6bf39417bbcb244bc8808cf",
       "rendered_digest": "fdafcfa4792e9d14cd5e18454dd8b913bd1fb4400fbdeaf2c31c446fa8ae9891",
       "ast_digest": "e956bca68fce0ef8f5a4c72719564eb0b312c3828670f356bacb7cc9c2d237e0"
     },
     "spp": {
-      "values_digest": "facbb5da85c9ad6763df1c12e275d3447350e18ff14ed8a2eb53f26242a786f5",
-      "rendered_digest": "f0f8f3a561ad9bf5260cf87ee9e98577801a2a9abdba46c56314a01762c8d263",
-      "ast_digest": "71af960682308abfea86d6277c405d52e0056ebc952587080da4a82f3536776a"
+      "values_digest": "70a7098695064f794225371be29e3c9061fd16d2236da5def4a61480aa8b4115",
+      "rendered_digest": "cab32ec8577c9d987005b753a79309c2b4ad3eb5f08e9d3e143149f85e5bd4f5",
+      "ast_digest": "6cd8dfa5d5e61526f8554692445a9a76240e172ed64669d075a785ef03df4e53"
     },
     "vpp": {
-      "values_digest": "d0a9485e57bdc9329c4a3daa89fc01983c1fc4f70abb3cc2e6bd5270572957cc",
-      "rendered_digest": "00ec6caee4edbea4847c74e0c071074696546b656911a6e0c899891bebe6e5ea",
-      "ast_digest": "5214aeb9d734257f5a8e6954ffab5e7b689ce628693a6633a703ac7a7641c593"
+      "values_digest": "c28fd4ab301e7fbe83251ba5bd9defe368af5a9708b8b0a9c71917a48f5d3854",
+      "rendered_digest": "0816ba0c09f410436d33fa6ee40ab65b5caa910b32218c19948c29fb5b0ed020",
+      "ast_digest": "f979d3c4eaea511ed59d8e9b5ded1e946b4725c91a81ced86a847448684e2045"
     },
     "srp": {
-      "values_digest": "8bbbab673f3882c210ea784c87884e700aa608e5be1e715f1143a9505c2b30bf",
+      "values_digest": "4eb06e3b9e5668133633d9b56a45150755421da037a9faf8df6408176908d27a",
       "rendered_digest": "fe236a0e8b3846da855ea05f672f1531f9dc6cd0c5848f9dd44e1814088fc780",
       "ast_digest": "462789fcf15f882db57b467bd4f2eefe89336419502104bdece9b788bae8d4b2"
     },
     "sor": {
-      "values_digest": "0d814d0aaf2374ee1f6814505c56780339c1dd35f2a3e5aca98994ed8385d92b",
+      "values_digest": "0c05057cc8d13021a0c741cd490b2504bd199959794148b8809ca77af8198e33",
       "rendered_digest": "3fa1033ef6063f1a11912cbe289b8051a47c359d66d7b0167a239a05c3f67eec",
       "ast_digest": "1a3b3b6cc014cce10e8ce5836d2b9535fd23e00a1ba729de1ba8d98c7e081553"
     }
@@ -160,6 +160,34 @@
       "actor": "codex:5860-quality-release-readiness",
       "reason": "Release the temporary preparation-only binding after exact-digest design approval and typed card rendering so the implementation session can reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5851-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-preparation-completion\",\"previous_owner\":\"codex:5860-quality-release-readiness\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-second-pass",
+      "reason": "Reacquire the exact released WP-01 preparation claim to make issue 5851 design-time execution-ready without product implementation, publication, push, merge, or closeout.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5851-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5851\",\".csdlc/issues/5851\",\".csdlc/locks/5851.lock\",\".csdlc/prepared/issues/5851\"],\"purpose\":\"Prepare and approve issue 5851 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 9,
+      "actor": "codex:5860-quality-release-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex:5860-quality-release-second-pass",
+      "reason": "Replace self-attested quality/release validation with derived live and exact-head proof.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"independent-derived-comparison\",\"proof_role\":\"Revalidate the WP-28A live universe, rebuild its material fields independently, and require exact row and source-digest equality.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5851/validate-readiness-review.rb\",\"comparison\"],\"parallel_group\":\"comparison\",\"defer_reason\":null},{\"lane\":\"digest-bound-handoff-review\",\"proof_role\":\"Bind reviewer identity, reviewed HEAD, every reviewed artifact digest, finding disposition, and candidate-only v0.93 claim boundary.\",\"acceptance_ids\":[\"AC-3\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":1800,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5851/validate-readiness-review.rb\",\"handoff\"],\"parallel_group\":\"handoff\",\"defer_reason\":null},{\"lane\":\"exercised-review-negatives\",\"proof_role\":\"Require the full missing, stale, red, active-claim, absent-receipt, dirty, partial, duplicate, premature-closeout, and activation negative universe to produce validator failures.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":1800,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5851/validate-readiness-review.rb\",\"negative\"],\"parallel_group\":\"negative\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.\",\"acceptance_ids\":[\"AC-1\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5851\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 10,
+      "actor": "codex:5860-quality-release-second-pass",
+      "reason": "Release the second-pass preparation claim after typed rendering, design reapproval, and bounded validation.",
+      "operation": "{\"claim_id\":\"claim-5851-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-release-second-pass-completion\",\"previous_owner\":\"codex:5860-quality-release-second-pass\"}"
     }
   ]
 }

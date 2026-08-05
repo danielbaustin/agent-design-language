@@ -24,61 +24,24 @@ Diagram: .csdlc/prepared/issues/5849/diagram.mmd
 
 [
   {
-    "lane": "v093-prerequisite-map",
-    "proof_role": "Require every candidate work area to name exact evidence, blocker, follow-on, or non-claim plus owner and acceptance hook.",
+    "lane": "derived-handoff-proof",
+    "proof_role": "Read live WP-27 and typed terminal truth, derive the complete tracked v0.93 candidate corpus, verify every evidence digest and owner/acceptance hook, and reject activation, implementation, legal, production-authority, or certification overclaims.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
-      "AC-3"
-    ],
-    "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 300,
-    "budget_tokens": 3000,
-    "argv": [
-      "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5849/v093-prerequisite-map.json')); abort 'empty map' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'incomplete prerequisite' unless r['rows'].all? { |x| x['work_area'] && x['disposition'] && x['owner'] && x['acceptance_hook'] }"
-    ],
-    "parallel_group": "handoff",
-    "defer_reason": null
-  },
-  {
-    "lane": "candidate-status-negative",
-    "proof_role": "Reject issue creation, activation, implementation, schedule, legal-personhood, production-authority, and certification overclaims.",
-    "acceptance_ids": [
+      "AC-3",
       "AC-4",
       "AC-5"
     ],
     "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 180,
-    "budget_tokens": 1500,
+    "resource_profile": "medium",
+    "budget_seconds": 600,
+    "budget_tokens": 4000,
     "argv": [
       "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5849/claim-boundary-scan.json')); abort 'handoff blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?"
+      ".csdlc/prepared/issues/5849/validate-handoff.rb"
     ],
-    "parallel_group": "negative",
-    "defer_reason": null
-  },
-  {
-    "lane": "planning-format-link-dependency",
-    "proof_role": "Validate candidate YAML/Markdown, links, dependency coverage, evidence identity, owners, and patch hygiene.",
-    "acceptance_ids": [
-      "AC-3",
-      "AC-5"
-    ],
-    "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 120,
-    "budget_tokens": 500,
-    "argv": [
-      "git",
-      "diff",
-      "--check"
-    ],
-    "parallel_group": "hygiene",
+    "parallel_group": "handoff",
     "defer_reason": null
   },
   {
@@ -116,9 +79,7 @@ Tokens: 10000
 
 ## Commands
 
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5849/v093-prerequisite-map.json')); abort 'empty map' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'incomplete prerequisite' unless r['rows'].all? { |x| x['work_area'] && x['disposition'] && x['owner'] && x['acceptance_hook'] }`
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5849/claim-boundary-scan.json')); abort 'handoff blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?`
-- `git diff --check`
+- `ruby .csdlc/prepared/issues/5849/validate-handoff.rb`
 - `csdlc-doctor --repo . --issue 5849`
 
 ## Failure Semantics

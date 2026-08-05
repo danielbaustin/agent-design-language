@@ -1,0 +1,57 @@
+{
+  "issue": 5786,
+  "card": "vpp",
+  "expected_generation": 9,
+  "expected_digest": "4375efd6652d96b7a6c131b546c7432b32a16ef8496be11c06a01a4689427b5c",
+  "claim_id": "claim-5786-v092-preparation",
+  "actor": "codex:5860-quality-release-second-pass",
+  "reason": "Replace self-attested quality/release validation with derived live and exact-head proof.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "derived-reduction-proof",
+        "proof_role": "Derive the complete tracked adl/src and active-reference denominator, calculate the baseline reduction, require every row owned/dispositioned, run clean installation, bind native macOS/Linux receipts to HEAD, and reject every stale reference.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 1800,
+        "budget_tokens": 9000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5786/validate-reduction.rb"
+        ],
+        "parallel_group": "reduction",
+        "defer_reason": null
+      },
+      {
+        "lane": "typed-card-doctor",
+        "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-6"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": [
+          "csdlc-doctor",
+          "--repo",
+          ".",
+          "--issue",
+          "5786"
+        ],
+        "parallel_group": "typed-readback",
+        "defer_reason": null
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

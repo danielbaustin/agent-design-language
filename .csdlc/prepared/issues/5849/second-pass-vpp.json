@@ -1,0 +1,57 @@
+{
+  "issue": 5849,
+  "card": "vpp",
+  "expected_generation": 9,
+  "expected_digest": "c06188b674e2a6e3c22ab3faaa502f8c91741e513af0c691692ff3d3d695ef57",
+  "claim_id": "claim-5849-v092-preparation",
+  "actor": "codex:5860-quality-release-second-pass",
+  "reason": "Replace self-attested quality/release validation with derived live and exact-head proof.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "derived-handoff-proof",
+        "proof_role": "Read live WP-27 and typed terminal truth, derive the complete tracked v0.93 candidate corpus, verify every evidence digest and owner/acceptance hook, and reject activation, implementation, legal, production-authority, or certification overclaims.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 600,
+        "budget_tokens": 4000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5849/validate-handoff.rb"
+        ],
+        "parallel_group": "handoff",
+        "defer_reason": null
+      },
+      {
+        "lane": "typed-card-doctor",
+        "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-6"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": [
+          "csdlc-doctor",
+          "--repo",
+          ".",
+          "--issue",
+          "5849"
+        ],
+        "parallel_group": "typed-readback",
+        "defer_reason": null
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

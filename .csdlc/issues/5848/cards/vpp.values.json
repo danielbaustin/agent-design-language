@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-27] Review findings remediation",
     "slug": "v0-92-wp-27-review-findings-remediation",
     "version": "v0.92",
-    "generation": 10
+    "generation": 11
   },
   "status": "ready",
   "content": {
@@ -102,7 +102,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5848/design.md",
-      "design_digest": "edde7c21ea8734503699499430774e6d3be95fe231dbee4cc3a1101e41144f5f",
+      "design_digest": "944dcee75e5a461f7be1e555f804755f786022ac8c28d0bde4eb88c15e1a46e3",
       "diagram_ref": ".csdlc/prepared/issues/5848/diagram.mmd",
       "diagram_digest": "bbd55a23ecab369dc5724109636f2fa3e89c73129f97ce62f2d8b3ee87b0df77"
     }

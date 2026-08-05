@@ -47,6 +47,15 @@ ceremony mutation, and later milestone activation.
 Other issue records, claims, worktrees, tags, releases, and GitHub objects are
 read-only inputs during planning; execution remains with their named owners.
 
+## Owned Paths
+
+- `.csdlc/evidence/5850/issue-universe.json`
+- `.csdlc/evidence/5850/closeout-dag.json`
+- `.csdlc/evidence/5850/negative-cases.json`
+- `.csdlc/evidence/5850/closeout-plan.md`
+- `docs/milestones/v0.92/V092_TERMINAL_CLOSEOUT_PLAN_5850.md`
+- `.csdlc/prepared/issues/5850/validate-closeout-plan.rb`
+
 ## Validation And Failure Policy
 
 Required lanes are universe completeness, issue/PR/head/merge/check/review

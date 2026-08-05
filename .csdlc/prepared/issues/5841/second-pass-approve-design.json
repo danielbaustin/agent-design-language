@@ -1,0 +1,7 @@
+{
+  "issue": 5841,
+  "expected_generation": 11,
+  "expected_digest": "6d2c7138371f37e5934effdfcba3f3ce0df4eeec382af0372599376049273375",
+  "claim_id": "claim-5841-v092-preparation",
+  "reviewer": "codex:5860-quality-release-second-pass-design-review"
+}

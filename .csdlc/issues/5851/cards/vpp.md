@@ -24,46 +24,46 @@ Diagram: .csdlc/prepared/issues/5851/diagram.mmd
 
 [
   {
-    "lane": "independent-universe-dag-comparison",
-    "proof_role": "Rebuild and compare the expected issue/PR/receipt/claim/worktree/release universe and dependency DAG.",
+    "lane": "independent-derived-comparison",
+    "proof_role": "Revalidate the WP-28A live universe, rebuild its material fields independently, and require exact row and source-digest equality.",
     "acceptance_ids": [
       "AC-1",
       "AC-2"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 300,
-    "budget_tokens": 3000,
+    "budget_seconds": 600,
+    "budget_tokens": 4000,
     "argv": [
       "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/universe-comparison.json')); abort 'comparison mismatch' unless r['missing'].is_a?(Array) && r['missing'].empty? && r['duplicates'].empty? && r['cycles'].empty? && r['unowned'].empty?"
+      ".csdlc/prepared/issues/5851/validate-readiness-review.rb",
+      "comparison"
     ],
-    "parallel_group": "review",
+    "parallel_group": "comparison",
     "defer_reason": null
   },
   {
-    "lane": "handoff-boundary-review",
-    "proof_role": "Validate v0.93 evidence/blocker/owner/acceptance coverage, candidate status, and governance/security/legal/certification non-claims.",
+    "lane": "digest-bound-handoff-review",
+    "proof_role": "Bind reviewer identity, reviewed HEAD, every reviewed artifact digest, finding disposition, and candidate-only v0.93 claim boundary.",
     "acceptance_ids": [
       "AC-3",
       "AC-5"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 180,
-    "budget_tokens": 1500,
+    "budget_seconds": 240,
+    "budget_tokens": 1800,
     "argv": [
       "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/handoff-review.json')); abort 'handoff review blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?"
+      ".csdlc/prepared/issues/5851/validate-readiness-review.rb",
+      "handoff"
     ],
-    "parallel_group": "review",
+    "parallel_group": "handoff",
     "defer_reason": null
   },
   {
-    "lane": "closeout-ceremony-negative",
-    "proof_role": "Reject missing/stale/red/active-claim/absent-receipt/dirty/partial/duplicate/premature-closeout and activation scenarios.",
+    "lane": "exercised-review-negatives",
+    "proof_role": "Require the full missing, stale, red, active-claim, absent-receipt, dirty, partial, duplicate, premature-closeout, and activation negative universe to produce validator failures.",
     "acceptance_ids": [
       "AC-4",
       "AC-5",
@@ -71,12 +71,12 @@ Diagram: .csdlc/prepared/issues/5851/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 180,
-    "budget_tokens": 1500,
+    "budget_seconds": 240,
+    "budget_tokens": 1800,
     "argv": [
       "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/negative-cases.json')); abort 'negative case escaped' unless r['cases'].is_a?(Array) && r['cases'].all? { |x| x['outcome']=='blocked' }"
+      ".csdlc/prepared/issues/5851/validate-readiness-review.rb",
+      "negative"
     ],
     "parallel_group": "negative",
     "defer_reason": null
@@ -116,9 +116,9 @@ Tokens: 10000
 
 ## Commands
 
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/universe-comparison.json')); abort 'comparison mismatch' unless r['missing'].is_a?(Array) && r['missing'].empty? && r['duplicates'].empty? && r['cycles'].empty? && r['unowned'].empty?`
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/handoff-review.json')); abort 'handoff review blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?`
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/negative-cases.json')); abort 'negative case escaped' unless r['cases'].is_a?(Array) && r['cases'].all? { |x| x['outcome']=='blocked' }`
+- `ruby .csdlc/prepared/issues/5851/validate-readiness-review.rb comparison`
+- `ruby .csdlc/prepared/issues/5851/validate-readiness-review.rb handoff`
+- `ruby .csdlc/prepared/issues/5851/validate-readiness-review.rb negative`
 - `csdlc-doctor --repo . --issue 5851`
 
 ## Failure Semantics

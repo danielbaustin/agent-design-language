@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-22] Quality gate",
     "slug": "v0-92-wp-22-quality-gate",
     "version": "v0.92",
-    "generation": 10
+    "generation": 11
   },
   "status": "ready",
   "content": {
@@ -100,7 +100,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5842/design.md",
-      "design_digest": "7f552225e49129b001274316b510a7a3466642d635ade554dbbcfa606085ef4a",
+      "design_digest": "a3b2acade618e169946935df70d5ba8defe03695ae27b3c0ee0a8dc5dce35335",
       "diagram_ref": ".csdlc/prepared/issues/5842/diagram.mmd",
       "diagram_digest": "b1829fae5cf441c5f53f7e5d0184bdbcd7bf61e53855dca5d99241bf03b6c794"
     }

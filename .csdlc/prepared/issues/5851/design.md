@@ -47,6 +47,15 @@ issues.
 WP-28/WP-28A artifacts are read-only review inputs unless findings are routed
 back to their owner for a separately reviewed correction.
 
+## Owned Paths
+
+- `docs/reviews/v0.92/next-milestone-review-5851`
+- `docs/milestones/v0.92/review/V092_NEXT_MILESTONE_REVIEW_5851.md`
+- `.csdlc/evidence/5851/universe-comparison.json`
+- `.csdlc/evidence/5851/handoff-review.json`
+- `.csdlc/evidence/5851/negative-cases.json`
+- `.csdlc/prepared/issues/5851/validate-readiness-review.rb`
+
 ## Validation And Failure Policy
 
 Required lanes are independent universe/DAG comparison, handoff dependency and

@@ -89,7 +89,7 @@ Revision 4
 
 .csdlc/prepared/issues/5841/design.md
 
-Digest: da1aae684e3702aea1a1b6e18c0797fb0476281afe07a066e83b9ada9a259128
+Digest: 496006b4eec4a88d4cdfaedcc42b6ef74950990044da86858c82e0d90b680e22
 
 ## Diagram
 

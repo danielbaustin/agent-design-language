@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "89b20b217984f9f253debdb4789e8e2d7790f6260df8e3739ea9994c97cc6f97",
   "phase": "bound",
-  "generation": 8,
-  "digest": "bbb48cba16f012d50dc9c21b9ecb1c80f01aacb969f2a8440507ebe6dbe212d8",
+  "generation": 10,
+  "digest": "0a84a55663fae6f66ef4f34d4c521cd77c8272ee32afe467eb91ef9c990cfb3a",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5849/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-quality-release-readiness-design-review",
-      "revision": "e2a54eff73538d18c5b3267dac4ba7b03f92189d08d369c6c5072b89807b47b2"
+      "reviewer": "codex:5860-quality-release-second-pass-design-review",
+      "revision": "6fce991f1f886059ad4b71c6ebe842405e16d38cacd9b99385916b8cc6bf0d8e"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "d5e2b39f3c0635adea06e3820042eca9778549832a5381783939a9d3e497626f",
+      "values_digest": "c488a6114c90aa80258e0e0d4f6bb46c7d8dfe9ad770f132b0791e9c27885d6b",
       "rendered_digest": "20cac2042927a8061147684838c07d16e5e3ad823384eb4e8e46f06dfc70fd84",
       "ast_digest": "3c154f0de672c6215654ad08196a7cbfd33a81b5e6fa66b5a045cdb63cfbf686"
     },
     "stp": {
-      "values_digest": "c9b82683cee07a35063c277dcf0b21b36863b31e2c58bf82d19d2bde61b16e9f",
+      "values_digest": "0cf63685f7c6278c7e9c3d6ec93ba8a4c824a783c30fceb2c38771626ebe7e1f",
       "rendered_digest": "1e47975bad2c955f6c7870d121696d5a27ceb120fb91d24f78498d1e07512831",
       "ast_digest": "66d884afb41c2b64a1438ed653818bd21ff56ab42fd1eb6abae3f5b65029e09e"
     },
     "spp": {
-      "values_digest": "e90ce3142fdcf8d0e310e5b6a0ecf218d63883a312d7ec339ba3bd96da2adfb1",
-      "rendered_digest": "d38fd868834e768ad65d2e0b58e04b450d41357c7e2330a4666926587fb38eed",
-      "ast_digest": "4fed95cafaa077d43387c66a052ea3db97170c4d4edf9ed0d5342ef48f1be454"
+      "values_digest": "ec0561d63474836d14ec9215d7fcc428f564232cf8bced7edcd3d8d4585bb30c",
+      "rendered_digest": "cabdf33afd4e9c2fb607db9254772f30bf13b92f57527ca37182ef45675ec8e1",
+      "ast_digest": "0d1a5eb8e07c80e6578a0a34bd7111e0c6335e8473edb2cd8d3fca2f371cdc4c"
     },
     "vpp": {
-      "values_digest": "83d670103e5921fc8ffb08a88dbec1c0467c69bdafc8d98e724789e2c310827b",
-      "rendered_digest": "d05a00c0ebe8a7b7e211cd79d6d6864856c5a1905c2db22454277a837bf7010c",
-      "ast_digest": "2b83b9b7ebafa0fdbe3243eb6544b8fe6d894b140b149b9f17d5c037adcc88d1"
+      "values_digest": "fa58fb5fef44add2d12fd0558b9f04dbba1c3bc282513b9f5fb56d04e46c4c99",
+      "rendered_digest": "d7db4875b17c86a30c2522da9bf53b7a17c63b216af3732dfd032dd736acb5dd",
+      "ast_digest": "34d824a5b048b909106c43b0788888a2da824ec7e41cd9b4929979d67ac19082"
     },
     "srp": {
-      "values_digest": "8bef863163f506462edc053ecc84350553374db0838ca910f484552b4f25d6f2",
+      "values_digest": "3a4a51c334154321b371e864826b8b5c3b488f9160cd975ec20a7e7b63cef7c8",
       "rendered_digest": "59ae4e6da77b4e713faf7cdf13500f22c29510507d8412659776a68b7252d7ea",
       "ast_digest": "45995183a7de6a0c7fc66d80c17d77ad30eca01907337a3744b0f0084a4cf630"
     },
     "sor": {
-      "values_digest": "764db362df9178c23cdb4b37b38c6b05b67237bbea4128a889d159a01053d0a9",
+      "values_digest": "97ca5e8eb6dddf8af0b2d0440e9913ede5fef881dbf288f16c1b9d2066d23d6d",
       "rendered_digest": "fffaf16ebada328022491314d5ffed59030793eb182fd5a691ff03d95162ec4d",
       "ast_digest": "52375733756c3256bb7d83ae13ebc58911c2be97a882524184e275517375019b"
     }
@@ -160,6 +160,34 @@
       "actor": "codex:5860-quality-release-readiness",
       "reason": "Release the temporary preparation-only binding after exact-digest design approval and typed card rendering so the implementation session can reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5849-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-preparation-completion\",\"previous_owner\":\"codex:5860-quality-release-readiness\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-second-pass",
+      "reason": "Reacquire the exact released WP-01 preparation claim to make issue 5849 design-time execution-ready without product implementation, publication, push, merge, or closeout.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5849-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5849\",\".csdlc/issues/5849\",\".csdlc/locks/5849.lock\",\".csdlc/prepared/issues/5849\"],\"purpose\":\"Prepare and approve issue 5849 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 9,
+      "actor": "codex:5860-quality-release-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex:5860-quality-release-second-pass",
+      "reason": "Replace self-attested quality/release validation with derived live and exact-head proof.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"derived-handoff-proof\",\"proof_role\":\"Read live WP-27 and typed terminal truth, derive the complete tracked v0.93 candidate corpus, verify every evidence digest and owner/acceptance hook, and reject activation, implementation, legal, production-authority, or certification overclaims.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5849/validate-handoff.rb\"],\"parallel_group\":\"handoff\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.\",\"acceptance_ids\":[\"AC-1\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5849\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 10,
+      "actor": "codex:5860-quality-release-second-pass",
+      "reason": "Release the second-pass preparation claim after typed rendering, design reapproval, and bounded validation.",
+      "operation": "{\"claim_id\":\"claim-5849-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-release-second-pass-completion\",\"previous_owner\":\"codex:5860-quality-release-second-pass\"}"
     }
   ]
 }

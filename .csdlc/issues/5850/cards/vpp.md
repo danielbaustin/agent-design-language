@@ -24,8 +24,8 @@ Diagram: .csdlc/prepared/issues/5850/diagram.mmd
 
 [
   {
-    "lane": "terminal-universe-schema",
-    "proof_role": "Require every v0.92 row to carry complete GitHub, typed, SOR, receipt, claim, worktree, dependency, classification, owner, and next-action fields.",
+    "lane": "derived-terminal-universe",
+    "proof_role": "Derive the expected v0.92 issue universe from canonical wave authority and compare every row with live GitHub, typed phase, receipt, claim, and registered-worktree truth.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -33,50 +33,48 @@ Diagram: .csdlc/prepared/issues/5850/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 300,
-    "budget_tokens": 3000,
+    "budget_seconds": 600,
+    "budget_tokens": 4000,
     "argv": [
       "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5850/issue-universe.json')); k=%w[issue github_state typed_phase sor_state receipt_state claim_state worktree_state classification owner next_action]; abort 'empty universe' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'incomplete row' unless r['rows'].all? { |x| k.all? { |y| x.key?(y) } }"
+      ".csdlc/prepared/issues/5850/validate-closeout-plan.rb",
+      "universe"
     ],
     "parallel_group": "universe",
     "defer_reason": null
   },
   {
-    "lane": "closeout-dag",
-    "proof_role": "Prove the terminal and ceremony sequence is complete, acyclic, owner-bound, and preserves typed finish/release/cleanup authority.",
+    "lane": "derived-closeout-dag",
+    "proof_role": "Reconstruct and topologically validate the exact finish, claim release, cleanup, WP-29, WP-30, umbrella-closeout, and v0.93-acceptance sequence.",
     "acceptance_ids": [
-      "AC-3",
       "AC-4"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 180,
-    "budget_tokens": 1500,
+    "budget_seconds": 240,
+    "budget_tokens": 1800,
     "argv": [
       "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5850/closeout-dag.json')); abort 'cycle or owner gap' unless r['acyclic']==true && r['unowned'].is_a?(Array) && r['unowned'].empty?"
+      ".csdlc/prepared/issues/5850/validate-closeout-plan.rb",
+      "dag"
     ],
     "parallel_group": "dag",
     "defer_reason": null
   },
   {
-    "lane": "terminal-negative-cases",
-    "proof_role": "Reject stale, red, missing-review/receipt, active-claim, dirty, partial-release, duplicate-retry, unknown, and unowned scenarios.",
+    "lane": "exercised-terminal-negatives",
+    "proof_role": "Mutate the derived row contract for every stale, red, missing-review/receipt, active-claim, dirty, partial, duplicate, unknown, and unowned case and require the gate to block.",
     "acceptance_ids": [
-      "AC-5",
-      "AC-6"
+      "AC-5"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 180,
-    "budget_tokens": 1500,
+    "budget_seconds": 240,
+    "budget_tokens": 1800,
     "argv": [
       "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5850/negative-cases.json')); abort 'negative cases not blocked' unless r['cases'].is_a?(Array) && r['cases'].all? { |x| x['outcome']=='blocked' }"
+      ".csdlc/prepared/issues/5850/validate-closeout-plan.rb",
+      "negative"
     ],
     "parallel_group": "negative",
     "defer_reason": null
@@ -116,9 +114,9 @@ Tokens: 10000
 
 ## Commands
 
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5850/issue-universe.json')); k=%w[issue github_state typed_phase sor_state receipt_state claim_state worktree_state classification owner next_action]; abort 'empty universe' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'incomplete row' unless r['rows'].all? { |x| k.all? { |y| x.key?(y) } }`
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5850/closeout-dag.json')); abort 'cycle or owner gap' unless r['acyclic']==true && r['unowned'].is_a?(Array) && r['unowned'].empty?`
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5850/negative-cases.json')); abort 'negative cases not blocked' unless r['cases'].is_a?(Array) && r['cases'].all? { |x| x['outcome']=='blocked' }`
+- `ruby .csdlc/prepared/issues/5850/validate-closeout-plan.rb universe`
+- `ruby .csdlc/prepared/issues/5850/validate-closeout-plan.rb dag`
+- `ruby .csdlc/prepared/issues/5850/validate-closeout-plan.rb negative`
 - `csdlc-doctor --repo . --issue 5850`
 
 ## Failure Semantics

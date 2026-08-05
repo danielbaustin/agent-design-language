@@ -50,6 +50,16 @@ replaces local duplication with an unowned shared utility fails the objective.
 The implementation claim must list files after the post-WP-21 inventory; no
 whole-root claim is authorized by this design.
 
+## Owned Paths
+
+- `.csdlc/evidence/5841/refactor-selection.json`
+- `.csdlc/evidence/5841/refactor-metrics.json`
+- `.csdlc/evidence/5841/platform`
+- `.csdlc/prepared/issues/5841/validate-refactor-selection.rb`
+
+Selected Rust and test files become owned only after the exact-path selection
+manifest is reviewed and the execution claim is amended to those files.
+
 ## Validation And Failure Policy
 
 Required lanes are selected-owner inventory validation, focused pre/post
