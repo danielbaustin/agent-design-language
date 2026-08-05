@@ -117,6 +117,18 @@ def sha256(path)
   Digest::SHA256.file(path).hexdigest
 end
 
+def preparation_validator_error(path)
+  return "missing preparation validator #{path}" unless File.file?(path) && !File.zero?(path)
+
+  command = case File.extname(path)
+            when ".rb" then ["ruby", "-c", path]
+            when ".sh" then ["bash", "-n", path]
+            else return nil
+            end
+  _stdout, stderr, status = Open3.capture3(*command)
+  status.success? ? nil : "invalid preparation validator #{path}: #{stderr.strip}"
+end
+
 def live_issue_inventory
   stdout, stderr, status = Open3.capture3(
     "gh", "issue", "list", "--state", "all", "--limit", "200",
@@ -357,6 +369,10 @@ sprints.each do |sprint, sprint_issues|
         argv = lane["argv"]
         errors << "##{issue}: VPP lane #{lane_index + 1} lacks argv" if !argv.is_a?(Array) || argv.empty?
         errors << "##{issue}: VPP lane #{lane_index + 1} contains an empty argv token" if Array(argv).any? { |arg| arg.to_s.strip.empty? }
+        Array(argv).select { |arg| arg.to_s.start_with?(".csdlc/prepared/issues/") }.each do |path|
+          error = preparation_validator_error(path)
+          errors << "##{issue}: #{error}" if error
+        end
       end
     end
 
