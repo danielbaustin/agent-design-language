@@ -39,7 +39,7 @@ is replaced. Trust installation never commits private material or silently
 modifies a host trust store. Unsupported or incomplete host setup remains a
 reported prerequisite, not an instruction to disable verification.
 
-## Exclusive Owned Paths
+## Owned Paths
 
 - `adl-runtime/src/local_tls.rs`
 - `adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs`
@@ -48,10 +48,10 @@ reported prerequisite, not an instruction to disable verification.
 - `demos/html-observatory/README.md`
 - `adl/tools/validate_v092_browser_trusted_observatory.mjs`
 
-Issue 5800 owns exactly these files. It reads but does not edit
-`infra/runtime-v3/runtime-init.toml`, which belongs to #5820. It does not edit
-the HTML application transport owned by #5837 or the Shepherd channel owned by
-#5795. Any required expansion stops for dependency and claim reconciliation.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Invariants And Failure Semantics
 

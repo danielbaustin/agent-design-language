@@ -16,19 +16,46 @@ events and incomplete evidence.
 - `docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md`
 - `docs/milestones/v0.91.8/review/v092_handoff_4762/`
 
-## Proposed Artifacts And Protected-Path Candidates
+## Owned Paths
 
 - `adl/tools/demo_v092_first_birthday.sh`
 - `adl/tools/validate_v092_first_birthday_packet.py`
 - `adl/tools/test_v092_first_birthday_demo.sh`
-- `demos/v0.92/first-birthday/`
+- `demos/v0.92/first-birthday`
 - `docs/milestones/v0.92/DEMO_MATRIX_v0.92.md`
 - `docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md`
 - `docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md`
 - `docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md`
-- `.csdlc/evidence/5836/publication-gate-checklist.json`
-- `.csdlc/evidence/5836/validate-publication-gate.rb`
-- `.csdlc/evidence/5836/`
+- `.csdlc/evidence/5836`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-birthday-demo-matrix-v1",
+    "paths": [
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md"
+    ],
+    "issues": [
+      5834,
+      5836,
+      5840
+    ],
+    "order": [
+      5834,
+      5836,
+      5840
+    ]
+  }
+]
+```
 
 ## Proof Architecture
 

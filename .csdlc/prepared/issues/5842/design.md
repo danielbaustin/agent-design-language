@@ -40,24 +40,18 @@ date, or authorize WP-25 internal review while any required row is unaccepted.
 6. Obtain exact-head independent review of the gate logic and every acceptance
    disposition before WP-25 may begin.
 
-## Protected-Path Candidates
+## Owned Paths
 
-- `docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md`
 - `docs/milestones/v0.92/QUALITY_GATE_v0.92.md`
 - `docs/milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md`
 - `docs/reviews/v0.92/quality-gate-5842`
 - `.csdlc/evidence/5842`
-
-Feature implementation paths remain read-only inputs. Any needed repair is a
-blocker routed to its owner, not absorbed into the WP-22 claim.
-
-## Owned Paths
-
-- `.csdlc/evidence/5842/feature-completion-matrix.json`
-- `.csdlc/evidence/5842/negative-cases.json`
-- `.csdlc/evidence/5842/blocker-report.json`
-- `docs/reviews/v0.92/quality-gate-5842`
 - `.csdlc/prepared/issues/5842/validate-quality-gate.rb`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Validation And Failure Policy
 

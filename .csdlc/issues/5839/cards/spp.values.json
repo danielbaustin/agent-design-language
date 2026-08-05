@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-19] Birthday-to-governance handoff",
     "slug": "v0-92-wp-19-birthday-to-governance-handoff",
     "version": "v0.92",
-    "generation": 22
+    "generation": 24
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 9,
       "summary": "Verify #5834, #5835, and the v0.93 allocation; inventory exact accepted artifacts; author consumer, redaction, forbidden-inference, and unresolved-decision columns; update ADR 0033 planning without acceptance; validate completeness and review from producer/consumer perspectives.",
       "steps": [
         {
@@ -60,10 +60,9 @@
         }
       ],
       "affected_areas": [
-        "docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md",
         "docs/milestones/v0.92/ADR_PLAN_v0.92.md",
         "docs/milestones/v0.92/review/V092_TO_V093_GOVERNANCE_EVIDENCE_MAP.md",
-        ".csdlc/evidence/5839/"
+        ".csdlc/evidence/5839"
       ],
       "invariants": [
         "Every handoff row resolves to exact evidence or an explicit blocker",
@@ -92,7 +91,7 @@
         "ADR numbering or promotion policy changes"
       ],
       "design_ref": ".csdlc/prepared/issues/5839/design.md",
-      "design_digest": "b458e4655affeb638620def0d4bec90af11e6104158d5d4e3dd4efcd080c0e00",
+      "design_digest": "f39a2a1ce50ea4d83618c7d0601e3934c3db1d68b13cfeba723688e3219d203c",
       "diagram_ref": ".csdlc/prepared/issues/5839/diagram.mmd",
       "diagram_digest": "6b99d2a8f3fe9e3cb9e6d79e173dbf3833884262ae15d3fe86cc4bce9568d699"
     }

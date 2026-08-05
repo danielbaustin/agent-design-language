@@ -6,17 +6,67 @@ Implement the WP-10 continuity record defined by `docs/milestones/v0.92/features
 
 ## Owned Paths
 
-The complete writable protected-path set is:
-
 - `adl-runtime-kernel/src/birthday_continuity.rs`
 - `adl-runtime-kernel/src/lib.rs`
 - `adl-runtime-kernel/tests/birthday_continuity.rs`
-- `adl-runtime-kernel/tests/fixtures/birthday_continuity/`
+- `adl-runtime-kernel/tests/fixtures/birthday_continuity`
 - `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md`
 - `.csdlc/prepared/issues/5827/validate-native-receipts.rb`
-- `.csdlc/evidence/5827/`
+- `.csdlc/evidence/5827`
 
-`adl-runtime-kernel/src/lib.rs` is limited to module registration. Existing continuity, wake, and retained evidence paths are read-only authorities. A record links at least two bounded cycle artifacts through identity root, predecessor/current cycle IDs, ordered evidence refs, continuity-head hash, witness refs, and an explicit continuity grade or rejection reason.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-birthday-kernel-registration-v1",
+    "paths": [
+      "adl-runtime-kernel/src/lib.rs"
+    ],
+    "issues": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ],
+    "order": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-identity-feature-doc-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md"
+    ],
+    "issues": [
+      5826,
+      5827
+    ],
+    "order": [
+      5826,
+      5827
+    ]
+  }
+]
+```
 
 ## Contract
 

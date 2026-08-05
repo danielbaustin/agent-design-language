@@ -6,16 +6,41 @@ Assemble WP-16's integrated review packet from `docs/milestones/v0.92/features/F
 
 ## Owned Paths
 
-The complete writable protected-path set is:
-
 - `docs/milestones/v0.92/review/FIRST_BIRTHDAY_REVIEW_PACKET_v0.92.md`
 - `docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json`
 - `docs/milestones/v0.92/review/first-birthday-review-packet.schema.json`
-- `.csdlc/prepared/issues/5834/validate-review-packet.rb`
 - `docs/milestones/v0.92/DEMO_MATRIX_v0.92.md`
-- `.csdlc/evidence/5834/`
+- `.csdlc/prepared/issues/5834/validate-review-packet.rb`
+- `.csdlc/evidence/5834`
 
-The demo-matrix write is limited to the WP-16 link/status row. Feature, shared release, launch, sprint, and milestone-status documents are read-only authorities.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-birthday-demo-matrix-v1",
+    "paths": [
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md"
+    ],
+    "issues": [
+      5834,
+      5836,
+      5840
+    ],
+    "order": [
+      5834,
+      5836,
+      5840
+    ]
+  }
+]
+```
 
 ## Contract
 

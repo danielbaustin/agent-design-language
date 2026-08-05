@@ -20,8 +20,16 @@ editorial/audio review. Publication and deployment remain separately gated.
 
 ## Owned Paths
 
-- `demos/podcast/episodes/001-meet-the-ai-coworkers/` through `010-what-does-a-weekly-ai-studio-look-like/`
-- `demos/podcast/audio/`
+- `demos/podcast/episodes/001-meet-the-ai-coworkers`
+- `demos/podcast/episodes/002-can-an-ai-be-a-good-teammate`
+- `demos/podcast/episodes/003-the-promise-and-weirdness-of-talking-to-machines`
+- `demos/podcast/episodes/004-what-should-we-let-ai-do-for-us`
+- `demos/podcast/episodes/005-can-ai-help-us-think-better`
+- `demos/podcast/episodes/006-the-new-creative-room`
+- `demos/podcast/episodes/007-trust-receipts-and-proof`
+- `demos/podcast/episodes/008-local-ai-vs-cloud-ai`
+- `demos/podcast/episodes/009-when-ai-gets-stuck`
+- `demos/podcast/episodes/010-what-does-a-weekly-ai-studio-look-like`
 - `demos/podcast/feed.xml`
 - `demos/podcast/LAUNCH_READINESS.md`
 - `adl/tools/generate_podcast_launch_packet.py`
@@ -30,11 +38,14 @@ editorial/audio review. Publication and deployment remain separately gated.
 - `adl/tools/record_podcast_native_playback.sh`
 - `adl/tools/record_podcast_browser_playback.mjs`
 - `adl/tools/record_podcast_ios_safari_playback.sh`
-- `.csdlc/evidence/5845/`
+- `.csdlc/prepared/issues/5845/validate-platform-playback-receipts.rb`
+- `.csdlc/prepared/issues/5845/validate-second-pass-readiness.rb`
+- `.csdlc/evidence/5845`
 
-The Agent Logic public route or storage repository is not claimed until #5819
-and the route/storage decision identify the canonical destination. Cross-repo
-publication must use its own authorized lifecycle.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Episode Package Contract
 

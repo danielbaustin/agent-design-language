@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-13] ACP / cognitive profiles",
     "slug": "v0-92-wp-13-acp-cognitive-profiles",
     "version": "v0.92",
-    "generation": 37
+    "generation": 39
   },
   "status": "ready",
   "content": {
@@ -72,7 +72,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5830/design.md",
-      "design_digest": "51ef8fac075e02acbb22c88d673093f7d7fb6a4c8fc8f1f0cc50bbdf1ff44743",
+      "design_digest": "fb2baa8e667f94ac4a4d7a45cf2f963eca132d757264de1765793548618391c2",
       "diagram_ref": ".csdlc/prepared/issues/5830/diagram.mmd",
       "diagram_digest": "6b9a9b2ae6cf9491279ce9ea531331cc7b98069e510d08bd2aad9422595fef47"
     }

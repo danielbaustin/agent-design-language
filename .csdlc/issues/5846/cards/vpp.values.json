@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-25] Internal review",
     "slug": "v0-92-wp-25-internal-review",
     "version": "v0.92",
-    "generation": 10
+    "generation": 12
   },
   "status": "ready",
   "content": {
@@ -81,7 +81,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5846/design.md",
-      "design_digest": "1020a2d53898d7558af5bcbca2a610cb978ad6fcc569a6df0b01968e057128d0",
+      "design_digest": "2a1795f478af2f09e846b6c94955658bcca4a0c3cdd5b37b4c8d8d33a55d3e09",
       "diagram_ref": ".csdlc/prepared/issues/5846/diagram.mmd",
       "diagram_digest": "a045efc1685d9776f7041ed3163c44f35452aadb851e7c625026a3ff430ed779"
     }

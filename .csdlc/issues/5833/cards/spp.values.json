@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-15] Birth witnesses and receipts",
     "slug": "v0-92-wp-15-birth-witnesses-and-receipts",
     "version": "v0.92",
-    "generation": 39
+    "generation": 41
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 14,
+      "plan_revision": 15,
       "summary": "Implement and prove WP-15 exact-candidate witness consensus and deterministic redacted receipts with anti-equivocation, authority, and premature-claim protections.",
       "steps": [
         {
@@ -64,10 +64,12 @@
         "adl-runtime-kernel/src/birth_witness.rs",
         "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/birth_witness.rs",
-        "adl-runtime-kernel/tests/fixtures/birth_witness/",
+        "adl-runtime-kernel/tests/fixtures/birth_witness",
         "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
         ".csdlc/prepared/issues/5833/validate-native-receipts.rb",
-        ".csdlc/evidence/5833/"
+        ".csdlc/evidence/5833",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-memory-capability-witness-feature-doc-v1\",\"paths\":[\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\"],\"issues\":[5829,5833],\"order\":[5829,5833]}"
       ],
       "invariants": [
         "Witnesses bind the exact candidate and evidence digests and are distinct where policy requires.",
@@ -96,7 +98,7 @@
         "Review identifies a receipt field that substitutes for birthday authority."
       ],
       "design_ref": ".csdlc/prepared/issues/5833/design.md",
-      "design_digest": "1b734a2e05627563caedf508e0c954c96c6ea5c5f11dc4184360030b9fb198bc",
+      "design_digest": "3db16560d408faf1bf5299b59616a5c5402737a6369b7625d804d3b74da331a1",
       "diagram_ref": ".csdlc/prepared/issues/5833/diagram.mmd",
       "diagram_digest": "0255242ebe93f2857c2a9dc5f2d0c1a083fa373b340935cbfe34749941f0d599"
     }

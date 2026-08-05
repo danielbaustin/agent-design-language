@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice",
     "slug": "v0-92-wp-11-runtime-implement-first-memory-palace-context-topology-slice",
     "version": "v0.92",
-    "generation": 35
+    "generation": 37
   },
   "status": "ready",
   "content": {
@@ -93,7 +93,7 @@
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5828/design.md",
-      "design_digest": "953d554b52df8949dd55f555e27fbbaa80c2668d3712db7a1344a8031fdccde7",
+      "design_digest": "1fd04b872c9d7a811a1d39b57542551ab8beffb9663751437e099459a5c78d29",
       "diagram_ref": ".csdlc/prepared/issues/5828/diagram.mmd",
       "diagram_digest": "ff82b0bec69f0e9368d20aff4022d0a5506a8040000a27f8a1991dece282ff8b"
     }

@@ -63,3 +63,24 @@ matrix cannot pass with a blocked Linux or macOS row, and no row may use an
 unqualified `blocked_with_evidence` success. Existing AWS
 and Nessus wrapper tests prove adapter compatibility, not the entire portable
 contract.
+## Owned Paths
+
+- `tools/remote_validation/Cargo.toml`
+- `tools/remote_validation/Cargo.lock`
+- `tools/remote_validation/src/lib.rs`
+- `tools/remote_validation/src/bin/adl-remote-validation.rs`
+- `tools/remote_validation/tests/contract.rs`
+- `tools/aws_remote_validation/src/aws_remote_validation.rs`
+- `tools/aws_remote_validation/src/bin/adl_aws_remote_validation.rs`
+- `tools/aws_remote_validation/tests/portable_adapter.rs`
+- `adl/tools/run_nessus_remote_validation.sh`
+- `adl/tools/test_run_nessus_remote_validation.sh`
+- `adl/tools/run_aws_spot_remote_validation_lane.sh`
+- `adl/tools/test_run_aws_spot_remote_validation_lane.sh`
+- `.csdlc/evidence/5823`
+- `.csdlc/prepared/issues/5823/validate-platform-matrix.rb`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.

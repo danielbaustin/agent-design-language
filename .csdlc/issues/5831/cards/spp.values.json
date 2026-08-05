@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
     "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
     "version": "v0.92",
-    "generation": 40
+    "generation": 42
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 15,
+      "plan_revision": 16,
       "summary": "Implement and prove WP-13A's evaluation-to-policy-to-graph DAG, including accepted and rejected paths, deterministic replay, bounded Runtime v3 integration, and rollback history.",
       "steps": [
         {
@@ -63,10 +63,11 @@
         "adl-runtime-kernel/src/adaptive_learning.rs",
         "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/adaptive_learning.rs",
-        "adl-runtime-kernel/tests/fixtures/adaptive_learning/",
+        "adl-runtime-kernel/tests/fixtures/adaptive_learning",
         "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
         ".csdlc/prepared/issues/5831/validate-native-receipts.rb",
-        ".csdlc/evidence/5831/"
+        ".csdlc/evidence/5831",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}"
       ],
       "invariants": [
         "Missing evidence never becomes feedback and rejected proposals never mutate state or graph.",
@@ -95,7 +96,7 @@
         "Review finds mutation before policy decision or an incomplete durable-history edge."
       ],
       "design_ref": ".csdlc/prepared/issues/5831/design.md",
-      "design_digest": "54a449d526b1b0394db6fb9998a1c7b8100e5a58a26a68cf93bb657bab232a66",
+      "design_digest": "af3c40d75a9003d7a4de354b771c18a954844573ef1a05f037f61dd2f21fa8e9",
       "diagram_ref": ".csdlc/prepared/issues/5831/diagram.mmd",
       "diagram_digest": "859dbad5aa913e1a5f65375bd3b1ea19e42c33ed9c4c5d264053d6763a54d057"
     }

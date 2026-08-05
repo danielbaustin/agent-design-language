@@ -16,7 +16,7 @@ Extract a provider-neutral exact-revision request/result contract over current a
 
 ## Plan
 
-Revision 9
+Revision 10
 
 ## Steps
 
@@ -87,7 +87,7 @@ Revision 9
 
 .csdlc/prepared/issues/5823/design.md
 
-Digest: cc489f7e9478bae98ddaec1e41354153478b6c960dc3aea01e22ef69c2076e1f
+Digest: 632fd39231ba5046dff28b107e5903f65e4406f77d0a20f4e6ea5a36e19c17be
 
 ## Diagram
 

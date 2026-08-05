@@ -16,7 +16,7 @@ Validate gates and denominator, schedule dependency-ready children, require chil
 
 ## Plan
 
-Revision 1
+Revision 2
 
 ## Steps
 
@@ -85,7 +85,7 @@ Revision 1
 
 .csdlc/prepared/issues/5862/design.md
 
-Digest: db9a8663968f8bc8966b40c8217ced2bdfd0c38d9964b5715ec6e42ace1fe717
+Digest: 7a054dcb8473bd85e221f9cf176993574f04e05487dc48a0d71208161c926ac5
 
 ## Diagram
 

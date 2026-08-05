@@ -58,17 +58,18 @@ require a new architecture/security gate review before binding.
 | WP-04.15 | #5877 | Issue #5877: versioned distributed projection | WP-04.05, WP-04.08, WP-04.13, WP-04.14 | `adl-runtime/src/distributed/projection.rs`, `adl-runtime/tests/distributed_projection.rs`, `docs/api/runtime-v3/v1/distributed.openapi.json` | Exact nonzero `distributed_projection` test and OpenAPI proof validate parity, redaction, ordering and compatibility | Disable new projection version without weakening auth or exposing state |
 | WP-04.16 | #5878 | Issue #5878: module registration, integration, adversarial and native proof | WP-04.01 through WP-04.15 | `adl-runtime/src/distributed/mod.rs`, `adl-runtime/src/lib.rs`, `adl-runtime/tests/distributed_guardian.rs`, `adl/tools/validate_v092_distributed_guardian.sh`, `adl/tools/validate_v092_distributed_native_receipts.rb` | Production Guardian/kernel multi-node API/WSS, partition, fencing, migration, recovery, shutdown and digest-bound macOS/Linux/Windows proof | Remove module registration, fence remote ownership and prove WP-03 single-node health |
 
-## Exclusive Owned Paths
+## Owned Paths
 
-- `.csdlc/issues/5821/`
-- `.csdlc/prepared/issues/5821/`
-- `.csdlc/evidence/5821/`
+- `.csdlc/issues/5821`
+- `.csdlc/prepared/issues/5821`
+- `.csdlc/evidence/5821`
 - `docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE.md`
 - `docs/security/runtime-v3/DISTRIBUTED_GUARDIAN_THREAT_MODEL.md`
 
-The gate owns only these planning, architecture, security, and evidence paths.
-WP-04-IMP #5862 owns orchestration and reconciliation records only. WP-04.16
-#5878 exclusively owns module registration and final product integration paths.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Dependencies And Scheduling
 

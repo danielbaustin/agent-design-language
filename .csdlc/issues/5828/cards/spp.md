@@ -16,7 +16,7 @@ Extend and prove the existing WP-11 Memory Palace topology with identity/continu
 
 ## Plan
 
-Revision 12
+Revision 13
 
 ## Steps
 
@@ -90,7 +90,7 @@ Revision 12
 
 .csdlc/prepared/issues/5828/design.md
 
-Digest: 953d554b52df8949dd55f555e27fbbaa80c2668d3712db7a1344a8031fdccde7
+Digest: 1fd04b872c9d7a811a1d39b57542551ab8beffb9663751437e099459a5c78d29
 
 ## Diagram
 

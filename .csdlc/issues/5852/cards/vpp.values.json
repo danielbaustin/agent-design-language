@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-30] Release ceremony",
     "slug": "v0-92-wp-30-release-ceremony",
     "version": "v0.92",
-    "generation": 10
+    "generation": 12
   },
   "status": "ready",
   "content": {
@@ -99,7 +99,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5852/design.md",
-      "design_digest": "3696cdb26e650c90119f8a46b4f0f7360eafad8693222ea73183b97bd00bd014",
+      "design_digest": "1b7d9aad8a3a3bd3156964f210ae13c9d80fe55d63d0c33541471cf41d93d2cb",
       "diagram_ref": ".csdlc/prepared/issues/5852/diagram.mmd",
       "diagram_digest": "6457d352e4b029f960adb90912d556e38a0a16ac88e9c3712435b72c47bcc647"
     }

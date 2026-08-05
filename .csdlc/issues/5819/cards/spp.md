@@ -16,7 +16,7 @@ Verify organization gates, transfer exactly five repositories serially with assi
 
 ## Plan
 
-Revision 10
+Revision 11
 
 ## Steps
 
@@ -80,7 +80,7 @@ Revision 10
 
 .csdlc/prepared/issues/5819/design.md
 
-Digest: 3340d20767a5c27dbbe65cdf460f9e15873c62c19a7091b416e384ab460967f5
+Digest: 6f8edebe284f8afb2c163434407edbd7ab45e4235e74c0898c46297ec942807d
 
 ## Diagram
 

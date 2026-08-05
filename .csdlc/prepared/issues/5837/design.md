@@ -47,7 +47,7 @@ same Runtime schema. Neither client may invent fallback success: retained
 packets are visibly historical/offline, while live mode requires current
 Runtime correlation and freshness evidence.
 
-## Exclusive Owned Paths
+## Owned Paths
 
 - `demos/html-observatory/app.js`
 - `demos/html-observatory/styles.css`
@@ -58,9 +58,10 @@ Runtime correlation and freshness evidence.
 - `adl/tools/validate_v092_unity_observatory_live.sh`
 - `adl/tools/validate_v092_observatory_restart_reconnect.sh`
 
-Issue 5837 owns exactly these consumer and proof paths. It reads but does not
-edit the trusted TLS configuration owned by #5800, the Shepherd channel owned
-by #5795, or Runtime/ACIP product files owned by #5820 and #5832.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Invariants And Failure Semantics
 

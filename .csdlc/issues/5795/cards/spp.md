@@ -16,7 +16,7 @@ After 5800/5820 and stable 5832 contracts, narrow the governed operation and con
 
 ## Plan
 
-Revision 10
+Revision 11
 
 ## Steps
 
@@ -92,7 +92,7 @@ Revision 10
 
 .csdlc/prepared/issues/5795/design.md
 
-Digest: 51ef81da78702fb9b867a93ffa7f532edc2312d12ccbc472af40bea82a5124e0
+Digest: 61f97abdaa3054ef846c6473ec503e70213950e96392884aa4d3d08fe881e48a
 
 ## Diagram
 

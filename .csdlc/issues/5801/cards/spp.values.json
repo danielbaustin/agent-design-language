@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-02A] CI and coverage reliability",
     "slug": "v0-92-wp-02-ci-and-coverage-reliability",
     "version": "v0.92",
-    "generation": 19
+    "generation": 21
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 10,
+      "plan_revision": 11,
       "summary": "Review the current topology, centralize deterministic path/PVF classification, deduplicate heavy and coverage lanes, preserve exact-head source safety, bound metadata-only reuse, prove stale-run behavior, and validate platform contracts.",
       "steps": [
         {
@@ -53,12 +53,21 @@
         }
       ],
       "affected_areas": [
-        "GitHub Actions CI job graph and concurrency",
-        "Path policy and PVF lane classification",
-        "Fast, slow, runtime, demo, and coverage runners",
-        "Coverage shard provenance and aggregation",
-        "C-SDLC v2 metadata-only exact-head lineage",
-        "CI policy documentation and focused contract tests"
+        ".github/workflows/ci.yaml",
+        "adl/tools/ci_path_policy.sh",
+        "adl/tools/run_pr_fast_test_lane.sh",
+        "adl/tools/run_pr_fast_coverage_lane.sh",
+        "adl/tools/check_coverage_impact.sh",
+        "adl/tools/run_authoritative_coverage_lane.sh",
+        "adl/tools/test_ci_path_policy.sh",
+        "adl/tools/test_run_pr_fast_test_lane.sh",
+        "adl/tools/test_run_pr_fast_coverage_lane.sh",
+        "adl/tools/test_check_coverage_impact.sh",
+        "adl/tools/test_coverage_authority_contract.sh",
+        "adl/tools/test_ci_runtime_contracts.sh",
+        ".csdlc/evidence/5801",
+        ".csdlc/prepared/issues/5801/validate-gemini-review.rb",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-ci-runner-experiment-v1\",\"paths\":[\".github/workflows/ci.yaml\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"issues\":[5801,5853],\"order\":[5801,5853]}"
       ],
       "invariants": [
         "Unknown or mixed source changes select the stronger proving lane",
@@ -93,7 +102,7 @@
         "A platform contract exposes a path or shell portability gap"
       ],
       "design_ref": ".csdlc/prepared/issues/5801/design.md",
-      "design_digest": "b182f8d0bfc34dd38efb21e7b225e28961504bf532fd1fa436fafe7930b3a46a",
+      "design_digest": "4cdfecb24d801e921caab5c32f46c9ec23350195458b02b75e9848360ae6c18d",
       "diagram_ref": ".csdlc/prepared/issues/5801/diagram.mmd",
       "diagram_digest": "38d2b37695ebf0a973ad18715373b5388f65f5eb6d61f68fafb821966de2ecb2"
     }

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-05] C-SDLC estimation and cycle-time reduction",
     "slug": "v0-92-wp-05-c-sdlc-estimation-and-cycle-time-reduction",
     "version": "v0.92",
-    "generation": 17
+    "generation": 19
   },
   "status": "ready",
   "content": {
@@ -88,7 +88,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5822/design.md",
-      "design_digest": "e584f376c6fef66a4ef81e1d44d04f919c032e4aef5f1c7f270fe7fc08a24297",
+      "design_digest": "5b7be1961e8813d6e648a05759c9bd32c44c90ae424ab6a655a9741030110fb3",
       "diagram_ref": ".csdlc/prepared/issues/5822/diagram.mmd",
       "diagram_digest": "360aefdd9d98f37c36836af1445244e6295fda65ce9b41c418b8d8161d17b2eb"
     }

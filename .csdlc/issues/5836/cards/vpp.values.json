@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-18] First birthday demo",
     "slug": "v0-92-wp-18-first-birthday-demo",
     "version": "v0.92",
-    "generation": 31
+    "generation": 33
   },
   "status": "ready",
   "content": {
@@ -118,7 +118,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5836/design.md",
-      "design_digest": "c43c901f8f49fff5dc423ccd7d261ad798d70591d0157cd77119a0bdb7d9b092",
+      "design_digest": "82f1ec1056c927fdf4eaa15fe2c03fb791dc62bf8e1945f378f7a5718e321d50",
       "diagram_ref": ".csdlc/prepared/issues/5836/diagram.mmd",
       "diagram_digest": "039549736c17a86e37d74217aa9f5d20dade32c3a9e12e92c43a9975fd8d1a03"
     }

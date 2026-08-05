@@ -7,7 +7,7 @@
     "title": "[v0.92][observatory][tls] Use browser-trusted local HTTPS certificate",
     "slug": "v0-92-observatory-browser-trusted-https",
     "version": "v0.92",
-    "generation": 42
+    "generation": 44
   },
   "status": "ready",
   "content": {
@@ -135,7 +135,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on certificate warnings, trust bypasses, SAN mismatch, partial replacement, private-material exposure, or HTTP/HTTPS configuration drift.",
       "design_ref": ".csdlc/prepared/issues/5800/design.md",
-      "design_digest": "57c78c786488cf64234694319e65b20d3aa4534b77def1af5994e8defee30f7a",
+      "design_digest": "5f983337ffd152615bdcc31a9d8114ed4590af85849394bdae27e2d2852cdc36",
       "diagram_ref": ".csdlc/prepared/issues/5800/diagram.mmd",
       "diagram_digest": "7dd8d22e5d50ec170456f9d5e5402880e82cbd01f58e52055996d331a046a55f"
     }

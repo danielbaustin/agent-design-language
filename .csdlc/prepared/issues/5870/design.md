@@ -13,14 +13,15 @@ receive completion credit from the #5821 architecture gate.
 - `adl-runtime/src/guardian.rs`, `adl-runtime/src/networking.rs`, `adl-runtime/src/topology.rs`, and `adl-runtime/src/runtime_api.rs` are current Runtime v3 integration authorities.
 - `adl-runtime/tests/guardian_cli.rs` and `adl-runtime/tests/runtime_api_wss.rs` are retained launch and authenticated carrier proof inputs, not substitutes for this child's named proof.
 
-## Exclusive Owned Paths
+## Owned Paths
 
 - `adl-runtime/src/distributed/fencing.rs`
 - `adl-runtime/tests/distributed_fencing.rs`
 
-No other WP-04 child may edit these paths. This child may read sibling and
-upstream contracts but may not widen its claim. WP-04.16 alone owns final
-module registration and integrated proof paths.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Design And Failure Semantics
 

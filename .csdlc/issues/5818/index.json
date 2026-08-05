@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9ed0c16b82a7c094d6474b27313bfc4d63eaabcae5bedee51d7e839e9c8534fd",
   "phase": "bound",
-  "generation": 19,
-  "digest": "a378b769325c1f8ae9df9bfea000406b42cfc6a1ad0a4ff837c9dcabce883288",
+  "generation": 21,
+  "digest": "d37145718f73a8d88db4a486ba4e6ecbb40cf07d03763f9df8945f8f7686d506",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5818/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-second-pass-review",
-      "revision": "9cfaff15112b6463dc61d449af32f1d65723a9bb2b3bd811590d284f51400cae"
+      "reviewer": "codex:5860-v092-ownership-design-review",
+      "revision": "bf1c90dc367dc12dc1f557da9dbaa9f10defcf0da59d9572787160be1349f71a"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "40a0d42e1ce314f855036cd864475ec56c968ef3906cfa64a31a0233075b8aed",
+      "values_digest": "5cc6e0d85dff3032a950aff776b057d0a4e134b75841c5ec947cc27f6fc5d352",
       "rendered_digest": "7497385431a0397c1dbead85e28d4294d7efcb2caaff6b14f342826caeeb6bb0",
       "ast_digest": "23098f1f67be5cc90995f6aec88db71ec06a8b4914e8e36d34a1939b4fa6a2e8"
     },
     "stp": {
-      "values_digest": "ae66f1c9cbfee9213b2e6595a0c507bbdcaaff94d101a4687b11aa092a2ea2be",
+      "values_digest": "3df9e96a4a3359fd4a638dbe73c80c040f63d502f08193867e3be6bcf1704e02",
       "rendered_digest": "84cf6f84323564dc85587aa765eb4d8bbf7c78df060f1f19541475dcdb4f25ea",
       "ast_digest": "7dd9272ed6007eb2ac9028b947a6a6c46dcf96d10d5d7555bf501f7721714787"
     },
     "spp": {
-      "values_digest": "63c76cba7fcb743d8b96eed5a398e344515f1701aee1ad910c4758aa403f0f82",
-      "rendered_digest": "66cfcc433d9f7c065ec10ce83253d5abbf00995606f931e8250a7ceae7b62d0b",
-      "ast_digest": "c30fd6929ecaebf33c4cd135abcb701f5db001470415ac1bd989969e455476dd"
+      "values_digest": "0e2ee76cf73e122460e9c63888770642310883a32187146f8ac2962ee0e2521b",
+      "rendered_digest": "67e04e1194416dbc8f03b67965718e79cbb144c1f938a3987076b568a332b8ad",
+      "ast_digest": "a3a7150ff2dd171bbc2c0c2b437e556db1759fa6ae206444f8e419d6801eb414"
     },
     "vpp": {
-      "values_digest": "0ebe30b5b32df22cce2ceb05060239c10359935efdc9aa49fdd969df733d298b",
+      "values_digest": "be6842f6777263709156d2feb8938b70deaf16ffc07ee8a3591b662f12a2795d",
       "rendered_digest": "c981029d0900fa2e987b8582a6b9fe7d09e184dc16111d741f3dd213831d3074",
       "ast_digest": "c548115ddb1c678a81a7bbf16e087ac0bb88af4b8274fe0d83a6c73dacdbb578"
     },
     "srp": {
-      "values_digest": "373d06b305bca16ed35959a00e3f25c2947826b66aca0162664efe1d9766705a",
+      "values_digest": "b34020b59ed4d24f75f269c8286e69d395d7719a7bf0cf3c2a6875742908eb66",
       "rendered_digest": "850bf908b77990370d184fe9ee2bf1f084431dcf2706ebffe5dec935345b2b4e",
       "ast_digest": "3e71138cb5d788546c289c6f05d2f941b1373f21ac7150406dbc2f07d8c5af6a"
     },
     "sor": {
-      "values_digest": "21d8d8bd8b6c8934ab2005aba7ca284448ffde1405dec0220bb0840dff5a312b",
+      "values_digest": "fe56c7f733fe7a875a699b976a01569555288218ea0d32004b81ed55ad48ac8c",
       "rendered_digest": "bd15fe44fe2ca1bceaa2ed905a0b6cb117e1b973e9553ca9cb3fa825bc8a10d6",
       "ast_digest": "a228ec470a1b6243cc39ed9b70888478cf0b6d452147c0160d50b928ec42e7b7"
     }
@@ -265,6 +265,34 @@
       "actor": "codex:5860-foundation-second-pass",
       "reason": "Release the Foundation second-pass preparation claim after typed regeneration, reapproval, and focused validation; execution must reacquire just-in-time authority.",
       "operation": "{\"claim_id\":\"claim-5818-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-second-pass\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 19,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Reacquire issue-local preparation authority to normalize exact owned paths and serialization gates without product implementation.",
+      "operation": "{\"branch\":\"codex/5860-v092-ownership-normalization\",\"claim_id\":\"claim-5818-v092-ownership-normalization\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-v092-ownership-normalization\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5818\",\".csdlc/prepared/issues/5818\",\".csdlc/evidence/5818\"],\"purpose\":\"Normalize issue 5818 design/card ownership only; no product implementation, GitHub mutation, wave/WBS mutation, or publication.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 20,
+      "actor": "codex:5860-v092-ownership-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 31,
+      "generation": 21,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Align the operative plan with exact owned paths and machine-readable serialization gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"README.md\",\"docs/README.md\",\"docs/planning/ADL_FEATURE_LIST.md\",\"adl/README.md\",\"csdlc-v2/README.md\",\"AGENTS.md\",\"REVIEW.md\",\"docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md\",\"docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md\",\"csdlc-v2/operator/skills/csdlc-v2-bind/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-card-editor/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-doctor/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-publish/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-review/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-shepherd/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-validate/SKILL.md\",\"adl/Cargo.toml\",\"adl/Cargo.lock\",\"adl-v2/Cargo.toml\",\"adl-v2/Cargo.lock\",\"adl-runtime/Cargo.toml\",\"adl-runtime/Cargo.lock\",\"adl-runtime-kernel/Cargo.toml\",\"adl-runtime-kernel/Cargo.lock\",\"adl-resilience/Cargo.toml\",\"adl-resilience/Cargo.lock\",\"adl-characterization/Cargo.toml\",\"adl-characterization/Cargo.lock\",\"csdlc-v2/Cargo.toml\",\"csdlc-v2/Cargo.lock\",\".csdlc/evidence/5818\",\".csdlc/prepared/issues/5818/validate-activation.rb\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-docs-activation-final-truth-v1\\\",\\\"paths\\\":[\\\"README.md\\\",\\\"docs/README.md\\\",\\\"docs/planning/ADL_FEATURE_LIST.md\\\",\\\"AGENTS.md\\\",\\\"REVIEW.md\\\"],\\\"issues\\\":[5818,5843],\\\"order\\\":[5818,5843]}\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-runtime-manifest-sequence-v1\\\",\\\"paths\\\":[\\\"adl-runtime/Cargo.toml\\\",\\\"adl-runtime/Cargo.lock\\\"],\\\"issues\\\":[5818,5865],\\\"order\\\":[5818,5865]}\"]}"
+    },
+    {
+      "sequence": 32,
+      "generation": 21,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
+      "operation": "{\"claim_id\":\"claim-5818-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
     }
   ]
 }

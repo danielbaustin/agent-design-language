@@ -16,7 +16,7 @@ Implement and prove the deterministic WP-08 birth decision, including complete d
 
 ## Plan
 
-Revision 24
+Revision 25
 
 ## Steps
 
@@ -89,7 +89,7 @@ Revision 24
 
 .csdlc/prepared/issues/5825/design.md
 
-Digest: f820b504b76ecbeee8b4850fe1c7a967d15648f1f95da9d4be312de822ec2137
+Digest: 27dc5783c0ce3b5bd30096310436d9ad4081aa0731bac53a0848881804730fbc
 
 ## Diagram
 

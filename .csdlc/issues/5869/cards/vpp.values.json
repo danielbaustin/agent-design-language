@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.07] Epoch and lease authority",
     "slug": "v0-92-wp-04-07-epoch-lease-authority",
     "version": "v0.92",
-    "generation": 0
+    "generation": 2
   },
   "status": "ready",
   "content": {
@@ -66,7 +66,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on stale dependencies, path overlap, zero tests, invalid evidence, insecure fallback, or unresolved review findings.",
       "design_ref": ".csdlc/prepared/issues/5869/design.md",
-      "design_digest": "133c13c28340ca2af9b82be1da03b62f67457ef74e91eef5ee01f09826ac1dc8",
+      "design_digest": "f84809bfb6407cd79add641e46ea02e4111b37e74a421324fd767402ab26766e",
       "diagram_ref": ".csdlc/prepared/issues/5869/diagram.mmd",
       "diagram_digest": "b6214f3f6d8281d9eabcf54b42092e69517d8f3cbb616f27313f0b7265a97d07"
     }

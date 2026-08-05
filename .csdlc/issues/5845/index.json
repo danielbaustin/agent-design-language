@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "62cfffa47d080caf69fa1b1d20e49542e7f455d7c847aae132ae93191d1913fd",
   "phase": "bound",
-  "generation": 28,
-  "digest": "e5597c4c8c7d817fb34aead455139fe4d85cc63116646f2923c3352f195a9767",
+  "generation": 32,
+  "digest": "b69aed32a7f4098a4e16c775d9ec4f74d8e4e97fbd6202ca230dc5c643f38208",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5845/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-demo-publication-second-pass",
-      "revision": "c1be7df6e178d82e31cb10783e47ac9e7096db34f2aff79ea4e068408cf92553"
+      "reviewer": "codex:5860-v092-ownership-design-review",
+      "revision": "00b84250de2974fd61befd1b2b122a7c749a17fb7615e4f2c8ec19e00dfe264a"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "d5a92a48da4338a6c3e4eddd2a635593e16f2745ae80b8a46aa6f1dd5b2313bf",
+      "values_digest": "101a4a695e1497b3952d8060a5cafa237f5ba56a7d6917b1b8c3fe8648e5a3ff",
       "rendered_digest": "6404ed059784ae16bb1ddf0594e48c6834b7272f82bfacbfb2883e1fe7d75f6b",
       "ast_digest": "82b54069472e970a520197f3752ed83b93ad00cad4394a3940e60b24e268e29d"
     },
     "stp": {
-      "values_digest": "56462bea812b45755a97532e55858731444cf676c910680d5f4fbb1669af0bc2",
+      "values_digest": "947a06b97d6a99fdb9e1b9985e61b27e9557cf96c02d8322f6dd2ae5d09eba57",
       "rendered_digest": "ddcb9be2d795a2f4a1fd7441eaed975b890b9891cd5386a4248367997c2e61a4",
       "ast_digest": "1aa5c3754e51b7cbaafe8b13053bfff94e8148250b1efe3064fab28e194b2ed5"
     },
     "spp": {
-      "values_digest": "8f5915bde1fc99f5f097d018a8542b4b2ec0395431bad74497652669c4425c61",
-      "rendered_digest": "d9ab879b9b968259e6111506725144424aecc375a6e27176c8332588b010cb97",
-      "ast_digest": "4d1aed54df9526523dec22e0a24108fe84a4e76fba64fbc03c8d969f9ff66fdb"
+      "values_digest": "21c2967a72cc0e7b05992acf824753dc62c54b067f3e5cba0185245d76d0879c",
+      "rendered_digest": "b37de138ce6ecf653e15ab193562913c8d516a00ff2203788eb56418102c38a2",
+      "ast_digest": "7dca7626ccb42ebc87ab3365320625e408ee155d8bf61c4dbe8bab96d5fa54c3"
     },
     "vpp": {
-      "values_digest": "cb7afd4be5b60c7e8f6283c504f2f459eaaca5bd2f779cc8c7001d10e5b4372c",
+      "values_digest": "e47a8c0956aa5829c29ab4facd29684786d366e98fec1438290ed06ac5b664c1",
       "rendered_digest": "0dcea4c3cb4ebc469e125583c5f6eac9de4900db2e2cb84c4af45c65b02e170e",
       "ast_digest": "585fd42a104e08956c945e4cba0fdd5e68637b16f3fb2b6295d7eaeec55f8add"
     },
     "srp": {
-      "values_digest": "be90bb3a94e874fd04e5e63f2869dd7b4401bea3029abbef3ad8e3ba3f30daad",
+      "values_digest": "ed1c0c53ea34259adf6bc330a0dfb7f01f30c625872f11889616f9cf12395497",
       "rendered_digest": "66584b02c22d0bbd0817ef755e84c0fd40420199f03ce8fe7b33a5b7b8a75a9f",
       "ast_digest": "f5b2ec19198beddd171eda9407d02c311e89b54ced36ac7aaead57db2f9f06a0"
     },
     "sor": {
-      "values_digest": "347f037e853fbf1d50d736288f868938f8929907eedcbba63fc260c00e1a10ce",
+      "values_digest": "3f14c7f28dbf1d7d14a336e047a045ed3c70bab638f7f65d62a35e7d927e0ca4",
       "rendered_digest": "b6559a50b406e113d4bdecd7b46d6236777db7e3bd028391abdfeba5acae375d",
       "ast_digest": "63307f804d1711e04428b4b653b5230947299d891caf3ed6bdf972e7f4042d49"
     }
@@ -328,6 +328,62 @@
       "actor": "codex:5860-demo-publication-second-pass",
       "reason": "Release the temporary WP-24A second-pass repair claim after typed card validation",
       "operation": "{\"claim_id\":\"claim-5845-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5860-demo-publication-second-pass\"}"
+    },
+    {
+      "sequence": 38,
+      "generation": 28,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Reacquire issue-local preparation authority to normalize exact owned paths and serialization gates without product implementation.",
+      "operation": "{\"branch\":\"codex/5860-v092-ownership-normalization\",\"claim_id\":\"claim-5845-v092-ownership-normalization\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-v092-ownership-normalization\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5845\",\".csdlc/prepared/issues/5845\",\".csdlc/evidence/5845\"],\"purpose\":\"Normalize issue 5845 design/card ownership only; no product implementation, GitHub mutation, wave/WBS mutation, or publication.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 39,
+      "generation": 29,
+      "actor": "codex:5860-v092-ownership-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 40,
+      "generation": 30,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Align the operative plan with exact owned paths and machine-readable serialization gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"demos/podcast/episodes/001-meet-the-ai-coworkers\",\"demos/podcast/episodes/002-can-an-ai-be-a-good-teammate\",\"demos/podcast/episodes/003-the-promise-and-weirdness-of-talking-to-machines\",\"demos/podcast/episodes/004-what-should-we-let-ai-do-for-us\",\"demos/podcast/episodes/005-can-ai-help-us-think-better\",\"demos/podcast/episodes/006-the-new-creative-room\",\"demos/podcast/episodes/007-trust-receipts-and-proof\",\"demos/podcast/episodes/008-local-ai-vs-cloud-ai\",\"demos/podcast/episodes/009-when-ai-gets-stuck\",\"demos/podcast/episodes/010-what-does-a-weekly-ai-studio-look-like\",\"demos/podcast/audio\",\"demos/podcast/feed.xml\",\"demos/podcast/LAUNCH_READINESS.md\",\"adl/tools/generate_podcast_launch_packet.py\",\"adl/tools/validate_podcast_launch_packet.py\",\"adl/tools/test_podcast_launch_packet.sh\",\"adl/tools/record_podcast_native_playback.sh\",\"adl/tools/record_podcast_browser_playback.mjs\",\"adl/tools/record_podcast_ios_safari_playback.sh\",\".csdlc/prepared/issues/5845/validate-platform-playback-receipts.rb\",\".csdlc/prepared/issues/5845/validate-second-pass-readiness.rb\",\".csdlc/evidence/5845\"]}"
+    },
+    {
+      "sequence": 41,
+      "generation": 30,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
+      "operation": "{\"claim_id\":\"claim-5845-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 42,
+      "generation": 30,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Refresh exact ownership after removing one broad directory path.",
+      "operation": "{\"branch\":\"codex/5860-v092-ownership-normalization\",\"claim_id\":\"claim-5845-v092-ownership-normalization\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-v092-ownership-normalization\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5845\",\".csdlc/prepared/issues/5845\",\".csdlc/evidence/5845\"],\"purpose\":\"Normalize issue 5845 design and card ownership only.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 43,
+      "generation": 31,
+      "actor": "codex:5860-v092-ownership-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 44,
+      "generation": 32,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Align the SPP affected areas with the exact design-owned paths.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"demos/podcast/episodes/001-meet-the-ai-coworkers\",\"demos/podcast/episodes/002-can-an-ai-be-a-good-teammate\",\"demos/podcast/episodes/003-the-promise-and-weirdness-of-talking-to-machines\",\"demos/podcast/episodes/004-what-should-we-let-ai-do-for-us\",\"demos/podcast/episodes/005-can-ai-help-us-think-better\",\"demos/podcast/episodes/006-the-new-creative-room\",\"demos/podcast/episodes/007-trust-receipts-and-proof\",\"demos/podcast/episodes/008-local-ai-vs-cloud-ai\",\"demos/podcast/episodes/009-when-ai-gets-stuck\",\"demos/podcast/episodes/010-what-does-a-weekly-ai-studio-look-like\",\"demos/podcast/feed.xml\",\"demos/podcast/LAUNCH_READINESS.md\",\"adl/tools/generate_podcast_launch_packet.py\",\"adl/tools/validate_podcast_launch_packet.py\",\"adl/tools/test_podcast_launch_packet.sh\",\"adl/tools/record_podcast_native_playback.sh\",\"adl/tools/record_podcast_browser_playback.mjs\",\"adl/tools/record_podcast_ios_safari_playback.sh\",\".csdlc/prepared/issues/5845/validate-platform-playback-receipts.rb\",\".csdlc/prepared/issues/5845/validate-second-pass-readiness.rb\",\".csdlc/evidence/5845\"]}"
+    },
+    {
+      "sequence": 45,
+      "generation": 32,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Ownership normalization is complete; release the temporary claim.",
+      "operation": "{\"claim_id\":\"claim-5845-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
     }
   ]
 }

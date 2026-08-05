@@ -39,14 +39,17 @@ because the packet is complete.
 6. Run a bounded meta-review of the review quality and publish the internal
    report and register for WP-26 consumption.
 
-## Protected-Path Candidates
+## Owned Paths
 
 - `docs/reviews/v0.92/internal-review-5846`
 - `docs/milestones/v0.92/review/V092_INTERNAL_REVIEW_5846.md`
 - `.csdlc/evidence/5846`
+- `.csdlc/prepared/issues/5846/validate-internal-review.rb`
 
-All product, docs, lifecycle, demo, and publication inputs are read-only review
-sources. Remediation paths belong to #5848 or separately routed owners.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Validation And Failure Policy
 

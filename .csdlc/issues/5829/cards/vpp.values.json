@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-12] Capability envelope",
     "slug": "v0-92-wp-12-capability-envelope",
     "version": "v0.92",
-    "generation": 58
+    "generation": 60
   },
   "status": "ready",
   "content": {
@@ -73,7 +73,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5829/design.md",
-      "design_digest": "84716664e6a6262c8b75169869bb4640908c697de99ecec3383efcf9736b9ddd",
+      "design_digest": "67fb062b32fd18344a0e924536a43eab01bfe58c422ed2065228c2115f5e1605",
       "diagram_ref": ".csdlc/prepared/issues/5829/diagram.mmd",
       "diagram_digest": "78acf0d1432d60e5c4c8b3eba8f887a035f2f55abeee4cc19537b6495dc5de3a"
     }

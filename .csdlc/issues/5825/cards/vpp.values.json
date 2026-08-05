@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-08] Birthday contract and negative cases",
     "slug": "v0-92-wp-08-birthday-contract-and-negative-cases",
     "version": "v0.92",
-    "generation": 53
+    "generation": 55
   },
   "status": "ready",
   "content": {
@@ -72,7 +72,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5825/design.md",
-      "design_digest": "f820b504b76ecbeee8b4850fe1c7a967d15648f1f95da9d4be312de822ec2137",
+      "design_digest": "27dc5783c0ce3b5bd30096310436d9ad4081aa0731bac53a0848881804730fbc",
       "diagram_ref": ".csdlc/prepared/issues/5825/diagram.mmd",
       "diagram_digest": "af3ccfe3d575efcd6afdf4b661f1a73ffef8cd1ac35a93da986e2d10d55ed3a9"
     }

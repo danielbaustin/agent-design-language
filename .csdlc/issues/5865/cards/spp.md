@@ -16,7 +16,7 @@ Verify gates, implement the exclusive slice, run exact proving tests and negativ
 
 ## Plan
 
-Revision 1
+Revision 2
 
 ## Steps
 
@@ -86,7 +86,7 @@ Revision 1
 
 .csdlc/prepared/issues/5865/design.md
 
-Digest: f0f2a2884f35f50513dca229872a4011a2f1f6a1bed2dd854007bfac340d714d
+Digest: 42691a23bab1f1f3a5b4bbb883d9082ec686d528b70a332b1169f9e00ceb699b
 
 ## Diagram
 

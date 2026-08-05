@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-02B][build] Run the post-migration build acceleration experiment",
     "slug": "v0-92-wp-02b-post-migration-build-acceleration",
     "version": "v0.92",
-    "generation": 8
+    "generation": 10
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 5,
+      "plan_revision": 6,
       "summary": "Verify migration and CI entry gates, freeze the comparison, capture standard and 16-core cold/warm trials, prove parity, run one canary, apply predeclared thresholds, retain the decision, and prove fallback or cleanup.",
       "steps": [
         {
@@ -49,11 +49,11 @@
         }
       ],
       "affected_areas": [
-        "Selected GitHub Actions runner routing",
-        "Restricted organization runner-group access and cost controls",
-        "Exact-SHA cold and warm benchmark evidence",
-        "Proof, artifact, validation, and required-check parity",
-        "Lane decision, canary, observation, fallback, and cleanup evidence"
+        ".github/workflows/ci.yaml",
+        "adl/tools/test_ci_runtime_contracts.sh",
+        ".csdlc/evidence/5853",
+        ".csdlc/prepared/issues/5853/validate-experiment.rb",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-ci-runner-experiment-v1\",\"paths\":[\".github/workflows/ci.yaml\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"issues\":[5801,5853],\"order\":[5801,5853]}"
       ],
       "invariants": [
         "Standard GitHub-hosted runners remain the default and immediate fallback",
@@ -90,7 +90,7 @@
         "The organization owner changes thresholds before the first measured run"
       ],
       "design_ref": ".csdlc/prepared/issues/5853/design.md",
-      "design_digest": "b55bff65678838b3f435b8b1cfc4b03935f93eb71ad270bf35906404df9702e6",
+      "design_digest": "5a0f7eefbffae2cfc9cdde6969b68cb6e772bf8db2c2fd6c7f48ecabef21228c",
       "diagram_ref": ".csdlc/prepared/issues/5853/diagram.mmd",
       "diagram_digest": "17d5a853df6d07718c8495e9076f622572dea08eba574fccccf450a39131a966"
     }

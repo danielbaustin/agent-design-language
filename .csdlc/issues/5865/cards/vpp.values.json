@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.03] Maintained QUIC/TLS transport adapter",
     "slug": "v0-92-wp-04-03-quic-tls-transport",
     "version": "v0.92",
-    "generation": 0
+    "generation": 2
   },
   "status": "ready",
   "content": {
@@ -66,7 +66,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on stale dependencies, path overlap, zero tests, invalid evidence, insecure fallback, or unresolved review findings.",
       "design_ref": ".csdlc/prepared/issues/5865/design.md",
-      "design_digest": "f0f2a2884f35f50513dca229872a4011a2f1f6a1bed2dd854007bfac340d714d",
+      "design_digest": "42691a23bab1f1f3a5b4bbb883d9082ec686d528b70a332b1169f9e00ceb699b",
       "diagram_ref": ".csdlc/prepared/issues/5865/diagram.mmd",
       "diagram_digest": "ae4305f70229ef4ff4628661a2d1541947fc0cbfb83e373dbf38252ad51f3faa"
     }

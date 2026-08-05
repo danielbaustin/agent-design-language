@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b64ea880252f74a339493a02b2aaa4484361128d76e56588f7fed78d84751c0f",
   "phase": "bound",
-  "generation": 17,
-  "digest": "72fdc7dafa4057a23347e3a58e2069d4d90e711f0277f808ca00fa129d790266",
+  "generation": 19,
+  "digest": "315ce9e2053418221a39742c2d5a2d012b7e01fbb7898e01403caa19f0199d99",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5824/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-second-pass-review",
-      "revision": "2c34517219b7288fef539610b8d4be187058b759eeaa20f9d02a1ad45fa25e32"
+      "reviewer": "codex:5860-v092-ownership-design-review",
+      "revision": "683765d53f82a487bd5f7bc760239da43dca6c552e10fc8a96ec5111543717c5"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "ab083dba1389839209d9aa51ac86f7caa1252cd603ba3b2fc6737aaed5f66fc1",
+      "values_digest": "1732e4a6222ccdeac652a2657dd203294940f3a0c4ce71ba01719066aed407e5",
       "rendered_digest": "3c078a22e0b186e812947cb68fc69b204388acd828c00652285bc791baa8f916",
       "ast_digest": "7d89a791d94d459f676de8a69ffcba4e938277e73b7c52ea1bd9bf1278ac1425"
     },
     "stp": {
-      "values_digest": "8887d8f7e5316b6a1908171be09ebb5af0464996689b474af62ecada8ef72c6e",
+      "values_digest": "cb0170b50929bd63d79e1d5b22a82a602404b497898fb103bad4dea93cef579c",
       "rendered_digest": "6528528a1756de9503e1a99cf09f502a1cf248faabd24d06ec601ff05c9a9669",
       "ast_digest": "70910b3e83f3e7eefe8477471848900aa3184bef3ce378d1d2ee4519a6a6a152"
     },
     "spp": {
-      "values_digest": "3023e809ead575e0693f43d9493b59090296444b78e191631d695138aa32a8e6",
-      "rendered_digest": "f75b9c9df4c3a319fe61aa20750febfe5ac25cef833fc5bd32c8fdb259f05e1b",
-      "ast_digest": "17441a320bc2cf401df6b1fedc112fd0befe0b0d628f8135886bd1e3ba85a497"
+      "values_digest": "cdc95bd3c0a6e2898ad6c53733f580093c886ad891892e44184fc62c8d953e1a",
+      "rendered_digest": "8ef2d9eccaa4646e516195dd5cedfcb02708e874899b2fefdcad37bbdd4217e5",
+      "ast_digest": "9d87604692e250462447e904e5d94611a96f238d9d582bbea9756eb9f08e5dfa"
     },
     "vpp": {
-      "values_digest": "d1c8d43b5d1cd63d22d2089a942beb942d6354126c3b6613ecfa447dd57be5a5",
+      "values_digest": "819dbcfd03329d12272eddab1ac2d873750cc81eecd9665272e459eb0f8491d7",
       "rendered_digest": "f5c328a96837d3a1fbe980db18402b8a142abe4b97a5e3bd0ecefcb4a41a474b",
       "ast_digest": "222290e7f83d8041e1218697d83bc08dc71f9094a6909248d99923c6d315c857"
     },
     "srp": {
-      "values_digest": "48afbfe1ede06359e0a2f235658e6256c0aedfb8e7fedc28aeb9055cd065c40f",
+      "values_digest": "022cc9865ba73428be614dcc15cf51268785d849c8ba8118c7f64d93975c66f5",
       "rendered_digest": "330fdc5d203d7c423f7a21a24d362260ea0bc0e37e0cf61a0bcf5aafe738c1d8",
       "ast_digest": "c41f89ee3243519e57315ed19839689b0a975dfc2ad05a3ade9cfe1a61e6b6df"
     },
     "sor": {
-      "values_digest": "72414f831583695bd5f47e834e4096e7576d29ae7c1f7e5785874a213d014e30",
+      "values_digest": "79fa92ccdbb5e377186b9ad304462cd5fc9359999fcf5676de5a2704fd100079",
       "rendered_digest": "a9e82b10a38d86a71ce1ace7f3ba80ddab41b2610f14edee8e48c1c31c9479b2",
       "ast_digest": "c4bf4161b995d734609a8fdd7728933f7382fcd4ff9a2cd2c8918511c0b4ee03"
     }
@@ -237,6 +237,34 @@
       "actor": "codex:5860-foundation-second-pass",
       "reason": "Release the Foundation second-pass preparation claim after typed regeneration, reapproval, and focused validation; execution must reacquire just-in-time authority.",
       "operation": "{\"claim_id\":\"claim-5824-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-second-pass\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 17,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Reacquire issue-local preparation authority to normalize exact owned paths and serialization gates without product implementation.",
+      "operation": "{\"branch\":\"codex/5860-v092-ownership-normalization\",\"claim_id\":\"claim-5824-v092-ownership-normalization\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-v092-ownership-normalization\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5824\",\".csdlc/prepared/issues/5824\",\".csdlc/evidence/5824\"],\"purpose\":\"Normalize issue 5824 design/card ownership only; no product implementation, GitHub mutation, wave/WBS mutation, or publication.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:5860-v092-ownership-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 27,
+      "generation": 19,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Align the operative plan with exact owned paths and machine-readable serialization gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"csdlc-v2/src/cards.rs\",\"csdlc-v2/src/model.rs\",\"csdlc-v2/src/schema.rs\",\"csdlc-v2/tests/prompt_card_enum_typing.rs\",\".csdlc/evidence/5824\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-csdlc-card-internals-v1\\\",\\\"paths\\\":[\\\"csdlc-v2/src/cards.rs\\\"],\\\"issues\\\":[5822,5824],\\\"order\\\":[5822,5824]}\"]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 19,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
+      "operation": "{\"claim_id\":\"claim-5824-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
     }
   ]
 }

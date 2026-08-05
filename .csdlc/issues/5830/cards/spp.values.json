@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-13] ACP / cognitive profiles",
     "slug": "v0-92-wp-13-acp-cognitive-profiles",
     "version": "v0.92",
-    "generation": 37
+    "generation": 39
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 14,
+      "plan_revision": 15,
       "summary": "Implement and prove WP-13 canonical evidence maps with revision-linked updates, bounded projections, privacy, and explicit non-reputation/personhood boundaries.",
       "steps": [
         {
@@ -63,10 +63,11 @@
         "adl-runtime-kernel/src/cognitive_profile.rs",
         "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/cognitive_profile.rs",
-        "adl-runtime-kernel/tests/fixtures/cognitive_profile/",
+        "adl-runtime-kernel/tests/fixtures/cognitive_profile",
         "docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md",
         ".csdlc/prepared/issues/5830/validate-native-receipts.rb",
-        ".csdlc/evidence/5830/"
+        ".csdlc/evidence/5830",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}"
       ],
       "invariants": [
         "Every profile field cites an allowed current evidence category and digest.",
@@ -94,7 +95,7 @@
         "Review finds a label that functions as diagnosis, standing, reputation, or rights inference."
       ],
       "design_ref": ".csdlc/prepared/issues/5830/design.md",
-      "design_digest": "51ef8fac075e02acbb22c88d673093f7d7fb6a4c8fc8f1f0cc50bbdf1ff44743",
+      "design_digest": "fb2baa8e667f94ac4a4d7a45cf2f963eca132d757264de1765793548618391c2",
       "diagram_ref": ".csdlc/prepared/issues/5830/diagram.mmd",
       "diagram_digest": "6b9a9b2ae6cf9491279ce9ea531331cc7b98069e510d08bd2aad9422595fef47"
     }

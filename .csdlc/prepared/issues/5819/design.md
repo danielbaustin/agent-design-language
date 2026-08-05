@@ -85,3 +85,13 @@ digest. Differences require a digest-bound verified-disposition artifact; a
 boolean preservation assertion is never sufficient. The live verifier queries
 all GitHub API-backed surfaces at the destination and binds LFS to a retained
 `git lfs fsck` receipt.
+## Owned Paths
+
+- `.csdlc/evidence/5819`
+- `.csdlc/prepared/issues/5819/validate-migration-evidence.rb`
+- `.csdlc/prepared/issues/5819/verify-live-repositories.rb`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01B] Canonical documentation and version activation",
     "slug": "v0-92-wp-01b-canonical-documentation-and-version-activation",
     "version": "v0.92",
-    "generation": 19
+    "generation": 21
   },
   "status": "ready",
   "content": {
@@ -83,7 +83,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5818/design.md",
-      "design_digest": "9cfaff15112b6463dc61d449af32f1d65723a9bb2b3bd811590d284f51400cae",
+      "design_digest": "bf1c90dc367dc12dc1f557da9dbaa9f10defcf0da59d9572787160be1349f71a",
       "diagram_ref": ".csdlc/prepared/issues/5818/diagram.mmd",
       "diagram_digest": "031adc526b6fb3e7420d6f84f360751febe5858232cbb45d62cdb50c059ad1a9"
     }

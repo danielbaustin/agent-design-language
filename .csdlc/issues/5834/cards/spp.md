@@ -16,7 +16,7 @@ Assemble and prove WP-16's exact-digest reviewer packet with complete child evid
 
 ## Plan
 
-Revision 14
+Revision 15
 
 ## Steps
 
@@ -89,7 +89,7 @@ Revision 14
 
 .csdlc/prepared/issues/5834/design.md
 
-Digest: 573921782c8d2fe436cf4ea70bdc8bd8b3ce61d31cce96516cfdaea492a20fe8
+Digest: 32a673ea781e96b489cc8be1878fd200d89d6de6213f8e79da28c104e1e916c3
 
 ## Diagram
 

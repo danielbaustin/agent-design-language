@@ -41,19 +41,19 @@ behavior that did not land.
 6. Complete typed issue and sprint/milestone closeout from retained receipts
    and live release evidence, then hand v0.93 its accepted packet.
 
-## Protected-Path Candidates
+## Owned Paths
 
 - `docs/milestones/v0.92/RELEASE_NOTES_v0.92.md`
 - `docs/milestones/v0.92/RELEASE_PLAN_v0.92.md`
 - `docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md`
-- `docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md`
 - `docs/milestones/v0.92/V092_RELEASE_CEREMONY_5852.md`
-- `adl/tools/release_ceremony.sh` and its focused test only if preflight defects
-  require a separately reviewed repair
 - `.csdlc/evidence/5852`
+- `.csdlc/prepared/issues/5852/validate-release-evidence.rb`
 
-Tags, releases, issues, and sprint state are live ceremony mutations, not
-tracked-path ownership substitutes.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Validation And Failure Policy
 

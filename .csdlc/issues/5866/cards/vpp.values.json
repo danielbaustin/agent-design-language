@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.04] Seed discovery and authenticated join",
     "slug": "v0-92-wp-04-04-seed-discovery-join",
     "version": "v0.92",
-    "generation": 0
+    "generation": 2
   },
   "status": "ready",
   "content": {
@@ -66,7 +66,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on stale dependencies, path overlap, zero tests, invalid evidence, insecure fallback, or unresolved review findings.",
       "design_ref": ".csdlc/prepared/issues/5866/design.md",
-      "design_digest": "7bb117256a91a0d02aa7750ba53019f7d298aaeca0a127de0d89a1a0be0351cf",
+      "design_digest": "6db1b21325f79962c62a273deabd7a42782a253418e56817fcf9aaaa52763180",
       "diagram_ref": ".csdlc/prepared/issues/5866/diagram.mmd",
       "diagram_digest": "1b8d06efcd7f570319003f17fbfe38fd444c9b24333feb82fd47809b38828d91"
     }

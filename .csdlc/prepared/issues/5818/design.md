@@ -84,3 +84,88 @@ and historical-preservation checks, Markdown/link and YAML/JSON validation,
 Cargo metadata plus locked check, diff hygiene, and an exact-revision bounded
 review. Broad runtime tests are not required unless executable version behavior
 is changed.
+## Owned Paths
+
+- `README.md`
+- `docs/README.md`
+- `docs/planning/ADL_FEATURE_LIST.md`
+- `adl/README.md`
+- `csdlc-v2/README.md`
+- `AGENTS.md`
+- `REVIEW.md`
+- `docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md`
+- `docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md`
+- `csdlc-v2/operator/skills/csdlc-v2-bind/SKILL.md`
+- `csdlc-v2/operator/skills/csdlc-v2-card-editor/SKILL.md`
+- `csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md`
+- `csdlc-v2/operator/skills/csdlc-v2-doctor/SKILL.md`
+- `csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md`
+- `csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md`
+- `csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md`
+- `csdlc-v2/operator/skills/csdlc-v2-publish/SKILL.md`
+- `csdlc-v2/operator/skills/csdlc-v2-review/SKILL.md`
+- `csdlc-v2/operator/skills/csdlc-v2-shepherd/SKILL.md`
+- `csdlc-v2/operator/skills/csdlc-v2-validate/SKILL.md`
+- `adl/Cargo.toml`
+- `adl/Cargo.lock`
+- `adl-v2/Cargo.toml`
+- `adl-v2/Cargo.lock`
+- `adl-runtime/Cargo.toml`
+- `adl-runtime/Cargo.lock`
+- `adl-runtime-kernel/Cargo.toml`
+- `adl-runtime-kernel/Cargo.lock`
+- `adl-resilience/Cargo.toml`
+- `adl-resilience/Cargo.lock`
+- `adl-characterization/Cargo.toml`
+- `adl-characterization/Cargo.lock`
+- `csdlc-v2/Cargo.toml`
+- `csdlc-v2/Cargo.lock`
+- `.csdlc/evidence/5818`
+- `.csdlc/prepared/issues/5818/validate-activation.rb`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-docs-activation-final-truth-v1",
+    "paths": [
+      "README.md",
+      "docs/README.md",
+      "docs/planning/ADL_FEATURE_LIST.md",
+      "AGENTS.md",
+      "REVIEW.md"
+    ],
+    "issues": [
+      5818,
+      5843
+    ],
+    "order": [
+      5818,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-runtime-manifest-sequence-v1",
+    "paths": [
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/Cargo.lock"
+    ],
+    "issues": [
+      5818,
+      5865
+    ],
+    "order": [
+      5818,
+      5865
+    ]
+  }
+]
+```

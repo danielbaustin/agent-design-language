@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.05] Membership state and topology convergence",
     "slug": "v0-92-wp-04-05-membership-topology",
     "version": "v0.92",
-    "generation": 0
+    "generation": 2
   },
   "status": "ready",
   "content": {
@@ -66,7 +66,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on stale dependencies, path overlap, zero tests, invalid evidence, insecure fallback, or unresolved review findings.",
       "design_ref": ".csdlc/prepared/issues/5867/design.md",
-      "design_digest": "d021c93afe45a50811e0c4d08dca3942e5fe983af2b4c7c920af7a967b30968d",
+      "design_digest": "c1e6a87371e79c22f2c2e1e6476991172ea6bd775ad479a325045c9d5c97f1ff",
       "diagram_ref": ".csdlc/prepared/issues/5867/diagram.mmd",
       "diagram_digest": "583069f1e5e23de29e40c6d6a2c6f6f2c39c31907ef9d63198e80ae2ae0a8f33"
     }

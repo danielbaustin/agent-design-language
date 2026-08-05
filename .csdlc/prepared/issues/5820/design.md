@@ -45,7 +45,7 @@ reason. A required production adapter that cannot execute real work fails
 before readiness. Shutdown drains the API, checkpoints state, cancels bounded
 tasks, and returns control to Guardian within the declared budget.
 
-## Exclusive Owned Paths
+## Owned Paths
 
 - `adl-runtime/src/bin/adl-runtime-guardian.rs`
 - `adl-runtime/src/guardian.rs`
@@ -61,9 +61,10 @@ tasks, and returns control to Guardian within the declared budget.
 - `adl/tools/validate_v092_runtime_guardian_lifecycle.sh`
 - `adl/tools/validate_v092_runtime_native_receipts.rb`
 
-These paths are exclusive to #5820. Browser trust stays with #5800;
-distributed modules stay with #5863 through #5878; ACIP/auth/WSS contract work
-stays with #5832. Scope expansion stops before binding.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Invariants And Failure Semantics
 

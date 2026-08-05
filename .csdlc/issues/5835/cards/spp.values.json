@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-17] Migration and cross-polis continuity planning",
     "slug": "v0-92-wp-17-migration-and-cross-polis-continuity-planning",
     "version": "v0.92",
-    "generation": 22
+    "generation": 24
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 9,
       "summary": "Verify #5826, #5827, and #5834; reconcile landed schemas; author the transfer matrix and WP-04 boundary; validate links, redaction, copied-state rejection, and forbidden production claims; then obtain exact-head review.",
       "steps": [
         {
@@ -64,8 +64,7 @@
       "affected_areas": [
         "docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md",
         "docs/milestones/v0.92/design/CROSS_POLIS_CONTINUITY_TRANSFER_DESIGN_v0.92.md",
-        "docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md",
-        ".csdlc/evidence/5835/"
+        ".csdlc/evidence/5835"
       ],
       "invariants": [
         "Copied state is never continuity proof",
@@ -94,7 +93,7 @@
         "v0.93 allocation requires a different handoff shape"
       ],
       "design_ref": ".csdlc/prepared/issues/5835/design.md",
-      "design_digest": "98bb854103c27ca16f788f98c22594cf6bd9e356d92184498de6a134daa07b52",
+      "design_digest": "2d55588405f0f58c47150e7359b8204b3d42d3db19a82b642a4a43cb08f451a2",
       "diagram_ref": ".csdlc/prepared/issues/5835/diagram.mmd",
       "diagram_digest": "0a3ab8f4a8150b92ec738750c11ea59db723de5e8bdd6d4a18052b93ae7e632b"
     }

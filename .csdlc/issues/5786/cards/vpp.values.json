@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-21] Repository-wide code reduction cleanup",
     "slug": "v0-92-wp-21-repository-wide-code-reduction-cleanup",
     "version": "v0.92",
-    "generation": 10
+    "generation": 12
   },
   "status": "ready",
   "content": {
@@ -62,7 +62,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5786/design.md",
-      "design_digest": "f8cf97391e03e08b1cac0624aa4b81453b840eea52e1e8fa574d5e56aae3e70f",
+      "design_digest": "c632c08fd12cd7e5223a33004b7a892b374df71f855b9a8cffac0a4792fb5fb8",
       "diagram_ref": ".csdlc/prepared/issues/5786/diagram.mmd",
       "diagram_digest": "713df357faa79f6e7978d40833f7932dcf2dc1e12f5416ab45e6b498c880be0e"
     }

@@ -45,3 +45,13 @@ correction.
 Rollback is the two-line revert. Completion requires focused unit tests that
 assert both defaults and unsafe-artifact rejection, `cargo fmt --check`, the
 exact Clippy command with `-D warnings`, diff hygiene, and bounded review.
+## Owned Paths
+
+- `adl/src/csm_freedom_gate.rs`
+- `.csdlc/evidence/5812`
+- `.csdlc/prepared/issues/5812/validate-path-scope.rb`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.

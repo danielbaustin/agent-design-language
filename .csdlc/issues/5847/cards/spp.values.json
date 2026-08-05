@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-26] External / third-party review",
     "slug": "v0-92-wp-26-external-third-party-review",
     "version": "v0.92",
-    "generation": 10
+    "generation": 12
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 4,
+      "plan_revision": 5,
       "summary": "Verify WP-25, build and redact the exact packet manifest, compute/freeze its digest, validate reviewer authority and claims, dispatch with operator approval, reject stale/missing output, and retain the received report plus routed findings index.",
       "steps": [
         {
@@ -61,10 +61,10 @@
         }
       ],
       "affected_areas": [
-        "REVIEW.md only if still the active external-review entrypoint",
         "docs/milestones/v0.92/review/THIRD_PARTY_REVIEW_HANDOFF_v0.92.md",
         "docs/reviews/v0.92/external-review-5847",
-        ".csdlc/evidence/5847"
+        ".csdlc/evidence/5847",
+        ".csdlc/prepared/issues/5847/validate-external-review.rb"
       ],
       "invariants": [
         "No tracked work on main",
@@ -88,7 +88,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5847/design.md",
-      "design_digest": "87f9be3d8bb3567165a85171d7f8322ccf7133fd3c840e4253bc390bc6a5624c",
+      "design_digest": "79dd293f0747a774c538016ae7fdcc76020e2ad39a8c348676f52509a7899c75",
       "diagram_ref": ".csdlc/prepared/issues/5847/diagram.mmd",
       "diagram_digest": "3f27fc4f521fdd57a23ed1afaa29417434e08b8ac93e33e58d1a106069d94cd1"
     }

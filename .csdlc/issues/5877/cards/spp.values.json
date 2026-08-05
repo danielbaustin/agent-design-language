@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-04.15] Versioned distributed topology and migration projection",
     "slug": "v0-92-wp-04-15-distributed-projection",
     "version": "v0.92",
-    "generation": 0
+    "generation": 2
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
+      "plan_revision": 2,
       "summary": "Verify gates, implement the exclusive slice, run exact proving tests and negatives, validate rollback, resolve review, and close through child authority.",
       "steps": [
         {
@@ -53,7 +53,11 @@
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "adl-runtime/src/distributed/projection.rs",
+        "adl-runtime/tests/distributed_projection.rs",
+        "docs/api/runtime-v3/v1/distributed.openapi.json"
+      ],
       "invariants": [
         "Exclusive paths remain disjoint",
         "Guardian stays process 0",
@@ -81,7 +85,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5877/design.md",
-      "design_digest": "3a36bd4b372aebaa97dc4df405026aef34bcbde8ea428394020573f6e5b21d45",
+      "design_digest": "3de8c51576f3045cd2bef74b3eaeecdc30cf9c8daa605c2a803b5de6821bd6c7",
       "diagram_ref": ".csdlc/prepared/issues/5877/diagram.mmd",
       "diagram_digest": "205e7e83ffbf8812f537bacc9065673460c7a36bdcb9ca33e80fc0cabd99e5b4"
     }

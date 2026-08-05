@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-14] ACIP and A2A contract reconciliation",
     "slug": "v0-92-wp-14-acip-and-a2a-contract-reconciliation",
     "version": "v0.92",
-    "generation": 31
+    "generation": 33
   },
   "status": "ready",
   "content": {
@@ -106,7 +106,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5832/design.md",
-      "design_digest": "cc10aa75a38e1544cb668d51ef931b908c9893ff7b937e4b77dea50ae3141e53",
+      "design_digest": "b718ea4c1edd36ad2ac4cacfdcacd680abf06b043e65e4271d86584da3b1ac7a",
       "diagram_ref": ".csdlc/prepared/issues/5832/diagram.mmd",
       "diagram_digest": "0ddb64863e3e34f2587da73ca88c9ce88eb77000c199807e0c69639234b28b7f"
     }

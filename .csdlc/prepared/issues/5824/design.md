@@ -50,3 +50,37 @@ cards. Proof includes the inventory, enum parse/display/serde round trips,
 schema parity, editor allowed-value parity, Markdown import/render stability,
 invalid-value negatives, and a no-duplicate-work disposition for every audited
 field. The issue is complete only at an exact reviewed revision.
+## Owned Paths
+
+- `csdlc-v2/src/cards.rs`
+- `csdlc-v2/src/model.rs`
+- `csdlc-v2/src/schema.rs`
+- `csdlc-v2/tests/prompt_card_enum_typing.rs`
+- `.csdlc/evidence/5824`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-csdlc-card-internals-v1",
+    "paths": [
+      "csdlc-v2/src/cards.rs"
+    ],
+    "issues": [
+      5822,
+      5824
+    ],
+    "order": [
+      5822,
+      5824
+    ]
+  }
+]
+```

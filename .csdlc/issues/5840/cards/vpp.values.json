@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-20] Demo matrix, AEE proof, and proof coverage",
     "slug": "v0-92-wp-20-demo-matrix-aee-proof-and-proof-coverage",
     "version": "v0.92",
-    "generation": 22
+    "generation": 24
   },
   "status": "ready",
   "content": {
@@ -77,7 +77,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5840/design.md",
-      "design_digest": "9431c5b9ecbb320ef0b0e61b86d1b686c9ab7f5e9d0093c7a63126478c3bcf40",
+      "design_digest": "401d537577b2defef3a31a71b8933295d6a7880f549fd4d591ddaefa41387f49",
       "diagram_ref": ".csdlc/prepared/issues/5840/diagram.mmd",
       "diagram_digest": "57f3fcc1a7b7aac2e97794d4e761093a49874adc02355f69436b4811bb6538e2"
     }

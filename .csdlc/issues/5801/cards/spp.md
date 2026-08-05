@@ -16,7 +16,7 @@ Review the current topology, centralize deterministic path/PVF classification, d
 
 ## Plan
 
-Revision 10
+Revision 11
 
 ## Steps
 
@@ -86,7 +86,7 @@ Revision 10
 
 .csdlc/prepared/issues/5801/design.md
 
-Digest: b182f8d0bfc34dd38efb21e7b225e28961504bf532fd1fa436fafe7930b3a46a
+Digest: 4cdfecb24d801e921caab5c32f46c9ec23350195458b02b75e9848360ae6c18d
 
 ## Diagram
 

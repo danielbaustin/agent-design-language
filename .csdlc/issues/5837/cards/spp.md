@@ -16,7 +16,7 @@ After 5800/5820/5832/WP-18 gates, freeze one compatibility matrix, bind both exi
 
 ## Plan
 
-Revision 10
+Revision 11
 
 ## Steps
 
@@ -97,7 +97,7 @@ Revision 10
 
 .csdlc/prepared/issues/5837/design.md
 
-Digest: 95bc62818274a27ff835e01bd87c3c99fa807f0ad3bc3d95f823bcf00a6f34be
+Digest: 1d3852345f499a82f8dd3e3f1cf6812b20681a10f1a049035d2d9dd575c47b70
 
 ## Diagram
 

@@ -6,17 +6,52 @@ Define WP-13's bounded ACP profile in current Runtime v3 authority from `docs/mi
 
 ## Owned Paths
 
-The complete writable protected-path set is:
-
 - `adl-runtime-kernel/src/cognitive_profile.rs`
 - `adl-runtime-kernel/src/lib.rs`
 - `adl-runtime-kernel/tests/cognitive_profile.rs`
-- `adl-runtime-kernel/tests/fixtures/cognitive_profile/`
+- `adl-runtime-kernel/tests/fixtures/cognitive_profile`
 - `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md`
 - `.csdlc/prepared/issues/5830/validate-native-receipts.rb`
-- `.csdlc/evidence/5830/`
+- `.csdlc/evidence/5830`
 
-`adl-runtime-kernel/src/lib.rs` is limited to module registration. Existing Runtime v2 and retained evidence paths are read-only authorities. The profile contains ID/schema, identity and continuity bindings, allowed evidence refs, update reason/actor, privacy/redaction policy, projections, and explicit non-claims.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-birthday-kernel-registration-v1",
+    "paths": [
+      "adl-runtime-kernel/src/lib.rs"
+    ],
+    "issues": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ],
+    "order": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ]
+  }
+]
+```
 
 ## Contract
 

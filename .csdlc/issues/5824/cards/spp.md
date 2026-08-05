@@ -16,7 +16,7 @@ Audit current v2 restricted fields end to end, classify typed completion and ext
 
 ## Plan
 
-Revision 9
+Revision 10
 
 ## Steps
 
@@ -90,7 +90,7 @@ Revision 9
 
 .csdlc/prepared/issues/5824/design.md
 
-Digest: 2c34517219b7288fef539610b8d4be187058b759eeaa20f9d02a1ad45fa25e32
+Digest: 683765d53f82a487bd5f7bc760239da43dca6c552e10fc8a96ec5111543717c5
 
 ## Diagram
 

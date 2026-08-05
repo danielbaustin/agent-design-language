@@ -17,7 +17,7 @@ own repository reduction despite stale prose in the current proof-coverage row.
 - `docs/milestones/v0.91.6/features/AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md`
 - live `WP_ISSUE_WAVE_v0.92.yaml` and issue #5840 override the stale WP-20 reduction row.
 
-## Proposed Artifacts And Protected-Path Candidates
+## Owned Paths
 
 - `docs/milestones/v0.92/DEMO_MATRIX_v0.92.md`
 - `docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md`
@@ -25,7 +25,36 @@ own repository reduction despite stale prose in the current proof-coverage row.
 - `docs/milestones/v0.92/review/V092_DEMO_AEE_ARTIFACT_INDEX.md`
 - `adl/tools/validate_v092_demo_proof_coverage.py`
 - `adl/tools/test_v092_demo_proof_coverage.sh`
-- `.csdlc/evidence/5840/`
+- `.csdlc/evidence/5840`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-birthday-demo-matrix-v1",
+    "paths": [
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md"
+    ],
+    "issues": [
+      5834,
+      5836,
+      5840
+    ],
+    "order": [
+      5834,
+      5836,
+      5840
+    ]
+  }
+]
+```
 
 ## Coverage Model
 

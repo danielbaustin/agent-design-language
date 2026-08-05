@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d92e8e7b58695fd938ff38397f6cc6e3a2c3fda5ecb26fa32cb1d552e29f74f9",
   "phase": "bound",
-  "generation": 37,
-  "digest": "247d5455f8b7a71a755417b448454f10185a54b1193b2274f90d885e4efa12af",
+  "generation": 39,
+  "digest": "8c1e6c8a21cf282d1093650e853b0f1ce05bc5a71311f4663ee10be2dc5e5110",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5830/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-birthday-readiness-second-pass-review",
-      "revision": "51ef8fac075e02acbb22c88d673093f7d7fb6a4c8fc8f1f0cc50bbdf1ff44743"
+      "reviewer": "codex:5860-v092-ownership-design-review",
+      "revision": "fb2baa8e667f94ac4a4d7a45cf2f963eca132d757264de1765793548618391c2"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "3f31a42cbb1957cac6180590c831e5c07b794285f19f5151dd589f71f13edde3",
+      "values_digest": "b52c8ccc3a89a6bc7c8fe125a424c545890c134e1daee66b9393a3c5a2c91d69",
       "rendered_digest": "f693dd3d3ed034e3ffbaff3348331e986f4f5cc9ae5fce166acecd4f23918b30",
       "ast_digest": "3fd878ebfe7fe0596cb55885b39a06ca0f8b84f87406ef8b718c3f501ba84fa1"
     },
     "stp": {
-      "values_digest": "cc001b04749a818ea2cc47386f48b38c4a5c25240a00b0d5f42a54a503c80c4b",
+      "values_digest": "768cfbe5836036522bb822bb069a14c8e5f6da400e176854a28ffb591960234d",
       "rendered_digest": "90375b3e0de3e71c082e6867951969157e0ea98199c2d3b35a6cc2593993b753",
       "ast_digest": "e2f92e7ba905ab2a9fb711910619b7f1f12bc854663e82246002ba6212684ea4"
     },
     "spp": {
-      "values_digest": "23c7682e10066e031ae493a02d7ff3d9710a19c1187e63d3b43da7c26641b9b1",
-      "rendered_digest": "5c3faa63429a86c7b8cc31ca4c92971923e0ea4a720238e782410b3c21195ce6",
-      "ast_digest": "b7a328f62adb03ef5639c5de7aa4cd9d3d4f821177410bd4aaa9fcda5ccb6881"
+      "values_digest": "f2d00aa431f5202d70512945c2b7c48068af76adecef6a457e29c013a0e83f3d",
+      "rendered_digest": "00925f274e666bbfff09a6423b7401efd9cfaeb6ab2e18d773088aa277957342",
+      "ast_digest": "aecdd7860206835524bbd71527e000cc4b55d7805b98c5426b43adc7fbe9245b"
     },
     "vpp": {
-      "values_digest": "34717fc0ace9c5ea51732c7dc5ea710366974a04db89291a29685f09bfa1b00a",
+      "values_digest": "1db0fee2b9b6110cc9974360efe63746d271bf441a8a7a46050a6ddfaa580e84",
       "rendered_digest": "28d4d1157b06b1687d4cb2487e244db310cf7982594009695b82927f2803fc7c",
       "ast_digest": "de758d9a0e7073dc5f05d81c3c531ed3aca5a9a0f9b090b7fb97ea2fc434b015"
     },
     "srp": {
-      "values_digest": "42d4a01232d39cf99806ed8ff32c78fd9b4769fd64f7bf8b291dba95ce3e8df9",
+      "values_digest": "1c2f0986a29ae8dec013414bf9b0c4d8f2f2a389da39e1a3e790f49a2f4da6fa",
       "rendered_digest": "5cf1d14625cc5c42441e85503a8ba2347ee72f5b8a6c55327ebb7b4d02773ec8",
       "ast_digest": "a0c0d5d841942e9187eedd87886ba119301e1a7842960f3b8e41ca367ba925ca"
     },
     "sor": {
-      "values_digest": "8fda330499b874bf8ddbfe1985ce73b8b8bf64c4c170ca7fad55236c449edc75",
+      "values_digest": "4e6c7284554afbe252c1c3ec57af1636493842b6cbfb3785c1ebf69d159ea263",
       "rendered_digest": "8dbf031f6e2f727893acd7c4297a6e74d21ecc2bad913bb38629f4c172994b2e",
       "ast_digest": "80a35a095cda2e9920e7a586f841529fd4f683612c6d4f7f185bba3eddcdef26"
     }
@@ -405,6 +405,34 @@
       "actor": "codex:5860-birthday-readiness-second-pass",
       "reason": "Release the second-pass preparation claim after typed rendering and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5830-v092-birthday-second-pass\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-readiness-second-pass\",\"previous_owner\":\"codex:5860-birthday-readiness-second-pass\"}"
+    },
+    {
+      "sequence": 49,
+      "generation": 37,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Reacquire issue-local preparation authority to normalize exact owned paths and serialization gates without product implementation.",
+      "operation": "{\"branch\":\"codex/5860-v092-ownership-normalization\",\"claim_id\":\"claim-5830-v092-ownership-normalization\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-v092-ownership-normalization\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5830\",\".csdlc/prepared/issues/5830\",\".csdlc/evidence/5830\"],\"purpose\":\"Normalize issue 5830 design/card ownership only; no product implementation, GitHub mutation, wave/WBS mutation, or publication.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 50,
+      "generation": 38,
+      "actor": "codex:5860-v092-ownership-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 51,
+      "generation": 39,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Align the operative plan with exact owned paths and machine-readable serialization gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/cognitive_profile.rs\",\"adl-runtime-kernel/src/lib.rs\",\"adl-runtime-kernel/tests/cognitive_profile.rs\",\"adl-runtime-kernel/tests/fixtures/cognitive_profile\",\"docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md\",\".csdlc/prepared/issues/5830/validate-native-receipts.rb\",\".csdlc/evidence/5830\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-birthday-kernel-registration-v1\\\",\\\"paths\\\":[\\\"adl-runtime-kernel/src/lib.rs\\\"],\\\"issues\\\":[5825,5826,5827,5828,5829,5830,5831,5833],\\\"order\\\":[5825,5826,5827,5828,5829,5830,5831,5833]}\"]}"
+    },
+    {
+      "sequence": 52,
+      "generation": 39,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
+      "operation": "{\"claim_id\":\"claim-5830-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
     }
   ]
 }

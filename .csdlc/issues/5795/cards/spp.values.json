@@ -7,13 +7,13 @@
     "title": "[v0.92][runtime][shepherd] Pull local Gemma/MLX Shepherd MVP forward",
     "slug": "v0-92-local-gemma-mlx-shepherd-mvp",
     "version": "v0.92",
-    "generation": 27
+    "generation": 29
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 10,
+      "plan_revision": 11,
       "summary": "After 5800/5820 and stable 5832 contracts, narrow the governed operation and consumer files, add an explicit bounded local MLX adapter and truthful execution classification, preserve Runtime usability on all failures, then prove deterministic negatives, one real model round trip, browser correlation, and exact-head review.",
       "steps": [
         {
@@ -97,7 +97,7 @@
         "Runtime provider-adapter ownership moves before implementation"
       ],
       "design_ref": ".csdlc/prepared/issues/5795/design.md",
-      "design_digest": "51ef81da78702fb9b867a93ffa7f532edc2312d12ccbc472af40bea82a5124e0",
+      "design_digest": "61f97abdaa3054ef846c6473ec503e70213950e96392884aa4d3d08fe881e48a",
       "diagram_ref": ".csdlc/prepared/issues/5795/diagram.mmd",
       "diagram_digest": "7db206956bb1d4ac5d32aae7445ca356c16a90e7d8cc28bb40054e448880a2dd"
     }

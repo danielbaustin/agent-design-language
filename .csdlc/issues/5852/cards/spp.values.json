@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-30] Release ceremony",
     "slug": "v0-92-wp-30-release-ceremony",
     "version": "v0.92",
-    "generation": 10
+    "generation": 12
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 4,
+      "plan_revision": 5,
       "summary": "Verify WP-29 and all terminal gates, assemble evidence-linked final release artifacts, dry-run and review the ceremony, then at the exact merged commit create/push tag, publish/verify release, recover partial state idempotently, and close typed issue/sprint/milestone truth.",
       "steps": [
         {
@@ -61,10 +61,12 @@
         }
       ],
       "affected_areas": [
-        "docs/milestones/v0.92/RELEASE_NOTES_v0.92.md, RELEASE_PLAN_v0.92.md, MILESTONE_CHECKLIST_v0.92.md, and NEXT_MILESTONE_HANDOFF_v0.92.md",
+        "docs/milestones/v0.92/RELEASE_NOTES_v0.92.md",
+        "docs/milestones/v0.92/RELEASE_PLAN_v0.92.md",
+        "docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md",
         "docs/milestones/v0.92/V092_RELEASE_CEREMONY_5852.md",
-        "adl/tools/release_ceremony.sh and test_release_ceremony.sh only for a separately reviewed preflight defect",
-        ".csdlc/evidence/5852 plus live tag/release/issue/sprint state"
+        ".csdlc/evidence/5852",
+        ".csdlc/prepared/issues/5852/validate-release-evidence.rb"
       ],
       "invariants": [
         "No tracked work on main",
@@ -88,7 +90,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5852/design.md",
-      "design_digest": "3696cdb26e650c90119f8a46b4f0f7360eafad8693222ea73183b97bd00bd014",
+      "design_digest": "1b7d9aad8a3a3bd3156964f210ae13c9d80fe55d63d0c33541471cf41d93d2cb",
       "diagram_ref": ".csdlc/prepared/issues/5852/diagram.mmd",
       "diagram_digest": "6457d352e4b029f960adb90912d556e38a0a16ac88e9c3712435b72c47bcc647"
     }

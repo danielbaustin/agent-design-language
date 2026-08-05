@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-19] Birthday-to-governance handoff",
     "slug": "v0-92-wp-19-birthday-to-governance-handoff",
     "version": "v0.92",
-    "generation": 22
+    "generation": 24
   },
   "status": "ready",
   "content": {
@@ -77,7 +77,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5839/design.md",
-      "design_digest": "b458e4655affeb638620def0d4bec90af11e6104158d5d4e3dd4efcd080c0e00",
+      "design_digest": "f39a2a1ce50ea4d83618c7d0601e3934c3db1d68b13cfeba723688e3219d203c",
       "diagram_ref": ".csdlc/prepared/issues/5839/diagram.mmd",
       "diagram_digest": "6b99d2a8f3fe9e3cb9e6d79e173dbf3833884262ae15d3fe86cc4bce9568d699"
     }

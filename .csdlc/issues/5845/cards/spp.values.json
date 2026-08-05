@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-24A] Podcast Studio first ten episodes",
     "slug": "v0-92-wp-24a-podcast-studio-first-ten-episodes",
     "version": "v0.92",
-    "generation": 28
+    "generation": 32
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 13,
+      "plan_revision": 15,
       "summary": "Run ten bounded episode waves budgeted at 8 hours and 70,000 tokens each (80 agent-hours and 700,000 tokens aggregate), covering source/script work, audio production, transcript/show notes/artwork/metadata, listen review, revisions, validation, feed-wide consistency, and platform playback; five parallel owners target 20-30 hours wall-clock and stop before deployment or publication.",
       "steps": [
         {
@@ -74,8 +74,16 @@
         }
       ],
       "affected_areas": [
-        "demos/podcast/episodes/001-meet-the-ai-coworkers/ through demos/podcast/episodes/010-what-does-a-weekly-ai-studio-look-like/",
-        "demos/podcast/audio/",
+        "demos/podcast/episodes/001-meet-the-ai-coworkers",
+        "demos/podcast/episodes/002-can-an-ai-be-a-good-teammate",
+        "demos/podcast/episodes/003-the-promise-and-weirdness-of-talking-to-machines",
+        "demos/podcast/episodes/004-what-should-we-let-ai-do-for-us",
+        "demos/podcast/episodes/005-can-ai-help-us-think-better",
+        "demos/podcast/episodes/006-the-new-creative-room",
+        "demos/podcast/episodes/007-trust-receipts-and-proof",
+        "demos/podcast/episodes/008-local-ai-vs-cloud-ai",
+        "demos/podcast/episodes/009-when-ai-gets-stuck",
+        "demos/podcast/episodes/010-what-does-a-weekly-ai-studio-look-like",
         "demos/podcast/feed.xml",
         "demos/podcast/LAUNCH_READINESS.md",
         "adl/tools/generate_podcast_launch_packet.py",
@@ -84,7 +92,9 @@
         "adl/tools/record_podcast_native_playback.sh",
         "adl/tools/record_podcast_browser_playback.mjs",
         "adl/tools/record_podcast_ios_safari_playback.sh",
-        ".csdlc/evidence/5845/"
+        ".csdlc/prepared/issues/5845/validate-platform-playback-receipts.rb",
+        ".csdlc/prepared/issues/5845/validate-second-pass-readiness.rb",
+        ".csdlc/evidence/5845"
       ],
       "invariants": [
         "Every final audio digest matches its manifest and enclosure",
@@ -116,7 +126,7 @@
         "Feed, audio, artwork, or repository-size policy changes"
       ],
       "design_ref": ".csdlc/prepared/issues/5845/design.md",
-      "design_digest": "c1be7df6e178d82e31cb10783e47ac9e7096db34f2aff79ea4e068408cf92553",
+      "design_digest": "00b84250de2974fd61befd1b2b122a7c749a17fb7615e4f2c8ec19e00dfe264a",
       "diagram_ref": ".csdlc/prepared/issues/5845/diagram.mmd",
       "diagram_digest": "f93e767ad01814319f03d67e71121eeca0bbbaf725dbabb2e0997aaf7f37ccce"
     }

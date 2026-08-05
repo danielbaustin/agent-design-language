@@ -43,7 +43,7 @@ does not hold signing keys, launch providers, or gain direct filesystem/model
 authority. Provider failure returns a bounded error and leaves Runtime and the
 public read stream usable.
 
-## Exclusive Owned Paths
+## Owned Paths
 
 - `adl-runtime-kernel/src/shepherd.rs`
 - `adl-runtime-kernel/tests/shepherd.rs`
@@ -51,10 +51,10 @@ public read stream usable.
 - `demos/html-observatory/index.html`
 - `adl/tools/validate_v092_shepherd_browser_roundtrip.mjs`
 
-Issue 5795 owns exactly these paths. Runtime admission and ACIP/WSS modules are
-read-only dependencies owned by #5832; the common Observatory transport in
-`demos/html-observatory/app.js` is owned by #5837. Integration stops if the
-stable interfaces cannot support this slice without widening ownership.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Invariants And Failure Semantics
 

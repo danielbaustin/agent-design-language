@@ -49,7 +49,7 @@ and replay identity before dispatch. Backpressure, cancellation, reconnect,
 and error frames are bounded and observable. No browser token appears in URLs,
 logs, fixtures, or committed artifacts.
 
-## Exclusive Owned Paths
+## Owned Paths
 
 - `adl-runtime/src/acip.rs`
 - `adl-runtime/src/runtime_api_auth.rs`
@@ -62,9 +62,10 @@ logs, fixtures, or committed artifacts.
 - `adl/tools/validate_v092_acip_wss.sh`
 - `adl/tools/validate_v092_acip_native_receipts.rb`
 
-Issue 5832 owns exactly these paths. It reads the integrated distributed
-projection produced by WP-04-IMP #5862 but does not edit any distributed child
-path. Consumer files remain owned by #5795 and #5837.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Invariants And Failure Semantics
 

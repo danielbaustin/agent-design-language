@@ -18,15 +18,24 @@ gated by #5843 and operator publication authority.
 
 ## Owned Paths
 
-- `docs/milestones/v0.92/publication/articles/01-what-is-adl/` through `10-whats-next-for-adl/`
+- `docs/milestones/v0.92/publication/articles/01-what-is-adl`
+- `docs/milestones/v0.92/publication/articles/02-adl-runtime-and-cognitive-spacetime-model`
+- `docs/milestones/v0.92/publication/articles/03-godel-agents-and-godel-hadamard-bayes-algorithm`
+- `docs/milestones/v0.92/publication/articles/04-the-freedom-gate`
+- `docs/milestones/v0.92/publication/articles/05-uts-and-acc-making-agents-with-tools-safe`
+- `docs/milestones/v0.92/publication/articles/06-codefriend-and-the-cognitive-sdlc`
+- `docs/milestones/v0.92/publication/articles/07-continuous-adversarial-verification-for-continuous-security`
+- `docs/milestones/v0.92/publication/articles/08-agent-economics`
+- `docs/milestones/v0.92/publication/articles/09-adl-and-social-intelligence`
+- `docs/milestones/v0.92/publication/articles/10-whats-next-for-adl`
 - `docs/milestones/v0.92/publication/articles/SERIES_ARC_AND_CLAIM_MATRIX.md`
 - `docs/milestones/v0.92/publication/articles/PUBLICATION_DISPOSITION.md`
-- `.csdlc/evidence/5844/`
+- `.csdlc/evidence/5844`
 
-Each article directory contains `source-packet.md`, `article.md`, and
-`editorial-review.md`. The implementation session must claim individual
-article directories or the exact common root after confirming no concurrent
-author owns it.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Canonical Series
 

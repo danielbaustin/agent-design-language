@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-03] Runtime launch and resilience consolidation",
     "slug": "v0-92-wp-03-runtime-launch-and-resilience-consolidation",
     "version": "v0.92",
-    "generation": 30
+    "generation": 32
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 11,
+      "plan_revision": 12,
       "summary": "Audit the current Guardian/kernel/init split and active Runtime collisions, freeze one authoritative init schema, consolidate process ownership and bounded lifecycle behavior, prove dependency degradation cannot kill the kernel, then run real restart/state/API/log/platform proof before exact-head review.",
       "steps": [
         {
@@ -108,7 +108,7 @@
         "Focused proof reveals more than one production launch path remains"
       ],
       "design_ref": ".csdlc/prepared/issues/5820/design.md",
-      "design_digest": "32e9dafdd48e5519c49fd44d7d894c26ca903f76bca040116ca7cedb78ad50d9",
+      "design_digest": "b9838dcfa3966a4f8e3bb7482ef7762db50b7ceafbf1d9f0684227e734fd6200",
       "diagram_ref": ".csdlc/prepared/issues/5820/diagram.mmd",
       "diagram_digest": "c3c9d67b221cc5f5967cbdb03ad51c66980f9e1920c1b2e069a308dbb1183b31"
     }

@@ -16,7 +16,7 @@ Change only the two defaults, run focused behavior and lint proof, review the ex
 
 ## Plan
 
-Revision 6
+Revision 7
 
 ## Steps
 
@@ -80,7 +80,7 @@ Revision 6
 
 .csdlc/prepared/issues/5812/design.md
 
-Digest: 958d2ad7889790c03707b29413730f7902cbea3a044ae5cb5005d59aec5d701c
+Digest: ab7465c7e7d322f5b536bebffcc5c56f1e44dfc9d80340ce30c00dd91c90d5d1
 
 ## Diagram
 

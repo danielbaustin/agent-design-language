@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-03] Runtime launch and resilience consolidation",
     "slug": "v0-92-wp-03-runtime-launch-and-resilience-consolidation",
     "version": "v0.92",
-    "generation": 30
+    "generation": 32
   },
   "status": "ready",
   "content": {
@@ -105,7 +105,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5820/design.md",
-      "design_digest": "32e9dafdd48e5519c49fd44d7d894c26ca903f76bca040116ca7cedb78ad50d9",
+      "design_digest": "b9838dcfa3966a4f8e3bb7482ef7762db50b7ceafbf1d9f0684227e734fd6200",
       "diagram_ref": ".csdlc/prepared/issues/5820/diagram.mmd",
       "diagram_digest": "c3c9d67b221cc5f5967cbdb03ad51c66980f9e1920c1b2e069a308dbb1183b31"
     }

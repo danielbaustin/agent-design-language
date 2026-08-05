@@ -16,7 +16,7 @@ Implement and prove WP-13A's evaluation-to-policy-to-graph DAG, including accept
 
 ## Plan
 
-Revision 15
+Revision 16
 
 ## Steps
 
@@ -89,7 +89,7 @@ Revision 15
 
 .csdlc/prepared/issues/5831/design.md
 
-Digest: 54a449d526b1b0394db6fb9998a1c7b8100e5a58a26a68cf93bb657bab232a66
+Digest: af3c40d75a9003d7a4de354b771c18a954844573ef1a05f037f61dd2f21fa8e9
 
 ## Diagram
 

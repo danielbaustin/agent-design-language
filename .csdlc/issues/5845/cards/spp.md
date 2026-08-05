@@ -16,7 +16,7 @@ Run ten bounded episode waves budgeted at 8 hours and 70,000 tokens each (80 age
 
 ## Plan
 
-Revision 13
+Revision 15
 
 ## Steps
 
@@ -106,7 +106,7 @@ Revision 13
 
 .csdlc/prepared/issues/5845/design.md
 
-Digest: c1be7df6e178d82e31cb10783e47ac9e7096db34f2aff79ea4e068408cf92553
+Digest: 00b84250de2974fd61befd1b2b122a7c749a17fb7615e4f2c8ec19e00dfe264a
 
 ## Diagram
 

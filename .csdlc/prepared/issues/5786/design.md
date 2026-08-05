@@ -41,28 +41,15 @@ or a reduced build graph without net incumbent deletion is not completion.
 6. Publish before/after counts, retained exceptions, replacement owners, and
    an independently reviewed final manifest.
 
-## Protected-Path Candidates
-
-- `adl/src` only after the inventory narrows deletion bands to exact files
-- `adl/Cargo.toml` and `adl/Cargo.lock` only when removed source changes them
-- `adl-v2`, `adl-runtime-kernel`, and `csdlc-v2` only for proven capability gaps
-- `.github/workflows`, `adl/tools`, active install/docs/demo references only
-  when a deleted owner is still named there
-- `.csdlc/evidence/5786` for inventory, denominator, parity, and review proof
-
-The implementation claim must enumerate exact files; these candidate roots do
-not authorize a broad repository claim.
-
 ## Owned Paths
 
-- `.csdlc/evidence/5786/deletion-manifest.json`
-- `.csdlc/evidence/5786/repository-denominator.json`
-- `.csdlc/evidence/5786/platform-proof.json`
-- `.csdlc/evidence/5786/stale-reference-report.json`
+- `.csdlc/evidence/5786`
 - `.csdlc/prepared/issues/5786/validate-reduction.rb`
 
-Product paths are not owned until the exhaustive denominator selects exact
-files and the execution claim is amended to list them individually.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Validation And Failure Policy
 

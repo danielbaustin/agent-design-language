@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-04.14] Rollback, recovery, and relocation failure",
     "slug": "v0-92-wp-04-14-rollback-recovery-relocation",
     "version": "v0.92",
-    "generation": 0
+    "generation": 2
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
+      "plan_revision": 2,
       "summary": "Verify gates, implement the exclusive slice, run exact proving tests and negatives, validate rollback, resolve review, and close through child authority.",
       "steps": [
         {
@@ -53,7 +53,10 @@
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "adl-runtime/src/distributed/recovery.rs",
+        "adl-runtime/tests/distributed_recovery.rs"
+      ],
       "invariants": [
         "Exclusive paths remain disjoint",
         "Guardian stays process 0",
@@ -81,7 +84,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5876/design.md",
-      "design_digest": "59a38d720b5212647d20d686ca4f67837f834e12942ee77cddb9988542574a2b",
+      "design_digest": "20026e624282b76fb7cf5b03b1d5322ddecd61a355bbccce23b32c26f4aaa014",
       "diagram_ref": ".csdlc/prepared/issues/5876/diagram.mmd",
       "diagram_digest": "f14e247760f9faddb6e77001751c05c08c67b6879c04b2ede6a34e177ec688e9"
     }

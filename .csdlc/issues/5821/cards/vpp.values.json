@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04] Distributed Guardian/polis runtime",
     "slug": "v0-92-wp-04-distributed-guardian-polis-runtime",
     "version": "v0.92",
-    "generation": 50
+    "generation": 52
   },
   "status": "ready",
   "content": {
@@ -60,7 +60,7 @@
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5821/design.md",
-      "design_digest": "47b07e77bc1525fd28a0a4a98bd1787298a0bda9a4fca052d56a46813145e7c2",
+      "design_digest": "9bbf1f0268fdbd6023c1789ae934feec6020b5705658368ee4547cc8c46d55cd",
       "diagram_ref": ".csdlc/prepared/issues/5821/diagram.mmd",
       "diagram_digest": "2a57bd6f3950517bf9f5b6a5b2401c178e2b7bf15b382a271dafab50d000a77a"
     }

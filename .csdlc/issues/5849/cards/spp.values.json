@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-28] Next milestone planning",
     "slug": "v0-92-wp-28-next-milestone-planning",
     "version": "v0.92",
-    "generation": 10
+    "generation": 12
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 4,
+      "plan_revision": 5,
       "summary": "Consume terminal remediation, inventory the v0.93 candidate corpus, map every prerequisite to exact evidence/blocker/owner/non-claim, reconcile decision-ready candidate planning, validate dependencies and claim boundaries, and hand the reviewed packet to WP-28A.",
       "steps": [
         {
@@ -63,9 +63,9 @@
       ],
       "affected_areas": [
         "docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md",
-        "Exact inventoried candidate files under docs/milestones/v0.93",
         "docs/reviews/v0.92/next-milestone-planning-5849",
-        ".csdlc/evidence/5849"
+        ".csdlc/evidence/5849",
+        ".csdlc/prepared/issues/5849/validate-handoff.rb"
       ],
       "invariants": [
         "No tracked work on main",
@@ -89,7 +89,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5849/design.md",
-      "design_digest": "6fce991f1f886059ad4b71c6ebe842405e16d38cacd9b99385916b8cc6bf0d8e",
+      "design_digest": "ab486207a4471bec9cfc204ef26e452dc3a6c41605880f01db8bf84a0913fa68",
       "diagram_ref": ".csdlc/prepared/issues/5849/diagram.mmd",
       "diagram_digest": "71c4234b11ef676b8124bc3a101e7670f42ee734598fb52da48405843f96b070"
     }

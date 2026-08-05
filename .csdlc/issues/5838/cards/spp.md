@@ -16,7 +16,7 @@ Verify #5832, #5834, and #5836; select two real independently configured provide
 
 ## Plan
 
-Revision 8
+Revision 9
 
 ## Steps
 
@@ -92,7 +92,7 @@ Revision 8
 
 .csdlc/prepared/issues/5838/design.md
 
-Digest: 9edd5d793d7fb009b2b655fb774846175ed5c156159bf964921ada07082264f5
+Digest: c5bd59187f5f6cb350285cb74249a5c4bce79cba018b8387917fb18c8a3325c4
 
 ## Diagram
 

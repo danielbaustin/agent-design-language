@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-06] Remote validation/build runner",
     "slug": "v0-92-wp-06-remote-validation-build-runner",
     "version": "v0.92",
-    "generation": 17
+    "generation": 19
   },
   "status": "ready",
   "content": {
@@ -121,7 +121,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5823/design.md",
-      "design_digest": "cc489f7e9478bae98ddaec1e41354153478b6c960dc3aea01e22ef69c2076e1f",
+      "design_digest": "632fd39231ba5046dff28b107e5903f65e4406f77d0a20f4e6ea5a36e19c17be",
       "diagram_ref": ".csdlc/prepared/issues/5823/diagram.mmd",
       "diagram_digest": "24b36a7dc64ffb0ae6f13c33c638f96389ffb5b4711ac2e8027a2606508b73ca"
     }

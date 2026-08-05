@@ -41,16 +41,52 @@ and v0.93 claims retain the milestone non-claim boundaries.
 6. Run bounded exact-head docs review and leave WP-24/WP-24A publication
    artifacts and WP-25 review execution to their owners.
 
-## Protected-Path Candidates
+## Owned Paths
 
-- `README.md` and `CHANGELOG.md` only where v0.92 canonical truth requires it
-- `docs/milestones/v0.92` excluding historical immutable evidence
-- active feature-list, skill, and nested `AGENTS.md` files found by inventory
+- `README.md`
+- `docs/README.md`
+- `docs/planning/ADL_FEATURE_LIST.md`
+- `AGENTS.md`
+- `REVIEW.md`
+- `docs/milestones/v0.92/README.md`
+- `docs/milestones/v0.92/VISION_v0.92.md`
+- `docs/milestones/v0.92/DESIGN_v0.92.md`
+- `docs/milestones/v0.92/DECISIONS_v0.92.md`
+- `docs/milestones/v0.92/SPRINT_v0.92.md`
 - `docs/reviews/v0.92/docs-release-truth-5843`
 - `.csdlc/evidence/5843`
+- `.csdlc/prepared/issues/5843/validate-doc-release-truth.rb`
 
-The implementation claim must list the exact inventory result. It must not
-claim all documentation or any product source root.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-docs-activation-final-truth-v1",
+    "paths": [
+      "README.md",
+      "docs/README.md",
+      "docs/planning/ADL_FEATURE_LIST.md",
+      "AGENTS.md",
+      "REVIEW.md"
+    ],
+    "issues": [
+      5818,
+      5843
+    ],
+    "order": [
+      5818,
+      5843
+    ]
+  }
+]
+```
 
 ## Validation And Failure Policy
 

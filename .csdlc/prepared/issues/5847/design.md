@@ -39,15 +39,17 @@ review is a valid outcome; only an actual received report proves review occurred
 6. Retain the received report verbatim where permitted, create the findings
    index, and hand every actionable item to WP-27.
 
-## Protected-Path Candidates
+## Owned Paths
 
-- `REVIEW.md` only if it remains the active external-review entrypoint
 - `docs/milestones/v0.92/review/THIRD_PARTY_REVIEW_HANDOFF_v0.92.md`
 - `docs/reviews/v0.92/external-review-5847`
 - `.csdlc/evidence/5847`
+- `.csdlc/prepared/issues/5847/validate-external-review.rb`
 
-Reviewed implementation/docs paths remain read-only. Reviewer output is never
-silently edited to make the result more favorable.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Validation And Failure Policy
 

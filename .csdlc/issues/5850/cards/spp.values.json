@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-28A] Next-milestone closeout plan",
     "slug": "v0-92-wp-28a-next-milestone-closeout-plan",
     "version": "v0.92",
-    "generation": 10
+    "generation": 12
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 4,
+      "plan_revision": 5,
       "summary": "Freeze the full v0.92 universe, reconcile live and typed terminal truth, classify each row with one owner/action, build an acyclic retry-safe PR-to-ceremony sequence, test stale/dirty/missing/partial cases, and exact-head review the plan.",
       "steps": [
         {
@@ -59,9 +59,9 @@
         }
       ],
       "affected_areas": [
-        ".csdlc/evidence/5850/issue-universe.json",
-        ".csdlc/evidence/5850/closeout-plan.md",
-        "docs/milestones/v0.92/V092_TERMINAL_CLOSEOUT_PLAN_5850.md"
+        "docs/milestones/v0.92/V092_TERMINAL_CLOSEOUT_PLAN_5850.md",
+        ".csdlc/evidence/5850",
+        ".csdlc/prepared/issues/5850/validate-closeout-plan.rb"
       ],
       "invariants": [
         "No tracked work on main",
@@ -85,7 +85,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5850/design.md",
-      "design_digest": "00cc6a8f66cc35db3bf44b183e35bd969379fff600118ac1cfb0f667c9b7c3cc",
+      "design_digest": "5772b7a0159c68a1b78abf7efdb75f022bc7d320ec7a302c15267d6f751d076d",
       "diagram_ref": ".csdlc/prepared/issues/5850/diagram.mmd",
       "diagram_digest": "ce44b443126a9cf4b3cc12290861a6bae0cd0d02289d05af13909228de637435"
     }

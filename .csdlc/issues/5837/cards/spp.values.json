@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-18A] Observatory/Unity consumer integration",
     "slug": "v0-92-wp-18a-observatory-unity-consumer-integration",
     "version": "v0.92",
-    "generation": 27
+    "generation": 29
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 10,
+      "plan_revision": 11,
       "summary": "After 5800/5820/5832/WP-18 gates, freeze one compatibility matrix, bind both existing clients to the same redacted HTTP/WSS contract, implement authenticated control and bounded reconnect/failure behavior without UI redesign, then prove real browser and Unity interactions, restart recovery, redaction/refusal, platform limits, and exact-head review.",
       "steps": [
         {
@@ -106,7 +106,7 @@
         "Redaction review changes audience projection rules"
       ],
       "design_ref": ".csdlc/prepared/issues/5837/design.md",
-      "design_digest": "95bc62818274a27ff835e01bd87c3c99fa807f0ad3bc3d95f823bcf00a6f34be",
+      "design_digest": "1d3852345f499a82f8dd3e3f1cf6812b20681a10f1a049035d2d9dd575c47b70",
       "diagram_ref": ".csdlc/prepared/issues/5837/diagram.mmd",
       "diagram_digest": "2735fcc45f0da9aacd9372d8bc46663117662848e7775310da12795fa0824105"
     }

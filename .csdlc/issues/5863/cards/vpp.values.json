@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.01] Node identity and authenticated enrollment",
     "slug": "v0-92-wp-04-01-node-identity-enrollment",
     "version": "v0.92",
-    "generation": 0
+    "generation": 2
   },
   "status": "ready",
   "content": {
@@ -66,7 +66,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on stale dependencies, path overlap, zero tests, invalid evidence, insecure fallback, or unresolved review findings.",
       "design_ref": ".csdlc/prepared/issues/5863/design.md",
-      "design_digest": "3719259d6c96f929fd50e9688907943c48e78a1e219faf91c815ca4bf483abb8",
+      "design_digest": "d297c56e4e2ee938bf539f50756eb13de9f1607f175ead272426fb6559a016e3",
       "diagram_ref": ".csdlc/prepared/issues/5863/diagram.mmd",
       "diagram_digest": "076369d31c36cbebb1b4cbe85060e4fe374166ac504a40cb37adfd56c0624ec8"
     }

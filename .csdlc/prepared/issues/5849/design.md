@@ -39,26 +39,17 @@ candidate/planned boundary. It does not open issues or start v0.93 execution.
 6. Obtain exact-head review and hand the packet to WP-28A for terminal-sequence
    planning.
 
-## Protected-Path Candidates
-
-- `docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md`
-- exact candidate files under `docs/milestones/v0.93` identified by inventory
-- `docs/reviews/v0.92/next-milestone-planning-5849`
-- `.csdlc/evidence/5849`
-
-No GitHub issue wave, product source, or shared milestone status is mutated
-without separate authority.
-
 ## Owned Paths
 
 - `docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md`
 - `docs/reviews/v0.92/next-milestone-planning-5849`
-- `.csdlc/evidence/5849/v093-prerequisite-map.json`
-- `.csdlc/evidence/5849/claim-boundary-scan.json`
+- `.csdlc/evidence/5849`
 - `.csdlc/prepared/issues/5849/validate-handoff.rb`
 
-The `docs/milestones/v0.93` candidate corpus is read-only input unless an
-exact candidate file is separately added to the execution claim.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Validation And Failure Policy
 

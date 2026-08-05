@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-07] Prompt-card enum typing",
     "slug": "v0-92-wp-07-prompt-card-enum-typing",
     "version": "v0.92",
-    "generation": 17
+    "generation": 19
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 9,
+      "plan_revision": 10,
       "summary": "Audit current v2 restricted fields end to end, classify typed completion and extensibility, implement only the smallest proven finite gap, preserve durable strings, and prove schema/editor/validator/Markdown round-trip parity and invalid-value rejection.",
       "steps": [
         {
@@ -57,12 +57,12 @@
         }
       ],
       "affected_areas": [
-        "C-SDLC v2 card and lifecycle enums",
-        "Semantic editor operation and field ownership types",
-        "Public JSON schema bundle",
-        "Markdown AST import and deterministic rendering",
-        "Gate 2 typed round-trip and invalid-value tests",
-        "Issue-local enum inventory and no-duplicate-work report"
+        "csdlc-v2/src/cards.rs",
+        "csdlc-v2/src/model.rs",
+        "csdlc-v2/src/schema.rs",
+        "csdlc-v2/tests/prompt_card_enum_typing.rs",
+        ".csdlc/evidence/5824",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-csdlc-card-internals-v1\",\"paths\":[\"csdlc-v2/src/cards.rs\"],\"issues\":[5822,5824],\"order\":[5822,5824]}"
       ],
       "invariants": [
         "Durable card values remain canonical strings",
@@ -97,7 +97,7 @@
         "Legacy aliases require an explicit versioned compatibility policy"
       ],
       "design_ref": ".csdlc/prepared/issues/5824/design.md",
-      "design_digest": "2c34517219b7288fef539610b8d4be187058b759eeaa20f9d02a1ad45fa25e32",
+      "design_digest": "683765d53f82a487bd5f7bc760239da43dca6c552e10fc8a96ec5111543717c5",
       "diagram_ref": ".csdlc/prepared/issues/5824/diagram.mmd",
       "diagram_digest": "5846fe328a23646041deee2956de2d777e77a496fc82d707f3976361df4c5249"
     }

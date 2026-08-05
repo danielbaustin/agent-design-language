@@ -6,17 +6,52 @@ Define the deterministic WP-08 birth decision consumed by the Birthday sprint. T
 
 ## Owned Paths
 
-The complete writable protected-path set is:
-
 - `adl-runtime-kernel/src/birthday.rs`
 - `adl-runtime-kernel/src/lib.rs`
 - `adl-runtime-kernel/tests/birthday.rs`
-- `adl-runtime-kernel/tests/fixtures/birthday/`
+- `adl-runtime-kernel/tests/fixtures/birthday`
 - `docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md`
 - `.csdlc/prepared/issues/5825/validate-native-receipts.rb`
-- `.csdlc/evidence/5825/`
+- `.csdlc/evidence/5825`
 
-`adl-runtime-kernel/src/lib.rs` is limited to module registration. No source input, retained evidence, or `adl/src/runtime_v2/` path is writable under this issue.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-birthday-kernel-registration-v1",
+    "paths": [
+      "adl-runtime-kernel/src/lib.rs"
+    ],
+    "issues": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ],
+    "order": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ]
+  }
+]
+```
 
 ## Contract
 

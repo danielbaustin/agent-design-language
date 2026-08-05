@@ -6,17 +6,67 @@ Define WP-12's birthday-consumable provider, model, tool, skill, authority, and 
 
 ## Owned Paths
 
-The complete writable protected-path set is:
-
 - `adl-runtime-kernel/src/capability_envelope.rs`
 - `adl-runtime-kernel/src/lib.rs`
 - `adl-runtime-kernel/tests/capability_envelope.rs`
-- `adl-runtime-kernel/tests/fixtures/capability_envelope/`
+- `adl-runtime-kernel/tests/fixtures/capability_envelope`
 - `docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`
 - `.csdlc/prepared/issues/5829/validate-native-receipts.rb`
-- `.csdlc/evidence/5829/`
+- `.csdlc/evidence/5829`
 
-Provider inventory and #4761 evidence are read-only input authorities. WP-12 may develop its nonshared paths in parallel with WP-11, but it must not claim or edit `adl-runtime-kernel/src/lib.rs` until WP-11/#5828 has landed and released that path; its registration edit is then a one-line serialized step.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-birthday-kernel-registration-v1",
+    "paths": [
+      "adl-runtime-kernel/src/lib.rs"
+    ],
+    "issues": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ],
+    "order": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-memory-capability-witness-feature-doc-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md"
+    ],
+    "issues": [
+      5829,
+      5833
+    ],
+    "order": [
+      5829,
+      5833
+    ]
+  }
+]
+```
 
 ## Contract
 

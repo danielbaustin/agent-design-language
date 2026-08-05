@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-27] Review findings remediation",
     "slug": "v0-92-wp-27-review-findings-remediation",
     "version": "v0.92",
-    "generation": 11
+    "generation": 13
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 4,
+      "plan_revision": 5,
       "summary": "Freeze the complete review-finding universe, preserve provenance while deduplicating true duplicates, assign exact owner-aligned fix slices, validate and review each fix, reconcile exact PR/merge/quality-gate truth, and block downstream planning until every actionable item is proven.",
       "steps": [
         {
@@ -63,9 +63,9 @@
         }
       ],
       "affected_areas": [
-        "docs/reviews/v0.92/remediation-5848 and .csdlc/evidence/5848",
-        "Exact implementation, test, docs, or workflow files assigned by the frozen finding-to-owner map",
-        "Exact release-facing docs whose claims change after a proven fix"
+        "docs/reviews/v0.92/remediation-5848",
+        ".csdlc/evidence/5848",
+        ".csdlc/prepared/issues/5848/validate-remediation-regressions.rb"
       ],
       "invariants": [
         "No tracked work on main",
@@ -89,7 +89,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5848/design.md",
-      "design_digest": "944dcee75e5a461f7be1e555f804755f786022ac8c28d0bde4eb88c15e1a46e3",
+      "design_digest": "7e9a76d8e112db28949f0a751b367196ec048b80e4e104c723f22fccc528bba8",
       "diagram_ref": ".csdlc/prepared/issues/5848/diagram.mmd",
       "diagram_digest": "bbd55a23ecab369dc5724109636f2fa3e89c73129f97ce62f2d8b3ee87b0df77"
     }

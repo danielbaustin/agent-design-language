@@ -30,13 +30,14 @@ a child on the child's behalf.
 
 ## Owned Paths
 
-- `.csdlc/issues/5862/`
-- `.csdlc/prepared/issues/5862/`
-- `.csdlc/evidence/5862/`
+- `.csdlc/issues/5862`
+- `.csdlc/prepared/issues/5862`
+- `.csdlc/evidence/5862`
 
-No `adl-runtime/`, `adl-runtime-kernel/`, `adl/tools/`, or API schema path is
-owned by the umbrella. WP-04.16 owns final module registration and product
-integration paths.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Scheduling And Integration
 

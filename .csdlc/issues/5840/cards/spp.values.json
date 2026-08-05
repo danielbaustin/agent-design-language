@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-20] Demo matrix, AEE proof, and proof coverage",
     "slug": "v0-92-wp-20-demo-matrix-aee-proof-and-proof-coverage",
     "version": "v0.92",
-    "generation": 22
+    "generation": 24
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 9,
       "summary": "Verify dependency revisions; correct stale WP-20 ownership while preserving WP-21/WP-21A; replace candidate rows only with accepted exact-revision evidence; build the AEE artifact index; add fail-closed coverage validation; resolve exact-head review.",
       "steps": [
         {
@@ -66,7 +66,8 @@
         "docs/milestones/v0.92/review/V092_DEMO_AEE_ARTIFACT_INDEX.md",
         "adl/tools/validate_v092_demo_proof_coverage.py",
         "adl/tools/test_v092_demo_proof_coverage.sh",
-        ".csdlc/evidence/5840/"
+        ".csdlc/evidence/5840",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-demo-matrix-v1\",\"paths\":[\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\"],\"issues\":[5834,5836,5840],\"order\":[5834,5836,5840]}"
       ],
       "invariants": [
         "Every accepted row names an exact revision, command, artifact, owner, and review state",
@@ -95,7 +96,7 @@
         "Quality-gate or proof-status vocabulary changes"
       ],
       "design_ref": ".csdlc/prepared/issues/5840/design.md",
-      "design_digest": "9431c5b9ecbb320ef0b0e61b86d1b686c9ab7f5e9d0093c7a63126478c3bcf40",
+      "design_digest": "401d537577b2defef3a31a71b8933295d6a7880f549fd4d591ddaefa41387f49",
       "diagram_ref": ".csdlc/prepared/issues/5840/diagram.mmd",
       "diagram_digest": "57f3fcc1a7b7aac2e97794d4e761093a49874adc02355f69436b4811bb6538e2"
     }

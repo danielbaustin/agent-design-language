@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-01B] Canonical documentation and version activation",
     "slug": "v0-92-wp-01b-canonical-documentation-and-version-activation",
     "version": "v0.92",
-    "generation": 19
+    "generation": 21
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 10,
+      "plan_revision": 11,
       "summary": "Inventory authoritative current surfaces, update v0.92 documentation and version declarations, preserve historical evidence, run focused parity and structure proof, then obtain exact-revision review.",
       "steps": [
         {
@@ -54,10 +54,44 @@
         }
       ],
       "affected_areas": [
-        "Canonical documentation indexes and feature inventory",
-        "Workspace and package version metadata",
-        "Current milestone, tooling, skill, and runbook entrypoints",
-        "Issue-local inventory and proof artifacts"
+        "README.md",
+        "docs/README.md",
+        "docs/planning/ADL_FEATURE_LIST.md",
+        "adl/README.md",
+        "csdlc-v2/README.md",
+        "AGENTS.md",
+        "REVIEW.md",
+        "docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md",
+        "docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md",
+        "csdlc-v2/operator/skills/csdlc-v2-bind/SKILL.md",
+        "csdlc-v2/operator/skills/csdlc-v2-card-editor/SKILL.md",
+        "csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md",
+        "csdlc-v2/operator/skills/csdlc-v2-doctor/SKILL.md",
+        "csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md",
+        "csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md",
+        "csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md",
+        "csdlc-v2/operator/skills/csdlc-v2-publish/SKILL.md",
+        "csdlc-v2/operator/skills/csdlc-v2-review/SKILL.md",
+        "csdlc-v2/operator/skills/csdlc-v2-shepherd/SKILL.md",
+        "csdlc-v2/operator/skills/csdlc-v2-validate/SKILL.md",
+        "adl/Cargo.toml",
+        "adl/Cargo.lock",
+        "adl-v2/Cargo.toml",
+        "adl-v2/Cargo.lock",
+        "adl-runtime/Cargo.toml",
+        "adl-runtime/Cargo.lock",
+        "adl-runtime-kernel/Cargo.toml",
+        "adl-runtime-kernel/Cargo.lock",
+        "adl-resilience/Cargo.toml",
+        "adl-resilience/Cargo.lock",
+        "adl-characterization/Cargo.toml",
+        "adl-characterization/Cargo.lock",
+        "csdlc-v2/Cargo.toml",
+        "csdlc-v2/Cargo.lock",
+        ".csdlc/evidence/5818",
+        ".csdlc/prepared/issues/5818/validate-activation.rb",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-docs-activation-final-truth-v1\",\"paths\":[\"README.md\",\"docs/README.md\",\"docs/planning/ADL_FEATURE_LIST.md\",\"AGENTS.md\",\"REVIEW.md\"],\"issues\":[5818,5843],\"order\":[5818,5843]}",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-runtime-manifest-sequence-v1\",\"paths\":[\"adl-runtime/Cargo.toml\",\"adl-runtime/Cargo.lock\"],\"issues\":[5818,5865],\"order\":[5818,5865]}"
       ],
       "invariants": [
         "v0.92 active does not mean v0.92 features complete",
@@ -88,7 +122,7 @@
         "The active prompt-template or workspace version authority changes before execution"
       ],
       "design_ref": ".csdlc/prepared/issues/5818/design.md",
-      "design_digest": "9cfaff15112b6463dc61d449af32f1d65723a9bb2b3bd811590d284f51400cae",
+      "design_digest": "bf1c90dc367dc12dc1f557da9dbaa9f10defcf0da59d9572787160be1349f71a",
       "diagram_ref": ".csdlc/prepared/issues/5818/diagram.mmd",
       "diagram_digest": "031adc526b6fb3e7420d6f84f360751febe5858232cbb45d62cdb50c059ad1a9"
     }

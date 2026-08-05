@@ -16,7 +16,7 @@ Implement and prove WP-13 canonical evidence maps with revision-linked updates, 
 
 ## Plan
 
-Revision 14
+Revision 15
 
 ## Steps
 
@@ -89,7 +89,7 @@ Revision 14
 
 .csdlc/prepared/issues/5830/design.md
 
-Digest: 51ef8fac075e02acbb22c88d673093f7d7fb6a4c8fc8f1f0cc50bbdf1ff44743
+Digest: fb2baa8e667f94ac4a4d7a45cf2f963eca132d757264de1765793548618391c2
 
 ## Diagram
 

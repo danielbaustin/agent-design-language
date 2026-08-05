@@ -16,7 +16,7 @@ Verify WP-25, build and redact the exact packet manifest, compute/freeze its dig
 
 ## Plan
 
-Revision 4
+Revision 5
 
 ## Steps
 
@@ -90,7 +90,7 @@ Revision 4
 
 .csdlc/prepared/issues/5847/design.md
 
-Digest: 87f9be3d8bb3567165a85171d7f8322ccf7133fd3c840e4253bc390bc6a5624c
+Digest: 79dd293f0747a774c538016ae7fdcc76020e2ad39a8c348676f52509a7899c75
 
 ## Diagram
 

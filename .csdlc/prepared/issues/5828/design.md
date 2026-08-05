@@ -6,18 +6,53 @@ Implement the Runtime v3 Memory Palace boundary in `adl-runtime-kernel`, using t
 
 ## Owned Paths
 
-The complete writable protected-path set is:
-
 - `adl-runtime-kernel/src/memory_palace.rs`
 - `adl-runtime-kernel/src/lib.rs`
 - `adl-runtime-kernel/tests/memory_palace.rs`
-- `adl-runtime-kernel/tests/fixtures/memory_palace/`
+- `adl-runtime-kernel/tests/fixtures/memory_palace`
 - `docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md`
 - `.csdlc/prepared/issues/5828/validate-obsmem-trace-integration.rb`
 - `.csdlc/prepared/issues/5828/validate-native-receipts.rb`
-- `.csdlc/evidence/5828/`
+- `.csdlc/evidence/5828`
 
-`adl-runtime-kernel/src/lib.rs` is limited to WP-11 module registration. ObsMem, observability, proof, and retained compatibility paths are read-only authorities. WP-11 may develop in parallel with WP-12; the WP-12 registration edit is serialized after this registration lands.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-birthday-kernel-registration-v1",
+    "paths": [
+      "adl-runtime-kernel/src/lib.rs"
+    ],
+    "issues": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ],
+    "order": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ]
+  }
+]
+```
 
 ## Contract
 

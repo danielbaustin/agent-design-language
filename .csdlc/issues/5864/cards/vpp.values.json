@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.02] Distributed certificate purposes and lifecycle",
     "slug": "v0-92-wp-04-02-certificate-lifecycle",
     "version": "v0.92",
-    "generation": 0
+    "generation": 2
   },
   "status": "ready",
   "content": {
@@ -66,7 +66,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on stale dependencies, path overlap, zero tests, invalid evidence, insecure fallback, or unresolved review findings.",
       "design_ref": ".csdlc/prepared/issues/5864/design.md",
-      "design_digest": "a00a649cd2ea63b48086fcc2f66d590aaa4c673b522dc33e8a1b32a9f2cf6028",
+      "design_digest": "37e752856b2ca3e35a4563ad38809c74049647bf6bc5495a4f9754f5304512d5",
       "diagram_ref": ".csdlc/prepared/issues/5864/diagram.mmd",
       "diagram_digest": "9604660435e11926c438538864ddeaaf35e7c9e3766cfa8917e0e648e9d0b9bf"
     }

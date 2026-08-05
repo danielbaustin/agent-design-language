@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-02] Agent Logic GitHub organization repository migration",
     "slug": "v0-92-wp-01a-agent-logic-github-organization-repository-migration",
     "version": "v0.92",
-    "generation": 19
+    "generation": 21
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 10,
+      "plan_revision": 11,
       "summary": "Verify organization gates, transfer exactly five repositories serially with assignee-aware manifests and zero unexplained drift, execute the ADL website/integration cutover last, prove exclusions, and retain a reviewed final report.",
       "steps": [
         {
@@ -47,11 +47,9 @@
         }
       ],
       "affected_areas": [
-        "GitHub repository ownership and organization policy",
-        "Issues, pull requests, assignees, teams, collaborators, and rulesets",
-        "Actions, environments, OIDC, packages, LFS, Pages, webhooks, Apps, and deploy keys",
-        "Current repository URLs, clone remotes, badges, sites, and external consumers",
-        "Issue-local migration evidence"
+        ".csdlc/evidence/5819",
+        ".csdlc/prepared/issues/5819/validate-migration-evidence.rb",
+        ".csdlc/prepared/issues/5819/verify-live-repositories.rb"
       ],
       "invariants": [
         "Transfer one repository at a time and pass verification before continuing",
@@ -87,7 +85,7 @@
         "Transfer-back becomes the organization-owner recovery decision"
       ],
       "design_ref": ".csdlc/prepared/issues/5819/design.md",
-      "design_digest": "3340d20767a5c27dbbe65cdf460f9e15873c62c19a7091b416e384ab460967f5",
+      "design_digest": "6f8edebe284f8afb2c163434407edbd7ab45e4235e74c0898c46297ec942807d",
       "diagram_ref": ".csdlc/prepared/issues/5819/diagram.mmd",
       "diagram_digest": "204d0f3b1c0bcb0a1821d0253e340cb71a0f802ace72f599bcca643f8bb3bf4b"
     }

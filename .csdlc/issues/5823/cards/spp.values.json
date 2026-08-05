@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-06] Remote validation/build runner",
     "slug": "v0-92-wp-06-remote-validation-build-runner",
     "version": "v0.92",
-    "generation": 17
+    "generation": 19
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 9,
+      "plan_revision": 10,
       "summary": "Extract a provider-neutral exact-revision request/result contract over current adapters, add deterministic provenance, artifacts, redaction, timeout, cleanup, and no-network fallback, then prove Linux, macOS, Windows, and failure boundaries.",
       "steps": [
         {
@@ -54,11 +54,20 @@
         }
       ],
       "affected_areas": [
-        "Portable remote validation request and result model",
-        "Local, Nessus, and AWS adapter selection",
-        "Exact revision and command-profile provenance",
-        "Artifact collection, logging, redaction, timeout, cancellation, and cleanup",
-        "No-network fallback and platform compatibility"
+        "tools/remote_validation/Cargo.toml",
+        "tools/remote_validation/Cargo.lock",
+        "tools/remote_validation/src/lib.rs",
+        "tools/remote_validation/src/bin/adl-remote-validation.rs",
+        "tools/remote_validation/tests/contract.rs",
+        "tools/aws_remote_validation/src/aws_remote_validation.rs",
+        "tools/aws_remote_validation/src/bin/adl_aws_remote_validation.rs",
+        "tools/aws_remote_validation/tests/portable_adapter.rs",
+        "adl/tools/run_nessus_remote_validation.sh",
+        "adl/tools/test_run_nessus_remote_validation.sh",
+        "adl/tools/run_aws_spot_remote_validation_lane.sh",
+        "adl/tools/test_run_aws_spot_remote_validation_lane.sh",
+        ".csdlc/evidence/5823",
+        ".csdlc/prepared/issues/5823/validate-platform-matrix.rb"
       ],
       "invariants": [
         "Remote and local execution use the same declared command profile",
@@ -93,7 +102,7 @@
         "Live Windows proof is unavailable and must remain explicitly fixture-qualified"
       ],
       "design_ref": ".csdlc/prepared/issues/5823/design.md",
-      "design_digest": "cc489f7e9478bae98ddaec1e41354153478b6c960dc3aea01e22ef69c2076e1f",
+      "design_digest": "632fd39231ba5046dff28b107e5903f65e4406f77d0a20f4e6ea5a36e19c17be",
       "diagram_ref": ".csdlc/prepared/issues/5823/diagram.mmd",
       "diagram_digest": "24b36a7dc64ffb0ae6f13c33c638f96389ffb5b4711ac2e8027a2606508b73ca"
     }

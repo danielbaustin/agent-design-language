@@ -59,3 +59,47 @@ That packet names repository-relative prompt, response, and topology artifact
 paths. The issue-local validator recomputes each SHA-256 digest and verifies the
 topology file's Git blob at the exact 40-hex reviewed revision. Free-standing
 digest strings or an untracked model response do not satisfy the review gate.
+## Owned Paths
+
+- `.github/workflows/ci.yaml`
+- `adl/tools/ci_path_policy.sh`
+- `adl/tools/run_pr_fast_test_lane.sh`
+- `adl/tools/run_pr_fast_coverage_lane.sh`
+- `adl/tools/check_coverage_impact.sh`
+- `adl/tools/run_authoritative_coverage_lane.sh`
+- `adl/tools/test_ci_path_policy.sh`
+- `adl/tools/test_run_pr_fast_test_lane.sh`
+- `adl/tools/test_run_pr_fast_coverage_lane.sh`
+- `adl/tools/test_check_coverage_impact.sh`
+- `adl/tools/test_coverage_authority_contract.sh`
+- `adl/tools/test_ci_runtime_contracts.sh`
+- `.csdlc/evidence/5801`
+- `.csdlc/prepared/issues/5801/validate-gemini-review.rb`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-ci-runner-experiment-v1",
+    "paths": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "issues": [
+      5801,
+      5853
+    ],
+    "order": [
+      5801,
+      5853
+    ]
+  }
+]
+```

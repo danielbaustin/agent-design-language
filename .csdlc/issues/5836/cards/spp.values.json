@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-18] First birthday demo",
     "slug": "v0-92-wp-18-first-birthday-demo",
     "version": "v0.92",
-    "generation": 31
+    "generation": 33
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 11,
+      "plan_revision": 12,
       "summary": "Verify #5825-#5830 and #5832-#5834; bind to landed schemas; implement the positive Runtime harness and negative matrix; run replay, redaction, separate native macOS and Linux, and interruption proof; reconcile the two canonical launch documents; validate a fail-closed publication-gate checklist; update D1-D6 only from accepted evidence; then review exact head.",
       "steps": [
         {
@@ -73,13 +73,13 @@
         "adl/tools/demo_v092_first_birthday.sh",
         "adl/tools/validate_v092_first_birthday_packet.py",
         "adl/tools/test_v092_first_birthday_demo.sh",
-        "demos/v0.92/first-birthday/",
+        "demos/v0.92/first-birthday",
         "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+        "docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md",
         "docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md",
         "docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md",
-        ".csdlc/evidence/5836/publication-gate-checklist.json",
-        ".csdlc/evidence/5836/validate-publication-gate.rb",
-        ".csdlc/evidence/5836/"
+        ".csdlc/evidence/5836",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-demo-matrix-v1\",\"paths\":[\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\"],\"issues\":[5834,5836,5840],\"order\":[5834,5836,5840]}"
       ],
       "invariants": [
         "Positive proof is Runtime-produced",
@@ -108,7 +108,7 @@
         "Required platform lane changes"
       ],
       "design_ref": ".csdlc/prepared/issues/5836/design.md",
-      "design_digest": "c43c901f8f49fff5dc423ccd7d261ad798d70591d0157cd77119a0bdb7d9b092",
+      "design_digest": "82f1ec1056c927fdf4eaa15fe2c03fb791dc62bf8e1945f378f7a5718e321d50",
       "diagram_ref": ".csdlc/prepared/issues/5836/diagram.mmd",
       "diagram_digest": "039549736c17a86e37d74217aa9f5d20dade32c3a9e12e92c43a9975fd8d1a03"
     }

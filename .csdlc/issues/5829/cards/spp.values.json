@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-12] Capability envelope",
     "slug": "v0-92-wp-12-capability-envelope",
     "version": "v0.92",
-    "generation": 58
+    "generation": 60
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 22,
+      "plan_revision": 23,
       "summary": "Implement and prove WP-12 canonical capability envelopes with explicit providers, tools, skills, grants, denials, limits, provenance, and secret-safe failure handling.",
       "steps": [
         {
@@ -64,10 +64,12 @@
         "adl-runtime-kernel/src/capability_envelope.rs",
         "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/capability_envelope.rs",
-        "adl-runtime-kernel/tests/fixtures/capability_envelope/",
+        "adl-runtime-kernel/tests/fixtures/capability_envelope",
         "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
         ".csdlc/prepared/issues/5829/validate-native-receipts.rb",
-        ".csdlc/evidence/5829/"
+        ".csdlc/evidence/5829",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-memory-capability-witness-feature-doc-v1\",\"paths\":[\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\"],\"issues\":[5829,5833],\"order\":[5829,5833]}"
       ],
       "invariants": [
         "Capability description never grants authority or proves invocation.",
@@ -97,7 +99,7 @@
         "Review identifies an undeclared authority or resource dimension."
       ],
       "design_ref": ".csdlc/prepared/issues/5829/design.md",
-      "design_digest": "84716664e6a6262c8b75169869bb4640908c697de99ecec3383efcf9736b9ddd",
+      "design_digest": "67fb062b32fd18344a0e924536a43eab01bfe58c422ed2065228c2115f5e1605",
       "diagram_ref": ".csdlc/prepared/issues/5829/diagram.mmd",
       "diagram_digest": "78acf0d1432d60e5c4c8b3eba8f887a035f2f55abeee4cc19537b6495dc5de3a"
     }

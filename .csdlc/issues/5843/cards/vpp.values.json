@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-23] Docs and release-truth pass",
     "slug": "v0-92-wp-23-docs-and-release-truth-pass",
     "version": "v0.92",
-    "generation": 10
+    "generation": 12
   },
   "status": "ready",
   "content": {
@@ -81,7 +81,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5843/design.md",
-      "design_digest": "7b6cf38e0703310aca977caa178d7c0872b96d40abd5f6e3ffbbe95021a26154",
+      "design_digest": "df65cd33fb590ad53114ea67e65143866b543df1051bdc091438abad53636205",
       "diagram_ref": ".csdlc/prepared/issues/5843/diagram.mmd",
       "diagram_digest": "e9443389dc374e5a02a2f30234e94766f6f7c6cebf18268f6671e69c5bc97795"
     }

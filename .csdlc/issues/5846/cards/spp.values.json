@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-25] Internal review",
     "slug": "v0-92-wp-25-internal-review",
     "version": "v0.92",
-    "generation": 10
+    "generation": 12
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 4,
+      "plan_revision": 5,
       "summary": "Verify review entry gates, freeze the exact v0.92 packet, run bounded independent specialist lanes, retain and deduplicate evidence-backed findings, validate coverage/redaction/revision identity, and meta-review the final report.",
       "steps": [
         {
@@ -61,7 +61,8 @@
       "affected_areas": [
         "docs/reviews/v0.92/internal-review-5846",
         "docs/milestones/v0.92/review/V092_INTERNAL_REVIEW_5846.md",
-        ".csdlc/evidence/5846"
+        ".csdlc/evidence/5846",
+        ".csdlc/prepared/issues/5846/validate-internal-review.rb"
       ],
       "invariants": [
         "No tracked work on main",
@@ -85,7 +86,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5846/design.md",
-      "design_digest": "1020a2d53898d7558af5bcbca2a610cb978ad6fcc569a6df0b01968e057128d0",
+      "design_digest": "2a1795f478af2f09e846b6c94955658bcca4a0c3cdd5b37b4c8d8d33a55d3e09",
       "diagram_ref": ".csdlc/prepared/issues/5846/diagram.mmd",
       "diagram_digest": "a045efc1685d9776f7041ed3163c44f35452aadb851e7c625026a3ff430ed779"
     }

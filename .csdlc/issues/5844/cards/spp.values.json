@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-24] Ten-article launch series",
     "slug": "v0-92-wp-24-ten-article-launch-series",
     "version": "v0.92",
-    "generation": 27
+    "generation": 29
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 11,
+      "plan_revision": 12,
       "summary": "Run ten bounded article waves budgeted at 4 hours and 74,000 tokens each (40 agent-hours and 740,000 tokens aggregate), with source research, complete drafting, editorial review, revisions, validation, cross-series review, #5843 reconciliation, and a stop-before-publish disposition; five parallel owners target 12-18 hours wall-clock without reducing any article to an outline.",
       "steps": [
         {
@@ -72,8 +72,19 @@
         }
       ],
       "affected_areas": [
-        "docs/milestones/v0.92/publication/articles/",
-        ".csdlc/evidence/5844/"
+        "docs/milestones/v0.92/publication/articles/01-what-is-adl",
+        "docs/milestones/v0.92/publication/articles/02-adl-runtime-and-cognitive-spacetime-model",
+        "docs/milestones/v0.92/publication/articles/03-godel-agents-and-godel-hadamard-bayes-algorithm",
+        "docs/milestones/v0.92/publication/articles/04-the-freedom-gate",
+        "docs/milestones/v0.92/publication/articles/05-uts-and-acc-making-agents-with-tools-safe",
+        "docs/milestones/v0.92/publication/articles/06-codefriend-and-the-cognitive-sdlc",
+        "docs/milestones/v0.92/publication/articles/07-continuous-adversarial-verification-for-continuous-security",
+        "docs/milestones/v0.92/publication/articles/08-agent-economics",
+        "docs/milestones/v0.92/publication/articles/09-adl-and-social-intelligence",
+        "docs/milestones/v0.92/publication/articles/10-whats-next-for-adl",
+        "docs/milestones/v0.92/publication/articles/SERIES_ARC_AND_CLAIM_MATRIX.md",
+        "docs/milestones/v0.92/publication/articles/PUBLICATION_DISPOSITION.md",
+        ".csdlc/evidence/5844"
       ],
       "invariants": [
         "Each article is grounded in a declared bounded source packet",
@@ -102,7 +113,7 @@
         "Publication-review policy changes"
       ],
       "design_ref": ".csdlc/prepared/issues/5844/design.md",
-      "design_digest": "3de0b93dbc7089562d1f497d34856b408b64151cf42ab76ce52cb64e810e2538",
+      "design_digest": "8519fa31485b2594b8c17867d97cd034b140c15ed8869e76acc2c89fc50def32",
       "diagram_ref": ".csdlc/prepared/issues/5844/diagram.mmd",
       "diagram_digest": "fd443e63c054166e3e4c71db483681f52038f49cafe19a5a5353a8cbb24673a1"
     }

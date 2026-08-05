@@ -16,7 +16,7 @@ Freeze the complete review-finding universe, preserve provenance while deduplica
 
 ## Plan
 
-Revision 4
+Revision 5
 
 ## Steps
 
@@ -92,7 +92,7 @@ Revision 4
 
 .csdlc/prepared/issues/5848/design.md
 
-Digest: 944dcee75e5a461f7be1e555f804755f786022ac8c28d0bde4eb88c15e1a46e3
+Digest: 7e9a76d8e112db28949f0a751b367196ec048b80e4e104c723f22fccc528bba8
 
 ## Diagram
 

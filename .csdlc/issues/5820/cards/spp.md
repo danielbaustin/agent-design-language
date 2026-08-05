@@ -16,7 +16,7 @@ Audit the current Guardian/kernel/init split and active Runtime collisions, free
 
 ## Plan
 
-Revision 11
+Revision 12
 
 ## Steps
 
@@ -94,7 +94,7 @@ Revision 11
 
 .csdlc/prepared/issues/5820/design.md
 
-Digest: 32e9dafdd48e5519c49fd44d7d894c26ca903f76bca040116ca7cedb78ad50d9
+Digest: b9838dcfa3966a4f8e3bb7482ef7762db50b7ceafbf1d9f0684227e734fd6200
 
 ## Diagram
 

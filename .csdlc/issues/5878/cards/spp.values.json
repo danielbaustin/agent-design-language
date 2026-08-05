@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-04.16] Distributed integration, adversarial, and native-platform proof",
     "slug": "v0-92-wp-04-16-integration-adversarial-native-proof",
     "version": "v0.92",
-    "generation": 0
+    "generation": 2
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
+      "plan_revision": 2,
       "summary": "Verify gates, implement the exclusive slice, run exact proving tests and negatives, validate rollback, resolve review, and close through child authority.",
       "steps": [
         {
@@ -53,7 +53,13 @@
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "adl-runtime/src/distributed/mod.rs",
+        "adl-runtime/src/lib.rs",
+        "adl-runtime/tests/distributed_guardian.rs",
+        "adl/tools/validate_v092_distributed_guardian.sh",
+        "adl/tools/validate_v092_distributed_native_receipts.rb"
+      ],
       "invariants": [
         "Exclusive paths remain disjoint",
         "Guardian stays process 0",
@@ -81,7 +87,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5878/design.md",
-      "design_digest": "87b1ec1ef9325257a313faf2a77acd705ce597dd61dda161a4f1aa10b842ab26",
+      "design_digest": "fb08ad7a8aad3b9d4026601e5f75f9647aeacb89cb715ce0ddbc204d74fadec0",
       "diagram_ref": ".csdlc/prepared/issues/5878/diagram.mmd",
       "diagram_digest": "6c8b714c4987361c7d51ad9a3fffcdf0ff3f94a7dd8b7e6ac7d1e392a173caf0"
     }

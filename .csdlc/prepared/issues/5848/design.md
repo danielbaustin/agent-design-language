@@ -36,28 +36,16 @@ finding fixed from intent alone.
 6. Obtain exact-head review of the complete disposition register and block
    WP-28 while any actionable finding remains open or unproven.
 
-## Protected-Path Candidates
+## Owned Paths
 
 - `docs/reviews/v0.92/remediation-5848`
 - `.csdlc/evidence/5848`
-- exact implementation, test, docs, or workflow files assigned by the frozen
-  finding-to-owner map
-- current release-facing docs only when a remediated claim changes
-
-No broad product root may be claimed. If a finding belongs to another active
-issue or owner, #5848 records and watches that route instead of colliding.
-
-## Owned Paths
-
-- `docs/reviews/v0.92/remediation-5848/dispositions.json`
-- `docs/reviews/v0.92/remediation-5848/regression-manifest.json`
-- `docs/reviews/v0.92/remediation-5848/validation.json`
-- `.csdlc/evidence/5848`
 - `.csdlc/prepared/issues/5848/validate-remediation-regressions.rb`
 
-Remediation source paths are owned only by their separately bound finding
-issues; WP-27 consumes their exact-head evidence and never accepts caller-
-supplied validation commands.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Validation And Failure Policy
 

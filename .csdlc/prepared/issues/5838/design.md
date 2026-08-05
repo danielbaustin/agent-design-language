@@ -17,14 +17,19 @@ explicitly ineligible.
 - `adl/tools/provider_demo_common.sh`
 - existing v0.87-v0.91 multi-agent demos are historical inputs, not v0.92 proof.
 
-## Proposed Artifacts And Protected-Path Candidates
+## Owned Paths
 
 - `adl/tools/demo_v092_provider_neutral_birthday.sh`
 - `adl/tools/validate_v092_provider_neutral_proof.py`
 - `adl/tools/test_v092_provider_neutral_proof.sh`
-- `demos/v0.92/provider-neutral-birthday/`
+- `demos/v0.92/provider-neutral-birthday`
 - `docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md`
-- `.csdlc/evidence/5838/`
+- `.csdlc/evidence/5838`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Proof Matrix
 

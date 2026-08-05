@@ -16,12 +16,16 @@ does not assign citizenship, standing, rights, duties, or polis authority.
 - `docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md`
 - v0.93 allocation must exist before execution receives credit.
 
-## Proposed Artifacts And Protected-Path Candidates
+## Owned Paths
 
-- `docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md`
 - `docs/milestones/v0.92/ADR_PLAN_v0.92.md`
 - `docs/milestones/v0.92/review/V092_TO_V093_GOVERNANCE_EVIDENCE_MAP.md`
-- `.csdlc/evidence/5839/`
+- `.csdlc/evidence/5839`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Handoff Map
 

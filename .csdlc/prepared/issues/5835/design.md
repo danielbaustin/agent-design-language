@@ -17,17 +17,16 @@ how copied or ambiguous state is rejected. It does not implement migration.
 - `docs/milestones/v0.92/ADR_PLAN_v0.92.md`
 - WP-04 infrastructure remains owned outside this issue.
 
-## Proposed Artifacts And Protected-Path Candidates
+## Owned Paths
 
 - `docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md`
 - `docs/milestones/v0.92/design/CROSS_POLIS_CONTINUITY_TRANSFER_DESIGN_v0.92.md`
-- `docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md`
-- `.csdlc/evidence/5835/`
+- `.csdlc/evidence/5835`
 
-The implementation session must narrow this list before binding if landed
-dependency artifacts make an additional path necessary. It must not claim the
-WP-04 Runtime, storage, networking, key-management, or polis implementation
-paths.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Contract Shape
 

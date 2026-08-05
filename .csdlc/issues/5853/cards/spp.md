@@ -16,7 +16,7 @@ Verify migration and CI entry gates, freeze the comparison, capture standard and
 
 ## Plan
 
-Revision 5
+Revision 6
 
 ## Steps
 
@@ -83,7 +83,7 @@ Revision 5
 
 .csdlc/prepared/issues/5853/design.md
 
-Digest: b55bff65678838b3f435b8b1cfc4b03935f93eb71ad270bf35906404df9702e6
+Digest: 5a0f7eefbffae2cfc9cdde6969b68cb6e772bf8db2c2fd6c7f48ecabef21228c
 
 ## Diagram
 

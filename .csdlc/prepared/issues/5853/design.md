@@ -61,3 +61,37 @@ regression, maximum queue increase, and maximum cost per minute saved. The
 validator recomputes p50, p95, means, reliability, deltas, and cost efficiency
 from finite nonnegative raw samples; it rejects inconsistent totals, mismatched
 reported statistics, threshold-free adoption, or adoption below any gate.
+## Owned Paths
+
+- `.github/workflows/ci.yaml`
+- `adl/tools/test_ci_runtime_contracts.sh`
+- `.csdlc/evidence/5853`
+- `.csdlc/prepared/issues/5853/validate-experiment.rb`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-ci-runner-experiment-v1",
+    "paths": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "issues": [
+      5801,
+      5853
+    ],
+    "order": [
+      5801,
+      5853
+    ]
+  }
+]
+```

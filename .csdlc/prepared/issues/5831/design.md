@@ -6,17 +6,52 @@ Implement WP-13A's evaluated, policy-governed graph-change path in current Runti
 
 ## Owned Paths
 
-The complete writable protected-path set is:
-
 - `adl-runtime-kernel/src/adaptive_learning.rs`
 - `adl-runtime-kernel/src/lib.rs`
 - `adl-runtime-kernel/tests/adaptive_learning.rs`
-- `adl-runtime-kernel/tests/fixtures/adaptive_learning/`
+- `adl-runtime-kernel/tests/fixtures/adaptive_learning`
 - `docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md`
 - `.csdlc/prepared/issues/5831/validate-native-receipts.rb`
-- `.csdlc/evidence/5831/`
+- `.csdlc/evidence/5831`
 
-`adl-runtime-kernel/src/lib.rs` is limited to module registration. Reasoning, cognition, governance, durable-state, Runtime v2, and retained evidence paths are read-only authorities.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-birthday-kernel-registration-v1",
+    "paths": [
+      "adl-runtime-kernel/src/lib.rs"
+    ],
+    "issues": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ],
+    "order": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ]
+  }
+]
+```
 
 ## Contract
 

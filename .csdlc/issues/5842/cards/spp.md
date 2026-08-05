@@ -16,7 +16,7 @@ Pin the gate SHA, enumerate every feature and supporting critical path, bind eac
 
 ## Plan
 
-Revision 4
+Revision 5
 
 ## Steps
 
@@ -90,7 +90,7 @@ Revision 4
 
 .csdlc/prepared/issues/5842/design.md
 
-Digest: a3b2acade618e169946935df70d5ba8defe03695ae27b3c0ee0a8dc5dce35335
+Digest: 2a2f34956c88c9f8f4024f563b8612acac8ab046042d063cd75206202a3e362e
 
 ## Diagram
 

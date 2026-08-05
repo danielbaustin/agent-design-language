@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-21A] Rust refactoring and maintainability pass",
     "slug": "v0-92-wp-21a-rust-refactoring-and-maintainability-pass",
     "version": "v0.92",
-    "generation": 12
+    "generation": 14
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 4,
+      "plan_revision": 5,
       "summary": "After WP-21 lands, rebuild the active Rust hotspot inventory, select exact files and invariants, capture characterization proof, refactor one owner at a time, and prove behavior, negative cases, LoC, lint, tests, and platform parity.",
       "steps": [
         {
@@ -60,10 +60,8 @@
         }
       ],
       "affected_areas": [
-        "Exact selected files in adl-v2/crates/adl-language, adl-compiler, or adl-engine",
-        "Exact selected files in adl-runtime-kernel or csdlc-v2",
-        "Only tightly coupled manifests and focused tests",
-        ".csdlc/evidence/5841"
+        ".csdlc/evidence/5841",
+        ".csdlc/prepared/issues/5841/validate-refactor-selection.rb"
       ],
       "invariants": [
         "No tracked work on main",
@@ -87,7 +85,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5841/design.md",
-      "design_digest": "496006b4eec4a88d4cdfaedcc42b6ef74950990044da86858c82e0d90b680e22",
+      "design_digest": "08937231b83df57d1d77e4dc0adea8f244698e8b2a089ac5b83a084545c02bf6",
       "diagram_ref": ".csdlc/prepared/issues/5841/diagram.mmd",
       "diagram_digest": "b4df00a4d3d743cffd8848bba7bb5c20d5b4d4641915587f6a72b37044e3c611"
     }

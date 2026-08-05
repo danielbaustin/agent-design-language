@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-26] External / third-party review",
     "slug": "v0-92-wp-26-external-third-party-review",
     "version": "v0.92",
-    "generation": 10
+    "generation": 12
   },
   "status": "ready",
   "content": {
@@ -100,7 +100,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5847/design.md",
-      "design_digest": "87f9be3d8bb3567165a85171d7f8322ccf7133fd3c840e4253bc390bc6a5624c",
+      "design_digest": "79dd293f0747a774c538016ae7fdcc76020e2ad39a8c348676f52509a7899c75",
       "diagram_ref": ".csdlc/prepared/issues/5847/diagram.mmd",
       "diagram_digest": "3f27fc4f521fdd57a23ed1afaa29417434e08b8ac93e33e58d1a106069d94cd1"
     }

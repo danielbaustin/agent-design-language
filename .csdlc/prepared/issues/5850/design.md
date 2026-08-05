@@ -37,24 +37,16 @@ ceremony mutation, and later milestone activation.
    absent receipts, active claims, partial release state, and retry safety.
 6. Run exact-head review of the complete universe and sequence.
 
-## Protected-Path Candidates
-
-- `.csdlc/evidence/5850/issue-universe.json`
-- `.csdlc/evidence/5850/closeout-plan.md`
-- `docs/milestones/v0.92/V092_TERMINAL_CLOSEOUT_PLAN_5850.md`
-- exact release/handoff references required to link the reviewed sequence
-
-Other issue records, claims, worktrees, tags, releases, and GitHub objects are
-read-only inputs during planning; execution remains with their named owners.
-
 ## Owned Paths
 
-- `.csdlc/evidence/5850/issue-universe.json`
-- `.csdlc/evidence/5850/closeout-dag.json`
-- `.csdlc/evidence/5850/negative-cases.json`
-- `.csdlc/evidence/5850/closeout-plan.md`
 - `docs/milestones/v0.92/V092_TERMINAL_CLOSEOUT_PLAN_5850.md`
+- `.csdlc/evidence/5850`
 - `.csdlc/prepared/issues/5850/validate-closeout-plan.rb`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Validation And Failure Policy
 

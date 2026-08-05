@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "10b57804d863de9ac5cda1e29dd5aeee90e4b00bd8f1569549bc8a878b5c5d6c",
   "phase": "bound",
-  "generation": 22,
-  "digest": "a74c6420e10035a38525d7fb4be1364b04a522f686dd8d3fef355cb3754d1de2",
+  "generation": 24,
+  "digest": "0f79cba29f33ab3652d228e1949429fd4cb334c88d78a42abd4c04ea2e2b69a9",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5839/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5854-design-review",
-      "revision": "b458e4655affeb638620def0d4bec90af11e6104158d5d4e3dd4efcd080c0e00"
+      "reviewer": "codex:5860-v092-ownership-design-review",
+      "revision": "f39a2a1ce50ea4d83618c7d0601e3934c3db1d68b13cfeba723688e3219d203c"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "0ca5b7cab9eaa22aee1ef7e9dda1737de4cb9404902d6e6e5310cbd319c2dd3c",
+      "values_digest": "c0602035a1b5d79bd2faf450da648bd2cf1ad5d268c9f8084ce4311fd3de3e19",
       "rendered_digest": "88f5f1d3c57353d3d011ae5c5fbfe66ba50df2c03352e3f67dcec0e0da303684",
       "ast_digest": "a9dbc727e263b5035d18037f45f9351999beb8d56e0805573394665b1f7f6dfd"
     },
     "stp": {
-      "values_digest": "6361cfe48dfebc8f7ddbe859ed69f9a103c83bf46f051957263c1d715753a16c",
+      "values_digest": "8c7035048583e780adb1a85d5d73d34b93e9151e2139e671015896bbbbfb3d0f",
       "rendered_digest": "b6a780b5f628f3d0625ea83e95aa9907cc3b38a463baf6ef3ff5e809e71cb082",
       "ast_digest": "a7cb6c40d14307ed4d08e5b5e345237a259f244f8d1ad15521919bdf1fe625b8"
     },
     "spp": {
-      "values_digest": "0486a5d31ac1ccf05efcfc4a7691e9b7927a0d98a44612632b2b46a0f900c64d",
-      "rendered_digest": "20b2af17f58325de0fe0357e9c4b786d34e3591685960bda2df5e7ffb5fc0845",
-      "ast_digest": "08f4e037dd0ec7cdb49f1aa5e7a3e8896a69c4bb2e201fcce1d950205969e3a6"
+      "values_digest": "6e71b15158e575b9117d21a914d8a64f68a731d364c7479f71421b75891c6f54",
+      "rendered_digest": "93e6f77257ffa365bd530a5b39673b5ee74d858a3af5c82ed1cd9ef1662f9bbe",
+      "ast_digest": "6c1071a0f0b89cc2a1a4462514dbb33f38816b94b57c913684b757a7f8b03c97"
     },
     "vpp": {
-      "values_digest": "8526868e77cfb99192f6a7e2d72d5ae84317ccdc72412533ceb58c2740936a01",
+      "values_digest": "fe7dee369c804ced9fecc8bcf7bb2d4033275cb33294c33db3c0bb198bb834c2",
       "rendered_digest": "098ccfeb33726daf260b7372b6af9e85671ed325ecfdfe0b7f2cb51f3590125f",
       "ast_digest": "fc4baafaac9ec2ef173fc4d1b1bc88fea3c5a92c0f3243400da5b87bdb5385cb"
     },
     "srp": {
-      "values_digest": "f4d449e66f724303a52982696852fc0631c53772ad3f1f3ac71bea84b94dafd8",
+      "values_digest": "16cac58f4af3d08c30cca727602f7d8379a8006ad4ea0f68609b5751dc037b13",
       "rendered_digest": "1ba628e8a13f4d92eb6cb2adea05136d85f96d239d48caa5d10698ae326124f8",
       "ast_digest": "797664cb3acec61fcabcd329021db6bfcec0b8da2df735a399e444e351b81a07"
     },
     "sor": {
-      "values_digest": "d2df95e5802cd63fed3e2da6528b2a23ce2cab4640980c16025fe8b4b0122abd",
+      "values_digest": "8d795e13cfa10eeb9dbe54a7fe690a281dc2a2c2e4952af09d1e400ec0bf5caf",
       "rendered_digest": "d829c572fae3ca6425298b5e8895b59ced47f8d7c4f18114a0e936cede751417",
       "ast_digest": "84b8dcf3c18a0f039f1665cdde6bcae35da4a42984f3a4505cacbdfb7175612a"
     }
@@ -272,6 +272,34 @@
       "actor": "codex:5854-preparation",
       "reason": "Release temporary design-time preparation binding after typed diagram projection refresh",
       "operation": "{\"claim_id\":\"claim-5839-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 22,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Reacquire issue-local preparation authority to normalize exact owned paths and serialization gates without product implementation.",
+      "operation": "{\"branch\":\"codex/5860-v092-ownership-normalization\",\"claim_id\":\"claim-5839-v092-ownership-normalization\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-v092-ownership-normalization\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5839\",\".csdlc/prepared/issues/5839\",\".csdlc/evidence/5839\"],\"purpose\":\"Normalize issue 5839 design/card ownership only; no product implementation, GitHub mutation, wave/WBS mutation, or publication.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 31,
+      "generation": 23,
+      "actor": "codex:5860-v092-ownership-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 32,
+      "generation": 24,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Align the operative plan with exact owned paths and machine-readable serialization gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/ADR_PLAN_v0.92.md\",\"docs/milestones/v0.92/review/V092_TO_V093_GOVERNANCE_EVIDENCE_MAP.md\",\".csdlc/evidence/5839\"]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 24,
+      "actor": "codex:5860-v092-ownership-normalization",
+      "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
+      "operation": "{\"claim_id\":\"claim-5839-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
     }
   ]
 }

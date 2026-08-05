@@ -16,7 +16,7 @@ Reconcile the existing local TLS generator with one explicit browser trust mecha
 
 ## Plan
 
-Revision 16
+Revision 17
 
 ## Steps
 
@@ -93,7 +93,7 @@ Revision 16
 
 .csdlc/prepared/issues/5800/design.md
 
-Digest: 57c78c786488cf64234694319e65b20d3aa4534b77def1af5994e8defee30f7a
+Digest: 5f983337ffd152615bdcc31a9d8114ed4590af85849394bdae27e2d2852cdc36
 
 ## Diagram
 

@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-18B] Provider-neutral multi-agent proof",
     "slug": "v0-92-wp-18b-provider-neutral-multi-agent-proof",
     "version": "v0.92",
-    "generation": 22
+    "generation": 24
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 9,
       "summary": "Verify #5832, #5834, and #5836; select two real independently configured providers; run the identical scenario and retain redacted ACIP traces; execute malformed, denied, interrupted, unavailable, loss, and substitution cases; validate source/provider truth and review exact head.",
       "steps": [
         {
@@ -65,9 +65,9 @@
         "adl/tools/demo_v092_provider_neutral_birthday.sh",
         "adl/tools/validate_v092_provider_neutral_proof.py",
         "adl/tools/test_v092_provider_neutral_proof.sh",
-        "demos/v0.92/provider-neutral-birthday/",
+        "demos/v0.92/provider-neutral-birthday",
         "docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md",
-        ".csdlc/evidence/5838/"
+        ".csdlc/evidence/5838"
       ],
       "invariants": [
         "Every positive column is a real provider invocation",
@@ -96,7 +96,7 @@
         "A required platform lacks the provider tool"
       ],
       "design_ref": ".csdlc/prepared/issues/5838/design.md",
-      "design_digest": "9edd5d793d7fb009b2b655fb774846175ed5c156159bf964921ada07082264f5",
+      "design_digest": "c5bd59187f5f6cb350285cb74249a5c4bce79cba018b8387917fb18c8a3325c4",
       "diagram_ref": ".csdlc/prepared/issues/5838/diagram.mmd",
       "diagram_digest": "66b8593a65f5605cd6e903d1954da188a9dada0abb3d75d1b6b1324da92a4f29"
     }

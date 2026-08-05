@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-04.08] Fencing and single-owner enforcement",
     "slug": "v0-92-wp-04-08-fencing-single-owner",
     "version": "v0.92",
-    "generation": 0
+    "generation": 2
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
+      "plan_revision": 2,
       "summary": "Verify gates, implement the exclusive slice, run exact proving tests and negatives, validate rollback, resolve review, and close through child authority.",
       "steps": [
         {
@@ -53,7 +53,10 @@
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "adl-runtime/src/distributed/fencing.rs",
+        "adl-runtime/tests/distributed_fencing.rs"
+      ],
       "invariants": [
         "Exclusive paths remain disjoint",
         "Guardian stays process 0",
@@ -81,7 +84,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5870/design.md",
-      "design_digest": "d7d7995e586cb9216149dc5ae9c0fbe91286e1edcd89e2a41c2207ab5cfb17e8",
+      "design_digest": "7fd6aed91354dcc1f993845cfe1f0f33d1e9571f52df7735eb41d2caa9d21ea3",
       "diagram_ref": ".csdlc/prepared/issues/5870/diagram.mmd",
       "diagram_digest": "113850977a9b27ab371914763d9bcac7fc2757008adcd1fe7dea0da48ef809b9"
     }

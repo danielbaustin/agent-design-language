@@ -38,27 +38,15 @@ replaces local duplication with an unowned shared utility fails the objective.
 6. Retain the inventory, before/after LoC, dependency-boundary changes, and
    unresolved hotspots without calling them complete.
 
-## Protected-Path Candidates
-
-- exact files selected under `adl-v2/crates/adl-language`
-- exact files selected under `adl-v2/crates/adl-compiler`
-- exact files selected under `adl-v2/crates/adl-engine`
-- exact files selected under `adl-runtime-kernel` or `csdlc-v2`
-- focused tests and manifests coupled to those selected files
-- `.csdlc/evidence/5841` for inventory, metrics, and parity proof
-
-The implementation claim must list files after the post-WP-21 inventory; no
-whole-root claim is authorized by this design.
-
 ## Owned Paths
 
-- `.csdlc/evidence/5841/refactor-selection.json`
-- `.csdlc/evidence/5841/refactor-metrics.json`
-- `.csdlc/evidence/5841/platform`
+- `.csdlc/evidence/5841`
 - `.csdlc/prepared/issues/5841/validate-refactor-selection.rb`
 
-Selected Rust and test files become owned only after the exact-path selection
-manifest is reviewed and the execution claim is amended to those files.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
 ## Validation And Failure Policy
 

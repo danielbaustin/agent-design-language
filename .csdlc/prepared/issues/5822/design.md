@@ -65,3 +65,36 @@ the existing v2 route without data loss. Proof covers deterministic schemas,
 unknown/schema-drift negatives, cohort leakage rejection, forecast stability,
 non-enforcement, typed card round trips, closeout comparison, and measured
 cycle-time improvement.
+## Owned Paths
+
+- `csdlc-v2/src/estimation.rs`
+- `csdlc-v2/src/cards.rs`
+- `csdlc-v2/tests/estimation_contracts.rs`
+- `.csdlc/evidence/5822`
+
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-csdlc-card-internals-v1",
+    "paths": [
+      "csdlc-v2/src/cards.rs"
+    ],
+    "issues": [
+      5822,
+      5824
+    ],
+    "order": [
+      5822,
+      5824
+    ]
+  }
+]
+```

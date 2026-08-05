@@ -6,17 +6,67 @@ Define WP-15 Runtime v3 witness and receipt contracts from `docs/milestones/v0.9
 
 ## Owned Paths
 
-The complete writable protected-path set is:
-
 - `adl-runtime-kernel/src/birth_witness.rs`
 - `adl-runtime-kernel/src/lib.rs`
 - `adl-runtime-kernel/tests/birth_witness.rs`
-- `adl-runtime-kernel/tests/fixtures/birth_witness/`
+- `adl-runtime-kernel/tests/fixtures/birth_witness`
 - `docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`
 - `.csdlc/prepared/issues/5833/validate-native-receipts.rb`
-- `.csdlc/evidence/5833/`
+- `.csdlc/evidence/5833`
 
-`adl-runtime-kernel/src/lib.rs` is limited to module registration. Private-state, Runtime v2, and #4762 paths are read-only authorities. The witness set binds witness identity/role, observed evidence digest, decision, time/sequence anchor, signature or integrity reference, and redaction policy.
+## Read-Only Inputs
+
+- Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
+- Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
+
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-birthday-kernel-registration-v1",
+    "paths": [
+      "adl-runtime-kernel/src/lib.rs"
+    ],
+    "issues": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ],
+    "order": [
+      5825,
+      5826,
+      5827,
+      5828,
+      5829,
+      5830,
+      5831,
+      5833
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-memory-capability-witness-feature-doc-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md"
+    ],
+    "issues": [
+      5829,
+      5833
+    ],
+    "order": [
+      5829,
+      5833
+    ]
+  }
+]
+```
 
 ## Contract
 

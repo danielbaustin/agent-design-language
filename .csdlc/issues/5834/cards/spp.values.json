@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-16] Birthday review packet",
     "slug": "v0-92-wp-16-birthday-review-packet",
     "version": "v0.92",
-    "generation": 38
+    "generation": 40
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 14,
+      "plan_revision": 15,
       "summary": "Assemble and prove WP-16's exact-digest reviewer packet with complete child evidence, redacted projections, blocked dispositions, caveats, questions, and public non-claims.",
       "steps": [
         {
@@ -63,9 +63,10 @@
         "docs/milestones/v0.92/review/FIRST_BIRTHDAY_REVIEW_PACKET_v0.92.md",
         "docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json",
         "docs/milestones/v0.92/review/first-birthday-review-packet.schema.json",
-        ".csdlc/prepared/issues/5834/validate-review-packet.rb",
         "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
-        ".csdlc/evidence/5834/"
+        ".csdlc/prepared/issues/5834/validate-review-packet.rb",
+        ".csdlc/evidence/5834",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-demo-matrix-v1\",\"paths\":[\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\"],\"issues\":[5834,5836,5840],\"order\":[5834,5836,5840]}"
       ],
       "invariants": [
         "Each canonical source digest appears once and binds an exact reviewed revision.",
@@ -94,7 +95,7 @@
         "Review finds duplicate authority or a presentation-only proof substitution."
       ],
       "design_ref": ".csdlc/prepared/issues/5834/design.md",
-      "design_digest": "573921782c8d2fe436cf4ea70bdc8bd8b3ce61d31cce96516cfdaea492a20fe8",
+      "design_digest": "32a673ea781e96b489cc8be1878fd200d89d6de6213f8e79da28c104e1e916c3",
       "diagram_ref": ".csdlc/prepared/issues/5834/diagram.mmd",
       "diagram_digest": "8a837711a7e5863a846f42a46cd793d3ff77846c6e80cc07d72e14c7665a6224"
     }
