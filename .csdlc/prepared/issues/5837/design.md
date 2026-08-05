@@ -82,6 +82,17 @@ and live Editor/player interaction against the same Runtime revision. A restart
 lane proves both clients reconnect without duplicated events or authority
 escalation. macOS browser/Unity proof does not substitute for declared Windows
 or Linux client coverage.
+The implementation must add three focused live-proof entrypoints:
+`adl/tools/validate_v092_html_observatory_live.mjs` drives the real browser
+against Runtime HTTPS/WSS; `adl/tools/validate_v092_unity_observatory_live.sh`
+launches the approved Unity Editor/player against that same revision and
+captures native interaction evidence; and
+`adl/tools/validate_v092_observatory_restart_reconnect.sh` coordinates a
+Guardian-owned Runtime restart while both clients remain connected, then
+verifies bounded replay, no duplicate application, unchanged authorization,
+and fresh post-restart correlation in both clients. Retained v0.91.7 packets,
+static screenshots, contract-only batch checks, and a Runtime-only soak cannot
+satisfy these live lanes.
 
 ## Rollback
 

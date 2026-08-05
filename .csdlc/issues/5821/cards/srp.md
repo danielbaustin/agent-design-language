@@ -16,11 +16,11 @@ Review issue 5821 architecture/threat gate, exact 16-child ledger and terminal t
 
 ## Prompts
 
-- Does the architecture and threat model close every trust, identity, certificate, partition, replay, and migration boundary before implementation credit?
-- Are exactly 16 children concrete, nonduplicative, disjoint, terminal, and fully represented in integration evidence?
-- Can any partition, stale lease, cloned checkpoint, or failed migration create two authoritative owners?
-- Do real transport, certificate, relocation, recovery, and observability proofs use production paths rather than fixtures or receipts?
-- Did the program avoid Runtime v2, v0.93 governance, custom crypto, and WP-14 scope?
+- Does the architecture and threat model close every declared identity, trust, certificate, partition, replay, lease, fencing, placement, migration, rollback, and observability boundary?
+- Does the ledger contain exactly WP-04.01 through WP-04.16 with complete, nonduplicative outcomes and disjoint protected paths?
+- Do all child dependencies resolve without cycles or hidden ownership, and does WP-04-IMP name the identical denominator?
+- Are all sixteen children required to be execution-ready before implementation starts?
+- Does issue 5821 stop before product implementation, multi-node proof, integration, or terminal child reconciliation claims?
 
 ## Findings
 

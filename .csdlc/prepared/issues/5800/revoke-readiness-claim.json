@@ -2,10 +2,10 @@
   "issue": 5800,
   "repository": "danielbaustin/agent-design-language",
   "expected_claim_id": "claim-5800-v092-preparation",
-  "expected_generation": 34,
-  "expected_digest": "a45d2210de9ee067a9d37a90df3e8030a224e9e14e6407f70a7d445acbf4f196",
-  "now_unix_seconds": 1785949549,
-  "actor": "codex:5860-runtime-readiness",
+  "expected_generation": 36,
+  "expected_digest": "8b8eaeecd4b7fc6363b222b2fab175bd79142600fb8f61f35c46f5e96add3401",
+  "now_unix_seconds": 1785952115,
+  "actor": "codex:5860-runtime-readiness-repair",
   "operator_authority": "operator:daniel-issue-5860-preparation-only",
   "reason": "Release completed preparation claim so implementation can reacquire authority just in time."
 }

@@ -12,43 +12,39 @@ Status: ready
 
 ## Summary
 
-After WP-03 stabilizes, freeze the architecture/threat/COTS/schema contract and exact 16-child denominator, execute children in dependency order with disjoint claims, integrate production transport and single-authority migration behavior, run adversarial multi-node/platform proof, then reconcile all terminal receipts at one reviewed revision.
+After WP-03 stabilizes, freeze and review the distributed architecture and threat model, validate the exact disjoint WP-04.01 through WP-04.16 ledger, create the separate WP-04-IMP umbrella, prepare all sixteen children, and close this gate without product implementation or integration credit.
 
 ## Plan
 
-Revision 8
+Revision 15
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify WP-03, freeze architecture/threat/COTS/schema contracts, and publish the exact 16-child ownership and dependency ledger.",
+    "action": "Verify WP-03 terminal ancestry and freeze the distributed Guardian architecture, COTS transport, schemas, trust boundaries, failure semantics, and threat model.",
     "acceptance_ids": [
       "AC-1",
-      "AC-2"
+      "AC-2",
+      "AC-7"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Route and complete all 16 children under disjoint claims with production proof and truthful terminal receipts.",
+    "action": "Publish and validate the immutable WP-04.01 through WP-04.16 ownership, dependency, protected-path, proof, and rollback ledger.",
     "acceptance_ids": [
-      "AC-2",
       "AC-3",
       "AC-4",
-      "AC-5",
-      "AC-6",
       "AC-7"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Integrate the real multi-node substrate and run partition, fencing, migration, rollback, certificate, recovery, relocation, and observability proof.",
+    "action": "Create and schedule the separate WP-04-IMP umbrella and prepare exactly the sixteen declared child issues before any implementation starts.",
     "acceptance_ids": [
-      "AC-3",
-      "AC-4",
       "AC-5",
       "AC-6",
       "AC-7"
@@ -57,7 +53,7 @@ Revision 8
   },
   {
     "id": "S4",
-    "action": "Reconcile all child receipts and integrated evidence at one exact revision, resolve review, and publish with closing linkage.",
+    "action": "Resolve independent architecture and security review, retain the approved gate packet, and close issue 5821 without distributed implementation credit.",
     "acceptance_ids": [
       "AC-8"
     ],
@@ -67,21 +63,20 @@ Revision 8
 
 ## Invariants
 
-- Exactly one authoritative owner exists for a Runtime lineage at any epoch
-- All node/control traffic is mutually authenticated with separate certificate purposes
-- Replay, stale epoch, cloned state, wrong node, and wrong trust domain fail closed
-- Failed migration never activates two targets or discards the recoverable source checkpoint
-- Partitions degrade placement/relocation but never grant authority
-- Every one of the 16 children has one nonduplicative owner and terminal receipt
+- The architecture preserves exactly one authoritative owner for a Runtime lineage at any epoch
+- The trust contract requires mutual authentication with separate certificate purposes and no insecure mode
+- Replay, stale epoch, cloned state, wrong node, and wrong trust domain are specified to fail closed
+- Migration ordering retains source authority until target validation and fencing succeed
+- The ledger contains exactly sixteen nonduplicative owners with disjoint protected paths
+- All sixteen children are execution-ready before WP-04-IMP starts, while issue 5821 claims no implementation credit
 
 ## Risks
 
-- The 16-child denominator could contain gaps or duplicate ownership
-- Partition or stale lease could create split brain
-- Migration ordering could fence the source before target validation
-- Certificate rotation/expiry could strand membership
-- Synthetic fixtures could be mistaken for real multi-node proof
-- Program integration could hide a red or nonterminal child
+- The sixteen-child denominator could omit a required behavior or duplicate ownership
+- Protected paths could overlap before binding and make parallel execution unsafe
+- Architecture or threat review could change child boundaries after issues are opened
+- The implementation umbrella could drift from the approved identities or dependency graph
+- Planning artifacts could be mistaken for distributed implementation proof
 
 ## Estimates
 
@@ -95,21 +90,22 @@ Revision 8
 
 .csdlc/prepared/issues/5821/design.md
 
-Digest: 46e68b5092a52a379d8e352fec1c388008d7d265cbaf245fc2a38d05b3669db1
+Digest: b04fce508d08c3b96ef7c9c98b5c706de8bb2d62892b642ce667411774659d46
 
 ## Diagram
 
 .csdlc/prepared/issues/5821/diagram.mmd
 
-Digest: 839945549709f057ef410e2b793c0a4beac3077114e3c5e24e0ef2a786407954
+Digest: 2a57bd6f3950517bf9f5b6a5b2401c178e2b7bf15b382a271dafab50d000a77a
 
 ## Stop Conditions
 
 - WP-03 contracts are not terminal and stable
 - Architecture or threat review has unresolved actionable findings
-- The exact 16-child ledger is missing, duplicate, or path-colliding
-- Any design permits plaintext, verification disablement, custom crypto, Runtime v2, or dual authority
-- A child lacks real production-path proof or truthful terminal state
+- The ledger is not exactly WP-04.01 through WP-04.16
+- Any two children have overlapping protected paths or unresolved dependencies
+- WP-04-IMP differs from the approved sixteen-child denominator
+- Any issue 5821 artifact claims distributed product implementation or integration completion
 
 ## Handoff
 

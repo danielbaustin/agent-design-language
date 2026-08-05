@@ -71,6 +71,13 @@ and last-valid-pair behavior. Live macOS proof covers Chrome trust, static HTML,
 Runtime health/readiness/feed, and curl verification. Linux and native Windows
 lanes must either reproduce the supported setup or retain an explicit platform
 blocker; a macOS screenshot alone does not prove portable trust installation.
+The implementation must add `adl/tools/validate_v092_browser_trusted_observatory.mjs`.
+That Playwright validator launches the real HTTPS static server and Runtime
+candidate, opens Chrome with the operator-approved trust root, fails on any
+certificate interstitial or console/network TLS error, exercises HTML plus
+health, readiness, and feed requests, and writes redacted browser-visible
+evidence. `curl` remains a separate endpoint probe and cannot satisfy browser
+trust acceptance.
 
 ## Rollback
 

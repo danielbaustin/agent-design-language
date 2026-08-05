@@ -48,31 +48,41 @@ Diagram: .csdlc/prepared/issues/5800/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "observatory-https-integration",
-    "proof_role": "Prove the configured separate Observatory and Runtime endpoints through verified curl, HTML, health, readiness, and feed access.",
+    "lane": "chrome-trusted-live-observatory",
+    "proof_role": "Use the issue-delivered Playwright validator to open real Chrome against the live HTTPS Observatory and Runtime, reject interstitials or TLS console/network errors, and prove HTML, health, readiness, and feed access with browser-visible evidence.",
     "acceptance_ids": [
+      "AC-1",
       "AC-3",
       "AC-4",
-      "AC-5"
+      "AC-5",
+      "AC-7"
     ],
     "deterministic": false,
-    "resource_profile": "medium",
+    "resource_profile": "large",
     "budget_seconds": 600,
     "budget_tokens": 4000,
     "argv": [
-      "bash",
-      "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+      "node",
+      "adl/tools/validate_v092_browser_trusted_observatory.mjs",
+      "--browser",
+      "chrome",
+      "--require-trusted-tls",
+      "--runtime-url",
+      "https://localhost:20997",
+      "--observatory-url",
+      "https://localhost:8765"
     ],
-    "parallel_group": "local-live",
-    "defer_reason": "Run after the implementation session starts the real HTTPS listeners with the supported certificate identity."
+    "parallel_group": "live-browser",
+    "defer_reason": "The named validator is an issue 5800 implementation deliverable and requires explicit operator trust plus both real HTTPS listeners."
   },
   {
-    "lane": "trusted-browser-macos",
-    "proof_role": "Retain Chrome trust and no-warning evidence for the actual localhost Observatory and Runtime feed.",
+    "lane": "verified-endpoint-probe",
+    "proof_role": "Independently verify the live Runtime HTTPS identity and endpoint responses without substituting curl for browser trust.",
     "acceptance_ids": [
-      "AC-1",
+      "AC-2",
+      "AC-3",
       "AC-4",
-      "AC-7"
+      "AC-5"
     ],
     "deterministic": false,
     "resource_profile": "medium",
@@ -83,13 +93,14 @@ Diagram: .csdlc/prepared/issues/5800/diagram.mmd
       "--config",
       ".csdlc/prepared/issues/5800/curl-observatory-https.conf"
     ],
-    "parallel_group": "local-live",
-    "defer_reason": "Requires explicit operator trust installation and browser-visible live endpoints on macOS."
+    "parallel_group": "live-browser",
+    "defer_reason": "Requires the real certificate identity and Runtime listener; this lane cannot satisfy AC-1."
   },
   {
-    "lane": "platform-trust",
-    "proof_role": "Run or disposition the same trust, probe, and negative contract on Linux and native Windows.",
+    "lane": "native-platform-trust-matrix",
+    "proof_role": "Run the same issue-delivered browser validator on native macOS, Linux, and Windows evidence lanes and fail closed on any missing required platform disposition.",
     "acceptance_ids": [
+      "AC-1",
       "AC-2",
       "AC-3",
       "AC-5",
@@ -100,12 +111,13 @@ Diagram: .csdlc/prepared/issues/5800/diagram.mmd
     "budget_seconds": 600,
     "budget_tokens": 4000,
     "argv": [
-      "bash",
-      "adl/tools/run_owner_validation_lane.sh",
-      "runtime"
+      "node",
+      "adl/tools/validate_v092_browser_trusted_observatory.mjs",
+      "--require-native-platform-evidence",
+      "macos,linux,windows"
     ],
     "parallel_group": "platform",
-    "defer_reason": "Requires native Linux and Windows runners after implementation; absent runner evidence remains blocked, not passed."
+    "defer_reason": "Requires native runners and host trust setup; missing native proof remains blocked, never inferred from macOS."
   },
   {
     "lane": "exact-head-hygiene",
@@ -116,8 +128,8 @@ Diagram: .csdlc/prepared/issues/5800/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
+    "budget_seconds": 300,
+    "budget_tokens": 2000,
     "argv": [
       "git",
       "diff",
@@ -141,9 +153,9 @@ Tokens: 25000
 ## Commands
 
 - `cargo test --locked --manifest-path adl-runtime/Cargo.toml --test local_tls`
-- `bash adl/tools/test_v0917_html_observatory_integrated_proof.sh`
+- `node adl/tools/validate_v092_browser_trusted_observatory.mjs --browser chrome --require-trusted-tls --runtime-url https://localhost:20997 --observatory-url https://localhost:8765`
 - `curl --config .csdlc/prepared/issues/5800/curl-observatory-https.conf`
-- `bash adl/tools/run_owner_validation_lane.sh runtime`
+- `node adl/tools/validate_v092_browser_trusted_observatory.mjs --require-native-platform-evidence macos,linux,windows`
 - `git diff --check`
 
 ## Failure Semantics

@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5837/diagram.mmd
 [
   {
     "lane": "shared-consumer-contract",
-    "proof_role": "Validate one schema/version/audience/order/reconnect/auth/backpressure matrix plus redaction and denied actions for both clients.",
+    "proof_role": "Validate one schema, audience, ordering, reconnect, auth, and backpressure matrix plus redaction and denied actions for both clients.",
     "acceptance_ids": [
       "AC-1",
       "AC-4",
@@ -44,7 +44,7 @@ Diagram: .csdlc/prepared/issues/5837/diagram.mmd
   },
   {
     "lane": "html-live-runtime",
-    "proof_role": "Run the separate HTML Observatory against the real trusted Runtime HTTP/WSS paths and retain read, authorized control, denial, stale, offline, and visible browser evidence.",
+    "proof_role": "Use the issue-delivered Playwright entrypoint to drive the real HTML Observatory over trusted Runtime HTTPS/WSS and retain read, authorized control, denial, stale, offline, and visible browser evidence.",
     "acceptance_ids": [
       "AC-2",
       "AC-4",
@@ -52,19 +52,24 @@ Diagram: .csdlc/prepared/issues/5837/diagram.mmd
       "AC-7"
     ],
     "deterministic": false,
-    "resource_profile": "medium",
+    "resource_profile": "large",
     "budget_seconds": 600,
     "budget_tokens": 4000,
     "argv": [
-      "bash",
-      "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+      "node",
+      "adl/tools/validate_v092_html_observatory_live.mjs",
+      "--browser",
+      "chrome",
+      "--require-live-runtime",
+      "--require-authorized-control",
+      "--require-denial-proof"
     ],
     "parallel_group": "consumer-live",
-    "defer_reason": "Requires issue 5800 trust plus the running exact Runtime candidate."
+    "defer_reason": "The named validator is an issue 5837 implementation deliverable and requires issue 5800 trust plus the exact Runtime candidate."
   },
   {
     "lane": "unity-live-runtime",
-    "proof_role": "Run native Unity Editor/player integration against the same Runtime revision and retain reads, controls, denial, failure, and visual interaction evidence.",
+    "proof_role": "Use the issue-delivered native entrypoint to launch the approved Unity Editor/player against the same Runtime revision and retain real reads, controls, denial, failure, and visual interaction evidence.",
     "acceptance_ids": [
       "AC-3",
       "AC-4",
@@ -77,20 +82,24 @@ Diagram: .csdlc/prepared/issues/5837/diagram.mmd
     "budget_tokens": 4000,
     "argv": [
       "bash",
-      "adl/tools/test_v0917_unity_observatory_integrated_proof.sh"
+      "adl/tools/validate_v092_unity_observatory_live.sh",
+      "--require-editor-player",
+      "--require-live-runtime",
+      "--require-visual-evidence"
     ],
     "parallel_group": "consumer-live",
-    "defer_reason": "Requires the approved Unity version, live Runtime endpoint, and native Editor/player environment."
+    "defer_reason": "The named validator is an issue 5837 implementation deliverable and requires the approved Unity version and native environment."
   },
   {
-    "lane": "guardian-restart-reconnect",
-    "proof_role": "Restart the Guardian-owned Runtime and prove both clients reconnect with bounded replay, no duplicate application, and no authority escalation.",
+    "lane": "guardian-restart-both-clients",
+    "proof_role": "Use the issue-delivered coordinator to keep both clients active across Guardian-owned Runtime restart and prove bounded replay, no duplicate application, fresh post-restart correlation, and unchanged authorization.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
       "AC-3",
       "AC-5",
-      "AC-6"
+      "AC-6",
+      "AC-7"
     ],
     "deterministic": false,
     "resource_profile": "large",
@@ -98,10 +107,15 @@ Diagram: .csdlc/prepared/issues/5837/diagram.mmd
     "budget_tokens": 4000,
     "argv": [
       "bash",
-      "adl/tools/run_runtime_v3_guardian_soak.sh"
+      "adl/tools/validate_v092_observatory_restart_reconnect.sh",
+      "--clients",
+      "html,unity",
+      "--require-bounded-replay",
+      "--reject-duplicates",
+      "--require-unchanged-authority"
     ],
     "parallel_group": "consumer-live",
-    "defer_reason": "Requires both completed consumers and the exact Runtime candidate."
+    "defer_reason": "The named validator is an issue 5837 implementation deliverable and requires both completed consumers and the exact Guardian/Runtime candidate."
   },
   {
     "lane": "exact-head-hygiene",
@@ -111,8 +125,8 @@ Diagram: .csdlc/prepared/issues/5837/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
+    "budget_seconds": 300,
+    "budget_tokens": 2000,
     "argv": [
       "git",
       "diff",
@@ -136,9 +150,9 @@ Tokens: 25000
 ## Commands
 
 - `bash adl/tools/test_v0916_unity_observatory_contract.sh`
-- `bash adl/tools/test_v0917_html_observatory_integrated_proof.sh`
-- `bash adl/tools/test_v0917_unity_observatory_integrated_proof.sh`
-- `bash adl/tools/run_runtime_v3_guardian_soak.sh`
+- `node adl/tools/validate_v092_html_observatory_live.mjs --browser chrome --require-live-runtime --require-authorized-control --require-denial-proof`
+- `bash adl/tools/validate_v092_unity_observatory_live.sh --require-editor-player --require-live-runtime --require-visual-evidence`
+- `bash adl/tools/validate_v092_observatory_restart_reconnect.sh --clients html,unity --require-bounded-replay --reject-duplicates --require-unchanged-authority`
 - `git diff --check`
 
 ## Failure Semantics

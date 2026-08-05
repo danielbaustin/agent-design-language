@@ -1,15 +1,12 @@
 flowchart TD
-  W["WP-03 stable single-node Runtime"] --> A["Architecture and threat-model gate"]
-  A --> C["16 bounded child contracts"]
-  C --> N1["Guardian node A"]
-  C --> N2["Guardian node B"]
-  N1 <-->|"mTLS QUIC membership"| N2
-  N1 --> E["Epoch, lease, and fencing authority"]
-  N2 --> E
-  E --> M["Prepare and quiesce"]
-  M --> S["Checkpoint and transfer"]
-  S --> V["Validate target and fence source"]
-  V --> K["Activate and commit one owner"]
-  V -->|"failure"| R["Rollback to validated source"]
-  K --> P["Integrated multi-node proof"]
-  R --> P
+  W["WP-03 stable single-node Runtime"] --> A["WP-04 architecture and security gate"]
+  A --> T["Reviewed architecture and threat model"]
+  A --> L["Exact 16-child ownership ledger"]
+  T --> U["Schedule separate WP-04-IMP umbrella"]
+  L --> U
+  U --> C1["WP-04.01 through WP-04.08 identity, transport, and authority"]
+  U --> C2["WP-04.09 through WP-04.15 placement, migration, and projection"]
+  C1 --> C16["WP-04.16 real multi-node adversarial proof"]
+  C2 --> C16
+  C16 --> I["WP-04-IMP integration and terminal reconciliation"]
+  I --> N["WP-14 may consume stable distributed contracts"]

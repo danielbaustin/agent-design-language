@@ -24,121 +24,46 @@ Diagram: .csdlc/prepared/issues/5821/diagram.mmd
 
 [
   {
-    "lane": "architecture-threat-gate",
-    "proof_role": "Validate the frozen architecture, threat model, COTS choices, schemas, trust boundaries, and exact 16-child coverage/ownership ledger.",
+    "lane": "child-wave-ledger",
+    "proof_role": "Parse the retained design and require exactly sixteen ordered child identities, unique protected paths, resolvable child dependencies, and the separate implementation umbrella contract.",
     "acceptance_ids": [
-      "AC-1",
-      "AC-2",
-      "AC-6"
-    ],
-    "deterministic": true,
-    "resource_profile": "large",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
-    "argv": [
-      "ruby",
-      ".csdlc/prepared/issues/5821/validate-distributed-program.rb"
-    ],
-    "parallel_group": "program-gate",
-    "defer_reason": "Validator is an implementation deliverable and runs before any child receives implementation credit."
-  },
-  {
-    "lane": "distributed-state-machines",
-    "proof_role": "Prove epochs, leases, fencing, membership, topology, snapshot, migration, rollback, replay, and stale-message semantics deterministically.",
-    "acceptance_ids": [
+      "AC-3",
       "AC-4",
       "AC-5",
       "AC-6",
       "AC-7"
     ],
     "deterministic": true,
-    "resource_profile": "large",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 3000,
     "argv": [
-      "cargo",
-      "test",
-      "--locked",
-      "--manifest-path",
-      "adl-runtime-kernel/Cargo.toml",
-      "--test",
-      "continuity",
-      "--test",
-      "durable_state",
-      "--test",
-      "control"
+      "ruby",
+      ".csdlc/prepared/issues/5821/validate-child-wave.rb"
     ],
-    "parallel_group": "distributed-contract",
+    "parallel_group": "planning-gate",
     "defer_reason": null
   },
   {
-    "lane": "real-multinode-adversarial",
-    "proof_role": "Exercise production mTLS/QUIC membership, partition, fencing, migration, rollback, rotation/revocation, recovery, and relocation failures across real nodes.",
+    "lane": "architecture-threat-packet-hygiene",
+    "proof_role": "Reject malformed or whitespace-damaged architecture, threat-model, ledger, diagram, and issue-card changes before independent review.",
     "acceptance_ids": [
-      "AC-4",
-      "AC-5",
-      "AC-6",
-      "AC-7"
-    ],
-    "deterministic": false,
-    "resource_profile": "large",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
-    "argv": [
-      "cargo",
-      "test",
-      "--locked",
-      "--manifest-path",
-      "adl-runtime/Cargo.toml",
-      "--test",
-      "distributed_guardian",
-      "--",
-      "--ignored",
-      "--exact",
-      "real_multinode_program"
-    ],
-    "parallel_group": "multinode-live",
-    "defer_reason": "Requires completed child implementations, real node identities, and issue-local certificate/state roots."
-  },
-  {
-    "lane": "child-terminal-reconciliation",
-    "proof_role": "Require all 16 child issues, PRs, exact reviews, validation, merged revisions, receipts, and released claims to agree.",
-    "acceptance_ids": [
+      "AC-1",
       "AC-2",
-      "AC-3",
+      "AC-7",
       "AC-8"
     ],
     "deterministic": true,
-    "resource_profile": "large",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 3000,
     "argv": [
-      "ruby",
-      ".csdlc/prepared/issues/5821/validate-distributed-children.rb"
+      "git",
+      "diff",
+      "--check"
     ],
-    "parallel_group": "program-closeout",
-    "defer_reason": "Runs after all child closeout receipts exist."
-  },
-  {
-    "lane": "platform-and-exact-head",
-    "proof_role": "Run declared native platform proof, diff hygiene, and exact integrated review.",
-    "acceptance_ids": [
-      "AC-4",
-      "AC-5",
-      "AC-6",
-      "AC-8"
-    ],
-    "deterministic": false,
-    "resource_profile": "large",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
-    "argv": [
-      "bash",
-      "adl/tools/run_owner_validation_lane.sh",
-      "runtime"
-    ],
-    "parallel_group": "platform",
-    "defer_reason": "Requires native platform runners and the exact integrated candidate."
+    "parallel_group": "planning-gate",
+    "defer_reason": null
   }
 ]
 
@@ -154,11 +79,8 @@ Tokens: 50000
 
 ## Commands
 
-- `ruby .csdlc/prepared/issues/5821/validate-distributed-program.rb`
-- `cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test continuity --test durable_state --test control`
-- `cargo test --locked --manifest-path adl-runtime/Cargo.toml --test distributed_guardian -- --ignored --exact real_multinode_program`
-- `ruby .csdlc/prepared/issues/5821/validate-distributed-children.rb`
-- `bash adl/tools/run_owner_validation_lane.sh runtime`
+- `ruby .csdlc/prepared/issues/5821/validate-child-wave.rb`
+- `git diff --check`
 
 ## Failure Semantics
 

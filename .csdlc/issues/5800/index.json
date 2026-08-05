@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "01a996f3111ad433ba2731d9e465e062a862e763797a061a45c684e4a22e6ab8",
   "phase": "bound",
-  "generation": 34,
-  "digest": "15bf2ed0352fffae12d817c171f2a4523900e0aa7091118c77d6abaecea0afe7",
+  "generation": 36,
+  "digest": "35814d27cfe841578881278ac31dece2522e8b6357fa5efbb2a9cf86d25b1686",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5800/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-runtime-readiness-design-review",
-      "revision": "a8b0df8a0932388521fce40c96c551f235873d09a2b165b75d84d635c055b738"
+      "reviewer": "codex:5860-runtime-readiness-repair-design-review",
+      "revision": "b763e6a678932b977803e780f2f4fa0b52a4b1b26e2a38b59af88b35203a5d4a"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "25660818264c2a42ca5d354894d7659c4034b0072ba5c0dbf4d10992b3877110",
+      "values_digest": "c19af30ea98b3ada91b2729f0fcaaa36eb7cc1bf81ec4f8356e054194d0a2b7b",
       "rendered_digest": "05d1efa19d495cbf163b37c9ac1d2761b8fd3fe40b2e76b0cc10b6f2662c3671",
       "ast_digest": "0821c22f599d89013c81ff3e42b067eb660e7a8f30fe6cac6b08fbb38c703d69"
     },
     "stp": {
-      "values_digest": "1bfd3aa2f0703fb2c955e0f071175f8f475ab4d13050f256e175fc93e8880f28",
+      "values_digest": "e33814140057211f8ff4b15f6030e4db2bae8fe4586a0e39f1ebd6efff24c6ff",
       "rendered_digest": "b7e8321544bf20cc1015fe935798a6205189bdf4bcb5b6c773f821f4d80a8694",
       "ast_digest": "46a3653959adc3cbe7ad8df38b7bf09fbbbd77fce7ed61ce11b51282b64c19cc"
     },
     "spp": {
-      "values_digest": "d4670cfcef056641c6788355a7edcee49054dee35339d03d2be97f25bd057bec",
-      "rendered_digest": "d4e8e02e4523274bae6918182644c0edf9582623687cffe87e43aeeab671064c",
-      "ast_digest": "ede268c6946791177c8527c477910ef37f01775093530fc464ca4b1fe9a9050a"
+      "values_digest": "90416b8a77bc9cb78dae0cefa316875f55cb2e9f8ed5b8c2ff6a3964c1c20318",
+      "rendered_digest": "745b0fcb219d7071a585db2a239d2facb962a4624960c446173ddc8ef97b9976",
+      "ast_digest": "25ac5ae2088159cfa1f5c2db8ff338edfd5d378b23f01f4677fb2b8723560c5f"
     },
     "vpp": {
-      "values_digest": "3be9e9e078ca9346dcfc1134b8949b99319400139c8fcfc446a79fdbc040a829",
-      "rendered_digest": "d84f2358bcd4767f47ef2e61ca435c1aa379f86c6d16fa862f995a9a836b6113",
-      "ast_digest": "cb3b05d69d9d7a7ce7a4d96798179fb298106be6e2cc068b77df867eddeacab3"
+      "values_digest": "675084c46e9bf9b5564b9524f81160146d0630fe9e7334b002b7a35f500b0aea",
+      "rendered_digest": "a20109164235d52d3fe00759adcd111e76f6208c4eb7f4824a594aee79b461e5",
+      "ast_digest": "306ea4096f14fa7ad2af2f0869e7dab047af6fe3f9a4b3a4e5df60a0f5cd6fa4"
     },
     "srp": {
-      "values_digest": "ddfdc6ac80eb7a31af557f1dc67d70440d32272fb5f9e1889dfb40f57dd43415",
+      "values_digest": "c642e7dadaeb254fbde71fb4b8b5c41a878652ca3a7fc6a17afc3fe5e623a1f0",
       "rendered_digest": "d604d83d9201ea7bfdfa7defaf344f7d9f31f19952424dc8dd5cf89a57d1c602",
       "ast_digest": "1357a28cc8559115cf7c29beef24b4ea325afa835c2c8071df4744c4d6b31627"
     },
     "sor": {
-      "values_digest": "78029908a6ec3ce8ea02027addc7fe0cad44ed1a1f255b14090c7985edd1d4c6",
+      "values_digest": "6e7c729a5f14751ab748d3988066ea24d925a19eee06e424f25da27f404608f9",
       "rendered_digest": "7148b0815005ac5283ff0ca3bbe2e3f2022389e5bf225933974247be44f2c41f",
       "ast_digest": "c38cb7e2bfafaa0197f338df785a225b6c110fc6fd4ef1c4dd07401f592b351b"
     }
@@ -340,6 +340,34 @@
       "sequence": 39,
       "generation": 34,
       "actor": "codex:5860-runtime-readiness",
+      "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5800-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
+    },
+    {
+      "sequence": 40,
+      "generation": 34,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Reacquire the released issue-local preparation claim to repair and approve design-time readiness for issue 5800 only.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5800-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5800\",\".csdlc/prepared/issues/5800\",\".csdlc/evidence/5800\"],\"purpose\":\"Prepare issue 5800 design, diagram, cards, and validation plan without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 41,
+      "generation": 35,
+      "actor": "codex:5860-runtime-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 42,
+      "generation": 36,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Replace proxy TLS checks with real v0.92 Chrome trust and live endpoint proof.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"local-tls-contract\",\"proof_role\":\"Prove generation, SAN, expiry, Rustls pair, permissions, atomic replacement, and last-valid-pair negatives.\",\"acceptance_ids\":[\"AC-2\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--test\",\"local_tls\"],\"parallel_group\":\"tls-contract\",\"defer_reason\":null},{\"lane\":\"chrome-trusted-live-observatory\",\"proof_role\":\"Use the issue-delivered Playwright validator to open real Chrome against the live HTTPS Observatory and Runtime, reject interstitials or TLS console/network errors, and prove HTML, health, readiness, and feed access with browser-visible evidence.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"node\",\"adl/tools/validate_v092_browser_trusted_observatory.mjs\",\"--browser\",\"chrome\",\"--require-trusted-tls\",\"--runtime-url\",\"https://localhost:20997\",\"--observatory-url\",\"https://localhost:8765\"],\"parallel_group\":\"live-browser\",\"defer_reason\":\"The named validator is an issue 5800 implementation deliverable and requires explicit operator trust plus both real HTTPS listeners.\"},{\"lane\":\"verified-endpoint-probe\",\"proof_role\":\"Independently verify the live Runtime HTTPS identity and endpoint responses without substituting curl for browser trust.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"curl\",\"--config\",\".csdlc/prepared/issues/5800/curl-observatory-https.conf\"],\"parallel_group\":\"live-browser\",\"defer_reason\":\"Requires the real certificate identity and Runtime listener; this lane cannot satisfy AC-1.\"},{\"lane\":\"native-platform-trust-matrix\",\"proof_role\":\"Run the same issue-delivered browser validator on native macOS, Linux, and Windows evidence lanes and fail closed on any missing required platform disposition.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-5\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"node\",\"adl/tools/validate_v092_browser_trusted_observatory.mjs\",\"--require-native-platform-evidence\",\"macos,linux,windows\"],\"parallel_group\":\"platform\",\"defer_reason\":\"Requires native runners and host trust setup; missing native proof remains blocked, never inferred from macOS.\"},{\"lane\":\"exact-head-hygiene\",\"proof_role\":\"Reject unrelated changes and support exact-head review.\",\"acceptance_ids\":[\"AC-6\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 43,
+      "generation": 36,
+      "actor": "codex:5860-runtime-readiness-repair",
       "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5800-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
     }

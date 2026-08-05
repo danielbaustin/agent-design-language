@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "6ef29c7a1f87d77504d438d2f3513062d5e22dd635a6f3c6f71424e2c76468f9",
   "phase": "bound",
-  "generation": 19,
-  "digest": "dc69029d9649339372b2fd44b16b15063e1c8d6a044589021fba3247d0d03df0",
+  "generation": 21,
+  "digest": "3d5f00a38f0fa98e1ad0777a52fe06b0d86ca03671627a6c9d8da7b42723d1d9",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5837/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-runtime-readiness-design-review",
-      "revision": "b0515176721b655162f3e919c5864345b65613ea64876e0c6a3c52b038becda3"
+      "reviewer": "codex:5860-runtime-readiness-repair-design-review",
+      "revision": "ed0220eb8060138d3cf9d284f77a8520cdd03e7d99b95f6aa9557fb128ca7085"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "37c3c1a2124bd727f5baa632a973b8edcb024fe76e74c6286ecbaef27fc0053f",
+      "values_digest": "e784f4f16140ad0d4b1335090a0264c81d859ff3376c1e65e9c5bce894cde190",
       "rendered_digest": "c2fb4b3f2b83cbce75a07774c4cbaa963229394f2c99cf0a8d996cbda6278e7f",
       "ast_digest": "ee216e81724f02be7ca8a15fcb06b569aab8527c412eed8a9c43087ea625ec85"
     },
     "stp": {
-      "values_digest": "4685c71254e795b1e4b49b8345474794b0fec29977c3e4f1d258e3da0ea128e7",
+      "values_digest": "ad85bbe8825289c1668b63ca04a1a5be86551d91fb2425b3e594110222851ff1",
       "rendered_digest": "89a92d1719e4464a06de2a30eaf346d32e1ec097611a230a044878776ff4fd7d",
       "ast_digest": "4949958bceeea8511af36f6bfa70dcb6f46824e2ad83caf9d956e112686011ed"
     },
     "spp": {
-      "values_digest": "3b9c08cc66198eee69ed502bba35f4e04a3678eaf7c10ef1138167c11229d484",
-      "rendered_digest": "46117bc8667f145871c23ff4fcde9105ee8430b3cd0d0accf3dd905081405482",
-      "ast_digest": "46618f21de80e8c7df6503a2bd2d154db5113b9ebf0a773b2fc4f5f591edeaaa"
+      "values_digest": "dff1078bb19eafae501f3372a833f99b535c1eb4a16a3225444dde430db1d07c",
+      "rendered_digest": "5ead2aa8a9f62a5ff6482f0dc7d482f5afa6ca6db0447eb3ee659471fcc18dd2",
+      "ast_digest": "0883857e73b2421ae30c63cf5bdeac85af1ebd5601203d35357fe9354fcc1b1e"
     },
     "vpp": {
-      "values_digest": "1a9575033a325c880a0416f0fb90c01135c6805f1222b266bc798fdae89b4815",
-      "rendered_digest": "7ab023995f3b6413b411a94c74f050ca6c559e43b870e771c48811395b67ac88",
-      "ast_digest": "d67dfe2a98ffc69b03dcf9b1d5a99cf6faebabe0aad40fc4b9250c4a5c9eed40"
+      "values_digest": "7f1d6c51d27c138bcdfda327f7bd90941926c1fdb0fe7d9d3564989238f4002f",
+      "rendered_digest": "d33203b81b04a5239b8179ab1efb776cbc490a99bcd90e96b17f9301065b87be",
+      "ast_digest": "a20e2ed567a066d3be713390d5470d24ffd8cf8c4bfba7fe6c7c5b00aa84894d"
     },
     "srp": {
-      "values_digest": "0b2471cc3a94d1c0f06758f8cacb3f3975b95a830936df2193066b1e08f669dc",
+      "values_digest": "a653feb7443e23146c76f4eb4f2d63394f9cb1b2023df95d96216bb5cd37da4a",
       "rendered_digest": "4a410e3fc919d32ef714e9727514d78b364d0e8f4a7ad3e40d0c63d97151921a",
       "ast_digest": "632f461a5bbba97888a8eb14bb652b0b7953cc2348818bd06367e9cc79bd6e9b"
     },
     "sor": {
-      "values_digest": "06240f85c01ee165721827c91e485979b6259c34c65c808838ffdbee4816ab2f",
+      "values_digest": "e4c592631dfcb1ca94535310751b101bfc8e23fc399e4cf0800698b3791f852d",
       "rendered_digest": "cd5d91a22977f1ce997fe7b2f496d6e9ee52629243f267790c4b7e51d366e13b",
       "ast_digest": "b26fb3458067490fe6011bc9fd74c3a3065bd6a94cdccb84aa3d3d23b8691158"
     }
@@ -235,6 +235,34 @@
       "sequence": 24,
       "generation": 19,
       "actor": "codex:5860-runtime-readiness",
+      "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5837-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Reacquire the released issue-local preparation claim to repair and approve design-time readiness for issue 5837 only.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5837-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5837\",\".csdlc/prepared/issues/5837\",\".csdlc/evidence/5837\"],\"purpose\":\"Prepare issue 5837 design, diagram, cards, and validation plan without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex:5860-runtime-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Replace retained v0.91.7 and Runtime-only proof with real HTML, Unity, and reconnect validation entrypoints.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"shared-consumer-contract\",\"proof_role\":\"Validate one schema, audience, ordering, reconnect, auth, and backpressure matrix plus redaction and denied actions for both clients.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_contract.sh\"],\"parallel_group\":\"consumer-contract\",\"defer_reason\":null},{\"lane\":\"html-live-runtime\",\"proof_role\":\"Use the issue-delivered Playwright entrypoint to drive the real HTML Observatory over trusted Runtime HTTPS/WSS and retain read, authorized control, denial, stale, offline, and visible browser evidence.\",\"acceptance_ids\":[\"AC-2\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"node\",\"adl/tools/validate_v092_html_observatory_live.mjs\",\"--browser\",\"chrome\",\"--require-live-runtime\",\"--require-authorized-control\",\"--require-denial-proof\"],\"parallel_group\":\"consumer-live\",\"defer_reason\":\"The named validator is an issue 5837 implementation deliverable and requires issue 5800 trust plus the exact Runtime candidate.\"},{\"lane\":\"unity-live-runtime\",\"proof_role\":\"Use the issue-delivered native entrypoint to launch the approved Unity Editor/player against the same Runtime revision and retain real reads, controls, denial, failure, and visual interaction evidence.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/validate_v092_unity_observatory_live.sh\",\"--require-editor-player\",\"--require-live-runtime\",\"--require-visual-evidence\"],\"parallel_group\":\"consumer-live\",\"defer_reason\":\"The named validator is an issue 5837 implementation deliverable and requires the approved Unity version and native environment.\"},{\"lane\":\"guardian-restart-both-clients\",\"proof_role\":\"Use the issue-delivered coordinator to keep both clients active across Guardian-owned Runtime restart and prove bounded replay, no duplicate application, fresh post-restart correlation, and unchanged authorization.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/validate_v092_observatory_restart_reconnect.sh\",\"--clients\",\"html,unity\",\"--require-bounded-replay\",\"--reject-duplicates\",\"--require-unchanged-authority\"],\"parallel_group\":\"consumer-live\",\"defer_reason\":\"The named validator is an issue 5837 implementation deliverable and requires both completed consumers and the exact Guardian/Runtime candidate.\"},{\"lane\":\"exact-head-hygiene\",\"proof_role\":\"Reject unrelated changes and support exact-head review.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 21,
+      "actor": "codex:5860-runtime-readiness-repair",
       "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5837-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
     }

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-18A] Observatory/Unity consumer integration",
     "slug": "v0-92-wp-18a-observatory-unity-consumer-integration",
     "version": "v0.92",
-    "generation": 19
+    "generation": 21
   },
   "status": "ready",
   "content": {
@@ -102,7 +102,7 @@
         "Redaction review changes audience projection rules"
       ],
       "design_ref": ".csdlc/prepared/issues/5837/design.md",
-      "design_digest": "b0515176721b655162f3e919c5864345b65613ea64876e0c6a3c52b038becda3",
+      "design_digest": "ed0220eb8060138d3cf9d284f77a8520cdd03e7d99b95f6aa9557fb128ca7085",
       "diagram_ref": ".csdlc/prepared/issues/5837/diagram.mmd",
       "diagram_digest": "2735fcc45f0da9aacd9372d8bc46663117662848e7775310da12795fa0824105"
     }

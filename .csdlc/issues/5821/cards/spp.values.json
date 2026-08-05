@@ -7,43 +7,39 @@
     "title": "[v0.92][WP-04] Distributed Guardian/polis runtime",
     "slug": "v0-92-wp-04-distributed-guardian-polis-runtime",
     "version": "v0.92",
-    "generation": 19
+    "generation": 31
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
-      "summary": "After WP-03 stabilizes, freeze the architecture/threat/COTS/schema contract and exact 16-child denominator, execute children in dependency order with disjoint claims, integrate production transport and single-authority migration behavior, run adversarial multi-node/platform proof, then reconcile all terminal receipts at one reviewed revision.",
+      "plan_revision": 15,
+      "summary": "After WP-03 stabilizes, freeze and review the distributed architecture and threat model, validate the exact disjoint WP-04.01 through WP-04.16 ledger, create the separate WP-04-IMP umbrella, prepare all sixteen children, and close this gate without product implementation or integration credit.",
       "steps": [
         {
           "id": "S1",
-          "action": "Verify WP-03, freeze architecture/threat/COTS/schema contracts, and publish the exact 16-child ownership and dependency ledger.",
+          "action": "Verify WP-03 terminal ancestry and freeze the distributed Guardian architecture, COTS transport, schemas, trust boundaries, failure semantics, and threat model.",
           "acceptance_ids": [
             "AC-1",
-            "AC-2"
+            "AC-2",
+            "AC-7"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "Route and complete all 16 children under disjoint claims with production proof and truthful terminal receipts.",
+          "action": "Publish and validate the immutable WP-04.01 through WP-04.16 ownership, dependency, protected-path, proof, and rollback ledger.",
           "acceptance_ids": [
-            "AC-2",
             "AC-3",
             "AC-4",
-            "AC-5",
-            "AC-6",
             "AC-7"
           ],
           "status": "pending"
         },
         {
           "id": "S3",
-          "action": "Integrate the real multi-node substrate and run partition, fencing, migration, rollback, certificate, recovery, relocation, and observability proof.",
+          "action": "Create and schedule the separate WP-04-IMP umbrella and prepare exactly the sixteen declared child issues before any implementation starts.",
           "acceptance_ids": [
-            "AC-3",
-            "AC-4",
             "AC-5",
             "AC-6",
             "AC-7"
@@ -52,7 +48,7 @@
         },
         {
           "id": "S4",
-          "action": "Reconcile all child receipts and integrated evidence at one exact revision, resolve review, and publish with closing linkage.",
+          "action": "Resolve independent architecture and security review, retain the approved gate packet, and close issue 5821 without distributed implementation credit.",
           "acceptance_ids": [
             "AC-8"
           ],
@@ -60,28 +56,26 @@
         }
       ],
       "affected_areas": [
-        "Guardian identity and mTLS membership",
-        "Discovery, epochs, leases, fencing, and failure detection",
-        "Capability/resource-weather placement inputs",
-        "Snapshot catalog and migration/rollback state machine",
-        "Topology, certificate, migration, and failure observability",
-        "16-child lifecycle and integration evidence"
+        "Distributed Guardian architecture decision packet",
+        "Distributed Guardian security threat model",
+        "Exact WP-04.01 through WP-04.16 ownership and dependency ledger",
+        "WP-04-IMP umbrella scheduling and child preparation contract",
+        "Issue 5821 gate validation and review evidence"
       ],
       "invariants": [
-        "Exactly one authoritative owner exists for a Runtime lineage at any epoch",
-        "All node/control traffic is mutually authenticated with separate certificate purposes",
-        "Replay, stale epoch, cloned state, wrong node, and wrong trust domain fail closed",
-        "Failed migration never activates two targets or discards the recoverable source checkpoint",
-        "Partitions degrade placement/relocation but never grant authority",
-        "Every one of the 16 children has one nonduplicative owner and terminal receipt"
+        "The architecture preserves exactly one authoritative owner for a Runtime lineage at any epoch",
+        "The trust contract requires mutual authentication with separate certificate purposes and no insecure mode",
+        "Replay, stale epoch, cloned state, wrong node, and wrong trust domain are specified to fail closed",
+        "Migration ordering retains source authority until target validation and fencing succeed",
+        "The ledger contains exactly sixteen nonduplicative owners with disjoint protected paths",
+        "All sixteen children are execution-ready before WP-04-IMP starts, while issue 5821 claims no implementation credit"
       ],
       "risks": [
-        "The 16-child denominator could contain gaps or duplicate ownership",
-        "Partition or stale lease could create split brain",
-        "Migration ordering could fence the source before target validation",
-        "Certificate rotation/expiry could strand membership",
-        "Synthetic fixtures could be mistaken for real multi-node proof",
-        "Program integration could hide a red or nonterminal child"
+        "The sixteen-child denominator could omit a required behavior or duplicate ownership",
+        "Protected paths could overlap before binding and make parallel execution unsafe",
+        "Architecture or threat review could change child boundaries after issues are opened",
+        "The implementation umbrella could drift from the approved identities or dependency graph",
+        "Planning artifacts could be mistaken for distributed implementation proof"
       ],
       "execution_estimates": {
         "elapsed_seconds": 43200,
@@ -91,20 +85,21 @@
       "stop_conditions": [
         "WP-03 contracts are not terminal and stable",
         "Architecture or threat review has unresolved actionable findings",
-        "The exact 16-child ledger is missing, duplicate, or path-colliding",
-        "Any design permits plaintext, verification disablement, custom crypto, Runtime v2, or dual authority",
-        "A child lacks real production-path proof or truthful terminal state"
+        "The ledger is not exactly WP-04.01 through WP-04.16",
+        "Any two children have overlapping protected paths or unresolved dependencies",
+        "WP-04-IMP differs from the approved sixteen-child denominator",
+        "Any issue 5821 artifact claims distributed product implementation or integration completion"
       ],
       "replan_triggers": [
-        "WP-03 changes ingress/state/lifecycle contracts",
-        "Threat review changes trust boundaries or COTS transport",
-        "A child discovers overlapping ownership or an uncovered requirement",
-        "Integrated partition/migration proof violates single-authority invariants"
+        "WP-03 changes ingress, state, lifecycle, or readiness contracts before gate approval",
+        "Architecture or threat review changes trust boundaries, COTS transport, or child ownership",
+        "The validator discovers an uncovered requirement, duplicate owner, path overlap, or dependency cycle",
+        "WP-04-IMP or any prepared child differs from the approved sixteen-row ledger"
       ],
       "design_ref": ".csdlc/prepared/issues/5821/design.md",
-      "design_digest": "46e68b5092a52a379d8e352fec1c388008d7d265cbaf245fc2a38d05b3669db1",
+      "design_digest": "b04fce508d08c3b96ef7c9c98b5c706de8bb2d62892b642ce667411774659d46",
       "diagram_ref": ".csdlc/prepared/issues/5821/diagram.mmd",
-      "diagram_digest": "839945549709f057ef410e2b793c0a4beac3077114e3c5e24e0ef2a786407954"
+      "diagram_digest": "2a57bd6f3950517bf9f5b6a5b2401c178e2b7bf15b382a271dafab50d000a77a"
     }
   }
 }

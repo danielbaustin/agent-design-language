@@ -75,6 +75,14 @@ unauthorized mutation. A local macOS Apple Metal/MLX lane must invoke the
 explicitly configured model and retain a real response with correlation proof.
 Missing hardware/model is a truthful deferred or blocked lane, never a pass.
 Browser proof verifies the complete Observatory-to-Runtime round trip.
+The implementation must add
+`adl/tools/validate_v092_shepherd_browser_roundtrip.mjs`. That live validator
+opens the real Observatory in Chrome, submits one uniquely correlated governed
+message, proves Runtime admission invoked the configured MLX/Gemma adapter,
+waits for the non-retained `real_local_model` response, verifies the browser
+renders the same correlation and classification, and retains redacted Runtime,
+adapter, WSS, and browser evidence. Legacy Observatory scripts, deterministic
+adapters, and direct model invocation cannot satisfy this lane.
 
 ## Rollback
 

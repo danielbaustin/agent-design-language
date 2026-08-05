@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9376933aa08bd1c1708eacda6c1cb876ff925d7a61596daf9f30c8c4e86f245e",
   "phase": "bound",
-  "generation": 19,
-  "digest": "6ec5776a5003641d4f33c99bb2789db4472ecf6e9bb9675d3f5944a4d5797313",
+  "generation": 31,
+  "digest": "b5c3bb1d36ea62994121ddbb61c515f7d469ffc0d42d68e536704c8d022460bb",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5821/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-runtime-readiness-design-review",
-      "revision": "46e68b5092a52a379d8e352fec1c388008d7d265cbaf245fc2a38d05b3669db1"
+      "reviewer": "codex:5860-runtime-readiness-repair-design-review",
+      "revision": "b04fce508d08c3b96ef7c9c98b5c706de8bb2d62892b642ce667411774659d46"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "adefe46710abbaf8f19b0e12c2229897c1c1b72cbee8ec07c04e30ca5cf1fbcf",
+      "values_digest": "d8a04475bf0ddc6d09fc0fe514587bab5cc381040b4e0163e00f8a4ccd9d7eeb",
       "rendered_digest": "fd8725bbe5024f9ee69db3b95a42ab6a522d6c3154d73eff104f8592862b50aa",
       "ast_digest": "b2b4c1840ccfa82f416250b4f87211b0e9a519f583286f013c7a084db9a6ec28"
     },
     "stp": {
-      "values_digest": "7224edcbe7ac2a7a6a43cfbd926f73033ef0eaa3ac8b72d2c43aa2ba5ea21467",
-      "rendered_digest": "204c65fc2019d42e89ab91144c4578f641102546fd0d6366b0b31eea21575b2b",
-      "ast_digest": "cbaadc27e7ee10ac046e5131eba0395b680de3b2772831d322262c60d71e726a"
+      "values_digest": "061b1681d9f7908da9ad8a51483c448ac112ea8d4c24eeb04f8c9f33784ca621",
+      "rendered_digest": "5e8b7349918b91b7ac5d18199946919a576f9e78ecbd0a3b5acdb7f7390abba6",
+      "ast_digest": "3839de7224a437d1400084aca7f7b8a7c0f6335812ff2fe19bb273a1e75d5041"
     },
     "spp": {
-      "values_digest": "d525d314da4ad22bb2e6cb455e6142c9e8b5d88464594dbc7880a1a618dabb7d",
-      "rendered_digest": "746f5a70f07dee6cd539799b1e90286bf93738a1aac178921c0ae4832234c202",
-      "ast_digest": "d7799f1eea3531de260a9d2a9f4f421f5eb860763e69fc22742531680c04fb8b"
+      "values_digest": "577e3fc194d29724b9d14dd09f3b390cc4d0ef15f7ef63b98bb1a8d96f217754",
+      "rendered_digest": "68bec7c9b9d36703d1458551faaee3ede39ceeda5830cc1081688052baeb2e8b",
+      "ast_digest": "9c2bea3ebb266288314e5f0e1d2070d86c615e9023a88d64b5f0aedf1f18d465"
     },
     "vpp": {
-      "values_digest": "fd70b557e4b7789ad9631cb55a4b087def72537bbabc317c49128ef0d4ad530c",
-      "rendered_digest": "35058599a2d3775dac4dd90a23e4e3290c9b3201034d6488ddbaca1ad4292a35",
-      "ast_digest": "86c101d6d87145ae8c634d170cf2a8c3d8dabf1a46695bfd8b241f948b9650d8"
+      "values_digest": "d2d8b51beb69996a2f96266d0558f26390dc1a25015100a8a9c868d461a4f7d5",
+      "rendered_digest": "769d5b1dd34116476bc918914641f70c85afe6c9a4da1b2a02a7381b574ba4da",
+      "ast_digest": "f0ac50946c4775d1a3ed68be6c6742d6e285caf17c1a2865f7a60c6ab0b8837f"
     },
     "srp": {
-      "values_digest": "e69cb64c237cc85992fd1086444c3bfb178b3e66f435299c76b69ac766b28cc4",
-      "rendered_digest": "75c3f53abe2bded4afac17822a9a69df635c44145be99d682ccd31107717cb92",
-      "ast_digest": "75281ebd3097df3bd457d4b948943a65bcca6c2606a1213159c851a215da2f59"
+      "values_digest": "9b85c00461bbf7c065b4d53ea401e7c4d08fb68d153c2ce4b818104f175b3f04",
+      "rendered_digest": "26cef715aa56af54b86ef0aba47aadba1c1bf7f3c05d0719853cd6242ca5e0fd",
+      "ast_digest": "46f530c75ae60c4d0858fff71941147846698e0d938b9cc3cb2b7f5e1ab07ce0"
     },
     "sor": {
-      "values_digest": "9098e405d569a6ea1509492d0275bd895c5f056748992e992cc19b069ed56a89",
+      "values_digest": "aa4806ffd59ea1ababd600a1e2842bc4eff40e243c0db1191e689fa1b6765ce8",
       "rendered_digest": "e10d878924281817411c3f3ea1f856c4f04bc1a7c1419a67f67224f0db96dd33",
       "ast_digest": "e9f243f2dcd8c5194d9cc00e3bcc0b6d2994a1076c33b349f81126488ff15055"
     }
@@ -235,6 +235,118 @@
       "sequence": 24,
       "generation": 19,
       "actor": "codex:5860-runtime-readiness",
+      "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Reacquire the released issue-local preparation claim to repair and approve design-time readiness for issue 5821 only.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5821\",\".csdlc/prepared/issues/5821\",\".csdlc/evidence/5821\"],\"purpose\":\"Prepare issue 5821 design, diagram, cards, and validation plan without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex:5860-runtime-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Bound WP-04 as the architecture, security, and exact 16-child planning gate with a separately scheduled implementation umbrella.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"A reviewed architecture freezes Guardian and node identity, certificate purposes, enrollment, discovery, membership, transport, epochs, leases, fencing, placement inputs, migration, rollback, observability, and failure semantics\",\"A reviewed threat model covers partition, replay, stale lease, cloned state, wrong node or trust domain, certificate compromise or expiry, relocation failure, rollback failure, and split-brain activation\",\"The retained ledger contains exactly WP-04.01 through WP-04.16 with one required outcome, dependency set, owner, disjoint protected path set, proof boundary, and rollback responsibility per child\",\"An issue-local validator rejects missing identities, duplicate or overlapping protected paths, unresolved dependencies, malformed rows, or a denominator other than sixteen\",\"A separately scheduled WP-04-IMP implementation umbrella depends on issue 5821 and names exactly the same sixteen children without preclaiming their product paths\",\"Every child is execution-ready before WP-04-IMP starts, and WP-14 issue 5832 remains blocked until the later umbrella has stable integrated distributed contracts\",\"Issue 5821 performs no distributed product implementation, product test, multi-node proof, child integration, or terminal reconciliation claim\",\"Independent architecture and security review of the exact gate revision has no unresolved actionable findings\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify WP-03 terminal ancestry and freeze the distributed Guardian architecture, COTS transport, schemas, trust boundaries, failure semantics, and threat model.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Publish and validate the immutable WP-04.01 through WP-04.16 ownership, dependency, protected-path, proof, and rollback ledger.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Create and schedule the separate WP-04-IMP umbrella and prepare exactly the sixteen declared child issues before any implementation starts.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve independent architecture and security review, retain the approved gate packet, and close issue 5821 without distributed implementation credit.\",\"acceptance_ids\":[\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"child-wave-ledger\",\"proof_role\":\"Parse the retained design and require exactly sixteen ordered child identities, unique protected paths, resolvable child dependencies, and the separate implementation umbrella contract.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5821/validate-child-wave.rb\"],\"parallel_group\":\"planning-gate\",\"defer_reason\":null},{\"lane\":\"architecture-threat-packet-hygiene\",\"proof_role\":\"Reject malformed or whitespace-damaged architecture, threat-model, ledger, diagram, and issue-card changes before independent review.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"planning-gate\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Correct the WP-04 execution boundary to the architecture, security, and child-wave planning gate.",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Freeze and independently review the distributed Guardian architecture and threat model, validate an exact disjoint WP-04.01 through WP-04.16 child ledger, and schedule a separate WP-04-IMP implementation umbrella without performing distributed product implementation in issue 5821.\",\"operation\":\"replan\",\"previous_value\":\"Freeze the distributed Guardian trust, membership, lease/epoch, fencing, placement, migration, rollback, observability, and threat contracts; route exactly 16 nonduplicative children; then prove and reconcile one real integrated multi-node program.\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 23,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Replace implementation-program outputs with concrete planning-gate deliverables.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Reviewed distributed Guardian architecture decision packet and threat model\",\"Exact validated 16-row ledger for WP-04.01 through WP-04.16 with owner, dependencies, disjoint protected paths, proof boundary, and rollback responsibility\",\"Separately scheduled WP-04-IMP implementation umbrella naming exactly the same sixteen-child denominator\",\"Execution-ready cards for all sixteen children before the implementation umbrella starts\"]}"
+    },
+    {
+      "sequence": 30,
+      "generation": 24,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Make WP-04 planning and later implementation dependencies explicit.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-03 issue 5820 terminal with stable ingress, lifecycle, state, and readiness contracts\",\"Reviewed COTS transport and cryptographic boundary\",\"WP-04-IMP created only after this architecture and security gate is approved\",\"WP-04.01 through WP-04.16 prepared before WP-04-IMP implementation starts\",\"WP-14 issue 5832 waits for stable integrated output from the later WP-04-IMP umbrella\"]}"
+    },
+    {
+      "sequence": 31,
+      "generation": 25,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Correct the WP-04 operative plan to stop at the reviewed child-wave handoff.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"After WP-03 stabilizes, freeze and review the distributed architecture and threat model, validate the exact disjoint WP-04.01 through WP-04.16 ledger, create the separate WP-04-IMP umbrella, prepare all sixteen children, and close this gate without product implementation or integration credit.\",\"operation\":\"replan\",\"previous_value\":\"After WP-03 stabilizes, freeze the architecture/threat/COTS/schema contract and exact 16-child denominator, execute children in dependency order with disjoint claims, integrate production transport and single-authority migration behavior, run adversarial multi-node/platform proof, then reconcile all terminal receipts at one reviewed revision.\"}"
+    },
+    {
+      "sequence": 32,
+      "generation": 26,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Limit affected areas to architecture, threat, ledger, and scheduling truth.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"Distributed Guardian architecture decision packet\",\"Distributed Guardian security threat model\",\"Exact WP-04.01 through WP-04.16 ownership and dependency ledger\",\"WP-04-IMP umbrella scheduling and child preparation contract\",\"Issue 5821 gate validation and review evidence\"]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 27,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Replace implementation risks with planning-gate failure modes.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"The sixteen-child denominator could omit a required behavior or duplicate ownership\",\"Protected paths could overlap before binding and make parallel execution unsafe\",\"Architecture or threat review could change child boundaries after issues are opened\",\"The implementation umbrella could drift from the approved identities or dependency graph\",\"Planning artifacts could be mistaken for distributed implementation proof\"]}"
+    },
+    {
+      "sequence": 34,
+      "generation": 28,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Set fail-closed planning-gate stop conditions.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"WP-03 contracts are not terminal and stable\",\"Architecture or threat review has unresolved actionable findings\",\"The ledger is not exactly WP-04.01 through WP-04.16\",\"Any two children have overlapping protected paths or unresolved dependencies\",\"WP-04-IMP differs from the approved sixteen-child denominator\",\"Any issue 5821 artifact claims distributed product implementation or integration completion\"]}"
+    },
+    {
+      "sequence": 35,
+      "generation": 29,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Align review prompts with the architecture, security, and child-wave gate.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does the architecture and threat model close every declared identity, trust, certificate, partition, replay, lease, fencing, placement, migration, rollback, and observability boundary?\",\"Does the ledger contain exactly WP-04.01 through WP-04.16 with complete, nonduplicative outcomes and disjoint protected paths?\",\"Do all child dependencies resolve without cycles or hidden ownership, and does WP-04-IMP name the identical denominator?\",\"Are all sixteen children required to be execution-ready before implementation starts?\",\"Does issue 5821 stop before product implementation, multi-node proof, integration, or terminal child reconciliation claims?\"]}"
+    },
+    {
+      "sequence": 36,
+      "generation": 29,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
+    },
+    {
+      "sequence": 37,
+      "generation": 29,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Reacquire the released issue-local preparation claim to repair and approve design-time readiness for issue 5821 only.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5821\",\".csdlc/prepared/issues/5821\",\".csdlc/evidence/5821\"],\"purpose\":\"Prepare issue 5821 design, diagram, cards, and validation plan without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 38,
+      "generation": 30,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Remove implementation-closeout truth from the WP-04 planning gate invariants.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"The architecture preserves exactly one authoritative owner for a Runtime lineage at any epoch\",\"The trust contract requires mutual authentication with separate certificate purposes and no insecure mode\",\"Replay, stale epoch, cloned state, wrong node, and wrong trust domain are specified to fail closed\",\"Migration ordering retains source authority until target validation and fencing succeed\",\"The ledger contains exactly sixteen nonduplicative owners with disjoint protected paths\",\"All sixteen children are execution-ready before WP-04-IMP starts, while issue 5821 claims no implementation credit\"]}"
+    },
+    {
+      "sequence": 39,
+      "generation": 31,
+      "actor": "codex:5860-runtime-readiness-repair",
+      "reason": "Keep replanning authority inside the WP-04 planning gate.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"WP-03 changes ingress, state, lifecycle, or readiness contracts before gate approval\",\"Architecture or threat review changes trust boundaries, COTS transport, or child ownership\",\"The validator discovers an uncovered requirement, duplicate owner, path overlap, or dependency cycle\",\"WP-04-IMP or any prepared child differs from the approved sixteen-row ledger\"]}"
+    },
+    {
+      "sequence": 40,
+      "generation": 31,
+      "actor": "codex:5860-runtime-readiness-repair",
       "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
     }

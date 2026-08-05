@@ -7,7 +7,7 @@
     "title": "[v0.92][observatory][tls] Use browser-trusted local HTTPS certificate",
     "slug": "v0-92-observatory-browser-trusted-https",
     "version": "v0.92",
-    "generation": 34
+    "generation": 36
   },
   "status": "ready",
   "content": {
@@ -98,7 +98,7 @@
         "Browser trust requires a different explicit operator mechanism on a supported platform"
       ],
       "design_ref": ".csdlc/prepared/issues/5800/design.md",
-      "design_digest": "a8b0df8a0932388521fce40c96c551f235873d09a2b165b75d84d635c055b738",
+      "design_digest": "b763e6a678932b977803e780f2f4fa0b52a4b1b26e2a38b59af88b35203a5d4a",
       "diagram_ref": ".csdlc/prepared/issues/5800/diagram.mmd",
       "diagram_digest": "7dd8d22e5d50ec170456f9d5e5402880e82cbd01f58e52055996d331a046a55f"
     }
