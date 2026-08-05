@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5819/diagram.mmd
 [
   {
     "lane": "migration-evidence-contract",
-    "proof_role": "Validate the exact ordered five-repository destination set, per-destination receipts, zero unexplained drift, both untouched negative controls, and the two-file four-link website cutover.",
+    "proof_role": "Recompute five before/after manifest digests and compare all ten required surfaces, dispositions, controls, and website receipts.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -48,7 +48,7 @@ Diagram: .csdlc/prepared/issues/5819/diagram.mmd
   },
   {
     "lane": "github-five-destination-live-proof",
-    "proof_role": "Run the retained execution script that queries and records all five live agent-logic destinations, never only ADL.",
+    "proof_role": "Inspect all five live destinations across issues, PRs, assignees, rulesets, releases, Actions, Pages, packages, LFS receipts, and integrations.",
     "acceptance_ids": [
       "AC-3",
       "AC-4"

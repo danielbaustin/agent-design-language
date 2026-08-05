@@ -31,7 +31,7 @@ Deliver historical-delivery audit and only the proven remaining enum/schema corr
 5. Existing valid values JSON and rendered Markdown round-trip without drift and active template structure/schema parity remains intact
 6. Invalid values fail deterministically and any supported legacy alias normalizes only at an explicit tested boundary
 7. Sunset v1 authority, template redesign, wire-format migration, and extensible identifier typing remain excluded
-8. Focused inventory, round-trip, schema, negative, diff, and exact-revision review proof passes
+8. The exact csdlc-v2/tests/prompt_card_enum_typing.rs target proves round-trip/schema and invalid-value/legacy behavior with zero tests treated as failure
 
 ## Dependencies
 

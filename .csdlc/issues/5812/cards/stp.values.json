@@ -7,7 +7,7 @@
     "title": "[v0.92][runtime][quality] Restore Clippy cleanliness in csm_freedom_gate",
     "slug": "v0-92-freedom-gate-clippy-cleanliness",
     "version": "v0.92",
-    "generation": 6
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -24,7 +24,7 @@
         "unmediated_execution_allowed still defaults to false",
         "Focused csm_freedom_gate tests, including unsafe retained-artifact rejection, pass",
         "The adl-gws-context-mirror production binary passes Clippy with warnings denied",
-        "The executable path-scope validator proves the product diff is limited to adl/src/csm_freedom_gate.rs and rejects Cargo.toml, Cargo.lock, dependencies, Google Drive, and unrelated source changes",
+        "The path validator requires adl/src/csm_freedom_gate.rs, exactly two expression substitutions, and rejects Cargo, dependency, Google Drive, and unrelated changes",
         "One exact-revision bounded review has no unresolved actionable findings"
       ],
       "dependencies": [

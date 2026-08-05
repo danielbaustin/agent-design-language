@@ -8,11 +8,29 @@ require "yaml"
 ROOT = Pathname.new(__dir__).join("../../..").cleanpath
 INVENTORY = ROOT.join(".csdlc/evidence/5818/canonical-surface-inventory.json")
 ALLOWED = %w[update already_current historical_preserve not_authoritative].freeze
+REQUIRED_PATHS = [
+  "README.md",
+  "docs/README.md",
+  "docs/planning/ADL_FEATURE_LIST.md",
+  "adl/Cargo.toml",
+  "adl/Cargo.lock",
+  "csdlc-v2/Cargo.toml",
+  "AGENTS.md",
+  "REVIEW.md",
+  "docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md",
+  "docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md",
+  *%w[init github finish review shepherd doctor validate bind clean card-editor publish].map do |name|
+    "csdlc-v2/operator/skills/csdlc-v2-#{name}/SKILL.md"
+  end
+].freeze
 
 abort "missing canonical surface inventory" unless INVENTORY.file? && !INVENTORY.zero?
 rows = JSON.parse(INVENTORY.read)
 abort "inventory must be a nonempty array" unless rows.is_a?(Array) && !rows.empty?
 abort "duplicate inventory path" unless rows.map { |row| row["path"] }.uniq.length == rows.length
+inventory_paths = rows.map { |row| row["path"] }
+missing_required = REQUIRED_PATHS - inventory_paths
+abort "canonical inventory omits required paths: #{missing_required.join(', ')}" unless missing_required.empty?
 
 rows.each do |row|
   path = row["path"].to_s

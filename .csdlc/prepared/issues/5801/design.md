@@ -54,3 +54,8 @@ provenance. Platform syntax and path handling are checked for Linux, macOS, and
 Windows-facing contracts; required GitHub checks prove the final exact head.
 The retained Gemini 3.1 Pro packet is a required review input, not replaceable
 by an unnamed generic external review.
+
+That packet names repository-relative prompt, response, and topology artifact
+paths. The issue-local validator recomputes each SHA-256 digest and verifies the
+topology file's Git blob at the exact 40-hex reviewed revision. Free-standing
+digest strings or an untracked model response do not satisfy the review gate.

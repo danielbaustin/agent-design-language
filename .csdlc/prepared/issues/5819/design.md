@@ -76,3 +76,12 @@ absent negative control, missing destination verification for any of the five
 repositories, or missing production/beta website cutover receipt. The
 issue-local validator is
 `.csdlc/prepared/issues/5819/validate-migration-evidence.rb`.
+
+Each before/after manifest is retained as a separate SHA-256-bound JSON
+artifact. Both manifests contain actual data for issues, pull requests,
+assignees, rulesets, releases, Actions, Pages, packages, LFS, and integrations.
+The validator recomputes both file digests and every canonical per-surface
+digest. Differences require a digest-bound verified-disposition artifact; a
+boolean preservation assertion is never sufficient. The live verifier queries
+all GitHub API-backed surfaces at the destination and binds LFS to a retained
+`git lfs fsck` receipt.

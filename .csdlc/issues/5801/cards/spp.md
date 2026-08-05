@@ -16,14 +16,14 @@ Review the current topology, centralize deterministic path/PVF classification, d
 
 ## Plan
 
-Revision 9
+Revision 10
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Retain and validate the required Gemini 3.1 Pro topology review, dispose every actionable finding, and define the single deterministic change-class and PVF lane map",
+    "action": "Retain and cryptographically validate Gemini 3.1 Pro review artifacts and dispose every actionable finding",
     "acceptance_ids": [
       "AC-1",
       "AC-2"
@@ -44,7 +44,7 @@ Revision 9
   },
   {
     "id": "S3",
-    "action": "Run Gemini packet, policy, coverage, lifecycle, platform, and exact-head integration proof and resolve bounded review",
+    "action": "Run review-packet, policy, coverage, lifecycle, platform, and exact-head proof",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -86,7 +86,7 @@ Revision 9
 
 .csdlc/prepared/issues/5801/design.md
 
-Digest: 0732e464036716c0a0f881f3dec516a1d2dfd2798a815901624c40d8caca1458
+Digest: b182f8d0bfc34dd38efb21e7b225e28961504bf532fd1fa436fafe7930b3a46a
 
 ## Diagram
 

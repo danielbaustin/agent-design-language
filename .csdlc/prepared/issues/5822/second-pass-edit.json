@@ -1,0 +1,32 @@
+{
+  "issue": 5822,
+  "card": "spp",
+  "expected_generation": 16,
+  "expected_digest": "b52a1c972d831bbfd500c5afc9785f0a2101a073c8639936deb97fda2d07791b",
+  "claim_id": "claim-5822-v092-preparation",
+  "actor": "codex:5860-foundation-second-pass",
+  "reason": "Replace zero-match estimation filters with one exact integration-test target and fail on zero selected tests.",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "Typed observation, forecast, accepted-estimate, and outcome schemas retain per-field provenance and explicit unknown values",
+      "Lifecycle, GitHub, PVF/validation, approved session, and operator-annotation adapters join deterministically without transcript-content leakage",
+      "Comparable cohorts exclude target actuals and forecasts report ranges, cohort size, dispersion, confidence, outlier factors, and drift state",
+      "Static PlanningProfile estimates remain an explicit fallback when data sufficiency or calibration gates fail",
+      "A typed SPP edit records advisory estimate source and operator disposition without enforcing time, tokens, completion, or phase",
+      "Terminal closeout records forecast-versus-actual evidence and supports reproducible backtest and calibration reports",
+      "Equivalent baseline and candidate cohorts demonstrate truthful operator cycle-time and reconnection behavior without gate weakening",
+      "The exact csdlc-v2/tests/estimation_contracts.rs target proves schema, privacy, leakage, deterministic cohort, fallback, calibration, and backtest behavior with zero tests treated as failure"
+    ],
+    "steps": [
+      {"id":"S1","action":"Define typed observations, forecasts, outcomes, sufficiency gates, and the exact estimation_contracts integration target","acceptance_ids":["AC-1","AC-2","AC-4","AC-8"],"status":"pending"},
+      {"id":"S2","action":"Implement deterministic cohorts, advisory SPP integration, terminal actuals, backtests, and drift handling","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-6"],"status":"pending"},
+      {"id":"S3","action":"Run the exact no-tests-fail integration target, cycle-time comparison, and exact-revision review","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"status":"pending"}
+    ],
+    "validation_lanes": [
+      {"lane":"estimation-contracts-exact-target","proof_role":"Run the exact estimation_contracts integration target for schema, privacy, negatives, cohorts, fallback, calibration, and backtesting; zero tests fail.","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-8"],"deterministic":true,"resource_profile":"medium","budget_seconds":1800,"budget_tokens":9000,"argv":["cargo","nextest","run","--locked","--manifest-path","csdlc-v2/Cargo.toml","--no-tests=fail","--test","estimation_contracts"],"parallel_group":"csdlc-v2","defer_reason":null},
+      {"lane":"cycle-time-comparison","proof_role":"Validate retained equivalent baseline and candidate cohorts and component timing.","acceptance_ids":["AC-7","AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":300,"budget_tokens":2000,"argv":["ruby","-rjson","-e","r=JSON.parse(File.read('.csdlc/evidence/5822/cycle-time-comparison.json')); abort('incomparable') unless r['baseline_cohort']&&r['candidate_cohort']&&r['comparison_basis_equal']==true&&r['gates_preserved']==true"],"parallel_group":"analysis","defer_reason":null},
+      {"lane":"diff-hygiene","proof_role":"Reject whitespace errors and support exact-revision review.","acceptance_ids":["AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":30,"budget_tokens":500,"argv":["git","diff","--check"],"parallel_group":"issue-local","defer_reason":null}
+    ]
+  }
+}

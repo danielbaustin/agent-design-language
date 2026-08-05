@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5818/diagram.mmd
 [
   {
     "lane": "activation-evidence-contract",
-    "proof_role": "Parse inventoried YAML/JSON, resolve current Markdown links, compare expected and observed versions, and reject historical changes except new issue-owned evidence.",
+    "proof_role": "Require the fixed canonical denominator, parse structured data, resolve links, compare versions, and reject historical changes.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -47,7 +47,7 @@ Diagram: .csdlc/prepared/issues/5818/diagram.mmd
   },
   {
     "lane": "cargo-version-parity",
-    "proof_role": "Prove locked workspace/package metadata is internally consistent after authoritative version activation.",
+    "proof_role": "Prove locked ADL workspace/package metadata is internally consistent from the repository root.",
     "acceptance_ids": [
       "AC-3",
       "AC-7"
@@ -60,6 +60,8 @@ Diagram: .csdlc/prepared/issues/5818/diagram.mmd
       "cargo",
       "metadata",
       "--locked",
+      "--manifest-path",
+      "adl/Cargo.toml",
       "--format-version",
       "1"
     ],
@@ -68,7 +70,7 @@ Diagram: .csdlc/prepared/issues/5818/diagram.mmd
   },
   {
     "lane": "diff-hygiene",
-    "proof_role": "Reject whitespace errors and support exact-revision bounded review.",
+    "proof_role": "Reject whitespace errors and support exact-revision review.",
     "acceptance_ids": [
       "AC-7"
     ],
@@ -99,7 +101,7 @@ Tokens: 10000
 ## Commands
 
 - `ruby .csdlc/prepared/issues/5818/validate-activation.rb`
-- `cargo metadata --locked --format-version 1`
+- `cargo metadata --locked --manifest-path adl/Cargo.toml --format-version 1`
 - `git diff --check`
 
 ## Failure Semantics

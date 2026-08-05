@@ -32,7 +32,7 @@ Deliver measured estimation, reconnection, and simplified lifecycle path.
 5. A typed SPP edit records advisory estimate source and operator disposition without enforcing time, tokens, completion, or phase
 6. Terminal closeout records forecast-versus-actual evidence and supports reproducible backtest and calibration reports
 7. Equivalent baseline and candidate cohorts demonstrate truthful operator cycle-time and reconnection behavior without gate weakening
-8. Focused schema, negative, deterministic, privacy, lifecycle, and exact-revision review proof passes
+8. The exact csdlc-v2/tests/estimation_contracts.rs target proves schema, privacy, leakage, deterministic cohort, fallback, calibration, and backtest behavior with zero tests treated as failure
 
 ## Dependencies
 

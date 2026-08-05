@@ -7,29 +7,30 @@
     "title": "[v0.92][WP-07] Prompt-card enum typing",
     "slug": "v0-92-wp-07-prompt-card-enum-typing",
     "version": "v0.92",
-    "generation": 15
+    "generation": 17
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 9,
       "summary": "Audit current v2 restricted fields end to end, classify typed completion and extensibility, implement only the smallest proven finite gap, preserve durable strings, and prove schema/editor/validator/Markdown round-trip parity and invalid-value rejection.",
       "steps": [
         {
           "id": "S1",
-          "action": "Inventory and classify every restricted current-v2 card field and historical delivery",
+          "action": "Inventory every restricted field and declare the exact prompt_card_enum_typing integration target",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
             "AC-3",
-            "AC-7"
+            "AC-7",
+            "AC-8"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "If and only if a finite gap is proven, implement the smallest shared enum authority across current v2 boundaries",
+          "action": "If a finite gap exists, implement the smallest shared enum authority across current v2 boundaries",
           "acceptance_ids": [
             "AC-3",
             "AC-4",
@@ -41,7 +42,7 @@
         },
         {
           "id": "S3",
-          "action": "Run inventory, round-trip, schema, invalid-value, no-duplicate-work, and exact-revision review proof",
+          "action": "Run inventory, exact no-tests-fail target, no-duplicate-work, and exact-revision proof",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -96,7 +97,7 @@
         "Legacy aliases require an explicit versioned compatibility policy"
       ],
       "design_ref": ".csdlc/prepared/issues/5824/design.md",
-      "design_digest": "e83cbd5c35a95ce03128aeaff870ee6a07cf1f47e62912bec184bf7de60e3007",
+      "design_digest": "2c34517219b7288fef539610b8d4be187058b759eeaa20f9d02a1ad45fa25e32",
       "diagram_ref": ".csdlc/prepared/issues/5824/diagram.mmd",
       "diagram_digest": "5846fe328a23646041deee2956de2d777e77a496fc82d707f3976361df4c5249"
     }

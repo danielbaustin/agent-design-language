@@ -7,7 +7,7 @@
     "title": "[v0.92][runtime][quality] Restore Clippy cleanliness in csm_freedom_gate",
     "slug": "v0-92-freedom-gate-clippy-cleanliness",
     "version": "v0.92",
-    "generation": 6
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -41,7 +41,7 @@
         },
         {
           "lane": "freedom-gate-clippy",
-          "proof_role": "Reproduce and eliminate the exact production-binary warnings with warnings denied.",
+          "proof_role": "Eliminate the exact production-binary warnings with warnings denied.",
           "acceptance_ids": [
             "AC-1",
             "AC-5"
@@ -89,7 +89,7 @@
         },
         {
           "lane": "exact-path-scope-negative",
-          "proof_role": "Reject Cargo metadata, dependency, Google Drive, and every unrelated product path rather than checking whitespace only.",
+          "proof_role": "Require the two substitutions and reject every unauthorized path.",
           "acceptance_ids": [
             "AC-6",
             "AC-7"
@@ -107,7 +107,7 @@
         },
         {
           "lane": "diff-hygiene",
-          "proof_role": "Reject whitespace errors after the exact-path gate passes.",
+          "proof_role": "Reject whitespace errors after exact-path proof.",
           "acceptance_ids": [
             "AC-6",
             "AC-7"
@@ -129,7 +129,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on semantic drift, lint failure, unrelated changes, or missing focused proof.",
       "design_ref": ".csdlc/prepared/issues/5812/design.md",
-      "design_digest": "2ba06f131edeb273db5d8a9eb8c8b98bd7ad4fe1d21a7e281de15ade5875d531",
+      "design_digest": "958d2ad7889790c03707b29413730f7902cbea3a044ae5cb5005d59aec5d701c",
       "diagram_ref": ".csdlc/prepared/issues/5812/diagram.mmd",
       "diagram_digest": "ecc400f15bce3baa144b59854cd774554bc04d7e8747d44fecb4093ad83cbc82"
     }

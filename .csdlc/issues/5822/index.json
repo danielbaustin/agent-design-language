@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b476d2b9dfcbc719a2efb87fbffe14fcb7df6263bcbaecc1a27a64c5c4c1e798",
   "phase": "bound",
-  "generation": 15,
-  "digest": "17d92bad43681db89b8b3bac3294f947532fa4b6a1abf7a618847052de8a55e5",
+  "generation": 17,
+  "digest": "600cbff245f9308379f431846f1f49af47e33d384d42df150d2c89fd82a8d408",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5822/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-design-review",
-      "revision": "383ba7248a20b4d58d83a488d3445ceffc38d42195c5510be7a3912463560422"
+      "reviewer": "codex:5860-foundation-second-pass-review",
+      "revision": "e584f376c6fef66a4ef81e1d44d04f919c032e4aef5f1c7f270fe7fc08a24297"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "fab9c19b9484409b31f65ee3fa921ddf6061d6b0cd5a6cd05556671aa8e0a64d",
+      "values_digest": "f30800ddbef9784331b6a6c50f1b93335467ee50efdec2dc442e5c8cad57e99d",
       "rendered_digest": "a2e05d299c61fb87347a0c7e4217da58dcd8ffcdb615f1dc0aac4438c3bebd79",
       "ast_digest": "98e306b57fa7f5865499191708ed16b077317e9e8f9018041ed11757b0f78e2f"
     },
     "stp": {
-      "values_digest": "fc3e0609b3e4cc0a9f5abb61fbbdc47956842d967609bb6ca07ac77073723334",
-      "rendered_digest": "631accc892c4d2b7347fca6fc88692a722bd3513f555fa12c4f97d913155dbb7",
-      "ast_digest": "8c7ff19a5058aa0c0c7de3713f12d79bc2c87f226cf4d56e7d938242c4efe0bb"
+      "values_digest": "250ddd84e1539069bbc56500537dbc9754ea2a2b33a834e5ff3f20c37bcd5c56",
+      "rendered_digest": "b5ea1948c8b04f65c7e6fe5a5709ae0c27e3efa3a9f4d68ea4c2a2eb83d64586",
+      "ast_digest": "aa359ab54626c9f0787a862efa22ec899c7bf5a73f630127203541e458cb9ada"
     },
     "spp": {
-      "values_digest": "eef33b607a4f0ce5b4386da0e42315c3fb29f6c62f57d5760e5e06188065a3a4",
-      "rendered_digest": "622636521c6aec39df5983178565c4a0eaba18997bc67d98e2b36e02a018fd45",
-      "ast_digest": "8d23437d5c79d2556dbb4c6495465c4c962c9122d4c458807880b181b0509b52"
+      "values_digest": "89f535b348da91f95347ec00d3e2257e699db35ed907833d924a252083144e94",
+      "rendered_digest": "2fe14507d7a3258adfa1750a045fee95a3ddde4e5a1f6a04f77175a13d6dc3e8",
+      "ast_digest": "fd8005ee23738ece6780a6e345cacb3978ef6e4f7d7e0c463cf9a7e46db78e2f"
     },
     "vpp": {
-      "values_digest": "96cad82b8ed39666be20608519f6453961cacc4c875398be4ab738915e0da710",
-      "rendered_digest": "4eab5a145c28a747bf1bcb9bd362a87e285cd2233e794203079ecebc4c9a8c23",
-      "ast_digest": "a076e1fc455ca01894b85d777fcb0982b16e9fc5d4dc0d376f631697727bd5fd"
+      "values_digest": "eff1de55cd910a8c1cac107c989bfcb84937330cc362672942a5b6e2383a9190",
+      "rendered_digest": "b5c9f1109eb92758ae4d584feaed93929e2a63b2c6f3cf2299e2a2263e614f45",
+      "ast_digest": "2a57b64e87e65cb60059e4a14343acb120dbd5df9d67f9b69edb0a33d890ff02"
     },
     "srp": {
-      "values_digest": "0a30808aa293686921b3056916a9ad6956eb0671ab45d0c0cb2d14f2c9013d6c",
+      "values_digest": "768f7ee14cc8a34331043dab1ee5b286d02af57602b2deeda3e4938b26520905",
       "rendered_digest": "69ab3feab354c989fbe6922f1f8b04f2a39e07b6831180b12f22fbee71eceb58",
       "ast_digest": "6cac5cde4b2319c579dc8d5b66b951bda0ab8ea548ce7d91f55a755f5c0a3a80"
     },
     "sor": {
-      "values_digest": "3d5022baef4ef6a5d842bee3baa65ef818123c60df6d5faabe3cef13b4cf4be0",
+      "values_digest": "6d089cd1ed947fc3c7771e45112d71d36dba94a0ec6064f0643e759089f5f0df",
       "rendered_digest": "350a21346b3268c5d96b108284fe5ca27520ed7417790180d5cb3e56e0754fbe",
       "ast_digest": "ae340b59eeb81d8a04dbd8dd632b73c8a311492d9edc837dc8291b95a4200968"
     }
@@ -209,6 +209,34 @@
       "actor": "codex:5860-foundation-readiness",
       "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5822-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Reacquire issue #5822 only for the authorized Foundation second-pass readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5822-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5822\",\".csdlc/issues/5822\",\".csdlc/locks/5822.lock\",\".csdlc/prepared/issues/5822\"],\"purpose\":\"Repair issue 5822 Foundation execution-readiness packet without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:5860-foundation-second-pass-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Replace zero-match estimation filters with one exact integration-test target and fail on zero selected tests.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Typed observation, forecast, accepted-estimate, and outcome schemas retain per-field provenance and explicit unknown values\",\"Lifecycle, GitHub, PVF/validation, approved session, and operator-annotation adapters join deterministically without transcript-content leakage\",\"Comparable cohorts exclude target actuals and forecasts report ranges, cohort size, dispersion, confidence, outlier factors, and drift state\",\"Static PlanningProfile estimates remain an explicit fallback when data sufficiency or calibration gates fail\",\"A typed SPP edit records advisory estimate source and operator disposition without enforcing time, tokens, completion, or phase\",\"Terminal closeout records forecast-versus-actual evidence and supports reproducible backtest and calibration reports\",\"Equivalent baseline and candidate cohorts demonstrate truthful operator cycle-time and reconnection behavior without gate weakening\",\"The exact csdlc-v2/tests/estimation_contracts.rs target proves schema, privacy, leakage, deterministic cohort, fallback, calibration, and backtest behavior with zero tests treated as failure\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Define typed observations, forecasts, outcomes, sufficiency gates, and the exact estimation_contracts integration target\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-4\",\"AC-8\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement deterministic cohorts, advisory SPP integration, terminal actuals, backtests, and drift handling\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run the exact no-tests-fail integration target, cycle-time comparison, and exact-revision review\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"estimation-contracts-exact-target\",\"proof_role\":\"Run the exact estimation_contracts integration target for schema, privacy, negatives, cohorts, fallback, calibration, and backtesting; zero tests fail.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":9000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--no-tests=fail\",\"--test\",\"estimation_contracts\"],\"parallel_group\":\"csdlc-v2\",\"defer_reason\":null},{\"lane\":\"cycle-time-comparison\",\"proof_role\":\"Validate retained equivalent baseline and candidate cohorts and component timing.\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"r=JSON.parse(File.read('.csdlc/evidence/5822/cycle-time-comparison.json')); abort('incomparable') unless r['baseline_cohort']&&r['candidate_cohort']&&r['comparison_basis_equal']==true&&r['gates_preserved']==true\"],\"parallel_group\":\"analysis\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors and support exact-revision review.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Release the Foundation second-pass preparation claim after typed regeneration, reapproval, and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5822-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-second-pass\"}"
     }
   ]
 }

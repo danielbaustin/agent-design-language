@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-05] C-SDLC estimation and cycle-time reduction",
     "slug": "v0-92-wp-05-c-sdlc-estimation-and-cycle-time-reduction",
     "version": "v0.92",
-    "generation": 15
+    "generation": 17
   },
   "status": "ready",
   "content": {
@@ -30,7 +30,7 @@
         "A typed SPP edit records advisory estimate source and operator disposition without enforcing time, tokens, completion, or phase",
         "Terminal closeout records forecast-versus-actual evidence and supports reproducible backtest and calibration reports",
         "Equivalent baseline and candidate cohorts demonstrate truthful operator cycle-time and reconnection behavior without gate weakening",
-        "Focused schema, negative, deterministic, privacy, lifecycle, and exact-revision review proof passes"
+        "The exact csdlc-v2/tests/estimation_contracts.rs target proves schema, privacy, leakage, deterministic cohort, fallback, calibration, and backtest behavior with zero tests treated as failure"
       ],
       "dependencies": [
         "WP-02A issue #5801 complete with stable CI/PVF timing and lifecycle topology",

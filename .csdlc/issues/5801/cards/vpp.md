@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5801/diagram.mmd
 [
   {
     "lane": "gemini-3-1-pro-review-contract",
-    "proof_role": "Require retained Gemini 3.1 Pro identity, exact revision and prompt/response digests, and dispositions for every actionable finding.",
+    "proof_role": "Recompute prompt, response, and topology SHA-256 and bind the topology Git blob to the exact reviewed revision.",
     "acceptance_ids": [
       "AC-1",
       "AC-7"
@@ -101,7 +101,7 @@ Diagram: .csdlc/prepared/issues/5801/diagram.mmd
   },
   {
     "lane": "metadata-lineage-negative",
-    "proof_role": "Prove metadata-only reuse rejects substantive, renamed, stale-review, or different-head source drift.",
+    "proof_role": "Prove metadata-only reuse rejects substantive, renamed, stale-review, or different-head drift.",
     "acceptance_ids": [
       "AC-5",
       "AC-7"
@@ -125,7 +125,7 @@ Diagram: .csdlc/prepared/issues/5801/diagram.mmd
   },
   {
     "lane": "exact-head-ci-platform",
-    "proof_role": "GitHub required checks prove the final exact head while contract fixtures cover macOS and Windows boundaries.",
+    "proof_role": "GitHub required checks prove the final exact head while fixtures cover macOS and Windows boundaries.",
     "acceptance_ids": [
       "AC-1",
       "AC-4",
@@ -147,7 +147,7 @@ Diagram: .csdlc/prepared/issues/5801/diagram.mmd
   },
   {
     "lane": "diff-hygiene",
-    "proof_role": "Reject whitespace and unintended policy-surface churn.",
+    "proof_role": "Reject whitespace and unintended policy churn.",
     "acceptance_ids": [
       "AC-7"
     ],

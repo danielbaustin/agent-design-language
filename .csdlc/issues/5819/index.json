@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "8f38743f59dd814a09097b78e17331ac66a04b30cc584dab53d682d1e1d4ea34",
   "phase": "bound",
-  "generation": 17,
-  "digest": "d275a222c62a82c84cc9ecc7a70766c842dc9414fa3ebee7f1b18b25b150cce5",
+  "generation": 19,
+  "digest": "ddc2ef717e2257d4fd58b230e2983741ccfb9c18ebd79b2c7be92e671ccb4432",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5819/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-readiness-repair-review",
-      "revision": "dd0933f96f45a243b17ad7d5cb4e3cfed18a492e3297a5e2e7826d7cbe964afb"
+      "reviewer": "codex:5860-foundation-second-pass-review",
+      "revision": "3340d20767a5c27dbbe65cdf460f9e15873c62c19a7091b416e384ab460967f5"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "3e20cc113d14fbf65b9cc595b72e4f31f7898fc114ecb42d5c45f9cc2084cae4",
+      "values_digest": "f10c60c3607f03909837999245809ff9a8494885b6afaf651d05544faa8058fd",
       "rendered_digest": "44e6d8cf86fd0800f426b743c58bc2352661d9beeea3551cfdbb579e08a05dfc",
       "ast_digest": "dadf91013f912bb3f6d459708baa2117f193b2c4eeb7b7ef1e1bbee61995e981"
     },
     "stp": {
-      "values_digest": "24e281f94103915ceb174334ff8f81500b2bdd55f2468970d8268e6638cc11db",
-      "rendered_digest": "0c8c686afd8fe43c75c5fb128a94f0943271fb042ece477bcc5a88b973f5fd96",
-      "ast_digest": "5c773f2294b8f3fb0ed235f59ba90dab38263b3c858cd09966fce576ccf8919f"
+      "values_digest": "9940f69c692a2729999c1307a18c5d6a38fa10dd02e2e3faae27cffd4b273f34",
+      "rendered_digest": "618913b7938d42b6bdf89cb4a8b55548f34ca26c4d11a50c19d6f5c23fd35991",
+      "ast_digest": "ff3715976eb2a09e3043bbe14e4b690aa7d608e73bcfc3a9444c888274fe62a2"
     },
     "spp": {
-      "values_digest": "9a99294e7e21d6fb938f9b6ffdb4b8116c7d0b6837d8b1de6e877858ce5ae986",
-      "rendered_digest": "a006a568f602abbc03d077b31b8ab4bf447ca2a369335453cd2ee8bd733a7946",
-      "ast_digest": "eb657a993376233af2cb9ca416d7e0dff7ec253a32bc01a30faf988e951e6ede"
+      "values_digest": "f45dd7e05e8eba5a359a1333fe6d273337c1fea18c3ec08f87bf604ccc92091a",
+      "rendered_digest": "975e4aef7d77f299fc70258cc6f9bd748c0af4094dc6ea081e09aa682dc798c2",
+      "ast_digest": "fba8b0015f167acfdcb124493ced7e0797fd5834e7888d5ef6ddab251beffe5b"
     },
     "vpp": {
-      "values_digest": "d588a0dca6b3878ec3761b3ca02022d3579b3016db2cf1ee065836ff312931e6",
-      "rendered_digest": "b9d47e10df1b61d03a68c787343ade1f163e9bfc035fd00d4dc2fd33c143ca35",
-      "ast_digest": "716774f4e3e6150382319c86b758ac1a58a7b0d2d75095fcc2ababf9be12af97"
+      "values_digest": "f566f03422a6520301503688dee49d05b8a71ba9cc831750c8fa18f190901975",
+      "rendered_digest": "6f7d41c2d8b99d665cb4efe53d4de35df26c1e49b27bfae29d2a5ca866940840",
+      "ast_digest": "d1a1b5a185c84293a0fe598998d20ea4bf2da5deae7d12cca210c37e6732f257"
     },
     "srp": {
-      "values_digest": "de37ae74da5b9a3840ece9bb0241528cf5822cfd0931314e7c27fe1f33df1f01",
+      "values_digest": "3532a18dd97c547c85eafd0aaa12888f864126cded6d662f4ded9b3297e908bd",
       "rendered_digest": "734056ebfca5125e98986cbbfd83620c219853a8db268ceba6b4d30dec8df33b",
       "ast_digest": "3e8f2043f792c6d62e42f6a5ca496e340b8a9f6d1a040cf8c72371ec3148c862"
     },
     "sor": {
-      "values_digest": "f9dc0b448be95875833f2f10884729132d215b876a968ba864f6861ca2f5ad9a",
+      "values_digest": "d6816257e889df5dc7db3ad348be657c235b5e8fe5ba4435310d8978958a7dc4",
       "rendered_digest": "b9d02042c58382c56857864e90a725014418ad564516ddde5a0559f85a2a1e9b",
       "ast_digest": "2d4882273217ccc6b33a14cd0d057b992c48a401a63dfe2680b0ca6254180916"
     }
@@ -237,6 +237,34 @@
       "actor": "codex:5860-foundation-readiness",
       "reason": "Release the Foundation readiness-repair claim after typed card regeneration, design approval, and focused validation; child execution must reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5819-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 17,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Reacquire issue #5819 only for the authorized Foundation second-pass readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5819-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5819\",\".csdlc/issues/5819\",\".csdlc/locks/5819.lock\",\".csdlc/prepared/issues/5819\"],\"purpose\":\"Repair issue 5819 Foundation execution-readiness packet without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:5860-foundation-second-pass-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 27,
+      "generation": 19,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Bind migration preservation claims to recomputed before/after manifests and live inspection of every required GitHub surface.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Organization owners, recovery, billing, policy, permissions, destination names, and exact five-repository scope are verified\",\"Every repository has SHA-256-bound before and after manifests at one exact HEAD containing actual issues, PRs, assignees, rulesets, releases, Actions, Pages, packages, LFS, and integration data\",\"Exactly the five approved repositories transfer in order to agent-logic with names, visibility, history, and every manifest surface preserved or backed by a digest-bound verified disposition\",\"Every destination passes live GitHub inspection for API-backed surfaces and retained git-lfs-fsck evidence before the next transfer\",\"ADL transfers last; agent-logic/agent-logic.ai updates exactly site/index.html and site/beta/index.html, removes all four old ADL links, and retains source and publication receipts\",\"danielbaustin/asksifu remains personal and danielbaustin/Horust is neither transferred nor settings-mutated, with an observation receipt for each\",\"Final evidence contains no secret values, no unexplained drift, and one exact-revision bounded review\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Capture complete digest-bound before manifests and assignee-aware transfer plans for all five repositories\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Transfer serially and compare recomputed per-surface before/after evidence plus live destination state\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Complete website cutover, controls, final report, validators, and exact-revision review\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"migration-evidence-contract\",\"proof_role\":\"Recompute five before/after manifest digests and compare all ten required surfaces, dispositions, controls, and website receipts.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5819/validate-migration-evidence.rb\"],\"parallel_group\":\"migration-contract\",\"defer_reason\":null},{\"lane\":\"github-five-destination-live-proof\",\"proof_role\":\"Inspect all five live destinations across issues, PRs, assignees, rulesets, releases, Actions, Pages, packages, LFS receipts, and integrations.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":5000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5819/verify-live-repositories.rb\"],\"parallel_group\":\"github-live\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors in tracked integration and evidence changes.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 19,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Release the Foundation second-pass preparation claim after typed regeneration, reapproval, and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5819-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-second-pass\"}"
     }
   ]
 }

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01B] Canonical documentation and version activation",
     "slug": "v0-92-wp-01b-canonical-documentation-and-version-activation",
     "version": "v0.92",
-    "generation": 17
+    "generation": 19
   },
   "status": "ready",
   "content": {
@@ -22,12 +22,12 @@
         "Retained focused validation and exact-revision review packet"
       ],
       "acceptance_criteria": [
-        "Canonical inventory classifies every checked current or historical surface and names its owner and disposition",
+        "Canonical inventory includes the fixed required README, feature-list, Cargo manifest/lockfile, AGENTS, REVIEW, eleven C-SDLC v2 skill, and runbook denominator plus any additional checked surfaces",
         "docs/planning/ADL_FEATURE_LIST.md and current entrypoints identify v0.92 as active without claiming planned features complete",
-        "All authoritative current version declarations record an observed version equal to their declared v0.92 or 0.92.0 expectation and Cargo metadata is internally consistent",
+        "All authoritative current version declarations record an observed version equal to their declared v0.92 or 0.92.0 expectation and ADL Cargo metadata is internally consistent",
         "Historical milestone, release, review, migration, and pre-existing evidence records retain their original version and claims while new .csdlc/evidence/5818 proof remains allowed",
         "Every inventoried current JSON and YAML file parses and every local Markdown link in the declared current boundary resolves",
-        "Current AGENTS.md, REVIEW.md, skills, and runbooks agree with final C-SDLC v2 authority",
+        "Current AGENTS.md, REVIEW.md, all eleven C-SDLC v2 skills, and named runbooks agree with final C-SDLC v2 authority",
         "Focused diff, lockfile, placeholder, stale-reference, and exact-revision review checks pass"
       ],
       "dependencies": [

@@ -16,25 +16,26 @@ Audit current v2 restricted fields end to end, classify typed completion and ext
 
 ## Plan
 
-Revision 8
+Revision 9
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Inventory and classify every restricted current-v2 card field and historical delivery",
+    "action": "Inventory every restricted field and declare the exact prompt_card_enum_typing integration target",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
       "AC-3",
-      "AC-7"
+      "AC-7",
+      "AC-8"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "If and only if a finite gap is proven, implement the smallest shared enum authority across current v2 boundaries",
+    "action": "If a finite gap exists, implement the smallest shared enum authority across current v2 boundaries",
     "acceptance_ids": [
       "AC-3",
       "AC-4",
@@ -46,7 +47,7 @@ Revision 8
   },
   {
     "id": "S3",
-    "action": "Run inventory, round-trip, schema, invalid-value, no-duplicate-work, and exact-revision review proof",
+    "action": "Run inventory, exact no-tests-fail target, no-duplicate-work, and exact-revision proof",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -89,7 +90,7 @@ Revision 8
 
 .csdlc/prepared/issues/5824/design.md
 
-Digest: e83cbd5c35a95ce03128aeaff870ee6a07cf1f47e62912bec184bf7de60e3007
+Digest: 2c34517219b7288fef539610b8d4be187058b759eeaa20f9d02a1ad45fa25e32
 
 ## Diagram
 

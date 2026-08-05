@@ -26,7 +26,7 @@ Deliver reliable focused and slow test routing, coverage aggregation, and platfo
 
 ## Acceptance
 
-1. A retained Gemini 3.1 Pro review packet binds provider/model identity, exact reviewed revision, prompt and response digests, findings, and dispositions to the current CI topology
+1. A retained Gemini 3.1 Pro packet names prompt, response, and topology paths, recomputed SHA-256 digests, the exact reviewed revision and topology Git blob, findings, and dispositions
 2. One deterministic policy classifies docs/review, lifecycle metadata, tooling, ordinary source, runtime-critical, unknown, and mixed changes into explicit PVF lanes
 3. Focused and slow test families are separated and unknown changes fail to the stronger proving lane
 4. Coverage runs once per PR class with complete exact-SHA shard provenance and one authoritative aggregation gate

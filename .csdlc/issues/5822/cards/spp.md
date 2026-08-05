@@ -16,18 +16,19 @@ Inventory historical estimation evidence, define v2-owned typed joins and adviso
 
 ## Plan
 
-Revision 8
+Revision 9
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Inventory historical evidence and define typed multi-source observations, forecasts, outcomes, and sufficiency gates",
+    "action": "Define typed observations, forecasts, outcomes, sufficiency gates, and the exact estimation_contracts integration target",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
-      "AC-4"
+      "AC-4",
+      "AC-8"
     ],
     "status": "pending"
   },
@@ -45,7 +46,7 @@ Revision 8
   },
   {
     "id": "S3",
-    "action": "Measure comparable workflow cycle time and run privacy, negative, determinism, lifecycle, and exact-revision review proof",
+    "action": "Run the exact no-tests-fail integration target, cycle-time comparison, and exact-revision review",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -88,7 +89,7 @@ Revision 8
 
 .csdlc/prepared/issues/5822/design.md
 
-Digest: 383ba7248a20b4d58d83a488d3445ceffc38d42195c5510be7a3912463560422
+Digest: e584f376c6fef66a4ef81e1d44d04f919c032e4aef5f1c7f270fe7fc08a24297
 
 ## Diagram
 

@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "00ffe4f675d8a5fb02d44c4860d3f331ef37cbc03e595286463aa7d700e358d4",
   "phase": "bound",
-  "generation": 6,
-  "digest": "31fc4a3b57b5ae3c483683753a2271f1c75cdb69c3c0e738d3f99a52a98cdc24",
+  "generation": 8,
+  "digest": "c456194c52a9c16849606f94b5e767b0235d911f6fa9f1daefd656eded96f9dd",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5812/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-readiness-repair-review",
-      "revision": "2ba06f131edeb273db5d8a9eb8c8b98bd7ad4fe1d21a7e281de15ade5875d531"
+      "reviewer": "codex:5860-foundation-second-pass-review",
+      "revision": "958d2ad7889790c03707b29413730f7902cbea3a044ae5cb5005d59aec5d701c"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "bcfd383ea02e3d789bed3d8a2a7ddc722bdfa9dcf884b7ae24331b13ba7d0759",
+      "values_digest": "99592bd3d0effb766c558a6bfc25faf732349e51319f7450dc8e034b1baf2eb2",
       "rendered_digest": "eea1e855587938558d63612a7aac5412155ff5eec16e1408e712fe87f92b744b",
       "ast_digest": "932a85ba546430881677b05014186d8f7960ccaf4bf5f3612e4d834438bf93e6"
     },
     "stp": {
-      "values_digest": "942b989cf02e79662c0bf8bb2de560cbee7da161cf701065ae0437d594ad0e4a",
-      "rendered_digest": "12468c3e6933f2d6276cff4f526430aec7035897a3beac6360b73ab3890e9595",
-      "ast_digest": "5fa587db9aba198c09f00ba783ab935b3182fdc9fe05a70df79029833ea7326a"
+      "values_digest": "919a1cebaa1cdd0bcbf7e748acae99ced8a0059382630a29725037353ff0d489",
+      "rendered_digest": "f3a23c1b6120ed496b6d61d025b690328bce9c8aecaff2b8301f1f16cbc5e645",
+      "ast_digest": "56598d1027a79dae8800d2b6b67d4dd7efadce542b0b2f7d00f6ace7689a7ce2"
     },
     "spp": {
-      "values_digest": "13a936cd1a4eb3c5fe1461a999529a47a1e1e1a607de482613d9495e208f8d7b",
-      "rendered_digest": "8658b3cec58c9d95dc16b0ad88fce5d3393be46acc5d01b33e5c885c6831d7f6",
-      "ast_digest": "3da91094019426c41584a8b7ac24d0a8fef2ae7c95ea6ab04baccc78ff691698"
+      "values_digest": "9cd4ac881df10c3e48aa8ecc97e33e507b5fbe6d31bfc9b40b5378b282787a1a",
+      "rendered_digest": "e287e870f472edd86579249fc426d056445e03dd40744eeb65662d37eb447732",
+      "ast_digest": "a430db325f7e4b2c04d54e587a4f0c98ab080a0436419454c4216138899e52af"
     },
     "vpp": {
-      "values_digest": "2928f1895dcb3e2f81799a161fa09139092ce46fa66ba089de82ea0f45bcca00",
-      "rendered_digest": "90e5e999b3ff4d3bd5ae163e24c6c5260b0dd005dd1fe0573d1f7fba37fe27bd",
-      "ast_digest": "d640d48b8c1448651325d502d6f4783368a52949f7fbc7b1f2d4f2f69db0b8fe"
+      "values_digest": "8610b16b4fe26c9b5508d51ee46d7924b0fdc1448c0e3044f22a4617385fd67a",
+      "rendered_digest": "9ead02066db46091da00da39d3ac8772242513b030cd9a5260394c105784a516",
+      "ast_digest": "ca780d870b4560c2eba631b3a4bff119ce72d719d31a962c799a328d71ff6001"
     },
     "srp": {
-      "values_digest": "829e1778e442933da0fb48f9212d1ed936c3c22e9c4883c8919b43e0433c048e",
+      "values_digest": "7fb02fb95c867e7d5786e0abb7bf95854ff23c2a7872434abe27e6e1719b5423",
       "rendered_digest": "c83dd84e8956d3c4cc9283fc8b4302ad937f73f3836aa4561d9d72dda4df14df",
       "ast_digest": "b5a6ecd08df3b59851ae285651c0be23e649888f2d8d4e0d8076ec9dfdca09af"
     },
     "sor": {
-      "values_digest": "ca957073a53bfca688a24d31615bafdf48b13d1cb1f378e2c7ef9e59e4435741",
+      "values_digest": "2e79c372ad675b2a4b6a699152f2729ac9771ea3326e7e37637f26351fa5b652",
       "rendered_digest": "4ff0dbcf96ef65210fa23f69dbf49528e3d73a11fc06b0895efbd4bf474a9780",
       "ast_digest": "86e1a36f42bafe12e44ff4801e8c2f186041c38de1baeb98af920e8232c8c94d"
     }
@@ -160,6 +160,34 @@
       "actor": "codex:5860-foundation-readiness",
       "reason": "Release the Foundation readiness-repair claim after typed card regeneration, design approval, and focused validation; child execution must reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5812-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 6,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Reacquire issue #5812 only for the authorized Foundation second-pass readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5812-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5812\",\".csdlc/issues/5812\",\".csdlc/locks/5812.lock\",\".csdlc/prepared/issues/5812\"],\"purpose\":\"Repair issue 5812 Foundation execution-readiness packet without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 7,
+      "actor": "codex:5860-foundation-second-pass-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 16,
+      "generation": 8,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Require the promised two-expression Freedom Gate product correction in addition to rejecting out-of-scope paths.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Both unnecessary lazy-evaluation warnings are removed by changing only the two reported default expressions\",\"executor_requires_gate_decision still defaults to true\",\"unmediated_execution_allowed still defaults to false\",\"Focused csm_freedom_gate tests, including unsafe retained-artifact rejection, pass\",\"The adl-gws-context-mirror production binary passes Clippy with warnings denied\",\"The path validator requires adl/src/csm_freedom_gate.rs, exactly two expression substitutions, and rejects Cargo, dependency, Google Drive, and unrelated changes\",\"One exact-revision bounded review has no unresolved actionable findings\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Confirm the two expressions, warning reproduction, and fail-closed tests\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Apply exactly two eager-default substitutions and run test, format, Clippy, and exact-path proof\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Review the exact product candidate and publish with closing linkage\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"freedom-gate-module-tests\",\"proof_role\":\"Prove both defaults and unsafe retained-artifact rejection remain behaviorally unchanged.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl/Cargo.toml\",\"--lib\",\"csm_freedom_gate::tests\"],\"parallel_group\":\"rust\",\"defer_reason\":null},{\"lane\":\"freedom-gate-clippy\",\"proof_role\":\"Eliminate the exact production-binary warnings with warnings denied.\",\"acceptance_ids\":[\"AC-1\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl/Cargo.toml\",\"--bin\",\"adl-gws-context-mirror\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"rust\",\"defer_reason\":null},{\"lane\":\"rust-format\",\"proof_role\":\"Reject unintended Rust formatting churn.\",\"acceptance_ids\":[\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":100,\"budget_tokens\":500,\"argv\":[\"cargo\",\"fmt\",\"--manifest-path\",\"adl/Cargo.toml\",\"--all\",\"--\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null},{\"lane\":\"exact-path-scope-negative\",\"proof_role\":\"Require the two substitutions and reject every unauthorized path.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5812/validate-path-scope.rb\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors after exact-path proof.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 8,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Release the Foundation second-pass preparation claim after typed regeneration, reapproval, and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5812-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-second-pass\"}"
     }
   ]
 }

@@ -27,6 +27,12 @@ truthful outcome is a reviewed no-duplicate-work disposition with proof.
    strings and reuse it at all affected current v2 boundaries.
 5. Preserve existing rendered Markdown and values JSON for unchanged input.
 
+If a finite gap is implemented, its exact proving target is
+`csdlc-v2/tests/prompt_card_enum_typing.rs`. The target owns typed-card
+round-trip/schema parity and invalid-value/legacy-alias negatives. Validation
+uses nextest with `--no-tests=fail`; broad `enum` or `invalid` name filters are
+not evidence because they may select zero or unrelated tests.
+
 ## Compatibility And Negative Boundary
 
 - Active template registry and tracked structure schemas remain authoritative.

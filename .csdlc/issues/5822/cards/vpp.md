@@ -24,81 +24,38 @@ Diagram: .csdlc/prepared/issues/5822/diagram.mmd
 
 [
   {
-    "lane": "estimation-schema-and-roundtrip",
-    "proof_role": "Prove typed observation, forecast, accepted-estimate, and outcome schema and serde round trips.",
+    "lane": "estimation-contracts-exact-target",
+    "proof_role": "Run the exact estimation_contracts integration target for schema, privacy, negatives, cohorts, fallback, calibration, and backtesting; zero tests fail.",
     "acceptance_ids": [
       "AC-1",
-      "AC-5",
-      "AC-6",
-      "AC-8"
-    ],
-    "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 900,
-    "budget_tokens": 4000,
-    "argv": [
-      "cargo",
-      "test",
-      "--locked",
-      "--manifest-path",
-      "csdlc-v2/Cargo.toml",
-      "estimation"
-    ],
-    "parallel_group": "csdlc-v2",
-    "defer_reason": null
-  },
-  {
-    "lane": "estimation-negative-and-privacy",
-    "proof_role": "Reject missing provenance, schema drift, transcript leakage, target-actual leakage, and estimate enforcement.",
-    "acceptance_ids": [
       "AC-2",
       "AC-3",
+      "AC-4",
       "AC-5",
+      "AC-6",
       "AC-8"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 900,
-    "budget_tokens": 4000,
+    "budget_seconds": 1800,
+    "budget_tokens": 9000,
     "argv": [
       "cargo",
-      "test",
+      "nextest",
+      "run",
       "--locked",
       "--manifest-path",
       "csdlc-v2/Cargo.toml",
-      "estimation_negative"
+      "--no-tests=fail",
+      "--test",
+      "estimation_contracts"
     ],
     "parallel_group": "csdlc-v2",
-    "defer_reason": null
-  },
-  {
-    "lane": "forecast-backtest-and-fallback",
-    "proof_role": "Prove deterministic cohorts, uncertainty, drift, calibration, and explicit static-profile fallback on insufficient data.",
-    "acceptance_ids": [
-      "AC-3",
-      "AC-4",
-      "AC-6",
-      "AC-7",
-      "AC-8"
-    ],
-    "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 900,
-    "budget_tokens": 5000,
-    "argv": [
-      "cargo",
-      "test",
-      "--locked",
-      "--manifest-path",
-      "csdlc-v2/Cargo.toml",
-      "estimation_backtest"
-    ],
-    "parallel_group": "analysis",
     "defer_reason": null
   },
   {
     "lane": "cycle-time-comparison",
-    "proof_role": "Validate retained equivalent baseline and candidate workflow cohorts and component timing.",
+    "proof_role": "Validate retained equivalent baseline and candidate cohorts and component timing.",
     "acceptance_ids": [
       "AC-7",
       "AC-8"
@@ -148,9 +105,7 @@ Tokens: 25000
 
 ## Commands
 
-- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml estimation`
-- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml estimation_negative`
-- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml estimation_backtest`
+- `cargo nextest run --locked --manifest-path csdlc-v2/Cargo.toml --no-tests=fail --test estimation_contracts`
 - `ruby -rjson -e r=JSON.parse(File.read('.csdlc/evidence/5822/cycle-time-comparison.json')); abort('incomparable') unless r['baseline_cohort']&&r['candidate_cohort']&&r['comparison_basis_equal']==true&&r['gates_preserved']==true`
 - `git diff --check`
 

@@ -68,6 +68,17 @@ only part of a generated metadata set.
 
 ## Proof Design
 
+The activation inventory has a fixed minimum denominator. It must include the
+root and documentation READMEs, `docs/planning/ADL_FEATURE_LIST.md`, the ADL
+and C-SDLC Cargo manifests and lockfile, `AGENTS.md`, `REVIEW.md`, all eleven
+current C-SDLC v2 operator skills, and the current session-coordination and
+rescue-sprint runbooks. Additional package READMEs and version declarations
+may be added, but the executor cannot shrink this minimum set.
+
+Cargo metadata proof runs from the repository root with
+`--manifest-path adl/Cargo.toml`; the repository root is not itself a Cargo
+workspace.
+
 Proof consists of the retained surface inventory, deterministic version-parity
 and historical-preservation checks, Markdown/link and YAML/JSON validation,
 Cargo metadata plus locked check, diff hygiene, and an exact-revision bounded

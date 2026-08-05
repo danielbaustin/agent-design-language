@@ -7,28 +7,29 @@
     "title": "[v0.92][WP-01B] Canonical documentation and version activation",
     "slug": "v0-92-wp-01b-canonical-documentation-and-version-activation",
     "version": "v0.92",
-    "generation": 17
+    "generation": 19
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 9,
+      "plan_revision": 10,
       "summary": "Inventory authoritative current surfaces, update v0.92 documentation and version declarations, preserve historical evidence, run focused parity and structure proof, then obtain exact-revision review.",
       "steps": [
         {
           "id": "S1",
-          "action": "Build and review the classified canonical-surface and version-authority inventory, including expected and observed versions for declarations",
+          "action": "Build the fixed-denominator canonical-surface and version-authority inventory",
           "acceptance_ids": [
             "AC-1",
             "AC-3",
-            "AC-4"
+            "AC-4",
+            "AC-6"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "Update current documentation, feature inventory, links, and authoritative version metadata without historical drift",
+          "action": "Update current documentation, feature inventory, links, and version metadata without historical drift",
           "acceptance_ids": [
             "AC-2",
             "AC-3",
@@ -39,7 +40,7 @@
         },
         {
           "id": "S3",
-          "action": "Run the issue-local activation validator, locked Cargo metadata, diff hygiene, and exact-revision review",
+          "action": "Run activation validation, locked ADL Cargo metadata, diff hygiene, and exact-revision review",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -87,7 +88,7 @@
         "The active prompt-template or workspace version authority changes before execution"
       ],
       "design_ref": ".csdlc/prepared/issues/5818/design.md",
-      "design_digest": "f7cff126362e2ea4eaba3de3571258967683b9bce1fc1da91503392f4d24a9e2",
+      "design_digest": "9cfaff15112b6463dc61d449af32f1d65723a9bb2b3bd811590d284f51400cae",
       "diagram_ref": ".csdlc/prepared/issues/5818/diagram.mmd",
       "diagram_digest": "031adc526b6fb3e7420d6f84f360751febe5858232cbb45d62cdb50c059ad1a9"
     }

@@ -1,0 +1,31 @@
+{
+  "issue": 5819,
+  "card": "spp",
+  "expected_generation": 18,
+  "expected_digest": "1195c00b4a2384bfdbf40c00940dd9d4590ac19d385c88eb1333a67c3d5fefea",
+  "claim_id": "claim-5819-v092-preparation",
+  "actor": "codex:5860-foundation-second-pass",
+  "reason": "Bind migration preservation claims to recomputed before/after manifests and live inspection of every required GitHub surface.",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "Organization owners, recovery, billing, policy, permissions, destination names, and exact five-repository scope are verified",
+      "Every repository has SHA-256-bound before and after manifests at one exact HEAD containing actual issues, PRs, assignees, rulesets, releases, Actions, Pages, packages, LFS, and integration data",
+      "Exactly the five approved repositories transfer in order to agent-logic with names, visibility, history, and every manifest surface preserved or backed by a digest-bound verified disposition",
+      "Every destination passes live GitHub inspection for API-backed surfaces and retained git-lfs-fsck evidence before the next transfer",
+      "ADL transfers last; agent-logic/agent-logic.ai updates exactly site/index.html and site/beta/index.html, removes all four old ADL links, and retains source and publication receipts",
+      "danielbaustin/asksifu remains personal and danielbaustin/Horust is neither transferred nor settings-mutated, with an observation receipt for each",
+      "Final evidence contains no secret values, no unexplained drift, and one exact-revision bounded review"
+    ],
+    "steps": [
+      {"id":"S1","action":"Capture complete digest-bound before manifests and assignee-aware transfer plans for all five repositories","acceptance_ids":["AC-1","AC-2","AC-6"],"status":"pending"},
+      {"id":"S2","action":"Transfer serially and compare recomputed per-surface before/after evidence plus live destination state","acceptance_ids":["AC-3","AC-4"],"status":"pending"},
+      {"id":"S3","action":"Complete website cutover, controls, final report, validators, and exact-revision review","acceptance_ids":["AC-5","AC-6","AC-7"],"status":"pending"}
+    ],
+    "validation_lanes": [
+      {"lane":"migration-evidence-contract","proof_role":"Recompute five before/after manifest digests and compare all ten required surfaces, dispositions, controls, and website receipts.","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7"],"deterministic":true,"resource_profile":"medium","budget_seconds":300,"budget_tokens":4000,"argv":["ruby",".csdlc/prepared/issues/5819/validate-migration-evidence.rb"],"parallel_group":"migration-contract","defer_reason":null},
+      {"lane":"github-five-destination-live-proof","proof_role":"Inspect all five live destinations across issues, PRs, assignees, rulesets, releases, Actions, Pages, packages, LFS receipts, and integrations.","acceptance_ids":["AC-3","AC-4"],"deterministic":false,"resource_profile":"medium","budget_seconds":1800,"budget_tokens":5000,"argv":["ruby",".csdlc/prepared/issues/5819/verify-live-repositories.rb"],"parallel_group":"github-live","defer_reason":null},
+      {"lane":"diff-hygiene","proof_role":"Reject whitespace errors in tracked integration and evidence changes.","acceptance_ids":["AC-7"],"deterministic":true,"resource_profile":"small","budget_seconds":30,"budget_tokens":500,"argv":["git","diff","--check"],"parallel_group":"issue-local","defer_reason":null}
+    ]
+  }
+}

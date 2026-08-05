@@ -1,0 +1,32 @@
+{
+  "issue": 5824,
+  "card": "spp",
+  "expected_generation": 16,
+  "expected_digest": "8c91e8cf006cff44cd40038e24d100b9de9f0673aeb208eceedc84d073e15a45",
+  "claim_id": "claim-5824-v092-preparation",
+  "actor": "codex:5860-foundation-second-pass",
+  "reason": "Replace broad enum and invalid filters with one exact integration target and zero-test failure semantics.",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "Every restricted current-v2 field is inventoried with stored string, Rust type, parser/formatter, schema, editor, validator, Markdown, and test ownership",
+      "Every field has a source-backed typed_complete, finite_gap, or intentionally_extensible disposition",
+      "Only the smallest coherent finite_gap family changes code; no-gap results retain a reviewed no-duplicate-work disposition",
+      "A changed finite field has one canonical parse, display, serde, allowed-value, schema, editor, validator, and diagnostic authority",
+      "Existing valid values JSON and rendered Markdown round-trip without drift and active template structure/schema parity remains intact",
+      "Invalid values fail deterministically and any supported legacy alias normalizes only at an explicit tested boundary",
+      "Sunset v1 authority, template redesign, wire-format migration, and extensible identifier typing remain excluded",
+      "The exact csdlc-v2/tests/prompt_card_enum_typing.rs target proves round-trip/schema and invalid-value/legacy behavior with zero tests treated as failure"
+    ],
+    "steps": [
+      {"id":"S1","action":"Inventory every restricted field and declare the exact prompt_card_enum_typing integration target","acceptance_ids":["AC-1","AC-2","AC-3","AC-7","AC-8"],"status":"pending"},
+      {"id":"S2","action":"If a finite gap exists, implement the smallest shared enum authority across current v2 boundaries","acceptance_ids":["AC-3","AC-4","AC-5","AC-6","AC-7"],"status":"pending"},
+      {"id":"S3","action":"Run inventory, exact no-tests-fail target, no-duplicate-work, and exact-revision proof","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"status":"pending"}
+    ],
+    "validation_lanes": [
+      {"lane":"enum-inventory-contract","proof_role":"Validate complete field ownership and one disposition per restricted current-v2 field.","acceptance_ids":["AC-1","AC-2","AC-3","AC-7","AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":300,"budget_tokens":2000,"argv":["ruby","-rjson","-e","r=JSON.parse(File.read('.csdlc/evidence/5824/enum-inventory.json')); abort('empty') unless r.is_a?(Array)&&!r.empty?; allowed=%w[typed_complete finite_gap intentionally_extensible]; abort('bad row') unless r.all?{|x|x['field'].to_s!=''&&allowed.include?(x['disposition'])&&x['stored_string']&&x['owners'].is_a?(Hash)}; abort('duplicate') unless r.map{|x|x['field']}.uniq.length==r.length"],"parallel_group":"inventory","defer_reason":null},
+      {"lane":"prompt-card-enum-exact-target","proof_role":"Run the exact prompt_card_enum_typing integration target for round-trip/schema and invalid-value/legacy behavior; zero tests fail.","acceptance_ids":["AC-4","AC-5","AC-6","AC-8"],"deterministic":true,"resource_profile":"medium","budget_seconds":1800,"budget_tokens":8000,"argv":["cargo","nextest","run","--locked","--manifest-path","csdlc-v2/Cargo.toml","--no-tests=fail","--test","prompt_card_enum_typing"],"parallel_group":"csdlc-v2","defer_reason":null},
+      {"lane":"diff-hygiene","proof_role":"Reject whitespace and unintended template or sunset-v1 changes.","acceptance_ids":["AC-7","AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":30,"budget_tokens":500,"argv":["git","diff","--check"],"parallel_group":"issue-local","defer_reason":null}
+    ]
+  }
+}

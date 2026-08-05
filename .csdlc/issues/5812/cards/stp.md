@@ -26,7 +26,7 @@ Deliver Clippy-clean Freedom Gate defaults with unchanged runtime behavior.
 3. unmediated_execution_allowed still defaults to false
 4. Focused csm_freedom_gate tests, including unsafe retained-artifact rejection, pass
 5. The adl-gws-context-mirror production binary passes Clippy with warnings denied
-6. The executable path-scope validator proves the product diff is limited to adl/src/csm_freedom_gate.rs and rejects Cargo.toml, Cargo.lock, dependencies, Google Drive, and unrelated source changes
+6. The path validator requires adl/src/csm_freedom_gate.rs, exactly two expression substitutions, and rejects Cargo, dependency, Google Drive, and unrelated changes
 7. One exact-revision bounded review has no unresolved actionable findings
 
 ## Dependencies

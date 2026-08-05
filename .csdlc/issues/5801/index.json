@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d161c9886615d203d6b83404683281ca21b58925bbbf7d1f8e8339098c2ef07b",
   "phase": "bound",
-  "generation": 17,
-  "digest": "99a66905374f833188ef07905a5ecc636f2a0632c11d5a482a8f3cf60ef855f5",
+  "generation": 19,
+  "digest": "4267fb174df64ac5a5898db7de73c59578d9d5ba950440a9b71981c326fdbd79",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5801/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-readiness-repair-review",
-      "revision": "0732e464036716c0a0f881f3dec516a1d2dfd2798a815901624c40d8caca1458"
+      "reviewer": "codex:5860-foundation-second-pass-review",
+      "revision": "b182f8d0bfc34dd38efb21e7b225e28961504bf532fd1fa436fafe7930b3a46a"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "e87b397887b91fc8a483d4ff8be11cde4c1499a587345dbf9931c6dc0a7b4edf",
+      "values_digest": "8f32a7ccf3f3de52d1dfc434506f159a57717659fbef6f1e2349c5084fa7eb9d",
       "rendered_digest": "657fd9d5f272245476015fc6c7996cf3c879bea80c113a649a095df5f2d870c4",
       "ast_digest": "e87314878eb145d12ee48dee595db92db566fa77e4d91fb5746e1e6c546a64e3"
     },
     "stp": {
-      "values_digest": "0e27b678b2e9670c928a2f9abf69ec9e96b05157bbe619f7302bd72cbac56130",
-      "rendered_digest": "261e6b5e545812be713edf99b0ba29a76aa35cb6e1c1e108de3a88e08d128da1",
-      "ast_digest": "0f01f927e53df90cb4f685bb5aeb59a1df4f55e6338bd961554fdd9b532c3d10"
+      "values_digest": "b2df0562db107fbe6b1a31c33a93978017d4a90f2c5850d0d06f8bc1432f8a9f",
+      "rendered_digest": "cd253d5e0dc68572b6fbc1c12647c733791548f7ecd4a29e8848f08ef74a542d",
+      "ast_digest": "330fbc3bdfd92e63140c9480493d607bb96f4f8ee8699e461ac3c09ef0f3848c"
     },
     "spp": {
-      "values_digest": "7beb19ae744544c947ee3244c7e2df5973c7aaa2e7c9a079ac319799eb82180b",
-      "rendered_digest": "16f39fb620542e6d11a3e6762c57d5de51f6ff8e1a4b18953ac9651495df260e",
-      "ast_digest": "db0425d11f3ea12f2ac3c4d67646757b0a0c46b39785db433112d121b939563b"
+      "values_digest": "3ba3e01b2c7e0a21802244a03eb10b22db5095176cba441768e3d86f444dd78f",
+      "rendered_digest": "713949531fc340311fab1130661a0a1ff12bffa2a1cbea46591cd2ed1f2f6ac7",
+      "ast_digest": "f4fbb84ec282d3d3da3ef96204c7e26c9ee121db0b1f329432c682906b3e78f2"
     },
     "vpp": {
-      "values_digest": "a7491e8ff600a526c4d33770cc71cb211793e067843df4dbedb5ed0c87bed8bb",
-      "rendered_digest": "d700e1f754d70415bfc2813eedbc567e4b52d6da966bb8787d94e655a7886323",
-      "ast_digest": "f01ab824417c405be3148d2c7c4e1a5809c82c0f22f9235ea7121aa344055c45"
+      "values_digest": "f2c05a8719a189fedba61bf0b8af7d7a3814d6f99a4f847be5eba1eceab29178",
+      "rendered_digest": "2b0b0aeeb49bdaafe3516c588ae27185569f3fb8679cb82823ce59d3c9f63fd4",
+      "ast_digest": "01ed0a61216689a270d69f0952f6e403dfdea0d40f9126aac04740152796db1b"
     },
     "srp": {
-      "values_digest": "8c4a17f80575bcb36b2459f2ea57a0ab2d54eeb2ace73d2dec62101777d80288",
+      "values_digest": "bbf1f02ab6c493af17475b87566795c05877f7a7ba02a1c1592c66f1eeca53bd",
       "rendered_digest": "bfa2844b186a214901b2166fe826c9f490ac70e1a20c76d3b788e5270b4b388f",
       "ast_digest": "3624c633f28a9bf2de7d0b7eda4c1a63698aaabc372467a25545a996dd8db923"
     },
     "sor": {
-      "values_digest": "431e6df2ca88137895d8679a2f67821da52ed1709d69e134b9c51ead3aecd977",
+      "values_digest": "fc8283f4956189717a3dae870d865c112c168cfe459b9a71db7c5524ebadeb62",
       "rendered_digest": "014507d61b21b426b14a44883b044863dab9590297ae704f65ce363803f7459b",
       "ast_digest": "2543e6a3a620c7d2ff382d35157473896b403f624ce7f3d53b57df629afcb3b2"
     }
@@ -237,6 +237,34 @@
       "actor": "codex:5860-foundation-readiness",
       "reason": "Release the Foundation readiness-repair claim after typed card regeneration, design approval, and focused validation; child execution must reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5801-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 17,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Reacquire issue #5801 only for the authorized Foundation second-pass readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5801-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5801\",\".csdlc/issues/5801\",\".csdlc/locks/5801.lock\",\".csdlc/prepared/issues/5801\"],\"purpose\":\"Repair issue 5801 Foundation execution-readiness packet without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:5860-foundation-second-pass-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 27,
+      "generation": 19,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Cryptographically bind the required Gemini review to retained prompt, response, and exact-revision topology artifacts.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"A retained Gemini 3.1 Pro packet names prompt, response, and topology paths, recomputed SHA-256 digests, the exact reviewed revision and topology Git blob, findings, and dispositions\",\"One deterministic policy classifies docs/review, lifecycle metadata, tooling, ordinary source, runtime-critical, unknown, and mixed changes into explicit PVF lanes\",\"Focused and slow test families are separated and unknown changes fail to the stronger proving lane\",\"Coverage runs once per PR class with complete exact-SHA shard provenance and one authoritative aggregation gate\",\"Metadata-only reconciliation reuses source proof only under typed unchanged-source lineage while substantive drift retains exact-head validation\",\"Superseded runs cancel without converting a cancelled or missing final required state into success\",\"Focused Gemini-review, policy, coverage, lifecycle-lineage, Linux/macOS/Windows contract, and exact-head CI proof passes\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Retain and cryptographically validate Gemini 3.1 Pro review artifacts and dispose every actionable finding\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement focused/slow routing, coverage deduplication, metadata-lineage reuse, and cancellation safety\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run review-packet, policy, coverage, lifecycle, platform, and exact-head proof\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"gemini-3-1-pro-review-contract\",\"proof_role\":\"Recompute prompt, response, and topology SHA-256 and bind the topology Git blob to the exact reviewed revision.\",\"acceptance_ids\":[\"AC-1\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5801/validate-gemini-review.rb\"],\"parallel_group\":\"review\",\"defer_reason\":null},{\"lane\":\"ci-path-policy-contract\",\"proof_role\":\"Exercise docs, metadata, tooling, source, runtime, unknown, mixed, and Windows-path classifications.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\"],\"parallel_group\":\"policy\",\"defer_reason\":null},{\"lane\":\"ci-runtime-and-coverage-contract\",\"proof_role\":\"Prove workflow graph, stale-run behavior, one coverage authority, shard provenance, and aggregation semantics.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"parallel_group\":\"policy\",\"defer_reason\":null},{\"lane\":\"coverage-impact-negative\",\"proof_role\":\"Reject unmapped or insufficient source coverage and prevent broad basename fallback.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_check_coverage_impact.sh\"],\"parallel_group\":\"coverage\",\"defer_reason\":null},{\"lane\":\"metadata-lineage-negative\",\"proof_role\":\"Prove metadata-only reuse rejects substantive, renamed, stale-review, or different-head drift.\",\"acceptance_ids\":[\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate_finish\",\"metadata\"],\"parallel_group\":\"lifecycle\",\"defer_reason\":null},{\"lane\":\"exact-head-ci-platform\",\"proof_role\":\"GitHub required checks prove the final exact head while fixtures cover macOS and Windows boundaries.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":1200,\"budget_tokens\":8000,\"argv\":[\"gh\",\"pr\",\"checks\",\"--watch\"],\"parallel_group\":\"github-live\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace and unintended policy churn.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 19,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Release the Foundation second-pass preparation claim after typed regeneration, reapproval, and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5801-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-second-pass\"}"
     }
   ]
 }

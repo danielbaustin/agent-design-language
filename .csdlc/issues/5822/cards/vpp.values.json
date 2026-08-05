@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-05] C-SDLC estimation and cycle-time reduction",
     "slug": "v0-92-wp-05-c-sdlc-estimation-and-cycle-time-reduction",
     "version": "v0.92",
-    "generation": 15
+    "generation": 17
   },
   "status": "ready",
   "content": {
@@ -16,81 +16,38 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "estimation-schema-and-roundtrip",
-          "proof_role": "Prove typed observation, forecast, accepted-estimate, and outcome schema and serde round trips.",
+          "lane": "estimation-contracts-exact-target",
+          "proof_role": "Run the exact estimation_contracts integration target for schema, privacy, negatives, cohorts, fallback, calibration, and backtesting; zero tests fail.",
           "acceptance_ids": [
             "AC-1",
-            "AC-5",
-            "AC-6",
-            "AC-8"
-          ],
-          "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 900,
-          "budget_tokens": 4000,
-          "argv": [
-            "cargo",
-            "test",
-            "--locked",
-            "--manifest-path",
-            "csdlc-v2/Cargo.toml",
-            "estimation"
-          ],
-          "parallel_group": "csdlc-v2",
-          "defer_reason": null
-        },
-        {
-          "lane": "estimation-negative-and-privacy",
-          "proof_role": "Reject missing provenance, schema drift, transcript leakage, target-actual leakage, and estimate enforcement.",
-          "acceptance_ids": [
             "AC-2",
             "AC-3",
+            "AC-4",
             "AC-5",
+            "AC-6",
             "AC-8"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 900,
-          "budget_tokens": 4000,
+          "budget_seconds": 1800,
+          "budget_tokens": 9000,
           "argv": [
             "cargo",
-            "test",
+            "nextest",
+            "run",
             "--locked",
             "--manifest-path",
             "csdlc-v2/Cargo.toml",
-            "estimation_negative"
+            "--no-tests=fail",
+            "--test",
+            "estimation_contracts"
           ],
           "parallel_group": "csdlc-v2",
-          "defer_reason": null
-        },
-        {
-          "lane": "forecast-backtest-and-fallback",
-          "proof_role": "Prove deterministic cohorts, uncertainty, drift, calibration, and explicit static-profile fallback on insufficient data.",
-          "acceptance_ids": [
-            "AC-3",
-            "AC-4",
-            "AC-6",
-            "AC-7",
-            "AC-8"
-          ],
-          "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 900,
-          "budget_tokens": 5000,
-          "argv": [
-            "cargo",
-            "test",
-            "--locked",
-            "--manifest-path",
-            "csdlc-v2/Cargo.toml",
-            "estimation_backtest"
-          ],
-          "parallel_group": "analysis",
           "defer_reason": null
         },
         {
           "lane": "cycle-time-comparison",
-          "proof_role": "Validate retained equivalent baseline and candidate workflow cohorts and component timing.",
+          "proof_role": "Validate retained equivalent baseline and candidate cohorts and component timing.",
           "acceptance_ids": [
             "AC-7",
             "AC-8"
@@ -131,7 +88,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5822/design.md",
-      "design_digest": "383ba7248a20b4d58d83a488d3445ceffc38d42195c5510be7a3912463560422",
+      "design_digest": "e584f376c6fef66a4ef81e1d44d04f919c032e4aef5f1c7f270fe7fc08a24297",
       "diagram_ref": ".csdlc/prepared/issues/5822/diagram.mmd",
       "diagram_digest": "360aefdd9d98f37c36836af1445244e6295fda65ce9b41c418b8d8161d17b2eb"
     }

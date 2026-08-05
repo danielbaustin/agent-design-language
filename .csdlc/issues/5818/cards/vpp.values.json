@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01B] Canonical documentation and version activation",
     "slug": "v0-92-wp-01b-canonical-documentation-and-version-activation",
     "version": "v0.92",
-    "generation": 17
+    "generation": 19
   },
   "status": "ready",
   "content": {
@@ -17,7 +17,7 @@
       "lanes": [
         {
           "lane": "activation-evidence-contract",
-          "proof_role": "Parse inventoried YAML/JSON, resolve current Markdown links, compare expected and observed versions, and reject historical changes except new issue-owned evidence.",
+          "proof_role": "Require the fixed canonical denominator, parse structured data, resolve links, compare versions, and reject historical changes.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -39,7 +39,7 @@
         },
         {
           "lane": "cargo-version-parity",
-          "proof_role": "Prove locked workspace/package metadata is internally consistent after authoritative version activation.",
+          "proof_role": "Prove locked ADL workspace/package metadata is internally consistent from the repository root.",
           "acceptance_ids": [
             "AC-3",
             "AC-7"
@@ -52,6 +52,8 @@
             "cargo",
             "metadata",
             "--locked",
+            "--manifest-path",
+            "adl/Cargo.toml",
             "--format-version",
             "1"
           ],
@@ -60,7 +62,7 @@
         },
         {
           "lane": "diff-hygiene",
-          "proof_role": "Reject whitespace errors and support exact-revision bounded review.",
+          "proof_role": "Reject whitespace errors and support exact-revision review.",
           "acceptance_ids": [
             "AC-7"
           ],
@@ -81,7 +83,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5818/design.md",
-      "design_digest": "f7cff126362e2ea4eaba3de3571258967683b9bce1fc1da91503392f4d24a9e2",
+      "design_digest": "9cfaff15112b6463dc61d449af32f1d65723a9bb2b3bd811590d284f51400cae",
       "diagram_ref": ".csdlc/prepared/issues/5818/diagram.mmd",
       "diagram_digest": "031adc526b6fb3e7420d6f84f360751febe5858232cbb45d62cdb50c059ad1a9"
     }

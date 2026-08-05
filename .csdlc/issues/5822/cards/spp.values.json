@@ -7,22 +7,23 @@
     "title": "[v0.92][WP-05] C-SDLC estimation and cycle-time reduction",
     "slug": "v0-92-wp-05-c-sdlc-estimation-and-cycle-time-reduction",
     "version": "v0.92",
-    "generation": 15
+    "generation": 17
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 9,
       "summary": "Inventory historical estimation evidence, define v2-owned typed joins and advisory forecasts, prove sparse/unknown/drift behavior and no enforcement, integrate accepted estimates and terminal actuals, then measure cycle-time and calibration against retained baselines.",
       "steps": [
         {
           "id": "S1",
-          "action": "Inventory historical evidence and define typed multi-source observations, forecasts, outcomes, and sufficiency gates",
+          "action": "Define typed observations, forecasts, outcomes, sufficiency gates, and the exact estimation_contracts integration target",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
-            "AC-4"
+            "AC-4",
+            "AC-8"
           ],
           "status": "pending"
         },
@@ -40,7 +41,7 @@
         },
         {
           "id": "S3",
-          "action": "Measure comparable workflow cycle time and run privacy, negative, determinism, lifecycle, and exact-revision review proof",
+          "action": "Run the exact no-tests-fail integration target, cycle-time comparison, and exact-revision review",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -94,7 +95,7 @@
         "Backtests fail to outperform or calibrate against static and historical baselines"
       ],
       "design_ref": ".csdlc/prepared/issues/5822/design.md",
-      "design_digest": "383ba7248a20b4d58d83a488d3445ceffc38d42195c5510be7a3912463560422",
+      "design_digest": "e584f376c6fef66a4ef81e1d44d04f919c032e4aef5f1c7f270fe7fc08a24297",
       "diagram_ref": ".csdlc/prepared/issues/5822/diagram.mmd",
       "diagram_digest": "360aefdd9d98f37c36836af1445244e6295fda65ce9b41c418b8d8161d17b2eb"
     }

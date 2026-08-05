@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-07] Prompt-card enum typing",
     "slug": "v0-92-wp-07-prompt-card-enum-typing",
     "version": "v0.92",
-    "generation": 15
+    "generation": 17
   },
   "status": "ready",
   "content": {
@@ -29,7 +29,7 @@
         "Existing valid values JSON and rendered Markdown round-trip without drift and active template structure/schema parity remains intact",
         "Invalid values fail deterministically and any supported legacy alias normalizes only at an explicit tested boundary",
         "Sunset v1 authority, template redesign, wire-format migration, and extensible identifier typing remain excluded",
-        "Focused inventory, round-trip, schema, negative, diff, and exact-revision review proof passes"
+        "The exact csdlc-v2/tests/prompt_card_enum_typing.rs target proves round-trip/schema and invalid-value/legacy behavior with zero tests treated as failure"
       ],
       "dependencies": [
         "WP-01 issue #5817 current prompt-template registry and v2 authority published",

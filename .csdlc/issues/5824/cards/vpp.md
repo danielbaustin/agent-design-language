@@ -47,59 +47,35 @@ Diagram: .csdlc/prepared/issues/5824/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "typed-card-roundtrip-and-schema",
-    "proof_role": "Prove parse/display/serde, public schema, semantic editor, Markdown importer, renderer, and existing-card parity.",
+    "lane": "prompt-card-enum-exact-target",
+    "proof_role": "Run the exact prompt_card_enum_typing integration target for round-trip/schema and invalid-value/legacy behavior; zero tests fail.",
     "acceptance_ids": [
       "AC-4",
       "AC-5",
-      "AC-8"
-    ],
-    "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 900,
-    "budget_tokens": 4000,
-    "argv": [
-      "cargo",
-      "test",
-      "--locked",
-      "--manifest-path",
-      "csdlc-v2/Cargo.toml",
-      "--test",
-      "gate2",
-      "enum"
-    ],
-    "parallel_group": "csdlc-v2",
-    "defer_reason": null
-  },
-  {
-    "lane": "invalid-value-and-legacy-negative",
-    "proof_role": "Reject unknown finite values and prove any supported alias normalization is explicit and lossless.",
-    "acceptance_ids": [
-      "AC-5",
       "AC-6",
-      "AC-7",
       "AC-8"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 900,
-    "budget_tokens": 4000,
+    "budget_seconds": 1800,
+    "budget_tokens": 8000,
     "argv": [
       "cargo",
-      "test",
+      "nextest",
+      "run",
       "--locked",
       "--manifest-path",
       "csdlc-v2/Cargo.toml",
+      "--no-tests=fail",
       "--test",
-      "gate2",
-      "invalid"
+      "prompt_card_enum_typing"
     ],
     "parallel_group": "csdlc-v2",
     "defer_reason": null
   },
   {
     "lane": "diff-hygiene",
-    "proof_role": "Reject whitespace and unintended template or sunset-v1 changes and support exact-revision review.",
+    "proof_role": "Reject whitespace and unintended template or sunset-v1 changes.",
     "acceptance_ids": [
       "AC-7",
       "AC-8"
@@ -131,8 +107,7 @@ Tokens: 25000
 ## Commands
 
 - `ruby -rjson -e r=JSON.parse(File.read('.csdlc/evidence/5824/enum-inventory.json')); abort('empty') unless r.is_a?(Array)&&!r.empty?; allowed=%w[typed_complete finite_gap intentionally_extensible]; abort('bad row') unless r.all?{|x|x['field'].to_s!=''&&allowed.include?(x['disposition'])&&x['stored_string']&&x['owners'].is_a?(Hash)}; abort('duplicate') unless r.map{|x|x['field']}.uniq.length==r.length`
-- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate2 enum`
-- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate2 invalid`
+- `cargo nextest run --locked --manifest-path csdlc-v2/Cargo.toml --no-tests=fail --test prompt_card_enum_typing`
 - `git diff --check`
 
 ## Failure Semantics

@@ -27,6 +27,11 @@ diff is limited to `adl/src/csm_freedom_gate.rs` and issue-owned C-SDLC
 artifacts. It explicitly rejects Cargo manifests, lockfiles, dependency files,
 Google Drive code, and every unrelated product path.
 
+It also requires `adl/src/csm_freedom_gate.rs` to appear in the candidate diff
+and requires exactly two expression substitutions (two removed and two added
+lines). A lifecycle-only or validator-only candidate cannot satisfy the product
+correction.
+
 ## Invariants And Stop Conditions
 
 - Runtime output and fail-closed behavior do not change.

@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b64ea880252f74a339493a02b2aaa4484361128d76e56588f7fed78d84751c0f",
   "phase": "bound",
-  "generation": 15,
-  "digest": "ce59897f7602b1d7ff5c2e55c033b9af5fa02e7b3aa0b969b5b726c87bea3022",
+  "generation": 17,
+  "digest": "72fdc7dafa4057a23347e3a58e2069d4d90e711f0277f808ca00fa129d790266",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5824/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-design-review",
-      "revision": "e83cbd5c35a95ce03128aeaff870ee6a07cf1f47e62912bec184bf7de60e3007"
+      "reviewer": "codex:5860-foundation-second-pass-review",
+      "revision": "2c34517219b7288fef539610b8d4be187058b759eeaa20f9d02a1ad45fa25e32"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "22bd498134a8cb955596e891b5b5941d5e10fe7643402a3d6d627d114c1b50c0",
+      "values_digest": "ab083dba1389839209d9aa51ac86f7caa1252cd603ba3b2fc6737aaed5f66fc1",
       "rendered_digest": "3c078a22e0b186e812947cb68fc69b204388acd828c00652285bc791baa8f916",
       "ast_digest": "7d89a791d94d459f676de8a69ffcba4e938277e73b7c52ea1bd9bf1278ac1425"
     },
     "stp": {
-      "values_digest": "b393d467c8582a6548b58dc01542eb13211995a097eca2bcd961ad72b72253b1",
-      "rendered_digest": "5547a21aaeb7a6330dfd467ab30a6beb025818bd937058c94a4e3ed599616b21",
-      "ast_digest": "d24a73523da556a3feae88677c0cbec2098dadc1dcab7922072058a64237eab5"
+      "values_digest": "8887d8f7e5316b6a1908171be09ebb5af0464996689b474af62ecada8ef72c6e",
+      "rendered_digest": "6528528a1756de9503e1a99cf09f502a1cf248faabd24d06ec601ff05c9a9669",
+      "ast_digest": "70910b3e83f3e7eefe8477471848900aa3184bef3ce378d1d2ee4519a6a6a152"
     },
     "spp": {
-      "values_digest": "cfdfc87ca1d77cfffb5ea3d39826c55d9241ac4422df89fda12e16195000c1c2",
-      "rendered_digest": "15024b8f9cd4aba2723045339f76dd42307acb492ae8c8cb952d40e8e94e13bd",
-      "ast_digest": "62c8a0999b88195c8e2d9e46e215fe34dd203299ed1ba3413b701464811e674d"
+      "values_digest": "3023e809ead575e0693f43d9493b59090296444b78e191631d695138aa32a8e6",
+      "rendered_digest": "f75b9c9df4c3a319fe61aa20750febfe5ac25cef833fc5bd32c8fdb259f05e1b",
+      "ast_digest": "17441a320bc2cf401df6b1fedc112fd0befe0b0d628f8135886bd1e3ba85a497"
     },
     "vpp": {
-      "values_digest": "dd80f82f9c810796dad1cb1e365e5090db30010bc52311057f3d463c4c1ed7ca",
-      "rendered_digest": "cc64ab51d5e926ed10df14e793def10009db1f075175a52745a8e04887a843ee",
-      "ast_digest": "1b175707e7f5054d73c99f46541402842dde2e8c5bc3338d2fedc227a05719e6"
+      "values_digest": "d1c8d43b5d1cd63d22d2089a942beb942d6354126c3b6613ecfa447dd57be5a5",
+      "rendered_digest": "f5c328a96837d3a1fbe980db18402b8a142abe4b97a5e3bd0ecefcb4a41a474b",
+      "ast_digest": "222290e7f83d8041e1218697d83bc08dc71f9094a6909248d99923c6d315c857"
     },
     "srp": {
-      "values_digest": "257ca3281cd71a16574ff1953ece6d97eb7861ac09b66b46eb9f0b783257e037",
+      "values_digest": "48afbfe1ede06359e0a2f235658e6256c0aedfb8e7fedc28aeb9055cd065c40f",
       "rendered_digest": "330fdc5d203d7c423f7a21a24d362260ea0bc0e37e0cf61a0bcf5aafe738c1d8",
       "ast_digest": "c41f89ee3243519e57315ed19839689b0a975dfc2ad05a3ade9cfe1a61e6b6df"
     },
     "sor": {
-      "values_digest": "7dea6a2af3350affce3e69b8032761b9304f577573a2775d08423100bfd38d0a",
+      "values_digest": "72414f831583695bd5f47e834e4096e7576d29ae7c1f7e5785874a213d014e30",
       "rendered_digest": "a9e82b10a38d86a71ce1ace7f3ba80ddab41b2610f14edee8e48c1c31c9479b2",
       "ast_digest": "c4bf4161b995d734609a8fdd7728933f7382fcd4ff9a2cd2c8918511c0b4ee03"
     }
@@ -209,6 +209,34 @@
       "actor": "codex:5860-foundation-readiness",
       "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5824-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Reacquire issue #5824 only for the authorized Foundation second-pass readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5824-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5824\",\".csdlc/issues/5824\",\".csdlc/locks/5824.lock\",\".csdlc/prepared/issues/5824\"],\"purpose\":\"Repair issue 5824 Foundation execution-readiness packet without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:5860-foundation-second-pass-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Replace broad enum and invalid filters with one exact integration target and zero-test failure semantics.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Every restricted current-v2 field is inventoried with stored string, Rust type, parser/formatter, schema, editor, validator, Markdown, and test ownership\",\"Every field has a source-backed typed_complete, finite_gap, or intentionally_extensible disposition\",\"Only the smallest coherent finite_gap family changes code; no-gap results retain a reviewed no-duplicate-work disposition\",\"A changed finite field has one canonical parse, display, serde, allowed-value, schema, editor, validator, and diagnostic authority\",\"Existing valid values JSON and rendered Markdown round-trip without drift and active template structure/schema parity remains intact\",\"Invalid values fail deterministically and any supported legacy alias normalizes only at an explicit tested boundary\",\"Sunset v1 authority, template redesign, wire-format migration, and extensible identifier typing remain excluded\",\"The exact csdlc-v2/tests/prompt_card_enum_typing.rs target proves round-trip/schema and invalid-value/legacy behavior with zero tests treated as failure\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Inventory every restricted field and declare the exact prompt_card_enum_typing integration target\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"If a finite gap exists, implement the smallest shared enum authority across current v2 boundaries\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run inventory, exact no-tests-fail target, no-duplicate-work, and exact-revision proof\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"enum-inventory-contract\",\"proof_role\":\"Validate complete field ownership and one disposition per restricted current-v2 field.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"r=JSON.parse(File.read('.csdlc/evidence/5824/enum-inventory.json')); abort('empty') unless r.is_a?(Array)&&!r.empty?; allowed=%w[typed_complete finite_gap intentionally_extensible]; abort('bad row') unless r.all?{|x|x['field'].to_s!=''&&allowed.include?(x['disposition'])&&x['stored_string']&&x['owners'].is_a?(Hash)}; abort('duplicate') unless r.map{|x|x['field']}.uniq.length==r.length\"],\"parallel_group\":\"inventory\",\"defer_reason\":null},{\"lane\":\"prompt-card-enum-exact-target\",\"proof_role\":\"Run the exact prompt_card_enum_typing integration target for round-trip/schema and invalid-value/legacy behavior; zero tests fail.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\",\"AC-6\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":8000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--no-tests=fail\",\"--test\",\"prompt_card_enum_typing\"],\"parallel_group\":\"csdlc-v2\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace and unintended template or sunset-v1 changes.\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Release the Foundation second-pass preparation claim after typed regeneration, reapproval, and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5824-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-second-pass\"}"
     }
   ]
 }

@@ -49,7 +49,7 @@ Diagram: .csdlc/prepared/issues/5812/diagram.mmd
   },
   {
     "lane": "freedom-gate-clippy",
-    "proof_role": "Reproduce and eliminate the exact production-binary warnings with warnings denied.",
+    "proof_role": "Eliminate the exact production-binary warnings with warnings denied.",
     "acceptance_ids": [
       "AC-1",
       "AC-5"
@@ -97,7 +97,7 @@ Diagram: .csdlc/prepared/issues/5812/diagram.mmd
   },
   {
     "lane": "exact-path-scope-negative",
-    "proof_role": "Reject Cargo metadata, dependency, Google Drive, and every unrelated product path rather than checking whitespace only.",
+    "proof_role": "Require the two substitutions and reject every unauthorized path.",
     "acceptance_ids": [
       "AC-6",
       "AC-7"
@@ -115,7 +115,7 @@ Diagram: .csdlc/prepared/issues/5812/diagram.mmd
   },
   {
     "lane": "diff-hygiene",
-    "proof_role": "Reject whitespace errors after the exact-path gate passes.",
+    "proof_role": "Reject whitespace errors after exact-path proof.",
     "acceptance_ids": [
       "AC-6",
       "AC-7"

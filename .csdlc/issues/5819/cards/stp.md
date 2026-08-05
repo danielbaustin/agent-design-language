@@ -26,11 +26,11 @@ Deliver five serially transferred company repositories with danielbaustin/asksif
 ## Acceptance
 
 1. Organization owners, recovery, billing, policy, permissions, destination names, and exact five-repository scope are verified
-2. Every repository has a reviewed redacted before-manifest at an exact HEAD and complete assignee membership or reassignment plan
-3. Exactly cognitive-sdlc-paper, godel-hadamard-bayes-paper, general-intelligence-paper-private, universal-tool-schema, and agent-design-language transfer in that order to agent-logic with names, visibility, and history preserved
-4. Every one of the five agent-logic destinations has its own live destination receipt and passes manifest comparison for GitHub surfaces, security, packages, Pages, LFS, Actions, and external integrations before the next transfer
-5. ADL transfers last; agent-logic/agent-logic.ai updates exactly site/index.html and site/beta/index.html, removes all four old ADL links, and retains source and publication receipts under that repository's ownership
-6. danielbaustin/asksifu remains personal and danielbaustin/Horust is neither transferred nor settings-mutated, with an observation receipt for each negative control
+2. Every repository has SHA-256-bound before and after manifests at one exact HEAD containing actual issues, PRs, assignees, rulesets, releases, Actions, Pages, packages, LFS, and integration data
+3. Exactly the five approved repositories transfer in order to agent-logic with names, visibility, history, and every manifest surface preserved or backed by a digest-bound verified disposition
+4. Every destination passes live GitHub inspection for API-backed surfaces and retained git-lfs-fsck evidence before the next transfer
+5. ADL transfers last; agent-logic/agent-logic.ai updates exactly site/index.html and site/beta/index.html, removes all four old ADL links, and retains source and publication receipts
+6. danielbaustin/asksifu remains personal and danielbaustin/Horust is neither transferred nor settings-mutated, with an observation receipt for each
 7. Final evidence contains no secret values, no unexplained drift, and one exact-revision bounded review
 
 ## Dependencies

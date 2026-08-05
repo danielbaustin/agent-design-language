@@ -24,12 +24,12 @@ Deliver v0.92 current-version truth across docs/planning/ADL_FEATURE_LIST.md, ca
 
 ## Acceptance
 
-1. Canonical inventory classifies every checked current or historical surface and names its owner and disposition
+1. Canonical inventory includes the fixed required README, feature-list, Cargo manifest/lockfile, AGENTS, REVIEW, eleven C-SDLC v2 skill, and runbook denominator plus any additional checked surfaces
 2. docs/planning/ADL_FEATURE_LIST.md and current entrypoints identify v0.92 as active without claiming planned features complete
-3. All authoritative current version declarations record an observed version equal to their declared v0.92 or 0.92.0 expectation and Cargo metadata is internally consistent
+3. All authoritative current version declarations record an observed version equal to their declared v0.92 or 0.92.0 expectation and ADL Cargo metadata is internally consistent
 4. Historical milestone, release, review, migration, and pre-existing evidence records retain their original version and claims while new .csdlc/evidence/5818 proof remains allowed
 5. Every inventoried current JSON and YAML file parses and every local Markdown link in the declared current boundary resolves
-6. Current AGENTS.md, REVIEW.md, skills, and runbooks agree with final C-SDLC v2 authority
+6. Current AGENTS.md, REVIEW.md, all eleven C-SDLC v2 skills, and named runbooks agree with final C-SDLC v2 authority
 7. Focused diff, lockfile, placeholder, stale-reference, and exact-revision review checks pass
 
 ## Dependencies

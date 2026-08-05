@@ -42,6 +42,12 @@ and excludes the target issue's own future actuals.
 6. Measure baseline and candidate operator cycle time over equivalent workflow
    cohorts, including active work, validation, review, CI, and wait components.
 
+The implementation owns the exact integration-test target
+`csdlc-v2/tests/estimation_contracts.rs`. That target must cover schema and
+round-trip behavior, privacy and leakage negatives, deterministic cohort
+selection, sparse-data fallback, calibration, and backtesting. Validation uses
+nextest with `--no-tests=fail`; substring filters are not acceptable proof.
+
 ## Invariants And Stop Conditions
 
 - No transcript body or sensitive path is copied into tracked evidence.

@@ -16,24 +16,25 @@ Inventory authoritative current surfaces, update v0.92 documentation and version
 
 ## Plan
 
-Revision 9
+Revision 10
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Build and review the classified canonical-surface and version-authority inventory, including expected and observed versions for declarations",
+    "action": "Build the fixed-denominator canonical-surface and version-authority inventory",
     "acceptance_ids": [
       "AC-1",
       "AC-3",
-      "AC-4"
+      "AC-4",
+      "AC-6"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Update current documentation, feature inventory, links, and authoritative version metadata without historical drift",
+    "action": "Update current documentation, feature inventory, links, and version metadata without historical drift",
     "acceptance_ids": [
       "AC-2",
       "AC-3",
@@ -44,7 +45,7 @@ Revision 9
   },
   {
     "id": "S3",
-    "action": "Run the issue-local activation validator, locked Cargo metadata, diff hygiene, and exact-revision review",
+    "action": "Run activation validation, locked ADL Cargo metadata, diff hygiene, and exact-revision review",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -84,7 +85,7 @@ Revision 9
 
 .csdlc/prepared/issues/5818/design.md
 
-Digest: f7cff126362e2ea4eaba3de3571258967683b9bce1fc1da91503392f4d24a9e2
+Digest: 9cfaff15112b6463dc61d449af32f1d65723a9bb2b3bd811590d284f51400cae
 
 ## Diagram
 

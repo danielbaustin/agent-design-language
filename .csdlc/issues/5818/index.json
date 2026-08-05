@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9ed0c16b82a7c094d6474b27313bfc4d63eaabcae5bedee51d7e839e9c8534fd",
   "phase": "bound",
-  "generation": 17,
-  "digest": "ce0f2bf65c8ac959da12ea038a13cf2ae8d07ba7cba1fd8668affffa4ddc0286",
+  "generation": 19,
+  "digest": "a378b769325c1f8ae9df9bfea000406b42cfc6a1ad0a4ff837c9dcabce883288",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5818/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-readiness-repair-review",
-      "revision": "f7cff126362e2ea4eaba3de3571258967683b9bce1fc1da91503392f4d24a9e2"
+      "reviewer": "codex:5860-foundation-second-pass-review",
+      "revision": "9cfaff15112b6463dc61d449af32f1d65723a9bb2b3bd811590d284f51400cae"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "c6e046d12c83e1b75c6b5b0f3216485aba287ff22f61e2cc7b54774f904fc7df",
+      "values_digest": "40a0d42e1ce314f855036cd864475ec56c968ef3906cfa64a31a0233075b8aed",
       "rendered_digest": "7497385431a0397c1dbead85e28d4294d7efcb2caaff6b14f342826caeeb6bb0",
       "ast_digest": "23098f1f67be5cc90995f6aec88db71ec06a8b4914e8e36d34a1939b4fa6a2e8"
     },
     "stp": {
-      "values_digest": "9f5602d6b61feaac9e7585e75764e1e03e39b47750be2ca6cdbd6d75a15ac284",
-      "rendered_digest": "57f45f72cc93eef32a9a9ec310aa35308b1c544937050abd7a96f582aeda6ec9",
-      "ast_digest": "2bc5cb5bb15c53c2a2202201f8717bcd003364cce6a8692b06358c10c8951942"
+      "values_digest": "ae66f1c9cbfee9213b2e6595a0c507bbdcaaff94d101a4687b11aa092a2ea2be",
+      "rendered_digest": "84cf6f84323564dc85587aa765eb4d8bbf7c78df060f1f19541475dcdb4f25ea",
+      "ast_digest": "7dd9272ed6007eb2ac9028b947a6a6c46dcf96d10d5d7555bf501f7721714787"
     },
     "spp": {
-      "values_digest": "97534846b6db9b9bcc8811403253efbdc9dabb65cb7037462ad31611ecfdd2da",
-      "rendered_digest": "fb5e3d3d225985c34ec551f8ec6bafb57db6aabf3105a624e73c79ec0add6a1d",
-      "ast_digest": "815f3bfc4c9bdf8055eac7a3c4f9181f6b5a86c1c48f8bdfd6716159ed77b4d7"
+      "values_digest": "63c76cba7fcb743d8b96eed5a398e344515f1701aee1ad910c4758aa403f0f82",
+      "rendered_digest": "66cfcc433d9f7c065ec10ce83253d5abbf00995606f931e8250a7ceae7b62d0b",
+      "ast_digest": "c30fd6929ecaebf33c4cd135abcb701f5db001470415ac1bd989969e455476dd"
     },
     "vpp": {
-      "values_digest": "32b72eb99cf85de8693144a81808da305676c6ed8ebd9de46ade3e6a2ceede0d",
-      "rendered_digest": "8eb8958f8eea104e941bc469bf04bdfd920868db2a7c87f642571b2ecc9f32e0",
-      "ast_digest": "b2baa8a687c373db7693673771c65412ec8d42b3ca1f0c91d71dbc3e34cce6b5"
+      "values_digest": "0ebe30b5b32df22cce2ceb05060239c10359935efdc9aa49fdd969df733d298b",
+      "rendered_digest": "c981029d0900fa2e987b8582a6b9fe7d09e184dc16111d741f3dd213831d3074",
+      "ast_digest": "c548115ddb1c678a81a7bbf16e087ac0bb88af4b8274fe0d83a6c73dacdbb578"
     },
     "srp": {
-      "values_digest": "f14183c1f3d6bcfc3eddbd8d75ba6d17b0de0848cc3e6bcde8b55104059b9326",
+      "values_digest": "373d06b305bca16ed35959a00e3f25c2947826b66aca0162664efe1d9766705a",
       "rendered_digest": "850bf908b77990370d184fe9ee2bf1f084431dcf2706ebffe5dec935345b2b4e",
       "ast_digest": "3e71138cb5d788546c289c6f05d2f941b1373f21ac7150406dbc2f07d8c5af6a"
     },
     "sor": {
-      "values_digest": "418240596c30d96595b4d9b0572c1ae2d6540b3142e0568cf5ec9ea5fb08a7ad",
+      "values_digest": "21d8d8bd8b6c8934ab2005aba7ca284448ffde1405dec0220bb0840dff5a312b",
       "rendered_digest": "bd15fe44fe2ca1bceaa2ed905a0b6cb117e1b973e9553ca9cb3fa825bc8a10d6",
       "ast_digest": "a228ec470a1b6243cc39ed9b70888478cf0b6d452147c0160d50b928ec42e7b7"
     }
@@ -237,6 +237,34 @@
       "actor": "codex:5860-foundation-readiness",
       "reason": "Release the Foundation readiness-repair claim after typed card regeneration, design approval, and focused validation; child execution must reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5818-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 17,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Reacquire issue #5818 only for the authorized Foundation second-pass readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5818-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5818\",\".csdlc/issues/5818\",\".csdlc/locks/5818.lock\",\".csdlc/prepared/issues/5818\"],\"purpose\":\"Repair issue 5818 Foundation execution-readiness packet without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:5860-foundation-second-pass-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 27,
+      "generation": 19,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Require the fixed canonical activation denominator and run Cargo metadata against the actual ADL manifest.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Canonical inventory includes the fixed required README, feature-list, Cargo manifest/lockfile, AGENTS, REVIEW, eleven C-SDLC v2 skill, and runbook denominator plus any additional checked surfaces\",\"docs/planning/ADL_FEATURE_LIST.md and current entrypoints identify v0.92 as active without claiming planned features complete\",\"All authoritative current version declarations record an observed version equal to their declared v0.92 or 0.92.0 expectation and ADL Cargo metadata is internally consistent\",\"Historical milestone, release, review, migration, and pre-existing evidence records retain their original version and claims while new .csdlc/evidence/5818 proof remains allowed\",\"Every inventoried current JSON and YAML file parses and every local Markdown link in the declared current boundary resolves\",\"Current AGENTS.md, REVIEW.md, all eleven C-SDLC v2 skills, and named runbooks agree with final C-SDLC v2 authority\",\"Focused diff, lockfile, placeholder, stale-reference, and exact-revision review checks pass\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Build the fixed-denominator canonical-surface and version-authority inventory\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-4\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Update current documentation, feature inventory, links, and version metadata without historical drift\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run activation validation, locked ADL Cargo metadata, diff hygiene, and exact-revision review\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"activation-evidence-contract\",\"proof_role\":\"Require the fixed canonical denominator, parse structured data, resolve links, compare versions, and reject historical changes.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5818/validate-activation.rb\"],\"parallel_group\":\"docs-contract\",\"defer_reason\":null},{\"lane\":\"cargo-version-parity\",\"proof_role\":\"Prove locked ADL workspace/package metadata is internally consistent from the repository root.\",\"acceptance_ids\":[\"AC-3\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":3000,\"argv\":[\"cargo\",\"metadata\",\"--locked\",\"--manifest-path\",\"adl/Cargo.toml\",\"--format-version\",\"1\"],\"parallel_group\":\"metadata\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors and support exact-revision review.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 19,
+      "actor": "codex:5860-foundation-second-pass",
+      "reason": "Release the Foundation second-pass preparation claim after typed regeneration, reapproval, and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5818-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-second-pass\"}"
     }
   ]
 }

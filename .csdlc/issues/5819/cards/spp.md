@@ -16,14 +16,14 @@ Verify organization gates, transfer exactly five repositories serially with assi
 
 ## Plan
 
-Revision 9
+Revision 10
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify organization readiness, plan lineage, exact five-repository scope, and per-repository assignee-aware manifests",
+    "action": "Capture complete digest-bound before manifests and assignee-aware transfer plans for all five repositories",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -33,7 +33,7 @@ Revision 9
   },
   {
     "id": "S2",
-    "action": "Transfer and independently verify each of the five destination repositories serially, stopping on any unexplained drift",
+    "action": "Transfer serially and compare recomputed per-surface before/after evidence plus live destination state",
     "acceptance_ids": [
       "AC-3",
       "AC-4"
@@ -42,7 +42,7 @@ Revision 9
   },
   {
     "id": "S3",
-    "action": "Complete the exact agent-logic.ai production and beta cutover, both negative controls, final report, validator, and exact-revision review",
+    "action": "Complete website cutover, controls, final report, validators, and exact-revision review",
     "acceptance_ids": [
       "AC-5",
       "AC-6",
@@ -80,7 +80,7 @@ Revision 9
 
 .csdlc/prepared/issues/5819/design.md
 
-Digest: dd0933f96f45a243b17ad7d5cb4e3cfed18a492e3297a5e2e7826d7cbe964afb
+Digest: 3340d20767a5c27dbbe65cdf460f9e15873c62c19a7091b416e384ab460967f5
 
 ## Diagram
 
