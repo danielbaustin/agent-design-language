@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-16] Birthday review packet",
     "slug": "v0-92-wp-16-birthday-review-packet",
     "version": "v0.92",
-    "generation": 30
+    "generation": 38
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 11,
+      "plan_revision": 14,
       "summary": "Assemble and prove WP-16's exact-digest reviewer packet with complete child evidence, redacted projections, blocked dispositions, caveats, questions, and public non-claims.",
       "steps": [
         {
@@ -64,7 +64,7 @@
         "docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json",
         "docs/milestones/v0.92/review/first-birthday-review-packet.schema.json",
         ".csdlc/prepared/issues/5834/validate-review-packet.rb",
-        "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md (WP-16 row only)",
+        "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
         ".csdlc/evidence/5834/"
       ],
       "invariants": [
@@ -86,7 +86,7 @@
         "Any required child lacks terminal exact-head evidence.",
         "A packet link or digest cannot be validated reproducibly.",
         "Assembly requires editing shared milestone or release authority outside WP-16.",
-        "The WP-13A dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled."
+        "The canonical wave row or live issue does not include the required WP-13A/#5831 dependency."
       ],
       "replan_triggers": [
         "A child republishes or supersedes its canonical exact-head proof.",
@@ -94,7 +94,7 @@
         "Review finds duplicate authority or a presentation-only proof substitution."
       ],
       "design_ref": ".csdlc/prepared/issues/5834/design.md",
-      "design_digest": "4cdaaf8cd0144e87c29137b969cff72a5e5e213d7e2d7e0b75a901c62a504d46",
+      "design_digest": "573921782c8d2fe436cf4ea70bdc8bd8b3ce61d31cce96516cfdaea492a20fe8",
       "diagram_ref": ".csdlc/prepared/issues/5834/diagram.mmd",
       "diagram_digest": "8a837711a7e5863a846f42a46cd793d3ff77846c6e80cc07d72e14c7665a6224"
     }

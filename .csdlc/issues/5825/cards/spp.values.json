@@ -7,18 +7,18 @@
     "title": "[v0.92][WP-08] Birthday contract and negative cases",
     "slug": "v0-92-wp-08-birthday-contract-and-negative-cases",
     "version": "v0.92",
-    "generation": 44
+    "generation": 53
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 21,
+      "plan_revision": 24,
       "summary": "Implement and prove the deterministic WP-08 birth decision, including complete disqualifying cases and explicit public-claim boundaries.",
       "steps": [
         {
           "id": "S1",
-          "action": "Verify #5818/#5819 terminal receipts and inspect adl-runtime-kernel contract/proof authorities before claiming the exact birthday.rs, lib.rs, tests, fixture, feature, and evidence paths.",
+          "action": "Verify #5817/#5801 terminal receipts and inspect adl-runtime-kernel contract/proof authorities before claiming the exact birthday.rs, lib.rs, tests, fixture, feature, and evidence paths.",
           "acceptance_ids": [
             "AC-2",
             "AC-3"
@@ -61,10 +61,11 @@
       ],
       "affected_areas": [
         "adl-runtime-kernel/src/birthday.rs",
-        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/birthday.rs",
         "adl-runtime-kernel/tests/fixtures/birthday/",
         "docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md",
+        ".csdlc/prepared/issues/5825/validate-native-receipts.rb",
         ".csdlc/evidence/5825/"
       ],
       "invariants": [
@@ -83,7 +84,7 @@
         "validation_seconds": 1200
       },
       "stop_conditions": [
-        "WP-01 or WP-02A terminal proof is stale, missing, or contradictory.",
+        "WP-01/#5817 or WP-02A/#5801 terminal proof is stale, missing, or contradictory.",
         "Execution requires paths outside birthday.rs, lib.rs registration, tests/birthday.rs, tests/fixtures/birthday/, the WP-08 feature contract, or .csdlc/evidence/5825/ without explicit replan.",
         "Any declared negative case lacks deterministic fail-closed proof."
       ],
@@ -93,7 +94,7 @@
         "A reviewer identifies an uncovered lifecycle lookalike or unsupported public claim."
       ],
       "design_ref": ".csdlc/prepared/issues/5825/design.md",
-      "design_digest": "742c4d39314fcda3cd57abd07306dbed5e75df1ee14becc93f583d1b4981c4ce",
+      "design_digest": "f820b504b76ecbeee8b4850fe1c7a967d15648f1f95da9d4be312de822ec2137",
       "diagram_ref": ".csdlc/prepared/issues/5825/diagram.mmd",
       "diagram_digest": "af3ccfe3d575efcd6afdf4b661f1a73ffef8cd1ac35a93da986e2d10d55ed3a9"
     }

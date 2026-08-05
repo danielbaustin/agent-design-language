@@ -4,9 +4,20 @@
 
 Implement the Runtime v3 Memory Palace boundary in `adl-runtime-kernel`, using the existing ObsMem contract in `adl/src/obsmem_contract/` and trace fields in `adl-runtime-kernel/src/observability.rs` as read-only input authorities. The retained `adl/src/memory_palace.rs` slice is compatibility evidence, not the implementation target. The design follows `docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md` and the redaction boundary in `MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`.
 
-## Owned Surface
+## Owned Paths
 
-Protected implementation paths are `adl-runtime-kernel/src/memory_palace.rs` (new Runtime v3 topology/selection boundary), `adl-runtime-kernel/src/lib.rs` (module registration only), `adl-runtime-kernel/tests/memory_palace.rs`, `adl-runtime-kernel/tests/fixtures/memory_palace/`, `docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md`, `.csdlc/evidence/5828/obsmem-trace-integration-receipt.json`, and `.csdlc/evidence/5828/`. The normalized fixture contract is sourced from `adl/src/obsmem_contract/models.rs`; trace bindings are sourced from `adl-runtime-kernel/src/observability.rs` and `adl-runtime-kernel/src/proof.rs`. Those authority files are read-only unless a fresh collision-checked claim explicitly adds them.
+The complete writable protected-path set is:
+
+- `adl-runtime-kernel/src/memory_palace.rs`
+- `adl-runtime-kernel/src/lib.rs`
+- `adl-runtime-kernel/tests/memory_palace.rs`
+- `adl-runtime-kernel/tests/fixtures/memory_palace/`
+- `docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md`
+- `.csdlc/prepared/issues/5828/validate-obsmem-trace-integration.rb`
+- `.csdlc/prepared/issues/5828/validate-native-receipts.rb`
+- `.csdlc/evidence/5828/`
+
+`adl-runtime-kernel/src/lib.rs` is limited to WP-11 module registration. ObsMem, observability, proof, and retained compatibility paths are read-only authorities. WP-11 may develop in parallel with WP-12; the WP-12 registration edit is serialized after this registration lands.
 
 ## Contract
 
@@ -18,7 +29,7 @@ WP-09/#5826 and WP-10/#5827 must be terminal. Before editing, record exact sourc
 
 ## Validation And Rollback
 
-The exact `memory_palace` Runtime v3 integration-test target must run a nonzero count and prove normalized ObsMem ingestion, trace/receipt binding, deterministic replay, bounded overflow, and stale/hash/continuity/redaction failures. A receipt validator recomputes all authority, fixture, and output digests rather than trusting declared fields. Native Linux CI and a retained native macOS receipt execute the same fixture digest before platform-equivalent output is claimed. Rollback removes the new Runtime v3 module and fixture schema while preserving the integration receipt and emitted historical packets as evidence.
+The exact `memory_palace` Runtime v3 integration-test target must run a nonzero count and prove normalized ObsMem ingestion, trace/receipt binding, deterministic replay, bounded overflow, and stale/hash/continuity/redaction failures. `validate-obsmem-trace-integration.rb` recomputes source, authority, fixture-tree, and output digests and binds exact HEAD, argv, runner, trace, and citation identity rather than trusting declared fields. Native Linux CI and a retained native macOS receipt bind that same exact source SHA, test argv, fixture-tree digest, output digest, runner identity, and recomputed native artifact digest before platform-equivalent output is claimed. Rollback removes the new Runtime v3 module and fixture schema while preserving the integration receipt and emitted historical packets as evidence.
 
 ## Non-Goals
 

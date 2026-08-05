@@ -1,0 +1,17 @@
+{
+  "issue": 5825,
+  "card": "stp",
+  "expected_generation": 47,
+  "expected_digest": "41308592b644a5af17b518f4b7d6c5fa50b3c5354ec5cd98574ac93f44a13399",
+  "claim_id": "claim-5825-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Correct dependency identity and preserve the stricter Birthday sprint graph.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "WP-01 / issue #5817 terminal proof",
+      "WP-02A / issue #5801 terminal proof"
+    ]
+  }
+}

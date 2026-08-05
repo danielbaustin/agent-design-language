@@ -1,0 +1,23 @@
+{
+  "issue": 5828,
+  "card": "spp",
+  "expected_generation": 32,
+  "expected_digest": "084e08f9bae97837d59887e98c4e39ffed34ab1f42f46476569b968e304aad0a",
+  "claim_id": "claim-5828-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Project the exact writable Owned Paths set into the SPP.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "affected_areas",
+    "values": [
+      "adl-runtime-kernel/src/memory_palace.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/tests/memory_palace.rs",
+      "adl-runtime-kernel/tests/fixtures/memory_palace/",
+      "docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md",
+      ".csdlc/prepared/issues/5828/validate-obsmem-trace-integration.rb",
+      ".csdlc/prepared/issues/5828/validate-native-receipts.rb",
+      ".csdlc/evidence/5828/"
+    ]
+  }
+}

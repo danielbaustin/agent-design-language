@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-10] Continuity across bounded cycles",
     "slug": "v0-92-wp-10-continuity-across-bounded-cycles",
     "version": "v0.92",
-    "generation": 34
+    "generation": 39
   },
   "status": "ready",
   "content": {
@@ -49,7 +49,7 @@
         },
         {
           "lane": "birthday_continuity-native-platform-receipts",
-          "proof_role": "Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.",
+          "proof_role": "Recompute and bind exact HEAD, exact test argv, nonzero test count, fixture-tree digest, output digest, runner identity, and native artifact digest for macOS and Linux; require byte-identical semantic output.",
           "acceptance_ids": [
             "AC-4",
             "AC-8"
@@ -60,9 +60,7 @@
           "budget_tokens": 1000,
           "argv": [
             "ruby",
-            "-rjson",
-            "-e",
-            "receipts=ARGV.map{|p| JSON.parse(File.read(p))};\nabort \"native platform receipts must cover macos and linux\" unless receipts.map{|r| r[\"platform\"]}.sort==%w[linux macos];\nabort \"native proof failed\" unless receipts.all?{|r| r[\"status\"]==\"passed\" && Integer(r[\"tests_run\"])>0};\nabort \"fixture digest mismatch\" unless receipts.map{|r| r[\"fixture_digest\"]}.uniq.length==1",
+            ".csdlc/prepared/issues/5827/validate-native-receipts.rb",
             ".csdlc/evidence/5827/native-platform/macos.json",
             ".csdlc/evidence/5827/native-platform/linux.json"
           ],
@@ -74,7 +72,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5827/design.md",
-      "design_digest": "fa58cabd0b42eb2d88e51720df28d38ae5788490daafdda83f182d571e394308",
+      "design_digest": "f87f8806c1cec122f19612fefe1523f4b966ce9952109c4fa1a2e8e70dd22836",
       "diagram_ref": ".csdlc/prepared/issues/5827/diagram.mmd",
       "diagram_digest": "b8e8902ce03c1fd254d2be626f03fb412db939612b74f42de3942fcfd6cdbbb4"
     }

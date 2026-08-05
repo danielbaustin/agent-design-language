@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d92e8e7b58695fd938ff38397f6cc6e3a2c3fda5ecb26fa32cb1d552e29f74f9",
   "phase": "bound",
-  "generation": 32,
-  "digest": "be280e5fdae9b575cd128e3e48c1048cbdeb4d58984f36fdcbc48dd2dcc3c82d",
+  "generation": 37,
+  "digest": "247d5455f8b7a71a755417b448454f10185a54b1193b2274f90d885e4efa12af",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5830/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-birthday-readiness-repair-design-review",
-      "revision": "af18b5f377a88b49556fcd5314db9f1a94ab53c81156e5b0482e750e58130b78"
+      "reviewer": "codex:5860-birthday-readiness-second-pass-review",
+      "revision": "51ef8fac075e02acbb22c88d673093f7d7fb6a4c8fc8f1f0cc50bbdf1ff44743"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "b690714d90257d78673f007883245453ce6db2db777aa33548c671e1bd88cdd0",
-      "rendered_digest": "5e3cc68af86e8b0a628297b06dec6e6f9da8245c5ef187d47c82f38a0f0e350a",
-      "ast_digest": "05af150839edac6248b69de48aefac8c4d537306b7bc3e697182728947a86f5f"
+      "values_digest": "3f31a42cbb1957cac6180590c831e5c07b794285f19f5151dd589f71f13edde3",
+      "rendered_digest": "f693dd3d3ed034e3ffbaff3348331e986f4f5cc9ae5fce166acecd4f23918b30",
+      "ast_digest": "3fd878ebfe7fe0596cb55885b39a06ca0f8b84f87406ef8b718c3f501ba84fa1"
     },
     "stp": {
-      "values_digest": "1476fa69afd9bd6d7b0b0cd06ef3709a4d7a0e7169339bfd569f3316a48c9ab9",
+      "values_digest": "cc001b04749a818ea2cc47386f48b38c4a5c25240a00b0d5f42a54a503c80c4b",
       "rendered_digest": "90375b3e0de3e71c082e6867951969157e0ea98199c2d3b35a6cc2593993b753",
       "ast_digest": "e2f92e7ba905ab2a9fb711910619b7f1f12bc854663e82246002ba6212684ea4"
     },
     "spp": {
-      "values_digest": "abd41f66d8fbd4600a382a07b08e909b19fd37591897f721b28355c7012af416",
-      "rendered_digest": "071eda06771085bc4cc476d35aa6e4ac5004c429dac40b8ad93c17e4f52faa52",
-      "ast_digest": "bf48d489dd9a71ceca254957d8a45f26f582e95a6b618ec17fbd1e29d961cf21"
+      "values_digest": "23c7682e10066e031ae493a02d7ff3d9710a19c1187e63d3b43da7c26641b9b1",
+      "rendered_digest": "5c3faa63429a86c7b8cc31ca4c92971923e0ea4a720238e782410b3c21195ce6",
+      "ast_digest": "b7a328f62adb03ef5639c5de7aa4cd9d3d4f821177410bd4aaa9fcda5ccb6881"
     },
     "vpp": {
-      "values_digest": "c0f94418dcde5a4fcba33133459dbc8b6d08f239859dcff847ed3b756fb94d8d",
-      "rendered_digest": "c29fef5f926801fcdab5546d2bfa3d93789caeb3da2db0af31da8554ad485607",
-      "ast_digest": "02156b6c6ac30e5bc6b0042820c4a8ff975368ee5593aea920564a6c3dd81de6"
+      "values_digest": "34717fc0ace9c5ea51732c7dc5ea710366974a04db89291a29685f09bfa1b00a",
+      "rendered_digest": "28d4d1157b06b1687d4cb2487e244db310cf7982594009695b82927f2803fc7c",
+      "ast_digest": "de758d9a0e7073dc5f05d81c3c531ed3aca5a9a0f9b090b7fb97ea2fc434b015"
     },
     "srp": {
-      "values_digest": "649b28dd42d07a8eb0c8cacbfaa30f438598d6098f0354adbd75f9b09b4da0b5",
+      "values_digest": "42d4a01232d39cf99806ed8ff32c78fd9b4769fd64f7bf8b291dba95ce3e8df9",
       "rendered_digest": "5cf1d14625cc5c42441e85503a8ba2347ee72f5b8a6c55327ebb7b4d02773ec8",
       "ast_digest": "a0c0d5d841942e9187eedd87886ba119301e1a7842960f3b8e41ca367ba925ca"
     },
     "sor": {
-      "values_digest": "ce843cd4f463a7e033ee916de83759a8bf5a7eb843adeaa739c2e189224749fb",
+      "values_digest": "8fda330499b874bf8ddbfe1985ce73b8b8bf64c4c170ca7fad55236c449edc75",
       "rendered_digest": "8dbf031f6e2f727893acd7c4297a6e74d21ecc2bad913bb38629f4c172994b2e",
       "ast_digest": "80a35a095cda2e9920e7a586f841529fd4f683612c6d4f7f185bba3eddcdef26"
     }
@@ -356,6 +356,55 @@
       "actor": "codex:5860-birthday-readiness-repair",
       "reason": "Release completed Birthday readiness-repair claim for just-in-time child execution binding.",
       "operation": "{\"claim_id\":\"repair-5860-birthday-5830\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-birthday-readiness-repair\"}"
+    },
+    {
+      "sequence": 42,
+      "generation": 32,
+      "actor": "codex:5860-birthday-readiness-second-pass",
+      "reason": "Reacquire the released preparation claim for the operator-authorized Birthday second-pass readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-birthday-readiness-repair-v2\",\"claim_id\":\"claim-5830-v092-birthday-second-pass\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-readiness-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5830\",\".csdlc/issues/5830\",\".csdlc/locks/5830.lock\",\".csdlc/prepared/issues/5830\"],\"purpose\":\"Repair issue 5830 design and typed cards only; no product behavior, shared milestone docs, live GitHub mutation, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 43,
+      "generation": 33,
+      "actor": "codex:5860-birthday-readiness-second-pass-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 44,
+      "generation": 34,
+      "actor": "codex:5860-birthday-readiness-second-pass",
+      "reason": "Project the exact writable Owned Paths set into the SIP.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime-kernel/src/cognitive_profile.rs\",\"adl-runtime-kernel/src/lib.rs\",\"adl-runtime-kernel/tests/cognitive_profile.rs\",\"adl-runtime-kernel/tests/fixtures/cognitive_profile/\",\"docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md\",\".csdlc/prepared/issues/5830/validate-native-receipts.rb\",\".csdlc/evidence/5830/\"]}"
+    },
+    {
+      "sequence": 45,
+      "generation": 35,
+      "actor": "codex:5860-birthday-readiness-second-pass",
+      "reason": "Project the exact writable Owned Paths set into the SPP.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/cognitive_profile.rs\",\"adl-runtime-kernel/src/lib.rs\",\"adl-runtime-kernel/tests/cognitive_profile.rs\",\"adl-runtime-kernel/tests/fixtures/cognitive_profile/\",\"docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md\",\".csdlc/prepared/issues/5830/validate-native-receipts.rb\",\".csdlc/evidence/5830/\"]}"
+    },
+    {
+      "sequence": 46,
+      "generation": 36,
+      "actor": "codex:5860-birthday-readiness-second-pass",
+      "reason": "Replace self-attested native receipts with issue-local recomputation and add the concrete ObsMem/trace lane where applicable.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"cognitive_profile-runtime-v3\",\"proof_role\":\"Run the exact Runtime v3 integration target and fail when the selected target contains no tests.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"cognitive_profile\",\"--no-tests=fail\",\"--status-level\",\"all\"],\"parallel_group\":\"5830-core\",\"defer_reason\":null},{\"lane\":\"cognitive_profile-native-platform-receipts\",\"proof_role\":\"Recompute and bind exact HEAD, exact test argv, nonzero test count, fixture-tree digest, output digest, runner identity, and native artifact digest for macOS and Linux; require byte-identical semantic output.\",\"acceptance_ids\":[\"AC-4\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":1000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5830/validate-native-receipts.rb\",\".csdlc/evidence/5830/native-platform/macos.json\",\".csdlc/evidence/5830/native-platform/linux.json\"],\"parallel_group\":\"5830-platform\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 47,
+      "generation": 37,
+      "actor": "codex:5860-birthday-readiness-second-pass-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 48,
+      "generation": 37,
+      "actor": "codex:5860-birthday-readiness-second-pass",
+      "reason": "Release the second-pass preparation claim after typed rendering and exact-digest design reapproval.",
+      "operation": "{\"claim_id\":\"claim-5830-v092-birthday-second-pass\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-readiness-second-pass\",\"previous_owner\":\"codex:5860-birthday-readiness-second-pass\"}"
     }
   ]
 }

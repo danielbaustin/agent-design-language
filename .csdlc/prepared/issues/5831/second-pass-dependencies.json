@@ -1,0 +1,19 @@
+{
+  "issue": 5831,
+  "card": "stp",
+  "expected_generation": 34,
+  "expected_digest": "ca3789fe2a95245dc91df425963b0dcbcf5ea2f2ca99910080d1a69453a46726",
+  "claim_id": "claim-5831-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Correct dependency identity and preserve the stricter Birthday sprint graph.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "WP-01 / issue #5817 terminal proof",
+      "WP-13 / issue #5830 terminal proof",
+      "Merged issue #5104 adaptive-learning semantics",
+      "Current Runtime v3 prerequisite and loop-runtime requalification"
+    ]
+  }
+}

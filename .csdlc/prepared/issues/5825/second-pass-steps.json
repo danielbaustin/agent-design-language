@@ -1,0 +1,56 @@
+{
+  "issue": 5825,
+  "card": "spp",
+  "expected_generation": 49,
+  "expected_digest": "31e36b71173ec0839d7de5658b8a06f3b81fb23ba59beec5ec39a8a81a27d64a",
+  "claim_id": "claim-5825-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Make the operative plan use corrected dependencies and the serialized registration gate.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Verify #5817/#5801 terminal receipts and inspect adl-runtime-kernel contract/proof authorities before claiming the exact birthday.rs, lib.rs, tests, fixture, feature, and evidence paths.",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Implement the versioned birth-decision contract, one valid fixture, and the complete table-driven disqualifier matrix.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run deterministic focused, negative, path-hygiene, and public-claim boundary lanes and retain exact-revision evidence.",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5825 linkage.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8"
+        ],
+        "status": "pending"
+      }
+    ]
+  }
+}

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-12] Capability envelope",
     "slug": "v0-92-wp-12-capability-envelope",
     "version": "v0.92",
-    "generation": 34
+    "generation": 58
   },
   "status": "ready",
   "content": {
@@ -28,7 +28,7 @@
         "Unknown or stale provider/model evidence, undeclared tools/skills, authority escalation, omitted limits, secret-like content, private paths, and host paths fail closed.",
         "One bounded exact-head SRP review records no unresolved actionable findings.",
         "The implementation PR targets the intended base and includes Closes #5829 without claiming completion of downstream Birthday work.",
-        "Before claim acquisition, reconcile the live issue and canonical wave with the stricter sprint/card dependency on WP-08/#5825; WP-08 remains required.",
+        "Before claim acquisition, require the canonical wave row and live issue to add WP-08/#5825 so all dependency surfaces exactly match. WP-12's adl-runtime-kernel/src/lib.rs registration claim and edit must also wait until WP-11/#5828 has landed and released that path.",
         "The exact capability_envelope nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed."
       ],
       "dependencies": [

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-09] Stable name and identity architecture",
     "slug": "v0-92-wp-09-stable-name-and-identity-architecture",
     "version": "v0.92",
-    "generation": 35
+    "generation": 40
   },
   "status": "ready",
   "content": {
@@ -17,10 +17,11 @@
       "required_outcome": "A versioned identity record, validator, fixtures, and retained report binding stable name, root, aliases, origin, continuity head, provenance, witness references, and redaction policy.",
       "declared_scope": [
         "adl-runtime-kernel/src/birthday_identity.rs",
-        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/birthday_identity.rs",
         "adl-runtime-kernel/tests/fixtures/birthday_identity/",
         "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md",
+        ".csdlc/prepared/issues/5826/validate-native-receipts.rb",
         ".csdlc/evidence/5826/"
       ],
       "authority_boundary": [

@@ -4,9 +4,19 @@
 
 Define the deterministic WP-08 birth decision consumed by the Birthday sprint. The contract is grounded in `docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md`, the negative suite in `docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md`, and the WP-08 row in `docs/milestones/v0.92/WBS_v0.92.md`.
 
-## Owned Surface
+## Owned Paths
 
-Protected implementation paths are `adl-runtime-kernel/src/birthday.rs` (new birth-decision contract and validator), `adl-runtime-kernel/src/lib.rs` (module registration only), `adl-runtime-kernel/tests/birthday.rs` (positive, negative, and deterministic replay tests), `adl-runtime-kernel/tests/fixtures/birthday/` (versioned candidate packets), `docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md`, and `.csdlc/evidence/5825/`. No `adl/src/runtime_v2/` implementation is in scope.
+The complete writable protected-path set is:
+
+- `adl-runtime-kernel/src/birthday.rs`
+- `adl-runtime-kernel/src/lib.rs`
+- `adl-runtime-kernel/tests/birthday.rs`
+- `adl-runtime-kernel/tests/fixtures/birthday/`
+- `docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md`
+- `.csdlc/prepared/issues/5825/validate-native-receipts.rb`
+- `.csdlc/evidence/5825/`
+
+`adl-runtime-kernel/src/lib.rs` is limited to module registration. No source input, retained evidence, or `adl/src/runtime_v2/` path is writable under this issue.
 
 ## Contract
 
@@ -14,11 +24,11 @@ A birth result requires stable name and identity root, continuity head across bo
 
 ## Dependencies And Invariants
 
-WP-01/#5818 and WP-02A/#5819 must be terminally proven before execution. The decision is deterministic over canonical inputs, fails closed on missing or contradictory evidence, and never upgrades existing v0.91.x birthday non-claims by implication.
+WP-01/#5817 and WP-02A/#5801 must be terminally proven before execution. WP-01B/#5818 and WP-02/#5819 are distinct work packages and cannot satisfy those gates. The decision is deterministic over canonical inputs, fails closed on missing or contradictory evidence, and never upgrades existing v0.91.x birthday non-claims by implication.
 
 ## Validation And Rollback
 
-Focused tests must invoke the exact `birthday` integration-test target, assert that at least one test ran, and prove one valid packet plus every table-driven disqualifier and missing-evidence case. A claim-boundary scan rejects personhood, consciousness, production citizenship, governance, migration, and transport overclaims. Native Linux CI and a retained native macOS receipt must execute the same fixture corpus before portability is claimed. Rollback removes the new module/fixtures and restores the feature doc without altering historical evidence.
+Focused tests must invoke the exact `birthday` integration-test target, assert that at least one test ran, and prove one valid packet plus every table-driven disqualifier and missing-evidence case. A claim-boundary scan rejects personhood, consciousness, production citizenship, governance, migration, and transport overclaims. Native Linux CI and a retained native macOS receipt must bind the exact source SHA, test argv, fixture-tree digest, output digest, runner identity, and recomputed native artifact digest before portability is claimed. Rollback removes the new module/fixtures and restores the feature doc without altering historical evidence.
 
 ## Non-Goals
 

@@ -24,7 +24,7 @@ A schema-validated packet inventorying exact revisions and digests for WP-08 thr
 - docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json
 - docs/milestones/v0.92/review/first-birthday-review-packet.schema.json
 - .csdlc/prepared/issues/5834/validate-review-packet.rb
-- docs/milestones/v0.92/DEMO_MATRIX_v0.92.md (WP-16 row only)
+- docs/milestones/v0.92/DEMO_MATRIX_v0.92.md
 - .csdlc/evidence/5834/
 
 ## Authority

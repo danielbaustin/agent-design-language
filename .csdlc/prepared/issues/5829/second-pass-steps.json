@@ -1,0 +1,57 @@
+{
+  "issue": 5829,
+  "card": "spp",
+  "expected_generation": 53,
+  "expected_digest": "a8c6d702ed2494c5c64d7be49040e5d5152365027768a68abb1b3f773f4c2a12",
+  "claim_id": "claim-5829-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Make the operative plan use corrected dependencies and the serialized registration gate.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Verify WP-08/#5825, WP-09/#5826, and #4761; collision-check nonshared paths immediately, but defer the one-line lib.rs registration claim until WP-11/#5828 has landed and released it.",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Implement the versioned envelope, canonical ordering, explicit grants/denials/limits, validator, and fixtures.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run focused canonicalization, stale/escalation/limit negatives, secret scanning, and path portability lanes.",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5829 linkage.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8",
+          "AC-9"
+        ],
+        "status": "pending"
+      }
+    ]
+  }
+}

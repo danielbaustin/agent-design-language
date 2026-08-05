@@ -1,0 +1,22 @@
+{
+  "issue": 5829,
+  "card": "sip",
+  "expected_generation": 49,
+  "expected_digest": "ea4033efabd5c74c7eb5e41c533c96bea9bf40d074dde515bdb1ac85b2ed7785",
+  "claim_id": "claim-5829-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Project the exact writable Owned Paths set into the SIP.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "declared_scope",
+    "values": [
+      "adl-runtime-kernel/src/capability_envelope.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/tests/capability_envelope.rs",
+      "adl-runtime-kernel/tests/fixtures/capability_envelope/",
+      "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
+      ".csdlc/prepared/issues/5829/validate-native-receipts.rb",
+      ".csdlc/evidence/5829/"
+    ]
+  }
+}

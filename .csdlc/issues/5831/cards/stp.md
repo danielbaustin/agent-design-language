@@ -24,7 +24,7 @@ Deliver only the WP-13A Runtime v3 adaptive-learning graph path, focused integra
 ## Acceptance
 
 1. The WP-13A DAG durably links loop event, evaluation, evidence-backed state delta, graph proposal, policy decision, accepted or rejected mutation, replay, and rollback/inverse record.
-2. WP-01/#5818, WP-13/#5830, merged #5104 semantics, and current Runtime v3 requalification are verified before implementation.
+2. WP-01/#5817, WP-13/#5830, merged #5104 semantics, and current Runtime v3 requalification are verified before implementation.
 3. Implementation is confined to current Runtime v3 authority: adl-runtime-kernel/src/adaptive_learning.rs, lib.rs module registration, tests/adaptive_learning.rs, tests/fixtures/adaptive_learning/, the feature contract, and .csdlc/evidence/5831/; adl/src/runtime_v2/ is excluded from implementation.
 4. Same durable inputs replay to identical proposal, policy disposition, state/graph hashes, and retained exact-revision history.
 5. Missing/forged evidence, substituted state, invalid graph binding, discontinuous resume, unbounded recurrence, unauthorized mutation, rejected-proposal mutation, and rollback mismatch fail closed.
@@ -34,7 +34,7 @@ Deliver only the WP-13A Runtime v3 adaptive-learning graph path, focused integra
 
 ## Dependencies
 
-- WP-01 / issue #5818 terminal proof
+- WP-01 / issue #5817 terminal proof
 - WP-13 / issue #5830 terminal proof
 - Merged issue #5104 adaptive-learning semantics
 - Current Runtime v3 prerequisite and loop-runtime requalification

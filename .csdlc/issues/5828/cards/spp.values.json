@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice",
     "slug": "v0-92-wp-11-runtime-implement-first-memory-palace-context-topology-slice",
     "version": "v0.92",
-    "generation": 30
+    "generation": 35
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 11,
+      "plan_revision": 12,
       "summary": "Extend and prove the existing WP-11 Memory Palace topology with identity/continuity gates, bounded deterministic selection, overflow, provenance, and redaction.",
       "steps": [
         {
@@ -62,11 +62,12 @@
       ],
       "affected_areas": [
         "adl-runtime-kernel/src/memory_palace.rs",
-        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/memory_palace.rs",
         "adl-runtime-kernel/tests/fixtures/memory_palace/",
         "docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md",
-        ".csdlc/evidence/5828/obsmem-trace-integration-receipt.json",
+        ".csdlc/prepared/issues/5828/validate-obsmem-trace-integration.rb",
+        ".csdlc/prepared/issues/5828/validate-native-receipts.rb",
         ".csdlc/evidence/5828/"
       ],
       "invariants": [
@@ -96,7 +97,7 @@
         "Review identifies an unbounded or unauthorized retrieval path."
       ],
       "design_ref": ".csdlc/prepared/issues/5828/design.md",
-      "design_digest": "581333d079c24f6145b50ba6749a664f6fbffc50a6e48d6883ae5fc3417e664a",
+      "design_digest": "953d554b52df8949dd55f555e27fbbaa80c2668d3712db7a1344a8031fdccde7",
       "diagram_ref": ".csdlc/prepared/issues/5828/diagram.mmd",
       "diagram_digest": "ff82b0bec69f0e9368d20aff4022d0a5506a8040000a27f8a1991dece282ff8b"
     }

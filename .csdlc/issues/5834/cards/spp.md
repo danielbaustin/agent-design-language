@@ -16,7 +16,7 @@ Assemble and prove WP-16's exact-digest reviewer packet with complete child evid
 
 ## Plan
 
-Revision 11
+Revision 14
 
 ## Steps
 
@@ -89,7 +89,7 @@ Revision 11
 
 .csdlc/prepared/issues/5834/design.md
 
-Digest: 4cdaaf8cd0144e87c29137b969cff72a5e5e213d7e2d7e0b75a901c62a504d46
+Digest: 573921782c8d2fe436cf4ea70bdc8bd8b3ce61d31cce96516cfdaea492a20fe8
 
 ## Diagram
 
@@ -102,7 +102,7 @@ Digest: 8a837711a7e5863a846f42a46cd793d3ff77846c6e80cc07d72e14c7665a6224
 - Any required child lacks terminal exact-head evidence.
 - A packet link or digest cannot be validated reproducibly.
 - Assembly requires editing shared milestone or release authority outside WP-16.
-- The WP-13A dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled.
+- The canonical wave row or live issue does not include the required WP-13A/#5831 dependency.
 
 ## Handoff
 

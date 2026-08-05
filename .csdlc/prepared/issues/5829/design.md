@@ -4,9 +4,19 @@
 
 Define WP-12's birthday-consumable provider, model, tool, skill, authority, and limit envelope from `docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`, current provider/profile surfaces under `adl/src/provider/`, `adl/src/provider_adapter.rs`, and the retained #4761 envelope at `.csdlc/evidence/4761/capability-envelope/`.
 
-## Owned Surface
+## Owned Paths
 
-Protected implementation paths are `adl-runtime-kernel/src/capability_envelope.rs`, `adl-runtime-kernel/src/lib.rs` (module registration only), `adl-runtime-kernel/tests/capability_envelope.rs`, `adl-runtime-kernel/tests/fixtures/capability_envelope/`, `docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`, and `.csdlc/evidence/5829/`. Existing provider inventory under `adl/src/provider/`, `adl/src/provider_adapter.rs`, and `.csdlc/evidence/4761/capability-envelope/` is read-only input authority. The implementation must consume #4761 as a versioned input or explicitly supersede it; it cannot silently copy stale capability claims.
+The complete writable protected-path set is:
+
+- `adl-runtime-kernel/src/capability_envelope.rs`
+- `adl-runtime-kernel/src/lib.rs`
+- `adl-runtime-kernel/tests/capability_envelope.rs`
+- `adl-runtime-kernel/tests/fixtures/capability_envelope/`
+- `docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`
+- `.csdlc/prepared/issues/5829/validate-native-receipts.rb`
+- `.csdlc/evidence/5829/`
+
+Provider inventory and #4761 evidence are read-only input authorities. WP-12 may develop its nonshared paths in parallel with WP-11, but it must not claim or edit `adl-runtime-kernel/src/lib.rs` until WP-11/#5828 has landed and released that path; its registration edit is then a one-line serialized step.
 
 ## Contract
 
@@ -14,11 +24,11 @@ Each envelope binds identity root and evidence revision to explicit provider/mod
 
 ## Dependencies And Invariants
 
-WP-08/#5825 and WP-09/#5826 must be terminal, and #4761 evidence must remain verifiable. The canonical issue row currently omits the stricter WP-08 gate carried by the Birthday sprint gate; pre-execution dependency reconciliation must align the live issue, canonical wave, and cards before claim acquisition, preserving WP-08 as required. Capability is descriptive and bounded; it does not grant authority, prove invocation, expose credentials, or imply unlimited capacity.
+WP-08/#5825 and WP-09/#5826 must be terminal, and #4761 evidence must remain verifiable. The canonical wave row and live issue must add WP-08 before execution so they exactly match this stricter card contract. The `lib.rs` registration claim is additionally serialized after WP-11/#5828 integration; this is a write-collision gate, not a semantic substitution for WP-08 or WP-09. Capability is descriptive and bounded; it does not grant authority, prove invocation, expose credentials, or imply unlimited capacity.
 
 ## Validation And Rollback
 
-The exact `capability_envelope` integration-test target must run a nonzero count proving complete deterministic envelopes and stale-provenance, unsupported-provider/model, unauthorized-capability, omitted-limit, secret-like-content, and path-portability failures. Native Linux CI and a retained native macOS receipt use the same fixture digest before portability is claimed. Rollback removes the v0.92 envelope while preserving #4761 evidence unchanged.
+The exact `capability_envelope` integration-test target must run a nonzero count proving complete deterministic envelopes and stale-provenance, unsupported-provider/model, unauthorized-capability, omitted-limit, secret-like-content, and path-portability failures. Native Linux CI and a retained native macOS receipt bind the exact source SHA, test argv, fixture-tree digest, output digest, runner identity, and recomputed native artifact digest before portability is claimed. Rollback removes the v0.92 envelope while preserving #4761 evidence unchanged.
 
 ## Non-Goals
 

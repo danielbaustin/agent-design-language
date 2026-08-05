@@ -21,10 +21,11 @@ A versioned birth-decision contract, valid fixture, disqualifying fixtures, vali
 ## Scope
 
 - adl-runtime-kernel/src/birthday.rs
-- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/src/lib.rs
 - adl-runtime-kernel/tests/birthday.rs
 - adl-runtime-kernel/tests/fixtures/birthday/
 - docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md
+- .csdlc/prepared/issues/5825/validate-native-receipts.rb
 - .csdlc/evidence/5825/
 
 ## Authority

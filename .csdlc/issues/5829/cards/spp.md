@@ -16,14 +16,14 @@ Implement and prove WP-12 canonical capability envelopes with explicit providers
 
 ## Plan
 
-Revision 15
+Revision 22
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Reconcile the WP-08 dependency mismatch, verify #5825/#5826/#4761 evidence, and claim the exact capability_envelope.rs, lib.rs, tests, fixture, feature, and evidence paths.",
+    "action": "Verify WP-08/#5825, WP-09/#5826, and #4761; collision-check nonshared paths immediately, but defer the one-line lib.rs registration claim until WP-11/#5828 has landed and released it.",
     "acceptance_ids": [
       "AC-2",
       "AC-3"
@@ -90,7 +90,7 @@ Revision 15
 
 .csdlc/prepared/issues/5829/design.md
 
-Digest: e0c98b4bbad7618c697213e6e5f76e42394d12fee8330c942d04d164766baacf
+Digest: 84716664e6a6262c8b75169869bb4640908c697de99ecec3383efcf9736b9ddd
 
 ## Diagram
 
@@ -101,9 +101,10 @@ Digest: 78acf0d1432d60e5c4c8b3eba8f887a035f2f55abeee4cc19537b6495dc5de3a
 ## Stop Conditions
 
 - WP-08/#5825, WP-09/#5826, or #4761 evidence is stale or unverifiable.
-- The WP-08 dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled.
 - Execution requires provider-adapter or credential changes outside the exact declared paths.
 - Secret-like data or unbounded authority cannot be excluded.
+- The canonical wave row or live issue does not include the required WP-08/#5825 dependency.
+- WP-11/#5828 has not landed and released adl-runtime-kernel/src/lib.rs before the WP-12 registration claim.
 
 ## Handoff
 

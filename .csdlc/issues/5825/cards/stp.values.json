@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-08] Birthday contract and negative cases",
     "slug": "v0-92-wp-08-birthday-contract-and-negative-cases",
     "version": "v0.92",
-    "generation": 44
+    "generation": 53
   },
   "status": "ready",
   "content": {
@@ -22,7 +22,7 @@
       ],
       "acceptance_criteria": [
         "The WP-08 birth-decision contract accepts one structurally complete candidate and emits stable rejection reasons for every declared lifecycle lookalike or missing evidence surface.",
-        "Terminal proof for WP-01/#5818 and WP-02A/#5819 is verified before implementation begins.",
+        "Terminal proof for WP-01/#5817 and WP-02A/#5801 is verified before implementation begins.",
         "Implementation is confined to adl-runtime-kernel/src/birthday.rs, lib.rs module registration, tests/birthday.rs, tests/fixtures/birthday/, the WP-08 feature contract, and .csdlc/evidence/5825/; Runtime v2 is excluded.",
         "Focused and negative validation is deterministic, reproducible, retained under .csdlc/evidence/5825/, and bound to the exact reviewed revision.",
         "Missing or contradictory evidence, private or absolute paths, and personhood, consciousness, citizenship, governance, migration, or public-launch overclaims fail closed.",
@@ -31,8 +31,8 @@
         "The exact birthday nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed."
       ],
       "dependencies": [
-        "WP-01 / issue #5818 terminal proof",
-        "WP-02A / issue #5819 terminal proof"
+        "WP-01 / issue #5817 terminal proof",
+        "WP-02A / issue #5801 terminal proof"
       ],
       "repo_inputs": [
         "docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md",

@@ -16,14 +16,14 @@ Implement and prove the deterministic WP-08 birth decision, including complete d
 
 ## Plan
 
-Revision 21
+Revision 24
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify #5818/#5819 terminal receipts and inspect adl-runtime-kernel contract/proof authorities before claiming the exact birthday.rs, lib.rs, tests, fixture, feature, and evidence paths.",
+    "action": "Verify #5817/#5801 terminal receipts and inspect adl-runtime-kernel contract/proof authorities before claiming the exact birthday.rs, lib.rs, tests, fixture, feature, and evidence paths.",
     "acceptance_ids": [
       "AC-2",
       "AC-3"
@@ -89,7 +89,7 @@ Revision 21
 
 .csdlc/prepared/issues/5825/design.md
 
-Digest: 742c4d39314fcda3cd57abd07306dbed5e75df1ee14becc93f583d1b4981c4ce
+Digest: f820b504b76ecbeee8b4850fe1c7a967d15648f1f95da9d4be312de822ec2137
 
 ## Diagram
 
@@ -99,7 +99,7 @@ Digest: af3ccfe3d575efcd6afdf4b661f1a73ffef8cd1ac35a93da986e2d10d55ed3a9
 
 ## Stop Conditions
 
-- WP-01 or WP-02A terminal proof is stale, missing, or contradictory.
+- WP-01/#5817 or WP-02A/#5801 terminal proof is stale, missing, or contradictory.
 - Execution requires paths outside birthday.rs, lib.rs registration, tests/birthday.rs, tests/fixtures/birthday/, the WP-08 feature contract, or .csdlc/evidence/5825/ without explicit replan.
 - Any declared negative case lacks deterministic fail-closed proof.
 

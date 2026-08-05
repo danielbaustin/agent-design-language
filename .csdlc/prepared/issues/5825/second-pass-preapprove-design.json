@@ -1,0 +1,7 @@
+{
+  "issue": 5825,
+  "expected_generation": 44,
+  "expected_digest": "4c7adbe07bb3bc3df1e217c010c9a2f2969a04d73397660d44638665a4908920",
+  "claim_id": "claim-5825-v092-birthday-second-pass",
+  "reviewer": "codex:5860-birthday-readiness-second-pass-review"
+}

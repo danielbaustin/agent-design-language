@@ -1,0 +1,22 @@
+{
+  "issue": 5834,
+  "card": "stp",
+  "expected_generation": 34,
+  "expected_digest": "2d0a369787b2a0afe43b30dc173452ef6b0196d6ccd17948923a8c3abed074fc",
+  "claim_id": "claim-5834-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Correct dependency identities and encode dependency and shared-path readiness gates.",
+  "operation": {
+    "operation": "replace_acceptance_criteria",
+    "values": [
+      "The WP-16 packet inventories one canonical exact revision/digest for every required WP-08 through WP-15 proof, negative report, caveat, reviewer question, redacted projection, and public non-claim.",
+      "All issues #5825 through #5833, including #5831 and #5832, satisfy sprint gate 4 terminal and exact-head evidence requirements before assembly.",
+      "Implementation is confined to the named WP-16 review packet Markdown, evidence JSON, schema, issue-local validator, WP-16 demo-matrix row, and .csdlc/evidence/5834/.",
+      "Schema, link, digest, uniqueness, and completeness validation is reproducible and retained at the exact reviewed revision.",
+      "Missing, stale, contradictory, nonterminal, unreviewed, duplicate-digest, private-path, personhood, citizenship, consciousness, governance, or publication-ready inputs produce named blocked failure.",
+      "One bounded exact-head SRP review records no unresolved actionable findings.",
+      "The implementation PR targets the intended base and includes Closes #5834 without claiming completion of downstream Birthday work.",
+      "Before claim acquisition, require the canonical wave row and live issue to add WP-13A/#5831 so all dependency surfaces exactly match."
+    ]
+  }
+}

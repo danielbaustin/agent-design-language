@@ -30,7 +30,7 @@ Deliver only the WP-16 integrated reviewer packet, schema/link/digest validator,
 5. Missing, stale, contradictory, nonterminal, unreviewed, duplicate-digest, private-path, personhood, citizenship, consciousness, governance, or publication-ready inputs produce named blocked failure.
 6. One bounded exact-head SRP review records no unresolved actionable findings.
 7. The implementation PR targets the intended base and includes Closes #5834 without claiming completion of downstream Birthday work.
-8. Before claim acquisition, reconcile the live issue and canonical wave with the stricter sprint/card dependency on WP-13A/#5831; WP-13A remains required.
+8. Before claim acquisition, require the canonical wave row and live issue to add WP-13A/#5831 so all dependency surfaces exactly match.
 
 ## Dependencies
 

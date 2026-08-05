@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-15] Birth witnesses and receipts",
     "slug": "v0-92-wp-15-birth-witnesses-and-receipts",
     "version": "v0.92",
-    "generation": 30
+    "generation": 39
   },
   "status": "ready",
   "content": {
@@ -28,7 +28,7 @@
         "Missing, duplicate, stale, forged, equivocal, unauthorized, candidate-mismatched, redaction-leaking witnesses and premature birth claims fail closed.",
         "One bounded exact-head SRP review records no unresolved actionable findings.",
         "The implementation PR targets the intended base and includes Closes #5833 without claiming completion of downstream Birthday work.",
-        "Before claim acquisition, reconcile the live issue and canonical wave with the stricter sprint/card dependency on WP-13/#5830; WP-13 remains required.",
+        "Before claim acquisition, require the canonical wave row and live issue to add WP-13/#5830 so all dependency surfaces exactly match.",
         "The exact birth_witness nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed."
       ],
       "dependencies": [

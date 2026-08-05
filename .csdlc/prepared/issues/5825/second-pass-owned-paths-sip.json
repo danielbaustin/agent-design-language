@@ -1,0 +1,22 @@
+{
+  "issue": 5825,
+  "card": "sip",
+  "expected_generation": 45,
+  "expected_digest": "8829d1708917ea9e5afaef6994569d31bd8870e4c0f2694f690a38fb532bdc6c",
+  "claim_id": "claim-5825-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Project the exact writable Owned Paths set into the SIP.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "declared_scope",
+    "values": [
+      "adl-runtime-kernel/src/birthday.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/tests/birthday.rs",
+      "adl-runtime-kernel/tests/fixtures/birthday/",
+      "docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md",
+      ".csdlc/prepared/issues/5825/validate-native-receipts.rb",
+      ".csdlc/evidence/5825/"
+    ]
+  }
+}

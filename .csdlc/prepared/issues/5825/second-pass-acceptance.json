@@ -1,0 +1,22 @@
+{
+  "issue": 5825,
+  "card": "stp",
+  "expected_generation": 48,
+  "expected_digest": "4a30d8efc3da1ccb4144e548afee2ff0d0d6fb199f5fe471f9380686cd5a9fed",
+  "claim_id": "claim-5825-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Correct dependency identities and encode dependency and shared-path readiness gates.",
+  "operation": {
+    "operation": "replace_acceptance_criteria",
+    "values": [
+      "The WP-08 birth-decision contract accepts one structurally complete candidate and emits stable rejection reasons for every declared lifecycle lookalike or missing evidence surface.",
+      "Terminal proof for WP-01/#5817 and WP-02A/#5801 is verified before implementation begins.",
+      "Implementation is confined to adl-runtime-kernel/src/birthday.rs, lib.rs module registration, tests/birthday.rs, tests/fixtures/birthday/, the WP-08 feature contract, and .csdlc/evidence/5825/; Runtime v2 is excluded.",
+      "Focused and negative validation is deterministic, reproducible, retained under .csdlc/evidence/5825/, and bound to the exact reviewed revision.",
+      "Missing or contradictory evidence, private or absolute paths, and personhood, consciousness, citizenship, governance, migration, or public-launch overclaims fail closed.",
+      "One bounded exact-head SRP review records no unresolved actionable findings.",
+      "The implementation PR targets the intended base and includes Closes #5825 without claiming completion of downstream Birthday work.",
+      "The exact birthday nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed."
+    ]
+  }
+}

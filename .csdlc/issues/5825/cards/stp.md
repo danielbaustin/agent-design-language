@@ -24,7 +24,7 @@ Deliver the WP-08 birthday-decision contract, complete negative fixture matrix, 
 ## Acceptance
 
 1. The WP-08 birth-decision contract accepts one structurally complete candidate and emits stable rejection reasons for every declared lifecycle lookalike or missing evidence surface.
-2. Terminal proof for WP-01/#5818 and WP-02A/#5819 is verified before implementation begins.
+2. Terminal proof for WP-01/#5817 and WP-02A/#5801 is verified before implementation begins.
 3. Implementation is confined to adl-runtime-kernel/src/birthday.rs, lib.rs module registration, tests/birthday.rs, tests/fixtures/birthday/, the WP-08 feature contract, and .csdlc/evidence/5825/; Runtime v2 is excluded.
 4. Focused and negative validation is deterministic, reproducible, retained under .csdlc/evidence/5825/, and bound to the exact reviewed revision.
 5. Missing or contradictory evidence, private or absolute paths, and personhood, consciousness, citizenship, governance, migration, or public-launch overclaims fail closed.
@@ -34,8 +34,8 @@ Deliver the WP-08 birthday-decision contract, complete negative fixture matrix, 
 
 ## Dependencies
 
-- WP-01 / issue #5818 terminal proof
-- WP-02A / issue #5819 terminal proof
+- WP-01 / issue #5817 terminal proof
+- WP-02A / issue #5801 terminal proof
 
 ## Inputs
 

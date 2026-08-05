@@ -1,0 +1,22 @@
+{
+  "issue": 5827,
+  "card": "sip",
+  "expected_generation": 35,
+  "expected_digest": "01976ba47c58401bc0aa04e3cd24dc147683e72f3b3d77b335e1169ca609deb5",
+  "claim_id": "claim-5827-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Project the exact writable Owned Paths set into the SIP.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "declared_scope",
+    "values": [
+      "adl-runtime-kernel/src/birthday_continuity.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/tests/birthday_continuity.rs",
+      "adl-runtime-kernel/tests/fixtures/birthday_continuity/",
+      "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md",
+      ".csdlc/prepared/issues/5827/validate-native-receipts.rb",
+      ".csdlc/evidence/5827/"
+    ]
+  }
+}

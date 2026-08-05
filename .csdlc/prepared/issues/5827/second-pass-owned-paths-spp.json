@@ -1,0 +1,22 @@
+{
+  "issue": 5827,
+  "card": "spp",
+  "expected_generation": 36,
+  "expected_digest": "53469a0e698d3fd1a77cf43897d0f4cbce321999fc923a8f9065c9b7c04282f9",
+  "claim_id": "claim-5827-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Project the exact writable Owned Paths set into the SPP.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "affected_areas",
+    "values": [
+      "adl-runtime-kernel/src/birthday_continuity.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/tests/birthday_continuity.rs",
+      "adl-runtime-kernel/tests/fixtures/birthday_continuity/",
+      "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md",
+      ".csdlc/prepared/issues/5827/validate-native-receipts.rb",
+      ".csdlc/evidence/5827/"
+    ]
+  }
+}

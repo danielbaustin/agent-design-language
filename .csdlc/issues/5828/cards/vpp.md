@@ -57,8 +57,28 @@ Diagram: .csdlc/prepared/issues/5828/diagram.mmd
     "defer_reason": null
   },
   {
+    "lane": "memory-palace-obsmem-trace-binding",
+    "proof_role": "Recompute the exact ObsMem, Runtime v3 observability/proof, fixture, output, source-SHA, argv, runner, trace, and citation bindings in the integration receipt.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-4",
+      "AC-8"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 2000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5828/validate-obsmem-trace-integration.rb",
+      ".csdlc/evidence/5828/obsmem-trace-integration-receipt.json"
+    ],
+    "parallel_group": "5828-integration",
+    "defer_reason": null
+  },
+  {
     "lane": "memory_palace-native-platform-receipts",
-    "proof_role": "Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.",
+    "proof_role": "Recompute and bind exact HEAD, exact test argv, nonzero test count, fixture-tree digest, output digest, runner identity, and native artifact digest for macOS and Linux; require byte-identical semantic output.",
     "acceptance_ids": [
       "AC-4",
       "AC-9"
@@ -69,9 +89,7 @@ Diagram: .csdlc/prepared/issues/5828/diagram.mmd
     "budget_tokens": 1000,
     "argv": [
       "ruby",
-      "-rjson",
-      "-e",
-      "receipts=ARGV.map{|p| JSON.parse(File.read(p))};\nabort \"native platform receipts must cover macos and linux\" unless receipts.map{|r| r[\"platform\"]}.sort==%w[linux macos];\nabort \"native proof failed\" unless receipts.all?{|r| r[\"status\"]==\"passed\" && Integer(r[\"tests_run\"])>0};\nabort \"fixture digest mismatch\" unless receipts.map{|r| r[\"fixture_digest\"]}.uniq.length==1",
+      ".csdlc/prepared/issues/5828/validate-native-receipts.rb",
       ".csdlc/evidence/5828/native-platform/macos.json",
       ".csdlc/evidence/5828/native-platform/linux.json"
     ],
@@ -93,10 +111,8 @@ Tokens: 50000
 ## Commands
 
 - `cargo nextest run --manifest-path adl-runtime-kernel/Cargo.toml --test memory_palace --no-tests=fail --status-level all`
-- `ruby -rjson -e receipts=ARGV.map{|p| JSON.parse(File.read(p))};
-abort "native platform receipts must cover macos and linux" unless receipts.map{|r| r["platform"]}.sort==%w[linux macos];
-abort "native proof failed" unless receipts.all?{|r| r["status"]=="passed" && Integer(r["tests_run"])>0};
-abort "fixture digest mismatch" unless receipts.map{|r| r["fixture_digest"]}.uniq.length==1 .csdlc/evidence/5828/native-platform/macos.json .csdlc/evidence/5828/native-platform/linux.json`
+- `ruby .csdlc/prepared/issues/5828/validate-obsmem-trace-integration.rb .csdlc/evidence/5828/obsmem-trace-integration-receipt.json`
+- `ruby .csdlc/prepared/issues/5828/validate-native-receipts.rb .csdlc/evidence/5828/native-platform/macos.json .csdlc/evidence/5828/native-platform/linux.json`
 
 ## Failure Semantics
 

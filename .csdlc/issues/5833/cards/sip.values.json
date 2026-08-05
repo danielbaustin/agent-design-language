@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-15] Birth witnesses and receipts",
     "slug": "v0-92-wp-15-birth-witnesses-and-receipts",
     "version": "v0.92",
-    "generation": 30
+    "generation": 39
   },
   "status": "ready",
   "content": {
@@ -17,10 +17,11 @@
       "required_outcome": "Versioned witness-set and receipt contracts binding witness identity/role, candidate and evidence digests, decisions, anchors, integrity refs, redaction, caveats, rejection reasons, and claim boundary.",
       "declared_scope": [
         "adl-runtime-kernel/src/birth_witness.rs",
-        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/birth_witness.rs",
         "adl-runtime-kernel/tests/fixtures/birth_witness/",
         "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
+        ".csdlc/prepared/issues/5833/validate-native-receipts.rb",
         ".csdlc/evidence/5833/"
       ],
       "authority_boundary": [

@@ -16,7 +16,7 @@ Implement and prove WP-15 exact-candidate witness consensus and deterministic re
 
 ## Plan
 
-Revision 11
+Revision 14
 
 ## Steps
 
@@ -90,7 +90,7 @@ Revision 11
 
 .csdlc/prepared/issues/5833/design.md
 
-Digest: fd6d20bd10782c504f190bd896ec883f3163d3a80acbac0ea40d98c0d9fa3e83
+Digest: 1b734a2e05627563caedf508e0c954c96c6ea5c5f11dc4184360030b9fb198bc
 
 ## Diagram
 
@@ -103,7 +103,7 @@ Digest: 0255242ebe93f2857c2a9dc5f2d0c1a083fa373b340935cbfe34749941f0d599
 - Any sprint-gate dependency or #4762 is not verifiable.
 - The candidate digest cannot be bound across all witnesses.
 - Privacy, equivocation, authority, or premature-claim negatives cannot fail closed.
-- The WP-13 dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled.
+- The canonical wave row or live issue does not include the required WP-13/#5830 dependency.
 
 ## Handoff
 

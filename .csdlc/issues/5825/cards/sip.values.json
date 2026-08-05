@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-08] Birthday contract and negative cases",
     "slug": "v0-92-wp-08-birthday-contract-and-negative-cases",
     "version": "v0.92",
-    "generation": 44
+    "generation": 53
   },
   "status": "ready",
   "content": {
@@ -17,10 +17,11 @@
       "required_outcome": "A versioned birth-decision contract, valid fixture, disqualifying fixtures, validator, and retained report that distinguish birth from startup, wake, snapshot, admission, copied state, and other non-birth lifecycle events.",
       "declared_scope": [
         "adl-runtime-kernel/src/birthday.rs",
-        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/birthday.rs",
         "adl-runtime-kernel/tests/fixtures/birthday/",
         "docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md",
+        ".csdlc/prepared/issues/5825/validate-native-receipts.rb",
         ".csdlc/evidence/5825/"
       ],
       "authority_boundary": [

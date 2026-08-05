@@ -21,10 +21,11 @@ A versioned ACP record and update contract binding identity, continuity, allowed
 ## Scope
 
 - adl-runtime-kernel/src/cognitive_profile.rs
-- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/src/lib.rs
 - adl-runtime-kernel/tests/cognitive_profile.rs
 - adl-runtime-kernel/tests/fixtures/cognitive_profile/
 - docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md
+- .csdlc/prepared/issues/5830/validate-native-receipts.rb
 - .csdlc/evidence/5830/
 
 ## Authority

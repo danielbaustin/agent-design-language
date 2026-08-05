@@ -1,0 +1,19 @@
+{
+  "issue": 5831,
+  "card": "spp",
+  "expected_generation": 37,
+  "expected_digest": "52927bd6303031e8a17a44c802f2d9c75318cbd54236601bee9eaf0330d9d514",
+  "claim_id": "claim-5831-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Fail closed on unresolved dependency projection or shared-path serialization.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "Any dependency or Runtime v3 qualification evidence is stale or missing.",
+      "Any proposed implementation path targets adl/src/runtime_v2/ rather than adl-runtime-kernel.",
+      "A shared Runtime v3 reasoning, cognition, governance, or durable-state edit lacks explicit versioning and a widened collision-checked claim.",
+      "Rejected-path, replay, bounds, or rollback proof cannot be produced."
+    ]
+  }
+}

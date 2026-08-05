@@ -1,0 +1,25 @@
+{
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "expected_digest": "9e951832d2bbcc0d751c8fc81c2571a59d2f294354dd2f91c0ba98bfe002c4bb",
+  "expected_generation": 35,
+  "issue": 5826,
+  "now_unix_seconds": 1785953333,
+  "reason": "Reacquire the released preparation claim for the operator-authorized Birthday second-pass readiness repair.",
+  "replacement": {
+    "acquired_unix_seconds": 1785953333,
+    "branch": "codex/5860-birthday-readiness-repair-v2",
+    "expires_unix_seconds": 1786039733,
+    "generation": 35,
+    "heartbeat_unix_seconds": 1785953333,
+    "id": "claim-5826-v092-birthday-second-pass",
+    "owner": "codex:5860-birthday-readiness-second-pass",
+    "protected_paths": [
+      ".csdlc/evidence/5826",
+      ".csdlc/issues/5826",
+      ".csdlc/locks/5826.lock",
+      ".csdlc/prepared/issues/5826"
+    ],
+    "purpose": "Repair issue 5826 design and typed cards only; no product behavior, shared milestone docs, live GitHub mutation, publication, merge, or closeout authority.",
+    "worktree": "."
+  }
+}

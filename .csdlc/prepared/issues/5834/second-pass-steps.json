@@ -1,0 +1,56 @@
+{
+  "issue": 5834,
+  "card": "spp",
+  "expected_generation": 35,
+  "expected_digest": "da537ae8c210dc504a0650d9a3638820189687b0987dad6c649e57e4f2c36aa7",
+  "claim_id": "claim-5834-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Make the operative plan use corrected dependencies and the serialized registration gate.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Reconcile the stricter WP-13A dependency and verify exact terminal/reviewed evidence for the complete WP-08 through WP-15 roster.",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Assemble the named Markdown packet, evidence JSON, schema, and deterministic issue-local validator without manufacturing missing proof.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run schema/link/digest/uniqueness/completeness proof and missing/stale/contradictory/private/overclaim negative fixtures.",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5834 linkage.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8"
+        ],
+        "status": "pending"
+      }
+    ]
+  }
+}

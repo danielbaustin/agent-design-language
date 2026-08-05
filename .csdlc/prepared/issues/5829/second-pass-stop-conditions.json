@@ -1,0 +1,20 @@
+{
+  "issue": 5829,
+  "card": "spp",
+  "expected_generation": 54,
+  "expected_digest": "9634f9a3cb8d1667c09d72def897def56007003adb620399cdf5f215e8a2c868",
+  "claim_id": "claim-5829-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Fail closed on unresolved dependency projection or shared-path serialization.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "WP-08/#5825, WP-09/#5826, or #4761 evidence is stale or unverifiable.",
+      "Execution requires provider-adapter or credential changes outside the exact declared paths.",
+      "Secret-like data or unbounded authority cannot be excluded.",
+      "The canonical wave row or live issue does not include the required WP-08/#5825 dependency.",
+      "WP-11/#5828 has not landed and released adl-runtime-kernel/src/lib.rs before the WP-12 registration claim."
+    ]
+  }
+}

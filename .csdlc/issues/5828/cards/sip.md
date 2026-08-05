@@ -21,11 +21,12 @@ A versioned-compatible Memory Palace slice that canonically binds declared memor
 ## Scope
 
 - adl-runtime-kernel/src/memory_palace.rs
-- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/src/lib.rs
 - adl-runtime-kernel/tests/memory_palace.rs
 - adl-runtime-kernel/tests/fixtures/memory_palace/
 - docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md
-- .csdlc/evidence/5828/obsmem-trace-integration-receipt.json
+- .csdlc/prepared/issues/5828/validate-obsmem-trace-integration.rb
+- .csdlc/prepared/issues/5828/validate-native-receipts.rb
 - .csdlc/evidence/5828/
 
 ## Authority

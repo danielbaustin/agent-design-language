@@ -58,7 +58,7 @@ Diagram: .csdlc/prepared/issues/5829/diagram.mmd
   },
   {
     "lane": "capability_envelope-native-platform-receipts",
-    "proof_role": "Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.",
+    "proof_role": "Recompute and bind exact HEAD, exact test argv, nonzero test count, fixture-tree digest, output digest, runner identity, and native artifact digest for macOS and Linux; require byte-identical semantic output.",
     "acceptance_ids": [
       "AC-4",
       "AC-9"
@@ -69,9 +69,7 @@ Diagram: .csdlc/prepared/issues/5829/diagram.mmd
     "budget_tokens": 1000,
     "argv": [
       "ruby",
-      "-rjson",
-      "-e",
-      "receipts=ARGV.map{|p| JSON.parse(File.read(p))};\nabort \"native platform receipts must cover macos and linux\" unless receipts.map{|r| r[\"platform\"]}.sort==%w[linux macos];\nabort \"native proof failed\" unless receipts.all?{|r| r[\"status\"]==\"passed\" && Integer(r[\"tests_run\"])>0};\nabort \"fixture digest mismatch\" unless receipts.map{|r| r[\"fixture_digest\"]}.uniq.length==1",
+      ".csdlc/prepared/issues/5829/validate-native-receipts.rb",
       ".csdlc/evidence/5829/native-platform/macos.json",
       ".csdlc/evidence/5829/native-platform/linux.json"
     ],
@@ -93,10 +91,7 @@ Tokens: 10000
 ## Commands
 
 - `cargo nextest run --manifest-path adl-runtime-kernel/Cargo.toml --test capability_envelope --no-tests=fail --status-level all`
-- `ruby -rjson -e receipts=ARGV.map{|p| JSON.parse(File.read(p))};
-abort "native platform receipts must cover macos and linux" unless receipts.map{|r| r["platform"]}.sort==%w[linux macos];
-abort "native proof failed" unless receipts.all?{|r| r["status"]=="passed" && Integer(r["tests_run"])>0};
-abort "fixture digest mismatch" unless receipts.map{|r| r["fixture_digest"]}.uniq.length==1 .csdlc/evidence/5829/native-platform/macos.json .csdlc/evidence/5829/native-platform/linux.json`
+- `ruby .csdlc/prepared/issues/5829/validate-native-receipts.rb .csdlc/evidence/5829/native-platform/macos.json .csdlc/evidence/5829/native-platform/linux.json`
 
 ## Failure Semantics
 

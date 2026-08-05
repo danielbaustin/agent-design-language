@@ -21,10 +21,11 @@ A versioned provider/model/tool/skill/authority/limit envelope, validator, fixtu
 ## Scope
 
 - adl-runtime-kernel/src/capability_envelope.rs
-- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/src/lib.rs
 - adl-runtime-kernel/tests/capability_envelope.rs
 - adl-runtime-kernel/tests/fixtures/capability_envelope/
 - docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md
+- .csdlc/prepared/issues/5829/validate-native-receipts.rb
 - .csdlc/evidence/5829/
 
 ## Authority
@@ -37,6 +38,7 @@ A versioned provider/model/tool/skill/authority/limit envelope, validator, fixtu
 
 - Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.
 - The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.
+- WP-12 nonshared implementation may proceed in parallel, but adl-runtime-kernel/src/lib.rs registration is a separate serialized claim after WP-11/#5828 releases that path.
 
 ## Operator Constraints
 

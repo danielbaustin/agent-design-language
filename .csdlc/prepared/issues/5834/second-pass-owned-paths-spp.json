@@ -1,0 +1,21 @@
+{
+  "issue": 5834,
+  "card": "spp",
+  "expected_generation": 32,
+  "expected_digest": "22bf52479809588d382399e296483f34cc89ebb9d363e0d0f29dbaedfb25e026",
+  "claim_id": "claim-5834-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Project the exact writable Owned Paths set into the SPP.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "affected_areas",
+    "values": [
+      "docs/milestones/v0.92/review/FIRST_BIRTHDAY_REVIEW_PACKET_v0.92.md",
+      "docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json",
+      "docs/milestones/v0.92/review/first-birthday-review-packet.schema.json",
+      ".csdlc/prepared/issues/5834/validate-review-packet.rb",
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+      ".csdlc/evidence/5834/"
+    ]
+  }
+}

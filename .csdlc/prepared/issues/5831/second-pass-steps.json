@@ -1,0 +1,56 @@
+{
+  "issue": 5831,
+  "card": "spp",
+  "expected_generation": 36,
+  "expected_digest": "7e29ee97d7c7400c41a6c1ac60201a19039187ba1f7c4c0379f07652f91c4036",
+  "claim_id": "claim-5831-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Make the operative plan use corrected dependencies and the serialized registration gate.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Verify #5818, #5830, #5104, and Runtime v3 requalification, then inspect adl-runtime-kernel reasoning, cognition, governance, and durable-state authorities.",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Implement evaluation, adaptation delta, proposal, policy decision, accepted/rejected mutation, durable history, and rollback in adl-runtime-kernel/src/adaptive_learning.rs.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run accepted/rejected focused tests, deterministic/forged-history replay negatives, resource bounds, resume continuity, and branch-built Runtime v3 integration.",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5831 linkage.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8"
+        ],
+        "status": "pending"
+      }
+    ]
+  }
+}

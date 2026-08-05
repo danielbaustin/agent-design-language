@@ -1,0 +1,18 @@
+{
+  "issue": 5825,
+  "card": "spp",
+  "expected_generation": 50,
+  "expected_digest": "176f0b9466ae68974054f08f5f1ae89642997cc66e89f1c95f67d1dfabe418fe",
+  "claim_id": "claim-5825-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Fail closed on unresolved dependency projection or shared-path serialization.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "WP-01/#5817 or WP-02A/#5801 terminal proof is stale, missing, or contradictory.",
+      "Execution requires paths outside birthday.rs, lib.rs registration, tests/birthday.rs, tests/fixtures/birthday/, the WP-08 feature contract, or .csdlc/evidence/5825/ without explicit replan.",
+      "Any declared negative case lacks deterministic fail-closed proof."
+    ]
+  }
+}

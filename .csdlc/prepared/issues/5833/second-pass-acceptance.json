@@ -1,0 +1,23 @@
+{
+  "issue": 5833,
+  "card": "stp",
+  "expected_generation": 34,
+  "expected_digest": "fb7482fc5d8f64a4740005dbe8caf07062f5470f2fc9222af23fde04dc8ca7cf",
+  "claim_id": "claim-5833-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Correct dependency identities and encode dependency and shared-path readiness gates.",
+  "operation": {
+    "operation": "replace_acceptance_criteria",
+    "values": [
+      "The WP-15 validator accepts only policy-complete distinct witnesses bound to the exact candidate/evidence digest and derives a deterministic caveated receipt from the validated decision.",
+      "WP-09/#5826 through WP-13/#5830 and retained #4762 evidence are verified before implementation.",
+      "Implementation is confined to adl-runtime-kernel/src/birth_witness.rs, lib.rs module registration, tests/birth_witness.rs, tests/fixtures/birth_witness/, the feature contract, and .csdlc/evidence/5833/.",
+      "Equivalent witness sets and decisions produce canonical exact-revision validation and receipt output.",
+      "Missing, duplicate, stale, forged, equivocal, unauthorized, candidate-mismatched, redaction-leaking witnesses and premature birth claims fail closed.",
+      "One bounded exact-head SRP review records no unresolved actionable findings.",
+      "The implementation PR targets the intended base and includes Closes #5833 without claiming completion of downstream Birthday work.",
+      "Before claim acquisition, require the canonical wave row and live issue to add WP-13/#5830 so all dependency surfaces exactly match.",
+      "The exact birth_witness nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed."
+    ]
+  }
+}

@@ -7,18 +7,18 @@
     "title": "[v0.92][WP-12] Capability envelope",
     "slug": "v0-92-wp-12-capability-envelope",
     "version": "v0.92",
-    "generation": 34
+    "generation": 58
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 15,
+      "plan_revision": 22,
       "summary": "Implement and prove WP-12 canonical capability envelopes with explicit providers, tools, skills, grants, denials, limits, provenance, and secret-safe failure handling.",
       "steps": [
         {
           "id": "S1",
-          "action": "Reconcile the WP-08 dependency mismatch, verify #5825/#5826/#4761 evidence, and claim the exact capability_envelope.rs, lib.rs, tests, fixture, feature, and evidence paths.",
+          "action": "Verify WP-08/#5825, WP-09/#5826, and #4761; collision-check nonshared paths immediately, but defer the one-line lib.rs registration claim until WP-11/#5828 has landed and released it.",
           "acceptance_ids": [
             "AC-2",
             "AC-3"
@@ -62,10 +62,11 @@
       ],
       "affected_areas": [
         "adl-runtime-kernel/src/capability_envelope.rs",
-        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/capability_envelope.rs",
         "adl-runtime-kernel/tests/fixtures/capability_envelope/",
         "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
+        ".csdlc/prepared/issues/5829/validate-native-receipts.rb",
         ".csdlc/evidence/5829/"
       ],
       "invariants": [
@@ -85,9 +86,10 @@
       },
       "stop_conditions": [
         "WP-08/#5825, WP-09/#5826, or #4761 evidence is stale or unverifiable.",
-        "The WP-08 dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled.",
         "Execution requires provider-adapter or credential changes outside the exact declared paths.",
-        "Secret-like data or unbounded authority cannot be excluded."
+        "Secret-like data or unbounded authority cannot be excluded.",
+        "The canonical wave row or live issue does not include the required WP-08/#5825 dependency.",
+        "WP-11/#5828 has not landed and released adl-runtime-kernel/src/lib.rs before the WP-12 registration claim."
       ],
       "replan_triggers": [
         "#4761 must be explicitly superseded rather than consumed.",
@@ -95,7 +97,7 @@
         "Review identifies an undeclared authority or resource dimension."
       ],
       "design_ref": ".csdlc/prepared/issues/5829/design.md",
-      "design_digest": "e0c98b4bbad7618c697213e6e5f76e42394d12fee8330c942d04d164766baacf",
+      "design_digest": "84716664e6a6262c8b75169869bb4640908c697de99ecec3383efcf9736b9ddd",
       "diagram_ref": ".csdlc/prepared/issues/5829/diagram.mmd",
       "diagram_digest": "78acf0d1432d60e5c4c8b3eba8f887a035f2f55abeee4cc19537b6495dc5de3a"
     }

@@ -1,0 +1,57 @@
+{
+  "issue": 5833,
+  "card": "spp",
+  "expected_generation": 35,
+  "expected_digest": "98d1a64379a0ac92d4ccd3dcacee0846a40dfc210fb773feaa6340665f5f322a",
+  "claim_id": "claim-5833-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Make the operative plan use corrected dependencies and the serialized registration gate.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Verify #5826 through #5830 and #4762, then inspect exact private-state witness and birthday candidate contracts.",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Implement witness-set validation, exact candidate binding, accepted/rejected receipt derivation, caveats, redaction, and fixtures.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run canonical witness/receipt tests plus equivocation, duplicate, stale, forged, authority, privacy, and premature-claim negatives.",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5833 linkage.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8",
+          "AC-9"
+        ],
+        "status": "pending"
+      }
+    ]
+  }
+}

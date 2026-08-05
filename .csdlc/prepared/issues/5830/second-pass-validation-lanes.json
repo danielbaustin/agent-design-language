@@ -1,0 +1,66 @@
+{
+  "issue": 5830,
+  "card": "vpp",
+  "expected_generation": 35,
+  "expected_digest": "6f42374117487ede81d9c29ba3a6843e460ae40609af1dfac586677217677361",
+  "claim_id": "claim-5830-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Replace self-attested native receipts with issue-local recomputation and add the concrete ObsMem/trace lane where applicable.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "cognitive_profile-runtime-v3",
+        "proof_role": "Run the exact Runtime v3 integration target and fail when the selected target contains no tests.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 600,
+        "budget_tokens": 4000,
+        "argv": [
+          "cargo",
+          "nextest",
+          "run",
+          "--manifest-path",
+          "adl-runtime-kernel/Cargo.toml",
+          "--test",
+          "cognitive_profile",
+          "--no-tests=fail",
+          "--status-level",
+          "all"
+        ],
+        "parallel_group": "5830-core",
+        "defer_reason": null
+      },
+      {
+        "lane": "cognitive_profile-native-platform-receipts",
+        "proof_role": "Recompute and bind exact HEAD, exact test argv, nonzero test count, fixture-tree digest, output digest, runner identity, and native artifact digest for macOS and Linux; require byte-identical semantic output.",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-8"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 30,
+        "budget_tokens": 1000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5830/validate-native-receipts.rb",
+          ".csdlc/evidence/5830/native-platform/macos.json",
+          ".csdlc/evidence/5830/native-platform/linux.json"
+        ],
+        "parallel_group": "5830-platform",
+        "defer_reason": null
+      }
+    ]
+  }
+}

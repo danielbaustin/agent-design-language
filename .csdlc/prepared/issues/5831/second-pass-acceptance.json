@@ -1,0 +1,22 @@
+{
+  "issue": 5831,
+  "card": "stp",
+  "expected_generation": 35,
+  "expected_digest": "915c8ede431effcfeeb7dab348c6d9dc30789b29205eaf9503884896ec988a89",
+  "claim_id": "claim-5831-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Correct dependency identities and encode dependency and shared-path readiness gates.",
+  "operation": {
+    "operation": "replace_acceptance_criteria",
+    "values": [
+      "The WP-13A DAG durably links loop event, evaluation, evidence-backed state delta, graph proposal, policy decision, accepted or rejected mutation, replay, and rollback/inverse record.",
+      "WP-01/#5817, WP-13/#5830, merged #5104 semantics, and current Runtime v3 requalification are verified before implementation.",
+      "Implementation is confined to current Runtime v3 authority: adl-runtime-kernel/src/adaptive_learning.rs, lib.rs module registration, tests/adaptive_learning.rs, tests/fixtures/adaptive_learning/, the feature contract, and .csdlc/evidence/5831/; adl/src/runtime_v2/ is excluded from implementation.",
+      "Same durable inputs replay to identical proposal, policy disposition, state/graph hashes, and retained exact-revision history.",
+      "Missing/forged evidence, substituted state, invalid graph binding, discontinuous resume, unbounded recurrence, unauthorized mutation, rejected-proposal mutation, and rollback mismatch fail closed.",
+      "One bounded exact-head SRP review records no unresolved actionable findings.",
+      "The implementation PR targets the intended base and includes Closes #5831 without claiming completion of downstream Birthday work.",
+      "The exact adaptive_learning nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed."
+    ]
+  }
+}

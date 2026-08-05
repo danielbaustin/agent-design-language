@@ -1,0 +1,22 @@
+{
+  "issue": 5833,
+  "card": "spp",
+  "expected_generation": 32,
+  "expected_digest": "4fc04105a176d42de65c22b34a42dd6594ea6171f8191299141958f304b4fb05",
+  "claim_id": "claim-5833-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Project the exact writable Owned Paths set into the SPP.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "affected_areas",
+    "values": [
+      "adl-runtime-kernel/src/birth_witness.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/tests/birth_witness.rs",
+      "adl-runtime-kernel/tests/fixtures/birth_witness/",
+      "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
+      ".csdlc/prepared/issues/5833/validate-native-receipts.rb",
+      ".csdlc/evidence/5833/"
+    ]
+  }
+}

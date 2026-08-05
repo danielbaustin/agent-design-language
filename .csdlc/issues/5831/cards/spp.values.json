@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
     "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
     "version": "v0.92",
-    "generation": 31
+    "generation": 40
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 12,
+      "plan_revision": 15,
       "summary": "Implement and prove WP-13A's evaluation-to-policy-to-graph DAG, including accepted and rejected paths, deterministic replay, bounded Runtime v3 integration, and rollback history.",
       "steps": [
         {
@@ -61,10 +61,11 @@
       ],
       "affected_areas": [
         "adl-runtime-kernel/src/adaptive_learning.rs",
-        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/adaptive_learning.rs",
         "adl-runtime-kernel/tests/fixtures/adaptive_learning/",
         "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
+        ".csdlc/prepared/issues/5831/validate-native-receipts.rb",
         ".csdlc/evidence/5831/"
       ],
       "invariants": [
@@ -94,7 +95,7 @@
         "Review finds mutation before policy decision or an incomplete durable-history edge."
       ],
       "design_ref": ".csdlc/prepared/issues/5831/design.md",
-      "design_digest": "8a8476b2b26ffa23054519cb27d2d4ecb61424a7164ba4ff2697eb3c40c9e79a",
+      "design_digest": "54a449d526b1b0394db6fb9998a1c7b8100e5a58a26a68cf93bb657bab232a66",
       "diagram_ref": ".csdlc/prepared/issues/5831/diagram.mmd",
       "diagram_digest": "859dbad5aa913e1a5f65375bd3b1ea19e42c33ed9c4c5d264053d6763a54d057"
     }

@@ -1,0 +1,19 @@
+{
+  "issue": 5833,
+  "card": "spp",
+  "expected_generation": 36,
+  "expected_digest": "1e231f41c70d6410ef054ff6be7d1248ff69858e9e64bca6d8118395a7fc5e37",
+  "claim_id": "claim-5833-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Fail closed on unresolved dependency projection or shared-path serialization.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "Any sprint-gate dependency or #4762 is not verifiable.",
+      "The candidate digest cannot be bound across all witnesses.",
+      "Privacy, equivocation, authority, or premature-claim negatives cannot fail closed.",
+      "The canonical wave row or live issue does not include the required WP-13/#5830 dependency."
+    ]
+  }
+}

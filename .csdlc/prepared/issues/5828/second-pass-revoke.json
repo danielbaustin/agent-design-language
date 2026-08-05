@@ -1,0 +1,11 @@
+{
+  "issue": 5828,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5828-v092-birthday-second-pass",
+  "expected_generation": 35,
+  "expected_digest": "f65958632ea4843e2acb13e2950451b8ea391c6c8450a29a4c41e20e2225c4f2",
+  "now_unix_seconds": 1785953349,
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "operator_authority": "operator:daniel-5860-birthday-readiness-second-pass",
+  "reason": "Release the second-pass preparation claim after typed rendering and exact-digest design reapproval."
+}

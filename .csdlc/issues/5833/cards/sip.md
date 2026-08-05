@@ -21,10 +21,11 @@ Versioned witness-set and receipt contracts binding witness identity/role, candi
 ## Scope
 
 - adl-runtime-kernel/src/birth_witness.rs
-- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/src/lib.rs
 - adl-runtime-kernel/tests/birth_witness.rs
 - adl-runtime-kernel/tests/fixtures/birth_witness/
 - docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md
+- .csdlc/prepared/issues/5833/validate-native-receipts.rb
 - .csdlc/evidence/5833/
 
 ## Authority

@@ -1,0 +1,23 @@
+{
+  "issue": 5829,
+  "card": "stp",
+  "expected_generation": 52,
+  "expected_digest": "632d1abf28655a6c1d5b18226a300b211bd66a79569de23dfbc98e002b3071d1",
+  "claim_id": "claim-5829-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Correct dependency identities and encode dependency and shared-path readiness gates.",
+  "operation": {
+    "operation": "replace_acceptance_criteria",
+    "values": [
+      "The WP-12 envelope deterministically binds identity and evidence revision to explicit provider/model identifiers, tools, skills, grants, denials, resource limits, provenance, and unsupported claims.",
+      "WP-08/#5825, WP-09/#5826, and retained #4761 evidence are verified before implementation begins.",
+      "Implementation is confined to adl-runtime-kernel/src/capability_envelope.rs, lib.rs module registration, tests/capability_envelope.rs, tests/fixtures/capability_envelope/, the feature contract, and .csdlc/evidence/5829/.",
+      "Equivalent capability inputs serialize canonically and produce reproducible exact-revision validation evidence.",
+      "Unknown or stale provider/model evidence, undeclared tools/skills, authority escalation, omitted limits, secret-like content, private paths, and host paths fail closed.",
+      "One bounded exact-head SRP review records no unresolved actionable findings.",
+      "The implementation PR targets the intended base and includes Closes #5829 without claiming completion of downstream Birthday work.",
+      "Before claim acquisition, require the canonical wave row and live issue to add WP-08/#5825 so all dependency surfaces exactly match. WP-12's adl-runtime-kernel/src/lib.rs registration claim and edit must also wait until WP-11/#5828 has landed and released that path.",
+      "The exact capability_envelope nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed."
+    ]
+  }
+}

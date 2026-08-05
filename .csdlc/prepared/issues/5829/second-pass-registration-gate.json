@@ -1,0 +1,18 @@
+{
+  "issue": 5829,
+  "card": "sip",
+  "expected_generation": 55,
+  "expected_digest": "09950babc6a4fc424069148d7e4d7c05090da5633ec91c32f560617fc8c59670",
+  "claim_id": "claim-5829-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Record the shared lib.rs serialization gate in the SIP.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "initial_assumptions",
+    "values": [
+      "Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.",
+      "The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.",
+      "WP-12 nonshared implementation may proceed in parallel, but adl-runtime-kernel/src/lib.rs registration is a separate serialized claim after WP-11/#5828 releases that path."
+    ]
+  }
+}

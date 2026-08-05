@@ -21,10 +21,11 @@ A versioned continuity record and validator linking identity root, predecessor a
 ## Scope
 
 - adl-runtime-kernel/src/birthday_continuity.rs
-- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/src/lib.rs
 - adl-runtime-kernel/tests/birthday_continuity.rs
 - adl-runtime-kernel/tests/fixtures/birthday_continuity/
 - docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md
+- .csdlc/prepared/issues/5827/validate-native-receipts.rb
 - .csdlc/evidence/5827/
 
 ## Authority

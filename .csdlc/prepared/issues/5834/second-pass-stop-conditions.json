@@ -1,0 +1,19 @@
+{
+  "issue": 5834,
+  "card": "spp",
+  "expected_generation": 36,
+  "expected_digest": "f53c04d64dff739cb8f39d2a08f0599fa094010d79b8815cae2149b4be6f88b5",
+  "claim_id": "claim-5834-v092-birthday-second-pass",
+  "actor": "codex:5860-birthday-readiness-second-pass",
+  "reason": "Fail closed on unresolved dependency projection or shared-path serialization.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "Any required child lacks terminal exact-head evidence.",
+      "A packet link or digest cannot be validated reproducibly.",
+      "Assembly requires editing shared milestone or release authority outside WP-16.",
+      "The canonical wave row or live issue does not include the required WP-13A/#5831 dependency."
+    ]
+  }
+}

@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-10] Continuity across bounded cycles",
     "slug": "v0-92-wp-10-continuity-across-bounded-cycles",
     "version": "v0.92",
-    "generation": 34
+    "generation": 39
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 13,
+      "plan_revision": 14,
       "summary": "Implement and prove WP-10 canonical multi-cycle continuity with predecessor binding, deterministic head derivation, and complete discontinuity negatives.",
       "steps": [
         {
@@ -61,10 +61,11 @@
       ],
       "affected_areas": [
         "adl-runtime-kernel/src/birthday_continuity.rs",
-        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/birthday_continuity.rs",
         "adl-runtime-kernel/tests/fixtures/birthday_continuity/",
         "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md",
+        ".csdlc/prepared/issues/5827/validate-native-receipts.rb",
         ".csdlc/evidence/5827/"
       ],
       "invariants": [
@@ -93,7 +94,7 @@
         "Review identifies an uncovered discontinuity or replay ambiguity."
       ],
       "design_ref": ".csdlc/prepared/issues/5827/design.md",
-      "design_digest": "fa58cabd0b42eb2d88e51720df28d38ae5788490daafdda83f182d571e394308",
+      "design_digest": "f87f8806c1cec122f19612fefe1523f4b966ce9952109c4fa1a2e8e70dd22836",
       "diagram_ref": ".csdlc/prepared/issues/5827/diagram.mmd",
       "diagram_digest": "b8e8902ce03c1fd254d2be626f03fb412db939612b74f42de3942fcfd6cdbbb4"
     }

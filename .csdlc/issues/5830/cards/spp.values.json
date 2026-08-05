@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-13] ACP / cognitive profiles",
     "slug": "v0-92-wp-13-acp-cognitive-profiles",
     "version": "v0.92",
-    "generation": 32
+    "generation": 37
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 13,
+      "plan_revision": 14,
       "summary": "Implement and prove WP-13 canonical evidence maps with revision-linked updates, bounded projections, privacy, and explicit non-reputation/personhood boundaries.",
       "steps": [
         {
@@ -61,10 +61,11 @@
       ],
       "affected_areas": [
         "adl-runtime-kernel/src/cognitive_profile.rs",
-        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/cognitive_profile.rs",
         "adl-runtime-kernel/tests/fixtures/cognitive_profile/",
         "docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md",
+        ".csdlc/prepared/issues/5830/validate-native-receipts.rb",
         ".csdlc/evidence/5830/"
       ],
       "invariants": [
@@ -93,7 +94,7 @@
         "Review finds a label that functions as diagnosis, standing, reputation, or rights inference."
       ],
       "design_ref": ".csdlc/prepared/issues/5830/design.md",
-      "design_digest": "af18b5f377a88b49556fcd5314db9f1a94ab53c81156e5b0482e750e58130b78",
+      "design_digest": "51ef8fac075e02acbb22c88d673093f7d7fb6a4c8fc8f1f0cc50bbdf1ff44743",
       "diagram_ref": ".csdlc/prepared/issues/5830/diagram.mmd",
       "diagram_digest": "6b9a9b2ae6cf9491279ce9ea531331cc7b98069e510d08bd2aad9422595fef47"
     }

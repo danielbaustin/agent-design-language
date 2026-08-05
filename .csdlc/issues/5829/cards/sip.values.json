@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-12] Capability envelope",
     "slug": "v0-92-wp-12-capability-envelope",
     "version": "v0.92",
-    "generation": 34
+    "generation": 58
   },
   "status": "ready",
   "content": {
@@ -17,10 +17,11 @@
       "required_outcome": "A versioned provider/model/tool/skill/authority/limit envelope, validator, fixtures, and retained report bound to identity root, evidence revision, explicit grants, denials, provenance, and unsupported claims.",
       "declared_scope": [
         "adl-runtime-kernel/src/capability_envelope.rs",
-        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/src/lib.rs",
         "adl-runtime-kernel/tests/capability_envelope.rs",
         "adl-runtime-kernel/tests/fixtures/capability_envelope/",
         "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
+        ".csdlc/prepared/issues/5829/validate-native-receipts.rb",
         ".csdlc/evidence/5829/"
       ],
       "authority_boundary": [
@@ -30,7 +31,8 @@
       ],
       "initial_assumptions": [
         "Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.",
-        "The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval."
+        "The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.",
+        "WP-12 nonshared implementation may proceed in parallel, but adl-runtime-kernel/src/lib.rs registration is a separate serialized claim after WP-11/#5828 releases that path."
       ],
       "operator_constraints": [
         "Use typed C-SDLC v2 lifecycle operations in an issue-bound worktree.",

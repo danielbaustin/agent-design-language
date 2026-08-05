@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-16] Birthday review packet",
     "slug": "v0-92-wp-16-birthday-review-packet",
     "version": "v0.92",
-    "generation": 30
+    "generation": 38
   },
   "status": "ready",
   "content": {
@@ -20,7 +20,7 @@
         "docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json",
         "docs/milestones/v0.92/review/first-birthday-review-packet.schema.json",
         ".csdlc/prepared/issues/5834/validate-review-packet.rb",
-        "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md (WP-16 row only)",
+        "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
         ".csdlc/evidence/5834/"
       ],
       "authority_boundary": [
