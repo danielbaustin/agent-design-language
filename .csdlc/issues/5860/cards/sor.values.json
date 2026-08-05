@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
     "slug": "v092-all-issue-execution-readiness",
     "version": "v0.92",
-    "generation": 25
+    "generation": 28
   },
   "status": "pre_phase",
   "content": {
@@ -70,8 +70,8 @@
           "evidence_ref": "wp04-implementation-wave-preparation.log"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "ready",
+      "integration_state": "worktree_only",
+      "publication_state": "not_published",
       "merge_state": "not_merged",
       "closeout_state": "not_started",
       "follow_ups": []

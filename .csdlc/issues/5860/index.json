@@ -3,13 +3,13 @@
   "issue": 5860,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "55ede2c3738e4bf11b1ccb5c475e5b9703bea3faabc6e4d568d4cd61d96e7886",
-  "phase": "published",
-  "generation": 25,
-  "digest": "f0ecc6bcf450554712f57553887de1eb0ac2563565a0e81e85c21042350c8f0a",
+  "phase": "implemented",
+  "generation": 28,
+  "digest": "f681c2ab5f5bc2f0d3f5a7b15835e92e301a936f962ebac06223193b5cd2f191",
   "claim": {
     "id": "claim-5860-v092-execution-readiness",
     "owner": "codex:5860-readiness-integration",
-    "generation": 25,
+    "generation": 28,
     "acquired_unix_seconds": 1785965519,
     "expires_unix_seconds": 1786051919,
     "heartbeat_unix_seconds": 1785965519,
@@ -171,36 +171,8 @@
     "purpose": "Integrate and prove design-time execution readiness for all 58 v0.92 execution issues, including #5862-#5878 and excluding #5861, without product implementation"
   },
   "review_assignment": null,
-  "review": {
-    "reviewer": "subagent:019fd381-7cc5-7941-b8d4-626e24192022",
-    "scope": [
-      ".adl/docs/TBD",
-      ".csdlc/issues",
-      ".csdlc/prepared/issues",
-      ".csdlc/evidence",
-      ".csdlc/locks",
-      "docs/milestones/v0.92"
-    ],
-    "reviewed_revision": "git-blake3:1538ef7389d360e80175ecaa79e570e041621627:afd3c4d29646a4964df34c78193fd132a2f54ce0eea4099b7a6dafc48e18a6ce",
-    "findings": [],
-    "residual_risks": [
-      "Fifty-three child implementation or evidence-production scripts remain intentionally deferred to their issue execution lanes; #5860 proves design-time readiness and does not claim child execution.",
-      "Live GitHub issue contract parity is controlled-external point-in-time evidence and must be rechecked by each child at execution binding."
-    ],
-    "completed": true,
-    "non_substantive_proof": null
-  },
-  "publication": {
-    "repository": "danielbaustin/agent-design-language",
-    "issue": 5860,
-    "pull_request": 5880,
-    "url": "https://github.com/danielbaustin/agent-design-language/pull/5880",
-    "base": "main",
-    "head": "codex/5860-v092-execution-readiness",
-    "revision": "git-blake3:c100b63e6615c3a561e92ca2dce1fafef95f76b5:496f95467a33b9b80938c5a5a8183276097b5c8714c87e4ca0c0749327cbc6f6",
-    "draft": false,
-    "observed_state": "open"
-  },
+  "review": null,
+  "publication": null,
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -208,40 +180,40 @@
   "diagram_path": ".csdlc/prepared/issues/5860/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-six-sprint-reconciliation",
-      "revision": "987f69de241139ee5a986390b8b52e3a41771dcecfbacb7a9e1434d863d8cde8"
+      "reviewer": "codex:5860-exact-parent-scope-remediation",
+      "revision": "efb288c53c47046c56e512a9cd277b4b8803965a595fa2870c253b36e429d748"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "5e5789880b439a1270d2646379aa4175c5b119b29e368e0d18a6c133439c1f38",
+      "values_digest": "1f989ae39236d56cc1358720149f8d308427da08d0cd2b393593f53ca0e6a2a0",
       "rendered_digest": "3e9ae3237d301a3c4fd5f83023309af5ba812844f3f8689634cc24be7f202266",
       "ast_digest": "5576febc98d7657f1ac70eedb9d29d22232190b585b9a450ed6cd71c4b5ebab5"
     },
     "stp": {
-      "values_digest": "5e45d2669bde913c667c19c25d0f599fe0add04ee6d464a17d75b9ec579a64c3",
+      "values_digest": "4252b4f7c0a9755fa2baf010d6457d076d4b7305af3a286a5c3888f8b9940bc1",
       "rendered_digest": "0c366cfdae2b139bdc23aff8f6f8c7c9e91e0b2a1366652139c8d13f183cb125",
       "ast_digest": "00354257ccb2a051baf338d3aaf1422baa1ae3fac55194dbb828189ef18c9fd6"
     },
     "spp": {
-      "values_digest": "065b3017f60aba5688c2b7bc72bfeffb83a087d28fcc99ccd16148f0366ef043",
-      "rendered_digest": "e8e8e62e573507ed7a51ee7a93bab84f86a81187cb2cfce25b29e2e1874e0841",
-      "ast_digest": "c7737d6c6757866d9fb5eb7bfe8a726b8188f01df3c6e8cd5cfb11f9860ea4c9"
+      "values_digest": "04858d0e566c4d449b1843b250f185bf69083c80e7816ae5c51e5348102d7cca",
+      "rendered_digest": "a11fb8e337a1a07d60eaf2ef6c066d125b2e5e0b88987126356f6ad3166e4a2f",
+      "ast_digest": "7ca0597aeaa51f7b37e12e8d4a0511e61cfdafc4e809ee53d812859dd1e0bdce"
     },
     "vpp": {
-      "values_digest": "066d6d4a43a7f58ce3476a2b999413a8114df2b00b4b2b245b592e76a444fd42",
+      "values_digest": "737886e2891863c4762d057c2148f12d658090eb7b49e7be80825b2ee096a6fe",
       "rendered_digest": "02134c1a62be7b8eecfde6067d4586ee623fcd727e7b2a6f0d6eccfc107ad030",
       "ast_digest": "aa4993cfb7db69afed7a3f0b739e091143c4a79ee275fe0e482f581caea8da5d"
     },
     "srp": {
-      "values_digest": "e7597edd1e028a0ef8bb7cd292a6b84d3992d55886ae2c34ad3a5e64c5339e04",
-      "rendered_digest": "46075663ce716c8c5c22df2faebe96b4c8e8732b410580e0c37ccfe8a831c868",
-      "ast_digest": "4728206e1296c7eee38e2c2da5fb86f40c4d09339d6502fd1f643a7a07c63b0b"
+      "values_digest": "f28be6f93fcd3207698092ae7127d4314063ef7b898dcab4acb60f020773730e",
+      "rendered_digest": "4a8e36e5f9ed6f805708cc7e32df600279b64c6597603ea357ba71bda7fe5f2d",
+      "ast_digest": "5f71f8b4fa9258bffb83aebb05a323e8f891275a0b840f1cfc9590c88c9af85b"
     },
     "sor": {
-      "values_digest": "ee851c214e598a524e17892ac5e6383170eaf9cad05e4aed369c14451b198882",
-      "rendered_digest": "fdf9f9bf7b6f733de64e9d5c6211898e7b46d274f38db51e1c4597f154f04994",
-      "ast_digest": "493980588ae6cd182dc043ed8ef033bf9a23dd652820ec16990ee76a21d039b0"
+      "values_digest": "f60bb416d4ff7adee8e3f2ff012c41dccd5b3676a4f55909e297ac09926fbd26",
+      "rendered_digest": "62a375ec70b5d22d06e010558020916e16ac85529e8fe36995e6ce249b5f5ff8",
+      "ast_digest": "1e17a6ef6e7d8953e8441f71cdfb4f7ed05f6dd0d9d06bbe4135ee94bf7ffcca"
     }
   },
   "transitions": [
@@ -279,6 +251,13 @@
       "to": "published",
       "actor": "codex:5860-readiness-integration",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5860-readiness-integration",
+      "reason": "Recover substantive review authority to repair the exact changed-path allowlist and parent ownership declarations required by the P1 review finding."
     }
   ],
   "audit": [
@@ -589,6 +568,27 @@
       "actor": "codex:5860-readiness-integration",
       "reason": "Reacquire published readiness authority with the durable PR #5880 publication intent included in exact protected scope.",
       "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5860-v092-execution-readiness\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-readiness-integration\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md\",\".adl/docs/TBD/V092_SPRINT_5862_DISTRIBUTED_GUARDIAN_SESSION_PROMPT.md\",\".csdlc/evidence/5795\",\".csdlc/evidence/5800\",\".csdlc/evidence/5820\",\".csdlc/evidence/5821\",\".csdlc/evidence/5832\",\".csdlc/evidence/5837\",\".csdlc/evidence/5860\",\".csdlc/issues/5786\",\".csdlc/issues/5795\",\".csdlc/issues/5800\",\".csdlc/issues/5801\",\".csdlc/issues/5812\",\".csdlc/issues/5818\",\".csdlc/issues/5819\",\".csdlc/issues/5820\",\".csdlc/issues/5821\",\".csdlc/issues/5822\",\".csdlc/issues/5823\",\".csdlc/issues/5824\",\".csdlc/issues/5825\",\".csdlc/issues/5826\",\".csdlc/issues/5827\",\".csdlc/issues/5828\",\".csdlc/issues/5829\",\".csdlc/issues/5830\",\".csdlc/issues/5831\",\".csdlc/issues/5832\",\".csdlc/issues/5833\",\".csdlc/issues/5834\",\".csdlc/issues/5835\",\".csdlc/issues/5836\",\".csdlc/issues/5837\",\".csdlc/issues/5838\",\".csdlc/issues/5839\",\".csdlc/issues/5840\",\".csdlc/issues/5841\",\".csdlc/issues/5842\",\".csdlc/issues/5843\",\".csdlc/issues/5844\",\".csdlc/issues/5845\",\".csdlc/issues/5846\",\".csdlc/issues/5847\",\".csdlc/issues/5848\",\".csdlc/issues/5849\",\".csdlc/issues/5850\",\".csdlc/issues/5851\",\".csdlc/issues/5852\",\".csdlc/issues/5853\",\".csdlc/issues/5860\",\".csdlc/issues/5862\",\".csdlc/issues/5863\",\".csdlc/issues/5864\",\".csdlc/issues/5865\",\".csdlc/issues/5866\",\".csdlc/issues/5867\",\".csdlc/issues/5868\",\".csdlc/issues/5869\",\".csdlc/issues/5870\",\".csdlc/issues/5871\",\".csdlc/issues/5872\",\".csdlc/issues/5873\",\".csdlc/issues/5874\",\".csdlc/issues/5875\",\".csdlc/issues/5876\",\".csdlc/issues/5877\",\".csdlc/issues/5878\",\".csdlc/locks/5860.lock\",\".csdlc/locks/5862.lock\",\".csdlc/locks/5863.lock\",\".csdlc/locks/5864.lock\",\".csdlc/locks/5865.lock\",\".csdlc/locks/5866.lock\",\".csdlc/locks/5867.lock\",\".csdlc/locks/5868.lock\",\".csdlc/locks/5869.lock\",\".csdlc/locks/5870.lock\",\".csdlc/locks/5871.lock\",\".csdlc/locks/5872.lock\",\".csdlc/locks/5873.lock\",\".csdlc/locks/5874.lock\",\".csdlc/locks/5875.lock\",\".csdlc/locks/5876.lock\",\".csdlc/locks/5877.lock\",\".csdlc/locks/5878.lock\",\".csdlc/prepared/issues/5786\",\".csdlc/prepared/issues/5795\",\".csdlc/prepared/issues/5800\",\".csdlc/prepared/issues/5801\",\".csdlc/prepared/issues/5812\",\".csdlc/prepared/issues/5818\",\".csdlc/prepared/issues/5819\",\".csdlc/prepared/issues/5820\",\".csdlc/prepared/issues/5821\",\".csdlc/prepared/issues/5822\",\".csdlc/prepared/issues/5823\",\".csdlc/prepared/issues/5824\",\".csdlc/prepared/issues/5825\",\".csdlc/prepared/issues/5826\",\".csdlc/prepared/issues/5827\",\".csdlc/prepared/issues/5828\",\".csdlc/prepared/issues/5829\",\".csdlc/prepared/issues/5830\",\".csdlc/prepared/issues/5831\",\".csdlc/prepared/issues/5832\",\".csdlc/prepared/issues/5833\",\".csdlc/prepared/issues/5834\",\".csdlc/prepared/issues/5835\",\".csdlc/prepared/issues/5836\",\".csdlc/prepared/issues/5837\",\".csdlc/prepared/issues/5838\",\".csdlc/prepared/issues/5839\",\".csdlc/prepared/issues/5840\",\".csdlc/prepared/issues/5841\",\".csdlc/prepared/issues/5842\",\".csdlc/prepared/issues/5843\",\".csdlc/prepared/issues/5844\",\".csdlc/prepared/issues/5845\",\".csdlc/prepared/issues/5846\",\".csdlc/prepared/issues/5847\",\".csdlc/prepared/issues/5848\",\".csdlc/prepared/issues/5849\",\".csdlc/prepared/issues/5850\",\".csdlc/prepared/issues/5851\",\".csdlc/prepared/issues/5852\",\".csdlc/prepared/issues/5853\",\".csdlc/prepared/issues/5860\",\".csdlc/prepared/issues/5862\",\".csdlc/prepared/issues/5863\",\".csdlc/prepared/issues/5864\",\".csdlc/prepared/issues/5865\",\".csdlc/prepared/issues/5866\",\".csdlc/prepared/issues/5867\",\".csdlc/prepared/issues/5868\",\".csdlc/prepared/issues/5869\",\".csdlc/prepared/issues/5870\",\".csdlc/prepared/issues/5871\",\".csdlc/prepared/issues/5872\",\".csdlc/prepared/issues/5873\",\".csdlc/prepared/issues/5874\",\".csdlc/prepared/issues/5875\",\".csdlc/prepared/issues/5876\",\".csdlc/prepared/issues/5877\",\".csdlc/prepared/issues/5878\",\".csdlc/publication/5860.intent.json\",\"docs/milestones/v0.92/README.md\",\"docs/milestones/v0.92/SPRINT_v0.92.md\",\"docs/milestones/v0.92/WBS_v0.92.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\"docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md\"],\"purpose\":\"Integrate and prove design-time execution readiness for all 58 v0.92 execution issues, including #5862-#5878 and excluding #5861, without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 45,
+      "generation": 26,
+      "actor": "codex:5860-readiness-integration",
+      "reason": "Recover substantive review authority to repair the exact changed-path allowlist and parent ownership declarations required by the P1 review finding.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 46,
+      "generation": 27,
+      "actor": "codex:5860-exact-parent-scope-remediation",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 47,
+      "generation": 28,
+      "actor": "codex:5860-readiness-integration",
+      "reason": "Mirror the complete parent-owned surface in the executable planning card after exact-scope review.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\".csdlc/issues/5860/\",\".csdlc/prepared/issues/5860/\",\".csdlc/evidence/5860/\",\".csdlc/locks/5860.lock\",\".csdlc/publication/5860.intent.json\",\"docs/milestones/v0.92/README.md\",\"docs/milestones/v0.92/SPRINT_v0.92.md\",\"docs/milestones/v0.92/WBS_v0.92.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\"docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md\",\".adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md\",\".adl/docs/TBD/V092_SPRINT_5862_DISTRIBUTED_GUARDIAN_SESSION_PROMPT.md\"]}"
     }
   ]
 }

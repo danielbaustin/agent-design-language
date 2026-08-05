@@ -1,0 +1,28 @@
+{
+  "issue": 5860,
+  "card": "spp",
+  "expected_generation": 27,
+  "expected_digest": "bf49434604e52b9cdf7c3ca71a43999ff9ee32b1e5dfe5cf7be701bf4b920737",
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "actor": "codex:5860-readiness-integration",
+  "reason": "Mirror the complete parent-owned surface in the executable planning card after exact-scope review.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "affected_areas",
+    "values": [
+      ".csdlc/issues/5860/",
+      ".csdlc/prepared/issues/5860/",
+      ".csdlc/evidence/5860/",
+      ".csdlc/locks/5860.lock",
+      ".csdlc/publication/5860.intent.json",
+      "docs/milestones/v0.92/README.md",
+      "docs/milestones/v0.92/SPRINT_v0.92.md",
+      "docs/milestones/v0.92/WBS_v0.92.md",
+      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+      "docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md",
+      ".adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md",
+      ".adl/docs/TBD/V092_SPRINT_5862_DISTRIBUTED_GUARDIAN_SESSION_PROMPT.md"
+    ]
+  },
+  "fail_after_backup": false
+}

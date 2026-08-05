@@ -16,7 +16,7 @@ Audit all children, prepare six disjoint sprint sets, integrate typed designs an
 
 ## Plan
 
-Revision 4
+Revision 5
 
 ## Steps
 
@@ -98,7 +98,7 @@ Revision 4
 
 .csdlc/prepared/issues/5860/design.md
 
-Digest: 987f69de241139ee5a986390b8b52e3a41771dcecfbacb7a9e1434d863d8cde8
+Digest: efb288c53c47046c56e512a9cd277b4b8803965a595fa2870c253b36e429d748
 
 ## Diagram
 

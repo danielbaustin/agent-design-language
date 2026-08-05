@@ -1,0 +1,7 @@
+{
+  "issue": 5860,
+  "expected_generation": 26,
+  "expected_digest": "3fb5d3d20985aac3b79dcd9e5ff171003872ef3ff225f0d56adb29598cf8f6f7",
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "reviewer": "codex:5860-exact-parent-scope-remediation"
+}

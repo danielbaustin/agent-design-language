@@ -7,15 +7,15 @@
     "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
     "slug": "v092-all-issue-execution-readiness",
     "version": "v0.92",
-    "generation": 25
+    "generation": 28
   },
-  "status": "pre_phase",
+  "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": ".adl/docs/TBD\n.csdlc/issues\n.csdlc/prepared/issues\n.csdlc/evidence\n.csdlc/locks\ndocs/milestones/v0.92",
-      "review_revision": "git-blake3:1538ef7389d360e80175ecaa79e570e041621627:afd3c4d29646a4964df34c78193fd132a2f54ce0eea4099b7a6dafc48e18a6ce",
-      "reviewer": "subagent:019fd381-7cc5-7941-b8d4-626e24192022",
+      "review_scope": "",
+      "review_revision": null,
+      "reviewer": null,
       "review_prompts": [
         "Can every child bind after only just-in-time claim reacquisition?",
         "Are all designs and plans issue-specific and source-grounded?",
@@ -23,11 +23,8 @@
         "Are SRP/SOR and all non-claims truthful?"
       ],
       "findings": [],
-      "residual_risk": [
-        "Fifty-three child implementation or evidence-production scripts remain intentionally deferred to their issue execution lanes; #5860 proves design-time readiness and does not claim child execution.",
-        "Live GitHub issue contract parity is controlled-external point-in-time evidence and must be rechecked by each child at execution binding."
-      ],
-      "review_result": "pass"
+      "residual_risk": [],
+      "review_result": "pre_review"
     }
   }
 }

@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
     "slug": "v092-all-issue-execution-readiness",
     "version": "v0.92",
-    "generation": 25
+    "generation": 28
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 4,
+      "plan_revision": 5,
       "summary": "Audit all children, prepare six disjoint sprint sets, integrate typed designs and cards, validate every packet and released claim, then run independent exact-head review.",
       "steps": [
         {
@@ -66,7 +66,20 @@
           "status": "completed"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        ".csdlc/issues/5860/",
+        ".csdlc/prepared/issues/5860/",
+        ".csdlc/evidence/5860/",
+        ".csdlc/locks/5860.lock",
+        ".csdlc/publication/5860.intent.json",
+        "docs/milestones/v0.92/README.md",
+        "docs/milestones/v0.92/SPRINT_v0.92.md",
+        "docs/milestones/v0.92/WBS_v0.92.md",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md",
+        ".adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md",
+        ".adl/docs/TBD/V092_SPRINT_5862_DISTRIBUTED_GUARDIAN_SESSION_PROMPT.md"
+      ],
       "invariants": [
         "No product path changes",
         "No generic card accepted as ready",
@@ -92,7 +105,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5860/design.md",
-      "design_digest": "987f69de241139ee5a986390b8b52e3a41771dcecfbacb7a9e1434d863d8cde8",
+      "design_digest": "efb288c53c47046c56e512a9cd277b4b8803965a595fa2870c253b36e429d748",
       "diagram_ref": ".csdlc/prepared/issues/5860/diagram.mmd",
       "diagram_digest": "e2a3e34b6407cb62639a89ed201ac32976da3a2ce4a7f270cdc8a6bac3423209"
     }

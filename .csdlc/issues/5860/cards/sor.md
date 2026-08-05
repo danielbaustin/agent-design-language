@@ -77,11 +77,11 @@ Prepared and independently reviewed execution-ready design-time cards, validator
 
 ## Integration
 
-pr_open
+worktree_only
 
 ## Publication
 
-Publication: ready
+Publication: not_published
 
 Merge: not_merged
 

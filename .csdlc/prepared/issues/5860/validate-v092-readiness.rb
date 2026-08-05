@@ -12,11 +12,11 @@ LIVE_MANIFEST_PATH = ".csdlc/evidence/5860/V092_LIVE_ISSUE_CONTRACTS.json"
 OWNERSHIP_VALIDATOR = ".csdlc/prepared/issues/5860/validate-v092-ownership.rb"
 DOCTOR_VALIDATOR = ".csdlc/prepared/issues/5860/validate-v092-doctors.rb"
 LIVE_BODY_PUBLISHER = ".csdlc/prepared/issues/5860/publish-v092-live-issue-bodies.rb"
+PARENT_DESIGN_PATH = ".csdlc/prepared/issues/5860/design.md"
 LIVE_PREPARATION_COMMANDS = [
   ["ruby", ".csdlc/prepared/issues/5821/validate-child-wave.rb"],
   ["ruby", ".csdlc/prepared/issues/5862/validate-implementation-wave.rb", "--preflight"]
 ].freeze
-ALLOWED_DIFF_PREFIXES = [".adl/docs/TBD/", ".csdlc/", "docs/"].freeze
 EXPECTED_ISSUES = [
   5786, 5795, 5800, 5801, 5812, 5818, 5819, 5820, 5821, 5822,
   5823, 5824, 5825, 5826, 5827, 5828, 5829, 5830, 5831, 5832,
@@ -64,6 +64,33 @@ def owned_paths(design)
 
   section.scan(/`([^`]+)`/).flatten.map { |value| value.sub(/[.,;:]\z/, "") }
     .select { |value| repo_path?(value) }.uniq.sort
+end
+
+def child_lifecycle_roots(issues)
+  issues.flat_map do |issue|
+    [
+      ".csdlc/issues/#{issue}",
+      ".csdlc/prepared/issues/#{issue}",
+      ".csdlc/evidence/#{issue}",
+      ".csdlc/locks/#{issue}.lock"
+    ]
+  end
+end
+
+def path_owned?(path, roots)
+  roots.any? do |root|
+    normalized = root.delete_suffix("/")
+    path == normalized || path.start_with?("#{normalized}/")
+  end
+end
+
+def verify_scope_allowlist_contract!
+  parent = [".csdlc/issues/5860", "docs/milestones/v0.92/README.md"]
+  roots = parent + child_lifecycle_roots([5818])
+  raise "parent exact-path positive fixture failed" unless path_owned?("docs/milestones/v0.92/README.md", roots)
+  raise "child lifecycle-root positive fixture failed" unless path_owned?(".csdlc/issues/5818/cards/stp.md", roots)
+  raise "unrelated docs path escaped exact scope" if path_owned?("docs/unrelated.md", roots)
+  raise "unrelated C-SDLC path escaped exact scope" if path_owned?(".csdlc/issues/9999/index.json", roots)
 end
 
 
@@ -218,6 +245,7 @@ if ARGV.include?("--self-test")
   raise "issue-local rejection exit-class negative fixture escaped" unless preexecution_contract_error(role, 126, diagnostic)
   faulted = "#{diagnostic} bash: /dev/null: Permission denied"
   raise "trailing shell-fault negative fixture escaped" unless preexecution_contract_error(role, 1, faulted)
+  verify_scope_allowlist_contract!
   puts "v0.92 readiness validator self-test: PASS"
   exit 0
 end
@@ -226,6 +254,9 @@ wave = YAML.safe_load(File.read(WAVE_PATH), aliases: true)
 wp_rows, supporting_rows, issues, sprints = canonical_graph(wave)
 abort "canonical v0.92 execution denominator drift" unless issues == EXPECTED_ISSUES
 abort "canonical v0.92 sprint denominator drift" unless sprints.transform_values(&:length) == EXPECTED_SPRINT_COUNTS
+verify_scope_allowlist_contract!
+parent_owned_paths = owned_paths(File.read(PARENT_DESIGN_PATH))
+allowed_diff_roots = parent_owned_paths + child_lifecycle_roots(issues)
 rows_by_issue = (wp_rows + supporting_rows).each_with_object({}) do |row, memo|
   issue = row["issue"]
   memo[issue] = row if issues.include?(issue)
@@ -242,6 +273,11 @@ dependency_closure = lambda do |wp, seen = []|
 end
 
 errors = []
+parent_affected_areas = JSON.parse(
+  File.read(".csdlc/issues/5860/cards/spp.values.json")
+).dig("content", "values", "affected_areas")
+errors << "#5860: parent SPP affected_areas do not exactly mirror parent Owned Paths" unless
+  Array(parent_affected_areas).sort == parent_owned_paths.sort
 rows = []
 script_contracts = 0
 behavior_probes = 0
@@ -258,7 +294,7 @@ errors << "cannot inspect documentation-only diff boundary: #{diff_stderr.strip}
 if diff_status.success?
   changed_paths = diff_stdout.lines.map(&:strip).reject(&:empty?)
   changed_paths.each do |path|
-    errors << "product or undeclared path changed: #{path}" unless ALLOWED_DIFF_PREFIXES.any? { |prefix| path.start_with?(prefix) }
+    errors << "product or undeclared path changed: #{path}" unless path_owned?(path, allowed_diff_roots)
     errors << "externally owned #5861 path changed: #{path}" if path.match?(%r{(?:^|/)5861(?:/|\.|$)})
   end
 end

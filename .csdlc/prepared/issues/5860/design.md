@@ -52,7 +52,13 @@ one integration review.
 - `.csdlc/issues/5860/`
 - `.csdlc/prepared/issues/5860/`
 - `.csdlc/evidence/5860/`
+- `.csdlc/locks/5860.lock`
+- `.csdlc/publication/5860.intent.json`
+- `docs/milestones/v0.92/README.md`
+- `docs/milestones/v0.92/SPRINT_v0.92.md`
+- `docs/milestones/v0.92/WBS_v0.92.md`
 - `docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml`
+- `docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md`
 - `.adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md`
 - `.adl/docs/TBD/V092_SPRINT_5862_DISTRIBUTED_GUARDIAN_SESSION_PROMPT.md`
 
