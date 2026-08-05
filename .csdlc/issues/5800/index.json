@@ -5,23 +5,8 @@
   "initialization_digest": "01a996f3111ad433ba2731d9e465e062a862e763797a061a45c684e4a22e6ab8",
   "phase": "initialized",
   "generation": 0,
-  "digest": "b0f5410da405f4894fb8597f50b44e5944865037ad588b4e1018e7129c59f84c",
-  "claim": {
-    "id": "claim-5800-v092-preparation",
-    "owner": "wp01:issue-wave-preparation",
-    "generation": 0,
-    "acquired_unix_seconds": 1785916360,
-    "expires_unix_seconds": 1788508360,
-    "heartbeat_unix_seconds": 1785916360,
-    "branch": "codex/5800-v092-observatory-trusted-tls",
-    "worktree": ".worktrees/adl-wp-5800",
-    "protected_paths": [
-      ".csdlc/issues/5800",
-      ".csdlc/prepared/issues/5800",
-      ".csdlc/evidence/5800"
-    ],
-    "purpose": "Prepare the Observatory TLS sidecar before execution binding"
-  },
+  "digest": "5af499b0573a1afde2d66adc9290cd2a0e6f567c29309fe31461b6ea72ffe5bb",
+  "claim": null,
   "review_assignment": null,
   "review": null,
   "publication": null,
@@ -71,6 +56,13 @@
       "actor": "wp01:issue-wave-preparation",
       "reason": "initialize issue record and all six cards",
       "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5817",
+      "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
+      "operation": "{\"claim_id\":\"claim-5800-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
     }
   ]
 }

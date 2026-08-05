@@ -8,7 +8,8 @@ Runtime/Observatory collision domain.
 ## Execution Contract
 
 - Establish browser trust and resilient launch through `#5800` and `#5820`.
-- Integrate local Shepherd behavior under `#5795` after that baseline.
+- Integrate local Shepherd behavior under `#5795` after that baseline and
+  stable WP-14 (`#5832`) protocol contracts.
 - Prepare distributed-polis and protocol work against stable Runtime contracts.
 - Integrate Observatory/Unity consumers only after WP-03, WP-14, and WP-18.
 - Require real positive and negative integrated proof before sprint completion.

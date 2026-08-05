@@ -23,6 +23,12 @@ Startup:
    bundles.
 4. Audit readiness and dependencies without executing out of order.
 
+WP-01 published the initialized child records under its own temporary publication
+claim. After WP-01 releases that claim, create and register each real child
+worktree, use typed `csdlc-bind --reacquire-request` to acquire the child's exact
+issue-local paths, then run the normal bind and goal sequence. Do not assume the
+bootstrap reservation is still active.
+
 Exact child wave:
 
 - #5786, WP-21: repository-wide code reduction cleanup

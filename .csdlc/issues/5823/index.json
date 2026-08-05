@@ -5,23 +5,8 @@
   "initialization_digest": "7c3bcca3a89242a98791c5d0a2391d199e3e2a088e3fa577d270275ae22c2571",
   "phase": "initialized",
   "generation": 0,
-  "digest": "ed28a07f4c84e3126083ced1eeeff72634a8590aa0a9ad76704d64e232ad9989",
-  "claim": {
-    "id": "claim-5823-v092-preparation",
-    "owner": "wp01:issue-wave-preparation",
-    "generation": 0,
-    "acquired_unix_seconds": 1785911652,
-    "expires_unix_seconds": 1788503652,
-    "heartbeat_unix_seconds": 1785911652,
-    "branch": "codex/5823-v092-wp-06",
-    "worktree": ".worktrees/adl-wp-5823",
-    "protected_paths": [
-      ".csdlc/issues/5823",
-      ".csdlc/prepared/issues/5823",
-      ".csdlc/evidence/5823"
-    ],
-    "purpose": "Prepare WP-06 cards and issue-local evidence before execution binding"
-  },
+  "digest": "70a87d9723eea38f33d70e82136c40ee2aac835b66e44e622ed15fb83e81e7d5",
+  "claim": null,
   "review_assignment": null,
   "review": null,
   "publication": null,
@@ -71,6 +56,13 @@
       "actor": "wp01:issue-wave-preparation",
       "reason": "initialize issue record and all six cards",
       "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5817",
+      "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
+      "operation": "{\"claim_id\":\"claim-5823-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
     }
   ]
 }

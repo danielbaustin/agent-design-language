@@ -1,6 +1,6 @@
 # v0.92 Feature and Issue Coverage Audit
 
-Date: 2026-08-04
+Date: 2026-08-05
 
 ## Result
 
@@ -8,13 +8,17 @@ PASS for WP-01 planning coverage.
 
 - 39 work packages, three supporting issues, and five sprint umbrellas are
   mapped to 47 unique live GitHub issues.
-- All 47 issues were read through `csdlc-github-issue`; all are open.
+- All 47 issues were read through the typed `csdlc-github` binary; all are
+  open, and the retained live-contract packet matches the current wave digest.
 - All work-package titles identify their owning WP; the three supporting issues
   are explicitly mapped to an owner WP in the issue wave.
 - 41 child and supporting issues plus five sprint umbrellas have six
   initialized typed cards, 552 card artifacts total.
 - Every child STP task, deliverable, proof surface, and dependency matches the
   authoritative issue wave.
+- Every path changed by the WP-01 pull request is covered by the active WP-01
+  publication claim. Bootstrap-only child reservations were operator-revoked;
+  child sessions reacquire exact issue-local claims only after WP-01 releases.
 - Every indexed product feature has a concrete owning WP and linked feature
   contract.
 - WP-22 blocks internal review until every feature is landed with accepted
@@ -86,6 +90,12 @@ checks WBS/wave alignment; parses every child card values file; verifies issue,
 version, card-kind, and values-object identity for all 552 card artifacts;
 checks the three supporting issues, five live sprint umbrella records, their
 execution packets, and exact five-sprint membership;
+checks that child and sprint records are claim-free while WP-01 publishes them,
+that every changed path is protected by the parent publication claim, and that
+every sprint prompt requires typed child claim reacquisition;
+checks the retained live GitHub contract for all 47 issues against the current
+wave digest, dependency identifiers, open state, Shepherd v0.92 scope, and the
+absence of obsolete `WP-01A` dependencies;
 checks required source dispositions, feature contracts, completion gates, and
 active-wave wording; and resolves every relative Markdown link under the v0.92
 milestone package.

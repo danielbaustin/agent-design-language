@@ -28,6 +28,12 @@ Startup contract:
 5. Prepare blocked children now, but do not cross a serial gate merely to keep
    the session busy.
 
+WP-01 published the initialized child records under its own temporary publication
+claim. After WP-01 releases that claim, create and register each real child
+worktree, use typed `csdlc-bind --reacquire-request` to acquire the child's exact
+issue-local paths, then run the normal bind and goal sequence. Do not assume the
+bootstrap reservation is still active.
+
 Exact child wave:
 
 - #5800: browser-trusted local Observatory HTTPS
@@ -43,7 +49,8 @@ sprint. Do not split them into competing Observatory owners.
 Serial gates:
 
 - #5800 and #5820 establish the trusted local launch baseline.
-- #5795 integrates only after #5800 and #5820 stabilize the path.
+- #5795 integrates only after #5800 and #5820 stabilize the path and WP-14
+  #5832 establishes stable protocol contracts.
 - #5837 integrates only after #5820, #5832, and its WP-18 dependency are ready.
 
 Safe preparation and parallelism:
@@ -53,7 +60,7 @@ Safe preparation and parallelism:
   ACIP substrate and trace baselines; do not run these dependent children in
   parallel.
 - #5795 may prepare local-provider work before its final integration gate, but
-  it may not redefine Runtime or Observatory contracts.
+  it may not redefine Runtime, Observatory, or WP-14 protocol contracts.
 
 For every dependency-ready child: bind, create the child issue goal, implement
 the complete production outcome, prove real positive and negative behavior,

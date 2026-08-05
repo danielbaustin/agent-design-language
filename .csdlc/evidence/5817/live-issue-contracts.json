@@ -1,0 +1,1001 @@
+{
+  "schema": "adl.v092.live_issue_contracts.v1",
+  "repository": "danielbaustin/agent-design-language",
+  "observed_at": "2026-08-05T09:11:28Z",
+  "producer": ".adl/bin/csdlc-v2/csdlc-github",
+  "wave_sha256": "414ef51f21460d99481420f34a13612e5212a2117e16cdd3d7bcef76a7f99c49",
+  "issues": [
+    {
+      "assignees": [
+
+      ],
+      "body": "## Objective\n\nRetire the remaining legacy `adl/src` implementation after the ADL v1 rollback window closes, while preserving every still-supported behavior through ADL v2, Runtime v3, C-SDLC v2, or an explicitly owned adapter.\n\n## Scheduling gate\n\n- Do not begin destructive deletion before the retained ADL v1 rollback window ends on **2026-08-12T09:04:24Z**.\n- Before deletion, verify whether rollback was invoked and confirm the selected ADL v2 generation remains healthy.\n- This issue is scheduled for the **v0.92 backlog** and does not authorize changes during the rollback window.\n\n## Dependencies\n\n- WP-20\n\n## Current baseline\n\n- Original `adl/src` baseline: **355,675 physical Rust LoC across 621 files**.\n- Current merged-tree `adl/src`: approximately **261,273 physical Rust LoC across 480 files**.\n- Reduction so far: approximately **94,402 LoC (26.5%)**.\n- Final target: at least **80% deletion** from the pinned baseline; **90% preferred**.\n- `adl/src/runtime_v2` remains approximately **80,282 LoC** and is a primary post-cutover retirement candidate.\n\nRefresh these measurements at execution start and pin the exact revision.\n\n## Required work\n\n1. Produce an exhaustive machine-readable inventory of every remaining `adl/src` module, binary, test surface, and active CI/install/documentation reference.\n2. Classify each row as migrated to ADL v2, Runtime v3, C-SDLC v2, a named adapter/product owner, temporarily retained with owner/reason/expiry, or eligible for deletion.\n3. Close all real capability gaps before deleting their incumbent implementation.\n4. Make the thin ADL v2 CLI the supported `adl` entrypoint while preserving required command and artifact contracts.\n5. Remove Runtime v2 and obsolete compatibility binaries after exact parity, rollback, and operational installation proof.\n6. Remove stale `adl/Cargo.toml`, CI, coverage, installer, documentation, and demo references as their owning surfaces disappear.\n7. Delete by bounded ownership band with focused validation and review; do not perform one opaque bulk deletion.\n8. Publish exact before/after physical LoC, file counts, retained exceptions, and replacement owners.\n\n## Acceptance criteria\n\n- [ ] Rollback window completion and selector health are verified at an exact revision.\n- [ ] Every remaining legacy file has a disposition and an accountable replacement owner.\n- [ ] No supported behavior is represented only by deleted legacy code.\n- [ ] The supported `adl` command resolves to the thin ADL v2 implementation.\n- [ ] Runtime v2 is absent from production source and active build/CI routes.\n- [ ] Active CI, installation, documentation, and examples no longer require the legacy crate.\n- [ ] At least 80% of the pinned 355,675-line incumbent baseline is deleted, with 90% preferred.\n- [ ] Any retained 80-89% exception has owner, reason, and expiry; below 80% is not completion.\n- [ ] Focused parity, rollback, integration, and clean-install proofs pass on the exact deletion head.\n- [ ] Final bounded review has no unresolved actionable findings.\n\n## Non-goals\n\n- Deleting code before a replacement capability is operational.\n- Treating crate movement alone as simplification.\n- Retaining unowned compatibility code indefinitely.\n\n<!-- csdlc-github-operation:v092-wp01-live-contract-reconcile-5786-20260805 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-03T17:15:41Z",
+      "labels": [
+        "type:task",
+        "area:runtime",
+        "track:backlog",
+        "area:quality",
+        "area:architecture",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5786,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-21][adl-v2][deletion] Retire legacy adl/src after rollback window"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Problem\n\nThe real model-backed Shepherd path is currently planned later in the v0.95 Shepherd/Gemma/evaluator work, but the operator needs an earlier usable MVP. #5789 established the Runtime v3 / Observatory signed command path, but it does not yet provide real Shepherd dialogue through a local model.\n\n## Required Outcome\n\nProvide a v0.92 local-only MVP that lets the operator send a bounded Shepherd message/control through Runtime v3/Observatory and receive a real local model-backed response with truthful evidence when the local model is available.\n\n## Dependencies\n\n- WP-03\n- Issue #5800\n- WP-14 (#5832) contract stability before final Observatory integration\n\n## Scope\n\n- Local Apple Metal / MLX path only; no AWS or cloud provider operations.\n- Wire the existing Shepherd status/policy surface to an actual local model invocation boundary or adapter.\n- Keep `gemma4:12b-mlx` behind explicit config/availability/eval gates; do not make it the global default until focused evaluation passes.\n- Route operator communication through the governed Runtime v3 command/control path, not an ad hoc UI-only shortcut.\n- Update Observatory status so it distinguishes unavailable, mock/test fallback, and real local model-backed Shepherd proof.\n- Include failure evidence for unavailable model, timeout, malformed command, and unsigned/unauthorized mutation.\n\n## Non-Scope\n\n- No full v0.95 Shepherd/Gemma training program.\n- No Aptitude Atlas or productized evaluator buildout.\n- No global default model switch.\n- No AWS usage.\n- No broad intelligence or safety claims beyond the proven local MVP path.\n\n## Acceptance Criteria\n\n1. A real local model-backed Shepherd invocation path exists behind explicit configuration and availability gates.\n2. The Observatory lets the operator send a bounded Shepherd message/control through Runtime v3 and see the response/result evidence.\n3. Runtime status truth distinguishes mock/test fallback from real local model-backed proof.\n4. Negative cases pass for no local model installed, timeout, malformed command, and unsigned/unauthorized mutation.\n5. Focused tests cover the adapter boundary with a deterministic fake, plus an optional local smoke when the configured MLX/Gemma model is available.\n6. Documentation preserves the v0.95 full Shepherd/Gemma/evaluator plan as later work while recording this early MVP route truthfully.\n7. No AWS or cloud operations are used.\n\nCloses: TBD by implementation PR.\n\n<!-- csdlc-github-operation:v092-wp01-review-remediation-5795-20260805 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-03T19:10:55Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:runtime",
+        "version:v0.92",
+        "area:observatory"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5795,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][runtime][shepherd] Pull local Gemma/MLX Shepherd MVP forward"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\\nChrome rejects the current local ADL Observatory HTTPS certificate for https://localhost:8765/demos/html-observatory/. Create a v0.92 fix so the operator can use the Observatory over browser-trusted HTTPS without bypass warnings.\\n\\n## Scope\\n- Keep this out of v0.91.8 release scope.\\n- Investigate a durable local/browser-trusted certificate flow for Observatory development and demos.\\n- Prefer real, trusted certificate handling where appropriate, including evaluating Let's Encrypt for agent-logic.ai-hosted or DNS-backed test endpoints.\\n- For localhost-only development, document and implement the right trust model if Let's Encrypt is not applicable to localhost directly.\\n- Ensure the configured Observatory URL, docs, startup scripts, and health checks all agree on HTTPS.\\n\\n## Acceptance Criteria\\n- Chrome loads the Observatory test URL without certificate warnings under the chosen v0.92-supported flow.\\n- HTTP/stale URL guidance is removed or clearly redirected to HTTPS.\\n- The certificate source, renewal/trust process, and local/operator setup are documented.\\n- No AWS work.\\n- No v0.91.8 scope expansion.\\n\\n## Evidence To Capture\\n- Browser proof of trusted HTTPS load.\\n- curl/health-check proof for Observatory HTML and runtime feed.\\n- Config/docs path inventory showing HTTPS consistency.",
+      "closed_at": null,
+      "created_at": "2026-08-04T01:11:20Z",
+      "labels": [
+        "type:bug",
+        "area:runtime",
+        "version:v0.92",
+        "area:observatory"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5800,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][observatory][tls] Use browser-trusted local HTTPS certificate"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nThe v0.91.8 review/repair flow exposed that CI and coverage are too broad, too slow, and too tightly coupled to lifecycle exact-SHA mechanics. Review-only or lifecycle-only deltas can trigger expensive broad Rust/coverage lanes, and exact-head/SHA churn repeatedly restarts checks. Create a v0.92 fix to simplify the CI/coverage process and reduce brittle SHA friction while preserving truthful review and merge safety.\n\n## Problem\n- Review/lifecycle-only updates can force full CI/coverage instead of focused documentation/control-plane checks.\n- Coverage lanes still take too long and are difficult to reason about.\n- Exact SHA / digest lifecycle mechanics are useful for truth but currently create excessive republish/recheck churn.\n- Stale runs can keep burning CI minutes unless actively cancelled.\n- The lane selector and lifecycle publication path need a cleaner separation between source/product changes, tooling changes, docs/review packets, and lifecycle metadata.\n\n## Dependencies\n\n- WP-02\n\n## Scope\n- v0.92 only; do not expand v0.91.8 scope.\n- Use Gemini 3.1 Pro to review the current CI/coverage/lifecycle-publication process and suggest simplifications.\n- Audit current GitHub Actions, validation lane selector, coverage lane sharding, and typed review/publish/finish exact-head contracts.\n- Propose and implement a smaller, deterministic lane model that avoids duplicate or unnecessary heavy checks.\n- Preserve exact-head safety for source/product merges, but remove avoidable SHA/digest churn for metadata-only lifecycle reconciliation where possible.\n- Add automatic stale-run cancellation or repo-native guidance where safe.\n\n## Acceptance Criteria\n- Gemini review packet is retained locally/issue-bound and summarized into findings.\n- Lane selector separates docs/review/lifecycle metadata from source/tooling/runtime changes with explicit PVF truth.\n- Coverage lanes are parallelized and de-duplicated so we do not run the same coverage proof twice for the same PR class.\n- Metadata-only typed lifecycle reconciliation no longer forces needless full heavy CI when the source merge candidate is already exact-head validated, or the remaining reason is documented and bounded.\n- Exact-SHA/digest rules are simplified or wrapped so operators do not have to manually chase stale digests for ordinary publish/closeout.\n- Tests cover lane selection and stale-run cancellation behavior.\n- No AWS.\n\n## Non-Goals\n- No v0.91.8 release-tail scope expansion.\n- No weakening source/product exact-head validation.\n- No broad CI rewrite without retained compatibility and proof.\n\nCloses: TBD when implemented.\n\n<!-- csdlc-github-operation:v092-wp01-live-contract-reconcile-5801-20260805 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-04T01:20:21Z",
+      "labels": [
+        "track:roadmap",
+        "area:quality",
+        "type:tooling",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5801,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-02A][ci] CI and coverage reliability"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\n\nRestore `-D warnings` Clippy cleanliness for the CSM freedom-gate projection without changing runtime behavior.\n\n## Problem\n\nA focused production-binary Clippy run currently fails in `adl/src/csm_freedom_gate.rs` because two default-value expressions use unnecessary lazy closures:\n\n- line 150: `executor_requires_gate_decision` uses `unwrap_or_else(|| json!(true))`\n- line 151: `unmediated_execution_allowed` uses `unwrap_or_else(|| json!(false))`\n\nClippy reports `clippy::unnecessary_lazy_evaluations` and recommends eager `unwrap_or(...)` values. This is unrelated to Google Drive issue #5802 and must remain separately scoped.\n\n## Acceptance Criteria\n\n- Both warnings are removed with the smallest behavior-preserving Rust change.\n- Existing freedom-gate defaults remain exactly `true` and `false`, respectively.\n- Focused CSM freedom-gate tests pass.\n- `cargo clippy --offline --bin adl-gws-context-mirror -- -D warnings` no longer fails on `csm_freedom_gate.rs`.\n- `cargo fmt --all -- --check` passes for the touched source.\n- No unrelated runtime, Google Drive, lockfile, or dependency changes are included.\n\n## Validation\n\n- Focused tests covering `csm_freedom_gate`.\n- Focused Clippy reproduction with `-D warnings`.\n- `git diff --check`.\n\n## Non-goals\n\n- No freedom-gate semantic redesign.\n- No broad Clippy cleanup outside the two observed warnings.\n- No changes to issue #5802.\n\n## Source Evidence\n\nObserved during issue #5802 validation on 2026-08-04 with current Rust/Clippy: `clippy::unnecessary_lazy_evaluations` at `adl/src/csm_freedom_gate.rs:150-151`.\n<!-- csdlc-github-operation:v092-csm-freedom-gate-clippy-20260804 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T02:40:07Z",
+      "labels": [
+        "track:roadmap",
+        "type:bug",
+        "area:runtime",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5812,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][runtime][quality] Restore Clippy cleanliness in csm_freedom_gate"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nPromote the reviewed v0.92 planning package into executable milestone truth. Reconcile current v0.91.8 release evidence, the activation-test map, AEE completion evidence, issue #3377, WP-22 planning dispositions, and post-#5104 loop-runtime truth before opening the final v0.92 issue wave.\n\n## Scope\n- Update canonical version, milestone, feature, ADR, demo, and issue-wave surfaces to current evidence.\n- Reconcile every candidate WP and dependency against live issue, PR, release, and retained source truth.\n- Requalify the merged #5104 loop-runtime behavior against current Runtime v3 contracts before claiming validated replayable loops.\n- Preserve explicit deferred and later-backlog source dispositions.\n- Open the final bounded v0.92 child issue wave only after the package validates.\n- Generate all six issue-specific C-SDLC cards for each opened issue from the active template registry.\n\n## Acceptance Criteria\n- The canonical v0.92 planning docs agree on scope, WP order, dependencies, and current issue numbers.\n- The issue-wave YAML advances from candidate `draft_pre_open` truth to an evidence-backed opened-wave state.\n- Every scheduled TBD source has one explicit owner, target, or deferral disposition.\n- #3377, the activation bridge, v0.91.8 release evidence, AEE evidence, and #5104 loop-runtime evidence are explicitly consumed or gap-routed.\n- The complete child issue wave is opened without duplicate issues and each issue has SIP, STP, SPP, VPP, SRP, and SOR cards.\n- Focused YAML, Markdown-link, card-structure, schema, dependency-graph, and diff-hygiene validation passes.\n- One bounded pre-PR review is clean before publication.\n\n## Non-goals\n- Do not execute child implementation WPs.\n- Do not transfer repositories; WP-02 owns migration execution.\n- Do not absorb v0.93 constitutional governance or deferred provider/model work.\n- Do not claim legal personhood, production citizenship, consciousness proof, or birthday readiness without evidence.\n\nCloses this issue when the reviewed WP-01 planning and issue-wave package merges.\n\n<!-- csdlc-github-operation:v092-wp01-live-contract-reconcile-5817-20260805 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:11:14Z",
+      "labels": [
+        "track:roadmap",
+        "area:docs",
+        "type:docs",
+        "area:planning",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5817,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-01][planning] Promote canonical docs and open the final issue wave"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nPerform the early v0.92 repository-wide documentation and version activation pass immediately after WP-01 opens the milestone issue wave and before substantive implementation begins. Replace stale active-v0.91.8 and pre-open-v0.92 wording with current release and milestone truth without rewriting historical evidence.\n\n## Execution Order\n- Depends on WP-01 planning activation and the final issue wave.\n- Runs immediately after WP-01 as WP-01B.\n- Blocks the first substantive v0.92 implementation wave so later work starts from current documentation and version truth.\n- May run in parallel with other non-product milestone setup that does not edit the same canonical surfaces.\n\n## Scope\n- Update `docs/planning/ADL_FEATURE_LIST.md` as the canonical feature inventory and completion-state surface.\n- Update the root `README.md`, `docs/README.md`, package READMEs, contributor entrypoints, and other canonical documentation indexes.\n- Update current-version badges, status summaries, milestone links, demo/quality/review entrypoints, and release references.\n- Update `Cargo.toml`, `Cargo.lock`, package metadata, and other authoritative version declarations that should move from 0.91.8 to 0.92.0.\n- Audit `AGENTS.md`, `REVIEW.md`, skills, runbooks, examples, and generated-client/user-facing docs for stale milestone or process language.\n- Preserve historical milestone, release, evidence, review, and migration records unchanged except where a current index links to them.\n- Produce a machine-readable inventory of checked canonical surfaces and dispositions.\n\n## Acceptance Criteria\n- `docs/planning/ADL_FEATURE_LIST.md` identifies v0.92 as active and reflects every indexed v0.92 feature and owning WP without claiming unlanded work complete.\n- All authoritative current-version declarations consistently report v0.92 / 0.92.0.\n- Root and package README surfaces identify v0.92 as active and v0.91.8 as the latest completed release.\n- Canonical documentation, demo, feature, quality, API, contributor, and review entrypoints point to current valid paths.\n- `AGENTS.md`, `REVIEW.md`, skills, and runbooks are audited for the current C-SDLC v2 and milestone process; changes remain source-grounded and bounded.\n- Historical evidence retains its original version and claims.\n- Markdown links, YAML/JSON, Cargo metadata, version parity, placeholder/stale-reference scans, and diff hygiene pass.\n- One bounded pre-PR review is clean.\n\n## Non-goals\n- Do not implement v0.92 product features.\n- Do not rewrite historical release or review evidence to look current.\n- Do not perform repository migration, release ceremony, or child-WP closeout.\n- Do not run broad runtime tests unless executable version behavior changes.\n\nCloses this issue when the reviewed canonical documentation and version activation PR merges.\n\n<!-- csdlc-github-operation:v092-wp01b-feature-list-contract -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:25:03Z",
+      "labels": [
+        "track:roadmap",
+        "area:docs",
+        "type:docs",
+        "area:planning",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5818,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-01B][docs] Activate v0.92 across canonical docs and version surfaces"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-02** in the v0.92 milestone: migrate the five approved company repositories into the Agent Logic GitHub organization before substantive milestone implementation.\n\n## Required Outcome\nFive serially transferred company repositories with `danielbaustin/asksifu` retained as personal and Horust excluded.\n\n## Dependencies\n- WP-01\n- WP-01B\n- Reviewed migration plan from #5815 and PR #5816\n- Confirmed destination organization and owners\n- Complete migration inventory\n- Billing and security readiness\n\n## Proof Surface\nPre-transfer manifests including issue and PR assignee membership, per-repository transfer and verification evidence including assignee retention or explicit reassignment, integration updates, negative `asksifu` control, and final migration report.\n\n## Acceptance Criteria\n- Execute only the five approved repository transfers in the reviewed order.\n- Preserve issues, PRs, releases, Actions, Pages, permissions, remotes, and integrations or record an explicit verified disposition.\n- Before each transfer, inventory issue and PR assignees and verify that each assignee is a destination-organization member or has an explicit reassignment plan.\n- After each transfer, verify assignee retention or record and complete the required reassignment.\n- Keep `danielbaustin/asksifu` personal and exclude Horust.\n- Verify every declared dependency from current repository and GitHub evidence.\n- Retain reproducible exact-operation evidence and complete one bounded pre-PR review.\n- The implementation PR includes `Closes #5819`.\n\n## Non-goals\n- Do not absorb CI/coverage work from WP-02A.\n- Do not migrate Horust or `danielbaustin/asksifu`.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-wp02-assignee-transfer-contract -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:02Z",
+      "labels": [
+        "track:roadmap",
+        "area:docs",
+        "type:task",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5819,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-02][operations] Agent Logic GitHub organization repository migration"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-03** in the v0.92 milestone: Runtime launch and resilience consolidation.\n\n## Required Outcome\none Guardian-owned launch path with resilient startup, configuration, recovery, and lifecycle behavior.\n\n## Dependencies\n- WP-02A\n\n## Existing Inputs\n- #5800 browser-trusted Observatory TLS\n\n## Proof Surface\ncross-platform start-stop, recovery, configuration, and clean-log proof.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n\n<!-- csdlc-github-operation:v092-wp01-review-remediation-5820-20260805 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:04Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:runtime",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5820,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-03] Runtime launch and resilience consolidation"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nComplete WP-04 in v0.92: pass the architecture and security gate, execute all 16 bounded distributed-runtime child issues, and integrate the resulting Guardian/polis runtime.\n\n## Required Outcome\nArchitecture and security gate followed by completion of the bounded 16-issue distributed-runtime program within v0.92.\n\n## Dependencies\n- WP-03\n\n## Proof Surface\nReviewed architecture, threat model, all 16 child issues landed, integrated distributed proof, and relocation failure cases.\n\n## Acceptance Criteria\n- The architecture and threat model are reviewed before implementation credit.\n- All 16 child issues are concrete, nonduplicative, implemented, reviewed, merged, and linked.\n- Integrated multi-node Guardian/polis behavior and relocation failure cases use real production paths.\n- Fixtures, receipts, demo mode, synthetic success, and degraded placeholders receive no completion credit.\n- Applicable failure, security, privacy, portability, recovery, and claim boundaries are tested.\n- One exact-revision pre-PR review has no unresolved actionable findings.\n- The implementation PR includes `Closes #5821`.\n\n## Non-goals\n- Do not claim v0.93 constitutional governance.\n- Do not substitute planning prose or an opened child wave for completion.\n<!-- csdlc-github-operation:v092-wp04-complete-distributed-program -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:05Z",
+      "labels": [
+        "track:roadmap",
+        "area:security",
+        "type:task",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5821,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-04] Distributed Guardian/polis runtime"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-05** in the v0.92 milestone: C-SDLC estimation and cycle-time reduction.\n\n## Required Outcome\nmeasured estimation, reconnection, and simplified lifecycle path.\n\n## Dependencies\n- WP-02A\n\n## Proof Surface\nbaseline, cycle-time comparison, lifecycle regressions, and operator workflow proof.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n\n<!-- csdlc-github-operation:v092-wp01-review-remediation-5822-20260805 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:07Z",
+      "labels": [
+        "track:roadmap",
+        "area:tools",
+        "type:tooling",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5822,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-05] C-SDLC estimation and cycle-time reduction"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-06** in the v0.92 milestone: Remote validation/build runner.\n\n## Required Outcome\nportable bounded runner with provenance and failover.\n\n## Dependencies\n- WP-02A\n\n## Proof Surface\nlocal, Linux, macOS, Windows, failure, and no-network fallback proof.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n\n<!-- csdlc-github-operation:v092-wp01-review-remediation-5823-20260805 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:08Z",
+      "labels": [
+        "track:roadmap",
+        "area:tools",
+        "type:tooling",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5823,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-06] Remote validation/build runner"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-07** in the v0.92 milestone: Prompt-card enum typing.\n\n## Required Outcome\nhistorical-delivery audit and only the proven remaining enum/schema correction.\n\n## Dependencies\n- WP-01\n- WP-05\n\n## Proof Surface\nschema inventory, typed round trips, negative cases, and no-duplicate-work disposition.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-07 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:10Z",
+      "labels": [
+        "track:roadmap",
+        "area:tools",
+        "type:tooling",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5824,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-07] Prompt-card enum typing"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-08** in the v0.92 milestone: Birthday contract and negative cases.\n\n## Required Outcome\nbirth contract, disqualifying cases, and negative fixtures.\n\n## Dependencies\n- WP-01\n- WP-02A\n\n## Proof Surface\ncontract doc and validation fixture report.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n\n<!-- csdlc-github-operation:v092-wp01-review-remediation-5825-20260805 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:11Z",
+      "labels": [
+        "track:roadmap",
+        "type:docs",
+        "area:tools",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5825,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-08] Birthday contract and negative cases"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-09** in the v0.92 milestone: Stable name and identity architecture.\n\n## Required Outcome\nstable-name and identity-root contract.\n\n## Dependencies\n- WP-08\n\n## Proof Surface\nidentity record fixtures and schema validation.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-09 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:13Z",
+      "labels": [
+        "track:roadmap",
+        "type:docs",
+        "area:tools",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5826,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-09] Stable name and identity architecture"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-10** in the v0.92 milestone: Continuity across bounded cycles.\n\n## Required Outcome\ncontinuity records and bounded-cycle proof.\n\n## Dependencies\n- WP-09\n\n## Proof Surface\ncontinuity fixtures, cycle artifacts, and witness links.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-10 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:14Z",
+      "labels": [
+        "track:roadmap",
+        "area:tools",
+        "type:tooling",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5827,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-10] Continuity across bounded cycles"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nImplement WP-11 as the first working Memory Palace slice, not a planning-only or blocked disposition.\n\n## Required Outcome\nWorking deterministic context topology, bounded working-set materialization, witnessed memory references, stale-context detection, and redaction-safe provenance proof integrated with Runtime memory and continuity authority.\n\n## Dependencies\n- WP-09\n- WP-10\n- ObsMem and trace baseline\n\n## Acceptance Criteria\n- Real context-topology and bounded working-set behavior executes at the exact reviewed revision.\n- The same declared inputs reproduce the same topology and working set.\n- Every loaded or rejected context item names its durable source and provenance.\n- Missing references, stale context, provenance mismatch, redaction failure, and unauthorized private-state access are proven negative cases.\n- Planning prose, fixtures, receipts, synthetic success, or a blocked disposition do not satisfy completion.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes `Closes #5828`.\n\n## Non-goals\n- Unbounded or distributed Memory Palace expansion.\n- Raw private-state exposure.\n- Replacing ObsMem, trace, or identity continuity authority.\n- Absorbing adjacent work packages.\n<!-- csdlc-github-operation:v092-wp01-require-working-memory-palace-slice -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:16Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:runtime",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5828,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-12** in the v0.92 milestone: Capability envelope.\n\n## Required Outcome\nprovider, model, tool, skill, authority, and limit envelope.\n\n## Dependencies\n- WP-09\n\n## Proof Surface\ncapability-envelope fixtures and validation report.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-12 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:17Z",
+      "labels": [
+        "track:roadmap",
+        "type:docs",
+        "area:tools",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5829,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-12] Capability envelope"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-13** in the v0.92 milestone: ACP / cognitive profiles.\n\n## Required Outcome\nevidence-grounded cognitive-profile contract.\n\n## Dependencies\n- WP-10\n- WP-11\n- WP-12\n\n## Proof Surface\nprofile fixtures, update rules, privacy boundary, and validation report.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-13 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:18Z",
+      "labels": [
+        "track:roadmap",
+        "type:docs",
+        "area:tools",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5830,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-13] ACP / cognitive profiles"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nImplement WP-13A as real Runtime v3 behavior, not another planning queue.\n\n## Required Outcome\nWorking evaluation bindings, durable adaptation deltas, policy-governed graph-change proposals, accepted and rejected mutation paths, and deterministic replay proof on the WP-01-qualified Runtime v3 loop substrate.\n\n## Dependencies\n- WP-01\n- WP-13\n- merged #5104 historical semantic input\n- current Runtime v3 loop qualification retained by #5817\n\n## Acceptance Criteria\n- The Adaptive Learning DAG executes real Runtime v3 behavior at the exact reviewed revision.\n- Every accepted state or graph change is policy-authorized, durable, and deterministically replayable.\n- Evaluation evidence, before/after state hashes, rationale, policy decisions, and graph deltas remain inspectable.\n- Rejected mutation, forged history, discontinuous resume, invalid binding, unbounded recurrence, missing evidence, and unauthorized mutation are proven negative cases.\n- No fixture, receipt, demo mode, synthetic result, or planning document substitutes for runtime behavior.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes `Closes #5831`.\n\n## Non-goals\n- Ungoverned or unconstrained self-modification.\n- Absorbing adjacent work packages.\n- Rewriting historical evidence.\n- Claiming downstream milestone completion.\n<!-- csdlc-github-operation:v092-wp01-promote-wp13a-real-implementation -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:20Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:runtime",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5831,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-14** in the v0.92 milestone: ACIP and A2A contract reconciliation.\n\n## Required Outcome\nreconciled versioned protocol family, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS carrier.\n\n## Dependencies\n- WP-04\n- ACIP substrate\n- trace and replay baseline\n\n## Proof Surface\ncontracts, schema catalog, round-trip fixtures, denied-access case, and real WSS exchange.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-14 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:21Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:runtime",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5832,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-14] ACIP and A2A contract reconciliation"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-15** in the v0.92 milestone: Birth witnesses and receipts.\n\n## Required Outcome\nwitness set and citizen-facing receipt contract.\n\n## Dependencies\n- WP-09\n- WP-10\n- WP-11\n- WP-12\n\n## Proof Surface\nwitness fixtures, receipt fixtures, and validation report.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-15 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:23Z",
+      "labels": [
+        "track:roadmap",
+        "type:docs",
+        "area:tools",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5833,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-15] Birth witnesses and receipts"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-16** in the v0.92 milestone: Birthday review packet.\n\n## Required Outcome\nreviewer-facing birthday evidence packet.\n\n## Dependencies\n- WP-08\n- WP-09\n- WP-10\n- WP-11\n- WP-12\n- WP-13\n- WP-14\n- WP-15\n\n## Proof Surface\nintegrated review packet and claim-boundary scan.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-16 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:24Z",
+      "labels": [
+        "track:roadmap",
+        "type:docs",
+        "area:tools",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5834,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-16] Birthday review packet"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-17** in the v0.92 milestone: Migration and cross-polis continuity planning.\n\n## Required Outcome\nbounded birthday-identity movement semantics and non-goals.\n\n## Dependencies\n- WP-09\n- WP-10\n- WP-16\n\n## Proof Surface\ncross-polis continuity feature doc, design note, and boundary against WP-04 infrastructure.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-17 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:25Z",
+      "labels": [
+        "track:roadmap",
+        "area:docs",
+        "type:docs",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5835,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-17] Migration and cross-polis continuity planning"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-18** in the v0.92 milestone: First birthday demo.\n\n## Required Outcome\nrunnable first-birthday proof demo and negative suite.\n\n## Dependencies\n- WP-08\n- WP-09\n- WP-10\n- WP-11\n- WP-12\n- WP-13\n- WP-14\n- WP-15\n- WP-16\n\n## Proof Surface\ndemo feature doc, artifacts, negative-case report, and reviewer packet.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-18 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:27Z",
+      "labels": [
+        "track:roadmap",
+        "area:tools",
+        "type:tooling",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5836,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-18] First birthday demo"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-18A** in the v0.92 milestone: Observatory/Unity consumer integration.\n\n## Required Outcome\nseparate consumers integrated with the versioned Runtime API and WSS.\n\n## Dependencies\n- WP-03\n- WP-14\n- WP-18\n\n## Proof Surface\nreal Observatory and Unity interactions, compatibility matrix, and consumer failure cases.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-18a -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:28Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:runtime",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5837,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-18A] Observatory/Unity consumer integration"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-18B** in the v0.92 milestone: Provider-neutral multi-agent proof.\n\n## Required Outcome\nprovider-neutral multi-agent proof matrix and artifacts.\n\n## Dependencies\n- WP-14\n- WP-16\n- WP-18\n\n## Proof Surface\nreal multi-provider runs, protocol traces, negative cases, and no-provider-substitution proof.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-18b -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:30Z",
+      "labels": [
+        "track:roadmap",
+        "area:tools",
+        "type:tooling",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5838,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-18B] Provider-neutral multi-agent proof"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-19** in the v0.92 milestone: Birthday-to-governance handoff.\n\n## Required Outcome\nv0.93 governance handoff map.\n\n## Dependencies\n- WP-16\n- WP-17\n- v0.93 allocation\n\n## Proof Surface\nidentity-evidence to governance-consumption mapping and ADR-plan update.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-19 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:31Z",
+      "labels": [
+        "track:roadmap",
+        "area:docs",
+        "type:docs",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5839,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-19] Birthday-to-governance handoff"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-20** in the v0.92 milestone: Demo matrix, AEE proof, and proof coverage.\n\n## Required Outcome\ndemo matrix, AEE proof routing or packet, proof coverage, and validation commands.\n\n## Dependencies\n- WP-18\n- WP-18A\n- WP-18B\n- WP-19\n\n## Proof Surface\ndemo matrix, AEE evidence, proof coverage document, and artifact index.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-20 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:32Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:demo",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5840,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-20] Demo matrix, AEE proof, and proof coverage"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-21A** in the v0.92 milestone: Rust refactoring and maintainability pass.\n\n## Required Outcome\nbehavior-preserving simplification of active Rust ownership boundaries, duplication, and maintainability hotspots before review.\n\n## Dependencies\n- WP-20\n- WP-21\n\n## Proof Surface\nexact refactoring inventory, focused behavior parity, Clippy and test proof, before/after LoC, and bounded review.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-21a -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:34Z",
+      "labels": [
+        "track:roadmap",
+        "type:chore",
+        "area:quality",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5841,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-21A] Rust refactoring and maintainability pass"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nRun the v0.92 quality gate and block internal review until every indexed product feature and supporting critical path meets the milestone delivery standard.\n\n## Required Outcome\nA quality gate that blocks internal review until every indexed v0.92 feature is landed with accepted exact-revision proof.\n\n## Dependencies\n- WP-04\n- WP-05\n- WP-06\n- WP-07\n- WP-13A\n- WP-20\n- WP-21\n- WP-21A\n\n## Proof Surface\nFeature-completion matrix, quality-gate record, platform proof, and blocker report.\n\n## Acceptance Criteria\n- Every feature in `docs/milestones/v0.92/features/README.md` is landed and linked to exact implementation, validation, review, and integration evidence.\n- Runtime, protocol, provider, consumer, migration, and integration work uses real production paths and real positive and negative proof.\n- Fixtures, receipts, demo mode, synthetic success, substituted providers, scaffolding, placeholders, and partial work receive no completion credit.\n- Documentation and planning outputs are source-grounded, decision-ready, bounded to useful outcomes, and executable without chat reconstruction.\n- Tooling and cleanup outputs demonstrate measured useful value and focused regression safety.\n- Any unmet row is a blocker; internal review cannot begin.\n- One exact-revision pre-PR review has no unresolved actionable findings.\n- The implementation PR includes `Closes #5842`.\n\n## Non-goals\n- Do not waive incomplete features to preserve schedule.\n- Do not claim release readiness from issue closure alone.\n<!-- csdlc-github-operation:v092-wp22-feature-completion-gate -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:35Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:review",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5842,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-22] Quality gate"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-23** in the v0.92 milestone: Docs and release-truth pass.\n\n## Required Outcome\ncurrent canonical docs, release notes, feature list, ADR plan, skills, agent guidance, and milestone docs.\n\n## Dependencies\n- WP-22\n\n## Proof Surface\ndocs-review packet, ADR candidate packet if needed, and release-truth diff.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-23 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:37Z",
+      "labels": [
+        "track:roadmap",
+        "area:docs",
+        "type:docs",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5843,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-23] Docs and release-truth pass"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-24** in the v0.92 milestone: Ten-article launch series.\n\n## Required Outcome\nall ten planned articles complete and ready for editorial review, followed by final release-grounded publication disposition.\n\n## Dependencies\n- WP-02 for parallel drafting\n- WP-23 for final release-truth alignment\n\n## Proof Surface\nten reviewed article sources, series-arc review, per-article claim scans, links, milestone evidence updates, and publication boundary.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n\n<!-- csdlc-github-operation:v092-wp01-review-remediation-5844-20260805 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:38Z",
+      "labels": [
+        "track:roadmap",
+        "type:docs",
+        "area:authoring",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5844,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-24] Ten-article launch series"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-24A** in the v0.92 milestone: Podcast Studio first ten episodes.\n\n## Required Outcome\nall first ten episodes complete as review-ready production packages, not topic or schema placeholders.\n\n## Dependencies\n- WP-02\n- Podcast Studio v2 proof\n- Agent Logic route and storage decisions\n\n## Proof Surface\nten scripts, transcripts, show notes, final audio files and QA reports, guest metadata, artwork and ID3 metadata, RSS-ready enclosure records, redaction checks, and editorial/audio review packets.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n\n<!-- csdlc-github-operation:v092-wp01-review-remediation-5845-20260805 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:39Z",
+      "labels": [
+        "track:roadmap",
+        "type:docs",
+        "area:authoring",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5845,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-24A] Podcast Studio first ten episodes"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-25** in the v0.92 milestone: Internal review.\n\n## Required Outcome\ninternal review report and finding register.\n\n## Dependencies\n- WP-23\n- WP-24\n- WP-24A\n\n## Proof Surface\ninternal review packet.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-25 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:41Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:review",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5846,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-25] Internal review"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-26** in the v0.92 milestone: External / third-party review.\n\n## Required Outcome\nexternal review handoff and received review.\n\n## Dependencies\n- WP-25\n\n## Proof Surface\nreview handoff and review report.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-26 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:42Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:review",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5847,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-26] External / third-party review"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-27** in the v0.92 milestone: Review findings remediation.\n\n## Required Outcome\nfinding dispositions and remediation PRs.\n\n## Dependencies\n- WP-26\n\n## Proof Surface\nfinding disposition record.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-27 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:44Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:review",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5848,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-27] Review findings remediation"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-28** in the v0.92 milestone: Next milestone planning.\n\n## Required Outcome\nv0.93 handoff and downstream planning update.\n\n## Dependencies\n- WP-27\n\n## Proof Surface\nnext-milestone handoff document.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-28 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:31:45Z",
+      "labels": [
+        "track:roadmap",
+        "area:docs",
+        "type:docs",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5849,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-28] Next milestone planning"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-28A** in the v0.92 milestone: Next-milestone closeout plan.\n\n## Required Outcome\nexact terminal issue, PR, receipt, and ceremony sequence.\n\n## Dependencies\n- WP-28\n\n## Proof Surface\nreviewed closeout plan and issue universe.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-28a -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:32:06Z",
+      "labels": [
+        "track:roadmap",
+        "area:docs",
+        "type:docs",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5850,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-28A] Next-milestone closeout plan"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-29** in the v0.92 milestone: Next milestone review pass.\n\n## Required Outcome\nreview pass over v0.93 planning and closeout readiness.\n\n## Dependencies\n- WP-28A\n\n## Proof Surface\nnext-milestone review findings and disposition.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-29 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:32:08Z",
+      "labels": [
+        "track:roadmap",
+        "area:docs",
+        "type:docs",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5851,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-29] Next milestone review pass"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute **WP-30** in the v0.92 milestone: Release ceremony.\n\n## Required Outcome\nrelease evidence package and ceremony closeout.\n\n## Dependencies\n- WP-29\n\n## Proof Surface\nrelease evidence packet, release notes, and closeout record.\n\n## Acceptance Criteria\n- The required outcome is implemented or produced without substituting planning prose for working behavior.\n- Every declared dependency is verified from current repository and GitHub evidence before execution credit is claimed.\n- The named proof surface is retained, reproducible, and reviewed at the exact merge candidate.\n- Applicable failure, negative, privacy, security, portability, and claim boundaries are explicit and tested or dispositioned.\n- One bounded pre-PR review has no unresolved actionable findings.\n- The implementation PR includes Closes #<this issue>.\n\n## Non-goals\n- Do not absorb adjacent work packages.\n- Do not rewrite historical evidence to look current.\n- Do not claim downstream milestone completion.\n<!-- csdlc-github-operation:v092-final-wave-wp-30 -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T06:32:09Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:release",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5852,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-30] Release ceremony"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Summary\nExecute the bounded post-GitHub-migration build acceleration experiment defined in `.adl/docs/TBD/POST_GITHUB_MIGRATION_BUILD_ACCELERATION_EXPERIMENT_PLAN.md`. Compare the existing `ubuntu-latest` control with one restricted GitHub-hosted 16-core Ubuntu runner, preserve validation semantics, and make a retained adopt/reject/defer decision per measured lane.\n\n## Required Outcome\nA controlled, reversible experiment that determines whether selected ADL CI lanes become materially faster and cost-effective on a restricted 16-core GitHub-hosted runner without weakening exact-head proof, required checks, permissions, or fallback behavior.\n\n## Dependencies\n- WP-02 repository migration is verified through its post-transfer gate.\n- WP-02A CI and coverage reliability establishes the trustworthy control topology.\n- The destination organization has an eligible GitHub plan, owner-approved budget and alerts, and selected-repository runner-group approval.\n- The experiment SHA, workflows, Rust toolchain, lockfiles, permissions, caches, artifacts, required checks, and branch protections are inventoried and frozen.\n\n## Scope\n- Retain a migration-eligibility receipt and frozen workload/environment manifest.\n- Establish fresh same-SHA `ubuntu-latest` cold and warm controls for the shared smoke benchmark and representative Rust lanes.\n- Configure one selected-repository 16-core Ubuntu larger-runner group with maximum concurrency one, bounded budget controls, least privilege, and a proven routing rollback.\n- Run five cold and ten warm trials per candidate and workload, retaining queue, setup, cache, compile/link, execution, artifact, total-time, critical-path, reliability, and cost measurements.\n- Prove output, artifact, and check-semantic parity before routing one canary lane.\n- Produce a lane-by-lane adopt/reject/defer decision using the predeclared thresholds.\n- If a lane is adopted, preserve required-check identity and standard-runner fallback and observe at least ten representative CI runs. If rejected, remove the experimental routing and configuration.\n\n## Acceptance Criteria\n- Entry gates are verified from current migration, GitHub, billing, access, and CI evidence before any paid experiment runs.\n- Control and candidate trials use the same exact commit, workflow, toolchain, lockfiles, commands, permissions, cache design, and proof inputs.\n- Every warm run has cache-hit evidence; cold and warm samples, outliers, queue delay, failures, retries, and cancellations are retained without selective omission.\n- The decision table reports p50 and p95 total time, critical-path change, queue delta, proof parity, cost per run, and cost per critical-path minute saved.\n- No lane is adopted unless it meets the plan's improvement, parity, reliability, queue, canary, and owner-approved cost thresholds.\n- Required-check names, branch protection, exact-head evidence, validation breadth, and result semantics are unchanged.\n- Routing can return to `ubuntu-latest` without product-code or test-expectation changes, and rejected configuration is cleaned up.\n- The final exact-head review has no unresolved actionable findings and the implementation PR includes `Closes #<this issue>`.\n\n## Non-goals\n- Do not use AWS or introduce a self-hosted runner platform.\n- Do not make larger runners the organization-wide default.\n- Do not change test logic, validation breadth, required-check names, or branch protection to manufacture a speedup.\n- Do not test 32-core, coverage-topology, custom-image, ARM64, or self-hosted candidates unless separately authorized by a measured follow-up issue.\n- Do not treat hardware, cache presence, runner provisioning, or planning prose as proof of acceleration.\n<!-- csdlc-github-operation:v092-final-wave-wp-02b-build-acceleration -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T07:52:28Z",
+      "labels": [
+        "track:roadmap",
+        "area:tools",
+        "type:task",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5853,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][WP-02B][build] Run the post-migration build acceleration experiment"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Goal\nProduce real demonstrations, consumer proofs, governance handoff, and complete launch media.\n\n## Child Issues\n- #5835 (WP-17)\n- #5836 (WP-18)\n- #5838 (WP-18B)\n- #5839 (WP-19)\n- #5840 (WP-20)\n- #5844 (WP-24)\n- #5845 (WP-24A)\n\n## Execution Mode\nHybrid. Article and podcast production may begin after WP-02. WP-17 and WP-18 follow WP-16. WP-18B follows WP-14, WP-16, and WP-18. WP-20 follows WP-18, WP-18A, WP-18B, and WP-19. Public claims finalize only after WP-23 release truth.\n\n## Boundary\nThis umbrella coordinates migration semantics, birthday demos, provider-neutral proof, governance handoff, proof coverage, articles, and podcasts. It does not publish externally or replace child C-SDLC authority.\n\n## Exit Criteria\nEvery child is merged with reviewed artifacts, all demos use real paths, all ten articles and ten podcast packages are review-ready, and one sprint review passes.\n<!-- csdlc-github-operation:v092-sprint-demo-publication -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T08:20:21Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:review",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5854,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][sprint] Demonstration, handoff, and publication"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Goal\nDeliver one resilient Runtime and Observatory path, then distributed, protocol, provider, and consumer integration.\n\n## Child Issues\n- #5800 (browser-trusted Observatory HTTPS)\n- #5820 (WP-03 Runtime launch and resilience)\n- #5795 (local Gemma/MLX Shepherd MVP)\n- #5821 (WP-04 distributed Guardian/polis)\n- #5832 (WP-14 ACIP/A2A reconciliation)\n- #5837 (WP-18A Observatory/Unity consumers)\n\n## Execution Mode\nHybrid. #5800 and #5820 establish browser trust and resilient launch. #5795 integrates only after that baseline stabilizes. #5821 architecture/security preparation and #5832 protocol reconciliation may proceed against stable contracts. #5837 integrates only after WP-03, WP-14, and WP-18 are ready.\n\n## Boundary\nThe shared write surface is Runtime launch, Observatory HTTPS/WSS, local provider integration, distributed polis, ACIP/A2A, and consumers. The umbrella coordinates that collision domain; it does not implement child code or replace child C-SDLC authority.\n\n## Exit Criteria\nAll children are merged with real positive and negative proof, the Observatory uses the resilient Runtime and governed protocol path, and one integrated sprint review passes.\n<!-- csdlc-github-operation:v092-sprint-runtime-observatory -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T08:20:21Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:runtime",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5855,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][sprint] Runtime, Observatory, polis, and protocol"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Goal\nReduce and refactor safely, enforce the quality gate, complete reviews, remediate findings, and close the milestone.\n\n## Child Issues\n- #5786 (WP-21)\n- #5841 (WP-21A)\n- #5842 (WP-22)\n- #5843 (WP-23)\n- #5846 through #5852 (WP-25 through WP-30)\n\n## Execution Mode\nSequential. WP-21 precedes WP-21A, WP-21A precedes WP-22, and WP-22 through WP-30 follow their declared dependency order.\n\n## Boundary\nThis umbrella owns coordination and sprint-end truth for reduction, Rust refactoring, quality, documentation, reviews, remediation, next-milestone planning, and ceremony. It does not implement child code or replace child C-SDLC authority.\n\n## Exit Criteria\nEvery child is merged and terminally truthful, review findings are resolved or explicitly routed, release evidence is consistent, and the milestone ceremony completes.\n<!-- csdlc-github-operation:v092-sprint-release-tail -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T08:20:21Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:review",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5856,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][sprint] Quality and release tail"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Goal\nBuild the first-birthday identity, continuity, memory, capability, learning, witness, and review contracts.\n\n## Child Issues\n- #5825 through #5831 (WP-08 through WP-13A)\n- #5833 (WP-15)\n- #5834 (WP-16)\n\n## Execution Mode\nHybrid dependency graph. WP-08 precedes WP-09 and WP-12. WP-09 precedes WP-10 and WP-11. WP-10, WP-11, WP-12, and WP-13 precede WP-15. WP-13A and WP-15 precede WP-16. Dependency-ready memory, capability, profile, and learning lanes may run in parallel.\n\n## Boundary\nThis umbrella coordinates birthday-contract integration and proof. It does not absorb v0.93 governance, implement child code, or replace child C-SDLC authority.\n\n## Exit Criteria\nEvery child is merged with real positive and negative proof, the integrated birthday review packet is internally consistent, and one sprint review passes without overclaiming personhood or governance.\n<!-- csdlc-github-operation:v092-sprint-birthday-core -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T08:20:21Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:runtime",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5857,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][sprint] First-birthday core"
+    },
+    {
+      "assignees": [
+
+      ],
+      "body": "## Goal\nEstablish current documentation, repository ownership, reliable proof infrastructure, and fast operator workflows.\n\n## Child Issues\n- #5818 (WP-01B)\n- #5819 (WP-02)\n- #5812 (supporting Freedom Gate cleanup)\n- #5801 (WP-02A)\n- #5853 (WP-02B)\n- #5822 (WP-05)\n- #5823 (WP-06)\n- #5824 (WP-07)\n\n## Execution Mode\nHybrid. WP-01B precedes WP-02. WP-02 precedes WP-02A and WP-02B. WP-02A precedes WP-02B, WP-05, and WP-06. WP-05 precedes WP-07. WP-05 and WP-06 may execute in parallel after WP-02A; #5812 is a bounded low-collision repair coordinated with WP-02A.\n\n## Boundary\nThis umbrella coordinates dependencies, lane ownership, integration proof, and sprint review. It does not implement child code or replace child C-SDLC, validation, review, or publication authority.\n\n## Exit Criteria\nEvery child issue is merged with its own accepted proof, the serial gates are satisfied, cross-lane regressions are resolved, and one sprint review confirms the foundation is ready for dependent work.\n<!-- csdlc-github-operation:v092-sprint-foundation -->\n",
+      "closed_at": null,
+      "created_at": "2026-08-05T08:20:21Z",
+      "labels": [
+        "track:roadmap",
+        "type:task",
+        "area:review",
+        "version:v0.92"
+      ],
+      "marker_present": false,
+      "milestone": null,
+      "number": 5858,
+      "repository": "danielbaustin/agent-design-language",
+      "schema": "csdlc.github_issue.v1",
+      "state": "open",
+      "title": "[v0.92][sprint] Foundation and throughput"
+    }
+  ]
+}

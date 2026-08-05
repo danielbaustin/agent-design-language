@@ -30,6 +30,12 @@ Before execution:
 5. Use sprint-conductor for coordination, but route every implementation
    through the child's typed v2 lifecycle.
 
+WP-01 published the initialized child records under its own temporary publication
+claim. After WP-01 releases that claim, create and register each real child
+worktree, use typed `csdlc-bind --reacquire-request` to acquire the child's exact
+issue-local paths, then run the normal bind and goal sequence. Do not assume the
+bootstrap reservation is still active.
+
 Exact child wave:
 
 - #5818, WP-01B: activate canonical v0.92 docs and version surfaces

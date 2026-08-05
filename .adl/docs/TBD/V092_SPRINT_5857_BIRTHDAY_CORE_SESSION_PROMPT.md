@@ -23,6 +23,12 @@ Before execution:
 5. Do not claim birth, continuity, memory grounding, capability, learning, or
    witness completion from prose or fixtures.
 
+WP-01 published the initialized child records under its own temporary publication
+claim. After WP-01 releases that claim, create and register each real child
+worktree, use typed `csdlc-bind --reacquire-request` to acquire the child's exact
+issue-local paths, then run the normal bind and goal sequence. Do not assume the
+bootstrap reservation is still active.
+
 Exact child wave:
 
 - #5825, WP-08: first true Godel-agent birthday contract

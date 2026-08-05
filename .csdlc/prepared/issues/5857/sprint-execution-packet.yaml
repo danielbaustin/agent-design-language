@@ -20,5 +20,5 @@ serial_gates:
   - issues 5831 and 5833 before 5834
 review_path: .csdlc/evidence/5857/sprint-review.md
 activity_log_path: .csdlc/evidence/5857/activity.jsonl
-child_goal_rule: Each child session creates an issue-bound goal after bind and before implementation.
+child_goal_rule: After WP-01 releases its publication claim, each child session registers its worktree, reacquires the exact issue-local claim, binds, and creates an issue-bound goal before implementation.
 closeout_rule: Complete the birthday-core integrated review before umbrella closeout.

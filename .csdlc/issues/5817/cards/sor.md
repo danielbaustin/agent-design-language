@@ -114,11 +114,11 @@ Activated the canonical v0.92 milestone package, requalified prerequisites, open
 
 ## Integration
 
-pr_open
+worktree_only
 
 ## Publication
 
-Publication: ready
+Publication: not_published
 
 Merge: not_merged
 

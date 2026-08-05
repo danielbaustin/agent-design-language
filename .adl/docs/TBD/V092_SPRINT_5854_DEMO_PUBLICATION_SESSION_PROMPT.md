@@ -21,6 +21,12 @@ Startup:
    never recreate initialized cards through a sunset .adl task-bundle route.
 4. Prepare all child plans, but execute only lanes with satisfied dependencies.
 
+WP-01 published the initialized child records under its own temporary publication
+claim. After WP-01 releases that claim, create and register each real child
+worktree, use typed `csdlc-bind --reacquire-request` to acquire the child's exact
+issue-local paths, then run the normal bind and goal sequence. Do not assume the
+bootstrap reservation is still active.
+
 Exact child wave:
 
 - #5835, WP-17: cross-polis continuity and migration semantics

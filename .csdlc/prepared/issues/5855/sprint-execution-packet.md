@@ -53,7 +53,9 @@ Out of scope:
 ## Budget And Goal Accounting
 
 - No sprint-global token budget is preallocated.
-- Every implementation session creates its own issue-bound goal after bind and readiness.
+- After WP-01 releases its publication claim, every implementation session
+  registers its child worktree, reacquires the exact issue-local claim, binds,
+  and creates its own issue-bound goal before implementation.
 - Actual time and token use are recorded per child when available and are never inferred as zero.
 
 ## Watcher Plan
@@ -73,7 +75,7 @@ Out of scope:
 |---|---|---|---|
 | lane 1 | `#5821` | Distributed-polis architecture and security work remains in its child worktree. | Runtime ingress contracts from issue 5820 are stable |
 | lane 2 | `#5832` | Protocol work is isolated after its distributed-runtime dependency. | issue 5821 and the declared ACIP substrate and trace baselines are complete |
-| lane 3 | `#5795` | Local-provider work cannot redefine Observatory or Runtime contracts. | preparation may precede integration; integration waits for issues 5800 and 5820 |
+| lane 3 | `#5795` | Local-provider work cannot redefine Observatory, Runtime, or WP-14 protocol contracts. | preparation may precede integration; integration waits for issues 5800 and 5820 plus WP-14 issue 5832 contract stability |
 
 ## Candidate Parallel Lanes
 
@@ -81,14 +83,14 @@ Out of scope:
 |---|---|---|---|---|---|
 | candidate 1 | safe_parallel | `#5821` | child worktree | Runtime ingress contracts from issue 5820 are stable | collapse to serial on overlap |
 | candidate 2 | safe_parallel | `#5832` | child worktree | issue 5821 and declared protocol baselines are complete | collapse to serial on overlap |
-| candidate 3 | safe_parallel | `#5795` | child worktree | preparation may precede integration; integration waits for issues 5800 and 5820 | collapse to serial on overlap |
+| candidate 3 | safe_parallel | `#5795` | child worktree | preparation may precede integration; integration waits for issues 5800 and 5820 plus WP-14 issue 5832 contract stability | collapse to serial on overlap |
 
 ## Serial Gates
 
 | Gate | Blocks | Exit condition | Owner |
 |---|---|---|---|
 | gate 1 | downstream children | issues 5800 and 5820 establish the trusted local launch baseline | sprint session |
-| gate 2 | downstream children | issue 5795 integrates after issues 5800 and 5820 | sprint session |
+| gate 2 | downstream children | issue 5795 integrates after issues 5800 and 5820 plus WP-14 issue 5832 contract stability | sprint session |
 | gate 3 | downstream children | issue 5837 integrates after issues 5820 and 5832 and its WP-18 dependency | sprint session |
 
 ## PVF / Validation-Tail Notes

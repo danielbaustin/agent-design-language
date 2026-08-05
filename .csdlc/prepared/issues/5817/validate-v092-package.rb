@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "json"
+require "digest"
+require "open3"
 require "pathname"
 require "set"
 require "yaml"
@@ -97,13 +99,27 @@ child_rows.each do |row|
   raise "issue #{issue} dependencies do not match wave" unless stp.fetch("dependencies") == Array(row["depends_on"]).map(&:to_s)
 end
 
-claim_paths = child_rows.flat_map do |row|
-  record = JSON.parse(File.read(File.join(ROOT, ".csdlc/issues", row.fetch("issue").to_s, "index.json")))
-  record.fetch("claim").fetch("protected_paths")
+child_rows.each do |row|
+  issue = Integer(row.fetch("issue"))
+  record = JSON.parse(File.read(File.join(ROOT, ".csdlc/issues", issue.to_s, "index.json")))
+  raise "issue #{issue} retained a WP-01 bootstrap claim" unless record["claim"].nil?
 end
-path_counts = claim_paths.each_with_object(Hash.new(0)) { |path, counts| counts[path] += 1 }
-duplicates = path_counts.select { |_path, count| count > 1 }
-raise "duplicate child claim paths: #{duplicates.keys.join(", ")}" unless duplicates.empty?
+
+parent_record = JSON.parse(File.read(File.join(ROOT, ".csdlc/issues/5817/index.json")))
+parent_claim = parent_record.fetch("claim")
+raise "WP-01 publication claim identity mismatch" unless parent_claim.fetch("id") == "claim-5817-v092-wp01"
+protected_paths = parent_claim.fetch("protected_paths")
+committed_output, committed_status = Open3.capture2("git", "-C", ROOT, "diff", "--name-only", "origin/main...HEAD")
+working_output, working_status = Open3.capture2("git", "-C", ROOT, "diff", "--name-only")
+raise "cannot inspect committed WP-01 paths" unless committed_status.success?
+raise "cannot inspect working WP-01 paths" unless working_status.success?
+committed_paths = committed_output.lines.map(&:strip)
+working_paths = working_output.lines.map(&:strip)
+changed_paths = (committed_paths + working_paths).uniq
+uncovered_paths = changed_paths.reject do |path|
+  protected_paths.any? { |protected| path == protected || path.start_with?("#{protected}/") }
+end
+raise "WP-01 claim does not cover: #{uncovered_paths.join(", ")}" unless uncovered_paths.empty?
 
 sprints = wave.fetch("execution_sprints")
 raise "expected five execution sprints" unless sprints.length == 5
@@ -139,6 +155,7 @@ sprints.each do |sprint|
   record = JSON.parse(File.read(File.join(issue_root, "index.json")))
   raise "sprint issue #{issue} is not initialized" unless record.fetch("phase") == "initialized"
   raise "sprint issue #{issue} record identity mismatch" unless record.fetch("issue") == issue
+  raise "sprint issue #{issue} retained a WP-01 bootstrap claim" unless record["claim"].nil?
   CARD_NAMES.each do |card|
     %W[#{card}.md #{card}.values.json].each do |name|
       path = File.join(issue_root, "cards", name)
@@ -167,6 +184,12 @@ sprints.each do |sprint|
   raise "sprint packet #{issue} lacks review path" if packet.fetch("review_path").strip.empty?
   raise "sprint packet #{issue} lacks activity log" if packet.fetch("activity_log_path").strip.empty?
   raise "sprint packet #{issue} lacks child goal rule" if packet.fetch("child_goal_rule").strip.empty?
+  unless packet.fetch("child_goal_rule").include?("reacquires the exact issue-local claim")
+    raise "sprint packet #{issue} omits typed child claim reacquisition"
+  end
+  unless prompt.include?("csdlc-bind --reacquire-request")
+    raise "sprint #{sprint.fetch("sprint")} prompt omits typed child claim reacquisition"
+  end
   packet.fetch("safe_parallel_lanes").each do |lane|
     lane.fetch("issues").map { |lane_issue| Integer(lane_issue) }.combination(2) do |left_issue, right_issue|
       left_wp = issue_to_wp[left_issue]
@@ -198,6 +221,43 @@ sprints.each do |sprint|
   missing_sections = required_sections.reject { |section| human_packet.include?(section) }
   raise "sprint packet #{issue} missing sections: #{missing_sections.join(", ")}" unless missing_sections.empty?
 end
+
+live_contract_path = File.join(ROOT, ".csdlc/evidence/5817/live-issue-contracts.json")
+raise "missing retained live issue contracts" unless File.file?(live_contract_path) && !File.zero?(live_contract_path)
+live_contracts = JSON.parse(File.read(live_contract_path))
+raise "live issue contract schema mismatch" unless live_contracts.fetch("schema") == "adl.v092.live_issue_contracts.v1"
+raise "live issue contract repository mismatch" unless live_contracts.fetch("repository") == "danielbaustin/agent-design-language"
+expected_wave_digest = Digest::SHA256.file(WAVE_PATH).hexdigest
+raise "live issue contracts are stale for the current wave" unless live_contracts.fetch("wave_sha256") == expected_wave_digest
+live_issues = live_contracts.fetch("issues").to_h { |packet| [Integer(packet.fetch("number")), packet] }
+expected_live_issues = ([5817] + all_issues + sprint_issues).uniq.sort
+raise "retained live issue set differs" unless live_issues.keys.sort == expected_live_issues
+live_issues.each do |issue, packet|
+  raise "live issue #{issue} is not open" unless packet.fetch("state") == "open"
+end
+rows.reject { |row| row.fetch("wp") == "WP-01" }.each do |row|
+  issue = Integer(row.fetch("issue"))
+  packet = live_issues.fetch(issue)
+  raise "live issue #{issue} title omits #{row.fetch("wp")}" unless packet.fetch("title").include?("[#{row.fetch("wp")}]")
+  Array(row["depends_on"]).each do |dependency|
+    dependency_tokens = dependency.scan(/WP-\d+[A-Z]?|issue-\d+|#\d+/)
+    dependency_tokens.each do |token|
+      rendered_token = token.start_with?("issue-") ? "##{token.delete_prefix("issue-")}" : token
+      raise "live issue #{issue} omits dependency #{rendered_token}" unless packet.fetch("body").include?(rendered_token)
+    end
+  end
+end
+shepherd_body = live_issues.fetch(5795).fetch("body")
+raise "live issue 5795 retains v0.91.8 scope" if shepherd_body.include?("v0.91.8 local-only MVP")
+[
+  "- WP-03\n",
+  "- Issue #5800\n",
+  "- WP-14 (#5832) contract stability before final Observatory integration\n"
+].each do |dependency|
+  raise "live issue 5795 omits #{dependency.strip}" unless shepherd_body.include?(dependency)
+end
+stale_wp01a = live_issues.values.select { |packet| packet.fetch("body").include?("WP-01A") }.map { |packet| packet.fetch("number") }
+raise "live issues retain stale WP-01A dependencies: #{stale_wp01a.join(", ")}" unless stale_wp01a.empty?
 
 expected_sources = %w[
   .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md
