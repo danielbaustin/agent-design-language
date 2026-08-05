@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1e45fdeda7d0795b7290a037be238e7e7c8624af5008b8c868d9e3b0a4c50365",
   "phase": "implemented",
-  "generation": 6,
-  "digest": "514dca6dc62ba13b40f54afd281160ac58f69411705356fc074914e38282957f",
+  "generation": 10,
+  "digest": "3ec9fc166710a4b75267cf06723d334b8d02f6a5d06357675ae881c693d76c46",
   "claim": {
     "id": "claim-5359-v0918-prep-recovery-20260804",
     "owner": "codex:5359-preparation-owner",
-    "generation": 6,
+    "generation": 10,
     "acquired_unix_seconds": 1785865465,
     "expires_unix_seconds": 1786470265,
     "heartbeat_unix_seconds": 1785865465,
@@ -42,34 +42,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "6f2dcd3828c3c551ea201363a61f525e2f388dea1c6f149c45a3ec464df681eb",
+      "values_digest": "8335b4e300de33b7a1f86bec9f9854bd5c87926b54d85249e7311d6eb9bde493",
       "rendered_digest": "b5b05423d638e93763bbb471be206e9a35ec25d30f99900e0f97e789c0d928ab",
       "ast_digest": "3413b735bfe7ddbedd9595dde0373caedd93e4f2d53fe1eb5a2db6c78dd47ef7"
     },
     "stp": {
-      "values_digest": "81fa9e572a5a1857a31ef2d48e3ccc1e7b8ae527aa852a7818a6895571055d49",
+      "values_digest": "cd97fec10198501960b06340f52df712e56fa622a588542dd43534c5532ee0ff",
       "rendered_digest": "709a96bb616f3e3591b958f7eda47f81a8c21588ac42b4dc8dd49b03b128b98e",
       "ast_digest": "eebc1238aefc97fda13ea37fca2b8eafd5a65dc00f7c3f140f37d0853f7b58a0"
     },
     "spp": {
-      "values_digest": "eb9ba6afd514b0933273044f0e5b145d4531835006adbdc090a9a67b9cb4e6bc",
+      "values_digest": "c8cacabea69f53c7c59d31d8410c67e7abb7f99b1b982244c7c8cf29a9b1117b",
       "rendered_digest": "76b9658f0c0cd986e58d96c68590fe5e2645c26b1860704d99f3951c132637e7",
       "ast_digest": "55c93f3f78c5e88784167dbc380ce05eea0bea38176b2468178ec6f7e5adf647"
     },
     "vpp": {
-      "values_digest": "ebaaaaee97a4dace56ad845590c2351b46661921e4dc4abff6955dfe5decd088",
+      "values_digest": "867cafe3f988f59d511d0cd00287f292d9070e66047046522b54a342d391c0a2",
       "rendered_digest": "ceb39c57a89d83c4a8ac5b88043a6b036b8f4a7bd76643e5262299605778d662",
       "ast_digest": "7b19a1624305e712a92f1ec429ab2c5ec28e3688f72c4bb5b979dcaf9080fc3b"
     },
     "srp": {
-      "values_digest": "289cde298b5741aa110bfaf20f540ff92e20acecfeef539e18fcaf4f67822911",
+      "values_digest": "4b71e1cbfbbf1f93a75c12f01ecc825179acb6cfc56bbc387e0b99b470430456",
       "rendered_digest": "b1d351a312e0ff8b9fff23f64125d3ac5833b85c5ce269bd1ed8e1af44dee26b",
       "ast_digest": "827117fdf0f9dbb73e8baae3ca4a94af3b2f8dca8667853d71c6687538c29165"
     },
     "sor": {
-      "values_digest": "06aa411cb39a2741ab519e6d0e21c4ab21ae6354ee554811efaef0ecbe98f3d5",
-      "rendered_digest": "543c8f3d26317c8cb5b2161f335ae1dfdc5af159cce3efa41762a440c51476cb",
-      "ast_digest": "0ef7cc505ff55431ec0b68eafafee46013a3d35647e69ce1417576ef68d3b2fe"
+      "values_digest": "5a8b8059aa18858fe47d46931c2802344a49b644af5d2bcfdfc4319997ec8a4e",
+      "rendered_digest": "e79b2f781610cb50ea74e946c4805784307bbf71acb0378befea900fda6042d8",
+      "ast_digest": "96c505af8f908ff03ccc6febd702641636b4f4747428341e56cdd4cc42f13cba"
     }
   },
   "transitions": [
@@ -165,6 +165,34 @@
       "actor": "codex:5359-planning-review",
       "reason": "The WP-22 planning package and source dispositions are implemented and focused validation passes; advance to exact-revision review.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5359-planning-review",
+      "reason": "Record the independently replayable v0.92 package validation command.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby\",\"-ryaml\",\".csdlc/prepared/issues/5359/validate-v092-package.rb\"],\"purpose\":\"Prove YAML structure, exact WBS/YAML WP parity, complete TBD source dispositions, and six-card policy.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5359-planning-review",
+      "reason": "Record the independently replayable typed lifecycle validation command.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5359\"],\"purpose\":\"Prove typed lifecycle integrity and all six card projections.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5359/index.json\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5359-planning-review",
+      "reason": "Record the independently replayable diff-hygiene validation command.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove the bounded planning changes contain no whitespace errors.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5359-planning-review",
+      "reason": "Replace the non-replayable compound validation argv with the three independently executed validation commands.",
+      "operation": "{\"operation\":\"replace_execution\",\"summary\":\"Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the approved reliability, tooling, migration, protocol, consumer, proof, cleanup, and publication tracks; retained the birthday product spine and full release tail; and recorded explicit technical deferrals and later backlog.\",\"changes\":[\"Expanded the v0.92 WBS to a 35-row candidate sequence with the Agent Logic repository migration before substantive work, an early living article track, parallel reliability/tooling tracks, and a complete review/closeout tail.\",\"Updated the sprint plan with migration, publication setup, proving-substrate, Runtime, workflow, birthday, consumer, cleanup, and release phases.\",\"Updated the issue-wave YAML with exact WP/title parity, scheduled source ownership, deferred source retention, and later backlog.\",\"Added the WP-22 planning review packet with blockers, stale assumptions, overclaims, non-claims, and WP-23 disposition.\",\"Preserved draft_pre_open status and opened no v0.92 execution issues.\"],\"artifacts\":[\"docs/milestones/v0.92/WBS_v0.92.md\",\"docs/milestones/v0.92/SPRINT_v0.92.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\",\".csdlc/prepared/issues/5359/validate-v092-package.rb\"],\"validation\":[{\"command\":[\"ruby\",\"-ryaml\",\".csdlc/prepared/issues/5359/validate-v092-package.rb\"],\"purpose\":\"Prove YAML structure, exact WBS/YAML WP parity, complete TBD source dispositions, and six-card policy.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\"},{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5359\"],\"purpose\":\"Prove typed lifecycle integrity and all six card projections.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5359/index.json\"},{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove the bounded planning changes contain no whitespace errors.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\"}]}"
     }
   ]
 }

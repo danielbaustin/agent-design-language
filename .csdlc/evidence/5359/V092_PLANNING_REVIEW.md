@@ -40,6 +40,11 @@ review and closeout tail.
 - The old sequence omitted the early canonical-docs, CI/coverage, Runtime
   reliability, distributed-runtime, workflow-efficiency, remote validation,
   and prompt-typing tracks.
+- The Agent Logic repository migration was listed only as a merged planning
+  input rather than an executable v0.92 WP. It is now WP-01A and must complete
+  before substantive milestone work.
+- The Medium article was incorrectly placed at the end of implementation. It
+  now starts as an early living draft after WP-01A and is finalized by WP-23.
 
 ## Overclaims Removed
 
@@ -63,6 +68,7 @@ planning repairs, implementation, or hidden remediation.
 | Track | v0.92 placement | Source inputs | Disposition |
 | --- | --- | --- | --- |
 | Canonical docs and issue-wave readiness | WP-01 | current milestone package and v0.91.8 release truth | First issue; updates canonical docs and opens the reviewed wave. |
+| Agent Logic GitHub organization repository migration | WP-01A | `AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md` | Execute the six-repository serial transfer before substantive milestone work; retain `danielbaustin/asksifu` as personal. |
 | CI and coverage reliability | WP-02 | current CI/coverage findings | Second issue; repairs the proving substrate before broad execution. |
 | Runtime launch and resilience consolidation | WP-03 | `RUNTIME_V3_LAUNCH_AND_OBSERVATORY_RECOVERY_PLAN.md`; `resilience/RUNTIME_V3_LONG_LIVED_AGENT_OS_PLAN.md` | One bounded Runtime reliability WP. |
 | Distributed Guardian/polis runtime | WP-04 | `CSM_RUNTIME_DISTRIBUTED_DESIGN.md`; `CSM_RUNTIME_DISTRIBUTED_EXECUTION_PLAN.md` | Execute the documented 16-issue program under one architecture/security-gated WP. |
@@ -73,7 +79,7 @@ planning repairs, implementation, or hidden remediation.
 | Observatory/Unity consumer integration | WP-18A | `OBSERVATORY_UNITY_DESIGN.md` | Separate consumer WP; the Observatory remains outside the Runtime API implementation. |
 | Provider-neutral multi-agent proof | WP-18B | `multiagent_demos/` | Provider-neutral proof tranche after the birthday review packet is available. |
 | Repository-wide code reduction remainder | WP-21 | `ADL_REPOSITORY_CODE_REDUCTION_PLAN_v0.91.8.md` | Bounded cleanup only; preserve behavior and prove the deletion denominator. |
-| Medium launch article | WP-24 | former empty `publication/medium_launch_articles/1-WHY-ADL.md` placeholder | Author a real release-grounded article; do not restore an empty placeholder. |
+| Medium launch article | WP-24 | former empty `publication/medium_launch_articles/1-WHY-ADL.md` placeholder | Start a real living draft immediately after WP-01A, maintain it as evidence lands, and finalize claims in WP-23. |
 
 ## Explicitly Deferred
 
@@ -95,17 +101,19 @@ planning repairs, implementation, or hidden remediation.
 ## Sequencing Rules
 
 1. WP-01 updates canonical docs and opens only the reviewed issue wave.
-2. WP-02 repairs CI/coverage before it is credited as milestone proof.
-3. WP-03 through WP-07 may proceed in parallel where their dependencies allow.
-4. The birthday product spine starts at WP-08 and retains identity,
+2. WP-01A executes and verifies the Agent Logic repository migration before substantive milestone work.
+3. WP-24 begins its living draft after WP-01A; WP-23 owns final release-truth alignment.
+4. WP-02 repairs CI/coverage before it is credited as milestone proof.
+5. WP-03 through WP-07 may proceed in parallel where their dependencies allow.
+6. The birthday product spine starts at WP-08 and retains identity,
    continuity, memory, capability, profile, protocol, witness, review, and
    negative-proof boundaries.
-5. Distributed Runtime work has an architecture/security gate and explicit
+7. Distributed Runtime work has an architecture/security gate and explicit
    child issues; it is not treated as one oversized implementation commit.
-6. Observatory/Unity remains a consumer of the versioned Runtime API.
-7. WP-21 cleanup is behavior-preserving and cannot substitute deletion counts
+8. Observatory/Unity remains a consumer of the versioned Runtime API.
+9. WP-21 cleanup is behavior-preserving and cannot substitute deletion counts
    for product proof.
-8. The release tail is quality, docs, publication, internal review, external
+10. The release tail is quality, docs and article finalization, internal review, external
    review, remediation, next-milestone planning, closeout planning,
    next-milestone review, and ceremony.
 

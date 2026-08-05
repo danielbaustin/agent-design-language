@@ -1,0 +1,25 @@
+{
+  "issue": 5359,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "2f116363b65705df18b0921fa2b3796316374a47b5fcca3b046adba9157ade8c",
+  "claim_id": "claim-5359-v0918-prep-recovery-20260804",
+  "actor": "codex:5359-planning-review",
+  "reason": "Record the independently replayable typed lifecycle validation command.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+        "--repo",
+        ".",
+        "--issue",
+        "5359"
+      ],
+      "purpose": "Prove typed lifecycle integrity and all six card projections.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/issues/5359/index.json"
+    }
+  },
+  "fail_after_backup": false
+}

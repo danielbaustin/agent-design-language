@@ -12,7 +12,7 @@ Status: pre_phase
 
 ## Summary
 
-Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the approved reliability, tooling, protocol, consumer, proof, cleanup, and article tracks; retained the birthday product spine and full release tail; and recorded explicit technical deferrals and later backlog.
+Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the approved reliability, tooling, migration, protocol, consumer, proof, cleanup, and publication tracks; retained the birthday product spine and full release tail; and recorded explicit technical deferrals and later backlog.
 
 ## Artifacts
 
@@ -24,8 +24,8 @@ Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the a
 
 ## Execution
 
-- Expanded the v0.92 WBS to a 34-row candidate sequence with early parallel reliability/tooling tracks and a complete review/closeout tail.
-- Updated the sprint plan with proving-substrate, Runtime, workflow, birthday, consumer, cleanup, and release phases.
+- Expanded the v0.92 WBS to a 35-row candidate sequence with the Agent Logic repository migration before substantive work, an early living article track, parallel reliability/tooling tracks, and a complete review/closeout tail.
+- Updated the sprint plan with migration, publication setup, proving-substrate, Runtime, workflow, birthday, consumer, cleanup, and release phases.
 - Updated the issue-wave YAML with exact WP/title parity, scheduled source ownership, deferred source retention, and later backlog.
 - Added the WP-22 planning review packet with blockers, stale assumptions, overclaims, non-claims, and WP-23 disposition.
 - Preserved draft_pre_open status and opened no v0.92 execution issues.
@@ -37,19 +37,31 @@ Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the a
     "command": [
       "ruby",
       "-ryaml",
-      ".csdlc/prepared/issues/5359/validate-v092-package.rb",
-      "&&",
-      "csdlc-doctor",
+      ".csdlc/prepared/issues/5359/validate-v092-package.rb"
+    ],
+    "purpose": "Prove YAML structure, exact WBS/YAML WP parity, complete TBD source dispositions, and six-card policy.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5359/V092_PLANNING_REVIEW.md"
+  },
+  {
+    "command": [
+      "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
       "--repo",
       ".",
       "--issue",
-      "5359",
-      "&&",
+      "5359"
+    ],
+    "purpose": "Prove typed lifecycle integrity and all six card projections.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/issues/5359/index.json"
+  },
+  {
+    "command": [
       "git",
       "diff",
       "--check"
     ],
-    "purpose": "Prove YAML structure, exact WBS/YAML WP parity, complete TBD source dispositions, six-card policy, typed lifecycle integrity, and diff hygiene.",
+    "purpose": "Prove the bounded planning changes contain no whitespace errors.",
     "outcome": "passed",
     "evidence_ref": ".csdlc/evidence/5359/V092_PLANNING_REVIEW.md"
   }

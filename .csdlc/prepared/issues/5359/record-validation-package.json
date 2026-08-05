@@ -1,0 +1,23 @@
+{
+  "issue": 5359,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "514dca6dc62ba13b40f54afd281160ac58f69411705356fc074914e38282957f",
+  "claim_id": "claim-5359-v0918-prep-recovery-20260804",
+  "actor": "codex:5359-planning-review",
+  "reason": "Record the independently replayable v0.92 package validation command.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        "-ryaml",
+        ".csdlc/prepared/issues/5359/validate-v092-package.rb"
+      ],
+      "purpose": "Prove YAML structure, exact WBS/YAML WP parity, complete TBD source dispositions, and six-card policy.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5359/V092_PLANNING_REVIEW.md"
+    }
+  },
+  "fail_after_backup": false
+}

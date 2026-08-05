@@ -1,0 +1,23 @@
+{
+  "issue": 5359,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "094f638000e0511f62a05e65cc88087c7e354e502c811a7b766266a3a6efad06",
+  "claim_id": "claim-5359-v0918-prep-recovery-20260804",
+  "actor": "codex:5359-planning-review",
+  "reason": "Record the independently replayable diff-hygiene validation command.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "purpose": "Prove the bounded planning changes contain no whitespace errors.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5359/V092_PLANNING_REVIEW.md"
+    }
+  },
+  "fail_after_backup": false
+}

@@ -18,6 +18,7 @@ end
 raise "WBS and issue-wave WP rows differ" unless wbs_wps == yaml_wps
 
 expected_sources = %w[
+  .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md
   .adl/docs/TBD/RUNTIME_V3_LAUNCH_AND_OBSERVATORY_RECOVERY_PLAN.md
   .adl/docs/TBD/resilience/RUNTIME_V3_LONG_LIVED_AGENT_OS_PLAN.md
   .adl/docs/TBD/CSDLC_V2_SESSION_ESTIMATION_RECONNECTION_PLAN.md

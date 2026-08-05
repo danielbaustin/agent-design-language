@@ -11,6 +11,8 @@ notes:
   - WP-01 updates canonical docs and consumes the final v0.91.8 release package, the activation-test map, AEE completion evidence, issue 3377, and WP-22 planning dispositions before opening the wave.
   - WP-02 repairs CI and coverage before broad milestone proof receives credit.
   - Runtime, distributed Guardian/polis, C-SDLC efficiency, remote validation, and prompt-typing tracks may proceed in parallel only where their declared dependencies allow.
+  - WP-01A completes the Agent Logic GitHub organization repository migration before substantive milestone work begins.
+  - WP-24 starts an early living article draft after WP-01A and receives final release-truth alignment in WP-23.
   - WP-01 must requalify post-5104 loop-runtime merge evidence against current Runtime v3 contracts before consuming loops as validated replayable objects.
   - No v0.92 issue may claim legal personhood, production citizenship, consciousness proof, or completed v0.93 constitutional governance.
   - Every opened v0.92 issue must receive SIP, STP, SPP, VPP, SRP, and SOR cards from the active prompt-template registry.
@@ -37,6 +39,10 @@ scheduled_tbd_inputs:
     sources:
       - .adl/docs/TBD/RUNTIME_V3_LAUNCH_AND_OBSERVATORY_RECOVERY_PLAN.md
       - .adl/docs/TBD/resilience/RUNTIME_V3_LONG_LIVED_AGENT_OS_PLAN.md
+  - track: agent_logic_account_repo_migration
+    wp: WP-01A
+    sources:
+      - .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md
   - track: distributed_guardian_polis
     wp: WP-04
     sources:
@@ -122,11 +128,25 @@ work_packages:
     depends_on: [v0.91.8 release package, activation-test map, AEE completion tranche, issue-3377, issue-5359]
     primary_deliverable: updated canonical docs, reviewed opened issue wave, six-card bundles, and explicit deferred-source index
     proof_surface: milestone docs, canonical version/docs surfaces, feature docs, ADR plan, issue-wave YAML, and card validation
+  - wp: WP-01A
+    issue: pending
+    title: Agent Logic GitHub organization repository migration
+    queue: operations
+    depends_on: [WP-01, confirmed destination organization and owners, complete seven-repository inventory, billing and security readiness]
+    primary_deliverable: six serially transferred company repositories with danielbaustin/asksifu retained as personal
+    proof_surface: pre-transfer manifests, per-repository transfer and verification evidence, integration updates, negative asksifu control, and final migration report
+  - wp: WP-24
+    issue: pending
+    title: Medium launch article
+    queue: publication
+    depends_on: [WP-01A for initial draft, WP-23 for final release-truth alignment]
+    primary_deliverable: early substantive living draft followed by final release-grounded publication disposition
+    proof_surface: reviewed article source, claim scan, links, milestone evidence updates, and publication boundary
   - wp: WP-02
     issue: pending
     title: CI and coverage reliability
     queue: tooling
-    depends_on: [WP-01]
+    depends_on: [WP-01A]
     primary_deliverable: reliable focused and slow test routing, coverage aggregation, and platform parity
     proof_surface: CI contracts, failure regressions, and exact-head green required checks
   - wp: WP-03
@@ -297,13 +317,6 @@ work_packages:
     depends_on: [WP-22]
     primary_deliverable: current canonical docs, release notes, feature list, ADR plan, skills, agent guidance, and milestone docs
     proof_surface: docs-review packet, ADR candidate packet if needed, and release-truth diff
-  - wp: WP-24
-    issue: pending
-    title: Medium launch article
-    queue: publication
-    depends_on: [WP-23]
-    primary_deliverable: substantive release-grounded article and publication disposition
-    proof_surface: reviewed article source, claim scan, links, and publication boundary
   - wp: WP-25
     issue: pending
     title: Internal review

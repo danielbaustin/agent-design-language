@@ -26,7 +26,8 @@ final sprint state machine and does not open or close any v0.92 sprint issues.
 
 ## Sprint Overview
 
-The milestone should first establish reliable CI, Runtime launch/resilience,
+The milestone should first complete the Agent Logic GitHub organization and
+repository migration, then establish reliable CI, Runtime launch/resilience,
 distributed Guardian/polis execution, and efficient workflow tooling. It then
 moves through birthday definition, identity evidence, transport/readability,
 consumer and provider-neutral proofs, cleanup, review, remediation, and
@@ -36,6 +37,11 @@ the final issue wave.
 ## Sprint Goals
 
 - Preserve first-birthday scope without absorbing v0.93 governance.
+- Complete the reviewed six-repository Agent Logic GitHub organization
+  migration before substantive milestone execution, while retaining
+  `danielbaustin/asksifu` as personal.
+- Start the Medium launch article as an early living draft and finalize its
+  claims only after the release-truth pass.
 - Repair CI/coverage before it is used as milestone proof.
 - Consolidate Runtime reliability and schedule the distributed Guardian/polis
   program without hiding its 16 child issues.
@@ -65,14 +71,16 @@ program.
 ## Work Plan
 
 1. Update canonical docs and seed the final issue wave and six-card bundles.
-2. Repair CI/coverage.
-3. Run Runtime reliability, distributed-runtime, workflow-efficiency, remote
+2. Execute and verify the Agent Logic GitHub organization repository migration.
+3. Start the Medium launch article as a reviewable living draft.
+4. Repair CI/coverage.
+5. Run Runtime reliability, distributed-runtime, workflow-efficiency, remote
    validation, and prompt-typing tracks in parallel where safe.
-4. Execute birthday, identity, continuity, memory, capability, ACP,
+6. Execute birthday, identity, continuity, memory, capability, ACP,
    adaptive-learning, ACIP/A2A, witness, review-packet, demo, consumer,
    provider-neutral proof, and handoff work in dependency order.
-5. Complete the bounded repository-reduction cleanup.
-6. Run quality, docs, article, internal review, external review, remediation,
+7. Complete the bounded repository-reduction cleanup.
+8. Run quality, docs and article finalization, internal review, external review, remediation,
    next-milestone planning, closeout planning, next-milestone review, and
    release ceremony.
 
@@ -91,7 +99,7 @@ and validation tight rather than one oversized single-threaded queue.
 
 | Phase | Focus | Expected outcome |
 | --- | --- | --- |
-| 1 | Planning and proving substrate | Canonical docs, reviewed issue wave, six-card bundles, and reliable CI/coverage. |
+| 1 | Planning, migration, and publication setup | Canonical docs, reviewed issue wave, six-card bundles, completed Agent Logic repository migration, and an early article draft. |
 | 2 | Runtime and workflow foundations | Consolidated Runtime launch/resilience, architecture-gated distributed Guardian/polis program, C-SDLC efficiency, remote validation, and prompt typing. |
 | 3 | Birthday contract | Definition of birth and negative cases. |
 | 4 | Identity and continuity | Stable name, identity root, continuity record, and cycle evidence. |
@@ -99,7 +107,7 @@ and validation tight rather than one oversized single-threaded queue.
 | 6 | Adaptive learning and ACIP/A2A readiness | Adaptive Learning DAG queue plus reconciled protocol semantics, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS proof. |
 | 7 | Witness and integrated review packet | Birth witness set, receipt, and reviewer packet. |
 | 8 | Demos, consumers, and handoff | First-birthday demo, Observatory/Unity integration, provider-neutral multi-agent proof, governance handoff, and proof matrix. |
-| 9 | Cleanup and release tail | Repository reduction, quality, docs, article, reviews, remediation, next-milestone planning, closeout planning, and ceremony. |
+| 9 | Cleanup and release tail | Repository reduction, quality, docs, article finalization, reviews, remediation, next-milestone planning, closeout planning, and ceremony. |
 
 ## Dependencies To Check Before WP-01
 
