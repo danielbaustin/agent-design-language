@@ -153,10 +153,11 @@ from issue
 
 ### v0.92 - Active Development Milestone
 
-v0.92 is the active development milestone. Its issue wave is execution-ready
-and work is underway across the bounded foundation, runtime, observatory,
-identity, resilience, and release-proof lanes. Activation does not claim those
-planned outcomes are implemented or release-approved.
+v0.92 is the active development milestone. Its issue wave is prepared, the
+foundation lane is active, and the runtime, observatory, identity, resilience,
+and release-proof lanes remain governed by their declared dependency gates.
+Activation does not claim those planned outcomes are implemented or
+release-approved.
 
 Start here:
 
