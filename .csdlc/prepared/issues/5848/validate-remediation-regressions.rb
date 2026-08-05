@@ -11,12 +11,14 @@ abort "affected WP-22 rows missing" unless rows.is_a?(Array) && !rows.empty?
 claims = manifest["release_claims"]
 abort "release claim dispositions missing" unless claims.is_a?(Array)
 (rows + claims).each do |entry|
-  %w[id evidence_ref].each do |field|
+  %w[id evidence_ref target_sha].each do |field|
     abort "#{field} missing" unless entry[field].is_a?(String) && !entry[field].strip.empty?
   end
+  abort "entry target mismatch" unless entry["target_sha"] == manifest["target_sha"]
   abort "evidence missing" unless File.file?(entry["evidence_ref"])
   argv = entry["validator_argv"]
   abort "validator argv missing" unless argv.is_a?(Array) && !argv.empty?
+  abort "validator is not pinned to target SHA" unless argv.include?(manifest["target_sha"])
   stdout, stderr, status = Open3.capture3(*argv)
   abort "regression failed for #{entry['id']}: #{stdout}\n#{stderr}" unless status.success?
 end
