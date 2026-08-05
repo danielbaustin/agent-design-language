@@ -711,10 +711,7 @@ pub(crate) fn validate_validation_lanes(
             };
             is_runnable_file(&path)
         } else {
-            std::env::var_os("PATH").is_some_and(|path| {
-                std::env::split_paths(&path)
-                    .any(|directory| is_runnable_file(&directory.join(executable)))
-            })
+            command_is_runnable(executable)
         };
         if !executable_exists {
             return Err(V2Error::new(
@@ -764,6 +761,26 @@ fn is_runnable_file(path: &Path) -> bool {
     {
         true
     }
+}
+
+fn command_is_runnable(executable: &str) -> bool {
+    std::env::var_os("PATH").is_some_and(|path| {
+        std::env::split_paths(&path).any(|directory| {
+            if is_runnable_file(&directory.join(executable)) {
+                return true;
+            }
+            #[cfg(windows)]
+            {
+                let extensions =
+                    std::env::var_os("PATHEXT").unwrap_or_else(|| ".COM;.EXE;.BAT;.CMD".into());
+                return extensions.to_string_lossy().split(';').any(|extension| {
+                    is_runnable_file(&directory.join(format!("{executable}{extension}")))
+                });
+            }
+            #[cfg(not(windows))]
+            false
+        })
+    })
 }
 
 pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {

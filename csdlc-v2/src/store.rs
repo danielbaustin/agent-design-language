@@ -2604,8 +2604,18 @@ fn read_json<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T> {
     Ok(serde_json::from_slice(&fs::read(path)?)?)
 }
 
-fn sync_dir(path: &Path) -> Result<()> {
-    File::open(path)?.sync_all()?;
+pub(crate) fn sync_dir(path: &Path) -> Result<()> {
+    #[cfg(windows)]
+    let directory = {
+        use std::os::windows::fs::OpenOptionsExt;
+        OpenOptions::new()
+            .read(true)
+            .custom_flags(0x0200_0000)
+            .open(path)?
+    };
+    #[cfg(not(windows))]
+    let directory = File::open(path)?;
+    directory.sync_all()?;
     Ok(())
 }
 

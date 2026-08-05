@@ -369,6 +369,12 @@ fn create_issue_draft_locked(store: &Store, request: IssueCreateRequest) -> Resu
         verify_draft(&existing)?;
         let candidate = draft_from_request(request)?;
         if existing == candidate {
+            let manifest_path = issue_preparation_dir(store, existing.issue).join("manifest.json");
+            if !manifest_path.exists() {
+                let manifest =
+                    manifest(existing.issue, PreparationState::Draft, None, 0, None, None)?;
+                atomic_write_json(&manifest_path, &manifest)?;
+            }
             return Ok(existing);
         }
         return Err(V2Error::new(
@@ -1451,6 +1457,45 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
         }
         return Err(error);
     }
+    if intent.state == BindingIntentState::Bound {
+        let target = if intent.worktree == "." {
+            store.root().to_path_buf()
+        } else {
+            store.root().join(&intent.worktree)
+        };
+        let target_store = Store::new(&target);
+        let record = target_store.load_record(request.issue)?;
+        if record.claim.as_ref().map(|value| value.id.as_str()) != Some(&intent.claim_id)
+            || record.phase != crate::LifecyclePhase::Bound
+            || crate::git::run(&target, &["rev-parse", "HEAD"])?.stdout != intent.base_revision
+        {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "bound retry topology does not match durable intent",
+            ));
+        }
+        update_manifest_state(&target_store, request.issue, PreparationState::Bound)?;
+        update_manifest_state(store, request.issue, PreparationState::Bound)?;
+        intent.materialized_lifecycle_digest =
+            Some(materialized_lifecycle_digest(&target, request.issue)?);
+        intent.digest.clear();
+        intent.digest = object_digest(&intent)?;
+        write_binding_intent(store, &intent)?;
+        return Ok(DerivedBindResult {
+            schema: "csdlc.derived_bind_result.v1".into(),
+            issue: request.issue,
+            state: PreparationState::Bound,
+            branch: intent.branch,
+            worktree: intent.worktree,
+            owner: intent.owner,
+            bind: BindResult {
+                created: false,
+                branch,
+                worktree,
+                claim_id,
+            },
+        });
+    }
     intent.state = BindingIntentState::Initialized;
     intent.digest.clear();
     intent.digest = object_digest(&intent)?;
@@ -2148,7 +2193,7 @@ fn write_generation(
             render(values)?.markdown.as_bytes(),
         )?;
     }
-    File::open(&staging)?.sync_all()?;
+    crate::store::sync_dir(&staging)?;
     fs::rename(&staging, &final_path)?;
     File::open(&base)?.sync_all()?;
     Ok(())
@@ -2639,7 +2684,7 @@ fn write_immutable_json<T: Serialize>(path: &Path, value: &T) -> Result<()> {
         Ok(mut file) => {
             file.write_all(&bytes)?;
             file.sync_all()?;
-            File::open(parent)?.sync_all()?;
+            crate::store::sync_dir(parent)?;
             Ok(())
         }
         Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
@@ -2733,7 +2778,7 @@ fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
     file.sync_all()?;
     fs::rename(&tmp, path)?;
     crate::store::require_regular_or_absent_beneath(root, &relative)?;
-    File::open(parent)?.sync_all()?;
+    crate::store::sync_dir(parent)?;
     Ok(())
 }
 

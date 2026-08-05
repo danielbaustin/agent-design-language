@@ -128,8 +128,16 @@ fn diagnose_internal(store: &Store, issue: u64, include_preparation: bool) -> Do
                 if manifest.state == PreparationState::Binding && binding_intent.is_some() =>
             {
                 report.preparation_state = Some(manifest.state);
-                report.binding_intent_digest = binding_intent.map(|intent| intent.digest);
-                report.next_operation = Some("csdlc-bind run".into());
+                let intent = binding_intent.expect("checked binding intent");
+                report.binding_intent_digest = Some(intent.digest);
+                report.next_operation = Some(
+                    if intent.expires_unix_seconds <= now_seconds().unwrap_or(u64::MAX) {
+                        "csdlc-bind release"
+                    } else {
+                        "csdlc-bind run"
+                    }
+                    .into(),
+                );
                 return report;
             }
             Ok(manifest)
