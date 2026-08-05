@@ -1,0 +1,24 @@
+{
+  "issue": 5815,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "e9d5a06855f61da024d934167353efcaa3dbcdedbc544b96a8b4454b80d174dd",
+  "claim_id": "claim-5815-v092-final-repo-migration-plan",
+  "actor": "codex:5815",
+  "reason": "Record the final migration runbook and Gemini 3.1 Pro architecture review evidence.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Finalized the executable migration plan for five repositories moving to the Agent Logic organization and incorporated the bounded Gemini 3.1 Pro review findings.",
+    "changes": [
+      "Defined the five-repository transfer inventory, order, gates, rollback, and verification",
+      "Excluded asksifu and Horust with explicit dispositions",
+      "Included agent-logic.ai link cutover and destination GitHub, GHCR, LFS, Pages, OIDC, secret, team, and App handling",
+      "Recorded and dispositioned Gemini 3.1 Pro review findings"
+    ],
+    "artifacts": [
+      ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md",
+      ".csdlc/evidence/5815/gemini-3.1-pro-review-result.json"
+    ]
+  },
+  "fail_after_backup": false
+}

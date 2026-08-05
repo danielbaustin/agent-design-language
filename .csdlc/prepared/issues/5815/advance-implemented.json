@@ -1,0 +1,14 @@
+{
+  "issue": 5815,
+  "card": "sip",
+  "expected_generation": 2,
+  "expected_digest": "880db8a58c3258713e7a3c6a5028001c554fbd2a112f52feb25169deee0a8492",
+  "claim_id": "claim-5815-v092-final-repo-migration-plan",
+  "actor": "codex:5815",
+  "reason": "The final migration runbook and review evidence are implemented and validated.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

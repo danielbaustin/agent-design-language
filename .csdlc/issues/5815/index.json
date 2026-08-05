@@ -3,13 +3,13 @@
   "issue": 5815,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "437e850172eac49ea547a7e7f93eabcf5e576beab8f1ae452afe3033b8d593f7",
-  "phase": "bound",
-  "generation": 0,
-  "digest": "e9d5a06855f61da024d934167353efcaa3dbcdedbc544b96a8b4454b80d174dd",
+  "phase": "implemented",
+  "generation": 3,
+  "digest": "123631f751b08ecefb401afcba90081fef002c4d00ac129f7689e2719e1ab37a",
   "claim": {
     "id": "claim-5815-v092-final-repo-migration-plan",
     "owner": "codex:5815",
-    "generation": 0,
+    "generation": 3,
     "acquired_unix_seconds": 1785909450,
     "expires_unix_seconds": 1786514250,
     "heartbeat_unix_seconds": 1785909450,
@@ -39,34 +39,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "f79b200bf3dd46c32719bae2c025118dc7235706f092ecdde588a1fa582247b4",
+      "values_digest": "2bbfcdf1414eac0cfad495fbae60984f77b40865f9e8c0f17974866f55c6f62d",
       "rendered_digest": "3e1780985e4c1b3b14fed754d81574833c9f90b0b62fb41373f978760c674acd",
       "ast_digest": "d0ec809eea40b56b9597b21774110e3833d8111ed28263d0318fded6a9304da4"
     },
     "stp": {
-      "values_digest": "86f8d0305b714bf93e608611779e542606fe0ad9946ea6fb6571eb4a2fb88fcf",
+      "values_digest": "f14c449ae54ddfe72dc675c00eaa7fc1be884cb5e1e261a6b8d7d109d641ca74",
       "rendered_digest": "6f94cd20fdad8e1963f5a8e50fcaffd683b09bc367072aa8e75ec2f7d9a0fb50",
       "ast_digest": "9b997272963e38e676be457ee4bd64695990569712e76d3ac37e29a70795ad79"
     },
     "spp": {
-      "values_digest": "54ce17cecfd70e3adb772db4c91449617668aa330f576f12ac3c4f5542ea74bd",
+      "values_digest": "2eb7339b1a88751b932dbee4fc1c4943c3ac4253b75642ca1efb3584c400def1",
       "rendered_digest": "708e9f8352f551a169e6c33039433a174facb64b3668d9aaa9d6b3d41e6a536e",
       "ast_digest": "0ac6547ffb9107c9ea5770f06070d7f6b4347c97663504c582c8efc526b9dc0c"
     },
     "vpp": {
-      "values_digest": "d4c2fcfdc47a3a8be0a56c28a8dc9af9ac02b2bf694873ad00b508bcf9b84fb2",
+      "values_digest": "d47e6de7bb8cfa673aedc450be6d7b3cab29a9935eda095e2bdaf13131ab10b4",
       "rendered_digest": "b2a9a3173c1573b5bca6f9e1ee5d3e19bd9763db1b6f57710e9abb3984855669",
       "ast_digest": "c412fcebe152fbab17d6c81b569c614e13fff3a897066f7825dce4253081144e"
     },
     "srp": {
-      "values_digest": "8378a338b921b344e23db583158acb2955af6b8395aa54b120aa4b950f205359",
+      "values_digest": "b9e03ccfeb048c12aff57232697f8c4bc2c3b716fd0c30f640bd01c1efdf940e",
       "rendered_digest": "5aeca59b9cd5cc61725817c0f4e9fac5f59074c3030d4a9114caec605dd4bb5b",
       "ast_digest": "913f53d3c798c1bc2810fe645cc8876308325b69b95c35bf10dff8d6ea87428a"
     },
     "sor": {
-      "values_digest": "d97d720612c5b2f61bff7dd468087ad8158690fab9745147ae312893fd9648af",
-      "rendered_digest": "f80ae968351224d861d650198f9f859da22043bc642f902e6ff34c63e821e6a7",
-      "ast_digest": "c311f76dee39b4a2ca8b37dc31cf5280d22401c2bdbd9761deab3654b612ea06"
+      "values_digest": "ef5999479a1e89230db2001feb67c4f3a0edbbbe7bb9c23ffa222df35368557e",
+      "rendered_digest": "e284138b578981023bcc7acb091325e2eea003aeae46365c87428000ea0688cd",
+      "ast_digest": "5dc58a799cd855df5d20406042c8a36dc700a68ea2224b0e866a010df915b61f"
     }
   },
   "transitions": [
@@ -83,6 +83,13 @@
       "to": "bound",
       "actor": "codex:5815",
       "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5815",
+      "reason": "The final migration runbook and review evidence are implemented and validated."
     }
   ],
   "audit": [
@@ -99,6 +106,27 @@
       "actor": "codex:5815",
       "reason": "bind branch/worktree and activate claim",
       "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5815",
+      "reason": "Record the final migration runbook and Gemini 3.1 Pro architecture review evidence.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Finalized the executable migration plan for five repositories moving to the Agent Logic organization and incorporated the bounded Gemini 3.1 Pro review findings.\",\"changes\":[\"Defined the five-repository transfer inventory, order, gates, rollback, and verification\",\"Excluded asksifu and Horust with explicit dispositions\",\"Included agent-logic.ai link cutover and destination GitHub, GHCR, LFS, Pages, OIDC, secret, team, and App handling\",\"Recorded and dispositioned Gemini 3.1 Pro review findings\"],\"artifacts\":[\".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md\",\".csdlc/evidence/5815/gemini-3.1-pro-review-result.json\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5815",
+      "reason": "Record focused document and Gemini review-evidence validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git diff --no-index --check /dev/null .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md\",\"jq assertions over Gemini result\",\"rg assertions over required migration topics\",\"csdlc-doctor --repo . --issue 5815\"],\"purpose\":\"Prove document hygiene, exact migration inventory coverage, valid Gemini 3.1 Pro evidence, and healthy typed issue state.\",\"outcome\":\"passed\",\"evidence_ref\":\"Focused validation passed: no whitespace errors; Gemini route google/gemini-3.1-pro-preview returned status ok; all required repositories, exclusions, website cutover, GHCR, LFS, and OIDC topics are present; typed doctor passed with no findings.\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5815",
+      "reason": "The final migration runbook and review evidence are implemented and validated.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
     }
   ]
 }
