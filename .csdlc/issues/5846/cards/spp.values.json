@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-25] Internal review",
     "slug": "v0-92-wp-25-internal-review",
     "version": "v0.92",
-    "generation": 13
+    "generation": 15
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 5,
+      "plan_revision": 6,
       "summary": "Verify review entry gates, freeze the exact v0.92 packet, run bounded independent specialist lanes, retain and deduplicate evidence-backed findings, validate coverage/redaction/revision identity, and meta-review the final report.",
       "steps": [
         {
@@ -86,7 +86,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5846/design.md",
-      "design_digest": "2a1795f478af2f09e846b6c94955658bcca4a0c3cdd5b37b4c8d8d33a55d3e09",
+      "design_digest": "90cc1c8e968be0009fb6aa7537f66243dbf004df5fb63b071b7cd3e05ecb5537",
       "diagram_ref": ".csdlc/prepared/issues/5846/diagram.mmd",
       "diagram_digest": "a045efc1685d9776f7041ed3163c44f35452aadb851e7c625026a3ff430ed779"
     }

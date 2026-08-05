@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-16] Birthday review packet",
     "slug": "v0-92-wp-16-birthday-review-packet",
     "version": "v0.92",
-    "generation": 46
+    "generation": 48
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 18,
+      "plan_revision": 19,
       "summary": "Assemble and prove WP-16's exact-digest reviewer packet with complete child evidence, redacted projections, blocked dispositions, caveats, questions, and public non-claims.",
       "steps": [
         {
@@ -81,7 +81,8 @@
         "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
         ".csdlc/prepared/issues/5834/validate-review-packet.rb",
         ".csdlc/evidence/5834",
-        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-demo-matrix-v1\",\"paths\":[\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\"],\"issues\":[5834,5836,5840],\"order\":[5834,5836,5840]}"
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-demo-matrix-v1\",\"paths\":[\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\"],\"issues\":[5834,5836,5840],\"order\":[5834,5836,5840]}",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-5834-demo-matrix-to-final-truth-v1\",\"paths\":[\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\"],\"issues\":[5834,5843],\"order\":[5834,5843]}"
       ],
       "invariants": [
         "Each canonical source digest appears once and binds an exact reviewed revision.",
@@ -110,7 +111,7 @@
         "Review finds duplicate authority or a presentation-only proof substitution."
       ],
       "design_ref": ".csdlc/prepared/issues/5834/design.md",
-      "design_digest": "62170aad99c6535960642361e9c5f51dd217c80dbb9b77793d6d6b7f4829ea5c",
+      "design_digest": "eae174084abaea4077d16ff5f93268fc566c2da88a93ba4f034d19627e0abeaf",
       "diagram_ref": ".csdlc/prepared/issues/5834/diagram.mmd",
       "diagram_digest": "8a837711a7e5863a846f42a46cd793d3ff77846c6e80cc07d72e14c7665a6224"
     }

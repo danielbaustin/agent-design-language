@@ -52,6 +52,23 @@ own repository reduction despite stale prose in the current proof-coverage row.
       5836,
       5840
     ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5840-proof-docs-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+      "docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+    ],
+    "issues": [
+      5840,
+      5843
+    ],
+    "order": [
+      5840,
+      5843
+    ]
   }
 ]
 ```

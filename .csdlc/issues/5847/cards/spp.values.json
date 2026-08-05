@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-26] External / third-party review",
     "slug": "v0-92-wp-26-external-third-party-review",
     "version": "v0.92",
-    "generation": 13
+    "generation": 15
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 5,
+      "plan_revision": 6,
       "summary": "Verify WP-25, build and redact the exact packet manifest, compute/freeze its digest, validate reviewer authority and claims, dispatch with operator approval, reject stale/missing output, and retain the received report plus routed findings index.",
       "steps": [
         {
@@ -88,7 +88,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5847/design.md",
-      "design_digest": "79dd293f0747a774c538016ae7fdcc76020e2ad39a8c348676f52509a7899c75",
+      "design_digest": "156c0d5b40979e54579b180b4bf1f12c7ca3dcf6bf09639835e3c988cddd2f4e",
       "diagram_ref": ".csdlc/prepared/issues/5847/diagram.mmd",
       "diagram_digest": "3f27fc4f521fdd57a23ed1afaa29417434e08b8ac93e33e58d1a106069d94cd1"
     }

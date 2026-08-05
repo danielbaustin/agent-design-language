@@ -559,8 +559,11 @@ absence; macOS and Linux CI parity; exact-head review. Any rollback activity,
 pre-window execution, missing owner, below-80% reduction, unsupported behavior,
 or failed platform lane blocks completion and preserves the incumbent surface.
 
-## Non-Goals
+## Rollback
 
+Revert only the reviewed deletion/refactor commit while preserving the pinned pre-change denominator and all retained baseline evidence. Restore each removed source path from that pinned baseline, rerun the denominator and focused behavioral validators, and stop if restoration would overwrite later independently owned work.
+
+## Non-Goals
 - No deletion during preparation or before the rollback gate.
 - No new feature behavior, architecture-by-file-move, or indefinite unowned
   compatibility exception.

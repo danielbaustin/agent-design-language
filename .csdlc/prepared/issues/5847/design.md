@@ -61,8 +61,11 @@ exact packet, and findings-index completeness. Missing
 reviewer output, changed packet identity, inaccessible evidence, or unsafe
 content yields blocked/deferred truth, not a synthetic review pass.
 
-## Non-Goals
+## Rollback
 
+Withdraw the external-review acceptance packet without deleting the external reviewer record. Correct identity, authority, evidence, severity, disposition, accepted-risk, or duplicate linkage as applicable, then rerun the complete external-review validator before the packet can gate remediation.
+
+## Non-Goals
 - No product remediation, issue mutation by the reviewer, or release approval.
 - No paid/provider dispatch without explicit operator-approved credentials and
   channel at execution time.

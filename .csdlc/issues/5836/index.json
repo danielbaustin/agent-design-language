@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "846869967e550e7f6dc78805815062a71d7c828653ce0a668e7c479663588d00",
   "phase": "bound",
-  "generation": 37,
-  "digest": "dbf2206019245d8d9c3b908a22e6d59b225fcec1b48789f9163b8911d50babad",
+  "generation": 39,
+  "digest": "6d11fc5f076f10c293e2bbef321d74643e7647f26907616fb61f655d2722b550",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5836/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-birthday-publication-final-design-review",
-      "revision": "d45b304f65477d6f3ea8535a0f01981434dd86ff1b7007faa1fb9e56717cef68"
+      "reviewer": "codex:5860-quality-release-replay-combined-design-review",
+      "revision": "389dc25c9c887f4dc46845debdd6505da495c7814187b783bb436620ddcb750a"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "d1986e7138255450a83fafcea15164d65c77869aac0df142059ad29cf91e441d",
+      "values_digest": "2795e8bac9d5a27584a8c4e56482e45e092b7367da6f4c882ef0b54117c812b9",
       "rendered_digest": "17414a5a6263a1d8bbb37cc555577f182a41c0d98cda8b7525b8976cb3d8e97c",
       "ast_digest": "848b2b0d3edc6e0d317ca14397c03c92a6e283874f0070e8f69fb72bcadd6d56"
     },
     "stp": {
-      "values_digest": "288dc4403f97b685a1d0bcf20ee76d8996aa9cc063b82a262aabc23b6f023dc2",
+      "values_digest": "351f1d0c925c8dc2eed61536f82337a6337879ad60e2a9b681597a8e868b366f",
       "rendered_digest": "f8ec1fc6951913c6b6551ad187ce364a445a5a02fc21bf3da883ec2bfb413c1f",
       "ast_digest": "518d360372d9e4d4d7992bd9715a0a5b610771c99035f13a1a67e28d4c615861"
     },
     "spp": {
-      "values_digest": "a71f00f3b8c1240226fb6e11530444ed03e30efbc018addf1ab4019e46128dd7",
-      "rendered_digest": "88144ff6176143267d929fbcbdafd90f8a735266a875edf852833a4d8027a5a1",
-      "ast_digest": "8138bc9e0663cba65a9b0c6249e8648076226ae736a153cfbac2ff0c9e1fdd26"
+      "values_digest": "e4a1d2027805cbe289d2df4478d782829aba4e8f00431d49d1cb2116c260de32",
+      "rendered_digest": "6debdf5699666244443ffe6a11d675a6159c6fd37fa16cf5f53702edab7762ed",
+      "ast_digest": "4b46614d8a5c25c972cf7c6b843951c12e95ff73e641256cb37393e9068dd2e3"
     },
     "vpp": {
-      "values_digest": "0d26b047f1ea8b31abc538157ab23227325b4f312c1d410f333a7184f02bbe89",
+      "values_digest": "48452216de8182d7ea9aa1e0062db5c565b454d30c30843a4e67ad050883e112",
       "rendered_digest": "133d8a0fe1a188b4463edadffcab16d3b6cbdd214d351431d76853dc49e62b93",
       "ast_digest": "4f3ab139da95c092ee0e6c3ef9d98b7c5ad333a836fa9d364b51adbd63a99ed5"
     },
     "srp": {
-      "values_digest": "7149e0892e2df1fd33d814d5b150b53300bb619fdd4e96b9f9ee087ad01c5eaa",
+      "values_digest": "6982c3c2f302ca58257f0edd947beab64ac76f247e693c4dd37e1a1930d1f821",
       "rendered_digest": "effeb2dc571ff39b68bafbe764b5b12d19286a0a856df06d3b68a4d1948ec4ee",
       "ast_digest": "c1221ba532e8cde1ffa3ae6f0e93463333da42ae174fea0d11d2a7c23c1e2198"
     },
     "sor": {
-      "values_digest": "69fbdca24790dac1686ee1181189491c8ce3b402915bcc3c389587e8bfe7ca39",
+      "values_digest": "3120673214da91bffebce8be550cf4654f1de98a4000a8069ca35f43b8817850",
       "rendered_digest": "4fbc680667c00745e3761cbb9cc6d40c3b11080eee395b41fa5972125cafb61b",
       "ast_digest": "63699a396361f0a5b765229460953191b0069437f235102e2abcd22d70aca6e7"
     }
@@ -419,6 +419,34 @@
       "actor": "codex:5860-birthday-publication-repair",
       "reason": "Release the temporary preparation claim after typed card regeneration, exact-digest design approval, and lane validation.",
       "operation": "{\"claim_id\":\"claim-5836-v092-birthday-publication-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-repair\",\"previous_owner\":\"codex:5860-birthday-publication-repair\"}"
+    },
+    {
+      "sequence": 51,
+      "generation": 37,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Reacquire the released issue-local preparation claim to replay quality rollback and reciprocal serialization onto the exact integrated head.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-replay\",\"claim_id\":\"claim-5836-v092-quality-replay\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-replay\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5836\",\".csdlc/prepared/issues/5836\",\".csdlc/evidence/5836\"],\"purpose\":\"Replay issue-local rollback and serialization readiness onto exact integrated head only; preserve Birthday changes; no product implementation, #5860 aggregate, #5861, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 52,
+      "generation": 38,
+      "actor": "codex:5860-quality-release-replay-combined-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 53,
+      "generation": 39,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Regenerate the exact combined-head SPP projection from approved Owned Paths plus Serialization Gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl/tools/demo_v092_first_birthday.sh\",\"adl/tools/validate_v092_first_birthday_packet.py\",\"adl/tools/test_v092_first_birthday_demo.sh\",\"demos/v0.92/first-birthday\",\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\"docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md\",\"docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md\",\".csdlc/evidence/5836\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-birthday-demo-matrix-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\\\"],\\\"issues\\\":[5834,5836,5840],\\\"order\\\":[5834,5836,5840]}\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-5836-launch-docs-to-final-truth-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\\\",\\\"docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md\\\",\\\"docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md\\\",\\\"docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md\\\"],\\\"issues\\\":[5836,5843],\\\"order\\\":[5836,5843]}\"]}"
+    },
+    {
+      "sequence": 54,
+      "generation": 39,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Release exact-head replay claim after combined design approval, SPP regeneration, 58-issue ownership proof, and zero rollback-gap proof.",
+      "operation": "{\"claim_id\":\"claim-5836-v092-quality-replay\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-replay-completion\",\"previous_owner\":\"codex:5860-quality-release-replay\"}"
     }
   ]
 }

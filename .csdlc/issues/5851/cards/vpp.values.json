@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-29] Next milestone review pass",
     "slug": "v0-92-wp-29-next-milestone-review-pass",
     "version": "v0.92",
-    "generation": 13
+    "generation": 15
   },
   "status": "ready",
   "content": {
@@ -114,7 +114,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5851/design.md",
-      "design_digest": "dfbaf4612dbe52d1398794749b871797bb3bdc34e9b85fc9f79196a97f603b1e",
+      "design_digest": "74fa041ee5cc003d1c998c2384525584335863b2dcb02115bf11f0ef47d6865e",
       "diagram_ref": ".csdlc/prepared/issues/5851/diagram.mmd",
       "diagram_digest": "684da2a4d408951a88dc77fd84f07952b5e795bb91e83392370c723c1b647bee"
     }

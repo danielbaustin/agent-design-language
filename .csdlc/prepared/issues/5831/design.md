@@ -50,6 +50,21 @@ Implement WP-13A's evaluated, policy-governed graph-change path in current Runti
       5831,
       5833
     ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5831-adaptive-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md"
+    ],
+    "issues": [
+      5831,
+      5843
+    ],
+    "order": [
+      5831,
+      5843
+    ]
   }
 ]
 ```

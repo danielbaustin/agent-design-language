@@ -53,6 +53,24 @@ events and incomplete evidence.
       5836,
       5840
     ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5836-launch-docs-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+      "docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md",
+      "docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md",
+      "docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md"
+    ],
+    "issues": [
+      5836,
+      5843
+    ],
+    "order": [
+      5836,
+      5843
+    ]
   }
 ]
 ```

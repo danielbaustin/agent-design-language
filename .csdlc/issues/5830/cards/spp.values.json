@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-13] ACP / cognitive profiles",
     "slug": "v0-92-wp-13-acp-cognitive-profiles",
     "version": "v0.92",
-    "generation": 46
+    "generation": 48
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 17,
+      "plan_revision": 18,
       "summary": "Implement and prove WP-13 canonical evidence maps with revision-linked updates, bounded projections, privacy, and explicit non-reputation/personhood boundaries.",
       "steps": [
         {
@@ -68,7 +68,8 @@
         ".csdlc/prepared/issues/5830/validate-native-receipts.rb",
         ".csdlc/prepared/issues/5830/produce-native-receipt.rb",
         ".csdlc/evidence/5830",
-        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}"
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-5830-acp-doc-to-final-truth-v1\",\"paths\":[\"docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md\"],\"issues\":[5830,5843],\"order\":[5830,5843]}"
       ],
       "invariants": [
         "Every profile field cites an allowed current evidence category and digest.",
@@ -96,7 +97,7 @@
         "Review finds a label that functions as diagnosis, standing, reputation, or rights inference."
       ],
       "design_ref": ".csdlc/prepared/issues/5830/design.md",
-      "design_digest": "f02bc64fc2119cdf4a142b52830e2ac84dbbb8b451292465c36abd6a7e4964df",
+      "design_digest": "9a6f30dfd9dd930ee1f90f8bb63c7655f5cce37b44bb0fda7e41ad8fa4eca413",
       "diagram_ref": ".csdlc/prepared/issues/5830/diagram.mmd",
       "diagram_digest": "6b9a9b2ae6cf9491279ce9ea531331cc7b98069e510d08bd2aad9422595fef47"
     }

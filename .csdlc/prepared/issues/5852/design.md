@@ -84,8 +84,11 @@ recovery, artifact hash verification, exact-head review, and post-publication
 live readback. Any red check, active claim, missing receipt, unresolved finding,
 dirty head, tag/release conflict, or partial verification blocks advancement.
 
-## Non-Goals
+## Rollback
 
+Stop publication and remove only an unpublished candidate tag or draft release created by this issue. If publication already occurred, preserve the public record and use a corrective release; in either case rerun exact-head ancestry, terminal, claim, notes, asset, GitHub release, and ceremony-negative proof before resuming.
+
+## Non-Goals
 - No product remediation, evidence invention, or feature completion by ceremony.
 - No unreviewed tag/release mutation or silent retry of non-idempotent steps.
 - No claim that v0.93 is active or that legal/governance promises are delivered.

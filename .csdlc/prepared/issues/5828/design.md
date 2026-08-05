@@ -51,6 +51,21 @@ Implement the Runtime v3 Memory Palace boundary in `adl-runtime-kernel`, using t
       5831,
       5833
     ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5828-memory-palace-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md"
+    ],
+    "issues": [
+      5828,
+      5843
+    ],
+    "order": [
+      5828,
+      5843
+    ]
   }
 ]
 ```

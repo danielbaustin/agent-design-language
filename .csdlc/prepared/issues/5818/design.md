@@ -168,6 +168,31 @@ is changed.
       5818,
       5865
     ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5818-skills-to-final-doc-truth-v1",
+    "paths": [
+      "csdlc-v2/operator/skills/csdlc-v2-bind/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-card-editor/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-doctor/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-publish/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-review/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-shepherd/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-validate/SKILL.md"
+    ],
+    "issues": [
+      5818,
+      5843
+    ],
+    "order": [
+      5818,
+      5843
+    ]
   }
 ]
 ```

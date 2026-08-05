@@ -62,8 +62,11 @@ redaction/private-path/secret scanning, and review-quality evaluation. Missing
 sources, stale revision identity, incomplete lanes, unsupported severity, or
 unredacted evidence makes the review blocked rather than silently partial.
 
-## Non-Goals
+## Rollback
 
+Withdraw the internal-review packet and finding register from release authority while preserving reviewer outputs as immutable evidence. Correct the affected specialist lane or schema, rerun every declared lane, and republish only after authority, evidence, severity, disposition, duplicate, and disagreement checks pass.
+
+## Non-Goals
 - No remediation, external-review dispatch, release approval, or ceremony.
 - No issue-per-finding explosion; route by coherent owner and failure mode.
 - No inference that a closed issue, receipt, article, or podcast proves product

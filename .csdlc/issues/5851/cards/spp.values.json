@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-29] Next milestone review pass",
     "slug": "v0-92-wp-29-next-milestone-review-pass",
     "version": "v0.92",
-    "generation": 13
+    "generation": 15
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 5,
+      "plan_revision": 6,
       "summary": "Freeze the WP-28A packet, independently rebuild and compare its universe/DAG, review v0.93 evidence/owners/non-claims, exercise terminal and ceremony negatives, record evidence-backed findings, and publish an exact-head disposition for WP-30.",
       "steps": [
         {
@@ -87,7 +87,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5851/design.md",
-      "design_digest": "dfbaf4612dbe52d1398794749b871797bb3bdc34e9b85fc9f79196a97f603b1e",
+      "design_digest": "74fa041ee5cc003d1c998c2384525584335863b2dcb02115bf11f0ef47d6865e",
       "diagram_ref": ".csdlc/prepared/issues/5851/diagram.mmd",
       "diagram_digest": "684da2a4d408951a88dc77fd84f07952b5e795bb91e83392370c723c1b647bee"
     }

@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-08] Birthday contract and negative cases",
     "slug": "v0-92-wp-08-birthday-contract-and-negative-cases",
     "version": "v0.92",
-    "generation": 62
+    "generation": 64
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 27,
+      "plan_revision": 28,
       "summary": "Implement and prove the deterministic WP-08 birth decision, including complete disqualifying cases and explicit public-claim boundaries.",
       "steps": [
         {
@@ -68,7 +68,8 @@
         ".csdlc/prepared/issues/5825/validate-native-receipts.rb",
         ".csdlc/prepared/issues/5825/produce-native-receipt.rb",
         ".csdlc/evidence/5825",
-        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}"
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-5825-birthday-doc-to-final-truth-v1\",\"paths\":[\"docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md\"],\"issues\":[5825,5843],\"order\":[5825,5843]}"
       ],
       "invariants": [
         "Birth decisions are deterministic over canonical inputs and fail closed on missing or contradictory evidence.",
@@ -96,7 +97,7 @@
         "A reviewer identifies an uncovered lifecycle lookalike or unsupported public claim."
       ],
       "design_ref": ".csdlc/prepared/issues/5825/design.md",
-      "design_digest": "8b4fbb1b545e8ae1db9f1d76c717bd68c06bbbbf2310f402a37115ffa6e19102",
+      "design_digest": "f04080d6b3bc8bc4d9c062333476ab8d4a44b464205d149c001a48c317361621",
       "diagram_ref": ".csdlc/prepared/issues/5825/diagram.mmd",
       "diagram_digest": "af3ccfe3d575efcd6afdf4b661f1a73ffef8cd1ac35a93da986e2d10d55ed3a9"
     }

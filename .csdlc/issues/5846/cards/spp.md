@@ -16,7 +16,7 @@ Verify review entry gates, freeze the exact v0.92 packet, run bounded independen
 
 ## Plan
 
-Revision 5
+Revision 6
 
 ## Steps
 
@@ -88,7 +88,7 @@ Revision 5
 
 .csdlc/prepared/issues/5846/design.md
 
-Digest: 2a1795f478af2f09e846b6c94955658bcca4a0c3cdd5b37b4c8d8d33a55d3e09
+Digest: 90cc1c8e968be0009fb6aa7537f66243dbf004df5fb63b071b7cd3e05ecb5537
 
 ## Diagram
 

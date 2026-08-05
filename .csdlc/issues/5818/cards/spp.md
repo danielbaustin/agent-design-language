@@ -16,7 +16,7 @@ Inventory authoritative current surfaces, update v0.92 documentation and version
 
 ## Plan
 
-Revision 11
+Revision 12
 
 ## Steps
 
@@ -85,7 +85,7 @@ Revision 11
 
 .csdlc/prepared/issues/5818/design.md
 
-Digest: 855c6d95934b4d9abd9667d25e5c8047c441694a84896253788768bf985a77fd
+Digest: 34752158fdf79f56549f51b677b35e2ad077d326cec9c9c146759fe1efe1320a
 
 ## Diagram
 

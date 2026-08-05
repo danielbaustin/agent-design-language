@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice",
     "slug": "v0-92-wp-11-runtime-implement-first-memory-palace-context-topology-slice",
     "version": "v0.92",
-    "generation": 44
+    "generation": 46
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 15,
+      "plan_revision": 16,
       "summary": "Extend and prove the existing WP-11 Memory Palace topology with identity/continuity gates, bounded deterministic selection, overflow, provenance, and redaction.",
       "steps": [
         {
@@ -70,7 +70,8 @@
         ".csdlc/prepared/issues/5828/validate-native-receipts.rb",
         ".csdlc/prepared/issues/5828/produce-native-receipt.rb",
         ".csdlc/evidence/5828",
-        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}"
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-5828-memory-palace-doc-to-final-truth-v1\",\"paths\":[\"docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md\"],\"issues\":[5828,5843],\"order\":[5828,5843]}"
       ],
       "invariants": [
         "Same inputs and observation time produce byte-equivalent semantic topology output.",
@@ -99,7 +100,7 @@
         "Review identifies an unbounded or unauthorized retrieval path."
       ],
       "design_ref": ".csdlc/prepared/issues/5828/design.md",
-      "design_digest": "45eae2eff5ce2465a69628867befe836e63f025d26a18a0153e11ad6c9d156dc",
+      "design_digest": "f45c9ef86e3ddd174ed2b1f1ab71865ef6ff02989b5ab3e4205845499160dd50",
       "diagram_ref": ".csdlc/prepared/issues/5828/diagram.mmd",
       "diagram_digest": "ff82b0bec69f0e9368d20aff4022d0a5506a8040000a27f8a1991dece282ff8b"
     }

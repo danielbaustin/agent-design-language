@@ -79,8 +79,11 @@ provider-identity consistency checks, docs/YAML/link validation, and exact-head
 review. One missing or ambiguous row makes the gate fail; the report must name
 the blocker and owner without advancing internal review.
 
-## Non-Goals
+## Rollback
 
+Revert the quality-gate document and evidence-matrix commit as one unit, retaining the rejected exact-head evidence for audit. Rebuild the matrix from live issue, PR, platform, integration, and terminal truth; do not downgrade semantic checks to digest existence or accept an ancestral substitute.
+
+## Non-Goals
 - No product remediation, evidence invention, scope waiver, or issue closure.
 - No release readiness inferred from GitHub closure or receipts alone.
 - No WP-23 docs rewrite, WP-25 review execution, or downstream ceremony.

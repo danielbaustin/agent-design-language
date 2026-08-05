@@ -28,6 +28,28 @@ how copied or ambiguous state is rejected. It does not implement migration.
 - Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
 - Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5835-migration-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md"
+    ],
+    "issues": [
+      5835,
+      5843
+    ],
+    "order": [
+      5835,
+      5843
+    ]
+  }
+]
+```
+
 ## Contract Shape
 
 The design note contains a field-level transfer matrix for stable name,

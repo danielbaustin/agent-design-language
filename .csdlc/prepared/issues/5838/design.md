@@ -31,6 +31,28 @@ explicitly ineligible.
 - Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
 - Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5838-provider-demo-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md"
+    ],
+    "issues": [
+      5838,
+      5843
+    ],
+    "order": [
+      5838,
+      5843
+    ]
+  }
+]
+```
+
 ## Proof Matrix
 
 Rows cover positive completion, malformed ACIP, denied capability, interrupted

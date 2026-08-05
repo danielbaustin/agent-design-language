@@ -16,7 +16,7 @@ Verify dependency revisions; correct stale WP-20 ownership while preserving WP-2
 
 ## Plan
 
-Revision 11
+Revision 12
 
 ## Steps
 
@@ -102,7 +102,7 @@ Revision 11
 
 .csdlc/prepared/issues/5840/design.md
 
-Digest: 84ab3b83975c621c82aaaf889ec94cb99871ebf4f01b232d64325bb8196cd5dd
+Digest: 75aa9aeda5ed62ef664d2bf3c0bd82e12f7592e10bb260a42f428be0e9c9167f
 
 ## Diagram
 

@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "89b20b217984f9f253debdb4789e8e2d7790f6260df8e3739ea9994c97cc6f97",
   "phase": "bound",
-  "generation": 19,
-  "digest": "2f9782c24a867fb769952c897afda5de296dcc132bad32b3e4c632569ad6638d",
+  "generation": 21,
+  "digest": "1e70e3d9e6b1582f66163c8edd2995aa6bba578fae9ae7905c1b2c6300e0971e",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5849/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-quality-release-exact-repair-final-design-review",
-      "revision": "44ca2597cf6decfd7b236d472854472dca421273ca4b0e5e7ed68704ad370c6d"
+      "reviewer": "codex:5860-quality-release-replay-combined-design-review",
+      "revision": "2a0c2e5f81419606b4a39d276d9f95b9191e97f217f0e85ed6bd74a98f0f1f8f"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "b875c1ddd1f5c083d1ffbdcecb51df62cac6945adf88862df64bf76ebf0fed31",
+      "values_digest": "4aa41a2542b4b7acd47a8ec938aaa545a8d799289fedcbf483ddd373ebf65ffd",
       "rendered_digest": "d5ad6c82f806044d48b55579ddf8c26c91e11d7ddff9d9bde239c81b38de1780",
       "ast_digest": "5bf248ec7259938d8c3f8a0036128b12b3f88763daa36f37c721b395e43d966d"
     },
     "stp": {
-      "values_digest": "8c443714cf0e8fc3c10b52980731c309ec7967f45b3081ce3cca2a845cedbb40",
+      "values_digest": "61857905261d54e4ffa92dfb05724f53e4dd2d43aa643ccb6d7beaac513251fa",
       "rendered_digest": "1e47975bad2c955f6c7870d121696d5a27ceb120fb91d24f78498d1e07512831",
       "ast_digest": "66d884afb41c2b64a1438ed653818bd21ff56ab42fd1eb6abae3f5b65029e09e"
     },
     "spp": {
-      "values_digest": "78c5f70af7aecea93b125c896b6242f16547c25e92d26ae668463fd6145720c4",
-      "rendered_digest": "8bd06d431d38d3a044dc0d17f9fd9b0e8b4ea8b64e4a17671bbbd3431c52c486",
-      "ast_digest": "78778a1887bffe073ea5eca051126b58d0cd3b701a24f5b75cbb6816fa165d11"
+      "values_digest": "bc199c8f4ec07a0105a8839152cf7a38468c5600baef6a59c002726446574258",
+      "rendered_digest": "b48c842ac1229e42d15689213bb68bdf0809aceb44e8b2170236fafdb4b78e95",
+      "ast_digest": "0d5bfa1eff2b2026ced990b8d67c70739dd3f298b7aee655c3a0423af717b361"
     },
     "vpp": {
-      "values_digest": "e89861276387861ce4a1d9dc8a6739e5c02d6fe512d667ef10c995c23e6582c2",
+      "values_digest": "cf1ae86715ca742960d2a81b64c2f6f2e89a1f21130f0c0f7e435d715e47a722",
       "rendered_digest": "6f2602556d9aa346d19fd36f32ef80fdc2efd427204ffd6b7c11ebbe0448f74b",
       "ast_digest": "81ff856109887f56cd51f718bcbad767c61130d8398a83b4314385cea84f9ef7"
     },
     "srp": {
-      "values_digest": "b27edea330a3446d14d46c5c3789954113a0280e68135d7426744d80a89ac459",
+      "values_digest": "9e5d947f5cbc391a3df6aca713bdcdf4cb4ae66485bd1d2019617514e63dcdeb",
       "rendered_digest": "59ae4e6da77b4e713faf7cdf13500f22c29510507d8412659776a68b7252d7ea",
       "ast_digest": "45995183a7de6a0c7fc66d80c17d77ad30eca01907337a3744b0f0084a4cf630"
     },
     "sor": {
-      "values_digest": "cb95c971bd053053745cf9a0c5e9d34de1fcbbbbeaacf25d4013490f9f974135",
+      "values_digest": "96072d77e2ca694860adce9568a746a71fb52eb3d20ba2ff4f93da03bfd60411",
       "rendered_digest": "fffaf16ebada328022491314d5ffed59030793eb182fd5a691ff03d95162ec4d",
       "ast_digest": "52375733756c3256bb7d83ae13ebc58911c2be97a882524184e275517375019b"
     }
@@ -279,6 +279,34 @@
       "actor": "codex:5860-quality-release-exact-repair",
       "reason": "Release bounded readiness-repair preparation claim after typed rendering, design approval, and focused validation.",
       "operation": "{\"claim_id\":\"claim-5849-v092-quality-release-exact-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-release-exact-repair-completion\",\"previous_owner\":\"codex:5860-quality-release-exact-repair\"}"
+    },
+    {
+      "sequence": 31,
+      "generation": 19,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Reacquire the released issue-local preparation claim to replay quality rollback and reciprocal serialization onto the exact integrated head.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-replay\",\"claim_id\":\"claim-5849-v092-quality-replay\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-replay\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5849\",\".csdlc/prepared/issues/5849\",\".csdlc/evidence/5849\"],\"purpose\":\"Replay issue-local rollback and serialization readiness onto exact integrated head only; preserve Birthday changes; no product implementation, #5860 aggregate, #5861, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 32,
+      "generation": 20,
+      "actor": "codex:5860-quality-release-replay-combined-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 33,
+      "generation": 21,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Regenerate the exact combined-head SPP projection from approved Owned Paths plus Serialization Gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\".csdlc/evidence/5849\",\".csdlc/prepared/issues/5849/validate-handoff.rb\",\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\",\"docs/milestones/v0.93/CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md\",\"docs/milestones/v0.93/DECISIONS_v0.93.md\",\"docs/milestones/v0.93/DEMO_MATRIX_v0.93.md\",\"docs/milestones/v0.93/DESIGN_v0.93.md\",\"docs/milestones/v0.93/MILESTONE_CHECKLIST_v0.93.md\",\"docs/milestones/v0.93/README.md\",\"docs/milestones/v0.93/RED_BLUE_ADVERSARIAL_SECURITY_ISSUE_WAVE_v0.93.md\",\"docs/milestones/v0.93/RELEASE_NOTES_v0.93.md\",\"docs/milestones/v0.93/RELEASE_PLAN_v0.93.md\",\"docs/milestones/v0.93/SPRINT_v0.93.md\",\"docs/milestones/v0.93/VISION_v0.93.md\",\"docs/milestones/v0.93/WBS_v0.93.md\",\"docs/milestones/v0.93/WP_ISSUE_WAVE_v0.93.yaml\",\"docs/milestones/v0.93/features/CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md\",\"docs/milestones/v0.93/features/DELEGATION_IAM_STANDING_AND_APPEAL_GOVERNANCE_v0.93.md\",\"docs/milestones/v0.93/features/ENTERPRISE_SECURITY_v0.93.md\",\"docs/milestones/v0.93/features/GUILDS_AND_COLLECTIVE_ORGANIZATION_v0.93.md\",\"docs/milestones/v0.93/features/README.md\",\"docs/milestones/v0.93/features/SECURITY_WP_S1_ZERO_TRUST_ARCHITECTURE_v0.93.md\",\"docs/milestones/v0.93/features/SECURITY_WP_S2_POLICY_ENFORCEMENT_AUTHORIZATION_v0.93.md\",\"docs/milestones/v0.93/features/SECURITY_WP_S3_SECRETS_KEYS_CRYPTOGRAPHIC_TRUST_v0.93.md\",\"docs/milestones/v0.93/features/SECURITY_WP_S4_AUDIT_COMPLIANCE_INCIDENT_EVIDENCE_v0.93.md\",\"docs/milestones/v0.93/features/SECURITY_WP_S5_ISOLATION_DATA_GOVERNANCE_PRIVACY_v0.93.md\",\"docs/milestones/v0.93/features/SECURITY_WP_S6_SECURITY_OPERATIONS_ADVERSARIAL_PROVENANCE_v0.93.md\",\"docs/milestones/v0.93/features/SOCIAL_RELATIONSHIP_REPUTATION_AND_SHARED_MEMORY_v0.93.md\",\"docs/milestones/v0.93/features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md\",\"docs/reviews/v0.92/next-milestone-planning-5849\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-doc-truth-to-handoff-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\\\"],\\\"issues\\\":[5843,5849],\\\"order\\\":[5843,5849]}\"]}"
+    },
+    {
+      "sequence": 34,
+      "generation": 21,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Release exact-head replay claim after combined design approval, SPP regeneration, 58-issue ownership proof, and zero rollback-gap proof.",
+      "operation": "{\"claim_id\":\"claim-5849-v092-quality-replay\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-replay-completion\",\"previous_owner\":\"codex:5860-quality-release-replay\"}"
     }
   ]
 }

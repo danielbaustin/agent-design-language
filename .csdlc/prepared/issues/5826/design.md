@@ -65,6 +65,21 @@ Define the WP-09 identity record from `docs/milestones/v0.92/features/IDENTITY_S
       5826,
       5827
     ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5826-identity-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md"
+    ],
+    "issues": [
+      5826,
+      5843
+    ],
+    "order": [
+      5826,
+      5843
+    ]
   }
 ]
 ```

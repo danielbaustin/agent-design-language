@@ -65,6 +65,21 @@ Define WP-12's birthday-consumable provider, model, tool, skill, authority, and 
       5829,
       5833
     ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5829-grounding-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md"
+    ],
+    "issues": [
+      5829,
+      5843
+    ],
+    "order": [
+      5829,
+      5843
+    ]
   }
 ]
 ```

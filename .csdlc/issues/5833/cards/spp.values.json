@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-15] Birth witnesses and receipts",
     "slug": "v0-92-wp-15-birth-witnesses-and-receipts",
     "version": "v0.92",
-    "generation": 49
+    "generation": 51
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 18,
+      "plan_revision": 19,
       "summary": "Implement and prove WP-15 exact-candidate witness consensus and deterministic redacted receipts with anti-equivocation, authority, and premature-claim protections.",
       "steps": [
         {
@@ -70,7 +70,8 @@
         ".csdlc/prepared/issues/5833/produce-native-receipt.rb",
         ".csdlc/evidence/5833",
         "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}",
-        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-memory-capability-witness-feature-doc-v1\",\"paths\":[\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\"],\"issues\":[5829,5833],\"order\":[5829,5833]}"
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-memory-capability-witness-feature-doc-v1\",\"paths\":[\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\"],\"issues\":[5829,5833],\"order\":[5829,5833]}",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-5833-witness-doc-to-final-truth-v1\",\"paths\":[\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\"],\"issues\":[5833,5843],\"order\":[5833,5843]}"
       ],
       "invariants": [
         "Witnesses bind the exact candidate and evidence digests and are distinct where policy requires.",
@@ -98,7 +99,7 @@
         "Review identifies a receipt field that substitutes for birthday authority."
       ],
       "design_ref": ".csdlc/prepared/issues/5833/design.md",
-      "design_digest": "03a5c8906927d3af970da1061ec00f53abbd3d56275f83f8809de2d184268bde",
+      "design_digest": "6a5dc4d38599413dadd357fc88b2c29a6e07212a719660cf9fcb8ccb7c1bff70",
       "diagram_ref": ".csdlc/prepared/issues/5833/diagram.mmd",
       "diagram_digest": "0255242ebe93f2857c2a9dc5f2d0c1a083fa373b340935cbfe34749941f0d599"
     }

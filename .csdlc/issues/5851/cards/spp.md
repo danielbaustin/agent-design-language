@@ -16,7 +16,7 @@ Freeze the WP-28A packet, independently rebuild and compare its universe/DAG, re
 
 ## Plan
 
-Revision 5
+Revision 6
 
 ## Steps
 
@@ -89,7 +89,7 @@ Revision 5
 
 .csdlc/prepared/issues/5851/design.md
 
-Digest: dfbaf4612dbe52d1398794749b871797bb3bdc34e9b85fc9f79196a97f603b1e
+Digest: 74fa041ee5cc003d1c998c2384525584335863b2dcb02115bf11f0ef47d6865e
 
 ## Diagram
 

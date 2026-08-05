@@ -136,15 +136,29 @@ and v0.93 claims retain the milestone non-claim boundaries.
       "docs/milestones/v0.92/QUALITY_GATE_v0.92.md",
       "docs/milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md"
     ],
-    "issues": [5842, 5843],
-    "order": [5842, 5843]
+    "issues": [
+      5842,
+      5843
+    ],
+    "order": [
+      5842,
+      5843
+    ]
   },
   {
     "schema": "csdlc.serialization_gate.v1",
     "id": "v092-doc-truth-to-handoff-v1",
-    "paths": ["docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md"],
-    "issues": [5843, 5849],
-    "order": [5843, 5849]
+    "paths": [
+      "docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md"
+    ],
+    "issues": [
+      5843,
+      5849
+    ],
+    "order": [
+      5843,
+      5849
+    ]
   },
   {
     "schema": "csdlc.serialization_gate.v1",
@@ -154,8 +168,254 @@ and v0.93 claims retain the milestone non-claim boundaries.
       "docs/milestones/v0.92/RELEASE_PLAN_v0.92.md",
       "docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md"
     ],
-    "issues": [5843, 5852],
-    "order": [5843, 5852]
+    "issues": [
+      5843,
+      5852
+    ],
+    "order": [
+      5843,
+      5852
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5818-skills-to-final-doc-truth-v1",
+    "paths": [
+      "csdlc-v2/operator/skills/csdlc-v2-bind/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-card-editor/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-doctor/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-publish/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-review/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-shepherd/SKILL.md",
+      "csdlc-v2/operator/skills/csdlc-v2-validate/SKILL.md"
+    ],
+    "issues": [
+      5818,
+      5843
+    ],
+    "order": [
+      5818,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5825-birthday-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md"
+    ],
+    "issues": [
+      5825,
+      5843
+    ],
+    "order": [
+      5825,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5826-identity-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md"
+    ],
+    "issues": [
+      5826,
+      5843
+    ],
+    "order": [
+      5826,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5827-continuity-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md"
+    ],
+    "issues": [
+      5827,
+      5843
+    ],
+    "order": [
+      5827,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5828-memory-palace-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md"
+    ],
+    "issues": [
+      5828,
+      5843
+    ],
+    "order": [
+      5828,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5829-grounding-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md"
+    ],
+    "issues": [
+      5829,
+      5843
+    ],
+    "order": [
+      5829,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5830-acp-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md"
+    ],
+    "issues": [
+      5830,
+      5843
+    ],
+    "order": [
+      5830,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5831-adaptive-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md"
+    ],
+    "issues": [
+      5831,
+      5843
+    ],
+    "order": [
+      5831,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5833-witness-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md"
+    ],
+    "issues": [
+      5833,
+      5843
+    ],
+    "order": [
+      5833,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5834-demo-matrix-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md"
+    ],
+    "issues": [
+      5834,
+      5843
+    ],
+    "order": [
+      5834,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5835-migration-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md"
+    ],
+    "issues": [
+      5835,
+      5843
+    ],
+    "order": [
+      5835,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5836-launch-docs-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+      "docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md",
+      "docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md",
+      "docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md"
+    ],
+    "issues": [
+      5836,
+      5843
+    ],
+    "order": [
+      5836,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5838-provider-demo-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md"
+    ],
+    "issues": [
+      5838,
+      5843
+    ],
+    "order": [
+      5838,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5839-adr-plan-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/ADR_PLAN_v0.92.md"
+    ],
+    "issues": [
+      5839,
+      5843
+    ],
+    "order": [
+      5839,
+      5843
+    ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5840-proof-docs-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+      "docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+    ],
+    "issues": [
+      5840,
+      5843
+    ],
+    "order": [
+      5840,
+      5843
+    ]
   }
 ]
 ```
@@ -168,8 +428,11 @@ evidence link checks, stale/planned/unsupported claim rejection, secret/private
 path scanning, and exact-head docs review. Any unresolved contradiction or
 unsupported release claim blocks completion and remains visible.
 
-## Non-Goals
+## Rollback
 
+Revert the final documentation-truth commit as one unit after all serialized producers are complete, preserving the canonical inventory and review packet. Restore the immediately prior reviewed documents only; do not partially roll back generated metadata, producer-owned content, release claims, or historical evidence.
+
+## Non-Goals
 - No product implementation, historical evidence rewrite, or release approval.
 - No article/podcast publication, internal review execution, or remediation.
 - No claim that v0.93 governance or legal personhood is implemented.

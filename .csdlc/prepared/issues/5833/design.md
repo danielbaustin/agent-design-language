@@ -65,6 +65,21 @@ Define WP-15 Runtime v3 witness and receipt contracts from `docs/milestones/v0.9
       5829,
       5833
     ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5833-witness-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md"
+    ],
+    "issues": [
+      5833,
+      5843
+    ],
+    "order": [
+      5833,
+      5843
+    ]
   }
 ]
 ```

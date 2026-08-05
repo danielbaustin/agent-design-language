@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "e7ab200f39f0714ae0aebb76949289e6bd66f4a3b272895650972227f5ad3a79",
   "phase": "bound",
-  "generation": 49,
-  "digest": "1e65142c1d5901d6481d957c3107c1caedadd97cdd8eb5d378a0b9e79c092136",
+  "generation": 51,
+  "digest": "2d46d55860d4ea3b418e233775f025550b33afe16b957f7d9099447f0fc1ff9a",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5831/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-birthday-publication-followup-design-review",
-      "revision": "713f542c10de8979a3643429b0b7f81be4a98b91591fa13d634ea508d74eaa34"
+      "reviewer": "codex:5860-quality-release-replay-combined-design-review",
+      "revision": "91f8ac6dc1021239177fb488afde787bf38e715cc2ec533d8e20aa425f85fd0e"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "e48eb7e1da1330ab90b2b7c809a7e1c94d1cce872e701552b52ee36907594777",
+      "values_digest": "fd9d3dc459650ce52851404de3c78922f7a3a98808975b67201c8ec61a382cd3",
       "rendered_digest": "ebf59b2657435fa4e629903ea15c1124838d020d1ae1513caad45f0d27305f71",
       "ast_digest": "47c02f5b5c4ce795d3c9fd3d14ccb9a57f1f44b7f18ac29b2051a969b70a3d53"
     },
     "stp": {
-      "values_digest": "90edec3717094d4a0ddafe7b792e09484c4a83969de4daf511d83e0f370d279f",
+      "values_digest": "04f796adb3312c1327137d7345914b0cccd821acc96cebf4527fae4ddea2b2c0",
       "rendered_digest": "54ee94bfd886753ce3703f62038afafdf66ba4f2f889edbb20b50a2a414ca4d6",
       "ast_digest": "c70418e11662fa1b5302c94461554c338552e9a9ff0477f19cfd50fe52c56390"
     },
     "spp": {
-      "values_digest": "e1568c8076ec313c36976139a9028d386d7a3f6bc23763ad3c6a998ad2c1e85f",
-      "rendered_digest": "fdea121072c000337a983e11d86d1290af0f1efadabbc30baae5edf34cd97302",
-      "ast_digest": "4ee35ec5041876a1e20ac8f360146e25bd0eeae64220082cdc288e403759d27a"
+      "values_digest": "865f046b070f202e39e533141b8583203acf5121304e506ad0f7d455a2206364",
+      "rendered_digest": "7adaa68d77add63bb964a6f25fe80f2bf048fe04862d93eff75bf7f6a8aba9d6",
+      "ast_digest": "c7f7dbbbabb7dda3e929dc1a331e52a341af174bba016226bf7bf23e0a0195a6"
     },
     "vpp": {
-      "values_digest": "c081f5de82f78eee1a1e1aafa594d6ccbfa515c9b4cc8c2fa519ac8a906442c8",
+      "values_digest": "ed12513a059f4e612b4455ac88b473cf634e14e836113f3e010a1613bccce1dc",
       "rendered_digest": "7ad830b9ab59a5861fadd5b8b358e784c6e64aaa166673170427dcfd9f2dedc2",
       "ast_digest": "8fcabb787d54f15fafdb398f85aa62d3e9c69eba68f811b78bcfd291538a7513"
     },
     "srp": {
-      "values_digest": "5d3c76925269bc1b6b0db70fee7367952d3a3b2ba1206fe486161527a2daf5f5",
+      "values_digest": "927008576282fef62010cc3e6cdb1e879d376165680950af7dbfc9a821b2f8f1",
       "rendered_digest": "f4d1b50f223cce6785b4a476d683618378921ceb30e3306785901a4454c0388b",
       "ast_digest": "ad48467373a00ab4134a625bb5c40e297dafeb7fbf5288f5b2ee8ba6761586e6"
     },
     "sor": {
-      "values_digest": "999d3bcd357d47edbf0945df5c35caf505fe905f800f62039bfc5fdfed1ec697",
+      "values_digest": "d40d10668581636943ae7c0ba65991611132a553726c970810dd060cc49ec215",
       "rendered_digest": "08069e5c4ac156b5d0d9ee35747632ff67581e203f0aeeaa7d12f41a60e986e9",
       "ast_digest": "1cef938010dcb5de447f8e1c7722d1462c72d177b4688fbe8c531ab97ef18a7c"
     }
@@ -531,6 +531,34 @@
       "actor": "codex:5860-birthday-publication-followup",
       "reason": "Release the issue-local follow-up claim after rollback, exact ownership projection, design approval, and validation.",
       "operation": "{\"claim_id\":\"claim-5831-v092-birthday-publication-followup\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-followup\",\"previous_owner\":\"codex:5860-birthday-publication-followup\"}"
+    },
+    {
+      "sequence": 67,
+      "generation": 49,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Reacquire the released issue-local preparation claim to replay quality rollback and reciprocal serialization onto the exact integrated head.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-replay\",\"claim_id\":\"claim-5831-v092-quality-replay\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-replay\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5831\",\".csdlc/prepared/issues/5831\",\".csdlc/evidence/5831\"],\"purpose\":\"Replay issue-local rollback and serialization readiness onto exact integrated head only; preserve Birthday changes; no product implementation, #5860 aggregate, #5861, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 68,
+      "generation": 50,
+      "actor": "codex:5860-quality-release-replay-combined-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 69,
+      "generation": 51,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Regenerate the exact combined-head SPP projection from approved Owned Paths plus Serialization Gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/adaptive_learning.rs\",\"adl-runtime-kernel/src/lib.rs\",\"adl-runtime-kernel/tests/adaptive_learning.rs\",\"adl-runtime-kernel/tests/fixtures/adaptive_learning\",\"docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md\",\".csdlc/prepared/issues/5831/validate-native-receipts.rb\",\".csdlc/prepared/issues/5831/produce-native-receipt.rb\",\".csdlc/evidence/5831\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-birthday-kernel-registration-v1\\\",\\\"paths\\\":[\\\"adl-runtime-kernel/src/lib.rs\\\"],\\\"issues\\\":[5825,5826,5827,5828,5829,5830,5831,5833],\\\"order\\\":[5825,5826,5827,5828,5829,5830,5831,5833]}\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-5831-adaptive-doc-to-final-truth-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md\\\"],\\\"issues\\\":[5831,5843],\\\"order\\\":[5831,5843]}\"]}"
+    },
+    {
+      "sequence": 70,
+      "generation": 51,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Release exact-head replay claim after combined design approval, SPP regeneration, 58-issue ownership proof, and zero rollback-gap proof.",
+      "operation": "{\"claim_id\":\"claim-5831-v092-quality-replay\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-replay-completion\",\"previous_owner\":\"codex:5860-quality-release-replay\"}"
     }
   ]
 }

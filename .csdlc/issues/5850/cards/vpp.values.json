@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-28A] Next-milestone closeout plan",
     "slug": "v0-92-wp-28a-next-milestone-closeout-plan",
     "version": "v0.92",
-    "generation": 13
+    "generation": 15
   },
   "status": "ready",
   "content": {
@@ -114,7 +114,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5850/design.md",
-      "design_digest": "5772b7a0159c68a1b78abf7efdb75f022bc7d320ec7a302c15267d6f751d076d",
+      "design_digest": "395cad35168532e370ea92a043a562d66f5b30260229bfda48a6ca96a461b518",
       "diagram_ref": ".csdlc/prepared/issues/5850/diagram.mmd",
       "diagram_digest": "ce44b443126a9cf4b3cc12290861a6bae0cd0d02289d05af13909228de637435"
     }

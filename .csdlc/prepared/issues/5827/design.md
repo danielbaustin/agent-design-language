@@ -65,6 +65,21 @@ Implement the WP-10 continuity record defined by `docs/milestones/v0.92/features
       5826,
       5827
     ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5827-continuity-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md"
+    ],
+    "issues": [
+      5827,
+      5843
+    ],
+    "order": [
+      5827,
+      5843
+    ]
   }
 ]
 ```

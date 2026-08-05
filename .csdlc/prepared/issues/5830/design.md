@@ -50,6 +50,21 @@ Define WP-13's bounded ACP profile in current Runtime v3 authority from `docs/mi
       5831,
       5833
     ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5830-acp-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md"
+    ],
+    "issues": [
+      5830,
+      5843
+    ],
+    "order": [
+      5830,
+      5843
+    ]
   }
 ]
 ```

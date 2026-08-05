@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-21A] Rust refactoring and maintainability pass",
     "slug": "v0-92-wp-21a-rust-refactoring-and-maintainability-pass",
     "version": "v0.92",
-    "generation": 21
+    "generation": 23
   },
   "status": "ready",
   "content": {
@@ -67,7 +67,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5841/design.md",
-      "design_digest": "7fc254a91189e99e04efde4f73dfc4e889d91110899e2bf5703fde2d7042e1ba",
+      "design_digest": "8a7b8001cbaade69071e925cdb741f526299fa661a9fbf724a25e12febb1de1d",
       "diagram_ref": ".csdlc/prepared/issues/5841/diagram.mmd",
       "diagram_digest": "b4df00a4d3d743cffd8848bba7bb5c20d5b4d4641915587f6a72b37044e3c611"
     }

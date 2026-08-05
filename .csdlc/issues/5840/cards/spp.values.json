@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-20] Demo matrix, AEE proof, and proof coverage",
     "slug": "v0-92-wp-20-demo-matrix-aee-proof-and-proof-coverage",
     "version": "v0.92",
-    "generation": 28
+    "generation": 30
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 11,
+      "plan_revision": 12,
       "summary": "Verify dependency revisions; correct stale WP-20 ownership while preserving WP-21/WP-21A; replace candidate rows only with accepted exact-revision evidence; build the AEE artifact index; add fail-closed coverage validation; resolve exact-head review.",
       "steps": [
         {
@@ -79,7 +79,8 @@
         "adl/tools/validate_v092_demo_proof_coverage.py",
         "adl/tools/test_v092_demo_proof_coverage.sh",
         ".csdlc/evidence/5840",
-        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-demo-matrix-v1\",\"paths\":[\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\"],\"issues\":[5834,5836,5840],\"order\":[5834,5836,5840]}"
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-demo-matrix-v1\",\"paths\":[\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\"],\"issues\":[5834,5836,5840],\"order\":[5834,5836,5840]}",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-5840-proof-docs-to-final-truth-v1\",\"paths\":[\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\"docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\"],\"issues\":[5840,5843],\"order\":[5840,5843]}"
       ],
       "invariants": [
         "Every accepted row names an exact revision, command, artifact, owner, and review state",
@@ -109,7 +110,7 @@
         "Quality-gate or proof-status vocabulary changes"
       ],
       "design_ref": ".csdlc/prepared/issues/5840/design.md",
-      "design_digest": "84ab3b83975c621c82aaaf889ec94cb99871ebf4f01b232d64325bb8196cd5dd",
+      "design_digest": "75aa9aeda5ed62ef664d2bf3c0bd82e12f7592e10bb260a42f428be0e9c9167f",
       "diagram_ref": ".csdlc/prepared/issues/5840/diagram.mmd",
       "diagram_digest": "57f3fcc1a7b7aac2e97794d4e761093a49874adc02355f69436b4811bb6538e2"
     }

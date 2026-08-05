@@ -16,7 +16,7 @@ Verify #5834, #5835, and the v0.93 allocation; inventory exact accepted artifact
 
 ## Plan
 
-Revision 11
+Revision 12
 
 ## Steps
 
@@ -102,7 +102,7 @@ Revision 11
 
 .csdlc/prepared/issues/5839/design.md
 
-Digest: 482c4c062636a7b1e19def3e19a73fc548a808681f178ec1606456b64f38a82c
+Digest: 53896fe1d51ca055df68e1a834372be8f4de1459c93410d1253306f24c2a67c9
 
 ## Diagram
 

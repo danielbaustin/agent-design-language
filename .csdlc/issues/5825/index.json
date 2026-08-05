@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "904390dda83597a867777bbf16ebbe9907f65b6d6481c7be13b55d2ed2e2de2d",
   "phase": "bound",
-  "generation": 62,
-  "digest": "97c6ac4e2fee64f94a72656a8cc4e02f3e48c609d2c5f5cb0591d2059e8f43ea",
+  "generation": 64,
+  "digest": "dcdff23719ddbed183d6accb11f1e709b27468c2c76b62beb7cf192c835f9fae",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5825/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-birthday-publication-followup-design-review",
-      "revision": "8b4fbb1b545e8ae1db9f1d76c717bd68c06bbbbf2310f402a37115ffa6e19102"
+      "reviewer": "codex:5860-quality-release-replay-combined-design-review",
+      "revision": "f04080d6b3bc8bc4d9c062333476ab8d4a44b464205d149c001a48c317361621"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "2662976bf74b5aed1207465dc50235f310490b4db0afcc49e4744c4c7d34d238",
+      "values_digest": "d8aafe2686d6d404d04b75789c33918198b3043c450cf68ec8651d7d4b7f59dd",
       "rendered_digest": "d6a522f9b96a13db366a0ee6b8ce2cdab3049852134faabe28fe9a42af07fe66",
       "ast_digest": "8d6bf8fbed7abdd44c892e87970e36f564d7ffc9fc248f3cae3aa1c0b8185d8a"
     },
     "stp": {
-      "values_digest": "d28df3aec09ac12ee0fcb1eeebca897a8fe55a10c700d268f05b740d6f70b36f",
+      "values_digest": "3a2c94451849055556550a2f4bcfacbec0597af9b5fcf21fd58d19545a053c0e",
       "rendered_digest": "9b4a0528dca8794b600709aeeae7acd7726325f47dd2975721db6e5156dcc245",
       "ast_digest": "013473c072130c1eb36860a8ccbf49a7b8b4acb815224e3e298125a880502aa6"
     },
     "spp": {
-      "values_digest": "0ba492d2c7ef06f9a2921d9c9e517da13c66c3f8cd8de90a302663d69bc2f391",
-      "rendered_digest": "1c8d0f525e1286c148cf99259de1a417a0cbaf55e1c4007bdca5ad398b56884b",
-      "ast_digest": "47b435f13e010c9b5c134baac958b50fb4b5752727dbf58326de9392111f165b"
+      "values_digest": "8c86af6935b2d9c1de9d6bab18784a4c80de4b8409b5189d4681a27f1f0249fc",
+      "rendered_digest": "e70533eeec1d595753e873872cd60c84921294bf19043d1b6527e977bb219bcf",
+      "ast_digest": "88d570e15dbae66e6ba456963de20f798f5fa98727a44a1b88352238eb7795db"
     },
     "vpp": {
-      "values_digest": "b5572d16d6070f0d61568c328af6641586f7c1c788c4da8da4a2ac70523db9b6",
+      "values_digest": "97218a538d61777ecd78427edabfc8a4e62e5c090211c3710de101bdadffb577",
       "rendered_digest": "f565b305caabed15e6a2c3378423c87aed1eb67fe1764db63eefe35a615e4864",
       "ast_digest": "0d6ea31c8a5919d79e482f092afc2985499ab29bd5f661e1d29532f633e42f2a"
     },
     "srp": {
-      "values_digest": "f303f1a32ddefd8ca0f712994593d0bda876e9b2d05adf6751e537762e07014e",
+      "values_digest": "12983051661f9d65781d5133bee9d0ba65cf7b135d1a941139dd830b1ae2644e",
       "rendered_digest": "656f33b83ff10ead3fa1cb155ab9ef8be5b90d51a2e442224b85d9fbfe76b2b4",
       "ast_digest": "ecc45c5df390f8f354a35abfe2e442480c22c6a4d71cbba8d76a340898994d13"
     },
     "sor": {
-      "values_digest": "fdb2e5742ce8f06505d8a61ccb828a126ccf4ac29cbdf98ef734935566527fc8",
+      "values_digest": "fd7ef16ebfd93963dce676bcb91bdfdf8b2722e359aa7ecd4cb41ca0f0beb9b7",
       "rendered_digest": "e3a6c6ec76708b4213ad79897d6cf48fe48bcaecd057a5a4c8601d59795a6d41",
       "ast_digest": "bf6ffc3401c9b3afd0a0dc0839121b241979dfa196064dffb3a6f233a26d1799"
     }
@@ -622,6 +622,34 @@
       "actor": "codex:5860-birthday-publication-followup",
       "reason": "Release the issue-local follow-up claim after rollback, exact ownership projection, design approval, and validation.",
       "operation": "{\"claim_id\":\"claim-5825-v092-birthday-publication-followup\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-followup\",\"previous_owner\":\"codex:5860-birthday-publication-followup\"}"
+    },
+    {
+      "sequence": 80,
+      "generation": 62,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Reacquire the released issue-local preparation claim to replay quality rollback and reciprocal serialization onto the exact integrated head.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-replay\",\"claim_id\":\"claim-5825-v092-quality-replay\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-replay\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5825\",\".csdlc/prepared/issues/5825\",\".csdlc/evidence/5825\"],\"purpose\":\"Replay issue-local rollback and serialization readiness onto exact integrated head only; preserve Birthday changes; no product implementation, #5860 aggregate, #5861, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 81,
+      "generation": 63,
+      "actor": "codex:5860-quality-release-replay-combined-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 82,
+      "generation": 64,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Regenerate the exact combined-head SPP projection from approved Owned Paths plus Serialization Gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/birthday.rs\",\"adl-runtime-kernel/src/lib.rs\",\"adl-runtime-kernel/tests/birthday.rs\",\"adl-runtime-kernel/tests/fixtures/birthday\",\"docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md\",\".csdlc/prepared/issues/5825/validate-native-receipts.rb\",\".csdlc/prepared/issues/5825/produce-native-receipt.rb\",\".csdlc/evidence/5825\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-birthday-kernel-registration-v1\\\",\\\"paths\\\":[\\\"adl-runtime-kernel/src/lib.rs\\\"],\\\"issues\\\":[5825,5826,5827,5828,5829,5830,5831,5833],\\\"order\\\":[5825,5826,5827,5828,5829,5830,5831,5833]}\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-5825-birthday-doc-to-final-truth-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md\\\"],\\\"issues\\\":[5825,5843],\\\"order\\\":[5825,5843]}\"]}"
+    },
+    {
+      "sequence": 83,
+      "generation": 64,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Release exact-head replay claim after combined design approval, SPP regeneration, 58-issue ownership proof, and zero rollback-gap proof.",
+      "operation": "{\"claim_id\":\"claim-5825-v092-quality-replay\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-replay-completion\",\"previous_owner\":\"codex:5860-quality-release-replay\"}"
     }
   ]
 }

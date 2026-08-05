@@ -16,7 +16,7 @@ Consume the passing WP-22 matrix, inventory canonical docs and claims, classify 
 
 ## Plan
 
-Revision 7
+Revision 8
 
 ## Steps
 
@@ -89,7 +89,7 @@ Revision 7
 
 .csdlc/prepared/issues/5843/design.md
 
-Digest: 7621cd6d9d3ca92ac64b188126a1d8bedefd3a5fa20982471377c27d34904a7b
+Digest: a578f64a6408dcc22a1e299b3a835ceb0445c14543067bdcd9444f9a88d2d178
 
 ## Diagram
 

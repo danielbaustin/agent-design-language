@@ -56,8 +56,11 @@ stale/dirty/missing-proof negative fixtures, ceremony idempotence planning,
 YAML/JSON/Markdown validation, and exact-head review. Any unknown row or
 unowned action blocks plan approval rather than being treated as complete.
 
-## Non-Goals
+## Rollback
 
+Discard the closeout-plan reconstruction and regenerate it from the live nonempty issue, PR, check, review, and typed-state universe. Preserve failed negative fixtures, and do not accept a plan until each one-field mutation produces exactly its expected blocker.
+
+## Non-Goals
 - No merge, typed finish, claim release, cleanup, tag, release, or issue close.
 - No v0.93 activation or replacement of WP-29/WP-30 authority.
 - No rewriting historical records to make the universe appear terminal.

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-28] Next milestone planning",
     "slug": "v0-92-wp-28-next-milestone-planning",
     "version": "v0.92",
-    "generation": 19
+    "generation": 21
   },
   "status": "ready",
   "content": {
@@ -67,7 +67,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5849/design.md",
-      "design_digest": "44ca2597cf6decfd7b236d472854472dca421273ca4b0e5e7ed68704ad370c6d",
+      "design_digest": "2a0c2e5f81419606b4a39d276d9f95b9191e97f217f0e85ed6bd74a98f0f1f8f",
       "diagram_ref": ".csdlc/prepared/issues/5849/diagram.mmd",
       "diagram_digest": "71c4234b11ef676b8124bc3a101e7670f42ee734598fb52da48405843f96b070"
     }

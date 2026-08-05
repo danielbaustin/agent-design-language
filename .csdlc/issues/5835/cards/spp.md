@@ -16,7 +16,7 @@ Verify #5826, #5827, and #5834; reconcile landed schemas; author the transfer ma
 
 ## Plan
 
-Revision 11
+Revision 12
 
 ## Steps
 
@@ -104,7 +104,7 @@ Revision 11
 
 .csdlc/prepared/issues/5835/design.md
 
-Digest: bf576c7f347cee6306685cc8fdfb11f926be8f7b7320da70f42c8faa674c1353
+Digest: 7aae0200e0a85f3ac98eb3f51b48e31a7599019454900b24e8602f81565b86b9
 
 ## Diagram
 

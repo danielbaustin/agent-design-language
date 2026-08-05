@@ -27,6 +27,28 @@ does not assign citizenship, standing, rights, duties, or polis authority.
 - Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
 - Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5839-adr-plan-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/ADR_PLAN_v0.92.md"
+    ],
+    "issues": [
+      5839,
+      5843
+    ],
+    "order": [
+      5839,
+      5843
+    ]
+  }
+]
+```
+
 ## Handoff Map
 
 Rows cover stable name, identity root, continuity head, memory grounding,

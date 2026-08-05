@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-18B] Provider-neutral multi-agent proof",
     "slug": "v0-92-wp-18b-provider-neutral-multi-agent-proof",
     "version": "v0.92",
-    "generation": 28
+    "generation": 30
   },
   "status": "ready",
   "content": {
@@ -80,7 +80,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5838/design.md",
-      "design_digest": "0295d4ea3cdf7ef7cb5de4412ea2d38386c4a77de2b7a60ae2932cdb5e657aa0",
+      "design_digest": "43828907491071060a0a4c25a74092fa82fe8352c71b25a5eac8de4ca8ce8cbc",
       "diagram_ref": ".csdlc/prepared/issues/5838/diagram.mmd",
       "diagram_digest": "66b8593a65f5605cd6e903d1954da188a9dada0abb3d75d1b6b1324da92a4f29"
     }

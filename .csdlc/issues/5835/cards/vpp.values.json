@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-17] Migration and cross-polis continuity planning",
     "slug": "v0-92-wp-17-migration-and-cross-polis-continuity-planning",
     "version": "v0.92",
-    "generation": 28
+    "generation": 30
   },
   "status": "ready",
   "content": {
@@ -76,7 +76,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5835/design.md",
-      "design_digest": "bf576c7f347cee6306685cc8fdfb11f926be8f7b7320da70f42c8faa674c1353",
+      "design_digest": "7aae0200e0a85f3ac98eb3f51b48e31a7599019454900b24e8602f81565b86b9",
       "diagram_ref": ".csdlc/prepared/issues/5835/diagram.mmd",
       "diagram_digest": "0a3ab8f4a8150b92ec738750c11ea59db723de5e8bdd6d4a18052b93ae7e632b"
     }

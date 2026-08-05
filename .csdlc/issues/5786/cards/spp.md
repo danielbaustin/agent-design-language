@@ -16,7 +16,7 @@ After WP-20 and the rollback gate, pin the deletion denominator, inventory every
 
 ## Plan
 
-Revision 8
+Revision 9
 
 ## Steps
 
@@ -90,7 +90,7 @@ Revision 8
 
 .csdlc/prepared/issues/5786/design.md
 
-Digest: 9fadae8185278d40d62e62eb377f1decc2e0ef134d273ffefb6a4613165aee58
+Digest: ee75b36cb7a9bde63967a4a57221d186e901199a4871771f6cfcc53e710ab386
 
 ## Diagram
 

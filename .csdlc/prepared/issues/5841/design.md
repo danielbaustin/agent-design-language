@@ -62,8 +62,11 @@ same target SHA, and bounded exact-head review. Replan if behavior changes, a fe
 the selected owner is unclear, or the refactor requires a broad public API
 break. Preserve the original behavior and route larger redesign separately.
 
-## Non-Goals
+## Rollback
 
+Revert only the selected Rust refactor paths and restore their pre-refactor implementations without touching unrelated runtime modules. Rerun formatting, Clippy, focused control and observability tests, native-platform proof, and metric comparison before resuming review.
+
+## Non-Goals
 - No legacy deletion already owned by #5786.
 - No new v0.92 feature behavior or hidden release remediation.
 - No broad workspace rewrite, dependency upgrade campaign, or aesthetic churn.

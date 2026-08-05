@@ -16,7 +16,7 @@ Freeze the full v0.92 universe, reconcile live and typed terminal truth, classif
 
 ## Plan
 
-Revision 5
+Revision 6
 
 ## Steps
 
@@ -88,7 +88,7 @@ Revision 5
 
 .csdlc/prepared/issues/5850/design.md
 
-Digest: 5772b7a0159c68a1b78abf7efdb75f022bc7d320ec7a302c15267d6f751d076d
+Digest: 395cad35168532e370ea92a043a562d66f5b30260229bfda48a6ca96a461b518
 
 ## Diagram
 

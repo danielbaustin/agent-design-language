@@ -50,6 +50,21 @@ Define the deterministic WP-08 birth decision consumed by the Birthday sprint. T
       5831,
       5833
     ]
+  },
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-5825-birthday-doc-to-final-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md"
+    ],
+    "issues": [
+      5825,
+      5843
+    ],
+    "order": [
+      5825,
+      5843
+    ]
   }
 ]
 ```

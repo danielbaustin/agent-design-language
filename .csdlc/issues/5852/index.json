@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "af917826983f54ef33a15a08cacf4239502b6469ee09079b0a28f195e9741431",
   "phase": "bound",
-  "generation": 15,
-  "digest": "5e9927d1c51ff4f23750a0c6ead359c58dac0ebc23c27b14d7c569902f568471",
+  "generation": 17,
+  "digest": "e127319dee117ddfcdb2b60548e15bd693eb0e7fd692626d9835511b7371075b",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5852/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-quality-release-exact-repair-design-review",
-      "revision": "7d7fd77cd7abd13264c637b3af8ce76a6f4eeb23a64b2323d14e2efd444aa755"
+      "reviewer": "codex:5860-quality-release-replay-combined-design-review",
+      "revision": "9acff2df21c37eee745b4e693922bd3008918e474fdc920a5a9d7b8af341b14c"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "4c8877a0de88381b2118c400d89b4c44de1a36c14ea9383a4c90a29e9d09a9cc",
+      "values_digest": "27b64cd70029a67f33c0a7e3244d393b576a09c38081373cfbd5f844eb7ec4c6",
       "rendered_digest": "be5003b662067d5bab91d7c4553fcdd70728fbe6e5de6ee928563a945d5e58e1",
       "ast_digest": "26f535c6f0bcb09c4857e1b891a69f874f1cf58a6976c6dfe6872ced7d7b0c7b"
     },
     "stp": {
-      "values_digest": "0bbea737a5939a6e56917409810568eaf805ac164b9358aad1aafe15ad2d0b0c",
+      "values_digest": "c4ed34e86bb388107f75ed72f51d50e94e857a8e46d25b1fd114926800bc5381",
       "rendered_digest": "3d396b6e5e1491362ba0f40f6d1f74ccb8d988730770630570ceb3fe9da149d6",
       "ast_digest": "bea85d5035a0b377f19f1a0f64bf0ef94d0de6185cd8be44a92da1485798ad9a"
     },
     "spp": {
-      "values_digest": "816d67bae472011e8cb4d94a9e530b089bdb70e60cb5e0d4026d22efce17e0b3",
-      "rendered_digest": "255aee5f9457022e134759d09483f210390282ab778eb020635db75691b15787",
-      "ast_digest": "f167ebfa3f404e44ead5fd5209e7e6cd982655a88cbe64fa7574d6acf5e897c8"
+      "values_digest": "86bad65656c63a33ebd881623fa1155952ad35861fc9e099c65eccd9b2be0b97",
+      "rendered_digest": "0904a6a03fcabd95a9beab3c013e04de9fb18117571824d7dd7e1baf587a4b2a",
+      "ast_digest": "711d5f5e2a1a07cdff3eead983ba0d4a056cad53854fe4b126d3f27e545b3499"
     },
     "vpp": {
-      "values_digest": "19a2cf12e196d67ac1032b6b4e2cbf7b60a5471f39a865a6db793a6a2d2a7851",
+      "values_digest": "220ce946a7ce9d9b2ef2034aab3cac56616396fd4947a4d2bfc5ebd305449af3",
       "rendered_digest": "39ac72f2dba480ea9bb2ac415058e2b9f005523f66dffa94499676ab08d41ca9",
       "ast_digest": "015f54052a0c374bbd5cbba6ce2806c257823163f8e4daa3a953a482c46c8e19"
     },
     "srp": {
-      "values_digest": "451c670e119e152e8d9e196d1218940ebeb67fe8f0c26e2d16a82d47498febf7",
+      "values_digest": "c9b85f4fc08d40ab2a15a65a3a473cbc65c6096b02c802bb77afec672730d358",
       "rendered_digest": "392c586ae21a77ce6717f21c780b03649921cab7ce1faf6b4ec5ee16247652cb",
       "ast_digest": "75d679dec3b72e6f8b9c263e17f296e2b8bcc2049033e2f66a5a9c30187fc175"
     },
     "sor": {
-      "values_digest": "b1c265ecca373be012adc989c0a10495797e1d280762a5a5c104dd3ee86c4767",
+      "values_digest": "f83630f24ddf103c0ede88b5dc63acf808399aa9fa01f5c1d3c369a077e58612",
       "rendered_digest": "2cf64595a2dc6c3b25eefd8028717e80ac4fa419fb182cab5d1bf273c16b484f",
       "ast_digest": "e5296f9f599959eaaa052d0feaecd7cfa28ec61756815c3d98807aacebfde812"
     }
@@ -251,6 +251,34 @@
       "actor": "codex:5860-quality-release-exact-repair",
       "reason": "Release bounded readiness-repair preparation claim after typed rendering, design approval, and focused validation.",
       "operation": "{\"claim_id\":\"claim-5852-v092-quality-release-exact-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-release-exact-repair-completion\",\"previous_owner\":\"codex:5860-quality-release-exact-repair\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 15,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Reacquire the released issue-local preparation claim to replay quality rollback and reciprocal serialization onto the exact integrated head.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-replay\",\"claim_id\":\"claim-5852-v092-quality-replay\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-replay\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5852\",\".csdlc/prepared/issues/5852\",\".csdlc/evidence/5852\"],\"purpose\":\"Replay issue-local rollback and serialization readiness onto exact integrated head only; preserve Birthday changes; no product implementation, #5860 aggregate, #5861, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 28,
+      "generation": 16,
+      "actor": "codex:5860-quality-release-replay-combined-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 29,
+      "generation": 17,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Regenerate the exact combined-head SPP projection from approved Owned Paths plus Serialization Gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/RELEASE_NOTES_v0.92.md\",\"docs/milestones/v0.92/RELEASE_PLAN_v0.92.md\",\"docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md\",\"docs/milestones/v0.92/V092_RELEASE_CEREMONY_5852.md\",\".csdlc/evidence/5852\",\".csdlc/prepared/issues/5852/validate-release-evidence.rb\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-doc-truth-to-release-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/RELEASE_NOTES_v0.92.md\\\",\\\"docs/milestones/v0.92/RELEASE_PLAN_v0.92.md\\\",\\\"docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md\\\"],\\\"issues\\\":[5843,5852],\\\"order\\\":[5843,5852]}\"]}"
+    },
+    {
+      "sequence": 30,
+      "generation": 17,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Release exact-head replay claim after combined design approval, SPP regeneration, 58-issue ownership proof, and zero rollback-gap proof.",
+      "operation": "{\"claim_id\":\"claim-5852-v092-quality-replay\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-replay-completion\",\"previous_owner\":\"codex:5860-quality-release-replay\"}"
     }
   ]
 }

@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "32be2775da7d29b623f133aa7284fea130d4fd34731c4f9b15c417f41bb01059",
   "phase": "bound",
-  "generation": 28,
-  "digest": "53c835e79753ec41b60bf383caf60cfd3508069d092ce71b1f4659060163d872",
+  "generation": 30,
+  "digest": "1dbde1600501b66f62ec004fb1a34d3b6d798a9ba53807888742145d604eaa57",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5838/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-birthday-publication-final-design-review",
-      "revision": "0295d4ea3cdf7ef7cb5de4412ea2d38386c4a77de2b7a60ae2932cdb5e657aa0"
+      "reviewer": "codex:5860-quality-release-replay-combined-design-review",
+      "revision": "43828907491071060a0a4c25a74092fa82fe8352c71b25a5eac8de4ca8ce8cbc"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "f300cd2184a95617a192c3c6fa223914770f224b305ac460581006ca9a6ae2fe",
+      "values_digest": "0293bf8b6083f4a53a69a9b4b9efa2dff1ab9384fe57dbf760d43d5ea61984fa",
       "rendered_digest": "339a1941074f0cf96f2e657e465eecb1d7b9e3dd680d1d67cf643a0f103ed1b6",
       "ast_digest": "c8def94eb0b19d23c05ce6f087fb550907808c8b50929a6d16ae2066349d7e11"
     },
     "stp": {
-      "values_digest": "f29898f13e58e7e472c1acda3c4905bc914af27fa30f4805f245a51fab660929",
+      "values_digest": "4a8f51a767439524837be5468eebc98ffd3d1e6645ab694d93cd378d8a9c56a4",
       "rendered_digest": "1444a8c2cf61a20aabba3b4d44ff13d9ba8a03e4ec4e45ab363fe219ae5e288c",
       "ast_digest": "97c67232d75805316eedacc391a3306971fd152feb8016feb25876f7ae618d6a"
     },
     "spp": {
-      "values_digest": "24facffd448f80ff33237e56c760ffb2198911c84b46cbf973ed4c553e0e56f8",
-      "rendered_digest": "82d7feacb722b52904eb14c12cd7125ad28adb1cbbf85dec860a907db9f8a74e",
-      "ast_digest": "07b9e0b66b2f62c91a5567b0ed95de49e7765d25a2a0dbc9ddd20b6f9e5d97f6"
+      "values_digest": "9d7f4f93efba7599324da7dfef021aa382857eb77bab7ea0826608a60bb36d1f",
+      "rendered_digest": "3f53f756255c7626e425e06434a8b5d998b1537f2cbf885cfd0cdd90a85e377e",
+      "ast_digest": "b60c5cbd609b97a0b4f79c298637596b7ddfed1c4b3b76818832e0d407eb0adb"
     },
     "vpp": {
-      "values_digest": "aa41c7488b8bac86e19ccc379cca732644c737552f5e6ee897b55d72df50c520",
+      "values_digest": "04f58c8839e3c3fc8e49bdf9f4b75ff2ecc2fdcd698f69992c49fed2904a3bdb",
       "rendered_digest": "22670963e767a00788f734b8e5a6fbebb87c791f15cee5c15caae1ed602f0b00",
       "ast_digest": "aefe3b3d15d6b57c032286c9ab9924ff908294667f2c5c43ff97d6f1136493d9"
     },
     "srp": {
-      "values_digest": "f9ee49471037aa57bd27b66f34e2167bfcf8d17f2d9a9dcb7d8d5718cff5098f",
+      "values_digest": "618716f9b79fc93dfd5a2020c210532471e8acb2207605792b8206bce94063cc",
       "rendered_digest": "48a6d07a5e55bf0ec0ec3ee2965792840a60bf8b24ad29262b4301f62200fbca",
       "ast_digest": "01c214c54d26abf163c33731700e79b0223934d010a2b7781d678fb9a3c360ec"
     },
     "sor": {
-      "values_digest": "7410eaceb27c8389578dd0628eb5bc598f250659e0120680d84ed03eaff6396a",
+      "values_digest": "e663d244ff877cef3f70e8199d6af35d189b1632c55bd1358df6d669db3e0249",
       "rendered_digest": "54c0446d13e9fff136c9c400ad2ee8985fbf958252f1eb073c3ad8164a7af534",
       "ast_digest": "52178b8ee7eb467f2882e27a84b0cf3218729296aad0bddfc89a3189b9483fa6"
     }
@@ -342,6 +342,34 @@
       "actor": "codex:5860-birthday-publication-repair",
       "reason": "Release the temporary preparation claim after typed card regeneration, exact-digest design approval, and lane validation.",
       "operation": "{\"claim_id\":\"claim-5838-v092-birthday-publication-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-repair\",\"previous_owner\":\"codex:5860-birthday-publication-repair\"}"
+    },
+    {
+      "sequence": 40,
+      "generation": 28,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Reacquire the released issue-local preparation claim to replay quality rollback and reciprocal serialization onto the exact integrated head.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-replay\",\"claim_id\":\"claim-5838-v092-quality-replay\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-replay\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5838\",\".csdlc/prepared/issues/5838\",\".csdlc/evidence/5838\"],\"purpose\":\"Replay issue-local rollback and serialization readiness onto exact integrated head only; preserve Birthday changes; no product implementation, #5860 aggregate, #5861, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 41,
+      "generation": 29,
+      "actor": "codex:5860-quality-release-replay-combined-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 42,
+      "generation": 30,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Regenerate the exact combined-head SPP projection from approved Owned Paths plus Serialization Gates.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl/tools/demo_v092_provider_neutral_birthday.sh\",\"adl/tools/validate_v092_provider_neutral_proof.py\",\"adl/tools/test_v092_provider_neutral_proof.sh\",\"demos/v0.92/provider-neutral-birthday\",\"docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md\",\".csdlc/evidence/5838\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-5838-provider-demo-doc-to-final-truth-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md\\\"],\\\"issues\\\":[5838,5843],\\\"order\\\":[5838,5843]}\"]}"
+    },
+    {
+      "sequence": 43,
+      "generation": 30,
+      "actor": "codex:5860-quality-release-replay",
+      "reason": "Release exact-head replay claim after combined design approval, SPP regeneration, 58-issue ownership proof, and zero rollback-gap proof.",
+      "operation": "{\"claim_id\":\"claim-5838-v092-quality-replay\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-replay-completion\",\"previous_owner\":\"codex:5860-quality-release-replay\"}"
     }
   ]
 }

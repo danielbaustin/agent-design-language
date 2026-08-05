@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-09] Stable name and identity architecture",
     "slug": "v0-92-wp-09-stable-name-and-identity-architecture",
     "version": "v0.92",
-    "generation": 49
+    "generation": 51
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 17,
+      "plan_revision": 18,
       "summary": "Implement and prove WP-09 canonical identity records with stable labels, immutable root authority, provenance, and redaction-safe negative handling.",
       "steps": [
         {
@@ -69,7 +69,8 @@
         ".csdlc/prepared/issues/5826/produce-native-receipt.rb",
         ".csdlc/evidence/5826",
         "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}",
-        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-identity-feature-doc-v1\",\"paths\":[\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\"],\"issues\":[5826,5827],\"order\":[5826,5827]}"
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-identity-feature-doc-v1\",\"paths\":[\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\"],\"issues\":[5826,5827],\"order\":[5826,5827]}",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-5826-identity-doc-to-final-truth-v1\",\"paths\":[\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\"],\"issues\":[5826,5843],\"order\":[5826,5843]}"
       ],
       "invariants": [
         "Stable name never substitutes for identity root authority.",
@@ -97,7 +98,7 @@
         "Review finds an unmodeled alias or provenance ambiguity."
       ],
       "design_ref": ".csdlc/prepared/issues/5826/design.md",
-      "design_digest": "ba2ad2f62ab40d2e0a1b86240ffdac8fe3f07431993fb1f818bc8e36d3e493c1",
+      "design_digest": "808598da005814fe2c5ec62495819b60cdac1d328a0611562a1126a4902fe297",
       "diagram_ref": ".csdlc/prepared/issues/5826/diagram.mmd",
       "diagram_digest": "d5cc198edc4895057317ca54fe8aa3c676496c00d23ba4718aa88f17ac266f58"
     }

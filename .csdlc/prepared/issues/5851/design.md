@@ -58,8 +58,11 @@ digest freshness, finding-schema/disposition checks, redaction, and review-
 quality evaluation. Missing rows, circular sequencing, unsupported activation,
 or unresolved actionable findings yields changes-required/blocked truth.
 
-## Non-Goals
+## Rollback
 
+Withdraw the readiness-review decision and independently reread GitHub plus typed state from the canonical denominator. Do not reuse sliced #5850 rows; rerun comparison, discrepancy, authority, and negative-replay checks before issuing a replacement exact-head decision.
+
+## Non-Goals
 - No implementation, closeout mutation, release ceremony, or v0.93 activation.
 - No repetition of product review already owned by WP-25/WP-26.
 - No approval from packet existence or author self-attestation alone.

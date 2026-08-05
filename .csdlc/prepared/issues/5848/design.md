@@ -57,8 +57,11 @@ release-claim validator at the target SHA, and open-finding rejection. Any
 unresolved actionable finding, missing proof, stale fix SHA, or unauthorized
 risk acceptance blocks completion.
 
-## Non-Goals
+## Rollback
 
+Revert only remediation commits whose live PR, review, merge, ancestry, terminal, or regression proof fails, leaving accepted-risk records and unrelated remediations intact. Reopen the affected disposition, rerun its allowlisted regression validator, and rebuild the canonical disposition register from internal and external findings.
+
+## Non-Goals
 - No suppression of reviewer findings or blanket risk acceptance.
 - No unrelated cleanup, milestone replanning, or release ceremony.
 - No claim that opening a remediation PR equals a fixed or merged disposition.

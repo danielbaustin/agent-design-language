@@ -98,8 +98,11 @@ Markdown/link validation, negative scans for activation/completion/legal/
 certification overclaims, and exact-head docs review. Missing evidence remains
 a named blocker or follow-on; it is never converted into implicit approval.
 
-## Non-Goals
+## Rollback
 
+Revert the v0.93 handoff package as one reviewed unit while preserving the source milestone evidence and rejected candidate packet. Rebuild the complete candidate planning universe after remediation is terminal; do not leave a partial package or silently promote deferred work.
+
+## Non-Goals
 - No v0.93 issue creation, activation, implementation, or release scheduling.
 - No reinterpretation of missing v0.92 evidence as governance approval.
 - No legal personhood, production constitutional authority, or certification
