@@ -1,0 +1,97 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5861,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "bd0f74de382b941c962968626ec47c9841184670eb31eb9e17a30d7c0f0f6cee",
+  "phase": "initialized",
+  "generation": 2,
+  "digest": "bddbe245f94d98aa2b0f7d72f971cf84ed090000dde845d9479b3ab33df21456",
+  "claim": {
+    "id": "claim-5861-v092-simple-preparation-binding",
+    "owner": "codex:5861",
+    "generation": 2,
+    "acquired_unix_seconds": 1785950070,
+    "expires_unix_seconds": 1786554870,
+    "heartbeat_unix_seconds": 1785950070,
+    "branch": "codex/5861-v092-csdlc-preparation",
+    "worktree": ".worktrees/adl-wp-5861-preparation",
+    "protected_paths": [
+      "csdlc-v2",
+      "docs/architecture/csdlc-v2",
+      ".csdlc/issues/5861",
+      ".csdlc/prepared/issues/5861",
+      ".csdlc/evidence/5861"
+    ],
+    "purpose": "Implement claim-free preparation and recoverable execution binding after explicit operator authorization"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5861/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5861/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:gemini-claude-design-synthesis",
+      "revision": "a206164ee7ec641ddbf61895973c31b1e2534c8f35ad3a798945f7a15411bc9f"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "42f7c67cf59308ecb81cc7f82972363ab49115c823c5ef07d8261d9b123f4676",
+      "rendered_digest": "6e39e0f8deba7bbc3536f44f9bfb50758098d82521083b0bc0df09ab85168db5",
+      "ast_digest": "6fd523d645506b07936ef6dbb9bdbe6f75bf70c8363734ccc7eb730957b83dd0"
+    },
+    "stp": {
+      "values_digest": "2c2daee1ae3baa8989561180d13a6b0766e9e6594af0f001c574d4ab3b2497cf",
+      "rendered_digest": "2fdefde547f40eac8f3a8396226b54fe247b94e209b5c95a39013b32895076d9",
+      "ast_digest": "240dd4d1331ae906ff12eb675bee3e86a25623957075a68aeea5959fd85374a7"
+    },
+    "spp": {
+      "values_digest": "d9edc2691155795b7aca760dc2e738a6c1747141005a8fc0d24eba31d9f87cfa",
+      "rendered_digest": "dbda70beb272ed138d651ed1a14054f2be4f7b1b8bfa6524afd4f21d28dc7982",
+      "ast_digest": "59282205f7916a0b9e848c2c86fa06809fc3a537f82a5f479347a14f24f59bf0"
+    },
+    "vpp": {
+      "values_digest": "02f2e79b81495cf9fafc0e7a53f335249627ce0dfb5c933fb0083658c0f8f2bb",
+      "rendered_digest": "6af697a120545f88ec21ce5800ddd59aa48b720946851567006dd08b78d37353",
+      "ast_digest": "fd35591f328f0c9fcbaaa8b6cfc91ae3678dd818451118f33dcb7cfb97d52019"
+    },
+    "srp": {
+      "values_digest": "fb269da8325741a8cccd327157c066afec063613bbce88e69f474308e698ea18",
+      "rendered_digest": "e1b387d9beb7748fff215455a939c62615aaea9b308a64d3dfa60d7bb85c5f7d",
+      "ast_digest": "3e842568e55505feddaa42414c71667eb0f327402f302b10ffb5a69a25483126"
+    },
+    "sor": {
+      "values_digest": "68ae41237ccdebb89659b6741adeaba840d96315a4a71ad67180c907869eda3a",
+      "rendered_digest": "5fb37cf6ccd456bfad993a3f4e0c4c0dba1f3e01bb3bc50176b4da445e126539",
+      "ast_digest": "477ed35fa8088ce14ece83dda3b63f32ce5ad32ff72f0153962d9e4994eeda0c"
+    }
+  },
+  "transitions": [],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5861",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:gemini-claude-design-synthesis",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 2,
+      "actor": "codex:gemini-claude-design-synthesis",
+      "reason": "reapprove stale initialized issue design",
+      "operation": "approve_design"
+    }
+  ]
+}

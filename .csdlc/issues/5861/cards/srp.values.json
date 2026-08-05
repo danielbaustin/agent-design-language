@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5861,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][C-SDLC v2][design] Simplify issue creation, preparation, and binding",
+    "slug": "v0-92-csdlc-v2-simplify-issue-creation-preparation-and-binding",
+    "version": "v0.92",
+    "generation": 2
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Only issue 5861's C-SDLC v2 creation, preparation, readiness, binding, release, migration, batch, focused tests, schemas, operator skills, and architecture contracts.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does every state and command have one truthful authority and next operation?",
+        "Can preparation remain fully editable and claim-free without weakening bind-time overlap safety?",
+        "Are receipt digest fields semantic, complete, and stable under non-semantic tracker changes?",
+        "Are bind, release, recovery, and compensation linearizable and ownership-safe at every crash point?",
+        "Does migration preserve valid active claims and offer a bounded audited repair for ambiguity?",
+        "Do batch outcomes preserve child truth without claiming all-or-nothing atomicity?",
+        "Can the coupled legacy route be deleted after focused parity without hidden compatibility behavior?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

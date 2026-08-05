@@ -1,0 +1,119 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5861,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][C-SDLC v2][design] Simplify issue creation, preparation, and binding",
+    "slug": "v0-92-csdlc-v2-simplify-issue-creation-preparation-and-binding",
+    "version": "v0.92",
+    "generation": 2
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Characterize the coupled current contracts, add claim-free generation and sealing primitives, implement linearized recoverable binding and release, migrate legacy records, update typed operator routes, and prove each crash, race, drift, and batch boundary before deleting old coupling.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Characterize current init, edit, doctor, bind, claim, and migration behavior with focused regression fixtures",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-6",
+            "AC-10"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement immutable prepared generations, semantic receipts, edit demotion, and doctor routing",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Implement repository-linearized binding intent, idempotent recovery, release, and compensation",
+          "acceptance_ids": [
+            "AC-6",
+            "AC-7",
+            "AC-8",
+            "AC-10"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Implement truthful batch preparation and audited legacy migration and repair",
+          "acceptance_ids": [
+            "AC-9",
+            "AC-10"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S5",
+          "action": "Update typed commands, operator skills, schemas, and architecture docs; prove parity and delete coupled legacy behavior",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8",
+            "AC-9",
+            "AC-10",
+            "AC-11",
+            "AC-12"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "No preparation operation creates or reserves an execution claim",
+        "No readiness status exists without a current semantic receipt",
+        "No losing overlapping bind mutates Git",
+        "No compensation deletes an artifact not proven to be intent-owned",
+        "No operator must copy or reconstruct a hidden claim identifier",
+        "Every durable transition has one explicit linearization point and recovery action"
+      ],
+      "risks": [
+        "Compatibility migration can strand or over-release ambiguous legacy claims",
+        "Incorrect digest scope can make receipts either fragile or unsound",
+        "Lock ordering mistakes can deadlock bind and release",
+        "Git compensation can delete pre-existing operator work without exact provenance",
+        "Batch summaries can overstate readiness after partial success",
+        "A broad rewrite can destabilize terminal lifecycle behavior outside this issue"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 43200,
+        "total_tokens": 140000,
+        "validation_seconds": 7200
+      },
+      "stop_conditions": [
+        "The implementation requires weakening issue-bound worktree or overlap safety",
+        "A migration path cannot distinguish valid active claims from preparation-only claims",
+        "A crash window lacks a deterministic owner recovery or safe operator repair action",
+        "Scope expands into implementation, review, publication, or closeout orchestration",
+        "Focused parity cannot prove the replacement before legacy deletion"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5861/design.md",
+      "design_digest": "a206164ee7ec641ddbf61895973c31b1e2534c8f35ad3a798945f7a15411bc9f",
+      "diagram_ref": ".csdlc/prepared/issues/5861/diagram.mmd",
+      "diagram_digest": "0a59a5969a03e84aa7e87f99da68355a036661b3f9cb88b7b7fd4259503b05d3"
+    }
+  }
+}

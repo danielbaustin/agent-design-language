@@ -1,0 +1,7 @@
+{
+  "issue": 5861,
+  "expected_generation": 1,
+  "expected_digest": "ffa6ced8297404bcb43967030645b50671ab80c763ed85c905749659f2dc7d2f",
+  "claim_id": "claim-5861-v092-simple-preparation-binding",
+  "reviewer": "codex:gemini-claude-design-synthesis"
+}

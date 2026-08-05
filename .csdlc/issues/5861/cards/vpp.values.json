@@ -1,0 +1,83 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5861,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][C-SDLC v2][design] Simplify issue creation, preparation, and binding",
+    "slug": "v0-92-csdlc-v2-simplify-issue-creation-preparation-and-binding",
+    "version": "v0.92",
+    "generation": 2
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "csdlc-v2-preparation-binding-focused",
+          "proof_role": "Prove state, receipt, concurrency, crash recovery, release, batch, and migration contracts in focused Rust tests",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8",
+            "AC-9",
+            "AC-10"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 12000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate2"
+          ],
+          "parallel_group": "csdlc-v2-focused",
+          "defer_reason": null
+        },
+        {
+          "lane": "csdlc-v2-public-contract-focused",
+          "proof_role": "Prove typed command, schema, operator skill, compatibility, and deletion boundaries",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4",
+            "AC-6",
+            "AC-11",
+            "AC-12"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 8000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate10a"
+          ],
+          "parallel_group": "csdlc-v2-contract",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on stale receipts, uncertain dependency state, ambiguous migration, unsupported lock topology, overlapping path races, unowned Git artifacts, or any readiness claim not backed by the exact current semantic generation.",
+      "design_ref": ".csdlc/prepared/issues/5861/design.md",
+      "design_digest": "a206164ee7ec641ddbf61895973c31b1e2534c8f35ad3a798945f7a15411bc9f",
+      "diagram_ref": ".csdlc/prepared/issues/5861/diagram.mmd",
+      "diagram_digest": "0a59a5969a03e84aa7e87f99da68355a036661b3f9cb88b7b7fd4259503b05d3"
+    }
+  }
+}

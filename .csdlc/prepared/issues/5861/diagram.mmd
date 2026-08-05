@@ -1,0 +1,21 @@
+stateDiagram-v2
+  [*] --> Draft: csdlc-issue create
+  Draft --> Prepared: csdlc-prepare sync
+  Prepared --> Prepared: typed edit / sync successor
+  Prepared --> ExecutionReady: csdlc-prepare seal
+  ExecutionReady --> Prepared: semantic drift / typed edit
+  ExecutionReady --> Binding: reserve paths + write intent
+  Binding --> Binding: exact owner recovery
+  Binding --> Bound: Git topology verified
+  Binding --> ExecutionReady: owner release / compensation
+  Bound --> [*]: later lifecycle
+
+  note right of ExecutionReady
+    digest-pinned semantic receipt
+    no claim and no path reservation
+  end note
+
+  note right of Binding
+    repository-wide path linearization
+    intent-owned Git artifact ledger
+  end note
