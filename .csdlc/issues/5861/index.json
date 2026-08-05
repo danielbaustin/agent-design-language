@@ -3,13 +3,13 @@
   "issue": 5861,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "bd0f74de382b941c962968626ec47c9841184670eb31eb9e17a30d7c0f0f6cee",
-  "phase": "bound",
-  "generation": 3,
-  "digest": "3ed3a14e1caf22a595ca8ac574d33ae1cfd6120eb30a7768f238879bbc7c7ca4",
+  "phase": "implemented",
+  "generation": 4,
+  "digest": "2fa948bb12a89132730ec05faa241370000a4bbcfcdba8cc991ad87db649e6f2",
   "claim": {
     "id": "claim-5861-v092-simple-preparation-binding",
     "owner": "codex:5861",
-    "generation": 3,
+    "generation": 4,
     "acquired_unix_seconds": 1785950070,
     "expires_unix_seconds": 1786554870,
     "heartbeat_unix_seconds": 1785950070,
@@ -40,34 +40,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "f15f1b38068c598dee96d12aa87b232e118f76c4bb12e636937195705531b17e",
+      "values_digest": "73abf9d87625b77102bf89c75f52b7b49c0b8b1dded1b5f712f6556e9c5d78b5",
       "rendered_digest": "6e39e0f8deba7bbc3536f44f9bfb50758098d82521083b0bc0df09ab85168db5",
       "ast_digest": "6fd523d645506b07936ef6dbb9bdbe6f75bf70c8363734ccc7eb730957b83dd0"
     },
     "stp": {
-      "values_digest": "07c8b0130712ffb2a0914824e451ad7d0b0e2825630e543c8f616dbb155395ef",
+      "values_digest": "3317d28f7a1afa40cb9b71caa5deac7ae2507e9dcadb9394fe1a3901c8b9986e",
       "rendered_digest": "2fdefde547f40eac8f3a8396226b54fe247b94e209b5c95a39013b32895076d9",
       "ast_digest": "240dd4d1331ae906ff12eb675bee3e86a25623957075a68aeea5959fd85374a7"
     },
     "spp": {
-      "values_digest": "5438cf58ac1aedcba41333b6f19bdde78e751abbc5d4081beeb431216f5b8856",
+      "values_digest": "99f20844e2041feb93e0e97fa5e66532fafccdbaff642df9c4bba9250987026d",
       "rendered_digest": "dbda70beb272ed138d651ed1a14054f2be4f7b1b8bfa6524afd4f21d28dc7982",
       "ast_digest": "59282205f7916a0b9e848c2c86fa06809fc3a537f82a5f479347a14f24f59bf0"
     },
     "vpp": {
-      "values_digest": "8d4445c41626b36aa58b9f4d9d90ba8c7c9ee24a03dc8daa7090e1bc4a655bf7",
+      "values_digest": "f0375d92e3a59aec7c0fad65e72477754849ec059d5fea0e63efda03aca7859b",
       "rendered_digest": "353c9944a14a2c4cf93390edac7e4f778415ec5f36a6771a1abb259615d66197",
       "ast_digest": "c49629db18b908195cbc2ddf1fb01ca263de0d02a4281c2eeedf231fdd701b75"
     },
     "srp": {
-      "values_digest": "b06a3cf0991e61f30bf06b26d485542e4ed87e8563cdf448c2c01f59e509e0b8",
+      "values_digest": "a1e0ee3689a22eaebb88e27fa5cd19ba9209c2dca116fab89a832e1c5102245f",
       "rendered_digest": "e1b387d9beb7748fff215455a939c62615aaea9b308a64d3dfa60d7bb85c5f7d",
       "ast_digest": "3e842568e55505feddaa42414c71667eb0f327402f302b10ffb5a69a25483126"
     },
     "sor": {
-      "values_digest": "2f7f02bee90da28862ed919ce1b05d65f1c11564e65bb140d8aeb8284f98cef5",
-      "rendered_digest": "5fb37cf6ccd456bfad993a3f4e0c4c0dba1f3e01bb3bc50176b4da445e126539",
-      "ast_digest": "477ed35fa8088ce14ece83dda3b63f32ce5ad32ff72f0153962d9e4994eeda0c"
+      "values_digest": "45e61e14d441e2e3c719bdbfb8679bb86feb31ccb0923f72c23a38740c529bc2",
+      "rendered_digest": "67221da4cdc7602dfd00dc61014a8102d869db1e4f04fd8a1034f88315c25105",
+      "ast_digest": "8e81f70787c7db67c144b57aeaa74bde84119b33b0a9f735bd2716eee20af1ff"
     }
   },
   "transitions": [
@@ -84,6 +84,13 @@
       "to": "bound",
       "actor": "codex:5861",
       "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5861",
+      "reason": "execution and passing validation finalized atomically"
     }
   ],
   "audit": [
@@ -121,6 +128,13 @@
       "actor": "codex:5861",
       "reason": "Add the focused preparation target and strict lint proof required by the final implementation review.",
       "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"csdlc-v2-preparation-binding-focused\",\"proof_role\":\"Prove draft, generation, readiness, dependency drift, session authority, concurrency, recovery, release, batch, migration, corruption, and path-hardening behavior.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\",\"AC-10\",\"AC-11\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":12000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"preparation\"],\"parallel_group\":\"csdlc-v2-focused\",\"defer_reason\":null},{\"lane\":\"csdlc-v2-lifecycle-compatibility\",\"proof_role\":\"Prove the new preparation path preserves canonical lifecycle behavior needed after binding.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\",\"AC-8\",\"AC-10\",\"AC-11\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":12000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\"],\"parallel_group\":\"csdlc-v2-focused\",\"defer_reason\":null},{\"lane\":\"csdlc-v2-public-contract-focused\",\"proof_role\":\"Prove typed commands, schemas, operator skills, installer inventory, compatibility, and deletion boundaries.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-6\",\"AC-11\",\"AC-12\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":8000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate10a\"],\"parallel_group\":\"csdlc-v2-contract\",\"defer_reason\":null},{\"lane\":\"csdlc-v2-strict-lints\",\"proof_role\":\"Prove strict Rust lint cleanliness across the touched crate and tests.\",\"acceptance_ids\":[\"AC-11\",\"AC-12\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":8000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--tests\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"csdlc-v2-contract\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5861",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
     }
   ]
 }

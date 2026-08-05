@@ -1,0 +1,27 @@
+
+running 20 tests
+test preparation_namespace_symlink_fails_before_external_write ... ok
+test manifest_tampering_fails_closed ... ok
+test seal_rejects_a_successful_noop_validation_executable ... ok
+test draft_and_preparation_are_claim_free ... ok
+test forged_design_approval_invalidates_the_generation_digest ... ok
+test concurrent_writers_cannot_replace_an_immutable_batch_result ... ok
+test run_preserves_failed_generation_then_seals_a_successor ... ok
+test batch_reports_dependency_cycles_without_overstating_child_readiness ... ok
+test batch_id_is_immutable_across_different_results ... ok
+test sync_rejects_symlinked_design_input ... ok
+test seal_rejects_a_validation_file_without_an_executable_bit ... ok
+test dependency_drift_blocks_seal ... ok
+test seal_rejects_an_unavailable_validation_executable ... ok
+test batch_retains_successful_children_and_reports_overlap_and_failure ... ok
+test ambiguous_migration_requires_digest_pinned_typed_repair ... ok
+test successor_generation_demotes_readiness_and_rejects_stale_seal ... ok
+test migration_releases_preparation_only_claim_and_preserves_snapshot ... ok
+test derived_bind_uses_the_existing_issue_worktree_in_place ... ok
+test derived_bind_is_retryable_and_release_removes_only_created_git_artifacts ... ok
+test ten_overlapping_binds_have_one_git_winner ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.33s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.44s
+     Running tests/preparation.rs (csdlc-v2/target/debug/deps/preparation-c4488a2274c4ae97)
