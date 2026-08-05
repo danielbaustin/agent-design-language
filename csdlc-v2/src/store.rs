@@ -16,7 +16,8 @@ use crate::cards::{
 use crate::error::{ErrorCode, Result, V2Error};
 use crate::model::{
     AuditEvent, CardProjection, Claim, DesignReview, IssueRecord, LifecyclePhase,
-    PublicationEvidence, ReviewAssignment, ReviewEvidence, TerminalReceipt,
+    PublicationEvidence, ReviewAssignment, ReviewEvidence, TerminalEvidence, TerminalReceipt,
+    TransitionEvent,
 };
 use crate::review::evaluate_publication_review_in_repo;
 
@@ -480,6 +481,268 @@ impl Store {
             ));
         }
         Ok(materialized)
+    }
+
+    pub(crate) fn materialize_terminal_from_derived(
+        &self,
+        issue: u64,
+        expected_generation: u64,
+        expected_digest: &str,
+        actor: &str,
+        reason: &str,
+        envelope: &crate::finish::DerivedTerminalEnvelope,
+    ) -> Result<IssueRecord> {
+        let _lock = self.lock(issue)?;
+        self.recover_if_needed(issue)?;
+        let mut record = self.load_record(issue)?;
+        if record.generation != expected_generation {
+            return Err(V2Error::new(
+                ErrorCode::StaleGeneration,
+                "terminal materialization generation is stale",
+            ));
+        }
+        if record.digest != expected_digest {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "terminal materialization digest is stale",
+            ));
+        }
+        if actor.trim().is_empty() || reason.trim().is_empty() {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "terminal materialization actor and reason are required",
+            ));
+        }
+        let source_projection_match = envelope.issue == record.issue
+            && envelope.repository == record.repository
+            && envelope.initialization_digest == record.initialization_digest
+            && envelope.canonical_generation == record.generation
+            && envelope.canonical_digest == record.digest;
+        let already_materialized_match = terminal_matches_derived(&record, envelope);
+        if !source_projection_match && !already_materialized_match {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "derived terminal envelope does not match the expected source projection",
+            ));
+        }
+        crate::finish::validate_envelope(envelope)?;
+        let mut cards = self.load_cards(issue)?;
+        verify_cards(self, &record, &cards)?;
+        verify_canonical_projection_bytes(self, &record, &cards)?;
+        if already_materialized_match {
+            if self
+                .load_terminal_receipt(issue)?
+                .as_ref()
+                .is_some_and(|receipt| {
+                    self.legacy_receipt_matches_projection(receipt)
+                        .unwrap_or(false)
+                })
+            {
+                return Ok(record);
+            }
+            let receipt = self.build_terminal_receipt(issue, &record, &cards)?;
+            self.write_terminal_receipt(issue, &receipt)?;
+            return Ok(record);
+        }
+        let rollback_record = record.clone();
+        let rollback_cards = cards.clone();
+
+        let released = match (record.claim.clone(), record.terminal.clone()) {
+            (Some(claim), _) => (claim.branch, claim.worktree, claim.protected_paths),
+            (None, Some(terminal)) => (
+                terminal.released_branch,
+                terminal.released_worktree,
+                terminal.released_protected_paths,
+            ),
+            (None, None) => {
+                return Err(V2Error::new(
+                    ErrorCode::MissingClaim,
+                    "terminal materialization requires a source claim or terminal release evidence",
+                ));
+            }
+        };
+        let publication = record.publication.as_mut().ok_or_else(|| {
+            V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "terminal materialization requires publication evidence",
+            )
+        })?;
+        if publication.pull_request != envelope.pull_request.unwrap_or_default() {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "terminal materialization PR does not match publication evidence",
+            ));
+        }
+        let design_bytes = fs::read(self.root.join(&record.design_path))?;
+        let diagram_bytes = fs::read(self.root.join(&record.diagram_path))?;
+        let design_digest = digest(&design_bytes);
+        let diagram_digest = digest(&diagram_bytes);
+        if let DesignReview::Approved { revision, .. } = &mut record.design_review {
+            *revision = design_digest.clone();
+        }
+        match &mut cards.get_mut(&CardKind::Spp).expect("SPP").content {
+            CardContent::Spp(values) => {
+                values.design_ref = record.design_path.clone();
+                values.design_digest = design_digest.clone();
+                values.diagram_ref = record.diagram_path.clone();
+                values.diagram_digest = diagram_digest.clone();
+            }
+            _ => unreachable!("SPP"),
+        }
+        match &mut cards.get_mut(&CardKind::Vpp).expect("VPP").content {
+            CardContent::Vpp(values) => {
+                values.design_ref = record.design_path.clone();
+                values.design_digest = design_digest;
+                values.diagram_ref = record.diagram_path.clone();
+                values.diagram_digest = diagram_digest;
+            }
+            _ => unreachable!("VPP"),
+        }
+
+        let (terminal_disposition, observed_state, integration_state, merge_state) =
+            match envelope.disposition {
+                crate::finish::FinishDisposition::Merged => (
+                    crate::readiness::TerminalDisposition::Merged,
+                    "merged",
+                    crate::cards::IntegrationState::Merged,
+                    crate::cards::MergeState::Merged,
+                ),
+                crate::finish::FinishDisposition::ClosedUnmerged => (
+                    crate::readiness::TerminalDisposition::ClosedUnmerged,
+                    "closed_unmerged",
+                    crate::cards::IntegrationState::ClosedNoPr,
+                    crate::cards::MergeState::ClosedUnmerged,
+                ),
+                crate::finish::FinishDisposition::ClosedNoPr => (
+                    crate::readiness::TerminalDisposition::ClosedNoPr,
+                    "closed_no_pr",
+                    crate::cards::IntegrationState::ClosedNoPr,
+                    crate::cards::MergeState::ClosedUnmerged,
+                ),
+            };
+        publication.observed_state = observed_state.into();
+
+        let sor = match &mut cards.get_mut(&CardKind::Sor).expect("SOR").content {
+            CardContent::Sor(values) => values,
+            _ => unreachable!("SOR"),
+        };
+        sor.integration_state = integration_state;
+        sor.publication_state = crate::cards::PublicationState::Closed;
+        sor.merge_state = merge_state;
+        sor.closeout_state = crate::cards::CloseoutState::Complete;
+
+        record.generation += 1;
+        for values in cards.values_mut() {
+            values.identity.generation = record.generation;
+        }
+        record.claim = None;
+        record.terminal = Some(TerminalEvidence {
+            pull_request: envelope.pull_request,
+            disposition: terminal_disposition,
+            observed_sha: envelope.head_sha.clone(),
+            observed_state: observed_state.into(),
+            receipt_path: format!("csdlc-v2/closeout/{issue}.json"),
+            released_branch: released.0,
+            released_worktree: released.1,
+            released_protected_paths: released.2,
+        });
+        match record.phase {
+            LifecyclePhase::Published => {
+                push_legacy_terminal_transition(
+                    &mut record,
+                    LifecyclePhase::MergeReady,
+                    actor,
+                    "observed required checks, review, and conflict readiness",
+                );
+                push_legacy_terminal_transition(
+                    &mut record,
+                    LifecyclePhase::Merged,
+                    actor,
+                    "observed exact PR merged",
+                );
+            }
+            LifecyclePhase::MergeReady => {
+                push_legacy_terminal_transition(
+                    &mut record,
+                    LifecyclePhase::Merged,
+                    actor,
+                    "observed exact PR merged",
+                );
+            }
+            LifecyclePhase::Merged => {}
+            LifecyclePhase::ClosedOut => {}
+            _ => {
+                return Err(V2Error::new(
+                    ErrorCode::InvalidTransition,
+                    "terminal materialization requires published, merge_ready, or merged phase",
+                ));
+            }
+        }
+        if record.phase != LifecyclePhase::ClosedOut {
+            push_legacy_terminal_transition(&mut record, LifecyclePhase::ClosedOut, actor, reason);
+        }
+        record.audit.push(AuditEvent {
+            sequence: record.audit.len() as u64 + 1,
+            generation: record.generation,
+            actor: actor.into(),
+            reason: reason.into(),
+            operation: "materialize_derived_terminal".into(),
+        });
+        hydrate_projections(&mut record, &cards)?;
+        record.digest = record_digest(&record)?;
+        let receipt = self.build_terminal_receipt(issue, &record, &cards)?;
+        self.commit(issue, &record, &cards, false)?;
+        if let Err(error) = self.write_terminal_receipt(issue, &receipt) {
+            self.commit(issue, &rollback_record, &rollback_cards, false)?;
+            verify_cards(self, &rollback_record, &rollback_cards)?;
+            return Err(error);
+        }
+        Ok(record)
+    }
+
+    fn build_terminal_receipt(
+        &self,
+        issue: u64,
+        record: &IssueRecord,
+        cards: &BTreeMap<CardKind, CardValues>,
+    ) -> Result<TerminalReceipt> {
+        let mut receipt = TerminalReceipt {
+            schema: "csdlc.terminal_receipt.v1".into(),
+            issue,
+            repository: record.repository.clone(),
+            initialization_digest: record.initialization_digest.clone(),
+            receipt_ref: format!("csdlc-v2/closeout/{issue}.json"),
+            authored_artifacts: BTreeMap::new(),
+            record: record.clone(),
+            cards: cards.clone(),
+            digest: String::new(),
+        };
+        for authored_path in [&record.design_path, &record.diagram_path] {
+            let bytes = read_regular_projection(&self.root, Path::new(authored_path))?;
+            receipt.authored_artifacts.insert(
+                authored_path.clone(),
+                String::from_utf8(bytes).map_err(|error| {
+                    V2Error::new(
+                        ErrorCode::CorruptRecord,
+                        format!("terminal authored artifact is not UTF-8: {error}"),
+                    )
+                })?,
+            );
+        }
+        receipt.digest = terminal_receipt_digest(&receipt)?;
+        validate_terminal_receipt(&receipt)?;
+        Ok(receipt)
+    }
+
+    fn write_terminal_receipt(&self, issue: u64, receipt: &TerminalReceipt) -> Result<()> {
+        let receipt_path = self.terminal_receipt_path(issue)?;
+        let (common, relative) = self.git_common_relative(&receipt_path)?;
+        replace_regular_authored_artifact(
+            &common,
+            &relative,
+            &serde_json::to_vec_pretty(&receipt)?,
+            "tmp",
+        )
     }
 
     pub(crate) fn verify_canonical_authority_projection(
@@ -1936,6 +2199,52 @@ fn validate_terminal_receipt(receipt: &TerminalReceipt) -> Result<()> {
         ));
     }
     Ok(())
+}
+
+fn push_legacy_terminal_transition(
+    record: &mut IssueRecord,
+    next: LifecyclePhase,
+    actor: &str,
+    reason: &str,
+) {
+    let from = record.phase;
+    record.phase = next;
+    record.transitions.push(TransitionEvent {
+        sequence: record.transitions.len() as u64 + 1,
+        from,
+        to: next,
+        actor: actor.into(),
+        reason: reason.into(),
+    });
+}
+
+fn terminal_matches_derived(
+    record: &IssueRecord,
+    envelope: &crate::finish::DerivedTerminalEnvelope,
+) -> bool {
+    if record.phase != LifecyclePhase::ClosedOut
+        || record.claim.is_some()
+        || envelope.issue != record.issue
+        || envelope.repository != record.repository
+        || envelope.initialization_digest != record.initialization_digest
+    {
+        return false;
+    }
+    let Some(terminal) = record.terminal.as_ref() else {
+        return false;
+    };
+    let disposition = match envelope.disposition {
+        crate::finish::FinishDisposition::Merged => crate::readiness::TerminalDisposition::Merged,
+        crate::finish::FinishDisposition::ClosedUnmerged => {
+            crate::readiness::TerminalDisposition::ClosedUnmerged
+        }
+        crate::finish::FinishDisposition::ClosedNoPr => {
+            crate::readiness::TerminalDisposition::ClosedNoPr
+        }
+    };
+    terminal.disposition == disposition
+        && terminal.pull_request == envelope.pull_request
+        && terminal.observed_sha == envelope.head_sha
 }
 
 fn verify_canonical_projection_bytes(

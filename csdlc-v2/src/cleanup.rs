@@ -60,6 +60,27 @@ pub struct LegacyTerminalIndexRequest {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct TerminalMaterializeRequest {
+    pub schema: String,
+    pub issue: u64,
+    pub expected_generation: u64,
+    pub expected_digest: String,
+    pub actor: String,
+    pub reason: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct TerminalMaterializeResult {
+    pub schema: String,
+    pub issue: u64,
+    pub phase: LifecyclePhase,
+    pub generation: u64,
+    pub digest: String,
+    pub receipt_path: String,
+    pub consumed_derived_digest: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct LegacyTerminalEntry {
     pub issue: u64,
     pub phase: LifecyclePhase,
@@ -136,6 +157,8 @@ pub fn cleanup_schema_bundle() -> Value {
         "cleanup_result": schemars::schema_for!(CleanupResult),
         "legacy_terminal_index_request": schemars::schema_for!(LegacyTerminalIndexRequest),
         "legacy_terminal_index": schemars::schema_for!(LegacyTerminalIndex),
+        "terminal_materialize_request": schemars::schema_for!(TerminalMaterializeRequest),
+        "terminal_materialize_result": schemars::schema_for!(TerminalMaterializeResult),
         "terminal_census_report": schemars::schema_for!(TerminalCensusReport),
     })
 }
@@ -285,6 +308,53 @@ pub fn execute_cleanup(root: &Path, request: &CleanupRequest) -> Result<CleanupR
     ))
 }
 
+pub fn materialize_terminal(
+    root: &Path,
+    request: &TerminalMaterializeRequest,
+) -> Result<TerminalMaterializeResult> {
+    if request.schema != "csdlc.terminal_materialize_request.v1"
+        || request.issue == 0
+        || request.expected_generation == 0
+        || request.expected_digest.trim().is_empty()
+        || request.actor.trim().is_empty()
+        || request.reason.trim().is_empty()
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "terminal materialize request identity, expected projection, actor, and reason are required",
+        ));
+    }
+    let envelope = load_cached_terminal(root, request.issue)?.ok_or_else(|| {
+        V2Error::new(
+            ErrorCode::ReconciliationRequired,
+            "terminal materialization requires a retained derived terminal envelope",
+        )
+    })?;
+    let store = Store::new(root);
+    let record = store.materialize_terminal_from_derived(
+        request.issue,
+        request.expected_generation,
+        &request.expected_digest,
+        &request.actor,
+        &request.reason,
+        &envelope,
+    )?;
+    let receipt_path = record
+        .terminal
+        .as_ref()
+        .map(|terminal| terminal.receipt_path.clone())
+        .unwrap_or_default();
+    Ok(TerminalMaterializeResult {
+        schema: "csdlc.terminal_materialize_result.v1".into(),
+        issue: request.issue,
+        phase: record.phase,
+        generation: record.generation,
+        digest: record.digest,
+        receipt_path,
+        consumed_derived_digest: envelope.digest,
+    })
+}
+
 pub fn build_legacy_terminal_index(
     root: &Path,
     request: &LegacyTerminalIndexRequest,
@@ -316,10 +386,20 @@ pub fn build_legacy_terminal_index(
             .as_ref()
             .map(|value| value.record == record && value.cards == cards);
         let derived = load_cached_terminal(root, issue)?;
-        let derived_terminal_matches_projection = derived
-            .as_ref()
-            .map(|value| envelope_matches_record(value, &record))
-            .transpose()?;
+        let derived_terminal_matches_projection = match derived.as_ref() {
+            Some(value) => {
+                let direct = envelope_matches_record(value, &record)?;
+                Some(
+                    direct
+                        || derived_consumed_by_materialized_projection(
+                            value,
+                            &record,
+                            receipt_matches_projection == Some(true),
+                        ),
+                )
+            }
+            None => None,
+        };
         let mut diagnostics = Vec::new();
         if receipt_matches_projection == Some(false) {
             diagnostics.push("retained receipt does not match the tracked projection".into());
@@ -348,7 +428,7 @@ pub fn build_legacy_terminal_index(
             receipt_matches_projection,
             derived_terminal_present: derived.is_some(),
             derived_terminal_matches_projection,
-            derived_disposition: derived.map(|value| value.disposition),
+            derived_disposition: derived.as_ref().map(|value| value.disposition),
             compatible,
             diagnostics,
         });
@@ -357,6 +437,33 @@ pub fn build_legacy_terminal_index(
         schema: "csdlc.legacy_terminal_index.v1".into(),
         issues,
     })
+}
+
+fn derived_consumed_by_materialized_projection(
+    envelope: &crate::finish::DerivedTerminalEnvelope,
+    record: &IssueRecord,
+    receipt_matches_projection: bool,
+) -> bool {
+    if !receipt_matches_projection
+        || record.phase != LifecyclePhase::ClosedOut
+        || record.claim.is_some()
+        || envelope.issue != record.issue
+        || envelope.repository != record.repository
+        || envelope.initialization_digest != record.initialization_digest
+    {
+        return false;
+    }
+    let Some(terminal) = record.terminal.as_ref() else {
+        return false;
+    };
+    let disposition = match envelope.disposition {
+        FinishDisposition::Merged => crate::readiness::TerminalDisposition::Merged,
+        FinishDisposition::ClosedUnmerged => crate::readiness::TerminalDisposition::ClosedUnmerged,
+        FinishDisposition::ClosedNoPr => crate::readiness::TerminalDisposition::ClosedNoPr,
+    };
+    terminal.disposition == disposition
+        && terminal.pull_request == envelope.pull_request
+        && terminal.observed_sha == envelope.head_sha
 }
 
 pub fn validate_terminal_census(root: &Path, audit_path: &Path) -> Result<TerminalCensusReport> {
