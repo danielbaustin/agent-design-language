@@ -1,0 +1,15 @@
+{
+  "issue": 5860,
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "expected_owner": "codex:5860-readiness-integration",
+  "expected_generation": 8,
+  "expected_digest": "c6af1600c660a4de57be3502a40a141cdf5c75c523955ea45df7434e5d2dc8b7",
+  "now_unix_seconds": 1785955123,
+  "actor": "codex:5860-readiness-58-issue-reconciliation",
+  "reason": "Reconcile active ownership with the canonical 58-issue readiness denominator and explicit #5861 exclusion.",
+  "expected_purpose": "Integrate and prove design-time execution readiness for all 41 v0.92 child issues without product implementation",
+  "purpose": "Integrate and prove design-time execution readiness for all 58 v0.92 execution issues, including #5862-#5878 and excluding #5861, without product implementation",
+  "add_protected_paths": [
+    ".csdlc/issues/5860"
+  ]
+}

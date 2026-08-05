@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
     "slug": "v092-all-issue-execution-readiness",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -15,19 +15,20 @@
     "values": {
       "task_boundary": "Repair and prove child design-time readiness without executing child deliverables.",
       "deliverables": [
-        "41 issue-specific design and diagram packets",
-        "41 complete typed card sets",
-        "41-row readiness matrix",
+        "58 issue-specific design and diagram packets",
+        "58 complete typed card sets",
+        "58-row readiness matrix with exact owned paths and serialized overlaps",
+        "Pinned live-contract, artifact-digest, typed-doctor, and ownership evidence",
         "Independent exact-head readiness review"
       ],
       "acceptance_criteria": [
-        "AC-1: No child retains placeholder design or generic planning scaffolds",
-        "AC-2: Every child design is source-grounded and approved at its exact digest",
+        "AC-1: None of the 58 issues retains placeholder design or generic planning scaffolds",
+        "AC-2: Every issue design is source-grounded and approved at its exact digest",
         "AC-3: Every SIP, STP, SPP, and VPP is issue-specific and schema-valid",
-        "AC-4: Every SRP and SOR remains truthful pre-execution state",
-        "AC-5: Dependencies, owned paths, non-goals, rollback, and validation lanes are explicit for all children",
-        "AC-6: Preparation claims are released after validation and no product implementation begins",
-        "AC-7: Independent review finds no actionable readiness gap"
+        "AC-4: Every SRP and SOR remains in truthful pre-execution state",
+        "AC-5: Dependencies, exact owned paths, read-only inputs, non-goals, rollback, and validation lanes are explicit for all 58 issues",
+        "AC-6: Preparation claims are released after validation, no product implementation begins, and externally owned #5861 remains untouched",
+        "AC-7: The canonical graph and all four aggregate evidence surfaces cover the same exact 58-issue denominator and independent exact-head review finds no actionable readiness gap"
       ],
       "dependencies": [
         "Merged WP-01 PR 5859 at 92451299651c44725a1951d4101b9cba27cad864",

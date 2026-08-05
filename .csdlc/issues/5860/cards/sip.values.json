@@ -7,17 +7,18 @@
     "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
     "slug": "v092-all-issue-execution-readiness",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
     "card_kind": "sip",
     "values": {
-      "goal": "Make all 41 v0.92 child issues genuinely design-time ready before milestone implementation begins.",
+      "goal": "Make all 58 v0.92 execution issues genuinely design-time ready before milestone implementation begins, including #5862-#5878 and excluding externally owned #5861.",
       "required_outcome": "Every child has source-grounded approved design, issue-specific SIP/STP/SPP, truthful VPP/SRP/SOR, typed validation, and a released preparation claim.",
       "declared_scope": [
-        ".csdlc issue-local readiness surfaces for the 41 children of umbrellas 5854 through 5858",
-        ".csdlc/evidence/5860 readiness matrix and review"
+        ".csdlc issue-local readiness surfaces for the 58 execution issues of umbrellas 5854 through 5858, including #5862-#5878",
+        ".csdlc/evidence/5860 readiness matrix and exact-head review",
+        "Issue #5861 is externally owned and excluded"
       ],
       "authority_boundary": [
         "Issue 5860 owns readiness preparation and integration only",

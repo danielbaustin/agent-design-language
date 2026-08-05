@@ -9,14 +9,17 @@ that every child design and plan was issue-specific or bindable.
 
 ## Scope
 
-The repair covers the 41 child issues assigned to sprint umbrellas #5854
-through #5858. It may update only each child's C-SDLC design, diagram, cards,
+The repair covers the 58 execution issues assigned to sprint umbrellas #5854
+through #5858, including the reviewed WP-04 implementation umbrella #5862
+and its exact sixteen-child wave #5863 through #5878. It may update only each
+issue's C-SDLC design, diagram, cards,
 issue-local readiness evidence, and lock/claim projections required by typed
 lifecycle tooling. It also owns the #5860 lifecycle record and one aggregate
 readiness matrix.
 
 No product source, milestone feature claim, implementation proof, or child PR
-belongs to this issue.
+belongs to this issue. Sidecar issue #5861 is owned by another session and is
+excluded from this issue's denominator and write scope.
 
 ## Readiness Contract
 
@@ -36,9 +39,26 @@ Each child must have:
 ## Parallelization
 
 Preparation is split by the five existing sprint umbrellas. The write sets are
-disjoint child issue directories. Shared milestone and product paths are
+disjoint issue directories. Shared milestone and product paths are
 read-only inputs. Results converge only through the #5860 readiness matrix and
 one integration review.
+
+## Owned Paths
+
+- `.csdlc/issues/5860/`
+- `.csdlc/prepared/issues/5860/`
+- `.csdlc/evidence/5860/`
+- `docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml`
+
+## Read-Only Inputs
+
+- `.csdlc/issues/<v0.92-execution-issue>/`
+- `.csdlc/prepared/issues/<v0.92-execution-issue>/`
+- `.adl/docs/TBD/V092_SPRINT_5854_DEMO_PUBLICATION_SESSION_PROMPT.md`
+- `.adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md`
+- `.adl/docs/TBD/V092_SPRINT_5856_QUALITY_RELEASE_SESSION_PROMPT.md`
+- `.adl/docs/TBD/V092_SPRINT_5857_BIRTHDAY_CORE_SESSION_PROMPT.md`
+- `.adl/docs/TBD/V092_SPRINT_5858_FOUNDATION_SESSION_PROMPT.md`
 
 ## Validation
 
@@ -48,7 +68,7 @@ one integration review.
 - verify exact dependency and sprint membership against the v0.92 wave;
 - run typed validation for every child;
 - prove no product path changed;
-- independently review all 41 readiness dispositions before publication.
+- independently review all 58 readiness dispositions before publication.
 
 ## Stop Conditions
 
@@ -61,5 +81,5 @@ one integration review.
 
 ## Completion Boundary
 
-Completion means all 41 child packets are ready for just-in-time claim
-reacquisition and binding. It does not start any sprint or child implementation.
+Completion means all 58 execution packets are ready for just-in-time claim
+reacquisition and binding. It does not start any sprint or issue implementation.

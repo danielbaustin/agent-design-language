@@ -1,18 +1,19 @@
 flowchart TD
-    A["WP-01 merged package"] --> B["Audit 41 child packets"]
+    A["WP-01 merged package"] --> B["Audit 58 execution packets"]
     B --> C1["Foundation #5858"]
     B --> C2["Runtime #5855"]
     B --> C3["Birthday #5857"]
     B --> C4["Demo and publication #5854"]
     B --> C5["Quality and release #5856"]
     C1 --> D["Typed issue-specific designs and cards"]
-    C2 --> D
+    C2 --> C2A["WP-04 implementation #5862-#5878"]
+    C2A --> D
     C3 --> D
     C4 --> D
     C5 --> D
     D --> E["Design digest approval and schema validation"]
-    E --> F{"All 41 pass and claims released?"}
+    E --> F{"All 58 pass and claims released?"}
     F -- "No" --> G["Block named issue; no implementation"]
     F -- "Yes" --> H["Independent readiness review"]
     H --> I["Publish #5860 readiness matrix"]
-    I --> J["Foundation child may bind just in time"]
+    I --> J["Execution issue may bind just in time"]

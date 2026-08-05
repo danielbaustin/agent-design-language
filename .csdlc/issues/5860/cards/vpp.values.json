@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
     "slug": "v092-all-issue-execution-readiness",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -17,7 +17,7 @@
       "lanes": [
         {
           "lane": "v092-readiness-matrix",
-          "proof_role": "Reject placeholder/generic cards and verify exact design/card/dependency readiness for all 41 children",
+          "proof_role": "Reject placeholder or generic cards and prove exact design, card, dependency, ownership, live-contract, artifact-digest, and doctor readiness for all 58 execution issues while excluding #5861",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -29,11 +29,12 @@
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 1200,
-          "budget_tokens": 12000,
+          "budget_seconds": 1800,
+          "budget_tokens": 18000,
           "argv": [
             "ruby",
-            ".csdlc/prepared/issues/5860/validate-v092-readiness.rb"
+            ".csdlc/prepared/issues/5860/validate-v092-readiness.rb",
+            "--verify-live"
           ],
           "parallel_group": "readiness-integration",
           "defer_reason": null
@@ -43,9 +44,9 @@
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on any placeholder, generic plan, pending design approval, invalid card, active preparation claim, or product path change.",
       "design_ref": ".csdlc/prepared/issues/5860/design.md",
-      "design_digest": "e1cfff83f30931bbc2de3fa7624859c0924b5661a45f6af7e416a90d45a3a707",
+      "design_digest": "7ea42565fcfade242ff133ad12b4c37d0ebe9041c09d5bb4a3510df854a5cbc1",
       "diagram_ref": ".csdlc/prepared/issues/5860/diagram.mmd",
-      "diagram_digest": "6f53c3e4107b7adf7e298a31c25674d8c8be3b2d3ac51ae58d82ed73ade33021"
+      "diagram_digest": "e2a3e34b6407cb62639a89ed201ac32976da3a2ce4a7f270cdc8a6bac3423209"
     }
   }
 }

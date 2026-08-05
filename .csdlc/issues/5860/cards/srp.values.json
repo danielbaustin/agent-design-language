@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
     "slug": "v092-all-issue-execution-readiness",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "All 41 child readiness packets, #5860 matrix, and no-product-diff boundary.",
+      "review_scope": "All 58 execution-readiness packets, the canonical dependency and sprint graph, exact ownership and serialization, pinned live and artifact manifests, typed doctor evidence, the #5860 matrix, explicit #5861 exclusion, and the no-product-diff boundary.",
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [

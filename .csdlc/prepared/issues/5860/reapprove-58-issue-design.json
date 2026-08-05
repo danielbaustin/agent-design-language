@@ -1,0 +1,7 @@
+{
+  "issue": 5860,
+  "expected_generation": 0,
+  "expected_digest": "6ccc097242f48769cbcf8501a22f274c4f83bd7720aca24d366f8f7e80eb8bf8",
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "reviewer": "codex:5860-readiness-58-issue-reconciliation"
+}

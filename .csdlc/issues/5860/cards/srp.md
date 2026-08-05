@@ -12,7 +12,7 @@ Status: pre_phase
 
 ## Scope
 
-All 41 child readiness packets, #5860 matrix, and no-product-diff boundary.
+All 58 execution-readiness packets, the canonical dependency and sprint graph, exact ownership and serialization, pinned live and artifact manifests, typed doctor evidence, the #5860 matrix, explicit #5861 exclusion, and the no-product-diff boundary.
 
 ## Prompts
 

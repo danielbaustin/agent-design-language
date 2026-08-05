@@ -16,36 +16,25 @@ Audit all children, prepare five disjoint sprint sets, integrate typed designs/c
 
 ## Plan
 
-Revision 1
+Revision 2
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Audit all 41 children and preserve exact defect/readiness baseline",
+    "action": "Audit all 58 execution issues and preserve the exact defect and readiness baseline",
     "acceptance_ids": [
       "AC-1",
-      "AC-5"
-    ],
-    "status": "in_progress"
-  },
-  {
-    "id": "S2",
-    "action": "Prepare source-grounded designs and typed cards in five disjoint sprint lanes",
-    "acceptance_ids": [
-      "AC-1",
-      "AC-2",
-      "AC-3",
-      "AC-4",
       "AC-5"
     ],
     "status": "pending"
   },
   {
-    "id": "S3",
-    "action": "Integrate results, release preparation claims, and generate the 41-row readiness matrix",
+    "id": "S2",
+    "action": "Prepare source-grounded designs and typed cards in five disjoint sprint lanes, including WP-04 issues #5862-#5878",
     "acceptance_ids": [
+      "AC-1",
       "AC-2",
       "AC-3",
       "AC-4",
@@ -55,8 +44,21 @@ Revision 1
     "status": "pending"
   },
   {
+    "id": "S3",
+    "action": "Integrate results, release preparation claims, and generate the exact 58-row readiness and ownership evidence",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7"
+    ],
+    "status": "pending"
+  },
+  {
     "id": "S4",
-    "action": "Run typed validation and independent exact-head readiness review; repair every finding",
+    "action": "Run typed validation and independent exact-head readiness review, then repair every actionable finding",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -96,13 +98,13 @@ Revision 1
 
 .csdlc/prepared/issues/5860/design.md
 
-Digest: e1cfff83f30931bbc2de3fa7624859c0924b5661a45f6af7e416a90d45a3a707
+Digest: 7ea42565fcfade242ff133ad12b4c37d0ebe9041c09d5bb4a3510df854a5cbc1
 
 ## Diagram
 
 .csdlc/prepared/issues/5860/diagram.mmd
 
-Digest: 6f53c3e4107b7adf7e298a31c25674d8c8be3b2d3ac51ae58d82ed73ade33021
+Digest: e2a3e34b6407cb62639a89ed201ac32976da3a2ce4a7f270cdc8a6bac3423209
 
 ## Stop Conditions
 

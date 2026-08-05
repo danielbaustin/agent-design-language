@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5860/diagram.mmd
 [
   {
     "lane": "v092-readiness-matrix",
-    "proof_role": "Reject placeholder/generic cards and verify exact design/card/dependency readiness for all 41 children",
+    "proof_role": "Reject placeholder or generic cards and prove exact design, card, dependency, ownership, live-contract, artifact-digest, and doctor readiness for all 58 execution issues while excluding #5861",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -37,11 +37,12 @@ Diagram: .csdlc/prepared/issues/5860/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 1200,
-    "budget_tokens": 12000,
+    "budget_seconds": 1800,
+    "budget_tokens": 18000,
     "argv": [
       "ruby",
-      ".csdlc/prepared/issues/5860/validate-v092-readiness.rb"
+      ".csdlc/prepared/issues/5860/validate-v092-readiness.rb",
+      "--verify-live"
     ],
     "parallel_group": "readiness-integration",
     "defer_reason": null
@@ -60,7 +61,7 @@ Tokens: 50000
 
 ## Commands
 
-- `ruby .csdlc/prepared/issues/5860/validate-v092-readiness.rb`
+- `ruby .csdlc/prepared/issues/5860/validate-v092-readiness.rb --verify-live`
 
 ## Failure Semantics
 

@@ -1,0 +1,14 @@
+{
+  "issue": 5860,
+  "card": "srp",
+  "expected_generation": 7,
+  "expected_digest": "888b6f2c4c5c47531363c1bdaaebe367e01e58523fb4c4976cc8b97108e46fbc",
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "actor": "codex:5860-readiness-58-issue-reconciliation",
+  "reason": "Reconcile the parent packet with the canonical 58-issue readiness denominator.",
+  "operation": {
+    "operation": "replan",
+    "field": "review_scope",
+    "value": "All 58 execution-readiness packets, the canonical dependency and sprint graph, exact ownership and serialization, pinned live and artifact manifests, typed doctor evidence, the #5860 matrix, explicit #5861 exclusion, and the no-product-diff boundary."
+  }
+}

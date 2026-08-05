@@ -16,20 +16,21 @@ Repair and prove child design-time readiness without executing child deliverable
 
 ## Deliverables
 
-- 41 issue-specific design and diagram packets
-- 41 complete typed card sets
-- 41-row readiness matrix
+- 58 issue-specific design and diagram packets
+- 58 complete typed card sets
+- 58-row readiness matrix with exact owned paths and serialized overlaps
+- Pinned live-contract, artifact-digest, typed-doctor, and ownership evidence
 - Independent exact-head readiness review
 
 ## Acceptance
 
-1. AC-1: No child retains placeholder design or generic planning scaffolds
-2. AC-2: Every child design is source-grounded and approved at its exact digest
+1. AC-1: None of the 58 issues retains placeholder design or generic planning scaffolds
+2. AC-2: Every issue design is source-grounded and approved at its exact digest
 3. AC-3: Every SIP, STP, SPP, and VPP is issue-specific and schema-valid
-4. AC-4: Every SRP and SOR remains truthful pre-execution state
-5. AC-5: Dependencies, owned paths, non-goals, rollback, and validation lanes are explicit for all children
-6. AC-6: Preparation claims are released after validation and no product implementation begins
-7. AC-7: Independent review finds no actionable readiness gap
+4. AC-4: Every SRP and SOR remains in truthful pre-execution state
+5. AC-5: Dependencies, exact owned paths, read-only inputs, non-goals, rollback, and validation lanes are explicit for all 58 issues
+6. AC-6: Preparation claims are released after validation, no product implementation begins, and externally owned #5861 remains untouched
+7. AC-7: The canonical graph and all four aggregate evidence surfaces cover the same exact 58-issue denominator and independent exact-head review finds no actionable readiness gap
 
 ## Dependencies
 
