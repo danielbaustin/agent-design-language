@@ -1,0 +1,14 @@
+{
+  "issue": 5359,
+  "claim_id": "claim-5359-v0918-prep-recovery-20260804",
+  "expected_generation": 2,
+  "expected_digest": "f877817c6fb2c8198143fd7cf62b0a8bf5d8d26d5205f7533cebbe8626634a7b",
+  "now_unix_seconds": 1785894061,
+  "actor": "codex:5359-wp22-planning",
+  "reason": "Protect the bounded v0.92 planning surfaces required to schedule approved TBD inputs and record explicit deferrals without opening issues or implementing work.",
+  "add_protected_paths": [
+    "docs/milestones/v0.92/WBS_v0.92.md",
+    "docs/milestones/v0.92/SPRINT_v0.92.md",
+    "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
+  ]
+}

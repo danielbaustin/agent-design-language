@@ -1,0 +1,14 @@
+{
+  "issue": 5359,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "f1534348cd34e9a3c98c481a4c76df071c20b979acd4ee55911f193358661148",
+  "claim_id": "claim-5359-v0918-prep-recovery-20260804",
+  "actor": "codex:5359-planning-review",
+  "reason": "The WP-22 planning package and source dispositions are implemented and focused validation passes; advance to exact-revision review.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

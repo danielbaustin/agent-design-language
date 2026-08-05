@@ -1,0 +1,33 @@
+{
+  "issue": 5359,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "51793fcea24b8f5be3726f2c2b8ea6b2e7b2d05d17b7e0aacdc05c26d3731c23",
+  "claim_id": "claim-5359-v0918-prep-recovery-20260804",
+  "actor": "codex:5359-planning-review",
+  "reason": "Record focused WP-22 planning-package validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        "-ryaml",
+        ".csdlc/prepared/issues/5359/validate-v092-package.rb",
+        "&&",
+        "csdlc-doctor",
+        "--repo",
+        ".",
+        "--issue",
+        "5359",
+        "&&",
+        "git",
+        "diff",
+        "--check"
+      ],
+      "purpose": "Prove YAML structure, exact WBS/YAML WP parity, complete TBD source dispositions, six-card policy, typed lifecycle integrity, and diff hygiene.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5359/V092_PLANNING_REVIEW.md"
+    }
+  },
+  "fail_after_backup": false
+}

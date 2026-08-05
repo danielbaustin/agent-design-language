@@ -1,25 +1,27 @@
 milestone: v0.92
 status: draft_pre_open
 owner_issue: 3434
+planning_review_issue: 5359
 first_birthday_readiness_issue: 3377
 planning_source: docs/milestones/v0.92
 tracked_package: docs/milestones/v0.92
 notes:
-  - v0.92 is the first true Godel-agent birthday milestone.
-  - This file is a candidate issue-wave preflight surface, not an opened GitHub issue wave.
-  - WP-01 must consume v0.91.5 release-tail closeout, the v0.91.5 activation-test map, the v0.91.6 readiness tranche, and the v0.91.7 implementation/proof tranche before seeding the final issue wave.
-  - WP-01 must consume the v0.91.5 AEE completion tranche and seed or route concrete AEE proof work before v0.92 can claim birthday readiness.
-  - WP-01 must requalify post-5104 loop-runtime merge evidence against current Runtime v3 contracts before consuming loops as validated, replayable objects for adaptive-learning planning.
-  - WP-01 must consume issue 3377 before seeding the final issue wave.
-  - WP-01 must verify the v0.92 feature-doc package and ADR plan before opening implementation WPs.
-  - No v0.92 issue should claim legal personhood, production citizenship, consciousness proof, or completed v0.93 constitutional governance.
-  - All opened v0.92 issues must receive SIP, STP, SPP, SRP, and SOR cards from the active prompt-template registry.
+  - v0.92 is the first true Godel-agent birthday milestone on a hardened execution substrate.
+  - This file is a reviewed candidate issue-wave surface, not an opened GitHub issue wave.
+  - WP-01 updates canonical docs and consumes the final v0.91.8 release package, the activation-test map, AEE completion evidence, issue 3377, and WP-22 planning dispositions before opening the wave.
+  - WP-02 repairs CI and coverage before broad milestone proof receives credit.
+  - Runtime, distributed Guardian/polis, C-SDLC efficiency, remote validation, and prompt-typing tracks may proceed in parallel only where their declared dependencies allow.
+  - WP-01 must requalify post-5104 loop-runtime merge evidence against current Runtime v3 contracts before consuming loops as validated replayable objects.
+  - No v0.92 issue may claim legal personhood, production citizenship, consciousness proof, or completed v0.93 constitutional governance.
+  - Every opened v0.92 issue must receive SIP, STP, SPP, VPP, SRP, and SOR cards from the active prompt-template registry.
+
 scheduled_planning:
   - issue: 5765
+    pull_request: 5796
     title: Agent Logic account repository migration
     source: .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md
     source_visibility: operator_local_unpublished
-    status: planning_only
+    status: merged_planning_input
     prerequisites:
       - destination organization slug and owners confirmed
       - live inventory names exactly six migration candidates
@@ -28,171 +30,326 @@ scheduled_planning:
     non_claims:
       - no organization creation or billing mutation
       - no repository transfer, visibility, permission, remote, Actions, Pages, DNS, secret, workflow, or runner mutation
+
+scheduled_tbd_inputs:
+  - track: runtime_launch_resilience
+    wp: WP-03
+    sources:
+      - .adl/docs/TBD/RUNTIME_V3_LAUNCH_AND_OBSERVATORY_RECOVERY_PLAN.md
+      - .adl/docs/TBD/resilience/RUNTIME_V3_LONG_LIVED_AGENT_OS_PLAN.md
+  - track: distributed_guardian_polis
+    wp: WP-04
+    sources:
+      - .adl/docs/TBD/CSM_RUNTIME_DISTRIBUTED_DESIGN.md
+      - .adl/docs/TBD/CSM_RUNTIME_DISTRIBUTED_EXECUTION_PLAN.md
+    child_issue_count: 16
+  - track: csdlc_estimation_cycle_time
+    wp: WP-05
+    sources:
+      - .adl/docs/TBD/CSDLC_V2_SESSION_ESTIMATION_RECONNECTION_PLAN.md
+      - .adl/docs/TBD/workflow_tooling/planning/SPRINT_CYCLE_TIME_REDUCTION_PLAN.md
+  - track: remote_validation_runner
+    wp: WP-06
+    sources:
+      - .adl/docs/TBD/workflow_tooling/planning/REMOTE_BUILD_RUNNER_PILOT_PLAN.md
+  - track: prompt_card_enum_typing
+    wp: WP-07
+    sources:
+      - .adl/docs/TBD/workflow_tooling/planning/V0917_PROMPT_CARD_ENUM_TYPING_PLAN.md
+  - track: acip_a2a_reconciliation
+    wp: WP-14
+    sources:
+      - .adl/docs/TBD/acip/AGENT_COMMUNICATION_AND_INVOCATION_PROTOCOL.md
+      - .adl/docs/TBD/a2a/ADL_A2A_ADAPTER.md
+  - track: observatory_unity_consumers
+    wp: WP-18A
+    sources:
+      - .adl/docs/TBD/OBSERVATORY_UNITY_DESIGN.md
+  - track: provider_neutral_multiagent_proof
+    wp: WP-18B
+    sources:
+      - .adl/docs/TBD/multiagent_demos/
+  - track: repository_code_reduction_cleanup
+    wp: WP-21
+    sources:
+      - .adl/docs/TBD/ADL_REPOSITORY_CODE_REDUCTION_PLAN_v0.91.8.md
+  - track: medium_launch_article
+    wp: WP-24
+    sources:
+      - .adl/docs/TBD/publication/medium_launch_articles/1-WHY-ADL.md
+    source_status: zero_byte_placeholder_removed_authoring_required
+
+deferred_planning:
+  - track: capability_taxonomy_integration
+    target: later_capability_milestone
+    priority: noncritical_for_v0.92
+    sources:
+      - .adl/docs/TBD/capability_testing/ADL_CAPABILITY_TAXONOMY.md
+  - track: mlx_and_oci_model_distribution
+    target: later_provider_model_milestone
+    priority: noncritical_for_v0.92
+    sources:
+      - .adl/docs/TBD/MLX_APPLE_METAL_PROVIDER_PLAN.md
+      - .adl/docs/TBD/OCI_MODEL_PACKAGING_METHOD_PLAN.md
+
+later_backlog:
+  - track: agent_logic_website_investor_publication
+    target: agent_logic_launch_lane
+    sources:
+      - .adl/docs/TBD/AGENT_LOGIC_WEBSITE_DESIGN_v2.1.md
+      - .adl/docs/TBD/AGENT_LOGIC_INVESTOR_MATERIAL_TRACKING_AND_PUBLICATION_PLAN.md
+  - track: general_intelligence_paper_program
+    target: research_publication_milestone
+    sources:
+      - .adl/docs/TBD/general-intelligence-paper/
+
+retained_operational_inputs:
+  - .adl/docs/TBD/OPUS_REVIEW_RUNBOOK.md
+
 card_update_rule:
-  - Every opened WP must receive SIP, STP, SPP, SRP, and SOR cards.
+  - Every opened WP must receive SIP, STP, SPP, VPP, SRP, and SOR cards.
   - SIP, STP, and SPP must be issue-specific and design-time ready before execution starts.
+  - VPP must truthfully classify focused, slow, platform, and release proof lanes.
   - SRP and SOR must exist upfront but remain truthful to review and output lifecycle state.
-  - Card edits must use editor skills.
-  - SOR closeout must match GitHub issue/PR truth.
+  - Card edits must use editor skills and typed v2 commands.
+  - SOR closeout must match live GitHub issue and PR truth.
+
 work_packages:
   - wp: WP-01
     issue: pending
-    title: Design pass and issue-wave readiness
+    title: Canonical docs and issue-wave readiness
     queue: docs
-    depends_on: [v0.91.5 release-tail closeout, v0.91.5 activation-test map, v0.91.6 readiness tranche, v0.91.7 implementation/proof tranche, v0.91.5 AEE completion tranche, issue-3377]
-    primary_deliverable: reviewed v0.92 docs, verified feature-doc package, ADR plan, opened issue wave, complete card bundle, and AEE proof routing
-    proof_surface: milestone docs, feature docs, ADR plan, issue-wave YAML, and SIP/STP/SPP/SRP/SOR cards
+    depends_on: [v0.91.8 release package, activation-test map, AEE completion tranche, issue-3377, issue-5359]
+    primary_deliverable: updated canonical docs, reviewed opened issue wave, six-card bundles, and explicit deferred-source index
+    proof_surface: milestone docs, canonical version/docs surfaces, feature docs, ADR plan, issue-wave YAML, and card validation
   - wp: WP-02
+    issue: pending
+    title: CI and coverage reliability
+    queue: tooling
+    depends_on: [WP-01]
+    primary_deliverable: reliable focused and slow test routing, coverage aggregation, and platform parity
+    proof_surface: CI contracts, failure regressions, and exact-head green required checks
+  - wp: WP-03
+    issue: pending
+    title: Runtime launch and resilience consolidation
+    queue: runtime
+    depends_on: [WP-02]
+    primary_deliverable: one Guardian-owned launch path with resilient startup, configuration, recovery, and lifecycle behavior
+    proof_surface: cross-platform start-stop, recovery, configuration, and clean-log proof
+  - wp: WP-04
+    issue: pending
+    title: Distributed Guardian/polis runtime
+    queue: runtime_security
+    depends_on: [WP-03]
+    primary_deliverable: architecture and security gate followed by the bounded 16-issue distributed-runtime program
+    proof_surface: reviewed architecture, threat model, child issue wave, integrated distributed proof, and relocation failure cases
+  - wp: WP-05
+    issue: pending
+    title: C-SDLC estimation and cycle-time reduction
+    queue: tooling
+    depends_on: [WP-02]
+    primary_deliverable: measured estimation, reconnection, and simplified lifecycle path
+    proof_surface: baseline, cycle-time comparison, lifecycle regressions, and operator workflow proof
+  - wp: WP-06
+    issue: pending
+    title: Remote validation/build runner
+    queue: tooling
+    depends_on: [WP-02]
+    primary_deliverable: portable bounded runner with provenance and failover
+    proof_surface: local, Linux, macOS, Windows, failure, and no-network fallback proof
+  - wp: WP-07
+    issue: pending
+    title: Prompt-card enum typing
+    queue: tooling
+    depends_on: [WP-01, WP-05]
+    primary_deliverable: historical-delivery audit and only the proven remaining enum/schema correction
+    proof_surface: schema inventory, typed round trips, negative cases, and no-duplicate-work disposition
+  - wp: WP-08
     issue: pending
     title: Birthday contract and negative cases
     queue: docs_tools
-    depends_on: [WP-01]
+    depends_on: [WP-01, WP-02]
     primary_deliverable: birth contract, disqualifying cases, and negative fixtures
     proof_surface: contract doc and validation fixture report
-  - wp: WP-03
+  - wp: WP-09
     issue: pending
     title: Stable name and identity architecture
     queue: tools_docs
-    depends_on: [WP-02]
+    depends_on: [WP-08]
     primary_deliverable: stable-name and identity-root contract
     proof_surface: identity record fixtures and schema validation
-  - wp: WP-04
+  - wp: WP-10
     issue: pending
     title: Continuity across bounded cycles
     queue: tools
-    depends_on: [WP-03]
+    depends_on: [WP-09]
     primary_deliverable: continuity records and bounded-cycle proof
     proof_surface: continuity fixtures, cycle artifacts, and witness links
-  - wp: WP-05
+  - wp: WP-11
     issue: pending
-    title: Memory grounding
+    title: Memory grounding and Memory Palace proof slice
     queue: tools_docs
-    depends_on: [WP-03, WP-04]
-    primary_deliverable: memory-grounding contract and redacted review packet
-    proof_surface: witnessed memory references and redaction-safe packet
-  - wp: WP-06
+    depends_on: [WP-09, WP-10]
+    primary_deliverable: memory-grounding contract, redacted packet, and Memory Palace disposition
+    proof_surface: witnessed memory references, context-topology proof slice, and redaction-safe packet
+  - wp: WP-12
     issue: pending
     title: Capability envelope
     queue: tools_docs
-    depends_on: [WP-03, WP-04]
+    depends_on: [WP-09]
     primary_deliverable: provider, model, tool, skill, authority, and limit envelope
     proof_surface: capability-envelope fixtures and validation report
-  - wp: WP-07
+  - wp: WP-13
     issue: pending
     title: ACP / cognitive profiles
     queue: tools_docs
-    depends_on: [WP-04, WP-05, WP-06]
+    depends_on: [WP-10, WP-11, WP-12]
     primary_deliverable: evidence-grounded cognitive-profile contract
-    proof_surface: ACP/profile fixtures, update rules, privacy boundary, and validation report
-  - wp: WP-07A
+    proof_surface: profile fixtures, update rules, privacy boundary, and validation report
+  - wp: WP-13A
     issue: pending
     title: Adaptive Learning DAG queue
     queue: docs_tools
-    depends_on: [WP-01, WP-07, issue-5104-merge-evidence, v0.91.7 reasoning-graph-loop-runtime-proof]
-    primary_deliverable: adaptive-learning feature contract, runtime-status verification checklist, evaluation/state/graph-delta queue, and negative-test plan
-    proof_surface: ADAPTIVE_LEARNING_DAG_v0.92.md, verified loop-runtime status checklist, replay-continuity negative plan, and graph-mutation policy boundary
-  - wp: WP-08
+    depends_on: [WP-01, WP-13, issue-5104-merge-evidence, current Runtime v3 loop qualification]
+    primary_deliverable: feature contract, status checklist, evaluation and graph-delta queue, and negative-test plan
+    proof_surface: adaptive-learning plan, loop-runtime qualification, replay-continuity negatives, and graph-mutation policy boundary
+  - wp: WP-14
     issue: pending
-    title: ACIP binary schema and WebSocket carrier
-    queue: tools_docs
-    depends_on: [WP-01]
-    primary_deliverable: ACIP protobuf schema, public schema catalog, JSON projection, and mock carrier proof
-    proof_surface: proto/schema catalog, round-trip fixtures, denied-access case, and mock WebSocket trace
-  - wp: WP-09
+    title: ACIP and A2A contract reconciliation
+    queue: runtime_protocols
+    depends_on: [WP-04, ACIP substrate, trace and replay baseline]
+    primary_deliverable: reconciled versioned protocol family, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS carrier
+    proof_surface: contracts, schema catalog, round-trip fixtures, denied-access case, and real WSS exchange
+  - wp: WP-15
     issue: pending
     title: Birth witnesses and receipts
     queue: tools_docs
-    depends_on: [WP-03, WP-04, WP-05, WP-06]
+    depends_on: [WP-09, WP-10, WP-11, WP-12]
     primary_deliverable: witness set and citizen-facing receipt contract
     proof_surface: witness fixtures, receipt fixtures, and validation report
-  - wp: WP-10
+  - wp: WP-16
     issue: pending
     title: Birthday review packet
     queue: docs_tools
-    depends_on: [WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09]
+    depends_on: [WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15]
     primary_deliverable: reviewer-facing birthday evidence packet
     proof_surface: integrated review packet and claim-boundary scan
-  - wp: WP-11
+  - wp: WP-17
     issue: pending
     title: Migration and cross-polis continuity planning
     queue: docs
-    depends_on: [WP-03, WP-04, WP-10]
-    primary_deliverable: bounded continuity/migration feature note and design note
-    proof_surface: cross-polis continuity feature doc, design note, and explicit non-goals
-  - wp: WP-12
+    depends_on: [WP-09, WP-10, WP-16]
+    primary_deliverable: bounded birthday-identity movement semantics and non-goals
+    proof_surface: cross-polis continuity feature doc, design note, and boundary against WP-04 infrastructure
+  - wp: WP-18
     issue: pending
     title: First birthday demo
     queue: demo_tools
-    depends_on: [WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10]
+    depends_on: [WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16]
     primary_deliverable: runnable first-birthday proof demo and negative suite
-    proof_surface: first-birthday demo feature doc, demo artifacts, negative-case report, and reviewer packet
-  - wp: WP-13
+    proof_surface: demo feature doc, artifacts, negative-case report, and reviewer packet
+  - wp: WP-18A
+    issue: pending
+    title: Observatory/Unity consumer integration
+    queue: consumers
+    depends_on: [WP-03, WP-14, WP-18]
+    primary_deliverable: separate consumers integrated with the versioned Runtime API and WSS
+    proof_surface: real Observatory and Unity interactions, compatibility matrix, and consumer failure cases
+  - wp: WP-18B
+    issue: pending
+    title: Provider-neutral multi-agent proof
+    queue: demo_tools
+    depends_on: [WP-14, WP-16, WP-18]
+    primary_deliverable: provider-neutral multi-agent proof matrix and artifacts
+    proof_surface: real multi-provider runs, protocol traces, negative cases, and no-provider-substitution proof
+  - wp: WP-19
     issue: pending
     title: Birthday-to-governance handoff
     queue: docs
-    depends_on: [WP-10, WP-11, v0.93 allocation]
+    depends_on: [WP-16, WP-17, v0.93 allocation]
     primary_deliverable: v0.93 governance handoff map
     proof_surface: identity-evidence to governance-consumption mapping and ADR-plan update
-  - wp: WP-14
+  - wp: WP-20
     issue: pending
     title: Demo matrix, AEE proof, and proof coverage
     queue: demo
-    depends_on: [WP-12, WP-13]
-    primary_deliverable: demo matrix, AEE proof routing or proof packet, proof coverage, and validation commands
-    proof_surface: demo matrix, AEE proof evidence, proof coverage doc, and artifact index
-  - wp: WP-15
+    depends_on: [WP-18, WP-18A, WP-18B, WP-19]
+    primary_deliverable: demo matrix, AEE proof routing or packet, proof coverage, and validation commands
+    proof_surface: demo matrix, AEE evidence, proof coverage document, and artifact index
+  - wp: WP-21
+    issue: pending
+    title: Repository-wide code reduction cleanup
+    queue: cleanup
+    depends_on: [WP-20]
+    primary_deliverable: behavior-preserving cleanup with exact deletion denominator
+    proof_surface: reviewed deletion manifest, parity proof, and retained-surface inventory
+  - wp: WP-22
     issue: pending
     title: Quality gate
     queue: quality
-    depends_on: [WP-14]
+    depends_on: [WP-04, WP-05, WP-06, WP-07, WP-13A, WP-20, WP-21]
     primary_deliverable: quality gate and blocker disposition
-    proof_surface: quality-gate record and blocker report
-  - wp: WP-16
+    proof_surface: quality-gate record, platform proof, and blocker report
+  - wp: WP-23
     issue: pending
     title: Docs and release-truth pass
     queue: docs
-    depends_on: [WP-15]
-    primary_deliverable: current docs, release notes, feature list, ADR plan, and milestone docs
+    depends_on: [WP-22]
+    primary_deliverable: current canonical docs, release notes, feature list, ADR plan, skills, agent guidance, and milestone docs
     proof_surface: docs-review packet, ADR candidate packet if needed, and release-truth diff
-  - wp: WP-17
+  - wp: WP-24
+    issue: pending
+    title: Medium launch article
+    queue: publication
+    depends_on: [WP-23]
+    primary_deliverable: substantive release-grounded article and publication disposition
+    proof_surface: reviewed article source, claim scan, links, and publication boundary
+  - wp: WP-25
     issue: pending
     title: Internal review
     queue: review
-    depends_on: [WP-16]
+    depends_on: [WP-23, WP-24]
     primary_deliverable: internal review report and finding register
     proof_surface: internal review packet
-  - wp: WP-18
+  - wp: WP-26
     issue: pending
     title: External / third-party review
     queue: review
-    depends_on: [WP-17]
+    depends_on: [WP-25]
     primary_deliverable: external review handoff and received review
     proof_surface: review handoff and review report
-  - wp: WP-19
+  - wp: WP-27
     issue: pending
     title: Review findings remediation
     queue: review
-    depends_on: [WP-18]
+    depends_on: [WP-26]
     primary_deliverable: finding dispositions and remediation PRs
     proof_surface: finding disposition record
-  - wp: WP-20
+  - wp: WP-28
     issue: pending
     title: Next milestone planning
     queue: docs
-    depends_on: [WP-19]
+    depends_on: [WP-27]
     primary_deliverable: v0.93 handoff and downstream planning update
-    proof_surface: next-milestone handoff doc
-  - wp: WP-21
+    proof_surface: next-milestone handoff document
+  - wp: WP-28A
+    issue: pending
+    title: Next-milestone closeout plan
+    queue: docs
+    depends_on: [WP-28]
+    primary_deliverable: exact terminal issue, PR, receipt, and ceremony sequence
+    proof_surface: reviewed closeout plan and issue universe
+  - wp: WP-29
     issue: pending
     title: Next milestone review pass
     queue: docs
-    depends_on: [WP-20]
-    primary_deliverable: review pass over v0.93 planning before ceremony
+    depends_on: [WP-28A]
+    primary_deliverable: review pass over v0.93 planning and closeout readiness
     proof_surface: next-milestone review findings and disposition
-  - wp: WP-22
+  - wp: WP-30
     issue: pending
     title: Release ceremony
     queue: release
-    depends_on: [WP-21]
+    depends_on: [WP-29]
     primary_deliverable: release evidence package and ceremony closeout
     proof_surface: release evidence packet, release notes, and closeout record

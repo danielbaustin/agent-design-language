@@ -22,13 +22,13 @@ Prepare lifecycle packet only; planning review is future execution work.
 
 ## Acceptance
 
-1. AC-1: #5359 preparation is grounded in the live issue body, current origin/main, and checked-in v0.91.8 release-tail routing.
-2. AC-2: future execution is blocked until WP-21A #5355 is closed by a merged PR and the observed #5355 merge SHA is ancestral to the exact #5359 execution base.
-3. AC-3: future review inventory covers the WP wave, release-tail sequence, next-milestone handoff, activation map, canonical inventory, V092 handoff feature, and the WP-21/WP-21A output packets.
-4. AC-4: the WP-22 output packet classifies blockers, stale assumptions, overclaims, explicit non-claims, and whether WP-23 #5348 may start.
-5. AC-5: execution and preparation avoid main, #5357, PR #5805, #5804, version:v0.92 issues, product implementation, AWS, publication, merge, and closeout surfaces unless separately authorized.
-6. AC-6: validation separates runnable preparation hygiene from deferred future execution proof; skipped, pending, or missing predecessor evidence is a blocker or non-pass.
-7. AC-7: this preparation branch may be committed and pushed, but no WP execution, review publication, PR creation, or closeout occurs in the preparation lane.
+1. AC-1: WP-21 #5362 and WP-21A #5355 are closed by merged PRs and both merge commits are ancestral to the exact #5359 planning revision.
+2. AC-2: The revised v0.92 WBS, sprint plan, and issue-wave YAML preserve the complete birthday product spine and schedule every operator-approved v0.92 reliability, tooling, protocol, consumer, demo, cleanup, and publication track.
+3. AC-3: Capability taxonomy and MLX/OCI are explicitly deferred with retained source pointers; Agent Logic publication and the general-intelligence paper program are explicitly placed in later backlog rather than silently dropped.
+4. AC-4: The WP-22 review packet classifies blockers, stale assumptions, overclaims, non-claims, all inspected TBD source dispositions, and WP-23 eligibility.
+5. AC-5: The package remains draft_pre_open planning truth; #5359 opens no v0.92 execution issue and performs no Runtime, tooling, consumer, demo, publication, AWS, or product implementation.
+6. AC-6: YAML parsing, exact WBS/YAML WP-title parity, complete source-disposition coverage, six-card policy, typed doctor, and diff hygiene pass at the exact revision.
+7. AC-7: One bounded pre-PR review covers the exact planning package; all actionable findings are fixed before typed publication with a PR body that closes #5359.
 
 ## Dependencies
 

@@ -1,0 +1,104 @@
+{
+  "issue": 5359,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "577f704ba38dfb393da449e821e30e743c820ab6aa318e75a7d1ea4fe7200509",
+  "claim_id": "claim-5359-v0918-prep-recovery-20260804",
+  "actor": "codex:5359-planning-review",
+  "reason": "Replace the completed preparation-only plan with the operator-authorized WP-22 v0.92 planning review, validation, review, and publication path.",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "AC-1: WP-21 #5362 and WP-21A #5355 are closed by merged PRs and both merge commits are ancestral to the exact #5359 planning revision.",
+      "AC-2: The revised v0.92 WBS, sprint plan, and issue-wave YAML preserve the complete birthday product spine and schedule every operator-approved v0.92 reliability, tooling, protocol, consumer, demo, cleanup, and publication track.",
+      "AC-3: Capability taxonomy and MLX/OCI are explicitly deferred with retained source pointers; Agent Logic publication and the general-intelligence paper program are explicitly placed in later backlog rather than silently dropped.",
+      "AC-4: The WP-22 review packet classifies blockers, stale assumptions, overclaims, non-claims, all inspected TBD source dispositions, and WP-23 eligibility.",
+      "AC-5: The package remains draft_pre_open planning truth; #5359 opens no v0.92 execution issue and performs no Runtime, tooling, consumer, demo, publication, AWS, or product implementation.",
+      "AC-6: YAML parsing, exact WBS/YAML WP-title parity, complete source-disposition coverage, six-card policy, typed doctor, and diff hygiene pass at the exact revision.",
+      "AC-7: One bounded pre-PR review covers the exact planning package; all actionable findings are fixed before typed publication with a PR body that closes #5359."
+    ],
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Verify live WP-21 and WP-21A merged closure and ancestry, then inventory the complete existing v0.92 package and TBD source set.",
+        "acceptance_ids": ["AC-1", "AC-4"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Revise the WBS, sprint plan, issue-wave YAML, and WP-22 review packet with the full schedule, explicit deferrals, later backlog, non-claims, and WP-23 disposition.",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-5"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run focused structural, cross-file, source-disposition, lifecycle, and diff-hygiene validation and retain exact evidence.",
+        "acceptance_ids": ["AC-5", "AC-6"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Obtain one bounded exact-revision pre-PR review, fix every actionable finding, and record review truth.",
+        "acceptance_ids": ["AC-7"],
+        "status": "pending"
+      },
+      {
+        "id": "S5",
+        "action": "Publish the reviewed planning-only package with Closes #5359 and hand WP-23 the exact post-merge eligibility boundary.",
+        "acceptance_ids": ["AC-5", "AC-7"],
+        "status": "pending"
+      }
+    ],
+    "validation_lanes": [
+      {
+        "lane": "wp22-yaml-and-wp-parity",
+        "proof_role": "Parse the issue wave and prove exact WP identifier/title parity with the WBS.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-6"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 30,
+        "budget_tokens": 1000,
+        "argv": ["ruby", "-ryaml", ".csdlc/prepared/issues/5359/validate-v092-package.rb"],
+        "parallel_group": "planning-validation",
+        "defer_reason": null
+      },
+      {
+        "lane": "wp22-source-dispositions",
+        "proof_role": "Prove every approved, deferred, and later-backlog TBD input has one explicit disposition.",
+        "acceptance_ids": ["AC-3", "AC-4", "AC-6"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 30,
+        "budget_tokens": 1000,
+        "argv": ["ruby", "-ryaml", ".csdlc/prepared/issues/5359/validate-v092-package.rb"],
+        "parallel_group": "planning-validation",
+        "defer_reason": null
+      },
+      {
+        "lane": "wp22-typed-doctor",
+        "proof_role": "Validate the #5359 lifecycle record and all six rendered card projections.",
+        "acceptance_ids": ["AC-5", "AC-6", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 30,
+        "budget_tokens": 1000,
+        "argv": ["/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor", "--repo", ".", "--issue", "5359"],
+        "parallel_group": "planning-validation",
+        "defer_reason": null
+      },
+      {
+        "lane": "wp22-diff-hygiene",
+        "proof_role": "Prove the bounded planning diff has no whitespace errors.",
+        "acceptance_ids": ["AC-5", "AC-6"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 15,
+        "budget_tokens": 500,
+        "argv": ["git", "diff", "--check"],
+        "parallel_group": "planning-validation",
+        "defer_reason": null
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

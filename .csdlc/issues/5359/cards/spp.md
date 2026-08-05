@@ -16,47 +16,51 @@ Prepare now; execute only after #5355 is live-merged and ancestral.
 
 ## Plan
 
-Revision 2
+Revision 3
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Recheck live #5359/#5355/#5362 state, origin/main, and the v0.91.8 release-tail sequence before execution; stop if #5355 is not merged and ancestral.",
+    "action": "Verify live WP-21 and WP-21A merged closure and ancestry, then inventory the complete existing v0.92 package and TBD source set.",
     "acceptance_ids": [
       "AC-1",
-      "AC-2"
-    ],
-    "status": "pending"
-  },
-  {
-    "id": "S2",
-    "action": "Inventory the exact v0.92 handoff and activation inputs, including the WP-21 and WP-21A outputs after they close.",
-    "acceptance_ids": [
-      "AC-3"
-    ],
-    "status": "pending"
-  },
-  {
-    "id": "S3",
-    "action": "Produce the WP-22 planning review packet with blocker, stale-assumption, overclaim, non-claim, and WP-23 disposition sections.",
-    "acceptance_ids": [
       "AC-4"
     ],
     "status": "pending"
   },
   {
-    "id": "S4",
-    "action": "Run focused preparation and future execution validation lanes without treating deferred predecessor proof as passed.",
+    "id": "S2",
+    "action": "Revise the WBS, sprint plan, issue-wave YAML, and WP-22 review packet with the full schedule, explicit deferrals, later backlog, non-claims, and WP-23 disposition.",
     "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S3",
+    "action": "Run focused structural, cross-file, source-disposition, lifecycle, and diff-hygiene validation and retain exact evidence.",
+    "acceptance_ids": [
+      "AC-5",
       "AC-6"
     ],
     "status": "pending"
   },
   {
+    "id": "S4",
+    "action": "Obtain one bounded exact-revision pre-PR review, fix every actionable finding, and record review truth.",
+    "acceptance_ids": [
+      "AC-7"
+    ],
+    "status": "pending"
+  },
+  {
     "id": "S5",
-    "action": "Preserve the forbidden-surface boundary and stop at pushed preparation branch with no PR, publication, execution, or closeout.",
+    "action": "Publish the reviewed planning-only package with Closes #5359 and hand WP-23 the exact post-merge eligibility boundary.",
     "acceptance_ids": [
       "AC-5",
       "AC-7"
