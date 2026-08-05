@@ -64,10 +64,10 @@ rows.each do |row|
   abort "version mismatch #{path}: #{observed.inspect} != #{expected.inspect}" if expected && observed != expected
 end
 
-markdown_paths = rows.filter_map do |row|
+markdown_paths = rows.each_with_object([]) do |row, paths|
   next unless %w[update already_current].include?(row["disposition"])
   path = ROOT.join(row["path"].to_s)
-  path if path.file? && path.extname.downcase == ".md"
+  paths << path if path.file? && path.extname.downcase == ".md"
 end
 markdown_paths.each do |path|
   path.read.scan(/\[[^\]]*\]\(([^)]+)\)/).flatten.each do |raw|

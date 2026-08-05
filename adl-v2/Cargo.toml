@@ -12,3 +12,6 @@ members = [
   "crates/adl-workcell-convergence",
   "crates/adl-workcell-task-adapter",
 ]
+
+[workspace.package]
+version = "0.92.0"

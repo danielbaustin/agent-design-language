@@ -23,19 +23,27 @@ It provides:
 
 ## Current Status
 
-- Current active milestone in the main repo: **v0.91.4**
-- Current release state: **v0.91.4 issue setup and C-SDLC default-operation
-  hardening are underway**
-- Most recently completed milestone in the main repo: **v0.91.3**
-- Current crate version on the active release line: **0.91.4**
+- Current active milestone in the main repo: **v0.92**
+- Current development state: **the v0.92 issue wave is active; planned runtime
+  outcomes remain subject to issue-owned implementation and proof**
+- Retained upstream handoff milestone: **v0.91.8**
+- Current crate version on the active development line: **0.92.0**
 
 This README describes the runtime as it exists on the current `main` branch and points to the relevant milestone and demo surfaces in the parent repository.
 
 ## Recent Runtime Milestones
 
+### v0.92 - Active Development
+
+v0.92 activates the next bounded runtime and identity-bearing-agent work. The
+milestone package is current, while implementation status remains governed by
+its individual issues and evidence. See the
+[v0.92 milestone README](../docs/milestones/v0.92/README.md) and
+[execution-readiness packet](../docs/milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md).
+
 ### v0.91.4 — Cognitive SDLC Default Operation
 
-v0.91.4 is the active milestone. The runtime-adjacent work hardens the
+v0.91.4 is a completed historical milestone. The runtime-adjacent work hardened the
 v0.91.3 first slice into default C-SDLC operation: validator/doctor/conductor
 alignment, signed trace and ObsMem handoff, five-minute-sprint repeatability,
 validation-tail/PVF work, and active-issue migration policy.

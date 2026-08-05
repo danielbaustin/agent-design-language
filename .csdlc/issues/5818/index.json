@@ -5,8 +5,40 @@
   "initialization_digest": "9ed0c16b82a7c094d6474b27313bfc4d63eaabcae5bedee51d7e839e9c8534fd",
   "phase": "bound",
   "generation": 25,
-  "digest": "d65b5aa52a81c69ff2366b887966b24c9a72320cfe9e19ec8aad6bb788bb8898",
-  "claim": null,
+  "digest": "4719da7252285cfef64d2d539d584dfef935e2277557745384628f12a5eca8de",
+  "claim": {
+    "id": "claim-5818-sprint1-execution",
+    "owner": "codex:sprint1-5818",
+    "generation": 25,
+    "acquired_unix_seconds": 1785972077,
+    "expires_unix_seconds": 1785986477,
+    "heartbeat_unix_seconds": 1785972077,
+    "branch": "codex/5818-v0-92-wp-01b-canonical-documentation-and-version-activation",
+    "worktree": ".worktrees/adl-wp-5818-v0-92-wp-01b-canonical-documentation-and-version-activation",
+    "protected_paths": [
+      "README.md",
+      "docs/README.md",
+      "docs/planning/ADL_FEATURE_LIST.md",
+      "adl/README.md",
+      "AGENTS.md",
+      "REVIEW.md",
+      "docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md",
+      "docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md",
+      "adl/Cargo.toml",
+      "adl/Cargo.lock",
+      "adl-v2/Cargo.toml",
+      "adl-v2/Cargo.lock",
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/Cargo.lock",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/Cargo.lock",
+      "adl-resilience/Cargo.toml",
+      "adl-resilience/Cargo.lock",
+      "adl-characterization/Cargo.toml",
+      "adl-characterization/Cargo.lock"
+    ],
+    "purpose": "Execute #5818 canonical documentation and version activation only."
+  },
   "review_assignment": null,
   "review": null,
   "publication": null,
@@ -377,6 +409,13 @@
       "actor": "codex:5860-vpp-preexecution-contracts",
       "reason": "Release issue-local authority after typed VPP contract replacement.",
       "operation": "{\"claim_id\":\"claim-5818-v092-preexec-contract\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-vpp-preexecution-contracts\"}"
+    },
+    {
+      "sequence": 45,
+      "generation": 25,
+      "actor": "codex:sprint1-5818",
+      "reason": "Begin operator-authorized Sprint 1 execution of #5818 in its exact issue worktree.",
+      "operation": "{\"branch\":\"codex/5818-v0-92-wp-01b-canonical-documentation-and-version-activation\",\"claim_id\":\"claim-5818-sprint1-execution\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:sprint1-5818\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\"README.md\",\"docs/README.md\",\"docs/planning/ADL_FEATURE_LIST.md\",\"adl/README.md\",\"AGENTS.md\",\"REVIEW.md\",\"docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md\",\"docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md\",\"adl/Cargo.toml\",\"adl/Cargo.lock\",\"adl-v2/Cargo.toml\",\"adl-v2/Cargo.lock\",\"adl-runtime/Cargo.toml\",\"adl-runtime/Cargo.lock\",\"adl-runtime-kernel/Cargo.toml\",\"adl-runtime-kernel/Cargo.lock\",\"adl-resilience/Cargo.toml\",\"adl-resilience/Cargo.lock\",\"adl-characterization/Cargo.toml\",\"adl-characterization/Cargo.lock\"],\"purpose\":\"Execute #5818 canonical documentation and version activation only.\",\"worktree\":\".worktrees/adl-wp-5818-v0-92-wp-01b-canonical-documentation-and-version-activation\"}"
     }
   ]
 }

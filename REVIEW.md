@@ -21,7 +21,18 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the active v0.91.8 release-tail review, start with:
+For the active v0.92 development review, start with:
+
+- `docs/milestones/v0.92/README.md`
+- `docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml`
+- `docs/milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md`
+- `docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md`
+- `docs/milestones/v0.92/QUALITY_GATE_v0.92.md`
+- `docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md`
+- `docs/milestones/v0.92/DEMO_MATRIX_v0.92.md`
+
+The retained v0.91.8 handoff and release-tail evidence remains an upstream
+review input:
 
 - `docs/milestones/v0.91.8/README.md`
 - `docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml`
@@ -78,7 +89,11 @@ minimum, inspect and update every applicable item in this checklist:
 Tail closeout docs review is complete only when this surface has either been
 updated, confirmed current, or explicitly ruled not applicable with evidence.
 
-The current review posture is v0.91.8 WP-19 external-review freeze readiness. WP-16
+The current review posture is v0.92 active development. Review each v0.92
+outcome against its owning issue and current exact revision; activation of the
+milestone package is not evidence that planned features are complete.
+
+The retained v0.91.8 posture reached WP-19 external-review freeze readiness. WP-16
 merged at `2e9d2dd7c`; its evidence records 67 audited issue outcomes, 0
 unacceptable outcomes, and passing ADL v2, Runtime v3, and C-SDLC v2
 integrated lanes. WP-17 documentation truth alignment is closed. WP-18

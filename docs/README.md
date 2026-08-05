@@ -6,8 +6,8 @@ Use this index to find the right source of truth quickly.
 
 ## Start Here
 
-- Active milestone package: `milestones/v0.91.8/`
-- Current quality evidence: `milestones/v0.91.8/evidence/wp16/`
+- Active milestone package: `milestones/v0.92/`
+- Current execution readiness: `milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md`
 - Most recently published release: `v0.91.7`
 - Previous completed bridge package: `milestones/v0.91.6/`
 - Root project overview: `../README.md`
@@ -18,9 +18,10 @@ Use this index to find the right source of truth quickly.
 
 ## Milestone Documentation
 
-- Active milestone package: `milestones/v0.91.8/`
-- Integrated WP-16 quality evidence: `milestones/v0.91.8/evidence/wp16/`
-- Current review entrypoint: `milestones/v0.91.8/review/`
+- Active milestone package: `milestones/v0.92/`
+- Active issue wave: `milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml`
+- Current quality plan: `milestones/v0.92/QUALITY_GATE_v0.92.md`
+- Current review entrypoint: `milestones/v0.92/README.md`
 - Most recently published release package: `milestones/v0.91.7/`
 - Recent stable milestones: `milestones/v0.91.5/`, `milestones/v0.91.4/`, `milestones/v0.91.3/`, `milestones/v0.91.2/`, `milestones/v0.91.1/`, `milestones/v0.90.5/`
 - Earlier milestones: `milestones/v0.75/`, `milestones/v0.7/`, `milestones/v0.6/`
@@ -38,9 +39,9 @@ Use this index to find the right source of truth quickly.
 ## Demo and Tooling Surfaces
 
 - Canonical demo index: `../demos/README.md`
-- Active milestone demo matrix: `milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md`
-- Active feature-proof coverage: `milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md`
-- Active quality gate: `milestones/v0.91.8/evidence/wp16/QUALITY_GATE.md`
+- Active milestone demo matrix: `milestones/v0.92/DEMO_MATRIX_v0.92.md`
+- Active feature-proof coverage: `milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md`
+- Active quality gate plan: `milestones/v0.92/QUALITY_GATE_v0.92.md`
 - Most recently completed milestone demo matrix: `milestones/v0.91.6/DEMO_MATRIX_v0.91.6.md`
 - Editor/tooling demo surfaces: `tooling/editor/README.md`
 
@@ -48,11 +49,8 @@ Use this index to find the right source of truth quickly.
 
 Milestone docs should be read as bounded engineering records. They distinguish
 what has shipped, what is currently being implemented, what is demoable, and
-what is planned for later milestones. At the moment, `v0.91.8` is the active
-bridge milestone. WP-16 passed at `2e9d2dd7c` with 67 audited issue outcomes,
-0 unacceptable outcomes, and passing ADL v2, Runtime v3, and C-SDLC v2 lanes.
-WP-17 documentation alignment and both WP-18 internal reviews are closed.
-WP-19 is ready to freeze its external-review packet but has not dispatched it.
-The milestone is not
-release-approved until external review, remediation, handoff, and ceremony
-gates complete.
+what is planned for later milestones. `v0.92` is the active development
+milestone. Its planning package and issue wave are active, but planned feature
+rows remain incomplete until their implementation, validation, review, and
+release evidence lands. The retained `v0.91.8` package is upstream handoff
+evidence, not the current execution center.
