@@ -1153,6 +1153,31 @@ fn derived_bind_uses_the_existing_issue_worktree_in_place() {
     .expect("issue-local bind");
     assert!(!result.bind.created);
     assert_eq!(result.worktree, ".");
+    git(temp.path(), &["switch", "main"]);
+    let error = run_derived_bind(
+        &store,
+        DerivedBindRequest {
+            issue: 9001,
+            session_id: "session-9001".into(),
+            base_branch: "main".into(),
+            expected_base_revision: base_revision.clone(),
+            lease_seconds: 3_600,
+        },
+    )
+    .expect_err("bound retry on the wrong root branch must fail closed");
+    assert_eq!(error.code, ErrorCode::ReconciliationRequired);
+    git(temp.path(), &["switch", "codex/9001-issue-local"]);
+    run_derived_bind(
+        &store,
+        DerivedBindRequest {
+            issue: 9001,
+            session_id: "session-9001".into(),
+            base_branch: "main".into(),
+            expected_base_revision: base_revision.clone(),
+            lease_seconds: 3_600,
+        },
+    )
+    .expect("bound retry on the durable root branch");
     let receipt: csdlc_v2::ExecutionReadinessReceipt = serde_json::from_slice(
         &fs::read(
             temp.path()

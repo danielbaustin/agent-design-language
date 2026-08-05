@@ -1307,11 +1307,17 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
             "bind must run from the declared base branch or the derived issue branch",
         ));
     }
-    let worktree = if current_branch == branch {
-        ".".into()
-    } else {
-        format!(".worktrees/adl-wp-{}-{}", request.issue, draft.slug)
-    };
+    let existing_intent = load_binding_intent(store, request.issue)?;
+    let worktree = existing_intent
+        .as_ref()
+        .map(|intent| intent.worktree.clone())
+        .unwrap_or_else(|| {
+            if current_branch == branch {
+                ".".into()
+            } else {
+                format!(".worktrees/adl-wp-{}-{}", request.issue, draft.slug)
+            }
+        });
     let actual_revision = crate::git::run(store.root(), &["rev-parse", "HEAD"])?.stdout;
     if actual_revision != request.expected_base_revision {
         return Err(V2Error::new(
@@ -1330,7 +1336,6 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
         )
         .as_bytes(),
     );
-    let existing_intent = load_binding_intent(store, request.issue)?;
     let branch_preexisting = git_branch_exists(store.root(), &branch)?;
     let worktree_preexisting = worktree == "." || store.root().join(&worktree).exists();
     if existing_intent.is_none() && worktree != "." && (branch_preexisting || worktree_preexisting)
@@ -1463,18 +1468,16 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
         } else {
             store.root().join(&intent.worktree)
         };
-        if intent.worktree != "." {
-            let expected = expected_worktree_path(store.root(), &intent.worktree)?;
-            let registered = crate::git::worktrees(store.root())?
-                .into_iter()
-                .find(|(registered_branch, _)| registered_branch == &intent.branch)
-                .map(|(_, path)| path);
-            if registered.as_deref() != Some(expected.as_str()) {
-                return Err(V2Error::new(
-                    ErrorCode::ReconciliationRequired,
-                    "bound retry worktree is not registered to the durable intent branch",
-                ));
-            }
+        let expected = expected_worktree_path(store.root(), &intent.worktree)?;
+        let registered = crate::git::worktrees(store.root())?
+            .into_iter()
+            .find(|(registered_branch, _)| registered_branch == &intent.branch)
+            .map(|(_, path)| path);
+        if registered.as_deref() != Some(expected.as_str()) {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "bound retry worktree is not registered to the durable intent branch",
+            ));
         }
         let target_store = Store::new(&target);
         let record = target_store.load_record(request.issue)?;

@@ -2604,14 +2604,14 @@ fn read_json<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T> {
     Ok(serde_json::from_slice(&fs::read(path)?)?)
 }
 
+#[cfg(windows)]
+pub(crate) fn sync_dir(_path: &Path) -> Result<()> {
+    // Windows does not support FlushFileBuffers on directory handles.
+    Ok(())
+}
+
+#[cfg(not(windows))]
 pub(crate) fn sync_dir(path: &Path) -> Result<()> {
-    #[cfg(windows)]
-    {
-        // Windows does not support FlushFileBuffers on directory handles.
-        let _ = path;
-        return Ok(());
-    }
-    #[cfg(not(windows))]
     File::open(path)?.sync_all()?;
     Ok(())
 }
